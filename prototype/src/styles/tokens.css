@@ -1,0 +1,335 @@
+/* ============================================================
+   ui-ux-pro-max · DeerMind 设计令牌（design-system/deermind/MASTER.md）
+   风格：Claymorphism（孩子端） + Soft UI 覆盖（家长端）
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Comic+Neue:wght@300;400;700&display=swap');
+
+:root {
+  /* ---- 主色板（MASTER）---- */
+  --color-primary: #4F46E5;
+  --color-secondary: #818CF8;
+  --color-cta: #22C55E;
+  --color-background: #EEF2FF;
+  --color-text: #312E81;
+
+  /* ---- 扩展支持色 ---- */
+  --color-primary-soft: #EEF2FF;
+  --color-secondary-soft: #E0E7FF;
+  --color-cta-soft: #DCFCE7;
+  --color-warning: #F59E0B;
+  --color-warning-soft: #FEF3C7;
+  --color-danger: #EF4444;
+  --color-danger-soft: #FEE2E2;
+  --color-mastered: #22C55E;
+  --color-inprogress: #F59E0B;
+  --color-focus: #EF4444;
+  --color-paper: #FFFDF7;
+  --color-ink: #312E81;
+  --color-line: #E2E8F0;
+  --color-white: #FFFFFF;
+
+  /* ---- 间距（MASTER）---- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* ---- 圆角 / 描边 / 阴影（MASTER 组件规格）---- */
+  --radius-sm: 8px;        /* 输入框、小元素 */
+  --radius-md: 12px;       /* 卡片 */
+  --radius-lg: 16px;       /* 弹窗、大卡片 */
+  --radius-btn: var(--radius-sm);
+  --radius-card: var(--radius-md);
+  --radius-input: var(--radius-sm);
+  --border-thick: 0px;     /* MASTER 卡片无粗描边 */
+  --card-bg: #EEF2FF;      /* MASTER 卡片背景 */
+  --btn-weight: 600;       /* MASTER 按钮字重 */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+  --shadow-card: var(--shadow-md);
+  --shadow-card-hover: var(--shadow-lg);
+  --shadow-press: 0 2px 4px rgba(0, 0, 0, 0.08);
+  /* 兼容别名（部分组件引用旧变量名） */
+  --shadow-clay: var(--shadow-card);
+  --shadow-clay-press: var(--shadow-press);
+
+  /* ---- 字体（MASTER）---- */
+  --font-head: 'Baloo 2', 'Comic Neue', system-ui, sans-serif;
+  --font-body: 'Comic Neue', 'Baloo 2', system-ui, sans-serif;
+
+  /* ---- 动效 ---- */
+  --ease-soft: 200ms ease-out;
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  color-scheme: light;
+}
+
+/* ---- 孩子端覆盖（design-system/pages/child.md · Claymorphism）---- */
+.child-mode {
+  --radius-sm: 14px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-btn: 18px;
+  --radius-card: 24px;
+  --radius-input: 14px;
+  --border-thick: 3px;
+  --card-bg: #FFFFFF;
+  --btn-weight: 700;
+  --shadow-card: 4px 4px 0 rgba(79, 70, 229, 0.12), inset -2px -2px 6px rgba(79, 70, 229, 0.06);
+  --shadow-card-hover: 6px 6px 0 rgba(79, 70, 229, 0.12), inset -2px -2px 6px rgba(79, 70, 229, 0.06);
+  --shadow-press: inset 2px 2px 6px rgba(79, 70, 229, 0.15);
+  --shadow-clay: var(--shadow-card);
+  --shadow-clay-press: var(--shadow-press);
+}
+
+/* ---- 家长端覆盖（design-system/pages/parent.md · Soft UI）---- */
+.parent-mode {
+  --color-background: #F6F7FB;
+  --color-primary-soft: #EEF0FF;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-btn: 8px;
+  --radius-card: 14px;
+  --radius-input: 8px;
+  --border-thick: 0px;
+  --card-bg: #FFFFFF;
+  --btn-weight: 600;
+  --shadow-card: 0 2px 8px rgba(30, 30, 60, 0.06);
+  --shadow-card-hover: 0 6px 16px rgba(30, 30, 60, 0.1);
+  --shadow-press: 0 1px 3px rgba(30, 30, 60, 0.1);
+  --shadow-clay: var(--shadow-card);
+  --shadow-clay-press: var(--shadow-press);
+  --font-head: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+  --font-body: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+}
+
+/* ================= 基础 ================= */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 模式字体随 .app 作用域继承（body 在 .app 之外，需在此显式应用模式字体） */
+.app {
+  font-family: var(--font-body);
+  color: var(--color-text);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ================= 通用组件 ================= */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-card);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-card);
+  border: var(--border-thick) solid rgba(79, 70, 229, 0.08);
+  transition: transform var(--ease-soft), box-shadow var(--ease-soft);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.card.pressable:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-press);
+}
+
+.btn {
+  border: none;
+  border-radius: var(--radius-btn);
+  padding: 12px 24px;
+  font-weight: var(--btn-weight);
+  font-size: 16px;
+  transition: all var(--ease-soft);
+}
+
+.btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--color-cta);
+  color: #fff;
+}
+.btn-primary:active {
+  transform: translateY(2px);
+}
+
+.btn-indigo {
+  background: var(--color-primary);
+  color: #fff;
+}
+.btn-indigo:active {
+  transform: translateY(2px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
+.btn-soft {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-green { background: var(--color-mastered); }
+.dot-amber { background: var(--color-inprogress); }
+.dot-red { background: var(--color-focus); }
+
+/* 三色掌握度 */
+.pill-mastered {
+  background: var(--color-cta-soft);
+  color: #15803D;
+}
+.pill-inprogress {
+  background: var(--color-warning-soft);
+  color: #B45309;
+}
+.pill-focus {
+  background: var(--color-danger-soft);
+  color: #B91C1C;
+}
+
+/* 输入 */
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-input);
+  font-size: 16px;
+  font-family: inherit;
+  background: #fff;
+  transition: border-color var(--ease-soft), box-shadow var(--ease-soft);
+}
+.input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+/* 图标按钮（无 emoji，用 SVG）*/
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border: none;
+  transition: all var(--ease-soft);
+}
+.icon-btn:active {
+  transform: scale(0.92);
+}
+
+/* 无障碍：焦点可见 */
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ================= 响应式基础 ================= */
+img {
+  max-width: 100%;
+}
+
+/* 做题类/流程类页面在平板、桌面下居中限宽，避免被拉伸（布局不乱） */
+@media (min-width: 768px) {
+  .photo, .attribution, .reading, .explain, .practice, .variant, .summary,
+  .pin, .create {
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .spaces, .today, .weekly {
+    max-width: 960px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+/* ================= 孩子端组件覆盖（design-system/pages/child.md · Claymorphism）================= */
+.child-mode .btn-primary,
+.child-mode .btn-indigo {
+  box-shadow: 0 4px 0 rgba(79, 70, 229, 0.35);
+}
+.child-mode .btn-primary {
+  box-shadow: 0 4px 0 rgba(34, 197, 94, 0.35);
+}
+.child-mode .btn-primary:active,
+.child-mode .btn-indigo:active {
+  transform: translateY(2px);
+}
+.child-mode .btn-primary:active {
+  box-shadow: 0 2px 0 rgba(34, 197, 94, 0.35);
+}
+.child-mode .btn-indigo:active {
+  box-shadow: 0 2px 0 rgba(79, 70, 229, 0.35);
+}
+.child-mode .input {
+  border-width: 2px;
+}

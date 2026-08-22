@@ -1,0 +1,24 @@
+{
+  "name": "deermind-prototype",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "呦鹿智伴 DeerMind - 产品设计即原型（基于 doc/产品设计.md）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "type-check": "vue-tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "pinia": "^2.1.7",
+    "vue": "^3.4.27",
+    "vue-router": "^4.3.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vue-tsc": "^2.0.22"
+  }
+}
