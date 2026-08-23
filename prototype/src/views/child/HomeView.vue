@@ -62,7 +62,7 @@ const pillLabel = (s: string) => (s === 'mastered' ? '已掌握' : s === 'inprog
         <Icon name="camera" :size="26" />
         <span>拍错题</span>
       </button>
-      <button class="card pressable quick-item" @click="router.push('/child/summary')">
+      <button class="card pressable quick-item" @click="router.push('/child/review')">
         <Icon name="refresh" :size="26" />
         <span>复习</span>
       </button>

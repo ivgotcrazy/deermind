@@ -12,6 +12,8 @@ const nav = [
   { to: '/parent/today', icon: 'calendar', label: '今日' },
   { to: '/parent/weekly', icon: 'chart', label: '周报' },
   { to: '/parent/spaces', icon: 'doc', label: '空间' },
+  { to: '/parent/input', icon: 'upload', label: '录入' },
+  { to: '/parent/settings', icon: 'user', label: '设置' },
 ]
 
 function exitToChild() {

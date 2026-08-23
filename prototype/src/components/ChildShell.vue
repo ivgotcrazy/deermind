@@ -17,8 +17,9 @@ const isHome = computed(() => route.path === '/child/home')
 const nav = [
   { to: '/child/home', icon: 'home', label: '首页' },
   { to: '/child/photo', icon: 'camera', label: '拍题' },
-  { to: '/child/summary', icon: 'chart', label: '进度' },
-  { to: '/child/home', icon: 'user', label: '我的' },
+  { to: '/child/review', icon: 'refresh', label: '复习' },
+  { to: '/child/progress', icon: 'chart', label: '进度' },
+  { to: '/child/profile', icon: 'user', label: '我的' },
 ]
 
 function goBack() {

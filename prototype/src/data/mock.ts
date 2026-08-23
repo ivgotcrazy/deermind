@@ -249,3 +249,146 @@ export const weeklyReport = {
   ],
   suggestion: '下周重点：应用题读题训练 + 分数乘法变式巩固；建议每天 15-30 分钟，优先完成 2 个读题练习。',
 }
+
+/* ==================== Phase B：摸底 / 复习 / 错题详情 / 录入 / 记忆 / 设置 ==================== */
+
+/* 摸底（J2 冷启动）：3 道摸底题 */
+export interface QuizQuestion {
+  id: string
+  text: string
+  options: string[]
+  answer: string
+  kp: string
+}
+
+export const mogiQuestions: QuizQuestion[] = [
+  {
+    id: 'm1',
+    text: '5 × 2/3 等于多少？',
+    options: ['10/3', '10/15', '7/3', '5 又 2/3'],
+    answer: '10/3',
+    kp: '分数乘法',
+  },
+  {
+    id: 'm2',
+    text: '一根绳子长 3/4 米，用去了 1/2，用去了多少米？',
+    options: ['3/8 米', '1/4 米', '3/2 米', '1/8 米'],
+    answer: '3/8 米',
+    kp: '求一个数的几分之几',
+  },
+  {
+    id: 'm3',
+    text: '果园有 60 棵苹果树，梨树是苹果树的 2/5，梨树有多少棵？',
+    options: ['24 棵', '12 棵', '150 棵', '58 棵'],
+    answer: '24 棵',
+    kp: '分数应用题',
+  },
+]
+
+/* 间隔复习（J4）任务与题目 */
+export interface ReviewTask {
+  id: string
+  kp: string
+  day: number
+  due: string
+  state: '待复习' | '已完成'
+}
+
+export const reviewTasks: ReviewTask[] = [
+  { id: 'r1', kp: '求一个数的几分之几', day: 1, due: '今天', state: '待复习' },
+  { id: 'r2', kp: '分数乘法', day: 3, due: '今天', state: '待复习' },
+  { id: 'r3', kp: '分数应用题', day: 7, due: '3 天后', state: '待复习' },
+]
+
+export const reviewQuestions: QuizQuestion[] = [
+  {
+    id: 'rv1',
+    text: '一本书有 45 页，小红看了全书的 2/3，看了多少页？（复习：求一个数的几分之几）',
+    options: ['30 页', '15 页', '22 页', '35 页'],
+    answer: '30 页',
+    kp: '求一个数的几分之几',
+  },
+  {
+    id: 'rv2',
+    text: '5/6 × 2/3 计算结果是？（复习：分数乘法）',
+    options: ['5/9', '10/18', '7/9', '15/12'],
+    answer: '5/9',
+    kp: '分数乘法',
+  },
+]
+
+/* 错题详情列表（家长高参与） */
+export interface ErrorDetail {
+  id: string
+  kp: string
+  attribution: string
+  time: string
+  text: string
+  status: '短期掌握' | '攻克中' | '需关注'
+  timeline: string[]
+}
+
+export const errorList: ErrorDetail[] = [
+  {
+    id: 'e1',
+    kp: '求一个数的几分之几',
+    attribution: '审题失误',
+    time: '8月23日 17:02',
+    text: '张叔叔用一根长 5/6 米的彩带做一个中国结，用去了全长的 2/3。用去了多少米？',
+    status: '短期掌握',
+    timeline: ['收录', '归因（审题失误）', '读题训练', '讲解', '练习全对', '变式通过'],
+  },
+  {
+    id: 'e2',
+    kp: '分数乘法计算',
+    attribution: '粗心',
+    time: '8月22日 16:48',
+    text: '计算：3/7 × 14 = ?（把 3/7 × 14 算成 14/21）',
+    status: '攻克中',
+    timeline: ['收录', '归因（粗心）', '检查习惯训练', '变式通过'],
+  },
+  {
+    id: 'e3',
+    kp: '分数应用题',
+    attribution: '概念不清',
+    time: '8月21日 17:10',
+    text: '单位"1"的确定：把 20 吨看作单位"1"，求它的 3/5 是多少。',
+    status: '需关注',
+    timeline: ['收录', '归因（概念不清）', '讲解中'],
+  },
+]
+
+/* 家长录入（J6） */
+export const parentNotes = {
+  teacher: '老师说女儿分数应用题常漏条件，建议加强读题训练。',
+  observation: '她口算不错，但一遇到长题干的大题就容易慌。',
+  materials: ['校内同步提升讲义.pdf', '学而思 分数应用进阶.pdf'],
+}
+
+/* 记忆列表（§8.8） */
+export interface MemoryItem {
+  id: string
+  type: '事实' | '偏好' | '状态'
+  content: string
+  source: string
+  time: string
+  confidence: number
+}
+
+export const memoryItems: MemoryItem[] = [
+  { id: 'mem1', type: '事实', content: '「求一个数的几分之几」于 8/23 达到短期掌握', source: '会话#123', time: '8月23日', confidence: 0.95 },
+  { id: 'mem2', type: '偏好', content: '更喜欢图形/线段讲解，文字长段落容易走神', source: '会话#98', time: '8月22日', confidence: 0.8 },
+  { id: 'mem3', type: '状态', content: '对应用题（长题干）有畏难情绪，需要先鼓励再引导', source: '会话#110', time: '8月22日', confidence: 0.85 },
+  { id: 'mem4', type: '事实', content: '分数乘法计算错误多为粗心（倒数抄错/约分遗漏）', source: '会话#87', time: '8月20日', confidence: 0.9 },
+]
+
+/* 家长设置（J7） */
+export const parentSettings = {
+  tierOptions: [
+    { id: 'low', label: '低参与（默认）', desc: '只看每周周报' },
+    { id: 'mid', label: '中参与', desc: '加看每日日报 + 异常告警' },
+    { id: 'high', label: '高参与', desc: '错题详情 + 家长录入' },
+  ],
+  dailyLimit: 30,
+  lockEnabled: false,
+}
