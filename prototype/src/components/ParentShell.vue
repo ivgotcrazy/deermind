@@ -11,15 +11,13 @@ const store = useAppStore()
 const nav = [
   { to: '/parent/today', icon: 'calendar', label: '今日' },
   { to: '/parent/weekly', icon: 'chart', label: '周报' },
+  { to: '/parent/students', icon: 'user', label: '学生' },
   { to: '/parent/spaces', icon: 'doc', label: '空间' },
-  { to: '/parent/input', icon: 'upload', label: '录入' },
-  { to: '/parent/settings', icon: 'user', label: '设置' },
 ]
 
 function exitToChild() {
   store.setMode('child')
-  store.resetFlow()
-  router.push('/child/home')
+  router.push('/student/home')
 }
 </script>
 
@@ -29,7 +27,6 @@ function exitToChild() {
     <header class="top">
       <div class="brand">
         <span class="badge">家长端</span>
-        <span class="tier">参与度：中</span>
       </div>
       <button class="exit" @click="exitToChild">
         <Icon name="back" :size="16" /> 返回孩子端

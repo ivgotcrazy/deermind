@@ -2,24 +2,33 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
+import { useEvidenceStore } from '@/stores/evidence'
+import { useStudentChat } from '@/stores/studentChat'
 import Icon from '@/components/Icon.vue'
 import DeerAvatar from '@/components/DeerAvatar.vue'
 
 const store = useAppStore()
+const ev = useEvidenceStore()
+const chat = useStudentChat()
 const router = useRouter()
 
-function goChild() {
+function goStudent() {
   store.setMode('child')
-  store.resetFlow()
-  router.push('/child/home')
+  router.push('/student/home')
 }
 function goParent() {
   store.setMode('parent')
   router.push('/parent/today')
 }
+function goAdmin() {
+  store.setMode('admin')
+  router.push('/admin')
+}
 function onReset() {
   store.resetAll()
-  router.push('/child/home')
+  ev.resetAll() // 三端共享证据状态一并重置
+  chat.logout() // 清空学生端对话，回到登录页，演示可重跑
+  router.push('/student/login')
 }
 
 /* 响应式断点指示（手机 / 平板） */
@@ -39,7 +48,14 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure))
 </script>
 
 <template>
-  <div class="app" :class="{ 'child-mode': store.mode === 'child', 'parent-mode': store.mode === 'parent' }">
+  <div
+    class="app"
+    :class="{
+      'child-mode': store.mode === 'child',
+      'parent-mode': store.mode === 'parent',
+      'admin-mode': store.mode === 'admin',
+    }"
+  >
     <!-- 顶部工具栏（响应式） -->
     <header class="toolbar">
       <div class="brand">
@@ -49,8 +65,9 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure))
       </div>
 
       <div class="seg">
-        <button :class="{ on: store.mode === 'child' }" @click="goChild">孩子端</button>
+        <button :class="{ on: store.mode === 'child' }" @click="goStudent">学生端</button>
         <button :class="{ on: store.mode === 'parent' }" @click="goParent">家长端</button>
+        <button :class="{ on: store.mode === 'admin' }" @click="goAdmin">管理员端</button>
       </div>
 
       <div class="actions">
