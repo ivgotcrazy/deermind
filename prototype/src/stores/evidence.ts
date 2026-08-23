@@ -202,6 +202,10 @@ function nowTime(): string {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
+function nowIso(): string {
+  return new Date().toISOString()
+}
+
 function freshSnapshot(c: Concept): MasterySnapshot {
   return {
     conceptId: c.id,
@@ -271,7 +275,7 @@ export const useEvidenceStore = defineStore('evidence', () => {
 
   function resolveError(id: string) {
     const e = errors.value.find((x) => x.id === id)
-    if (e) e.status = 'mastered'
+    if (e) e.status = 'resolved'
   }
 
   function textbookOf(spaceId: string): Textbook | undefined {
@@ -293,6 +297,7 @@ export const useEvidenceStore = defineStore('evidence', () => {
     evidence.value.push({
       id: nextId('e'),
       time: nowTime(),
+      occurredAt: nowIso(),
       kpId,
       kpName: concept.name,
       type,
@@ -337,6 +342,7 @@ export const useEvidenceStore = defineStore('evidence', () => {
       decisions.value.push({
         id: nextId('d'),
         time: nowTime(),
+        occurredAt: nowIso(),
         kpId,
         kpName: concept.name,
         trigger,
@@ -349,6 +355,7 @@ export const useEvidenceStore = defineStore('evidence', () => {
       decisions.value.push({
         id: nextId('d'),
         time: nowTime(),
+        occurredAt: nowIso(),
         kpId,
         kpName: concept.name,
         trigger,

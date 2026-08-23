@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStudentChat } from '@/stores/studentChat'
+import DeerAvatar from '@/components/DeerAvatar.vue'
 import Icon from '@/components/Icon.vue'
 import ChatMessage from '@/components/student/ChatMessage.vue'
 
 const store = useStudentChat()
 const router = useRouter()
+
+const hasAction = computed(
+  () => store.plan.review.length + store.plan.migration.length + store.plan.consolidate.length > 0,
+)
+
+function startAction(kind: 'review' | 'migration' | 'variant') {
+  store.quick(kind)
+}
 
 const draft = ref('')
 const voice = ref(false)
@@ -49,25 +58,29 @@ function onQuick(kind: 'review') {
       </div>
       <div class="plan-prog">{{ store.activeSpace?.progress ?? '' }}</div>
       <div class="plan-body">
+        <div v-if="hasAction" class="nba-label"><span class="nba-dot"></span> 现在最值得做</div>
         <template v-if="store.plan.review.length">
-          <div class="plan-row">
+          <div class="plan-row action" @click="startAction('review')">
             <span class="tag tag-review">待复习</span>
             <span class="kp">{{ store.plan.review[0].kp }}</span>
             <span class="note">{{ store.plan.review[0].day }}</span>
+            <Icon name="play" :size="14" class="go" />
           </div>
         </template>
         <template v-if="store.plan.migration.length">
-          <div class="plan-row">
+          <div class="plan-row action" @click="startAction('migration')">
             <span class="tag tag-migration">待迁移</span>
             <span class="kp">{{ store.plan.migration[0].kp }}</span>
             <span class="note">迁移题 · 验证稳定性</span>
+            <Icon name="play" :size="14" class="go" />
           </div>
         </template>
         <template v-if="store.plan.consolidate.length">
-          <div class="plan-row">
+          <div class="plan-row action" @click="startAction('variant')">
             <span class="tag tag-learn">继续巩固</span>
             <span class="kp">{{ store.plan.consolidate[0].kp }}</span>
             <span class="note">{{ store.plan.consolidate[0].note }}</span>
+            <Icon name="play" :size="14" class="go" />
           </div>
         </template>
         <template v-if="store.plan.mastered.length">
@@ -86,7 +99,11 @@ function onQuick(kind: 'review') {
     <!-- 大对话区 -->
     <main ref="listRef" class="chat">
       <ChatMessage v-for="m in store.messages" :key="m.id" :msg="m" />
-      <div v-if="store.typing" class="typing"><span></span><span></span><span></span></div>
+      <div v-if="store.typing" class="typing">
+        <DeerAvatar :size="26" class="typing-avatar" />
+        <span class="typing-text">小鹿正在想</span>
+        <span class="dots"><i></i><i></i><i></i></span>
+      </div>
     </main>
 
     <!-- 输入区 -->
@@ -165,17 +182,55 @@ function onQuick(kind: 'review') {
   flex-direction: column;
   gap: 6px;
 }
+.nba-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-top: 2px;
+}
+.nba-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  animation: pulse 1.6s infinite;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
 .plan-row {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 13.5px;
-  padding: 7px 10px;
+  padding: 8px 10px;
   border-radius: 12px;
   background: var(--color-primary-soft);
 }
+.plan-row.action {
+  background: linear-gradient(135deg, var(--color-primary-soft), #e0e7ff);
+  border: 2px solid rgba(79, 70, 229, 0.25);
+  cursor: pointer;
+  transition: transform var(--ease-soft), box-shadow var(--ease-soft);
+}
+.plan-row.action:active {
+  transform: scale(0.98);
+}
+.plan-row.action .go {
+  color: var(--color-primary);
+}
 .plan-row.done {
   background: var(--color-cta-soft);
+  opacity: 0.72;
 }
 .tag {
   font-size: 11px;
@@ -225,25 +280,47 @@ function onQuick(kind: 'review') {
   gap: 12px;
 }
 .typing {
-  display: flex;
-  gap: 5px;
-  padding: 10px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
   background: var(--color-white);
   border-radius: 18px;
   width: fit-content;
   box-shadow: var(--shadow-clay);
 }
-.typing span {
-  width: 8px;
-  height: 8px;
+.typing-avatar {
+  animation: think-bounce 1s infinite;
+}
+@keyframes think-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+.typing-text {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+.dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.dots i {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--color-secondary);
   animation: blink 1.2s infinite;
 }
-.typing span:nth-child(2) {
+.dots i:nth-child(2) {
   animation-delay: 0.2s;
 }
-.typing span:nth-child(3) {
+.dots i:nth-child(3) {
   animation-delay: 0.4s;
 }
 @keyframes blink {

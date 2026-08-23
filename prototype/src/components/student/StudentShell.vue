@@ -35,6 +35,7 @@ function pickSpace(id: string) {
         <Icon name="chevronDown" :size="14" />
       </div>
       <div v-if="showSpaces" class="space-menu">
+        <div class="space-head">我的学习空间</div>
         <div
           v-for="sp in store.ev.spaces"
           :key="sp.id"
@@ -42,8 +43,12 @@ function pickSpace(id: string) {
           :class="{ on: sp.id === store.activeSpaceId }"
           @click="pickSpace(sp.id)"
         >
-          <div class="so-name">{{ sp.name }}</div>
+          <div class="so-name">
+            {{ sp.name }}
+            <span v-if="sp.id === store.activeSpaceId" class="so-cur">当前</span>
+          </div>
           <div class="so-meta">{{ sp.textbook }}</div>
+          <div class="so-prog">当前：{{ sp.progress }}</div>
         </div>
       </div>
       <div class="spacer"></div>
@@ -74,6 +79,7 @@ function pickSpace(id: string) {
         <Icon name="chevronDown" :size="14" />
       </div>
       <div v-if="showSpaces" class="space-menu rail-menu">
+        <div class="space-head">我的学习空间</div>
         <div
           v-for="sp in store.ev.spaces"
           :key="sp.id"
@@ -81,8 +87,12 @@ function pickSpace(id: string) {
           :class="{ on: sp.id === store.activeSpaceId }"
           @click="pickSpace(sp.id)"
         >
-          <div class="so-name">{{ sp.name }}</div>
+          <div class="so-name">
+            {{ sp.name }}
+            <span v-if="sp.id === store.activeSpaceId" class="so-cur">当前</span>
+          </div>
           <div class="so-meta">{{ sp.textbook }}</div>
+          <div class="so-prog">当前：{{ sp.progress }}</div>
         </div>
       </div>
 
@@ -177,6 +187,12 @@ function pickSpace(id: string) {
   gap: 4px;
   z-index: 30;
 }
+.space-head {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-secondary);
+  padding: 4px 8px 2px;
+}
 .space-opt {
   padding: 10px 12px;
   border-radius: 12px;
@@ -190,9 +206,24 @@ function pickSpace(id: string) {
   font-weight: 700;
   color: var(--color-text);
 }
+.so-cur {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border-radius: 999px;
+  padding: 1px 7px;
+  margin-left: 4px;
+}
 .so-meta {
   font-size: 11.5px;
   opacity: 0.7;
+  margin-top: 2px;
+}
+.so-prog {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-primary);
   margin-top: 2px;
 }
 
@@ -235,8 +266,8 @@ function pickSpace(id: string) {
   min-width: 0;
 }
 
-/* 桌面：左 Rail + 右侧内容 */
-@media (min-width: 1024px) {
+/* 桌面 / Pad：左 Rail + 右侧内容（产品以 Pad 为主，≥768px 起用 Rail） */
+@media (min-width: 768px) {
   .student-shell {
     flex-direction: row;
   }

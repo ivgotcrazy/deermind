@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStudentChat } from '@/stores/studentChat'
+import { childState, ERROR_STATUS_CHILD, agentLineForWrongbook } from '@/stores/studentSemantics'
 import { ERROR_SOURCE_LABEL, type ErrorStatus } from '@/data/sharedMock'
 import Icon from '@/components/Icon.vue'
 
@@ -10,26 +11,32 @@ const router = useRouter()
 
 type Filter = 'all' | ErrorStatus
 const filter = ref<Filter>('all')
+const search = ref('')
+const conceptFilter = ref('all')
 const detailId = ref<string | null>(null)
 const redoId = ref<string | null>(null)
 const redoMsg = ref<string>('')
 
-const statusLabel: Record<ErrorStatus, string> = {
-  pending: '待处理',
-  reviewing: '复习中',
-  mastered: '已掌握',
-}
-
 const tabs: { key: Filter; label: string }[] = [
   { key: 'all', label: '全部' },
   { key: 'pending', label: '待处理' },
-  { key: 'reviewing', label: '复习中' },
-  { key: 'mastered', label: '已掌握' },
+  { key: 'reviewing', label: '辅导中' },
+  { key: 'resolved', label: '已解决' },
 ]
 
+const spaceErrors = computed(() =>
+  store.ev.errors.filter((e) => e.spaceId === store.activeSpaceId),
+)
+const errorConcepts = computed(() => [...new Set(spaceErrors.value.map((e) => e.conceptName))])
+
 const list = computed(() =>
-  store.ev.errors.filter(
-    (e) => e.spaceId === store.activeSpaceId && (filter.value === 'all' || e.status === filter.value),
+  spaceErrors.value.filter(
+    (e) =>
+      (filter.value === 'all' || e.status === filter.value) &&
+      (conceptFilter.value === 'all' || e.conceptName === conceptFilter.value) &&
+      (search.value === '' ||
+        e.conceptName.includes(search.value) ||
+        e.stem.includes(search.value)),
   ),
 )
 
@@ -43,14 +50,14 @@ function toggleRedo(id: string) {
   redoMsg.value = ''
 }
 
-/* 重做：会了 → 标记已解决 + 正证据入账；还不会 → 保持待处理 */
+/* 重做：错题状态 → 已解决 + 正证据入账；掌握与否由估计器判断（与错题解耦） */
 function redoPass(id: string) {
   const e = store.ev.errors.find((x) => x.id === id)
   if (e) {
     store.ev.resolveError(id)
     store.ev.applyEvidence(e.conceptId, 'review', 'positive', '错题重做', '重做通过')
   }
-  redoMsg.value = '重做通过！这道错题已标记为「已掌握」，证据已入账 ✓'
+  redoMsg.value = '这道题已解决，证据已入账。是否真正掌握，由小鹿根据更多证据判断。'
 }
 function redoFail() {
   redoMsg.value = '没关系，说明还不熟。让小鹿再讲讲，过两天再来重做～'
@@ -63,6 +70,14 @@ function redoFail() {
       <h1>我的错题</h1>
       <p class="desc">做错的题会自动收进来，随时查看、复习、重做。</p>
     </header>
+
+    <div class="toolbar">
+      <input v-model="search" class="search" placeholder="搜索题目或知识点…" />
+      <select v-model="conceptFilter" class="select">
+        <option value="all">全部知识点</option>
+        <option v-for="c in errorConcepts" :key="c" :value="c">{{ c }}</option>
+      </select>
+    </div>
 
     <div class="tabs">
       <button
@@ -80,32 +95,41 @@ function redoFail() {
       <article v-for="e in list" :key="e.id" class="card">
         <div class="row-top" @click="toggleDetail(e.id)">
           <span class="src">{{ ERROR_SOURCE_LABEL[e.source] }} · {{ e.time }}</span>
-          <span class="status" :class="e.status">{{ statusLabel[e.status] }}</span>
+          <span class="status" :class="e.status">{{ ERROR_STATUS_CHILD[e.status] }}</span>
         </div>
         <div class="kp">{{ e.conceptName }}</div>
         <div class="stem">{{ e.stem }}</div>
         <div class="row-meta">
           <span class="att">{{ e.attribution }}</span>
-          <span class="now-state">现在：{{ e.status === 'mastered' ? '已掌握' : '待处理' }}</span>
+          <span class="now-state">错题：{{ ERROR_STATUS_CHILD[e.status] }}</span>
         </div>
 
         <div class="actions">
           <button class="ghost" @click="toggleDetail(e.id)">
             {{ detailId === e.id ? '收起' : '查看' }}
           </button>
-          <button v-if="e.status !== 'mastered'" class="primary" @click="toggleRedo(e.id)">
+          <button v-if="e.status !== 'resolved'" class="primary" @click="toggleRedo(e.id)">
             {{ redoId === e.id ? '收起' : '现在复习' }}
           </button>
         </div>
 
-        <!-- 详情 -->
+        <!-- 详情：错题状态与知识点掌握状态分开 -->
         <div v-if="detailId === e.id" class="detail">
           <div class="sec">原题</div>
           <p class="full">{{ e.stem }}</p>
           <div class="sec">当时为什么错</div>
           <p class="full">{{ e.attribution }}</p>
-          <div class="sec">现在掌握情况</div>
-          <p class="full">「{{ e.conceptName }}」小鹿判断为 {{ store.ev.snapshotOf(e.conceptId)?.status === 'stable' ? '已稳定掌握' : '学习中 / 待稳定' }}（只展示状态，不看数值）</p>
+          <div class="sec">这道题现在</div>
+          <p class="full">错题：{{ ERROR_STATUS_CHILD[e.status] }}</p>
+          <div class="sec">「{{ e.conceptName }}」这个知识点</div>
+          <p class="full">
+            <template v-if="childState(store.ev.snapshotOf(e.conceptId)?.status).show">
+              {{ childState(store.ev.snapshotOf(e.conceptId)?.status).text }}——一道题会了不等于掌握，小鹿会继续看有没有更多证据。
+            </template>
+            <template v-else>还没有发现需要处理的问题。</template>
+          </p>
+          <div class="sec">小鹿的建议</div>
+          <p class="full agent">{{ agentLineForWrongbook(e.conceptName, store.ev.snapshotOf(e.conceptId)?.status, e.status === 'resolved') }}</p>
           <button class="ghost" @click="router.push('/student/home'); store.send(`讲讲${e.conceptName}`)">
             让小鹿讲讲 <Icon name="speaker" :size="15" />
           </button>
@@ -152,6 +176,33 @@ function redoFail() {
   margin: 4px 0 0;
   font-size: 12.5px;
   opacity: 0.75;
+}
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.search {
+  flex: 1;
+  min-width: 160px;
+  border: 2px solid var(--color-line);
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+}
+.select {
+  border: 2px solid var(--color-line);
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: #fff;
+  color: var(--color-text);
+}
+.full.agent {
+  background: var(--color-warning-soft);
+  color: #7c4a03;
 }
 .tabs {
   display: flex;
@@ -212,7 +263,7 @@ function redoFail() {
   background: var(--color-secondary-soft);
   color: var(--color-primary);
 }
-.status.mastered {
+.status.resolved {
   background: var(--color-cta-soft);
   color: #15803d;
 }

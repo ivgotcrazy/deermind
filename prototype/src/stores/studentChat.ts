@@ -18,6 +18,7 @@ export type CardKind =
 export interface ChatMsg {
   id: number
   role: 'user' | 'bot'
+  ts: number // 时间戳（按自然日分组的依据）
   text?: string
   card?: CardKind
   kpName?: string
@@ -58,6 +59,11 @@ export const useStudentChat = defineStore('studentChat', () => {
   function switchSpace(id: string) {
     if (ev.spaces.some((s) => s.id === id)) activeSpaceId.value = id
   }
+  /* 更新当前学习进度（课程位置，非掌握度） */
+  function setSpaceProgress(spaceId: string, label: string) {
+    const sp = ev.spaces.find((s) => s.id === spaceId)
+    if (sp) sp.progress = label
+  }
 
   /* 当前学习知识点（默认演示：分数乘分数） */
   const activeKpId = ref('kp_frac_mul')
@@ -91,7 +97,7 @@ export const useStudentChat = defineStore('studentChat', () => {
     username.value = u || 'xiaolu_0608'
     // 今日安排是结构化决策对象（页面卡片），不重复推入对话
     messages.value = [
-      { id: nextId(), role: 'bot', text: `嗨，我是小鹿！今天想先复习「${activeKpName.value}」，还是做一道变式验证一下？` },
+      { id: nextId(), role: 'bot', ts: Date.now(), text: `嗨，我是小鹿！今天想先复习「${activeKpName.value}」，还是做一道变式验证一下？` },
     ]
   }
 
@@ -101,10 +107,10 @@ export const useStudentChat = defineStore('studentChat', () => {
     messages.value = []
   }
 
-  function pushBot(m: Omit<ChatMsg, 'id' | 'role'>) {
+  function pushBot(m: Omit<ChatMsg, 'id' | 'role' | 'ts'>) {
     typing.value = true
     setTimeout(() => {
-      messages.value.push({ id: nextId(), role: 'bot', ...m })
+      messages.value.push({ id: nextId(), role: 'bot', ts: Date.now(), ...m })
       typing.value = false
     }, 450)
   }
@@ -112,7 +118,7 @@ export const useStudentChat = defineStore('studentChat', () => {
   function send(text: string) {
     const t = text.trim()
     if (!t) return
-    messages.value.push({ id: nextId(), role: 'user', text: t })
+    messages.value.push({ id: nextId(), role: 'user', ts: Date.now(), text: t })
     const r = route(t)
     if (r.reply) pushBot({ text: r.reply })
     if (r.card) pushBot({ card: r.card, kpName: r.kpName ?? activeKpName.value, kpId: activeKpId.value })
@@ -240,6 +246,7 @@ export const useStudentChat = defineStore('studentChat', () => {
     activeSpaceId,
     activeSpace,
     switchSpace,
+    setSpaceProgress,
     activeKpId,
     activeKpName,
     plan,

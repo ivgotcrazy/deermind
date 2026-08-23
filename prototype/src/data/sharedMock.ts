@@ -66,7 +66,8 @@ export interface MasterySnapshot {
 
 export interface EvidenceRecord {
   id: string
-  time: string // 'HH:MM' / '周一 17:05'
+  time: string // 展示标签 'HH:MM' / '周一 17:05'
+  occurredAt: string // ISO 时间戳（领域层，按自然日分组依据）
   kpId: string
   kpName: string
   type: EvidenceType
@@ -79,6 +80,7 @@ export interface EvidenceRecord {
 export interface PolicyDecision {
   id: string
   time: string
+  occurredAt: string // ISO 时间戳
   kpId: string
   kpName: string
   trigger: string // 触发证据摘要
@@ -174,37 +176,37 @@ export const seedSnapshots: MasterySnapshot[] = [
 /* ---------------- 证据账本（本周已发生的过往事件） ---------------- */
 export const seedEvidence: EvidenceRecord[] = [
   {
-    id: 'e-101', time: '周一 17:05', kpId: 'kp_frac_mul_int', kpName: '分数乘整数',
+    id: 'e-101', time: '周一 17:05', occurredAt: '2026-08-17T17:05:00+08:00', kpId: 'kp_frac_mul_int', kpName: '分数乘整数',
     type: 'practice', polarity: 'positive', informationValue: 0.4,
     source: '人教六上 P2 例题后练习', note: '3/4 × 8 等 3 道全对',
   },
   {
-    id: 'e-102', time: '周一 17:12', kpId: 'kp_frac_mul_int', kpName: '分数乘整数',
+    id: 'e-102', time: '周一 17:12', occurredAt: '2026-08-17T17:12:00+08:00', kpId: 'kp_frac_mul_int', kpName: '分数乘整数',
     type: 'variant', polarity: 'positive', informationValue: 0.7,
     source: '变式题 · 即时迁移', note: '换个情境仍会做，思路一句话正确',
   },
   {
-    id: 'e-103', time: '周一 17:15', kpId: 'kp_frac_mul_int', kpName: '分数乘整数',
+    id: 'e-103', time: '周一 17:15', occurredAt: '2026-08-17T17:15:00+08:00', kpId: 'kp_frac_mul_int', kpName: '分数乘整数',
     type: 'review', polarity: 'positive', informationValue: 0.55,
     source: '间隔复习 · 第 1 天', note: '复习通过，进入第 3 天间隔',
   },
   {
-    id: 'e-104', time: '周一 17:18', kpId: 'kp_frac_mul_int', kpName: '分数乘整数',
+    id: 'e-104', time: '周一 17:18', occurredAt: '2026-08-17T17:18:00+08:00', kpId: 'kp_frac_mul_int', kpName: '分数乘整数',
     type: 'migration', polarity: 'positive', informationValue: 0.85,
     source: '迁移题 · 高价值（应用题）', note: '跨题型仍正确',
   },
   {
-    id: 'e-201', time: '周二 17:02', kpId: 'kp_frac_mul', kpName: '分数乘分数',
+    id: 'e-201', time: '周二 17:02', occurredAt: '2026-08-18T17:02:00+08:00', kpId: 'kp_frac_mul', kpName: '分数乘分数',
     type: 'quiz', polarity: 'negative', informationValue: 0.5,
     source: '课后检验 2/5 × 5/6', note: '归因：粗心（最后一步约分错）',
   },
   {
-    id: 'e-202', time: '今天 17:02', kpId: 'kp_frac_mul', kpName: '分数乘分数',
+    id: 'e-202', time: '今天 17:02', occurredAt: '2026-08-23T17:02:00+08:00', kpId: 'kp_frac_mul', kpName: '分数乘分数',
     type: 'practice', polarity: 'positive', informationValue: 0.4,
     source: '讲解后基础练习 3 道', note: '归因后重新练习，全对',
   },
   {
-    id: 'e-301', time: '周三 17:20', kpId: 'kp_simplify', kpName: '分数乘法·约分与运算律',
+    id: 'e-301', time: '周三 17:20', occurredAt: '2026-08-19T17:20:00+08:00', kpId: 'kp_simplify', kpName: '分数乘法·约分与运算律',
     type: 'quiz', polarity: 'negative', informationValue: 0.5,
     source: '课堂小测', note: '归因：概念不清（运算律混淆）',
   },
@@ -213,14 +215,14 @@ export const seedEvidence: EvidenceRecord[] = [
 /* ---------------- 决策记录（政策引擎，本周） ---------------- */
 export const seedDecisions: PolicyDecision[] = [
   {
-    id: 'd-101', time: '周一 17:18', kpId: 'kp_frac_mul_int', kpName: '分数乘整数',
+    id: 'd-101', time: '周一 17:18', occurredAt: '2026-08-17T17:18:00+08:00', kpId: 'kp_frac_mul_int', kpName: '分数乘整数',
     trigger: '基础练习全对 + 变式(即时迁移)通过 + 复习通过 + 迁移题通过',
     action: '判定稳定掌握 → 停止该知识点主动练习',
     reason: '多条独立证据一致通过，含高价值迁移证据，估计器达到 STABLE 阈值（演示 0.8）。',
     fromState: 'short', toState: 'stable',
   },
   {
-    id: 'd-201', time: '今天 17:05', kpId: 'kp_frac_mul', kpName: '分数乘分数',
+    id: 'd-201', time: '今天 17:05', occurredAt: '2026-08-23T17:05:00+08:00', kpId: 'kp_frac_mul', kpName: '分数乘分数',
     trigger: '归因(粗心) + 讲解后基础练习全对',
     action: '状态保持【学习中】→ 安排变式验收',
     reason: '单次全对不直接切换状态；待变式（即时迁移）证据后再判定。',
@@ -345,7 +347,7 @@ export const ERROR_SOURCE_LABEL: Record<ErrorSource, string> = {
   reading: '读题训练',
 }
 
-export type ErrorStatus = 'pending' | 'reviewing' | 'mastered'
+export type ErrorStatus = 'pending' | 'reviewing' | 'resolved'
 
 export interface ErrorRecord {
   id: string
@@ -358,6 +360,52 @@ export interface ErrorRecord {
   attribution: string
   status: ErrorStatus
   lastTriedAt?: string
+}
+
+/* 教材内容（供学生端"查看教材"查阅；MVP 人工维护） */
+export interface ConceptContent {
+  conceptId?: string
+  textbookRef: string // 教材位置，如 '人教版六上 P10–P12'
+  summary: string
+  keyPoints: string[]
+}
+
+export const conceptContents: Record<string, ConceptContent> = {
+  kp_frac_mean: {
+    textbookRef: '人教版六上 P2',
+    summary: '分数的意义：把单位“1”平均分成若干份，表示其中一份或几份的数叫分数。',
+    keyPoints: ['分子表示取了几份', '分母表示平均分了几份', '理解分数单位'],
+  },
+  kp_frac_mul_int: {
+    textbookRef: '人教版六上 P2–P4',
+    summary: '分数乘整数：用分子乘整数的积作分子，分母不变。',
+    keyPoints: ['能约分的先约分', '整数可以看作分母是 1'],
+  },
+  kp_frac_mul: {
+    textbookRef: '人教版六上 P5–P7',
+    summary: '分数乘分数：分子乘分子、分母乘分母。',
+    keyPoints: ['分子乘分子', '分母乘分母', '能约分的先约分'],
+  },
+  kp_frac_of_num: {
+    textbookRef: '人教版六上 P8–P9',
+    summary: '求一个数的几分之几，用乘法。',
+    keyPoints: ['“的”字句 = 乘法', '画图帮助理解'],
+  },
+  kp_simplify: {
+    textbookRef: '人教版六上 P6–P7',
+    summary: '分数乘法里先约分再计算，更简便。',
+    keyPoints: ['约分', '运用运算律', '简便计算'],
+  },
+  kp_frac_app: {
+    textbookRef: '人教版六上 P10–P12',
+    summary: '分数乘法实际问题：读懂题意 → 找单位“1” → 列式。',
+    keyPoints: ['找单位“1”', '理清数量关系', '检验答案'],
+  },
+  kp_reciprocal: {
+    textbookRef: '人教版六上 P13',
+    summary: '乘积是 1 的两个数互为倒数。',
+    keyPoints: ['会求倒数', '0 没有倒数', '1 的倒数是 1'],
+  },
 }
 
 export const seedErrors: ErrorRecord[] = [
@@ -373,7 +421,7 @@ export const seedErrors: ErrorRecord[] = [
     conceptId: 'kp_frac_mean', conceptName: '分数意义',
     source: 'photo',
     stem: '判断：分数的分子可以大于分母吗？',
-    attribution: '概念不清', status: 'mastered', lastTriedAt: '8月21日',
+    attribution: '概念不清', status: 'resolved', lastTriedAt: '8月21日',
   },
   {
     id: 'err-3', time: '8月23日', spaceId: 'sp_school',
