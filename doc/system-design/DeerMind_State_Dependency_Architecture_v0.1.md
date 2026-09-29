@@ -1,0 +1,1503 @@
+# DeerMind State, Dependency & Invalidation Architecture v0.1
+
+> **中文名称**：DeerMind 状态、依赖与失效架构  
+> **版本**：v0.1  
+> **文档性质**：Focused System Design / Pre-Validation Candidate  
+> **状态**：§3.4 Focused Design Closure 候选  
+> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v0.1.md`  
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.4.md`  
+> **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`、`DeerMind_AI_Reasoning_Runtime_Design_v0.1.md`  
+> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
+> **更新时间**：2026-09-29  
+> **版本说明**：v0.1 是 State, Dependency & Invalidation Architecture 的首个 Pre-Validation Focused Design Candidate。它不改变总体 System Design 已冻结的 `Current != Latest`、`Materialization != FormalStanding`、`Projection != SourceOfTruth`、typed invalidation、synchronous validity safety、asynchronous recomputation、optimistic formal commit 与 immutable history 等系统级合同，而是把这些合同深化为可直接约束实现的状态一致性机制。本版本冻结 state standing、identity / revision、exact dependency、`PINNED / CURRENT` dependency、Current Resolution、stale / invalid / superseded / recomputed 语义、typed invalidation、snapshot coherence、commit-time revalidation、owner-specific recompute、cache / materialization 边界、recovery 与 failure path；dependency graph 的具体数据结构、数据库、索引、队列、调度框架与生产级 fan-out 优化仍不在本版本冻结范围内。
+
+---
+
+## 1. 文档定位与设计命题
+
+### 1.1 为什么需要独立 State / Dependency / Invalidation Architecture
+
+DeerMind 的系统状态不是一组“最新值”。Observation、Evidence、Learner Belief、Target Assessment、Interaction State、Target Binding projection、Decision Context、Plan、System Issue 等对象都可能依赖不同事实、不同 canonical semantics、不同版本与不同 authority 条件，而且这些上游会在运行中被 correction、revision、activation、expiration、revocation 或重新解释。
+
+如果实现只保存一个 `latest=true` 或 `valid=true`，系统很快会遇到三个根本问题。
+
+第一，**历史正确性与当前可用性会被混在一起**。旧 Belief 可能准确反映当时可用证据，但今天已经不能用于新的 Policy；旧 DecisionContext 对历史审计仍然有效，却绝不能成为未来 current state。
+
+第二，**上游变化会被粗暴传播**。Target Definition 改变不应自动否定 Learner Belief；Claim / Evidence semantics 改变却可能要求 Evidence reinterpretation 与 Belief reinference；Binding / Authority 改变主要影响 Plan、Policy Context 和 Action admissibility。统一 `invalidate_all()` 会破坏 DeerMind 已冻结的 semantic ownership。
+
+第三，**异步系统容易把已知失效状态继续当成 current 使用**。如果“等 recompute 完成再切换”，旧状态会在这段时间继续影响正式 Decision / Action；如果所有变化都同步重算，又会把全系统拖进不可控的同步 fan-out。
+
+因此本专项的核心设计命题是：
+
+\[
+\boxed{
+Explicit\ Dependencies
++
+Synchronous\ Current\ Validity\ Barrier
++
+Pull\ Authoritative\ Resolution
++
+Asynchronous\ Owner\ Recompute
+}
+\]
+
+它表达一个关键取舍：**失效安全必须同步，替代状态生成可以异步。**
+
+### 1.2 本文档解决什么
+
+本文档负责定义：
+
+- Factual、Canonical、Derived Formal、Runtime Projection、Execution / Workflow State 的 standing 边界；
+- semantic identity、canonical version、derived revision、occurrence / execution identity 的区别；
+- Derived State 的 exact dependency contract；
+- `PINNED` 与 `CURRENT` dependency 的不同责任；
+- provenance dependency 与 validity dependency 的区别；
+- `stale`、`invalid`、`superseded`、`recomputed` 的正式语义；
+- typed invalidation 如何处理 Event correction、Target revision、Claim / Evidence semantics revision、Binding / Authority change 等不同变化；
+- Current Resolution 如何在 purpose / scope / version / lifecycle / authority / data authority / security 条件下解析 current state；
+- current view 与 historical view 的读取边界；
+- synchronous validity barrier 与 asynchronous recomputation 的分工；
+- materialization、cache、reverse dependency index 与 Source of Truth 的边界；
+- immutable snapshot、commit-time revalidation 与 optimistic concurrency；
+- `CandidateStale`、`CommitConflict`、`DependencyInvalid`、`NoCurrentValidState` 等失败语义；
+- owner-specific recompute、restart、recovery 与 workflow checkpoint 的边界；
+- 与 Event、AI Runtime、Interaction、Evaluation、Version / Replay、Authority / Data Authority 的接口。
+
+### 1.3 本文档不解决什么
+
+本文档不冻结：
+
+- dependency graph 使用关系表、图数据库、KV、内存索引还是其他物理结构；
+- reverse index 是否永久持久化、如何分片、如何压缩；
+- recompute queue / scheduler 的具体产品与调度算法；
+- 数据库、消息队列、缓存产品；
+- 微服务、进程或部署拓扑；
+- API / protobuf / JSON schema；
+- fan-out threshold、batch size、retry interval 等工程参数；
+- 具体 Evaluation inference algorithm；
+- 具体 Interaction Policy；
+- Semantic Version compatibility 的完整规则；
+- Governance activation 的完整工作流。
+
+这些问题可以在 ADR、Protocol / Component Design 或后续实现中选择，但不能改变本文档冻结的状态与一致性语义。
+
+### 1.4 为什么该专项采用独立文档
+
+本专项判定为 `SEPARATE`。
+
+原因不是“dependency 很复杂”，而是它横跨所有 Space 和所有正式 effect：任何 Observation、Evidence、Belief、Decision、Action、Version Activation 都必须知道自己依赖什么、当前还能不能用，以及上游变化后何时必须停止生效。它具有独立的 identity / currentness / consistency / concurrency / failure contract，并直接承担 Gate B 的主要工程闭合责任。
+
+如果把这些规则全部放入总体 System Design，会使主文档退化成 dependency engine 规格；如果只保留总体原则，又会迫使实现者在代码阶段重新发明 `current`、失效传播和重算语义。因此独立成文获得了足够解释价值。
+
+---
+
+## 2. 状态、正式性与 Dependency Contract
+
+### 2.1 五类运行 standing
+
+DeerMind 首先按“对象对系统正式意味着什么”区分状态，而不是按“它存在哪个数据库”区分。
+
+| Standing | 典型对象 | 核心责任 | 是否可作为独立 Source of Truth |
+|---|---|---|---|
+| **Factual State** | Event、ActionOccurrence、Correction | 某 occurrence 被授权来源正式 attested | 是，对发生事实命题 |
+| **Canonical Semantic State** | Target、Task、Solution、KC、Reasoning Protocol、Policy semantics | 当前正式采用的规范语义 | 是，对 canonical semantics 命题 |
+| **Derived Formal Semantic State** | Observation、Evidence、Learner Belief、PolicyOutcome、Plan、SystemIssue | 在事实与规范语义上形成的可修正正式判断 | 是，对该 owner 的派生判断命题 |
+| **Runtime Projection** | InteractionState、TargetAssessment、TargetBinding projection、AssistanceContext、Current View | 针对当前 purpose 组织上游正式状态 | 否 |
+| **Execution / Workflow State** | ReasoningExecution、Tool execution、Action execution、WorkflowCheckpoint、RecomputeJob | 记录执行进度与可恢复性 | 否，对 epistemic / semantic truth 不具有 authority |
+
+前三类可以包含正式 standing；后两类即使持久化，也不能因为“存下来了”就升级为语义事实。
+
+因此：
+
+\[
+StateClass
+\neq
+SemanticOwner
+\neq
+PersistenceClass
+\neq
+HistoryClass
+\]
+
+### 2.2 Source of Truth 是命题级 authority，不是数据库
+
+本专项不定义一个“全局状态库”。
+
+Source of Truth 的正确问题是：
+
+> **对于某一类命题，哪组 formal records 拥有 authoritative standing？**
+
+例如：
+
+- “这个 learner work 是否提交过” → Factual History；
+- “当前 active 的 Task semantics 是哪个版本” → Canonical Registry + Activation / Resolution；
+- “Evaluation 当前正式相信 learner 的 Task Proficiency 是什么” → Evaluation committed Belief revisions + Current Resolution；
+- “当时 Policy 决定了什么” → committed Decision / PolicyOutcome；
+- “某 Action 是否真的发生” → ActionOccurrence；
+- “当前 TargetAssessment 是什么” → TargetDefinition + LearnerBeliefs 的 derived resolution，而不是一张独立 truth table。
+
+因此：
+
+\[
+SourceOfTruth \neq Database
+\]
+
+以及：
+
+\[
+Owner \neq AuthoritativeRecord \neq Resolver \neq Projection \neq Cache
+\]
+
+### 2.3 Materialization 不创造 standing
+
+Derived Formal State 和 Runtime Projection 都可能被 materialize，但两者语义不同。
+
+Observation、Evidence、Learner Belief 一旦通过 owner-specific Commit，会获得正式 domain standing；即使未来可以重新计算，它们仍然不是 disposable cache。
+
+TargetAssessment、InteractionState、Binding projection、Current View 则可以按需计算或 materialize。materialization 只优化访问，不改变 authority。
+
+\[
+Materialization \neq FormalStanding
+\]
+
+\[
+Projection \neq SourceOfTruth
+\]
+
+因此 cache 丢失可以降低 availability，但不能改变 DeerMind “相信什么”或“发生过什么”。
+
+### 2.4 Identity、Version 与 Revision
+
+状态一致性依赖稳定 identity。DeerMind 至少区分：
+
+```text
+Canonical semantic object → SemanticIdentity + CanonicalVersion
+Derived formal object     → SemanticIdentity + DerivedRevision
+Occurrence / execution    → OccurrenceIdentity / ExecutionIdentity
+```
+
+一个新 revision 表示“同一语义对象在新的依据或解释下形成新的正式判断”；一个新的学习机会通常是新的 Evidence identity，而不是旧 Evidence 的 revision。
+
+已 Commit revision immutable。变化通过：
+
+- new revision；
+- new canonical version；
+- factual correction；
+- supersession；
+- activation change；
+
+表达，而不是静默覆盖。
+
+### 2.5 Semantic Owner 与 State Runtime 分离
+
+State / Dependency Runtime 是共享机制，不是新的 semantic owner。
+
+它可以：
+
+- 保存 dependency metadata；
+- 解析 currentness；
+- 检查 validity；
+- 发现 downstream 需要 reevaluate；
+- 调度 recompute；
+- 提供 snapshot / historical read；
+
+但它不能：
+
+- 自己重新解释 Observation；
+- 自己生成 Evidence；
+- 自己修改 Learner Belief；
+- 自己重新规划 Plan；
+- 自己改变 canonical semantics。
+
+Recompute 必须回到对应 owner：
+
+```text
+Observation   → Interaction
+Evidence      → Evaluation
+LearnerBelief → Evaluation
+Plan          → Interaction
+SystemIssue   → Evolution
+```
+
+因此：
+
+\[
+SharedStateMechanism \neq SharedSemanticAuthority
+\]
+
+---
+
+
+### 2.6 Exact Dependency 是正式派生状态的最低要求
+
+一个重要 Derived Formal State 如果不能回答“它基于什么形成”，就无法安全判断 current、无法 correction、无法 replay，也无法解释为什么过去曾经做出某个 Decision。
+
+因此 commit 时必须保存足够精确的 dependency：
+
+```text
+DependencyRef
+├── UpstreamIdentity
+├── ExactVersionOrRevisionRef
+├── DependencyRole
+├── DependencyMode
+│   ├── PINNED
+│   └── CURRENT
+├── Purpose / Scope when required
+├── CompatibilityExpectation when required
+└── Resolution / Provenance Basis
+```
+
+本文档冻结这些语义字段族，不冻结物理 schema。
+
+### 2.7 `PINNED` 与 `CURRENT` 是两种不同问题
+
+`PINNED` 回答：
+
+> **这个历史结果当时到底使用了什么？**
+
+例如 Decision D7 当时使用 `Belief B@r3`，未来即使 B 已经产生 r4，D7 的历史 provenance 仍然必须指向 r3。
+
+`CURRENT` 回答：
+
+> **如果这个对象现在继续用于新的 formal effect，上游是否仍满足 current 条件？**
+
+例如一个 materialized TargetAssessment 可能记录：
+
+```text
+PINNED:
+  Target@v3
+  Belief@r8
+
+CURRENT requirements:
+  TargetIdentity must resolve current-compatible
+  BeliefIdentity must resolve current-compatible
+```
+
+因此：
+
+\[
+HistoricalPinning \neq CurrentEligibility
+\]
+
+### 2.8 Provenance Dependency 不等于 Validity Dependency
+
+不是所有“执行时使用过的信息”都应该成为 semantic invalidation dependency。
+
+例如某次 reasoning 使用：
+
+- `ReasoningProtocol@v4`；
+- `ModelProviderRevision=x`；
+- `ContextAssemblyVersion=v2`；
+- `ToolAdapter=v7`。
+
+这些都应该进入 provenance，但它们是否成为结果 current validity dependency，取决于它们是否影响 formal semantic meaning。
+
+默认情况下：
+
+```text
+Protocol semantic version → 可能是 validity dependency
+Model/provider revision   → provenance dependency
+Adapter implementation    → provenance dependency
+```
+
+除非 Evolution / Validation 证明某个 execution change 会改变 formal semantics，才把它升级为 validity dependency。
+
+因此：
+
+\[
+ProvenanceDependency \neq ValidityDependency
+\]
+
+### 2.9 Dependency Role 必须保留语义类别
+
+为了避免一个万能“depends_on”丢失失效含义，dependency 至少需要区分逻辑角色：
+
+- **Factual Grounding Dependency**：结果依赖哪些 Event / Artifact occurrence；
+- **Canonical Semantic Dependency**：依赖哪些 Target / Task / Claim / Evidence / Policy / Protocol semantics；
+- **Epistemic Dependency**：Belief / Assessment / Decision 依赖哪些 derived inputs；
+- **Authority Eligibility Dependency**：当前 use / effect 依赖哪些 Authority / Binding / Approval 条件；
+- **Data Authority Dependency**：当前读取、推断、披露是否仍被允许；
+- **Operational Dependency**：Action executor、Tool availability 等 effect 所需当前运行条件。
+
+这些 dependency 并不都以同一种方式 invalidation。
+
+### 2.10 Dependency Set 不是 Context Manifest
+
+需要保持：
+
+\[
+ContextManifest \neq VersionContext \neq DependencySet
+\]
+
+- ContextManifest 记录 reasoning 当时实际看到了什么；
+- VersionContext 记录 semantic / execution version bindings；
+- DependencySet 记录结果对上游 currentness / provenance 的正式依赖。
+
+三者可以交叉引用，但不能压缩成一个万能 RuntimeContext。
+
+### 2.11 同一 generation 的 validity cycle 禁止
+
+Formal validity 不能形成自我支持循环，例如：
+
+```text
+Belief B1 current
+because Assessment A1 current
+because Belief B1 current
+```
+
+这种同一 generation dependency cycle 不允许。
+
+但跨时间、跨 Event、跨 revision 的反馈循环是学习系统的正常结构：
+
+```text
+Belief@r1
+→ Decision
+→ ActionOccurrence
+→ New Event
+→ Evidence
+→ Belief@r2
+```
+
+因此：
+
+\[
+SameGenerationValidityCycle = Forbidden
+\]
+
+而：
+
+\[
+TemporalFeedbackLoop = Allowed
+\]
+
+---
+
+## 3. Current Model 与 Typed Invalidation
+
+### 3.1 为什么拒绝全局 `is_current`
+
+DeerMind 不定义一个跨用途通用的：
+
+```text
+object.is_current = true | false
+```
+
+因为同一 revision 可能：
+
+- 对 Historical Audit 仍合法；
+- 对新的 learner-facing Policy 已经失效；
+- epistemically 仍成立，但 Data Authority 已撤销，不能再读取；
+- semantic validity 正常，但 lifecycle 已 retired；
+- 内容本身有效，但与当前 active version 不 compatible。
+
+因此：
+
+\[
+Current \neq Latest
+\]
+
+并且：
+
+\[
+Current = PurposeSpecificResolution
+\]
+
+### 3.2 CurrentUsability 的组成
+
+对要求 current-valid 的 effect，至少需要同时满足：
+
+\[
+CurrentUsability
+=
+SemanticValidity
+\land LifecycleEligibility
+\land VersionCompatibility
+\land DependencyCoherence
+\land AuthorityEligibility
+\land DataUseEligibility
+\land SecurityEligibility
+\]
+
+这些判断分别由对应 owner / resolver 提供；Current Resolver 负责组合，而不是重新拥有这些语义。
+
+### 3.3 Current Resolver 是逻辑能力，不是新的 Source of Truth
+
+Current Resolver 的标准逻辑顺序是：
+
+```text
+Resolve(identity, purpose, scope, time)
+→ Resolve eligible canonical / semantic version
+→ Check lifecycle eligibility
+→ Check semantic validity
+→ Bind exact upstream refs
+→ Check dependency coherence
+→ Check version compatibility
+→ Resolve current authority
+→ Resolve current data authority
+→ Check operational security eligibility
+→ Return Current View | NoCurrentValidState
+```
+
+具体实现可以拆成多个 resolver，也可以在单一进程内组合；本文档不冻结部署方式。
+
+关键是：Resolver 只解释 owner records，不创建新的 truth。
+
+### 3.4 `NoCurrentValidState` 是合法结果
+
+当 current requirements 无法满足时，系统必须允许：
+
+```text
+NoCurrentValidState
+```
+
+而不是：
+
+- fallback 到旧 revision；
+- 选 latest 不管 validity；
+- 隐式忽略缺失 dependency；
+- 把 stale 当“勉强可用”。
+
+\[
+NoCurrentValidState \neq SystemCorruption
+\]
+
+它是 DeerMind 对不确定性和暂时不可用性的诚实表达。
+
+### 3.5 Current View 与 Historical View 必须分开
+
+Current read 的目标是回答：
+
+> **现在能用于这个 purpose 的状态是什么？**
+
+Historical read 的目标是回答：
+
+> **过去某个 boundary 当时使用了什么、相信了什么、决定了什么？**
+
+Historical read 必须遵循 exact pinned refs，即使这些 refs 今天已经 invalid / superseded / retired。
+
+Current read 则必须重新做 currentness / authority / data authority / compatibility resolution。
+
+因此历史 snapshot 不能被重新包装成 current state。
+
+---
+
+
+### 3.6 这些词不能互换
+
+DeerMind 不把所有“旧了”压成一个 `inactive`。
+
+| 术语 | 正式含义 | 是否表示历史错误 | 是否允许 current-valid effect |
+|---|---|---:|---:|
+| **STALE** | 某 current-sensitive dependency 已变化、缺失或需要重新解析，旧 snapshot / materialization 不再满足 current assumption | 否 | 否，直到重新 resolution / recompute |
+| **INVALID** | 已知 grounding、semantic contract 或 dependency contradiction 使该 revision 对指定语义用途不再成立 | 不一定；过去形成过程仍可审计 | 否 |
+| **SUPERSEDED** | 同一 identity 已有后续 revision / version 接替当前位置 | 否 | 取决于 purpose；通常不是 current head |
+| **RECOMPUTED** | 新 revision 是在新的 upstream / semantics 下重新计算得到的 provenance relation | 否；它不是 validity state | 新 revision 需独立通过 current checks |
+
+### 3.7 `Superseded != Wrong`
+
+一个旧 Learner Belief 被新 Belief revision supersede，不意味着旧 Belief 当时是错误的。它可能只是基于当时证据形成的最佳认识。
+
+同样，一个 Canonical Version 被新版本 supersede，也不意味着旧版本历史上从未合法存在。
+
+\[
+Superseded \neq Invalid \neq Deleted
+\]
+
+### 3.8 `Stale` 主要描述 current assumption 失效
+
+例如 DecisionContext C1 在 Policy reasoning 过程中依赖 `Belief@r3`；reasoning 尚未返回时，Evaluation commit `Belief@r4`。
+
+C1 仍然是合法历史 snapshot，但对新的 Decision commit 已 stale。
+
+因此 Policy Candidate 必须在 Commit revalidation 中被拒绝：
+
+```text
+DecisionContext C1
+→ reasoning
+→ Candidate
+→ critical dependency changed
+→ CandidateStale
+```
+
+系统随后创建新的 Decision Cycle，而不是把 C1 的 metadata 改成 r4。
+
+### 3.9 `Invalid` 需要明确失效理由
+
+Invalidation 不能只保存 `valid=false`。至少应可解释：
+
+- 哪个 upstream 发生变化；
+- dependency role 是什么；
+- 哪种 rule 触发失效；
+- 影响的是 semantic validity、current usability 还是 authority / data-use eligibility；
+- 是否需要 reinterpret / reinfer / replan / only reread；
+- 是否存在 replacement revision。
+
+因此 invalidation 是可审计的 semantic relation，而不是一个匿名布尔位。
+
+---
+
+
+### 3.10 核心原则
+
+\[
+Invalidation \neq Recomputation
+\]
+
+以及：
+
+\[
+UpstreamChange \not\Rightarrow GlobalRecompute
+\]
+
+系统必须首先阻止已知失效状态继续用于 current effect，再由真正拥有 downstream 语义的 owner 决定是否以及如何产生 replacement。
+
+### 3.11 Event / Observation correction 路径
+
+标准路径：
+
+```text
+Event / Grounding
+→ Observation O1
+→ Evidence E1
+→ Belief B1
+```
+
+后来 factual correction 或 grounding correction 使 O1 不再 current-valid。
+
+系统必须：
+
+1. append correction，不改写历史 Event；
+2. current resolution 立即停止把 O1 用于要求 current-valid 的 downstream effect；
+3. E1 / B1 若具有 `CURRENT` dependency，则同步失去 current usability；
+4. 依赖这些对象的 in-flight Candidate 在 revalidation 失败；
+5. Interaction owner 形成 O2 或明确 non-resolution；
+6. Evaluation owner reinterpret Evidence，必要时形成 E2；
+7. Evaluation owner重新 inference，必要时形成 B2；
+8. O1 / E1 / B1 保留为 historical revisions。
+
+重要的是：
+
+```text
+invalidate now
+recompute later
+```
+
+而不是：
+
+```text
+keep old current
+until replacement ready
+```
+
+### 3.12 Target Definition revision
+
+Learning Target 改变时，默认失效路径是：
+
+```text
+TargetDefinition revision
+→ TargetAssessment stale / invalid for current target
+→ related Plan / Policy Context reevaluation
+```
+
+但通常：
+
+\[
+TargetRevision \not\Rightarrow LearnerBeliefRevision
+\]
+
+原因是 Belief 表达 learner capability 认识，不应该因为目标标准变了而被重写。
+
+新的 TargetAssessment 应重新组合新 TargetDefinition 与现有 current-compatible Beliefs。
+
+### 3.13 Task / Claim / Evidence / Inference semantics revision
+
+这一类变化会改变“旧事实在当前意义体系下能够说明什么”。
+
+默认路径可能是：
+
+```text
+Semantic revision
+→ old Evidence compatibility check
+→ Semantic Reinterpretation if required
+→ Belief reinference
+→ TargetAssessment reevaluation
+→ downstream Policy / Plan reevaluation
+```
+
+这类变化可能触发更深的 epistemic invalidation，但仍不能改写 Historical Event。
+
+### 3.14 Target Binding / External Obligation / Context Authority change
+
+Binding 与 Authority 的变化主要影响未来运行资格：
+
+```text
+Binding / Obligation / Authority change
+→ DecisionContext stale
+→ Plan reevaluation
+→ admissible action space reevaluation
+→ ActionIntent eligibility recheck
+```
+
+默认不自动修改：
+
+- TargetDefinition；
+- LearnerBelief；
+- Historical Event；
+- 已发生 ActionOccurrence。
+
+\[
+AuthorityChange \neq EpistemicChange
+\]
+
+### 3.15 Learner Belief / TargetAssessment change
+
+新的 Learner Belief 或 TargetAssessment 可以触发新的 Decision opportunity，但：
+
+\[
+StateChange \neq DecisionMandate
+\]
+
+Interaction 需要重新形成 current DecisionContext，由 Policy 决定 Execute / NoIntervention / Defer。
+
+### 3.16 Data Authority / Retention change
+
+Data Authority revocation 主要改变：
+
+- 当前读取资格；
+- current context assembly；
+- future inference / disclosure permission；
+- replay authorization。
+
+它不自动改变该对象过去的 semantic standing。
+
+\[
+DataAuthorityChange \neq SemanticInvalidation
+\]
+
+同样：
+
+\[
+Deletion \neq SemanticInvalidation
+\]
+
+合法删除 grounding 后，某 Belief 可以仍然 epistemically current，但 Historical Reconstruction / ReplayCapability 可能退化为 `PARTIAL / UNAVAILABLE`。
+
+### 3.17 Time / Freshness 变化
+
+时间流逝不能自动成为 negative evidence：
+
+\[
+TimePassage \neq NegativeEvidence
+\]
+
+但它可以改变：
+
+- freshness uncertainty；
+- 是否需要 reassessment；
+- 某 dependency 是否仍满足 purpose-specific currentness；
+- Plan / ActionIntent 是否 expiration。
+
+Belief 本身不采用简单 TTL 失效；freshness 必须由 Evidence / Claim / purpose semantics 解释。
+
+### 3.18 Tool / Runtime availability change
+
+Runtime Tool Availability 属于当前 operational dependency。它可以使：
+
+- DecisionContext 需要重新形成；
+- 某 ActionCandidate 不再 admissible；
+- ActionIntent effect-time precondition 失败。
+
+它不改变 Task Canonical Tool Semantics，也不自动修改 Evidence / Belief。
+
+---
+
+## 4. Consistency、Concurrency、Recompute 与 Recovery
+
+### 4.1 为什么不采用同步全量重算
+
+一种直觉设计是：任何上游变化发生时，立即递归重算所有 downstream，直到系统重新稳定。
+
+这个方案表面简单，但在 DeerMind 中不可取：
+
+- dependency fan-out 可能很大；
+- 某些 recompute 需要 AI reasoning；
+- 某些 downstream 当前根本不会被读取；
+- 不同 owner 有不同 recompute 成本和 failure semantics；
+- 长链同步重算会把局部 correction 放大成全局停顿。
+
+因此正确约束不是“所有 downstream 立即算完”，而是：
+
+> **任何已知不再满足 current 条件的旧状态，必须立即停止用于正式 current effect。**
+
+### 4.2 Synchronous Validity Barrier
+
+当系统已经知道某 upstream change 会影响 downstream currentness 时，要求 current-valid 的 read / commit / effect 必须同步观察到这一事实。
+
+这可以通过多种 implementation 实现，例如：
+
+- pull-time transitive validation；
+- invalidation generation / epoch；
+- reverse index 辅助；
+- durable invalidation marker；
+
+本文档不冻结具体机制。
+
+但语义要求是：
+
+\[
+KnownInvalid \Rightarrow ImmediatelyNotCurrentUsable
+\]
+
+### 4.3 Asynchronous Owner-Specific Recompute
+
+replacement 允许异步：
+
+```text
+upstream changes
+→ current usability barrier
+→ downstream owner notified / discovered
+→ owner-specific recompute
+→ Candidate
+→ Validation / Commit
+→ new revision
+→ Current Resolution
+```
+
+Recompute scheduler 只负责发现工作与调度，不能自行成为 semantic writer。
+
+### 4.4 Pull Resolution 是 authority，Push Index 是优化
+
+v0.1 的 baseline 是：
+
+```text
+Exact Dependencies
++ Pull Authoritative Resolution
++ optional reverse index / async notification
+```
+
+Reverse dependency graph / queue / cache 可以帮助及时发现 downstream，但不能成为“某状态 current 的唯一真相”。
+
+如果 reverse index 丢失，只应影响 recompute latency，不应让 invalid state 被合法读成 current。
+
+这条设计依赖 Architecture Assumption **AA-B01**：Exact Dependencies + Pull Current Resolver + synchronous validity barrier 足以保证 correctness，而不要求 authoritative push graph。该 Assumption 在 Consolidated Spike 前保持 `UNVALIDATED`。
+
+### 4.5 Fan-out 是工程风险，不是降低 invariant 的理由
+
+如果 Spike 发现 transitive checking 或 recompute fan-out 失控，首先允许调整：
+
+- dependency granularity；
+- materialization strategy；
+- reverse indexing；
+- recompute batching / scheduling；
+- owner-specific cache；
+
+但不能通过“继续使用已知失效旧状态”换取 availability。
+
+这对应 **AA-B02**：同步 invalidation safety 与异步 recompute 是否能在 realistic fan-out 下分离并保持可控。
+
+---
+
+
+### 4.6 Semantic Consistency Boundary
+
+DeerMind 不要求全局强一致。它要求每个正式 reasoning / effect boundary 内部具有 coherent snapshot。
+
+典型 boundary 包括：
+
+- Observation Interpretation；
+- Evidence Interpretation；
+- Belief Inference；
+- Decision Cycle；
+- Action Execution；
+- Validation Run；
+- Canonical Activation。
+
+每个 boundary 至少绑定：
+
+```text
+Purpose
+Exact Input Refs
+VersionContext
+DependencySet
+Authority / DataAuthority basis
+Lifecycle requirements
+Security requirements
+Expected Head / Commit preconditions
+```
+
+### 4.7 Freeze Snapshot，不冻结未来权限
+
+Reasoning 开始前，系统冻结 exact semantic inputs，使执行过程中模型看到一个一致 snapshot。
+
+但：
+
+- Authority revocation；
+- Data Authority revocation；
+- explicit security block；
+- commit-critical lifecycle change；
+
+不能因为 snapshot 已冻结而被永久 pin 住。
+
+因此：
+
+\[
+PinnedMeaning + CurrentCommitEligibility
+\]
+
+而不是：
+
+\[
+PinnedSnapshot = PermanentPermission
+\]
+
+### 4.8 Commit-time Revalidation
+
+正式 Commit 前必须重验 commit-critical conditions：
+
+```text
+Candidate
+→ Validate structure / grounding / semantic contract
+→ Recheck CURRENT dependencies
+→ Recheck expected head
+→ Recheck version compatibility
+→ Recheck lifecycle
+→ Recheck authority
+→ Recheck data authority
+→ Recheck security eligibility
+→ Commit | reject with typed result
+```
+
+### 4.9 `CandidateStale` 与 `CommitConflict`
+
+这两个失败不能合并。
+
+**CandidateStale**：Candidate 所依赖的世界已经变化，因此当前 reasoning 不能再合法取得 standing。
+
+**CommitConflict**：目标 identity 的 head 已被另一个合法 writer 改变，即使 Candidate 的其他 inputs 仍可能有效。
+
+例如两个 Belief recomputation 都基于 `Belief@r4`：
+
+```text
+R1 → commits B@r5
+R2 → tries commit against expected head r4
+   → CommitConflict
+```
+
+R2 不能只修改 parent ref 为 r5 再提交，因为它并没有在 r5 的语义基础上 reasoning。
+
+### 4.10 禁止 Last-Write-Wins
+
+Derived Formal State 的 formal head 不允许用 Last-Write-Wins 解决并发。
+
+LWW 会把：
+
+- reasoning 输入；
+- dependency basis；
+- evidence basis；
+- authority basis；
+
+与最终状态脱节。
+
+因此 formal commit 必须使用 explicit expected-head / compare-and-commit 语义。
+
+### 4.11 Decision concurrency 的特殊边界
+
+Policy reasoning 期间如果新 Event / Belief / Binding / Authority 使 DecisionContext stale：
+
+```text
+DecisionContext C1
+→ Policy reasoning
+→ ActionCandidate
+→ revalidation fails
+→ CandidateStale
+→ no ActionIntent
+→ new Decision Cycle
+```
+
+但 ActionIntent 一旦合法 Commit，系统不要求任何新 Event 都重新运行 Policy；Executor 只需按照 Intent 声明的 deterministic preconditions 在 effect-time recheck。
+
+如果 precondition 已失效：
+
+```text
+ActionIntent
+→ Executor
+→ NotOccurred:PreconditionInvalidated
+```
+
+\[
+ExecutionPreconditionCheck \neq PolicyReexecution
+\]
+
+---
+
+
+### 4.12 哪些对象可以 materialize
+
+本专项不强制统一 materialization 策略。典型建议边界：
+
+- Observation / Evidence / LearnerBelief：正式 derived revision，通常 durable；
+- InteractionState：可 materialize，可 rebuild；
+- TargetAssessment：可 on-demand，也可 materialize；
+- TargetBinding current projection：可 materialize；
+- DecisionContext：正式 decision snapshot 需要 durable exact refs，但不作为 current SoT；
+- Current View：短期 projection / cache；
+- reverse dependency index：优化结构；
+- WorkflowCheckpoint：execution recovery state。
+
+### 4.13 Cache 丢失不得改变 truth
+
+\[
+CacheLoss \not\Rightarrow SemanticChange
+\]
+
+如果 cache / reverse index / materialized projection 丢失，系统可以：
+
+- rebuild；
+- temporarily return unavailable；
+- degrade capability；
+
+但不能：
+
+- 把未知状态当 current；
+- fallback 到已知 invalid revision；
+- 生成新的 Belief；
+- 通过 rerun LLM 猜历史 provenance。
+
+### 4.14 Recompute 必须经过正常 Commit Path
+
+Recompute 不是一个 privileged shortcut。
+
+新的 derived revision 必须和普通产生路径一样：
+
+```text
+resolve current inputs
+→ form coherent snapshot
+→ owner-specific reasoning / computation
+→ Candidate
+→ Validation
+→ Commit revalidation
+→ new revision
+```
+
+Recompute worker 不得直接 `UPDATE current_value`。
+
+### 4.15 Restart 不等于 Semantic Reset
+
+Process restart 后：
+
+- formal history 不变化；
+- canonical versions 不变化；
+- committed derived revisions 不变化；
+- current 必须重新 resolution；
+- in-flight workflow 可依据 checkpoint 恢复或 abandon；
+- cache / projection 可 rebuild。
+
+\[
+Restart \neq NewReality
+\]
+
+### 4.16 WorkflowCheckpoint 不拥有 epistemic authority
+
+Checkpoint 可以保存：
+
+- workflow step；
+- pending execution metadata；
+- retry state；
+- external job handle；
+
+但如果其中包含“learner 很粗心”“应该给 hint”之类 cognition，它不能因为 checkpoint durable 就变成正式 semantic state。
+
+\[
+WorkflowCheckpoint \neq EpistemicState
+\]
+
+恢复时必须重新解析 current dependency、authority、data authority、version 与 lifecycle，而不能复用旧 snapshot 作为未来权限。
+
+---
+
+## 5. 与相邻 Work Package 的运行契约
+
+### 5.1 Runtime & Event Architecture
+
+Event 专项提供：
+
+- immutable factual records；
+- correction relation；
+- occurrence / source / time provenance；
+- ActionOccurrence；
+- factual current resolution 所需依据。
+
+State / Dependency 不重写 Event；它只记录 derived object 如何依赖 factual refs，以及 factual correction 如何影响 current usability。
+
+### 5.2 AI Reasoning Runtime
+
+AI Runtime 提供：
+
+- ContextManifest；
+- ReasoningExecutionRecord；
+- Candidate；
+- execution provenance。
+
+State / Dependency 负责：
+
+- Context assembly 前提供 current-valid inputs；
+- reasoning snapshot 冻结 exact refs；
+- Candidate commit 前重验 CURRENT dependencies；
+- reasoning result commit 后注册正式 dependency。
+
+因此：
+
+\[
+ReasoningSnapshot \neq CurrentSourceOfTruth
+\]
+
+### 5.3 Evaluation
+
+Evaluation 是 Evidence 与 Learner Belief 的 semantic owner。
+
+State / Dependency 必须支持：
+
+- Observation correction → Evidence reevaluation → Belief reinference；
+- Claim / Evidence semantic revision → compatibility / reinterpretation；
+- correlated / assistance-related Evidence provenance；
+- Belief revision 的 exact EvidenceBasis；
+- TargetAssessment 对 Target + Beliefs 的依赖；
+- Target revision 不自动重写 Belief。
+
+### 5.4 Interaction
+
+Interaction 是 Observation、Decision、Plan、Action decision 与 current TargetBinding projection 的 owner。
+
+State / Dependency 必须支持：
+
+- InteractionState rebuild；
+- DecisionContext coherent snapshot；
+- Belief / Target / Binding / Authority change 后 stale detection；
+- Plan invalidation / replanning；
+- ActionIntent effect-time preconditions；
+- AssistanceContext projection。
+
+### 5.5 Semantic Version / Replay
+
+Version 专项定义完整 compatibility、multi-version 与 replay semantics。
+
+本专项只冻结接口：
+
+- dependency 必须保存 exact semantic version refs；
+- current resolution 必须检查 compatibility；
+- version change 可以触发 typed invalidation；
+- historical pinned refs 不因 activation change 被改写；
+- reinterpretation 形成新 derived revision，而不是修改旧历史。
+
+### 5.6 Authority / Data Authority / Security
+
+这些横切机制不被 State Runtime 吸收。
+
+Current Resolver 需要组合其结果，但：
+
+\[
+SemanticValidity \neq AuthorityEligibility \neq DataUseEligibility \neq SecurityEligibility
+\]
+
+一个对象可以 semantic-valid 但当前 unauthorized；也可以 historical-readable 但不能进入新的 model context。
+
+---
+
+## 6. 关键失败与恢复路径
+
+### 6.1 上游 correction，但 replacement 尚未生成
+
+合法状态：
+
+```text
+O1 invalid/current-unusable
+E1/B1 current-unusable
+O2/E2/B2 not yet available
+→ NoCurrentValidState
+```
+
+不允许 fallback 到 O1 / E1 / B1。
+
+### 6.2 Context 中某个 dependency 在 reasoning 期间变化
+
+```text
+snapshot frozen
+→ reasoning succeeds
+→ commit revalidation detects change
+→ CandidateStale
+```
+
+模型成功输出不等于可以 Commit。
+
+### 6.3 并发 recompute 写同一 head
+
+```text
+R1 wins
+R2 → CommitConflict
+```
+
+R2 必须重新 resolve / reasoning，不能 metadata rebase。
+
+### 6.4 Dependency metadata 缺失
+
+如果某 formal object 本应依赖关键 upstream，但 dependency metadata 不完整：
+
+- 不得猜测 dependency；
+- 不得默认 valid；
+- 对要求 current-safe 的用途返回 `DependencyUnknown / NoCurrentValidState`；
+- historical standing 仍可按已有记录审计；
+- 是否允许修复 metadata 由 owner / migration contract 决定。
+
+### 6.5 Reverse index / recompute queue unavailable
+
+这是 operational availability failure，不允许改变 correctness：
+
+- current read 仍使用 authoritative pull validation；
+- recompute latency 可以变长；
+- capability 可以 degraded；
+- 不得继续使用已知 invalid state。
+
+### 6.6 Data deletion 破坏 replay grounding
+
+对象可能仍保留 semantic standing，但：
+
+```text
+ReplayCapability = PARTIAL | UNAVAILABLE
+```
+
+不能为了“保证重放”绕过 Data Authority 或 retention policy。
+
+### 6.7 Plan / Workflow 长时间挂起
+
+恢复时必须：
+
+```text
+re-resolve lifecycle
+→ re-resolve versions
+→ re-resolve dependencies
+→ re-resolve authority/data authority
+→ resume | abandon | replan
+```
+
+旧 WorkflowCheckpoint 不能携带未来 authority。
+
+---
+
+## 7. 设计权衡、能力分阶段与验证状态
+
+### 7.1 被拒绝：`Current = Latest`
+
+优点：实现简单、查询快。
+
+拒绝原因：无法表达 invalid、unauthorized、retired、version-incompatible、data-authority-denied 等状态，也无法正确支持 historical audit。
+
+### 7.2 被拒绝：Authoritative Push Dependency Graph
+
+优点：上游变化时可主动找到所有 downstream。
+
+当前不将其设为 correctness premise，因为：
+
+- graph 本身需要保持绝对完整；
+- graph 丢边会导致 silent correctness failure；
+- 对大量 dynamic / purpose-specific currentness 仍需 resolution；
+- 可能把实现优化误升级成 Source of Truth。
+
+当前选择 Exact Dependencies + Pull authoritative resolution；reverse index 可以作为优化。该选择仍需 Dimension B 验证。
+
+### 7.3 被拒绝：同步全量 recompute
+
+优点：理论上变化后立即回到完整新状态。
+
+拒绝原因：AI reasoning、fan-out、多 owner、长链 dependency 会导致不可控 latency 与可用性损失。
+
+当前选择同步 validity safety + 异步 owner recompute。
+
+### 7.4 被拒绝：全局 `valid=false` + 全量重算
+
+优点：规则统一。
+
+拒绝原因：Target、Belief、Binding、Authority、Version 的变化语义不同；全量重算会破坏 semantic ownership 并产生大量无意义工作。
+
+当前选择 typed invalidation。
+
+### 7.5 被拒绝：Universal Lifecycle Enum
+
+优点：所有对象统一状态机。
+
+拒绝原因：Belief、Plan、ActionIntent、CanonicalVersion、AuthorityGrant 的生命周期本质不同。一个万能枚举会再次制造 false equivalence。
+
+当前选择 purpose-specific lifecycle eligibility。
+
+### 7.6 被拒绝：Cache / Materialized View 作为 truth
+
+优点：读取简单。
+
+拒绝原因：cache 丢失或 lag 会改变系统“真相”，形成 second source of truth。
+
+当前要求 projection 可 rebuild，authority 保留在 formal records / owner state。
+
+---
+
+
+### 7.7 v0.1 必须成立的 S0 Contract
+
+以下语义从第一版实现起不可省略：
+
+- Formal Standing 分类；
+- `Current != Latest`；
+- exact dependency；
+- `PINNED / CURRENT` 区分；
+- provenance / validity dependency 区分；
+- typed invalidation；
+- synchronous validity barrier；
+- `NoCurrentValidState`；
+- no fallback to known-invalid state；
+- immutable revision；
+- coherent snapshot；
+- commit-time revalidation；
+- `CandidateStale != CommitConflict`；
+- optimistic expected-head semantics；
+- owner-specific recompute；
+- projection / cache 不成为 SoT；
+- historical / current read 分离；
+- same-generation validity cycle forbidden。
+
+### 7.8 Consolidated Spike 必须验证的 S1 内容
+
+Dimension B 至少验证：
+
+```text
+Observation O1
+→ Evidence E1
+→ Belief B1
+→ correction / invalidate O1
+→ current read immediately stops using E1/B1
+→ transitive validity resolution
+→ async recompute O2/E2/B2
+→ historical audit still sees O1/E1/B1
+→ no fallback to invalid revisions
+```
+
+并观察：
+
+- pull resolution 是否足以保证 correctness；
+- dependency fan-out 是否可控；
+- invalidation 与 recompute 是否可分离；
+- commit-time stale detection 是否可靠。
+
+### 7.9 可以延后的能力
+
+可以延后到 Architecture Validation Build 或更晚：
+
+- persistent dependency graph；
+- reverse index 的生产级实现；
+- distributed recompute scheduler；
+- cross-region invalidation；
+- large-scale fan-out optimization；
+- production cache hierarchy；
+- automated backfill / migration orchestration。
+
+延后实现不能降低 S0 contract。
+
+### 7.10 Architecture Assumption 状态
+
+本专项直接承载两项高风险 Assumption：
+
+**AA-B01 — UNVALIDATED**  
+`Exact Dependencies + Pull Current Resolver + synchronous validity barrier` 足以保证 correctness，不需要 authoritative push graph 才能知道 current。
+
+**AA-B02 — UNVALIDATED**  
+同步 invalidation safety 与异步 recompute 可以分离，并在 realistic fan-out 下保持可控。
+
+如果 Assumption 被 Denied，应首先修改 State / Dependency System Design 或形成 ADR；只有 evidence 表明上位 Invariant 本身无法成立时，才考虑 Architecture Reopen。
+
+### 7.11 Focused Design Closure 判断
+
+截至 v0.1，本专项已经明确：
+
+- 核心 state standing 与 owner boundary；
+- identity / version / revision；
+- exact dependency contract；
+- stale / invalid / superseded / recomputed；
+- typed invalidation；
+- current / historical resolution；
+- consistency / concurrency；
+- recompute / recovery；
+- failure semantics；
+- 与相邻 Work Package 的接口；
+- staging 与 validation handoff。
+
+因此本文件作为 **§3.4 Focused Design Closure Candidate**。其结论在 Consolidated Spike 前属于 Pre-Validation；AA-B01 / AA-B02 仍需真实 evidence。
+
+---
+
+## 8. 下位设计与后续阶段交接
+
+### 8.1 后续可以形成的 ADR / Component Design
+
+以下问题具有多个合理实现方案，当前不需要在本文件提前冻结：
+
+- dependency metadata 的物理表示；
+- reverse index 是否 durable；
+- derived materialization strategy；
+- recompute scheduling / batching；
+- Current Resolver 的物理拆分；
+- expected-head / commit transaction 的存储实现；
+- invalidation notification transport；
+- fan-out control 与 backpressure；
+- cache hierarchy 与 projection rebuild。
+
+它们可以形成 ADR 或 Component Design，但必须引用本文档语义合同。
+
+### 8.2 对总体 System Design 的影响
+
+本专项没有发现需要修改 `DeerMind_System_Design_v0.1` 核心合同的新冲突。
+
+它把总体设计已有的：
+
+```text
+Current != Latest
+Typed Invalidation
+Synchronous Validity Safety
+Asynchronous Recompute
+Optimistic Formal Commit
+```
+
+深化为可执行 State / Dependency contract。因此当前不需要为了本专项单独提升总体 System Design 版本。
+
+如果后续 Spike 证明 AA-B01 / AA-B02 不成立，或后续 §3.5–§3.7 发现跨专项矛盾，再按 evidence 更新本文件与总体 Candidate。
+
+### 8.3 Roadmap Handoff
+
+本专项完成后，Phase 4 按 Roadmap §3.5 继续：
+
+```text
+Interaction & Decision Runtime
+```
+
+只有 §3.2–§3.7 全部达到 Focused Design Closure、§3.8 完成横切覆盖审计后，才能进入 Phase 5 Consolidated Architecture Spike。
+
+---
+
+## Appendix A — State / Dependency Invariant Registry
+
+| ID | Invariant |
+|---|---|
+| **SD-01** | `SourceOfTruth != Database`。 |
+| **SD-02** | `SemanticOwner != PersistenceLocation != Resolver != Projection != Cache`。 |
+| **SD-03** | `Materialization != FormalStanding`。 |
+| **SD-04** | `Projection != SourceOfTruth`。 |
+| **SD-05** | Formal revision immutable；变化通过 new revision / version / correction / supersession 表达。 |
+| **SD-06** | `Current != Latest`。 |
+| **SD-07** | Current 是 purpose / scope / time 相关 resolution，不存在跨用途万能 `is_current`。 |
+| **SD-08** | 重要 Derived Formal State 必须保留 exact dependency。 |
+| **SD-09** | `PINNED != CURRENT` dependency。 |
+| **SD-10** | `ProvenanceDependency != ValidityDependency`。 |
+| **SD-11** | `ContextManifest != VersionContext != DependencySet`。 |
+| **SD-12** | `Invalidation != Recomputation`。 |
+| **SD-13** | Known-invalid / stale state 不得用于要求 current-valid 的正式 effect。 |
+| **SD-14** | `NoCurrentValidState` 是合法运行结果；禁止 fallback 到 known-invalid revision。 |
+| **SD-15** | `Stale != Invalid != Superseded`；`Recomputed` 是 lineage / outcome，不是同义状态。 |
+| **SD-16** | Target revision 默认不自动 revision Learner Belief。 |
+| **SD-17** | Binding / Authority change 默认不重写 TargetDefinition、LearnerBelief 或 Historical Event。 |
+| **SD-18** | DataAuthority change 不自动等于 semantic invalidation。 |
+| **SD-19** | `TimePassage != NegativeEvidence`。 |
+| **SD-20** | Synchronous invalidation safety 与 asynchronous owner recompute 分离。 |
+| **SD-21** | Pull Current Resolution 是 correctness baseline；reverse index / push notification 默认只是优化。 |
+| **SD-22** | 同一 generation formal validity dependency cycle 非法。 |
+| **SD-23** | Boundary reasoning 使用 immutable exact-input snapshot，Commit 前重验 critical dependencies。 |
+| **SD-24** | `CandidateStale != CommitConflict`。 |
+| **SD-25** | Formal state commit 禁止 Last-Write-Wins；必须使用 explicit expected-head / optimistic concurrency。 |
+| **SD-26** | Recompute 必须回到 semantic owner，并经过正常 Candidate / Validation / Commit 路径。 |
+| **SD-27** | Cache / reverse index 丢失只影响 availability / latency，不改变 semantic truth。 |
+| **SD-28** | `WorkflowCheckpoint != EpistemicState`。 |
+| **SD-29** | Restart / Recovery 不得制造新 reality 或复用旧 authority snapshot。 |
+| **SD-30** | Historical pinned refs 不因 current activation / revision 变化被重写。 |
+
+---
+
+## Appendix B — Typed Invalidation Matrix
+
+| Upstream Change | 默认影响 | 默认不自动影响 | 典型处理 |
+|---|---|---|---|
+| Factual correction / grounding correction | Observation、Evidence、Belief、相关 DecisionContext currentness | Historical Event identity / record | invalidate current use → owner reinterpret / reinfer |
+| Observation correction | Evidence、Belief、InteractionState、DecisionContext | 原始 Event | Evaluation reevaluate；Interaction rebuild |
+| Target Definition / Requirement / Support Boundary revision | TargetAssessment、Plan、Policy Context | LearnerBelief、Historical Event | reassess target + replan |
+| Task / Solution semantics revision | Observation / Evidence compatibility、相关 Belief / Assessment | Historical Event | replay / reinterpret where required |
+| Claim / Evidence / Inference semantics revision | Evidence interpretation、Belief、TargetAssessment | Historical Event | reinterpret / reinfer |
+| LearnerBelief revision | TargetAssessment、DecisionContext、Plan currentness | Historical Decision / ActionOccurrence | new decision opportunity |
+| TargetAssessment revision | DecisionContext / Plan | LearnerBelief | policy reevaluation only |
+| Target Binding change | DecisionContext、Plan、Action admissibility | TargetDefinition、LearnerBelief、History | re-resolve binding projection |
+| External Obligation change | DecisionContext、Plan | LearnerBelief | replan / re-decide |
+| Context Authority / AuthorityDirective change | admissible action set、DecisionContext、Plan、ActionIntent eligibility | TargetDefinition、LearnerBelief、Historical Event | authority re-resolution |
+| Data Authority revocation | current read / infer / disclose / replay authorization | semantic standing by default | synchronously deny use; async disposition |
+| Data deletion / retention expiry | replay capability、grounding availability | semantic validity by default | mark PARTIAL / UNAVAILABLE replay |
+| Canonical version activation | future current resolution、compatibility | historical pinned execution | new boundary resolves new version |
+| Tool availability change | DecisionContext、Action admissibility / execution | canonical Task Tool semantics、Belief | new decision or effect-time failure |
+| Plan expiration / invalidation | future execution path | Target / Belief | replan; never execute queued stale command |
+| Time passage / freshness concern | freshness uncertainty、reassessment need | Belief as automatic negative evidence | purpose-specific reevaluation |
+
+---
+
+## Appendix C — Core State Responsibility Matrix
+
+| Object / Family | Standing | Semantic Owner | Identity / Version | 主要依赖 | Current Resolution | Replacement / Recompute |
+|---|---|---|---|---|---|---|
+| Event | Factual | Factual authority / Event Runtime | EventId + OccurrenceKey | source / authority / correction | factual eligibility / correction view | 不 recompute；通过 correction |
+| Canonical Target / Task / KC | Canonical | Learning / corresponding owner | identity + version | Governance / activation | active version + scope | new canonical version |
+| ReasoningProtocol | Canonical | corresponding semantic owner / governance | identity + protocol version | canonical semantics | active compatible protocol | new version |
+| Observation | Derived Formal | Interaction | identity + revision | Event / Artifact / canonical semantics | dependency + version + lifecycle | Interaction reinterpretation |
+| Evidence | Derived Formal | Evaluation | identity + revision | Observation / Claim / exposure / semantics | dependency + compatibility | Evaluation reinterpretation |
+| LearnerBelief | Derived Formal | Evaluation | identity + revision | EvidenceBasis / inference semantics | dependency + freshness + compatibility | Evaluation reinference |
+| TargetAssessment | Runtime Derived View | cross-space derived / Evaluation semantics | target + belief snapshot refs | Target + LearnerBeliefs | purpose-specific resolver | recompute / on-demand |
+| InteractionState | Runtime Projection | Interaction | projection identity / snapshot | Event / Observation / time / environment | rebuild from current sources | Interaction rebuild |
+| TargetBinding projection | Runtime Projection | Interaction | binding projection identity | Event + authority / scope / lifecycle | current binding resolution | re-resolve |
+| DecisionContext | Historical Snapshot / runtime input | Interaction | decision cycle + exact refs | current inputs + authority / versions | immutable historical snapshot; commit revalidation | new DecisionCycle |
+| PolicyOutcome | Derived Formal Decision | Interaction | decision identity / revision if modeled | DecisionContext + Policy version | historical committed decision | new DecisionCycle |
+| Plan | Derived Formal Strategy | Interaction | plan identity + revision | Target / Binding / Belief / Authority | purpose / expiry / dependency | replan |
+| ActionIntent | Runtime execution authority | Interaction | intent identity | Decision / authority / preconditions | effect-time eligibility | new Intent only via new decision |
+| SystemIssue | Derived Formal | Evolution | identity + revision | Signals / expectations / semantics | scope / version / evidence | Evolution reassessment |
+| WorkflowCheckpoint | Execution State | execution runtime | workflow execution id | workflow step / runtime metadata | recovery only | resume / abandon; no semantic commit |
+| Current View | Projection | resolver mechanism, no semantic owner | purpose-bound snapshot | owner records + all eligibility checks | computed | rebuild |
+
+---
+
+## Appendix D — Validation Handoff for Dimension B
+
+### D.1 Assumptions
+
+| ID | Claim | 状态 |
+|---|---|---|
+| AA-B01 | Exact Dependencies + Pull Current Resolver + synchronous validity barrier 足以保证 correctness，无需 authoritative push dependency graph。 | UNVALIDATED |
+| AA-B02 | 同步 invalidation safety 与异步 recompute 可以分离，并在 realistic fan-out 下保持可控。 | UNVALIDATED |
+
+### D.2 最小验证链
+
+```text
+1. Commit Observation O1
+2. Generate Evidence E1
+3. Commit LearnerBelief B1
+4. Append correction / invalidate O1
+5. Current read immediately refuses E1 / B1
+6. In-flight Candidate using O1/E1/B1 becomes stale
+7. Async owner recompute creates O2 / E2 / B2
+8. Old revisions remain historically auditable
+9. No fallback to invalid old revision
+10. Measure dependency traversal and fan-out complexity
+```
+
+### D.3 Denied 条件
+
+AA-B01 被否定的典型条件：
+
+- pull resolution 无法可靠发现 transitive invalid dependency；
+- correctness 必须依赖 authoritative push graph 才能成立；
+- reverse index 丢失会直接导致 invalid state 被视为 current。
+
+AA-B02 被否定的典型条件：
+
+- correctness 只能依赖 synchronous full recompute；
+- realistic fan-out 下异步 replacement 长期无法收敛；
+- current resolver 成本不可接受且无法通过 granularity / index / materialization 改善。
+
+被否定首先触发本专项设计修订 / ADR，不自动触发 Architecture Reopen。
