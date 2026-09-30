@@ -160,8 +160,9 @@ def run_case(case_id, case, directory):
     recorder = EvidenceRecorder(directory / f"{case_id}.jsonl")
     error = None
     try:
-        recorder.emit("case_start", case_id=case_id, implementation_scope="Step 0–2",
-                      standing_source="scripted fixture; FormalCommit not implemented",
+        guarded = case_id in ("ContextCommit-foundation", "F2-injected-foundation")
+        recorder.emit("case_start", case_id=case_id, implementation_scope="Step 3–4" if guarded else "Step 0–2",
+                      standing_source="backend-enforced commit with scripted semantic review" if guarded else "scripted fixture",
                       assumption_status="UNVALIDATED")
         case(recorder)
     except Exception as exc:

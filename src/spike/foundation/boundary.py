@@ -8,6 +8,7 @@ from uuid import uuid4
 from .records import Dependency, Mode, Record, Ref, Role, Space, VersionContext, json_value
 from .runtime import ContractError, CurrentResolver, Decision
 from .security import AccessDenied, DataUse, Operation, parameter
+from .semantic_review import check_criteria_review
 
 
 def digest(value):
@@ -79,6 +80,7 @@ class SemanticValidation:
     status: str
     rationale: str
     fixture: bool
+    details_json: str = "{}"
 
 
 @dataclass(frozen=True)
@@ -189,7 +191,8 @@ class BoundaryRuntime:
     def record_semantic_validation(self, token, candidate, status, rationale, model_ref, *, fixture=False):
         """Trusted validation execution boundary; never exposed as a model callable tool.
 
-        Until an LLM adapter is installed, only explicitly marked test fixtures may supply results.
+        Direct result injection is restricted to explicitly marked test fixtures.
+        Real reviews originate in validate_with_llm and its provider execution.
         """
         if not fixture:
             raise ContractError("RealLLMValidationUnavailable")
@@ -210,6 +213,90 @@ class BoundaryRuntime:
                                     protocol.semantic_rule, source, model_ref, status, rationale, True)
         self._reviews[result.identity] = result
         return result
+
+    def _model_context(self, token, context, source):
+        protocol = self._protocols[context.protocol]
+        values = []
+        for item in context.items:
+            record, _ = self.security.read(token, item.record.ref, context.purpose, protocol.destination,
+                                           source, protocol.allowed_context_kinds)
+            values.append({"ref": json_value(record.ref), "kind": record.kind, "content": record.payload})
+        return values
+
+    def generate_with_llm(self, token, context, adapter):
+        if self._contexts.get(context.identity) != context:
+            raise ContractError("UnregisteredContext")
+        if adapter.config.base_url != self._protocols[context.protocol].destination:
+            raise ContractError("ModelDestinationMismatch")
+        source = self.execution("LLMGenerationStarted", context.subject, {"context_id": context.identity})
+        authority, _ = self.security.enforce(token, Operation(context.purpose, context.subject, context.protocol.identity, "reason"), source)
+        if authority.principal != context.principal:
+            raise ContractError("ExecutionPrincipalMismatch")
+        content = self._model_context(token, context, source)
+        protocol_record = self.h.get(context.protocol)
+        messages = [{"role": "system", "content": protocol_record.payload["generation_system"]},
+                    {"role": "user", "content": json.dumps(content, ensure_ascii=False)}]
+        try:
+            payload, call_id = adapter.complete(messages, "ObservationGeneration")
+        except Exception:
+            self.execution("LLMGenerationFailed", context.subject, {"context_id": context.identity})
+            raise
+        candidate = self.propose(context, "O", "r1", payload)
+        candidate = replace(candidate, record=replace(candidate.record,
+                            provenance=candidate.record.provenance + (f"model-call:{call_id}",)))
+        self._candidates[candidate.identity] = candidate
+        self.execution("LLMGenerationCompleted", context.subject, {"context_id": context.identity,
+                       "model_call": call_id, "candidate_digest": digest(candidate)})
+        return candidate
+
+    def validate_with_llm(self, token, candidate, adapter):
+        if self._candidates.get(candidate.identity) != candidate:
+            raise ContractError("UnregisteredOrAlteredCandidate")
+        context = self._contexts[candidate.context_id]
+        protocol = self._protocols[candidate.protocol]
+        if adapter.config.base_url != protocol.destination:
+            raise ContractError("ModelDestinationMismatch")
+        source = self.execution("LLMValidationStarted", context.subject, {"candidate_digest": digest(candidate)})
+        self.security.enforce(token, Operation(context.purpose, context.subject, protocol.ref.identity, "validate"), source,
+                              DataUse(context.purpose, context.subject, candidate.record.kind, "validate", protocol.destination))
+        content = self._model_context(token, context, source)
+        rule = self.h.get(protocol.semantic_rule)
+        # These are exact arithmetic fixture facts, not a natural-language classifier.
+        arithmetic = {"42 / 6": 42 // 6, "8 * 15": 8 * 15, "42 / 6 * 15": (42 // 6) * 15}
+        messages = [{"role": "system", "content": rule.payload["system"]},
+                    {"role": "user", "content": json.dumps({"context": content,
+                     "candidate": candidate.record.payload, "arithmetic_fixture": arithmetic,
+                     "criteria": rule.payload.get("criteria", [])}, ensure_ascii=False)}]
+        try:
+            output, call_id = adapter.complete(messages, "ObservationSemanticValidation")
+        except Exception:
+            self.execution("LLMValidationFailed", context.subject, {"candidate_digest": digest(candidate)})
+            raise
+        try:
+            if rule.payload.get("format") == "criteria-quotes-v2":
+                status, rationale = check_criteria_review(output, candidate.record.payload, rule.payload["criteria"])
+            elif rule.payload.get("format", "legacy-v1") == "legacy-v1":
+                if (set(output) != {"status", "rationale"} or output["status"] not in ("PASS", "FAIL", "UNRESOLVED")
+                        or not isinstance(output["rationale"], str) or not output["rationale"].strip()):
+                    raise ContractError("InvalidSemanticValidationOutput")
+                status, rationale = output["status"], output["rationale"]
+            else:
+                raise ContractError("UnsupportedSemanticValidationFormat")
+        except ContractError as exc:
+            self.execution("SemanticValidationRejected", context.subject,
+                           {"candidate_digest": digest(candidate), "model_call": call_id,
+                            "reason": str(exc), "output": output})
+            raise
+        execution = self.execution("SemanticValidationExecution", context.subject,
+                                   {"candidate_digest": digest(candidate), "context_id": context.identity,
+                                    "protocol": json_value(protocol.ref), "rule": json_value(protocol.semantic_rule),
+                                    "model_ref": adapter.config.model, "model_call": call_id,
+                                    "status": status, "fixture": False, "details": output})
+        review = SemanticValidation(uuid4().hex, digest(candidate), context.identity, protocol.ref,
+                                    protocol.semantic_rule, execution, adapter.config.model, status,
+                                    rationale, False, json.dumps(output, ensure_ascii=False, sort_keys=True))
+        self._reviews[review.identity] = review
+        return review
 
     def validate(self, candidate, review_id):
         if self._candidates.get(candidate.identity) != candidate:
@@ -246,6 +333,15 @@ class BoundaryRuntime:
         if (execution is None or execution.kind != "SemanticValidationExecution"
                 or execution.payload["candidate_digest"] != digest(candidate)):
             return "UntrustedValidationExecution"
+        rule = self.h.get(protocol.semantic_rule)
+        if rule.payload.get("format") == "criteria-quotes-v2":
+            try:
+                details = json.loads(review.details_json)
+                status, _ = check_criteria_review(details, r.payload, rule.payload["criteria"])
+                if status != review.status or execution.payload.get("details") != details:
+                    return "SemanticValidationDetailsMismatch"
+            except (ContractError, ValueError) as exc:
+                return f"SemanticValidationEvidenceInvalid:{exc}"
         return "" if review.status == "PASS" else f"SemanticValidation:{review.status}"
 
     def commit(self, token, candidate, review_id):

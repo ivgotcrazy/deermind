@@ -16,6 +16,19 @@ class ModelFailure(RuntimeError):
     pass
 
 
+def strict_json(text):
+    def reject_constant(value):
+        raise ValueError("Non-finite JSON number")
+    def unique_pairs(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("Duplicate JSON key")
+            result[key] = value
+        return result
+    return json.loads(text, parse_constant=reject_constant, object_pairs_hook=unique_pairs)
+
+
 @dataclass(frozen=True)
 class LLMConfig:
     api_key: str = field(repr=False)
@@ -85,12 +98,12 @@ def http_transport(url, key, payload, timeout):
             data = response.read(1024 * 1024 + 1)
             if len(data) > 1024 * 1024:
                 raise ModelFailure("ProviderResponseTooLarge")
-            return json.loads(data)
+            return strict_json(data)
     except HTTPError as exc:
         raise ModelFailure(f"ProviderHTTPError:{exc.code}") from None
     except (URLError, TimeoutError):
         raise ModelFailure("ProviderNetworkOrTimeoutFailure") from None
-    except (UnicodeDecodeError, json.JSONDecodeError):
+    except (UnicodeDecodeError, ValueError):
         raise ModelFailure("InvalidProviderResponse") from None
 
 
@@ -129,7 +142,7 @@ class DeepSeekAdapter:
                 raise ModelFailure("IncompleteModelOutput")
             if not isinstance(content, str) or not content.strip():
                 raise ModelFailure("EmptyModelOutput")
-            parsed = json.loads(content)
+            parsed = strict_json(content)
             if not isinstance(parsed, dict):
                 raise ModelFailure("InvalidStructuredOutput")
             record["status"] = "COMPLETED"
@@ -140,5 +153,8 @@ class DeepSeekAdapter:
         except (KeyError, IndexError, TypeError, ValueError):
             record.update(status="FAILED", failure="InvalidStructuredOutput")
             raise ModelFailure("InvalidStructuredOutput") from None
+        except Exception:
+            record.update(status="FAILED", failure="ProviderTransportFailure")
+            raise ModelFailure("ProviderTransportFailure") from None
         finally:
             record["completed_at"] = datetime.now(timezone.utc).isoformat()

@@ -10,18 +10,25 @@ from .security import (AccessDenied, AuthorityGrant, CredentialBinding, DataUseG
                        Operation, SecurityRuntime, parameter)
 
 
-def setup_boundary():
+def setup_boundary(*, prepare_candidate=True, protocol_payload=None, destination="reasoning-runtime", work_payload=None):
     h = foundation_harness()
     # Step 3/4 uses backend enforcement, not the Step 0–2 eligibility fixture.
     h.eligibility.clear()
-    protocol_ref = seed(h, Ref(Space.CANONICAL, "ObservationProtocol", "v1"), kind="ReasoningProtocol")
-    rule = seed(h, Ref(Space.CANONICAL, "ObservationRules", "v1"), kind="SemanticValidationRules")
+    protocol_identity = (protocol_payload or {}).get("identity", "ObservationProtocol")
+    version = (protocol_payload or {}).get("version", "v1")
+    compatibility_id = f"protocol-rules-{version}"
+    protocol_ref = seed(h, Ref(Space.CANONICAL, protocol_identity, version), kind="ReasoningProtocol", payload=protocol_payload)
+    rule = seed(h, Ref(Space.CANONICAL, "ObservationRules", version), kind="SemanticValidationRules",
+                payload={"system": (protocol_payload or {}).get("validation_system", "fixture rule"),
+                         "format": (protocol_payload or {}).get("validation_format", "legacy-v1"),
+                         "criteria": (protocol_payload or {}).get("criteria", [])})
     work = seed(h, Ref(Space.FACT, "work", "1"), kind="LearnerWorkSubmitted",
-                occurrence_key="work", payload={"text": "42 / 6 = 8; 8 * 15 = 120"})
+                occurrence_key="work", payload=work_payload if work_payload is not None else {"task": "6kg apples cost 42 yuan. What do 15kg cost?",
+                                                "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"})
     belief = seed(h, derived("B-old"), kind="LearnerBelief", payload={"untrusted_for_observation": True})
-    h.canonical.add_compatibility_fixture(Compatibility("protocol-rules-v1", (protocol_ref, rule),
+    h.canonical.add_compatibility_fixture(Compatibility(compatibility_id, (protocol_ref, rule),
                                                       "learner-A", "learning", Decision.ALLOW))
-    versions = VersionContext((protocol_ref, rule), compatibility_basis="protocol-rules-v1")
+    versions = VersionContext((protocol_ref, rule), compatibility_basis=compatibility_id)
     security = SecurityRuntime(h)
     resources = (work.identity, belief.identity, protocol_ref.identity, rule.identity, "O")
     security.install_authority(AuthorityGrant("read-grant", "interaction", "learning", "learner-A",
@@ -35,18 +42,20 @@ def setup_boundary():
     security.install_data(DataUseGrant("read-data", "interaction", "learning", "learner-A",
                                       ("LearnerWorkSubmitted", "LearnerBelief", "ReasoningProtocol",
                                        "SemanticValidationRules", "Observation"),
-                                      ("read",), ("reasoning-runtime",), "run", "internal", 10000))
+                                      ("read",), (destination,), "run", "internal", 10000))
     security.install_data(DataUseGrant("validate-data", "interaction", "learning", "learner-A",
-                                      ("Observation",), ("validate",), ("reasoning-runtime",), "run", "internal", 10000))
+                                      ("Observation",), ("validate",), (destination,), "run", "internal", 10000))
     security.install_data(DataUseGrant("commit-data", "interaction", "learning", "learner-A",
                                       ("Observation",), ("commit",), ("formal-state",), "run", "internal", 10000))
     token = security.issue_fixture_credential(CredentialBinding("interaction", "learning", "learner-A", 10000))
     runtime = BoundaryRuntime(h, security)
     runtime.register_protocol(Protocol(protocol_ref, "Observation", "Interaction", ("LearnerWorkSubmitted",),
-                                       (("description", "string"),), rule))
+                                       (("description", "string"),), rule, destination))
     context = runtime.assemble(token, protocol_ref, "learner-A", "learner-A", "learning",
                                (ContextInput(work, Role.FACTUAL), ContextInput(belief, Role.EPISTEMIC, required=False)),
                                versions)
+    if not prepare_candidate:
+        return h, security, runtime, token, context, None, None
     candidate = runtime.propose(context, "O", "r1", {"description": "The submitted division and final answer mismatch the task."})
     review = runtime.record_semantic_validation(token, candidate, "PASS", "injected control result",
                                                  "SCRIPTED-VALIDATION-FIXTURE", fixture=True)

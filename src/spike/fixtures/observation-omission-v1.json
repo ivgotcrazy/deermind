@@ -1,0 +1,38 @@
+{
+  "identity": "ObservationOmissionRegression",
+  "version": "v1",
+  "source_run": "llm-smoke-20260930T062159Z-a186de65d4e4",
+  "source_candidate_digest": "d4c513dab20509ad045d8ebaac9c38504d77b5e0b93513afa436981ae5f3fc6f",
+  "source_payload_sha256": "4616547b3786114985d601a2e71f96323befe8ee69006a0a14ffa47a106ff360",
+  "scope": "One fixed negative and its minimally repaired positive. No reliability-rate or full A1/A2 claim.",
+  "planned_repetitions": 1,
+  "planned_model_calls": 2,
+  "cases": [
+    {
+      "id": "original_omission",
+      "candidate": {
+        "description": "The learner's submitted work for the task \"6kg apples cost 42 yuan. What do 15kg cost?\" shows the steps \"42 / 6 = 8; 8 * 15 = 120; Answer = 120\". The division step is stated as \"42 / 6 = 8\", which does not match the arithmetic result of 42 divided by 6 (7). The subsequent multiplication uses that stated quotient: \"8 * 15 = 120\", and the final answer is given as \"Answer = 120\"."
+      },
+      "expected_status": "FAIL",
+      "expected_criteria": {
+        "final_result": "FAIL"
+      },
+      "expected_commit": "ValidationFailed"
+    },
+    {
+      "id": "repaired_positive",
+      "candidate": {
+        "description": "The learner's submitted work for the task \"6kg apples cost 42 yuan. What do 15kg cost?\" shows the steps \"42 / 6 = 8; 8 * 15 = 120; Answer = 120\". The division step is stated as \"42 / 6 = 8\", which does not match the arithmetic result of 42 divided by 6 (7). The subsequent multiplication uses that stated quotient: \"8 * 15 = 120\", and the final answer is given as \"Answer = 120\". The submitted final total of 120 yuan is incorrect; using the correct unit price gives 15 * 7 = 105 yuan for this task."
+      },
+      "expected_status": "PASS",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS"
+      },
+      "expected_commit": "Committed"
+    }
+  ]
+}
