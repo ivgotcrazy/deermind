@@ -50,3 +50,6 @@ env/
 # ================= 其他 =================
 *.orig
 *.rej
+
+# Architecture Spike evidence (each run is kept locally)
+src/spike/runs/
