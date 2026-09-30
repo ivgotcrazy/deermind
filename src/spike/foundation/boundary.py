@@ -8,7 +8,7 @@ from uuid import uuid4
 from .records import Dependency, Mode, Record, Ref, Role, Space, VersionContext, json_value
 from .runtime import ContractError, CurrentResolver, Decision
 from .security import AccessDenied, DataUse, Operation, parameter
-from .semantic_review import check_criteria_review
+from .semantic_review import check_criteria_review, check_source_review
 
 
 def digest(value):
@@ -273,7 +273,9 @@ class BoundaryRuntime:
             self.execution("LLMValidationFailed", context.subject, {"candidate_digest": digest(candidate)})
             raise
         try:
-            if rule.payload.get("format") == "criteria-quotes-v2":
+            if rule.payload.get("format") == "source-linked-v3":
+                status, rationale = check_source_review(output, candidate.record.payload, rule.payload["criteria"], content)
+            elif rule.payload.get("format") == "criteria-quotes-v2":
                 status, rationale = check_criteria_review(output, candidate.record.payload, rule.payload["criteria"])
             elif rule.payload.get("format", "legacy-v1") == "legacy-v1":
                 if (set(output) != {"status", "rationale"} or output["status"] not in ("PASS", "FAIL", "UNRESOLVED")
@@ -334,10 +336,15 @@ class BoundaryRuntime:
                 or execution.payload["candidate_digest"] != digest(candidate)):
             return "UntrustedValidationExecution"
         rule = self.h.get(protocol.semantic_rule)
-        if rule.payload.get("format") == "criteria-quotes-v2":
+        if rule.payload.get("format") in ("criteria-quotes-v2", "source-linked-v3"):
             try:
                 details = json.loads(review.details_json)
-                status, _ = check_criteria_review(details, r.payload, rule.payload["criteria"])
+                if rule.payload["format"] == "source-linked-v3":
+                    content = [{"ref": json_value(item.record.ref), "kind": item.record.kind,
+                                "content": item.record.payload} for item in context.items]
+                    status, _ = check_source_review(details, r.payload, rule.payload["criteria"], content)
+                else:
+                    status, _ = check_criteria_review(details, r.payload, rule.payload["criteria"])
                 if status != review.status or execution.payload.get("details") != details:
                     return "SemanticValidationDetailsMismatch"
             except (ContractError, ValueError) as exc:

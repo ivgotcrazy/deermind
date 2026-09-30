@@ -22,11 +22,11 @@ from run_foundation import manifest
 ROOT = Path(__file__).resolve().parent
 
 
-def load_design():
-    fixture = json.loads((ROOT / "fixtures/observation-stability-v1.json").read_text(encoding="utf-8"))
+def load_design(filename="observation-stability-v1.json"):
+    fixture = json.loads((ROOT / "fixtures" / filename).read_text(encoding="utf-8"))
     content = (ROOT / fixture["protocol_path"]).read_bytes()
     if sha256(content).hexdigest() != fixture["protocol_sha256"]:
-        raise ValueError("FrozenProtocolHashMismatch: register a new design instead of silently changing v2")
+        raise ValueError("FrozenProtocolHashMismatch: register a new design instead of changing a frozen protocol")
     return fixture, json.loads(content)
 
 
@@ -142,11 +142,16 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", action="store_true")
     parser.add_argument("--max-calls", type=int, help="Explicit budget override for this batch; does not edit .env")
+    parser.add_argument("--max-output-tokens", type=int, help="Explicit per-call output budget; does not edit .env")
+    parser.add_argument("--fixture", choices=("observation-stability-v1.json", "observation-grounding-v1.json"),
+                        default="observation-stability-v1.json")
     args = parser.parse_args(argv)
-    fixture, protocol = load_design()
+    fixture, protocol = load_design(args.fixture)
     repo = ROOT.parents[1]
     configured = load_config(repo)
     config = replace(configured, max_calls=args.max_calls) if args.max_calls is not None else configured
+    if args.max_output_tokens is not None:
+        config = replace(config, max_output_tokens=args.max_output_tokens)
     if not args.run:
         print(json.dumps({"planned_calls": fixture["planned_model_calls"], "effective_config": config.public(),
                           "configured_max_calls": configured.max_calls,
@@ -161,6 +166,8 @@ def main(argv=None):
     run_manifest = manifest(repo)
     run_manifest.update(scope=fixture["scope"], fixture=fixture, model_config=config.public(),
                         configured_max_calls=configured.max_calls, explicit_max_calls_override=args.max_calls,
+                        configured_max_output_tokens=configured.max_output_tokens,
+                        explicit_max_output_tokens_override=args.max_output_tokens,
                         cases=[c["id"] for c in fixture["cases"]], repetitions=fixture["planned_repetitions"],
                         planned_calls=fixture["planned_model_calls"], model_calls="see summary.json")
     (directory / "manifest.json").write_text(json.dumps(run_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
