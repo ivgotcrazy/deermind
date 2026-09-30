@@ -8,7 +8,10 @@
 > **关联基线**：DeerMind Learning Space Design v1.1；DeerMind Evaluation Space Design v1.1  
 > **上位价值约束**：DeerMind Product Thesis v1.0；DeerMind Product Constitution v1.0  
 > **写作规范**：DeerMind Design Document Standard v1.0  
-> **更新时间**：2026-09-27  
+> **更新时间**：2026-09-30
+>
+> **修订说明**：细化既有“目标责任边界不禁止临时支架”原则，补充当前活动的帮助约束与诊断转入教学的语义；明确 Observation 的局部解释、自述归属和自由文本校验边界。保留既有模型、ownership 与 authority 边界，同步 AI Runtime、Evaluation 与 Spike 合同。
+>
 > **版本说明**：v1.1 保留 v1.0 的 Observation Model、Interaction State Model、Action Model、Interaction Policy 四模型结构，以及 Runtime Learner Condition、NoIntervention、Minimum Sufficient Intervention、多时间尺度规划、assistance exposure lineage、Observation 修正与失效传播、Evolution Contract 等成熟语义。本版本完成五项对齐：第一，正式接入 Learning Target、Target Assessment、Target Gap、Epistemic Gap 与 Target Support / Responsibility Boundary；第二，分离 Goal Intent、Learning Target、External Obligation、Target Binding 与 Plan；第三，将 Parent / School 等首发场景角色从 Core Actor 假设中移除，外部 Actor 权限改由 Product Context / Context Constitution 定义；第四，把工具语义拆分为 Task Canonical Tool Semantics、Target Support Boundary、Runtime Tool Availability 与 Occurred Tool Use；第五，补充 Context Authority、反证机会与版本失效对 Policy 的约束。经 Evolution v1.1 对齐与 Cross-Document Freeze Gate，本版本进一步冻结 Target Binding projection 的 Interaction ownership；v1.1 现作为架构冻结基线。
 
 ---
@@ -352,6 +355,8 @@ Observation 必须与 latent 学习者状态、Evidence 和 Policy 决策保持�
 - **行动中立的**：不把“应该做什么”混进“看到了什么”；
 - **溯源信息-preserving**：保留来源、范围与解析版本；
 - **不确定性-explicit**：允许 ambiguous / uncertain Observation。
+
+这些边界约束的是断言含义及其归属，不是特定词语。学习者说“我不会除法”可以作为带来源的 self-report 被观察，但不能直接改写为系统认定的 DivisionWeak；基于步骤判断本次采用单位量策略也可以成立，不等于学习者已掌握该策略。开放内容的解释与边界校验应遵循 AI-Native Architecture Principles，由语义规则约束下的 LLM 完成，并保留 grounding 与不确定性。正式 Observation 的描述、解释等自由文本同样受这些约束，不能通过合法字段夹带能力断言或行动建议；未取得相应 standing 的候选附言也不能被下游当作正式 Observation 使用。
 
 \[
 ObservedUse(K)
@@ -809,6 +814,14 @@ InteractionPolicy
 \]
 
 不新增 Planning Model。
+
+#### 当前活动的帮助范围与目的转换
+
+Target 规定最终能力达成的标准，当前活动则需要明确正在学习、诊断还是承担其他目的，以及适用的帮助限制。Interaction 通过已有 Interaction State 与 DecisionContext 表达当前活动的目的、约束及其来源；规范要求来自 Learning 的 Task semantics 和适用的 Product Context / Context Authority，活动中的选择与转换由 Policy 在这些约束内决定。这不新增 Activity Model，也不赋予 Policy 修改 Target 或外部权限的权力。
+
+普通学习活动可以允许暂时替代部分目标认知责任的提示、演示乃至完整讲解，是否值得采用仍由 Policy 根据学习价值、认知替代和注意成本判断。明确要求独立完成的诊断活动可以限制此类帮助，但该限制属于当前活动的要求，不能由 Target 的最终独立能力要求直接推广到整个学习过程。
+
+学习者在独立诊断中明确请求讲解，表达了退出当前诊断、转入教学的意图。在允许学习者自主切换的活动中，系统应结束本次独立诊断，明确记录切换原因并转入教学；请求不直接授权某个具体讲解 Action。若适用的外部测评约束限制这种转换，Policy 必须遵守并说明限制，不得静默放宽。请求前的表现保留原有证据价值，请求本身不等于已经接受帮助；切换与实际信息暴露分别记录，后续 Evidence 由 Evaluation 根据真实条件解释。
 
 #### Fade-out 是 Policy trajectory
 
@@ -1282,6 +1295,7 @@ Interaction Space 的成熟不取决于“功能覆盖是否完整”，而取�
 - 是否系统性受到先验 Learner Belief 影响而产生 confirmation loop；
 - Observation resolution 是否经常过细或过粗；
 - 歧义 / 不确定性是否被诚实保留；
+- 是否漏放合法字段中的语义越界，或误拒合法的局部解释、引用与 self-report；
 - 同一类行为在不同情境中是否被错误地统一解释；
 - Observation 修正后 downstream 失效是否真实可执行。
 

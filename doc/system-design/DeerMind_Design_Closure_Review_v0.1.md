@@ -1,0 +1,90 @@
+# DeerMind Design Closure Review v0.1
+
+> **中文名称**：DeerMind 本轮设计收口审查
+>
+> **日期**：2026-09-30
+>
+> **性质**：工作区设计审查记录
+>
+> **结论**：本轮识别的实验判据、组合场景与 Claim 映射已补入 Spike 设计，可以进入最小实现。实际模型、预算及版本化执行资源仍需在实测前固定；Architecture Assumptions 仍为 UNVALIDATED，Gate E / F 保持 OPEN。
+>
+> **审查基准**：Git HEAD `159b3a2` 加本轮尚未提交的文档修订。本文记录该工作区快照的审查判断；后续修订需重新核对受影响结论。
+
+## 1. 审查范围与结论
+
+本轮检查近期修改的九份文档：AI-Native Architecture Principles v0.2、Interaction / Evaluation Space Design v1.1、AI Reasoning Runtime v0.1、Interaction & Decision Runtime v0.1、State / Dependency Architecture v0.1、System Design v0.2、System Design Roadmap v0.5 和 Consolidated Architecture Spike v0.1。另对照 Runtime / Event、Version / Replay 与 Evolution / Governance 的相关合同，检查事实边界、外部变化与验证结果的适用范围。
+
+在严格串行的普通学习流程中，本轮未发现必须新增核心模型或调整 Space ownership 才能继续的设计缺口。近期共识已传导到运行时及验证文档；审查发现的三项实验准备缺口已在后续修订中补齐，并形成最小实现配置建议。剩余工作是实现及固定实际运行配置，此结论来自文档检查与场景推演，尚无代码运行、真实模型或学习效果证据。
+
+## 2. 严格串行的学习闭环
+
+场景使用现有比例题：6kg 苹果 42 元，求 15kg 的价格。学习者先写出 `42 ÷ 6 = 8`、`8 × 15 = 120`，随后请求讲解；当前活动允许自主结束诊断、进入教学。
+
+| 阶段 | 责任与记录 | 衔接检查 |
+|---|---|---|
+| 提交解法 | Factual Runtime 保存 Event / Artifact，Interaction 按当前轮次取输入 | 收到事实与进入处理的时刻可不同；排队内容不进入当前 Context |
+| 理解与校验 | LLM 形成 Observation 候选，按语义规则校验；确定性 gate 核验引用、权限、版本与校验记录 | 局部计算错误不能直接升级为能力结论；语义校验绑定 exact candidate |
+| 解释证据与决定行动 | Evaluation 拥有 Evidence / Belief；Interaction 依据当前 purpose 所需信息作出 PolicyOutcome | 缺少非必要 Belief 不要求阻塞全部交互；关键依据缺失则明确 non-resolution |
+| 接收讲解请求 | 当前轮次结束后，按队列顺序处理下一输入 | 普通讲解请求不抢占旧轮次；用户主动中断与异常另走控制路径 |
+| 诊断转教学 | Interaction 记录转换决定及生效，按新活动目的形成新的 DecisionContext | 同一轮内需要多个 Decision Cycle 时顺序执行；请求不是已经暴露帮助，也不直接写 Learner Belief |
+| 讲解实际发生 | Policy 选择帮助，ActionIntent 取得执行资格，Executor 记录实际展示结果 | 未发生、部分展示和无法确认分开；展示不等于学习者已理解 |
+| 新的独立机会 | 新的 learner 表现进入 Observation → Evidence 路径 | 提示前证据保留；后续判断使用真实暴露历史，新会话或新活动标签不清除影响 |
+
+[Interaction Runtime §4.10、§5.1](DeerMind_Interaction_Decision_Runtime_Design_v0.1.md)定义活动切换及串行边界，[Runtime / Event §5.6–§5.7](DeerMind_Runtime_Event_Architecture_v0.1.md)定义真实发生，[Evaluation §5.2–§5.3](../concept-design/DeerMind_Evaluation_Space_Design_v1.1.md)负责证据解释。跨会话共享状态、权限撤销和独立 owner 的 correction 仍通过既有重验机制处理，不能用这些外部情况重新引入同会话普通输入并发。
+
+用户主动中断、异常恢复的交互细节单独处理；本轮普通闭环推演不宣称已完成这两类流程的验证。
+
+## 3. 修订传导与局部对齐
+
+| 共识 | 文档承载与审查结果 |
+|---|---|
+| 最终独立能力目标允许过程支架 | Interaction 概念、运行时和总体设计已区分目标标准与活动帮助约束；E1 的完整讲解禁令明确限定为 fixture |
+| 精确依据不能静默替换 | State §2.7 / §3.3 与 Spike §4.5 / B1 已一致；B1 包含上游恢复、下游尚未重算的中间阶段 |
+| 单项结论与汇总分离 | Spike §6 / §17、总体设计 §7.5 / Appendix B 与路线图 §5.8 已一致；否定与未决不被 scope 收窄或 staging 覆盖 |
+| 开放语义采用规则约束下的 LLM | 上位原则、AI Runtime、Observation、AA-A02、A2、真实执行范围及实现步骤已传导；结构 / 权限 / 提交继续由确定性机制执行 |
+| 同会话完整轮次串行 | Interaction、State、总体设计、路线图及 E2 已一致；X1 已明确 correction 的外部来源 |
+
+审查修正了 Evaluation §6.3 的一处旧例句：提示发生前已呈现的单位量策略不能因后来的算术提示追溯性地判为受助选择；提示后的重复步骤也不能再算一次独立选择。这是已确认的时间顺序与证据保留原则的局部对齐。
+
+Evolution / Governance 的通用 ValidationResult 仍可表达 PARTIALLY_SUPPORTED 等领域结论；本轮收紧的是 Architecture Assumption 的实验结果。两者判定对象不同，本轮未将通用 Evolution 结果集合机械替换。历史覆盖审计与旧版本引用作为历史上下文保留，后续实现应明确使用总体 v0.2、路线图 v0.5 和当前专项修订组成的基线集合。
+
+## 4. Spike 的证据边界与准备项处理
+
+| 假设 | 现有实验可以支持的范围 | 不能由该实验直接推出 |
+|---|---|---|
+| A01 / A02 | 固定协议与模型配置下，有依据的 Observation 形成、语义边界检查、提交控制及正反样例表现 | 任意领域或语言输入的普遍可靠性；多次模型一致不等于正确性证明 |
+| B01 / B02 | 精确依赖、传递失效、分阶段重算与固定 fan-out 的正确性 | 生产规模的吞吐、延迟或收敛保证 |
+| C01 / C02 | 多版本并存、历史重建与重新执行的区分、数据缺失时的诚实降级 | 任意历史材料均可重放，或模型输出可精确复现 |
+| D01 / D02 | 模拟 effect 边界下的展示记录，以及脚本 Evidence 对不同 Claim 的差异表达 | 真实客户端的感知 / 理解，或 LLM 能正确评估提示造成的认知影响 |
+| E01 / E02 | 真实 Policy 调用与合法性控制的分工，会话排队及外部变化重验 | 长期教学有效性，或仅凭 outcome 枚举合法就证明判断有用 |
+| F01 / F02 | 注入的恶意候选 / 调用无法越过实际 backend scope 检查，且拒绝有来源记录 | 生产环境全面安全，或模型拒绝语言本身构成安全边界 |
+
+### 4.1 有用性判据：已补入设计，待执行
+
+A1 原有条件允许 grounded phenomenon 或 Ambiguous / Unmapped，E1 原来主要检查 outcome 合法性。仅凭这些条件，可能把始终不作解释或始终返回一个合法 outcome 的实现误判为支持了“有用解释 / 真实情境判断”。A2 的候选注入正例不能替代 A1 对实际生成能力的验证。
+
+当前 [Spike A1 / E1](DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)已分别固定三组输入：错误 / 正确 / 未完成解法，以及开放判断 / 请求检查但不要答案 / 请求暂不提示。A1 规定最低有用信息与 grounding；E1 用固定 rubric 检查依据、请求响应、认知替代成本和 outcome 一致性，允许多个合理行动。开放理由使用 test-only LLM review，未决不默认通过，也不参与运行时行动选择。
+
+每组配置预定至少 5 次运行，保留通过、拒绝与未决；未满足有用性要求不能仅因没有 falsifier 就判 SUPPORTED。具体执行资源与预期仍需在实测前审阅固定，这些判据尚无运行结果。
+
+### 4.2 活动转换组合场景：已登记 X5，待执行
+
+E1 不覆盖诊断转教学；E2 验证排队与外部变化；D1 / D2 验证暴露与 Claim-relative 表达。这些 Case 各自成立不能直接证明完整转换流程已运行正确，因此新增 [Spike §13.5 的 X5](DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)，串起讲解请求排队、诊断结束、目的转换、帮助发生和新的独立机会。
+
+X5 复用现有模型与 Harness，明确切换未生效、讲解未发生 / 部分发生 / 无法确认的变体，保留帮助前证据与真实展示时间。开放讲解使用 Action 类型的语义校验规则，不能套用 Observation 的职责限制。完整路径至少运行 5 次，四种 effect 边界分别注入并记录；合法 Defer / NoIntervention 也不能当作已完成转换链。覆盖矩阵、实施顺序与完成条件已同步为 12 个 Assumption Case 加 5 个 composition Case；这里登记的是计划覆盖，全部仍待执行。
+
+### 4.3 Claim fixture 规范归属：已固定映射
+
+[Spike §3.5](DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)已固定 C1:v1 为 TF-ProportionalQuantity 的 TaskProficiencyClaim，C2:v1 为 KC-ProportionalRelation 的 KCClaim，C3:v1 为 KC-DivisionArithmetic 的 KCClaim，并写明各自支持条件与范围。C2 的 Strategy Selection 仅为显示名称，允许多种合法策略，不形成第三类 StrategyBelief；Evaluation Core 继续使用 TaskProficiencyBeliefs 与 KCBeliefs。
+
+Evidence / Belief 的脚本实现可以隔离状态与溯源机制；实验报告必须保留这一局限，不能把脚本写入的差异解释当作真实 LLM 推断质量的证据。
+
+## 5. 进入实现前的最小事项
+
+上述 fixture、判据和覆盖矩阵已经补齐。[Spike §15](DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)新增最小实现配置建议：Python 3.13、标准库 unittest / venv、共享 LLM adapter 和 JSON / JSONL 证据。该建议不冻结产品技术栈；实际 provider / model 与调用预算尚未指定，版本化 Protocol、规则、候选结构、rubric 和 RunManifest 需随实现落成，并在真实执行前固定。
+
+下一步可以按 Spike Step 0–Step 2 建立测试骨架、记录与引用基础，以及依赖 / current / version 机制，再依次接入真实模型路径。实际运行须保存文档与代码内容标识，包括未提交改动；Prompt 可以迭代，但每次变更须保留配置和运行结果，避免通过重试或改标准覆盖失败。本轮尚未创建 Spike 代码或发起模型调用。
+
+工程继续采用文档已约定的单进程、in-memory、可控时钟、mock executor 与真实 LLM 路径。会话排队、exact-candidate 校验绑定和实验复核均可复用现有 Runtime 与记录，不需要新的 Core Model、Agent Framework 或服务拓扑。相关机制的实际成本与复杂度进入 Hidden Complexity Register 后再由实验评估。
+
+本轮已完成相关段落交叉复核与 `git diff --check`。这些检查支持文档可读性与合同对齐，不构成任何 AA 的实验结果，也不关闭 Gate E / F。

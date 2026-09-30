@@ -7,7 +7,10 @@
 > **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、Learning / Evaluation / Interaction / Evolution Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`  
 > **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.5.md`  
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-29  
+> **更新时间**：2026-09-30
+>
+> **修订说明**：同步活动帮助约束与诊断转入教学合同；分离假设结论与汇总、进度、实施安排；明确 LLM 语义校验与确定性提交分工；采用单会话常规轮次严格串行，并对齐 AA-A02 / AA-E02。保留既有职责边界，本次修订不构成新的实验验证或 Gate 关闭。
+>
 > **版本说明**：v0.2 是 Phase 4 的第二份 Integrated Pre-Validation System Design Candidate。它保持 v0.1 的核心 logical architecture、MVCL、Formal Standing / Current Model、per-boundary Version Context、Authority / Data Authority、受控 Action 与 Governed Evolution 等系统级合同不变，并吸收 Phase 4 后续设计结果：§3.2–§3.7 六个 Focused Work Package 已分别形成 Pre-Validation v0.1 并达到 Focused Design Closure Candidate；`DeerMind_System_Design_Roadmap_v0.5.md` 已明确 Core System Design 与下游 Product Context 的阶段边界；本版本补齐 Product Context / Context Constitution 的通用运行接入合同与 Observability Minimum Contract，并把六个 Focused Design 正式纳入同一 System Design 文档体系。v0.2 完成后通过 Phase 4 Exit Check，因此可以作为 Phase 5 Consolidated Architecture Spike 的正式 Pre-Validation Design Baseline；AA-A01…AA-F02 仍保持 `UNVALIDATED`，Gate E / Gate F 仍为 `OPEN`，不得把 Phase 4 closure 误解为工程验证或 v1.0 冻结。
 
 ---
@@ -230,6 +233,8 @@ Conceptual Space 是 semantic ownership boundary，不是进程、服务或部�
 **Semantic State Runtime** 提供 shared governed-state mechanism：formal identity / revision、dependency、current resolution、invalidation、version binding、commit metadata 和历史保存。它不拥有 Observation、Belief、Policy 等 domain semantics。
 
 **AI Reasoning Runtime** 在 versioned Reasoning Protocol、controlled Context、Authority Envelope 和 Tool Policy 下执行开放 cognition，产生 typed Candidate 或明确 non-success。它没有 domain semantic ownership，也不能因为执行成功就直接取得正式 standing。
+
+开放语言、上下文含义、grounding 支持关系和语义职责边界的判断采用显式语义规则约束下的 LLM reasoning，不以关键词、正则或枚举措辞的分支替代。确定性机制负责结构、精确计算、引用、版本、权限以及所需校验记录的核验与提交执行。语义校验结果绑定 exact candidate 和规则 / Protocol / Context / execution provenance；通过意见不创造 authority，缺失、失败或未决的 required check 不得被当作通过。该分工由 AI-Native Architecture Principles 定义，具体 Validation Profile 与自由文本准入合同见 AI Reasoning Runtime §6.6。
 
 **Interaction Runtime** 负责 Observation formation、InteractionState / DecisionContext、Policy reasoning、Plan、ActionIntent 形成和 Action execution coordination。它拥有 runtime decision responsibility，但不能修改 Learner Belief。
 
@@ -480,6 +485,8 @@ SemanticValidity
 
 ### 4.7 Consistency 与 Concurrency
 
+同一会话的常规处理按完整轮次严格串行，覆盖该轮所需的理解、决策、提交与行动结果处理；后续普通输入排队，不提前进入当前 Context，也不自动中断当前轮次。异常与用户主动中断属于独立控制路径。该安排不等于锁住整个 learner 或全系统：跨会话共享状态和外部权限 / 版本等变化仍按以下一致性合同处理，详细会话边界见 Interaction & Decision Runtime §5.1。
+
 DeerMind 不要求全局强一致，而要求 **正式 effect 前的一致性**：
 
 \[
@@ -610,6 +617,8 @@ Assess(TargetDefinition, LearnerBeliefs)
 ### 5.4 Interaction Decision 与 Action Execution
 
 Policy 在合法 Action Envelope 内进行真实 judgment。Deterministic system 首先确定哪些 action type、tool、scope、parameter 当前可被允许；AI 或其他 policy mechanism 再在这些合法候选中判断什么值得做、什么是 minimum sufficient intervention，以及什么时候 NoIntervention 更合适。
+
+行动范围中的帮助限制应根据当前活动的目的、Task semantics 与适用的 Context Authority 解析，不能把 Target 的最终独立能力要求直接当作学习过程的支架禁令。当前活动目的与约束沿用 InteractionState / DecisionContext 表达并保留来源；允许自主切换时，学习者明确请求讲解可使独立诊断结束并转入教学，系统记录转换并以新上下文重新决策。请求本身不等于帮助已经暴露，也不直接证明能力不足；实际帮助及此前表现的证据价值由 Evaluation 解释。完整运行合同见 Interaction & Decision Runtime §3.5、§4.10。
 
 因此：
 
@@ -1114,7 +1123,9 @@ Invariant 是系统必须保持的性质；Architecture Assumption 是当前设�
 
 ### 7.5 Consolidated Spike Handoff
 
-Phase 5 不再执行六个独立 Spike，而是在同一 Harness 中运行不同 validation scenarios。统一 Architecture Validation Report 必须记录：Architecture Assumption、对应 Invariant、falsifier、prototype scope、fixture / test case、observed evidence、unexpected behavior、`Supported / Partially Supported / Denied / Inconclusive`、对 System Design 的影响、ADR / Reopen 判断以及 capability staging 后续处理。
+Phase 5 不再执行六个独立 Spike，而是在同一 Harness 中运行不同 validation scenarios。统一 Architecture Validation Report 必须记录：Architecture Assumption 及其 revision、对应 Invariant、falsifier、prototype scope、fixture / test case、observed evidence、unexpected behavior、失败归因与判定依据、单项结论 `SUPPORTED / DENIED / INCONCLUSIVE`、对 System Design 的影响、ADR / Reopen 判断以及 capability staging 后续处理。
+
+`PARTIALLY_SUPPORTED` 仅用于多个假设或预先声明的独立子范围的汇总描述，必须保留逐项结果，不能稀释已确认的 falsifier。Case 失败须依据预注册合同区分实现缺陷与假设被否定；命中 falsifier 后，其他场景成功或后续修复不能覆盖原结论。收窄 scope 或改变机制应关联新的假设 revision 及验证证据，具体判定遵循 Consolidated Architecture Spike §6。
 
 `Inconclusive` 不能当作 `Supported`。Assumption 被 Denied 也不自动触发 Architecture Reopen；首先判断是否可以在保留冻结 Invariant 的前提下修订 System Design。只有当证据表明某个 Architecture Invariant 本身不可实现、互相冲突、无法表达重要现实，或必须依赖长期违规 workaround 才能运行时，才进入 Architecture Reopen。
 
@@ -1308,7 +1319,7 @@ System Design v1.0 只有在 Spike Evidence 被正式吸收、所有 Denied / In
 | ID | Claim | 主要影响 Invariant | Validation | Falsifier / Denied Condition | If Denied |
 |---|---|---|---|---|---|
 | **AA-A01** | 开放 learner input 可以在不读取既有 Learner Belief 的情况下，通过受控 Task / Solution / Ontology Context 形成有用且可治理的 ObservationCandidate。 | SI-02, SI-13 | A | 模型持续必须读取既有 Belief / hidden learner profile 才能稳定形成有用 Observation，或无法维持 Observation 与 latent learner state 边界。 | 重审 Observation Context Policy 与 Observation / Belief boundary；必要时 Architecture Reopen。 |
-| **AA-A02** | Typed Candidate + grounding + semantic validation 足以阻止 latent learner state、Evidence judgment、Policy recommendation 越过 Observation Commit Boundary。 | SI-04, SI-13 | A | Forbidden semantics 无法可靠检测，或 Candidate / Validator 无法区分合法开放现象与越界判断。 | 重构 Candidate / Validator boundary；若开放 Observation 本质不可治理，Reopen AI-native Observation design。 |
+| **AA-A02** | Typed Candidate + grounding + 规则约束下的 LLM semantic validation + deterministic commit enforcement 足以阻止 latent learner state、Evidence judgment、Policy recommendation 获得 Observation standing，同时保留合法局部解释与带归属的自述 / 引用。 | SI-04, SI-13 | A | Forbidden semantics 被提交或作为可信 Observation 进入下游；required validation 未通过仍提交；或边界只能靠关键词 / 枚举语义分支维持。正例可用性同样必须取得证据，不能以全部拒绝宣告支持。 | 重构 Candidate / Validation Profile / Commit boundary；若开放 Observation 本质不可治理，Reopen AI-native Observation design。 |
 | **AA-B01** | `Exact Dependencies + Pull Current Resolver + synchronous validity barrier` 足以保证 correctness，不需要 authoritative push dependency graph 才能知道 current。 | SI-08, SI-09, SI-10, SI-11 | B | 仅靠 exact refs / pull resolution 无法可靠阻止 transitive invalid downstream 被当 current 使用。 | 重审 State / Dependency architecture；可能提升 push graph 为 correctness mechanism。 |
 | **AA-B02** | 同步 invalidation safety 与异步 recompute 可以分离，并在 realistic fan-out 下保持可控。 | SI-09, SI-10, SI-12 | B | correctness 只能依赖同步全量重算，或 recompute fan-out / transitive checking 失控。 | 重构 dependency granularity、materialization、recompute strategy；必要时 ADR / Reopen。 |
 | **AA-C01** | Per-Boundary Version Context 足以表达运行与历史一致性，不需要全局 `SystemSemanticVersion`。 | SI-16, SI-22, SI-23 | C | 合法运行 / 历史重建反复要求全局原子版本号才能消除意义歧义。 | 重审 version granularity 与 consistency boundary；严重时 Architecture Reopen。 |
@@ -1316,11 +1327,11 @@ System Design v1.0 只有在 Spike Evidence 被正式吸收、所有 Denied / In
 | **AA-D01** | ActionOccurrence + occurred payload / disclosure + ordered lineage 足以表达 learner-facing assistance，不需要新增独立 durable `AssistanceExposureModel`。 | SI-19, SI-21 | D | 无法从现有 occurrence / payload records 恢复足够准确的 actual exposure，必须有独立 formal exposure object。 | 允许新增专门 Exposure model，但必须证明复杂度必要。 |
 | **AA-D02** | Evaluation 能基于 actual Exposure Lineage 做 claim-relative contamination，而不需要 task-level / global `assisted` 状态。 | SI-21 | D | 同一 response 对不同 Claim 的 contamination 无法可靠分离，或 lineage 缺失迫使系统退化成 global assisted flag。 | 重审 Exposure / Evidence contract，而不是增加 learner assistance trait。 |
 | **AA-E01** | AI 可以承担真实 pedagogy / runtime Policy judgment，而 deterministic mechanism 只负责 admissibility、authority、execution，不必把教学判断重新硬编码成规则。 | SI-17, SI-18, SI-20 | E | 为获得安全稳定行为，deterministic gate 不得不编码大量何时提示、教什么、何时练习等 pedagogy semantics。 | 重审 AI / deterministic responsibility boundary；若 pedagogy 不可开放 reasoning，可能影响 AI-native doctrine。 |
-| **AA-E02** | Coherent DecisionContext snapshot + commit-time revalidation 足以处理 concurrent learner events，不需要把整个 learner runtime 串行锁住。 | SI-08, SI-10, SI-17 | E | 真实场景持续出现无法安全识别 stale 的 race，或只能通过 learner-level 长事务 / 全局锁保证正确。 | 重审 Decision Cycle、dependency、concurrency model。 |
+| **AA-E02** | 同会话常规轮次严格串行；coherent DecisionContext snapshot + commit-time revalidation 足以处理跨会话共享状态与外部权限 / 版本等变化，不需要跨会话锁住整个 learner runtime。 | SI-08, SI-10, SI-17 | E | 会话串行之外的真实变化仍持续出现无法识别 stale 的 race，或只能通过跨会话 learner-level 长事务 / 全局锁保证正确。 | 重审 Decision Cycle、dependency、concurrency model；单会话串行本身不构成否定证据。 |
 | **AA-F01** | 即使模型或输入完全恶意，语言内容、working state 或 AI self-assertion 也无法突破 deterministic Authority / Tool / backend enforcement。 | SI-14, SI-20 | F | 任意 prompt / model output 能通过文本或调用结构扩大真实 tool / action / governance privilege。 | 高严重度 Architecture failure；必须修订 trust boundary，必要时 Architecture Reopen。 |
 | **AA-F02** | Protocol ToolPolicy + delegated scope + backend authorization + subject / resource / parameter checks 足以避免 confused deputy，并使 SecuritySignal 可追溯到 source occurrence。 | SI-14, SI-24 | F | workload credential 被 AI 用到原 purpose / scope 外，或 security interpretation 只能形成不可追溯的第二事实系统。 | 重构 delegation、security principal、source provenance 与 enforcement boundary。 |
 
-允许的 Validation Result：`UNVALIDATED / SUPPORTED / PARTIALLY_SUPPORTED / DENIED / INCONCLUSIVE / STAGED`。`Inconclusive` 不得作为关闭 Gate E 的依据。
+单项 Assumption 的 Validation Result 为 `SUPPORTED / DENIED / INCONCLUSIVE`，必须绑定被验证的 revision 与 scope。`UNVALIDATED` 表示尚未验证；`STAGED` 是 capability staging 的安排，不能覆盖已获得的验证结论。`PARTIALLY_SUPPORTED` 仅作为保留逐项结果的汇总描述。`INCONCLUSIVE` 不得作为关闭 Gate E 的依据，staging 是否满足 Gate E 须按路线图独立审查。
 
 ---
 

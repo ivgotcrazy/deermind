@@ -8,7 +8,10 @@
 > **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.4.md`  
 > **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`、`DeerMind_AI_Reasoning_Runtime_Design_v0.1.md`、`DeerMind_State_Dependency_Architecture_v0.1.md`  
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-29  
+> **更新时间**：2026-09-30
+>
+> **修订说明**：将活动目的与帮助约束落实到 DecisionContext 和 admissibility，补充诊断转入教学的记录与重新验证要求；明确同一会话常规轮次严格串行、普通新消息排队，异常与用户主动中断独立处理，并收窄 AA-E02 的并发范围。保留既有模型与 authority 边界，相关运行行为仍待验证。
+>
 > **版本说明**：v0.1 是 Interaction & Decision Runtime 的首个 Pre-Validation Focused Design Candidate。它不改变 Interaction Space 已冻结的 `ObservationModel + InteractionStateModel + ActionModel + InteractionPolicy` 四模型结构，也不改变总体 System Design 已冻结的 `DecisionTrigger != InterventionMandate`、`Admissible != WorthDoing`、`Execute / NoIntervention / Defer`、`ActionCandidate != ActionIntent != ActionOccurrence`、Minimum Sufficient Intervention、Plan 可修正、Assistance Exposure 可追溯、Authority Directive 不得绕过 Policy、状态变化不得自动升级为行动命令等系统级合同。本文档把这些语义深化为可直接约束实现的 Decision Cycle、Decision Context、Policy Protocol、admissible action space、PolicyOutcome、Plan、ActionIntent、Executor、Exposure Lineage、工具四层语义、并发 stale / re-decision、failure / recovery 与 audit contract。具体 LLM、Policy 算法、Action UI、工作流框架、存储产品与生产部署拓扑仍不在本版本冻结范围内。
 
 ---
@@ -206,6 +209,8 @@ Mandate
 
 触发只说明“当前世界可能值得重新判断”。它不说明一定要产生 learner-facing Action。
 
+同一会话的常规 Decision Opportunity 遵循 §5.1 的串行轮次安排；触发到达不意味着立即启动另一条并行 Policy 链。用户主动中断与异常属于独立控制路径，不能把所有普通输入自动视为中断。
+
 ### 2.3 Interaction 不创建 Learner Belief
 
 Interaction 可以读取 Evaluation 提供的 current Learner Belief、Target Assessment、Target Gap、Epistemic Gap，但不能在 Policy 中偷偷创建长期 learner judgment。
@@ -359,6 +364,8 @@ Decision Cycle 是历史 decision 事实的解释骨架，但不等于 Factual H
 ```text
 DecisionContext
 ├── Purpose / Subject / Scope
+├── Conversation / ActiveTurn refs
+├── Current activity purpose / assistance constraints + source refs
 ├── Current Observation(s)
 ├── InteractionState projection
 ├── LearnerBelief refs
@@ -422,7 +429,7 @@ AdmissibleActionEnvelope
 ActionSemantics
 ∩ ProductConstitution
 ∩ ContextAuthority
-∩ TargetSupportBoundary
+∩ 当前活动的帮助约束（结合活动目的、Task semantics、Target responsibility 与 Context Authority 解析）
 ∩ RuntimeToolAvailability
 ∩ DataAuthority
 ∩ SecurityEligibility
@@ -432,6 +439,8 @@ ActionSemantics
 这里的 `∩` 表示概念上的共同限制，不要求一个物理中央组件完成所有计算。
 
 Pre-reasoning admissibility 的目的不是替 Policy 选择行动，而是防止模型把明显无权执行的结果当成正常候选。
+
+Target Support / Responsibility Boundary 说明最终能力判断要求学习者承担什么，不直接禁止学习过程中暂时替代这些责任的支架。当前活动的帮助约束通过已有 InteractionState 与 DecisionContext 表达，并保留目的、适用的 Task / Context 规范及其 exact refs；它不是新的 canonical model，也不由 learner 请求自行授予权限。普通学习活动中，提示、演示或完整讲解可以进入候选范围，Policy 再判断是否值得采用；明确要求独立完成的活动则按其当前约束限制帮助。允许帮助不会降低 Target 标准，实际帮助对能力证据的影响仍由 Evaluation 解释。
 
 ### 3.6 Interaction Policy Protocol
 
@@ -749,7 +758,7 @@ Admissibility 处理不可被普通 reward 抵消的制度性限制，包括：
 - learner stop / refusal 在当前 scope 的效力；
 - Safety / Security restriction；
 - Data Authority；
-- Target Support / Responsibility Boundary；
+- 当前活动的帮助约束及其规范来源（见 §3.5）；
 - Action semantic version eligibility；
 - tool / resource availability；
 - lifecycle / expiry。
@@ -780,7 +789,7 @@ Admissibility 处理不可被普通 reward 抵消的制度性限制，包括：
 
 一个 Action 可以完全合法，却不值得执行。
 
-例如：系统有权给 Hint、Hint 不违反 Target Support Boundary、工具也可用，但 learner 正在独立推进且无高价值错误；此时 NoIntervention 可能优于 Hint。
+例如：系统有权给 Hint、Hint 满足当前活动的帮助约束、工具也可用，但 learner 正在独立推进且无高价值错误；此时 NoIntervention 可能优于 Hint。
 
 因此：
 
@@ -868,6 +877,16 @@ learner 说“我想今晚把作业做完”可以形成 Goal Intent；这不自
 
 同样，Policy 可以提出 `TargetCandidate`，但正式 Target Definition 仍属于 Learning 的 canonical change path。
 
+#### 独立诊断转入教学
+
+学习者在独立诊断中明确请求讲解，应作为 learner-originating Event 进入运行事实，并表达结束诊断、转入教学的意图。在允许自主切换的活动中，Interaction 应结束本次独立诊断并响应教学请求；具体帮助仍经过 Policy、Commit 与 Action execution。若适用的外部测评约束限制转换，系统说明限制，不通过改变 Purpose 绕过 authority。活动切换不修改 Target Definition，也不自动写入 Learner Belief。
+
+普通讲解请求按会话输入顺序处理，在轮到该输入时执行上述转换；若上一轮仍在运行，请求先排队，不因到达就自动取消上一轮。用户主动中断当前处理属于另一条控制路径，不与普通讲解请求的排队语义混同。
+
+请求、切换决定、切换实际生效和帮助实际暴露必须能够分别追溯，沿用现有 Event、PolicyOutcome、ActionIntent / ActionOccurrence 和 InteractionState 合同。活动转换涉及的 Control Action 仍须真实生效才更新相应运行投影；仅有 Policy 意图不能充当已完成转换。转入教学后，系统根据新的活动目的与约束形成新的 DecisionContext，并重新解析行动范围。影响 admissibility 的目的、约束及切换状态必须进入 critical dependency / execution precondition 检查，使切换前的候选或 Intent 不能绕过重新验证继续执行。
+
+最小语义检查应覆盖：自主切换被允许时诊断结束并可进入教学；外部约束不允许时不会获得越权帮助；请求已发生但讲解尚未暴露时不生成虚构的 Assistance；实际暴露后按 Claim-relative 条件解释表现。请求前的证据不得因后续转换被整体作废，诊断证据不足时允许保持未知。重新开始独立机会也不清除已有 exposure lineage；具体 Evidence 判断遵循 Evaluation Space §5.2–§5.3。
+
 ### 4.11 Context Authority 不创建 Epistemic Evidence
 
 合法 authority 可以改变可执行范围，但不能改变 learner 能力认识：
@@ -939,6 +958,14 @@ BetterPolicy
 ## 5. 动态运行：从 Decision Opportunity 到 Action Occurrence
 
 ### 5.1 Decision Cycle 主链
+
+同一会话的常规处理严格串行：同一时刻只有一个活动轮次，按输入接纳顺序完成该轮所需的理解、校验、决策、提交和行动结果处理，再开始下一轮。只串行调用 LLM、却允许上一轮的 Action 执行链与下一轮重叠，不满足此合同。轮次完成应对应明确的 outcome / execution result；不行动或等待未来机会可以结束当前轮次，不能遗留一个稍后自行执行的旧决策。
+
+处理中到达的普通消息可以先记录收到事实并排队，但不得提前启动该输入的 Observation / Policy 链，也不因排队本身使当前 DecisionContext stale。Interaction 必须区分已接收、待处理和当前轮次已纳入的输入；Context、InteractionState 与重建使用相同的处理边界，不能查询“最新消息”时把排队内容提前混入当前轮次。收到时间与处理顺序分别保留，不能为了串行执行改写原始 Event 时间。
+
+异常或用户主动中断可以使当前轮次进入独立的终止 / 恢复处理。确认旧轮次已结束，或其未完成执行已被隔离、不能再自行产生新 effect 后，才启动下一常规轮次；已发生或无法确认的 effect 沿用事实与 reconciliation 合同，不能因中断而假定从未发生。本节不展开中断的交互形式和恢复策略，也不要求对每条排队消息另开并行 LLM 判断。
+
+串行范围是会话，不是整个 learner 或全系统。跨会话共享状态、外部 correction、版本与权限变化仍须遵循 currentness 与 effect-time 检查；它们不创建同会话并行的常规轮次。相关变化需要重新决策时，由当前轮次收束后再调度新的 Decision Cycle。具体队列、锁或调度器不在此冻结。
 
 ```text
 Trigger / Opportunity
@@ -1316,7 +1343,7 @@ PolicyOutcome
 
 ### 7.4 Concurrent context change
 
-典型路径：
+同会话普通新输入按 §5.1 排队；本节处理另一会话或独立 owner 已提交的共享状态变化，以及当前 authority / version / lifecycle 变化。典型路径：
 
 ```text
 C1 = DecisionContext(Belief@r3, Binding@b2)
@@ -1328,11 +1355,11 @@ C1 = DecisionContext(Belief@r3, Binding@b2)
 → new DecisionCycle with current context
 ```
 
-这不需要 learner-wide serial lock。
+这不需要跨会话锁住整个 learner runtime；单会话严格串行是已选择的正常处理规则，不属于架构假设被否定。
 
 ### 7.5 Concurrent Policy commits
 
-如果同一 scope 同时产生多个互斥 Decision Candidate，需要 explicit expected-head / decision conflict semantics，而不是 Last-Write-Wins。
+单会话常规调度不产生并行轮次；如果不同会话 / 执行来源仍对同一正式 scope 产生互斥 Decision Candidate，需要 explicit expected-head / decision conflict semantics，而不是 Last-Write-Wins。
 
 例如：
 
@@ -1587,7 +1614,7 @@ Evaluation 可以基于实际 exposure lineage 与 Claim / Responsibility Bounda
 AI 可以承担真实 pedagogy / runtime Policy judgment，而 deterministic layer 只控制 legality、authority、commit 与 execution，不需要重新硬编码大量 pedagogy。
 
 **AA-E02 — Snapshot + Revalidation Concurrency**  
-coherent DecisionContext snapshot + commit-time revalidation 足以处理并发变化，而不需要 learner-wide long transaction / serial lock。
+在同会话常规轮次严格串行的前提下，coherent DecisionContext snapshot + commit-time revalidation 足以处理跨会话共享状态或外部 authority / version 等变化，不需要跨会话锁住整个 learner runtime。
 
 以上均保持：
 
@@ -1603,7 +1630,7 @@ UNVALIDATED
 
 - 无法在不引入第二 learner state 的情况下表达真实 Interaction currentness；
 - AI Policy 若不依赖大规模 hidden deterministic pedagogy rules 就无法保持可控；
-- Decision Context 并发必须依赖 learner-wide serial lock 才能保证 correctness；
+- 在单会话串行之外，跨会话 / 外部变化仍必须依赖 learner-wide 全局锁才可保证 Decision Context correctness；
 - ActionIntent / Executor 分离无法在真实 effect 系统中保持；
 - Assistance exposure 无法由 ActionOccurrence lineage 重建，且必须引入独立 authoritative exposure state；
 - `Execute / NoIntervention / Defer` 无法覆盖稳定真实 policy outcome，而需要新的不可约顶层结果；
@@ -1775,7 +1802,7 @@ Plan 状态迁移不能直接执行 Action。
 | AA-D01 | ActionOccurrence + occurred disclosure / payload + ordered lineage 足以重建 Assistance Exposure，无需独立 authoritative AssistanceExposureModel | IDR-19~23 | 关键 exposure 在真实运行中无法由 factual lineage 恢复，且需要新的 durable authoritative state | D | UNVALIDATED | 修订 exposure representation；必要时重新评估是否需要独立 model |
 | AA-D02 | Evaluation 可基于 claim-relative exposure lineage 判断 contamination，不需要 global assisted state | IDR-21~23 | 多数真实 claim 无法局部判断，只能依赖全局 assisted flag | D | UNVALIDATED | 修订 Evidence / Assistance contract；必要时 reopen boundary |
 | AA-E01 | AI 可承担真实 Policy judgment，deterministic layer 只控制 legality / authority / effect，不需要隐藏大量 pedagogy if/else | IDR-03~08,12,17 | 为保证质量/安全必须在 deterministic gate 编码大量实质 pedagogy 判断 | E | UNVALIDATED | 修订 Policy responsibility；若不可分离则 Architecture Reopen Candidate |
-| AA-E02 | coherent DecisionContext snapshot + commit-time revalidation 足以处理并发，不需要 learner-wide serial lock | IDR-27~30 | realistic race 持续导致无法阻止 stale effect，除非使用长事务 / 全局锁 | E | UNVALIDATED | 修订 consistency boundary / conflict model；必要时 reopen concurrency design |
+| AA-E02 | 单会话常规轮次严格串行；snapshot + revalidation 足以处理跨会话 / 外部变化，不需要 learner-wide 全局锁 | IDR-27~30 | 会话串行之外的变化持续导致无法阻止 stale effect，除非跨会话使用长事务 / 全局锁 | E | UNVALIDATED | 修订 consistency boundary / conflict model；必要时 reopen concurrency design |
 
 ---
 

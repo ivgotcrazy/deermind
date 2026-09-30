@@ -8,7 +8,10 @@
 > **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.4.md`  
 > **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`、`DeerMind_AI_Reasoning_Runtime_Design_v0.1.md`  
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-29  
+> **更新时间**：2026-09-30
+>
+> **修订说明**：细化 exact dependency 与上游 replacement 的 current 检查，同步 Spike B1；补清单会话常规轮次串行与跨会话 / 外部变化的重验边界。保留既有状态模型与 owner 职责。
+>
 > **版本说明**：v0.1 是 State, Dependency & Invalidation Architecture 的首个 Pre-Validation Focused Design Candidate。它不改变总体 System Design 已冻结的 `Current != Latest`、`Materialization != FormalStanding`、`Projection != SourceOfTruth`、typed invalidation、synchronous validity safety、asynchronous recomputation、optimistic formal commit 与 immutable history 等系统级合同，而是把这些合同深化为可直接约束实现的状态一致性机制。本版本冻结 state standing、identity / revision、exact dependency、`PINNED / CURRENT` dependency、Current Resolution、stale / invalid / superseded / recomputed 语义、typed invalidation、snapshot coherence、commit-time revalidation、owner-specific recompute、cache / materialization 边界、recovery 与 failure path；dependency graph 的具体数据结构、数据库、索引、队列、调度框架与生产级 fan-out 优化仍不在本版本冻结范围内。
 
 ---
@@ -269,9 +272,11 @@ PINNED:
   Belief@r8
 
 CURRENT requirements:
-  TargetIdentity must resolve current-compatible
-  BeliefIdentity must resolve current-compatible
+  exact Target@v3 must satisfy declared current requirements
+  exact Belief@r8 must satisfy declared current requirements
 ```
+
+`CURRENT` 是对实际依据的使用条件检查，不是读取时追随上游 head 的浮动引用。Resolver 必须检查已保存的 exact ref 及其传递依赖是否仍满足当前 purpose / scope 的要求，不能仅因同一 identity 已有可用的新 revision，就把旧结果视为有效或替换其依据。新版本存在本身也不意味着旧版本必然失效；是否仍可使用，取决于声明的 current、lifecycle 与 compatibility 条件。若旧依据已被 correction 判定为不可用，则新上游的存在不能消除这一失效，新的派生结果必须由相应 owner 重新解释并正式提交。
 
 因此：
 
@@ -429,7 +434,7 @@ Resolve(identity, purpose, scope, time)
 → Resolve eligible canonical / semantic version
 → Check lifecycle eligibility
 → Check semantic validity
-→ Bind exact upstream refs
+→ Read committed exact upstream refs without rebinding
 → Check dependency coherence
 → Check version compatibility
 → Resolve current authority
@@ -439,6 +444,8 @@ Resolve(identity, purpose, scope, time)
 ```
 
 具体实现可以拆成多个 resolver，也可以在单一进程内组合；本文档不冻结部署方式。
+
+检查 CURRENT dependency 时，Resolver 递归验证引用所指向的精确 revision，而不是用上游 identity 解析出的新 head 代替它。任一必需依赖无法满足条件，就返回 `NoCurrentValidState`；不能在 read path 修改 DependencySet，也不能仅靠存在 replacement 宣告旧 downstream 恢复 current。
 
 关键是：Resolver 只解释 owner records，不创建新的 truth。
 
@@ -574,6 +581,8 @@ Event / Grounding
 6. Evaluation owner reinterpret Evidence，必要时形成 E2；
 7. Evaluation owner重新 inference，必要时形成 B2；
 8. O1 / E1 / B1 保留为 historical revisions。
+
+例如 E:r1 基于 O:r1，B:r1 基于 E:r1；correction 使 O:r1 不再适用后，即使同一 Observation identity 的 O:r2 已提交，E:r1 与 B:r1 仍不可用于要求 current-valid 的用途。Evaluation 提交基于 O:r2 的 E:r2 后，可以恢复当前 Evidence，但 B:r1 不会自动改为依赖 E:r2；只有基于当前有效依据形成并提交的 B:r2 通过检查后，当前 Belief 才恢复。各步允许暂时没有当前有效结论，旧 revision 与原始依赖继续保留用于授权的历史追溯。
 
 重要的是：
 
@@ -902,7 +911,9 @@ LWW 会把：
 
 ### 4.11 Decision concurrency 的特殊边界
 
-Policy reasoning 期间如果新 Event / Belief / Binding / Authority 使 DecisionContext stale：
+同一会话的常规输入按完整轮次严格串行，处理中的后续普通消息只进入队列；收到事实可以先记录，但尚未轮到处理的内容不进入当前 DecisionContext，也不因排队本身使其 stale。Context 与 InteractionState 重建必须保留 Interaction 声明的处理边界，不能将会话串行仅实现为“LLM 调用串行”。用户主动中断与异常沿独立的终止 / 恢复路径处理，具体合同见 Interaction & Decision Runtime §5.1。
+
+会话串行不冻结跨会话共享状态、外部 correction 或权限 / 版本变化。Policy reasoning 期间若这些来源使 Belief / Binding / Authority 等 critical dependency 失效：
 
 ```text
 DecisionContext C1

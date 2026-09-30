@@ -6,7 +6,10 @@
 > **状态**：架构冻结基线  
 > **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md` 及四份 Space Design v1.1  
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-27  
+> **更新时间**：2026-09-30
+>
+> **修订说明**：明确开放语义解释与校验采用语义规则约束下的 LLM reasoning，区分语义判断与确定性结构、权限、提交执行；保留既有 Space ownership 与 authority 边界，并传导至 AI Runtime、Observation 与 Spike 验证合同。
+>
 > **版本说明**：v0.2 在 v0.1 的 Open Cognition / Controlled Authority、Reasoning Protocol、Candidate / Validation / Commit、版本化 reasoning 与 Governed Evolution 主干保持不变的前提下，对齐冻结的 Concept Architecture v1.1 与四份 Space Design v1.1。新增或明确 Learning Target / Target Assessment / Target Binding 的不同运行权威，Context Authority 与 scoped Authority Directive 不得绕过 Interaction Policy，Target / Belief / Policy 的 typed invalidation，以及 Validation / Replay 不能创造新的 authority 或 data authority。v0.2 作为当前 AI-native execution doctrine 的冻结基线。
 
 ---
@@ -41,6 +44,8 @@ DeerMind 面对的不是这种封闭世界。真实学习过程中会不断出�
 - 当旧认识被证明不充分时，系统如何修正而不重写历史。
 
 在这一前提下，具体语义理解与情境 reasoning 才由 AI 在运行时完成。
+
+对开放语言、上下文关系、行为含义和语义职责边界的判断，DeerMind 采用**显式语义规则约束下的 LLM reasoning**。语义规则定义可以作出什么断言、需要什么依据、如何保留归属与不确定性，并通过版本化 Protocol 执行；不得用关键词、正则或枚举表达方式的业务分支替代这些语义判断。确定性机制继续承担结构解析、精确计算、引用与版本检查、权限和提交执行；这些可精确判定的操作不因采用 LLM 而被移交给生成式判断。
 
 ### 1.2 AI-native 的正式定义
 
@@ -229,7 +234,7 @@ AI 可以在 envelope 内进行开放 reasoning，也可以申请更多 Context 
 
 如果 Interaction Policy 已通过 AI reasoning 选择 `NoIntervention` 或某个 Action，deterministic gate 不应重新实现一套教学规则来判断“教育上是否同意”。否则 AI 决策只是前置建议，真正业务逻辑仍然隐藏在 if/else 中。
 
-Deterministic gate 应验证的是：Action Type 是否当前版本合法、是否违反 Stop Request 或 Constitution、是否在当前 authority scope、参数是否有效、关键 Context 是否已经变化等制度性条件。
+Deterministic gate 应验证的是：Action Type 是否当前版本合法、已解析的 Stop Request / Constraint 是否允许该 effect、是否在当前 authority scope、参数是否有效、关键 Context 是否已经变化，以及 Protocol 要求的语义校验是否已完成并通过。若需要理解自然语言是否表达停止意图、候选内容是否违反 Constitution 等开放含义，应由语义规则约束下的 LLM 判断并留下校验依据；gate 执行相应结果与正式约束，不能把词语匹配当作含义判断，也不能让 LLM 的通过意见创建权限。
 
 因此：
 
@@ -386,14 +391,16 @@ DeerMind 采用分层、可组合的 Validation 模型，而不是一个抽象�
 | 层级 | 主要问题 | 典型机制 |
 |---|---|---|
 | L1 Structural | 输出结构是否有效 | Schema、字段、枚举、格式检查 |
-| L2 Grounding | 引用的事实和对象是否真实存在 | Source reference、identity、版本检查 |
-| L3 Semantic Contract | 是否违反 Space ownership / Architecture Invariant | 语义边界、authority、allowed type 检查 |
+| L2 Grounding | 引用是否存在、内容是否支持候选解释 | 引用 / identity / 版本的确定性检查；需要理解含义的支持关系由语义规则约束下的 LLM 判断 |
+| L3 Semantic Contract | 是否违反 Space ownership / Architecture Invariant | LLM 校验开放内容的断言、归属和职责边界；确定性机制检查类型、权限与校验记录 |
 | L4 Context Validity | reasoning 使用的关键 Context 是否仍有效 | freshness、dependency version、stale check |
-| L5 Semantic Quality | 判断本身是否足够可信 | critique、independent review、交叉检查 |
+| L5 Semantic Quality | 判断本身是否足够可信 | 规则约束下的 LLM critique、按风险安排的独立复核与交叉检查 |
 | L6 Empirical Validation | 高影响结构变更是否被现实证据支持 | replay、benchmark、shadow、prospective validation |
 | L7 Governance Authorization | 是否有权正式改变 canonical system | Governance / Approval Envelope |
 
 L7 严格说是 authority 而不是 epistemic validation，但它是高等级 Candidate 生命周期中的最终生效门槛。
+
+确定性 Commit 不意味着前置语义判断也能由确定性算法证明。LLM 语义校验必须有明确的规则、输入范围、依据和未决路径，其错误通过实验、运行反馈与可修正状态处理；不能只凭模型自报“已通过”取得 standing。是否增加独立校验 execution 或使用不同模型由 Validation Profile 按风险与证据决定，不要求所有 reasoning 固定调用多个模型，也不把模型间一致当作正确性的证明。
 
 ### 5.4 Validation 强度与风险匹配
 

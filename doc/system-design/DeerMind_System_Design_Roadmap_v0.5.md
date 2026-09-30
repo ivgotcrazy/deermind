@@ -6,7 +6,10 @@
 > **状态**：阶段基线  
 > **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`  
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-29  
+> **更新时间**：2026-09-30
+>
+> **修订说明**：同步 Phase 5 报告的单项结果与汇总合同，补清 Dimension A 的真实 LLM 语义校验；明确 Dimension E 的单会话常规轮次串行与跨会话 / 外部变化边界。保留原始否定 / 未决证据，不改变 Gate E / F 的关闭条件或当前进度。
+>
 > **版本说明**：v0.5 保持 v0.4 已澄清的 Work Package / Phase / Focused Design Closure 关系，以及 Architecture-Executable Specification、MVCL、P0 Mechanism、Gate A–F、Integrated Pre-Validation Candidate、Consolidated Architecture Spike 与 `DeerMind_System_Design_v1.0` Exit 目标不变。本次修订只收口 **§3.8 横切责任的阶段边界与完成条件**：第一，System Design Core 负责冻结 Product Context / Context Constitution 的运行接入合同，使场景特定 guardian authority、consent、child-data restriction、disclosure 与 stricter retention 能进入 Authority / Data Authority / Lifecycle / Audit enforcement，但不在 Core System Design 阶段实例化首个小学 Product Context 的具体规则；具体小学场景约束仍由 Development Roadmap 后续 Product Context / Product & Domain Foundation 阶段完成。第二，§3.8 新增 **Observability Minimum Contract** 作为 Phase 4 Exit 的明确要求，规定必须能够从正式 histories 与 runtime outcomes 区分 reasoning、candidate / commit、state / dependency、interaction / action、validation / evolution、authority / security 与 data-use failure / non-resolution，而不把 Metric / Alert / Trace 提升为 semantic standing 或 authority。该修订不改变 Architecture Baseline、Gate A–F 的实质标准、六个核心 Focused Work Package、Consolidated Spike A–F 组织方式，也不新增第七个 Focused Runtime。
 
 ---
@@ -220,7 +223,7 @@ Work Package 是必须完成的设计责任；Document 是承载这些设计结�
 - runtime learner condition；
 - Assistance Exposure Lineage，以及 Task Tool / Target Support / Runtime Availability / Occurred Use 四层语义；
 - Active Assessment 的运行 ownership；
-- concurrent event 导致 Context stale 时的 re-decision。
+- 同会话常规输入严格串行，异常 / 用户主动中断独立处理；跨会话或外部变化导致 Context stale 时的 re-decision。
 
 ### 3.6 Semantic Versioning, Replay & Migration Architecture
 
@@ -507,6 +510,8 @@ Factual History
 - model retry 是否会错误掩盖 UNKNOWN；
 - unauthorized latent learner state / Evidence / Policy judgment 是否能够被阻止进入 Observation standing。
 
+开放语义解释与边界校验必须由版本化语义规则约束下的真实 LLM reasoning 承担；确定性机制检查结构、引用、权限、版本及绑定 exact candidate 的校验结果，不能用关键词或枚举措辞替代语义判断。Dimension A 必须同时覆盖合法字段中的语义越界、合法局部解释与带归属的自述 / 引用、required validation failure / unresolved，以及未校验附言进入下游 Context 的路径。需要分别记录漏判、误判和未决；不能把 schema 检查通过、多个模型意见一致或全部拒绝当作语义边界已验证。
+
 **成功不是高准确率本身**，而是确认系统能够表达正确、错误、不确定、无法映射和 grounding failure，并能受 Candidate / Validation / Commit 机制治理。
 
 ### 5.3 Validation Dimension B — Dependency & Invalidation
@@ -577,9 +582,12 @@ ActionCandidate
 
 - ActionCandidate、NoIntervention、Defer 可被明确区分；
 - runtime / model failure 不会伪装成 NoIntervention / Defer；
-- concurrent event 导致 Context stale 时 Candidate 被拒绝并重新 reasoning；
+- 同会话普通新输入仅排队，当前轮次的理解、决策、提交和行动结果处理完成后才开始下一轮；
+- 跨会话共享状态或外部 authority / version 等变化导致 Context stale 时 Candidate 被拒绝，当前轮次收束后重新 reasoning；
 - ActionIntent 只能执行 exact approved semantics；
 - SelectedAction 与 ActionOccurrence 保持分离。
+
+单会话严格串行是正常执行策略，不属于 AA-E02 的失败证据。该假设检验的是是否仍需跨会话锁住整个 learner runtime 才能处理外部变化；普通消息到达不自动触发用户中断。具体排队与外部变化分支见 Consolidated Architecture Spike E2。
 
 ### 5.7 Validation Dimension F — Reasoning Runtime / Authority Security
 
@@ -600,14 +608,14 @@ ActionCandidate
 
 综合 Spike 必须形成统一的 `Architecture Validation Report`，并按 Validation Dimension 分区记录：
 
-- Architecture Assumption；
+- Architecture Assumption 及其 revision / 声明范围；
 - 对应 Architecture Invariant / P0 mechanism；
 - falsification condition；
 - prototype scope 与 non-goals；
 - fixtures / test cases；
 - observed evidence；
 - failure / unexpected behavior；
-- `Supported / Partially Supported / Denied / Inconclusive`；
+- 失败归因、falsifier 判定依据与单项结论 `SUPPORTED / DENIED / INCONCLUSIVE`；
 - 对 System Design 的影响；
 - 是否需要 ADR；
 - 是否触发 Architecture Reopen；
@@ -615,6 +623,8 @@ ActionCandidate
 - 可丢弃代码与可保留 reference code 的边界。
 
 综合 Spike 失败不是项目失败。其价值正是用统一运行证据证明当前 Pre-Validation Candidate 的某个假设不成立，并在冻结 v1.0 前完成修订。
+
+`PARTIALLY_SUPPORTED` 仅用于多个假设或预先声明的独立子范围的汇总描述，报告必须保留每项结论与证据，不能以汇总关闭尚未满足条件的单项审查。测试失败不直接等于假设被否定；应按预注册合同核实是否命中 falsifier，已确认的否定不因其他场景成功而消失。收窄范围、修订机制或安排 staging 时，保留原假设在原范围内的结论并关联后续处理；具体结果规则由 Consolidated Architecture Spike §6 定义。
 
 需要特别保持以下边界：
 

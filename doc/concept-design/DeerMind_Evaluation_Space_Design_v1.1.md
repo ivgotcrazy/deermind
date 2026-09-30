@@ -8,7 +8,10 @@
 > **上位领域基线**：DeerMind Learning Space Design v1.1  
 > **上位价值约束**：DeerMind Product Thesis v1.0、DeerMind Product Constitution v1.0  
 > **写作规范**：DeerMind Design Document Standard v1.0  
-> **更新时间**：2026-09-27  
+> **更新时间**：2026-09-30
+>
+> **修订说明**：补充诊断转入教学时的证据解释，区分讲解请求与实际暴露，并保留既有表现的证据价值；不改变 Claim Space 或 Evaluation ownership。
+>
 > **版本说明**：v1.1 保留 v1.0 的 LearnerStateModel / EvidenceModel / InferenceModel 三模型、TaskProficiencyBeliefs + KCBeliefs 的 Learner State Core、Evaluation 单写 Learner Belief、Observation / Evidence / Belief 分层、UNKNOWN、Assistance / Contamination、Evidence Dependency、Freshness、Conflict、Disconfirmation、Evolution Contract 与历史不可重写等核心结论；本版本主要完成四项语义对齐：第一，Task Proficiency Claim 升级为对 Conditions、Support / Responsibility Boundary 与 Quality Requirement 敏感的能力命题；第二，Assistance 与 Contamination 改为相对于 Claim / Target Responsibility Boundary 解释；第三，正式接入 Target Assessment / Target Gap，但不新增 TargetBelief、CapabilityBelief 或第四个 Core Model；第四，补充 Equal Epistemic Standing、Authority Override、Target Version 与派生判断失效等上位约束。经 Interaction / Evolution v1.1 对齐与 Cross-Document Freeze Gate，本版本现作为架构冻结基线。
 
 ---
@@ -599,6 +602,10 @@ Evaluation 在解释 assistance 时至少需要区分三层语义：
 
 `Prompted` 也不作为与 Independent / Assisted 平级的规范证据类型。不同 prompt 暴露的信息差异极大，从“再检查一下”到直接给出关键结构，必须依据真实 exposure lineage 解释。
 
+学习者请求讲解与系统实际提供帮助是不同事实。请求可以结束一次独立诊断，但不能仅凭请求推出能力不足，也不能将请求时刻当作帮助已经暴露的时刻。请求前的独立表现保留原有证据价值；诊断结束时证据不足，可以保持 UNKNOWN / InsufficientEvidence，不能因活动终止而补造负面结论。转入教学后，Evaluation 依据实际发生的帮助及其时间、内容与 Claim 关系解释后续表现。
+
+后续判断独立能力需要新的、符合该 Claim 支持条件的机会。新建活动或重新标记为“独立”不会消除既有暴露；刚接受解法讲解后答对同一道题，不能直接证明独立掌握。是否形成有效的独立 Evidence，仍需检查相关历史暴露，而不是只看活动名称或会话边界。
+
 ### 5.3 Contamination 是 Claim 与 Responsibility-Boundary Relative 的
 
 一次干预不会均匀污染整个 Task 的所有 Evidence。更准确地说：
@@ -992,7 +999,7 @@ Evidence Model 可以分别形成：
 - 对 Proportional Relation KC：possible supportive 证据；
 - 对 Division KC：矛盾性证据。
 
-如果 DeerMind 随后提示“再检查一下 42÷6”，学习者修正为 7 并得到 105，那么这次成功的 Evidence 需要按 Claim 分析污染：Strategy Selection 已被部分提示污染，Division KC 仍可能获得一定 positive 证据，而 Task Proficiency 不能被当作独立的 success。
+如果 DeerMind 随后提示“再检查一下 42÷6”，学习者修正为 7 并得到 105，那么这次成功的 Evidence 需要按 Claim 与发生顺序解释。提示前已经呈现的 Unit Rate 策略保留原有证据价值，不能因后来的算术提示追溯性地判为受助选择；提示后的步骤也不能被重复计为一次新的独立策略选择。Division KC 仍可能获得一定 positive 证据，但须保留提示指出计算位置这一条件，完整 Task success 则不能被当作独立完成。
 
 一周后学习者在新的 surface 情境中独立完成同构比例题，这条 delayed / 迁移 Evidence 对 retention 和 generalization 的解释价值更高。
 

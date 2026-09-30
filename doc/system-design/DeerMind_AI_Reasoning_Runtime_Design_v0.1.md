@@ -8,7 +8,10 @@
 > **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.4.md`  
 > **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`  
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-29  
+> **更新时间**：2026-09-30
+>
+> **修订说明**：明确开放语义校验的 LLM 职责、Validation Profile 与 exact-candidate 校验记录，保留确定性 authority / commit enforcement；同步 A2 对语义漏判、误判及未决路径的验证要求，相关可靠性仍为 UNVALIDATED。
+>
 > **版本说明**：v0.1 是 AI Reasoning Runtime 的首个 Pre-Validation Focused Design Candidate。它不改变 AI-Native Architecture 已冻结的 `Open Cognition != Open Authority`、Reasoning Protocol、Purpose-Bound Context、Candidate / Validation / Commit、Deterministic Authority、No Hidden Durable Epistemic State 与 Versioned Reasoning 等原则，而是将这些原则深化为可以直接约束实现的运行合同。本文档冻结 Reasoning Purpose / Request / Protocol / Execution、Context Policy / Assembly / Manifest、Authority Envelope、Model Routing / Adapter、Tool boundary、typed Candidate、Validation / Commit handoff、failure / retry、bounded workflow、ReasoningExecutionRecord、version / provenance 与 prompt-injection 防线；具体模型供应商、Agent Framework、Prompt 模板、Workflow Engine、数据库、消息系统与生产级调度参数仍不在本版本冻结范围内。
 
 ---
@@ -829,6 +832,14 @@ L7 Governance Authorization when required
 
 AI Runtime 负责执行 / 编排 Protocol 所声明的 validation profile，但每层的 authority 来源不同。
 
+开放内容的理解、grounding 的含义支持关系、断言归属与 semantic boundary 判断，必须通过显式语义规则约束下的 LLM reasoning 完成。关键词、正则或枚举措辞的分支不得作为语义裁决器。结构、引用存在性、精确计算、版本与权限条件仍由确定性机制检查；Validator 不替 Evaluation 推断学习者能力，也不替 Policy 选择教学行动，但必须校验内容是否越过相应职责。
+
+Validation Profile 应声明规则与版本、被检查的候选字段、允许使用的 Context、所需检查、通过 / 失败 / 未决条件，以及按风险采用的复核方式。语义校验产生可追溯的 validation result，绑定 exact Candidate revision / payload、Protocol / rule version、Context refs、执行与模型 provenance、相关内容定位、判断依据及未决项；它沿用现有 execution / validation 记录，不新增 semantic owner。确定性 gate 核验所需记录来自获准的校验 execution、对应当前提交的候选且满足 profile，候选正文中的“已验证”声明不具备同等效力。候选内容变化后必须重新完成所需校验，不能沿用旧内容的通过结果。
+
+Profile 要求的语义边界检查未决或执行失败时，不得把它当作通过，也不得降级为关键词裁决。可以请求所需 Context、按协议重试或返回明确 non-resolution；这与一个已符合合同、但诚实表达现象歧义的 Observation 不同，后者仍可取得 standing。校验 execution 也受 Context / Authority / Data Authority 约束，不能借校验之名读取原语义角色禁止的 Learner Belief，或取得 Action / Governance 权限。
+
+自由文本的用途必须由 OutputContract 声明：参与正式语义的描述与解释同样接受检查，引用与自述保留来源归属；仅供审计的 rationale 不自动成为下游正式输入。ContextAssembler 按已声明用途选择内容，不能把整段模型原文或未校验附言作为可信 Observation 传入后续 reasoning。需要重新使用原始材料时，按对应 Protocol 的普通材料重新准入，不继承不存在的语义校验或 authority。
+
 `L7` 本质上是 authorization，不是“更高质量的模型评价”。
 
 ### 6.7 Validation Success 不产生 Commit Authority
@@ -1180,7 +1191,8 @@ Recovery 只能从 durable execution record / checkpoint 恢复“已完成到�
 - Protocol / Context / Candidate contract 是否足以形成 governable Observation；
 - Forbidden Context 是否能在模型调用前结构性排除；
 - Unmapped / Ambiguous / GroundingFailure 是否能被保留；
-- Candidate validation 是否能阻止 latent learner state、Evidence / Policy judgment 越界。
+- 规则约束下的 LLM semantic validation 是否能识别合法字段中的 latent learner state、Evidence / Policy judgment 越界，并保留合法局部解释、引用与 self-report；
+- 确定性 gate 是否核验 exact-candidate validation result，缺失、失败或未决检查是否阻止不合格提交，未校验附言是否会泄漏到下游 Context。
 
 **Dimension E — Policy / Decision** 重点验证：
 
