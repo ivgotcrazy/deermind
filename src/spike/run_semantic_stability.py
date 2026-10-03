@@ -12,6 +12,8 @@ from uuid import uuid4
 
 from foundation.cases import EvidenceRecorder
 from foundation.guarded_cases import setup_boundary
+from foundation.claim_axes import assess_expected_axes
+from foundation.responsibility import assess_expected_roles
 from foundation.llm import DeepSeekAdapter, ModelFailure, load_config
 from foundation.records import json_value
 from foundation.runtime import ContractError
@@ -75,6 +77,18 @@ def summarize(results, fixture, model_calls):
             "not_run": fixture["planned_model_calls"] - len(results), "model_calls": model_calls,
             "positive_runs_planned": positive, "negative_runs_planned": negative, **counts,
             "per_case": per_case, "runs": results, "assumption_status": "UNVALIDATED",
+            "initial_source_conflicts": sum(r.get("initial_source_conflict", False) for r in results),
+            "recheck_calls": sum(r.get("recheck_calls", 0) for r in results),
+            "recheck_failures": sum(r.get("recheck_failed", False) for r in results),
+            "max_model_calls": fixture.get("max_model_calls", fixture["planned_model_calls"]),
+            "extraction_calls": sum(r.get("extraction_calls", 0) for r in results),
+            "arithmetic_overrides": sum(r.get("llm_semantic_status") == "PASS" and r.get("arithmetic_status") == "FAIL"
+                                        and r.get("effective_status") == "FAIL" for r in results),
+            "claim_axis_mismatches": sum(any(not a["matches"] for a in r.get("claim_axes", [])) for r in results),
+            "responsibility_calls": sum(r.get("responsibility_calls", 0) for r in results),
+            "responsibility_role_mismatches": sum(any(not a["matches"] for a in r.get("responsibility_roles", [])) for r in results),
+            "responsibility_overrides": sum(r.get("pre_responsibility_status") == "PASS" and r.get("responsibility_status") == "FAIL"
+                                            and r.get("effective_status") == "FAIL" for r in results),
             "scope": fixture["scope"], "measurement_note": "Counts over a designed sample; not an independent population error-rate estimate"}
 
 
@@ -86,7 +100,9 @@ def write_summary(directory, summary):
 
 
 def run_suite(config, directory, fixture, protocol, adapter=None, progress=None):
-    if config.max_calls < fixture["planned_model_calls"]:
+    if protocol.get("provider_endpoint", config.base_url) != config.base_url:
+        raise ValueError("ProtocolProviderEndpointMismatch: use the explicitly declared endpoint")
+    if config.max_calls < fixture.get("max_model_calls", fixture["planned_model_calls"]):
         raise ValueError("Budget below complete preregistered schedule; no calls made")
     adapter = adapter or DeepSeekAdapter(config)
     recorder = EvidenceRecorder(directory / "evidence.jsonl")
@@ -112,17 +128,49 @@ def run_suite(config, directory, fixture, protocol, adapter=None, progress=None)
                 outcome = runtime.commit(token, candidate, review.identity)
                 recorder.emit("commit", case_id=case["id"], repetition=repetition, value=json_value(outcome))
                 criteria = {r["id"]: r["status"] for r in json.loads(review.details_json)["criteria"]}
+                execution = h.get(review.execution).payload
+                arithmetic_status = (execution.get("arithmetic_result") or {}).get("status")
+                axes = assess_expected_axes(json.loads(review.details_json), case["candidate"], case.get("expected_claim_axes", []))
+                if axes:
+                    row["claim_axes"] = axes
                 matched = (review.status == case["expected_status"] and outcome.status == case["expected_commit"]
-                           and all(criteria.get(k) == v for k, v in case["expected_criteria"].items()))
+                           and all(criteria.get(k) == v for k, v in case["expected_criteria"].items())
+                           and all(a["matches"] for a in axes)
+                           and ("expected_arithmetic_status" not in case or arithmetic_status == case["expected_arithmetic_status"]))
                 row.update(result="PASS" if matched else "INCONCLUSIVE" if review.status == "UNRESOLVED" else "FAIL",
                            semantic_status=review.status, criterion_statuses=criteria, commit_status=outcome.status,
                            false_positive=case["expected_status"] == "FAIL" and review.status == "PASS",
                            false_negative=case["expected_status"] == "PASS" and review.status == "FAIL")
+                if arithmetic_status is not None:
+                    row.update(arithmetic_status=arithmetic_status, llm_semantic_status=execution["semantic_status"],
+                               effective_status=review.status)
+                if execution.get("responsibility_result") is not None:
+                    row["pre_responsibility_status"] = execution["pre_responsibility_status"]
             except (ModelFailure, ContractError, AccessDenied) as exc:
                 row.update(failure_type=type(exc).__name__, reason=str(exc))
                 recorder.emit("failure", **row)
             finally:
-                # Persist each call immediately: later interruptions must not lose earlier evidence.
+                classified = [r for r in h.executions.records() if r.kind == "ResponsibilityClassificationExecution"]
+                if classified:
+                    result = classified[-1].payload["result"]
+                    roles = assess_expected_roles(result, case["candidate"], case.get("expected_responsibility_roles", []))
+                    row.update(responsibility_status=result["status"], responsibility_roles=roles)
+                    if row["result"] == "PASS" and (not all(r["matches"] for r in roles)
+                            or result["status"] != case.get("expected_responsibility_status", result["status"])):
+                        row["result"] = "FAIL"
+                    recorder.emit("responsibility_classification", case_id=case["id"], repetition=repetition,
+                                  execution=classified[-1].payload)
+                history = runtime.validation_history(candidate)
+                for attempt in history:
+                    recorder.emit("validation_attempt", case_id=case["id"], repetition=repetition,
+                                  value=json_value(attempt), execution=h.get(attempt.execution).payload)
+                row.update(initial_source_conflict=bool(history and h.get(history[0].execution).payload.get("source_conflicts")),
+                           initial_semantic_status=history[0].status if history else None,
+                           recheck_calls=sum(r["purpose"] == "ObservationSemanticRecheck" for r in adapter.records[written_calls:]),
+                           extraction_calls=sum(r["purpose"] == "ArithmeticExtraction" for r in adapter.records[written_calls:]),
+                           responsibility_calls=sum(r["purpose"] == "ObservationResponsibilityClassification" for r in adapter.records[written_calls:]),
+                           recheck_failed=any(r.kind == "SemanticRecheckFailed" for r in h.executions.records()))
+                # Persist all calls from this candidate, including failed stages.
                 for record in adapter.records[written_calls:]:
                     recorder.emit("model_execution", case_id=case["id"], repetition=repetition, **record)
                 written_calls = len(adapter.records)
@@ -133,6 +181,9 @@ def run_suite(config, directory, fixture, protocol, adapter=None, progress=None)
             write_summary(directory, summary)
             if progress:
                 progress(summary)
+            if row.get("reason") in fixture.get("stop_on_provider_failures", []):
+                recorder.emit("batch_stopped", reason=row["reason"], not_run=summary["not_run"])
+                break
     finally:
         recorder.close()
     return summarize(results, fixture, adapter.calls)
@@ -143,23 +194,35 @@ def main(argv=None):
     parser.add_argument("--run", action="store_true")
     parser.add_argument("--max-calls", type=int, help="Explicit budget override for this batch; does not edit .env")
     parser.add_argument("--max-output-tokens", type=int, help="Explicit per-call output budget; does not edit .env")
-    parser.add_argument("--fixture", choices=("observation-stability-v1.json", "observation-grounding-v1.json"),
+    parser.add_argument("--base-url", help="Explicit endpoint for this batch; does not edit .env")
+    parser.add_argument("--fixture", choices=("observation-stability-v1.json", "observation-grounding-v1.json",
+                                              "observation-absence-v1.json", "observation-support-v1.json",
+                                              "observation-arithmetic-v1.json", "observation-structured-v1.json",
+                                              "observation-support-structured-v1.json", "observation-source-handles-v1.json",
+                                              "observation-claim-axes-v1.json", "observation-responsibility-v1.json"),
                         default="observation-stability-v1.json")
     args = parser.parse_args(argv)
     fixture, protocol = load_design(args.fixture)
+    maximum_calls = fixture.get("max_model_calls", fixture["planned_model_calls"])
     repo = ROOT.parents[1]
     configured = load_config(repo)
     config = replace(configured, max_calls=args.max_calls) if args.max_calls is not None else configured
     if args.max_output_tokens is not None:
         config = replace(config, max_output_tokens=args.max_output_tokens)
+    if args.base_url is not None:
+        config = replace(config, base_url=args.base_url.rstrip("/"))
+    endpoint_matches = protocol.get("provider_endpoint", config.base_url) == config.base_url
     if not args.run:
-        print(json.dumps({"planned_calls": fixture["planned_model_calls"], "effective_config": config.public(),
+        print(json.dumps({"planned_executions": fixture["planned_model_calls"],
+                          "planned_calls": fixture.get("initial_model_calls", fixture["planned_model_calls"]), "effective_config": config.public(),
                           "configured_max_calls": configured.max_calls,
-                          "ready": bool(config.api_key) and config.max_calls >= fixture["planned_model_calls"],
+                          "max_model_calls": maximum_calls,
+                          "ready": bool(config.api_key) and config.max_calls >= maximum_calls and endpoint_matches,
+                          "endpoint_matches_protocol": endpoint_matches,
                           "protocol_sha256": fixture["protocol_sha256"], "network_calls": 0}, indent=2))
         return 0
-    if not config.api_key or config.max_calls < fixture["planned_model_calls"]:
-        print(json.dumps({"status": "NEEDS_CONFIG", "reason": "Key and an explicit budget covering all planned calls are required"}))
+    if not config.api_key or config.max_calls < maximum_calls or not endpoint_matches:
+        print(json.dumps({"status": "NEEDS_CONFIG", "reason": "Key, sufficient budget and matching protocol endpoint are required"}))
         return 2
     directory = ROOT / "runs" / ("semantic-stability-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:12])
     directory.mkdir(parents=True, exist_ok=False)
@@ -167,11 +230,15 @@ def main(argv=None):
     run_manifest.update(scope=fixture["scope"], fixture=fixture, model_config=config.public(),
                         configured_max_calls=configured.max_calls, explicit_max_calls_override=args.max_calls,
                         configured_max_output_tokens=configured.max_output_tokens,
+                        explicit_base_url_override=args.base_url,
                         explicit_max_output_tokens_override=args.max_output_tokens,
                         cases=[c["id"] for c in fixture["cases"]], repetitions=fixture["planned_repetitions"],
-                        planned_calls=fixture["planned_model_calls"], model_calls="see summary.json")
+                        planned_executions=fixture["planned_model_calls"],
+                        planned_calls=fixture.get("initial_model_calls", fixture["planned_model_calls"]),
+                        max_model_calls=maximum_calls, model_calls="see summary.json")
     (directory / "manifest.json").write_text(json.dumps(run_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps({"output": str(directory.resolve()), "planned_calls": fixture["planned_model_calls"]}), flush=True)
+    print(json.dumps({"output": str(directory.resolve()), "planned_executions": fixture["planned_model_calls"],
+                      "planned_calls": fixture.get("initial_model_calls", fixture["planned_model_calls"])}), flush=True)
     def progress(summary):
         if summary["completed_runs"] % len(fixture["cases"]) == 0:
             print(json.dumps({key: summary[key] for key in ("completed_runs", "matched_runs", "false_positives", "false_negatives", "protocol_or_runtime_failures")}), flush=True)

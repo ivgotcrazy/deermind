@@ -5,15 +5,43 @@ from datetime import datetime, timezone
 import json
 import math
 import os
+import socket
+import ssl
+from http.client import RemoteDisconnected, IncompleteRead
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import Request, HTTPRedirectHandler, build_opener
 from uuid import uuid4
 
+from .structured_output import check_schema, matches_schema
+
 
 class ModelFailure(RuntimeError):
     pass
+
+
+def transport_failure_code(exc):
+    """Fixed labels only: never retain arbitrary exception text, headers or secrets."""
+    if isinstance(exc, URLError):
+        exc = exc.reason
+    if isinstance(exc, TimeoutError):
+        return "ProviderTimeout"
+    if isinstance(exc, ssl.SSLError):
+        return "ProviderTLSFailure"
+    if isinstance(exc, socket.gaierror):
+        return "ProviderDNSFailure"
+    if isinstance(exc, RemoteDisconnected):
+        return "ProviderRemoteDisconnected"
+    if isinstance(exc, ConnectionResetError):
+        return "ProviderConnectionReset"
+    if isinstance(exc, ConnectionRefusedError):
+        return "ProviderConnectionRefused"
+    if isinstance(exc, IncompleteRead):
+        return "ProviderIncompleteRead"
+    if isinstance(exc, OSError):
+        return "ProviderNetworkFailure"
+    return "ProviderTransportFailure"
 
 
 def strict_json(text):
@@ -101,8 +129,8 @@ def http_transport(url, key, payload, timeout):
             return strict_json(data)
     except HTTPError as exc:
         raise ModelFailure(f"ProviderHTTPError:{exc.code}") from None
-    except (URLError, TimeoutError):
-        raise ModelFailure("ProviderNetworkOrTimeoutFailure") from None
+    except (URLError, OSError, RemoteDisconnected, IncompleteRead) as exc:
+        raise ModelFailure(transport_failure_code(exc)) from None
     except (UnicodeDecodeError, ValueError):
         raise ModelFailure("InvalidProviderResponse") from None
 
@@ -113,13 +141,24 @@ class DeepSeekAdapter:
         self.calls = 0
         self.records = []
 
-    def complete(self, messages, purpose):
+    def complete(self, messages, purpose, *, output_contract=None):
         if not self.config.api_key:
             raise ModelFailure("MissingAPIKey: configure DEERMIND_LLM_API_KEY locally")
         if self.calls >= self.config.max_calls:
             raise ModelFailure("ModelCallBudgetExhausted")
         if len(json.dumps(messages, ensure_ascii=False)) > 16000:
             raise ModelFailure("InputLimitExceeded")
+        if output_contract is not None:
+            try:
+                if (set(output_contract) != {"name", "parameters"}
+                        or output_contract["name"] not in ("submit_observation", "submit_extraction", "submit_review", "submit_responsibility")
+                        or output_contract["parameters"].get("type") != "object"):
+                    raise ValueError("InvalidOutputContract")
+                check_schema(output_contract["parameters"])
+            except (ValueError, TypeError, KeyError, AttributeError):
+                raise ModelFailure("InvalidOutputContract") from None
+            if self.config.base_url != "https://api.deepseek.com/beta":
+                raise ModelFailure("StrictOutputEndpointMismatch")
         self.calls += 1
         record = {"execution_id": uuid4().hex, "purpose": purpose,
                   "started_at": datetime.now(timezone.utc).isoformat(), "config": self.config.public(),
@@ -128,6 +167,11 @@ class DeepSeekAdapter:
         request = {"model": self.config.model, "messages": messages, "stream": False,
                    "thinking": {"type": "disabled"}, "temperature": 0,
                    "response_format": {"type": "json_object"}, "max_tokens": self.config.max_output_tokens}
+        if output_contract is not None:
+            request.pop("response_format")
+            request["tools"] = [{"type": "function", "function": {**output_contract, "strict": True}}]
+            request["tool_choice"] = {"type": "function", "function": {"name": output_contract["name"]}}
+            record["output_contract"] = output_contract
         try:
             response = self.transport(self.config.base_url + "/chat/completions", self.config.api_key,
                                       request, self.config.timeout_seconds)
@@ -138,13 +182,28 @@ class DeepSeekAdapter:
                            "system_fingerprint": response.get("system_fingerprint"),
                            "usage": response.get("usage"), "finish_reason": choice.get("finish_reason"),
                            "content": content})
-            if choice.get("finish_reason") != "stop":
+            if output_contract is not None:
+                calls = choice["message"].get("tool_calls")
+                record["tool_calls"] = calls
+                if choice.get("finish_reason") != "tool_calls":
+                    raise ModelFailure("IncompleteModelOutput")
+                if (not isinstance(calls, list) or len(calls) != 1
+                        or not isinstance(calls[0], dict) or calls[0].get("type") != "function"
+                        or not isinstance(calls[0].get("function"), dict)
+                        or calls[0]["function"].get("name") != output_contract["name"]
+                        or content not in (None, "")):
+                    raise ModelFailure("InvalidResultEnvelope")
+                # This is a fixed data envelope. No function dispatch or tool execution occurs.
+                content = calls[0]["function"].get("arguments")
+            elif choice.get("finish_reason") != "stop":
                 raise ModelFailure("IncompleteModelOutput")
             if not isinstance(content, str) or not content.strip():
                 raise ModelFailure("EmptyModelOutput")
             parsed = strict_json(content)
             if not isinstance(parsed, dict):
                 raise ModelFailure("InvalidStructuredOutput")
+            if output_contract is not None and not matches_schema(parsed, output_contract["parameters"]):
+                raise ModelFailure("OutputSchemaMismatch")
             record["status"] = "COMPLETED"
             return parsed, record["execution_id"]
         except ModelFailure as exc:
@@ -153,8 +212,9 @@ class DeepSeekAdapter:
         except (KeyError, IndexError, TypeError, ValueError):
             record.update(status="FAILED", failure="InvalidStructuredOutput")
             raise ModelFailure("InvalidStructuredOutput") from None
-        except Exception:
-            record.update(status="FAILED", failure="ProviderTransportFailure")
-            raise ModelFailure("ProviderTransportFailure") from None
+        except Exception as exc:
+            code = transport_failure_code(exc)
+            record.update(status="FAILED", failure=code)
+            raise ModelFailure(code) from None
         finally:
             record["completed_at"] = datetime.now(timezone.utc).isoformat()

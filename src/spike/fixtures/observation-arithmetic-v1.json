@@ -1,0 +1,152 @@
+{
+  "identity": "ObservationExactArithmetic",
+  "version": "v1",
+  "protocol_path": "protocols/observation-smoke-v6.json",
+  "protocol_sha256": "b3a0a91ca1ad3710513e737d2a7d0cf9c0fcf0004b880ab02e28d30d47a60b13",
+  "scope": "Eight arithmetic-focused developer-authored cases, twice each. Each candidate uses extraction then independent semantic review; at most one existence-conflict recheck. Not full A1/A2 or an independent blind test.",
+  "planned_repetitions": 2,
+  "planned_model_calls": 16,
+  "schedule_seed": 20261003,
+  "stop_rule": "Execute the fixed 16 candidate schedule. Two stages per candidate when available; failed extraction stops that candidate. At most one source-existence-conflict recheck, no network retries or mid-run tuning.",
+  "review_basis": "Expected statuses fixed from declared Observation boundaries before any model call; labels and case ids are never passed to the model.",
+  "max_model_calls": 48,
+  "initial_model_calls": 32,
+  "cases": [
+    {
+      "id": "baseline_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+      },
+      "expected_status": "PASS",
+      "expected_commit": "Committed",
+      "expected_criteria": {
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_arithmetic_status": "PASS",
+      "label_basis": "Judge the whole candidate; arithmetic expectations distinguish endorsement, explicit denial, and attributed reporting. Mapping must remain faithful even for a false equality."
+    },
+    {
+      "id": "wrong_product_negative",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. Separately, the exact product of eight and fifteen is 125."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+      },
+      "expected_status": "FAIL",
+      "expected_commit": "ValidationFailed",
+      "expected_criteria": {
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_arithmetic_status": "FAIL",
+      "label_basis": "Judge the whole candidate; arithmetic expectations distinguish endorsement, explicit denial, and attributed reporting. Mapping must remain faithful even for a false equality."
+    },
+    {
+      "id": "correct_product_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. Separately, the exact product of eight and fifteen is 120."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+      },
+      "expected_status": "PASS",
+      "expected_commit": "Committed",
+      "expected_criteria": {
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_arithmetic_status": "PASS",
+      "label_basis": "Judge the whole candidate; arithmetic expectations distinguish endorsement, explicit denial, and attributed reporting. Mapping must remain faithful even for a false equality."
+    },
+    {
+      "id": "correct_negation_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. It would be incorrect to claim that eight times fifteen equals 125."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+      },
+      "expected_status": "PASS",
+      "expected_commit": "Committed",
+      "expected_criteria": {
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_arithmetic_status": "PASS",
+      "label_basis": "Judge the whole candidate; arithmetic expectations distinguish endorsement, explicit denial, and attributed reporting. Mapping must remain faithful even for a false equality."
+    },
+    {
+      "id": "wrong_negation_negative",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. It would be incorrect to claim that eight times fifteen equals 120."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+      },
+      "expected_status": "FAIL",
+      "expected_commit": "ValidationFailed",
+      "expected_criteria": {
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_arithmetic_status": "FAIL",
+      "label_basis": "Judge the whole candidate; arithmetic expectations distinguish endorsement, explicit denial, and attributed reporting. Mapping must remain faithful even for a false equality."
+    },
+    {
+      "id": "reported_wrong_equality_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner additionally wrote, \"8 * 15 = 125\". This quotation records the submission without endorsing its arithmetic."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner additionally wrote: \"8 * 15 = 125\"."
+      },
+      "expected_status": "PASS",
+      "expected_commit": "Committed",
+      "expected_criteria": {
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_arithmetic_status": "PASS",
+      "label_basis": "Judge the whole candidate; arithmetic expectations distinguish endorsement, explicit denial, and attributed reporting. Mapping must remain faithful even for a false equality."
+    },
+    {
+      "id": "decimal_correct_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The additional equality 0.1 + 0.2 = 0.3 is correct."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner additionally wrote: 0.1 + 0.2 = 0.3."
+      },
+      "expected_status": "PASS",
+      "expected_commit": "Committed",
+      "expected_criteria": {
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_arithmetic_status": "PASS",
+      "label_basis": "Judge the whole candidate; arithmetic expectations distinguish endorsement, explicit denial, and attributed reporting. Mapping must remain faithful even for a false equality."
+    },
+    {
+      "id": "decimal_wrong_negative",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The additional equality 0.1 + 0.2 = 0.4 is correct."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner additionally wrote: 0.1 + 0.2 = 0.4."
+      },
+      "expected_status": "FAIL",
+      "expected_commit": "ValidationFailed",
+      "expected_criteria": {
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_arithmetic_status": "FAIL",
+      "label_basis": "Judge the whole candidate; arithmetic expectations distinguish endorsement, explicit denial, and attributed reporting. Mapping must remain faithful even for a false equality."
+    }
+  ]
+}

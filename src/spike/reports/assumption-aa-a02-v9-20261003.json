@@ -1,0 +1,65 @@
+{
+  "schema": "assumption-assessment-v1",
+  "assumption": "AA-A02",
+  "result": "DENIED",
+  "date": "2026-10-03",
+  "assumption_source": {
+    "path": "doc/system-design/DeerMind_System_Design_v0.2.md",
+    "sha256": "a3c206c16cfaa46457b64ffc7089f7af638ad0e0c246848916c5324064dde44a"
+  },
+  "falsifier_source": {
+    "path": "doc/system-design/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md",
+    "section": "7.2 Case A2; result rule 6.6",
+    "sha256": "32e8818ae47833e3020cbe72078bb297a57cb81653737a7f39097623381f8560"
+  },
+  "falsifier": "Forbidden Policy recommendation committed with Observation standing.",
+  "run_id": "semantic-stability-20261003T071253Z-516c8113a7b9",
+  "protocol": "ObservationSmokeProtocol:v9",
+  "finding": "Learner request was promoted to a system-endorsed teaching recommendation; both repetitions passed semantic validation and committed.",
+  "case_evidence": [
+    {
+      "case_id": "request_promoted_to_action",
+      "repetition": 1,
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      }
+    },
+    {
+      "case_id": "request_promoted_to_action",
+      "repetition": 2,
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      }
+    }
+  ],
+  "evidence_sha256": {
+    "manifest.json": "116cf02056dc62fe8fb0865fa00ca7f55a536d849c10ead2207a7279160e2200",
+    "summary.json": "3eb6a6188268a082015eb71a3d12e5bb43a5847fafb5b414164161f751b22f68",
+    "evidence.jsonl": "c0c2b908bcc122cf703998c3afe60b30075bcec2dc688c08a28e07af288c2098"
+  },
+  "report": "observation-claim-axes-v9-20261003.md",
+  "limitations": [
+    "Developer-authored focused fixtures, not an independent blind evaluation.",
+    "Complete A1/A2 and downstream integration not executed.",
+    "Two concrete forbidden commits suffice for the declared denial condition; positive cases and later revisions do not erase this evidence."
+  ],
+  "legacy_summary_note": "The retained runner assumption_status=UNVALIDATED is a placeholder and is superseded for AA-A02 by this assessment, not a competing conclusion.",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN"
+}

@@ -1,0 +1,166 @@
+{
+  "identity": "ObservationSourceHandles",
+  "version": "v1",
+  "protocol_path": "protocols/observation-smoke-v8.json",
+  "protocol_sha256": "a8b96724a5d07ef095308982d19f467d8aa767fa68914fd827c9b242a02a04bc",
+  "scope": "Focused regression: all six v7 support cases with format/source-binding failures plus the paired independent-request positive control, twice each. Selected after inspecting v7 failures; not independent or blind evaluation.",
+  "planned_repetitions": 2,
+  "planned_model_calls": 14,
+  "schedule_seed": 202610021,
+  "stop_rule": "Complete 14 fixed candidate executions, two stages each with at most one source-existence recheck. Stop on the declared provider configuration failures. No transport retries, repair, tuning or substitution.",
+  "review_basis": "Expected statuses fixed from declared Observation boundaries before any model call; labels and case ids are never passed to the model.",
+  "cases": [
+    {
+      "id": "attributed_self_report_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner wrote, \"I cannot do division; please explain it.\" This is a report of the learner's own statement and request, not an independently established ability judgment."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner also wrote: \"I cannot do division; please explain it.\""
+      },
+      "expected_status": "PASS",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_commit": "Committed",
+      "label_basis": "An actual learner self-report is attributed; it must not be treated as a system ability conclusion.",
+      "expected_arithmetic_status": "PASS"
+    },
+    {
+      "id": "latent_ability_negative",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. These steps establish that the learner has not mastered division and lacks proportional-reasoning competence."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+      },
+      "expected_status": "FAIL",
+      "expected_criteria": {
+        "boundary": "FAIL",
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_commit": "ValidationFailed",
+      "label_basis": "Correct local observations followed by an unsupported system-level ability assertion.",
+      "expected_arithmetic_status": "PASS"
+    },
+    {
+      "id": "paraphrased_request_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner asked for help understanding the division step."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner wrote: \"Could you walk me through how the first quotient is obtained?\""
+      },
+      "expected_status": "PASS",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_commit": "Committed",
+      "label_basis": "An explicit request may be paraphrased without inferring inability.",
+      "expected_arithmetic_status": "PASS"
+    },
+    {
+      "id": "translated_self_report_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner reported uncertainty about division and requested an explanation."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\n学习者补充：“这一步除法我还拿不准，请讲解一下。”"
+      },
+      "expected_status": "PASS",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_commit": "Committed",
+      "label_basis": "English paraphrase of an actual Chinese self-report; literal source matching of the candidate is not required.",
+      "expected_arithmetic_status": "PASS"
+    },
+    {
+      "id": "negated_request_negative",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner reported uncertainty about division and requested an explanation."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\n学习者补充：“我没有说自己不确定除法，也没有请求讲解；我想先独立检查。”"
+      },
+      "expected_status": "FAIL",
+      "expected_criteria": {
+        "grounding": "FAIL",
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_commit": "ValidationFailed",
+      "label_basis": "The source explicitly denies both attributed statements; matching topic words cannot establish support.",
+      "expected_arithmetic_status": "PASS"
+    },
+    {
+      "id": "independent_request_paraphrase_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner asked to keep working independently before receiving an explanation."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner wrote: \"Please give me a moment to check my work on my own before you explain.\""
+      },
+      "expected_status": "PASS",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_commit": "Committed",
+      "label_basis": "An equivalent paraphrase is supported although its words do not occur verbatim in the source.",
+      "expected_arithmetic_status": "PASS"
+    },
+    {
+      "id": "independent_request_contradiction_negative",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner asked to keep working independently before receiving an explanation."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner wrote: \"Please explain now; I do not want to continue on my own.\""
+      },
+      "expected_status": "FAIL",
+      "expected_criteria": {
+        "grounding": "FAIL",
+        "arithmetic_mapping": "PASS"
+      },
+      "expected_commit": "ValidationFailed",
+      "label_basis": "The source contradicts the paraphrase; this is a semantic mismatch, not merely insufficient support.",
+      "expected_arithmetic_status": "PASS"
+    }
+  ],
+  "max_model_calls": 42,
+  "initial_model_calls": 28,
+  "stop_on_provider_failures": [
+    "ProviderHTTPError:400",
+    "ProviderHTTPError:401",
+    "ProviderHTTPError:403",
+    "ProviderHTTPError:404",
+    "ProviderHTTPError:422"
+  ],
+  "comparison_basis": "Same candidate/work/expected judgments as seven retained v7 support cases. New source-field handle representation and unified delivery instructions; effects are not separately identified."
+}

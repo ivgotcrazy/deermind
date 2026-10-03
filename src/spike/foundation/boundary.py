@@ -3,12 +3,18 @@
 from dataclasses import dataclass, replace
 from hashlib import sha256
 import json
+from .source_handles import source_registry, handle_contract, expand_review
 from uuid import uuid4
 
 from .records import Dependency, Mode, Record, Ref, Role, Space, VersionContext, json_value
 from .runtime import ContractError, CurrentResolver, Decision
 from .security import AccessDenied, DataUse, Operation, parameter
 from .semantic_review import check_criteria_review, check_source_review
+from .source_conflicts import check_absence_review
+from .llm import ModelFailure
+from .arithmetic import check_arithmetic_extraction, combine_arithmetic_review
+from .claim_axes import checked_claim_axes
+from .responsibility import check_responsibility, combine_status
 
 
 def digest(value):
@@ -99,6 +105,10 @@ class BoundaryRuntime:
         self._contexts = {}
         self._candidates = {}
         self._reviews = {}
+        self._bounded_review_started = set()
+        self._bounded_review_results = {}
+        self._arithmetic_executions = {}
+        self._responsibility_executions = {}
 
     def register_protocol(self, protocol):
         if protocol.ref in self._protocols:
@@ -237,7 +247,8 @@ class BoundaryRuntime:
         messages = [{"role": "system", "content": protocol_record.payload["generation_system"]},
                     {"role": "user", "content": json.dumps(content, ensure_ascii=False)}]
         try:
-            payload, call_id = adapter.complete(messages, "ObservationGeneration")
+            payload, call_id = adapter.complete(messages, "ObservationGeneration",
+                output_contract=protocol_record.payload.get("output_contracts", {}).get("generation"))
         except Exception:
             self.execution("LLMGenerationFailed", context.subject, {"context_id": context.identity})
             raise
@@ -252,6 +263,62 @@ class BoundaryRuntime:
     def validate_with_llm(self, token, candidate, adapter):
         if self._candidates.get(candidate.identity) != candidate:
             raise ContractError("UnregisteredOrAlteredCandidate")
+        protocol = self._protocols[candidate.protocol]
+        if self.h.get(protocol.semantic_rule).payload.get("format") not in ("source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
+            return self._validate_once(token, candidate, adapter)
+        if candidate.identity in self._bounded_review_results:
+            return self._bounded_review_results[candidate.identity]
+        if candidate.identity in self._bounded_review_started:
+            raise ContractError("CandidateValidationAlreadyAttempted")
+        self._bounded_review_started.add(candidate.identity)
+        first = self._validate_once(token, candidate, adapter)
+        self._bounded_review_results[candidate.identity] = first
+        if self.h.get(first.execution).payload.get("source_conflicts"):
+            try:
+                second = self._validate_once(token, candidate, adapter, previous=first)
+                self._bounded_review_results[candidate.identity] = second
+            except (ModelFailure, ContractError, AccessDenied) as exc:
+                self.execution("SemanticRecheckFailed", candidate.record.subject,
+                               {"candidate_digest": digest(candidate), "previous_review_id": first.identity,
+                                "failure_type": type(exc).__name__, "reason": str(exc)})
+                # Preserve the original UNRESOLVED record; a failed recheck grants no standing.
+        return self._bounded_review_results[candidate.identity]
+
+    def validation_history(self, candidate):
+        return tuple(r for r in self._reviews.values() if r.candidate_digest == digest(candidate))
+
+    def _checked_arithmetic(self, candidate, ref):
+        record = self.h.get(ref)
+        if record is None or record.kind != "ArithmeticExtractionExecution":
+            raise ContractError("MissingArithmeticExtraction")
+        protocol = self._protocols[candidate.protocol]
+        payload = record.payload
+        if (payload.get("candidate_digest"), payload.get("context_id"), payload.get("protocol"), payload.get("rule")) != (
+                digest(candidate), candidate.context_id, json_value(protocol.ref), json_value(protocol.semantic_rule)):
+            raise ContractError("ArithmeticExtractionBindingMismatch")
+        result = check_arithmetic_extraction(payload["extraction"], candidate.record.payload)
+        if result != payload["result"]:
+            raise ContractError("ArithmeticComputationMismatch")
+        return payload["extraction"], result
+
+    def _checked_responsibility(self, candidate, ref):
+        record = self.h.get(ref)
+        if record is None or record.kind != "ResponsibilityClassificationExecution":
+            raise ContractError("MissingResponsibilityClassification")
+        protocol = self._protocols[candidate.protocol]
+        payload = record.payload
+        if (payload.get("candidate_digest"), payload.get("context_id"), payload.get("protocol"), payload.get("rule")) != (
+                digest(candidate), candidate.context_id, json_value(protocol.ref), json_value(protocol.semantic_rule)):
+            raise ContractError("ResponsibilityBindingMismatch")
+        result = check_responsibility(payload["classification"], candidate.record.payload,
+            admission=self.h.get(protocol.ref).payload["responsibility_admission"])
+        if result != payload["result"]:
+            raise ContractError("ResponsibilityResultMismatch")
+        return result
+
+    def _validate_once(self, token, candidate, adapter, *, previous=None):
+        if self._candidates.get(candidate.identity) != candidate:
+            raise ContractError("UnregisteredOrAlteredCandidate")
         context = self._contexts[candidate.context_id]
         protocol = self._protocols[candidate.protocol]
         if adapter.config.base_url != protocol.destination:
@@ -261,19 +328,103 @@ class BoundaryRuntime:
                               DataUse(context.purpose, context.subject, candidate.record.kind, "validate", protocol.destination))
         content = self._model_context(token, context, source)
         rule = self.h.get(protocol.semantic_rule)
+        responsibility_ref, responsibility_result = None, None
+        definition = self.h.get(protocol.ref).payload
+        if definition.get("responsibility_profile") == "separate-classification-v1":
+            if candidate.identity not in self._responsibility_executions:
+                messages = [{"role": "system", "content": definition["responsibility_system"]},
+                            {"role": "user", "content": json.dumps({"context": content,
+                             "candidate": candidate.record.payload}, ensure_ascii=False)}]
+                try:
+                    classified, call = adapter.complete(messages, "ObservationResponsibilityClassification",
+                        output_contract=definition["output_contracts"]["responsibility"])
+                    result = check_responsibility(classified, candidate.record.payload,
+                        admission=definition["responsibility_admission"])
+                except (ModelFailure, ContractError) as exc:
+                    self.execution("ResponsibilityClassificationFailed", context.subject,
+                                   {"candidate_digest": digest(candidate), "reason": str(exc)})
+                    raise
+                ref = self.execution("ResponsibilityClassificationExecution", context.subject,
+                    {"candidate_digest": digest(candidate), "context_id": context.identity,
+                     "protocol": json_value(protocol.ref), "rule": json_value(protocol.semantic_rule),
+                     "model_call": call, "classification": classified, "result": result})
+                self._responsibility_executions[candidate.identity] = ref
+                self.security.enforce(token, Operation(context.purpose, context.subject, protocol.ref.identity, "validate"), source,
+                                      DataUse(context.purpose, context.subject, candidate.record.kind, "validate", protocol.destination))
+                content = self._model_context(token, context, source)
+            responsibility_ref = self._responsibility_executions[candidate.identity]
+            responsibility_result = self._checked_responsibility(candidate, responsibility_ref)
+        arithmetic_ref, arithmetic_result = None, None
+        if rule.payload.get("format") == "arithmetic-linked-v6":
+            if candidate.identity not in self._arithmetic_executions:
+                extraction_messages = [
+                    {"role": "system", "content": self.h.get(protocol.ref).payload["extraction_system"]},
+                    {"role": "user", "content": json.dumps({"context": content, "candidate": candidate.record.payload}, ensure_ascii=False)}]
+                try:
+                    extracted, extraction_call = adapter.complete(extraction_messages, "ArithmeticExtraction",
+                        output_contract=self.h.get(protocol.ref).payload.get("output_contracts", {}).get("extraction"))
+                    computed = check_arithmetic_extraction(extracted, candidate.record.payload)
+                except (ModelFailure, ContractError) as exc:
+                    self.execution("ArithmeticExtractionFailed", context.subject,
+                                   {"candidate_digest": digest(candidate), "reason": str(exc)})
+                    raise
+                arithmetic_ref = self.execution("ArithmeticExtractionExecution", context.subject,
+                    {"candidate_digest": digest(candidate), "context_id": context.identity,
+                     "protocol": json_value(protocol.ref), "rule": json_value(protocol.semantic_rule),
+                     "model_call": extraction_call, "extraction": extracted, "result": computed})
+                self._arithmetic_executions[candidate.identity] = arithmetic_ref
+                # No second outbound model call after an intervening authority/data revocation.
+                self.security.enforce(token, Operation(context.purpose, context.subject, protocol.ref.identity, "validate"), source,
+                                      DataUse(context.purpose, context.subject, candidate.record.kind, "validate", protocol.destination))
+                content = self._model_context(token, context, source)
+            arithmetic_ref = self._arithmetic_executions[candidate.identity]
+            extraction, arithmetic_result = self._checked_arithmetic(candidate, arithmetic_ref)
         # These are exact arithmetic fixture facts, not a natural-language classifier.
         arithmetic = {"42 / 6": 42 // 6, "8 * 15": 8 * 15, "42 / 6 * 15": (42 // 6) * 15}
         messages = [{"role": "system", "content": rule.payload["system"]},
                     {"role": "user", "content": json.dumps({"context": content,
                      "candidate": candidate.record.payload, "arithmetic_fixture": arithmetic,
                      "criteria": rule.payload.get("criteria", [])}, ensure_ascii=False)}]
+        if arithmetic_ref is not None:
+            payload = json.loads(messages[1]["content"])
+            payload.update(arithmetic_extraction=extraction, arithmetic_result=arithmetic_result)
+            messages[1]["content"] = json.dumps(payload, ensure_ascii=False)
+        if previous is not None:
+            # Same authorized context and candidate; hints establish existence, not semantics.
+            payload = json.loads(messages[1]["content"])
+            payload["source_existence_conflicts"] = self.h.get(previous.execution).payload["source_conflicts"]
+            payload["recheck_instruction"] = (
+                "This is the single permitted recheck of a contradictory review. The exact quoted words "
+                "exist in the listed original fields. Re-evaluate the ENTIRE exact candidate under all rules. "
+                "Existence is not speaker attribution or semantic support; do not automatically PASS. "
+                "Return a new complete review, using UNRESOLVED if support cannot be established.")
+            messages[1]["content"] = json.dumps(payload, ensure_ascii=False)
+        contract = self.h.get(protocol.ref).payload.get("output_contracts", {}).get("validation")
+        registry = None
+        if self.h.get(protocol.ref).payload.get("source_encoding") == "field-handles-v1":
+            registry = source_registry(content)
+            contract = handle_contract(contract, registry)
+            payload = json.loads(messages[1]["content"])
+            payload["source_registry"] = registry
+            messages[1]["content"] = json.dumps(payload, ensure_ascii=False)
         try:
-            output, call_id = adapter.complete(messages, "ObservationSemanticValidation")
+            output, call_id = adapter.complete(messages, "ObservationSemanticRecheck" if previous else "ObservationSemanticValidation",
+                output_contract=contract)
         except Exception:
             self.execution("LLMValidationFailed", context.subject, {"candidate_digest": digest(candidate)})
             raise
+        wire_output = output
         try:
-            if rule.payload.get("format") == "source-linked-v3":
+            if registry is not None:
+                output = expand_review(wire_output, registry)
+            checked_output = (checked_claim_axes(output)
+                if self.h.get(protocol.ref).payload.get("claim_axes") == "attribution-boundary-v1" else output)
+            conflicts = []
+            if rule.payload.get("format") in ("source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
+                status, rationale, conflicts = check_absence_review(
+                    checked_output, candidate.record.payload, rule.payload["criteria"], content,
+                    support_audit=rule.payload["format"] in ("source-linked-v5", "arithmetic-linked-v6"))
+            elif rule.payload.get("format") == "source-linked-v3":
                 status, rationale = check_source_review(output, candidate.record.payload, rule.payload["criteria"], content)
             elif rule.payload.get("format") == "criteria-quotes-v2":
                 status, rationale = check_criteria_review(output, candidate.record.payload, rule.payload["criteria"])
@@ -289,11 +440,26 @@ class BoundaryRuntime:
                            {"candidate_digest": digest(candidate), "model_call": call_id,
                             "reason": str(exc), "output": output})
             raise
+        semantic_status = status
+        if arithmetic_result is not None:
+            status = "UNRESOLVED" if conflicts else combine_arithmetic_review(status, output, arithmetic_result)
+        pre_responsibility_status = status
+        if responsibility_result is not None:
+            status = combine_status(status, responsibility_result["status"])
         execution = self.execution("SemanticValidationExecution", context.subject,
                                    {"candidate_digest": digest(candidate), "context_id": context.identity,
                                     "protocol": json_value(protocol.ref), "rule": json_value(protocol.semantic_rule),
                                     "model_ref": adapter.config.model, "model_call": call_id,
-                                    "status": status, "fixture": False, "details": output})
+                                    "status": status, "fixture": False, "details": output,
+                                    "source_registry": registry, "wire_output": wire_output,
+                                    "source_conflicts": conflicts,
+                                    "semantic_status": semantic_status,
+                                    "arithmetic_execution": json_value(arithmetic_ref) if arithmetic_ref else None,
+                                    "arithmetic_result": arithmetic_result,
+                                    "pre_responsibility_status": pre_responsibility_status,
+                                    "responsibility_execution": json_value(responsibility_ref) if responsibility_ref else None,
+                                    "responsibility_result": responsibility_result,
+                                    "previous_review_id": previous.identity if previous else None})
         review = SemanticValidation(uuid4().hex, digest(candidate), context.identity, protocol.ref,
                                     protocol.semantic_rule, execution, adapter.config.model, status,
                                     rationale, False, json.dumps(output, ensure_ascii=False, sort_keys=True))
@@ -336,15 +502,45 @@ class BoundaryRuntime:
                 or execution.payload["candidate_digest"] != digest(candidate)):
             return "UntrustedValidationExecution"
         rule = self.h.get(protocol.semantic_rule)
-        if rule.payload.get("format") in ("criteria-quotes-v2", "source-linked-v3"):
+        if rule.payload.get("format") in ("criteria-quotes-v2", "source-linked-v3", "source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
             try:
                 details = json.loads(review.details_json)
-                if rule.payload["format"] == "source-linked-v3":
+                checked_details = (checked_claim_axes(details)
+                    if self.h.get(protocol.ref).payload.get("claim_axes") == "attribution-boundary-v1" else details)
+                if rule.payload["format"] in ("source-linked-v3", "source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
                     content = [{"ref": json_value(item.record.ref), "kind": item.record.kind,
                                 "content": item.record.payload} for item in context.items]
-                    status, _ = check_source_review(details, r.payload, rule.payload["criteria"], content)
+                    if self.h.get(protocol.ref).payload.get("source_encoding") == "field-handles-v1":
+                        registry = source_registry(content)
+                        if (execution.payload.get("source_registry") != registry
+                                or expand_review(execution.payload.get("wire_output"), registry) != details):
+                            return "SourceHandleBindingMismatch"
+                    if rule.payload["format"] in ("source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
+                        status, _, conflicts = check_absence_review(
+                            checked_details, r.payload, rule.payload["criteria"], content,
+                            support_audit=rule.payload["format"] in ("source-linked-v5", "arithmetic-linked-v6"))
+                        if execution.payload.get("source_conflicts") != conflicts:
+                            return "SemanticValidationConflictDetailsMismatch"
+                    else:
+                        status, _ = check_source_review(details, r.payload, rule.payload["criteria"], content)
                 else:
                     status, _ = check_criteria_review(details, r.payload, rule.payload["criteria"])
+                if rule.payload["format"] == "arithmetic-linked-v6":
+                    ref_value = execution.payload.get("arithmetic_execution")
+                    if not isinstance(ref_value, dict) or set(ref_value) != {"space", "identity", "revision"}:
+                        return "MissingArithmeticExtraction"
+                    _, computed = self._checked_arithmetic(candidate, Ref(Space(ref_value["space"]), ref_value["identity"], ref_value["revision"]))
+                    if computed != execution.payload.get("arithmetic_result") or status != execution.payload.get("semantic_status"):
+                        return "ArithmeticValidationDetailsMismatch"
+                    status = "UNRESOLVED" if conflicts else combine_arithmetic_review(status, details, computed)
+                if self.h.get(protocol.ref).payload.get("responsibility_profile") == "separate-classification-v1":
+                    ref_value = execution.payload.get("responsibility_execution")
+                    if not isinstance(ref_value, dict) or set(ref_value) != {"space", "identity", "revision"}:
+                        return "MissingResponsibilityClassification"
+                    computed = self._checked_responsibility(candidate, Ref(Space(ref_value["space"]), ref_value["identity"], ref_value["revision"]))
+                    if computed != execution.payload.get("responsibility_result") or status != execution.payload.get("pre_responsibility_status"):
+                        return "ResponsibilityValidationDetailsMismatch"
+                    status = combine_status(status, computed["status"])
                 if status != review.status or execution.payload.get("details") != details:
                     return "SemanticValidationDetailsMismatch"
             except (ContractError, ValueError) as exc:

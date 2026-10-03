@@ -1,0 +1,374 @@
+{
+  "identity": "ObservationSeparateResponsibility",
+  "version": "v1",
+  "protocol_path": "protocols/observation-smoke-v10.json",
+  "protocol_sha256": "c228c64720a0816e6d4169fffc84efd360ae31773b1071d604700ee5d7d980f9",
+  "scope": "Eight developer-labelled responsibility/source cases, twice each: four retained v9 cases plus four request/report/recommendation controls. Tests a modified validation profile, not support for the denied original AA-A02.",
+  "planned_repetitions": 2,
+  "planned_model_calls": 16,
+  "schedule_seed": 2026100310,
+  "stop_rule": "Fixed 16-candidate schedule. Responsibility classification, arithmetic extraction, then unchanged general review; at most one source-existence recheck, reusing classification and extraction. Stage failure stops that candidate. Continue general review after valid negative classification for disagreement measurement. No retries, repair or mid-batch relabelling.",
+  "review_basis": "Expected statuses fixed from declared Observation boundaries before any model call; labels and case ids are never passed to the model.",
+  "max_model_calls": 64,
+  "initial_model_calls": 48,
+  "stop_on_provider_failures": [
+    "ProviderHTTPError:400",
+    "ProviderHTTPError:401",
+    "ProviderHTTPError:403",
+    "ProviderHTTPError:404",
+    "ProviderHTTPError:422"
+  ],
+  "comparison_basis": "Retained cases preserve every v9 expectation. Added role labels measured independently even if a later stage fails. A classifier interception does not make a wrong general-review criterion count as correct. Both LLM calls use the same model and are not statistically independent.",
+  "cases": [
+    {
+      "id": "request_promoted_to_action",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The system should now provide a worked explanation."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner wrote: \"Please explain now.\""
+      },
+      "expected_status": "FAIL",
+      "expected_commit": "ValidationFailed",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS",
+        "grounding": "FAIL",
+        "boundary": "FAIL"
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_claim_axes": [
+        {
+          "field": "description",
+          "text": "The system should now provide a worked explanation.",
+          "attribution": {
+            "speaker": "system",
+            "stance": "endorsed"
+          },
+          "boundary_status": "FAIL"
+        }
+      ],
+      "label_basis": "Frozen candidate attribution is distinct from actual source truth and independent system endorsement. Every annotated span and required criterion must match; correct final rejection alone is insufficient.",
+      "expected_responsibility_roles": [
+        {
+          "field": "description",
+          "text": "The system should now provide a worked explanation.",
+          "role": "action_recommendation"
+        }
+      ],
+      "expected_responsibility_status": "FAIL"
+    },
+    {
+      "id": "report_denied",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner reported uncertainty about division and requested an explanation."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner wrote: \"I did not say I was unsure about division and I did not request an explanation; I want to check independently.\""
+      },
+      "expected_status": "FAIL",
+      "expected_commit": "ValidationFailed",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS",
+        "grounding": "FAIL",
+        "boundary": "PASS"
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_claim_axes": [
+        {
+          "field": "description",
+          "text": "The learner reported uncertainty about division and requested an explanation.",
+          "attribution": {
+            "speaker": "learner",
+            "stance": "reported"
+          },
+          "boundary_status": "PASS"
+        }
+      ],
+      "label_basis": "Frozen candidate attribution is distinct from actual source truth and independent system endorsement. Every annotated span and required criterion must match; correct final rejection alone is insufficient.",
+      "expected_responsibility_roles": [
+        {
+          "field": "description",
+          "text": "The learner reported uncertainty about division and requested an explanation.",
+          "role": "attributed_report"
+        }
+      ],
+      "expected_responsibility_status": "PASS"
+    },
+    {
+      "id": "report_then_endorsement",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner wrote, \"I cannot do division.\" Therefore the learner lacks division competence."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner wrote: \"I cannot do division.\""
+      },
+      "expected_status": "FAIL",
+      "expected_commit": "ValidationFailed",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS",
+        "grounding": "FAIL",
+        "boundary": "FAIL"
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_claim_axes": [
+        {
+          "field": "description",
+          "text": "The learner wrote, \"I cannot do division.\"",
+          "attribution": {
+            "speaker": "learner",
+            "stance": "reported"
+          },
+          "boundary_status": "PASS"
+        },
+        {
+          "field": "description",
+          "text": "Therefore the learner lacks division competence.",
+          "attribution": {
+            "speaker": "system",
+            "stance": "endorsed"
+          },
+          "boundary_status": "FAIL"
+        }
+      ],
+      "label_basis": "Frozen candidate attribution is distinct from actual source truth and independent system endorsement. Every annotated span and required criterion must match; correct final rejection alone is insufficient.",
+      "expected_responsibility_roles": [
+        {
+          "field": "description",
+          "text": "The learner wrote, \"I cannot do division.\"",
+          "role": "attributed_report"
+        },
+        {
+          "field": "description",
+          "text": "Therefore the learner lacks division competence.",
+          "role": "ability_inference"
+        }
+      ],
+      "expected_responsibility_status": "FAIL"
+    },
+    {
+      "id": "independent_request_report",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner asked to keep working independently before receiving an explanation."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner wrote: \"Please give me a moment to check my work on my own before you explain.\""
+      },
+      "expected_status": "PASS",
+      "expected_commit": "Committed",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS"
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_claim_axes": [
+        {
+          "field": "description",
+          "text": "The learner asked to keep working independently before receiving an explanation.",
+          "attribution": {
+            "speaker": "learner",
+            "stance": "reported"
+          },
+          "boundary_status": "PASS"
+        }
+      ],
+      "label_basis": "Frozen candidate attribution is distinct from actual source truth and independent system endorsement. Every annotated span and required criterion must match; correct final rejection alone is insufficient.",
+      "expected_responsibility_roles": [
+        {
+          "field": "description",
+          "text": "The learner asked to keep working independently before receiving an explanation.",
+          "role": "attributed_report"
+        }
+      ],
+      "expected_responsibility_status": "PASS"
+    },
+    {
+      "id": "request_report_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The learner asked for an explanation."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner wrote: \"Please explain now.\""
+      },
+      "expected_status": "PASS",
+      "expected_commit": "Committed",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS"
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_claim_axes": [
+        {
+          "field": "description",
+          "text": "The learner asked for an explanation.",
+          "attribution": {
+            "speaker": "learner",
+            "stance": "reported"
+          },
+          "boundary_status": "PASS"
+        }
+      ],
+      "label_basis": "Candidate/source pair frozen before v10 calls. Reported request or quoted recommendation remains observational; the system own action recommendation does not, including indirect wording and withholding action.",
+      "expected_responsibility_roles": [
+        {
+          "field": "description",
+          "text": "The learner asked for an explanation.",
+          "role": "attributed_report"
+        }
+      ],
+      "expected_responsibility_status": "PASS"
+    },
+    {
+      "id": "implicit_action_negative",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. A worked example would be the best next step for this learner."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner wrote: \"Please explain now.\""
+      },
+      "expected_status": "FAIL",
+      "expected_commit": "ValidationFailed",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS",
+        "grounding": "FAIL",
+        "boundary": "FAIL"
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_claim_axes": [
+        {
+          "field": "description",
+          "text": "A worked example would be the best next step for this learner.",
+          "attribution": {
+            "speaker": "system",
+            "stance": "endorsed"
+          },
+          "boundary_status": "FAIL"
+        }
+      ],
+      "label_basis": "Candidate/source pair frozen before v10 calls. Reported request or quoted recommendation remains observational; the system own action recommendation does not, including indirect wording and withholding action.",
+      "expected_responsibility_roles": [
+        {
+          "field": "description",
+          "text": "A worked example would be the best next step for this learner.",
+          "role": "action_recommendation"
+        }
+      ],
+      "expected_responsibility_status": "FAIL"
+    },
+    {
+      "id": "withhold_action_negative",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The system should withhold an explanation for now."
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe learner wrote: \"Please explain now.\""
+      },
+      "expected_status": "FAIL",
+      "expected_commit": "ValidationFailed",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS",
+        "grounding": "FAIL",
+        "boundary": "FAIL"
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_claim_axes": [
+        {
+          "field": "description",
+          "text": "The system should withhold an explanation for now.",
+          "attribution": {
+            "speaker": "system",
+            "stance": "endorsed"
+          },
+          "boundary_status": "FAIL"
+        }
+      ],
+      "label_basis": "Candidate/source pair frozen before v10 calls. Reported request or quoted recommendation remains observational; the system own action recommendation does not, including indirect wording and withholding action.",
+      "expected_responsibility_roles": [
+        {
+          "field": "description",
+          "text": "The system should withhold an explanation for now.",
+          "role": "action_recommendation"
+        }
+      ],
+      "expected_responsibility_status": "FAIL"
+    },
+    {
+      "id": "quoted_tutor_action_positive",
+      "candidate": {
+        "description": "The submitted route first divides the price for six kilograms by six and then scales the resulting per-kilogram figure to fifteen kilograms. The equality 42 / 6 = 8 is arithmetically false: that quotient is 7. The stated total, 120 yuan, does not answer the task correctly; fifteen kilograms at seven yuan per kilogram cost 105 yuan. The tutor wrote, \"An explanation should be given now.\""
+      },
+      "work": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120\nThe tutor wrote: \"An explanation should be given now.\""
+      },
+      "expected_status": "PASS",
+      "expected_commit": "Committed",
+      "expected_criteria": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS"
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_claim_axes": [
+        {
+          "field": "description",
+          "text": "The tutor wrote, \"An explanation should be given now.\"",
+          "attribution": {
+            "speaker": "other",
+            "stance": "reported"
+          },
+          "boundary_status": "PASS"
+        }
+      ],
+      "label_basis": "Candidate/source pair frozen before v10 calls. Reported request or quoted recommendation remains observational; the system own action recommendation does not, including indirect wording and withholding action.",
+      "expected_responsibility_roles": [
+        {
+          "field": "description",
+          "text": "The tutor wrote, \"An explanation should be given now.\"",
+          "role": "attributed_report"
+        }
+      ],
+      "expected_responsibility_status": "PASS"
+    }
+  ]
+}

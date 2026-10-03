@@ -74,4 +74,157 @@ python run_semantic_stability.py --max-calls 40 --run
 
 模型标识与请求格式依据 2026-09-30 查阅的 DeepSeek 官方 [Chat Completions API](https://api-docs.deepseek.com/api/create-chat-completion/) 和 [JSON Output](https://api-docs.deepseek.com/guides/json_mode/)。别名可能随供应商升级，运行证据会同时保留实际返回的 model 和 fingerprint。
 
-**基础检查或连通验证 PASS 不等于 Architecture Assumption SUPPORTED。** 真实 API 已连通，首次语义误放已登记并形成定向回归。完整 A1/A2、Policy、Action、Replay 和会话串行链仍待执行，AA 保持 `UNVALIDATED`、Gate E / F 保持 `OPEN`。
+## 来源对应校验 v3
+
+v2 的 40 次运行发现 5 次误放，全部是同一“虚构学习者自述”负例，且均提交为 Observation。实际请求中的来源没有那句话；保留的原始批次为 `semantic-stability-20260930T064409Z-bbdc564fa1c2`。当前 v2 对该来源真实性检查的失败不因后续修复而撤销。
+
+v3 使用独立的 `protocols/observation-smoke-v3.json`。校验模型在五项判据之外，必须把候选全文划分为有序原文片段，为每段提供来源 ref / revision、字段及原文，并判断断言支持关系。程序要求片段覆盖全部候选非空白内容，精确来源属于已获准的 Context，且来源摘录确实存在；直接引语通过还要求被引原话存在于其引用的来源中。转述、翻译、说话人、否定含义及推导是否成立仍由显式规则 + LLM 判断，不用关键词分类。
+
+来源检查与校验 execution 绑定，并在提交时再次核验。缺少覆盖、虚构来源或判据与断言结果矛盾都属于协议失败，不能当作成功识别负例。完整字面覆盖不证明每个逻辑断言都被正确拆解，存在的来源片段也不证明支持关系；这些仍是需要用反例检验的 LLM 语义职责。
+
+`fixtures/observation-grounding-v1.json` 冻结 12 个样例，各运行 2 次，共 24 次：保留原 8 个样例，新增转述请求、错误说话人、跨语言自述和明确否认请求。5 个正例、7 个负例；正负例均要求语义结果与提交结果符合预期。新样例由开发会话编写，不是第三方盲测。运行期间不调参、不重试，也不修改预期：
+
+```powershell
+python run_semantic_stability.py --fixture observation-grounding-v1.json --max-calls 24 --max-output-tokens 3072
+python run_semantic_stability.py --fixture observation-grounding-v1.json --max-calls 24 --max-output-tokens 3072 --run
+```
+
+第一条只预检；第二条执行真实调用。来源对应信息比 v2 输出更长，因此该批每次输出上限显式提高到 3072；`.env` 不变。未指定 `--fixture` 仍运行原 v2 设计，连通 smoke 默认也保持 v2。历史协议、fixture 与运行结果不被替换。
+
+## 原文不存在判断与一次复核 v4
+
+v3 取得了原虚构自述反例两次拒绝的证据，但真实自述正例出现一次“原话存在却被判不存在”的误拒；另有 7 次传输失败，整批 NON_SUCCESS。原始结果与限制见 `reports/observation-grounding-v3-20261002.md`。
+
+v4 新增明确的支持／否定原因：supported、text_absent、speaker_mismatch、meaning_mismatch、uncertain。原文不存在只能用于直接引语；转述／翻译仍判断语义支持，不能因字面不同而否定。说话人或含义不支持必须引用来源。程序仅对 text_absent 在已获准 Context 的字符串字段中做精确查找，不扫描其他存储，也不以关键词解释含义。
+
+如果找到模型声称不存在的原话，原始输出保持不变，其校验记录的有效结论为 UNRESOLVED。运行时最多发起一次专门复核，附上原话所在的精确来源字段与上下文，要求重新判断全部候选。复核前重新授权读取；每次结果均保存，新记录关联 previous_review_id。原文存在不自动产生 PASS。复核仍有矛盾、输出不合法、网络失败或预算不足时阻止提交；同一已注册候选重复调用不会开启第三次校验或暗中重试。该实现采用当前 Spike 内存 Runtime 的候选及执行记录，不声称完成了跨进程恢复。
+
+传输失败使用固定脱敏类别区分超时、DNS、TLS、连接重置／拒绝、远端断开和响应不完整；不保留异常原文，不自动重试。
+
+`fixtures/observation-absence-v1.json` 保留 v3 的 12 个样例及预期，每项 2 次，共 24 次初始校验；每个候选最多一次条件复核，全批最多 48 次模型调用。不是未参与设计的独立测试集。摘要同时记录初次矛盾数、复核调用数和复核失败数；24 次最终判定全部符合预期才可报告本批 PASS，初次错误仍保留：
+
+```powershell
+python run_semantic_stability.py --fixture observation-absence-v1.json --max-calls 48 --max-output-tokens 3072
+python run_semantic_stability.py --fixture observation-absence-v1.json --max-calls 48 --max-output-tokens 3072 --run
+```
+
+第一条仅预检；第二条执行真实调用。未发生矛盾时不消耗额外复核预算，`.env` 不变。默认 smoke 和默认 stability fixture 保持既有版本。
+
+## 支持不足、含义矛盾与未决 v5
+
+v4 的 24 次实验中，10 次正例通过、7 次负例正确拒绝，但有 4 次协议错误和 3 次远端断开；未触发真实存在性复核，整批 NON_SUCCESS。见 `reports/observation-absence-v4-20261002.md`。
+
+v5 增加 `unsupported → FAIL`，表示模型检查本次提供的完整材料后，能够判断该非引语断言缺少支持；不宣称断言在现实中必然为假。`meaning_mismatch` 继续表达来源与陈述矛盾，`uncertain → UNRESOLVED` 表示无法判断支持关系。对转述／翻译，字面措辞不同不能推出 unsupported；对直接引语，不允许用 unsupported 绕过精确原文存在性检查。
+
+每个片段增加 `inspected_sources`，用精确 ref / revision 与字段声明已检查范围。unsupported 必须覆盖本次 Context 所有字符串字段，不得遗漏、重复或引用范围外记录；可不捏造用于证明缺失的原文摘录。其他类别可使用空范围声明，但仍遵守其原有引用要求。程序只检查这个声明的结构和范围，不把它当作语义推理正确性的证明。职责越界由 boundary 单独判断：支持关系未决与明确的职责违规可以并存。
+
+v5 保留 v4 的原文矛盾处理与一次复核上限。完整的旧协议、fixture 和运行结果保留。新增设计 `fixtures/observation-support-v1.json` 包含原 12 个样例，加上第二种解法有／无来源、独立作答请求转述被支持／被否定两组新样例；16 项各 2 次，共 32 次初始调用，最多 64 次（仅矛盾可复核，无网络重试）。7 个正例、9 个负例；这些仍是开发者编写的数据，不是独立盲测。
+
+```powershell
+python run_semantic_stability.py --fixture observation-support-v1.json --max-calls 64 --max-output-tokens 3072
+python run_semantic_stability.py --fixture observation-support-v1.json --max-calls 64 --max-output-tokens 3072 --run
+```
+
+第一条仅预检，第二条运行冻结批次。逐次保存原始模型输出、有效判断、协议错误、初次矛盾和条件复核，失败不以新调用替换。
+
+## 算术提取、语义映射审查与精确验算 v6
+
+v5 出现“理由已说明 8×15＝125 错误，但状态仍为 PASS 并提交”的误放，以及合法请求转述误拒，详见 `reports/observation-support-v5-20261002.md`。v6 聚焦前者，尚不解决一般转述支持关系的可靠性问题。
+
+每个候选先用一次独立 LLM 调用提取算术断言：带 exact candidate 原文定位的有序全文片段，以及 operator、left、right、value 和 stance。stance 区分 asserted_true、asserted_false、reported_only。提取必须保留候选实际声称值，不能先修正为正确值。程序使用有理数精确执行四则运算，不用 float 比较，不执行模型生成代码；数字仅接受有界十进制字符串。语义提取仍由 LLM 完成，数字格式语法检查不解释自然语言。
+
+随后第二次 LLM 调用执行来源／边界校验，并新增 arithmetic_mapping 判据，检查提取是否完整且忠实，包括数字、操作、否定及转述关系。提取遗漏或失真时有效结论为 UNRESOLVED，不能拿错误提取计算出的结果否定候选。映射通过后，精确算术 FAIL 可以覆盖 LLM 的语义 PASS。原文存在性矛盾仍记 UNRESOLVED，并最多复核一次；复核复用已绑定提取，不重做提取或无限调用。各阶段之间重新验证数据访问权限。
+
+提交时重新读取绑定 exact candidate / Context / Protocol / rule 的提取 execution，执行相同精确计算并核对保存结果。LLM 判断、算术判断和最终有效状态分别保留。完整字面覆盖不证明提取忠实；映射审查本身仍可能错误，这是单独的语义风险。除零或无法在本版有界二元四则运算内表达的断言保留为未决，不默认为通过。仅转述来源里的错误等式不等于候选自己断言该等式正确。
+
+`fixtures/observation-arithmetic-v1.json` 固定 8 项算术样例，各 2 次，共 16 个候选执行：基线、错误／正确乘法、正确／错误否定、转述错误等式、正确／错误十进制加法。每个候选通常两次模型调用，共计划 32 次；至多 16 次条件复核，总上限 48 次。提取失败则该候选停止，不追加调用或补跑。旧 runner 的 fixture 字段 planned_model_calls 在该设计中仍用于候选执行数；initial_model_calls、manifest 的 planned_calls 和实际 model_calls 分别标明计划初始 API 数与实际 API 数。
+
+```powershell
+python run_semantic_stability.py --fixture observation-arithmetic-v1.json --max-calls 48 --max-output-tokens 3072
+python run_semantic_stability.py --fixture observation-arithmetic-v1.json --max-calls 48 --max-output-tokens 3072 --run
+```
+
+第一条仅预检，第二条执行固定批次。摘要新增 extraction_calls 与 arithmetic_overrides；逐项记录 llm_semantic_status、arithmetic_status、effective_status，避免将程序拦截误报为 LLM 正确判断。v6 校验提示为容纳独立提取结果而重新组织、缩短；本批是组合方案实验，不能将效果差异仅归因于精确计算机制。
+
+## 严格结构输出实验 v7
+
+v6 的 16 次执行中，13 次符合预期，另有两次无效 JSON 和一次远端断开，详见 `reports/observation-arithmetic-v6-20261003.md`。v7 保留 v6 的全部语义规则、算术提取与映射审查、八项样例、预期和顺序，只增加结果交付说明及 JSON Schema，实验范围是结构输出稳定性。
+
+依据 2026-10-03 查阅的 DeepSeek 官方 [Tool Calls](https://api-docs.deepseek.com/guides/tool_calls/) 与 [Chat Completions API](https://api-docs.deepseek.com/api/create-chat-completion/)，使用显式的 `https://api.deepseek.com/beta` 端点、关闭 thinking、`strict: true` 和强制指定函数名。本实验的函数仅是固定结果包，不执行外部操作。协议保存 generation、extraction、validation 三个结构定义；对象字段全部必需且不允许额外字段。直接引语的 reported_quote 保留字符串／null 表示，供应商是否接受完整 schema 必须以真实调用验证，不能由本地模拟测试推出。
+
+适配器只接受一个指定函数的结果，要求 finish_reason 为 tool_calls，并严格解析 arguments；本地再次检查 schema、精确引用、候选覆盖、算术及提交权限。缺失、额外字段、未知函数、多函数、无效 JSON、截断及连接失败都保留失败证据，不回退到普通文本、不修复输出、不自动重试。结构正确不证明语义正确，原有误放反例仍有效。
+
+`fixtures/observation-structured-v1.json` 固定 16 个候选执行，计划 32 次初始调用，含条件复核的上限 48 次。首次调用也属于本批次；遇到声明的 HTTP 400、401、403、404、422 时停止整批，保留失败并列明剩余未运行样例，避免反复发送供应商不接受的请求。其他候选失败按固定顺序继续。所有 API 结果在本候选结束时写入证据；目前不保证进程在两阶段之间被强制结束时，当前候选的已完成调用已经落盘。
+
+```powershell
+python run_semantic_stability.py --fixture observation-structured-v1.json --base-url https://api.deepseek.com/beta --max-calls 48 --max-output-tokens 3072
+python run_semantic_stability.py --fixture observation-structured-v1.json --base-url https://api.deepseek.com/beta --max-calls 48 --max-output-tokens 3072 --run
+```
+
+第一条仅预检，第二条执行冻结批次。端点通过本批显式参数与协议一致性检查，授权数据目的地同步绑定该端点；`.env`、旧协议和历史批次保持原样。变化包含 beta 路径、结果包及交付说明，不能把与 v6 的差异仅归因于某一个因素。
+
+## 使用 v7 复查完整来源支持样例
+
+v7 算术批次的真实结果为 15/16 符合预期，一次远端断开；30 个返回结果均无结构错误，但错误否定样例两次被 LLM 判为语义 PASS，最终由精确算术拦截。见 `reports/observation-structured-v7-20261003.md`。这不足以解决一般转述支持关系，后续回归使用独立的 `fixtures/observation-support-structured-v1.json`。
+
+该设计保留 v5 全部 16 项候选、来源、预期和调度顺序，每项 2 次；直接使用冻结的 v7 协议，不改语义规则。每次新增算术提取与映射审查，共计划 64 次初始 API 调用，含最多一次来源存在性复核的总上限为 96 次。原有 grounding、boundary 等预期全部保留，另要求 arithmetic_mapping=PASS 和对应算术预期；即使程序成功阻止错误提交，若原有判据判断错误，仍记录判据不匹配，不能把该样例报告为完全符合预期。重点包括此前误拒的独立作答请求转述及其来源矛盾配对、错误说话人、跨语言自述、明确否定、虚构自述与第二解法有无来源。
+
+```powershell
+python run_semantic_stability.py --fixture observation-support-structured-v1.json --base-url https://api.deepseek.com/beta --max-calls 96 --max-output-tokens 3072
+python run_semantic_stability.py --fixture observation-support-structured-v1.json --base-url https://api.deepseek.com/beta --max-calls 96 --max-output-tokens 3072 --run
+```
+
+第一条只预检，第二条执行新批次。沿用 v7 的供应商配置失败停止规则，无网络重试和输出修复。相较 v5，协议内容、算术流程与传输方式已有变化，结果只用于定位现存问题，不单独证明某项改动的因果效果，也不代替新样例或独立盲测。
+
+## 来源字段编号与统一交付说明 v8
+
+v7 完整来源支持回归为 24/32 符合预期，五次多余闭合括号、一次额外 arguments 包装、两次错误来源字段，详见 `reports/observation-support-structured-v7-20261003.md`。严格接口仍可能返回不合法结果，本地检查不可省略。
+
+v8 由运行时在获准读取的 Context 中，为每个字符串字段生成本次调用内的 source_registry：handle、exact ref/revision、field、完整原文。模型的 sources 和 inspected_sources 仅选择该表中的编号；实际发送的 schema 枚举限于本次编号。程序按固定映射还原既有来源结构，保留原始 wire_output、source_registry 与展开后的 details，提交时从 exact Context 重新生成映射并核对展开结果。这是调用前声明的数据表示，不是错误返回后的修补；未知或重复编号、旧版 ref 对象都拒绝，不搜索字段、不猜测或重绑定引用。来源引用使用完整原字段，直接引语存在性和完整检查范围要求继续生效。
+
+编号只确定所指材料，模型仍须判断材料是否支持候选，包括说话人、否定、转述和边界。选择有效编号不证明语义支持；原文存在性矛盾仍最多复核一次，保存两次原始结果，复核前重新授权。算术提取、映射检查和精确验算继续执行。各阶段交付提示统一为调用指定结果函数，不再同时要求普通 JSON 文本回复；任何不合规结果继续保留失败，不自动删除括号或解包。
+
+`fixtures/observation-source-handles-v1.json` 选取 v7 发生故障的六种样例及独立作答请求正例配对，共七项，每项两次，14 次候选执行、28 次计划初始 API、最多 42 次（含条件复核）。样例及全部预期保持原样；这是看过失败后的定向回归，不是盲测，也不覆盖全部旧样例。两个表示／交付改动共同实验，不能分离各自效果。
+
+```powershell
+python run_semantic_stability.py --fixture observation-source-handles-v1.json --base-url https://api.deepseek.com/beta --max-calls 42 --max-output-tokens 3072
+python run_semantic_stability.py --fixture observation-source-handles-v1.json --base-url https://api.deepseek.com/beta --max-calls 42 --max-output-tokens 3072 --run
+```
+
+## 逐断言归属、来源支持与职责边界 v9
+
+v8 的定向回归为 12/14 符合当时预设指标，两次额外包装失败；额外审查发现同一个被来源否认的自述候选，boundary 一次 PASS、一次 FAIL，见 `reports/observation-source-handles-v8-20261003.md`。v9 据此补足逐片段测量，沿用 Interaction Space §3 的自述归属边界和 AI Runtime §6.6 的语义／确定性分工，不修改上位文档或 owner。
+
+新协议要求每个 claim 增加 attribution（speaker: system/learner/other/unresolved；stance: reported/endorsed/unresolved）及 boundary_status。归属描述候选将陈述归给谁、是否仅为转述；原材料缺失、否认或属于另一说话人，改变的是来源支持，不能自动把候选改判为系统独立认定。转述后追加系统结论必须分段。系统对本次步骤或算术的局部观察可以在职责内，系统独立能力结论或教学决策属于越界；这些内容判断全部由规则约束下的 LLM 作出。
+
+程序只校验枚举、完整结构和汇总一致性：boundary 等于各 claim 的 boundary_status 汇总；新增 attribution 判据仅表示所有片段归属已确定，遇到 unresolved 则为 UNRESOLVED，不表示被报告的事情真实。来源支持沿用 grounding。原始元数据连同来源映射保留，并在提交时复核。合法枚举及汇总一致也不能证明模型分类正确。
+
+`fixtures/observation-claim-axes-v1.json` 冻结十项、每项两次，共 20 次候选执行、40 次计划初始 API、最多 60 次。前四项使用完全相同的候选自述，分别提供支持、否认、缺失和错误说话人的来源；另覆盖学习者／教师的能力报告、系统直接能力认定、转述后追加认定、请求被升级为系统行动建议，以及独立作答请求。各例明确给出所有判据及关键候选片段的 speaker、stance、boundary_status 预期。
+
+runner 在得到审查结果后按候选原文定位离线标签，不将标签、样例名称或预期发送给模型；它既不以关键词作生产语义判断，也不改写模型结果。跨越多个预标注片段的大 claim 必须同时满足各片段预期，不能把混合归属藏在一句理由中。任何标注片段不匹配都会降低 matched_runs，另记 claim_axis_mismatches，即使最终拒绝正确也不能被计作完整通过。旧 fixture 没有此指标，跨版本总分不能直接等同。
+
+```powershell
+python run_semantic_stability.py --fixture observation-claim-axes-v1.json --base-url https://api.deepseek.com/beta --max-calls 60 --max-output-tokens 3072
+python run_semantic_stability.py --fixture observation-claim-axes-v1.json --base-url https://api.deepseek.com/beta --max-calls 60 --max-output-tokens 3072 --run
+```
+
+这些样例由开发会话根据已知反例编写，不是独立盲测。额外结果包装、来源错误或网络失败仍然拒绝且不自动修复；语义正确率与协议执行成功率分开报告。
+
+## 独立职责分类与准入 v10
+
+v9 的学习者请求升级为系统教学建议样例两次误放并提交，已命中 AA-A02 的预注册 falsifier，结论见 `reports/assumption-aa-a02-v9-20261003.json` 与 `reports/observation-claim-axes-v9-20261003.md`。原 AA-A02 保留 DENIED。v10 是新增必要检查的修订实验，不能把后续局部成功回填成原假设获支持。
+
+每个候选先调用一次专门的 LLM 职责分类，只判断完整候选各段表达的是 local_observation、attributed_report、ability_inference、evidence_inference、action_recommendation 或 uncertain，不回答某个行动是否合理、受欢迎或得到请求。分类器读取同一获准原材料与候选，不读取其他模型审查结果。自然语言归类仍由语义规则与 LLM 完成；程序仅核验全文覆盖、标签结构并执行协议显式声明的准入表：前两类允许，三种推断／建议类别拒绝，uncertain 未决。没有从措辞或关键词直接推导类别的分支，错误 LLM 分类仍是剩余风险。
+
+后续依次进行原有算术提取和未经改写的 v9 综合审查，综合审查看不到前置职责分类。该实验在有效的负面分类后仍继续原审查，以测量分歧，不代表产品必须采用相同调用成本。任一步骤执行失败停止该候选；有效的分类记录保留，不能把后续失败算作端到端成功。提交要求原有检查和独立职责准入均通过。分类记录绑定 exact Candidate/Context/Protocol/rule，提交重算准入并核对绑定；每次新外发调用前重验数据访问。来源存在性复核复用同一分类与算术提取，不重做分类或隐藏重试。
+
+`fixtures/observation-responsibility-v1.json` 包含八项各两次：保留 v9 的请求升级反例、被否认的自述、转述后追加能力认定、独立作答请求，新增同源讲解请求报告、委婉教学建议、暂缓讲解建议、教师教学建议的纯转述。全部旧预期保留，并为关键片段增加职责类别及准入预期。程序拦截后，错误的综合审查判据仍计为不匹配；不能把组合门拦截说成原审查已改正。
+
+计划 16 次候选执行、48 次初始 API、含最多一次来源复核的总上限 64 次。摘要增加责任分类调用数、逐片段类别不匹配，以及原审查与算术已通过但被职责准入阻止的次数。模型相同，只隔离调用任务与结果输入，不声称统计独立；样例是开发者编写的定向回归。
+
+```powershell
+python run_semantic_stability.py --fixture observation-responsibility-v1.json --base-url https://api.deepseek.com/beta --max-calls 64 --max-output-tokens 3072
+python run_semantic_stability.py --fixture observation-responsibility-v1.json --base-url https://api.deepseek.com/beta --max-calls 64 --max-output-tokens 3072 --run
+```
+
+**基础检查或连通验证 PASS 不等于 Architecture Assumption SUPPORTED。** 完整 A1/A2、Policy、Action、Replay 和会话串行链仍待执行，Gate E / F 保持 `OPEN`。运行清单中的整体 `UNVALIDATED` 不覆盖已有具体失败证据；正式假设审查必须纳入反例，命中声明的 falsifier 时按设计判为 `DENIED`，不能用后续修复抵消。
