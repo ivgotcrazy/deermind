@@ -1,0 +1,20 @@
+{
+  "identity": "BoundaryVersionHonestReplay",
+  "version": "v1",
+  "cases": ["C1", "C2"],
+  "repetitions": 1,
+  "model_calls": 0,
+  "scope": "C1 per-boundary versions and C2 operation-specific replay capabilities in the shared in-memory runtime; selected reinterpretation and provider behavior use explicit scripted fixtures.",
+  "real": ["canonical commit versus activation", "exact version binding", "formal owner commit", "historical record reads", "current authorization", "external artifact byte removal", "operation-specific capability and new execution provenance"],
+  "scripted": ["selected reinterpretation logic and semantic PASS", "provider revision availability and generated output", "grant installation", "retention stimulus"],
+  "expected_evidence": {
+    "C1": ["v2 commit alone leaves v1 active", "new boundary binds activated v2", "same factual ref yields two committed revisions", "old record and v1 remain available", "historical views use their exact version", "Evidence v1 can consume Observation v2", "no provider call for reconstruction"],
+    "C2": ["complete historical reconstruction FULL", "same-environment re-execution is new execution only", "missing original model leaves historical reconstruction FULL", "missing exact model re-execution UNAVAILABLE", "explicit alternate environment PARTIAL fidelity", "removed raw bytes cause PARTIAL reconstruction", "raw input missing causes UNAVAILABLE re-execution", "no reconstruction fills gaps with generated output", "all original records immutable"]
+  },
+  "falsifiers": {
+    "AA-C01": ["valid boundary operation requires global atomic semantic generation"],
+    "AA-C02": ["historical audit requires exact model reproduction", "new execution output presented as historical output", "missing grounding concealed instead of reported"]
+  },
+  "stop_rule": "One deterministic execution per case; preserve all failed checks and exceptions, no replacement batch or silent retry. Runner PASS requires evidence review before assumption assessment.",
+  "excluded_claims": ["A1/A2 semantic reliability", "real provider reproducibility", "production retention purge of all replicas", "counterfactual evaluation", "X2/X4 composition and production concurrency"]
+}

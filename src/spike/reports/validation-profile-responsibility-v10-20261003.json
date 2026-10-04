@@ -1,0 +1,58 @@
+{
+  "schema": "validation-profile-assessment-v1",
+  "date": "2026-10-03",
+  "profile": "ObservationSmokeProtocol:v10/separate-classification-v1",
+  "assessment": "INCONCLUSIVE",
+  "batch_status": "NON_SUCCESS",
+  "scope": "Developer-labelled modified-profile experiment; no population reliability or full A1/A2 claim.",
+  "original_assumption": {
+    "id": "AA-A02",
+    "result": "DENIED",
+    "assessment_path": "src/spike/reports/assumption-aa-a02-v9-20261003.json",
+    "assessment_sha256": "369a5adb46358e9d3ca26d3f71be3a5b79ba761ec2dee0fd29a9e31e05daef1e",
+    "unchanged": true
+  },
+  "run_id": "semantic-stability-20261003T074009Z-047da774265c",
+  "protocol_sha256": "c228c64720a0816e6d4169fffc84efd360ae31773b1071d604700ee5d7d980f9",
+  "observations": {
+    "planned_candidates": 16,
+    "completed_candidates": 16,
+    "model_calls": 47,
+    "all_expectations_matched": 11,
+    "known_counterexample_interceptions": 2,
+    "general_review_mismatches": 2,
+    "protocol_failures": 3,
+    "false_commits_observed": 0,
+    "valid_positive_commits": 5,
+    "valid_negative_rejections": 8,
+    "responsibility_calls": 16,
+    "annotated_role_mismatches": 0
+  },
+  "counterexample_interception": {
+    "case_id": "request_promoted_to_action",
+    "repetitions": [1, 2],
+    "general_review_status": "PASS",
+    "pre_responsibility_status": "PASS",
+    "responsibility_role": "action_recommendation",
+    "responsibility_status": "FAIL",
+    "effective_status": "FAIL",
+    "commit_status": "ValidationFailed",
+    "full_expectation_match": false
+  },
+  "limitations": [
+    "Two independent calls use the same model; errors may be correlated.",
+    "A wrong permitted responsibility label can pass deterministic structural checks.",
+    "The general reviewer still promotes a learner request to an action recommendation.",
+    "Three protocol failures are not successful semantic rejections.",
+    "Only selected spans have predeclared labels; evidence_inference and uncertain have no live cases in this batch.",
+    "No retries, repair, relabelling or replacement runs were used."
+  ],
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "evidence_directory": "src/spike/runs/semantic-stability-20261003T074009Z-047da774265c",
+  "evidence_sha256": {
+    "manifest.json": "b9f47d3de67662ccd19c9d4205106b517ed55150d58825773ba49f7321fbd11b",
+    "summary.json": "459a9955cea250a11a8c6c8a0429cc3e2835649185aa85138d25aad64d9fbbad",
+    "evidence.jsonl": "e52e81ac68f850c2602ab4fcd4d9d087e3f1fec8644c54e9fe6e3a35af8355d8"
+  }
+}

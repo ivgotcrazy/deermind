@@ -1,0 +1,21 @@
+{
+  "identity": "DependencyOwnerCommit",
+  "version": "v1",
+  "cases": ["B1", "B2"],
+  "repetitions": 1,
+  "model_calls": 0,
+  "scope": "B1/B2 exact dependency and synchronous read/commit safety in the shared single-process runtime; predetermined semantics isolate state mechanisms.",
+  "real": ["context admission", "backend authority and data authority", "candidate binding", "formal commit", "exact pull resolution", "append-only correction invalidation"],
+  "scripted": ["candidate meaning and semantic PASS explicitly marked fixture", "recompute order", "initial canonical versions and grants", "trusted correction stimulus"],
+  "preconditions": ["all derived records enter through BoundaryRuntime.commit", "no blanket EligibilityFixture", "100 branches in B2"],
+  "expected_evidence": {
+    "B1": ["initial O/E/B current", "correction rejects all three", "O replacement does not revive old E/B", "E replacement does not revive old B", "B replacement restores chain", "stale candidates rejected despite new head", "old exact refs and records unchanged"],
+    "B2": ["all 100 branches initially current", "correction immediately rejects all 200 downstream states without recompute", "root alone does not restore branches", "one new Evidence does not restore old Belief", "one complete branch recovers while other 99 remain unavailable", "only three replacement records", "old history unchanged"]
+  },
+  "falsifiers": {
+    "AA-B01": ["transitively corrected record returned current", "fallback to invalid old state", "implicit exact-ref rebinding", "correctness requires authoritative push invalidation"],
+    "AA-B02": ["safe reads require synchronous full recompute", "reverse graph must become correctness source"]
+  },
+  "stop_rule": "One planned execution per deterministic case. Preserve failed checks and exceptions; no retry or replacement evidence. A passing runner result is not an automatic assumption assessment.",
+  "excluded_claims": ["A1/A2 semantic reliability", "correction authorization lifecycle", "production concurrency or performance", "real Policy/Action composition"]
+}

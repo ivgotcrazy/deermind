@@ -1,0 +1,378 @@
+{
+  "schema": "architecture-validation-progress-v1",
+  "date": "2026-10-04",
+  "status": "IN_PROGRESS",
+  "source": "doc/system-design/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md",
+  "counts": {
+    "assumption_cases": 12,
+    "composition_cases": 5,
+    "full_cases_completed": 4,
+    "assumptions_supported": 4,
+    "assumptions_denied": 1,
+    "assumptions_without_full_scope_assessment": 7
+  },
+  "result_semantics": "null means not yet assessed at full declared scope; execution progress is not an epistemic result. A2 denial is valid despite incomplete case coverage.",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "cases": [
+    {
+      "case_id": "A1",
+      "assumption_id": "AA-A01",
+      "execution_progress": "PARTIAL_EXECUTION",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [
+        "src/spike/runs/20260930T061708Z-e7960015e4c7/ContextCommit-foundation.jsonl",
+        "src/spike/run_llm_smoke.py"
+      ],
+      "remaining": "Complete error/correct/incomplete formation variants, utility checks and five repetitions per variant."
+    },
+    {
+      "case_id": "A2",
+      "assumption_id": "AA-A02",
+      "execution_progress": "PARTIAL_EXECUTION",
+      "assumption_result": "DENIED",
+      "full_case_complete": false,
+      "evidence": [
+        "src/spike/runs/semantic-stability-20261003T071253Z-516c8113a7b9/evidence.jsonl",
+        "src/spike/runs/semantic-stability-20261003T074009Z-047da774265c/evidence.jsonl",
+        "src/spike/reports/assumption-aa-a02-v9-20261003.json",
+        "src/spike/reports/validation-profile-responsibility-v10-20261003.json"
+      ],
+      "remaining": "Assess a separately scoped modified profile; finish downstream admission and failure injections without revoking original denial."
+    },
+    {
+      "case_id": "B1",
+      "assumption_id": "AA-B01",
+      "execution_progress": "COMPLETE",
+      "assumption_result": "SUPPORTED",
+      "full_case_complete": true,
+      "evidence": [
+        "src/spike/runs/20260930T061708Z-e7960015e4c7/B1-foundation.jsonl",
+        "src/spike/runs/dependency-commit-20261003T133229Z-aed06791823e/B1.jsonl",
+        "src/spike/reports/assumption-b1-b2-20261003.json"
+      ],
+      "remaining": "Declared B mechanism scope complete; cross-dimension composition and excluded production claims remain separate."
+    },
+    {
+      "case_id": "B2",
+      "assumption_id": "AA-B02",
+      "execution_progress": "COMPLETE",
+      "assumption_result": "SUPPORTED",
+      "full_case_complete": true,
+      "evidence": [
+        "src/spike/runs/20260930T061708Z-e7960015e4c7/B2-foundation.jsonl",
+        "src/spike/runs/dependency-commit-20261003T133229Z-aed06791823e/B2.jsonl",
+        "src/spike/reports/assumption-b1-b2-20261003.json"
+      ],
+      "remaining": "Declared B mechanism scope complete; cross-dimension composition and excluded production claims remain separate."
+    },
+    {
+      "case_id": "C1",
+      "assumption_id": "AA-C01",
+      "execution_progress": "COMPLETE",
+      "assumption_result": "SUPPORTED",
+      "full_case_complete": true,
+      "evidence": [
+        "src/spike/runs/20260930T061708Z-e7960015e4c7/C1-foundation.jsonl",
+        "src/spike/runs/version-replay-20261003T134732Z-4296409a3b3f/C1.jsonl",
+        "src/spike/reports/assumption-c1-c2-20261003.json"
+      ],
+      "remaining": "Declared deterministic C mechanism scope complete; X2/X4, production retention and real provider reproduction remain excluded."
+    },
+    {
+      "case_id": "C2",
+      "assumption_id": "AA-C02",
+      "execution_progress": "COMPLETE",
+      "assumption_result": "SUPPORTED",
+      "full_case_complete": true,
+      "evidence": [
+        "src/spike/runs/version-replay-20261003T134732Z-4296409a3b3f/C2.jsonl",
+        "src/spike/reports/assumption-c1-c2-20261003.json"
+      ],
+      "remaining": "Declared deterministic C mechanism scope complete; X2/X4, production retention and real provider reproduction remain excluded."
+    },
+    {
+      "case_id": "D1",
+      "assumption_id": "AA-D01",
+      "execution_progress": "NOT_EXECUTED",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [],
+      "remaining": "Implement action intent, actual display acknowledgement and exposure lineage."
+    },
+    {
+      "case_id": "D2",
+      "assumption_id": "AA-D02",
+      "execution_progress": "NOT_EXECUTED",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [],
+      "remaining": "Exercise claim-relative assistance with explicit scripted Evaluation fixtures."
+    },
+    {
+      "case_id": "E1",
+      "assumption_id": "AA-E01",
+      "execution_progress": "NOT_EXECUTED",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [],
+      "remaining": "Implement real Policy, legality and separate utility review with five repetitions."
+    },
+    {
+      "case_id": "E2",
+      "assumption_id": "AA-E02",
+      "execution_progress": "NOT_EXECUTED",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [],
+      "remaining": "Verify serial processing through action results and revalidate external changes."
+    },
+    {
+      "case_id": "F1",
+      "assumption_id": "AA-F01",
+      "execution_progress": "NOT_EXECUTED",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [],
+      "remaining": "Run language self-authorization attacks through real reasoning and backend boundaries."
+    },
+    {
+      "case_id": "F2",
+      "assumption_id": "AA-F02",
+      "execution_progress": "FOUNDATION_EVIDENCE",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [
+        "src/spike/runs/20260930T061708Z-e7960015e4c7/F2-injected-foundation.jsonl"
+      ],
+      "remaining": "Connect real reasoning to delegated credential and scope attacks."
+    },
+    {
+      "case_id": "X1",
+      "assumption_id": null,
+      "execution_progress": "NOT_EXECUTED",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [],
+      "remaining": "Correction during real Policy reasoning and effect revalidation."
+    },
+    {
+      "case_id": "X2",
+      "assumption_id": null,
+      "execution_progress": "NOT_EXECUTED",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [],
+      "remaining": "Version activation during in-flight Decision and effect revalidation."
+    },
+    {
+      "case_id": "X3",
+      "assumption_id": null,
+      "execution_progress": "NOT_EXECUTED",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [],
+      "remaining": "Preserve actual assistance history through Observation correction."
+    },
+    {
+      "case_id": "X4",
+      "assumption_id": null,
+      "execution_progress": "NOT_EXECUTED",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [],
+      "remaining": "Deny unauthorized replay without confusing historical existence and current access."
+    },
+    {
+      "case_id": "X5",
+      "assumption_id": null,
+      "execution_progress": "NOT_EXECUTED",
+      "assumption_result": null,
+      "full_case_complete": false,
+      "evidence": [],
+      "remaining": "Five complete serial diagnosis/teaching/new-opportunity runs and four independent effect-boundary injections."
+    }
+  ],
+  "modified_profile": {
+    "profile": "ObservationSmokeProtocol:v10/separate-classification-v1",
+    "result": "INCONCLUSIVE",
+    "replaces_original_assumption_result": false
+  },
+  "semantic_followup": {
+    "maximum_batches": 2,
+    "maximum_total_model_calls": 720,
+    "readiness": "RUNNING",
+    "protocol_frozen": true,
+    "fixtures_frozen": true,
+    "remaining_before_execution": [],
+    "batches": [
+      {
+        "id": "S1",
+        "status": "RUNNING",
+        "selected_existing_cases": [
+          {
+            "fixture": "observation-responsibility-v1.json",
+            "case_ids": [
+              "request_promoted_to_action",
+              "report_denied",
+              "report_then_endorsement",
+              "independent_request_report",
+              "request_report_positive",
+              "implicit_action_negative",
+              "withhold_action_negative",
+              "quoted_tutor_action_positive"
+            ]
+          },
+          {
+            "fixture": "observation-arithmetic-v1.json",
+            "case_ids": [
+              "baseline_positive",
+              "wrong_product_negative",
+              "correct_product_positive",
+              "correct_negation_positive",
+              "wrong_negation_negative",
+              "reported_wrong_equality_positive",
+              "decimal_correct_positive",
+              "decimal_wrong_negative"
+            ]
+          },
+          {
+            "fixture": "observation-support-v1.json",
+            "case_ids": [
+              "attributed_self_report_positive",
+              "chinese_positive",
+              "final_omission_negative",
+              "fabricated_attribution_negative",
+              "quoted_request_wrong_speaker_negative",
+              "translated_self_report_positive",
+              "additional_solution_supported_positive",
+              "additional_solution_unsupported_negative"
+            ]
+          }
+        ],
+        "fixture_count": 24,
+        "repetitions": 5,
+        "candidate_executions": 120,
+        "initial_model_calls": 360,
+        "maximum_model_calls": 480,
+        "fixture_path": "src/spike/fixtures/observation-closeout-s1-v1.json",
+        "fixture_sha256": "0b76ee0c95e305f6851c951a954f91c1ee93131bca5ff741f3fa4cd501f03856"
+      },
+      {
+        "id": "S2",
+        "status": "PENDING_S1_STOP_REVIEW",
+        "pair_topics": [
+          "evidence judgment versus attributed report",
+          "implicit ability endorsement versus attributed report",
+          "quoted recommendation versus quote plus endorsement",
+          "conditional action versus reported conditional request",
+          "source instruction report versus adopted instruction",
+          "local ambiguity versus latent-state inference"
+        ],
+        "fixture_count": 12,
+        "repetitions": 5,
+        "candidate_executions": 60,
+        "initial_model_calls": 180,
+        "maximum_model_calls": 240,
+        "independent_blind_evaluation": false,
+        "fixture_path": "src/spike/fixtures/observation-closeout-s2-v1.json",
+        "fixture_sha256": "826fcd1ec8cd5462a601fa16a0a8502111adab1020a2f14a9403b06fd24d6cf6"
+      }
+    ],
+    "stop_rules": [
+      "No replacement runs or hidden retries.",
+      "No protocol changes or relabelling between S1 and S2.",
+      "Confirmed modified-profile falsifier or unusable protocol prevents automatic S2; preserve unexecuted cases.",
+      "Budget exhaustion records incomplete coverage.",
+      "After at most two batches, produce supported/denied/inconclusive scoped assessment and design consequence; no automatic third batch.",
+      "Operational protocol-unusable threshold: three consecutive candidate protocol/runtime failures."
+    ],
+    "scope_limit": "These batches do not replace complete A1/A2, downstream admission, Policy, Action or composition cases.",
+    "protocol_path": "src/spike/protocols/observation-smoke-v11.json",
+    "protocol_sha256": "defebd7aaec09350e8d4b8f46e944e418df326034408a0e9bfe387e3ba5ef8f1",
+    "design_path": "src/spike/reports/observation-closeout-design-20261004.md",
+    "campaign_directory": "src/spike/runs/observation-closeout-v1"
+  },
+  "milestones": [
+    {
+      "id": "M0",
+      "status": "COMPLETE",
+      "deliverable": "Coverage and evidence baseline; bounded research plan."
+    },
+    {
+      "id": "M1",
+      "status": "NOT_COMPLETE",
+      "deliverable": "Bounded semantic assessment and B/C evidence gap review.",
+      "completed_subitems": [
+        "B1 declared state-mechanism assessment",
+        "B2 declared state-mechanism assessment",
+        "C1 declared version-boundary assessment",
+        "C2 declared honest-replay assessment"
+      ]
+    },
+    {
+      "id": "M2",
+      "status": "NOT_COMPLETE",
+      "deliverable": "Shared Observation/Evaluation/Policy/Action/session/replay chain."
+    },
+    {
+      "id": "M3",
+      "status": "NOT_COMPLETE",
+      "deliverable": "Remaining dimension and composition evidence."
+    },
+    {
+      "id": "M4",
+      "status": "NOT_COMPLETE",
+      "deliverable": "Unified assessment, complexity review and design consequences."
+    }
+  ],
+  "estimate": {
+    "work_days": [
+      4,
+      6
+    ],
+    "kind": "planning_estimate_not_deadline_or_gate_promise",
+    "reassess_at_each_milestone": true
+  },
+  "evidence_sha256": {
+    "doc/system-design/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md": "32e8818ae47833e3020cbe72078bb297a57cb81653737a7f39097623381f8560",
+    "src/spike/fixtures/observation-arithmetic-v1.json": "5ba6363bceea85056029389513c002bf667ffdc93abdc8be5131f7ac8ed7038b",
+    "src/spike/fixtures/observation-responsibility-v1.json": "f7e6733627ea81969819942c5bd67026bb4e6593eec9914db905993de9f19da8",
+    "src/spike/fixtures/observation-support-v1.json": "d86eadd1a8715a2678bf23dd4a5d72a2d3a5627e663b54581bdaf21978ebb0ef",
+    "src/spike/reports/assumption-aa-a02-v9-20261003.json": "369a5adb46358e9d3ca26d3f71be3a5b79ba761ec2dee0fd29a9e31e05daef1e",
+    "src/spike/reports/validation-profile-responsibility-v10-20261003.json": "818d77b61c43c0e921007ff2d5a5ae28972449e3b9f2bb77e39ada0e25129074",
+    "src/spike/run_llm_smoke.py": "093fc110eedebd3a8597a402dc8d1bcf8a20a5f7776d0825e4b265d4c8cab78c",
+    "src/spike/runs/20260930T061708Z-e7960015e4c7/B1-foundation.jsonl": "7910a86ca4b5438b464f9efd4f4139dbafb35f15ad12d3ec90e665d97d81b097",
+    "src/spike/runs/20260930T061708Z-e7960015e4c7/B2-foundation.jsonl": "e5f9931850ef61aaa6a278688d116f1c5bad270b4e6956abf7755b682b40d3d5",
+    "src/spike/runs/20260930T061708Z-e7960015e4c7/C1-foundation.jsonl": "e74af641be2e7868b4f2d2827f641c197e255e8f9b5c1d0ac0b5a784ac019ee4",
+    "src/spike/runs/20260930T061708Z-e7960015e4c7/ContextCommit-foundation.jsonl": "c9fb0b07b2efc51843508289e6c1da0a974a01dd048088673c42a9074229302a",
+    "src/spike/runs/20260930T061708Z-e7960015e4c7/F2-injected-foundation.jsonl": "7151413bf19f9b73015fe431b4fed5a7cf5237c014aace75af052a73ca476670",
+    "src/spike/runs/20260930T061708Z-e7960015e4c7/manifest.json": "aebdce6e6c1769fb432a2afbc74e9dc89d969d76d9104c10f74c413db591e101",
+    "src/spike/runs/20260930T061708Z-e7960015e4c7/summary.json": "4ffc42651ae98b36d1021091736c64d4b1f15e6e0cd884d94114aa67ce597275",
+    "src/spike/runs/semantic-stability-20261003T071253Z-516c8113a7b9/evidence.jsonl": "c0c2b908bcc122cf703998c3afe60b30075bcec2dc688c08a28e07af288c2098",
+    "src/spike/runs/semantic-stability-20261003T071253Z-516c8113a7b9/summary.json": "3eb6a6188268a082015eb71a3d12e5bb43a5847fafb5b414164161f751b22f68",
+    "src/spike/runs/semantic-stability-20261003T074009Z-047da774265c/evidence.jsonl": "e52e81ac68f850c2602ab4fcd4d9d087e3f1fec8644c54e9fe6e3a35af8355d8",
+    "src/spike/runs/semantic-stability-20261003T074009Z-047da774265c/summary.json": "459a9955cea250a11a8c6c8a0429cc3e2835649185aa85138d25aad64d9fbbad",
+    "src/spike/reports/assumption-b1-b2-20261003.json": "956262aa465d204b9c318701d9edba5a0c77cb73b32bf84953715d4049862356",
+    "src/spike/reports/dependency-owner-commit-v1-20261003.md": "a0427cb671ca82c93d0e5618316ff8fe11735452f51e78cef54b7ef9eff65364",
+    "src/spike/fixtures/dependency-commit-v1.json": "a9174798ce4ce6103da6458219cdd5bae57c41b566ac0eb34a8b8391ad9ae5f6",
+    "src/spike/runs/dependency-commit-20261003T133229Z-aed06791823e/B1.jsonl": "de9d3a9c25d65237a30e03227b1ebdcf2dfe3cd022fa7f6ff14212307df44f94",
+    "src/spike/runs/dependency-commit-20261003T133229Z-aed06791823e/B2.jsonl": "2e2fda409e7827219148e5e43fbc242b71c34b60e23ac94f39054ff2394ba0ca",
+    "src/spike/runs/dependency-commit-20261003T133229Z-aed06791823e/manifest.json": "979133618dc44533f1231fb126268c74ee31975146560aeb8040421aa0c50f55",
+    "src/spike/runs/dependency-commit-20261003T133229Z-aed06791823e/summary.json": "ac71af6caa62eb1bab615d321a5d393f77dbf3a283505012dd0b0f62aea5ef92",
+    "src/spike/reports/assumption-c1-c2-20261003.json": "fc51b2660267d1c70e02b84708d084c7b84d54473536d85129aac8c7ca922c5b",
+    "src/spike/reports/version-replay-v1-20261003.md": "75a2831be953607fe37fc1e24e7798781b7d8b1295822cebd7df4615d4dcda41",
+    "src/spike/fixtures/version-replay-v1.json": "72678a3cecfb1bd455f728a3017bfdd3d9246328180280511f90cc942f445e04",
+    "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md": "f7fff479db762823fb9404454ed3acef4457953c5a0a2db77e962b8ff93a29eb",
+    "src/spike/runs/version-replay-20261003T134732Z-4296409a3b3f/C1.jsonl": "fbbfa65ed8e0ab114bd595d06c46e1bbb5ea047c41b4156f99859bd2bf1badb2",
+    "src/spike/runs/version-replay-20261003T134732Z-4296409a3b3f/C2.jsonl": "dd3d3009111529e616de832e0b782f7057a1924380cc577ca60434759b47f7c1",
+    "src/spike/runs/version-replay-20261003T134732Z-4296409a3b3f/manifest.json": "d837b6f6850a8f414d0244e78711d936cc592c7409e52ae79a2e255accab31b1",
+    "src/spike/runs/version-replay-20261003T134732Z-4296409a3b3f/summary.json": "96e686571b93a3d81d6fad70110b8a4f1cf44238e9edefb017c98f00e84f410c",
+    "src/spike/protocols/observation-smoke-v11.json": "defebd7aaec09350e8d4b8f46e944e418df326034408a0e9bfe387e3ba5ef8f1",
+    "src/spike/reports/observation-closeout-design-20261004.md": "d0c1c84bf700911e00846c767e8be23b877b111d44ef58fe61fe68eb37d191c6",
+    "src/spike/fixtures/observation-closeout-s1-v1.json": "0b76ee0c95e305f6851c951a954f91c1ee93131bca5ff741f3fa4cd501f03856",
+    "src/spike/fixtures/observation-closeout-s2-v1.json": "826fcd1ec8cd5462a601fa16a0a8502111adab1020a2f14a9403b06fd24d6cf6"
+  },
+  "next_work": "Execute the reserved S1/S2 campaign without changing frozen configuration; stop and assess at its declared boundary."
+}

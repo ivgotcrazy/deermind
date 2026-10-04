@@ -1,5 +1,29 @@
 # DeerMind Architecture Spike — deterministic foundation
 
+整体进度与停止条件见 [统一验收报告](reports/DeerMind_Architecture_Validation_Report_v0.1.md)。基础测试通过、场景执行完成和架构假设结论分别记录。
+
+## 有界 Observation 收口 S1 / S2
+
+从仓库根目录执行 `python src/spike/run_observation_closeout.py` 只做配置预检；增加 `--run` 执行唯一预留的两个批次。S1 为 24 项历史回归各五次，上限 480 次调用；S2 为 12 项新增表达各五次，上限 240 次。两份 fixture 和同一 v11 协议在 S1 前固定。新增表达由开发者预先标注，不称为独立盲测。原历史预期和全部失败继续保留。
+
+v11 保留 v10 的语义规则和职责分类，只修订来源检查声明的表示及算术抽取交付说明。模型必须显式返回 `inspection_scope=COMPLETE_CONTEXT` 才会展开为当前精确来源清单；`NOT_DECLARED` 不被程序补成完整检查，unsupported 仍要求完整声明。这个声明不证明模型判断正确。额外 `arguments` 包装仍被拒绝，不拆包修补。程序不从 rationale 或自然语言推导分类。
+
+执行器分别统计组件符合情况和最终组合结果；成功拦截不能把组件误判记为正确。出现不合格负例提交、不可恢复接口响应或连续三次协议／运行失败时立即结束当前批次，S2 不再自动启动。全部证据逐候选保存，协议与代码在两批之间重新核验指纹。固定目录 `runs/observation-closeout-v1` 一旦预留就拒绝自动重跑；中断需要先审计已有证据，不自动续跑或另开第三批。该实验不消除 AA-A02 的旧 DENIED，也不代替 A2 下游准入验证。
+
+## C1 / C2 版本与诚实回放
+
+从仓库根目录执行 `python src/spike/run_version_replay_validation.py`，按 `fixtures/version-replay-v1.json` 各执行一次确定性场景，保留独立原始批次。C1 使用文档允许的 selected reinterpretation fixture logic，候选经真实 owner 提交；验证同一事实的新旧语义版本并存、历史精确绑定，以及不同组件版本组合不要求全局版本代际。
+
+C2 分开 historical_reconstruct 和 reexecute。前者只读取获当前权限许可的历史记录；后者产生明确标识的新 execution，不自动提交、不冒充历史。原模型版本不可用通过受控 provider fixture 注入，原 artifact 的实际字节从独立内存存储删除；缺失分别产生操作对应的 FULL / PARTIAL / UNAVAILABLE。FULL 表示该操作的依据完整，不保证模型输出一致。所有认知与 provider 行为均为显式 scripted fixture，外部 API 调用为 0，不消耗 S1/S2 预算；不提供真实模型、生产删除或 X2/X4 完整组合结论。
+
+## B1 / B2 正式提交路径
+
+从仓库根目录执行 `python src/spike/run_dependency_validation.py`，按 `fixtures/dependency-commit-v1.json` 各执行一次 B1 / B2，保存独立清单、逐项证据和摘要。该入口不调用模型，不消耗 Observation 两个后续批次的预算；执行 PASS 后仍需证据审查才能形成假设结论。
+
+初始与替代 Observation / Evidence / Belief 全部经过共享 BoundaryRuntime 的 Context、候选绑定、后端授权和正式提交。B1 检查分阶段恢复以及已有新上游版本时旧候选仍不能提交；B2 检查 100 分支即时失效、只恢复一条分支及其他 99 条继续不可用。所有读取使用精确依赖和后端权限，不使用整体放行的资格 fixture，也没有 authoritative push graph。
+
+候选含义与 semantic PASS 明确标为 SCRIPTED-DEPENDENCY-FIXTURE，仅隔离依赖机制；事实、规则、grant 和 correction stimulus 为受信测试预设。该入口不提供 A1/A2 语义可靠性、correction 授权生命周期、生产并发或性能结论。旧 foundation 批次保持原样。
+
 实现范围包括综合 Spike 设计的 Step 0–Step 4 基础路径，以及 Step 5 的两次真实模型调用连通入口。已有不可变记录、精确依赖、版本激活、后端权限与数据使用检查、ContextManifest、exact-candidate 语义校验绑定和提交重验。只依赖 Python 3.13 标准库。
 
 在 `src/spike` 下运行：

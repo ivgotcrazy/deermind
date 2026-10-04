@@ -1,0 +1,206 @@
+{
+  "schema": "architecture-case-assessments-v1",
+  "date": "2026-10-03",
+  "run_id": "version-replay-20261003T134732Z-4296409a3b3f",
+  "source": {
+    "path": "doc/system-design/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md",
+    "sha256": "32e8818ae47833e3020cbe72078bb297a57cb81653737a7f39097623381f8560",
+    "sections": [
+      "4.10",
+      "4.17",
+      "9.1",
+      "9.2"
+    ]
+  },
+  "focused_design": {
+    "path": "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md",
+    "sha256": "f7fff479db762823fb9404454ed3acef4457953c5a0a2db77e962b8ff93a29eb",
+    "sections": [
+      "5",
+      "8"
+    ]
+  },
+  "profile": {
+    "path": "src/spike/fixtures/version-replay-v1.json",
+    "sha256": "72678a3cecfb1bd455f728a3017bfdd3d9246328180280511f90cc942f445e04"
+  },
+  "scope": "Predeclared C1/C2 single-process in-memory version and replay mechanism; selected reinterpretation semantics and provider availability/output are explicit fixtures.",
+  "model_calls": 0,
+  "cases": [
+    {
+      "case_id": "C1",
+      "assumption_id": "AA-C01",
+      "result": "SUPPORTED",
+      "full_declared_case_complete": true,
+      "protected_invariant_ids": [
+        "SI-16",
+        "SI-22",
+        "SI-23"
+      ],
+      "final_snapshot_id": "24ca581a5f12b17a2c445d63114b181d2584cca5152735ddbe49e3d1ca90f07f",
+      "evidence_path": "src/spike/runs/version-replay-20261003T134732Z-4296409a3b3f/C1.jsonl",
+      "check_count": 21,
+      "falsifier_observed": false,
+      "replay_observations": [
+        {
+          "label": "old history reconstructed",
+          "operation": "historical_reconstruct",
+          "capability": "FULL",
+          "reasons": [],
+          "execution_ref": {
+            "space": "execution",
+            "identity": "523aece0bc5344c9b74e2afbf77f499c",
+            "revision": "1"
+          }
+        },
+        {
+          "label": "new history reconstructed",
+          "operation": "historical_reconstruct",
+          "capability": "FULL",
+          "reasons": [],
+          "execution_ref": {
+            "space": "execution",
+            "identity": "4321039be69b4e959c7969a199efe899",
+            "revision": "1"
+          }
+        }
+      ],
+      "rationale": "Exact saved records, version contexts and output provenance matched the declared checks; no global generation, reconstruction-time model call or fabricated historical output was needed.",
+      "design_consequence": "Retain per-boundary versioning and distinct historical reconstruction/re-execution operations with honest capability gaps; validate composition separately."
+    },
+    {
+      "case_id": "C2",
+      "assumption_id": "AA-C02",
+      "result": "SUPPORTED",
+      "full_declared_case_complete": true,
+      "protected_invariant_ids": [
+        "SI-07",
+        "SI-24"
+      ],
+      "final_snapshot_id": "4890e2c069a7e546a63c8061eda39248eeabc92217ed6683271209642072ab17",
+      "evidence_path": "src/spike/runs/version-replay-20261003T134732Z-4296409a3b3f/C2.jsonl",
+      "check_count": 22,
+      "falsifier_observed": false,
+      "replay_observations": [
+        {
+          "label": "complete history",
+          "operation": "historical_reconstruct",
+          "capability": "FULL",
+          "reasons": [],
+          "execution_ref": {
+            "space": "execution",
+            "identity": "0dc5814bd8a945f8929fc593fc819305",
+            "revision": "1"
+          }
+        },
+        {
+          "label": "same-environment new execution",
+          "operation": "reexecute",
+          "capability": "FULL",
+          "reasons": [],
+          "execution_ref": {
+            "space": "execution",
+            "identity": "196cc6a603b3439dad9f54de385ea344",
+            "revision": "1"
+          }
+        },
+        {
+          "label": "model unavailable does not block reconstruction",
+          "operation": "historical_reconstruct",
+          "capability": "FULL",
+          "reasons": [],
+          "execution_ref": {
+            "space": "execution",
+            "identity": "29d34b7bf03340ffabcece2653b046f3",
+            "revision": "1"
+          }
+        },
+        {
+          "label": "exact re-execution unavailable",
+          "operation": "reexecute",
+          "capability": "UNAVAILABLE",
+          "reasons": [
+            "RequestedModelRevisionUnavailable"
+          ],
+          "execution_ref": {
+            "space": "execution",
+            "identity": "99bea8135aae435b9737145f63353f0b",
+            "revision": "1"
+          }
+        },
+        {
+          "label": "explicit different environment has partial fidelity",
+          "operation": "reexecute",
+          "capability": "PARTIAL",
+          "reasons": [
+            "RequestedEnvironmentDiffersFromHistorical"
+          ],
+          "execution_ref": {
+            "space": "execution",
+            "identity": "c91c9b4188ac4863a08188d834addff1",
+            "revision": "1"
+          }
+        },
+        {
+          "label": "missing raw artifact yields partial history",
+          "operation": "historical_reconstruct",
+          "capability": "PARTIAL",
+          "reasons": [
+            "RawArtifactRemoved"
+          ],
+          "execution_ref": {
+            "space": "execution",
+            "identity": "2d1add1509244c00b1ad95e873c1e89f",
+            "revision": "1"
+          }
+        },
+        {
+          "label": "raw input missing prevents new execution",
+          "operation": "reexecute",
+          "capability": "UNAVAILABLE",
+          "reasons": [
+            "RawArtifactRemoved"
+          ],
+          "execution_ref": {
+            "space": "execution",
+            "identity": "037bd8f78eba4a9ca9e02051e2e6eb53",
+            "revision": "1"
+          }
+        }
+      ],
+      "rationale": "Exact saved records, version contexts and output provenance matched the declared checks; no global generation, reconstruction-time model call or fabricated historical output was needed.",
+      "design_consequence": "Retain per-boundary versioning and distinct historical reconstruction/re-execution operations with honest capability gaps; validate composition separately."
+    }
+  ],
+  "limitations": [
+    "Not evidence of A1/A2 semantic reliability or real provider reproducibility.",
+    "Retention removes fixture bytes, not all production replicas or backups.",
+    "X2/X4 composition remains separate.",
+    "Re-execution output is unvalidated execution data without formal standing."
+  ],
+  "hidden_complexity": [
+    {
+      "mechanism": "ReplayManifest with exact historical references",
+      "correctness_dependency": "recorded provenance instead of current heads",
+      "architecture_impact": "execution metadata, not new semantic standing"
+    },
+    {
+      "mechanism": "External artifact bytes and retention tombstone fixture",
+      "correctness_dependency": "must distinguish saved history from unavailable original bytes",
+      "architecture_impact": "raw deletion does not automatically invalidate derived semantics"
+    },
+    {
+      "mechanism": "Explicit provider environment fixture and operation-specific capability",
+      "correctness_dependency": "no automatic model substitution or generated historical replacement",
+      "architecture_impact": "new output is an independent execution; production provider integration unvalidated"
+    }
+  ],
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "evidence_sha256": {
+    "C1.jsonl": "fbbfa65ed8e0ab114bd595d06c46e1bbb5ea047c41b4156f99859bd2bf1badb2",
+    "C2.jsonl": "dd3d3009111529e616de832e0b782f7057a1924380cc577ca60434759b47f7c1",
+    "manifest.json": "d837b6f6850a8f414d0244e78711d936cc592c7409e52ae79a2e255accab31b1",
+    "summary.json": "96e686571b93a3d81d6fad70110b8a4f1cf44238e9edefb017c98f00e84f410c"
+  }
+}

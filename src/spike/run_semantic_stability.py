@@ -72,7 +72,29 @@ def summarize(results, fixture, model_calls):
                          "outcomes": dict(Counter(r.get("semantic_status", "ERROR") for r in runs)),
                          "distinct_decision_signatures": len(signatures),
                          "all_expected": len(runs) == fixture["planned_repetitions"] and all(r["result"] == "PASS" for r in runs)})
+    case_by_id = {c["id"]: c for c in fixture["cases"]}
+    def expected(row, key):
+        return row.get(key, case_by_id.get(row.get("case_id"), {}).get(key))
+    outcome_matches = sum(expected(r, "expected_status") in ("PASS", "FAIL")
+                          and r.get("semantic_status") == expected(r, "expected_status")
+                          and r.get("commit_status") in ("Committed", "ValidationFailed")
+                          and r.get("commit_status") == expected(r, "expected_commit") and not r.get("failure_type") for r in results)
+    stop_reason = None
+    if results:
+        last = results[-1]
+        if fixture.get("stop_on_false_commit") and expected(last, "expected_status") == "FAIL" and last.get("commit_status") == "Committed":
+            stop_reason = "ForbiddenCommitObserved"
+        elif last.get("reason") in fixture.get("stop_on_provider_failures", []):
+            stop_reason = last["reason"]
+        else:
+            limit = fixture.get("stop_after_consecutive_protocol_failures", 0)
+            if limit and len(results) >= limit and all(r.get("failure_type") for r in results[-limit:]):
+                stop_reason = "ConsecutiveProtocolOrRuntimeFailures"
     return {"status": "PASS" if len(results) == fixture["planned_model_calls"] and all(r["result"] == "PASS" for r in results) else "NON_SUCCESS",
+            "composite_outcome_matches": outcome_matches,
+            "composite_status": "PASS" if len(results) == fixture["planned_model_calls"] == outcome_matches else "NON_SUCCESS",
+            "forbidden_commits": sum(expected(r, "expected_status") == "FAIL" and r.get("commit_status") == "Committed" for r in results),
+            "stop_reason": stop_reason,
             "planned_runs": fixture["planned_model_calls"], "completed_runs": len(results),
             "not_run": fixture["planned_model_calls"] - len(results), "model_calls": model_calls,
             "positive_runs_planned": positive, "negative_runs_planned": negative, **counts,
@@ -181,8 +203,8 @@ def run_suite(config, directory, fixture, protocol, adapter=None, progress=None)
             write_summary(directory, summary)
             if progress:
                 progress(summary)
-            if row.get("reason") in fixture.get("stop_on_provider_failures", []):
-                recorder.emit("batch_stopped", reason=row["reason"], not_run=summary["not_run"])
+            if summary.get("stop_reason"):
+                recorder.emit("batch_stopped", reason=summary["stop_reason"], not_run=summary["not_run"])
                 break
     finally:
         recorder.close()
@@ -199,7 +221,8 @@ def main(argv=None):
                                               "observation-absence-v1.json", "observation-support-v1.json",
                                               "observation-arithmetic-v1.json", "observation-structured-v1.json",
                                               "observation-support-structured-v1.json", "observation-source-handles-v1.json",
-                                              "observation-claim-axes-v1.json", "observation-responsibility-v1.json"),
+                                              "observation-claim-axes-v1.json", "observation-responsibility-v1.json",
+                                              "observation-closeout-s1-v1.json", "observation-closeout-s2-v1.json"),
                         default="observation-stability-v1.json")
     args = parser.parse_args(argv)
     fixture, protocol = load_design(args.fixture)

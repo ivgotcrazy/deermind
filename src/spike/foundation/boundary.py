@@ -416,7 +416,7 @@ class BoundaryRuntime:
         wire_output = output
         try:
             if registry is not None:
-                output = expand_review(wire_output, registry)
+                output = expand_review(wire_output, registry, self.h.get(protocol.ref).payload.get("inspection_encoding"))
             checked_output = (checked_claim_axes(output)
                 if self.h.get(protocol.ref).payload.get("claim_axes") == "attribution-boundary-v1" else output)
             conflicts = []
@@ -513,7 +513,8 @@ class BoundaryRuntime:
                     if self.h.get(protocol.ref).payload.get("source_encoding") == "field-handles-v1":
                         registry = source_registry(content)
                         if (execution.payload.get("source_registry") != registry
-                                or expand_review(execution.payload.get("wire_output"), registry) != details):
+                                or expand_review(execution.payload.get("wire_output"), registry,
+                                                 self.h.get(protocol.ref).payload.get("inspection_encoding")) != details):
                             return "SourceHandleBindingMismatch"
                     if rule.payload["format"] in ("source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
                         status, _, conflicts = check_absence_review(

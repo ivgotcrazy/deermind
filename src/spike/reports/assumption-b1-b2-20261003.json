@@ -1,0 +1,124 @@
+{
+  "schema": "architecture-case-assessments-v1",
+  "date": "2026-10-03",
+  "run_id": "dependency-commit-20261003T133229Z-aed06791823e",
+  "source": {
+    "path": "doc/system-design/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md",
+    "sha256": "32e8818ae47833e3020cbe72078bb297a57cb81653737a7f39097623381f8560",
+    "sections": [
+      "5",
+      "8.1",
+      "8.2",
+      "14"
+    ]
+  },
+  "profile": {
+    "path": "src/spike/fixtures/dependency-commit-v1.json",
+    "sha256": "a9174798ce4ce6103da6458219cdd5bae57c41b566ac0eb34a8b8391ad9ae5f6"
+  },
+  "scope": "Declared B1/B2 state-mechanism scope in the shared single-process in-memory Harness; predetermined semantic fixtures and trusted correction stimulus, real context/authorization/commit/current checks.",
+  "model_calls": 0,
+  "cases": [
+    {
+      "case_id": "B1",
+      "assumption_id": "AA-B01",
+      "result": "SUPPORTED",
+      "full_declared_case_complete": true,
+      "protected_invariant_ids": [
+        "SI-08",
+        "SI-09",
+        "SI-10",
+        "SI-11"
+      ],
+      "fixture_snapshot_id": "0210b88454488e87bc5339d874fc58cc2a91b5b9d523b70c0e3d57392e19a671",
+      "final_snapshot_id": "ed9ef979fe40b5ce46f1749ca25cbb97e03466597630979a17ca111edff4622f",
+      "protocol_refs": [
+        {
+          "space": "canonical",
+          "identity": "B-Observation-Protocol",
+          "revision": "v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "B-Evidence-Protocol",
+          "revision": "v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "B-LearnerBelief-Protocol",
+          "revision": "v1"
+        }
+      ],
+      "observed_successful_commits": 6,
+      "observed_resolution_count": 15,
+      "check_count": 31,
+      "falsifier_observed": false,
+      "evidence_path": "src/spike/runs/dependency-commit-20261003T133229Z-aed06791823e/B1.jsonl",
+      "rationale": "All predefined stage checks and immutable exact dependencies matched; post-run record audit confirmed real owner commits and corrected-reference rejection, with no authoritative push graph or full synchronous recompute.",
+      "design_consequence": "Retain pull-based currentness and gradual owner recomputation for this scope; assess Policy/Action composition independently."
+    },
+    {
+      "case_id": "B2",
+      "assumption_id": "AA-B02",
+      "result": "SUPPORTED",
+      "full_declared_case_complete": true,
+      "protected_invariant_ids": [
+        "SI-09",
+        "SI-10",
+        "SI-12"
+      ],
+      "fixture_snapshot_id": "7dc7ad189849537b84cdc930f46f855cefd7b550bb4c7e55e97846821df0eb11",
+      "final_snapshot_id": "0c0bfdb647753d90394f92c2f69c932add9d23b7258b9c5d95b5b7bca9ca061b",
+      "protocol_refs": [
+        {
+          "space": "canonical",
+          "identity": "B-Observation-Protocol",
+          "revision": "v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "B-Evidence-Protocol",
+          "revision": "v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "B-LearnerBelief-Protocol",
+          "revision": "v1"
+        }
+      ],
+      "observed_successful_commits": 204,
+      "observed_resolution_count": 1005,
+      "check_count": 422,
+      "falsifier_observed": false,
+      "evidence_path": "src/spike/runs/dependency-commit-20261003T133229Z-aed06791823e/B2.jsonl",
+      "rationale": "All predefined stage checks and immutable exact dependencies matched; post-run record audit confirmed real owner commits and corrected-reference rejection, with no authoritative push graph or full synchronous recompute.",
+      "design_consequence": "Retain pull-based currentness and gradual owner recomputation for this scope; assess Policy/Action composition independently."
+    }
+  ],
+  "limitations": [
+    "No A1/A2 semantic reliability claim.",
+    "Correction authorization lifecycle is not tested.",
+    "No production concurrency, throughput or capacity claim.",
+    "Policy/Action composition remains to be executed."
+  ],
+  "hidden_complexity": [
+    {
+      "mechanism": "Existing snapshot read basis and synchronous commit boundary",
+      "required_for_correctness": "consistent reads and no interleaving between final check and append",
+      "architecture_impact": "No push graph or new production runtime added; deepcopy implementation remains replaceable."
+    },
+    {
+      "mechanism": "Scripted candidate meanings and fixture-marked PASS",
+      "required_for_correctness": "isolates dependency behavior, not a deployed semantic validator",
+      "architecture_impact": "Cannot use these results as A2 semantic evidence."
+    }
+  ],
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "evidence_sha256": {
+    "B1.jsonl": "de9d3a9c25d65237a30e03227b1ebdcf2dfe3cd022fa7f6ff14212307df44f94",
+    "B2.jsonl": "2e2fda409e7827219148e5e43fbc242b71c34b60e23ac94f39054ff2394ba0ca",
+    "manifest.json": "979133618dc44533f1231fb126268c74ee31975146560aeb8040421aa0c50f55",
+    "summary.json": "ac71af6caa62eb1bab615d321a5d393f77dbf3a283505012dd0b0f62aea5ef92"
+  }
+}
