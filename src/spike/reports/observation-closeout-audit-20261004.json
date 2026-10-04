@@ -1,0 +1,54 @@
+{
+  "schema": "observation-closeout-offline-audit-v1",
+  "date": "2026-10-04",
+  "frozen_inputs_verified": 95,
+  "new_model_calls": 0,
+  "batches": {
+    "S1": {
+      "schedule_and_summary_verified": true,
+      "model_calls": 354,
+      "completed_wire_outputs_checked": 351,
+      "validation_bindings_and_recomputed_outcomes": 111,
+      "formal_commits_verified": 54,
+      "snapshots_verified": 120,
+      "reproduced_contract_failures": {
+        "PassingClaimNeedsSource": 4,
+        "InvalidResponsibilitySegment": 2
+      },
+      "invalid_responsibility_fields": {
+        "candidate.description": 9
+      },
+      "reported_usage": {
+        "prompt_tokens": 684223,
+        "completion_tokens": 248507,
+        "total_tokens": 932730,
+        "prompt_cache_hit_tokens": 582064,
+        "prompt_cache_miss_tokens": 102159
+      }
+    },
+    "S2": {
+      "schedule_and_summary_verified": true,
+      "model_calls": 174,
+      "completed_wire_outputs_checked": 173,
+      "validation_bindings_and_recomputed_outcomes": 55,
+      "formal_commits_verified": 23,
+      "snapshots_verified": 60,
+      "reproduced_contract_failures": {
+        "GroundingClaimStatusMismatch": 1,
+        "InvalidResponsibilitySegment": 3
+      },
+      "invalid_responsibility_fields": {
+        "candidate.description": 12
+      },
+      "reported_usage": {
+        "prompt_tokens": 334422,
+        "completion_tokens": 119850,
+        "total_tokens": 454272,
+        "prompt_cache_hit_tokens": 286403,
+        "prompt_cache_miss_tokens": 48019
+      }
+    }
+  },
+  "original_denial_unchanged": true,
+  "status": "PASS"
+}

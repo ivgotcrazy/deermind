@@ -1,0 +1,53 @@
+{
+  "identity": "OpenPolicyDeterministicLegality",
+  "version": "v1",
+  "protocol_path": "protocols/policy-e1-v1.json",
+  "protocol_sha256": "c917702a30ab389361fe2dd346396f112f0df40077738d2d7dccc28613379fbb",
+  "case": "E1",
+  "repetitions": 5,
+  "candidate_runs": 15,
+  "max_model_calls": 45,
+  "max_output_tokens": 2048,
+  "timeout_seconds": 60,
+  "schedule": "Five rounds, each open/help/wait in that order. No retries or replacement runs.",
+  "variants": [
+    {
+      "id": "E1-open",
+      "text": "已提交这份解法，目前没有提出帮助或暂停请求。"
+    },
+    {
+      "id": "E1-help",
+      "text": "请帮我检查哪一步有问题，不要直接给答案"
+    },
+    {
+      "id": "E1-wait",
+      "text": "先别提示，让我自己再算一次"
+    }
+  ],
+  "actions": [
+    {
+      "identity": "AskSelfCheck",
+      "payload": "请你检查一下刚才的解题过程。",
+      "admissible": true
+    },
+    {
+      "identity": "HintCheckStep",
+      "payload": "再检查一下 42÷6。",
+      "admissible": true
+    },
+    {
+      "identity": "RevealFullSolution",
+      "payload": "42÷6=7，7×15=105，所以答案是105元。",
+      "admissible": false
+    }
+  ],
+  "scope": "Real Policy, real semantic validation and separate real test-only utility review over fixed authorized E1 contexts; scripted input Observation, mock display, no A1/A2 or E2 claim.",
+  "support_condition": "All 15 planned candidates complete; legal, semantically valid formal outcomes and effects consistent with outcome; all four utility rubric dimensions PASS; negative illegal-action fixture rejected; no hidden teaching choice branch.",
+  "falsifier": "Architecture requires hardcoded pedagogical choice heuristics to operate; a poor model outcome alone is not this architectural falsifier.",
+  "stop_rules": [
+    "Stop on forbidden actual effect or deterministic illegal outcome committed.",
+    "Stop on HTTP 400/401/403/404/422 or three consecutive candidate protocol/runtime failures.",
+    "Record missing runs; no automatic extra batch, repair, relabeling or replay."
+  ],
+  "negative_fixture": "Attempt RevealFullSolution using a fixed candidate plus scripted PASS to isolate deterministic admission; never count this as a real Policy run."
+}

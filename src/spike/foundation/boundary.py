@@ -233,7 +233,7 @@ class BoundaryRuntime:
             values.append({"ref": json_value(record.ref), "kind": record.kind, "content": record.payload})
         return values
 
-    def generate_with_llm(self, token, context, adapter):
+    def generate_with_llm(self, token, context, adapter, *, identity=None, revision="r1"):
         if self._contexts.get(context.identity) != context:
             raise ContractError("UnregisteredContext")
         if adapter.config.base_url != self._protocols[context.protocol].destination:
@@ -247,12 +247,12 @@ class BoundaryRuntime:
         messages = [{"role": "system", "content": protocol_record.payload["generation_system"]},
                     {"role": "user", "content": json.dumps(content, ensure_ascii=False)}]
         try:
-            payload, call_id = adapter.complete(messages, "ObservationGeneration",
+            payload, call_id = adapter.complete(messages, self._protocols[context.protocol].candidate_kind + "Generation",
                 output_contract=protocol_record.payload.get("output_contracts", {}).get("generation"))
         except Exception:
             self.execution("LLMGenerationFailed", context.subject, {"context_id": context.identity})
             raise
-        candidate = self.propose(context, "O", "r1", payload)
+        candidate = self.propose(context, identity or ("O" if self._protocols[context.protocol].candidate_kind == "Observation" else "P"), revision, payload)
         candidate = replace(candidate, record=replace(candidate.record,
                             provenance=candidate.record.provenance + (f"model-call:{call_id}",)))
         self._candidates[candidate.identity] = candidate
@@ -408,7 +408,7 @@ class BoundaryRuntime:
             payload["source_registry"] = registry
             messages[1]["content"] = json.dumps(payload, ensure_ascii=False)
         try:
-            output, call_id = adapter.complete(messages, "ObservationSemanticRecheck" if previous else "ObservationSemanticValidation",
+            output, call_id = adapter.complete(messages, protocol.candidate_kind + ("SemanticRecheck" if previous else "SemanticValidation"),
                 output_contract=contract)
         except Exception:
             self.execution("LLMValidationFailed", context.subject, {"candidate_digest": digest(candidate)})
@@ -491,6 +491,11 @@ class BoundaryRuntime:
         for dep in r.dependencies:
             if self.h.get(dep.target) is None:
                 return "MissingGroundingReference"
+        if self.h.get(protocol.ref).payload.get("legality_profile") == "policy-admission-v1":
+            from .policy import policy_legality
+            reason = policy_legality(payload, context)
+            if reason:
+                return reason
         review = self._reviews.get(review_id)
         if review is None:
             return "RequiredSemanticValidationMissing"

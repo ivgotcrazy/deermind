@@ -1,0 +1,22 @@
+{
+  "identity": "ActionDisclosureClaimRelativeEvidence",
+  "version": "v1",
+  "cases": ["D1", "D2"],
+  "repetitions": 1,
+  "model_calls": 0,
+  "scope": "D1 actual mock disclosure lineage and D2 representability of claim-relative assistance through formal owner commits; no language interpretation quality claim.",
+  "real": ["formal PolicyOutcome and Evidence commits", "exact ActionIntent binding", "effect-time authority, data authority, expiry and dependency revalidation", "trusted mock display acknowledgement admission", "idempotent terminal results", "on-demand lineage and temporal comparison"],
+  "scripted": ["Observation and Policy meaning and semantic PASS", "claim-relative Evidence interpretation", "mock display acknowledgement", "grant installation and learner stimuli"],
+  "hint": "再检查一下 42÷6。",
+  "before_work": "42 / 6 = 8; 8 * 15 = 120; Answer = 120",
+  "after_work": "42 / 6 = 7; 7 * 15 = 105; Answer = 105",
+  "D1_variants": ["selected_not_occurred", "partial", "full", "available_unused", "response_before_hint", "indeterminate"],
+  "claim_interpretations": [
+    {"identity": "C1", "claim": "TaskProficiency", "independence": "NOT_INDEPENDENT_SUCCESS", "impact": "OVERALL_SUCCESS_ASSISTED", "description": "After a localized division cue, this completed response is not an independent task success."},
+    {"identity": "C2", "claim": "StrategySelection", "independence": "PRE_HINT_STRATEGY_BASIS", "impact": "STRATEGY_EXISTED_BEFORE_CUE", "description": "The initial work already chose the unit-rate route before the cue; retain that earlier strategy basis separately."},
+    {"identity": "C3", "claim": "DivisionArithmetic", "independence": "LOCALIZED_CUE_ACKNOWLEDGED", "impact": "MAY_RETAIN_LOCAL_POSITIVE_EVIDENCE", "description": "The cue identified a division step without supplying its quotient; corrected arithmetic may retain some positive evidence with assistance acknowledged."}
+  ],
+  "falsifiers": {"AA-D01": ["basic actual exposure truth requires an independent durable authoritative exposure model"], "AA-D02": ["one response can only be represented with a global assisted/unassisted value", "missing lineage forces a global assistance trait"]},
+  "stop_rule": "One deterministic execution per case after local tests; preserve failures and assess the declared mechanism scope without replacement runs.",
+  "excluded_claims": ["real Policy utility or E1", "A1/A2 semantic accuracy", "production UI/network delivery", "learner actually used the displayed hint", "correct numerical Evidence strength", "full X3/X5 or production concurrency"]
+}

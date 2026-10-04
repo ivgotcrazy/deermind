@@ -251,4 +251,14 @@ python run_semantic_stability.py --fixture observation-responsibility-v1.json --
 python run_semantic_stability.py --fixture observation-responsibility-v1.json --base-url https://api.deepseek.com/beta --max-calls 64 --max-output-tokens 3072 --run
 ```
 
-**基础检查或连通验证 PASS 不等于 Architecture Assumption SUPPORTED。** 完整 A1/A2、Policy、Action、Replay 和会话串行链仍待执行，Gate E / F 保持 `OPEN`。运行清单中的整体 `UNVALIDATED` 不覆盖已有具体失败证据；正式假设审查必须纳入反例，命中声明的 falsifier 时按设计判为 `DENIED`，不能用后续修复抵消。
+## D1/D2 行动与帮助披露机制
+
+`python run_action_exposure_validation.py` 执行 `fixtures/action-exposure-v1.json` 固定的 D1/D2 机制范围，不调用模型。Observation、Policy 选择及 Evaluation 意义均明确使用脚本 fixture，PolicyOutcome 和 Claim-relative Evidence 通过共享正式提交；`ActionRuntime` 负责 exact intent、执行前权限及依据重验、mock 展示确认、Occurred / NotOccurred / Indeterminate 和终态幂等性。
+
+只有实际确认展示的内容进入 ActionOccurrence。按响应重建的 exposure view 不持久化为独立 authoritative Model，也不推断学习者确实使用了提示。D2 分别保留任务非独立成功、帮助前已存在策略、局部算术仍可能有正面证据三种解释，不冻结 strength。当前受控时钟、单进程 mock 和整个 Policy 依据被列作 effect-critical 的范围见 `reports/action-exposure-design-20261004.md`；这不提供真实 Policy、真实 UI 或 A2 语义结论。
+
+## E1 真实 Policy 有界验证
+
+`python run_policy_validation.py` 只做配置预检；加 `--run` 预留唯一 `runs/policy-e1-v1` 并运行 open / help / wait 各五次，总预算 45 次模型调用，无重试或替补。真实 Policy、内容校验和独立测试评分经共享 Runtime 留存，固定 Observation 输入及 mock 展示边界明确标注。ActivityConstraints 的 exact action 范围在共享正式提交时重验，NoIntervention / Defer 不创建 ActionIntent；测试评分发生在提交和可选 effect 之后，不能代替生产校验。规则、停止条件和支持范围见 `reports/policy-e1-design-20261004.md`。此入口不重开 Observation S1/S2。
+
+**基础检查或连通验证 PASS 不等于 Architecture Assumption SUPPORTED。** 完整 A1/A2 和会话串行链仍待执行，B/C/D/E 只按各自报告的范围评估，Gate E / F 保持 `OPEN`。运行清单中的整体 `UNVALIDATED` 不覆盖已有具体失败证据；正式假设审查必须纳入反例，命中声明的 falsifier 时按设计判为 `DENIED`，不能用后续修复抵消。

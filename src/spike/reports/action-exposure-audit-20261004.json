@@ -1,0 +1,247 @@
+{
+  "schema": "action-exposure-offline-audit-v1",
+  "date": "2026-10-04",
+  "run_directory": "src/spike/runs/action-exposure-20261004T073701Z-4e9959cb65b4",
+  "frozen_inputs_verified": 101,
+  "cases": {
+    "D1": {
+      "counts": {
+        "checks": 91,
+        "snapshots": 6,
+        "formal_owner_commits": 10,
+        "intents": 5,
+        "NotOccurred": 1,
+        "acknowledged_occurrences": 3,
+        "Occurred": 3,
+        "Indeterminate": 1
+      },
+      "exposure_views": [
+        {
+          "variant": "selected_not_occurred",
+          "view": {
+            "response_ref": {
+              "space": "fact",
+              "identity": "D-work-after",
+              "revision": "1"
+            },
+            "episode": "apple-episode",
+            "exposures": [],
+            "unconfirmed": [
+              {
+                "intent_ref": {
+                  "space": "execution",
+                  "identity": "2453f10d3eca42ef82413935ae147564",
+                  "revision": "1"
+                },
+                "status": "NotOccurred"
+              }
+            ],
+            "learner_used_assistance": "NOT_INFERRED",
+            "source": "ON-DEMAND-FACTUAL-LINEAGE"
+          }
+        },
+        {
+          "variant": "partial",
+          "view": {
+            "response_ref": {
+              "space": "fact",
+              "identity": "D-work-after",
+              "revision": "1"
+            },
+            "episode": "apple-episode",
+            "exposures": [
+              {
+                "occurrence_ref": {
+                  "space": "fact",
+                  "identity": "6f9160fdf6d149eababc7568cf07a47e",
+                  "revision": "1"
+                },
+                "intent_ref": {
+                  "space": "execution",
+                  "identity": "b38442c6f8ee4b5ab14e9f4df612e0f5",
+                  "revision": "1"
+                },
+                "acknowledgement_ref": {
+                  "space": "execution",
+                  "identity": "c3d7d018691143bdb6af61aea9fef954",
+                  "revision": "1"
+                },
+                "completeness": "PARTIAL",
+                "payload": "再检查一",
+                "rendered_at": 16,
+                "before_response": true
+              }
+            ],
+            "unconfirmed": [],
+            "learner_used_assistance": "NOT_INFERRED",
+            "source": "ON-DEMAND-FACTUAL-LINEAGE"
+          }
+        },
+        {
+          "variant": "full",
+          "view": {
+            "response_ref": {
+              "space": "fact",
+              "identity": "D-work-after",
+              "revision": "1"
+            },
+            "episode": "apple-episode",
+            "exposures": [
+              {
+                "occurrence_ref": {
+                  "space": "fact",
+                  "identity": "9564ce22a29e472fad0bb5ab274535f1",
+                  "revision": "1"
+                },
+                "intent_ref": {
+                  "space": "execution",
+                  "identity": "c1a4e9512a604159b581cb9c938ba203",
+                  "revision": "1"
+                },
+                "acknowledgement_ref": {
+                  "space": "execution",
+                  "identity": "2e95c80c44a34ef5bed209492977bc74",
+                  "revision": "1"
+                },
+                "completeness": "FULL",
+                "payload": "再检查一下 42÷6。",
+                "rendered_at": 16,
+                "before_response": true
+              }
+            ],
+            "unconfirmed": [],
+            "learner_used_assistance": "NOT_INFERRED",
+            "source": "ON-DEMAND-FACTUAL-LINEAGE"
+          }
+        },
+        {
+          "variant": "available_unused",
+          "view": {
+            "response_ref": {
+              "space": "fact",
+              "identity": "D-work-after",
+              "revision": "1"
+            },
+            "episode": "apple-episode",
+            "exposures": [],
+            "unconfirmed": [],
+            "learner_used_assistance": "NOT_INFERRED",
+            "source": "ON-DEMAND-FACTUAL-LINEAGE"
+          }
+        },
+        {
+          "variant": "response_before_hint",
+          "view": {
+            "response_ref": {
+              "space": "fact",
+              "identity": "D-work-early",
+              "revision": "1"
+            },
+            "episode": "apple-episode",
+            "exposures": [
+              {
+                "occurrence_ref": {
+                  "space": "fact",
+                  "identity": "e3e4562cf7db4f61ba5737958971a748",
+                  "revision": "1"
+                },
+                "intent_ref": {
+                  "space": "execution",
+                  "identity": "45a909d85b1949f2bcc53eee7be8775f",
+                  "revision": "1"
+                },
+                "acknowledgement_ref": {
+                  "space": "execution",
+                  "identity": "74ceaf2aac9741e39cb06708fd67680b",
+                  "revision": "1"
+                },
+                "completeness": "FULL",
+                "payload": "再检查一下 42÷6。",
+                "rendered_at": 17,
+                "before_response": false
+              }
+            ],
+            "unconfirmed": [],
+            "learner_used_assistance": "NOT_INFERRED",
+            "source": "ON-DEMAND-FACTUAL-LINEAGE"
+          }
+        },
+        {
+          "variant": "indeterminate",
+          "view": {
+            "response_ref": {
+              "space": "fact",
+              "identity": "D-work-after",
+              "revision": "1"
+            },
+            "episode": "apple-episode",
+            "exposures": [],
+            "unconfirmed": [
+              {
+                "intent_ref": {
+                  "space": "execution",
+                  "identity": "e245efba2e4c49f5a3fdfb983408b641",
+                  "revision": "1"
+                },
+                "status": "Indeterminate"
+              }
+            ],
+            "learner_used_assistance": "NOT_INFERRED",
+            "source": "ON-DEMAND-FACTUAL-LINEAGE"
+          }
+        }
+      ]
+    },
+    "D2": {
+      "counts": {
+        "checks": 33,
+        "snapshots": 2,
+        "formal_owner_commits": 6,
+        "acknowledged_occurrences": 1,
+        "intents": 1,
+        "Occurred": 1
+      },
+      "exposure_views": [
+        {
+          "variant": "D2",
+          "view": {
+            "response_ref": {
+              "space": "fact",
+              "identity": "D-work-after",
+              "revision": "1"
+            },
+            "episode": "apple-episode",
+            "exposures": [
+              {
+                "occurrence_ref": {
+                  "space": "fact",
+                  "identity": "9a9df266846e4b4bbc9fa10f30c97ad5",
+                  "revision": "1"
+                },
+                "intent_ref": {
+                  "space": "execution",
+                  "identity": "a3058dad708d42ec996caf2526d6204f",
+                  "revision": "1"
+                },
+                "acknowledgement_ref": {
+                  "space": "execution",
+                  "identity": "3a03c97e9b0f45ab8357baa3eb6a4ed0",
+                  "revision": "1"
+                },
+                "completeness": "FULL",
+                "payload": "再检查一下 42÷6。",
+                "rendered_at": 16,
+                "before_response": true
+              }
+            ],
+            "unconfirmed": [],
+            "learner_used_assistance": "NOT_INFERRED",
+            "source": "ON-DEMAND-FACTUAL-LINEAGE"
+          }
+        }
+      ]
+    }
+  },
+  "model_calls": 0,
+  "status": "PASS"
+}

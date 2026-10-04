@@ -1,0 +1,69 @@
+{
+  "schema": "architecture-assumption-assessment-v1",
+  "date": "2026-10-04",
+  "run_id": "action-exposure-20261004T073701Z-4e9959cb65b4",
+  "scope": "D1/D2 deterministic action/disclosure and Claim-relative representation mechanisms; explicitly scripted cognition and mock display.",
+  "assessments": [
+    {
+      "case_id": "D1",
+      "assumption_id": "AA-D01",
+      "result": "SUPPORTED",
+      "full_case_complete": true,
+      "checks": 91,
+      "basis": "All five specified variants plus Indeterminate recover actual disclosure and temporal relation without a durable authoritative exposure model."
+    },
+    {
+      "case_id": "D2",
+      "assumption_id": "AA-D02",
+      "result": "SUPPORTED",
+      "full_case_complete": true,
+      "checks": 33,
+      "basis": "Three differently interpreted Claim-specific Evidence records formally commit and resolve Current with shared exact exposure and pre/post Observation lineage."
+    }
+  ],
+  "real": [
+    "formal owner commit",
+    "authority and data-authority enforcement",
+    "effect-time expiry and dependency checks",
+    "acknowledgement factual admission",
+    "terminal idempotency",
+    "on-demand exposure reconstruction",
+    "Claim-relative precise dependencies"
+  ],
+  "scripted": [
+    "Observation semantics and validation",
+    "Policy choice and validation",
+    "Evaluation interpretation and validation",
+    "mock display acknowledgement",
+    "grants and learner inputs"
+  ],
+  "excluded": [
+    "A1/A2 semantic reliability",
+    "real Policy quality E1",
+    "full E2/F1/F2/X1-X5",
+    "production UI/network/concurrency",
+    "numeric Evidence strength",
+    "learner actually used the hint"
+  ],
+  "model_calls": 0,
+  "local_tests_passed": 174,
+  "audit_status": "PASS",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "original_AA_A02": "DENIED",
+  "modified_observation_profile": "INCONCLUSIVE",
+  "evidence_sha256": {
+    "src/spike/runs/action-exposure-20261004T073701Z-4e9959cb65b4/D1.jsonl": "4eb4cd0b75d5b0243fdf88e04ac11618075c808f6756c7de3e2c280ac0ae89e5",
+    "src/spike/runs/action-exposure-20261004T073701Z-4e9959cb65b4/D2.jsonl": "144d647fd60c136fb9f38cfd3dc5a3c3dafdb212938d8f38b2b7df3cb6302d0c",
+    "src/spike/runs/action-exposure-20261004T073701Z-4e9959cb65b4/manifest.json": "adbd030c2d9e398740d85f73c3ffda80a7c43b7838bd39d4aa9325d8f61575bc",
+    "src/spike/runs/action-exposure-20261004T073701Z-4e9959cb65b4/summary.json": "815040a2e5f4e1885e8dcf9656f290d6597992310274a696bb7d29693b475329",
+    "src/spike/reports/action-exposure-design-20261004.md": "3ea3cea5d06ed216dd332008cec0c4ad1c6f8e82a2fcd9eea2b82dbbe17d7b98",
+    "src/spike/reports/action-exposure-v1-20261004.md": "49140b392e4618f7e30b4d3b067205299311f74283da1dbd796e00636f777dfa",
+    "src/spike/reports/action-exposure-audit-20261004.json": "4e76c89be447a92ecc962f2519e5645f059acd906dad9eddbc5aa32bf0f7f574",
+    "src/spike/fixtures/action-exposure-v1.json": "13ecc35f86c3232ee8a4681ab9a584ec3263b5fc6c2f3866921eb469e51a36c9",
+    "src/spike/foundation/actions.py": "645fcae50bd1a0942e7fac92b9a64405561c5af464b6db7a835a7c1796f51103",
+    "src/spike/foundation/action_cases.py": "ca12edb2a45f52961589ff3c53d03a6ee3feb902b4ffb0e0e8a15d8d96f9b1a0",
+    "src/spike/tests/test_actions.py": "6bfd80865aa5201c8906db13ca9d0951f524a351fb01880dce2cd3babaf200c5",
+    "src/spike/run_action_exposure_validation.py": "8b1fcdeec1cb76888bf44357c1630290ea4239cec3095ef4cc631a3287e566a0"
+  }
+}

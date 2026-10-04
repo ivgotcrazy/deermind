@@ -151,7 +151,7 @@ class DeepSeekAdapter:
         if output_contract is not None:
             try:
                 if (set(output_contract) != {"name", "parameters"}
-                        or output_contract["name"] not in ("submit_observation", "submit_extraction", "submit_review", "submit_responsibility")
+                        or output_contract["name"] not in ("submit_observation", "submit_extraction", "submit_review", "submit_responsibility", "submit_policy", "submit_policy_utility")
                         or output_contract["parameters"].get("type") != "object"):
                     raise ValueError("InvalidOutputContract")
                 check_schema(output_contract["parameters"])
