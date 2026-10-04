@@ -1,0 +1,32 @@
+{
+  "schema": "composition-x3-x4-audit-v1",
+  "date": "2026-10-04",
+  "mechanical_audit": "PASS",
+  "frozen_inputs_verified": 130,
+  "cases": {
+    "X3": {
+      "checks": 42,
+      "execution_result": "PASS",
+      "formal_derived_records": 8,
+      "immutable_occurrences": 1,
+      "stale_candidate_rejections": 1,
+      "restored_revisions": 3
+    },
+    "X4": {
+      "checks": 98,
+      "execution_result": "PASS",
+      "shared_initial_snapshots": 3,
+      "denied_operations": 6,
+      "allowed_operations": 8,
+      "source_linked_security_signals": 6,
+      "fixture_provider_invocations": 4
+    }
+  },
+  "external_model_calls": 0,
+  "evidence_sha256": {
+    "src/spike/runs/composition-x3-x4-v1/manifest.json": "78adfe9a9e65a61632ff5a980c21a60925b888e7ce29b5c05dde10635f6ce980",
+    "src/spike/runs/composition-x3-x4-v1/summary.json": "57f90973c2f5948c2f7bb68e0e62b943a374246f762404c3f291007fe849ce14",
+    "src/spike/runs/composition-x3-x4-v1/X3.jsonl": "b9fdef44815b2f2753441eff19d12de02d5e5ed42af7f8970e3cd0fe4615895f",
+    "src/spike/runs/composition-x3-x4-v1/X4.jsonl": "999789a3c964b462670e61498d0f23f9f3b5ad1a8dae2acabcf9d63e8d09c44e"
+  }
+}

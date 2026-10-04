@@ -186,9 +186,12 @@ class SecurityRuntime:
         self.h.audit.append(record)
         return record.ref
 
-    def enforce(self, token, request, source, use=None):
+    def enforce(self, token, request, source, use=None, *, expected_principal=None):
         self._require_source(source)
         authority = self.authority(token, request)
+        if authority.decision == Decision.ALLOW and expected_principal is not None and authority.principal != expected_principal:
+            authority = AccessDecision(Decision.DENY, "ExecutionPrincipalMismatch", authority.principal,
+                                       authority.authority_basis)
         if authority.decision != Decision.ALLOW:
             self._audit("SecuritySignal", source, {"request": json_value(request), **json_value(authority)})
             raise AccessDenied("Unauthorized", authority)

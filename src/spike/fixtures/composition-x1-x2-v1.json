@@ -1,0 +1,13 @@
+{
+  "schema": "composition-x1-x2-v1",
+  "repetitions": 5,
+  "branches": ["X1-correction", "X2-supersede", "X2-revoke"],
+  "branch_call_limits": {"X1-correction": 4, "X2-supersede": 4, "X2-revoke": 2},
+  "planned_branch_runs": 15,
+  "max_model_calls": 50,
+  "max_output_tokens": 2048,
+  "timeout_seconds": 60,
+  "policy_protocol_path": "protocols/policy-e1-v1.json",
+  "policy_protocol_sha256": "c917702a30ab389361fe2dd346396f112f0df40077738d2d7dccc28613379fbb",
+  "scope": "Controlled X1 correction and X2 activation/revocation with real Policy and validation, scripted Observation and trusted owner/governance inputs, shared commit/session/mock action."
+}

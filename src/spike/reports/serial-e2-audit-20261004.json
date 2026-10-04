@@ -1,0 +1,157 @@
+{
+  "schema": "serial-e2-evidence-audit-v1",
+  "date": "2026-10-04",
+  "status": "PASS",
+  "frozen_inputs_verified": 112,
+  "shared_initial_snapshot": "cd9ae621e575f6a0155a9d7e0e24d3228b311914f14fac5b92e2ca49e8c52cfe",
+  "counts": {
+    "snapshots": 30,
+    "checks": 150,
+    "model_calls": 35,
+    "failed_model_calls": 2,
+    "network_failed_paths_preserved": 2,
+    "completed_model_calls": 33,
+    "stale_policy_rejections": 5,
+    "external_formal_belief_updates": 10,
+    "before_commit_rejections": 5,
+    "formal_policy_commits": 11,
+    "before_effect_rejections": 5,
+    "complete_serial_two_turn_paths": 3
+  },
+  "reported_usage": {
+    "prompt_tokens": 59740,
+    "completion_tokens": 14265,
+    "total_tokens": 74005,
+    "prompt_cache_hit_tokens": 46208,
+    "prompt_cache_miss_tokens": 13532
+  },
+  "started_at": "2026-10-04T13:13:54.359465+00:00",
+  "completed_at": "2026-10-04T13:15:46.859842+00:00",
+  "branches": [
+    {
+      "branch": "A-queue",
+      "repetition": 1,
+      "result": "NON_SUCCESS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "B-external-before-commit",
+      "repetition": 1,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "C-external-before-effect",
+      "repetition": 1,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "A-queue",
+      "repetition": 2,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {
+        "result_processed": 39,
+        "T1_settled": 40,
+        "T2_started": 41,
+        "T2_observation_committed": 42,
+        "T2_context_bound": 43
+      }
+    },
+    {
+      "branch": "B-external-before-commit",
+      "repetition": 2,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "C-external-before-effect",
+      "repetition": 2,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "A-queue",
+      "repetition": 3,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {
+        "result_processed": 39,
+        "T1_settled": 40,
+        "T2_started": 41,
+        "T2_observation_committed": 42,
+        "T2_context_bound": 43
+      }
+    },
+    {
+      "branch": "B-external-before-commit",
+      "repetition": 3,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "C-external-before-effect",
+      "repetition": 3,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "A-queue",
+      "repetition": 4,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {
+        "result_processed": 39,
+        "T1_settled": 40,
+        "T2_started": 41,
+        "T2_observation_committed": 42,
+        "T2_context_bound": 43
+      }
+    },
+    {
+      "branch": "B-external-before-commit",
+      "repetition": 4,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "C-external-before-effect",
+      "repetition": 4,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "A-queue",
+      "repetition": 5,
+      "result": "NON_SUCCESS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "B-external-before-commit",
+      "repetition": 5,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    },
+    {
+      "branch": "C-external-before-effect",
+      "repetition": 5,
+      "result": "PASS",
+      "mechanical_evidence": "CONSISTENT",
+      "temporal_trace": {}
+    }
+  ],
+  "semantic_quality_reassessed": false,
+  "scope": "Saved evidence integrity and controlled ordering only; failed network paths remain incomplete."
+}

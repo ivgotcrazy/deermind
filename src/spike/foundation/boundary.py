@@ -40,6 +40,7 @@ class ContextInput:
     role: Role
     required: bool = True
     current: bool = True
+    require_head: bool = False
 
 
 @dataclass(frozen=True)
@@ -158,9 +159,13 @@ class BoundaryRuntime:
                         requested.ref, scope, purpose)
                     if result.current is None:
                         raise ContractError(result.reason)
-                items.append(ContextItem(record, auth.authority_basis, data.authority_basis))
+                if requested.require_head:
+                    head = self.h.states.candidate(record.ref.identity, scope, purpose, self.h.clock.now)
+                    if head is None or head.ref != record.ref:
+                        raise ContractError("RequiredHeadChanged")
                 dependencies.append(Dependency(record.ref, Mode.CURRENT if requested.current else Mode.PINNED,
-                                               requested.role))
+                                               requested.role, require_head=requested.require_head))
+                items.append(ContextItem(record, auth.authority_basis, data.authority_basis))
             except (AccessDenied, ContractError) as exc:
                 reason = exc.category if isinstance(exc, AccessDenied) else str(exc)
                 excluded.append((requested.ref, reason))

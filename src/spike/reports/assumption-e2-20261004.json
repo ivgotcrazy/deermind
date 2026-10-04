@@ -1,0 +1,75 @@
+{
+  "schema": "architecture-assumption-assessment-v1",
+  "date": "2026-10-04",
+  "case_id": "E2",
+  "assumption_id": "AA-E02",
+  "result": "INCONCLUSIVE",
+  "execution_progress": "EXECUTION_COMPLETE",
+  "full_case_complete": false,
+  "run_directory": "src/spike/runs/serial-e2-v1",
+  "scope": "Controlled single-process serial turns and external head changes with real Policy/semantic validation, scripted input/Evaluation, mock display.",
+  "planned_branch_runs": 15,
+  "attempted_branch_runs": 15,
+  "complete_matching_branch_runs": 13,
+  "incomplete_branch_runs": 2,
+  "not_run": 0,
+  "model_calls": 35,
+  "maximum_model_calls": 40,
+  "network_failures": 2,
+  "failed_invariant_checks": 0,
+  "checks_passed": 150,
+  "branch_results": {
+    "A-queue": {
+      "planned": 5,
+      "complete": 3,
+      "network_failed": 2
+    },
+    "B-external-before-commit": {
+      "planned": 5,
+      "complete": 5,
+      "stale_rejections": 5
+    },
+    "C-external-before-effect": {
+      "planned": 5,
+      "complete": 5,
+      "prevented_effects": 5
+    }
+  },
+  "mechanical_audit": "PASS",
+  "local_tests_passed": 188,
+  "falsifier_observed": false,
+  "basis": "All completed paths meet declared checks, but two interrupted A paths prevent predeclared full coverage. No repair, silent rebase or extra batch.",
+  "design_consequences": [
+    "Retain per-conversation serialization through action-result processing.",
+    "Retain explicit current-head requirements rather than implicitly invalidating all old revisions.",
+    "Keep failed turns and queued input visible; interruption/recovery UX remains unvalidated.",
+    "Advance bounded F1/F2 security integration without representing E2 as fully supported."
+  ],
+  "automatic_additional_batches": false,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "evidence_sha256": {
+    "src/spike/runs/serial-e2-v1/manifest.json": "88bbc671844af51c12fb253cafe15c82766a9ff2eb120b3df7244ec82abb4a27",
+    "src/spike/runs/serial-e2-v1/summary.json": "5355bbeab02118123b0e6e989a49809747cf2766a02286df41a2bbe9268c9424",
+    "src/spike/runs/serial-e2-v1/1-A-queue.jsonl": "3ffb9e6f04b9a3d121cc52a4de7c6b33294b89439c68597d756f1cd4c2a1e720",
+    "src/spike/runs/serial-e2-v1/1-B-external-before-commit.jsonl": "18ce3a035bdd744b328f2b602019f1f2a06d5b8891ba07b09dbe3344951e1f49",
+    "src/spike/runs/serial-e2-v1/1-C-external-before-effect.jsonl": "de81f533ed879eaefb2ac1d3bfd865b43df79e74072c70fa5ddb6a6d077c2646",
+    "src/spike/runs/serial-e2-v1/2-A-queue.jsonl": "95456f8a81deeb5c2f9e4bc51c95e84bfdced7d6f3b97fd4b2c43c1c67b861c9",
+    "src/spike/runs/serial-e2-v1/2-B-external-before-commit.jsonl": "0ec8454b826acaee5297bbda885d7fb389db169e9dfd961a046c0142a79b12e9",
+    "src/spike/runs/serial-e2-v1/2-C-external-before-effect.jsonl": "970239a9e116f147d56fb5f5f809281f06d3fe1d9237b762d0527e3d053d1397",
+    "src/spike/runs/serial-e2-v1/3-A-queue.jsonl": "4bfc501100039a54f3df76587cc4f220f7f8e378f93188f122a213c619ada64e",
+    "src/spike/runs/serial-e2-v1/3-B-external-before-commit.jsonl": "8e939c2a474e1fbe676485e8243a4b039641d8aadc4fd1003e54e5ac27a97c71",
+    "src/spike/runs/serial-e2-v1/3-C-external-before-effect.jsonl": "1a35af4d3e2ad33bb927d3c9a26156fc91d3b1d799890cc54370192331822492",
+    "src/spike/runs/serial-e2-v1/4-A-queue.jsonl": "550a36eeb37f7a6ad05f4e5ae35e8833ec86151d60039ed1e9f49a87b4436606",
+    "src/spike/runs/serial-e2-v1/4-B-external-before-commit.jsonl": "70b777a92ac2c833246bd3fe5a5e5f5df0de2d6f139c1fbf07e1e1a48e0c3db2",
+    "src/spike/runs/serial-e2-v1/4-C-external-before-effect.jsonl": "384d3dd4b6ac040268b891b60a9f3456e17811e6115ddbf8f7c45791e3adf88f",
+    "src/spike/runs/serial-e2-v1/5-A-queue.jsonl": "1b3689358ab5177d94f975c8bdb84d8bc10057bbbd68b9c13ed781b5b76dc11f",
+    "src/spike/runs/serial-e2-v1/5-B-external-before-commit.jsonl": "c80425a7561a44dc59940d9194cde315ca9497052968ee2fc2090d9c2e0c0154",
+    "src/spike/runs/serial-e2-v1/5-C-external-before-effect.jsonl": "7bb3a812021c7f908c1c3a8cd5b70d5aae15d70b3668c15346f150a56e3dcb55",
+    "src/spike/runs/serial-e2-v1/baseline.jsonl": "1f7759ccdc3dedadedd47a529a3765dd1ff68bc11b6e1c2a24b5c7070515396c",
+    "src/spike/reports/serial-e2-design-20261004.md": "3b08ddb64dc77dfdb3dd8efb524633957162c3a93578bbe093bc6b03187dea3b",
+    "src/spike/reports/serial-e2-v1-20261004.md": "18b3d745d290ac4f69969ad07a6f17473c10f7c593f61a730014c8bd89e43392",
+    "src/spike/reports/serial-e2-audit-20261004.json": "517612218f57038a58ba7ee5ef27ccf5c01cdde09d2b5c1d7022c9ed511018b3",
+    "src/spike/fixtures/serial-e2-v1.json": "f726fe88e77bed7623250055168f6e94ba132c23d57e54b96f5b06aebf31eb14"
+  }
+}

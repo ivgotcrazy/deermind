@@ -4,7 +4,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from enum import StrEnum
 
-from .records import Dependency, Mode, Record, Ref, Space, VersionContext
+from .records import Dependency, Mode, Record, Ref, Space, VersionContext, json_value
 
 
 class ContractError(ValueError):
@@ -56,6 +56,12 @@ class FactualHistory(History):
     def corrected(self, ref: Ref, time: int):
         return next((r for r in reversed(self.records())
                      if r.corrects == ref and r.recorded_at <= time), None)
+
+    def version_revocation(self, ref: Ref, scope: str, purpose: str, time: int):
+        return next((r for r in reversed(self.records())
+                     if r.kind == 'VersionRevocationOccurred' and r.recorded_at <= time
+                     and (r.scope, r.purpose) == (scope, purpose)
+                     and r.payload.get('target') == json_value(ref)), None)
 
     def resolve_effective_occurrence(self, occurrence_key: str, subject: str, time: int):
         return next((r for r in reversed(self.records(subject))
@@ -174,6 +180,20 @@ class Harness:
         """Install owner-authored test data; deliberately not a public commit gate."""
         if record.recorded_at > self.clock.now:
             raise ContractError("Cannot seed a future committed record")
+        if record.kind == 'VersionRevocationOccurred':
+            try:
+                value = record.payload['target']
+                target = self.get(Ref(Space(value['space']), value['identity'], value['revision']))
+                value = record.payload['source']
+                source = self.get(Ref(Space(value['space']), value['identity'], value['revision']))
+            except (KeyError, TypeError, ValueError):
+                raise ContractError('InvalidVersionRevocationFixture') from None
+            if (record.ref.space != Space.FACT or record.owner != 'Evolution' or target is None
+                    or target.ref.space != Space.CANONICAL or source is None
+                    or source.ref.space not in (Space.FACT, Space.EXECUTION)
+                    or target.subject != record.subject or source.subject != record.subject
+                    or source.recorded_at > record.recorded_at or target.recorded_at > record.recorded_at):
+                raise ContractError('InvalidVersionRevocationFixture')
         if record.corrects is not None:
             target = self.get(record.corrects)
             if target is None or target.subject != record.subject:
@@ -282,6 +302,8 @@ class CurrentResolver:
             return "UseContextMismatch"
         if record.valid_until is not None and self.time >= record.valid_until:
             return "LifecycleIneligible"
+        if ref.space == Space.CANONICAL and h.facts.version_revocation(ref, scope, purpose, self.time):
+            return 'VersionIneligible'
         correction = h.facts.corrected(ref, self.time)
         if correction:
             self.checks.append(Check(ref, purpose, scope, "Corrected", str(correction.ref)))

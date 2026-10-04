@@ -66,6 +66,8 @@ class ActionRuntime:
                    'episode': p['episode'], 'expires_at': expires_at, 'idempotency_key': idempotency_key,
                    # This minimal profile explicitly declares the whole policy basis effect-critical.
                    'preconditions': [json_value(policy_ref), json_value(action)]}
+        if 'disclosure_kind' in semantic.payload:
+            payload['disclosure_kind'] = semantic.payload['disclosure_kind']
         authority, data = self._authorize(token, payload, source)
         payload.update(authority_basis=list(authority.authority_basis), data_authority_basis=list(data.authority_basis))
         for old in self.h.executions.records(policy.subject):

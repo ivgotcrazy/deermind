@@ -1,0 +1,49 @@
+{
+  "identity": "SerialConversationAndExternalCriticalChange",
+  "version": "v1",
+  "case": "E2",
+  "branches": [
+    "A-queue",
+    "B-external-before-commit",
+    "C-external-before-effect"
+  ],
+  "repetitions": 5,
+  "planned_branch_runs": 15,
+  "max_model_calls": 40,
+  "branch_call_limits": {
+    "A-queue": 4,
+    "B-external-before-commit": 2,
+    "C-external-before-effect": 2
+  },
+  "max_output_tokens": 2048,
+  "timeout_seconds": 60,
+  "policy_protocol_path": "protocols/policy-e1-v1.json",
+  "policy_protocol_sha256": "c917702a30ab389361fe2dd346396f112f0df40077738d2d7dccc28613379fbb",
+  "scope": "One frozen shared baseline branched independently for each controlled E2 interleaving. Real Policy generation and semantic validation; scripted Observation/Evaluation and mock effect. No new E1 utility scoring.",
+  "stimuli": {
+    "A-queue": "Enqueue ordinary C/T2 during the first real Policy generation; attempt same-C start at reasoning, intent, returned effect and processed-result stages. T2 starts only after T1 settles, with formal scripted Observation and real Policy.",
+    "B-external-before-commit": "Independent Evaluation owner in C-external formally commits shared Belief r2 during Policy generation; exact r1 dependency explicitly requires current head. Expect CandidateStale, no intent, no silent rebase.",
+    "C-external-before-effect": "After committed Execute outcome and exact intent, independent Evaluation owner commits r2; expect NotOccurred before display, then process result and settle."
+  },
+  "support_condition": "All 15 branch runs satisfy checks with real Policy/validation. A/C must naturally choose Execute to cover effect boundaries; other choices leave coverage INCOMPLETE, never force or replace them.",
+  "falsifiers": [
+    "Overlapping ordinary input processing within one conversation",
+    "Queued input leaks into frozen prior Context",
+    "External stale basis cannot be detected",
+    "Need learner-wide lock through model call",
+    "Stale candidate creates intent",
+    "Silent rebase of old candidate"
+  ],
+  "stop_rules": [
+    "Stop on a failed invariant check or forbidden commit/effect.",
+    "Stop on HTTP 400/401/403/404/422 or three consecutive protocol/runtime failures.",
+    "Record incomplete or unrun cases; no retries, replacement runs or automatic additional batch."
+  ],
+  "excluded": [
+    "User interruption and exception recovery UX",
+    "Production scheduler, threading and distributed transactions",
+    "A1/A2 semantic quality",
+    "E1 unresolved rubric disputes",
+    "F1/F2 and full X1-X5"
+  ]
+}

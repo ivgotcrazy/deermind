@@ -1,0 +1,62 @@
+{
+  "schema": "architecture-composition-assessment-v1",
+  "date": "2026-10-04",
+  "run_directory": "src/spike/runs/composition-x3-x4-v1",
+  "scope": "Deterministic shared mechanisms; scripted cognition and local replay provider; trusted owner/grant stimuli and mock display.",
+  "cases": [
+    {
+      "case_id": "X3",
+      "composition_result": "PASS",
+      "execution_progress": "COMPLETE",
+      "full_case_complete": true,
+      "checks_passed": 42,
+      "basis": "Actual hint precedes response and formal O/E/B chain; correction invalidates old exact chain; rejected old-basis candidate cannot silently rebase; ordered new revisions restore current state without changing actual disclosure or replaying the effect."
+    },
+    {
+      "case_id": "X4",
+      "composition_result": "PASS",
+      "execution_progress": "COMPLETE",
+      "full_case_complete": true,
+      "checks_passed": 98,
+      "basis": "Three same-snapshot authorization branches, six replay operations denied with no raw byte load/provider input/output; eight allowed positive/restored operations and complete historical retention; six source-linked SecuritySignals."
+    }
+  ],
+  "external_model_calls": 0,
+  "fixture_provider_calls": 4,
+  "failed_invariant_checks": 0,
+  "checks_passed": 140,
+  "local_tests_passed": 205,
+  "mechanical_audit": "PASS",
+  "frozen_inputs_verified": 130,
+  "falsifier_observed": false,
+  "design_consequences": [
+    "Retain factual ActionOccurrence/ActualDisclosure independently from the current validity of epistemic interpretation.",
+    "Recompute O/E/B in dependency order without rewriting old records or duplicating actual effects.",
+    "Require current operation and data-use authority for both historical reconstruction and reexecution.",
+    "Keep denied access distinct from missing retained history and preserve traceable denial records.",
+    "Proceed to bounded X5 activity-transition composition; retain prior inconclusive and denied results."
+  ],
+  "limitations": [
+    "Scripted cognition and mock display do not establish semantic quality or production delivery.",
+    "One deterministic execution per declared branch, not a stochastic reliability estimate.",
+    "No production identity/authorization service, distributed revocation or external provider transport tested.",
+    "Individual raw-data denial can follow internal reads of still-authorized records; no content is returned or passed to provider."
+  ],
+  "automatic_additional_batches": false,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "evidence_sha256": {
+    "src/spike/fixtures/composition-x3-x4-v1.json": "b0ffaf0b31bbd122abb1d56954f50e7e2aeaf9d51d5f880a1ea7127209bf85de",
+    "src/spike/foundation/history_composition_cases.py": "1e84cadde63dd7b4feaf6930800d4017fdf8d8bed11dda98a0046971b1e7ca99",
+    "src/spike/reports/audit_composition_x3_x4.py": "2f86ecb056a84eb8f36ae1fe772b3839ab3188da9f2fe3056427a5206cdee348",
+    "src/spike/reports/composition-x3-x4-audit-20261004.json": "be007506c8551247bb41f6da39adf8b1b34fca952d3cba0cfef66af24598820c",
+    "src/spike/reports/composition-x3-x4-design-20261004.md": "6903dd53c136cb4e47006396b4e11723860efda0407f8d44552636762e9804ba",
+    "src/spike/reports/composition-x3-x4-v1-20261004.md": "023a68e8b09fed620df279b24230059915312c9de557cecff785e9ca36b6dbe8",
+    "src/spike/run_history_composition_validation.py": "d795e425eac0dc1a670e7680199e244f6743b48cbb2e04e91043c4e2923d51a0",
+    "src/spike/runs/composition-x3-x4-v1/manifest.json": "78adfe9a9e65a61632ff5a980c21a60925b888e7ce29b5c05dde10635f6ce980",
+    "src/spike/runs/composition-x3-x4-v1/summary.json": "57f90973c2f5948c2f7bb68e0e62b943a374246f762404c3f291007fe849ce14",
+    "src/spike/runs/composition-x3-x4-v1/X3.jsonl": "b9fdef44815b2f2753441eff19d12de02d5e5ed42af7f8970e3cd0fe4615895f",
+    "src/spike/runs/composition-x3-x4-v1/X4.jsonl": "999789a3c964b462670e61498d0f23f9f3b5ad1a8dae2acabcf9d63e8d09c44e",
+    "src/spike/tests/test_history_composition.py": "5fd6fe37add8afff3b96f0334fb6574bb1847aaff0c29deb8882a684e6d1e8cd"
+  }
+}

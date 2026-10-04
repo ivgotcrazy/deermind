@@ -1,0 +1,61 @@
+{
+  "schema": "composition-x1-x2-audit-v1",
+  "date": "2026-10-04",
+  "mechanical_audit": "PASS",
+  "frozen_inputs_verified": 125,
+  "baseline_snapshot": "d891763f5dbe55663766344a9fa68da78f051c8af57a8b088f290257d8e4750b",
+  "counts": {
+    "identical_initial_snapshots": 15,
+    "checks": 175,
+    "failed_checks": 0,
+    "model_calls": 47,
+    "call_FAILED": 2,
+    "call_COMPLETED": 45,
+    "exact_model_candidate_review_bindings": 22,
+    "formal_policy_commits": 18,
+    "effect_Occurred": 9,
+    "serial_two_turn_paths": 9,
+    "supersession_paths": 5,
+    "effect_NotOccurred": 4,
+    "revocation_paths": 4,
+    "correction_stale_paths": 4
+  },
+  "branches": {
+    "X1-correction": {
+      "attempted": 5,
+      "complete": 4,
+      "passed": 4
+    },
+    "X2-supersede": {
+      "attempted": 5,
+      "complete": 5,
+      "passed": 5
+    },
+    "X2-revoke": {
+      "attempted": 5,
+      "complete": 4,
+      "passed": 4
+    }
+  },
+  "scope": "Mechanical exact-binding, no-mutation and temporal evidence audit; no E1 utility or production concurrency claim.",
+  "evidence_sha256": {
+    "src/spike/runs/composition-x1-x2-v1/1-X1-correction.jsonl": "258228566fa4dac06c836071b030241e9d2ddbcc2c24667b777a1454c2dd28fa",
+    "src/spike/runs/composition-x1-x2-v1/1-X2-revoke.jsonl": "ae98f0da64e89cdbcff37f4578be37d8b94c258c3f78dbee9fc002d5331bab5a",
+    "src/spike/runs/composition-x1-x2-v1/1-X2-supersede.jsonl": "48939dd0833b042f98e598ce56903e3295230efecf2732b6d6ceb7c9d08122b4",
+    "src/spike/runs/composition-x1-x2-v1/2-X1-correction.jsonl": "f8b5a45c8985f088d3245e2cecbcac2c4eef57e6c450bf639a5713006f61bc9a",
+    "src/spike/runs/composition-x1-x2-v1/2-X2-revoke.jsonl": "6a487727248c3dc1a6f10a4dfacfcdbaf1e27be85ee119673a208b0c53f5bdfe",
+    "src/spike/runs/composition-x1-x2-v1/2-X2-supersede.jsonl": "cfc1511ac5dfe2b5fa7c70e445463abfd6693017677813cfd76a7840470ab913",
+    "src/spike/runs/composition-x1-x2-v1/3-X1-correction.jsonl": "9b711bc2bd585e441c72025f8ba88fa91edb5d5b63e1e612c65ac6a14f318cac",
+    "src/spike/runs/composition-x1-x2-v1/3-X2-revoke.jsonl": "8febea19badf8cd0494c5930402b503de779f3c0af8fc9248fcdb0c6b0a89342",
+    "src/spike/runs/composition-x1-x2-v1/3-X2-supersede.jsonl": "7617c777a897ef171b700cbcffaba555af8ba3f03a616a06b385deb6967a52d2",
+    "src/spike/runs/composition-x1-x2-v1/4-X1-correction.jsonl": "b072dc209a612ef37ccecd125cff5b6c88a9933a85c2b6f8c235883839368048",
+    "src/spike/runs/composition-x1-x2-v1/4-X2-revoke.jsonl": "0faa3eff60f65d3d7fe8dca52cba1a2654c4cf93a4e2fdd8663c38b49b2dd75e",
+    "src/spike/runs/composition-x1-x2-v1/4-X2-supersede.jsonl": "7ef0211401f727cc86b4fb4e2af454be7c8f19be9c399228babb48a66ea9bedb",
+    "src/spike/runs/composition-x1-x2-v1/5-X1-correction.jsonl": "9054e1907f85ccd717bf7f19b176edde0b4c562c2731aef92bb508d07d39afc8",
+    "src/spike/runs/composition-x1-x2-v1/5-X2-revoke.jsonl": "3c5a3520a7b4f10f20e99e16d0487964dcf8403e6e9325588b0fff81a1e6d21b",
+    "src/spike/runs/composition-x1-x2-v1/5-X2-supersede.jsonl": "31fcaf8117416a36007c8b4cb8e4ce0b2c4083971024a59a04d444c78c722c42",
+    "src/spike/runs/composition-x1-x2-v1/baseline.jsonl": "68c7430f9414dd5df190fe6808d3aaa9f33a77d6296762e79ef2044b2261ae69",
+    "src/spike/runs/composition-x1-x2-v1/manifest.json": "9eb7b7529fa459b90d4ad4a308a60115f34bf0ef847d14f0bc12e877e9419054",
+    "src/spike/runs/composition-x1-x2-v1/summary.json": "b288009e75463bd2146f7ad904bf0aa125c5259ff8bbe96225b71b526fede342"
+  }
+}

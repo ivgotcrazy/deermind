@@ -1,0 +1,109 @@
+{
+  "schema": "architecture-assumption-assessment-v1",
+  "date": "2026-10-04",
+  "case_id": "E1",
+  "assumption_id": "AA-E01",
+  "result": "INCONCLUSIVE",
+  "execution_progress": "EXECUTION_COMPLETE",
+  "full_case_complete": false,
+  "run_directory": "src/spike/runs/policy-e1-v1",
+  "scope": "Real Policy, semantic validation, test-only utility scoring and exact mock effects on 3 fixed E1 variants, 5 repetitions each. Scripted input Observation; no A1/A2, E2, or production claim.",
+  "raw_runner_status": "PASS",
+  "raw_utility_passes": 60,
+  "raw_scores_changed": false,
+  "completed_runs": 15,
+  "planned_runs": 15,
+  "model_calls": 45,
+  "max_model_calls": 45,
+  "not_run": 0,
+  "protocol_or_runtime_failures": 0,
+  "illegal_commits": 0,
+  "forbidden_effects": 0,
+  "policy_outcomes": {
+    "Execute_HintCheckStep": 10,
+    "NoIntervention": 4,
+    "Defer": 1
+  },
+  "negative_fixture_checks": 6,
+  "mechanical_audit": "PASS",
+  "local_tests_passed": 182,
+  "scoring_disputes": [
+    {
+      "variant": "E1-open",
+      "repetition": 1,
+      "field": "uncertainty",
+      "excerpt": "the learner may also have mis-multiplied 8×15 independently",
+      "dimensions": [
+        "grounding"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "Original work explicitly has 8*15=120, which is arithmetically correct. A further unobserved multiplication error lacks supplied evidence. Whether this hypothetical belongs in uncertainty is disputed; do not silently turn a possibility into an established false statement.",
+      "candidate_digest": "a6439b61723120c5ab867f081a5ed002e10ad858b71f3c2c4f9a9cc6adc3f591",
+      "original_utility_score": "PASS"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 3,
+      "field": "rationale",
+      "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+      "dimensions": [
+        "responsibility_cost",
+        "consistency"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+      "candidate_digest": "d871b71e2a5ff87ba7cc6054403f47c24f3332635f6d9eb67359080f0fb4221e",
+      "original_utility_score": "PASS"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 4,
+      "field": "rationale",
+      "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+      "dimensions": [
+        "responsibility_cost",
+        "consistency"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+      "candidate_digest": "ce5e18113318b1b0a13d0f4141ebcb9cbed56a174655d28c2d4b4e22ab988c19",
+      "original_utility_score": "PASS"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 5,
+      "field": "rationale",
+      "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+      "dimensions": [
+        "responsibility_cost",
+        "consistency"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+      "candidate_digest": "226d686aaaabb502b44a2e1416cdfb3329ee9eaccf449b0fd74d6e95e46fc786",
+      "original_utility_score": "PASS"
+    }
+  ],
+  "assessment_basis": "Predeclared rule preserves scoring disputes. No hardcoded pedagogical selection was required, so the declared AA-E01 falsifier was not observed; quality support remains unresolved.",
+  "design_consequences": [
+    "Retain raw PASS and separate scoring concerns; do not rewrite samples or results.",
+    "Policy rationale has no automatic Observation/Evidence/Belief standing.",
+    "Clarify uncertainty grounding and the distinction between assisted error localization and learner-owned recomputation.",
+    "Proceed to E2 mechanism work without representing E1 utility as established.",
+    "No automatic extra model batch."
+  ],
+  "automatic_additional_batches": false,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "evidence_sha256": {
+    "src/spike/runs/policy-e1-v1/manifest.json": "d405571fbf7853d8727e0d8b5eb8786aea249c40d1d1228c057bfa36628683cc",
+    "src/spike/runs/policy-e1-v1/summary.json": "51a56d588d71bb79ebd67710f0e472d6a71bc46ced03557edd967147943e5fef",
+    "src/spike/runs/policy-e1-v1/evidence.jsonl": "cf92ff8d3584b2d5449fc9d713b7ffdcd81afde704cfba9de772a0e3273ba2a7",
+    "src/spike/runs/policy-e1-v1/negative.jsonl": "5f0ecf68c2afd6ca42228ca1bfec7a605525dbc7bd0a72c4662620256ad3d9a4",
+    "src/spike/reports/policy-e1-design-20261004.md": "cc06e5422c8b2b9df348ecf917653d9461153e8d9e9b9ec9d424f5d3f57a1b09",
+    "src/spike/reports/policy-e1-v1-20261004.md": "310ffd1c6aeddfba574fa1fe7b7e80edbacbc6703ef5aaa403d0f4d9731f6401",
+    "src/spike/reports/policy-e1-audit-20261004.json": "b184b0d004b3632c86de7549ced59f802f547a1d70ed6307515ed67f6d29622d",
+    "src/spike/fixtures/policy-e1-v1.json": "2e37b69535871bc43ba9049287746b4edfc513494a9a5489d7ae98f36c7d36e7",
+    "src/spike/protocols/policy-e1-v1.json": "c917702a30ab389361fe2dd346396f112f0df40077738d2d7dccc28613379fbb"
+  }
+}

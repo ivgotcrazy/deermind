@@ -261,4 +261,20 @@ python run_semantic_stability.py --fixture observation-responsibility-v1.json --
 
 `python run_policy_validation.py` 只做配置预检；加 `--run` 预留唯一 `runs/policy-e1-v1` 并运行 open / help / wait 各五次，总预算 45 次模型调用，无重试或替补。真实 Policy、内容校验和独立测试评分经共享 Runtime 留存，固定 Observation 输入及 mock 展示边界明确标注。ActivityConstraints 的 exact action 范围在共享正式提交时重验，NoIntervention / Defer 不创建 ActionIntent；测试评分发生在提交和可选 effect 之后，不能代替生产校验。规则、停止条件和支持范围见 `reports/policy-e1-design-20261004.md`。此入口不重开 Observation S1/S2。
 
-**基础检查或连通验证 PASS 不等于 Architecture Assumption SUPPORTED。** 完整 A1/A2 和会话串行链仍待执行，B/C/D/E 只按各自报告的范围评估，Gate E / F 保持 `OPEN`。运行清单中的整体 `UNVALIDATED` 不覆盖已有具体失败证据；正式假设审查必须纳入反例，命中声明的 falsifier 时按设计判为 `DENIED`，不能用后续修复抵消。
+## E2 单会话完整轮次串行
+
+`python run_serial_validation.py` 只预检；加 `--run` 预留唯一 `runs/serial-e2-v1`。三个同源快照分支各五次，总上限 40 次真实 Policy / 校验调用：普通输入在 reasoning 期间排队；外部 owner 在提交前更新 shared Belief；以及 Intent 形成后、effect 前更新依据。`SerialSession` 把排队、Context、正式 outcome、Intent、行动结果处理与轮次收束关联；CURRENT + require_head 在 Context 形成和正式提交 / effect 时检查。不得靠强行选择 Execute 填满覆盖，具体范围和停止条件见 `reports/serial-e2-design-20261004.md`。
+
+## F1/F2 语言自授权限与委托范围
+
+`python run_security_validation.py` 只预检；加 `--run` 预留唯一 `runs/security-f-v1`，十个变体各五次、最多 50 次真实模型调用。真实候选通过共享 BoundaryRuntime 生成，在 `ToolBoundary` 经同一个 SecurityRuntime 检查。模型自称权限、身份或工具结构都不安装 grant。模型拒绝、模型实际请求及显式脚本攻击分开记账，每分支包含合法读取和合法候选暂存正对照；execute / 治理接收器为 mock。记录不会获得正式 Policy standing，完整范围、控制组与停止条件见 `reports/security-f-design-20261004.md`。固定离线审计入口为 `python reports/audit_security_f.py`。
+
+## X1/X2 在途决策组合
+
+`python run_composition_validation.py` 预检；加 `--run` 预留唯一 `runs/composition-x1-x2-v1`。correction、兼容版本启用、显式版本撤销三分支各五次，最多 50 次真实 Policy / 校验调用。前两条完整路径还包含收束后的新 Context 和真实重新决策。追加的 `VersionRevocationOccurred` 受信治理 fixture 保留 exact target / scope / purpose / source，提交及 effect 的共享 resolver 检查当前资格，不改写旧版本记录。范围见 `reports/composition-x1-x2-design-20261004.md`；离线审计为 `python reports/audit_composition_x1_x2.py`。激活和撤销都是治理输入 fixture，不是生产治理授权验收。
+
+## X3/X4 实际披露与受权限约束的历史回放
+
+`python run_history_composition_validation.py` 预检；加 `--run` 执行唯一 `runs/composition-x3-x4-v1`，无外部模型调用。X3 经正式 O/E/B 提交、受信 correction 和逐项重算检查实际帮助历史不变；X4 三个同源分支分别拒绝 replay 数据授权、原始材料读取和未获数据授权的用途，并包含合法回放与重新授权恢复对照。认知及 provider 为明确脚本 fixture，机制复用现有 Runtime。范围见 `reports/composition-x3-x4-design-20261004.md`，离线审计为 `python reports/audit_composition_x3_x4.py`。
+
+**基础检查或连通验证 PASS 不等于 Architecture Assumption SUPPORTED。** 完整 A1/A2 和跨边界组合只按各自报告的范围评估，Gate E / F 保持 `OPEN`。运行清单中的整体 `UNVALIDATED` 不覆盖已有具体失败证据；正式假设审查必须纳入反例，命中声明的 falsifier 时按设计判为 `DENIED`，不能用后续修复抵消。

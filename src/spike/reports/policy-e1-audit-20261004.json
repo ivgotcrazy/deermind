@@ -1,0 +1,284 @@
+{
+  "schema": "policy-e1-evidence-audit-v1",
+  "date": "2026-10-04",
+  "mechanical_audit": "PASS",
+  "frozen_inputs_verified": 107,
+  "counts": {
+    "snapshots": 15,
+    "model_policy_commits": 15,
+    "independent_test_reviews": 15,
+    "actual_disclosures": 10,
+    "nonexecute_without_intent": 5
+  },
+  "negative_fixture": "PASS",
+  "negative_fixture_checks": 6,
+  "reported_usage": {
+    "prompt_tokens": 79665,
+    "completion_tokens": 17991,
+    "total_tokens": 97656,
+    "prompt_cache_hit_tokens": 55936,
+    "prompt_cache_miss_tokens": 23729
+  },
+  "started_at": "2026-10-04T07:53:11.989406+00:00",
+  "completed_at": "2026-10-04T07:54:59.312113+00:00",
+  "measurements": [
+    {
+      "variant": "E1-open",
+      "repetition": 1,
+      "candidate_digest": "a6439b61723120c5ab867f081a5ed002e10ad858b71f3c2c4f9a9cc6adc3f591",
+      "outcome": "Execute",
+      "action": "HintCheckStep",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "01f41b8c56af478e99f370cf1517df87",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 1,
+      "candidate_digest": "e6f0fdda6d30cee008de17c77a25e6d8af9ec0756b751d1f01d3696323b28810",
+      "outcome": "Execute",
+      "action": "HintCheckStep",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "0a6666a853ea4f0cb1d6c57adc3fca9d",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-wait",
+      "repetition": 1,
+      "candidate_digest": "d29fed7c92cf3d855617fa59721b29bed9ea379fdd533dc63ca282f23847f96f",
+      "outcome": "Defer",
+      "action": "",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "3993de36439548829be4d04801b78f49",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-open",
+      "repetition": 2,
+      "candidate_digest": "34d4b38b780d9ae7944d87381c153e54e4d80e6cb489cc23e9959b8631607c9a",
+      "outcome": "Execute",
+      "action": "HintCheckStep",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "3ee2166a1be544e880aeba573d6e82d7",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 2,
+      "candidate_digest": "8d10a4fd27f2391b989c9f2c75c4ea93a6da0847ae445e5d945e0235be123b55",
+      "outcome": "Execute",
+      "action": "HintCheckStep",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "9fcda9b00792432fb7f94a52574e7d37",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-wait",
+      "repetition": 2,
+      "candidate_digest": "51d257f3137da07dfe480c7ca04d9bcd8858876af94ff4dd5935379f94422175",
+      "outcome": "NoIntervention",
+      "action": "",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "ad9554e1e87d4efc8d2ad3ddcac40100",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-open",
+      "repetition": 3,
+      "candidate_digest": "0dfaa00e2e876c32a4d499197ded88ff6df6474f805968dc843d5c68c47f8b8a",
+      "outcome": "Execute",
+      "action": "HintCheckStep",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "496e91a74acc4b8b99649b412490e6cd",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 3,
+      "candidate_digest": "d871b71e2a5ff87ba7cc6054403f47c24f3332635f6d9eb67359080f0fb4221e",
+      "outcome": "Execute",
+      "action": "HintCheckStep",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "e29402460f0642629a902898c34b4de0",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-wait",
+      "repetition": 3,
+      "candidate_digest": "06f227ca6e8b434886f8cfb69c93208f77c59d8880eeb69642b2202008be0816",
+      "outcome": "NoIntervention",
+      "action": "",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "89ad65760d924950baf6ef9fed8d1b1b",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-open",
+      "repetition": 4,
+      "candidate_digest": "96f7fd40bff118db38e84ffbbcea9b3854b1cb85095cfc8721872b9255296468",
+      "outcome": "Execute",
+      "action": "HintCheckStep",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "3ab1726404344d6cab46bfb88c842236",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 4,
+      "candidate_digest": "ce5e18113318b1b0a13d0f4141ebcb9cbed56a174655d28c2d4b4e22ab988c19",
+      "outcome": "Execute",
+      "action": "HintCheckStep",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "bef8f3c6328041a1b568edc696f0a545",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-wait",
+      "repetition": 4,
+      "candidate_digest": "6e6093cacfdc285a60d6d7140fceeded03b30395b382521f068916bd2d45c72a",
+      "outcome": "NoIntervention",
+      "action": "",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "063f91d1f878463192a8cd4ffdc708c3",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-open",
+      "repetition": 5,
+      "candidate_digest": "b25248d22ae533b9a227fda6927b594f37c128f062351dc7ce0b343700f54dd3",
+      "outcome": "Execute",
+      "action": "HintCheckStep",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "561c7bf0682b446f91833c3f35b9adde",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 5,
+      "candidate_digest": "226d686aaaabb502b44a2e1416cdfb3329ee9eaccf449b0fd74d6e95e46fc786",
+      "outcome": "Execute",
+      "action": "HintCheckStep",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "f9aecd90f8614eb0a51187ea0afc4bf2",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    },
+    {
+      "variant": "E1-wait",
+      "repetition": 5,
+      "candidate_digest": "e74688bbbc1f15b77f9d6383ef62854f7a4856c2c7df57628ace49e270ff3d6a",
+      "outcome": "NoIntervention",
+      "action": "",
+      "utility_execution_ref": {
+        "space": "execution",
+        "identity": "abc89505cbcb46d6bc2ff6a0c88b255b",
+        "revision": "1"
+      },
+      "raw_score": "PASS"
+    }
+  ],
+  "closeout_review": {
+    "reviewer": "Current development assistant reviewing retained outputs; not an independent human or new model API reviewer.",
+    "raw_model_scores_changed": false,
+    "additional_model_calls": 0,
+    "disputes": [
+      {
+        "variant": "E1-open",
+        "repetition": 1,
+        "field": "uncertainty",
+        "excerpt": "the learner may also have mis-multiplied 8×15 independently",
+        "dimensions": [
+          "grounding"
+        ],
+        "status": "UNRESOLVED_SCORING_DISPUTE",
+        "basis": "Original work explicitly has 8*15=120, which is arithmetically correct. A further unobserved multiplication error lacks supplied evidence. Whether this hypothetical belongs in uncertainty is disputed; do not silently turn a possibility into an established false statement.",
+        "candidate_digest": "a6439b61723120c5ab867f081a5ed002e10ad858b71f3c2c4f9a9cc6adc3f591",
+        "original_utility_score": "PASS"
+      },
+      {
+        "variant": "E1-help",
+        "repetition": 3,
+        "field": "rationale",
+        "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+        "dimensions": [
+          "responsibility_cost",
+          "consistency"
+        ],
+        "status": "UNRESOLVED_SCORING_DISPUTE",
+        "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+        "candidate_digest": "d871b71e2a5ff87ba7cc6054403f47c24f3332635f6d9eb67359080f0fb4221e",
+        "original_utility_score": "PASS"
+      },
+      {
+        "variant": "E1-help",
+        "repetition": 4,
+        "field": "rationale",
+        "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+        "dimensions": [
+          "responsibility_cost",
+          "consistency"
+        ],
+        "status": "UNRESOLVED_SCORING_DISPUTE",
+        "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+        "candidate_digest": "ce5e18113318b1b0a13d0f4141ebcb9cbed56a174655d28c2d4b4e22ab988c19",
+        "original_utility_score": "PASS"
+      },
+      {
+        "variant": "E1-help",
+        "repetition": 5,
+        "field": "rationale",
+        "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+        "dimensions": [
+          "responsibility_cost",
+          "consistency"
+        ],
+        "status": "UNRESOLVED_SCORING_DISPUTE",
+        "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+        "candidate_digest": "226d686aaaabb502b44a2e1416cdfb3329ee9eaccf449b0fd74d6e95e46fc786",
+        "original_utility_score": "PASS"
+      }
+    ],
+    "assessment_consequence": "INCONCLUSIVE until scoring disputes are resolved; no automatic replacement batch."
+  }
+}

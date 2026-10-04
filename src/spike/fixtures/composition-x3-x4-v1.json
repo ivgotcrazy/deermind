@@ -1,0 +1,8 @@
+{
+  "schema": "composition-x3-x4-v1",
+  "cases": ["X3", "X4"],
+  "X4_branches": ["replay-data-revoked", "raw-data-denied", "purpose-data-denied"],
+  "repetitions": 1,
+  "model_calls": 0,
+  "scope": "Deterministic shared-mechanism compositions with scripted cognition/provider, trusted correction/grant fixtures and mock display; no external LLM calls."
+}
