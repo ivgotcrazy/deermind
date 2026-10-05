@@ -20,10 +20,7 @@ class ActionRuntime:
         self.h, self.security = boundary.h, boundary.security
 
     def _event(self, kind, subject, payload):
-        ref = self.runtime.execution(kind, subject, payload)
-        if kind == 'ActionExecutionResult' and self.runtime.session is not None:
-            self.runtime.session.executor_returned(exact_ref(payload['intent_ref']), ref)
-        return ref
+        return self.runtime.execution(kind, subject, payload)
 
     def _authorize(self, token, payload, source):
         action = exact_ref(payload['action_semantic_ref'])
@@ -48,8 +45,6 @@ class ActionRuntime:
                    and r.payload.get('committed') == json_value(policy_ref) and r.payload.get('status') == 'Committed']
         if not commits:
             raise ContractError('FormalPolicyCommitRequired')
-        if self.runtime.session is not None:
-            self.runtime.session.check_policy_open(policy_ref)
         source = self._event('ActionIntentAdmission', policy.subject, {'policy_ref': json_value(policy_ref)})
         self.security.read(token, policy_ref, policy.purpose, 'reasoning-runtime', source, ('PolicyOutcome',))
         self._current(token, policy_ref, policy.scope, policy.purpose)
@@ -84,12 +79,7 @@ class ActionRuntime:
                 if prior != payload:
                     raise ContractError('IdempotencyKeyConflict')
                 return old.ref
-        if self.runtime.session is not None:
-            self.runtime.session.check_policy_open(policy_ref)
-        intent_ref = self._event('ActionIntent', policy.subject, payload)
-        if self.runtime.session is not None:
-            self.runtime.session.register_intent(policy_ref, intent_ref)
-        return intent_ref
+        return self._event('ActionIntent', policy.subject, payload)
 
     def execute(self, token, intent_ref, *, mode='OCCUR_FULL', partial_characters=None):
         intent = self.h.get(intent_ref)
@@ -98,8 +88,6 @@ class ActionRuntime:
         p = intent.payload
         if p['executor_target'] != 'mock-display':
             raise ContractError('DisplayExecutorMismatch')
-        if self.runtime.session is not None and intent_ref in self.runtime.session.in_flight:
-            raise ContractError('EffectAlreadyInFlight')
         # Existing terminal results are read, never re-executed (including Indeterminate).
         previous = next((r for r in self.h.executions.records(intent.subject)
                          if r.kind == 'ActionExecutionResult' and r.payload['intent_ref'] == json_value(intent_ref)), None)
@@ -117,8 +105,6 @@ class ActionRuntime:
                 raise ContractError('IntentExpired')
             for ref in p['preconditions']:
                 self._current(token, exact_ref(ref), p['scope'], p['purpose'])
-            if self.runtime.session is not None:
-                self.runtime.session.before_effect(intent_ref)
         except (ContractError, AccessDenied) as exc:
             reason = str(exc)
         else:

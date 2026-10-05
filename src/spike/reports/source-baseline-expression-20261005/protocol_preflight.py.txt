@@ -1,6 +1,5 @@
 """Check declared mechanical contracts before a bounded model campaign."""
 from .structured_output import check_schema
-from .expressions import FORMAT, extraction_contract
 
 
 def check_observation_contract(definition):
@@ -17,18 +16,4 @@ def check_observation_contract(definition):
     admitted=set(definition['responsibility_admission'])
     roles=contracts['responsibility']['parameters']['properties']['segments']['items']['properties']['role']['enum']
     if admitted!=set(roles):raise ValueError('ResponsibilityRoleSchemaMismatch')
-    profile=definition.get('arithmetic_extraction_format')
-    if profile is not None:
-        if profile!=FORMAT:raise ValueError('UnsupportedArithmeticExtractionFormat')
-        if definition['validation_format']!='arithmetic-linked-v6' or 'arithmetic_mapping' not in criteria:
-            raise ValueError('RequiredArithmeticMappingReviewMissing')
-        fields=list(schema['properties'])
-        if contracts['extraction']!=extraction_contract(fields):raise ValueError('ExpressionContractMismatch')
-        validation=contracts['validation']['parameters']['properties']
-        exact={'type':'string','enum':fields}
-        field_schemas=[validation['reviewed_fields']['items'],
-            validation['criteria']['items']['properties']['quotes']['items']['properties']['field'],
-            validation['claims']['items']['properties']['field'],
-            contracts['responsibility']['parameters']['properties']['segments']['items']['properties']['field']]
-        if any(s!=exact for s in field_schemas):raise ValueError('ExactCandidateFieldSchemaMismatch')
     return {'status':'PASS','criteria':criteria,'responsibility_roles':roles,'schemas_checked':len(contracts)}

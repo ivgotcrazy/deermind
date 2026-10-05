@@ -93,7 +93,6 @@ class ActivityWorld(ActionWorld):
         ctx = self.context(name,refs)
         self.last_context=ctx
         if turn:self.sessions.bind_context(turn,ctx)
-        else:self.sessions.bind_reasoning_context(self.sessions.active['X5'],ctx)
         protocol=self.protocols[name]
         self.security.install_authority(AuthorityGrant('X5-commit-'+identity,'interaction','learning','learner-A',(identity,),('commit',),100000,
             tuple((k,(parameter(k,v)[1],)) for k,v in {'owner':'Interaction','kind':protocol.candidate_kind}.items())))

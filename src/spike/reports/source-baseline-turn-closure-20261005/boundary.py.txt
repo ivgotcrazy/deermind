@@ -13,7 +13,6 @@ from .semantic_review import check_criteria_review, check_source_review
 from .source_conflicts import check_absence_review
 from .llm import ModelFailure
 from .arithmetic import check_arithmetic_extraction, combine_arithmetic_review
-from .expressions import FORMAT as EXPRESSION_FORMAT, check_expression_extraction
 from .claim_axes import checked_claim_axes
 from .responsibility import check_responsibility, combine_status
 
@@ -111,11 +110,6 @@ class BoundaryRuntime:
         self._bounded_review_results = {}
         self._arithmetic_executions = {}
         self._responsibility_executions = {}
-        self.session = None
-
-    def check_turn(self, context):
-        if self.session is not None:
-            self.session.check_context_open(context)
 
     def register_protocol(self, protocol):
         if protocol.ref in self._protocols:
@@ -126,18 +120,6 @@ class BoundaryRuntime:
         if protocol.owner != {"Observation": "Interaction", "PolicyOutcome": "Interaction",
                               "Evidence": "Evaluation", "LearnerBelief": "Evaluation"}.get(protocol.candidate_kind):
             raise ContractError("Protocol cannot redefine semantic ownership")
-        definition = self.h.get(protocol.ref).payload
-        if definition.get('arithmetic_extraction_format') is not None:
-            from .protocol_preflight import check_observation_contract
-            try:
-                check_observation_contract(definition)
-            except (ValueError, KeyError, TypeError) as exc:
-                raise ContractError('InvalidExpressionProtocol:' + str(exc)) from None
-            rule = self.h.get(protocol.semantic_rule).payload
-            if (protocol.candidate_kind != 'Observation' or protocol.fields != (('description','string'),)
-                    or rule.get('format') != definition['validation_format']
-                    or rule.get('criteria') != definition['criteria']):
-                raise ContractError('ExpressionProtocolRuleMismatch')
         self._protocols[protocol.ref] = protocol
 
     def execution(self, kind, subject, payload):
@@ -209,7 +191,6 @@ class BoundaryRuntime:
     def propose(self, context, identity, revision, payload, expected_head=None):
         if self._contexts.get(context.identity) != context:
             raise ContractError("Context must originate from the assembler")
-        self.check_turn(context)
         protocol = self._protocols[context.protocol]
         execution = self.execution("CandidateGeneration", context.subject, {"context_id": context.identity,
                                    "protocol": json_value(protocol.ref), "output": payload})
@@ -233,7 +214,6 @@ class BoundaryRuntime:
         if status not in ("PASS", "FAIL", "UNRESOLVED"):
             raise ContractError("Invalid semantic validation status")
         context = self._contexts[candidate.context_id]
-        self.check_turn(context)
         protocol = self._protocols[candidate.protocol]
         source = self.execution("SemanticValidationExecution", candidate.record.subject,
                                 {"candidate_digest": digest(candidate), "context_id": context.identity,
@@ -250,7 +230,6 @@ class BoundaryRuntime:
         return result
 
     def _model_context(self, token, context, source):
-        self.check_turn(context)
         protocol = self._protocols[context.protocol]
         values = []
         for item in context.items:
@@ -278,12 +257,6 @@ class BoundaryRuntime:
         except Exception:
             self.execution("LLMGenerationFailed", context.subject, {"context_id": context.identity})
             raise
-        try:
-            self.check_turn(context)
-        except ContractError as exc:
-            self.execution('LateGenerationDiscarded', context.subject, {'context_id':context.identity,
-                'model_call':call_id, 'reason':str(exc), 'output':payload, 'audit_only':True})
-            raise
         candidate = self.propose(context, identity or ("O" if self._protocols[context.protocol].candidate_kind == "Observation" else "P"), revision, payload)
         candidate = replace(candidate, record=replace(candidate.record,
                             provenance=candidate.record.provenance + (f"model-call:{call_id}",)))
@@ -295,7 +268,6 @@ class BoundaryRuntime:
     def validate_with_llm(self, token, candidate, adapter):
         if self._candidates.get(candidate.identity) != candidate:
             raise ContractError("UnregisteredOrAlteredCandidate")
-        self.check_turn(self._contexts[candidate.context_id])
         protocol = self._protocols[candidate.protocol]
         if self.h.get(protocol.semantic_rule).payload.get("format") not in ("source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
             return self._validate_once(token, candidate, adapter)
@@ -329,21 +301,10 @@ class BoundaryRuntime:
         if (payload.get("candidate_digest"), payload.get("context_id"), payload.get("protocol"), payload.get("rule")) != (
                 digest(candidate), candidate.context_id, json_value(protocol.ref), json_value(protocol.semantic_rule)):
             raise ContractError("ArithmeticExtractionBindingMismatch")
-        result = self._compute_arithmetic(candidate, payload["extraction"])
+        result = check_arithmetic_extraction(payload["extraction"], candidate.record.payload)
         if result != payload["result"]:
             raise ContractError("ArithmeticComputationMismatch")
         return payload["extraction"], result
-
-    def _compute_arithmetic(self, candidate, extraction):
-        definition = self.h.get(candidate.protocol).payload
-        profile = definition.get('arithmetic_extraction_format')
-        if profile is None:
-            return check_arithmetic_extraction(extraction, candidate.record.payload)
-        if profile != EXPRESSION_FORMAT:
-            raise ContractError('UnsupportedArithmeticExtractionFormat')
-        context = self._contexts[candidate.context_id]
-        registry = source_registry([{'ref':json_value(i.record.ref), 'content':i.record.payload} for i in context.items])
-        return check_expression_extraction(extraction, candidate.record.payload, registry)
 
     def _checked_responsibility(self, candidate, ref):
         record = self.h.get(ref)
@@ -401,16 +362,13 @@ class BoundaryRuntime:
         arithmetic_ref, arithmetic_result = None, None
         if rule.payload.get("format") == "arithmetic-linked-v6":
             if candidate.identity not in self._arithmetic_executions:
-                extraction_input = {"context":content, "candidate":candidate.record.payload}
-                if definition.get('arithmetic_extraction_format') == EXPRESSION_FORMAT:
-                    extraction_input['source_registry'] = source_registry(content)
                 extraction_messages = [
                     {"role": "system", "content": self.h.get(protocol.ref).payload["extraction_system"]},
-                    {"role": "user", "content": json.dumps(extraction_input, ensure_ascii=False)}]
+                    {"role": "user", "content": json.dumps({"context": content, "candidate": candidate.record.payload}, ensure_ascii=False)}]
                 try:
                     extracted, extraction_call = adapter.complete(extraction_messages, "ArithmeticExtraction",
                         output_contract=self.h.get(protocol.ref).payload.get("output_contracts", {}).get("extraction"))
-                    computed = self._compute_arithmetic(candidate, extracted)
+                    computed = check_arithmetic_extraction(extracted, candidate.record.payload)
                 except (ModelFailure, ContractError) as exc:
                     self.execution("ArithmeticExtractionFailed", context.subject,
                                    {"candidate_digest": digest(candidate), "reason": str(exc)})
@@ -460,13 +418,6 @@ class BoundaryRuntime:
                 output_contract=contract)
         except Exception:
             self.execution("LLMValidationFailed", context.subject, {"candidate_digest": digest(candidate)})
-            raise
-        try:
-            self.check_turn(context)
-        except ContractError as exc:
-            self.execution('LateValidationDiscarded', context.subject, {'context_id':context.identity,
-                'candidate_digest':digest(candidate), 'model_call':call_id,
-                'reason':str(exc), 'output':output, 'audit_only':True})
             raise
         wire_output = output
         try:
@@ -653,10 +604,6 @@ class BoundaryRuntime:
             status = resolution.reason if resolution.reason in ("Unauthorized", "DataAuthorityDenied", "LifecycleIneligible") else "CandidateStale"
             return self._outcome(candidate, status, resolution.reason)
         # No await/callback between final checks and append: single-process atomic boundary.
-        try:
-            self.check_turn(context)
-        except ContractError as exc:
-            return self._outcome(candidate, 'CandidateStale', str(exc))
         committed = replace(record, recorded_at=self.h.clock.now,
                             provenance=record.provenance + (f"candidate-sha256:{digest(candidate)}", review_id))
         self.h.states.append(committed)

@@ -15,8 +15,6 @@ class ActivityRuntime(ActionRuntime):
         p = intent.payload
         if p['executor_target'] != 'activity-control':
             raise ContractError('ControlExecutorMismatch')
-        if self.runtime.session is not None and intent_ref in self.runtime.session.in_flight:
-            raise ContractError('EffectAlreadyInFlight')
         previous = next((r for r in self.h.executions.records(intent.subject)
                          if r.kind == 'ActionExecutionResult' and r.payload['intent_ref'] == json_value(intent_ref)), None)
         if previous:
@@ -42,8 +40,6 @@ class ActivityRuntime(ActionRuntime):
             if (old.payload['activity_purpose'] != transition['from'] or p['episode'] != old.payload['episode']
                     or not any(d.target == prior and d.mode == Mode.CURRENT for d in policy.dependencies)):
                 raise ContractError('ControlActivityBindingMismatch')
-            if self.runtime.session is not None:
-                self.runtime.session.before_effect(intent_ref)
         except (ContractError, AccessDenied) as exc:
             reason = str(exc)
         else:

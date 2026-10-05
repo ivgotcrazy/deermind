@@ -1,0 +1,319 @@
+{
+  "schema": "expression-contract-fixtures-v1",
+  "scope": "Developer-authored mechanical mappings and outcomes, not model judgments or semantic acceptance",
+  "cases": [
+    {
+      "id": "unevaluated_known_operands",
+      "candidate": {
+        "description": "学习者写下 42÷6=?，尚未给出结果。"
+      },
+      "extraction": {
+        "segments": [
+          {
+            "field": "description",
+            "text": "学习者写下 42÷6=?，尚未给出结果。",
+            "coverage": "COMPLETE",
+            "expressions": [
+              {
+                "type": "UnevaluatedExpression",
+                "text": "学习者写下 42÷6=?，尚未给出结果。",
+                "speaker": "learner",
+                "sources": [
+                  "source_1"
+                ],
+                "stance": "reported_only",
+                "operator": "divide",
+                "left": "42",
+                "right": "6",
+                "value": null,
+                "reason": ""
+              }
+            ]
+          }
+        ]
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_computed": [
+        null
+      ]
+    },
+    {
+      "id": "unevaluated_unknown_operand",
+      "candidate": {
+        "description": "学习者写下 42÷x，尚未求值。"
+      },
+      "extraction": {
+        "segments": [
+          {
+            "field": "description",
+            "text": "学习者写下 42÷x，尚未求值。",
+            "coverage": "COMPLETE",
+            "expressions": [
+              {
+                "type": "UnevaluatedExpression",
+                "text": "学习者写下 42÷x，尚未求值。",
+                "speaker": "learner",
+                "sources": [
+                  "source_1"
+                ],
+                "stance": "reported_only",
+                "operator": "divide",
+                "left": "42",
+                "right": null,
+                "value": null,
+                "reason": ""
+              }
+            ]
+          }
+        ]
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_computed": [
+        null
+      ]
+    },
+    {
+      "id": "reported_wrong_equality",
+      "candidate": {
+        "description": "学习者写下 42÷6=8。"
+      },
+      "extraction": {
+        "segments": [
+          {
+            "field": "description",
+            "text": "学习者写下 42÷6=8。",
+            "coverage": "COMPLETE",
+            "expressions": [
+              {
+                "type": "NumericAssertion",
+                "text": "学习者写下 42÷6=8。",
+                "speaker": "learner",
+                "sources": [
+                  "source_1"
+                ],
+                "stance": "reported_only",
+                "operator": "divide",
+                "left": "42",
+                "right": "6",
+                "value": "8",
+                "reason": ""
+              }
+            ]
+          }
+        ]
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_computed": [
+        "7"
+      ]
+    },
+    {
+      "id": "endorsed_wrong_equality",
+      "candidate": {
+        "description": "42÷6=8。"
+      },
+      "extraction": {
+        "segments": [
+          {
+            "field": "description",
+            "text": "42÷6=8。",
+            "coverage": "COMPLETE",
+            "expressions": [
+              {
+                "type": "NumericAssertion",
+                "text": "42÷6=8。",
+                "speaker": "system",
+                "sources": [
+                  "source_1"
+                ],
+                "stance": "asserted_true",
+                "operator": "divide",
+                "left": "42",
+                "right": "6",
+                "value": "8",
+                "reason": ""
+              }
+            ]
+          }
+        ]
+      },
+      "expected_arithmetic_status": "FAIL",
+      "expected_computed": [
+        "7"
+      ]
+    },
+    {
+      "id": "denied_wrong_equality",
+      "candidate": {
+        "description": "42÷6 不等于 8。"
+      },
+      "extraction": {
+        "segments": [
+          {
+            "field": "description",
+            "text": "42÷6 不等于 8。",
+            "coverage": "COMPLETE",
+            "expressions": [
+              {
+                "type": "NumericAssertion",
+                "text": "42÷6 不等于 8。",
+                "speaker": "system",
+                "sources": [
+                  "source_1"
+                ],
+                "stance": "asserted_false",
+                "operator": "divide",
+                "left": "42",
+                "right": "6",
+                "value": "8",
+                "reason": ""
+              }
+            ]
+          }
+        ]
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_computed": [
+        "7"
+      ]
+    },
+    {
+      "id": "mixed_unknown_and_correction",
+      "candidate": {
+        "description": "学习者写下 42÷6=?；正确商为 7。"
+      },
+      "extraction": {
+        "segments": [
+          {
+            "field": "description",
+            "text": "学习者写下 42÷6=?；正确商为 7。",
+            "coverage": "COMPLETE",
+            "expressions": [
+              {
+                "type": "UnevaluatedExpression",
+                "text": "学习者写下 42÷6=?",
+                "speaker": "learner",
+                "sources": [
+                  "source_1"
+                ],
+                "stance": "reported_only",
+                "operator": "divide",
+                "left": "42",
+                "right": "6",
+                "value": null,
+                "reason": ""
+              },
+              {
+                "type": "NumericAssertion",
+                "text": "正确商为 7",
+                "speaker": "system",
+                "sources": [
+                  "source_0"
+                ],
+                "stance": "asserted_true",
+                "operator": "divide",
+                "left": "42",
+                "right": "6",
+                "value": "7",
+                "reason": ""
+              }
+            ]
+          }
+        ]
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_computed": [
+        null,
+        "7"
+      ]
+    },
+    {
+      "id": "asserted_unknown_relation",
+      "candidate": {
+        "description": "学习者认为 42÷x=7 成立。"
+      },
+      "extraction": {
+        "segments": [
+          {
+            "field": "description",
+            "text": "学习者认为 42÷x=7 成立。",
+            "coverage": "COMPLETE",
+            "expressions": [
+              {
+                "type": "UnresolvedNumericMapping",
+                "text": "学习者认为 42÷x=7 成立。",
+                "speaker": "learner",
+                "sources": [
+                  "source_1"
+                ],
+                "stance": "reported_only",
+                "operator": null,
+                "left": null,
+                "right": null,
+                "value": null,
+                "reason": "Unknown-variable relation unsupported by this exact calculator."
+              }
+            ]
+          }
+        ]
+      },
+      "expected_arithmetic_status": "UNRESOLVED",
+      "expected_computed": [
+        null
+      ]
+    },
+    {
+      "id": "undefined_division",
+      "candidate": {
+        "description": "系统断言 1÷0=0。"
+      },
+      "extraction": {
+        "segments": [
+          {
+            "field": "description",
+            "text": "系统断言 1÷0=0。",
+            "coverage": "COMPLETE",
+            "expressions": [
+              {
+                "type": "NumericAssertion",
+                "text": "系统断言 1÷0=0。",
+                "speaker": "system",
+                "sources": [
+                  "source_1"
+                ],
+                "stance": "asserted_true",
+                "operator": "divide",
+                "left": "1",
+                "right": "0",
+                "value": "0",
+                "reason": ""
+              }
+            ]
+          }
+        ]
+      },
+      "expected_arithmetic_status": "UNRESOLVED",
+      "expected_computed": [
+        null
+      ]
+    },
+    {
+      "id": "non_arithmetic_span",
+      "candidate": {
+        "description": "学习者表示仍在思考。"
+      },
+      "extraction": {
+        "segments": [
+          {
+            "field": "description",
+            "text": "学习者表示仍在思考。",
+            "coverage": "COMPLETE",
+            "expressions": []
+          }
+        ]
+      },
+      "expected_arithmetic_status": "PASS",
+      "expected_computed": []
+    }
+  ]
+}

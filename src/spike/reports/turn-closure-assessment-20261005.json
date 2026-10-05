@@ -1,0 +1,36 @@
+{
+  "schema": "turn-closure-scoped-assessment-v1",
+  "date": "2026-10-05",
+  "result": "PASS",
+  "scope": "Single-process failure closure with trusted session binding, scripted cognition and synchronous mock effects",
+  "run_directory": "src/spike/runs/turn-closure-v1",
+  "tests_run": 236,
+  "new_closure_tests": 18,
+  "unit_failures": 0,
+  "unit_errors": 0,
+  "unit_skipped": 0,
+  "external_model_calls": 0,
+  "blocked_network_attempts": 0,
+  "audit": {
+    "frozen_inputs_verified": 150,
+    "artifact_hashes_verified": 20,
+    "snapshots_verified": 28,
+    "fixture_checks_verified": 169,
+    "prior_ledger_entries_verified": 253,
+    "prior_sources_preserved": 5
+  },
+  "full_cases_completed": 9,
+  "original_A2": "DENIED",
+  "X5": "INCONCLUSIVE",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "draft_implementation_status": "PARTIAL_LOCAL_MECHANISM",
+  "semantic_protocol_changed": false,
+  "limitations": [
+    "Scripted cognition is mechanism evidence, not real semantic quality or X5 completion.",
+    "Synchronous mock return establishes only local quiescence; remote stop/reconciliation is unimplemented.",
+    "Closure is bound by a trusted in-memory coordinator; no crash persistence or distributed transaction claim.",
+    "Arithmetic expression types, validation-dimension contracts and authenticated user interruption remain unimplemented."
+  ],
+  "automatic_additional_batches": false
+}

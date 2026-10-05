@@ -1,0 +1,99 @@
+{
+  "schema": "offline-formation-content-review-v1",
+  "date": "2026-10-05",
+  "reviewer": "WORKING_ASSISTANT_OFFLINE",
+  "independent_blind_review": false,
+  "rule_source": "observation-a1-design-20261005.md; original Spike Design section 7.1",
+  "interpretation": "PASS is a scoped offline content judgment only. Failed or missing required runtime checks remain uncommitted. UNRESOLVED retains a scoring dispute, not an AA-A01 falsifier.",
+  "reviewed_candidates": 7,
+  "content_pass": 6,
+  "content_unresolved": 1,
+  "formal_commits": 3,
+  "rows": [
+    {
+      "execution_file": "1-A1-error.jsonl",
+      "content_review_status": "UNRESOLVED",
+      "basis": "The candidate quotes the work and explains division and final-result mismatches. Its method evidence is mostly arithmetic sequence/internal consistency, without clearly interpreting cost divided by weight as unit price. Raw method PASS may credit source structure beyond the candidate interpretation; retain a usefulness scoring dispute rather than impose literal wording.",
+      "candidate": {
+        "description": "Work: \"42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120\". ArithmeticMismatch: the division equality \"42 ÷ 6 = 8\" is locally wrong (42 ÷ 6 = 7). The subsequent step \"8 × 15 = 120\" is internally consistent with the learner's stated quotient 8. FinalResultMismatch: the final answer \"120\" does not match this task's correct value (105)."
+      },
+      "raw_result": "PASS",
+      "formal_commit_status": "Committed",
+      "changes_formal_standing": false,
+      "source_sha256": "ce662dbfcf5a9ff272b0a0daac845f09c0ff662dc49a04eb32931c82084386e2"
+    },
+    {
+      "execution_file": "1-A1-correct.jsonl",
+      "content_review_status": "PASS",
+      "basis": "Explicitly describes unit-price division then multiplication by 15; arithmetic and answer are correctly treated, without mastery claims.",
+      "candidate": {
+        "description": "Work: \"42 ÷ 6 = 7; 7 × 15 = 105; Answer = 105\". Method visible: unit-price division then multiplication by 15, with both equalities locally correct (42 ÷ 6 = 7; 7 × 15 = 105). Final answer \"105\" matches the task's required quantity (cost of 15kg), so no final-result mismatch is present. No incomplete step or help request appears."
+      },
+      "raw_result": "PASS",
+      "formal_commit_status": "Committed",
+      "changes_formal_standing": false,
+      "source_sha256": "19aaaaa12d681f70ed18b2863ddf5c4ab5fff70b9c3db1b92087216fac703e5a"
+    },
+    {
+      "execution_file": "1-A1-incomplete.jsonl",
+      "content_review_status": "PASS",
+      "basis": "Preserves the unevaluated expression and absence of unit-price value, multiplication and final answer; describes only an initial step, not a completed method. Provider failure prevents admission regardless of this content review.",
+      "candidate": {
+        "description": "Work is incomplete. The task asks for the cost of 15kg apples given \"6kg apples cost 42 yuan.\" The visible work is only the expression \"42 ÷ 6 = ?\" — a division of total cost by weight, with the quotient left unevaluated. No unit-price value, no multiplication by 15, and no final answer are present. The visible expression is consistent with an initial unit-price step, but the remaining steps and final answer are missing."
+      },
+      "raw_result": "NON_SUCCESS",
+      "formal_commit_status": null,
+      "changes_formal_standing": false,
+      "source_sha256": "f1f55075cc39e9623c79c8d9e6b96dcb23904317a69fd1470b380c52b692c589"
+    },
+    {
+      "execution_file": "2-A1-error.jsonl",
+      "content_review_status": "PASS",
+      "basis": "Explicit grounded unit-price route, incorrect division with correct local value, and separate final-result mismatch; no trait or teaching recommendation.",
+      "candidate": {
+        "description": "Work: \"42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120\". Method: unit-price-then-multiply pattern, dividing total cost by weight then multiplying by 15. ArithmeticMismatch: \"42 ÷ 6 = 8\" is locally wrong (42 ÷ 6 = 7), so the stated unit price 8 is incorrect. The subsequent \"8 × 15 = 120\" is internally consistent with the stated 8. FinalResultMismatch: \"Answer = 120\" does not match this task (correct value 105), and it also rests on the wrong unit price."
+      },
+      "raw_result": "PASS",
+      "formal_commit_status": "Committed",
+      "changes_formal_standing": false,
+      "source_sha256": "a6a5215db76568171b0a626eadbe97ec61de74098ad9cb5c720a308d3c142c53"
+    },
+    {
+      "execution_file": "2-A1-correct.jsonl",
+      "content_review_status": "PASS",
+      "basis": "Explains cost/weight and multiplication by target weight, quotes both steps, judges correct arithmetic and final answer without mastery. Required responsibility binding failed; content review does not admit it.",
+      "candidate": {
+        "description": "Work: \"42 ÷ 6 = 7; 7 × 15 = 105; Answer = 105\". Method: unit-price then multiply — divides cost by weight (\"42 ÷ 6 = 7\") and multiplies the unit price by the target weight (\"7 × 15 = 105\"). Both stated equalities are arithmetically correct (42 ÷ 6 = 7; 7 × 15 = 105). Final answer given as \"Answer = 105\"; this matches the task's requested quantity (cost of 15kg), and the intermediate result is carried consistently into the final answer. No mismatch, incompleteness, or help request is visible."
+      },
+      "raw_result": "NON_SUCCESS",
+      "formal_commit_status": null,
+      "changes_formal_standing": false,
+      "source_sha256": "8174d059234150f477593d0063bcab318ba705de1445992115b03a1e9688e972"
+    },
+    {
+      "execution_file": "2-A1-incomplete.jsonl",
+      "content_review_status": "PASS",
+      "basis": "Quotes the unknown quotient and explicitly preserves missing subsequent steps and answer. Does not fill the learner result. Arithmetic extraction incorrectly encoded value ?; content review does not admit it.",
+      "candidate": {
+        "description": "Work is incomplete. The learner wrote only \"42 ÷ 6 = ?\" for the task \"6kg apples cost 42 yuan. What do 15kg cost?\" This shows a division of the total cost by the weight, but the quotient is left unevaluated and no further steps (e.g., using the unit price for 15kg) or final answer are visible. No arithmetic mismatch or final-result mismatch can be identified because no computed value or final answer is given."
+      },
+      "raw_result": "NON_SUCCESS",
+      "formal_commit_status": null,
+      "changes_formal_standing": false,
+      "source_sha256": "e0377f6ac43e0125b76b795f7a306fe65b8716fd83f553db4f0841df6280fae3"
+    },
+    {
+      "execution_file": "3-A1-error.jsonl",
+      "content_review_status": "PASS",
+      "basis": "Describes cost/weight followed by target weight, the local division mismatch and independent final-result mismatch. Required responsibility field binding failed; content review does not admit it.",
+      "candidate": {
+        "description": "Work: \"42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120\". Method: divides total cost by weight, then multiplies by 15 kg. ArithmeticMismatch: \"42 ÷ 6 = 8\" is locally wrong (42 ÷ 6 = 7), so the unit price used is incorrect. FinalResultMismatch: \"Answer = 120\" does not match this task (correct cost for 15 kg is 105 yuan); the stated answer is consistent with the learner's own erroneous 8, not with the task."
+      },
+      "raw_result": "NON_SUCCESS",
+      "formal_commit_status": null,
+      "changes_formal_standing": false,
+      "source_sha256": "fb4b55013bc3c59ddab3af1f7017438ef701758e7ff97e11ce27ffce2f6bffaa"
+    }
+  ],
+  "automatic_additional_batches": false
+}

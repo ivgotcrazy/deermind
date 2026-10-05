@@ -9,8 +9,8 @@
     "full_cases_completed": 9,
     "assumptions_supported": 7,
     "assumptions_denied": 1,
-    "assumptions_without_full_scope_assessment": 1,
-    "assumptions_inconclusive": 3,
+    "assumptions_without_full_scope_assessment": 0,
+    "assumptions_inconclusive": 4,
     "composition_cases_assessed": 5,
     "composition_cases_inconclusive": 3,
     "composition_cases_passed": 2
@@ -23,13 +23,17 @@
       "case_id": "A1",
       "assumption_id": "AA-A01",
       "execution_progress": "PARTIAL_EXECUTION",
-      "assumption_result": null,
+      "assumption_result": "INCONCLUSIVE",
       "full_case_complete": false,
       "evidence": [
         "src/spike/runs/20260930T061708Z-e7960015e4c7/ContextCommit-foundation.jsonl",
-        "src/spike/run_llm_smoke.py"
+        "src/spike/run_llm_smoke.py",
+        "src/spike/reports/assumption-a1-20261005.json",
+        "src/spike/reports/observation-a1-v1-20261005.md",
+        "src/spike/runs/observation-a1-v1/summary.json"
       ],
-      "remaining": "Complete error/correct/incomplete formation variants, utility checks and five repetitions per variant."
+      "remaining": "Fixed campaign closed after 7/15 attempts by declared consecutive failure stop; 3 commits, 4 protocol/runtime failures, 8 NOT_RUN, one content scoring dispute. Redesign contracts and preserve result; no automatic reruns.",
+      "assessment_complete": true
     },
     {
       "case_id": "A2",
@@ -389,9 +393,10 @@
         "Shared formal scripted PolicyOutcome to ActionIntent/executor/actual-disclosure chain",
         "Three formal Claim-relative Evidence outputs with shared actual exposure and pre/post Observation lineage",
         "E1 real Policy to formal outcome and mock effect, plus separate test-only scoring; scoped assessment INCONCLUSIVE",
-        "E2 serial turn coordinator and 15 controlled real-Policy branch attempts; 13 complete, 2 provider failures, assessment INCONCLUSIVE"
+        "E2 serial turn coordinator and 15 controlled real-Policy branch attempts; 13 complete, 2 provider failures, assessment INCONCLUSIVE",
+        "A1 fixed formation campaign assessed INCONCLUSIVE: readable history structurally excluded; 7/15 attempts, 3 commits, 4 protocol/runtime failures, 8 NOT_RUN."
       ],
-      "remaining": "A1 and semantic/quality/coverage gaps remain; production recovery excluded. Proceed to security and compositions with explicit limits."
+      "remaining": "All 12 assumptions classified; A1/A2/E1/E2/F2 semantic, protocol, quality and coverage gaps require design revision. Production recovery excluded."
     },
     {
       "id": "M3",
@@ -404,12 +409,19 @@
         "X3/X4 deterministic composition assessments PASS: immutable actual disclosure and current-authority replay denial/restoration",
         "X5 fixed real campaign assessed INCONCLUSIVE: 5 attempts, 24 calls, no complete paths; four real effect branches NOT_RUN; local mechanism tests pass."
       ],
-      "remaining": "A1 and retained A/E/F2/X1/X2/X5 design and coverage gaps. No automatic reruns."
+      "remaining": "All five compositions assessed; retained A/E/F2/X1/X2/X5 design and coverage gaps. No automatic reruns."
     },
     {
       "id": "M4",
       "status": "NOT_COMPLETE",
-      "deliverable": "Unified assessment, complexity review and design consequences."
+      "deliverable": "Unified assessment, complexity review and design consequences.",
+      "completed_subitems": [
+        "All 12 assumption results and 5 composition results indexed without erasing earlier denial.",
+        "Per-inconclusive design consequence and complexity review draft: reports/design-closeout-review-20261005.md.",
+        "Concrete draft for Observation validation, unevaluated expressions and failed-turn closure, with original-assumption mapping and scoped acceptance requirements; original draft preserved, partial implementation tracked separately.",
+        "Minimal local failed-turn closure implemented: 236 regression tests including 18 closure cases; zero external calls; old evidence and assumption classifications preserved."
+      ],
+      "remaining": "Validation dimensions and unevaluated-expression contracts, A2 downstream admission/E1 scoring consequences, remote closure and Gate E/F review remain outstanding. No automatic reruns."
     }
   ],
   "estimate": {
@@ -424,7 +436,9 @@
       5
     ],
     "reassessed_at": "M1 closeout, 2026-10-04",
-    "basis": "Bounded semantic campaign and B/C assessments complete; remaining shared runtime, compositions and design closure dominate. Not a deadline or gate promise."
+    "basis": "Bounded semantic campaign and B/C assessments complete; remaining shared runtime, compositions and design closure dominate. Not a deadline or gate promise.",
+    "latest_checkpoint": "Partial local failure-closure implementation and fixed offline verification, 2026-10-05",
+    "remaining_estimate_status": "Previous 3-5 work-day estimate is historical, not refreshed after new contract decisions; timing depends on accepted design scope, not repeating fixed batches."
   },
   "evidence_sha256": {
     "doc/system-design/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md": "32e8818ae47833e3020cbe72078bb297a57cb81653737a7f39097623381f8560",
@@ -484,7 +498,7 @@
     "src/spike/reports/action-exposure-v1-20261004.md": "49140b392e4618f7e30b4d3b067205299311f74283da1dbd796e00636f777dfa",
     "src/spike/reports/action-exposure-audit-20261004.json": "4e76c89be447a92ecc962f2519e5645f059acd906dad9eddbc5aa32bf0f7f574",
     "src/spike/fixtures/action-exposure-v1.json": "13ecc35f86c3232ee8a4681ab9a584ec3263b5fc6c2f3866921eb469e51a36c9",
-    "src/spike/foundation/actions.py": "849f004a79ad0e53508938e5732a5f1e43e78ae8db72ef57e57923b1f4e95823",
+    "src/spike/foundation/actions.py": "a546fa818f2f996b83ff2c2783f552b54b0ab9bed629476d13827c58130cc047",
     "src/spike/foundation/action_cases.py": "ca12edb2a45f52961589ff3c53d03a6ee3feb902b4ffb0e0e8a15d8d96f9b1a0",
     "src/spike/tests/test_actions.py": "6bfd80865aa5201c8906db13ca9d0951f524a351fb01880dce2cd3babaf200c5",
     "src/spike/run_action_exposure_validation.py": "8b1fcdeec1cb76888bf44357c1630290ea4239cec3095ef4cc631a3287e566a0",
@@ -631,8 +645,8 @@
     "src/spike/tests/test_history_composition.py": "5fd6fe37add8afff3b96f0334fb6574bb1847aaff0c29deb8882a684e6d1e8cd",
     "src/spike/reports/composition-x3-x4-assessment-20261004.json": "b52d5e6761cf064ac110baedbc16c97db43491606da2179937ebf7181313eec9",
     "src/spike/fixtures/composition-x5-v1.json": "b23b318a6fe3515d1be0d0ece3fa3811b641d4bd1d309139392927f5ff1b7e71",
-    "src/spike/foundation/activity.py": "0c8b1e17426c1084c052392da834e6172e538978a082500b4f5fa189c05f9eb7",
-    "src/spike/foundation/activity_cases.py": "0324b231e8838a7a1ec9e9c10daf4b03023bd3fb4fbd4c3a213cb9322a056fd0",
+    "src/spike/foundation/activity.py": "3a2cda11efd0bcdf1c7208241fa3fdd9c41775618020c5dedd117ee3818b1c02",
+    "src/spike/foundation/activity_cases.py": "d1c08da24ff1143c4c8aeb3132734e919f02b6bc025c0bc3e332082da3b37636",
     "src/spike/run_activity_composition_validation.py": "ce2d149391706ddd5716f902daeb0e2f60ad7b4afd6976bc9e37cc7ec2fe7ec8",
     "src/spike/tests/test_activity_composition.py": "58779a406ee4b2714b04247025fb14d36980b50b90b9fd125b0d02ed90375325",
     "src/spike/tests/test_x5_protocol_contract.py": "522a2ad141435417d159582cdb9001387bd007e4710c525efefe2ea41b7efaf2",
@@ -653,12 +667,66 @@
     "src/spike/runs/composition-x5-v1/summary.json": "b46857d85baa0cf47eb59933f222c947ddd0ea7a021b2b277aeeb62893241a68",
     "src/spike/reports/source-baseline-x5-20261005/actions.py.txt": "645fcae50bd1a0942e7fac92b9a64405561c5af464b6db7a835a7c1796f51103",
     "src/spike/reports/source-baseline-x5-20261005/runtime.py.txt": "7e78caccdb3de213219693ce0ac689b7913bc66e5de39a329f1fd1fee12b4178",
-    "src/spike/foundation/boundary.py": "6a738d9fa808725e295790b6c92ba9e2b329e5e573e949ac3e191f0e6a03fd79",
+    "src/spike/foundation/boundary.py": "ae122269e28aab10b13fb14ccf19340989a6b2106bb113f7738c2f8c8b8ebfd1",
     "src/spike/foundation/policy.py": "e1d528d8d175f449d8949f52ce729c21e0b1efda474b56d14a14836201fb3cfd",
-    "src/spike/foundation/session.py": "c82edb852f1b0f3cf3722b2e7181162a022b9d6d4d34111350d8e98c4b30c501",
-    "src/spike/reports/composition-x5-assessment-20261005.json": "9643f639641a0191edb9232050485bf18d0f481d4ea51385e5ed9c62d0ecee23"
+    "src/spike/foundation/session.py": "b0cbb0c68c78daafdbe072fec5bdb86e173517041c91dad93083dc73a36d8256",
+    "src/spike/reports/composition-x5-assessment-20261005.json": "9643f639641a0191edb9232050485bf18d0f481d4ea51385e5ed9c62d0ecee23",
+    "src/spike/foundation/protocol_preflight.py": "9f0ada798dc15cb79e54b509a6ac4853ff0d3a1d24a46daeebf41475cd4ecbce",
+    "src/spike/foundation/formation_cases.py": "2bba226eb0a9372f30f460344f1f0d67706cb7b35eb695a7dd1ccbe7a8e90b40",
+    "src/spike/run_formation_validation.py": "cfa82a21ff136c086b2c18ecce836ddbc10b588a95dab8dbdf1b33ad50b3a86a",
+    "src/spike/tests/test_formation.py": "962deaa2f0a5e9dbd268f53dd2750cd0567d26ad1ba7d09fe7455ffd90879a7a",
+    "src/spike/protocols/observation-a1-v1.json": "4f4e026550652f780e81c5bc9a08da566e7e68b128b1f4a9fd818f651af617fd",
+    "src/spike/fixtures/observation-a1-v1.json": "e2512ab5825c1b157a07ce1d34f311102c1e1172f0fcc23eadb91353989a6178",
+    "src/spike/reports/audit_observation_a1.py": "345fdddd5b46598ddcfeb7643b431d47a525a5f80ac3bea614f97f1091fbff74",
+    "src/spike/reports/observation-a1-design-20261005.md": "06b16b7568c7a807b780a2268adeee040c9ebd25d1cb97e8be97e4ee2bdd8ff5",
+    "src/spike/reports/observation-a1-v1-20261005.md": "645c99143b24c00775682bc4c2480d905ce5d66db7570db98c869cb641617d6d",
+    "src/spike/reports/observation-a1-audit-20261005.json": "e39eb8e2643f8c7e12e76318b42520a319c91c230597879b953daa84e13255e1",
+    "src/spike/reports/observation-a1-content-review-20261005.json": "c0ffb05e27908997913d1095b784299161970bcee02b5b883a92a9a91414ca8e",
+    "src/spike/reports/design-closeout-review-20261005.md": "a88471325db4e2656da0867f66ba8673b029ddf29fddac6b3a79ac161ecf263e",
+    "src/spike/runs/observation-a1-v1/1-A1-correct.jsonl": "19aaaaa12d681f70ed18b2863ddf5c4ab5fff70b9c3db1b92087216fac703e5a",
+    "src/spike/runs/observation-a1-v1/1-A1-error.jsonl": "ce662dbfcf5a9ff272b0a0daac845f09c0ff662dc49a04eb32931c82084386e2",
+    "src/spike/runs/observation-a1-v1/1-A1-incomplete.jsonl": "f1f55075cc39e9623c79c8d9e6b96dcb23904317a69fd1470b380c52b692c589",
+    "src/spike/runs/observation-a1-v1/2-A1-correct.jsonl": "8174d059234150f477593d0063bcab318ba705de1445992115b03a1e9688e972",
+    "src/spike/runs/observation-a1-v1/2-A1-error.jsonl": "a6a5215db76568171b0a626eadbe97ec61de74098ad9cb5c720a308d3c142c53",
+    "src/spike/runs/observation-a1-v1/2-A1-incomplete.jsonl": "e0377f6ac43e0125b76b795f7a306fe65b8716fd83f553db4f0841df6280fae3",
+    "src/spike/runs/observation-a1-v1/3-A1-error.jsonl": "fb4b55013bc3c59ddab3af1f7017438ef701758e7ff97e11ce27ffce2f6bffaa",
+    "src/spike/runs/observation-a1-v1/manifest.json": "b3a45b8bbb6e2718f2ac286252727b06346b34add65bfd15cd58b00d5eb9c91c",
+    "src/spike/runs/observation-a1-v1/summary.json": "136308bc9cc931991a833bfbfe20b20cf9f20f5ee589f6c628cb30ef39ea91f6",
+    "src/spike/reports/assumption-a1-20261005.json": "e3281d4fe2881dde8569f7a9868b4c6ba939399454dcc577ddaba3efce4ef07a",
+    "doc/system-design/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md": "7a0d682a01069bcf9f170ecaab7b376326c0e1740235b36415438a81f881f8e0",
+    "src/spike/tests/test_turn_closure.py": "7952755788da69371eb850d15356f02099745d2b81703bb30fb7e99291fe078b",
+    "src/spike/run_turn_closure_validation.py": "926fe0f928b1ff8f934aa26e0d886f3c42d4ad0b205b9288efaa88756cd35d3e",
+    "src/spike/reports/turn-closure-v1-20261005.md": "733a1a6d24fe8eca0142b0d3b1fcd26867265c358c749aed2f9454c49bd78ffa",
+    "src/spike/reports/turn-closure-assessment-20261005.json": "369907b504bc835ccc1a1eb3f2cc6c90612bcada3f579a5b0e37c906b3659a73",
+    "src/spike/reports/source-baseline-turn-closure-20261005/actions.py.txt": "849f004a79ad0e53508938e5732a5f1e43e78ae8db72ef57e57923b1f4e95823",
+    "src/spike/reports/source-baseline-turn-closure-20261005/activity.py.txt": "0c8b1e17426c1084c052392da834e6172e538978a082500b4f5fa189c05f9eb7",
+    "src/spike/reports/source-baseline-turn-closure-20261005/activity_cases.py.txt": "0324b231e8838a7a1ec9e9c10daf4b03023bd3fb4fbd4c3a213cb9322a056fd0",
+    "src/spike/reports/source-baseline-turn-closure-20261005/boundary.py.txt": "6a738d9fa808725e295790b6c92ba9e2b329e5e573e949ac3e191f0e6a03fd79",
+    "src/spike/reports/source-baseline-turn-closure-20261005/index.json": "6bde0681470578faf48d4edee57f0ba0c1164a8d2a39b49d35932e5ed7e93811",
+    "src/spike/reports/source-baseline-turn-closure-20261005/session.py.txt": "c82edb852f1b0f3cf3722b2e7181162a022b9d6d4d34111350d8e98c4b30c501",
+    "src/spike/runs/turn-closure-v1/manifest.json": "9dc87daf59f10a3d53bce4801d7eb18c32a39afa68484cd1362e5697ee19fec3",
+    "src/spike/runs/turn-closure-v1/summary.json": "3576484d1988fddcd569243e02c9ff15259305764fac99c2eae2d501fe79cbe7",
+    "src/spike/runs/turn-closure-v1/unit-tests.txt": "ca61ad46dac0e4cfcdedd86ce9d09e0cfbb631b5591e08763acd460c3e2981da",
+    "src/spike/runs/turn-closure-v1/cases/test_admitted_intent_before_session_binding_is_closed_as_not_dispatched.jsonl": "8f1f75e8cddb8bcf62ab7ce588a7b018ad731078405e55acaec34fc31d51deec",
+    "src/spike/runs/turn-closure-v1/cases/test_close_after_policy_commit_blocks_new_intent_but_preserves_policy.jsonl": "626a4e15d2e6dc26044fec33803c435e237b9b658f40da229221d09ada67ff3c",
+    "src/spike/runs/turn-closure-v1/cases/test_close_before_control_preserves_independent_activity.jsonl": "27d8d49919830ecac2bd57c971753a5c5933b6a7187d60a723076de012d0679a",
+    "src/spike/runs/turn-closure-v1/cases/test_close_before_dispatch_rejects_effect.jsonl": "e166e2b576cd075f9b77ec6c2dfc1e41958695c2ba3b535e716f89b1ecfdbdb4",
+    "src/spike/runs/turn-closure-v1/cases/test_close_during_ack_waits_until_synchronous_executor_returns.jsonl": "45417700269601b5c381b6dd1f1cb4a026790e28ec2b632d7cd438bf1d796b69",
+    "src/spike/runs/turn-closure-v1/cases/test_close_immediately_before_commit_append_blocks_formal_standing.jsonl": "07810370e7a372995f1f07a0a5c9e1f959a64d810837bec16cf0a0bca5424d78",
+    "src/spike/runs/turn-closure-v1/cases/test_existing_full_partial_and_unknown_results_survive_closure.jsonl": "1db1df17fa7761f3ef4c4ebedc6e5d1c2d98524f5a76a0d4257e14d02f4e3e2b",
+    "src/spike/runs/turn-closure-v1/cases/test_failed_policy_commit_enters_failure_closure.jsonl": "2a5750d6c8c8413e5f0de2b93fface6c473a1ea4eb032920fed5373201e4f1a1",
+    "src/spike/runs/turn-closure-v1/cases/test_failure_source_must_belong_to_exact_turn.jsonl": "bf7a113602499bba6802118458ac997b81d522dd418c0f14ee3b9ea292f23407",
+    "src/spike/runs/turn-closure-v1/cases/test_late_generation_is_audit_only_and_cannot_create_candidate.jsonl": "f2be0fdf3bc39cc390e252418261c50ed1e61692de668321e4e5f7c3cb55de67",
+    "src/spike/runs/turn-closure-v1/cases/test_late_validation_cannot_start_another_model_call.jsonl": "8239ba102cf502e91f840a474daf77e205998094d9667e1141bf2f3abb1ca300",
+    "src/spike/runs/turn-closure-v1/cases/test_new_context_from_closed_input_and_new_coordinator_cannot_bypass_guard.jsonl": "aed41c4d7558e3b86bd645b039f2121e3f956c91eeed0bfeb02898c2c6866342",
+    "src/spike/runs/turn-closure-v1/cases/test_observation_failure_releases_next_request_without_failed_standing.jsonl": "95b280e2b196271166c3c31db6693fcfbf710cbe4006729dc453c64b8e053ca1",
+    "src/spike/runs/turn-closure-v1/cases/test_other_conversation_can_continue_while_one_turn_closes.jsonl": "064cadbfb7ecbf1023318a380be2975b594f6f0500640f1acc3b1c7a83894d15",
+    "src/spike/runs/turn-closure-v1/cases/test_queued_input_cannot_generate_before_previous_turn_closes.jsonl": "54a733d898a76f62d7199756ce01b0fa7a7e9565de3b49562c6fbe90ddda6368",
+    "src/spike/runs/turn-closure-v1/cases/test_successful_control_survives_later_failure.jsonl": "9af3c971c36945fca23ca45bf772b667d9b0f22c737fec120baba6aa9b537e48",
+    "src/spike/runs/turn-closure-v1/cases/test_unconfirmed_dispatch_blocks_release_and_duplicate_execution.jsonl": "164543b7510538f03b3faac2c79c61df590bf8d1c44c68c913e503c31793f930",
+    "src/spike/runs/turn-closure-v1/cases/test_validation_returning_after_close_is_audit_only.jsonl": "116c09022215c3e2303e32277df44bc4773def0ea0259f319e8959db51baf42e"
   },
-  "next_work": "A1 bounded formation/utility assessment and unified denied/inconclusive design closeout; no automatic X5 rerun.",
+  "next_work": "Implement bounded unevaluated-expression and exact field-mapping contracts without semantic heuristics or lowered required checks; then resolve A2 downstream admission/E1 scoring design consequences. No automatic new model batch.",
   "historical_source_revisions": [
     {
       "source_path": "src/spike/foundation/actions.py",
@@ -673,6 +741,88 @@
       "preserved_at": "src/spike/reports/source-baseline-x5-20261005/runtime.py.txt",
       "current_sha256": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
       "reason": "X5 activity Control/current-state changes; old hash preserved exactly; historical manifests and assessments unchanged."
+    },
+    {
+      "source_path": "src/spike/foundation/boundary.py",
+      "previous_sha256": "6a738d9fa808725e295790b6c92ba9e2b329e5e573e949ac3e191f0e6a03fd79",
+      "preserved_at": "src/spike/reports/source-baseline-turn-closure-20261005/boundary.py.txt",
+      "current_sha256": "ae122269e28aab10b13fb14ccf19340989a6b2106bb113f7738c2f8c8b8ebfd1",
+      "reason": "Partial local failed-turn closure: reject late commit/dispatch, preserve actual effects and wait for synchronous executor return. Historical manifests and assessments unchanged."
+    },
+    {
+      "source_path": "src/spike/foundation/session.py",
+      "previous_sha256": "c82edb852f1b0f3cf3722b2e7181162a022b9d6d4d34111350d8e98c4b30c501",
+      "preserved_at": "src/spike/reports/source-baseline-turn-closure-20261005/session.py.txt",
+      "current_sha256": "b0cbb0c68c78daafdbe072fec5bdb86e173517041c91dad93083dc73a36d8256",
+      "reason": "Partial local failed-turn closure: reject late commit/dispatch, preserve actual effects and wait for synchronous executor return. Historical manifests and assessments unchanged."
+    },
+    {
+      "source_path": "src/spike/foundation/actions.py",
+      "previous_sha256": "849f004a79ad0e53508938e5732a5f1e43e78ae8db72ef57e57923b1f4e95823",
+      "preserved_at": "src/spike/reports/source-baseline-turn-closure-20261005/actions.py.txt",
+      "current_sha256": "a546fa818f2f996b83ff2c2783f552b54b0ab9bed629476d13827c58130cc047",
+      "reason": "Partial local failed-turn closure: reject late commit/dispatch, preserve actual effects and wait for synchronous executor return. Historical manifests and assessments unchanged."
+    },
+    {
+      "source_path": "src/spike/foundation/activity.py",
+      "previous_sha256": "0c8b1e17426c1084c052392da834e6172e538978a082500b4f5fa189c05f9eb7",
+      "preserved_at": "src/spike/reports/source-baseline-turn-closure-20261005/activity.py.txt",
+      "current_sha256": "3a2cda11efd0bcdf1c7208241fa3fdd9c41775618020c5dedd117ee3818b1c02",
+      "reason": "Partial local failed-turn closure: reject late commit/dispatch, preserve actual effects and wait for synchronous executor return. Historical manifests and assessments unchanged."
+    },
+    {
+      "source_path": "src/spike/foundation/activity_cases.py",
+      "previous_sha256": "0324b231e8838a7a1ec9e9c10daf4b03023bd3fb4fbd4c3a213cb9322a056fd0",
+      "preserved_at": "src/spike/reports/source-baseline-turn-closure-20261005/activity_cases.py.txt",
+      "current_sha256": "d1c08da24ff1143c4c8aeb3132734e919f02b6bc025c0bc3e332082da3b37636",
+      "reason": "Partial local failed-turn closure: reject late commit/dispatch, preserve actual effects and wait for synchronous executor return. Historical manifests and assessments unchanged."
+    }
+  ],
+  "contract_revision_proposals": [
+    {
+      "identity": "observation-validation-turn-closure-v0.1",
+      "document": "doc/system-design/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+      "status": "PARTIAL_LOCAL_IMPLEMENTATION_REMAINDER_DRAFT",
+      "implemented": false,
+      "validated": false,
+      "new_model_calls": 0,
+      "preserved_decisions": [
+        "Rules and LLM for open semantics; deterministic structure/authority/arithmetic.",
+        "Belief-free Observation and owner-specific required validation.",
+        "Strict per-conversation serial normal turns; only acknowledged Control changes activity."
+      ],
+      "proposed_changes": [
+        "Separate content validity, required meaning coverage and validation execution status without lowering required checks.",
+        "Represent unevaluated expressions distinctly from numeric assertions; retain mandatory semantic mapping validation.",
+        "Explicit failure closure with commit/dispatch eligibility checks, effect reconciliation and ordered queue release."
+      ],
+      "affected_cases": [
+        "A1",
+        "A2",
+        "E1",
+        "E2",
+        "F2",
+        "X1",
+        "X2",
+        "X5"
+      ],
+      "approval_effect": "No baseline contract replacement, no model campaign reservation, no assumption result or Gate change.",
+      "implementation_status": "PARTIAL_LOCAL_MECHANISM",
+      "implementation_report": "src/spike/reports/turn-closure-v1-20261005.md",
+      "local_mechanism_assessment": "src/spike/reports/turn-closure-assessment-20261005.json",
+      "local_mechanism_implemented": true,
+      "local_mechanism_validated": true,
+      "implemented_scope": [
+        "Trusted per-turn closure and commit/admission/dispatch guards",
+        "Late generation and validation audit-only rejection",
+        "Queue release after synchronous mock return, preserving occurred/partial/unknown effects and successful Control"
+      ],
+      "remaining_scope": [
+        "Validation content/required-meaning/execution dimensions",
+        "Unevaluated expressions and exact semantic numeric mapping",
+        "Remote execution stop confirmation, late-effect reconciliation and crash recovery",
+        "Authenticated user interruption"
+      ]
     }
   ]
 }

@@ -1,0 +1,12 @@
+[
+  {
+    "source_path": "src/spike/foundation/boundary.py",
+    "previous_sha256": "ae122269e28aab10b13fb14ccf19340989a6b2106bb113f7738c2f8c8b8ebfd1",
+    "preserved_at": "src/spike/reports/source-baseline-expression-20261005/boundary.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/protocol_preflight.py",
+    "previous_sha256": "9f0ada798dc15cb79e54b509a6ac4853ff0d3a1d24a46daeebf41475cd4ecbce",
+    "preserved_at": "src/spike/reports/source-baseline-expression-20261005/protocol_preflight.py.txt"
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "source_path": "src/spike/foundation/boundary.py",
+    "previous_sha256": "6a738d9fa808725e295790b6c92ba9e2b329e5e573e949ac3e191f0e6a03fd79",
+    "preserved_at": "src/spike/reports/source-baseline-turn-closure-20261005/boundary.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/session.py",
+    "previous_sha256": "c82edb852f1b0f3cf3722b2e7181162a022b9d6d4d34111350d8e98c4b30c501",
+    "preserved_at": "src/spike/reports/source-baseline-turn-closure-20261005/session.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/actions.py",
+    "previous_sha256": "849f004a79ad0e53508938e5732a5f1e43e78ae8db72ef57e57923b1f4e95823",
+    "preserved_at": "src/spike/reports/source-baseline-turn-closure-20261005/actions.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/activity.py",
+    "previous_sha256": "0c8b1e17426c1084c052392da834e6172e538978a082500b4f5fa189c05f9eb7",
+    "preserved_at": "src/spike/reports/source-baseline-turn-closure-20261005/activity.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/activity_cases.py",
+    "previous_sha256": "0324b231e8838a7a1ec9e9c10daf4b03023bd3fb4fbd4c3a213cb9322a056fd0",
+    "preserved_at": "src/spike/reports/source-baseline-turn-closure-20261005/activity_cases.py.txt"
+  }
+]

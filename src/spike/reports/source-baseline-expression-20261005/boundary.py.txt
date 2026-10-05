@@ -13,7 +13,6 @@ from .semantic_review import check_criteria_review, check_source_review
 from .source_conflicts import check_absence_review
 from .llm import ModelFailure
 from .arithmetic import check_arithmetic_extraction, combine_arithmetic_review
-from .expressions import FORMAT as EXPRESSION_FORMAT, check_expression_extraction
 from .claim_axes import checked_claim_axes
 from .responsibility import check_responsibility, combine_status
 
@@ -126,18 +125,6 @@ class BoundaryRuntime:
         if protocol.owner != {"Observation": "Interaction", "PolicyOutcome": "Interaction",
                               "Evidence": "Evaluation", "LearnerBelief": "Evaluation"}.get(protocol.candidate_kind):
             raise ContractError("Protocol cannot redefine semantic ownership")
-        definition = self.h.get(protocol.ref).payload
-        if definition.get('arithmetic_extraction_format') is not None:
-            from .protocol_preflight import check_observation_contract
-            try:
-                check_observation_contract(definition)
-            except (ValueError, KeyError, TypeError) as exc:
-                raise ContractError('InvalidExpressionProtocol:' + str(exc)) from None
-            rule = self.h.get(protocol.semantic_rule).payload
-            if (protocol.candidate_kind != 'Observation' or protocol.fields != (('description','string'),)
-                    or rule.get('format') != definition['validation_format']
-                    or rule.get('criteria') != definition['criteria']):
-                raise ContractError('ExpressionProtocolRuleMismatch')
         self._protocols[protocol.ref] = protocol
 
     def execution(self, kind, subject, payload):
@@ -329,21 +316,10 @@ class BoundaryRuntime:
         if (payload.get("candidate_digest"), payload.get("context_id"), payload.get("protocol"), payload.get("rule")) != (
                 digest(candidate), candidate.context_id, json_value(protocol.ref), json_value(protocol.semantic_rule)):
             raise ContractError("ArithmeticExtractionBindingMismatch")
-        result = self._compute_arithmetic(candidate, payload["extraction"])
+        result = check_arithmetic_extraction(payload["extraction"], candidate.record.payload)
         if result != payload["result"]:
             raise ContractError("ArithmeticComputationMismatch")
         return payload["extraction"], result
-
-    def _compute_arithmetic(self, candidate, extraction):
-        definition = self.h.get(candidate.protocol).payload
-        profile = definition.get('arithmetic_extraction_format')
-        if profile is None:
-            return check_arithmetic_extraction(extraction, candidate.record.payload)
-        if profile != EXPRESSION_FORMAT:
-            raise ContractError('UnsupportedArithmeticExtractionFormat')
-        context = self._contexts[candidate.context_id]
-        registry = source_registry([{'ref':json_value(i.record.ref), 'content':i.record.payload} for i in context.items])
-        return check_expression_extraction(extraction, candidate.record.payload, registry)
 
     def _checked_responsibility(self, candidate, ref):
         record = self.h.get(ref)
@@ -401,16 +377,13 @@ class BoundaryRuntime:
         arithmetic_ref, arithmetic_result = None, None
         if rule.payload.get("format") == "arithmetic-linked-v6":
             if candidate.identity not in self._arithmetic_executions:
-                extraction_input = {"context":content, "candidate":candidate.record.payload}
-                if definition.get('arithmetic_extraction_format') == EXPRESSION_FORMAT:
-                    extraction_input['source_registry'] = source_registry(content)
                 extraction_messages = [
                     {"role": "system", "content": self.h.get(protocol.ref).payload["extraction_system"]},
-                    {"role": "user", "content": json.dumps(extraction_input, ensure_ascii=False)}]
+                    {"role": "user", "content": json.dumps({"context": content, "candidate": candidate.record.payload}, ensure_ascii=False)}]
                 try:
                     extracted, extraction_call = adapter.complete(extraction_messages, "ArithmeticExtraction",
                         output_contract=self.h.get(protocol.ref).payload.get("output_contracts", {}).get("extraction"))
-                    computed = self._compute_arithmetic(candidate, extracted)
+                    computed = check_arithmetic_extraction(extracted, candidate.record.payload)
                 except (ModelFailure, ContractError) as exc:
                     self.execution("ArithmeticExtractionFailed", context.subject,
                                    {"candidate_digest": digest(candidate), "reason": str(exc)})
