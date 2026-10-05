@@ -1,6 +1,6 @@
 {
   "schema": "architecture-validation-progress-v1",
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "status": "IN_PROGRESS",
   "source": "doc/system-design/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md",
   "counts": {
@@ -11,8 +11,8 @@
     "assumptions_denied": 1,
     "assumptions_without_full_scope_assessment": 1,
     "assumptions_inconclusive": 3,
-    "composition_cases_assessed": 4,
-    "composition_cases_inconclusive": 2,
+    "composition_cases_assessed": 5,
+    "composition_cases_inconclusive": 3,
     "composition_cases_passed": 2
   },
   "result_semantics": "null means not yet assessed at full declared scope; execution progress is not an epistemic result. A2 denial is valid despite incomplete case coverage. composition_result is separate from assumption_result and does not add Architecture Assumptions.",
@@ -234,11 +234,16 @@
     {
       "case_id": "X5",
       "assumption_id": null,
-      "execution_progress": "NOT_EXECUTED",
+      "execution_progress": "EXECUTED_AND_ASSESSED_WITH_GAPS",
       "assumption_result": null,
       "full_case_complete": false,
-      "evidence": [],
-      "remaining": "Five complete serial diagnosis/teaching/new-opportunity runs and four independent effect-boundary injections."
+      "evidence": [
+        "src/spike/reports/composition-x5-assessment-20261005.json",
+        "src/spike/reports/composition-x5-v1-20261005.md",
+        "src/spike/runs/composition-x5-v1/summary.json"
+      ],
+      "remaining": "0/5 complete real paths; all four effect branches NOT_RUN. Three missing-result observations, one protocol definition defect, one model field-binding failure. Local mechanisms pass; no automatic rerun.",
+      "composition_result": "INCONCLUSIVE"
     }
   ],
   "modified_profile": {
@@ -396,9 +401,10 @@
         "F1 shared real-model/backend authorization assessment SUPPORTED within declared scope",
         "F2 fixed delegated-scope campaign delivered; INCONCLUSIVE due to five multiple-envelope failures",
         "X1/X2 fixed real-Policy composition campaign delivered: 13/15 complete, both INCONCLUSIVE from two provider disconnects",
-        "X3/X4 deterministic composition assessments PASS: immutable actual disclosure and current-authority replay denial/restoration"
+        "X3/X4 deterministic composition assessments PASS: immutable actual disclosure and current-authority replay denial/restoration",
+        "X5 fixed real campaign assessed INCONCLUSIVE: 5 attempts, 24 calls, no complete paths; four real effect branches NOT_RUN; local mechanism tests pass."
       ],
-      "remaining": "X5 activity transition composition; retained A/E/F2/X1/X2 coverage and design gaps. No automatic reruns."
+      "remaining": "A1 and retained A/E/F2/X1/X2/X5 design and coverage gaps. No automatic reruns."
     },
     {
       "id": "M4",
@@ -478,7 +484,7 @@
     "src/spike/reports/action-exposure-v1-20261004.md": "49140b392e4618f7e30b4d3b067205299311f74283da1dbd796e00636f777dfa",
     "src/spike/reports/action-exposure-audit-20261004.json": "4e76c89be447a92ecc962f2519e5645f059acd906dad9eddbc5aa32bf0f7f574",
     "src/spike/fixtures/action-exposure-v1.json": "13ecc35f86c3232ee8a4681ab9a584ec3263b5fc6c2f3866921eb469e51a36c9",
-    "src/spike/foundation/actions.py": "645fcae50bd1a0942e7fac92b9a64405561c5af464b6db7a835a7c1796f51103",
+    "src/spike/foundation/actions.py": "849f004a79ad0e53508938e5732a5f1e43e78ae8db72ef57e57923b1f4e95823",
     "src/spike/foundation/action_cases.py": "ca12edb2a45f52961589ff3c53d03a6ee3feb902b4ffb0e0e8a15d8d96f9b1a0",
     "src/spike/tests/test_actions.py": "6bfd80865aa5201c8906db13ca9d0951f524a351fb01880dce2cd3babaf200c5",
     "src/spike/run_action_exposure_validation.py": "8b1fcdeec1cb76888bf44357c1630290ea4239cec3095ef4cc631a3287e566a0",
@@ -585,7 +591,7 @@
     "src/spike/reports/assumption-f1-f2-20261004.json": "8edfc9b7ebd564cc0766f98a8863f049f6577176b7cedf62e2c3f94da7debfd6",
     "src/spike/fixtures/composition-x1-x2-v1.json": "e35417b1a1fea5dbe01766cd7b88997ff8cddc3220860f101625ebf9d38bf1a6",
     "src/spike/foundation/composition_cases.py": "6340f9e91eb1019a744a9893fcb80ebdc93493d897df864bea0b648a857eea41",
-    "src/spike/foundation/runtime.py": "7e78caccdb3de213219693ce0ac689b7913bc66e5de39a329f1fd1fee12b4178",
+    "src/spike/foundation/runtime.py": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
     "src/spike/reports/audit_composition_x1_x2.py": "fa569e80d8be7f5907846a9e484ad69aff86cb3b0cfe5293f07fd34e4937c998",
     "src/spike/reports/composition-x1-x2-audit-20261004.json": "582e6b1a5339215f20d9083a3366bbaab75fba3d41b995fb4f614f62db15c55d",
     "src/spike/reports/composition-x1-x2-design-20261004.md": "09f11f5a3292b5d88c7a5470f4bf359cf0ffdc4337dfad27417613c7fbef1565",
@@ -623,7 +629,50 @@
     "src/spike/runs/composition-x3-x4-v1/X3.jsonl": "b9fdef44815b2f2753441eff19d12de02d5e5ed42af7f8970e3cd0fe4615895f",
     "src/spike/runs/composition-x3-x4-v1/X4.jsonl": "999789a3c964b462670e61498d0f23f9f3b5ad1a8dae2acabcf9d63e8d09c44e",
     "src/spike/tests/test_history_composition.py": "5fd6fe37add8afff3b96f0334fb6574bb1847aaff0c29deb8882a684e6d1e8cd",
-    "src/spike/reports/composition-x3-x4-assessment-20261004.json": "b52d5e6761cf064ac110baedbc16c97db43491606da2179937ebf7181313eec9"
+    "src/spike/reports/composition-x3-x4-assessment-20261004.json": "b52d5e6761cf064ac110baedbc16c97db43491606da2179937ebf7181313eec9",
+    "src/spike/fixtures/composition-x5-v1.json": "b23b318a6fe3515d1be0d0ece3fa3811b641d4bd1d309139392927f5ff1b7e71",
+    "src/spike/foundation/activity.py": "0c8b1e17426c1084c052392da834e6172e538978a082500b4f5fa189c05f9eb7",
+    "src/spike/foundation/activity_cases.py": "0324b231e8838a7a1ec9e9c10daf4b03023bd3fb4fbd4c3a213cb9322a056fd0",
+    "src/spike/run_activity_composition_validation.py": "ce2d149391706ddd5716f902daeb0e2f60ad7b4afd6976bc9e37cc7ec2fe7ec8",
+    "src/spike/tests/test_activity_composition.py": "58779a406ee4b2714b04247025fb14d36980b50b90b9fd125b0d02ed90375325",
+    "src/spike/tests/test_x5_protocol_contract.py": "522a2ad141435417d159582cdb9001387bd007e4710c525efefe2ea41b7efaf2",
+    "src/spike/reports/audit_composition_x5.py": "c5c85f21911b982c8781355f1cc4979177cd080d9e61e578bfffc58f9f1ed5e5",
+    "src/spike/reports/composition-x5-audit-20261005.json": "f3930a592f48d2e7c5b59a2486ff38439d70196234439fc8eeec427274c3f070",
+    "src/spike/reports/composition-x5-design-20261005.md": "e5841fb42f8749ecfe449b05ad078914df3278a613c174ebaecc5775d925f332",
+    "src/spike/reports/composition-x5-v1-20261005.md": "a1a9326484c5c7fa7eb9e7322e0a12f32ff3da3325300cc582fa8828228616a7",
+    "src/spike/protocols/observation-x5-new-work-v1.json": "07232aa87ee446b82c7eabdc1e278d662d22855d2afeb5878125b65e092eda3d",
+    "src/spike/protocols/observation-x5-request-v1.json": "30f0eb4cab6a736ef8c6b5f3542775ec8614b9a4d99f1da7b8dbcb27df0f2cc7",
+    "src/spike/protocols/observation-x5-request-v2.json": "be1207a9b365533ef0735f16e10d889eb98f3fcf19955312addb3e4f70036319",
+    "src/spike/protocols/policy-x5-v1.json": "8ba9b46e5258336ad118d240ef18707d7a33c04e49e087c007040d582843bdef",
+    "src/spike/runs/composition-x5-v1/1-path.jsonl": "6050065cc7df0f24c5359e03dc0e758479dd515795d5f1a4d1b812dceda63b32",
+    "src/spike/runs/composition-x5-v1/2-path.jsonl": "430cbef23c9fc2b6e0aa846932579619c9cd8d83a10abd134291b666d8db8636",
+    "src/spike/runs/composition-x5-v1/3-path.jsonl": "ebdfe08f39846b7d608a4f2dda09ebf96779679f508136d8f9c5605b58d096ee",
+    "src/spike/runs/composition-x5-v1/4-path.jsonl": "b098b57c5b28da2c90628238045f9987a5c95d204ced54dee5ecaf3fd4a86fdd",
+    "src/spike/runs/composition-x5-v1/5-path.jsonl": "718fb721c7fbcfad59e22aa549b819320fa2b9bcbebe80c8fc412aeb325a4a48",
+    "src/spike/runs/composition-x5-v1/manifest.json": "5e68f8273b596bca4c71af02b60cc8c61ff1fb57458f6dcc47e4457b876dfffa",
+    "src/spike/runs/composition-x5-v1/summary.json": "b46857d85baa0cf47eb59933f222c947ddd0ea7a021b2b277aeeb62893241a68",
+    "src/spike/reports/source-baseline-x5-20261005/actions.py.txt": "645fcae50bd1a0942e7fac92b9a64405561c5af464b6db7a835a7c1796f51103",
+    "src/spike/reports/source-baseline-x5-20261005/runtime.py.txt": "7e78caccdb3de213219693ce0ac689b7913bc66e5de39a329f1fd1fee12b4178",
+    "src/spike/foundation/boundary.py": "6a738d9fa808725e295790b6c92ba9e2b329e5e573e949ac3e191f0e6a03fd79",
+    "src/spike/foundation/policy.py": "e1d528d8d175f449d8949f52ce729c21e0b1efda474b56d14a14836201fb3cfd",
+    "src/spike/foundation/session.py": "c82edb852f1b0f3cf3722b2e7181162a022b9d6d4d34111350d8e98c4b30c501",
+    "src/spike/reports/composition-x5-assessment-20261005.json": "9643f639641a0191edb9232050485bf18d0f481d4ea51385e5ed9c62d0ecee23"
   },
-  "next_work": "Predeclare bounded X5 serial diagnosis-to-teaching-to-new-independent-opportunity composition with real cognition and explicit effect-boundary failures. Preserve A1 work and all earlier inconclusive/denied assessments for design closeout; no automatic restart of closed campaigns."
+  "next_work": "A1 bounded formation/utility assessment and unified denied/inconclusive design closeout; no automatic X5 rerun.",
+  "historical_source_revisions": [
+    {
+      "source_path": "src/spike/foundation/actions.py",
+      "previous_sha256": "645fcae50bd1a0942e7fac92b9a64405561c5af464b6db7a835a7c1796f51103",
+      "preserved_at": "src/spike/reports/source-baseline-x5-20261005/actions.py.txt",
+      "current_sha256": "849f004a79ad0e53508938e5732a5f1e43e78ae8db72ef57e57923b1f4e95823",
+      "reason": "X5 activity Control/current-state changes; old hash preserved exactly; historical manifests and assessments unchanged."
+    },
+    {
+      "source_path": "src/spike/foundation/runtime.py",
+      "previous_sha256": "7e78caccdb3de213219693ce0ac689b7913bc66e5de39a329f1fd1fee12b4178",
+      "preserved_at": "src/spike/reports/source-baseline-x5-20261005/runtime.py.txt",
+      "current_sha256": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
+      "reason": "X5 activity Control/current-state changes; old hash preserved exactly; historical manifests and assessments unchanged."
+    }
+  ]
 }

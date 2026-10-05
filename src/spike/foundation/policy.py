@@ -17,6 +17,12 @@ def policy_legality(payload, context):
     envelopes = [i.record.payload for i in context.items if i.record.kind == 'ActivityConstraints']
     if len(envelopes) != 1 or payload.get('episode') != envelopes[0]['episode']:
         return 'PolicyActivityBindingInvalid'
+    if 'activity_ref' in envelopes[0]:
+        activity = records.get(json.dumps(envelopes[0]['activity_ref'], sort_keys=True))
+        if (activity is None or activity.kind not in ('ActivityState', 'ActivityTransitionOccurred')
+                or activity.payload['episode'] != envelopes[0]['episode']
+                or activity.payload['activity_purpose'] != envelopes[0]['activity_purpose']):
+            return 'PolicyActualActivityBindingInvalid'
     outcome = payload.get('outcome')
     action_fields = ('action_identity', 'action_revision', 'exact_payload', 'executor_target')
     if outcome in ('NoIntervention', 'Defer'):

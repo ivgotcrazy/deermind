@@ -1,0 +1,22 @@
+{
+  "identity": "composition-x5-v1",
+  "date": "2026-10-05",
+  "repetitions": 5,
+  "max_calls_per_run": 28,
+  "max_model_calls": 140,
+  "max_output_tokens": 3072,
+  "timeout_seconds": 60,
+  "boundaries": [
+    "control-not-occurred",
+    "explanation-not-occurred",
+    "explanation-partial",
+    "explanation-indeterminate"
+  ],
+  "automatic_additional_batches": false,
+  "protocol_sha256": {
+    "protocols\\observation-smoke-v11.json": "defebd7aaec09350e8d4b8f46e944e418df326034408a0e9bfe387e3ba5ef8f1",
+    "protocols\\observation-x5-request-v1.json": "30f0eb4cab6a736ef8c6b5f3542775ec8614b9a4d99f1da7b8dbcb27df0f2cc7",
+    "protocols\\observation-x5-new-work-v1.json": "07232aa87ee446b82c7eabdc1e278d662d22855d2afeb5878125b65e092eda3d",
+    "protocols\\policy-x5-v1.json": "8ba9b46e5258336ad118d240ef18707d7a33c04e49e087c007040d582843bdef"
+  }
+}

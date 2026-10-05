@@ -1,0 +1,1089 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "frozen:.env.example",
+      "actual": "9ce6e1d3bb2e75d803db586caca0aa8a694eee485f7113dfb5b2c0e4bd47e488",
+      "expected": "9ce6e1d3bb2e75d803db586caca0aa8a694eee485f7113dfb5b2c0e4bd47e488",
+      "passed": true
+    },
+    {
+      "name": "frozen:.gitignore",
+      "actual": "c76b1296223613a0a66a1ba260d8c51da769c95af4897a02e49fef928670736d",
+      "expected": "c76b1296223613a0a66a1ba260d8c51da769c95af4897a02e49fef928670736d",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/archive/DeerMind_Concept_Design_v0.7.md",
+      "actual": "8a8e3156881fd579f0ad60ecb60a0e55372068edc48da8bacff7e7622d028106",
+      "expected": "8a8e3156881fd579f0ad60ecb60a0e55372068edc48da8bacff7e7622d028106",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/archive/DeerMind_Connect_Architecture_v0.5.md",
+      "actual": "1b3fdfb5933b428a7f0adfce49b5a255b594de4626bbb387c990036d92552f3a",
+      "expected": "1b3fdfb5933b428a7f0adfce49b5a255b594de4626bbb387c990036d92552f3a",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/archive/DeerMind_Knowledge_Model_v0.2.md",
+      "actual": "1b3bf1ecad3210227555f6c6042f7ffdd03fa3eb002c4577d4cd69ba224d2c6a",
+      "expected": "1b3bf1ecad3210227555f6c6042f7ffdd03fa3eb002c4577d4cd69ba224d2c6a",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/concept-design/DeerMind_Concept_Architecture_v1.1.md",
+      "actual": "c860a9b03f086ae9ce36efda275d803ab881c5d43953926089dd11b16936a2be",
+      "expected": "c860a9b03f086ae9ce36efda275d803ab881c5d43953926089dd11b16936a2be",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/concept-design/DeerMind_Evaluation_Space_Design_v1.1.md",
+      "actual": "3be0314a6ae8a1f3896109bc2da041634d08d63936fa4d4cb28673f36ede413f",
+      "expected": "3be0314a6ae8a1f3896109bc2da041634d08d63936fa4d4cb28673f36ede413f",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/concept-design/DeerMind_Evolution_Space_Design_v1.1.md",
+      "actual": "3fdcb23dc00dd70c56f08b4eb379f1c9fafa8379df7a51a50ceab763f244307e",
+      "expected": "3fdcb23dc00dd70c56f08b4eb379f1c9fafa8379df7a51a50ceab763f244307e",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/concept-design/DeerMind_Interaction_Space_Design_v1.1.md",
+      "actual": "e0ad81f89d877a74d6acb3b591c66a240932e4df4fd25f8ce2950c6ffa7f04a2",
+      "expected": "e0ad81f89d877a74d6acb3b591c66a240932e4df4fd25f8ce2950c6ffa7f04a2",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/concept-design/DeerMind_Learning_Space_Design_v1.1.md",
+      "actual": "9469c631840e64e85f94524e27cc48436b85469d6ccf059f771c75d13a5b2380",
+      "expected": "9469c631840e64e85f94524e27cc48436b85469d6ccf059f771c75d13a5b2380",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.1.md",
+      "actual": "9712b2fb447e3a7d20b8af7a69c522ac22082d030117677adafd5f8c950efc2a",
+      "expected": "9712b2fb447e3a7d20b8af7a69c522ac22082d030117677adafd5f8c950efc2a",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md",
+      "actual": "32e8818ae47833e3020cbe72078bb297a57cb81653737a7f39097623381f8560",
+      "expected": "32e8818ae47833e3020cbe72078bb297a57cb81653737a7f39097623381f8560",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_Cross_Cutting_Coverage_Review_v0.1.md",
+      "actual": "079a41fa048c02fdb0b024656373ac1f7552c395aa7286e9efe9e320a6d2f6ee",
+      "expected": "079a41fa048c02fdb0b024656373ac1f7552c395aa7286e9efe9e320a6d2f6ee",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
+      "actual": "0057151a8821adfd0962147a826dc72c98f3893f0f82726398c36051163d3680",
+      "expected": "0057151a8821adfd0962147a826dc72c98f3893f0f82726398c36051163d3680",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v0.1.md",
+      "actual": "1ed00ac2ce4621dbcd0f5834d9b8d8b8e9707c7e34c9b675a10e1aea961c0e31",
+      "expected": "1ed00ac2ce4621dbcd0f5834d9b8d8b8e9707c7e34c9b675a10e1aea961c0e31",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md",
+      "actual": "7eec39fd0b33300c5a2da53769e6d6eb958d59fa70dcc0f5bb2a1937047753d9",
+      "expected": "7eec39fd0b33300c5a2da53769e6d6eb958d59fa70dcc0f5bb2a1937047753d9",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_Runtime_Event_Architecture_v0.1.md",
+      "actual": "36cb9ddfe56330ae77c484d694095e4686e90d12fe7e9bf7617a614801030df0",
+      "expected": "36cb9ddfe56330ae77c484d694095e4686e90d12fe7e9bf7617a614801030df0",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md",
+      "actual": "f7fff479db762823fb9404454ed3acef4457953c5a0a2db77e962b8ff93a29eb",
+      "expected": "f7fff479db762823fb9404454ed3acef4457953c5a0a2db77e962b8ff93a29eb",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_State_Dependency_Architecture_v0.1.md",
+      "actual": "7b0db9b6d1f973713631e3033bfbb37ec0c2451e5cecc96bdd2b4d5930f2fdfa",
+      "expected": "7b0db9b6d1f973713631e3033bfbb37ec0c2451e5cecc96bdd2b4d5930f2fdfa",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_System_Design_Roadmap_v0.5.md",
+      "actual": "0d7d83d9b7ac6762c3c66bdc05a39141b01b614c329c51fae83cf0667cd52503",
+      "expected": "0d7d83d9b7ac6762c3c66bdc05a39141b01b614c329c51fae83cf0667cd52503",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/system-design/DeerMind_System_Design_v0.2.md",
+      "actual": "a3c206c16cfaa46457b64ffc7089f7af638ad0e0c246848916c5324064dde44a",
+      "expected": "a3c206c16cfaa46457b64ffc7089f7af638ad0e0c246848916c5324064dde44a",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/top/DeerMind_AI_Native_Architecture_Principles_v0.2.md",
+      "actual": "bcd7b8a621bb66bb857d5e7c67d7e799c1672dcd5cd7b679c2172d4a1c5cb82a",
+      "expected": "bcd7b8a621bb66bb857d5e7c67d7e799c1672dcd5cd7b679c2172d4a1c5cb82a",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/top/DeerMind_Design_Document_Standard_v1.0.md",
+      "actual": "0a83977989e14b336c4f653beee5df89797629e0482191452c517b3e6d7b7dbc",
+      "expected": "0a83977989e14b336c4f653beee5df89797629e0482191452c517b3e6d7b7dbc",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/top/DeerMind_Development_Roadmap_v0.3.md",
+      "actual": "24b39654fb9c394d8d195c9e95cf79c5221b4f851f3d956001163750b38bebc4",
+      "expected": "24b39654fb9c394d8d195c9e95cf79c5221b4f851f3d956001163750b38bebc4",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/top/DeerMind_Product_Constitution_v1.0.md",
+      "actual": "5a8f11b46bb79864db97b75742acd32f203bfd762ad65986b6c5d12fa52e66f3",
+      "expected": "5a8f11b46bb79864db97b75742acd32f203bfd762ad65986b6c5d12fa52e66f3",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/top/DeerMind_Product_Thesis_Critical_Issues_Analysis_v0.8.md",
+      "actual": "16cac48b76cf9e41f17d945946d0756f8d3f447564374c64f6693c59e0356d7a",
+      "expected": "16cac48b76cf9e41f17d945946d0756f8d3f447564374c64f6693c59e0356d7a",
+      "passed": true
+    },
+    {
+      "name": "frozen:doc/top/DeerMind_Product_Thesis_v1.0.md",
+      "actual": "76bba39ef1a183ce878959dcd2dd51594709ac4513e21ac667d51a865807ccf9",
+      "expected": "76bba39ef1a183ce878959dcd2dd51594709ac4513e21ac667d51a865807ccf9",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/action-exposure-v1.json",
+      "actual": "13ecc35f86c3232ee8a4681ab9a584ec3263b5fc6c2f3866921eb469e51a36c9",
+      "expected": "13ecc35f86c3232ee8a4681ab9a584ec3263b5fc6c2f3866921eb469e51a36c9",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/composition-x1-x2-v1.json",
+      "actual": "e35417b1a1fea5dbe01766cd7b88997ff8cddc3220860f101625ebf9d38bf1a6",
+      "expected": "e35417b1a1fea5dbe01766cd7b88997ff8cddc3220860f101625ebf9d38bf1a6",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/composition-x3-x4-v1.json",
+      "actual": "b0ffaf0b31bbd122abb1d56954f50e7e2aeaf9d51d5f880a1ea7127209bf85de",
+      "expected": "b0ffaf0b31bbd122abb1d56954f50e7e2aeaf9d51d5f880a1ea7127209bf85de",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/composition-x5-v1.json",
+      "actual": "b23b318a6fe3515d1be0d0ece3fa3811b641d4bd1d309139392927f5ff1b7e71",
+      "expected": "b23b318a6fe3515d1be0d0ece3fa3811b641d4bd1d309139392927f5ff1b7e71",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/dependency-commit-v1.json",
+      "actual": "a9174798ce4ce6103da6458219cdd5bae57c41b566ac0eb34a8b8391ad9ae5f6",
+      "expected": "a9174798ce4ce6103da6458219cdd5bae57c41b566ac0eb34a8b8391ad9ae5f6",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-absence-v1.json",
+      "actual": "a09837dc0ce63747a3a7932070caa4e01106049224c0b8569975082c05c73ea1",
+      "expected": "a09837dc0ce63747a3a7932070caa4e01106049224c0b8569975082c05c73ea1",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-arithmetic-v1.json",
+      "actual": "5ba6363bceea85056029389513c002bf667ffdc93abdc8be5131f7ac8ed7038b",
+      "expected": "5ba6363bceea85056029389513c002bf667ffdc93abdc8be5131f7ac8ed7038b",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-claim-axes-v1.json",
+      "actual": "7bd6efcb60a95b25e08a3ac60b321474ea024f21200ade06a0325625484a0d8a",
+      "expected": "7bd6efcb60a95b25e08a3ac60b321474ea024f21200ade06a0325625484a0d8a",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-closeout-s1-v1.json",
+      "actual": "0b76ee0c95e305f6851c951a954f91c1ee93131bca5ff741f3fa4cd501f03856",
+      "expected": "0b76ee0c95e305f6851c951a954f91c1ee93131bca5ff741f3fa4cd501f03856",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-closeout-s2-v1.json",
+      "actual": "826fcd1ec8cd5462a601fa16a0a8502111adab1020a2f14a9403b06fd24d6cf6",
+      "expected": "826fcd1ec8cd5462a601fa16a0a8502111adab1020a2f14a9403b06fd24d6cf6",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-grounding-v1.json",
+      "actual": "1108011a0276c473f7b03474f4727290c976d6c9b34b2e16b00a3c010ed335fb",
+      "expected": "1108011a0276c473f7b03474f4727290c976d6c9b34b2e16b00a3c010ed335fb",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-omission-v1.json",
+      "actual": "12e3405a521d66a5c318e1c44a5de502c01932a09c3e0a702629a5ac39892680",
+      "expected": "12e3405a521d66a5c318e1c44a5de502c01932a09c3e0a702629a5ac39892680",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-responsibility-v1.json",
+      "actual": "f7e6733627ea81969819942c5bd67026bb4e6593eec9914db905993de9f19da8",
+      "expected": "f7e6733627ea81969819942c5bd67026bb4e6593eec9914db905993de9f19da8",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-source-handles-v1.json",
+      "actual": "e41b1bc8369ea0acd303cf4e0d34386b20657f3f530f94b3756b798094ff7b83",
+      "expected": "e41b1bc8369ea0acd303cf4e0d34386b20657f3f530f94b3756b798094ff7b83",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-stability-v1.json",
+      "actual": "0a19857d19016f1189b19953fa293def0338192c148c454db728ab4e1e514c71",
+      "expected": "0a19857d19016f1189b19953fa293def0338192c148c454db728ab4e1e514c71",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-structured-v1.json",
+      "actual": "e3523e132f63d1969675bc21ce2c5dec556cc313e38c964ba894ceb562483967",
+      "expected": "e3523e132f63d1969675bc21ce2c5dec556cc313e38c964ba894ceb562483967",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-support-structured-v1.json",
+      "actual": "c0641bdca397e48557f6c4b9927e914fee2fc5592eb3c235ed25a9227c8a1383",
+      "expected": "c0641bdca397e48557f6c4b9927e914fee2fc5592eb3c235ed25a9227c8a1383",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/observation-support-v1.json",
+      "actual": "d86eadd1a8715a2678bf23dd4a5d72a2d3a5627e663b54581bdaf21978ebb0ef",
+      "expected": "d86eadd1a8715a2678bf23dd4a5d72a2d3a5627e663b54581bdaf21978ebb0ef",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/policy-e1-v1.json",
+      "actual": "2e37b69535871bc43ba9049287746b4edfc513494a9a5489d7ae98f36c7d36e7",
+      "expected": "2e37b69535871bc43ba9049287746b4edfc513494a9a5489d7ae98f36c7d36e7",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/security-f-v1.json",
+      "actual": "e19dea1c15c7bf45b4bb0180eb6f4f17154b8829fadf2e2e7d9ad17896b60620",
+      "expected": "e19dea1c15c7bf45b4bb0180eb6f4f17154b8829fadf2e2e7d9ad17896b60620",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/serial-e2-v1.json",
+      "actual": "f726fe88e77bed7623250055168f6e94ba132c23d57e54b96f5b06aebf31eb14",
+      "expected": "f726fe88e77bed7623250055168f6e94ba132c23d57e54b96f5b06aebf31eb14",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/fixtures/version-replay-v1.json",
+      "actual": "72678a3cecfb1bd455f728a3017bfdd3d9246328180280511f90cc942f445e04",
+      "expected": "72678a3cecfb1bd455f728a3017bfdd3d9246328180280511f90cc942f445e04",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/__init__.py",
+      "actual": "44e8f9249413c3f1b454e056d38aee69c02186206d2f932feafc0fe4be60ba68",
+      "expected": "44e8f9249413c3f1b454e056d38aee69c02186206d2f932feafc0fe4be60ba68",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/action_cases.py",
+      "actual": "ca12edb2a45f52961589ff3c53d03a6ee3feb902b4ffb0e0e8a15d8d96f9b1a0",
+      "expected": "ca12edb2a45f52961589ff3c53d03a6ee3feb902b4ffb0e0e8a15d8d96f9b1a0",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/actions.py",
+      "actual": "849f004a79ad0e53508938e5732a5f1e43e78ae8db72ef57e57923b1f4e95823",
+      "expected": "849f004a79ad0e53508938e5732a5f1e43e78ae8db72ef57e57923b1f4e95823",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/activity.py",
+      "actual": "0c8b1e17426c1084c052392da834e6172e538978a082500b4f5fa189c05f9eb7",
+      "expected": "0c8b1e17426c1084c052392da834e6172e538978a082500b4f5fa189c05f9eb7",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/activity_cases.py",
+      "actual": "0324b231e8838a7a1ec9e9c10daf4b03023bd3fb4fbd4c3a213cb9322a056fd0",
+      "expected": "0324b231e8838a7a1ec9e9c10daf4b03023bd3fb4fbd4c3a213cb9322a056fd0",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/arithmetic.py",
+      "actual": "322ba1cf462e1f8b2b914d084a136d4c3635dc77241e3395e46cbf1ace52f80d",
+      "expected": "322ba1cf462e1f8b2b914d084a136d4c3635dc77241e3395e46cbf1ace52f80d",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/boundary.py",
+      "actual": "6a738d9fa808725e295790b6c92ba9e2b329e5e573e949ac3e191f0e6a03fd79",
+      "expected": "6a738d9fa808725e295790b6c92ba9e2b329e5e573e949ac3e191f0e6a03fd79",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/cases.py",
+      "actual": "91ff4d712ce4d7ec1097e62e26694e7857fed88b0211c387c2e527f5fd991b27",
+      "expected": "91ff4d712ce4d7ec1097e62e26694e7857fed88b0211c387c2e527f5fd991b27",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/claim_axes.py",
+      "actual": "555d2b12687b58c29ca471a0fd35d10e0229e82f82f749435658a9cda9908f89",
+      "expected": "555d2b12687b58c29ca471a0fd35d10e0229e82f82f749435658a9cda9908f89",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/composition_cases.py",
+      "actual": "6340f9e91eb1019a744a9893fcb80ebdc93493d897df864bea0b648a857eea41",
+      "expected": "6340f9e91eb1019a744a9893fcb80ebdc93493d897df864bea0b648a857eea41",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/dependency_cases.py",
+      "actual": "bc522b01bbeda94054a9a9f62641c21523f2bf9ccf7646f21fc6016795ecb0e6",
+      "expected": "bc522b01bbeda94054a9a9f62641c21523f2bf9ccf7646f21fc6016795ecb0e6",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/guarded_cases.py",
+      "actual": "77aa00b031cd64fb05c12c2314290b4b8e166d572ddb6168fd10f89640c5ce5f",
+      "expected": "77aa00b031cd64fb05c12c2314290b4b8e166d572ddb6168fd10f89640c5ce5f",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/history_composition_cases.py",
+      "actual": "1e84cadde63dd7b4feaf6930800d4017fdf8d8bed11dda98a0046971b1e7ca99",
+      "expected": "1e84cadde63dd7b4feaf6930800d4017fdf8d8bed11dda98a0046971b1e7ca99",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/llm.py",
+      "actual": "e2bc8061193697a8759693f01db375a193c5d45b80770d71364b2b64e0b08e36",
+      "expected": "e2bc8061193697a8759693f01db375a193c5d45b80770d71364b2b64e0b08e36",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/policy.py",
+      "actual": "e1d528d8d175f449d8949f52ce729c21e0b1efda474b56d14a14836201fb3cfd",
+      "expected": "e1d528d8d175f449d8949f52ce729c21e0b1efda474b56d14a14836201fb3cfd",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/policy_cases.py",
+      "actual": "478a5748c16097ecf82eb5115396529131d5205b0cb16f019063202b833d1231",
+      "expected": "478a5748c16097ecf82eb5115396529131d5205b0cb16f019063202b833d1231",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/records.py",
+      "actual": "95abac7d39d6ef2202bb16421495666cb15c26f1f1162dd702683846aae00244",
+      "expected": "95abac7d39d6ef2202bb16421495666cb15c26f1f1162dd702683846aae00244",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/replay.py",
+      "actual": "36f7ee7352d24d39fde7225f5808b874a0f11cfab7773035906beb779731f0ce",
+      "expected": "36f7ee7352d24d39fde7225f5808b874a0f11cfab7773035906beb779731f0ce",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/responsibility.py",
+      "actual": "80fb8b9610fc87146db0a0ecd3054a1b768fc80abeeb61bcb9981ccb7e0291ac",
+      "expected": "80fb8b9610fc87146db0a0ecd3054a1b768fc80abeeb61bcb9981ccb7e0291ac",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/runtime.py",
+      "actual": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
+      "expected": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/security.py",
+      "actual": "7e83a20c8c6471e2d9539acf13b143e9cd5ae5971b8625791c31a6f1176f2668",
+      "expected": "7e83a20c8c6471e2d9539acf13b143e9cd5ae5971b8625791c31a6f1176f2668",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/security_cases.py",
+      "actual": "c28f787b14ebf7e53595eafa636d6cdb0b11d3306a9ad4e3121b7a59a0f6baec",
+      "expected": "c28f787b14ebf7e53595eafa636d6cdb0b11d3306a9ad4e3121b7a59a0f6baec",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/semantic_review.py",
+      "actual": "9628df31f4c9ca6db1e36369b86cb7484d26379c886398aebeaa7804ecec902d",
+      "expected": "9628df31f4c9ca6db1e36369b86cb7484d26379c886398aebeaa7804ecec902d",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/serial_cases.py",
+      "actual": "0738f953952282ddeec58ad2c3150e248c4a22dba25937ab7b5a072c86d4482a",
+      "expected": "0738f953952282ddeec58ad2c3150e248c4a22dba25937ab7b5a072c86d4482a",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/session.py",
+      "actual": "c82edb852f1b0f3cf3722b2e7181162a022b9d6d4d34111350d8e98c4b30c501",
+      "expected": "c82edb852f1b0f3cf3722b2e7181162a022b9d6d4d34111350d8e98c4b30c501",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/source_conflicts.py",
+      "actual": "cf3aa9a2a7561f9713e0972f04987cafbb310cdcd3bcf4301f23d564fc34be13",
+      "expected": "cf3aa9a2a7561f9713e0972f04987cafbb310cdcd3bcf4301f23d564fc34be13",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/source_handles.py",
+      "actual": "1896f9b17d8d40351ed7792dcd9cceae864fd2e638fb8672f2a773905f9dcaa8",
+      "expected": "1896f9b17d8d40351ed7792dcd9cceae864fd2e638fb8672f2a773905f9dcaa8",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/structured_output.py",
+      "actual": "803a45de9413c7f2dd7aebffa86763aeea33f78c193995f00be55653c0648113",
+      "expected": "803a45de9413c7f2dd7aebffa86763aeea33f78c193995f00be55653c0648113",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/tool_boundary.py",
+      "actual": "045d641a74ca747941025b8908eb7b6f1199a42695fb209dcfb10d68003a0921",
+      "expected": "045d641a74ca747941025b8908eb7b6f1199a42695fb209dcfb10d68003a0921",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/foundation/version_replay_cases.py",
+      "actual": "0ac4ba0548ebc0174dd867ab94b64a16a637d4def5b5d368b850a03940414f2a",
+      "expected": "0ac4ba0548ebc0174dd867ab94b64a16a637d4def5b5d368b850a03940414f2a",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v1.json",
+      "actual": "256d234dbf23a0261adbf07af0e248df80d7ce833b50af707041bed5e09573c4",
+      "expected": "256d234dbf23a0261adbf07af0e248df80d7ce833b50af707041bed5e09573c4",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v10.json",
+      "actual": "c228c64720a0816e6d4169fffc84efd360ae31773b1071d604700ee5d7d980f9",
+      "expected": "c228c64720a0816e6d4169fffc84efd360ae31773b1071d604700ee5d7d980f9",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v11.json",
+      "actual": "defebd7aaec09350e8d4b8f46e944e418df326034408a0e9bfe387e3ba5ef8f1",
+      "expected": "defebd7aaec09350e8d4b8f46e944e418df326034408a0e9bfe387e3ba5ef8f1",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v2.json",
+      "actual": "9963a25efdd57c32dc1aa8786ee6988fcee68e89c3169c23dbd0fbb8465fc608",
+      "expected": "9963a25efdd57c32dc1aa8786ee6988fcee68e89c3169c23dbd0fbb8465fc608",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v3.json",
+      "actual": "e374312931346230bd0b30e3f6542d1271424cd91c019641e6701fd52e61685b",
+      "expected": "e374312931346230bd0b30e3f6542d1271424cd91c019641e6701fd52e61685b",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v4.json",
+      "actual": "03722a159c6d04d9fec40ca36bfef952a6d382b9fbd64be797b50d5e961a188d",
+      "expected": "03722a159c6d04d9fec40ca36bfef952a6d382b9fbd64be797b50d5e961a188d",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v5.json",
+      "actual": "eb61f6866a84abcd1af49f1c4d8c7b144209fee357fc47ba3654377bd68db865",
+      "expected": "eb61f6866a84abcd1af49f1c4d8c7b144209fee357fc47ba3654377bd68db865",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v6.json",
+      "actual": "b3a0a91ca1ad3710513e737d2a7d0cf9c0fcf0004b880ab02e28d30d47a60b13",
+      "expected": "b3a0a91ca1ad3710513e737d2a7d0cf9c0fcf0004b880ab02e28d30d47a60b13",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v7.json",
+      "actual": "339d9baae97d471fb8dcfa3dd7d9a8021302d5d5220b93bc7accd9f4e3a9ac2d",
+      "expected": "339d9baae97d471fb8dcfa3dd7d9a8021302d5d5220b93bc7accd9f4e3a9ac2d",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v8.json",
+      "actual": "a8b96724a5d07ef095308982d19f467d8aa767fa68914fd827c9b242a02a04bc",
+      "expected": "a8b96724a5d07ef095308982d19f467d8aa767fa68914fd827c9b242a02a04bc",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-smoke-v9.json",
+      "actual": "c1f964e45b0856b2be9484313dfa093711f64d1b5dc5c02d646e1cde025d2e78",
+      "expected": "c1f964e45b0856b2be9484313dfa093711f64d1b5dc5c02d646e1cde025d2e78",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-x5-new-work-v1.json",
+      "actual": "07232aa87ee446b82c7eabdc1e278d662d22855d2afeb5878125b65e092eda3d",
+      "expected": "07232aa87ee446b82c7eabdc1e278d662d22855d2afeb5878125b65e092eda3d",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/observation-x5-request-v1.json",
+      "actual": "30f0eb4cab6a736ef8c6b5f3542775ec8614b9a4d99f1da7b8dbcb27df0f2cc7",
+      "expected": "30f0eb4cab6a736ef8c6b5f3542775ec8614b9a4d99f1da7b8dbcb27df0f2cc7",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/policy-e1-v1.json",
+      "actual": "c917702a30ab389361fe2dd346396f112f0df40077738d2d7dccc28613379fbb",
+      "expected": "c917702a30ab389361fe2dd346396f112f0df40077738d2d7dccc28613379fbb",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/policy-x5-v1.json",
+      "actual": "8ba9b46e5258336ad118d240ef18707d7a33c04e49e087c007040d582843bdef",
+      "expected": "8ba9b46e5258336ad118d240ef18707d7a33c04e49e087c007040d582843bdef",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/protocols/security-f-v1.json",
+      "actual": "e32b579595c51460836964599ee9f726f7e83a78dd87ed5ba3454b9fac9b4086",
+      "expected": "e32b579595c51460836964599ee9f726f7e83a78dd87ed5ba3454b9fac9b4086",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/README.md",
+      "actual": "fb7bd8ca540d3d775c222b892b9b78f1f02debcf0e8fcf98e897b6b2cc86f7b6",
+      "expected": "fb7bd8ca540d3d775c222b892b9b78f1f02debcf0e8fcf98e897b6b2cc86f7b6",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/reports/audit_composition_x1_x2.py",
+      "actual": "fa569e80d8be7f5907846a9e484ad69aff86cb3b0cfe5293f07fd34e4937c998",
+      "expected": "fa569e80d8be7f5907846a9e484ad69aff86cb3b0cfe5293f07fd34e4937c998",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/reports/audit_composition_x3_x4.py",
+      "actual": "2f86ecb056a84eb8f36ae1fe772b3839ab3188da9f2fe3056427a5206cdee348",
+      "expected": "2f86ecb056a84eb8f36ae1fe772b3839ab3188da9f2fe3056427a5206cdee348",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/reports/audit_composition_x5.py",
+      "actual": "c5c85f21911b982c8781355f1cc4979177cd080d9e61e578bfffc58f9f1ed5e5",
+      "expected": "c5c85f21911b982c8781355f1cc4979177cd080d9e61e578bfffc58f9f1ed5e5",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/reports/audit_observation_closeout.py",
+      "actual": "c9cd41fdcc1387380b0d2a3a4d394ba21a5a3200611c9a3962a9e519b416495f",
+      "expected": "c9cd41fdcc1387380b0d2a3a4d394ba21a5a3200611c9a3962a9e519b416495f",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/reports/audit_security_f.py",
+      "actual": "ed0b9bcde41801661339784837f2d3223dbe63319d76c946d70a20a01b0f0e0c",
+      "expected": "ed0b9bcde41801661339784837f2d3223dbe63319d76c946d70a20a01b0f0e0c",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_action_exposure_validation.py",
+      "actual": "8b1fcdeec1cb76888bf44357c1630290ea4239cec3095ef4cc631a3287e566a0",
+      "expected": "8b1fcdeec1cb76888bf44357c1630290ea4239cec3095ef4cc631a3287e566a0",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_activity_composition_validation.py",
+      "actual": "ce2d149391706ddd5716f902daeb0e2f60ad7b4afd6976bc9e37cc7ec2fe7ec8",
+      "expected": "ce2d149391706ddd5716f902daeb0e2f60ad7b4afd6976bc9e37cc7ec2fe7ec8",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_composition_validation.py",
+      "actual": "984559f871e2b0eeea83487e055be52b62891ea907467083834db7d3a7af08e2",
+      "expected": "984559f871e2b0eeea83487e055be52b62891ea907467083834db7d3a7af08e2",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_dependency_validation.py",
+      "actual": "03eb57082ad7209f1ae07a59a2d2aff8651e78fdfbe0f6cfcbff09300b1be0cb",
+      "expected": "03eb57082ad7209f1ae07a59a2d2aff8651e78fdfbe0f6cfcbff09300b1be0cb",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_foundation.py",
+      "actual": "4fdf71f6da54ace4991ec60f5ab9ab11411f0b5c9e9ccf6fd09e3670d9cadbf3",
+      "expected": "4fdf71f6da54ace4991ec60f5ab9ab11411f0b5c9e9ccf6fd09e3670d9cadbf3",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_history_composition_validation.py",
+      "actual": "d795e425eac0dc1a670e7680199e244f6743b48cbb2e04e91043c4e2923d51a0",
+      "expected": "d795e425eac0dc1a670e7680199e244f6743b48cbb2e04e91043c4e2923d51a0",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_llm_smoke.py",
+      "actual": "093fc110eedebd3a8597a402dc8d1bcf8a20a5f7776d0825e4b265d4c8cab78c",
+      "expected": "093fc110eedebd3a8597a402dc8d1bcf8a20a5f7776d0825e4b265d4c8cab78c",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_observation_closeout.py",
+      "actual": "5268854c63c5d0d20354219d3d662815cfed9b22c38383d83ffa6d8ac1d33f23",
+      "expected": "5268854c63c5d0d20354219d3d662815cfed9b22c38383d83ffa6d8ac1d33f23",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_policy_validation.py",
+      "actual": "7b067b9a491d35cf15bb87c66b06c93d80ae6a90e19bdd6cee310a630781a647",
+      "expected": "7b067b9a491d35cf15bb87c66b06c93d80ae6a90e19bdd6cee310a630781a647",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_security_validation.py",
+      "actual": "7c272bf245478e92433429393017a0ea4c1f0872364a4a26e0e26bb54ff768ba",
+      "expected": "7c272bf245478e92433429393017a0ea4c1f0872364a4a26e0e26bb54ff768ba",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_semantic_regression.py",
+      "actual": "935f57d5441bd49492d0ef7e38d6d1dff6982495b903d286e6a8ceb66b55bf8a",
+      "expected": "935f57d5441bd49492d0ef7e38d6d1dff6982495b903d286e6a8ceb66b55bf8a",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_semantic_stability.py",
+      "actual": "67d029ada73e1ecce26d37d604c363926e218e037bf378016771bef939cab1a1",
+      "expected": "67d029ada73e1ecce26d37d604c363926e218e037bf378016771bef939cab1a1",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_serial_validation.py",
+      "actual": "945feb1c9f43b09c8974537ffa38bbe60c402bb118276fb978c2e75b1d66df5c",
+      "expected": "945feb1c9f43b09c8974537ffa38bbe60c402bb118276fb978c2e75b1d66df5c",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/run_version_replay_validation.py",
+      "actual": "2452f98908acada71d71c98d07326c05336979f8cec77060ba6ade1bd94dd095",
+      "expected": "2452f98908acada71d71c98d07326c05336979f8cec77060ba6ade1bd94dd095",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_absence_review.py",
+      "actual": "4294dbbeaa00c8dab0c8692a085c9cd84b0726642a70adf7922b92c5fcde31ef",
+      "expected": "4294dbbeaa00c8dab0c8692a085c9cd84b0726642a70adf7922b92c5fcde31ef",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_actions.py",
+      "actual": "6bfd80865aa5201c8906db13ca9d0951f524a351fb01880dce2cd3babaf200c5",
+      "expected": "6bfd80865aa5201c8906db13ca9d0951f524a351fb01880dce2cd3babaf200c5",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_activity_composition.py",
+      "actual": "58779a406ee4b2714b04247025fb14d36980b50b90b9fd125b0d02ed90375325",
+      "expected": "58779a406ee4b2714b04247025fb14d36980b50b90b9fd125b0d02ed90375325",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_arithmetic.py",
+      "actual": "e9a192f7efaff35120561f52abdd81f89bac3a3cf5da77a5e733aa6983336c2f",
+      "expected": "e9a192f7efaff35120561f52abdd81f89bac3a3cf5da77a5e733aa6983336c2f",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_boundary.py",
+      "actual": "16246b0c746dfb356f764b3eafe481ccf65de6a807fd264ec938c02ba7418f2c",
+      "expected": "16246b0c746dfb356f764b3eafe481ccf65de6a807fd264ec938c02ba7418f2c",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_claim_axes.py",
+      "actual": "da4431ebd3952782dac9df52f49aac5aa9f8415dda0037d3d792e0da581034ae",
+      "expected": "da4431ebd3952782dac9df52f49aac5aa9f8415dda0037d3d792e0da581034ae",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_composition.py",
+      "actual": "a15f6b7b88a5e6300ff874aa71f34c076cee4e42d22bb23103a4df84c1902db0",
+      "expected": "a15f6b7b88a5e6300ff874aa71f34c076cee4e42d22bb23103a4df84c1902db0",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_dependency_cases.py",
+      "actual": "f9f6849aaf43fb64b4d6850e50eb6de0fcb0498a2e24234a2288eccc9b40d9c1",
+      "expected": "f9f6849aaf43fb64b4d6850e50eb6de0fcb0498a2e24234a2288eccc9b40d9c1",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_foundation.py",
+      "actual": "286f71099e207268f255f672f77aebaa159513d127e1c4f1c1cf39ff420bd922",
+      "expected": "286f71099e207268f255f672f77aebaa159513d127e1c4f1c1cf39ff420bd922",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_history_composition.py",
+      "actual": "5fd6fe37add8afff3b96f0334fb6574bb1847aaff0c29deb8882a684e6d1e8cd",
+      "expected": "5fd6fe37add8afff3b96f0334fb6574bb1847aaff0c29deb8882a684e6d1e8cd",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_llm.py",
+      "actual": "2e8a29967231f25d90ed4eccdcfeca078bfe8a2a406e4bec38115756e4c08b3b",
+      "expected": "2e8a29967231f25d90ed4eccdcfeca078bfe8a2a406e4bec38115756e4c08b3b",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_observation_closeout.py",
+      "actual": "bfc2c8c587979c3d73a191850ea4df3fe54a412059c30f7fdbc3f767ad67fa69",
+      "expected": "bfc2c8c587979c3d73a191850ea4df3fe54a412059c30f7fdbc3f767ad67fa69",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_policy.py",
+      "actual": "7fe94eb0b092bb5757cb2125e331869ad98b856a382112d2400d387a6b1a3b24",
+      "expected": "7fe94eb0b092bb5757cb2125e331869ad98b856a382112d2400d387a6b1a3b24",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_responsibility.py",
+      "actual": "27bf47259e95bb3c1bb7c2f052167050a4a3d5fee40d0460bae9ab630a7170b6",
+      "expected": "27bf47259e95bb3c1bb7c2f052167050a4a3d5fee40d0460bae9ab630a7170b6",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_security_campaign.py",
+      "actual": "d57b9380424aaa112fcdfacd503a3034e759ba8646812f657c6c3552b151c35c",
+      "expected": "d57b9380424aaa112fcdfacd503a3034e759ba8646812f657c6c3552b151c35c",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_semantic_review.py",
+      "actual": "5b4bb713f99b79d895f475616bfc58c747339241d18abad0cec43606f5abcf5b",
+      "expected": "5b4bb713f99b79d895f475616bfc58c747339241d18abad0cec43606f5abcf5b",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_semantic_stability.py",
+      "actual": "cb40b982edd2b3a9021753b59a70e2eb5423c9f448048f740a7887936c1f7078",
+      "expected": "cb40b982edd2b3a9021753b59a70e2eb5423c9f448048f740a7887936c1f7078",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_serial.py",
+      "actual": "bd8c42258240334d9b78f673a09572b23063a3975534da612d3a1aadd3c5dbdb",
+      "expected": "bd8c42258240334d9b78f673a09572b23063a3975534da612d3a1aadd3c5dbdb",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_source_handles.py",
+      "actual": "c12dda9e7410270959b218676cfeb1c46acd8235349c6b7ba59927ddbd3fd07a",
+      "expected": "c12dda9e7410270959b218676cfeb1c46acd8235349c6b7ba59927ddbd3fd07a",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_source_review.py",
+      "actual": "73dc1b3b817bff16ffe76cdf2f43ea46e3d198e00a3cfb7781b00f1dee0af410",
+      "expected": "73dc1b3b817bff16ffe76cdf2f43ea46e3d198e00a3cfb7781b00f1dee0af410",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_structured_output.py",
+      "actual": "dae094d53ad2e26bb62d74158236d913253c3debeaf147a074c6a59a9d39f21b",
+      "expected": "dae094d53ad2e26bb62d74158236d913253c3debeaf147a074c6a59a9d39f21b",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_support_review.py",
+      "actual": "f6ce2bc9f430f9338ab45537bcde5ee8d268a2e40cf840f19af524b798fc01f8",
+      "expected": "f6ce2bc9f430f9338ab45537bcde5ee8d268a2e40cf840f19af524b798fc01f8",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/tests/test_version_replay.py",
+      "actual": "e6a3450e6a2ae62d96b2ab5e5f30386bc6f4dd622cebc912bf066d4bcc1c0ddd",
+      "expected": "e6a3450e6a2ae62d96b2ab5e5f30386bc6f4dd622cebc912bf066d4bcc1c0ddd",
+      "passed": true
+    },
+    {
+      "name": "frozen:src/spike/reports/composition-x5-design-20261005.md",
+      "actual": "e5841fb42f8749ecfe449b05ad078914df3278a613c174ebaecc5775d925f332",
+      "expected": "e5841fb42f8749ecfe449b05ad078914df3278a613c174ebaecc5775d925f332",
+      "passed": true
+    },
+    {
+      "name": "1-path.jsonl: real semantic review X5-O-before",
+      "actual": false,
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "1-path.jsonl: model provenance X5-O-before",
+      "actual": "deepseek-flash",
+      "expected": "deepseek-flash",
+      "passed": true
+    },
+    {
+      "name": "1-path.jsonl: history has no activity correction",
+      "actual": false,
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "2-path.jsonl: real semantic review X5-O-before",
+      "actual": false,
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "2-path.jsonl: model provenance X5-O-before",
+      "actual": "deepseek-flash",
+      "expected": "deepseek-flash",
+      "passed": true
+    },
+    {
+      "name": "2-path.jsonl: history has no activity correction",
+      "actual": false,
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "3-path.jsonl: real semantic review X5-O-before",
+      "actual": false,
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "3-path.jsonl: model provenance X5-O-before",
+      "actual": "deepseek-flash",
+      "expected": "deepseek-flash",
+      "passed": true
+    },
+    {
+      "name": "3-path.jsonl: history has no activity correction",
+      "actual": false,
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "4-path.jsonl: real semantic review X5-O-before",
+      "actual": false,
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "4-path.jsonl: model provenance X5-O-before",
+      "actual": "deepseek-flash",
+      "expected": "deepseek-flash",
+      "passed": true
+    },
+    {
+      "name": "4-path.jsonl: real semantic review X5-P-initial",
+      "actual": false,
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "4-path.jsonl: model provenance X5-P-initial",
+      "actual": "deepseek-flash",
+      "expected": "deepseek-flash",
+      "passed": true
+    },
+    {
+      "name": "4-path.jsonl: history has no activity correction",
+      "actual": false,
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "5-path.jsonl: history has no activity correction",
+      "actual": false,
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "raw model call count equals summary",
+      "actual": 24,
+      "expected": 24,
+      "passed": true
+    },
+    {
+      "name": "within predeclared call budget",
+      "actual": true,
+      "expected": true,
+      "passed": true
+    },
+    {
+      "name": "raw invariant check count equals summary",
+      "actual": 14,
+      "expected": 14,
+      "passed": true
+    },
+    {
+      "name": "all invariant checks passed",
+      "actual": true,
+      "expected": true,
+      "passed": true
+    },
+    {
+      "name": "no duplicate provider execution ids",
+      "actual": 24,
+      "expected": 24,
+      "passed": true
+    }
+  ],
+  "frozen_inputs_verified": 139,
+  "raw_invariant_checks": 14,
+  "model_calls": 24,
+  "call_statuses": {
+    "COMPLETED": 23,
+    "FAILED": 1
+  },
+  "stage_results": [
+    {
+      "file": "1-path.jsonl",
+      "stage": "X5-O-before",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "reason": "SemanticValidation:FAIL",
+      "payload": {
+        "description": "Learner work on the task \"6kg apples cost 42 yuan. What do 15kg cost?\" is recorded as: \"42 / 6 = 8; 8 * 15 = 120; Answer = 120\". The method shown is unit-price then multiply: dividing total cost by quantity, then multiplying by the target quantity. The stated division \"42 / 6 = 8\" does not match the arithmetic fact 42 / 6 = 7, so the unit price used is 8 rather than 7. The subsequent multiplication \"8 * 15 = 120\" is internally consistent with the stated unit price of 8, and the final stated result is \"Answer = 120\". No other work or reasoning is visible."
+      }
+    },
+    {
+      "file": "2-path.jsonl",
+      "stage": "X5-O-before",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "reason": "SemanticValidation:FAIL",
+      "payload": {
+        "description": "Learner work on the task \"6kg apples cost 42 yuan. What do 15kg cost?\" is recorded as: \"42 / 6 = 8; 8 * 15 = 120; Answer = 120\". The stated unit-price step \"42 / 6 = 8\" does not match the arithmetic of the given numbers, since 42 / 6 = 7, not 8. The subsequent step \"8 * 15 = 120\" is internally consistent with the learner's stated value of 8, and the final stated result is \"Answer = 120\". The work is presented as complete, with no additional steps or explanation visible."
+      }
+    },
+    {
+      "file": "3-path.jsonl",
+      "stage": "X5-O-before",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "reason": "SemanticValidation:FAIL",
+      "payload": {
+        "description": "Learner work on the task \"6kg apples cost 42 yuan. What do 15kg cost?\" is recorded as: \"42 / 6 = 8; 8 * 15 = 120; Answer = 120\". The stated unit-price step \"42 / 6 = 8\" does not match the arithmetic of the supplied numbers, since 42 / 6 = 7. The subsequent step \"8 * 15 = 120\" is internally consistent with the learner's stated 8, and the final stated result is \"Answer = 120\". The work is presented as complete, with no further steps or explanation visible."
+      }
+    },
+    {
+      "file": "4-path.jsonl",
+      "stage": "X5-O-before",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "reason": "",
+      "payload": {
+        "description": "Learner work for the task \"6kg apples cost 42 yuan. What do 15kg cost?\" is submitted as: \"42 / 6 = 8; 8 * 15 = 120; Answer = 120\". The method shown is unit-price then multiply: dividing the total cost by the quantity, then multiplying by the target quantity. A local arithmetic mismatch is visible in the first step: the source states \"42 / 6 = 8\", whereas 42 / 6 = 7. The subsequent step \"8 * 15 = 120\" is internally consistent with the learner's stated 8, but the final result \"Answer = 120\" differs from the result obtained using the correct quotient (7 * 15 = 105). No other work or explanation is visible."
+      }
+    },
+    {
+      "file": "4-path.jsonl",
+      "stage": "X5-P-initial",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "reason": "",
+      "payload": {
+        "action_identity": "",
+        "action_revision": "",
+        "context_refs": [
+          {
+            "identity": "X5-initial-input",
+            "revision": "1",
+            "space": "fact"
+          },
+          {
+            "identity": "X5-O-before",
+            "revision": "r1",
+            "space": "derived"
+          },
+          {
+            "identity": "X5-initial-activity",
+            "revision": "1",
+            "space": "fact"
+          },
+          {
+            "identity": "X5-envelope-initial",
+            "revision": "v1",
+            "space": "canonical"
+          },
+          {
+            "identity": "X5-Target",
+            "revision": "v1",
+            "space": "canonical"
+          }
+        ],
+        "defer_condition": "",
+        "episode": "apple-episode",
+        "exact_payload": "",
+        "executor_target": "",
+        "expected_disclosure": "none",
+        "outcome": "NoIntervention",
+        "rationale": "Current activity is IndependentDiagnosis with an empty allowed_action_refs envelope, so no action is admissible. The learner submitted work showing a unit-price-then-multiply method with a local arithmetic slip (42/6 stated as 8). This is diagnostic evidence only; the learner retains responsibility for the task, and intervening now would substitute my cognition for theirs and contaminate the diagnosis. Minimum sufficient intervention is none.",
+        "uncertainty": "Whether the slip is a one-off arithmetic error or a persistent division/unit-rate misconception cannot be determined from a single submission; no explanation was provided, so the reasoning behind \"8\" is unknown."
+      }
+    }
+  ],
+  "snapshot_record_counts_including_shared_ancestry": {
+    "LearnerWorkSubmitted": 10,
+    "ActivityState": 5,
+    "CurrentInteractionInput": 10,
+    "ReasoningProtocol": 50,
+    "SemanticValidationRules": 45,
+    "ActionSemantic": 5,
+    "Target": 5,
+    "TaskInstance": 10,
+    "Claim": 10,
+    "InputQueued": 10,
+    "TurnStarted": 6,
+    "ContextAssembly": 8,
+    "ContextManifest": 8,
+    "LLMGenerationStarted": 7,
+    "CandidateGeneration": 8,
+    "LLMGenerationCompleted": 7,
+    "LLMValidationStarted": 7,
+    "ResponsibilityClassificationExecution": 5,
+    "ArithmeticExtractionExecution": 5,
+    "SemanticValidationExecution": 6,
+    "CandidateValidation": 6,
+    "CommitOutcome": 6,
+    "ActivityConstraints": 1,
+    "Observation": 1,
+    "Evidence": 1,
+    "PolicyOutcome": 1,
+    "CommitResolution": 3,
+    "TurnContextBound": 1,
+    "TurnPolicyResult": 1,
+    "TurnSettled": 1,
+    "LLMValidationFailed": 1,
+    "ResponsibilityClassificationFailed": 1
+  },
+  "note": "Mechanical evidence audit is not a semantic quality verdict or full-path coverage."
+}

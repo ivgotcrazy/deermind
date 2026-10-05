@@ -91,8 +91,25 @@ class SerialSession:
                 or result.payload['intent_ref'] != json_value(t['intent_ref'])
                 or result.payload['status'] not in ('Occurred', 'NotOccurred', 'Indeterminate')):
             raise ContractError('TurnActionResultBindingMismatch')
-        t['phase'] = 'READY'
+        t.update(phase='READY', result_ref=result_ref)
         self._event('ActionResultProcessed', turn, result_ref=json_value(result_ref), status=result.payload['status'])
+
+    def continue_cycle(self, turn):
+        """Only an acknowledged Control effect can start another cycle in this turn."""
+        from .actions import exact_ref
+        t = self.require(turn, 'READY')
+        result = self.b.h.get(t['result_ref']) if 'result_ref' in t else None
+        intent = self.b.h.get(t['intent_ref']) if 'intent_ref' in t else None
+        occurrence = self.b.h.get(exact_ref(result.payload['occurrence_ref'])) if result and result.payload.get('occurrence_ref') else None
+        if (not result or not intent or intent.payload['executor_target'] != 'activity-control'
+                or result.payload['status'] != 'Occurred' or not occurrence
+                or occurrence.ref.space != Space.FACT or occurrence.kind != 'ActivityTransitionOccurred'
+                or occurrence.payload['intent_ref'] != json_value(intent.ref)):
+            raise ContractError('SuccessfulControlRequired')
+        self._event('DecisionCycleContinued', turn, result_ref=json_value(result.ref), activity_ref=json_value(occurrence.ref))
+        for key in ('result_ref', 'intent_ref', 'policy_ref', 'context_id'):
+            t.pop(key, None)
+        t['phase'] = 'INPUT'
 
     def settle(self, turn):
         t = self.require(turn, 'READY')

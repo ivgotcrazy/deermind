@@ -304,13 +304,6 @@ class CurrentResolver:
             return "LifecycleIneligible"
         if ref.space == Space.CANONICAL and h.facts.version_revocation(ref, scope, purpose, self.time):
             return 'VersionIneligible'
-        if ref.space == Space.FACT and record.kind in ('ActivityState', 'ActivityTransitionOccurred'):
-            # A later successful transition ends current applicability, not historical truth.
-            if any(r.kind == 'ActivityTransitionOccurred' and r.recorded_at <= self.time
-                   and (r.subject, r.scope, r.purpose) == (record.subject, scope, purpose)
-                   and r.payload.get('previous_activity_ref') == json_value(ref)
-                   for r in h.facts.records(record.subject)):
-                return 'ActivitySuperseded'
         correction = h.facts.corrected(ref, self.time)
         if correction:
             self.checks.append(Check(ref, purpose, scope, "Corrected", str(correction.ref)))

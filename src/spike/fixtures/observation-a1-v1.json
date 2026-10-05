@@ -1,0 +1,30 @@
+{
+  "identity": "observation-a1-v1",
+  "date": "2026-10-05",
+  "protocol_path": "protocols/observation-a1-v1.json",
+  "protocol_sha256": "4f4e026550652f780e81c5bc9a08da566e7e68b128b1f4a9fd818f651af617fd",
+  "repetitions": 5,
+  "planned_runs": 15,
+  "max_calls_per_run": 4,
+  "max_model_calls": 60,
+  "max_output_tokens": 4096,
+  "timeout_seconds": 60,
+  "automatic_additional_batches": false,
+  "variants": [
+    {
+      "id": "A1-error",
+      "text": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "expected": "Grounded unit-rate structure, division mismatch and separate final-result mismatch; no global-only ambiguity."
+    },
+    {
+      "id": "A1-correct",
+      "text": "42 ÷ 6 = 7; 7 × 15 = 105; Answer = 105",
+      "expected": "Grounded unit-rate structure, correct local arithmetic and result; no invented mismatch or mastery."
+    },
+    {
+      "id": "A1-incomplete",
+      "text": "42 ÷ 6 = ?",
+      "expected": "Visible expression and missing quotient, subsequent steps and answer retained; no fabricated completed strategy, answer or ability."
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "schema": "architecture-composition-assessment-v1",
+  "date": "2026-10-05",
+  "run_directory": "src/spike/runs/composition-x5-v1",
+  "cases": [
+    {
+      "case_id": "X5",
+      "composition_result": "INCONCLUSIVE",
+      "execution_progress": "EXECUTED_AND_ASSESSED_WITH_GAPS",
+      "full_case_complete": false,
+      "attempts": 5,
+      "complete_paths": 0,
+      "boundaries_complete": 0,
+      "boundaries_not_run": 4
+    }
+  ],
+  "model_calls": 24,
+  "adapter_completed_calls": 23,
+  "adapter_failed_calls": 1,
+  "mechanical_checks_passed": 14,
+  "failed_invariant_checks": 0,
+  "pre_campaign_regression_tests_passed": 211,
+  "post_campaign_contract_tests_passed": 2,
+  "mechanical_audit": "PASS",
+  "frozen_inputs_verified": 139,
+  "falsifier_observed": false,
+  "falsifier_scope_note": "No effects reached. Absence of counterexample does not establish activity/disclosure safety.",
+  "failures": [
+    {
+      "attempts": [
+        1,
+        2,
+        3
+      ],
+      "category": "ObservationRequiredContentOmitted",
+      "detail": "No explicit final-result judgment; candidates not committed."
+    },
+    {
+      "attempts": [
+        4
+      ],
+      "category": "ExperimentProtocolDefinitionDefect",
+      "detail": "request criterion added without schema enum synchronization; preserve as implementation defect, not model hallucination."
+    },
+    {
+      "attempts": [
+        5
+      ],
+      "category": "ModelExactFieldBindingFailure",
+      "detail": "candidate.description is not exact candidate field description."
+    }
+  ],
+  "repair": {
+    "protocol": "src/spike/protocols/observation-x5-request-v2.json",
+    "scope": "Output criterion enum only; original semantic criteria unchanged. Separate unexecuted repair artifact.",
+    "external_calls": 0
+  },
+  "automatic_additional_batches": false,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "historical_source_preservation": [
+    {
+      "source_path": "src/spike/foundation/actions.py",
+      "previous_sha256": "645fcae50bd1a0942e7fac92b9a64405561c5af464b6db7a835a7c1796f51103",
+      "preserved_at": "src/spike/reports/source-baseline-x5-20261005/actions.py.txt",
+      "current_sha256": "849f004a79ad0e53508938e5732a5f1e43e78ae8db72ef57e57923b1f4e95823",
+      "reason": "X5 activity Control/current-state changes; old hash preserved exactly; historical manifests and assessments unchanged."
+    },
+    {
+      "source_path": "src/spike/foundation/runtime.py",
+      "previous_sha256": "7e78caccdb3de213219693ce0ac689b7913bc66e5de39a329f1fd1fee12b4178",
+      "preserved_at": "src/spike/reports/source-baseline-x5-20261005/runtime.py.txt",
+      "current_sha256": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
+      "reason": "X5 activity Control/current-state changes; old hash preserved exactly; historical manifests and assessments unchanged."
+    }
+  ],
+  "next_work": "A1 bounded formation/utility assessment and unified denied/inconclusive design closeout; no automatic X5 rerun.",
+  "evidence_sha256": {
+    "src/spike/fixtures/composition-x5-v1.json": "b23b318a6fe3515d1be0d0ece3fa3811b641d4bd1d309139392927f5ff1b7e71",
+    "src/spike/foundation/activity.py": "0c8b1e17426c1084c052392da834e6172e538978a082500b4f5fa189c05f9eb7",
+    "src/spike/foundation/activity_cases.py": "0324b231e8838a7a1ec9e9c10daf4b03023bd3fb4fbd4c3a213cb9322a056fd0",
+    "src/spike/run_activity_composition_validation.py": "ce2d149391706ddd5716f902daeb0e2f60ad7b4afd6976bc9e37cc7ec2fe7ec8",
+    "src/spike/tests/test_activity_composition.py": "58779a406ee4b2714b04247025fb14d36980b50b90b9fd125b0d02ed90375325",
+    "src/spike/tests/test_x5_protocol_contract.py": "522a2ad141435417d159582cdb9001387bd007e4710c525efefe2ea41b7efaf2",
+    "src/spike/reports/audit_composition_x5.py": "c5c85f21911b982c8781355f1cc4979177cd080d9e61e578bfffc58f9f1ed5e5",
+    "src/spike/reports/composition-x5-audit-20261005.json": "f3930a592f48d2e7c5b59a2486ff38439d70196234439fc8eeec427274c3f070",
+    "src/spike/reports/composition-x5-design-20261005.md": "e5841fb42f8749ecfe449b05ad078914df3278a613c174ebaecc5775d925f332",
+    "src/spike/reports/composition-x5-v1-20261005.md": "a1a9326484c5c7fa7eb9e7322e0a12f32ff3da3325300cc582fa8828228616a7",
+    "src/spike/protocols/observation-x5-new-work-v1.json": "07232aa87ee446b82c7eabdc1e278d662d22855d2afeb5878125b65e092eda3d",
+    "src/spike/protocols/observation-x5-request-v1.json": "30f0eb4cab6a736ef8c6b5f3542775ec8614b9a4d99f1da7b8dbcb27df0f2cc7",
+    "src/spike/protocols/observation-x5-request-v2.json": "be1207a9b365533ef0735f16e10d889eb98f3fcf19955312addb3e4f70036319",
+    "src/spike/protocols/policy-x5-v1.json": "8ba9b46e5258336ad118d240ef18707d7a33c04e49e087c007040d582843bdef",
+    "src/spike/runs/composition-x5-v1/1-path.jsonl": "6050065cc7df0f24c5359e03dc0e758479dd515795d5f1a4d1b812dceda63b32",
+    "src/spike/runs/composition-x5-v1/2-path.jsonl": "430cbef23c9fc2b6e0aa846932579619c9cd8d83a10abd134291b666d8db8636",
+    "src/spike/runs/composition-x5-v1/3-path.jsonl": "ebdfe08f39846b7d608a4f2dda09ebf96779679f508136d8f9c5605b58d096ee",
+    "src/spike/runs/composition-x5-v1/4-path.jsonl": "b098b57c5b28da2c90628238045f9987a5c95d204ced54dee5ecaf3fd4a86fdd",
+    "src/spike/runs/composition-x5-v1/5-path.jsonl": "718fb721c7fbcfad59e22aa549b819320fa2b9bcbebe80c8fc412aeb325a4a48",
+    "src/spike/runs/composition-x5-v1/manifest.json": "5e68f8273b596bca4c71af02b60cc8c61ff1fb57458f6dcc47e4457b876dfffa",
+    "src/spike/runs/composition-x5-v1/summary.json": "b46857d85baa0cf47eb59933f222c947ddd0ea7a021b2b277aeeb62893241a68",
+    "src/spike/reports/source-baseline-x5-20261005/actions.py.txt": "645fcae50bd1a0942e7fac92b9a64405561c5af464b6db7a835a7c1796f51103",
+    "src/spike/reports/source-baseline-x5-20261005/runtime.py.txt": "7e78caccdb3de213219693ce0ac689b7913bc66e5de39a329f1fd1fee12b4178",
+    "src/spike/foundation/actions.py": "849f004a79ad0e53508938e5732a5f1e43e78ae8db72ef57e57923b1f4e95823",
+    "src/spike/foundation/boundary.py": "6a738d9fa808725e295790b6c92ba9e2b329e5e573e949ac3e191f0e6a03fd79",
+    "src/spike/foundation/policy.py": "e1d528d8d175f449d8949f52ce729c21e0b1efda474b56d14a14836201fb3cfd",
+    "src/spike/foundation/runtime.py": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
+    "src/spike/foundation/session.py": "c82edb852f1b0f3cf3722b2e7181162a022b9d6d4d34111350d8e98c4b30c501"
+  }
+}

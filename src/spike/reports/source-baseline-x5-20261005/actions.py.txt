@@ -26,10 +26,9 @@ class ActionRuntime:
         action = exact_ref(payload['action_semantic_ref'])
         request = Operation(payload['purpose'], payload['subject'], action.identity, 'execute',
                             tuple(parameter(k, payload[k]) for k in ('exact_payload', 'executor_target', 'action_semantic_ref')))
-        control = payload['executor_target'] == 'activity-control'
         return self.security.enforce(token, request, source,
-            DataUse(payload['purpose'], payload['subject'], 'ControlEffect' if control else 'ActionDisclosure', 'execute',
-                    payload['executor_target'], disclosure='internal' if control else 'learner'))
+            DataUse(payload['purpose'], payload['subject'], 'ActionDisclosure', 'execute',
+                    payload['executor_target'], disclosure='learner'))
 
     def _current(self, token, ref, scope, purpose):
         result = CurrentResolver(self.h.capture(), self.runtime._eligibility(token, 'reasoning-runtime')).resolve_exact(ref, scope, purpose)
@@ -67,8 +66,6 @@ class ActionRuntime:
                    'episode': p['episode'], 'expires_at': expires_at, 'idempotency_key': idempotency_key,
                    # This minimal profile explicitly declares the whole policy basis effect-critical.
                    'preconditions': [json_value(policy_ref), json_value(action)]}
-        if 'disclosure_kind' in semantic.payload:
-            payload['disclosure_kind'] = semantic.payload['disclosure_kind']
         authority, data = self._authorize(token, payload, source)
         payload.update(authority_basis=list(authority.authority_basis), data_authority_basis=list(data.authority_basis))
         for old in self.h.executions.records(policy.subject):
@@ -86,8 +83,6 @@ class ActionRuntime:
         if intent is None or intent.kind != 'ActionIntent' or intent_ref.space != Space.EXECUTION:
             raise ContractError('ExactIntentRequired')
         p = intent.payload
-        if p['executor_target'] != 'mock-display':
-            raise ContractError('DisplayExecutorMismatch')
         # Existing terminal results are read, never re-executed (including Indeterminate).
         previous = next((r for r in self.h.executions.records(intent.subject)
                          if r.kind == 'ActionExecutionResult' and r.payload['intent_ref'] == json_value(intent_ref)), None)
@@ -150,8 +145,6 @@ class ActionRuntime:
                    and r.payload['episode'] == episode and r.payload['scope'] == response.scope and r.payload['purpose'] == response.purpose]
         for intent in intents:
             self.security.read(token, intent.ref, response.purpose, 'exposure-runtime', source, ('ActionIntent',))
-            if intent.payload['executor_target'] == 'activity-control' or intent.payload.get('disclosure_kind') == 'TASK_PRESENTATION':
-                continue
             terminal = next((r for r in self.h.executions.records(response.subject) if r.kind == 'ActionExecutionResult'
                              and r.payload['intent_ref'] == json_value(intent.ref)), None)
             if terminal is None:

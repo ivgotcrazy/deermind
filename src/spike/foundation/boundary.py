@@ -385,7 +385,8 @@ class BoundaryRuntime:
             arithmetic_ref = self._arithmetic_executions[candidate.identity]
             extraction, arithmetic_result = self._checked_arithmetic(candidate, arithmetic_ref)
         # These are exact arithmetic fixture facts, not a natural-language classifier.
-        arithmetic = {"42 / 6": 42 // 6, "8 * 15": 8 * 15, "42 / 6 * 15": (42 // 6) * 15}
+        arithmetic = self.h.get(protocol.ref).payload.get('arithmetic_fixture',
+            {"42 / 6": 42 // 6, "8 * 15": 8 * 15, "42 / 6 * 15": (42 // 6) * 15})
         messages = [{"role": "system", "content": rule.payload["system"]},
                     {"role": "user", "content": json.dumps({"context": content,
                      "candidate": candidate.record.payload, "arithmetic_fixture": arithmetic,
