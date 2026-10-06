@@ -1,0 +1,3707 @@
+[
+  {
+    "id": "unsupported_multiplication",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-unsupported_multiplication-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-unsupported_multiplication-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-unsupported_multiplication-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "已提交这份解法，目前没有提出帮助或暂停请求。"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-unsupported_multiplication-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-unsupported_multiplication-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-unsupported_multiplication-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-unsupported_multiplication-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Execute",
+      "action_identity": "AskSelfCheck",
+      "action_revision": "e1-v1",
+      "exact_payload": "请你检查一下刚才的解题过程。",
+      "executor_target": "mock-display",
+      "episode": "apple-episode",
+      "rationale": "拟请学习者自行检查，以保留重算责任；额外介入的依据见 uncertainty。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-unsupported_multiplication-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-unsupported_multiplication-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-unsupported_multiplication-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-unsupported_multiplication-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-unsupported_multiplication-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-unsupported_multiplication-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-unsupported_multiplication-C3",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "若执行，只展示自行检查请求，不提供错误位置或正确值。",
+      "uncertainty": "还可能独立算错了 8×15，因此现在应提示。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "grounded_gap",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-grounded_gap-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-grounded_gap-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-grounded_gap-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "已提交这份解法，目前没有提出帮助或暂停请求。"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-grounded_gap-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-grounded_gap-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-grounded_gap-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-grounded_gap-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Execute",
+      "action_identity": "AskSelfCheck",
+      "action_revision": "e1-v1",
+      "exact_payload": "请你检查一下刚才的解题过程。",
+      "executor_target": "mock-display",
+      "episode": "apple-episode",
+      "rationale": "可确认除法失配；一次作答不能区分笔误与其他原因。选择请其自行检查，以后续重算结果判断是否需要进一步帮助。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-grounded_gap-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-grounded_gap-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-grounded_gap-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-grounded_gap-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-grounded_gap-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-grounded_gap-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-grounded_gap-C3",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "若执行，只展示自行检查请求，不提供错误位置或正确值。",
+      "uncertainty": "一次作答不足以区分笔误与其他原因；后续自行检查结果可提供进一步材料。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "uncertainty_not_required",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-uncertainty_not_required-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-uncertainty_not_required-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-uncertainty_not_required-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "已提交这份解法，目前没有提出帮助或暂停请求。"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-uncertainty_not_required-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-uncertainty_not_required-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-uncertainty_not_required-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-uncertainty_not_required-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Execute",
+      "action_identity": "AskSelfCheck",
+      "action_revision": "e1-v1",
+      "exact_payload": "请你检查一下刚才的解题过程。",
+      "executor_target": "mock-display",
+      "episode": "apple-episode",
+      "rationale": "当前可核对的除法失配足以说明本次自行检查的依据；不额外猜测未观察到的错误。 选择这一行动的收益是减少停滞，成本是提示可能改变后续作答条件。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-uncertainty_not_required-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-uncertainty_not_required-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-uncertainty_not_required-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-uncertainty_not_required-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-uncertainty_not_required-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-uncertainty_not_required-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-uncertainty_not_required-C3",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "若执行，只展示自行检查请求，不提供错误位置或正确值。",
+      "uncertainty": "不额外提出影响本次选择的未观察错误假设。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "missing_review_material",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-missing_review_material-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "已提交这份解法，目前没有提出帮助或暂停请求。"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-missing_review_material-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-missing_review_material-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-missing_review_material-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-missing_review_material-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "missing-material",
+          "revision": "review-v2"
+        },
+        "kind": "ReviewMaterialAvailability",
+        "content": {
+          "missing": "Original learner work and its Observation are unavailable in this review input; no substitute factual description is provided."
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Execute",
+      "action_identity": "AskSelfCheck",
+      "action_revision": "e1-v1",
+      "exact_payload": "请你检查一下刚才的解题过程。",
+      "executor_target": "mock-display",
+      "episode": "apple-episode",
+      "rationale": "原作答中的乘法中间步骤冲突，需请学习者复算以区分转录与计算错误。 自行复算保留计算责任，代价是推迟下一步。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-missing_review_material-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-missing_review_material-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-missing_review_material-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-missing_review_material-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-missing_review_material-C3",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "missing-material",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "若执行，只展示自行检查请求，不提供错误位置或正确值。",
+      "uncertainty": "需要后续复算来区分这两种解释。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "localization_erased",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-localization_erased-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-localization_erased-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-localization_erased-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "请帮我检查哪一步有问题，不要直接给答案"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-localization_erased-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-localization_erased-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-localization_erased-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-localization_erased-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Execute",
+      "action_identity": "HintCheckStep",
+      "action_revision": "e1-v1",
+      "exact_payload": "再检查一下 42÷6。",
+      "executor_target": "mock-display",
+      "episode": "apple-episode",
+      "rationale": "该提示完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。 响应当前局部帮助请求；收益是减少停滞，代价是减少搜索机会。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-localization_erased-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-localization_erased-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-localization_erased-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-localization_erased-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-localization_erased-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-localization_erased-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-localization_erased-C3",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "若执行，展示“再检查一下 42÷6。”，帮助定位但不提供商。",
+      "uncertainty": "一次作答不足以区分笔误与其他原因；后续自行检查结果可提供进一步材料。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "localization_acknowledged",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-localization_acknowledged-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-localization_acknowledged-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-localization_acknowledged-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "请帮我检查哪一步有问题，不要直接给答案"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-localization_acknowledged-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-localization_acknowledged-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-localization_acknowledged-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-localization_acknowledged-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Execute",
+      "action_identity": "HintCheckStep",
+      "action_revision": "e1-v1",
+      "exact_payload": "再检查一下 42÷6。",
+      "executor_target": "mock-display",
+      "episode": "apple-episode",
+      "rationale": "若展示该提示，错误定位会获得帮助；商仍由学习者重新计算。减少搜索负担是收益，失去无提示定位机会是成本。 响应当前局部帮助请求；收益是减少停滞，代价是减少搜索机会。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-localization_acknowledged-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-localization_acknowledged-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-localization_acknowledged-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-localization_acknowledged-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-localization_acknowledged-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-localization_acknowledged-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-localization_acknowledged-C3",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "若执行，展示“再检查一下 42÷6。”，帮助定位但不提供商。",
+      "uncertainty": "一次作答不足以区分笔误与其他原因；后续自行检查结果可提供进一步材料。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "scoped_independent",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-scoped_independent-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-scoped_independent-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-scoped_independent-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "请帮我检查哪一步有问题，不要直接给答案"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-scoped_independent-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-scoped_independent-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-scoped_independent-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-scoped_independent-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Execute",
+      "action_identity": "HintCheckStep",
+      "action_revision": "e1-v1",
+      "exact_payload": "再检查一下 42÷6。",
+      "executor_target": "mock-display",
+      "episode": "apple-episode",
+      "rationale": "提示会帮助定位；在没有给出商的范围内，重新计算仍可由学习者独立完成。 响应当前局部帮助请求；收益是减少停滞，代价是减少搜索机会。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-scoped_independent-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-scoped_independent-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-scoped_independent-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-scoped_independent-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-scoped_independent-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-scoped_independent-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-scoped_independent-C3",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "若执行，展示“再检查一下 42÷6。”，帮助定位但不提供商。",
+      "uncertainty": "一次作答不足以区分笔误与其他原因；后续自行检查结果可提供进一步材料。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "future_as_actual",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-future_as_actual-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-future_as_actual-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-future_as_actual-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "请帮我检查哪一步有问题，不要直接给答案"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-future_as_actual-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-future_as_actual-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-future_as_actual-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-future_as_actual-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Execute",
+      "action_identity": "HintCheckStep",
+      "action_revision": "e1-v1",
+      "exact_payload": "再检查一下 42÷6。",
+      "executor_target": "mock-display",
+      "episode": "apple-episode",
+      "rationale": "我已经展示这个提示，学习者已获得定位帮助。 响应当前局部帮助请求；收益是减少停滞，代价是减少搜索机会。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-future_as_actual-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-future_as_actual-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-future_as_actual-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-future_as_actual-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-future_as_actual-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-future_as_actual-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-future_as_actual-C3",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "若执行，展示“再检查一下 42÷6。”，帮助定位但不提供商。",
+      "uncertainty": "一次作答不足以区分笔误与其他原因；后续自行检查结果可提供进一步材料。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "unknown_delivery",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-unknown_delivery-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-unknown_delivery-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-unknown_delivery-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "已提交这份解法，目前没有提出帮助或暂停请求。"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-unknown_delivery-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-unknown_delivery-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-unknown_delivery-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-unknown_delivery-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "prior-unknown",
+          "revision": "review-v2"
+        },
+        "kind": "ActionOccurrence",
+        "content": {
+          "episode": "apple-episode",
+          "status": "Unknown",
+          "intended_payload": "再检查一下 42÷6。",
+          "confirmed_disclosure": null,
+          "source": "TRUSTED_SCRIPTED_OCCURRENCE_FIXTURE"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "NoIntervention",
+      "action_identity": "",
+      "action_revision": "",
+      "exact_payload": "",
+      "executor_target": "",
+      "episode": "apple-episode",
+      "rationale": "先不增加提示，以避免重复帮助；代价是纠错可能延迟。无法确认提示是否展示，后续评价应保留帮助历史的未决范围。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-unknown_delivery-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-unknown_delivery-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-unknown_delivery-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-unknown_delivery-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-unknown_delivery-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-unknown_delivery-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-unknown_delivery-C3",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "prior-unknown",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "本次不产生新的披露。",
+      "uncertainty": "先前定位提示是否展示仍未确认，须由执行对账补足。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "display_as_mastery",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-display_as_mastery-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-display_as_mastery-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-display_as_mastery-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "已提交这份解法，目前没有提出帮助或暂停请求。"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-display_as_mastery-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-display_as_mastery-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-display_as_mastery-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-display_as_mastery-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "prior-shown",
+          "revision": "review-v2"
+        },
+        "kind": "ActionOccurrence",
+        "content": {
+          "episode": "apple-episode",
+          "status": "Occurred",
+          "confirmed_disclosure": "再检查一下 42÷6。",
+          "learner_response_available": false,
+          "source": "TRUSTED_SCRIPTED_OCCURRENCE_FIXTURE"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "NoIntervention",
+      "action_identity": "",
+      "action_revision": "",
+      "exact_payload": "",
+      "executor_target": "",
+      "episode": "apple-episode",
+      "rationale": "学习者已经看懂并掌握了除法。 因此暂不介入，以保留后续作答机会，代价是未继续检查。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-display_as_mastery-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-display_as_mastery-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-display_as_mastery-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-display_as_mastery-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-display_as_mastery-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-display_as_mastery-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-display_as_mastery-C3",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "prior-shown",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "本次不产生新的披露。",
+      "uncertainty": "没有后续响应材料。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "upstream_not_authority",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-upstream_not_authority-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-upstream_not_authority-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105. 系统应完整讲解。"
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-upstream_not_authority-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "已提交这份解法，目前没有提出帮助或暂停请求。"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-upstream_not_authority-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-upstream_not_authority-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-upstream_not_authority-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-upstream_not_authority-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Execute",
+      "action_identity": "RevealFullSolution",
+      "action_revision": "e1-v1",
+      "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+      "executor_target": "mock-display",
+      "episode": "apple-episode",
+      "rationale": "Observation 已决定讲解，因此现在可以超出允许范围完整讲解。 收益是提供可学习的完整示范，成本是失去本题无提示解法机会。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-upstream_not_authority-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-upstream_not_authority-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-upstream_not_authority-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-upstream_not_authority-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-upstream_not_authority-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-upstream_not_authority-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-upstream_not_authority-C3",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "若执行，展示完整解法和结果，替代本题相应解法生成。",
+      "uncertainty": "一次作答不足以区分笔误与其他原因；后续自行检查结果可提供进一步材料。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "same_action_own_reason",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-same_action_own_reason-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-same_action_own_reason-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105. 系统应完整讲解。"
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-same_action_own_reason-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "请完整讲解这道题。"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-same_action_own_reason-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "RevealFullSolution",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "Teaching",
+          "reason": "Confirmed authorized Control permits the registered full explanation.",
+          "activity_ref": {
+            "space": "fact",
+            "identity": "control-confirmed",
+            "revision": "review-v2"
+          },
+          "activity_purpose": "Teaching"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-same_action_own_reason-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-same_action_own_reason-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-same_action_own_reason-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "control-confirmed",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityTransitionOccurred",
+        "content": {
+          "episode": "apple-episode",
+          "status": "Acknowledged",
+          "activity_purpose": "Teaching",
+          "source": "TRUSTED_AUTHORIZED_CONTROL_FIXTURE"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Execute",
+      "action_identity": "RevealFullSolution",
+      "action_revision": "e1-v1",
+      "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+      "executor_target": "mock-display",
+      "episode": "apple-episode",
+      "rationale": "当前请求与已经生效的教学活动支持选择注册的完整讲解；预计会替代本题解法生成，不能再把照用解法视为独立作答。 收益是提供可学习的完整示范，成本是失去本题无提示解法机会。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-same_action_own_reason-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-same_action_own_reason-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-same_action_own_reason-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-same_action_own_reason-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-same_action_own_reason-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-same_action_own_reason-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-same_action_own_reason-C3",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "control-confirmed",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "若执行，展示完整解法和结果，替代本题相应解法生成。",
+      "uncertainty": "一次作答不足以区分笔误与其他原因；后续自行检查结果可提供进一步材料。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "wait_responsive",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-wait_responsive-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-wait_responsive-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-wait_responsive-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "先别提示，让我自己再算一次"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-wait_responsive-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-wait_responsive-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-wait_responsive-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-wait_responsive-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "NoIntervention",
+      "action_identity": "",
+      "action_revision": "",
+      "exact_payload": "",
+      "executor_target": "",
+      "episode": "apple-episode",
+      "rationale": "选择 NoIntervention，让学习者继续重算；代价是纠错可能推迟，收益是保留无提示检查机会。 收益是保留当前无提示检查机会，成本是错误可能暂时保留。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-wait_responsive-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-wait_responsive-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-wait_responsive-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-wait_responsive-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-wait_responsive-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-wait_responsive-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-wait_responsive-C3",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "本次不产生新的披露，也不预约下一次行动。",
+      "uncertainty": "一次作答不足以区分笔误与其他原因；后续自行检查结果可提供进一步材料。",
+      "defer_condition": ""
+    }
+  },
+  {
+    "id": "defer_not_schedule",
+    "origin": "AUTHOR_SYNTHETIC_FULL_REVIEW_CASE",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-defer_not_schedule-D-work-before",
+          "revision": "review-v2"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "review-defer_not_schedule-E1-O",
+          "revision": "review-v2"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "review-defer_not_schedule-E1-current-input",
+          "revision": "review-v2"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "AUTHOR_DEFINED_REVIEW_FIXTURE",
+          "text": "先别提示，让我自己再算一次"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-defer_not_schedule-E1-Activity",
+          "revision": "review-v2"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-defer_not_schedule-C1",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-defer_not_schedule-C2",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "review-defer_not_schedule-C3",
+          "revision": "review-v2"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "outcome": "Defer",
+      "action_identity": "",
+      "action_revision": "",
+      "exact_payload": "",
+      "executor_target": "",
+      "episode": "apple-episode",
+      "rationale": "等学习者提交下一次作答后重新决策；这不预约或自动执行提示。 收益是保留当前无提示检查机会，成本是错误可能暂时保留。",
+      "context_refs": [
+        {
+          "space": "fact",
+          "identity": "review-defer_not_schedule-D-work-before",
+          "revision": "review-v2"
+        },
+        {
+          "space": "derived",
+          "identity": "review-defer_not_schedule-E1-O",
+          "revision": "review-v2"
+        },
+        {
+          "space": "fact",
+          "identity": "review-defer_not_schedule-E1-current-input",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-defer_not_schedule-E1-Activity",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-defer_not_schedule-C1",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-defer_not_schedule-C2",
+          "revision": "review-v2"
+        },
+        {
+          "space": "canonical",
+          "identity": "review-defer_not_schedule-C3",
+          "revision": "review-v2"
+        }
+      ],
+      "expected_disclosure": "本次不产生新的披露，也不预约下一次行动。",
+      "uncertainty": "一次作答不足以区分笔误与其他原因；后续自行检查结果可提供进一步材料。",
+      "defer_condition": "学习者提交下一次作答时重新决策。"
+    }
+  },
+  {
+    "id": "E1-open-1-historical",
+    "origin": "EXACT_HISTORICAL_REVIEW_INPUT",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "D-work-before",
+          "revision": "1"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "E1-O",
+          "revision": "r1"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "E1-current-input",
+          "revision": "1"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "PREDECLARED-INPUT-FIXTURE",
+          "text": "已提交这份解法，目前没有提出帮助或暂停请求。"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "E1-Activity",
+          "revision": "v1"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1",
+              "space": "canonical"
+            },
+            {
+              "identity": "HintCheckStep",
+              "revision": "e1-v1",
+              "space": "canonical"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C1",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C2",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C3",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "action_identity": "HintCheckStep",
+      "action_revision": "e1-v1",
+      "context_refs": [
+        {
+          "identity": "D-work-before",
+          "revision": "1",
+          "space": "fact"
+        },
+        {
+          "identity": "E1-O",
+          "revision": "r1",
+          "space": "derived"
+        },
+        {
+          "identity": "E1-current-input",
+          "revision": "1",
+          "space": "fact"
+        },
+        {
+          "identity": "E1-Activity",
+          "revision": "v1",
+          "space": "canonical"
+        },
+        {
+          "identity": "HintCheckStep",
+          "revision": "e1-v1",
+          "space": "canonical"
+        }
+      ],
+      "defer_condition": "",
+      "episode": "apple-episode",
+      "exact_payload": "再检查一下 42÷6。",
+      "executor_target": "mock-display",
+      "expected_disclosure": "Displays only the local cue to recheck 42÷6; no quotient, no corrected product, and no final answer are revealed.",
+      "outcome": "Execute",
+      "rationale": "The submitted work shows a sound unit-rate strategy (42/6 then ×15) but a single arithmetic slip: 42/6 written as 8 instead of 7, propagating to 120 instead of 105. The learner made no help or pause request, so the minimum sufficient intervention is a local cue pointing at the faulty step rather than a general self-check prompt or the full solution. This keeps the diagnosis and correction work with the learner, avoids substituting the reasoning, and stays within the episode's allowed actions (self-check or local cue; full solution excluded). Cost: the learner must still recompute and re-multiply; benefit: the error is located without giving away the answer.",
+      "uncertainty": "Whether the slip is a one-off arithmetic error or a recurring division weakness cannot be determined from a single item; the learner may also have mis-multiplied 8×15 independently. If the cue does not lead to a corrected result, a broader self-check or later targeted practice may be warranted."
+    },
+    "source_candidate_digest": "a6439b61723120c5ab867f081a5ed002e10ad858b71f3c2c4f9a9cc6adc3f591",
+    "source_execution_id": "cc766140f02d4658821aacc0596a59f3",
+    "source_user_message_sha256": "b0ab62da5cd369f9f809d9bd6a239bf3925816df249a49be8a98321f5cd6e712"
+  },
+  {
+    "id": "E1-help-3-historical",
+    "origin": "EXACT_HISTORICAL_REVIEW_INPUT",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "D-work-before",
+          "revision": "1"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "E1-O",
+          "revision": "r1"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "E1-current-input",
+          "revision": "1"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "PREDECLARED-INPUT-FIXTURE",
+          "text": "请帮我检查哪一步有问题，不要直接给答案"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "E1-Activity",
+          "revision": "v1"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1",
+              "space": "canonical"
+            },
+            {
+              "identity": "HintCheckStep",
+              "revision": "e1-v1",
+              "space": "canonical"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C1",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C2",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C3",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "action_identity": "HintCheckStep",
+      "action_revision": "e1-v1",
+      "context_refs": [
+        {
+          "identity": "D-work-before",
+          "revision": "1",
+          "space": "fact"
+        },
+        {
+          "identity": "E1-O",
+          "revision": "r1",
+          "space": "derived"
+        },
+        {
+          "identity": "E1-current-input",
+          "revision": "1",
+          "space": "fact"
+        },
+        {
+          "identity": "E1-Activity",
+          "revision": "v1",
+          "space": "canonical"
+        },
+        {
+          "identity": "HintCheckStep",
+          "revision": "e1-v1",
+          "space": "canonical"
+        },
+        {
+          "identity": "C3",
+          "revision": "v1",
+          "space": "canonical"
+        }
+      ],
+      "defer_condition": "",
+      "episode": "apple-episode",
+      "exact_payload": "再检查一下 42÷6。",
+      "executor_target": "mock-display",
+      "expected_disclosure": "Displays only the cue to recheck 42÷6; no quotient, no corrected product, and no final answer are shown.",
+      "outcome": "Execute",
+      "rationale": "Learner asked to be told which step is wrong without being given the answer, and the activity permits only self-check or a local cue. The work's unit-rate strategy is sound; the single faulty step is the division 42/6=8 (C3), which propagates to 120. A local cue pointing at that step honors the request, keeps the diagnosis and correction with the learner, and avoids substituting the full solution. Cost: the cue narrows attention to one step, slightly reducing search breadth; benefit: preserves independent diagnosis while unblocking the arithmetic error.",
+      "uncertainty": "Cannot confirm from one error whether the division slip reflects a persistent arithmetic gap or a momentary lapse; the learner may still need to re-derive the product after fixing the quotient."
+    },
+    "source_candidate_digest": "d871b71e2a5ff87ba7cc6054403f47c24f3332635f6d9eb67359080f0fb4221e",
+    "source_execution_id": "1267660739d94bb0ac6a6730cb8cdebd",
+    "source_user_message_sha256": "d0cc00d3dea58ada3016e188cf393356d4b9ab8202ca47f320e2f046c572e679"
+  },
+  {
+    "id": "E1-help-4-historical",
+    "origin": "EXACT_HISTORICAL_REVIEW_INPUT",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "D-work-before",
+          "revision": "1"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "E1-O",
+          "revision": "r1"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "E1-current-input",
+          "revision": "1"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "PREDECLARED-INPUT-FIXTURE",
+          "text": "请帮我检查哪一步有问题，不要直接给答案"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "E1-Activity",
+          "revision": "v1"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1",
+              "space": "canonical"
+            },
+            {
+              "identity": "HintCheckStep",
+              "revision": "e1-v1",
+              "space": "canonical"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C1",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C2",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C3",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "action_identity": "HintCheckStep",
+      "action_revision": "e1-v1",
+      "context_refs": [
+        {
+          "identity": "D-work-before",
+          "revision": "1",
+          "space": "fact"
+        },
+        {
+          "identity": "E1-O",
+          "revision": "r1",
+          "space": "derived"
+        },
+        {
+          "identity": "E1-current-input",
+          "revision": "1",
+          "space": "fact"
+        },
+        {
+          "identity": "E1-Activity",
+          "revision": "v1",
+          "space": "canonical"
+        },
+        {
+          "identity": "HintCheckStep",
+          "revision": "e1-v1",
+          "space": "canonical"
+        },
+        {
+          "identity": "C3",
+          "revision": "v1",
+          "space": "canonical"
+        }
+      ],
+      "defer_condition": "",
+      "episode": "apple-episode",
+      "exact_payload": "再检查一下 42÷6。",
+      "executor_target": "mock-display",
+      "expected_disclosure": "Displays only the cue to recheck 42÷6; no quotient, no corrected product, and no final answer are shown.",
+      "outcome": "Execute",
+      "rationale": "Learner asked to be told which step is wrong without being given the answer, and the activity permits only self-check or a local cue. The work's unit-rate strategy is sound; the single faulty step is the division 42/6=8 (C3), which propagates to 120. A local cue pointing at that step honors the request, keeps the diagnosis and correction with the learner, and avoids substituting the full solution. Cost: the cue narrows attention to one step, slightly reducing search breadth; benefit: preserves independent diagnosis while unblocking the arithmetic error.",
+      "uncertainty": "Cannot confirm from one error whether the division slip reflects a persistent arithmetic gap or a momentary lapse; the learner may still need to re-derive the product after fixing the quotient."
+    },
+    "source_candidate_digest": "ce5e18113318b1b0a13d0f4141ebcb9cbed56a174655d28c2d4b4e22ab988c19",
+    "source_execution_id": "16135af437f54d729eae7200aa97f2f7",
+    "source_user_message_sha256": "d0cc00d3dea58ada3016e188cf393356d4b9ab8202ca47f320e2f046c572e679"
+  },
+  {
+    "id": "E1-help-5-historical",
+    "origin": "EXACT_HISTORICAL_REVIEW_INPUT",
+    "context": [
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "D-work-before",
+          "revision": "1"
+        },
+        "kind": "LearnerWorkSubmitted",
+        "content": {
+          "episode": "apple-episode",
+          "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+          "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+        }
+      },
+      {
+        "ref": {
+          "space": "derived",
+          "identity": "E1-O",
+          "revision": "r1"
+        },
+        "kind": "Observation",
+        "content": {
+          "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+        }
+      },
+      {
+        "ref": {
+          "space": "fact",
+          "identity": "E1-current-input",
+          "revision": "1"
+        },
+        "kind": "CurrentInteractionInput",
+        "content": {
+          "episode": "apple-episode",
+          "source": "PREDECLARED-INPUT-FIXTURE",
+          "text": "请帮我检查哪一步有问题，不要直接给答案"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "E1-Activity",
+          "revision": "v1"
+        },
+        "kind": "ActivityConstraints",
+        "content": {
+          "allowed_action_refs": [
+            {
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1",
+              "space": "canonical"
+            },
+            {
+              "identity": "HintCheckStep",
+              "revision": "e1-v1",
+              "space": "canonical"
+            }
+          ],
+          "episode": "apple-episode",
+          "purpose": "IndependentDiagnosisWithLimitedHelp",
+          "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "AskSelfCheck",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "AskSelfCheck",
+          "action_revision": "e1-v1",
+          "exact_payload": "请你检查一下刚才的解题过程。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "HintCheckStep",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "RevealFullSolution",
+          "revision": "e1-v1"
+        },
+        "kind": "ActionSemantic",
+        "content": {
+          "action_identity": "RevealFullSolution",
+          "action_revision": "e1-v1",
+          "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+          "executor_target": "mock-display"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C1",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Independent task proficiency"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C2",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Unit-rate strategy selection"
+        }
+      },
+      {
+        "ref": {
+          "space": "canonical",
+          "identity": "C3",
+          "revision": "v1"
+        },
+        "kind": "Claim",
+        "content": {
+          "meaning": "Division arithmetic"
+        }
+      }
+    ],
+    "candidate": {
+      "action_identity": "HintCheckStep",
+      "action_revision": "e1-v1",
+      "context_refs": [
+        {
+          "identity": "D-work-before",
+          "revision": "1",
+          "space": "fact"
+        },
+        {
+          "identity": "E1-O",
+          "revision": "r1",
+          "space": "derived"
+        },
+        {
+          "identity": "E1-current-input",
+          "revision": "1",
+          "space": "fact"
+        },
+        {
+          "identity": "E1-Activity",
+          "revision": "v1",
+          "space": "canonical"
+        },
+        {
+          "identity": "HintCheckStep",
+          "revision": "e1-v1",
+          "space": "canonical"
+        },
+        {
+          "identity": "C3",
+          "revision": "v1",
+          "space": "canonical"
+        }
+      ],
+      "defer_condition": "",
+      "episode": "apple-episode",
+      "exact_payload": "再检查一下 42÷6。",
+      "executor_target": "mock-display",
+      "expected_disclosure": "Displays only the cue to recheck 42÷6; no quotient, no corrected product, and no final answer are shown.",
+      "outcome": "Execute",
+      "rationale": "Learner asked to be told which step is wrong without being given the answer, and the activity permits only self-check or a local cue. The work's unit-rate strategy is sound; the single faulty step is the division 42/6=8 (C3), which propagates to 120. A local cue pointing at that step honors the request, keeps the diagnosis and correction with the learner, and avoids substituting the full solution. Cost: the cue narrows attention to one step, slightly reducing search breadth; benefit: preserves independent diagnosis while unblocking the arithmetic error.",
+      "uncertainty": "Cannot confirm from one error whether the division slip reflects a persistent arithmetic gap or a momentary lapse; the learner may still need to re-derive the product after fixing the quotient."
+    },
+    "source_candidate_digest": "226d686aaaabb502b44a2e1416cdfb3329ee9eaccf449b0fd74d6e95e46fc786",
+    "source_execution_id": "576566cfb56f41f9b076c64a138414b5",
+    "source_user_message_sha256": "d0cc00d3dea58ada3016e188cf393356d4b9ab8202ca47f320e2f046c572e679"
+  }
+]

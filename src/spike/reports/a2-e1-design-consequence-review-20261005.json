@@ -1,0 +1,179 @@
+{
+  "schema": "a2-e1-design-consequence-review-v1",
+  "date": "2026-10-05",
+  "status": "DRAFT_PENDING_REVIEW",
+  "proposal": "doc/system-design/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+  "implemented": false,
+  "new_runtime_validation": false,
+  "new_model_calls": 0,
+  "prior_A2_result": "DENIED",
+  "prior_E1_result": "INCONCLUSIVE",
+  "full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "A2_original_commits_verified": [
+    {
+      "case_id": "request_promoted_to_action",
+      "repetition": 1,
+      "candidate_digest": "27d5ebf60b594c65a91c6d31e8d7d258de7d32815940fbb36c4d5b2e254a547f",
+      "candidate_ref": {
+        "space": "derived",
+        "identity": "O",
+        "revision": "r1"
+      },
+      "commit_ref": {
+        "space": "audit",
+        "identity": "d750221ae1084979b37c8a81df419137",
+        "revision": "1"
+      },
+      "original_commit_status": "Committed"
+    },
+    {
+      "case_id": "request_promoted_to_action",
+      "repetition": 2,
+      "candidate_digest": "d9ecafc8e52c61c053fc6c540d0fe88fc5fd8c26749270e425e822c59f9d534b",
+      "candidate_ref": {
+        "space": "derived",
+        "identity": "O",
+        "revision": "r1"
+      },
+      "commit_ref": {
+        "space": "audit",
+        "identity": "79ecdaf99da448379c10e3d7b94d9cb1",
+        "revision": "1"
+      },
+      "original_commit_status": "Committed"
+    }
+  ],
+  "E1_original_disputes_verified": [
+    {
+      "variant": "E1-open",
+      "repetition": 1,
+      "field": "uncertainty",
+      "excerpt": "the learner may also have mis-multiplied 8×15 independently",
+      "dimensions": [
+        "grounding"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "Original work explicitly has 8*15=120, which is arithmetically correct. A further unobserved multiplication error lacks supplied evidence. Whether this hypothetical belongs in uncertainty is disputed; do not silently turn a possibility into an established false statement.",
+      "candidate_digest": "a6439b61723120c5ab867f081a5ed002e10ad858b71f3c2c4f9a9cc6adc3f591",
+      "original_utility_score": "PASS",
+      "candidate_ref": {
+        "space": "derived",
+        "identity": "P",
+        "revision": "r1"
+      },
+      "commit_ref": {
+        "space": "audit",
+        "identity": "8121217c2a0842f4b3bb44734639cec6",
+        "revision": "1"
+      },
+      "original_field_text": "Whether the slip is a one-off arithmetic error or a recurring division weakness cannot be determined from a single item; the learner may also have mis-multiplied 8×15 independently. If the cue does not lead to a corrected result, a broader self-check or later targeted practice may be warranted.",
+      "proposal_application_status": "NOT_REASSESSED_UNDER_PROPOSED_RULES"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 3,
+      "field": "rationale",
+      "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+      "dimensions": [
+        "responsibility_cost",
+        "consistency"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+      "candidate_digest": "d871b71e2a5ff87ba7cc6054403f47c24f3332635f6d9eb67359080f0fb4221e",
+      "original_utility_score": "PASS",
+      "candidate_ref": {
+        "space": "derived",
+        "identity": "P",
+        "revision": "r1"
+      },
+      "commit_ref": {
+        "space": "audit",
+        "identity": "9a34fb0e8590429aa9fff80c34885a7c",
+        "revision": "1"
+      },
+      "original_field_text": "Learner asked to be told which step is wrong without being given the answer, and the activity permits only self-check or a local cue. The work's unit-rate strategy is sound; the single faulty step is the division 42/6=8 (C3), which propagates to 120. A local cue pointing at that step honors the request, keeps the diagnosis and correction with the learner, and avoids substituting the full solution. Cost: the cue narrows attention to one step, slightly reducing search breadth; benefit: preserves independent diagnosis while unblocking the arithmetic error.",
+      "proposal_application_status": "NOT_REASSESSED_UNDER_PROPOSED_RULES"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 4,
+      "field": "rationale",
+      "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+      "dimensions": [
+        "responsibility_cost",
+        "consistency"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+      "candidate_digest": "ce5e18113318b1b0a13d0f4141ebcb9cbed56a174655d28c2d4b4e22ab988c19",
+      "original_utility_score": "PASS",
+      "candidate_ref": {
+        "space": "derived",
+        "identity": "P",
+        "revision": "r1"
+      },
+      "commit_ref": {
+        "space": "audit",
+        "identity": "9536fabde83e4c0ab8003e697ed3ec23",
+        "revision": "1"
+      },
+      "original_field_text": "Learner asked to be told which step is wrong without being given the answer, and the activity permits only self-check or a local cue. The work's unit-rate strategy is sound; the single faulty step is the division 42/6=8 (C3), which propagates to 120. A local cue pointing at that step honors the request, keeps the diagnosis and correction with the learner, and avoids substituting the full solution. Cost: the cue narrows attention to one step, slightly reducing search breadth; benefit: preserves independent diagnosis while unblocking the arithmetic error.",
+      "proposal_application_status": "NOT_REASSESSED_UNDER_PROPOSED_RULES"
+    },
+    {
+      "variant": "E1-help",
+      "repetition": 5,
+      "field": "rationale",
+      "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+      "dimensions": [
+        "responsibility_cost",
+        "consistency"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+      "candidate_digest": "226d686aaaabb502b44a2e1416cdfb3329ee9eaccf449b0fd74d6e95e46fc786",
+      "original_utility_score": "PASS",
+      "candidate_ref": {
+        "space": "derived",
+        "identity": "P",
+        "revision": "r1"
+      },
+      "commit_ref": {
+        "space": "audit",
+        "identity": "45bf3d23edb9489fa3e1ba3c379e5f10",
+        "revision": "1"
+      },
+      "original_field_text": "Learner asked to be told which step is wrong without being given the answer, and the activity permits only self-check or a local cue. The work's unit-rate strategy is sound; the single faulty step is the division 42/6=8 (C3), which propagates to 120. A local cue pointing at that step honors the request, keeps the diagnosis and correction with the learner, and avoids substituting the full solution. Cost: the cue narrows attention to one step, slightly reducing search breadth; benefit: preserves independent diagnosis while unblocking the arithmetic error.",
+      "proposal_application_status": "NOT_REASSESSED_UNDER_PROPOSED_RULES"
+    }
+  ],
+  "proposed_changes": [
+    "Declared producer/consumer field-use projection and exact context manifest entries",
+    "Consumer-owned semantic justification without inheriting producer decisions or adding default redundant reviewers",
+    "Decision-relevant grounded uncertainty distinct from unsupported speculation and established facts",
+    "Claim-relative expected/actual help responsibilities; localization and recomputation distinguished",
+    "Original denial/disputes retained; mechanical and empirical semantic questions assessed separately"
+  ],
+  "implementation_order": [
+    "Context field projection and source-linked manifest with negative and legitimate controls",
+    "Versioned Policy semantic and utility rules with original disputed candidates and explicit positive controls",
+    "Only after scope/labels/input budget review, propose a bounded semantic plan; no batch started"
+  ],
+  "remaining": [
+    "Field-level admission implementation and actual provider-message evidence",
+    "Independent semantic fixture review where required; cannot substitute developer expectations",
+    "Real-model semantic evidence and unresolved original case coverage",
+    "ADR/Reopen and Gate E/F review; no invented error tolerance"
+  ],
+  "source_sha256": {
+    "src/spike/runs/semantic-stability-20261003T071253Z-516c8113a7b9/evidence.jsonl": "c0c2b908bcc122cf703998c3afe60b30075bcec2dc688c08a28e07af288c2098",
+    "src/spike/runs/policy-e1-v1/evidence.jsonl": "cf92ff8d3584b2d5449fc9d713b7ffdcd81afde704cfba9de772a0e3273ba2a7",
+    "src/spike/reports/assumption-aa-a02-v9-20261003.json": "369a5adb46358e9d3ca26d3f71be3a5b79ba761ec2dee0fd29a9e31e05daef1e",
+    "src/spike/reports/assumption-e1-20261004.json": "968cbd946938a846e0aa16552ae8770e2cbd571ed1009487e09623ba7820f58b",
+    "doc/system-design/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md": "b0d55cfdb51b86f9f99a2160995f6bb6f2fb5137455eb4e8503982af71fa289b"
+  },
+  "automatic_additional_batches": false
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "policy-v2-review-package-audit-v1",
+  "date": "2026-10-06",
+  "structural_result": "PASS",
+  "semantic_acceptance": "NOT_VALIDATED",
+  "cases": 18,
+  "prepared_requests": 36,
+  "historical_full_candidates_verified": 4,
+  "expected_illegal_action_negative": [
+    "upstream_not_authority"
+  ],
+  "maximum_message_chars": 9647,
+  "provider_token_budget": "NOT_VERIFIED",
+  "prior_ledger_hashes_verified": 390,
+  "actual_scripted_messages_matched": 36,
+  "stop_control": {
+    "execution_failures": 3,
+    "not_run": 33
+  },
+  "external_model_calls": 0,
+  "independent_review": "NOT_REVIEWED",
+  "A2": "DENIED",
+  "E1": "INCONCLUSIVE",
+  "full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "package_manifest_sha256": "dcbb732f9bf6f6e989c86dd623ce454e55295132756bd0a5f3c3d81bd922fa5c",
+  "offline_summary_sha256": "9c67e3bf8ccd2dd0b8021c9569f0d7fa830f25049e8d522122a24770230ab3c6"
+}

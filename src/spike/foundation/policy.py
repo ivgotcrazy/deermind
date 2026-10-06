@@ -1,5 +1,6 @@
 """Open LLM Policy with exact mechanical admission and separate test-only review."""
 import json
+from dataclasses import replace
 
 from .boundary import digest
 from .records import Space, json_value
@@ -10,18 +11,20 @@ from .structured_output import matches_schema
 
 def policy_legality(payload, context):
     """Typed constraints only: never interpret requests, rationale, or teaching value."""
-    records = {json.dumps(json_value(i.record.ref), sort_keys=True): i.record for i in context.items}
+    records = {json.dumps(json_value(i.record.ref), sort_keys=True): replace(i.record,payload_json=json.dumps(i.content)) for i in context.items}
     refs = payload.get('context_refs')
     if not isinstance(refs, list) or not refs or any(json.dumps(r, sort_keys=True) not in records for r in refs):
         return 'PolicyContextReferenceInvalid'
-    envelopes = [i.record.payload for i in context.items if i.record.kind == 'ActivityConstraints']
-    if len(envelopes) != 1 or payload.get('episode') != envelopes[0]['episode']:
+    envelopes = [i.content for i in context.items if i.record.kind == 'ActivityConstraints']
+    if (len(envelopes) != 1 or not {'episode','allowed_action_refs'} <= set(envelopes[0])
+            or payload.get('episode') != envelopes[0]['episode']):
         return 'PolicyActivityBindingInvalid'
     if 'activity_ref' in envelopes[0]:
         activity = records.get(json.dumps(envelopes[0]['activity_ref'], sort_keys=True))
         if (activity is None or activity.kind not in ('ActivityState', 'ActivityTransitionOccurred')
-                or activity.payload['episode'] != envelopes[0]['episode']
-                or activity.payload['activity_purpose'] != envelopes[0]['activity_purpose']):
+                or activity.payload.get('episode') != envelopes[0]['episode']
+                or not activity.payload.get('activity_purpose')
+                or activity.payload.get('activity_purpose') != envelopes[0].get('activity_purpose')):
             return 'PolicyActualActivityBindingInvalid'
     outcome = payload.get('outcome')
     action_fields = ('action_identity', 'action_revision', 'exact_payload', 'executor_target')
@@ -39,7 +42,7 @@ def policy_legality(payload, context):
     action = records.get(json.dumps(selected, sort_keys=True))
     if action is None or action.kind != 'ActionSemantic':
         return 'ActionSemanticMissingFromContext'
-    if any(payload.get(k) != action.payload[k] for k in ('exact_payload', 'executor_target')):
+    if any(k not in action.payload or payload.get(k) != action.payload[k] for k in ('exact_payload', 'executor_target')):
         return 'ExactActionParametersMismatch'
     return ''
 
@@ -54,6 +57,14 @@ class PolicyRuntime:
         if b._candidates.get(candidate.identity) != candidate:
             raise ContractError('UnregisteredOrAlteredCandidate')
         context = b._contexts[candidate.context_id]
+        declared = self.definition.get('runtime_binding_requirement')
+        if declared is not None:
+            if (json_value(self.review_ref) != declared['utility_rule_ref']
+                    or json_value(context.protocol) != declared['protocol_ref']
+                    or self.review_ref not in context.versions.semantic_bindings
+                    or declared['semantic_rule_ref'] not in [json_value(r) for r in context.versions.semantic_bindings]
+                    or b.h.get(context.protocol).payload != self.definition):
+                raise ContractError('PolicyUtilityVersionBindingMismatch')
         if adapter.config.base_url != b._protocols[context.protocol].destination:
             raise ContractError('ModelDestinationMismatch')
         source = b.execution('PolicyUtilityReviewStarted', context.subject,

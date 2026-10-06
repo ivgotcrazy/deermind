@@ -1,7 +1,6 @@
 """Check declared mechanical contracts before a bounded model campaign."""
 from .structured_output import check_schema
 from .expressions import FORMAT, extraction_contract
-from .validation_dimensions import check_dimensions
 
 
 def check_observation_contract(definition):
@@ -32,5 +31,4 @@ def check_observation_contract(definition):
             validation['claims']['items']['properties']['field'],
             contracts['responsibility']['parameters']['properties']['segments']['items']['properties']['field']]
         if any(s!=exact for s in field_schemas):raise ValueError('ExactCandidateFieldSchemaMismatch')
-    if definition.get('validation_dimensions') is not None:check_dimensions(definition)
     return {'status':'PASS','criteria':criteria,'responsibility_roles':roles,'schemas_checked':len(contracts)}

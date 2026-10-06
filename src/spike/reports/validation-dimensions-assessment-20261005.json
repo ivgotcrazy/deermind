@@ -1,0 +1,35 @@
+{
+  "schema": "validation-dimensions-scoped-assessment-v1",
+  "date": "2026-10-05",
+  "result": "PASS",
+  "scope": "Per-check execution/conclusion audit, conditional-profile contract shape, unchanged formal commit and failed-turn closure; scripted judgments only",
+  "run_directory": "src/spike/runs/validation-dimensions-v1",
+  "tests_run": 262,
+  "new_test_methods": 12,
+  "semantic_design_examples": 9,
+  "semantic_design_examples_model_run": 0,
+  "external_model_calls": 0,
+  "scripted_adapter_records": 36,
+  "maximum_fixture_input_chars": 15597,
+  "audit": {
+    "frozen_inputs_verified": 162,
+    "artifacts_verified": 14,
+    "snapshots_verified": 13,
+    "unique_audit_assessments": 13,
+    "prior_ledger_entries_verified": 312,
+    "archived_sources_verified": 3
+  },
+  "full_cases_completed": 9,
+  "original_A2": "DENIED",
+  "X5": "INCONCLUSIVE",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "semantic_acceptance": "NOT_VALIDATED",
+  "new_profile_default": false,
+  "automatic_additional_batches": false,
+  "limitations": [
+    "Scripted semantic outputs cannot validate conditional meaning rules or joint false acceptance.",
+    "All seven criteria remain required. Conditional applicability rules and nine design examples are not real-model validated.",
+    "The new dimensional profile is opt-in; audit projections do not confer standing; historical campaigns remain closed."
+  ]
+}

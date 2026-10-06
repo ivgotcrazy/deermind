@@ -1,0 +1,100 @@
+[
+  {
+    "id": "unsupported_multiplication",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": false,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "grounded_gap",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": false,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "uncertainty_not_required",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": true,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "missing_review_material",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": true,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "localization_erased",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": false,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "localization_acknowledged",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": false,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "scoped_independent",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": false,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "future_as_actual",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": true,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "unknown_delivery",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": false,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "display_as_mastery",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": false,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "upstream_not_authority",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": false,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "same_action_own_reason",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": true,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "wait_responsive",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": false,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  },
+  {
+    "id": "defer_not_schedule",
+    "neutral_source_refs": true,
+    "semantic_expected_unchanged": true,
+    "focused_edit": false,
+    "interpretation": "Only listed utility dimensions are labelled; PASS is not a full utility endorsement."
+  }
+]

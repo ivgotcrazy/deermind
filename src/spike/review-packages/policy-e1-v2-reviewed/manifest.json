@@ -1,0 +1,70 @@
+{
+  "schema": "policy-v2-review-package-v1",
+  "status": "READY_FOR_EXPLORATORY_AUTHOR_LABEL_AGREEMENT_ONLY",
+  "scope": "Fixed review-only exploration; author labels are not independent truth; no Gate or full E1 acceptance",
+  "cases": 18,
+  "synthetic_cases": 14,
+  "historical_cases": 4,
+  "prepared_requests": 36,
+  "proposed_repetitions": 1,
+  "proposed_call_cap": 36,
+  "retries": 0,
+  "external_model_calls": 0,
+  "maximum_message_chars": 9220,
+  "local_adapter_message_char_limit": 16000,
+  "maximum_request_utf8_bytes_including_contract": 10466,
+  "provider_token_budget": "DOCUMENTED_CAPACITY_PRECHECK_ONLY_USAGE_PENDING",
+  "independent_review": "NOT_REVIEWED_NOT_CLAIMED",
+  "source_sha256": {
+    "src/spike/revise_policy_v2_review.py": "38e73562ed897cfc2aab7d5587b465129695055ffb52b56ab345ab56919c2384",
+    "src/spike/review-packages/policy-e1-v2-final/manifest.json": "dcbb732f9bf6f6e989c86dd623ce454e55295132756bd0a5f3c3d81bd922fa5c",
+    "src/spike/review-packages/policy-e1-v2-final/cases.json": "29b1581de8fbfbd23e2a954bd237fdd41674d4c31c1e0769c986a2810132fc6b",
+    "src/spike/review-packages/policy-e1-v2-final/author-expectations.json": "ba70f166725131013ee6ed422013400aaa01e4f9cff1394e9d909b9b2b835c69",
+    "src/spike/protocols/policy-e1-v2.json": "d3dbad522f226092ecb84084ae56bdb9f8e7f66452ce8f98b7137618a396a922",
+    "src/spike/run_policy_v2_review.py": "136e98ae93efe8863d926319bfb384ffc6cd3db0f581b5ff8b426c137290ab3e"
+  },
+  "artifact_sha256": {
+    "author-expectations.json": "2c1e522fefe95fb19f116ac78dc5140481e7621a030501ef2ac79a70dd4c5ec4",
+    "author-review.json": "505b82743039f143799b0ad493f573a607c8f2e038c0d84f35b97d8590b2fe70",
+    "cases.json": "0f022ce0fa22ddbb72eac0da8b211f517cd8c244109d151672e57d97ba2bb834",
+    "input-budget.json": "041f64c0e1751a3d18b5071aa56f0d1cc9ea36aa52ca526a75cc2259f1e1face",
+    "requests.json": "90a9a08be4d9e99f881de4b36083d831a40e0d70b9aabff167fe8494bebb2573"
+  },
+  "readiness_remaining": [
+    "Independent labels required before claiming independent semantic accuracy; exploratory agreement must remain explicitly author-labelled",
+    "Capture actual returned model/system_fingerprint/usage during any future fixed execution; do not equate alias with immutable weights"
+  ],
+  "proposed_stop_rules": [
+    "No retry, replacement, relabelling or hidden calls.",
+    "Stop on three consecutive provider/schema failures; preserve all NOT_RUN.",
+    "Stop on request/contract/source hash mismatch or budget exhaustion.",
+    "Semantic FAIL/UNRESOLVED is a measured result, not transport failure; preserve raw scores and disagreements."
+  ],
+  "non_claims": [
+    "Not independent semantic validation",
+    "No new E1/A2 result",
+    "No field-use projection rollout",
+    "No API configuration read"
+  ],
+  "author_review": "SECOND_PASS_COMPLETE",
+  "maximum_rough_token_estimate": 3069,
+  "planned_config": {
+    "model": "deepseek-flash",
+    "base_url": "https://api.deepseek.com/beta",
+    "max_output_tokens": 2048,
+    "timeout_seconds": 60,
+    "thinking": "disabled",
+    "retries": 0,
+    "max_calls": 36
+  },
+  "provider_docs": {
+    "checked_on": "2026-10-06",
+    "pricing": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "tool_calls": "https://api-docs.deepseek.com/guides/tool_calls/",
+    "tokens": "https://api-docs.deepseek.com/quick_start/token_usage/",
+    "documented_alias_version": "DeepSeek-V4.1-Flash",
+    "context": "1M tokens",
+    "maximum_output": "384K tokens",
+    "actual_response_identity": "NOT_CALLED"
+  }
+}

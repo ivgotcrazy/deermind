@@ -16,8 +16,6 @@ from .arithmetic import check_arithmetic_extraction, combine_arithmetic_review
 from .expressions import FORMAT as EXPRESSION_FORMAT, check_expression_extraction
 from .claim_axes import checked_claim_axes
 from .responsibility import check_responsibility, combine_status
-from .validation_dimensions import assessment as dimension_assessment, STAGES
-from .content_projection import check_profile as check_projection_profile, exact as projection_ref, project
 
 
 def digest(value):
@@ -51,19 +49,6 @@ class ContextItem:
     record: Record
     authority_basis: tuple[str, ...]
     data_authority_basis: tuple[str, ...]
-    content_json: str | None = None
-    projection_json: str | None = None
-
-    @property
-    def content(self):
-        return self.record.payload if self.content_json is None else json.loads(self.content_json)
-
-    def model_value(self):
-        value={'ref':json_value(self.record.ref),'kind':self.record.kind,'content':self.content}
-        if self.projection_json is not None:
-            metadata=json.loads(self.projection_json)
-            value.update(content_use=metadata['use'],content_contract=metadata['contract_ref'])
-        return value
 
 
 @dataclass(frozen=True)
@@ -142,9 +127,7 @@ class BoundaryRuntime:
                               "Evidence": "Evaluation", "LearnerBelief": "Evaluation"}.get(protocol.candidate_kind):
             raise ContractError("Protocol cannot redefine semantic ownership")
         definition = self.h.get(protocol.ref).payload
-        if definition.get('context_projection') is not None:
-            check_projection_profile(definition['context_projection'],protocol.allowed_context_kinds)
-        if definition.get('arithmetic_extraction_format') is not None or definition.get('validation_dimensions') is not None:
+        if definition.get('arithmetic_extraction_format') is not None:
             from .protocol_preflight import check_observation_contract
             try:
                 check_observation_contract(definition)
@@ -198,10 +181,9 @@ class BoundaryRuntime:
                     head = self.h.states.candidate(record.ref.identity, scope, purpose, self.h.clock.now)
                     if head is None or head.ref != record.ref:
                         raise ContractError("RequiredHeadChanged")
-                content_json,projection_json=self._project_content(token,protocol,record,source,versions,scope,purpose)
                 dependencies.append(Dependency(record.ref, Mode.CURRENT if requested.current else Mode.PINNED,
                                                requested.role, require_head=requested.require_head))
-                items.append(ContextItem(record, auth.authority_basis, data.authority_basis,content_json,projection_json))
+                items.append(ContextItem(record, auth.authority_basis, data.authority_basis))
             except (AccessDenied, ContractError) as exc:
                 reason = exc.category if isinstance(exc, AccessDenied) else str(exc)
                 excluded.append((requested.ref, reason))
@@ -218,25 +200,11 @@ class BoundaryRuntime:
         # Manifest is distinct from the actual payload package and VersionContext.
         self.execution("ContextManifest", subject, {"context_id": package.identity, "protocol": json_value(protocol_ref),
                        "included": [{"ref": json_value(i.record.ref), "authority": i.authority_basis,
-                                     "data_authority": i.data_authority_basis,
-                                     **({'projection':json.loads(i.projection_json)} if i.projection_json else {})} for i in items],
+                                     "data_authority": i.data_authority_basis} for i in items],
                        "excluded": [{"ref": json_value(r), "reason": why} for r, why in excluded],
                        "versions": json_value(versions), "frozen_at": package.frozen_at})
         self.h.control.reach("afterContextFrozen")
         return package
-
-    def _project_content(self,token,protocol,record,source,versions,scope,purpose):
-        profile=self.h.get(protocol.ref).payload.get('context_projection')
-        if profile is None:return None,None
-        rule=next((r for r in profile['inputs'] if r['kind']==record.kind),None)
-        if rule is None:raise ContractError('ProjectionInputNotDeclared')
-        ref=projection_ref(rule['contract'])
-        if ref not in versions.semantic_bindings:raise ContractError('ProjectionContractNotVersionBound')
-        if self.h.canonical.check_compatibility(versions,scope,purpose,self.h.clock.now)!=Decision.ALLOW:
-            raise ContractError('ProjectionVersionIncompatible')
-        contract,_=self.security.read(token,ref,purpose,protocol.destination,source,
-                                      ('ReasoningProtocol','ContentUseContract'))
-        return project(self,record,rule,contract,protocol.ref)
 
     def propose(self, context, identity, revision, payload, expected_head=None):
         if self._contexts.get(context.identity) != context:
@@ -282,17 +250,13 @@ class BoundaryRuntime:
         return result
 
     def _model_context(self, token, context, source):
-        if self._contexts.get(context.identity)!=context:raise ContractError('UnregisteredContext')
         self.check_turn(context)
         protocol = self._protocols[context.protocol]
         values = []
         for item in context.items:
             record, _ = self.security.read(token, item.record.ref, context.purpose, protocol.destination,
                                            source, protocol.allowed_context_kinds)
-            projected=self._project_content(token,protocol,record,source,context.versions,context.scope,context.purpose)
-            if record!=item.record or projected!=(item.content_json,item.projection_json):
-                raise ContractError('ContextProjectionBindingMismatch')
-            values.append(item.model_value())
+            values.append({"ref": json_value(record.ref), "kind": record.kind, "content": record.payload})
         return values
 
     def generate_with_llm(self, token, context, adapter, *, identity=None, revision="r1"):
@@ -329,59 +293,6 @@ class BoundaryRuntime:
         return candidate
 
     def validate_with_llm(self, token, candidate, adapter):
-        if self._candidates.get(candidate.identity) != candidate:
-            raise ContractError('UnregisteredOrAlteredCandidate')
-        self.check_turn(self._contexts[candidate.context_id])
-        definition=self.h.get(candidate.protocol).payload
-        if definition.get('validation_dimensions') is None or candidate.identity in self._bounded_review_started:
-            return self._validate_with_llm(token,candidate,adapter)
-        self.execution('ValidationAttemptStarted',candidate.record.subject,{
-            'candidate_digest':digest(candidate),'context_id':candidate.context_id,
-            'protocol':json_value(candidate.protocol), 'assessment':self.validation_assessment(candidate)})
-        try:
-            review=self._validate_with_llm(token,candidate,adapter)
-        except (ModelFailure,ContractError,AccessDenied) as exc:
-            stage='responsibility' if candidate.identity not in self._responsibility_executions else (
-                'arithmetic' if candidate.identity not in self._arithmetic_executions else 'semantic_review')
-            self.execution('ValidationAttemptFailed',candidate.record.subject,{
-                'candidate_digest':digest(candidate),'context_id':candidate.context_id,'stage':stage,
-                'failure_type':type(exc).__name__,'reason':str(exc)})
-            self._record_validation_assessment(candidate)
-            raise
-        self._record_validation_assessment(candidate)
-        return review
-
-    def _record_validation_assessment(self,candidate):
-        return self.execution('ValidationAssessment',candidate.record.subject,{
-            'candidate_digest':digest(candidate),'context_id':candidate.context_id,
-            'protocol':json_value(candidate.protocol), **self.validation_assessment(candidate)})
-
-    def validation_assessment(self,candidate):
-        if self._candidates.get(candidate.identity) != candidate:
-            raise ContractError('UnregisteredOrAlteredCandidate')
-        definition=self.h.get(candidate.protocol).payload
-        records=[r for r in self.h.executions.records(candidate.record.subject)
-                 if r.payload.get('candidate_digest')==digest(candidate)]
-        failure=next((r for r in reversed(records) if r.kind=='ValidationAttemptFailed'),None)
-        stages={name:{'execution_status':'NOT_RUN','conclusion':None,'source_ref':None} for name in STAGES}
-        for name,index in (('responsibility',self._responsibility_executions),('arithmetic',self._arithmetic_executions)):
-            ref=index.get(candidate.identity)
-            if ref is not None:
-                result=(self._checked_responsibility(candidate,ref) if name=='responsibility' else self._checked_arithmetic(candidate,ref)[1])
-                stages[name]={'execution_status':'COMPLETED','conclusion':result['status'],'source_ref':json_value(ref)}
-        review=self._bounded_review_results.get(candidate.identity)
-        criteria={}
-        if review is not None:
-            criteria={r['id']:r['status'] for r in json.loads(review.details_json)['criteria']}
-            stages['semantic_review']={'execution_status':'COMPLETED','conclusion':review.status,'source_ref':json_value(review.execution)}
-        if failure is not None:
-            stage=failure.payload['stage']
-            if stages[stage]['execution_status']!='COMPLETED':
-                stages[stage]={'execution_status':'FAILED','conclusion':None,'source_ref':json_value(failure.ref)}
-        rechecks=[json_value(r.ref) for r in records if r.kind=='SemanticRecheckFailed']
-        return dimension_assessment(definition,stages,criteria,review_status=review.status if review else None,recheck_failures=rechecks)
-
-    def _validate_with_llm(self, token, candidate, adapter):
         if self._candidates.get(candidate.identity) != candidate:
             raise ContractError("UnregisteredOrAlteredCandidate")
         self.check_turn(self._contexts[candidate.context_id])
@@ -431,7 +342,7 @@ class BoundaryRuntime:
         if profile != EXPRESSION_FORMAT:
             raise ContractError('UnsupportedArithmeticExtractionFormat')
         context = self._contexts[candidate.context_id]
-        registry = source_registry([i.model_value() for i in context.items])
+        registry = source_registry([{'ref':json_value(i.record.ref), 'content':i.record.payload} for i in context.items])
         return check_expression_extraction(extraction, candidate.record.payload, registry)
 
     def _checked_responsibility(self, candidate, ref):
@@ -657,7 +568,8 @@ class BoundaryRuntime:
                 checked_details = (checked_claim_axes(details)
                     if self.h.get(protocol.ref).payload.get("claim_axes") == "attribution-boundary-v1" else details)
                 if rule.payload["format"] in ("source-linked-v3", "source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
-                    content = [item.model_value() for item in context.items]
+                    content = [{"ref": json_value(item.record.ref), "kind": item.record.kind,
+                                "content": item.record.payload} for item in context.items]
                     if self.h.get(protocol.ref).payload.get("source_encoding") == "field-handles-v1":
                         registry = source_registry(content)
                         if (execution.payload.get("source_registry") != registry
@@ -717,10 +629,6 @@ class BoundaryRuntime:
             # All critical reads are reauthorized even when the context was formerly legal.
             for dep in record.dependencies:
                 self.security.read(token, dep.target, record.purpose, protocol.destination, candidate.execution)
-            for item in context.items:
-                if item.projection_json is not None:
-                    projected=self._project_content(token,protocol,item.record,candidate.execution,context.versions,context.scope,record.purpose)
-                    if projected!=(item.content_json,item.projection_json):raise ContractError('ContextProjectionBindingMismatch')
         except AccessDenied as exc:
             return self._outcome(candidate, exc.category, exc.decision.reason)
         except ContractError as exc:

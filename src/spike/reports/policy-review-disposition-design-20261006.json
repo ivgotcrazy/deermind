@@ -1,0 +1,117 @@
+{
+  "schema": "policy-review-disposition-design-review-v1",
+  "date": "2026-10-06",
+  "status": "DRAFT_NOT_IMPLEMENTED",
+  "contract": "doc/system-design/DeerMind_Policy_Review_Disposition_Revision_v0.1.md",
+  "source_sha256": {
+    "doc/system-design/DeerMind_Policy_Review_Disposition_Revision_v0.1.md": "fb512f2bfbe776b70a11fc38ebb589a3e30585a3d05a839533abb973211582e1",
+    "src/spike/runs/policy-v2-review-real-v1/execution/results.json": "4965a16097bfee3bf7cc6cba6e87c3f6327d0bacdeccb40ce3809bc887ef3936",
+    "src/spike/reports/policy-v2-real-assessment-20261006.json": "fe578cb93ca6794bf8ea4a5353d141b2ce1e9a074274537135bdcede72a97606"
+  },
+  "exact_review_outputs_bound": [
+    {
+      "case_id": "missing_review_material",
+      "stage": "semantic",
+      "model_call": "60fb2b36e2c44cad9dd43129f22bee84",
+      "original_status": "FAIL",
+      "output_sha256": "443519e21a13d3b92bb66cfbdef55b01252237e282858dd8abc051354844597b"
+    },
+    {
+      "case_id": "missing_review_material",
+      "stage": "utility",
+      "model_call": "7aa3c5668cfc4b8f838699ea36aa4cf1",
+      "original_status": "FAIL",
+      "output_sha256": "037888138675e9776c5362ac0e124db797e2b7e5bfe7cbdfd71719b3ef0e2eb4"
+    },
+    {
+      "case_id": "localization_erased",
+      "stage": "semantic",
+      "model_call": "65f5cf30cfc6495ab2279cad2e95fca2",
+      "original_status": "PASS",
+      "output_sha256": "d34046508657db9e428db20900c4c0e9aa05bb96a79c6fdb697c26788d7d4adc"
+    },
+    {
+      "case_id": "localization_erased",
+      "stage": "utility",
+      "model_call": "d0016174989d473dbe2505a9675a084a",
+      "original_status": "PASS",
+      "output_sha256": "dd83e2c2d01079843b7c9d00f951b1cf828947967055d1203a56002f0916b410"
+    },
+    {
+      "case_id": "E1-open-1-historical",
+      "stage": "semantic",
+      "model_call": "aafdb4ced4b74d1084547b092fab8f15",
+      "original_status": "PASS",
+      "output_sha256": "dbfc11638d3c30a92b45f90769a3c6d63a566868c39b56b5c3f245d5a5a007fa"
+    },
+    {
+      "case_id": "E1-open-1-historical",
+      "stage": "utility",
+      "model_call": "916da6de04be41f99dee6c42f5036dc6",
+      "original_status": "PASS",
+      "output_sha256": "9018f0d8d8455b94e73ac6f53862aedbc4f633fa2611af969cbee21c4a039cd5"
+    }
+  ],
+  "prior_ledger_hashes_verified": 438,
+  "new_runtime_tests": 0,
+  "new_model_calls": 0,
+  "implemented": false,
+  "validated": false,
+  "rules": [
+    "Structured S1-S5 dispositions within the existing semantic call; no default extra reviewer",
+    "LLM interprets assertions and conflicts; deterministic checks only enforce declared coverage, refs and disposition consistency",
+    "Trusted material availability metadata cannot be replaced by candidate self-attestation",
+    "FAIL and UNRESOLVED both deny production admission; execution failure remains separate",
+    "Correct text elsewhere cannot silently repair a conflicting assertion in the same immutable candidate"
+  ],
+  "local_acceptance_obligations": [
+    {
+      "id": "L1",
+      "input": "CONTRADICTED finding associated with S3 but check/overall PASS",
+      "expected": "INVALID_REVIEW_NO_COMMIT"
+    },
+    {
+      "id": "L2",
+      "input": "LLM explicitly finds a valid scoped independence statement with genuine quotes and all required obligations PASS",
+      "expected": "VALID_PASS_SUBJECT_TO_OTHER_GATES",
+      "limitation": "Does not prove model interpretation is correct"
+    },
+    {
+      "id": "L3",
+      "input": "Trusted missing-review-material gap affecting S2, UNDETERMINED finding, overall PASS",
+      "expected": "INVALID_REVIEW_NO_COMMIT"
+    },
+    {
+      "id": "L4",
+      "input": "Valid CONTRADICTED S3 plus independent unresolved S2 due to missing material",
+      "expected": "VALID_CONTENT_FAIL_NO_COMMIT"
+    },
+    {
+      "id": "L5",
+      "input": "Finding quote exists only outside projected source or binds another candidate",
+      "expected": "INVALID_REVIEW_NO_COMMIT"
+    },
+    {
+      "id": "L6",
+      "input": "Well-formed complete review with content FAIL or UNRESOLVED",
+      "expected": "PRESERVE_DISTINCT_REASON_NO_COMMIT"
+    },
+    {
+      "id": "L7",
+      "input": "Missing/duplicate required obligation or incomplete execution",
+      "expected": "NO_VALID_PASS_NO_COMMIT"
+    },
+    {
+      "id": "L8",
+      "input": "Model omits an actual contradiction and returns internally well-formed all-PASS",
+      "expected": "MECHANISM_ALONE_MAY_ACCEPT",
+      "limitation": "Explicit residual semantic false acceptance; not a success claim"
+    }
+  ],
+  "original_A2": "DENIED",
+  "original_E1": "INCONCLUSIVE",
+  "full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "automatic_additional_batches": false
+}

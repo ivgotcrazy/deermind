@@ -1,0 +1,26 @@
+{
+  "schema": "policy-v2-integration-audit-v1",
+  "result": "PASS",
+  "tests_run": 285,
+  "new_test_methods": 6,
+  "external_model_calls": 0,
+  "frozen_inputs_verified": 171,
+  "prior_ledger_entries_verified": 373,
+  "artifacts_verified": 8,
+  "snapshots_verified": 13,
+  "scripted_wire_records": 18,
+  "maximum_serialized_message_chars": 7839,
+  "semantic_acceptance": "NOT_VALIDATED",
+  "independent_review": "NOT_REVIEWED",
+  "full_cases_completed": 9,
+  "A2": "DENIED",
+  "E1": "INCONCLUSIVE",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "limitations": [
+    "Scripted judgments do not validate semantic quality or resolve original E1 disputes.",
+    "Fourteen design fragments remain author-labelled and are not full reviewed campaign cases.",
+    "Field-use projection is not enabled by this E1 version-binding integration."
+  ],
+  "summary_sha256": "b0894b188429d0e23fdc8897282a783bc04c3f99a8ac37fa4dc4ef5e11c8c1d5"
+}

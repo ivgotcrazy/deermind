@@ -153,7 +153,7 @@ class SerialSession:
             matches = matches or any(digest(c) == p['candidate_digest'] and
                 self.context_turn(self.b._contexts[c.context_id]) == turn for c in self.b._candidates.values())
         if not matches or failure.kind not in ('TurnFailure', 'LLMGenerationFailed', 'LLMValidationFailed',
-                'ResponsibilityClassificationFailed', 'ArithmeticExtractionFailed', 'ValidationAttemptFailed', 'CommitOutcome'):
+                'ResponsibilityClassificationFailed', 'ArithmeticExtractionFailed', 'CommitOutcome'):
             raise ContractError('TurnFailureReferenceRequired')
         if failure.kind == 'CommitOutcome' and p.get('status') == 'Committed':
             raise ContractError('SuccessfulCommitIsNotFailure')

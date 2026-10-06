@@ -1,0 +1,12 @@
+[
+  {
+    "source_path": "src/spike/foundation/policy_cases.py",
+    "previous_sha256": "478a5748c16097ecf82eb5115396529131d5205b0cb16f019063202b833d1231",
+    "preserved_at": "src/spike/reports/source-baseline-policy-v2-20261006/policy_cases.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/policy.py",
+    "previous_sha256": "e375a3a347e08d462223dd19395e479fe6e81192d76651ba87d0912c60fefad5",
+    "preserved_at": "src/spike/reports/source-baseline-policy-v2-20261006/policy.py.txt"
+  }
+]

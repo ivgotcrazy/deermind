@@ -1,0 +1,17 @@
+[
+  {
+    "source_path": "src/spike/foundation/boundary.py",
+    "previous_sha256": "cfdbad8a1720f40c76ecce6018d88876be3c424ac8b4fa0841b3c0f15d198c9c",
+    "preserved_at": "src/spike/reports/source-baseline-validation-dimensions-20261005/boundary.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/protocol_preflight.py",
+    "previous_sha256": "ba057b0b69e192133c031b1c74a5357a0263d1a2822094800ade99774fe50a6f",
+    "preserved_at": "src/spike/reports/source-baseline-validation-dimensions-20261005/protocol_preflight.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/session.py",
+    "previous_sha256": "b0cbb0c68c78daafdbe072fec5bdb86e173517041c91dad93083dc73a36d8256",
+    "preserved_at": "src/spike/reports/source-baseline-validation-dimensions-20261005/session.py.txt"
+  }
+]

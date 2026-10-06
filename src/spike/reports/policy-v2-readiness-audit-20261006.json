@@ -1,0 +1,20 @@
+{
+  "schema": "policy-v2-readiness-audit-v1",
+  "date": "2026-10-06",
+  "status": "READY_FOR_EXPLORATORY_AUTHOR_LABEL_AGREEMENT_ONLY",
+  "independent_review": "NOT_REVIEWED_NOT_CLAIMED",
+  "historical_candidates_unchanged": 4,
+  "synthetic_cases": 14,
+  "neutral_synthetic_reference_check": "PASS",
+  "actual_scripted_requests_matched": 36,
+  "external_model_calls": 0,
+  "prior_ledger_hashes_verified": 417,
+  "provider_budget": "DOCUMENTED_CAPACITY_PRECHECK_ONLY_USAGE_PENDING",
+  "maximum_message_chars": 9220,
+  "maximum_rough_token_estimate": 3069,
+  "package_manifest_sha256": "d51db97d84b51ebc3edbe55fec974b2d9cc04d32157d7452886694b34a4a56b0",
+  "wire_summary_sha256": "4a8d54be204be982fd134258ba1f3ac47fa5c88003577e7998dc81cfdde39d2b",
+  "full_cases_completed": 9,
+  "A2": "DENIED",
+  "E1": "INCONCLUSIVE"
+}

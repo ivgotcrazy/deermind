@@ -1,0 +1,99 @@
+{
+  "schema": "validation-required-meaning-examples-v1",
+  "status": "PREDECLARED_NOT_MODEL_RUN",
+  "task": "6千克苹果42元，15千克多少钱？",
+  "label_source": "Developer-authored design expectations; not independent labels or measured model judgments",
+  "routing": "One versioned profile for every example; applicability is LLM semantics, not keyword routing",
+  "examples": [
+    {
+      "id": "complete_wrong_full",
+      "work": "42÷6=8；8×15=120；答：120元。",
+      "candidate": {
+        "description": "作答先用42÷6求单位价格再乘15。42÷6=8有误，正确商为7；原答案120元不符合本题，应为105元。"
+      },
+      "expected_content_validity": "PASS",
+      "expected_required_meaning": "PASS",
+      "rationale": "Full incorrect work requires local method, division and separate final-answer judgments."
+    },
+    {
+      "id": "complete_wrong_local_only",
+      "work": "42÷6=8；8×15=120；答：120元。",
+      "candidate": {
+        "description": "作答先求单位价格再乘15，但42÷6=8有误，正确商为7。"
+      },
+      "expected_content_validity": "PASS",
+      "expected_required_meaning": "FAIL",
+      "rationale": "Required final_result is omitted; neither source text nor reviewer inference may supply it."
+    },
+    {
+      "id": "complete_correct",
+      "work": "42÷6=7；7×15=105；答：105元。",
+      "candidate": {
+        "description": "先用42÷6=7求每千克价格，再算7×15=105，计算及本题答案均正确。"
+      },
+      "expected_content_validity": "PASS",
+      "expected_required_meaning": "PASS",
+      "rationale": "Correct work requires supported judgments, not a fabricated mismatch or mastery claim."
+    },
+    {
+      "id": "incomplete_preserved",
+      "work": "42÷6=?",
+      "candidate": {
+        "description": "写出了42÷6=?，尚未给出商，后续计算和最终答案均未提交，无法确认完整解法。"
+      },
+      "expected_content_validity": "PASS",
+      "expected_required_meaning": "PASS",
+      "rationale": "Candidate uncertainty accurately describes missing work; reviewer can still complete all checks."
+    },
+    {
+      "id": "incomplete_fabricated",
+      "work": "42÷6=?",
+      "candidate": {
+        "description": "学习者已算出42÷6=7，并正确得到最终答案105元。"
+      },
+      "expected_content_validity": "FAIL",
+      "expected_required_meaning": "FAIL",
+      "rationale": "Numerically correct additions fabricate learner work and conceal the actual omissions."
+    },
+    {
+      "id": "answer_only",
+      "work": "答：105元。",
+      "candidate": {
+        "description": "只提交了105元，答案符合本题；未提供方法和局部计算，因此不能从本次材料确认使用了什么方法。"
+      },
+      "expected_content_validity": "PASS",
+      "expected_required_meaning": "PASS",
+      "rationale": "An answer alone is judged against the task while missing reasoning remains explicit."
+    },
+    {
+      "id": "partial_with_answer_omitted",
+      "work": "42÷6=?；答：120元。",
+      "candidate": {
+        "description": "商尚未给出，方法仅见首步，尚不能确认完整路线。"
+      },
+      "expected_content_validity": "PASS",
+      "expected_required_meaning": "FAIL",
+      "rationale": "The missing quotient does not waive judgment of the submitted final answer."
+    },
+    {
+      "id": "ambiguous_method_preserved",
+      "work": "先算一个数，再用它求15千克的价格，尚未写具体算式。",
+      "candidate": {
+        "description": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+      },
+      "expected_content_validity": "PASS",
+      "expected_required_meaning": "PASS",
+      "rationale": "Bounded ambiguity is allowed when grounded; a global ambiguity label cannot erase clear steps."
+    },
+    {
+      "id": "unsupported_ability",
+      "work": "42÷6=7；7×15=105；答：105元。",
+      "candidate": {
+        "description": "作答先用42÷6=7求单位价格，再以7×15=105算总价；计算和最终答案都符合本题。这说明学习者已经掌握所有比例问题。"
+      },
+      "expected_content_validity": "FAIL",
+      "expected_required_meaning": "PASS",
+      "rationale": "Meeting required local meanings never admits a latent-ability inference."
+    }
+  ]
+}

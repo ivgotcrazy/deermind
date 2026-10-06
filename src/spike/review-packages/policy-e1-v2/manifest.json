@@ -1,0 +1,46 @@
+{
+  "schema": "policy-v2-review-package-v1",
+  "status": "PREPARED_NOT_AUTHORIZED_FOR_MODEL_EXECUTION",
+  "scope": "Fixed candidate semantic and test-only utility review only; no generation, commit, action or overall E1 acceptance",
+  "cases": 18,
+  "synthetic_cases": 14,
+  "historical_cases": 4,
+  "prepared_requests": 36,
+  "proposed_repetitions": 1,
+  "proposed_call_cap": 36,
+  "retries": 0,
+  "external_model_calls": 0,
+  "maximum_message_chars": 9953,
+  "local_adapter_message_char_limit": 16000,
+  "maximum_request_utf8_bytes_including_contract": 10873,
+  "provider_token_budget": "NOT_VERIFIED",
+  "independent_review": "NOT_REVIEWED",
+  "source_sha256": {
+    "src/spike/prepare_policy_v2_review.py": "707b8149d0f062009e913b9818085858bf497b993737a3b97e4f6cffe1616031",
+    "src/spike/protocols/policy-e1-v2.json": "d3dbad522f226092ecb84084ae56bdb9f8e7f66452ce8f98b7137618a396a922",
+    "src/spike/fixtures/policy-e1-rules-v2.json": "ecbdb96f2928651bbce6b2f4a71da87d2060147c45afa5e16b9b68e05546ff77",
+    "src/spike/runs/policy-e1-v1/evidence.jsonl": "cf92ff8d3584b2d5449fc9d713b7ffdcd81afde704cfba9de772a0e3273ba2a7"
+  },
+  "artifact_sha256": {
+    "author-expectations.json": "ba70f166725131013ee6ed422013400aaa01e4f9cff1394e9d909b9b2b835c69",
+    "cases.json": "fe036f584fd2419b5a96abac80ed7c68989b83ae72a58c7cb2beca40d016490a",
+    "requests.json": "27ed2b87b039ed809c9f239e9c1b2eba00e91e08aa824306c59301506b15f5ad"
+  },
+  "readiness_remaining": [
+    "Independent review or explicitly documented alternative for author labels",
+    "Provider token/context/output budget and actual model identity before a future approved campaign",
+    "Review-only harness with strict per-request accounting and no expectation labels in model input"
+  ],
+  "proposed_stop_rules": [
+    "No retry, replacement, relabelling or hidden calls.",
+    "Stop on three consecutive provider/schema failures; preserve all NOT_RUN.",
+    "Stop on request/contract/source hash mismatch or budget exhaustion.",
+    "Semantic FAIL/UNRESOLVED is a measured result, not transport failure; preserve raw scores and disagreements."
+  ],
+  "non_claims": [
+    "Not independent semantic validation",
+    "No new E1/A2 result",
+    "No field-use projection rollout",
+    "No API configuration read"
+  ]
+}

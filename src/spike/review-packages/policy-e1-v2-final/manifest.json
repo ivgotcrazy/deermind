@@ -1,0 +1,46 @@
+{
+  "schema": "policy-v2-review-package-v1",
+  "status": "PREPARED_NOT_MODEL_RUN",
+  "scope": "Fixed candidate semantic and test-only utility review only; no generation, commit, action or overall E1 acceptance",
+  "cases": 18,
+  "synthetic_cases": 14,
+  "historical_cases": 4,
+  "prepared_requests": 36,
+  "proposed_repetitions": 1,
+  "proposed_call_cap": 36,
+  "retries": 0,
+  "external_model_calls": 0,
+  "maximum_message_chars": 9647,
+  "local_adapter_message_char_limit": 16000,
+  "maximum_request_utf8_bytes_including_contract": 10567,
+  "provider_token_budget": "NOT_VERIFIED",
+  "independent_review": "NOT_REVIEWED",
+  "source_sha256": {
+    "src/spike/prepare_policy_v2_review.py": "f87ba0553cfe4dcb4bfe441973a9d8b66e708f6eb010e50292ff1fe34ac3679a",
+    "src/spike/protocols/policy-e1-v2.json": "d3dbad522f226092ecb84084ae56bdb9f8e7f66452ce8f98b7137618a396a922",
+    "src/spike/fixtures/policy-e1-rules-v2.json": "ecbdb96f2928651bbce6b2f4a71da87d2060147c45afa5e16b9b68e05546ff77",
+    "src/spike/runs/policy-e1-v1/evidence.jsonl": "cf92ff8d3584b2d5449fc9d713b7ffdcd81afde704cfba9de772a0e3273ba2a7"
+  },
+  "artifact_sha256": {
+    "author-expectations.json": "ba70f166725131013ee6ed422013400aaa01e4f9cff1394e9d909b9b2b835c69",
+    "cases.json": "29b1581de8fbfbd23e2a954bd237fdd41674d4c31c1e0769c986a2810132fc6b",
+    "requests.json": "6aab3ceddc0e2647e7044c30fc1df34f328b34970f83f7b13769cfbc1ff9a7ad"
+  },
+  "readiness_remaining": [
+    "Independent review or explicitly documented alternative for author labels",
+    "Provider token/context/output budget and actual model identity before a future approved campaign",
+    "Review-only harness with strict per-request accounting and no expectation labels in model input"
+  ],
+  "proposed_stop_rules": [
+    "No retry, replacement, relabelling or hidden calls.",
+    "Stop on three consecutive provider/schema failures; preserve all NOT_RUN.",
+    "Stop on request/contract/source hash mismatch or budget exhaustion.",
+    "Semantic FAIL/UNRESOLVED is a measured result, not transport failure; preserve raw scores and disagreements."
+  ],
+  "non_claims": [
+    "Not independent semantic validation",
+    "No new E1/A2 result",
+    "No field-use projection rollout",
+    "No API configuration read"
+  ]
+}

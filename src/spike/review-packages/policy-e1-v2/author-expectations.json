@@ -1,0 +1,349 @@
+[
+  {
+    "id": "unsupported_multiplication",
+    "semantic_expected": "FAIL",
+    "utility_expected_only_for_dimensions": {
+      "grounding": "FAIL"
+    },
+    "basis": "没有为另一个乘法错误提供问题来源、决策关联与区分依据；不是证明隐藏过程绝不可能。",
+    "rules": [
+      "S2"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "grounded_gap",
+    "semantic_expected": "PASS",
+    "utility_expected_only_for_dimensions": {
+      "grounding": "PASS"
+    },
+    "basis": "不确定性来自具体错误与单次材料限制；说明当前选择和后续区分路径，不作稳定能力断言。",
+    "rules": [
+      "S2"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "uncertainty_not_required",
+    "semantic_expected": "PASS",
+    "utility_expected_only_for_dimensions": {
+      "grounding": "PASS"
+    },
+    "basis": "不强迫制造不确定性，片段未声称消除所有未知。",
+    "rules": [
+      "S2"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "missing_review_material",
+    "semantic_expected": "UNRESOLVED",
+    "utility_expected_only_for_dimensions": {
+      "grounding": "UNRESOLVED"
+    },
+    "basis": "评审所需来源缺失；不能当作已证实无依据，也不能通过。",
+    "rules": [
+      "S2"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "localization_erased",
+    "semantic_expected": "FAIL",
+    "utility_expected_only_for_dimensions": {
+      "responsibility_cost": "FAIL",
+      "consistency": "FAIL"
+    },
+    "basis": "精确提示已经缩小定位范围，完整独立定位的声称不成立。",
+    "rules": [
+      "S3"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "localization_acknowledged",
+    "semantic_expected": "PASS",
+    "utility_expected_only_for_dimensions": {
+      "responsibility_cost": "PASS",
+      "consistency": "PASS"
+    },
+    "basis": "明确预计帮助和仍保留的工作，不将部分责任泛化为整体独立。",
+    "rules": [
+      "S3",
+      "S4"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "scoped_independent",
+    "semantic_expected": "PASS",
+    "utility_expected_only_for_dimensions": {
+      "consistency": "PASS"
+    },
+    "basis": "出现独立一词不是拒绝依据；责任范围有明确限定。",
+    "rules": [
+      "S3"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "future_as_actual",
+    "semantic_expected": "FAIL",
+    "utility_expected_only_for_dimensions": {
+      "consistency": "FAIL"
+    },
+    "basis": "候选形成时还未执行，不能把预期效果写成已发生事实。",
+    "rules": [
+      "S4"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "unknown_delivery",
+    "semantic_expected": "PASS",
+    "utility_expected_only_for_dimensions": {
+      "consistency": "PASS"
+    },
+    "basis": "不将未知效果改写为零帮助或完整帮助。",
+    "rules": [
+      "S4"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "display_as_mastery",
+    "semantic_expected": "FAIL",
+    "utility_expected_only_for_dimensions": {
+      "grounding": "FAIL"
+    },
+    "basis": "展示确认不能证明注意、使用或掌握。",
+    "rules": [
+      "S4"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "upstream_not_authority",
+    "semantic_expected": "FAIL",
+    "utility_expected_only_for_dimensions": {
+      "grounding": "FAIL",
+      "consistency": "FAIL"
+    },
+    "basis": "上游建议不取得决定或授权地位；机械行动授权仍须另查。",
+    "rules": [
+      "S1"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "same_action_own_reason",
+    "semantic_expected": "PASS",
+    "utility_expected_only_for_dimensions": {
+      "grounding": "PASS",
+      "responsibility_cost": "PASS"
+    },
+    "basis": "选择与上游建议相同的行动仍可在自身权限和理由范围内成立；不建立请求自动授权规则。",
+    "rules": [
+      "S1",
+      "S3",
+      "S4"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "wait_responsive",
+    "semantic_expected": "PASS",
+    "utility_expected_only_for_dimensions": {
+      "responsiveness": "PASS",
+      "responsibility_cost": "PASS"
+    },
+    "basis": "回应等待请求的决定可以合理，不强制执行提示。",
+    "rules": [
+      "S5"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "defer_not_schedule",
+    "semantic_expected": "PASS",
+    "utility_expected_only_for_dimensions": {
+      "consistency": "PASS"
+    },
+    "basis": "给出具体新机会，仍需届时决定。",
+    "rules": [
+      "S5"
+    ],
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "qualification": "Full-candidate author expectation, not independent truth; other utility dimensions unlabelled."
+  },
+  {
+    "id": "E1-open-1-historical",
+    "semantic_expected": null,
+    "utility_expected_only_for_dimensions": {},
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "historical_dispute": {
+      "variant": "E1-open",
+      "repetition": 1,
+      "field": "uncertainty",
+      "excerpt": "the learner may also have mis-multiplied 8×15 independently",
+      "dimensions": [
+        "grounding"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "Original work explicitly has 8*15=120, which is arithmetically correct. A further unobserved multiplication error lacks supplied evidence. Whether this hypothetical belongs in uncertainty is disputed; do not silently turn a possibility into an established false statement.",
+      "candidate_digest": "a6439b61723120c5ab867f081a5ed002e10ad858b71f3c2c4f9a9cc6adc3f591",
+      "original_utility_score": "PASS",
+      "candidate_ref": {
+        "space": "derived",
+        "identity": "P",
+        "revision": "r1"
+      },
+      "commit_ref": {
+        "space": "audit",
+        "identity": "8121217c2a0842f4b3bb44734639cec6",
+        "revision": "1"
+      },
+      "original_field_text": "Whether the slip is a one-off arithmetic error or a recurring division weakness cannot be determined from a single item; the learner may also have mis-multiplied 8×15 independently. If the cue does not lead to a corrected result, a broader self-check or later targeted practice may be warranted.",
+      "proposal_application_status": "NOT_REASSESSED_UNDER_PROPOSED_RULES",
+      "new_rule_assessment": "NOT_RUN",
+      "new_expected_status": null
+    },
+    "qualification": "New-rule assessment pending; do not replace original PASS or disputed status."
+  },
+  {
+    "id": "E1-help-3-historical",
+    "semantic_expected": null,
+    "utility_expected_only_for_dimensions": {},
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "historical_dispute": {
+      "variant": "E1-help",
+      "repetition": 3,
+      "field": "rationale",
+      "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+      "dimensions": [
+        "responsibility_cost",
+        "consistency"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+      "candidate_digest": "d871b71e2a5ff87ba7cc6054403f47c24f3332635f6d9eb67359080f0fb4221e",
+      "original_utility_score": "PASS",
+      "candidate_ref": {
+        "space": "derived",
+        "identity": "P",
+        "revision": "r1"
+      },
+      "commit_ref": {
+        "space": "audit",
+        "identity": "9a34fb0e8590429aa9fff80c34885a7c",
+        "revision": "1"
+      },
+      "original_field_text": "Learner asked to be told which step is wrong without being given the answer, and the activity permits only self-check or a local cue. The work's unit-rate strategy is sound; the single faulty step is the division 42/6=8 (C3), which propagates to 120. A local cue pointing at that step honors the request, keeps the diagnosis and correction with the learner, and avoids substituting the full solution. Cost: the cue narrows attention to one step, slightly reducing search breadth; benefit: preserves independent diagnosis while unblocking the arithmetic error.",
+      "proposal_application_status": "NOT_REASSESSED_UNDER_PROPOSED_RULES",
+      "new_rule_assessment": "NOT_RUN",
+      "new_expected_status": null
+    },
+    "qualification": "New-rule assessment pending; do not replace original PASS or disputed status."
+  },
+  {
+    "id": "E1-help-4-historical",
+    "semantic_expected": null,
+    "utility_expected_only_for_dimensions": {},
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "historical_dispute": {
+      "variant": "E1-help",
+      "repetition": 4,
+      "field": "rationale",
+      "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+      "dimensions": [
+        "responsibility_cost",
+        "consistency"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+      "candidate_digest": "ce5e18113318b1b0a13d0f4141ebcb9cbed56a174655d28c2d4b4e22ab988c19",
+      "original_utility_score": "PASS",
+      "candidate_ref": {
+        "space": "derived",
+        "identity": "P",
+        "revision": "r1"
+      },
+      "commit_ref": {
+        "space": "audit",
+        "identity": "9536fabde83e4c0ab8003e697ed3ec23",
+        "revision": "1"
+      },
+      "original_field_text": "Learner asked to be told which step is wrong without being given the answer, and the activity permits only self-check or a local cue. The work's unit-rate strategy is sound; the single faulty step is the division 42/6=8 (C3), which propagates to 120. A local cue pointing at that step honors the request, keeps the diagnosis and correction with the learner, and avoids substituting the full solution. Cost: the cue narrows attention to one step, slightly reducing search breadth; benefit: preserves independent diagnosis while unblocking the arithmetic error.",
+      "proposal_application_status": "NOT_REASSESSED_UNDER_PROPOSED_RULES",
+      "new_rule_assessment": "NOT_RUN",
+      "new_expected_status": null
+    },
+    "qualification": "New-rule assessment pending; do not replace original PASS or disputed status."
+  },
+  {
+    "id": "E1-help-5-historical",
+    "semantic_expected": null,
+    "utility_expected_only_for_dimensions": {},
+    "overall_utility_expected": null,
+    "independent_review": "NOT_REVIEWED",
+    "historical_dispute": {
+      "variant": "E1-help",
+      "repetition": 5,
+      "field": "rationale",
+      "excerpt": "preserves independent diagnosis while unblocking the arithmetic error",
+      "dimensions": [
+        "responsibility_cost",
+        "consistency"
+      ],
+      "status": "UNRESOLVED_SCORING_DISPUTE",
+      "basis": "The cue already identifies which step to recheck. Recomputing remains with the learner, but error localization has partial assistance. The wording could conflate these responsibilities; no automatic scoring override.",
+      "candidate_digest": "226d686aaaabb502b44a2e1416cdfb3329ee9eaccf449b0fd74d6e95e46fc786",
+      "original_utility_score": "PASS",
+      "candidate_ref": {
+        "space": "derived",
+        "identity": "P",
+        "revision": "r1"
+      },
+      "commit_ref": {
+        "space": "audit",
+        "identity": "45bf3d23edb9489fa3e1ba3c379e5f10",
+        "revision": "1"
+      },
+      "original_field_text": "Learner asked to be told which step is wrong without being given the answer, and the activity permits only self-check or a local cue. The work's unit-rate strategy is sound; the single faulty step is the division 42/6=8 (C3), which propagates to 120. A local cue pointing at that step honors the request, keeps the diagnosis and correction with the learner, and avoids substituting the full solution. Cost: the cue narrows attention to one step, slightly reducing search breadth; benefit: preserves independent diagnosis while unblocking the arithmetic error.",
+      "proposal_application_status": "NOT_REASSESSED_UNDER_PROPOSED_RULES",
+      "new_rule_assessment": "NOT_RUN",
+      "new_expected_status": null
+    },
+    "qualification": "New-rule assessment pending; do not replace original PASS or disputed status."
+  }
+]

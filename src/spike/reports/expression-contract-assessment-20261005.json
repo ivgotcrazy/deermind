@@ -1,0 +1,34 @@
+{
+  "schema": "expression-contract-scoped-assessment-v1",
+  "date": "2026-10-05",
+  "result": "PASS",
+  "scope": "Local typed arithmetic mapping, exact fields, mandatory mapping-review gate and commit recomputation; scripted semantics only",
+  "run_directory": "src/spike/runs/expression-contract-v1",
+  "tests_run": 250,
+  "new_test_methods": 14,
+  "fixed_mapping_examples": 9,
+  "external_model_calls": 0,
+  "scripted_adapter_records": 53,
+  "maximum_fixture_input_chars": 14640,
+  "audit": {
+    "frozen_inputs_verified": 156,
+    "artifacts_verified": 16,
+    "snapshots_verified": 18,
+    "typed_calculation_records": 18,
+    "prior_ledger_entries_verified": 284,
+    "archived_sources_verified": 2
+  },
+  "full_cases_completed": 9,
+  "original_A2": "DENIED",
+  "X5": "INCONCLUSIVE",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "semantic_acceptance": "NOT_VALIDATED",
+  "new_profile_default": false,
+  "automatic_additional_batches": false,
+  "limitations": [
+    "Scripted semantic outputs cannot validate model mapping quality or joint false acceptance.",
+    "The existing complete-work required criteria are unchanged; incomplete-work profile adequacy is not established.",
+    "The new expression profile is opt-in and untested with a real provider; no old campaign is resumed."
+  ]
+}

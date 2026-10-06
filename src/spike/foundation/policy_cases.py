@@ -16,7 +16,18 @@ from .llm import ModelFailure
 
 
 class PolicyWorld(ActionWorld):
-    def __init__(self, evidence, definition, fixture, variant):
+    def __init__(self, evidence, definition, fixture, variant, *, rule_revision='v1'):
+        if rule_revision not in ('v1', 'v2'):
+            raise ContractError('UnsupportedPolicyRuleRevision')
+        if (definition.get('version') == 'v2') != (rule_revision == 'v2'):
+            raise ContractError('PolicyRuleRevisionMismatch')
+        if rule_revision == 'v2':
+            expected = {key: {'space': 'canonical', 'identity': identity, 'revision': 'v2'}
+                for key, identity in (('protocol_ref', 'E1PolicyProtocol'),
+                    ('semantic_rule_ref', 'E1PolicySemanticRules'), ('utility_rule_ref', 'E1UtilityRules'))}
+            binding = definition.get('runtime_binding_requirement', {})
+            if any(binding.get(k) != v for k, v in expected.items()):
+                raise ContractError('PolicyDeclaredBindingMismatch')
         self.endpoint = definition['provider_endpoint']
         super().__init__(evidence)
         self.definition, self.policy_fixture = definition, fixture
@@ -42,15 +53,17 @@ class PolicyWorld(ActionWorld):
                      'allowed_action_refs': allowed, 'reason': 'This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching.'})
         claims = tuple(seed(self.h, Ref(Space.CANONICAL, identity, 'v1'), kind='Claim', payload={'meaning': meaning})
             for identity, meaning in [('C1','Independent task proficiency'),('C2','Unit-rate strategy selection'),('C3','Division arithmetic')])
-        ref = seed(self.h, Ref(Space.CANONICAL, 'E1PolicyProtocol', 'v1'), kind='ReasoningProtocol', payload=definition)
-        rule = seed(self.h, Ref(Space.CANONICAL, 'E1PolicySemanticRules', 'v1'), kind='SemanticValidationRules',
+        ref = seed(self.h, Ref(Space.CANONICAL, 'E1PolicyProtocol', rule_revision), kind='ReasoningProtocol', payload=definition)
+        rule = seed(self.h, Ref(Space.CANONICAL, 'E1PolicySemanticRules', rule_revision), kind='SemanticValidationRules',
             payload={'format': 'legacy-v1', 'system': definition['validation_system']})
-        self.utility_rule = seed(self.h, Ref(Space.CANONICAL, 'E1UtilityRules', 'v1'), kind='PolicyUtilityRules',
+        self.utility_rule = seed(self.h, Ref(Space.CANONICAL, 'E1UtilityRules', rule_revision), kind='PolicyUtilityRules',
             payload={'system': definition['utility_system'], 'rubric': definition['utility_rubric'], 'test_only': True})
         kinds = ('Observation','LearnerWorkSubmitted','CurrentInteractionInput','ActionSemantic','ActivityConstraints','Claim')
         self.protocol = Protocol(ref, 'PolicyOutcome', 'Interaction', kinds, tuple(tuple(f) for f in definition['fields']), rule, self.endpoint)
         self.runtime.register_protocol(self.protocol)
-        self.h.canonical.add_compatibility_fixture(Compatibility('E1-compatible', (ref, rule), 'learner-A', 'learning', Decision.ALLOW))
+        bindings = (ref, rule, self.utility_rule) if rule_revision == 'v2' else (ref, rule)
+        compatibility = 'E1-compatible-v2' if rule_revision == 'v2' else 'E1-compatible'
+        self.h.canonical.add_compatibility_fixture(Compatibility(compatibility, bindings, 'learner-A', 'learning', Decision.ALLOW))
         self.security.install_authority(AuthorityGrant('E1-reason', 'interaction','learning','learner-A',
             (ref.identity,), ('reason','validate'), 100000))
         self.security.install_authority(AuthorityGrant('E1-utility', 'interaction','learning','learner-A',
@@ -63,7 +76,7 @@ class PolicyWorld(ActionWorld):
         inputs = (self.work, self.before_observation, self.input, self.constraints, *self.action_refs, *claims)
         self.context = self.runtime.assemble(self.tokens['interaction'], ref,'learner-A','learner-A','learning',
             tuple(ContextInput(r, Role.CANONICAL if r.space == Space.CANONICAL else Role.FACTUAL if r.space == Space.FACT else Role.EPISTEMIC) for r in inputs),
-            VersionContext((ref,rule), compatibility_basis='E1-compatible'))
+            VersionContext(bindings, compatibility_basis=compatibility))
         self.policy_runtime = PolicyRuntime(self.runtime, definition, self.utility_rule)
         self.e.emit('E1_context', context=json_value(self.context), grants=self.security.describe_grants(),
                     observation_semantics='SCRIPTED-INPUT-FIXTURE', policy='REAL-LLM', display='TRUSTED-MOCK')
@@ -110,8 +123,8 @@ def negative_fixture(evidence, definition, fixture):
     return all(c['passed'] for c in evidence.checks)
 
 
-def run_policy_case(evidence, definition, fixture, variant, repetition, adapter):
-    w = PolicyWorld(evidence, definition, fixture, variant)
+def run_policy_case(evidence, definition, fixture, variant, repetition, adapter, *, rule_revision='v1'):
+    w = PolicyWorld(evidence, definition, fixture, variant, rule_revision=rule_revision)
     start = len(adapter.records)
     row = {'variant': variant['id'], 'repetition': repetition, 'result': 'NON_SUCCESS',
            'legality_reason': None, 'semantic_status': None, 'commit_status': None,

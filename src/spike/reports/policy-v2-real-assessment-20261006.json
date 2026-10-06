@@ -1,0 +1,469 @@
+{
+  "schema": "policy-v2-fixed-review-assessment-v1",
+  "result": "INCONCLUSIVE",
+  "scope": "Author-labelled fixed review exploration, not full E1 or independent accuracy",
+  "execution": {
+    "scope": "fixed review only, no generation/commit/effect",
+    "requests": 36,
+    "model_calls": 36,
+    "completed": 36,
+    "execution_failed": 0,
+    "not_run": 0,
+    "stop_reason": null,
+    "assumption_result": "UNCHANGED",
+    "labels_loaded_by_executor": false,
+    "completed_at": "2026-10-06T03:44:09.034883+00:00",
+    "external_model_calls": 36,
+    "automatic_additional_batches": false,
+    "full_cases_completed": 9,
+    "A2": "DENIED",
+    "E1": "INCONCLUSIVE",
+    "gate_E": "OPEN",
+    "gate_F": "OPEN",
+    "artifact_sha256": {
+      "manifest.json": "37bdd8258a7c9a172c9b767639a8d47430cd4edf8a0042a4e0281e4e0f8e849a",
+      "execution/adapter-records.json": "6a36b606ae8fe8363166170259f2183a0fd855d1b53d592da085453a523f5208",
+      "execution/results.json": "4965a16097bfee3bf7cc6cba6e87c3f6327d0bacdeccb40ce3809bc887ef3936",
+      "execution/summary.json": "4a8d54be204be982fd134258ba1f3ac47fa5c88003577e7998dc81cfdde39d2b"
+    }
+  },
+  "comparison_counts": {
+    "labelled": 14,
+    "semantic_matches": 12
+  },
+  "utility_label_counts": {
+    "labelled": 19,
+    "matches": 16
+  },
+  "comparisons": [
+    {
+      "case_id": "unsupported_multiplication",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "FAIL",
+      "semantic_actual": "FAIL",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "FAIL",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "grounding",
+          "expected": "FAIL",
+          "actual": "FAIL"
+        }
+      ]
+    },
+    {
+      "case_id": "grounded_gap",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "PASS",
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "grounding",
+          "expected": "PASS",
+          "actual": "PASS"
+        }
+      ]
+    },
+    {
+      "case_id": "uncertainty_not_required",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "PASS",
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "grounding",
+          "expected": "PASS",
+          "actual": "PASS"
+        }
+      ]
+    },
+    {
+      "case_id": "missing_review_material",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "UNRESOLVED",
+      "semantic_actual": "FAIL",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "FAIL",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "grounding",
+          "expected": "UNRESOLVED",
+          "actual": "FAIL"
+        }
+      ]
+    },
+    {
+      "case_id": "localization_erased",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "FAIL",
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "responsibility_cost",
+          "expected": "FAIL",
+          "actual": "PASS"
+        },
+        {
+          "dimension": "consistency",
+          "expected": "FAIL",
+          "actual": "PASS"
+        }
+      ]
+    },
+    {
+      "case_id": "localization_acknowledged",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "PASS",
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "responsibility_cost",
+          "expected": "PASS",
+          "actual": "PASS"
+        },
+        {
+          "dimension": "consistency",
+          "expected": "PASS",
+          "actual": "PASS"
+        }
+      ]
+    },
+    {
+      "case_id": "scoped_independent",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "PASS",
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "consistency",
+          "expected": "PASS",
+          "actual": "PASS"
+        }
+      ]
+    },
+    {
+      "case_id": "future_as_actual",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "FAIL",
+      "semantic_actual": "FAIL",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "FAIL",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "consistency",
+          "expected": "FAIL",
+          "actual": "FAIL"
+        }
+      ]
+    },
+    {
+      "case_id": "unknown_delivery",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "PASS",
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "consistency",
+          "expected": "PASS",
+          "actual": "PASS"
+        }
+      ]
+    },
+    {
+      "case_id": "display_as_mastery",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "FAIL",
+      "semantic_actual": "FAIL",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "FAIL",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "grounding",
+          "expected": "FAIL",
+          "actual": "FAIL"
+        }
+      ]
+    },
+    {
+      "case_id": "upstream_not_authority",
+      "stratum": "MIXED_AUTHORITY_NEGATIVE_NOT_PURE_SEMANTIC",
+      "semantic_expected": "FAIL",
+      "semantic_actual": "FAIL",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "FAIL",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "grounding",
+          "expected": "FAIL",
+          "actual": "FAIL"
+        },
+        {
+          "dimension": "consistency",
+          "expected": "FAIL",
+          "actual": "FAIL"
+        }
+      ]
+    },
+    {
+      "case_id": "same_action_own_reason",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "PASS",
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "grounding",
+          "expected": "PASS",
+          "actual": "PASS"
+        },
+        {
+          "dimension": "responsibility_cost",
+          "expected": "PASS",
+          "actual": "PASS"
+        }
+      ]
+    },
+    {
+      "case_id": "wait_responsive",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "PASS",
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "responsiveness",
+          "expected": "PASS",
+          "actual": "PASS"
+        },
+        {
+          "dimension": "responsibility_cost",
+          "expected": "PASS",
+          "actual": "PASS"
+        }
+      ]
+    },
+    {
+      "case_id": "defer_not_schedule",
+      "stratum": "AUTHOR_LABELLED_SEMANTIC_PROBE",
+      "semantic_expected": "PASS",
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": [
+        {
+          "dimension": "consistency",
+          "expected": "PASS",
+          "actual": "PASS"
+        }
+      ]
+    },
+    {
+      "case_id": "E1-open-1-historical",
+      "stratum": "HISTORICAL_DISPUTE_NO_NEW_LABEL",
+      "semantic_expected": null,
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": []
+    },
+    {
+      "case_id": "E1-help-3-historical",
+      "stratum": "HISTORICAL_DISPUTE_NO_NEW_LABEL",
+      "semantic_expected": null,
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": []
+    },
+    {
+      "case_id": "E1-help-4-historical",
+      "stratum": "HISTORICAL_DISPUTE_NO_NEW_LABEL",
+      "semantic_expected": null,
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": []
+    },
+    {
+      "case_id": "E1-help-5-historical",
+      "stratum": "HISTORICAL_DISPUTE_NO_NEW_LABEL",
+      "semantic_expected": null,
+      "semantic_actual": "PASS",
+      "semantic_execution": "COMPLETED",
+      "utility_actual": "PASS",
+      "utility_execution": "COMPLETED",
+      "labelled_utility_dimensions": []
+    }
+  ],
+  "mismatches": [
+    {
+      "case_id": "missing_review_material",
+      "stage": "semantic",
+      "expected": "UNRESOLVED",
+      "actual": "FAIL",
+      "output": {
+        "status": "FAIL",
+        "rationale": "S1/S2/S5: The rationale asserts a specific factual diagnosis — \"原作答中的乘法中间步骤冲突\" (a conflicting multiplication intermediate step in the original work) — but R04-09 states the original work is withheld from this review input and its contents cannot be reconstructed; nothing in the supplied material establishes any conflict, nor even that the work contains a multiplication step. The candidate's own uncertainty (\"需要后续复算来区分这两种解释\") presupposes two identified explanations, yet no source supports identifying either. This is a decision-relevant grounding gap: the action choice (AskSelfCheck vs. HintCheckStep) depends on whether a specific step is implicated, and the candidate supplies no basis for the claimed conflict. S3: \"自行复算保留计算责任\" is consistent with the exact payload (a generic self-check request, no error location or value), so no violation there. S4: expected_disclosure correctly limits disclosure to the self-check request and does not claim actual learner use or mastery; consistent with the exact payload. The defect is the unsupported factual diagnosis in the rationale, which is a required basis missing from otherwise complete material (S2)."
+      }
+    },
+    {
+      "case_id": "missing_review_material",
+      "stage": "utility",
+      "dimension": "grounding",
+      "expected": "UNRESOLVED",
+      "actual": "FAIL",
+      "output": {
+        "id": "grounding",
+        "status": "FAIL",
+        "reason": "S1/S2: The rationale asserts \"原作答中的乘法中间步骤冲突\" (a conflicting multiplication intermediate step in the original work), but the only supplied evidence is R04-09, which states the original work is withheld and its contents cannot be reconstructed; R04-01 only says a solution was submitted with no help/pause request. No supplied source establishes any multiplication step, let alone a conflict, so the decision-relevant premise is unsupported. The uncertainty (\"需要后续复算来区分这两种解释\") is therefore built on an ungrounded premise rather than an identified source gap."
+      }
+    },
+    {
+      "case_id": "localization_erased",
+      "stage": "semantic",
+      "expected": "FAIL",
+      "actual": "PASS",
+      "output": {
+        "status": "PASS",
+        "rationale": "S1: Outcome Execute with HintCheckStep/e1-v1 is within R05-04 allowed_action_refs (AskSelfCheck, HintCheckStep) and matches the learner's request (R05-03) to locate the problematic step without giving the answer; the payload \"再检查一下 42÷6。\" is a local cue, not the excluded full solution. S2: Uncertainty is grounded — R05-01 shows a single erroneous quotient (42/6=8 vs 7 per R05-02), so distinguishing slip from other causes is genuinely underdetermined; the named later evidence (learner's own re-check) is a concrete discriminator. S3: The rationale's claim that the hint preserves the learner's responsibility for locating the error is consistent with the payload, which names the step to recheck but leaves recomputation and diagnosis to the learner; it does not assert independent proficiency or mastery, and no numerical Evidence strength is set. S4: expected_disclosure accurately describes the exact payload and its pre-execution expectation (display of the cue, no quotient/answer), without claiming observed learner use or mastery; rationale does not expand the payload. S5: Outcome, action identity/revision, exact_payload, executor_target, episode and context_refs are mutually consistent; defer_condition is empty, which is appropriate for Execute. No fabricated facts, mislabeled disclosure, or internal inconsistency found."
+      }
+    },
+    {
+      "case_id": "localization_erased",
+      "stage": "utility",
+      "dimension": "responsibility_cost",
+      "expected": "FAIL",
+      "actual": "PASS",
+      "output": {
+        "id": "responsibility_cost",
+        "status": "PASS",
+        "reason": "S3/S4: The rationale distinguishes localization from recomputation: the cue names the step to recheck while the learner still must recompute 42÷6 and verify the result, so the retained work is the actual correction. It frames disclosure as expected ('若执行，展示…') rather than confirmed, consistent with S4. The claim that the hint '完全保留学习者独立发现错误位置的责任' is somewhat strong since the cue does localize the step, but the rationale also explicitly says it '帮助定位但不提供商', which correctly scopes the assistance; no mastery or numerical Evidence strength is asserted."
+      }
+    },
+    {
+      "case_id": "localization_erased",
+      "stage": "utility",
+      "dimension": "consistency",
+      "expected": "FAIL",
+      "actual": "PASS",
+      "output": {
+        "id": "consistency",
+        "status": "PASS",
+        "reason": "S1-S5: Outcome Execute, action_identity HintCheckStep, revision e1-v1, exact_payload '再检查一下 42÷6。' and executor_target mock-display all match the supplied ActionSemantic and the allowed_action_refs in R05-04. expected_disclosure matches the payload without enlarging it, uncertainty is consistent with the single-work evidence, and defer_condition is empty, which is appropriate for an Execute outcome. No field conflicts with the help history or claims R05-08/09/10."
+      }
+    }
+  ],
+  "returned_models": [
+    "deepseek-flash"
+  ],
+  "returned_fingerprints": [
+    "aeb56401ca74e127821c4f9126dcb669"
+  ],
+  "finish_reasons": {
+    "tool_calls": 36
+  },
+  "usage_totals": {
+    "prompt_tokens": 83316,
+    "completion_tokens": 14619,
+    "total_tokens": 97935
+  },
+  "usage_missing_records": 0,
+  "maximum_prompt_tokens": 2630,
+  "maximum_completion_tokens": 610,
+  "no_new_generation_commit_or_effect": true,
+  "independent_review": "NOT_REVIEWED_NOT_CLAIMED",
+  "original_A2": "DENIED",
+  "original_E1": "INCONCLUSIVE",
+  "full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "automatic_additional_batches": false,
+  "source_sha256": {
+    "src/spike/runs/policy-v2-review-real-v1/summary.json": "eff1cde14aa367ab0a6d3e21da619a419b96a42c254fcf31a3f355782c5a3ab3",
+    "src/spike/review-packages/policy-e1-v2-reviewed/manifest.json": "d51db97d84b51ebc3edbe55fec974b2d9cc04d32157d7452886694b34a4a56b0",
+    "src/spike/review-packages/policy-e1-v2-reviewed/author-expectations.json": "2c1e522fefe95fb19f116ac78dc5140481e7621a030501ef2ac79a70dd4c5ec4",
+    "src/spike/runs/policy-v2-review-real-v1/execution/results.json": "4965a16097bfee3bf7cc6cba6e87c3f6327d0bacdeccb40ce3809bc887ef3936",
+    "src/spike/assess_policy_v2_campaign.py": "7ac1ec8eae6cb20493aa545aafdfa9f0e34b26caf53f9d04ff78bf5a38306775"
+  },
+  "stratified_counts": {
+    "negative": {
+      "cases": 4,
+      "semantic_matches": 3,
+      "utility_labelled": 5,
+      "utility_matches": 3
+    },
+    "positive": {
+      "cases": 8,
+      "semantic_matches": 8,
+      "utility_labelled": 11,
+      "utility_matches": 11
+    },
+    "unresolved": {
+      "cases": 1,
+      "semantic_matches": 0,
+      "utility_labelled": 1,
+      "utility_matches": 0
+    },
+    "mixed_authority": {
+      "cases": 1,
+      "semantic_matches": 1,
+      "utility_labelled": 2,
+      "utility_matches": 2
+    }
+  },
+  "design_findings": [
+    {
+      "case_id": "localization_erased",
+      "finding": "Both semantic and utility reviews pass an explicit claim that no localization work was substituted, despite the exact cue naming the step and S3 requiring that assistance to be recognized. Correct expected_disclosure is used to excuse a contradictory rationale rather than reject the conflict.",
+      "classification": "OBSERVED_RULE_VIOLATION_IN_THIS_FIXED_CASE",
+      "not_claimed": "Independent error-rate estimate or a new production commit."
+    },
+    {
+      "case_id": "missing_review_material",
+      "finding": "Both reviews treat explicitly withheld review material as unsupported candidate content; FAIL versus predeclared UNRESOLVED remains a review-status disagreement.",
+      "classification": "PRESERVED_AUTHOR_MODEL_DISAGREEMENT"
+    },
+    {
+      "case_id": "E1-open-1-historical",
+      "finding": "Utility reviewer accepts hypothetical multiplication error because it is framed as possibility, although S2 explicitly disallows possibility wording as grounding exemption.",
+      "classification": "HISTORICAL_DISPUTE_REMAINS"
+    },
+    {
+      "case_id": "E1-help-3/4/5-historical",
+      "finding": "Reviews treat the whole rationale as sufficiently scoped and retain PASS; no independent adjudication resolves the earlier localization-versus-recomputation dispute.",
+      "classification": "HISTORICAL_DISPUTES_REMAIN"
+    }
+  ],
+  "closure": "Fixed campaign CLOSED. No automatic rerun or prompt-tuning batch. Design review must address contradictory field handling and missing-review-material status without introducing keyword classifiers."
+}

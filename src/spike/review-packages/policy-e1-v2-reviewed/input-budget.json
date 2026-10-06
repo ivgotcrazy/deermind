@@ -1,0 +1,290 @@
+[
+  {
+    "case_id": "unsupported_multiplication",
+    "stage": "semantic",
+    "message_chars": 7623,
+    "request_utf8_bytes": 8412,
+    "rough_token_estimate": 2484,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "unsupported_multiplication",
+    "stage": "utility",
+    "message_chars": 8620,
+    "request_utf8_bytes": 9659,
+    "rough_token_estimate": 2858,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "grounded_gap",
+    "stage": "semantic",
+    "message_chars": 7648,
+    "request_utf8_bytes": 8520,
+    "rough_token_estimate": 2503,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "grounded_gap",
+    "stage": "utility",
+    "message_chars": 8645,
+    "request_utf8_bytes": 9767,
+    "rough_token_estimate": 2877,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "uncertainty_not_required",
+    "stage": "semantic",
+    "message_chars": 7657,
+    "request_utf8_bytes": 8547,
+    "rough_token_estimate": 2509,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "uncertainty_not_required",
+    "stage": "utility",
+    "message_chars": 8654,
+    "request_utf8_bytes": 9794,
+    "rough_token_estimate": 2883,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "missing_review_material",
+    "stage": "semantic",
+    "message_chars": 7340,
+    "request_utf8_bytes": 8174,
+    "rough_token_estimate": 2405,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "missing_review_material",
+    "stage": "utility",
+    "message_chars": 8337,
+    "request_utf8_bytes": 9421,
+    "rough_token_estimate": 2779,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "localization_erased",
+    "stage": "semantic",
+    "message_chars": 7658,
+    "request_utf8_bytes": 8528,
+    "rough_token_estimate": 2506,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "localization_erased",
+    "stage": "utility",
+    "message_chars": 8655,
+    "request_utf8_bytes": 9775,
+    "rough_token_estimate": 2880,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "localization_acknowledged",
+    "stage": "semantic",
+    "message_chars": 7676,
+    "request_utf8_bytes": 8582,
+    "rough_token_estimate": 2517,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "localization_acknowledged",
+    "stage": "utility",
+    "message_chars": 8673,
+    "request_utf8_bytes": 9829,
+    "rough_token_estimate": 2891,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "scoped_independent",
+    "stage": "semantic",
+    "message_chars": 7659,
+    "request_utf8_bytes": 8531,
+    "rough_token_estimate": 2507,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "scoped_independent",
+    "stage": "utility",
+    "message_chars": 8656,
+    "request_utf8_bytes": 9778,
+    "rough_token_estimate": 2881,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "future_as_actual",
+    "stage": "semantic",
+    "message_chars": 8024,
+    "request_utf8_bytes": 8870,
+    "rough_token_estimate": 2613,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "future_as_actual",
+    "stage": "utility",
+    "message_chars": 9021,
+    "request_utf8_bytes": 10117,
+    "rough_token_estimate": 2987,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "unknown_delivery",
+    "stage": "semantic",
+    "message_chars": 7982,
+    "request_utf8_bytes": 8789,
+    "rough_token_estimate": 2594,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "unknown_delivery",
+    "stage": "utility",
+    "message_chars": 8979,
+    "request_utf8_bytes": 10036,
+    "rough_token_estimate": 2968,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "display_as_mastery",
+    "stage": "semantic",
+    "message_chars": 7967,
+    "request_utf8_bytes": 8718,
+    "rough_token_estimate": 2581,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "display_as_mastery",
+    "stage": "utility",
+    "message_chars": 8964,
+    "request_utf8_bytes": 9965,
+    "rough_token_estimate": 2955,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "upstream_not_authority",
+    "stage": "semantic",
+    "message_chars": 7687,
+    "request_utf8_bytes": 8565,
+    "rough_token_estimate": 2516,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "upstream_not_authority",
+    "stage": "utility",
+    "message_chars": 8684,
+    "request_utf8_bytes": 9812,
+    "rough_token_estimate": 2890,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "same_action_own_reason",
+    "stage": "semantic",
+    "message_chars": 8223,
+    "request_utf8_bytes": 9219,
+    "rough_token_estimate": 2695,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "same_action_own_reason",
+    "stage": "utility",
+    "message_chars": 9220,
+    "request_utf8_bytes": 10466,
+    "rough_token_estimate": 3069,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "wait_responsive",
+    "stage": "semantic",
+    "message_chars": 7623,
+    "request_utf8_bytes": 8457,
+    "rough_token_estimate": 2490,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "wait_responsive",
+    "stage": "utility",
+    "message_chars": 8620,
+    "request_utf8_bytes": 9704,
+    "rough_token_estimate": 2864,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "defer_not_schedule",
+    "stage": "semantic",
+    "message_chars": 7609,
+    "request_utf8_bytes": 8463,
+    "rough_token_estimate": 2489,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "defer_not_schedule",
+    "stage": "utility",
+    "message_chars": 8606,
+    "request_utf8_bytes": 9710,
+    "rough_token_estimate": 2863,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "E1-open-1-historical",
+    "stage": "semantic",
+    "message_chars": 8125,
+    "request_utf8_bytes": 8761,
+    "rough_token_estimate": 2612,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "E1-open-1-historical",
+    "stage": "utility",
+    "message_chars": 9122,
+    "request_utf8_bytes": 10008,
+    "rough_token_estimate": 2986,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "E1-help-3-historical",
+    "stage": "semantic",
+    "message_chars": 7977,
+    "request_utf8_bytes": 8605,
+    "rough_token_estimate": 2566,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "E1-help-3-historical",
+    "stage": "utility",
+    "message_chars": 8974,
+    "request_utf8_bytes": 9852,
+    "rough_token_estimate": 2940,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "E1-help-4-historical",
+    "stage": "semantic",
+    "message_chars": 7977,
+    "request_utf8_bytes": 8605,
+    "rough_token_estimate": 2566,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "E1-help-4-historical",
+    "stage": "utility",
+    "message_chars": 8974,
+    "request_utf8_bytes": 9852,
+    "rough_token_estimate": 2940,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "E1-help-5-historical",
+    "stage": "semantic",
+    "message_chars": 7977,
+    "request_utf8_bytes": 8605,
+    "rough_token_estimate": 2566,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  },
+  {
+    "case_id": "E1-help-5-historical",
+    "stage": "utility",
+    "message_chars": 8974,
+    "request_utf8_bytes": 9852,
+    "rough_token_estimate": 2940,
+    "estimate_caveat": "Non-ASCII treated as Chinese for planning; not tokenizer count or hard bound."
+  }
+]
