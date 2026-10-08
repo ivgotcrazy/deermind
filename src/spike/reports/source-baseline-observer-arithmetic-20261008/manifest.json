@@ -1,0 +1,32 @@
+[
+  {
+    "source_path": "src/spike/foundation/boundary.py",
+    "previous_sha256": "1c9c1b5c5b7b3fbc90459335ffee6f3a021568c0e17d879705111587c64937f6",
+    "preserved_at": "src/spike/reports/source-baseline-observer-arithmetic-20261008/0-boundary.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/protocol_preflight.py",
+    "previous_sha256": "1af13ae13b7b4bd7cc03e53f62225f543c6e82f8e6a2f5dcb831436371d66210",
+    "preserved_at": "src/spike/reports/source-baseline-observer-arithmetic-20261008/1-protocol_preflight.py.txt"
+  },
+  {
+    "source_path": "src/spike/README.md",
+    "previous_sha256": "93997f8b69331b947baaca62096aaf0a426194180db4a2fdd860f83a9b95db42",
+    "preserved_at": "src/spike/reports/source-baseline-observer-arithmetic-20261008/2-README.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/spike/README.md",
+    "previous_sha256": "b4b07b48eb40c1702fccadde54af7f5997ec21f437cdaf5184931a6cd61ad863",
+    "preserved_at": "src/spike/reports/source-baseline-observer-arithmetic-20261008/3-README.md.txt"
+  },
+  {
+    "source_path": "src/spike/reports/validation-progress-v1.json",
+    "previous_sha256": "643f38dd9156dd23771d5fd08285ec5a0aa78612a3c5569f40d76919f4df574e",
+    "preserved_at": "src/spike/reports/source-baseline-observer-arithmetic-20261008/4-validation-progress-v1.json.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/validation_dimensions.py",
+    "previous_sha256": "2f361f2cc56253e2525984cc8ab8ac802c22ad228d56fce13c78b0d82007d680",
+    "preserved_at": "src/spike/reports/source-baseline-observer-arithmetic-20261008/5-validation_dimensions.py.txt"
+  }
+]

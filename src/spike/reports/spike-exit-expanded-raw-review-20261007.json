@@ -1,0 +1,390 @@
+{
+  "scope": "Host expansion for offline author analysis only; not a valid registered review, not a replay or new execution",
+  "expanded_raw_review": {
+    "candidate_digest": "9716ea4eb0c8f2e25ddb081e4613045ef7f678b605d50249d104e12052cc4c29",
+    "context_id": "03e25c6cf7a34800afd99574872ae6a0",
+    "rule_ref": {
+      "space": "canonical",
+      "identity": "E1PolicySemanticRules",
+      "revision": "v5"
+    },
+    "material_record_ref": {
+      "space": "execution",
+      "identity": "bd59e52d7ffe4377879bb7d9beddd0e3",
+      "revision": "1"
+    },
+    "reviewed_fields": [
+      "action_identity",
+      "action_revision",
+      "context_refs",
+      "defer_condition",
+      "episode",
+      "exact_payload",
+      "executor_target",
+      "expected_disclosure",
+      "outcome",
+      "rationale",
+      "uncertainty"
+    ],
+    "checks": [
+      {
+        "id": "S1",
+        "status": "PASS",
+        "reason_code": "SATISFIED",
+        "finding_ids": [
+          "F1",
+          "F2",
+          "F3"
+        ],
+        "rationale": "Action HintCheckStep/e1-v1 is within E1-Activity allowed_action_refs; payload matches registered ActionSemantic exactly; episode and context_refs align with the current request and work."
+      },
+      {
+        "id": "S2",
+        "status": "PASS",
+        "reason_code": "SATISFIED",
+        "finding_ids": [
+          "F4"
+        ],
+        "rationale": "Uncertainty correctly declines to infer stable ability from a single visible arithmetic error; no decision-relevant gap is left unaddressed for this local-cue action."
+      },
+      {
+        "id": "S3",
+        "status": "PASS",
+        "reason_code": "SATISFIED",
+        "finding_ids": [
+          "F5"
+        ],
+        "rationale": "Payload '再检查一下 42÷6。' names the step to recheck without supplying the quotient 7, so localization is cued while recomputation remains learner-owned; rationale's independence claim is scoped to localization, consistent with the payload."
+      },
+      {
+        "id": "S4",
+        "status": "PASS",
+        "reason_code": "SATISFIED",
+        "finding_ids": [
+          "F6"
+        ],
+        "rationale": "expected_disclosure is framed as an expectation ('预期') and does not claim the learner attended, used or mastered the cue; it does not expand the payload beyond the registered text."
+      },
+      {
+        "id": "S5",
+        "status": "PASS",
+        "reason_code": "SATISFIED",
+        "finding_ids": [
+          "F7"
+        ],
+        "rationale": "Outcome Execute with empty defer_condition is consistent; all free-text fields, exact parameters and the registered payload are mutually consistent and grounded in supplied materials."
+      }
+    ],
+    "findings": [
+      {
+        "id": "F1",
+        "rules": [
+          "S1"
+        ],
+        "relation": "SUPPORTED",
+        "candidate_quotes": [
+          {
+            "field": "action_identity",
+            "start": "0",
+            "end": "13",
+            "quote": "HintCheckStep"
+          },
+          {
+            "field": "action_revision",
+            "start": "0",
+            "end": "5",
+            "quote": "e1-v1"
+          }
+        ],
+        "source_quotes": [
+          {
+            "field": "action_identity",
+            "start": "0",
+            "end": "13",
+            "quote": "HintCheckStep",
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          },
+          {
+            "field": "action_revision",
+            "start": "0",
+            "end": "5",
+            "quote": "e1-v1",
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          },
+          {
+            "field": "purpose",
+            "start": "0",
+            "end": "35",
+            "quote": "IndependentDiagnosisWithLimitedHelp",
+            "ref": {
+              "space": "canonical",
+              "identity": "E1-Activity",
+              "revision": "v1"
+            }
+          },
+          {
+            "field": "reason",
+            "start": "0",
+            "end": "150",
+            "quote": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching.",
+            "ref": {
+              "space": "canonical",
+              "identity": "E1-Activity",
+              "revision": "v1"
+            }
+          }
+        ],
+        "gap_ids": [],
+        "rationale": "Selected action identity/revision match the registered HintCheckStep e1-v1 and appear in E1-Activity allowed_action_refs; the activity permits a local cue while excluding the complete answer."
+      },
+      {
+        "id": "F2",
+        "rules": [
+          "S1",
+          "S5"
+        ],
+        "relation": "SUPPORTED",
+        "candidate_quotes": [
+          {
+            "field": "exact_payload",
+            "start": "0",
+            "end": "11",
+            "quote": "再检查一下 42÷6。"
+          },
+          {
+            "field": "executor_target",
+            "start": "0",
+            "end": "12",
+            "quote": "mock-display"
+          }
+        ],
+        "source_quotes": [
+          {
+            "field": "exact_payload",
+            "start": "0",
+            "end": "11",
+            "quote": "再检查一下 42÷6。",
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          },
+          {
+            "field": "executor_target",
+            "start": "0",
+            "end": "12",
+            "quote": "mock-display",
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          }
+        ],
+        "gap_ids": [],
+        "rationale": "exact_payload and executor_target are verbatim identical to the registered HintCheckStep ActionSemantic."
+      },
+      {
+        "id": "F3",
+        "rules": [
+          "S1"
+        ],
+        "relation": "SUPPORTED",
+        "candidate_quotes": [
+          {
+            "field": "episode",
+            "start": "0",
+            "end": "13",
+            "quote": "apple-episode"
+          }
+        ],
+        "source_quotes": [
+          {
+            "field": "episode",
+            "start": "0",
+            "end": "13",
+            "quote": "apple-episode",
+            "ref": {
+              "space": "fact",
+              "identity": "D-work-before",
+              "revision": "1"
+            }
+          },
+          {
+            "field": "episode",
+            "start": "0",
+            "end": "13",
+            "quote": "apple-episode",
+            "ref": {
+              "space": "fact",
+              "identity": "E1-current-input",
+              "revision": "1"
+            }
+          },
+          {
+            "field": "episode",
+            "start": "0",
+            "end": "13",
+            "quote": "apple-episode",
+            "ref": {
+              "space": "canonical",
+              "identity": "E1-Activity",
+              "revision": "v1"
+            }
+          }
+        ],
+        "gap_ids": [],
+        "rationale": "Episode 'apple-episode' matches the work, current input and activity constraints; context_refs point to the supplied current input."
+      },
+      {
+        "id": "F4",
+        "rules": [
+          "S2"
+        ],
+        "relation": "SUPPORTED",
+        "candidate_quotes": [
+          {
+            "field": "uncertainty",
+            "start": "0",
+            "end": "21",
+            "quote": "本例可见除法结果错误，未据此推断稳定能力。"
+          }
+        ],
+        "source_quotes": [
+          {
+            "field": "description",
+            "start": "0",
+            "end": "155",
+            "quote": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105.",
+            "ref": {
+              "space": "derived",
+              "identity": "E1-O",
+              "revision": "r1"
+            }
+          }
+        ],
+        "gap_ids": [],
+        "rationale": "Observation confirms the visible division error; uncertainty appropriately limits inference to the visible error and does not assert stable mastery."
+      },
+      {
+        "id": "F5",
+        "rules": [
+          "S3"
+        ],
+        "relation": "SUPPORTED",
+        "candidate_quotes": [
+          {
+            "field": "rationale",
+            "start": "0",
+            "end": "30",
+            "quote": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+          },
+          {
+            "field": "exact_payload",
+            "start": "0",
+            "end": "11",
+            "quote": "再检查一下 42÷6。"
+          }
+        ],
+        "source_quotes": [
+          {
+            "field": "exact_payload",
+            "start": "0",
+            "end": "11",
+            "quote": "再检查一下 42÷6。",
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          },
+          {
+            "field": "text",
+            "start": "0",
+            "end": "19",
+            "quote": "请帮我检查哪一步有问题，不要直接给答案",
+            "ref": {
+              "space": "fact",
+              "identity": "E1-current-input",
+              "revision": "1"
+            }
+          }
+        ],
+        "gap_ids": [],
+        "rationale": "The cue names the step (42÷6) without giving the quotient, so it assists localization while recomputation stays learner-owned; the rationale's independence claim is limited to localization, matching the payload."
+      },
+      {
+        "id": "F6",
+        "rules": [
+          "S4"
+        ],
+        "relation": "SUPPORTED",
+        "candidate_quotes": [
+          {
+            "field": "expected_disclosure",
+            "start": "0",
+            "end": "19",
+            "quote": "预期帮助定位除法步骤，不提供正确的商。"
+          }
+        ],
+        "source_quotes": [
+          {
+            "field": "exact_payload",
+            "start": "0",
+            "end": "11",
+            "quote": "再检查一下 42÷6。",
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          }
+        ],
+        "gap_ids": [],
+        "rationale": "Disclosure is stated as an expectation about locating the division step and explicitly does not provide the correct quotient; no claim of actual delivery, attention or mastery."
+      },
+      {
+        "id": "F7",
+        "rules": [
+          "S5"
+        ],
+        "relation": "SUPPORTED",
+        "candidate_quotes": [
+          {
+            "field": "outcome",
+            "start": "0",
+            "end": "7",
+            "quote": "Execute"
+          }
+        ],
+        "source_quotes": [
+          {
+            "field": "exact_payload",
+            "start": "0",
+            "end": "11",
+            "quote": "再检查一下 42÷6。",
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            }
+          }
+        ],
+        "gap_ids": [],
+        "rationale": "Execute with empty defer_condition is coherent; no field conflicts with the registered payload or supplied materials."
+      }
+    ],
+    "review_material_gaps": [],
+    "status": "PASS",
+    "rationale": "All applicable semantic obligations S1-S5 are satisfied. The selected HintCheckStep/e1-v1 is an allowed action, its payload and executor_target match the registered ActionSemantic verbatim, the episode and context align with supplied materials, the cue localizes the division step without revealing the quotient, disclosure is expectation-framed without overclaiming effects, and outcome/parameters are internally consistent."
+  }
+}

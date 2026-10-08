@@ -1,0 +1,195 @@
+"""Bounded issue checks: offline mechanics and an optional single role-clarification probe.
+
+Never changes historical acceptance or retries semantic failures. Every output
+directory must be new. Labels are offline measurements, absent from model input.
+"""
+import argparse
+from copy import deepcopy
+from dataclasses import replace
+from hashlib import sha256
+import io
+import json
+from pathlib import Path
+import sys
+import time
+import unittest
+from unittest.mock import patch
+
+from foundation.candidate_spans import (QUOTE_SELECTIONS, bind_contract, expand_classification,
+                                       expand_review, registry)
+from foundation.cases import EvidenceRecorder
+from foundation.exit_campaign import CONFIG, ROOT, read, run_schedule
+from foundation.llm import DeepSeekAdapter, LLMConfig, ModelFailure
+from foundation.responsibility import check_responsibility
+from foundation.runtime import ContractError
+from foundation.structured_output import matches_schema
+from foundation.working_campaign import CallBudget
+from prepare_spike_exit import ScriptedTransport
+
+OBSERVATION = 'src/spike/protocols/observation-feasibility-v1.json'
+POLICY = 'src/spike/protocols/policy-feasibility-v1.json'
+FIXTURE = 'src/spike/fixtures/feasibility-responsibility-v1.json'
+
+
+def write(path, value):
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+
+def digest(path):
+    return sha256(path.read_bytes()).hexdigest()
+
+
+def freeze(folder, extra=()):
+    paths = list((ROOT / 'src/spike/foundation').glob('*.py'))
+    paths += list((ROOT / 'src/spike/protocols').glob('*.json'))
+    paths += list((ROOT / 'src/spike/fixtures').glob('*.json'))
+    paths += list((ROOT / 'src/spike/tests').glob('*.py'))
+    paths += [Path(__file__), ROOT / 'src/spike/prepare_spike_exit.py', *extra]
+    value = {p.relative_to(ROOT).as_posix(): digest(p) for p in paths}
+    write(folder / 'source-sha256.json', value)
+    return value
+
+
+def finish(folder, sources):
+    changed = [p for p, h in sources.items() if digest(ROOT / p) != h]
+    if changed:
+        raise ValueError('SourcesChangedDuringBoundedCheck')
+    write(folder / 'artifact-sha256.json', {p.relative_to(folder).as_posix(): digest(p)
+          for p in sorted(folder.rglob('*')) if p.is_file() and p.name != 'artifact-sha256.json'})
+
+
+def historical_interface_checks():
+    """Original outputs tested against new interfaces; never counted as new model passes."""
+    file = ROOT / 'src/spike/runs/single-task-v2-network-retry-v2/adapter-records.json'
+    quotes, refs = [], []
+    policy_schema = read(POLICY)['output_contracts']['generation']['parameters']
+    for record in json.loads(file.read_text(encoding='utf-8')):
+        if not record.get('tool_calls'):
+            continue
+        wire = json.loads(record['tool_calls'][0]['function']['arguments'])
+        body = json.loads(record['messages'][1]['content'])
+        if record['purpose'] == 'ObservationSemanticValidation':
+            try:
+                expand_review(wire, body['candidate'])
+            except ContractError as exc:
+                if str(exc) != 'CandidateHandlesNotContiguous':
+                    raise
+                expanded = expand_review(wire, body['candidate'], QUOTE_SELECTIONS)
+                quotes.append({'execution_id': record['execution_id'],
+                    'prior_error': str(exc), 'new_representation': 'ACCEPTED_EXACT_SEPARATE_QUOTES',
+                    'expanded_quotes': {c['id']: c['quotes'] for c in expanded['criteria']},
+                    'commit_replayed': False})
+        if record.get('failure') == 'OutputSchemaMismatch' and 'context_refs' in wire:
+            refs.append({'execution_id': record['execution_id'],
+                'new_schema_matches': matches_schema(wire, policy_schema),
+                'all_refs_are_actual_input': all(r in [i['ref'] for i in body] for r in wire['context_refs']),
+                'commit_replayed': False})
+    assert len(quotes) == 4 and len(refs) == 1
+    assert all(r['new_schema_matches'] and r['all_refs_are_actual_input'] for r in refs)
+    return {'source': file.relative_to(ROOT).as_posix(), 'sha256': digest(file),
+            'quotes': quotes, 'policy_refs': refs, 'semantic_pass_claimed': False}
+
+
+def offline(folder):
+    folder.mkdir(parents=True, exist_ok=False)
+    (folder / 'cases').mkdir()
+    sources = freeze(folder)
+    plan = deepcopy(read(CONFIG.relative_to(ROOT).as_posix()))
+    selected, seen = [], set()
+    for spec in plan['schedule']:
+        if spec['group'] not in ('E2', 'F2', 'X1', 'X2', 'X5'):
+            continue
+        key = (spec['group'], spec.get('variant'))
+        if key not in seen:
+            seen.add(key)
+            selected.append(spec)
+    plan['schedule'] = selected
+    plan['budget'] = {'max_calls': 60, 'wall_time_seconds': 120,
+                      'transport_retries': 0, 'replacement_cases': 0}
+    write(folder / 'selected-schedule.json', plan)
+    transport = ScriptedTransport()
+    adapter = DeepSeekAdapter(LLMConfig('OFFLINE-SCRIPTED', base_url=plan['model']['provider_endpoint'],
+        max_calls=60, max_output_tokens=4096), transport)
+    output = io.StringIO()
+    sys.path.insert(0, str(ROOT / 'src/spike/tests'))
+    modules = ['test_feasibility_interfaces', 'test_indexed_observation', 'test_single_task_v2',
+               'test_boundary', 'test_content_projection', 'test_validation_dimensions',
+               'test_exit_campaign', 'test_activity_composition']
+    # Test modules are explicit so no unrelated campaign or live API can start.
+    with patch('socket.socket.connect', side_effect=RuntimeError('OfflineNetworkForbidden')), \
+            patch('socket.create_connection', side_effect=RuntimeError('OfflineNetworkForbidden')):
+        batch = run_schedule(plan, adapter, lambda name: EvidenceRecorder(folder / 'cases' / (name + '.jsonl')),
+                             before_case=transport.before_case, content_review=lambda *args: True)
+        tests = unittest.TextTestRunner(stream=output, verbosity=2).run(
+            unittest.defaultTestLoader.loadTestsFromNames(modules))
+        representations = historical_interface_checks()
+    write(folder / 'mechanism-results.json', batch)
+    write(folder / 'historical-interface-checks.json', representations)
+    write(folder / 'scripted-calls.json', adapter.records)
+    (folder / 'tests.txt').write_text(output.getvalue(), encoding='utf-8')
+    result = {'status': 'PASS' if tests.wasSuccessful() and batch['stop_reason'] is None else 'FAIL',
+        'external_model_calls': 0, 'scripted_calls': adapter.calls,
+        'mechanism_cases': len(selected), 'completed_cases': sum(r['execution'] == 'COMPLETED' for r in batch['rows']),
+        'effect_boundaries': batch['boundaries'], 'tests': tests.testsRun,
+        'test_failures': len(tests.failures), 'test_errors': len(tests.errors),
+        'stop_reason': batch['stop_reason'], 'historical_quote_cases': len(representations['quotes']),
+        'historical_policy_reference_cases': len(representations['policy_refs']),
+        'model_semantics_and_real_X5_validated': False}
+    write(folder / 'summary.json', result)
+    finish(folder, sources)
+    return result
+
+
+def responsibility(folder):
+    from foundation.llm import load_config
+    folder.mkdir(parents=True, exist_ok=False)
+    sources = freeze(folder)
+    definition, fixture = read(OBSERVATION), read(FIXTURE)
+    config = replace(load_config(ROOT), base_url=definition['provider_endpoint'],
+                     max_calls=len(fixture['cases']), timeout_seconds=30,
+                     max_output_tokens=2048)
+    adapter = DeepSeekAdapter(config)
+    budget = CallBudget(adapter, {'max_calls': len(fixture['cases']), 'wall_time_seconds': 300})
+    write(folder / 'run-configuration.json', {'model': config.public(), 'wall_time_seconds': 300,
+        'cases': fixture, 'scope': 'Prepared-candidate responsibility only; no generation, full review or commit.'})
+    rows, started = [], time.monotonic()
+    for case in fixture['cases']:
+        candidate = {'description': case['text']}
+        entries = registry(candidate)
+        # Expected labels and case IDs are intentionally absent from messages.
+        messages = [{'role': 'system', 'content': definition['responsibility_system']},
+                    {'role': 'user', 'content': json.dumps({'context': fixture['context'],
+                        'candidate': candidate, 'candidate_registry': entries}, ensure_ascii=False)}]
+        row = {'id': case['id'], 'expected_roles': case['roles'], 'expected_status': case['status']}
+        try:
+            budget.begin_case(1)
+            wire, call = budget.complete(messages, 'ObservationResponsibilityClassification',
+                output_contract=bind_contract(definition['output_contracts']['responsibility'], entries))
+            result = check_responsibility(expand_classification(wire, candidate), candidate,
+                                         admission=definition['responsibility_admission'])
+            roles = sorted({s['role'] for s in result['segments']})
+            row.update(execution='COMPLETED', execution_id=call, result=result,
+                matches=roles == sorted(case['roles']) and result['status'] == case['status'])
+        except (ModelFailure, ContractError) as exc:
+            row.update(execution='INCOMPLETE', reason=str(exc), matches=False)
+        rows.append(row)
+        write(folder / 'results.json', rows)
+        write(folder / 'adapter-records.json', adapter.records)
+    result = {'status': 'BOUNDED_PROBE_FINISHED', 'actual_calls': adapter.calls,
+        'elapsed_seconds': round(time.monotonic() - started, 3), 'cases': len(rows),
+        'completed': sum(r['execution'] == 'COMPLETED' for r in rows),
+        'matched': sum(r['matches'] for r in rows), 'retries': 0, 'formal_commits': 0,
+        'general_accuracy_or_isolation_claimed': False, 'automatic_followup': False}
+    write(folder / 'summary.json', result)
+    finish(folder, sources)
+    return result
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('mode', choices=('offline', 'responsibility'))
+    parser.add_argument('--output', type=Path, required=True)
+    args = parser.parse_args()
+    result = (offline if args.mode == 'offline' else responsibility)(args.output)
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    raise SystemExit(1 if result['status'] == 'FAIL' else 0)

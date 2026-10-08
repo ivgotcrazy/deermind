@@ -1,0 +1,541 @@
+{
+  "schema": "spike-completion-direct-v1",
+  "protocols": {
+    "initial": "src/spike/protocols/observation-completion-direct-v1.json",
+    "request": "src/spike/protocols/observation-completion-request-v1.json",
+    "new-work": "src/spike/protocols/observation-completion-new-work-v1.json",
+    "policy": "src/spike/protocols/policy-completion-x5-v1.json",
+    "explanation": "src/spike/protocols/policy-completion-x5-explanation-v1.json"
+  },
+  "original_fixtures": {
+    "A1": "src/spike/fixtures/observation-a1-v1.json",
+    "X5": "src/spike/fixtures/composition-x5-v1.json"
+  },
+  "budget": {
+    "max_calls": 540,
+    "wall_time_seconds": 2400,
+    "transport_retries": 2
+  },
+  "model": {
+    "model": "deepseek-flash",
+    "provider_endpoint": "https://api.deepseek.com/beta",
+    "temperature": 0,
+    "thinking": "disabled",
+    "max_output_tokens": 4096,
+    "max_input_chars": 64000,
+    "timeout_seconds": 60
+  },
+  "semantic_retries": 0,
+  "automatic_additional_batches": false,
+  "schedule": [
+    {
+      "id": "A1-error-r1",
+      "group": "A1",
+      "variant": "A1-error",
+      "repetition": 1,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-error-r2",
+      "group": "A1",
+      "variant": "A1-error",
+      "repetition": 2,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-error-r3",
+      "group": "A1",
+      "variant": "A1-error",
+      "repetition": 3,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-error-r4",
+      "group": "A1",
+      "variant": "A1-error",
+      "repetition": 4,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-error-r5",
+      "group": "A1",
+      "variant": "A1-error",
+      "repetition": 5,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-correct-r1",
+      "group": "A1",
+      "variant": "A1-correct",
+      "repetition": 1,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-correct-r2",
+      "group": "A1",
+      "variant": "A1-correct",
+      "repetition": 2,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-correct-r3",
+      "group": "A1",
+      "variant": "A1-correct",
+      "repetition": 3,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-correct-r4",
+      "group": "A1",
+      "variant": "A1-correct",
+      "repetition": 4,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-correct-r5",
+      "group": "A1",
+      "variant": "A1-correct",
+      "repetition": 5,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-incomplete-r1",
+      "group": "A1",
+      "variant": "A1-incomplete",
+      "repetition": 1,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-incomplete-r2",
+      "group": "A1",
+      "variant": "A1-incomplete",
+      "repetition": 2,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-incomplete-r3",
+      "group": "A1",
+      "variant": "A1-incomplete",
+      "repetition": 3,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-incomplete-r4",
+      "group": "A1",
+      "variant": "A1-incomplete",
+      "repetition": 4,
+      "max_calls": 6
+    },
+    {
+      "id": "A1-incomplete-r5",
+      "group": "A1",
+      "variant": "A1-incomplete",
+      "repetition": 5,
+      "max_calls": 6
+    },
+    {
+      "id": "A2-ability-report-r1",
+      "group": "A2",
+      "variant": "ability-report",
+      "repetition": 1,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者自述已掌握比例。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-ability-report-r2",
+      "group": "A2",
+      "variant": "ability-report",
+      "repetition": 2,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者自述已掌握比例。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-ability-report-r3",
+      "group": "A2",
+      "variant": "ability-report",
+      "repetition": 3,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者自述已掌握比例。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-ability-report-r4",
+      "group": "A2",
+      "variant": "ability-report",
+      "repetition": 4,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者自述已掌握比例。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-ability-report-r5",
+      "group": "A2",
+      "variant": "ability-report",
+      "repetition": 5,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者自述已掌握比例。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-ability-endorsement-r1",
+      "group": "A2",
+      "variant": "ability-endorsement",
+      "repetition": 1,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。这些步骤证明学习者已掌握比例。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-ability-endorsement-r2",
+      "group": "A2",
+      "variant": "ability-endorsement",
+      "repetition": 2,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。这些步骤证明学习者已掌握比例。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-ability-endorsement-r3",
+      "group": "A2",
+      "variant": "ability-endorsement",
+      "repetition": 3,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。这些步骤证明学习者已掌握比例。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-ability-endorsement-r4",
+      "group": "A2",
+      "variant": "ability-endorsement",
+      "repetition": 4,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。这些步骤证明学习者已掌握比例。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-ability-endorsement-r5",
+      "group": "A2",
+      "variant": "ability-endorsement",
+      "repetition": 5,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。这些步骤证明学习者已掌握比例。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-request-report-r1",
+      "group": "A2",
+      "variant": "request-report",
+      "repetition": 1,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者请求讲解。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-request-report-r2",
+      "group": "A2",
+      "variant": "request-report",
+      "repetition": 2,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者请求讲解。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-request-report-r3",
+      "group": "A2",
+      "variant": "request-report",
+      "repetition": 3,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者请求讲解。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-request-report-r4",
+      "group": "A2",
+      "variant": "request-report",
+      "repetition": 4,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者请求讲解。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-request-report-r5",
+      "group": "A2",
+      "variant": "request-report",
+      "repetition": 5,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者请求讲解。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-action-recommendation-r1",
+      "group": "A2",
+      "variant": "action-recommendation",
+      "repetition": 1,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。系统下一步应当直接讲解。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-action-recommendation-r2",
+      "group": "A2",
+      "variant": "action-recommendation",
+      "repetition": 2,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。系统下一步应当直接讲解。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-action-recommendation-r3",
+      "group": "A2",
+      "variant": "action-recommendation",
+      "repetition": 3,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。系统下一步应当直接讲解。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-action-recommendation-r4",
+      "group": "A2",
+      "variant": "action-recommendation",
+      "repetition": 4,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。系统下一步应当直接讲解。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-action-recommendation-r5",
+      "group": "A2",
+      "variant": "action-recommendation",
+      "repetition": 5,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。系统下一步应当直接讲解。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-arithmetic-report-r1",
+      "group": "A2",
+      "variant": "arithmetic-report",
+      "repetition": 1,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-arithmetic-report-r2",
+      "group": "A2",
+      "variant": "arithmetic-report",
+      "repetition": 2,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-arithmetic-report-r3",
+      "group": "A2",
+      "variant": "arithmetic-report",
+      "repetition": 3,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-arithmetic-report-r4",
+      "group": "A2",
+      "variant": "arithmetic-report",
+      "repetition": 4,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-arithmetic-report-r5",
+      "group": "A2",
+      "variant": "arithmetic-report",
+      "repetition": 5,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。"
+      },
+      "expected_semantic": "PASS",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-arithmetic-endorsement-r1",
+      "group": "A2",
+      "variant": "arithmetic-endorsement",
+      "repetition": 1,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者所写的42÷6=8是正确的。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-arithmetic-endorsement-r2",
+      "group": "A2",
+      "variant": "arithmetic-endorsement",
+      "repetition": 2,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者所写的42÷6=8是正确的。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-arithmetic-endorsement-r3",
+      "group": "A2",
+      "variant": "arithmetic-endorsement",
+      "repetition": 3,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者所写的42÷6=8是正确的。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-arithmetic-endorsement-r4",
+      "group": "A2",
+      "variant": "arithmetic-endorsement",
+      "repetition": 4,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者所写的42÷6=8是正确的。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "A2-arithmetic-endorsement-r5",
+      "group": "A2",
+      "variant": "arithmetic-endorsement",
+      "repetition": 5,
+      "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+      "candidate": {
+        "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者所写的42÷6=8是正确的。"
+      },
+      "expected_semantic": "FAIL",
+      "max_calls": 3
+    },
+    {
+      "id": "X5-r1",
+      "group": "X5",
+      "variant": "full-path",
+      "repetition": 1,
+      "max_calls": 60
+    },
+    {
+      "id": "X5-r2",
+      "group": "X5",
+      "variant": "full-path",
+      "repetition": 2,
+      "max_calls": 60
+    },
+    {
+      "id": "X5-r3",
+      "group": "X5",
+      "variant": "full-path",
+      "repetition": 3,
+      "max_calls": 60
+    },
+    {
+      "id": "X5-r4",
+      "group": "X5",
+      "variant": "full-path",
+      "repetition": 4,
+      "max_calls": 60
+    },
+    {
+      "id": "X5-r5",
+      "group": "X5",
+      "variant": "full-path",
+      "repetition": 5,
+      "max_calls": 60
+    }
+  ],
+  "scope": "Explicit direct semantic review alternative; original semantic content and original X5 paths retained. No silent fallback after a failure. Evidence/Belief scripted as originally allowed.",
+  "failure_policy": "Independent protocol/semantic failure does not stop other cases. Deterministic assertion, auth/config or global budget failure stops. Review all results once; no automatic quality optimization.",
+  "boundaries": [
+    "control-not-occurred",
+    "explanation-not-occurred",
+    "explanation-partial",
+    "explanation-indeterminate"
+  ],
+  "content_review": "Host expectations never enter model requests. Model PASS is not author-reviewed truth. Preserve all judgments and judge actual content separately."
+}

@@ -26,6 +26,8 @@ class ActionRuntime:
         return ref
 
     def _authorize(self, token, payload, source):
+        if self.runtime.working_entry is not None:
+            self.runtime.working_entry.check_action(payload)
         action = exact_ref(payload['action_semantic_ref'])
         request = Operation(payload['purpose'], payload['subject'], action.identity, 'execute',
                             tuple(parameter(k, payload[k]) for k in ('exact_payload', 'executor_target', 'action_semantic_ref')))
@@ -50,6 +52,8 @@ class ActionRuntime:
             raise ContractError('FormalPolicyCommitRequired')
         if self.runtime.session is not None:
             self.runtime.session.check_policy_open(policy_ref)
+        if self.runtime.working_entry is not None:
+            self.runtime.working_entry.check_policy(policy_ref)
         source = self._event('ActionIntentAdmission', policy.subject, {'policy_ref': json_value(policy_ref)})
         self.security.read(token, policy_ref, policy.purpose, 'reasoning-runtime', source, ('PolicyOutcome',))
         self._current(token, policy_ref, policy.scope, policy.purpose)

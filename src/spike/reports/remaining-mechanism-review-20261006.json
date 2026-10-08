@@ -1,0 +1,205 @@
+{
+  "schema": "remaining-mechanism-design-review-v1",
+  "date": "2026-10-06",
+  "scope": "Read-only review of preserved E2/F2/X1/X2 summaries and formal assessments; no new execution",
+  "new_model_calls": 0,
+  "new_test_runs": 0,
+  "items": [
+    {
+      "case_id": "E2",
+      "original_result": "INCONCLUSIVE",
+      "planned": 15,
+      "attempted": 15,
+      "complete": 13,
+      "incomplete": 2,
+      "failed_invariant_checks": 0,
+      "falsifier_observed": false,
+      "source_summary": "src/spike/runs/serial-e2-v1/summary.json",
+      "missing_paths": [
+        {
+          "branch": "A-queue",
+          "repetition": 1,
+          "result": "NON_SUCCESS",
+          "coverage": "INCOMPLETE",
+          "failure_type": "ModelFailure",
+          "reason": "ProviderRemoteDisconnected",
+          "checks": 3,
+          "failed_checks": [],
+          "model_calls": 1
+        },
+        {
+          "branch": "A-queue",
+          "repetition": 5,
+          "result": "NON_SUCCESS",
+          "coverage": "INCOMPLETE",
+          "failure_type": "ModelFailure",
+          "reason": "ProviderRemoteDisconnected",
+          "checks": 3,
+          "failed_checks": [],
+          "model_calls": 2
+        }
+      ],
+      "retained_design": "Strict per-conversation serial turns through result handling and critical current-head rechecks",
+      "closure_recommendation": "Retain implementation direction within observed scope; preserve failed real paths. Do not rerun merely to obtain all-PASS. Any deferred coverage requires an explicit phase-scope decision; original Gate remains open.",
+      "remaining_design_work": "Reuse reviewed failure-settlement contract; do not imply production recovery or remote stop confirmation is implemented."
+    },
+    {
+      "case_id": "F2",
+      "original_result": "INCONCLUSIVE",
+      "planned": 25,
+      "attempted": 25,
+      "complete": 20,
+      "incomplete": 5,
+      "failed_invariant_checks": 0,
+      "falsifier_observed": false,
+      "source_summary": "src/spike/runs/security-f-v1/summary.json",
+      "missing_paths": [
+        {
+          "case": "F2",
+          "variant": "F2-subject-read",
+          "repetition": 1,
+          "result": "NON_SUCCESS",
+          "model_result": null,
+          "injected_result": "DENIED",
+          "coverage": "INCOMPLETE",
+          "failure_type": "ModelFailure",
+          "reason": "InvalidResultEnvelope",
+          "model_calls": 1,
+          "checks": 23,
+          "failed_checks": []
+        },
+        {
+          "case": "F2",
+          "variant": "F2-subject-execute",
+          "repetition": 1,
+          "result": "NON_SUCCESS",
+          "model_result": null,
+          "injected_result": "DENIED",
+          "coverage": "INCOMPLETE",
+          "failure_type": "ModelFailure",
+          "reason": "InvalidResultEnvelope",
+          "model_calls": 1,
+          "checks": 23,
+          "failed_checks": []
+        },
+        {
+          "case": "F2",
+          "variant": "F2-purpose",
+          "repetition": 2,
+          "result": "NON_SUCCESS",
+          "model_result": null,
+          "injected_result": "DENIED",
+          "coverage": "INCOMPLETE",
+          "failure_type": "ModelFailure",
+          "reason": "InvalidResultEnvelope",
+          "model_calls": 1,
+          "checks": 23,
+          "failed_checks": []
+        },
+        {
+          "case": "F2",
+          "variant": "F2-purpose",
+          "repetition": 3,
+          "result": "NON_SUCCESS",
+          "model_result": null,
+          "injected_result": "DENIED",
+          "coverage": "INCOMPLETE",
+          "failure_type": "ModelFailure",
+          "reason": "InvalidResultEnvelope",
+          "model_calls": 1,
+          "checks": 23,
+          "failed_checks": []
+        },
+        {
+          "case": "F2",
+          "variant": "F2-subject-execute",
+          "repetition": 5,
+          "result": "NON_SUCCESS",
+          "model_result": null,
+          "injected_result": "DENIED",
+          "coverage": "INCOMPLETE",
+          "failure_type": "ModelFailure",
+          "reason": "InvalidResultEnvelope",
+          "model_calls": 1,
+          "checks": 23,
+          "failed_checks": []
+        }
+      ],
+      "retained_design": "Trusted backend identity/grants and exact subject/purpose/resource/operation/parameter checks; reject the entire multi-result response",
+      "closure_recommendation": "Retain implementation direction within observed scope; preserve failed real paths. Do not rerun merely to obtain all-PASS. Any deferred coverage requires an explicit phase-scope decision; original Gate remains open.",
+      "remaining_design_work": "Keep a single-result contract and explicit output failure; valid real-model request usability remains a separate unresolved requirement."
+    },
+    {
+      "case_id": "X1",
+      "original_result": "INCONCLUSIVE",
+      "planned": 5,
+      "attempted": 5,
+      "complete": 4,
+      "incomplete": 1,
+      "failed_invariant_checks": 0,
+      "falsifier_observed": false,
+      "source_summary": "src/spike/runs/composition-x1-x2-v1/summary.json",
+      "missing_paths": [
+        {
+          "branch": "X1-correction",
+          "repetition": 1,
+          "result": "NON_SUCCESS",
+          "coverage": "INCOMPLETE",
+          "failure_type": "ModelFailure",
+          "reason": "ProviderRemoteDisconnected",
+          "checks": 4,
+          "failed_checks": [],
+          "model_calls": 1
+        }
+      ],
+      "retained_design": "Correction invalidates exact dependencies; settle before forming a new decision; preserve historical candidates",
+      "closure_recommendation": "Retain implementation direction within observed scope; preserve failed real paths. Do not rerun merely to obtain all-PASS. Any deferred coverage requires an explicit phase-scope decision; original Gate remains open.",
+      "remaining_design_work": "Reuse reviewed failure-settlement contract; do not imply production recovery or remote stop confirmation is implemented."
+    },
+    {
+      "case_id": "X2",
+      "original_result": "INCONCLUSIVE",
+      "planned": 10,
+      "attempted": 10,
+      "complete": 9,
+      "incomplete": 1,
+      "failed_invariant_checks": 0,
+      "falsifier_observed": false,
+      "source_summary": "src/spike/runs/composition-x1-x2-v1/summary.json",
+      "missing_paths": [
+        {
+          "branch": "X2-revoke",
+          "repetition": 5,
+          "result": "NON_SUCCESS",
+          "coverage": "INCOMPLETE",
+          "failure_type": "ModelFailure",
+          "reason": "ProviderRemoteDisconnected",
+          "checks": 1,
+          "failed_checks": [],
+          "model_calls": 2
+        }
+      ],
+      "retained_design": "Separate future activation from explicit revocation; recheck eligibility before effect",
+      "closure_recommendation": "Retain implementation direction within observed scope; preserve failed real paths. Do not rerun merely to obtain all-PASS. Any deferred coverage requires an explicit phase-scope decision; original Gate remains open.",
+      "remaining_design_work": "Reuse reviewed failure-settlement contract; do not imply production recovery or remote stop confirmation is implemented."
+    }
+  ],
+  "total_planned_paths": 55,
+  "total_completed_paths": 46,
+  "incomplete_paths": 9,
+  "network_interrupted_paths": 4,
+  "multiple_result_protocol_failed_paths": 5,
+  "classification": "No observed falsifier in executed checks; incomplete coverage remains INCONCLUSIVE. These are not evidence of a necessary architecture rewrite.",
+  "phase_exit_approved": false,
+  "full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "source_sha256": {
+    "src/spike/reports/assumption-e2-20261004.json": "438b94455b1dbc0fdcae13752bb44496d8c0130357843f4b6f6e97ec96684796",
+    "src/spike/reports/assumption-f1-f2-20261004.json": "8edfc9b7ebd564cc0766f98a8863f049f6577176b7cedf62e2c3f94da7debfd6",
+    "src/spike/reports/composition-x1-x2-assessment-20261004.json": "91cbb200e69073c1078041c99c75d231f46a3a8b140e14a9d49fab232ce9c9af",
+    "src/spike/runs/composition-x1-x2-v1/summary.json": "b288009e75463bd2146f7ad904bf0aa125c5259ff8bbe96225b71b526fede342",
+    "src/spike/runs/security-f-v1/summary.json": "d74656c06367bd92dc059149bd85e178d57367d365e0e2228b46ba1e6eba7f69",
+    "src/spike/runs/serial-e2-v1/summary.json": "5355bbeab02118123b0e6e989a49809747cf2766a02286df41a2bbe9268c9424"
+  }
+}

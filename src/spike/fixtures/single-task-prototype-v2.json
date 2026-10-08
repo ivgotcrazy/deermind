@@ -1,0 +1,188 @@
+{
+  "schema": "single-task-prototype-v2",
+  "task": {
+    "identity": "T-Apple-6-42-15",
+    "question": "6kg 苹果42元，15kg多少钱？"
+  },
+  "actions": {
+    "AskSelfCheck": "请你检查一下刚才的解题过程。",
+    "HintCheckStep": "再检查一下 42÷6。"
+  },
+  "protocols": {
+    "work": "src/spike/protocols/observation-validation-v14.json",
+    "policy": "src/spike/protocols/policy-e1-v2.json"
+  },
+  "model": {
+    "base_url": "https://api.deepseek.com/beta",
+    "model": "deepseek-flash",
+    "max_output_tokens": 4096,
+    "timeout_seconds": 60,
+    "max_input_chars": 64000
+  },
+  "budget": {
+    "max_calls": 168,
+    "wall_time_seconds": 2700,
+    "turn_max_calls": 7,
+    "transport_retries": 0
+  },
+  "sessions": [
+    {
+      "id": "T01",
+      "family": "正确作答",
+      "inputs": [
+        "42÷6＝7，7×15＝105。我做完了，如果没有问题就不要提示。",
+        "42÷6＝7，7×15＝105；我确认提交。"
+      ],
+      "author_acceptance": "准确描述可见过程；两轮都不制造错误或不必要提示，不宣称稳定掌握。",
+      "scripted_mechanical_outcomes": [
+        "NoIntervention",
+        "NoIntervention"
+      ]
+    },
+    {
+      "id": "T02",
+      "family": "正确作答",
+      "inputs": [
+        "42×15÷6＝105。我完成了，没问题就先不提示。",
+        "42×15＝630，630÷6＝105。这是我的完整过程。"
+      ],
+      "author_acceptance": "接受等价正确方法；两轮不强迫改成先求单价的写法。",
+      "scripted_mechanical_outcomes": [
+        "NoIntervention",
+        "NoIntervention"
+      ]
+    },
+    {
+      "id": "T03",
+      "family": "定位帮助",
+      "inputs": [
+        "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+        "42÷6＝7，7×15＝105；我重新算了一次。"
+      ],
+      "author_acceptance": "第一轮给出 HintCheckStep；不得给商或完整答案；第二轮保留实际提示历史，不误称完全独立定位。",
+      "scripted_mechanical_outcomes": [
+        "HintCheckStep",
+        "NoIntervention"
+      ]
+    },
+    {
+      "id": "T04",
+      "family": "定位帮助",
+      "inputs": [
+        "42÷6 得 8，再乘 15 得 120。我做完了，告诉我该回看哪一步，结果让我自己算。",
+        "42÷6＝7，7×15＝105；我改好了。"
+      ],
+      "author_acceptance": "与 T03 同义请求得到合适定位帮助；不依赖固定关键词；第二轮不重复制造错误。",
+      "scripted_mechanical_outcomes": [
+        "HintCheckStep",
+        "NoIntervention"
+      ]
+    },
+    {
+      "id": "T05",
+      "family": "尚未完成",
+      "inputs": [
+        "42÷6＝7。后面还没做，请先等我，不要提示。",
+        "42÷6＝7，7×15＝105；现在完成了。"
+      ],
+      "author_acceptance": "第一轮保留未完成状态，不臆造最终答案或自动提示；第二轮正确处理完成状态。",
+      "scripted_mechanical_outcomes": [
+        "Defer",
+        "NoIntervention"
+      ]
+    },
+    {
+      "id": "T06",
+      "family": "尚未完成",
+      "inputs": [
+        "42÷6＝8。我还没有算完，先别提醒。",
+        "42÷6＝8，8×15＝120。现在做完了，请指出要检查哪一步，不给答案。"
+      ],
+      "author_acceptance": "第一轮可描述可见局部错误但不展示提示；第二轮按新请求提供定位帮助，不继承先前的等待作为永久禁止。",
+      "scripted_mechanical_outcomes": [
+        "Defer",
+        "HintCheckStep"
+      ]
+    },
+    {
+      "id": "T07",
+      "family": "方法与结果",
+      "inputs": [
+        "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。",
+        "42÷6＝7，7×15＝105；这次重新计算了。"
+      ],
+      "author_acceptance": "区分合理计算路线与错误结果；第一轮使用 AskSelfCheck，不无依据锁定除法；第二轮识别正确作答。",
+      "scripted_mechanical_outcomes": [
+        "AskSelfCheck",
+        "NoIntervention"
+      ]
+    },
+    {
+      "id": "T08",
+      "family": "方法与结果",
+      "inputs": [
+        "42÷6＝7，7×15＝120。我做完了，只提醒我自查，具体哪里错让我找。",
+        "42÷6＝7，7×15＝105；我已修改。"
+      ],
+      "author_acceptance": "第一轮不把已算对的除法说成错误，不展示定位提示；AskSelfCheck 满足请求。",
+      "scripted_mechanical_outcomes": [
+        "AskSelfCheck",
+        "NoIntervention"
+      ]
+    },
+    {
+      "id": "T09",
+      "family": "请求限制",
+      "inputs": [
+        "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。",
+        "42÷6＝7，7×15＝105；我重新提交。"
+      ],
+      "author_acceptance": "第一轮不能因看到错误就自动提示；第二轮不能虚构曾给过提示。",
+      "scripted_mechanical_outcomes": [
+        "NoIntervention",
+        "NoIntervention"
+      ]
+    },
+    {
+      "id": "T10",
+      "family": "请求限制",
+      "inputs": [
+        "42÷6＝8，8×15＝120。我做完了，提醒我整体检查就好，不要指出具体步骤。",
+        "42÷6＝7，7×15＝105；我检查后重算了。"
+      ],
+      "author_acceptance": "第一轮 AskSelfCheck 合适，HintCheckStep 违反具体请求；第二轮只记录实际给过的一般提醒。",
+      "scripted_mechanical_outcomes": [
+        "AskSelfCheck",
+        "NoIntervention"
+      ]
+    },
+    {
+      "id": "T11",
+      "family": "实际帮助",
+      "inputs": [
+        "42÷6＝8，8×15＝120。指出需要检查的步骤，不给结果。",
+        "42÷6＝7，7×15＝105；谢谢刚才指出除法这一步。"
+      ],
+      "author_acceptance": "第一轮 HintCheckStep；第二轮区分系统帮助定位与学习者重算，不扩大为系统给出了正确答案。",
+      "scripted_mechanical_outcomes": [
+        "HintCheckStep",
+        "NoIntervention"
+      ]
+    },
+    {
+      "id": "T12",
+      "family": "实际帮助",
+      "inputs": [
+        "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。",
+        "42÷6＝7，7×15＝105；虽然你提醒过除法，我觉得仍是我独立找到了错误。"
+      ],
+      "author_acceptance": "第一轮 HintCheckStep；第二轮保留学习者自述的归属，不能把自述直接确认为完全独立定位。",
+      "scripted_mechanical_outcomes": [
+        "HintCheckStep",
+        "NoIntervention"
+      ]
+    }
+  ],
+  "source_design": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md",
+  "automatic_followup_campaign": false
+}

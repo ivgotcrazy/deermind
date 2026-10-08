@@ -1,0 +1,573 @@
+{
+  "schema": "single-task-prototype-assessment-v1",
+  "date": "2026-10-07",
+  "status": "CLOSED_NO_GO",
+  "decision": "NO_GO",
+  "reason": "Zero of twelve fixed two-turn sessions completed; all twenty-four turns failed before formal Observation admission.",
+  "document": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Result_v0.1.md",
+  "source_design": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md",
+  "mechanical_matrix": {
+    "M1": {
+      "status": "PASS",
+      "tests": [
+        "test_M1_invalidated_source_is_rejected",
+        "test_M1_required_review_status_digest_and_rule"
+      ]
+    },
+    "M2": {
+      "status": "PASS",
+      "tests": [
+        "test_M2_forbidden_action_or_payload_never_displayed",
+        "test_M2_forged_owner_is_rejected",
+        "test_M2_no_evaluation_capability_and_no_scripted_states",
+        "test_M2_wrong_task_and_conversation_before_model_call"
+      ]
+    },
+    "M3": {
+      "status": "PASS",
+      "tests": [
+        "test_M3_assembled_extra_source_cannot_enter_generation",
+        "test_M3_failed_observation_does_not_generate_policy_or_enter_next_turn",
+        "test_M3_prior_policy_and_reviewer_are_absent_from_next_messages"
+      ]
+    },
+    "M4": {
+      "status": "PASS",
+      "tests": [
+        "test_M4_full_partial_none_and_unknown_help"
+      ]
+    },
+    "M5": {
+      "status": "PASS",
+      "tests": [
+        "test_M5_closed_turn_discards_late_generation",
+        "test_M5_input_at_commit_is_queued_and_closed_policy_stays_closed",
+        "test_M5_queue_during_understanding_does_not_start",
+        "test_M5_rejected_policy_cannot_be_dispatched_later",
+        "test_M5_unknown_inflight_effect_does_not_release_queue"
+      ]
+    },
+    "M6": {
+      "status": "PASS",
+      "tests": [
+        "test_M6_no_intervention_defer_and_failure_receipts"
+      ]
+    },
+    "M7": {
+      "status": "PASS",
+      "tests": [
+        "test_M7_all_fixed_sessions_have_two_turns_and_no_utility_calls",
+        "test_M7_call_budget_stops_without_replacement",
+        "test_M7_deadline_stops_before_transport",
+        "test_M7_normal_failure_does_not_stop_other_turns_or_sessions",
+        "test_M7_semantic_fail_is_recorded_without_stopping_other_sessions",
+        "test_M7_timeout_is_capped_and_late_reply_not_committed"
+      ]
+    }
+  },
+  "final_tests_run": 22,
+  "test_failures": 0,
+  "test_errors": 0,
+  "scripted_sessions": 12,
+  "scripted_turns": 24,
+  "scripted_calls": 144,
+  "real_model_calls": 70,
+  "real_execution_seconds": 134.345,
+  "real_sessions_succeeded": 0,
+  "real_sessions_total": 12,
+  "real_turns_succeeded": 0,
+  "real_turns_failed": 24,
+  "not_run_turns": 0,
+  "failure_counts": {
+    "ModelFailure:InputLimitExceeded": 12,
+    "ContractError:InvalidBoundedDecimal": 1,
+    "ContractError:InvalidArithmeticOperatorOrStance": 6,
+    "ContractError:IncompleteResponsibilityCoverage": 2,
+    "ContractError:InvalidOrAmbiguousExpressionSpan": 3
+  },
+  "rows": [
+    {
+      "id": "T01",
+      "family": "正确作答",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T01.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T01.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T02",
+      "family": "正确作答",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T02.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:InvalidBoundedDecimal",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T02.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T03",
+      "family": "定位帮助",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T03.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T03.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T04",
+      "family": "定位帮助",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:IncompleteResponsibilityCoverage",
+          "actual_model_calls": 2,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": "Candidate says no final answer despite the submitted 120; confuses a no-answer request with missing learner answer.",
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T04.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T04.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T05",
+      "family": "尚未完成",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T05.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T05.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T06",
+      "family": "尚未完成",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T06.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:InvalidOrAmbiguousExpressionSpan",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T06.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T07",
+      "family": "方法与结果",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T07.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T07.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T08",
+      "family": "方法与结果",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T08.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:InvalidOrAmbiguousExpressionSpan",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T08.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T09",
+      "family": "请求限制",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T09.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T09.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T10",
+      "family": "请求限制",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T10.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T10.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T11",
+      "family": "实际帮助",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": "Candidate says no final answer despite the submitted 120; final-answer judgment is omitted.",
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T11.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:IncompleteResponsibilityCoverage",
+          "actual_model_calls": 2,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": "Candidate contradicts itself about 42/6=7, first calling it wrong and then correct.",
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T11.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T12",
+      "family": "实际帮助",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:InputLimitExceeded",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": null,
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T12.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:InvalidOrAmbiguousExpressionSpan",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_candidate_material_defect": "Candidate contradicts itself about 42/6=7, first calling it wrong and then correct.",
+          "candidate_was_committed": false,
+          "policy_evaluated": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v1/cases/T12.jsonl"
+        }
+      ]
+    }
+  ],
+  "real_observation_semantic_review_calls": 0,
+  "real_policy_calls": 0,
+  "formal_observations": 0,
+  "formal_policies": 0,
+  "action_intents": 0,
+  "action_occurrences": 0,
+  "settled_turns": 24,
+  "H_violations_observed": 0,
+  "C_accepted_content_errors_observed": 0,
+  "zero_accepted_content_is_not_quality_evidence": true,
+  "raw_uncommitted_candidate_material_defects_identified": 4,
+  "semantic_false_acceptance_rate": null,
+  "semantic_false_rejection_rate": null,
+  "rate_reason": "No real semantic review completed; no false-accept/reject denominator.",
+  "offline_analysis": "src/spike/reports/single-task-prototype-offline-analysis-20261007.json",
+  "offline_external_model_calls": 0,
+  "offline_reused_recorded_returns": 70,
+  "offline_sent_requests_matched": 70,
+  "reconstructed_oversized_chars_range": [
+    18363,
+    23928
+  ],
+  "only_length_limit_removed_same_returns_possible_complete_sessions": [
+    "T01",
+    "T05"
+  ],
+  "preparation_gap": "Scripted observations lacked realistic numeric assertions and expanded arithmetic-review payloads; capacity was not checked with representative full candidates before execution.",
+  "disposition": "Retain the scoped entry and mechanism evidence. Reject Flash plus Observation v13 as the default mandatory chain for this prototype; no repair/retry campaign is scheduled.",
+  "future_option_not_implemented": "An explicit new capability configuration could let constrained Policy consume raw work/request/actual help directly, with formal Observation-based evaluation staged separately. This is not a runtime fallback after failure.",
+  "existing_shared_runtime_or_protocol_sources_modified": false,
+  "new_entry_implemented": true,
+  "historical_results_relabelled": false,
+  "original_spike_status": "TERMINATED_NOT_ACCEPTED",
+  "historical_full_coverage": {
+    "complete": 9,
+    "total": 17
+  },
+  "original_A2": "DENIED",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "retries": 0,
+  "replacement_cases": 0,
+  "automatic_followup_campaign": false,
+  "work_time": {
+    "implementation_observed_start_utc": "2026-10-07T07:11:30+00:00",
+    "implementation_initial_allowance_seconds": 60,
+    "implementation_completed_utc": "2026-10-07T07:26:29.417384+00:00",
+    "implementation_conservative_seconds": 959.417,
+    "real_execution_seconds": 134.345,
+    "author_review_started_utc": "2026-10-07T07:29:11.230724+00:00",
+    "author_review_completed_utc": "2026-10-07T07:38:56+00:00",
+    "author_review_conservative_seconds": 584.769,
+    "final_decision_completed_utc": "2026-10-07T07:40:28.507984+00:00",
+    "final_decision_seconds": 92.508,
+    "total_conservative_wall_seconds": 1798.508,
+    "stage_caps_seconds": {
+      "implementation": 14400,
+      "real_execution": 2700,
+      "review": 3600,
+      "final": 900
+    },
+    "all_stage_caps_respected": true
+  }
+}

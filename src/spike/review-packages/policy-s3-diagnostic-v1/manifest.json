@@ -1,0 +1,35 @@
+{
+  "status": "PREPARED",
+  "external_model_calls": 0,
+  "public_model_config": {
+    "provider": "deepseek",
+    "base_url": "https://api.deepseek.com/beta",
+    "model": "deepseek-flash",
+    "max_calls": 12,
+    "max_output_tokens": 1024,
+    "timeout_seconds": 60,
+    "retries": 0,
+    "thinking": "disabled",
+    "temperature": 0,
+    "max_input_chars": 16000,
+    "credential_source": "DEERMIND_LLM_API_KEY",
+    "key_configured": true
+  },
+  "source_sha256": {
+    "src/spike/fixtures/policy-s3-diagnostic-v1.json": "6a4138043fc8d167cd0112a5e0d1d8810855f9ed15251715545361acab358e2c",
+    "src/spike/runs/spike-exit-v1/adapter-records.json": "5f79de48735217c65312a42d38db3df63fbaad64fb24fbb4bb42b4763580a12d",
+    "src/spike/protocols/policy-e1-v5.json": "89e3a6294f43c4cc557352effff6b9c7c0ecf42867d0a0cc6e1fc66be3c1023a",
+    "src/spike/foundation/s3_diagnostic.py": "8e3e9ff98253e2e63627fa44c9801a35b0f9151de11f81c704dbd18cfd7d632f",
+    "src/spike/run_policy_s3_diagnostic.py": "8d327852f90271a29a501ae95d7cb7421c3bb65ec8af3cdb30875460aae8c111",
+    "src/spike/tests/test_s3_diagnostic.py": "4ba1e47203a2a6be97b8fc20f2562359d765ecf1a5c71e98bf80abb1acce9093",
+    "src/spike/foundation/llm.py": "e2bc8061193697a8759693f01db375a193c5d45b80770d71364b2b64e0b08e36",
+    "src/spike/foundation/structured_output.py": "803a45de9413c7f2dd7aebffa86763aeea33f78c193995f00be55653c0648113",
+    "doc/system-design/spike/DeerMind_Policy_Review_Failure_Analysis_and_Next_Step_v0.1.md": "594bdcaccaadae180cbf08edfcb3e8608d33d93699584fae117a2c412891995b"
+  },
+  "artifact_sha256": {
+    "outgoing-requests.json": "e49563bf252df8655fb997b9187d5122c53b9697b600fe46165bb816e0950fb4",
+    "plan.json": "d6af8c9924bbc8d1c2681d0f647696e8c4e8935a4bbda4a9d3698d23d94db7dc"
+  },
+  "authorization": "User continue on 2026-10-07 under proposed S3-only finite scope",
+  "automatic_followup_campaign": false
+}

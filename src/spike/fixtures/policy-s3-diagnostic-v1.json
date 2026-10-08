@@ -1,0 +1,12 @@
+{
+  "identity": "policy-s3-diagnostic-v1",
+  "max_calls": 12,
+  "wall_seconds": 900,
+  "repetitions": 3,
+  "cases": [
+    {"id": "01", "rationale": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。", "expected_status": "FAIL"},
+    {"id": "02", "rationale": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。", "expected_status": "PASS"},
+    {"id": "03", "rationale": "学习者仍需自己找到应该检查哪一步，这个提示没有缩小查错范围。", "expected_status": "FAIL"},
+    {"id": "04", "rationale": "若展示这个提示，它会指出应检查除法；学习者还需自己算出商，并检查后续结果。", "expected_status": "PASS"}
+  ]
+}

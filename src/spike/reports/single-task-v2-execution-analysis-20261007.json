@@ -1,0 +1,542 @@
+{
+  "status": "OFFLINE_FACTUAL_ANALYSIS_COMPLETE",
+  "external_model_calls": 0,
+  "summary": {
+    "status": "EXECUTION_FINISHED_REVIEW_REQUIRED",
+    "started_at": "2026-10-07T09:59:37.287773+00:00",
+    "completed_at": "2026-10-07T10:08:20.845641+00:00",
+    "elapsed_seconds": 523.558,
+    "actual_model_calls": 75,
+    "maximum_calls": 168,
+    "maximum_wall_seconds": 2700,
+    "completed_sessions": 0,
+    "completed_turns": 1,
+    "failed_turns": 23,
+    "not_run_turns": 0,
+    "stop_reason": null,
+    "unexpected_failure_type": null,
+    "content_review_required": true,
+    "semantic_support_claimed": false,
+    "retries": 0,
+    "replacement_cases": 0,
+    "automatic_followup_campaign": false
+  },
+  "failure_counts": {
+    "ContractError:CandidateHandlesNotContiguous": 3,
+    "ModelFailure:ProviderTLSFailure": 8,
+    "ContractError:workRejected:SemanticValidation:FAIL": 5,
+    "ModelFailure:ProviderRemoteDisconnected": 1,
+    "ContractError:DirectQuoteNotInCitedSource": 2,
+    "ModelFailure:ProviderTimeout": 1,
+    "ModelFailure:ProviderIncompleteRead": 3
+  },
+  "provider_failure_counts": {
+    "ProviderTLSFailure": 8,
+    "ProviderRemoteDisconnected": 1,
+    "ProviderTimeout": 1,
+    "ProviderIncompleteRead": 3
+  },
+  "call_purpose_counts": {
+    "ObservationGeneration": 24,
+    "ObservationResponsibilityClassification": 19,
+    "ArithmeticExtraction": 16,
+    "ObservationSemanticValidation": 12,
+    "PolicyOutcomeGeneration": 2,
+    "PolicyOutcomeSemanticValidation": 2
+  },
+  "schema_valid_responses": 62,
+  "max_sent_message_chars": 33656,
+  "work_commits": 2,
+  "policy_commits": 1,
+  "settled_turns": 24,
+  "displays": [],
+  "invalid_locator_selections": [
+    {
+      "session": "T01",
+      "turn": 1,
+      "execution_id": "ca81558fcaea4a29b3cdc87259862028",
+      "purpose": "ObservationSemanticValidation",
+      "path": "$.criteria[2].quotes[0].span_ids",
+      "handles": [
+        "candidate_4",
+        "candidate_9",
+        "candidate_12"
+      ],
+      "error": "CandidateHandlesNotContiguous",
+      "selected_original_spans": [
+        {
+          "handle": "candidate_4",
+          "field": "description",
+          "start": 38,
+          "end": 47,
+          "text": "7×15＝105，"
+        },
+        {
+          "handle": "candidate_9",
+          "field": "description",
+          "start": 80,
+          "end": 85,
+          "text": "结果正确。"
+        },
+        {
+          "handle": "candidate_12",
+          "field": "description",
+          "start": 111,
+          "end": 127,
+          "text": "不改变其已提交的最终结果105。"
+        }
+      ]
+    },
+    {
+      "session": "T01",
+      "turn": 1,
+      "execution_id": "ca81558fcaea4a29b3cdc87259862028",
+      "purpose": "ObservationSemanticValidation",
+      "path": "$.criteria[3].quotes[0].span_ids",
+      "handles": [
+        "candidate_1",
+        "candidate_3",
+        "candidate_4",
+        "candidate_9",
+        "candidate_12",
+        "candidate_13",
+        "candidate_14"
+      ],
+      "error": "CandidateHandlesNotContiguous",
+      "selected_original_spans": [
+        {
+          "handle": "candidate_1",
+          "field": "description",
+          "start": 8,
+          "end": 17,
+          "text": "6kg苹果42元，"
+        },
+        {
+          "handle": "candidate_3",
+          "field": "description",
+          "start": 26,
+          "end": 38,
+          "text": "学习者写出42÷6＝7，"
+        },
+        {
+          "handle": "candidate_4",
+          "field": "description",
+          "start": 38,
+          "end": 47,
+          "text": "7×15＝105，"
+        },
+        {
+          "handle": "candidate_9",
+          "field": "description",
+          "start": 80,
+          "end": 85,
+          "text": "结果正确。"
+        },
+        {
+          "handle": "candidate_12",
+          "field": "description",
+          "start": 111,
+          "end": 127,
+          "text": "不改变其已提交的最终结果105。"
+        },
+        {
+          "handle": "candidate_13",
+          "field": "description",
+          "start": 127,
+          "end": 154,
+          "text": "AssistanceContext显示无先前协助记录，"
+        },
+        {
+          "handle": "candidate_14",
+          "field": "description",
+          "start": 154,
+          "end": 191,
+          "text": "learner_used_assistance为NOT_INFERRED。"
+        }
+      ]
+    },
+    {
+      "session": "T01",
+      "turn": 1,
+      "execution_id": "ca81558fcaea4a29b3cdc87259862028",
+      "purpose": "ObservationSemanticValidation",
+      "path": "$.criteria[4].quotes[0].span_ids",
+      "handles": [
+        "candidate_6",
+        "candidate_7",
+        "candidate_9",
+        "candidate_11"
+      ],
+      "error": "CandidateHandlesNotContiguous",
+      "selected_original_spans": [
+        {
+          "handle": "candidate_6",
+          "field": "description",
+          "start": 53,
+          "end": 64,
+          "text": "该计算先求每千克7元，"
+        },
+        {
+          "handle": "candidate_7",
+          "field": "description",
+          "start": 64,
+          "end": 74,
+          "text": "再乘15得105元，"
+        },
+        {
+          "handle": "candidate_9",
+          "field": "description",
+          "start": 80,
+          "end": 85,
+          "text": "结果正确。"
+        },
+        {
+          "handle": "candidate_11",
+          "field": "description",
+          "start": 100,
+          "end": 111,
+          "text": "这是对系统回复的约束，"
+        }
+      ]
+    },
+    {
+      "session": "T01",
+      "turn": 1,
+      "execution_id": "ca81558fcaea4a29b3cdc87259862028",
+      "purpose": "ObservationSemanticValidation",
+      "path": "$.criteria[5].quotes[0].span_ids",
+      "handles": [
+        "candidate_1",
+        "candidate_2",
+        "candidate_3",
+        "candidate_4",
+        "candidate_6",
+        "candidate_7",
+        "candidate_12"
+      ],
+      "error": "CandidateHandlesNotContiguous",
+      "selected_original_spans": [
+        {
+          "handle": "candidate_1",
+          "field": "description",
+          "start": 8,
+          "end": 17,
+          "text": "6kg苹果42元，"
+        },
+        {
+          "handle": "candidate_2",
+          "field": "description",
+          "start": 17,
+          "end": 26,
+          "text": "求15kg的价钱。"
+        },
+        {
+          "handle": "candidate_3",
+          "field": "description",
+          "start": 26,
+          "end": 38,
+          "text": "学习者写出42÷6＝7，"
+        },
+        {
+          "handle": "candidate_4",
+          "field": "description",
+          "start": 38,
+          "end": 47,
+          "text": "7×15＝105，"
+        },
+        {
+          "handle": "candidate_6",
+          "field": "description",
+          "start": 53,
+          "end": 64,
+          "text": "该计算先求每千克7元，"
+        },
+        {
+          "handle": "candidate_7",
+          "field": "description",
+          "start": 64,
+          "end": 74,
+          "text": "再乘15得105元，"
+        },
+        {
+          "handle": "candidate_12",
+          "field": "description",
+          "start": 111,
+          "end": 127,
+          "text": "不改变其已提交的最终结果105。"
+        }
+      ]
+    },
+    {
+      "session": "T01",
+      "turn": 1,
+      "execution_id": "ca81558fcaea4a29b3cdc87259862028",
+      "purpose": "ObservationSemanticValidation",
+      "path": "$.criteria[6].quotes[0].span_ids",
+      "handles": [
+        "candidate_3",
+        "candidate_4",
+        "candidate_5",
+        "candidate_10",
+        "candidate_9"
+      ],
+      "error": "CandidateHandlesNotContiguous",
+      "selected_original_spans": [
+        {
+          "handle": "candidate_3",
+          "field": "description",
+          "start": 26,
+          "end": 38,
+          "text": "学习者写出42÷6＝7，"
+        },
+        {
+          "handle": "candidate_4",
+          "field": "description",
+          "start": 38,
+          "end": 47,
+          "text": "7×15＝105，"
+        },
+        {
+          "handle": "candidate_5",
+          "field": "description",
+          "start": 47,
+          "end": 53,
+          "text": "并称已完成。"
+        },
+        {
+          "handle": "candidate_9",
+          "field": "description",
+          "start": 80,
+          "end": 85,
+          "text": "结果正确。"
+        },
+        {
+          "handle": "candidate_10",
+          "field": "description",
+          "start": 85,
+          "end": 100,
+          "text": "学习者请求若无问题就不要提示，"
+        }
+      ]
+    },
+    {
+      "session": "T03",
+      "turn": 1,
+      "execution_id": "5f3817f44ab647c88265bade892d4039",
+      "purpose": "ObservationSemanticValidation",
+      "path": "$.criteria[3].quotes[0].span_ids",
+      "handles": [
+        "candidate_4",
+        "candidate_5",
+        "candidate_7",
+        "candidate_11"
+      ],
+      "error": "CandidateHandlesNotContiguous",
+      "selected_original_spans": [
+        {
+          "handle": "candidate_4",
+          "field": "description",
+          "start": 37,
+          "end": 44,
+          "text": "42÷6＝8，"
+        },
+        {
+          "handle": "candidate_5",
+          "field": "description",
+          "start": 44,
+          "end": 53,
+          "text": "8×15＝120。"
+        },
+        {
+          "handle": "candidate_7",
+          "field": "description",
+          "start": 62,
+          "end": 70,
+          "text": "42÷6应为7，"
+        },
+        {
+          "handle": "candidate_11",
+          "field": "description",
+          "start": 106,
+          "end": 126,
+          "text": "因此最终结果120与正确结果105不符。"
+        }
+      ]
+    },
+    {
+      "session": "T03",
+      "turn": 1,
+      "execution_id": "5f3817f44ab647c88265bade892d4039",
+      "purpose": "ObservationSemanticValidation",
+      "path": "$.criteria[4].quotes[0].span_ids",
+      "handles": [
+        "candidate_6",
+        "candidate_7",
+        "candidate_11",
+        "candidate_13"
+      ],
+      "error": "CandidateHandlesNotContiguous",
+      "selected_original_spans": [
+        {
+          "handle": "candidate_6",
+          "field": "description",
+          "start": 53,
+          "end": 62,
+          "text": "第一步等式不成立，"
+        },
+        {
+          "handle": "candidate_7",
+          "field": "description",
+          "start": 62,
+          "end": 70,
+          "text": "42÷6应为7，"
+        },
+        {
+          "handle": "candidate_11",
+          "field": "description",
+          "start": 106,
+          "end": 126,
+          "text": "因此最终结果120与正确结果105不符。"
+        },
+        {
+          "handle": "candidate_13",
+          "field": "description",
+          "start": 138,
+          "end": 158,
+          "text": "同时请求指出哪一步需要检查、不要给答案；"
+        }
+      ]
+    },
+    {
+      "session": "T03",
+      "turn": 1,
+      "execution_id": "5f3817f44ab647c88265bade892d4039",
+      "purpose": "ObservationSemanticValidation",
+      "path": "$.criteria[5].quotes[0].span_ids",
+      "handles": [
+        "candidate_4",
+        "candidate_5",
+        "candidate_7",
+        "candidate_9",
+        "candidate_11"
+      ],
+      "error": "CandidateHandlesNotContiguous",
+      "selected_original_spans": [
+        {
+          "handle": "candidate_4",
+          "field": "description",
+          "start": 37,
+          "end": 44,
+          "text": "42÷6＝8，"
+        },
+        {
+          "handle": "candidate_5",
+          "field": "description",
+          "start": 44,
+          "end": 53,
+          "text": "8×15＝120。"
+        },
+        {
+          "handle": "candidate_7",
+          "field": "description",
+          "start": 62,
+          "end": 70,
+          "text": "42÷6应为7，"
+        },
+        {
+          "handle": "candidate_9",
+          "field": "description",
+          "start": 78,
+          "end": 96,
+          "text": "第二步8×15＝120本身计算正确，"
+        },
+        {
+          "handle": "candidate_11",
+          "field": "description",
+          "start": 106,
+          "end": 126,
+          "text": "因此最终结果120与正确结果105不符。"
+        }
+      ]
+    },
+    {
+      "session": "T03",
+      "turn": 1,
+      "execution_id": "5f3817f44ab647c88265bade892d4039",
+      "purpose": "ObservationSemanticValidation",
+      "path": "$.criteria[6].quotes[0].span_ids",
+      "handles": [
+        "candidate_3",
+        "candidate_4",
+        "candidate_5",
+        "candidate_13"
+      ],
+      "error": "CandidateHandlesNotContiguous",
+      "selected_original_spans": [
+        {
+          "handle": "candidate_3",
+          "field": "description",
+          "start": 27,
+          "end": 37,
+          "text": "学习者写出两步计算："
+        },
+        {
+          "handle": "candidate_4",
+          "field": "description",
+          "start": 37,
+          "end": 44,
+          "text": "42÷6＝8，"
+        },
+        {
+          "handle": "candidate_5",
+          "field": "description",
+          "start": 44,
+          "end": 53,
+          "text": "8×15＝120。"
+        },
+        {
+          "handle": "candidate_13",
+          "field": "description",
+          "start": 138,
+          "end": 158,
+          "text": "同时请求指出哪一步需要检查、不要给答案；"
+        }
+      ]
+    },
+    {
+      "session": "T04",
+      "turn": 2,
+      "execution_id": "867a78f8bd18429fb4bd79d6c8d7d353",
+      "purpose": "ArithmeticExtraction",
+      "path": "$.segments[3].expressions[0].span_ids",
+      "handles": [
+        "candidate_10",
+        "candidate_12"
+      ],
+      "error": "CandidateHandlesNotContiguous",
+      "selected_original_spans": [
+        {
+          "handle": "candidate_10",
+          "field": "description",
+          "start": 105,
+          "end": 124,
+          "text": "学习者已给出完整的终端计算结果105，"
+        },
+        {
+          "handle": "candidate_12",
+          "field": "description",
+          "start": 132,
+          "end": 146,
+          "text": "但该结果即为本题的最终答案。"
+        }
+      ]
+    }
+  ],
+  "semantic_quality_claimed": false,
+  "source_sha256": {
+    "src/spike/analyze_single_task_revision.py": "ff57a2c0a947a8d7ba8b2223e57899e32e5fef367fb1fe072415a3eb7ac01581",
+    "src/spike/runs/single-task-prototype-v2/summary.json": "82073038188e3103b9726f7c4ca7f5414b836f61c05277a772f3248f9be58fbf",
+    "src/spike/runs/single-task-prototype-v2/results.json": "61312131fc86e5d6be1d88277118eef469924c8c4a4e31cdba4b0370ebfabfbe",
+    "src/spike/runs/single-task-prototype-v2/adapter-records.json": "0d0fa3e4886c21bbb4dfa3b62a2800ebc9b679b114f450b395eaff2beb24d42a"
+  }
+}

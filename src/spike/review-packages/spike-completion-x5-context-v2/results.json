@@ -1,0 +1,421 @@
+{
+  "rows": [
+    {
+      "id": "X5-r1",
+      "repetition": 1,
+      "max_calls": 60,
+      "execution": "EXECUTED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "stages": [
+        {
+          "stage": "X5-O-before",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-initial",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-teaching-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-teaching",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-explain",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-practice",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-present-task",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-work",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-final",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        }
+      ],
+      "checks": 30,
+      "failed_checks": [],
+      "model_calls": 20,
+      "transport_incomplete": false
+    },
+    {
+      "id": "X5-r2",
+      "repetition": 2,
+      "max_calls": 60,
+      "execution": "EXECUTED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "stages": [
+        {
+          "stage": "X5-O-before",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-initial",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-teaching-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-teaching",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-explain",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-practice",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-present-task",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-work",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-final",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        }
+      ],
+      "checks": 30,
+      "failed_checks": [],
+      "model_calls": 20,
+      "transport_incomplete": false
+    },
+    {
+      "id": "X5-r3",
+      "repetition": 3,
+      "max_calls": 60,
+      "execution": "EXECUTED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "stages": [
+        {
+          "stage": "X5-O-before",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-initial",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-teaching-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-teaching",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-explain",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-practice",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-present-task",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-work",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-final",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        }
+      ],
+      "checks": 30,
+      "failed_checks": [],
+      "model_calls": 20,
+      "transport_incomplete": false
+    },
+    {
+      "id": "X5-r4",
+      "repetition": 4,
+      "max_calls": 60,
+      "execution": "EXECUTED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "stages": [
+        {
+          "stage": "X5-O-before",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-initial",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-teaching-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-teaching",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-explain",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-practice",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-present-task",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-work",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-final",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        }
+      ],
+      "checks": 30,
+      "failed_checks": [],
+      "model_calls": 20,
+      "transport_incomplete": false
+    },
+    {
+      "id": "X5-r5",
+      "repetition": 5,
+      "max_calls": 60,
+      "execution": "EXECUTED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "stages": [
+        {
+          "stage": "X5-O-before",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-initial",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-teaching-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-teaching",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-explain",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-practice",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-present-task",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-work",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-final",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        }
+      ],
+      "checks": 30,
+      "failed_checks": [],
+      "model_calls": 20,
+      "transport_incomplete": false
+    }
+  ],
+  "boundaries": [
+    {
+      "variant": "control-not-occurred",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "checks": 9,
+      "model_calls": 0,
+      "failed_checks": [],
+      "source_run": "X5-r1",
+      "source_stage": "switch-teaching",
+      "execution": "EXECUTED"
+    },
+    {
+      "variant": "explanation-not-occurred",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "checks": 7,
+      "model_calls": 0,
+      "failed_checks": [],
+      "source_run": "X5-r1",
+      "source_stage": "explain",
+      "execution": "EXECUTED"
+    },
+    {
+      "variant": "explanation-partial",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "checks": 6,
+      "model_calls": 0,
+      "failed_checks": [],
+      "source_run": "X5-r1",
+      "source_stage": "explain",
+      "execution": "EXECUTED"
+    },
+    {
+      "variant": "explanation-indeterminate",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "checks": 7,
+      "model_calls": 0,
+      "failed_checks": [],
+      "source_run": "X5-r1",
+      "source_stage": "explain",
+      "execution": "EXECUTED"
+    }
+  ],
+  "stop_reason": null
+}

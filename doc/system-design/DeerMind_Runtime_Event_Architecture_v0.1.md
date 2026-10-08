@@ -1,14 +1,16 @@
 # DeerMind Runtime & Event Architecture v0.1
 
-> **中文名称**：DeerMind 运行时与事件架构  
-> **版本**：v0.1  
-> **文档性质**：Focused System Design / Pre-Validation Candidate  
-> **状态**：§3.2 Focused Design Closure 候选  
-> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v0.1.md`  
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.4.md`  
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-29  
+> **中文名称**：DeerMind 运行时与事件架构<br>
+> **版本**：v0.1<br>
+> **文档性质**：Focused System Design / Pre-Validation Candidate<br>
+> **状态**：§3.2 Focused Design Closure 候选<br>
+> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v0.3.md`<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
+> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
+> **更新时间**：2026-09-29<br>
 > **版本说明**：v0.1 是 Runtime & Event Architecture 的首个 Pre-Validation Focused Design Candidate。它不改变 Concept Architecture 与 System Design 已冻结的 `Event != Observation != Evidence != Belief`、immutable factual history、`SelectedAction != ActionOccurrence`、append-only correction、per-boundary versioning、Data Authority 与 historical replay 边界，而是把这些系统级合同深化为可直接约束实现的事实运行契约。本文档冻结 Event identity、occurrence identity、factual authority、time / ordering、admission、deduplication、correction、late arrival、ActionOccurrence、ExternalInput、历史与 retention / replay 等运行规则；数据库产品、分区模型、消息系统和生产级物理持久化仍不在本版本冻结范围内。
+
+> **引用维护（2026-10-08）**：本次只同步当前协作版本引用，不改变本专项合同或重标历史实验；初版形成时的闭合结论仍是历史记录。当前阶段和验证结果以 [Roadmap v0.6](DeerMind_System_Design_Roadmap_v0.6.md) 与 [统一 Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md) 为准。
 
 ---
 
@@ -64,7 +66,7 @@ Event 不是“世界绝对真相”，而是 DeerMind 对一个授权来源所�
 
 ### 1.4 与总体 System Design 的关系
 
-总体 `DeerMind_System_Design_v0.1` 规定 Factual Runtime 在系统中的位置、Source of Truth 与上层闭环；本文档负责把该系统级责任深化到 Focused Design Closure。本文档不新建新的 semantic owner，也不把 Factual Runtime 提升成一个独立 Conceptual Space。
+总体 `DeerMind_System_Design_v0.3` 规定 Factual Runtime 在系统中的位置、Source of Truth 与上层闭环；本文档负责把该系统级责任深化到 Focused Design Closure。本文档不新建新的 semantic owner，也不把 Factual Runtime 提升成一个独立 Conceptual Space。
 
 可以概括为：
 

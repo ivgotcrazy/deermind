@@ -1,0 +1,3036 @@
+{
+  "schema": "single-task-engineering-assessment-v1",
+  "date": "2026-10-08",
+  "status": "ROUND_CLOSED_WITH_ACTIONABLE_FAILURES",
+  "prototype_status": "NOT_READY_FOR_LEARNER_USE",
+  "architecture_feasibility_reopened": false,
+  "automatic_new_campaign": false,
+  "started_at_china": "2026-10-07T23:57:20.242331+08:00",
+  "approx_ended_at_china": "2026-10-08T00:00:40.163331+08:00",
+  "run_summary": {
+    "status": "EXECUTION_FINISHED_CONTENT_REVIEW_REQUIRED",
+    "actual_calls": 60,
+    "logical_calls": 60,
+    "transport_extra_attempts": 0,
+    "elapsed_seconds": 199.921,
+    "completed_sessions": 2,
+    "completed_turns": 6,
+    "transport_incomplete_turns": 0,
+    "nontransport_failed_turns": 6,
+    "not_run_turns": 0,
+    "stop_reason": null,
+    "semantic_quality_claimed": false,
+    "automatic_followup": false
+  },
+  "metrics": {
+    "completed_sessions": 2,
+    "completed_turns": 6,
+    "provider_or_schema_failures": 0,
+    "mandatory_review_rejections": 5,
+    "quote_contract_failures": 1,
+    "observation_commits": 6,
+    "policy_commits": 6,
+    "outcomes": {
+      "NoIntervention": 6
+    },
+    "actual_hint_displays": 0,
+    "completed_action_matches": 6,
+    "committed_policies_citing_execution_context": 6,
+    "disjoint_quote_selections": 5,
+    "failure_tags": {
+      "missing_final_judgment": 1,
+      "reported_equation_as_endorsed": 4,
+      "invented_intermediate": 1,
+      "local_assistance_uncertainty": 1,
+      "nonverbatim_quote": 1
+    },
+    "failure_tags_overlap": true,
+    "explanation_review_concerns": 2,
+    "completed_sessions_without_identified_content_concerns": [
+      "T05"
+    ],
+    "population_accuracy_estimate": false
+  },
+  "turns": [
+    {
+      "session": "T01",
+      "turn": 1,
+      "input": "42÷6＝7，7×15＝105。我做完了，如果没有问题就不要提示。",
+      "execution": "COMPLETED",
+      "reason": null,
+      "observation": {
+        "description": "原任务为：6kg苹果42元，求15kg的价格。学习者写出42÷6＝7，该等式正确，得到单价7元/kg。学习者接着写出7×15＝105，该等式正确，得到15kg的总价105元。学习者已给出完整终值105，并声明“我做完了”。学习者请求：如果没有问题就不要提示，这是对系统回复的约束，不改变其已写出的结果。AssistanceContext显示无已提供的辅助记录，learner_used_assistance为NOT_INFERRED。"
+      },
+      "policy": {
+        "action_identity": "",
+        "action_revision": "",
+        "context_refs": [
+          {
+            "identity": "SingleTask-T01-work-input-1",
+            "revision": "1",
+            "space": "fact"
+          },
+          {
+            "identity": "SingleTask-T01-work-1",
+            "revision": "r1",
+            "space": "derived"
+          },
+          {
+            "identity": "SingleTaskActivity",
+            "revision": "v1",
+            "space": "canonical"
+          },
+          {
+            "identity": "c3534f5d041141fb9f7f4642aa564d57",
+            "revision": "1",
+            "space": "execution"
+          }
+        ],
+        "defer_condition": "",
+        "episode": "single-task-T01",
+        "exact_payload": "",
+        "executor_target": "",
+        "expected_disclosure": "No disclosure occurs: nothing is displayed, so no step, value or correctness signal is revealed to the learner.",
+        "outcome": "NoIntervention",
+        "rationale": "The learner's work is complete and correct: 42÷6=7 gives the unit price and 7×15=105 gives the total, matching the observation in SingleTask-T01-work-1. The learner explicitly asked not to be prompted if there is no problem (\"如果没有问题就不要提示\"), and the assistance history shows no prior help (exposures empty, learner_used_assistance NOT_INFERRED). Both admissible actions (AskSelfCheck, HintCheckStep) would display a check prompt, which is unnecessary here and would override the learner's stated preference without any diagnostic need. Retained responsibility: the learner owns the verification and any further checking; no substitution is introduced because nothing is supplied. Cost of intervening: needless interruption and implied doubt about a correct answer; benefit of abstaining: respects the request and preserves the learner's self-monitoring. No basis exists to suspect an error, so no hint is warranted.",
+        "uncertainty": "The observation confirms the written steps and final value but cannot establish how the learner arrived at them or whether they verified independently; this does not affect the decision, since the submitted result is correct and no error signal is present. No decision-relevant gap remains for this interaction."
+      },
+      "work_commit": {
+        "status": "Committed",
+        "candidate_digest": "e56d128760b88115147a7de18c078cb869da8bbdecd0ebb225d3a95257698f87",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T01-work-1",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "462cc310bf8d4978b9f67077e59f1108",
+          "revision": "1"
+        }
+      },
+      "policy_commit": {
+        "status": "Committed",
+        "candidate_digest": "1c9d3cd27c1c3803ef33548ba5e9b9582adb9b9096da96c95ee145fe30ec463a",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T01-policy-1",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "7d310b1fcc2e4a8eb222db605c96377e",
+          "revision": "1"
+        }
+      },
+      "role_blocks": [],
+      "arithmetic_blocks": [],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            }
+          ],
+          "rationale": "The candidate describes the full route: divide the cost by the given quantity (42÷6) to get the unit price 7 yuan/kg, then multiply by the requested quantity (7×15) to get 105 yuan. Both steps are quoted from the learner's work, so the method description is grounded.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3",
+                "candidate_4"
+              ]
+            }
+          ],
+          "rationale": "The candidate identifies the learner's division 42÷6＝7 and correctly judges it as correct; 42÷6=7 is indeed true, so no wrong equality is mislabeled and no mismatch is invented.",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_12"
+              ]
+            }
+          ],
+          "rationale": "The candidate explicitly judges the submitted terminal value 105 as the total price for 15 kg, which matches the original task (6 kg for 42 yuan → 15 kg for 105 yuan), and correctly notes that the learner's request not to prompt does not erase the written result.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_1"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "Every candidate assertion is supported: the task restatement matches source_1, the learner's equalities and statement match source_2, the arithmetic judgments are correct, and the assistance description matches source_3. No unsupported, contradicted or misattributed claim was found.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_13"
+              ]
+            }
+          ],
+          "rationale": "All claims are either reports of the learner's work/request or local arithmetic and task-method observations; none endorses a latent ability conclusion or makes a teaching decision. The request is described as a reply constraint without deciding what to teach.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully captures the task scalars (6, 42, 15), the learner's division 42÷6=7 and multiplication 7×15=105 with correct operands, operators, values, learner speaker and asserted_true stance, plus the system's derived scalars 7 and 105 and the final value 105. No numeric assertion is omitted or distorted.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "Each span has a determinate speaker and stance: learner reports for the written equalities and the statement “我做完了”, system endorsement for the arithmetic judgments and local interpretations, and system observation for the assistance context. No attribution is unresolved.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T01-work-input-1",
+          "revision": "1"
+        },
+        "episode": "single-task-T01",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [],
+      "completed_action_match": true,
+      "review_disposition": "ACCEPTABLE",
+      "issue_tags": [],
+      "human_review": "正确作答与不提示动作一致；未推断稳定掌握。"
+    },
+    {
+      "session": "T01",
+      "turn": 2,
+      "input": "42÷6＝7，7×15＝105；我确认提交。",
+      "execution": "COMPLETED",
+      "reason": null,
+      "observation": {
+        "description": "任务为单价问题：6kg 苹果 42 元，求 15kg 的价钱。学习者写出 42÷6＝7，该除法正确，得每千克 7 元。随后写出 7×15＝105，该乘法正确，得 105 元。学习者明确表示\"我确认提交\"，因此提交的最终结果为 105 元。按原任务检验，105 元与 42÷6×15 的结果一致，最终结果正确。学习者未提出要求系统揭示或保留某步骤的请求。AssistanceContext 显示无已暴露或未确认的辅助记录，learner_used_assistance 为 NOT_INFERRED，故不能据此判断此前是否获得系统帮助。"
+      },
+      "policy": {
+        "action_identity": "",
+        "action_revision": "",
+        "context_refs": [
+          {
+            "identity": "SingleTask-T01-work-2",
+            "revision": "r1",
+            "space": "derived"
+          },
+          {
+            "identity": "SingleTask-T01-received-2",
+            "revision": "1",
+            "space": "fact"
+          },
+          {
+            "identity": "SingleTaskActivity",
+            "revision": "v1",
+            "space": "canonical"
+          },
+          {
+            "identity": "6c4a9bc509fd41aeacbfa777391410ac",
+            "revision": "1",
+            "space": "execution"
+          }
+        ],
+        "defer_condition": "",
+        "episode": "single-task-T01",
+        "exact_payload": "",
+        "executor_target": "",
+        "expected_disclosure": "No content is displayed to the learner under NoIntervention; no hint, step cue or solution is disclosed.",
+        "outcome": "NoIntervention",
+        "rationale": "Observation SingleTask-T01-work-2 reports both steps correct (42÷6=7, 7×15=105) and the final answer 105 consistent with 42÷6×15; the learner confirmed submission and requested no reveal or step retention. The episode purpose is IndependentDiagnosisWithLimitedHelp, and the only admissible actions are local hints (AskSelfCheck, HintCheckStep). Neither is warranted: there is no error to localize, and prompting a self-check on an already-correct, confirmed submission would add no diagnostic value while consuming the learner's limited help budget. Learner retains full responsibility for the work; no substitution occurs since nothing is displayed. Cost of intervening (unnecessary cue, possible confusion about a correct answer) exceeds benefit (none identified).",
+        "uncertainty": "AssistanceContext shows no exposures and learner_used_assistance NOT_INFERRED, so prior system help cannot be ruled in or out; this does not affect the decision because the submitted work is correct on its face and no help is being offered. Whether the learner could reproduce the reasoning unaided is unknown and not inferable from one correct submission."
+      },
+      "work_commit": {
+        "status": "Committed",
+        "candidate_digest": "80a92106c42e89589321b60f00dda96d2fb98646f3b5e932b82561990bef3d47",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T01-work-2",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "0e7024e154d94d678dc893bca1237eef",
+          "revision": "1"
+        }
+      },
+      "policy_commit": {
+        "status": "Committed",
+        "candidate_digest": "b4e3f806fa033a0b445fdf10695d8270ce336cee1d2d703a60729f5153ef5f13",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T01-policy-2",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "ba52605059c44e14b669e93c8ec494c0",
+          "revision": "1"
+        }
+      },
+      "role_blocks": [],
+      "arithmetic_blocks": [],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            }
+          ],
+          "rationale": "The candidate describes the divide-cost-by-given-quantity (42÷6) then multiply-by-requested-quantity (7×15) route, grounded in the learner's written steps.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            }
+          ],
+          "rationale": "The candidate correctly identifies 42÷6=7 as a correct division and preserves the quotient 7 as the per-kg price.",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_12"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_13"
+              ]
+            }
+          ],
+          "rationale": "The candidate explicitly judges the submitted final result 105 yuan against the original task and finds it correct, independent of the learner's intermediate steps.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic, with correct speaker and polarity; no claim is contradicted or unsupported.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_17"
+              ]
+            }
+          ],
+          "rationale": "The candidate reports the learner's steps and makes only local task-method and arithmetic judgments; it does not endorse latent ability conclusions or teaching decisions, and it correctly declines to infer prior system assistance.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_12"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully captures the learner's 42÷6=7 and 7×15=105 assertions with correct operands, results, speaker and stance, and the candidate's 42÷6×15 comparison; no numeric assertion is omitted or distorted.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_13"
+              ]
+            }
+          ],
+          "rationale": "Every claim's speaker and stance are determined: learner steps are reported as learner/reported, and the candidate's own arithmetic and result judgments are system/endorsed.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T01-work-input-2",
+          "revision": "1"
+        },
+        "episode": "single-task-T01",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [],
+      "completed_action_match": true,
+      "review_disposition": "EXPLANATION_CONCERN",
+      "issue_tags": [
+        "unsupported_help_budget"
+      ],
+      "human_review": "不提示动作合理；理由中的 limited help budget 没有对应的来源预算字段，属于依据不清的表述，需工程复核。"
+    },
+    {
+      "session": "T03",
+      "turn": 1,
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "execution": "FAILED",
+      "reason": "ContractError:workRejected:SemanticValidation:FAIL",
+      "observation": {
+        "description": "原任务为单价问题：6kg 苹果42元，求15kg 的价钱。学习者写出两步计算：42÷6＝8，8×15＝120。第一步等式42÷6＝8在算术上不正确，42÷6应为7；第二步8×15＝120本身计算正确，但基于第一步的错误商。学习者已给出终端结果120，未标注为最终答案，但该计算已完成。学习者请求指出哪一步需要检查，并明确要求不要给答案。AssistanceContext 显示无已提供的辅助记录，learner_used_assistance 为 NOT_INFERRED。"
+      },
+      "policy": null,
+      "work_commit": {
+        "status": "ValidationFailed",
+        "candidate_digest": "d167a9128d98cca685e562dd87a7a9c4c2dfa97725bfcc2e4de79456c290373b",
+        "committed": null,
+        "reason": "SemanticValidation:FAIL",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "59b94722bd9d486caf154fc313b31e36",
+          "revision": "1"
+        }
+      },
+      "policy_commit": null,
+      "role_blocks": [],
+      "arithmetic_blocks": [
+        {
+          "segment": 1,
+          "expression": 0,
+          "field": "description",
+          "start": 39,
+          "end": 46,
+          "text": "42÷6＝8，",
+          "left": "42",
+          "operator": "divide",
+          "reason": "Learner's first step equality 42÷6=8.",
+          "right": "6",
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_4"
+          ],
+          "speaker": "learner",
+          "stance": "asserted_true",
+          "type": "NumericAssertion",
+          "value": "8",
+          "bound_sources": [
+            {
+              "handle": "source_2",
+              "ref": {
+                "space": "fact",
+                "identity": "SingleTask-T03-work-input-1",
+                "revision": "1"
+              },
+              "field": "text",
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": "7",
+          "relation_holds": false,
+          "status": "FAIL"
+        }
+      ],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3",
+                "candidate_4",
+                "candidate_5"
+              ]
+            }
+          ],
+          "rationale": "Candidate describes the submitted route: divide cost by given quantity (42÷6) then multiply by requested quantity (8×15), quoting the learner's two steps. The route is fully visible and correctly characterized.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_6",
+                "candidate_7"
+              ]
+            }
+          ],
+          "rationale": "Candidate identifies the wrong equality 42÷6＝8 and gives the correct local value 7, matching the arithmetic fixture (42/6=7).",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_10",
+                "candidate_11",
+                "candidate_12"
+              ]
+            }
+          ],
+          "rationale": "Candidate recognizes the learner's terminal result 120 as a completed calculation not labeled as a final answer. However, it never judges 120 against the original task (correct answer 105); it merely notes the computation is complete. The requirement demands an explicit judgment of the submitted final result against the task, which is absent.",
+          "status": "FAIL"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_0",
+                "candidate_1",
+                "candidate_2",
+                "candidate_3",
+                "candidate_4",
+                "candidate_5",
+                "candidate_6",
+                "candidate_7",
+                "candidate_8",
+                "candidate_9",
+                "candidate_10",
+                "candidate_11",
+                "candidate_12",
+                "candidate_13",
+                "candidate_14",
+                "candidate_15",
+                "candidate_16"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic with correct speaker and polarity; no unsupported or contradicted claim was found.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [],
+          "rationale": "All claims are reports of learner work/requests or local arithmetic and task-method interpretation; no latent ability conclusion or teaching decision is endorsed. All boundary_status values are PASS.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_4",
+                "candidate_5",
+                "candidate_6",
+                "candidate_7",
+                "candidate_8",
+                "candidate_10"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully maps the learner's two equalities (42÷6=8, 8×15=120) with correct operands, operators, values, speaker and stance, and the system's judgments (42÷6=8 false, 42÷6=7, 8×15=120 correct) plus the terminal scalar 120. No numeric assertion is missing or distorted.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [],
+          "rationale": "Every claim's speaker and stance are determined: learner reports for the learner's work and requests, system/endorsed for the task restatement, arithmetic judgments and AssistanceContext statement.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [
+        {
+          "criterion": "arithmetic_mapping",
+          "span_ids": [
+            "candidate_4",
+            "candidate_5",
+            "candidate_6",
+            "candidate_7",
+            "candidate_8",
+            "candidate_10"
+          ]
+        }
+      ],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T03-work-input-1",
+          "revision": "1"
+        },
+        "episode": "single-task-T03",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [
+        "HintCheckStep"
+      ],
+      "completed_action_match": null,
+      "review_disposition": "GENERATION_AND_EXTRACTION_DEFECT",
+      "issue_tags": [
+        "missing_final_judgment",
+        "reported_equation_as_endorsed"
+      ],
+      "human_review": "候选未明确判断120与原题关系，final_result拒绝有依据；另把转述42÷6=8抽取为asserted_true，叠加一次映射误判。"
+    },
+    {
+      "session": "T03",
+      "turn": 2,
+      "input": "42÷6＝7，7×15＝105；我重新算了一次。",
+      "execution": "COMPLETED",
+      "reason": null,
+      "observation": {
+        "description": "任务为单价问题：6kg苹果42元，求15kg的价钱。学习者写出42÷6＝7，该等式正确，得单价7元/kg。随后写出7×15＝105，该等式正确，得总价105元。学习者自述\"我重新算了一次\"，属自我报告。学习者未提出任何请求，也未要求系统给出或保留答案。AssistanceContext显示无先前辅助记录，learner_used_assistance为NOT_INFERRED。最终结果105元与任务相符。"
+      },
+      "policy": {
+        "action_identity": "",
+        "action_revision": "",
+        "context_refs": [
+          {
+            "identity": "SingleTask-T03-work-input-2",
+            "revision": "1",
+            "space": "fact"
+          },
+          {
+            "identity": "SingleTask-T03-received-2",
+            "revision": "1",
+            "space": "fact"
+          },
+          {
+            "identity": "SingleTask-T03-work-2",
+            "revision": "r1",
+            "space": "derived"
+          },
+          {
+            "identity": "SingleTaskActivity",
+            "revision": "v1",
+            "space": "canonical"
+          },
+          {
+            "identity": "42cbc66f729a484792a773da39063d3d",
+            "revision": "1",
+            "space": "execution"
+          }
+        ],
+        "defer_condition": "",
+        "episode": "single-task-T03",
+        "exact_payload": "",
+        "executor_target": "",
+        "expected_disclosure": "No display occurs; nothing is shown to the learner, so no disclosure or substitution effect is expected.",
+        "outcome": "NoIntervention",
+        "rationale": "Learner submitted a complete, correct solution (42÷6=7 unit price; 7×15=105 total) and self-reports having recomputed. No request for help was made, and AssistanceContext shows no prior assistance (learner_used_assistance NOT_INFERRED). Both admissible actions (AskSelfCheck, HintCheckStep) would direct the learner to re-verify a step already verified and correct, adding no diagnostic value and substituting the learner's own checking with a system prompt. The purpose is IndependentDiagnosisWithLimitedHelp; with a correct result and no error to localize, the minimum sufficient intervention is none. Learner retains full responsibility for the work; no cognitive substitution occurs.",
+        "uncertainty": "The self-report \"我重新算了一次\" is unverified and could reflect a single re-read rather than genuine recomputation; however, since both written equations are correct and no error is present, this uncertainty does not change the decision. No evidence about latent mastery is available or needed."
+      },
+      "work_commit": {
+        "status": "Committed",
+        "candidate_digest": "15d3e1a100712ef902c0ca7894fcb4f36d767cd7414c3a964d2adc3463ed4b5b",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T03-work-2",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "7d41722925134b0ba9ecf876cc7b619e",
+          "revision": "1"
+        }
+      },
+      "policy_commit": {
+        "status": "Committed",
+        "candidate_digest": "6a1c7698a2ca0c8b7f7070ecc4745102ecaeb3408ccf4b8693ac99206fe632bc",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T03-policy-2",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "d37b200553d944b880bf8fd706ecbdb9",
+          "revision": "1"
+        }
+      },
+      "role_blocks": [],
+      "arithmetic_blocks": [],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            }
+          ],
+          "rationale": "The candidate describes the submitted route: divide the cost by the given quantity (42÷6) and then multiply by the requested quantity (7×15), quoting both learner steps. The complete divide-then-multiply strategy is visible and correctly characterized.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            }
+          ],
+          "rationale": "The candidate identifies the learner's division 42÷6＝7, judges it correct, and states the resulting unit price 7 yuan/kg. The local division assertion is judged correctly with no invented mismatch.",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "The learner's terminal calculation 7×15＝105 supplies the final result 105 yuan; the candidate explicitly judges it against the original task as matching. The submitted answer is judged, not treated as absent.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_13"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic: the task restatement, the learner's two equalities, the self-report quote, the absence of requests, the AssistanceContext values, and the final-result judgment. No unsupported, contradicted or misattributed assertion was found.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "The candidate reports the learner's steps and self-report, and makes only local arithmetic/task-method judgments (equalities correct, unit price, total price, final result matching the task). It endorses no latent ability conclusion and makes no teaching decision, so all claim boundary_status values are PASS.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_1"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully captures the task scalars (6, 42, 15), the learner's division 42÷6=7 and multiplication 7×15=105 with correct operands, operators, values, learner speaker and asserted_true stance, plus the derived unit price 7 and total price 105. No numeric assertion is omitted or distorted; the mapping is faithful regardless of arithmetic truth.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "Every candidate span has a determinate speaker and stance: learner/reported for the reported equalities and the quoted self-report, system/endorsed for the task restatement, correctness judgments, derived prices, absence reports, AssistanceContext statements and final-result judgment.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T03-work-input-2",
+          "revision": "1"
+        },
+        "episode": "single-task-T03",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [],
+      "completed_action_match": true,
+      "review_disposition": "EXPLANATION_CONCERN",
+      "issue_tags": [
+        "unnecessary_process_speculation"
+      ],
+      "human_review": "作答与不提示动作合理；未伪造第一回合帮助。Policy猜测“可能只重读了一次”缺具体依据，留解释质量复核。"
+    },
+    {
+      "session": "T05",
+      "turn": 1,
+      "input": "42÷6＝7。后面还没做，请先等我，不要提示。",
+      "execution": "COMPLETED",
+      "reason": null,
+      "observation": {
+        "description": "原任务为：6kg苹果42元，求15kg多少钱。学习者提交的作业中只写出“42÷6＝7”，该除法计算正确，得到每千克7元这一中间量。学习者自述“后面还没做”，即尚未计算15kg的总价，因此提交内容中没有最终结果。学习者请求先等待、不要提示，这是对系统回复方式的约束，不改变其已写出的中间结果。"
+      },
+      "policy": {
+        "action_identity": "",
+        "action_revision": "",
+        "context_refs": [
+          {
+            "identity": "SingleTask-T05-work-input-1",
+            "revision": "1",
+            "space": "fact"
+          },
+          {
+            "identity": "SingleTask-T05-received-1",
+            "revision": "1",
+            "space": "fact"
+          },
+          {
+            "identity": "SingleTask-T05-work-1",
+            "revision": "r1",
+            "space": "derived"
+          },
+          {
+            "identity": "SingleTaskActivity",
+            "revision": "v1",
+            "space": "canonical"
+          },
+          {
+            "identity": "86a894ee7dca4500bf366e29e14e5027",
+            "revision": "1",
+            "space": "execution"
+          }
+        ],
+        "defer_condition": "",
+        "episode": "single-task-T05",
+        "exact_payload": "",
+        "executor_target": "",
+        "expected_disclosure": "No content is displayed; the learner receives no hint, check prompt or solution, and the request to wait is honored.",
+        "outcome": "NoIntervention",
+        "rationale": "Learner submitted only the correct intermediate step 42÷6=7 and explicitly stated the rest is not yet done, requesting to be left alone without hints. Both admissible actions (AskSelfCheck, HintCheckStep) would push a check prompt the learner has asked not to receive, and the intermediate computation is already correct, so neither would add diagnostic value now. Retaining responsibility with the learner: the remaining step (7×15) is still learner-owned and unassisted; no help history exists (exposures empty, learner_used_assistance NOT_INFERRED). Cognitive substitution: none, since no content is delivered. Cost/benefit: intervening would override an explicit request and could preempt the learner's own continuation; waiting preserves the independent-diagnosis purpose of the activity.",
+        "uncertainty": "The learner's eventual completion of 7×15 is unknown; whether they will self-correct or stall cannot be determined from this submission. This does not affect the current decision, which is only about whether to intervene now against an explicit wait request."
+      },
+      "work_commit": {
+        "status": "Committed",
+        "candidate_digest": "7a5b864a25ab7f554c120672c0d31daf176d49a49e543d93702b82630aa27372",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T05-work-1",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "5a6bca40f851412ca3b68eec0e6e50ac",
+          "revision": "1"
+        }
+      },
+      "policy_commit": {
+        "status": "Committed",
+        "candidate_digest": "6509af2665092b93c7cb8f68025d0232398a59265eb8d6266732c90dd8c70404",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T05-policy-1",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "52a53a9b8f1f4d9bb817dff5daa95d63",
+          "revision": "1"
+        }
+      },
+      "role_blocks": [],
+      "arithmetic_blocks": [],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            }
+          ],
+          "rationale": "The candidate describes only the visible part of the route: the learner wrote 42÷6＝7, giving the per-kg intermediate value of 7 yuan, and the candidate explicitly states the later step (15kg total) was not done and no final result exists. It does not invent a complete strategy, so the partial-route description is grounded.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            }
+          ],
+          "rationale": "The candidate identifies the visible local division 42÷6＝7, correctly judges it as correct (42÷6=7), and preserves the resulting intermediate quantity of 7 yuan per kg without inventing a mismatch.",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            }
+          ],
+          "rationale": "The original work contains only 42÷6＝7 and the learner's statement that the rest is not done; no terminal total for 15kg is present. The candidate explicitly preserves that absence rather than inventing a result, and the learner's request to wait does not erase any submitted result because none exists.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_1"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_2"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_11"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported: the task restatement matches source_1, the learner's written division and self-report match source_2, the arithmetic 42÷6=7 is correct, and the absence of a final result follows from the original work. No claim is contradicted or unsupported.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            }
+          ],
+          "rationale": "The candidate stays within Observation responsibility: it reports the learner's work and request, makes a local arithmetic judgment (42÷6=7 correct) and a local task-method interpretation (7 yuan per kg intermediate), and describes the request as constraining the system reply without making any teaching decision or latent-ability conclusion. All claim boundary_status values are PASS.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_1"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_2"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully captures the numeric content: task scalars 6, 42, 15 attributed to the task; the learner's division equality 42÷6=7 as a NumericAssertion with learner/asserted_true stance; the system's intermediate scalar 7; and the 15kg total as not computed. No numeric assertion is omitted or distorted, and the wrong-value check is not triggered since 42÷6=7 is correct.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_1"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            }
+          ],
+          "rationale": "Every span has a determinate speaker and stance: the task restatement is other/reported; the learner's written division and self-report are learner/reported; the correctness judgment and intermediate-value interpretation are system/endorsed; the request description is learner/reported with the system's observation of its constraining role. No attribution is unresolved.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T05-work-input-1",
+          "revision": "1"
+        },
+        "episode": "single-task-T05",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [],
+      "completed_action_match": true,
+      "review_disposition": "ACCEPTABLE",
+      "issue_tags": [],
+      "human_review": "正确中间步骤与尚无终值区分清楚；等待请求通过NoIntervention满足，无须固定选择Defer。"
+    },
+    {
+      "session": "T05",
+      "turn": 2,
+      "input": "42÷6＝7，7×15＝105；现在完成了。",
+      "execution": "COMPLETED",
+      "reason": null,
+      "observation": {
+        "description": "任务为单价归一问题：6kg苹果42元，求15kg的价钱。学习者写出42÷6＝7，该除法正确，得每千克7元。随后写出7×15＝105，该乘法正确，得105元。学习者自述\"现在完成了\"，表明其提交的最终结果为105元。按原任务检验，105元与42÷6×15的结果一致，最终结果正确。AssistanceContext显示无先前辅助暴露记录，learner_used_assistance为NOT_INFERRED。学习者未提出要求系统揭示或保留某步骤的请求。"
+      },
+      "policy": {
+        "action_identity": "",
+        "action_revision": "",
+        "context_refs": [
+          {
+            "identity": "SingleTask-T05-work-input-2",
+            "revision": "1",
+            "space": "fact"
+          },
+          {
+            "identity": "SingleTask-T05-work-2",
+            "revision": "r1",
+            "space": "derived"
+          },
+          {
+            "identity": "SingleTaskActivity",
+            "revision": "v1",
+            "space": "canonical"
+          },
+          {
+            "identity": "aabb156d537a4a3a83d8060bc9e22b47",
+            "revision": "1",
+            "space": "execution"
+          }
+        ],
+        "defer_condition": "",
+        "episode": "single-task-T05",
+        "exact_payload": "",
+        "executor_target": "",
+        "expected_disclosure": "No content is displayed to the learner; no hint, step cue, or solution is disclosed.",
+        "outcome": "NoIntervention",
+        "rationale": "Learner submitted 42÷6＝7 and 7×15＝105 for the unit-price task; both steps and the final 105元 are correct per the Observation, and the learner declared completion. No assistance exposure exists (AssistanceContext: exposures empty, learner_used_assistance NOT_INFERRED), and the learner made no request for a hint or reveal. The activity permits only AskSelfCheck and HintCheckStep; neither is warranted because there is no error to localize and no learner-posed question, so any prompt would add unrequested cognitive work without a diagnosed need. Responsibility for the work remains entirely with the learner; no substitution occurs since nothing is displayed. Cost of intervening (unnecessary self-check demand on a correct solution) exceeds benefit.",
+        "uncertainty": "The Observation is a single submitted attempt; it does not establish stable mastery of unit-price reasoning, and no independent verification of the learner's process beyond the written steps is available. This does not affect the present decision, since the submitted work is correct and no help was requested."
+      },
+      "work_commit": {
+        "status": "Committed",
+        "candidate_digest": "58341a88c7a32b468ee85e7ad18c190a9dc5ec93fda3ada8b5b4f8db726aeed0",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T05-work-2",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "f4b03e8b79564aef8b12f90cee320db1",
+          "revision": "1"
+        }
+      },
+      "policy_commit": {
+        "status": "Committed",
+        "candidate_digest": "596bba40344cace5f838090ca07aeffb883fcfd0feeb876ce15ebde3c6848092",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T05-policy-2",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "190a8885ee2a4a7aa88d49fd9f1665a2",
+          "revision": "1"
+        }
+      },
+      "role_blocks": [],
+      "arithmetic_blocks": [],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            }
+          ],
+          "rationale": "The candidate describes the complete route: divide cost by given quantity (42÷6=7) then multiply by the requested quantity (7×15=105), grounded in the learner's actual written steps.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            }
+          ],
+          "rationale": "The candidate identifies the learner's division 42÷6=7, judges it correct, and gives the local value 7 yuan per kg, matching the original work and correct arithmetic.",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_12"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_13"
+              ]
+            }
+          ],
+          "rationale": "The learner's terminal calculation 7×15=105 supplies a submitted final result of 105 yuan; the candidate explicitly judges it against the original task and finds it correct, consistent with 42÷6×15=105.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_12"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work, the AssistanceContext, and correct arithmetic; speaker, polarity and modality are accurate throughout.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [],
+          "rationale": "The candidate reports the learner's steps and self-report, and offers local arithmetic/task-method interpretation and a final-result judgment; it makes no latent-ability conclusion or teaching decision, so all claim boundary_status values are PASS.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_12"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully captures the learner's 42÷6=7 and 7×15=105 as learner-asserted NumericAssertions, the system's verification 42÷6×15=105, and the scalar values 6, 42, 15, 7, 105 with correct speakers, stances and sources; no numeric assertion is omitted or distorted.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_13"
+              ]
+            }
+          ],
+          "rationale": "Every span has a determinate speaker and stance: learner reports for the written steps and self-report, system endorsement for the correctness judgments and context observations.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T05-work-input-2",
+          "revision": "1"
+        },
+        "episode": "single-task-T05",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [],
+      "completed_action_match": true,
+      "review_disposition": "ACCEPTABLE",
+      "issue_tags": [],
+      "human_review": "完整作答正确，帮助历史按实际记录处理，未推断稳定掌握。"
+    },
+    {
+      "session": "T07",
+      "turn": 1,
+      "input": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。",
+      "execution": "FAILED",
+      "reason": "ContractError:workRejected:SemanticValidation:FAIL",
+      "observation": {
+        "description": "原任务为：6kg苹果42元，求15kg的价钱。学习者写出算式42÷6×15＝120，并称已完成。该式先求单价42÷6＝7，再乘15得105，故120这一结果不正确。学习者未写出中间步骤，只给出连等式与结果120。学习者请求只提醒其自行检查，不要指出错误位置；这是对系统回复范围的约束，不改变其已提交结果120。AssistanceContext显示无已确认的辅助记录，learner_used_assistance为NOT_INFERRED。"
+      },
+      "policy": null,
+      "work_commit": {
+        "status": "ValidationFailed",
+        "candidate_digest": "05d68dde00cee1bd3f943ba36bf5aa50567ec83f1be30fced5d90513393a9f60",
+        "committed": null,
+        "reason": "SemanticValidation:FAIL",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "05220b5e3afe4faa8f9289301781fbfa",
+          "revision": "1"
+        }
+      },
+      "policy_commit": null,
+      "role_blocks": [],
+      "arithmetic_blocks": [
+        {
+          "segment": 1,
+          "expression": 1,
+          "field": "description",
+          "start": 23,
+          "end": 42,
+          "text": "学习者写出算式42÷6×15＝120，",
+          "left": "7",
+          "operator": "multiply",
+          "reason": "Learner's chained expression 42÷6×15＝120 asserts the final result 120.",
+          "right": "15",
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_3"
+          ],
+          "speaker": "learner",
+          "stance": "asserted_true",
+          "type": "NumericAssertion",
+          "value": "120",
+          "bound_sources": [
+            {
+              "handle": "source_2",
+              "ref": {
+                "space": "fact",
+                "identity": "SingleTask-T07-work-input-1",
+                "revision": "1"
+              },
+              "field": "text",
+              "text": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。"
+            }
+          ],
+          "computed": "105",
+          "relation_holds": false,
+          "status": "FAIL"
+        }
+      ],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5",
+                "candidate_6"
+              ]
+            }
+          ],
+          "rationale": "Candidate describes the submitted route: the chained expression 42÷6×15 and the interpretation that it first finds unit price 42÷6＝7 then multiplies by 15. It also notes the learner wrote no intermediate steps. This grounds the divide-then-multiply route with candidate quotations.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            }
+          ],
+          "rationale": "Candidate identifies the local division 42÷6＝7 as correct and judges the learner's final result 120 incorrect (correct value 105). The local division assertion is correctly evaluated.",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_13"
+              ]
+            }
+          ],
+          "rationale": "Candidate explicitly judges the submitted final result 120 against the original task as incorrect, and correctly notes the learner's request to withhold the answer does not erase the submitted result 120.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5",
+                "candidate_6",
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_14",
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic with correct speaker and polarity; every claim is supported.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_12",
+                "candidate_13"
+              ]
+            }
+          ],
+          "rationale": "Candidate reports the learner's work and request, and makes local arithmetic/task-method observations (42÷6＝7, 7×15＝105, 120 incorrect, request constrains reply scope). No latent ability conclusion or teaching decision is endorsed; all claim boundary_status values are PASS.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5",
+                "candidate_6",
+                "candidate_7"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully maps the candidate's numeric assertions: task scalars 6, 42, 15; the learner's chained expression 42÷6×15＝120 (with intermediate 7 and result 120, learner/asserted_true); the system's 42÷6＝7, 7×15＝105, and the judgment that 120 is incorrect; and the reported 120 scalars. Operands, operations, values, speaker and stance are preserved with no omissions or distortions.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5",
+                "candidate_6",
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10",
+                "candidate_11"
+              ]
+            }
+          ],
+          "rationale": "Every candidate span has a determined speaker and stance: learner reports (the expression, completion claim, and request) are learner/reported; the system's arithmetic interpretation and judgment are system/endorsed. No unresolved attribution.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T07-work-input-1",
+          "revision": "1"
+        },
+        "episode": "single-task-T07",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [
+        "AskSelfCheck"
+      ],
+      "completed_action_match": null,
+      "review_disposition": "EXTRACTION_FALSE_REJECTION",
+      "issue_tags": [
+        "reported_equation_as_endorsed",
+        "invented_intermediate"
+      ],
+      "human_review": "候选局部判断合理；抽取为学习者补出中间7并认可7×15=120，既改变了原有陈述，又把转述误作认可。"
+    },
+    {
+      "session": "T07",
+      "turn": 2,
+      "input": "42÷6＝7，7×15＝105；这次重新计算了。",
+      "execution": "FAILED",
+      "reason": "ContractError:workRejected:SemanticValidation:FAIL",
+      "observation": {
+        "description": "原任务为：6kg苹果42元，求15kg的价格。学习者写出42÷6＝7，该等式正确，得到单价7元/kg。学习者接着写出7×15＝105，该等式正确，得到总价105元。学习者已给出完整终值105元，虽未标注“答”，但终端计算已完成。学习者自述“这次重新计算了”，这是对自身行为的报告，不能据此确认此前是否获得过系统帮助。AssistanceContext显示无暴露、无未确认项，learner_used_assistance为NOT_INFERRED，故无实际系统协助记录。学习者未提出要求系统揭示或保留某步骤的请求。"
+      },
+      "policy": null,
+      "work_commit": {
+        "status": "ValidationFailed",
+        "candidate_digest": "7a416bc0763ec854c737f1cada6b28b626df6d57b900f7f7aad52ea629214fb8",
+        "committed": null,
+        "reason": "SemanticValidation:FAIL",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "bdcebcbd6e4741ec969efe5072b146d7",
+          "revision": "1"
+        }
+      },
+      "policy_commit": null,
+      "role_blocks": [
+        {
+          "span_ids": [
+            "candidate_14"
+          ],
+          "role": "evidence_inference",
+          "rationale": "Draws a conclusion about what the report can and cannot establish regarding assistance."
+        }
+      ],
+      "arithmetic_blocks": [],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            }
+          ],
+          "rationale": "The candidate describes the full route: divide cost by given quantity (42÷6=7, unit price 7 yuan/kg), then multiply by requested quantity (7×15=105, total 105 yuan), grounded in the learner's visible steps.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            }
+          ],
+          "rationale": "The visible division 42÷6＝7 is correctly identified and judged correct, with the local value 7 preserved; no mismatch invented.",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_11"
+              ]
+            }
+          ],
+          "rationale": "The candidate explicitly judges the submitted terminal value 105 yuan as complete and correct against the original task, noting the absence of an explicit '答' label without erasing the result.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_1"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic, with correct speaker and polarity; no claim is contradicted or unsupported.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_14"
+              ]
+            }
+          ],
+          "rationale": "All claims are local task-method/arithmetic interpretation or attributed reports; no latent ability conclusion or teaching decision is endorsed, so every claim's boundary_status is PASS.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_1"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully captures the task scalars (6, 42, 15), the learner's division 42÷6=7 and multiplication 7×15=105 with correct operands, results, speaker and stance, plus the derived scalars 7 and 105; no numeric assertion is omitted or distorted.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_12"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            }
+          ],
+          "rationale": "Every span's speaker and stance are determined: learner-written equations are learner/reported, the learner's self-report is reported, and the system's correctness judgments and derivations are system/endorsed.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T07-work-input-2",
+          "revision": "1"
+        },
+        "episode": "single-task-T07",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [],
+      "completed_action_match": null,
+      "review_disposition": "ROLE_FALSE_REJECTION",
+      "issue_tags": [
+        "local_assistance_uncertainty"
+      ],
+      "human_review": "重新计算自述不能证明此前帮助，属于局部来源限度；被误分为evidence_inference，未涉及正式Claim或Evidence权重。"
+    },
+    {
+      "session": "T09",
+      "turn": 1,
+      "input": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。",
+      "execution": "FAILED",
+      "reason": "ContractError:workRejected:SemanticValidation:FAIL",
+      "observation": {
+        "description": "任务为单价问题：6kg 苹果42元，求15kg 的价钱。学习者写出两步计算：42÷6＝8，8×15＝120，并称已完成。其中 42÷6＝8 与正确商 7 不符，属可见的算术错误；随后 8×15＝120 的乘法本身正确，但基于错误的单价。学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。学习者同时请求本次不要提示，想自己再试，这是对系统回复方式的约束，不改变其已写出的结果。AssistanceContext 显示无先前暴露与未确认项，learner_used_assistance 为 NOT_INFERRED，故无实际系统协助记录。"
+      },
+      "policy": null,
+      "work_commit": {
+        "status": "ValidationFailed",
+        "candidate_digest": "78b4489a64a6cd8c84eb5e3dd2ce68d0f1a68c840c633a594536839737f95273",
+        "committed": null,
+        "reason": "SemanticValidation:FAIL",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "5d88a1506ab94ac9b02b6e690e687280",
+          "revision": "1"
+        }
+      },
+      "policy_commit": null,
+      "role_blocks": [],
+      "arithmetic_blocks": [
+        {
+          "segment": 1,
+          "expression": 0,
+          "field": "description",
+          "start": 38,
+          "end": 45,
+          "text": "42÷6＝8，",
+          "left": "42",
+          "operator": "divide",
+          "reason": "Learner's written division 42÷6=8.",
+          "right": "6",
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_4"
+          ],
+          "speaker": "learner",
+          "stance": "asserted_true",
+          "type": "NumericAssertion",
+          "value": "8",
+          "bound_sources": [
+            {
+              "handle": "source_2",
+              "ref": {
+                "space": "fact",
+                "identity": "SingleTask-T09-work-input-1",
+                "revision": "1"
+              },
+              "field": "text",
+              "text": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。"
+            }
+          ],
+          "computed": "7",
+          "relation_holds": false,
+          "status": "FAIL"
+        }
+      ],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3",
+                "candidate_4",
+                "candidate_5"
+              ]
+            }
+          ],
+          "rationale": "The candidate describes the submitted route: divide cost by given quantity (42÷6) then multiply by requested quantity (8×15), grounded in the learner's written steps.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_7",
+                "candidate_8"
+              ]
+            }
+          ],
+          "rationale": "The candidate identifies the visible division 42÷6＝8 as wrong and gives the correct quotient 7, matching the arithmetic.",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_11"
+              ]
+            }
+          ],
+          "rationale": "The candidate explicitly judges the submitted final result 120 yuan against the original task, noting it differs from the correct 105 yuan; the learner's request not to be given the answer does not erase the written result.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_1",
+                "candidate_4",
+                "candidate_7",
+                "candidate_11",
+                "candidate_16"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic, with correct speaker and polarity; no claim is contradicted or unsupported.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_7",
+                "candidate_11",
+                "candidate_14"
+              ]
+            }
+          ],
+          "rationale": "The candidate reports the learner's work and request, and makes only local arithmetic/task-method judgments; it endorses no latent ability conclusion or teaching decision, so all boundary_status values are PASS.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_4",
+                "candidate_5",
+                "candidate_7",
+                "candidate_9",
+                "candidate_11"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully maps the learner's 42÷6＝8 and 8×15＝120 as learner assertions, the system's judgment that 42÷6＝8 is wrong with correct quotient 7, the system's note that 8×15＝120 is correct, and the final-result comparison values 120, 7 and 105. Operands, operations, claimed values, speaker and stance are preserved; no numeric assertion is omitted or distorted.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3",
+                "candidate_7",
+                "candidate_11",
+                "candidate_12"
+              ]
+            }
+          ],
+          "rationale": "Every span has a determinate speaker and stance: the learner's written steps and request are learner/reported, while the candidate's own arithmetic and task judgments are system/endorsed.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [
+        {
+          "criterion": "grounding",
+          "span_ids": [
+            "candidate_1",
+            "candidate_4",
+            "candidate_7",
+            "candidate_11",
+            "candidate_16"
+          ]
+        },
+        {
+          "criterion": "boundary",
+          "span_ids": [
+            "candidate_7",
+            "candidate_11",
+            "candidate_14"
+          ]
+        },
+        {
+          "criterion": "arithmetic_mapping",
+          "span_ids": [
+            "candidate_4",
+            "candidate_5",
+            "candidate_7",
+            "candidate_9",
+            "candidate_11"
+          ]
+        },
+        {
+          "criterion": "attribution",
+          "span_ids": [
+            "candidate_3",
+            "candidate_7",
+            "candidate_11",
+            "candidate_12"
+          ]
+        }
+      ],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T09-work-input-1",
+          "revision": "1"
+        },
+        "episode": "single-task-T09",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [],
+      "completed_action_match": null,
+      "review_disposition": "EXTRACTION_FALSE_REJECTION",
+      "issue_tags": [
+        "reported_equation_as_endorsed"
+      ],
+      "human_review": "候选已判断错误商和错误终值；转述42÷6=8被抽取为asserted_true后遭验算拒绝。"
+    },
+    {
+      "session": "T09",
+      "turn": 2,
+      "input": "42÷6＝7，7×15＝105；我重新提交。",
+      "execution": "FAILED",
+      "reason": "ContractError:DirectQuoteNotInCitedSource",
+      "observation": {
+        "description": "任务为单价问题：6kg苹果42元，求15kg的价钱。学习者提交了计算：42÷6＝7，7×15＝105，并称“我重新提交”。该计算先求每千克7元，再乘15得105，方法可见且算术正确。105是完整终值计算，构成提交的最终结果，且与任务相符。学习者未请求系统揭示或保留任何内容。AssistanceContext显示无先前辅助暴露，learner_used_assistance为NOT_INFERRED。"
+      },
+      "policy": null,
+      "work_commit": null,
+      "policy_commit": null,
+      "role_blocks": [],
+      "arithmetic_blocks": [],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            }
+          ],
+          "rationale": "The candidate describes the divide-cost-by-given-quantity (42÷6=7, per-kilogram 7 yuan) then multiply-by-requested-quantity (7×15=105) route, grounded in the learner's submitted equations.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            }
+          ],
+          "rationale": "The candidate preserves the learner's division 42÷6＝7 and correctly treats it as valid (42/6=7); no wrong equality is invented or misjudged.",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_11"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_12"
+              ]
+            }
+          ],
+          "rationale": "The candidate explicitly identifies 105 as the submitted final result and judges it against the original task (15kg price), which is correct; the learner made no request to withhold the answer.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_12"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic with correct speaker and polarity; the quoted learner equations and phrase exist verbatim, and the AssistanceContext statements match source_3.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_11"
+              ]
+            }
+          ],
+          "rationale": "All claims are local task-method and arithmetic interpretation or attributed learner reports; no latent ability conclusion or teaching decision is endorsed, so every claim's boundary_status is PASS.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully captures the learner's two equations (42÷6=7, 7×15=105) as NumericAssertions with correct operands, operators, values, learner speaker and asserted_true stance, and the description's restated scalars (7, 15, 105) with system speaker; no numeric assertion is omitted or distorted.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "Every claim's speaker and stance are determined: learner/reported for the quoted equations and phrase, system/endorsed for the descriptive and interpretive statements.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T09-work-input-2",
+          "revision": "1"
+        },
+        "episode": "single-task-T09",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [],
+      "completed_action_match": null,
+      "review_disposition": "QUOTE_CONTRACT_FAILURE",
+      "issue_tags": [
+        "nonverbatim_quote"
+      ],
+      "human_review": "候选内容合理；review把“7×15＝105，”写成direct_quote，原来源为“7×15＝105；”，精确引用拒绝有依据。"
+    },
+    {
+      "session": "T12",
+      "turn": 1,
+      "input": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。",
+      "execution": "FAILED",
+      "reason": "ContractError:workRejected:SemanticValidation:FAIL",
+      "observation": {
+        "description": "任务为单价问题：6kg苹果42元，求15kg的价钱。学习者写出“42÷6＝8，8×15＝120”，其中42÷6＝8这一等式不成立，正确商应为7。学习者随后用8×15＝120，该乘法本身计算正确，但基于错误的单价8元，因此所得120元与正确结果105元不符。学习者已写出终值120，虽未标注为最终答案，但属于已提交的结果。学习者请求“给我一个步骤提示，不给答案”，这是对系统回复方式的约束，不改变其已写出120这一事实。AssistanceContext显示无先前暴露与未确认项，learner_used_assistance为NOT_INFERRED，故无实际系统协助记录。"
+      },
+      "policy": null,
+      "work_commit": {
+        "status": "ValidationFailed",
+        "candidate_digest": "2b69b772a71d418aa206faa83c246cdd6d6ddc1b9b9874f1771d022172b7f4a7",
+        "committed": null,
+        "reason": "SemanticValidation:FAIL",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "89779133b6f447de80dce9e7faa695a4",
+          "revision": "1"
+        }
+      },
+      "policy_commit": null,
+      "role_blocks": [],
+      "arithmetic_blocks": [
+        {
+          "segment": 1,
+          "expression": 0,
+          "field": "description",
+          "start": 26,
+          "end": 39,
+          "text": "学习者写出“42÷6＝8，",
+          "left": "42",
+          "operator": "divide",
+          "reason": "Learner's submitted equation 42÷6=8.",
+          "right": "6",
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_3"
+          ],
+          "speaker": "learner",
+          "stance": "asserted_true",
+          "type": "NumericAssertion",
+          "value": "8",
+          "bound_sources": [
+            {
+              "handle": "source_2",
+              "ref": {
+                "space": "fact",
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1"
+              },
+              "field": "text",
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": "7",
+          "relation_holds": false,
+          "status": "FAIL"
+        }
+      ],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3",
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            }
+          ],
+          "rationale": "The candidate describes the submitted route: the learner wrote 42÷6＝8 (divide cost by given quantity) and then 8×15＝120 (multiply by requested quantity), quoting the learner's own equations. This grounds the divide-then-multiply interpretation.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_5",
+                "candidate_6"
+              ]
+            }
+          ],
+          "rationale": "The candidate correctly identifies the local division assertion 42÷6＝8 as a false equality and supplies the correct quotient 7, matching the arithmetic fixture (42/6=7).",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_11",
+                "candidate_12",
+                "candidate_13"
+              ]
+            }
+          ],
+          "rationale": "The candidate explicitly judges the submitted terminal value 120 against the original task, noting it conflicts with the correct result 105, and correctly treats 120 as a submitted result despite lacking an answer label and despite the learner's request to withhold the answer.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3",
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5",
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_18",
+                "candidate_19",
+                "candidate_20"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic: the learner's equations are quoted accurately, the false equality and correct quotient 7 are correct, 120 vs 105 is correct, and the AssistanceContext description matches source_3. No claim is contradicted or unsupported.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_5",
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_16"
+              ]
+            }
+          ],
+          "rationale": "All claims are within Observation responsibility: reporting the learner's equations, judging local arithmetic, judging the submitted result against the task, and describing the learner's request as a constraint on the system reply. No latent ability conclusion or teaching decision is endorsed.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3",
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5",
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7",
+                "candidate_8",
+                "candidate_9",
+                "candidate_10"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_11"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully captures the learner's 42÷6=8 (learner, asserted_true, value 8) and 8×15=120 (learner, value 120), the system's rejection of 42÷6=8 with correct quotient 7, the reported 8×15=120, the wrong unit price 8, and the 120 vs 105 comparison. Operands, operations, claimed values, speaker and stance are preserved; no numeric assertion is omitted or distorted. The extraction's own FAIL status reflects the false learner equality, not a mapping defect.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3",
+                "candidate_4"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5",
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_14",
+                "candidate_15"
+              ]
+            }
+          ],
+          "rationale": "Every span's speaker and stance are determinate: the learner's equations are presented as learner/reported, the system's arithmetic judgments and task interpretation as system/endorsed, and the learner's request as learner/reported. No unresolved attribution.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T12-work-input-1",
+          "revision": "1"
+        },
+        "episode": "single-task-T12",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [
+        "HintCheckStep"
+      ],
+      "completed_action_match": null,
+      "review_disposition": "EXTRACTION_FALSE_REJECTION",
+      "issue_tags": [
+        "reported_equation_as_endorsed"
+      ],
+      "human_review": "候选明确判断42÷6=8错误、120与105不符；抽取仍把被转述等式标为asserted_true，误拒了观察。"
+    },
+    {
+      "session": "T12",
+      "turn": 2,
+      "input": "42÷6＝7，7×15＝105；虽然你提醒过除法，我觉得仍是我独立找到了错误。",
+      "execution": "COMPLETED",
+      "reason": null,
+      "observation": {
+        "description": "任务为单价问题：6kg 苹果42元，求15kg 的价钱。学习者写出 42÷6＝7 与 7×15＝105，两步计算均正确，终端结果105元已给出。学习者自述\"虽然你提醒过除法，我觉得仍是我独立找到了错误\"，这是对自身独立性的报告，并非外部事实。AssistanceContext 显示 exposures 为空、unconfirmed 为空、learner_used_assistance 为 NOT_INFERRED，故所供历史中无系统实际提供协助的记录。学习者未请求系统揭示或保留任何内容。"
+      },
+      "policy": {
+        "action_identity": "",
+        "action_revision": "",
+        "context_refs": [
+          {
+            "identity": "SingleTask-T12-work-input-2",
+            "revision": "1",
+            "space": "fact"
+          },
+          {
+            "identity": "SingleTask-T12-work-2",
+            "revision": "r1",
+            "space": "derived"
+          },
+          {
+            "identity": "SingleTaskActivity",
+            "revision": "v1",
+            "space": "canonical"
+          },
+          {
+            "identity": "abadb5a85dd84e4b8b4a6f59366e5899",
+            "revision": "1",
+            "space": "execution"
+          }
+        ],
+        "defer_condition": "",
+        "episode": "single-task-T12",
+        "exact_payload": "",
+        "executor_target": "",
+        "expected_disclosure": "",
+        "outcome": "NoIntervention",
+        "rationale": "Learner's work is complete and correct: 42÷6=7 (unit price) and 7×15=105 (cost of 15kg), matching the Observation (SingleTask-T12-work-2). The learner's remark about independence is a self-report, not a system-verified fact, and the AssistanceContext shows no exposures or unconfirmed assistance (learner_used_assistance NOT_INFERRED), so there is no supplied evidence of actual help delivered. The learner made no request for a hint, reveal, or retention. ActivityConstraints permits only AskSelfCheck and HintCheckStep; both would be redundant here since the answer is already correct and no error exists to localize. Intervening would substitute the learner's own verification with a system prompt and add no diagnostic value, while imposing an unnecessary display cost. Retained responsibility stays fully with the learner; no cognitive substitution occurs because no action is taken.",
+        "uncertainty": "The learner's claim of independent error-finding cannot be verified from supplied records; the AssistanceContext is empty of exposures, so whether any prior reminder occurred is unknown. This does not affect the decision, since the submitted work is correct and no assistance is warranted regardless."
+      },
+      "work_commit": {
+        "status": "Committed",
+        "candidate_digest": "22c2bd83c305c098c51c6c12f48777b9df0bad6c244f162d9e31c8e828f17724",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T12-work-2",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "1eae4395fafa4be78acbc0ddf0161283",
+          "revision": "1"
+        }
+      },
+      "policy_commit": {
+        "status": "Committed",
+        "candidate_digest": "6d46bd1cf580e6b4a1daaad33b03abdf98857e775507744b78d6bb3e647b4b2a",
+        "committed": {
+          "space": "derived",
+          "identity": "SingleTask-T12-policy-2",
+          "revision": "r1"
+        },
+        "reason": "",
+        "audit_ref": {
+          "space": "audit",
+          "identity": "d63381740214433485ac695ce9d88c74",
+          "revision": "1"
+        }
+      },
+      "role_blocks": [],
+      "arithmetic_blocks": [],
+      "raw_criteria": [
+        {
+          "id": "method",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            }
+          ],
+          "rationale": "The candidate describes the submitted route: divide the cost by the given quantity (42÷6) then multiply by the requested quantity (7×15), quoting the learner's two steps and judging them correct. This grounds the divide-then-multiply method interpretation.",
+          "status": "PASS"
+        },
+        {
+          "id": "division",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_4"
+              ]
+            }
+          ],
+          "rationale": "The visible local division assertion 42÷6＝7 is correctly identified as correct (quotient 7), with no invented mismatch.",
+          "status": "PASS"
+        },
+        {
+          "id": "final_result",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            }
+          ],
+          "rationale": "The candidate explicitly judges the submitted terminal result: 105 yuan was given, and 7×15=105 is correct against the original task (15kg at 7 yuan/kg = 105 yuan). The result is judged, not omitted.",
+          "status": "PASS"
+        },
+        {
+          "id": "grounding",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_10"
+              ]
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic with correct speaker and polarity: the task restatement, the learner's two correct steps, the terminal result 105, the quoted self-report, and the AssistanceContext description all match the sources.",
+          "status": "PASS"
+        },
+        {
+          "id": "boundary",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_8"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_9"
+              ]
+            }
+          ],
+          "rationale": "The candidate reports the learner's self-description of independence as a report and explicitly notes it is not external fact, rather than endorsing a latent ability conclusion. Local arithmetic and task-method interpretation are within Observation responsibility; no teaching decision is made.",
+          "status": "PASS"
+        },
+        {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_1"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_5"
+              ]
+            }
+          ],
+          "rationale": "The extraction faithfully captures the task scalars (6, 42, 15), the learner's two numeric assertions (42÷6=7 and 7×15=105) with learner/asserted_true stance, and the terminal scalar 105. Operands, operations, values and stance match the candidate; no numeric assertion is omitted or distorted.",
+          "status": "PASS"
+        },
+        {
+          "id": "attribution",
+          "quotes": [
+            {
+              "span_ids": [
+                "candidate_3"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_6"
+              ]
+            },
+            {
+              "span_ids": [
+                "candidate_7"
+              ]
+            }
+          ],
+          "rationale": "Every candidate span has a determinate speaker and stance: task restatements and arithmetic judgments are system/endorsed; the learner's written steps and quoted self-report are learner/reported. No unresolved attribution.",
+          "status": "PASS"
+        }
+      ],
+      "disjoint_criterion_quotes": [],
+      "assistance": {
+        "response_ref": {
+          "space": "fact",
+          "identity": "SingleTask-T12-work-input-2",
+          "revision": "1"
+        },
+        "episode": "single-task-T12",
+        "exposures": [],
+        "unconfirmed": [],
+        "learner_used_assistance": "NOT_INFERRED",
+        "source": "ON-DEMAND-FACTUAL-LINEAGE"
+      },
+      "actual_visible_actions": [],
+      "expected_visible_actions": [],
+      "completed_action_match": true,
+      "review_disposition": "ACCEPTABLE_WITH_COVERAGE_LIMIT",
+      "issue_tags": [],
+      "human_review": "学习者自称得到帮助且独立发现，候选保留其转述归属；实际第一回合失败，系统未将自述变为帮助事实。本轮未覆盖真实提示后的第二回合。"
+    }
+  ],
+  "reviewer": "Implementing assistant, not an independent blind reviewer. Interpretation concerns remain explicit.",
+  "next_priority": {
+    "component": "arithmetic extraction and semantic mapping review",
+    "requirement": "Distinguish observer endorsement from reporting the learner equation. Do not exempt all learner equations or bypass validation.",
+    "limits": "T03/1 also lacks final-result judgment; extraction repair alone is insufficient there. Chained expression must not invent learner intermediate steps.",
+    "verification": "Fixed prepared positive-report and negative-endorsement candidates before another end-to-end batch."
+  },
+  "historical_contract": "Original 9/17, A2 DENIED and formal gates unchanged.",
+  "source_sha256": {
+    "src/spike/runs/single-task-engineering-v1/manifest.json": "de1263b2d2f2aefc739386ebfcaf8c612bf72201ac7791dc195fc367925ae445",
+    "src/spike/runs/single-task-engineering-v1/results.json": "70545a1d586b1ef8f9d8691ade3d21e355381fe3cda1f66b35bb97cf04423ca8",
+    "src/spike/runs/single-task-engineering-v1/summary.json": "22f4f4fc7e64c510ab20e7cf2fca187100cd01145ce04f0fb89b787807d26bb4",
+    "src/spike/runs/single-task-engineering-v1/adapter-records.json": "fba95d5b1795fdd1b37e08ede9f305235c2822d4c274aa65c0bdf803df28f2cd",
+    "src/spike/runs/single-task-engineering-v1/artifact-sha256.json": "90c3f6865716f6ee68e78802b1b6afacd7b738f6515251efb9824d34479686e8",
+    "src/spike/fixtures/single-task-engineering-v1.json": "f6634303d7a36af6d9b94e848e256ea7cded96a67f7f864d374935a4d27d93e6",
+    "src/spike/review-packages/single-task-engineering-v1/readiness.json": "2fe7620a347cf4c39f544798f89f7f73b47e478940812a01441a23fe33d4b7a2",
+    "src/spike/analyze_single_task_engineering.py": "fe1142041b70f109acaf910661ad60b156adc3c739fb5dccec7d4f11a5786a11"
+  }
+}

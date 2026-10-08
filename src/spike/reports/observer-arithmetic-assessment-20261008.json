@@ -1,0 +1,2667 @@
+{
+  "schema": "observer-arithmetic-assessment-v1",
+  "date": "2026-10-08",
+  "status": "TARGETED_IMPROVEMENT_WITH_REVIEW_LIMITATIONS",
+  "scope_closed": true,
+  "automatic_followup": false,
+  "production_readiness_established": false,
+  "architecture_feasibility_reopened": false,
+  "run_summary": {
+    "status": "EXECUTED_CONTENT_REVIEW_REQUIRED",
+    "actual_calls": 21,
+    "logical_calls": 21,
+    "elapsed_seconds": 74.008,
+    "completed_cases": 7,
+    "planned_cases": 8,
+    "transport_incomplete": 0,
+    "transport_extra_attempts": 0,
+    "official_commits": 0,
+    "label_leaks": [],
+    "automatic_followup": false
+  },
+  "metrics": {
+    "historical_candidates": 4,
+    "historical_target_defect_absent": 4,
+    "historical_raw_arithmetic_pass": 4,
+    "historical_raw_combined_pass": 3,
+    "authored_negative_cases": 2,
+    "negative_schema_incomplete": 1,
+    "negative_review_nonpass": 1,
+    "injected_mapping_faults": 2,
+    "injected_faults_detected_by_mapping_review": 1,
+    "injected_faults_missed_by_mapping_review": 1,
+    "formal_commits_tested": 0,
+    "provider_calls": 21,
+    "provider_schema_failures": 1
+  },
+  "rows": [
+    {
+      "id": "T03",
+      "kind": "historical_candidate",
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "candidate": {
+        "description": "原任务为单价问题：6kg 苹果42元，求15kg 的价钱。学习者写出两步计算：42÷6＝8，8×15＝120。第一步等式42÷6＝8在算术上不正确，42÷6应为7；第二步8×15＝120本身计算正确，但基于第一步的错误商。学习者已给出终端结果120，未标注为最终答案，但该计算已完成。学习者请求指出哪一步需要检查，并明确要求不要给答案。AssistanceContext 显示无已提供的辅助记录，learner_used_assistance 为 NOT_INFERRED。"
+      },
+      "execution": "COMPLETED",
+      "failure": null,
+      "actual_calls": 3,
+      "raw_arithmetic_status": "PASS",
+      "raw_mapping_status": "PASS",
+      "raw_combined_status": "FAIL",
+      "criteria": {
+        "method": {
+          "id": "method",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出两步计算："
+            },
+            {
+              "field": "description",
+              "text": "42÷6＝8，"
+            },
+            {
+              "field": "description",
+              "text": "8×15＝120。"
+            }
+          ],
+          "rationale": "The candidate describes the submitted route: divide cost by given quantity (42÷6) then multiply by requested quantity (8×15), quoting the learner's two written steps. This matches the original work's visible strategy, so the method description is grounded.",
+          "status": "PASS"
+        },
+        "division": {
+          "id": "division",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "第一步等式42÷6＝8在算术上不正确，"
+            },
+            {
+              "field": "description",
+              "text": "42÷6应为7；"
+            }
+          ],
+          "rationale": "The candidate correctly identifies the local division assertion 42÷6＝8 as arithmetically wrong and supplies the correct local value 7, matching the fixture (42/6 = 7). No mismatch is invented.",
+          "status": "PASS"
+        },
+        "final_result": {
+          "id": "final_result",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者已给出终端结果120，"
+            },
+            {
+              "field": "description",
+              "text": "未标注为最终答案，"
+            },
+            {
+              "field": "description",
+              "text": "但该计算已完成。"
+            }
+          ],
+          "rationale": "The candidate explicitly notes the learner has produced the terminal result 120, that it is unlabeled as a final answer, and that the computation is complete. It does not judge 120 against the original task (correct value 105), but the criterion requires the submitted result be explicitly judged against the original task; the candidate only reports availability without judging correctness, so this is incomplete.",
+          "status": "FAIL"
+        },
+        "grounding": {
+          "id": "grounding",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "原任务为单价问题："
+            },
+            {
+              "field": "description",
+              "text": "6kg 苹果42元，"
+            },
+            {
+              "field": "description",
+              "text": "求15kg 的价钱。"
+            },
+            {
+              "field": "description",
+              "text": "42÷6＝8，"
+            },
+            {
+              "field": "description",
+              "text": "8×15＝120。"
+            },
+            {
+              "field": "description",
+              "text": "第一步等式42÷6＝8在算术上不正确，"
+            },
+            {
+              "field": "description",
+              "text": "42÷6应为7；"
+            },
+            {
+              "field": "description",
+              "text": "第二步8×15＝120本身计算正确，"
+            },
+            {
+              "field": "description",
+              "text": "但基于第一步的错误商。"
+            },
+            {
+              "field": "description",
+              "text": "学习者已给出终端结果120，"
+            },
+            {
+              "field": "description",
+              "text": "未标注为最终答案，"
+            },
+            {
+              "field": "description",
+              "text": "但该计算已完成。"
+            },
+            {
+              "field": "description",
+              "text": "学习者请求指出哪一步需要检查，"
+            },
+            {
+              "field": "description",
+              "text": "并明确要求不要给答案。"
+            },
+            {
+              "field": "description",
+              "text": "AssistanceContext 显示无已提供的辅助记录，"
+            },
+            {
+              "field": "description",
+              "text": "learner_used_assistance 为 NOT_INFERRED。"
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic: the task restatement, the learner's two equations, the wrong-equality identification, the corrected quotient 7, the correct 8×15=120, the note that 120 rests on the wrong quotient, the terminal-result availability, the learner's request, and the AssistanceContext status all match the sources. No claim is contradicted or unsupported.",
+          "status": "PASS"
+        },
+        "boundary": {
+          "id": "boundary",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "第一步等式42÷6＝8在算术上不正确，"
+            },
+            {
+              "field": "description",
+              "text": "42÷6应为7；"
+            },
+            {
+              "field": "description",
+              "text": "第二步8×15＝120本身计算正确，"
+            },
+            {
+              "field": "description",
+              "text": "但基于第一步的错误商。"
+            },
+            {
+              "field": "description",
+              "text": "学习者已给出终端结果120，"
+            },
+            {
+              "field": "description",
+              "text": "但该计算已完成。"
+            },
+            {
+              "field": "description",
+              "text": "学习者请求指出哪一步需要检查，"
+            },
+            {
+              "field": "description",
+              "text": "并明确要求不要给答案。"
+            }
+          ],
+          "rationale": "All claims are reports of the learner's work/request or local arithmetic interpretation (identifying the wrong equality, the correct quotient, the correct second step, the terminal result's availability). No latent ability conclusion or teaching decision is endorsed, and the learner's request is described rather than acted upon. All claim boundary_status values are PASS.",
+          "status": "PASS"
+        },
+        "arithmetic_mapping": {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "42÷6＝8，"
+            },
+            {
+              "field": "description",
+              "text": "8×15＝120。"
+            },
+            {
+              "field": "description",
+              "text": "第一步等式42÷6＝8在算术上不正确，"
+            },
+            {
+              "field": "description",
+              "text": "42÷6应为7；"
+            },
+            {
+              "field": "description",
+              "text": "第二步8×15＝120本身计算正确，"
+            }
+          ],
+          "rationale": "The mapping faithfully preserves the learner's two equations as REPORTS_ONLY (42÷6=8, 8×15=120), the observer's ASSERTS_FALSE of 42÷6=8, the AFFIRMS_TRUE of the corrected 42÷6=7, and the AFFIRMS_TRUE of 8×15=120. Expression tokens, values, types and observer positions match the exact candidate text; no assertion is omitted or invented.",
+          "status": "PASS"
+        },
+        "attribution": {
+          "id": "attribution",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出两步计算："
+            },
+            {
+              "field": "description",
+              "text": "42÷6＝8，"
+            },
+            {
+              "field": "description",
+              "text": "8×15＝120。"
+            },
+            {
+              "field": "description",
+              "text": "第一步等式42÷6＝8在算术上不正确，"
+            },
+            {
+              "field": "description",
+              "text": "42÷6应为7；"
+            },
+            {
+              "field": "description",
+              "text": "第二步8×15＝120本身计算正确，"
+            },
+            {
+              "field": "description",
+              "text": "但基于第一步的错误商。"
+            },
+            {
+              "field": "description",
+              "text": "学习者已给出终端结果120，"
+            },
+            {
+              "field": "description",
+              "text": "未标注为最终答案，"
+            },
+            {
+              "field": "description",
+              "text": "但该计算已完成。"
+            },
+            {
+              "field": "description",
+              "text": "学习者请求指出哪一步需要检查，"
+            },
+            {
+              "field": "description",
+              "text": "并明确要求不要给答案。"
+            },
+            {
+              "field": "description",
+              "text": "AssistanceContext 显示无已提供的辅助记录，"
+            },
+            {
+              "field": "description",
+              "text": "learner_used_assistance 为 NOT_INFERRED。"
+            }
+          ],
+          "rationale": "Every span's speaker and stance are determinate: the learner's equations and request are learner/reported; the observer's arithmetic judgments and the AssistanceContext description are system/endorsed. No span is left unresolved.",
+          "status": "PASS"
+        }
+      },
+      "arithmetic_checks": [
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T03-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": "7",
+          "end": 46,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Learner's first written equation 42÷6＝8, reported as the learner's assertion.",
+          "relation_holds": false,
+          "segment": 1,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_4"
+          ],
+          "speaker": "learner",
+          "start": 39,
+          "status": "PASS",
+          "text": "42÷6＝8，",
+          "type": "ArithmeticEquality",
+          "value": "8"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T03-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": "120",
+          "end": 55,
+          "expression": 1,
+          "expression_tokens": [
+            "8",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Learner's second written equation 8×15＝120, reported as the learner's assertion.",
+          "relation_holds": true,
+          "segment": 1,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_5"
+          ],
+          "speaker": "learner",
+          "start": 46,
+          "status": "PASS",
+          "text": "8×15＝120。",
+          "type": "ArithmeticEquality",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T03-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": "7",
+          "end": 74,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "ASSERTS_FALSE",
+          "reason": "Observer states the learner's first equation is arithmetically incorrect.",
+          "relation_holds": false,
+          "segment": 2,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_6"
+          ],
+          "speaker": "learner",
+          "start": 55,
+          "status": "PASS",
+          "text": "第一步等式42÷6＝8在算术上不正确，",
+          "type": "ArithmeticEquality",
+          "value": "8"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T03-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": "7",
+          "end": 82,
+          "expression": 1,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer states 42÷6 should be 7, endorsing this corrected relation.",
+          "relation_holds": true,
+          "segment": 2,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_7"
+          ],
+          "speaker": "learner",
+          "start": 74,
+          "status": "PASS",
+          "text": "42÷6应为7；",
+          "type": "ArithmeticEquality",
+          "value": "7"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T03-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": "120",
+          "end": 100,
+          "expression": 2,
+          "expression_tokens": [
+            "8",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer states the second step 8×15＝120 is itself computed correctly.",
+          "relation_holds": true,
+          "segment": 2,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_8"
+          ],
+          "speaker": "learner",
+          "start": 82,
+          "status": "PASS",
+          "text": "第二步8×15＝120本身计算正确，",
+          "type": "ArithmeticEquality",
+          "value": "120"
+        }
+      ],
+      "author_review": {
+        "target_old_defect_absent": true,
+        "complete_mapping_accepted_by_author": false,
+        "notes": "转述、否定和正确商得到区分；完整候选仍因最终结果判断遗漏被拒绝。抽取遗漏任务数值与终端120的独立出现，映射审查未指出；正确商7的陈述还被标为learner。"
+      },
+      "scripted_fault": [],
+      "candidate_has_formal_standing": false
+    },
+    {
+      "id": "T07",
+      "kind": "historical_candidate",
+      "input": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。",
+      "candidate": {
+        "description": "原任务为：6kg苹果42元，求15kg的价钱。学习者写出算式42÷6×15＝120，并称已完成。该式先求单价42÷6＝7，再乘15得105，故120这一结果不正确。学习者未写出中间步骤，只给出连等式与结果120。学习者请求只提醒其自行检查，不要指出错误位置；这是对系统回复范围的约束，不改变其已提交结果120。AssistanceContext显示无已确认的辅助记录，learner_used_assistance为NOT_INFERRED。"
+      },
+      "execution": "COMPLETED",
+      "failure": null,
+      "actual_calls": 3,
+      "raw_arithmetic_status": "PASS",
+      "raw_mapping_status": "PASS",
+      "raw_combined_status": "PASS",
+      "criteria": {
+        "method": {
+          "id": "method",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出算式42÷6×15＝120，"
+            },
+            {
+              "field": "description",
+              "text": "该式先求单价42÷6＝7，"
+            },
+            {
+              "field": "description",
+              "text": "再乘15得105，"
+            },
+            {
+              "field": "description",
+              "text": "学习者未写出中间步骤，"
+            },
+            {
+              "field": "description",
+              "text": "只给出连等式与结果120。"
+            }
+          ],
+          "rationale": "The candidate describes the submitted route: the learner wrote 42÷6×15, and the candidate interprets it as unit price 42÷6=7 then ×15=105, while noting the learner wrote no intermediate steps and gave only the chained equality and result 120. This grounds the divide-then-multiply interpretation and the missing intermediate work without inventing a complete strategy.",
+          "status": "PASS"
+        },
+        "division": {
+          "id": "division",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "该式先求单价42÷6＝7，"
+            },
+            {
+              "field": "description",
+              "text": "学习者写出算式42÷6×15＝120，"
+            }
+          ],
+          "rationale": "The candidate identifies the local division 42÷6=7 as the unit price, which is correct, and correctly treats the learner's submitted equality 42÷6×15=120 as wrong (correct value 105). The local division judgment is accurate and grounded.",
+          "status": "PASS"
+        },
+        "final_result": {
+          "id": "final_result",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "故120这一结果不正确。"
+            },
+            {
+              "field": "description",
+              "text": "不改变其已提交结果120。"
+            }
+          ],
+          "rationale": "The learner submitted a terminal result 120 in 42÷6×15＝120, and the candidate explicitly judges it incorrect against the original task (correct total 105), while also noting the request to withhold the answer does not change the submitted result 120. The submitted final answer is judged, not erased by the withholding request.",
+          "status": "PASS"
+        },
+        "grounding": {
+          "id": "grounding",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出算式42÷6×15＝120，"
+            },
+            {
+              "field": "description",
+              "text": "该式先求单价42÷6＝7，"
+            },
+            {
+              "field": "description",
+              "text": "再乘15得105，"
+            },
+            {
+              "field": "description",
+              "text": "故120这一结果不正确。"
+            },
+            {
+              "field": "description",
+              "text": "只给出连等式与结果120。"
+            },
+            {
+              "field": "description",
+              "text": "不改变其已提交结果120。"
+            },
+            {
+              "field": "description",
+              "text": "AssistanceContext显示无已确认的辅助记录，"
+            },
+            {
+              "field": "description",
+              "text": "learner_used_assistance为NOT_INFERRED。"
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic: the learner's equation and result 120 are quoted from source_2, the unit price 7 and total 105 are correct arithmetic, the judgment that 120 is incorrect follows, and the AssistanceContext statement matches source_3. No unsupported, contradicted or misattributed assertion appears.",
+          "status": "PASS"
+        },
+        "boundary": {
+          "id": "boundary",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "该式先求单价42÷6＝7，"
+            },
+            {
+              "field": "description",
+              "text": "再乘15得105，"
+            },
+            {
+              "field": "description",
+              "text": "故120这一结果不正确。"
+            },
+            {
+              "field": "description",
+              "text": "这是对系统回复范围的约束，"
+            }
+          ],
+          "rationale": "The candidate stays within Observation responsibility: it reports the learner's submitted work and request, and offers local task-method and arithmetic interpretation (unit price 7, total 105, 120 incorrect). It makes no latent-ability conclusion or teaching decision, and the request is described as constraining the system reply rather than authorizing any teaching action.",
+          "status": "PASS"
+        },
+        "arithmetic_mapping": {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出算式42÷6×15＝120，"
+            },
+            {
+              "field": "description",
+              "text": "该式先求单价42÷6＝7，"
+            },
+            {
+              "field": "description",
+              "text": "再乘15得105，"
+            },
+            {
+              "field": "description",
+              "text": "故120这一结果不正确。"
+            },
+            {
+              "field": "description",
+              "text": "只给出连等式与结果120。"
+            },
+            {
+              "field": "description",
+              "text": "不改变其已提交结果120。"
+            }
+          ],
+          "rationale": "The mapping faithfully preserves the learner's submitted equality 42÷6×15=120 as REPORTS_ONLY (learner), the observer's own intermediate steps 42÷6=7 and 7×15=105 as AFFIRMS_TRUE, and the observer's denial of 120 as ASSERTS_FALSE. Expression tokens, values, types and observer positions match the exact candidate; no invented learner intermediate values or omitted assertions appear.",
+          "status": "PASS"
+        },
+        "attribution": {
+          "id": "attribution",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出算式42÷6×15＝120，"
+            },
+            {
+              "field": "description",
+              "text": "并称已完成。"
+            },
+            {
+              "field": "description",
+              "text": "该式先求单价42÷6＝7，"
+            },
+            {
+              "field": "description",
+              "text": "再乘15得105，"
+            },
+            {
+              "field": "description",
+              "text": "故120这一结果不正确。"
+            },
+            {
+              "field": "description",
+              "text": "只给出连等式与结果120。"
+            },
+            {
+              "field": "description",
+              "text": "学习者请求只提醒其自行检查，"
+            },
+            {
+              "field": "description",
+              "text": "不要指出错误位置；"
+            },
+            {
+              "field": "description",
+              "text": "不改变其已提交结果120。"
+            },
+            {
+              "field": "description",
+              "text": "AssistanceContext显示无已确认的辅助记录，"
+            },
+            {
+              "field": "description",
+              "text": "learner_used_assistance为NOT_INFERRED。"
+            }
+          ],
+          "rationale": "Every candidate span has a determinate speaker and stance: the learner's equation, completion claim, missing steps, result 120 and request are presented as learner/reported; the unit-price and total computations and the judgment that 120 is incorrect are system/endorsed; the AssistanceContext statement is system/endorsed. No span is left unresolved.",
+          "status": "PASS"
+        }
+      },
+      "arithmetic_checks": [
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T07-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。"
+            }
+          ],
+          "computed": "105",
+          "end": 42,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Observer reports the learner's submitted equation 42÷6×15＝120 without endorsing it.",
+          "relation_holds": false,
+          "segment": 1,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_3"
+          ],
+          "speaker": "learner",
+          "start": 23,
+          "status": "PASS",
+          "text": "学习者写出算式42÷6×15＝120，",
+          "type": "ArithmeticEquality",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T07-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。"
+            }
+          ],
+          "computed": "7",
+          "end": 61,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer's own intermediate step computing the unit price.",
+          "relation_holds": true,
+          "segment": 3,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_5"
+          ],
+          "speaker": "other",
+          "start": 48,
+          "status": "PASS",
+          "text": "该式先求单价42÷6＝7，",
+          "type": "ArithmeticEquality",
+          "value": "7"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T07-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。"
+            }
+          ],
+          "computed": "105",
+          "end": 70,
+          "expression": 0,
+          "expression_tokens": [
+            "7",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer's own continuation multiplying unit price by 15.",
+          "relation_holds": true,
+          "segment": 4,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_6"
+          ],
+          "speaker": "other",
+          "start": 61,
+          "status": "PASS",
+          "text": "再乘15得105，",
+          "type": "ArithmeticEquality",
+          "value": "105"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T07-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。"
+            }
+          ],
+          "computed": "105",
+          "end": 82,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "ASSERTS_FALSE",
+          "reason": "Observer judges the learner's stated result 120 to be incorrect.",
+          "relation_holds": false,
+          "segment": 5,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_7"
+          ],
+          "speaker": "other",
+          "start": 70,
+          "status": "PASS",
+          "text": "故120这一结果不正确。",
+          "type": "ArithmeticEquality",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T07-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。"
+            }
+          ],
+          "computed": null,
+          "end": 106,
+          "expression": 0,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Observer notes the learner gave only the chained equality and result 120.",
+          "relation_holds": null,
+          "segment": 7,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_9"
+          ],
+          "speaker": "learner",
+          "start": 93,
+          "status": "NOT_APPLICABLE",
+          "text": "只给出连等式与结果120。",
+          "type": "ScalarValue",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T07-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。"
+            }
+          ],
+          "computed": null,
+          "end": 155,
+          "expression": 0,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Observer restates the learner's submitted result 120 as unchanged.",
+          "relation_holds": null,
+          "segment": 9,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_13"
+          ],
+          "speaker": "learner",
+          "start": 142,
+          "status": "NOT_APPLICABLE",
+          "text": "不改变其已提交结果120。",
+          "type": "ScalarValue",
+          "value": "120"
+        }
+      ],
+      "author_review": {
+        "target_old_defect_absent": true,
+        "complete_mapping_accepted_by_author": false,
+        "notes": "学习者完整连式被保留，未再生成学习者7×15=120的中间断言。观察者自己的7×15=105被独立保留。任务数值未抽取，观察者解释被标为other；原始PASS不等于完整映射无缺陷。"
+      },
+      "scripted_fault": [],
+      "candidate_has_formal_standing": false
+    },
+    {
+      "id": "T09",
+      "kind": "historical_candidate",
+      "input": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。",
+      "candidate": {
+        "description": "任务为单价问题：6kg 苹果42元，求15kg 的价钱。学习者写出两步计算：42÷6＝8，8×15＝120，并称已完成。其中 42÷6＝8 与正确商 7 不符，属可见的算术错误；随后 8×15＝120 的乘法本身正确，但基于错误的单价。学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。学习者同时请求本次不要提示，想自己再试，这是对系统回复方式的约束，不改变其已写出的结果。AssistanceContext 显示无先前暴露与未确认项，learner_used_assistance 为 NOT_INFERRED，故无实际系统协助记录。"
+      },
+      "execution": "COMPLETED",
+      "failure": null,
+      "actual_calls": 3,
+      "raw_arithmetic_status": "PASS",
+      "raw_mapping_status": "PASS",
+      "raw_combined_status": "PASS",
+      "criteria": {
+        "method": {
+          "id": "method",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出两步计算："
+            },
+            {
+              "field": "description",
+              "text": "42÷6＝8，"
+            },
+            {
+              "field": "description",
+              "text": "8×15＝120，"
+            }
+          ],
+          "rationale": "The candidate describes the submitted route as a two-step calculation (divide cost by given quantity, then multiply by requested quantity) and quotes both steps 42÷6＝8 and 8×15＝120, grounding the interpretation in the learner's actual work.",
+          "status": "PASS"
+        },
+        "division": {
+          "id": "division",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "42÷6＝8，"
+            },
+            {
+              "field": "description",
+              "text": "其中 42÷6＝8 与正确商 7 不符，"
+            },
+            {
+              "field": "description",
+              "text": "属可见的算术错误；"
+            }
+          ],
+          "rationale": "The candidate identifies the visible division assertion 42÷6＝8, states it does not match the correct quotient 7, and labels it a visible arithmetic error, preserving the correct local value without inventing a mismatch.",
+          "status": "PASS"
+        },
+        "final_result": {
+          "id": "final_result",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。"
+            },
+            {
+              "field": "description",
+              "text": "不改变其已写出的结果。"
+            }
+          ],
+          "rationale": "The candidate explicitly judges the submitted final result 120 元 against the original task, noting it differs from the 105 元 obtained with the correct unit price 7 元/kg, and correctly states the learner's request not to give hints does not change the already-written result.",
+          "status": "PASS"
+        },
+        "grounding": {
+          "id": "grounding",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "42÷6＝8，"
+            },
+            {
+              "field": "description",
+              "text": "8×15＝120，"
+            },
+            {
+              "field": "description",
+              "text": "其中 42÷6＝8 与正确商 7 不符，"
+            },
+            {
+              "field": "description",
+              "text": "随后 8×15＝120 的乘法本身正确，"
+            },
+            {
+              "field": "description",
+              "text": "学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。"
+            },
+            {
+              "field": "description",
+              "text": "AssistanceContext 显示无先前暴露与未确认项，"
+            },
+            {
+              "field": "description",
+              "text": "learner_used_assistance 为 NOT_INFERRED，"
+            },
+            {
+              "field": "description",
+              "text": "故无实际系统协助记录。"
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic: the learner's two equalities are quoted accurately, 42÷6=8 is correctly flagged as wrong (correct 7), 8×15=120 is correctly noted as arithmetically correct, the final 120 元 is correctly contrasted with 105 元, and the AssistanceContext statements match source_3. No claim is unsupported, contradicted, or misattributed.",
+          "status": "PASS"
+        },
+        "boundary": {
+          "id": "boundary",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "其中 42÷6＝8 与正确商 7 不符，"
+            },
+            {
+              "field": "description",
+              "text": "随后 8×15＝120 的乘法本身正确，"
+            },
+            {
+              "field": "description",
+              "text": "学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。"
+            },
+            {
+              "field": "description",
+              "text": "这是对系统回复方式的约束，"
+            }
+          ],
+          "rationale": "All claims are reports of the learner's work, local arithmetic interpretation, or observations about the request and assistance record; none endorses a latent ability conclusion or makes a teaching decision. Every claim's boundary_status is PASS, so the criterion passes.",
+          "status": "PASS"
+        },
+        "arithmetic_mapping": {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "42÷6＝8，"
+            },
+            {
+              "field": "description",
+              "text": "8×15＝120，"
+            },
+            {
+              "field": "description",
+              "text": "其中 42÷6＝8 与正确商 7 不符，"
+            },
+            {
+              "field": "description",
+              "text": "随后 8×15＝120 的乘法本身正确，"
+            },
+            {
+              "field": "description",
+              "text": "学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。"
+            }
+          ],
+          "rationale": "The mapping faithfully preserves the learner's equalities 42÷6=8 and 8×15=120 as REPORTS_ONLY, the observer's denial of 42÷6=8 with the correct quotient 7 as ASSERTS_FALSE, the endorsement of 8×15=120 as AFFIRMS_TRUE, and the final-result comparison (120 vs 105 with unit price 7) with correct observer positions. Expression tokens, values, speakers and positions match the exact candidate text; no equations are invented or omitted.",
+          "status": "PASS"
+        },
+        "attribution": {
+          "id": "attribution",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出两步计算："
+            },
+            {
+              "field": "description",
+              "text": "42÷6＝8，"
+            },
+            {
+              "field": "description",
+              "text": "8×15＝120，"
+            },
+            {
+              "field": "description",
+              "text": "其中 42÷6＝8 与正确商 7 不符，"
+            },
+            {
+              "field": "description",
+              "text": "随后 8×15＝120 的乘法本身正确，"
+            },
+            {
+              "field": "description",
+              "text": "学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。"
+            },
+            {
+              "field": "description",
+              "text": "学习者同时请求本次不要提示，"
+            },
+            {
+              "field": "description",
+              "text": "AssistanceContext 显示无先前暴露与未确认项，"
+            }
+          ],
+          "rationale": "Every span has a determinate speaker and stance: the learner's written equalities and final result are learner/reported, the observer's arithmetic judgments and AssistanceContext observations are system/endorsed, and the learner's request is learner/reported. No span is left unresolved.",
+          "status": "PASS"
+        }
+      },
+      "arithmetic_checks": [
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T09-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。"
+            }
+          ],
+          "computed": "7",
+          "end": 45,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Learner's written division equality reported by the observer without endorsement.",
+          "relation_holds": false,
+          "segment": 1,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_4"
+          ],
+          "speaker": "learner",
+          "start": 38,
+          "status": "PASS",
+          "text": "42÷6＝8，",
+          "type": "ArithmeticEquality",
+          "value": "8"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T09-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。"
+            }
+          ],
+          "computed": "120",
+          "end": 54,
+          "expression": 1,
+          "expression_tokens": [
+            "8",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Learner's written multiplication equality reported by the observer without endorsement.",
+          "relation_holds": true,
+          "segment": 1,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_5"
+          ],
+          "speaker": "learner",
+          "start": 45,
+          "status": "PASS",
+          "text": "8×15＝120，",
+          "type": "ArithmeticEquality",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T09-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。"
+            }
+          ],
+          "computed": "7",
+          "end": 80,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "ASSERTS_FALSE",
+          "reason": "Observer states the learner's 42÷6=8 does not match the correct quotient 7, denying the relation.",
+          "relation_holds": false,
+          "segment": 3,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_7"
+          ],
+          "speaker": "learner",
+          "start": 60,
+          "status": "PASS",
+          "text": "其中 42÷6＝8 与正确商 7 不符，",
+          "type": "ArithmeticEquality",
+          "value": "8"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T09-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。"
+            }
+          ],
+          "computed": null,
+          "end": 80,
+          "expression": 1,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer cites the correct quotient 7 for 42÷6.",
+          "relation_holds": null,
+          "segment": 3,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_7"
+          ],
+          "speaker": "other",
+          "start": 60,
+          "status": "NOT_APPLICABLE",
+          "text": "其中 42÷6＝8 与正确商 7 不符，",
+          "type": "ScalarValue",
+          "value": "7"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T09-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。"
+            }
+          ],
+          "computed": "120",
+          "end": 109,
+          "expression": 0,
+          "expression_tokens": [
+            "8",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer endorses the multiplication 8×15=120 as arithmetically correct.",
+          "relation_holds": true,
+          "segment": 5,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_9"
+          ],
+          "speaker": "learner",
+          "start": 89,
+          "status": "PASS",
+          "text": "随后 8×15＝120 的乘法本身正确，",
+          "type": "ArithmeticEquality",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T09-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。"
+            }
+          ],
+          "computed": null,
+          "end": 160,
+          "expression": 0,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Learner's final result 120 yuan reported by the observer.",
+          "relation_holds": null,
+          "segment": 7,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_11"
+          ],
+          "speaker": "learner",
+          "start": 118,
+          "status": "NOT_APPLICABLE",
+          "text": "学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。",
+          "type": "ScalarValue",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T09-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。"
+            }
+          ],
+          "computed": null,
+          "end": 160,
+          "expression": 1,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer cites the correct unit price 7 yuan/kg.",
+          "relation_holds": null,
+          "segment": 7,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_11"
+          ],
+          "speaker": "other",
+          "start": 118,
+          "status": "NOT_APPLICABLE",
+          "text": "学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。",
+          "type": "ScalarValue",
+          "value": "7"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T09-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。"
+            }
+          ],
+          "computed": null,
+          "end": 160,
+          "expression": 2,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer cites the correct total 105 yuan computed from the correct unit price.",
+          "relation_holds": null,
+          "segment": 7,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_11"
+          ],
+          "speaker": "other",
+          "start": 118,
+          "status": "NOT_APPLICABLE",
+          "text": "学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。",
+          "type": "ScalarValue",
+          "value": "105"
+        }
+      ],
+      "author_review": {
+        "target_old_defect_absent": true,
+        "complete_mapping_accepted_by_author": false,
+        "notes": "报告错误除法不再触发验算拒绝，候选获得综合PASS。任务数值未抽取；观察者对7与105的陈述标为other。保留为映射覆盖与说话人质量问题。"
+      },
+      "scripted_fault": [],
+      "candidate_has_formal_standing": false
+    },
+    {
+      "id": "T12",
+      "kind": "historical_candidate",
+      "input": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。",
+      "candidate": {
+        "description": "任务为单价问题：6kg苹果42元，求15kg的价钱。学习者写出“42÷6＝8，8×15＝120”，其中42÷6＝8这一等式不成立，正确商应为7。学习者随后用8×15＝120，该乘法本身计算正确，但基于错误的单价8元，因此所得120元与正确结果105元不符。学习者已写出终值120，虽未标注为最终答案，但属于已提交的结果。学习者请求“给我一个步骤提示，不给答案”，这是对系统回复方式的约束，不改变其已写出120这一事实。AssistanceContext显示无先前暴露与未确认项，learner_used_assistance为NOT_INFERRED，故无实际系统协助记录。"
+      },
+      "execution": "COMPLETED",
+      "failure": null,
+      "actual_calls": 3,
+      "raw_arithmetic_status": "PASS",
+      "raw_mapping_status": "PASS",
+      "raw_combined_status": "PASS",
+      "criteria": {
+        "method": {
+          "id": "method",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出“42÷6＝8，8×15＝120”，"
+            }
+          ],
+          "rationale": "The candidate describes the learner's route: divide cost by given quantity (42÷6) then multiply by requested quantity (8×15), quoting the learner's written steps. This grounds the interpretation of the submitted method.",
+          "status": "PASS"
+        },
+        "division": {
+          "id": "division",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "其中42÷6＝8这一等式不成立，正确商应为7。"
+            }
+          ],
+          "rationale": "The candidate identifies the learner's equality 42÷6＝8 as false and supplies the correct quotient 7, matching the arithmetic fixture.",
+          "status": "PASS"
+        },
+        "final_result": {
+          "id": "final_result",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "因此所得120元与正确结果105元不符。学习者已写出终值120，虽未标注为最终答案，但属于已提交的结果。"
+            }
+          ],
+          "rationale": "The candidate judges the submitted terminal value 120 against the original task, noting it differs from the correct 105, and correctly treats the request to withhold the answer as not erasing the written result.",
+          "status": "PASS"
+        },
+        "grounding": {
+          "id": "grounding",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出“42÷6＝8，8×15＝120”，其中42÷6＝8这一等式不成立，正确商应为7。"
+            },
+            {
+              "field": "description",
+              "text": "因此所得120元与正确结果105元不符。"
+            },
+            {
+              "field": "description",
+              "text": "AssistanceContext显示无先前暴露与未确认项，learner_used_assistance为NOT_INFERRED，故无实际系统协助记录。"
+            }
+          ],
+          "rationale": "All candidate assertions are supported by the original task/work and correct arithmetic, with accurate speaker attribution and polarity; no claim is contradicted or unsupported.",
+          "status": "PASS"
+        },
+        "boundary": {
+          "id": "boundary",
+          "quotes": [],
+          "rationale": "All claims are reports of learner work, local arithmetic judgments, or descriptions of the AssistanceContext; none endorses a latent ability conclusion or makes a teaching decision, so every boundary_status is PASS.",
+          "status": "PASS"
+        },
+        "arithmetic_mapping": {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出“42÷6＝8，8×15＝120”，其中42÷6＝8这一等式不成立，正确商应为7。学习者随后用8×15＝120，该乘法本身计算正确，但基于错误的单价8元，因此所得120元与正确结果105元不符。学习者已写出终值120，"
+            },
+            {
+              "field": "description",
+              "text": "不改变其已写出120这一事实。"
+            }
+          ],
+          "rationale": "The extraction faithfully maps the learner's equalities 42÷6＝8 and 8×15＝120 as REPORTS_ONLY, the observer's denial of 42÷6＝8 as ASSERTS_FALSE, the correct quotient 7 and correct result 105 as AFFIRMS_TRUE, and the erroneous unit price 8 as ASSERTS_FALSE, preserving all tokens and values without inventing intermediate values.",
+          "status": "PASS"
+        },
+        "attribution": {
+          "id": "attribution",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写出“42÷6＝8，8×15＝120”，其中42÷6＝8这一等式不成立，正确商应为7。学习者随后用8×15＝120，该乘法本身计算正确，但基于错误的单价8元，因此所得120元与正确结果105元不符。学习者已写出终值120，"
+            },
+            {
+              "field": "description",
+              "text": "学习者请求“给我一个步骤提示，不给答案”，这是对系统回复方式的约束，不改变其已写出120这一事实。"
+            }
+          ],
+          "rationale": "Every candidate span has a determinate speaker and stance: learner reports for the quoted work and request, and system endorsement for the observer's arithmetic judgments and descriptions.",
+          "status": "PASS"
+        }
+      },
+      "arithmetic_checks": [
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": "7",
+          "end": 39,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Learner's written division equality 42÷6＝8, reported without observer endorsement.",
+          "relation_holds": false,
+          "segment": 1,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_3"
+          ],
+          "speaker": "learner",
+          "start": 26,
+          "status": "PASS",
+          "text": "学习者写出“42÷6＝8，",
+          "type": "ArithmeticEquality",
+          "value": "8"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": "120",
+          "end": 49,
+          "expression": 1,
+          "expression_tokens": [
+            "8",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Learner's written multiplication equality 8×15＝120, reported without observer endorsement.",
+          "relation_holds": true,
+          "segment": 1,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_4"
+          ],
+          "speaker": "learner",
+          "start": 39,
+          "status": "PASS",
+          "text": "8×15＝120”，",
+          "type": "ArithmeticEquality",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": "7",
+          "end": 65,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "ASSERTS_FALSE",
+          "reason": "Observer explicitly states the learner's equality 42÷6＝8 does not hold.",
+          "relation_holds": false,
+          "segment": 2,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_5"
+          ],
+          "speaker": "learner",
+          "start": 49,
+          "status": "PASS",
+          "text": "其中42÷6＝8这一等式不成立，",
+          "type": "ArithmeticEquality",
+          "value": "8"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": null,
+          "end": 72,
+          "expression": 1,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer states the correct quotient is 7.",
+          "relation_holds": null,
+          "segment": 2,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_6"
+          ],
+          "speaker": "system",
+          "start": 65,
+          "status": "NOT_APPLICABLE",
+          "text": "正确商应为7。",
+          "type": "ScalarValue",
+          "value": "7"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": "120",
+          "end": 87,
+          "expression": 0,
+          "expression_tokens": [
+            "8",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Observer reports the learner's subsequent multiplication 8×15＝120.",
+          "relation_holds": true,
+          "segment": 3,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_7"
+          ],
+          "speaker": "learner",
+          "start": 72,
+          "status": "PASS",
+          "text": "学习者随后用8×15＝120，",
+          "type": "ArithmeticEquality",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": "120",
+          "end": 97,
+          "expression": 1,
+          "expression_tokens": [
+            "8",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer endorses the multiplication itself as correctly computed.",
+          "relation_holds": true,
+          "segment": 3,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_8"
+          ],
+          "speaker": "learner",
+          "start": 87,
+          "status": "PASS",
+          "text": "该乘法本身计算正确，",
+          "type": "ArithmeticEquality",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": null,
+          "end": 108,
+          "expression": 0,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "ASSERTS_FALSE",
+          "reason": "Observer identifies the unit price 8 yuan as erroneous.",
+          "relation_holds": null,
+          "segment": 4,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_9"
+          ],
+          "speaker": "learner",
+          "start": 97,
+          "status": "NOT_APPLICABLE",
+          "text": "但基于错误的单价8元，",
+          "type": "ScalarValue",
+          "value": "8"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": null,
+          "end": 128,
+          "expression": 0,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Observer reports the learner's resulting 120 yuan.",
+          "relation_holds": null,
+          "segment": 5,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_10"
+          ],
+          "speaker": "learner",
+          "start": 108,
+          "status": "NOT_APPLICABLE",
+          "text": "因此所得120元与正确结果105元不符。",
+          "type": "ScalarValue",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "task",
+              "handle": "source_1",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "6kg 苹果42元，15kg多少钱？"
+            }
+          ],
+          "computed": null,
+          "end": 128,
+          "expression": 1,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer states the correct result is 105 yuan.",
+          "relation_holds": null,
+          "segment": 5,
+          "sources": [
+            "source_1"
+          ],
+          "span_ids": [
+            "candidate_10"
+          ],
+          "speaker": "system",
+          "start": 108,
+          "status": "NOT_APPLICABLE",
+          "text": "因此所得120元与正确结果105元不符。",
+          "type": "ScalarValue",
+          "value": "105"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": null,
+          "end": 140,
+          "expression": 0,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Observer notes the learner has written the final value 120.",
+          "relation_holds": null,
+          "segment": 6,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_11"
+          ],
+          "speaker": "learner",
+          "start": 128,
+          "status": "NOT_APPLICABLE",
+          "text": "学习者已写出终值120，",
+          "type": "ScalarValue",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-T12-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。"
+            }
+          ],
+          "computed": null,
+          "end": 209,
+          "expression": 0,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Observer reiterates the learner's written value 120 as unchanged.",
+          "relation_holds": null,
+          "segment": 9,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_17"
+          ],
+          "speaker": "learner",
+          "start": 194,
+          "status": "NOT_APPLICABLE",
+          "text": "不改变其已写出120这一事实。",
+          "type": "ScalarValue",
+          "value": "120"
+        }
+      ],
+      "author_review": {
+        "target_old_defect_absent": true,
+        "complete_mapping_accepted_by_author": false,
+        "notes": "报告、否定、正确商及最终结果得到区分，候选获得综合PASS。任务数值仍未抽取，映射审查未指出。"
+      },
+      "scripted_fault": [],
+      "candidate_has_formal_standing": false
+    },
+    {
+      "id": "N01",
+      "kind": "authored_wrong_endorsement",
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "candidate": {
+        "description": "学习者写下42÷6＝8。这个除法等式是正确的。学习者随后写下8×15＝120，乘法等式成立，120元是原题的正确结果。"
+      },
+      "execution": "INCOMPLETE",
+      "failure": "ModelFailure:OutputSchemaMismatch",
+      "actual_calls": 2,
+      "raw_arithmetic_status": null,
+      "raw_mapping_status": null,
+      "raw_combined_status": null,
+      "criteria": {},
+      "arithmetic_checks": [],
+      "author_review": {
+        "negative_validation_complete": false,
+        "notes": "输出segments[0]缺少必需span_ids，schema拒绝；原始内层表达式区分了报告与错误认可，但未进入确定性验算及综合审查。不能记为语义成功拦截。"
+      },
+      "scripted_fault": [],
+      "candidate_has_formal_standing": false
+    },
+    {
+      "id": "N02",
+      "kind": "authored_wrong_endorsement",
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "candidate": {
+        "description": "学习者先算42÷6＝8，再算8×15＝120。前面的除法没有算错，最后120元也符合原题。"
+      },
+      "execution": "COMPLETED",
+      "failure": null,
+      "actual_calls": 3,
+      "raw_arithmetic_status": "UNRESOLVED",
+      "raw_mapping_status": "FAIL",
+      "raw_combined_status": "UNRESOLVED",
+      "criteria": {
+        "method": {
+          "id": "method",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者先算42÷6＝8，再算8×15＝120。"
+            }
+          ],
+          "rationale": "The candidate describes the learner's route: first dividing 42 by 6, then multiplying 8 by 15, which matches the submitted divide-cost-by-given-quantity then multiply-by-requested-quantity strategy. Both steps are quoted from the learner's work, so the method description is grounded.",
+          "status": "PASS"
+        },
+        "division": {
+          "id": "division",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者先算42÷6＝8，"
+            },
+            {
+              "field": "description",
+              "text": "前面的除法没有算错，"
+            }
+          ],
+          "rationale": "The candidate reports the learner's division 42÷6＝8 and then asserts the division was not wrong. The correct quotient is 7, so the candidate fails to identify the wrong equality and its correct local value; it instead endorses the incorrect quotient.",
+          "status": "FAIL"
+        },
+        "final_result": {
+          "id": "final_result",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "最后120元也符合原题。"
+            }
+          ],
+          "rationale": "The learner's work contains a terminal total of 120 yuan (8×15＝120), so a final result is submitted. The candidate judges it as fitting the original task, but the correct total is 42÷6×15 = 105 yuan; the candidate's judgment of the submitted answer is wrong.",
+          "status": "FAIL"
+        },
+        "grounding": {
+          "id": "grounding",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "前面的除法没有算错，最后120元也符合原题。"
+            }
+          ],
+          "rationale": "The candidate's claims that the division was not wrong and that 120 yuan fits the original problem contradict correct arithmetic (42÷6=7, 42÷6×15=105). These assertions are meaning_mismatch, so grounding fails.",
+          "status": "FAIL"
+        },
+        "boundary": {
+          "id": "boundary",
+          "quotes": [],
+          "rationale": "All candidate spans are local task-method and arithmetic interpretations of the learner's submitted work; none endorses a latent ability conclusion or makes a teaching decision. Every claim's boundary_status is PASS, so the boundary criterion passes.",
+          "status": "PASS"
+        },
+        "arithmetic_mapping": {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者先算42÷6＝8，再算8×15＝120。前面的除法没有算错，最后120元也符合原题。"
+            }
+          ],
+          "rationale": "The two reported learner equalities are mapped faithfully as REPORTS_ONLY with correct tokens and values. However, the candidate's own judgments in candidate_2 and candidate_3 are mapped as UnresolvedNumericMapping with observer_position AFFIRMS_TRUE, which misrepresents the observer's position: the observer endorses the false equality 42÷6＝8 and the false total 120, so these should be mapped as endorsed arithmetic judgments (AFFIRMS_TRUE on the equality), not as unresolved non-numeric mappings. The mapping is therefore not faithful.",
+          "status": "FAIL"
+        },
+        "attribution": {
+          "id": "attribution",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者先算42÷6＝8，再算8×15＝120。前面的除法没有算错，最后120元也符合原题。"
+            }
+          ],
+          "rationale": "The candidate clearly presents candidate_0 and candidate_1 as the learner's reported computations, and candidate_2 and candidate_3 as the observer's own judgments. Speaker and stance are determinate for every span.",
+          "status": "PASS"
+        }
+      },
+      "arithmetic_checks": [
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-N02-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": "7",
+          "end": 12,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Observer reports the learner's first computation 42÷6＝8 without endorsing it.",
+          "relation_holds": false,
+          "segment": 0,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_0"
+          ],
+          "speaker": "learner",
+          "start": 0,
+          "status": "PASS",
+          "text": "学习者先算42÷6＝8，",
+          "type": "ArithmeticEquality",
+          "value": "8"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-N02-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": "120",
+          "end": 23,
+          "expression": 1,
+          "expression_tokens": [
+            "8",
+            "*",
+            "15"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "Observer reports the learner's second computation 8×15＝120 without endorsing it.",
+          "relation_holds": true,
+          "segment": 0,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_1"
+          ],
+          "speaker": "learner",
+          "start": 12,
+          "status": "PASS",
+          "text": "再算8×15＝120。",
+          "type": "ArithmeticEquality",
+          "value": "120"
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-N02-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": null,
+          "end": 33,
+          "expression": 2,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer's claim that the division step is not wrong is a judgment about the reported equality, not a new numerical expression.",
+          "relation_holds": null,
+          "segment": 0,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_2"
+          ],
+          "speaker": "other",
+          "start": 23,
+          "status": "UNRESOLVED",
+          "text": "前面的除法没有算错，",
+          "type": "UnresolvedNumericMapping",
+          "value": null
+        },
+        {
+          "bound_sources": [
+            {
+              "field": "task",
+              "handle": "source_1",
+              "ref": {
+                "identity": "SingleTask-N02-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "6kg 苹果42元，15kg多少钱？"
+            },
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-N02-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": null,
+          "end": 45,
+          "expression": 3,
+          "expression_tokens": [],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "Observer's claim that 120 yuan fits the original problem is a contextual judgment, not a standalone numerical expression.",
+          "relation_holds": null,
+          "segment": 0,
+          "sources": [
+            "source_1",
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_3"
+          ],
+          "speaker": "other",
+          "start": 33,
+          "status": "UNRESOLVED",
+          "text": "最后120元也符合原题。",
+          "type": "UnresolvedNumericMapping",
+          "value": null
+        }
+      ],
+      "author_review": {
+        "negative_validation_complete": true,
+        "deterministic_false_endorsement_check_completed": false,
+        "notes": "抽取将明确指代的错误认可降为UnresolvedNumericMapping，未实现预期的算术FAIL。综合审查识别了错误除法与错误最终结果，并判映射FAIL；组合结果UNRESOLVED，未获准入。"
+      },
+      "scripted_fault": [],
+      "candidate_has_formal_standing": false
+    },
+    {
+      "id": "M01",
+      "kind": "injected_mapping_fault",
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "candidate": {
+        "description": "学习者写下42÷6＝8。"
+      },
+      "execution": "COMPLETED",
+      "failure": null,
+      "actual_calls": 2,
+      "raw_arithmetic_status": "FAIL",
+      "raw_mapping_status": "FAIL",
+      "raw_combined_status": "UNRESOLVED",
+      "criteria": {
+        "method": {
+          "id": "method",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8。"
+            }
+          ],
+          "rationale": "The candidate only reports the learner's first division step (42÷6＝8) and does not describe the divide-then-multiply route or the missing multiplication step, so the required method interpretation is absent.",
+          "status": "FAIL"
+        },
+        "division": {
+          "id": "division",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8。"
+            }
+          ],
+          "rationale": "The candidate reports the learner's division equality 42÷6＝8 but never identifies it as wrong nor gives the correct local value 7, so the required judgment of the visible local division is missing.",
+          "status": "FAIL"
+        },
+        "final_result": {
+          "id": "final_result",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8。"
+            }
+          ],
+          "rationale": "The original work contains a terminal total (8×15＝120), but the candidate neither judges it against the task nor reports its absence; the final-result criterion is unaddressed.",
+          "status": "FAIL"
+        },
+        "grounding": {
+          "id": "grounding",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8。"
+            }
+          ],
+          "rationale": "The single claim is a learner report whose quoted equality exists in the source, but the candidate's arithmetic mapping endorses the false equality as true, so grounding fails via the claim's meaning_mismatch.",
+          "status": "FAIL"
+        },
+        "boundary": {
+          "id": "boundary",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8。"
+            }
+          ],
+          "rationale": "The candidate merely reports an attributed learner statement, which is within Observation responsibility; no latent-ability conclusion or teaching decision is endorsed, so boundary passes.",
+          "status": "PASS"
+        },
+        "arithmetic_mapping": {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8。"
+            }
+          ],
+          "rationale": "The extracted mapping records 42/6 with value 8 as AFFIRMS_TRUE, but the candidate only reports the learner's written equality; the observer position should be REPORTS_ONLY, so the mapping distorts the observer's commitment.",
+          "status": "FAIL"
+        },
+        "attribution": {
+          "id": "attribution",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8。"
+            }
+          ],
+          "rationale": "The candidate clearly presents the equality as the learner's written work (learner/reported), so attribution is determinate.",
+          "status": "PASS"
+        }
+      },
+      "arithmetic_checks": [
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-M01-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": "7",
+          "end": 12,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "AFFIRMS_TRUE",
+          "reason": "",
+          "relation_holds": false,
+          "segment": 0,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_0"
+          ],
+          "speaker": "learner",
+          "start": 0,
+          "status": "FAIL",
+          "text": "学习者写下42÷6＝8。",
+          "type": "ArithmeticEquality",
+          "value": "8"
+        }
+      ],
+      "author_review": {
+        "injected_mapping_fault_detected": true,
+        "notes": "将仅转述注入为AFFIRMS_TRUE，映射审查FAIL，目标错误被发现。grounding理由却把抽取层错误归到原候选，仍有检查维度相互影响；其他维度不作为本例验收目标。"
+      },
+      "scripted_fault": [
+        {
+          "identity": "SCRIPTED-MAPPING-FAULT-M01",
+          "provider_call": false,
+          "payload": {
+            "segments": [
+              {
+                "span_ids": [
+                  "candidate_0"
+                ],
+                "coverage": "COMPLETE",
+                "expressions": [
+                  {
+                    "type": "ArithmeticEquality",
+                    "span_ids": [
+                      "candidate_0"
+                    ],
+                    "speaker": "learner",
+                    "sources": [
+                      "source_2"
+                    ],
+                    "observer_position": "AFFIRMS_TRUE",
+                    "expression_tokens": [
+                      "42",
+                      "/",
+                      "6"
+                    ],
+                    "value": "8",
+                    "reason": ""
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "candidate_has_formal_standing": false
+    },
+    {
+      "id": "M02",
+      "kind": "injected_mapping_fault",
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "candidate": {
+        "description": "学习者写下42÷6＝8，这个除法等式正确。"
+      },
+      "execution": "COMPLETED",
+      "failure": null,
+      "actual_calls": 2,
+      "raw_arithmetic_status": "PASS",
+      "raw_mapping_status": "PASS",
+      "raw_combined_status": "FAIL",
+      "criteria": {
+        "method": {
+          "id": "method",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8，"
+            }
+          ],
+          "rationale": "The candidate only reports the learner's division step 42÷6＝8; it does not describe the divide-cost-by-quantity then multiply-by-requested-quantity route, nor does it note the missing multiplication step. The submitted route is not described, so the method criterion is not satisfied.",
+          "status": "FAIL"
+        },
+        "division": {
+          "id": "division",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8，这个除法等式正确。"
+            }
+          ],
+          "rationale": "The candidate identifies the local division assertion 42÷6＝8 but declares it correct, whereas the correct quotient is 7. It fails to identify the wrong equality and its correct local value.",
+          "status": "FAIL"
+        },
+        "final_result": {
+          "id": "final_result",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8，"
+            }
+          ],
+          "rationale": "The original work contains a terminal total, 8×15＝120, which is the submitted final result for 15kg. The candidate never judges this final answer against the task (correct total is 105) and does not preserve its absence; it silently omits the final-result judgment.",
+          "status": "FAIL"
+        },
+        "grounding": {
+          "id": "grounding",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8，这个除法等式正确。"
+            }
+          ],
+          "rationale": "The report that the learner wrote 42÷6＝8 is supported by the original work, but the endorsement that this division equality is correct contradicts the correct arithmetic (42÷6＝7). The candidate therefore contains a false assertion.",
+          "status": "FAIL"
+        },
+        "boundary": {
+          "id": "boundary",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "这个除法等式正确。"
+            }
+          ],
+          "rationale": "The candidate moves from reporting the learner's written equality to independently endorsing it as correct. Local arithmetic interpretation is within Observation responsibility, so this endorsement does not exceed the boundary; boundary_status is PASS for both claims.",
+          "status": "PASS"
+        },
+        "arithmetic_mapping": {
+          "id": "arithmetic_mapping",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8，这个除法等式正确。"
+            }
+          ],
+          "rationale": "The extracted ArithmeticEquality 42/6 with value 8, speaker learner, observer_position REPORTS_ONLY, and source source_2 faithfully matches the candidate's report of the learner's written equality. The candidate's separate endorsement of correctness is captured as a claim, not as an altered observer position on the equality. Mapping fidelity is PASS.",
+          "status": "PASS"
+        },
+        "attribution": {
+          "id": "attribution",
+          "quotes": [
+            {
+              "field": "description",
+              "text": "学习者写下42÷6＝8，这个除法等式正确。"
+            }
+          ],
+          "rationale": "The candidate clearly presents the learner as the author of 42÷6＝8 (learner/reported) and the system as endorsing that equality as correct (system/endorsed). Both speaker and stance are determined for every span.",
+          "status": "PASS"
+        }
+      },
+      "arithmetic_checks": [
+        {
+          "bound_sources": [
+            {
+              "field": "text",
+              "handle": "source_2",
+              "ref": {
+                "identity": "SingleTask-M02-work-input-1",
+                "revision": "1",
+                "space": "fact"
+              },
+              "text": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。"
+            }
+          ],
+          "computed": "7",
+          "end": 21,
+          "expression": 0,
+          "expression_tokens": [
+            "42",
+            "/",
+            "6"
+          ],
+          "field": "description",
+          "observer_position": "REPORTS_ONLY",
+          "reason": "",
+          "relation_holds": false,
+          "segment": 0,
+          "sources": [
+            "source_2"
+          ],
+          "span_ids": [
+            "candidate_0",
+            "candidate_1"
+          ],
+          "speaker": "learner",
+          "start": 0,
+          "status": "PASS",
+          "text": "学习者写下42÷6＝8，这个除法等式正确。",
+          "type": "ArithmeticEquality",
+          "value": "8"
+        }
+      ],
+      "author_review": {
+        "injected_mapping_fault_detected": false,
+        "notes": "候选明确认可错误等式，注入仅转述的映射漏掉该认可；审查仍给arithmetic_mapping PASS，理由是认可已在claim中表达。此理由违反当前契约；division/final_result/grounding FAIL最终阻止准入，不能替映射审查记功。"
+      },
+      "scripted_fault": [
+        {
+          "identity": "SCRIPTED-MAPPING-FAULT-M02",
+          "provider_call": false,
+          "payload": {
+            "segments": [
+              {
+                "span_ids": [
+                  "candidate_0",
+                  "candidate_1"
+                ],
+                "coverage": "COMPLETE",
+                "expressions": [
+                  {
+                    "type": "ArithmeticEquality",
+                    "span_ids": [
+                      "candidate_0",
+                      "candidate_1"
+                    ],
+                    "speaker": "learner",
+                    "sources": [
+                      "source_2"
+                    ],
+                    "observer_position": "REPORTS_ONLY",
+                    "expression_tokens": [
+                      "42",
+                      "/",
+                      "6"
+                    ],
+                    "value": "8",
+                    "reason": ""
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "candidate_has_formal_standing": false
+    }
+  ],
+  "disposition": [
+    {
+      "issue": "Observer commitment confused with reported learner equation; compound equation rewritten as learner intermediate",
+      "category": "TARGETED_IMPLEMENTATION_IMPROVEMENT",
+      "decision": "Known four examples improved; retain opt-in protocol. This is not full extraction acceptance."
+    },
+    {
+      "issue": "Schema response missing segment span_ids",
+      "category": "ENGINEERING_OUTPUT_CONTRACT",
+      "decision": "Preserve incomplete result. Later output-shape reliability work; no silent repair or semantic-success credit."
+    },
+    {
+      "issue": "Implicit endorsement unresolved, missing scalar coverage, speaker attribution and mapping-review miss",
+      "category": "DEFERRED_SEMANTIC_ENGINEERING",
+      "decision": "Retain exact counterexamples. Mapping PASS is not a correctness guarantee. No automatic new tuning batch."
+    },
+    {
+      "issue": "Final-result omission, responsibility false rejection, direct quote fidelity, Policy rationale quality",
+      "category": "UNCHANGED_ENGINEERING_BACKLOG",
+      "decision": "Next bounded work may address the existing T03 final-result generation omission, not all defects at once."
+    },
+    {
+      "issue": "Actual hint display followed by learner correction",
+      "category": "UNVALIDATED_CAPABILITY",
+      "decision": "Not tested by fixed candidates. Still requires a later bounded integration check; production not ready."
+    }
+  ],
+  "reviewer": "Implementation author; fixed developer examples, one pass, not independent evaluation or an accuracy estimate.",
+  "source_sha256": {
+    "src/spike/runs/observer-arithmetic-v1/adapter-records.json": "7e56f1d2f89a6a4c03548d50e2857c5935a29c42d23df91c1fbe010a10be871e",
+    "src/spike/runs/observer-arithmetic-v1/manifest.json": "cb41f502820cbe5995ad9bcdd1d7298adc2e1ab888111a17e45b6ef9f82b4956",
+    "src/spike/runs/observer-arithmetic-v1/results.json": "66d1a9090a7930e1964a8e26edf3f824f25e3dd9b013d02aafcee596b3540bce",
+    "src/spike/runs/observer-arithmetic-v1/summary.json": "39b88c5098fb7ec1fac5853921a50447fc3b3bd37fdf3ba6b11ae707265afbd5",
+    "src/spike/runs/observer-arithmetic-v1/cases/M01.jsonl": "9fdcd7b3b70fd3f7ecb1e068f9f82b1f3b9271630166902027bae80189001af5",
+    "src/spike/runs/observer-arithmetic-v1/cases/M02.jsonl": "2b4facdf4caf57edf892407dde1a2225bda6334544923d55a47892dc6f46c72e",
+    "src/spike/runs/observer-arithmetic-v1/cases/N01.jsonl": "d133f335d3b486d35ec6a42e46ca970dc057f8b2fff78ffb82117629bffc57cb",
+    "src/spike/runs/observer-arithmetic-v1/cases/N02.jsonl": "256d76c21eb4477762b14c25b6bdd857f7fc883037ee8bc593f5e7f4cbfa2ee4",
+    "src/spike/runs/observer-arithmetic-v1/cases/T03.jsonl": "dde0bd6535108480342ef1f7c9ad75713699c9f7a2bdf3bbf14bd2b80aa5dbe3",
+    "src/spike/runs/observer-arithmetic-v1/cases/T07.jsonl": "8bbb5205351c63d0e673cfdf8d2b189b2e9814dcacb10bad5849d7e9518546e4",
+    "src/spike/runs/observer-arithmetic-v1/cases/T09.jsonl": "0eb1402f87e91b1f1b25108a1c698bfe36ddca070091d916c16e8670ab599aaa",
+    "src/spike/runs/observer-arithmetic-v1/cases/T12.jsonl": "9d32a935ff68daa71666ce4a57a890cd11393c87b2aa9ba51410b1685c63c9a2",
+    "src/spike/review-packages/observer-arithmetic-v1/manifest.json": "7ceb29ac85e0ba0ed3b673e674b7f327cfc292354e5a53fa09d0e6bf0eafd267",
+    "src/spike/analyze_observer_arithmetic.py": "1c3b39a3d1399f67b2c5113708cdcf0dd2f74a31ef2c00898b671fe0c8617369"
+  }
+}

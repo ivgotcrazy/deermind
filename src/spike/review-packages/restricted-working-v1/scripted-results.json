@@ -1,0 +1,541 @@
+{
+  "rows": [
+    {
+      "id": "P1-localization-conflict",
+      "execution": "COMPLETED",
+      "candidate_digest": "c9a85c8749d076c5cbe3ef5098020ec5504ab920404a810292279299b2e07173",
+      "semantic_status": "FAIL",
+      "utility_status": "FAIL",
+      "review": {
+        "candidate_digest": "c9a85c8749d076c5cbe3ef5098020ec5504ab920404a810292279299b2e07173",
+        "checks": [
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S1",
+            "rationale": "Scripted.",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S2",
+            "rationale": "Scripted.",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S3",
+            "rationale": "Scripted.",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S4",
+            "rationale": "Scripted.",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S5",
+            "rationale": "Scripted.",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          }
+        ],
+        "context_id": "50657228f0dc488996c202c804279b83",
+        "findings": [
+          {
+            "candidate_quotes": [
+              {
+                "handle": "candidate_9",
+                "quote": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+              }
+            ],
+            "gap_ids": [],
+            "id": "f1",
+            "rationale": "Explicit scripted relationship, not semantic evidence.",
+            "relation": "CONTRADICTED",
+            "rules": [
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5"
+            ],
+            "source_quotes": [
+              {
+                "handle": "source_2",
+                "quote": "42÷6=8；8×15=120；答案120元。"
+              }
+            ]
+          }
+        ],
+        "material_record_ref": {
+          "identity": "e671dc1a815c4ebaa76153c983570423",
+          "revision": "1",
+          "space": "execution"
+        },
+        "rationale": "Scripted.",
+        "review_material_gaps": [],
+        "reviewed_fields": [
+          "action_identity",
+          "action_revision",
+          "context_refs",
+          "defer_condition",
+          "episode",
+          "exact_payload",
+          "executor_target",
+          "expected_disclosure",
+          "outcome",
+          "rationale",
+          "uncertainty"
+        ],
+        "rule_ref": {
+          "identity": "E1PolicySemanticRules",
+          "revision": "v4",
+          "space": "canonical"
+        },
+        "status": "FAIL"
+      },
+      "required_detection_pending_content_review": true,
+      "calls": 2
+    },
+    {
+      "id": "P2-legal-localization",
+      "execution": "COMPLETED",
+      "candidate_digest": "70475408d622192c9fc476b331a0765d156534fb188f8100a47131acb19a6f94",
+      "semantic_status": "PASS",
+      "utility_status": "PASS",
+      "review": {
+        "candidate_digest": "70475408d622192c9fc476b331a0765d156534fb188f8100a47131acb19a6f94",
+        "checks": [
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S1",
+            "rationale": "Scripted.",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S2",
+            "rationale": "Scripted.",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S3",
+            "rationale": "Scripted.",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S4",
+            "rationale": "Scripted.",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S5",
+            "rationale": "Scripted.",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          }
+        ],
+        "context_id": "9ff2129377844812a9de7ab5adafd16c",
+        "findings": [
+          {
+            "candidate_quotes": [
+              {
+                "handle": "candidate_9",
+                "quote": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。"
+              }
+            ],
+            "gap_ids": [],
+            "id": "f1",
+            "rationale": "Explicit scripted relationship, not semantic evidence.",
+            "relation": "SUPPORTED",
+            "rules": [
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5"
+            ],
+            "source_quotes": [
+              {
+                "handle": "source_2",
+                "quote": "42÷6=8；8×15=120；答案120元。"
+              }
+            ]
+          }
+        ],
+        "material_record_ref": {
+          "identity": "37a04e7f03dc4b8bb00bd2930f3c7131",
+          "revision": "1",
+          "space": "execution"
+        },
+        "rationale": "Scripted.",
+        "review_material_gaps": [],
+        "reviewed_fields": [
+          "action_identity",
+          "action_revision",
+          "context_refs",
+          "defer_condition",
+          "episode",
+          "exact_payload",
+          "executor_target",
+          "expected_disclosure",
+          "outcome",
+          "rationale",
+          "uncertainty"
+        ],
+        "rule_ref": {
+          "identity": "E1PolicySemanticRules",
+          "revision": "v4",
+          "space": "canonical"
+        },
+        "status": "PASS"
+      },
+      "required_detection_pending_content_review": true,
+      "calls": 2
+    },
+    {
+      "id": "P3-unsupported-uncertainty",
+      "execution": "COMPLETED",
+      "candidate_digest": "ffa90d2b7050a10bfaeb7d537d2867b39afdbec746dfabdfd3a5edcf7089adcb",
+      "semantic_status": "FAIL",
+      "utility_status": "FAIL",
+      "review": {
+        "candidate_digest": "ffa90d2b7050a10bfaeb7d537d2867b39afdbec746dfabdfd3a5edcf7089adcb",
+        "checks": [
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S1",
+            "rationale": "Scripted.",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S2",
+            "rationale": "Scripted.",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S3",
+            "rationale": "Scripted.",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S4",
+            "rationale": "Scripted.",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S5",
+            "rationale": "Scripted.",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          }
+        ],
+        "context_id": "58b4a37c05704ddfb25024d455edf86f",
+        "findings": [
+          {
+            "candidate_quotes": [
+              {
+                "handle": "candidate_9",
+                "quote": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。"
+              }
+            ],
+            "gap_ids": [],
+            "id": "f1",
+            "rationale": "Explicit scripted relationship, not semantic evidence.",
+            "relation": "CONTRADICTED",
+            "rules": [
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5"
+            ],
+            "source_quotes": [
+              {
+                "handle": "source_2",
+                "quote": "42÷6=8；8×15=120；答案120元。"
+              }
+            ]
+          }
+        ],
+        "material_record_ref": {
+          "identity": "45c44e9507894ae0ad779ab0fc50a1c4",
+          "revision": "1",
+          "space": "execution"
+        },
+        "rationale": "Scripted.",
+        "review_material_gaps": [],
+        "reviewed_fields": [
+          "action_identity",
+          "action_revision",
+          "context_refs",
+          "defer_condition",
+          "episode",
+          "exact_payload",
+          "executor_target",
+          "expected_disclosure",
+          "outcome",
+          "rationale",
+          "uncertainty"
+        ],
+        "rule_ref": {
+          "identity": "E1PolicySemanticRules",
+          "revision": "v4",
+          "space": "canonical"
+        },
+        "status": "FAIL"
+      },
+      "required_detection_pending_content_review": true,
+      "calls": 2
+    },
+    {
+      "id": "O1-forbidden-ability",
+      "execution": "COMPLETED",
+      "candidate_digest": "ee150b0f261cfc217aa0902c50d52430da71df9dd0bfbfbb9f31dace94e2ce2e",
+      "semantic_status": "FAIL",
+      "utility_status": null,
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "episode",
+                "ref": {
+                  "identity": "WorkingSubmittedWork",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "WorkingSubmittedWork",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "WorkingSubmittedWork",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "Scripted support.",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "episode",
+                "ref": {
+                  "identity": "WorkingSubmittedWork",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "working-apple-episode"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "学习者先用总价除以原重量，再将所得单价乘以目标重量。作答写出42÷6=8，但正确商是7；随后写8×15=120，这个乘法等式成立，但它使用了错误的商。已提交答案120元不符合题目，正确总价为105元。这证明学习者比例推理能力不足，应先接受完整讲解。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "学习者先用总价除以原重量，再将所得单价乘以目标重量。作答写出42÷6=8，但正确商是7；随后写8×15=120，这个乘法等式成立，但它使用了错误的商。已提交答案120元不符合题目，正确总价为105元。这证明学习者比例推理能力不足，应先接受完整讲解。"
+              }
+            ],
+            "rationale": "Explicit scripted judgment.",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "学习者先用总价除以原重量，再将所得单价乘以目标重量。作答写出42÷6=8，但正确商是7；随后写8×15=120，这个乘法等式成立，但它使用了错误的商。已提交答案120元不符合题目，正确总价为105元。这证明学习者比例推理能力不足，应先接受完整讲解。"
+              }
+            ],
+            "rationale": "Explicit scripted judgment.",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "学习者先用总价除以原重量，再将所得单价乘以目标重量。作答写出42÷6=8，但正确商是7；随后写8×15=120，这个乘法等式成立，但它使用了错误的商。已提交答案120元不符合题目，正确总价为105元。这证明学习者比例推理能力不足，应先接受完整讲解。"
+              }
+            ],
+            "rationale": "Explicit scripted judgment.",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "学习者先用总价除以原重量，再将所得单价乘以目标重量。作答写出42÷6=8，但正确商是7；随后写8×15=120，这个乘法等式成立，但它使用了错误的商。已提交答案120元不符合题目，正确总价为105元。这证明学习者比例推理能力不足，应先接受完整讲解。"
+              }
+            ],
+            "rationale": "Explicit scripted judgment.",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "学习者先用总价除以原重量，再将所得单价乘以目标重量。作答写出42÷6=8，但正确商是7；随后写8×15=120，这个乘法等式成立，但它使用了错误的商。已提交答案120元不符合题目，正确总价为105元。这证明学习者比例推理能力不足，应先接受完整讲解。"
+              }
+            ],
+            "rationale": "Explicit scripted judgment.",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "学习者先用总价除以原重量，再将所得单价乘以目标重量。作答写出42÷6=8，但正确商是7；随后写8×15=120，这个乘法等式成立，但它使用了错误的商。已提交答案120元不符合题目，正确总价为105元。这证明学习者比例推理能力不足，应先接受完整讲解。"
+              }
+            ],
+            "rationale": "Explicit scripted judgment.",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "学习者先用总价除以原重量，再将所得单价乘以目标重量。作答写出42÷6=8，但正确商是7；随后写8×15=120，这个乘法等式成立，但它使用了错误的商。已提交答案120元不符合题目，正确总价为105元。这证明学习者比例推理能力不足，应先接受完整讲解。"
+              }
+            ],
+            "rationale": "Explicit scripted judgment.",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "required_detection_pending_content_review": true,
+      "calls": 3
+    },
+    {
+      "id": "W1-correct",
+      "execution": "COMPLETED",
+      "observation_digest": "21083e45afa437b50093e96b3fdfdd798e4cf05d5dd5f592085f27a959bb6f07",
+      "policy_digest": "7f2cbc3939ffc61680f4dff03e9419b728fd7b125a2a9e4b14f129a97068bdd2",
+      "outcome": "Execute",
+      "calls": 7
+    },
+    {
+      "id": "W2-wrong",
+      "execution": "COMPLETED",
+      "observation_digest": "d6789733877c821694741343c9d11c3a14dc53a09ae0040da13d8c88c9d08382",
+      "policy_digest": "edca8f49467686116fee1c66b158883e2be06d90a94da9a1967f51618696614a",
+      "outcome": "Execute",
+      "calls": 7
+    },
+    {
+      "id": "W3-unfinished",
+      "execution": "COMPLETED",
+      "observation_digest": "4a1064d9efa384d2b7b458ba15d35d7fa515271ae5ed5c2be29cc6a302363d9d",
+      "policy_digest": "936d0b0ad3b0c5332c7603f69021950d0c34903528ed1244abab6d6d8372509e",
+      "outcome": "Execute",
+      "calls": 7
+    },
+    {
+      "id": "W4-unfinished-with-answer",
+      "execution": "COMPLETED",
+      "observation_digest": "1c9f11e1d05ed03a9794e05335cf795d4043000052653fe88688d4a57d146edd",
+      "policy_digest": "15f17b3f53d14348f066a32eb9b397590560655b88f7dcadc90ae6867673375c",
+      "outcome": "Execute",
+      "calls": 7
+    },
+    {
+      "id": "R1-full-explanation",
+      "execution": "COMPLETED",
+      "observation_digest": "082150ea377915f16f7ec89a1133bcbba872cfd3c304cb3fa0935099e6431023",
+      "policy_digest": "af7575172569da572a8aaf584be441609d57091cb41f35a14308f85ec3de5967",
+      "outcome": "Execute",
+      "calls": 7
+    },
+    {
+      "id": "R2-new-independent-task",
+      "execution": "COMPLETED",
+      "observation_digest": "18082cc0bf01c42e6c2c8db713f74842f4f4266601c68bbc8eb099fce276a0cc",
+      "policy_digest": "05e2b5e936219ddfc1d6c137ffe66d5d4ab7d51a623563968e69bef05d06b507",
+      "outcome": "Execute",
+      "calls": 7
+    }
+  ],
+  "stop_reason": null,
+  "calls": 51,
+  "content_review_required": true,
+  "semantic_support_claimed": false
+}

@@ -1,0 +1,2102 @@
+{
+  "status": "DESIGN_ONLY_NOT_REGISTERED_NOT_MODEL_OUTPUT",
+  "proposed_format": "policy-review-rule-items-v1",
+  "semantic_rules_source": "src/spike/protocols/policy-e1-v5.json",
+  "semantic_rules": [
+    {
+      "id": "S1",
+      "title": "Consumer responsibility",
+      "rule": "Judge Policy within its own responsibility using the supplied exact sources, current request, constraints and registered action. An Observation standing label does not endorse every sentence or select an action. A request is not authority; only acknowledged Control changes activity."
+    },
+    {
+      "id": "S2",
+      "title": "Grounded uncertainty",
+      "rule": "For a decision-relevant uncertainty, identify the actual source gap, how it matters to this decision and what later evidence could distinguish the explanations. The explanation can be concise and shared across rationale and uncertainty. Do not require an unknown result to be known or invent uncertainty when none is relevant. Possibility language is no exemption from grounding. Missing a required basis in an otherwise complete candidate is FAIL; genuinely insufficient review context or unresolved interpretation is UNRESOLVED. Neither implies proving a hidden psychological process impossible."
+    },
+    {
+      "id": "S3",
+      "title": "Scoped learner responsibility",
+      "rule": "Compare claims about retained responsibility with the exact proposed payload and supplied help history. A cue naming a step assists localization even if recomputation is still learner-owned. Do not describe the whole diagnosis as independent unless context actually limits independence to unassisted work. Assess meaning in context, not the occurrence of the word independent. Do not infer stable mastery or set numerical Evidence strength."
+    },
+    {
+      "id": "S4",
+      "title": "Expected versus actual effects",
+      "rule": "Before execution, disclosure and substitution caused by the proposed action are expectations. Only trusted supplied occurrence evidence supports actual effects; unknown or partial delivery cannot become full or zero disclosure. Even confirmed display does not prove the learner attended, used or mastered it. Rationale cannot expand exact action payload."
+    },
+    {
+      "id": "S5",
+      "title": "Consistency and choice freedom",
+      "rule": "Check all free-text fields together with outcome, exact parameters and defer condition. Do not FAIL merely because another permitted choice seems better. Defer names a concrete new decision opportunity and does not schedule an action. Semantic review checks support, attribution and consistency; test-only utility review assesses justification quality without changing or authorizing the outcome."
+    }
+  ],
+  "source_fixture": "src/spike/runs/spike-exit-v1/adapter-records.json",
+  "source_fixture_sha256": "5f79de48735217c65312a42d38db3df63fbaad64fb24fbb4bb42b4763580a12d",
+  "note": "Constructed proposed shape/aggregation examples, not trusted Runtime requests, reviews, commits or real quality evidence. Host labels and names are never sent to the model.",
+  "examples": [
+    {
+      "id": "positive",
+      "status": "AUTHOR_CONSTRUCTED_DESIGN_EXAMPLE_NOT_EXECUTED",
+      "input": {
+        "context": [
+          {
+            "ref": {
+              "space": "fact",
+              "identity": "D-work-before",
+              "revision": "1"
+            },
+            "kind": "LearnerWorkSubmitted",
+            "content": {
+              "episode": "apple-episode",
+              "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+              "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+            }
+          },
+          {
+            "ref": {
+              "space": "derived",
+              "identity": "E1-O",
+              "revision": "r1"
+            },
+            "kind": "Observation",
+            "content": {
+              "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+            }
+          },
+          {
+            "ref": {
+              "space": "fact",
+              "identity": "E1-current-input",
+              "revision": "1"
+            },
+            "kind": "CurrentInteractionInput",
+            "content": {
+              "episode": "apple-episode",
+              "source": "PREDECLARED-INPUT-FIXTURE",
+              "text": "请帮我检查哪一步有问题，不要直接给答案"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "E1-Activity",
+              "revision": "v1"
+            },
+            "kind": "ActivityConstraints",
+            "content": {
+              "allowed_action_refs": [
+                {
+                  "identity": "AskSelfCheck",
+                  "revision": "e1-v1",
+                  "space": "canonical"
+                },
+                {
+                  "identity": "HintCheckStep",
+                  "revision": "e1-v1",
+                  "space": "canonical"
+                }
+              ],
+              "episode": "apple-episode",
+              "purpose": "IndependentDiagnosisWithLimitedHelp",
+              "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "content": {
+              "action_identity": "AskSelfCheck",
+              "action_revision": "e1-v1",
+              "exact_payload": "请你检查一下刚才的解题过程。",
+              "executor_target": "mock-display"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "content": {
+              "action_identity": "HintCheckStep",
+              "action_revision": "e1-v1",
+              "exact_payload": "再检查一下 42÷6。",
+              "executor_target": "mock-display"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "RevealFullSolution",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "content": {
+              "action_identity": "RevealFullSolution",
+              "action_revision": "e1-v1",
+              "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+              "executor_target": "mock-display"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "C1",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "content": {
+              "meaning": "Independent task proficiency"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "C2",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "content": {
+              "meaning": "Unit-rate strategy selection"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "C3",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "content": {
+              "meaning": "Division arithmetic"
+            }
+          }
+        ],
+        "candidate": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "context_refs": [
+            {
+              "identity": "E1-current-input",
+              "revision": "1",
+              "space": "fact"
+            }
+          ],
+          "defer_condition": "",
+          "episode": "apple-episode",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display",
+          "expected_disclosure": "预期帮助定位除法步骤，不提供正确的商。",
+          "outcome": "Execute",
+          "rationale": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。",
+          "uncertainty": "本例可见除法结果错误，未据此推断稳定能力。"
+        },
+        "materials": [
+          {
+            "id": "material_0",
+            "ref": {
+              "space": "fact",
+              "identity": "D-work-before",
+              "revision": "1"
+            },
+            "kind": "LearnerWorkSubmitted",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_1",
+            "ref": {
+              "space": "derived",
+              "identity": "E1-O",
+              "revision": "r1"
+            },
+            "kind": "Observation",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_2",
+            "ref": {
+              "space": "fact",
+              "identity": "E1-current-input",
+              "revision": "1"
+            },
+            "kind": "CurrentInteractionInput",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_3",
+            "ref": {
+              "space": "canonical",
+              "identity": "E1-Activity",
+              "revision": "v1"
+            },
+            "kind": "ActivityConstraints",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_4",
+            "ref": {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_5",
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_6",
+            "ref": {
+              "space": "canonical",
+              "identity": "RevealFullSolution",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_7",
+            "ref": {
+              "space": "canonical",
+              "identity": "C1",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_8",
+            "ref": {
+              "space": "canonical",
+              "identity": "C2",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_9",
+            "ref": {
+              "space": "canonical",
+              "identity": "C3",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "state": "AVAILABLE"
+          }
+        ],
+        "quote_registry": {
+          "candidate": [
+            {
+              "handle": "candidate_0",
+              "field": "action_identity"
+            },
+            {
+              "handle": "candidate_1",
+              "field": "action_revision"
+            },
+            {
+              "handle": "candidate_4",
+              "field": "episode"
+            },
+            {
+              "handle": "candidate_5",
+              "field": "exact_payload"
+            },
+            {
+              "handle": "candidate_6",
+              "field": "executor_target"
+            },
+            {
+              "handle": "candidate_7",
+              "field": "expected_disclosure"
+            },
+            {
+              "handle": "candidate_8",
+              "field": "outcome"
+            },
+            {
+              "handle": "candidate_9",
+              "field": "rationale"
+            },
+            {
+              "handle": "candidate_10",
+              "field": "uncertainty"
+            }
+          ],
+          "source": [
+            {
+              "handle": "source_0",
+              "ref": {
+                "space": "fact",
+                "identity": "D-work-before",
+                "revision": "1"
+              },
+              "field": "episode"
+            },
+            {
+              "handle": "source_1",
+              "ref": {
+                "space": "fact",
+                "identity": "D-work-before",
+                "revision": "1"
+              },
+              "field": "task"
+            },
+            {
+              "handle": "source_2",
+              "ref": {
+                "space": "fact",
+                "identity": "D-work-before",
+                "revision": "1"
+              },
+              "field": "text"
+            },
+            {
+              "handle": "source_3",
+              "ref": {
+                "space": "derived",
+                "identity": "E1-O",
+                "revision": "r1"
+              },
+              "field": "description"
+            },
+            {
+              "handle": "source_4",
+              "ref": {
+                "space": "fact",
+                "identity": "E1-current-input",
+                "revision": "1"
+              },
+              "field": "episode"
+            },
+            {
+              "handle": "source_5",
+              "ref": {
+                "space": "fact",
+                "identity": "E1-current-input",
+                "revision": "1"
+              },
+              "field": "source"
+            },
+            {
+              "handle": "source_6",
+              "ref": {
+                "space": "fact",
+                "identity": "E1-current-input",
+                "revision": "1"
+              },
+              "field": "text"
+            },
+            {
+              "handle": "source_7",
+              "ref": {
+                "space": "canonical",
+                "identity": "E1-Activity",
+                "revision": "v1"
+              },
+              "field": "episode"
+            },
+            {
+              "handle": "source_8",
+              "ref": {
+                "space": "canonical",
+                "identity": "E1-Activity",
+                "revision": "v1"
+              },
+              "field": "purpose"
+            },
+            {
+              "handle": "source_9",
+              "ref": {
+                "space": "canonical",
+                "identity": "E1-Activity",
+                "revision": "v1"
+              },
+              "field": "reason"
+            },
+            {
+              "handle": "source_10",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "action_identity"
+            },
+            {
+              "handle": "source_11",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "action_revision"
+            },
+            {
+              "handle": "source_12",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "exact_payload"
+            },
+            {
+              "handle": "source_13",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "executor_target"
+            },
+            {
+              "handle": "source_14",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "action_identity"
+            },
+            {
+              "handle": "source_15",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "action_revision"
+            },
+            {
+              "handle": "source_16",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "exact_payload"
+            },
+            {
+              "handle": "source_17",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "executor_target"
+            },
+            {
+              "handle": "source_18",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "action_identity"
+            },
+            {
+              "handle": "source_19",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "action_revision"
+            },
+            {
+              "handle": "source_20",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "exact_payload"
+            },
+            {
+              "handle": "source_21",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "executor_target"
+            },
+            {
+              "handle": "source_22",
+              "ref": {
+                "space": "canonical",
+                "identity": "C1",
+                "revision": "v1"
+              },
+              "field": "meaning"
+            },
+            {
+              "handle": "source_23",
+              "ref": {
+                "space": "canonical",
+                "identity": "C2",
+                "revision": "v1"
+              },
+              "field": "meaning"
+            },
+            {
+              "handle": "source_24",
+              "ref": {
+                "space": "canonical",
+                "identity": "C3",
+                "revision": "v1"
+              },
+              "field": "meaning"
+            }
+          ]
+        }
+      },
+      "model_output_example": {
+        "reviewed_fields": [
+          "outcome",
+          "action_identity",
+          "action_revision",
+          "exact_payload",
+          "executor_target",
+          "episode",
+          "rationale",
+          "context_refs",
+          "expected_disclosure",
+          "uncertainty",
+          "defer_condition"
+        ],
+        "checks": {
+          "S1": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_8"
+                    },
+                    {
+                      "handle": "candidate_0"
+                    },
+                    {
+                      "handle": "candidate_4"
+                    },
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "候选提出本回合局部提示，未把请求说成授权或声称已切换活动。"
+                },
+                {
+                  "candidate_fields": [],
+                  "source_fields": [
+                    {
+                      "handle": "source_6"
+                    },
+                    {
+                      "handle": "source_8"
+                    },
+                    {
+                      "handle": "source_16"
+                    }
+                  ],
+                  "meaning": "当前请求要求指出应检查的步骤且不给答案，已给活动允许局部提示。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "依据当前来源在Policy职责内判断提案，不把Observation标签作为权限。"
+            }
+          ],
+          "S2": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_10"
+                    },
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "完整候选合并说明可见除法失配与不推断稳定能力；稳定能力保留来自uncertainty，不称为rationale单独声明。"
+                },
+                {
+                  "candidate_fields": [],
+                  "source_fields": [
+                    {
+                      "handle": "source_2"
+                    },
+                    {
+                      "handle": "source_3"
+                    }
+                  ],
+                  "meaning": "原作答存在42÷6=8的失配，来源给出可检查的局部基础。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "材料足以支持有限提示和能力判断的保留，没有无依据的额外假设。"
+            }
+          ],
+          "S3": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_5"
+                    }
+                  ],
+                  "source_fields": [
+                    {
+                      "handle": "source_16"
+                    }
+                  ],
+                  "meaning": "若展示，点名42÷6会帮助定位除法步骤，但不提供正确商。"
+                },
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "原理由承认定位帮助，保留学习者重新计算的责任。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "提示的帮助与理由保留的重算责任一致。"
+            }
+          ],
+          "S4": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_8"
+                    },
+                    {
+                      "handle": "candidate_5"
+                    },
+                    {
+                      "handle": "candidate_7"
+                    }
+                  ],
+                  "source_fields": [
+                    {
+                      "handle": "source_16"
+                    }
+                  ],
+                  "meaning": "候选披露是拟执行提示的预期，未声称已展示、已被利用或已掌握。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "预期帮助限于精确提示，不用候选解释扩大payload或证明实际效果。"
+            }
+          ],
+          "S5": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_8"
+                    },
+                    {
+                      "handle": "candidate_5"
+                    },
+                    {
+                      "handle": "candidate_7"
+                    }
+                  ],
+                  "source_fields": [
+                    {
+                      "handle": "source_16"
+                    }
+                  ],
+                  "meaning": "Execute提示和预期披露都指向局部定位，不给商；空defer_condition没有被说成预约。"
+                },
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "理由同样承认定位帮助并保留重算。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "完整候选在本例没有已知内部冲突；来源依据缺口在对应义务中另记，不因偏好另一行动而拒绝。"
+            }
+          ]
+        }
+      },
+      "host_only_expected_rule_statuses": {
+        "S3": "PASS",
+        "S4": "PASS",
+        "S5": "PASS",
+        "S1": "PASS",
+        "S2": "PASS"
+      },
+      "host_only_expected_overall": "PASS"
+    },
+    {
+      "id": "negative",
+      "status": "AUTHOR_CONSTRUCTED_DESIGN_EXAMPLE_NOT_EXECUTED",
+      "input": {
+        "context": [
+          {
+            "ref": {
+              "space": "fact",
+              "identity": "D-work-before",
+              "revision": "1"
+            },
+            "kind": "LearnerWorkSubmitted",
+            "content": {
+              "episode": "apple-episode",
+              "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+              "text": "42 / 6 = 8; 8 * 15 = 120; Answer = 120"
+            }
+          },
+          {
+            "ref": {
+              "space": "derived",
+              "identity": "E1-O",
+              "revision": "r1"
+            },
+            "kind": "Observation",
+            "content": {
+              "description": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105."
+            }
+          },
+          {
+            "ref": {
+              "space": "fact",
+              "identity": "E1-current-input",
+              "revision": "1"
+            },
+            "kind": "CurrentInteractionInput",
+            "content": {
+              "episode": "apple-episode",
+              "source": "PREDECLARED-INPUT-FIXTURE",
+              "text": "请帮我检查哪一步有问题，不要直接给答案"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "E1-Activity",
+              "revision": "v1"
+            },
+            "kind": "ActivityConstraints",
+            "content": {
+              "allowed_action_refs": [
+                {
+                  "identity": "AskSelfCheck",
+                  "revision": "e1-v1",
+                  "space": "canonical"
+                },
+                {
+                  "identity": "HintCheckStep",
+                  "revision": "e1-v1",
+                  "space": "canonical"
+                }
+              ],
+              "episode": "apple-episode",
+              "purpose": "IndependentDiagnosisWithLimitedHelp",
+              "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "content": {
+              "action_identity": "AskSelfCheck",
+              "action_revision": "e1-v1",
+              "exact_payload": "请你检查一下刚才的解题过程。",
+              "executor_target": "mock-display"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "content": {
+              "action_identity": "HintCheckStep",
+              "action_revision": "e1-v1",
+              "exact_payload": "再检查一下 42÷6。",
+              "executor_target": "mock-display"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "RevealFullSolution",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "content": {
+              "action_identity": "RevealFullSolution",
+              "action_revision": "e1-v1",
+              "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+              "executor_target": "mock-display"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "C1",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "content": {
+              "meaning": "Independent task proficiency"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "C2",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "content": {
+              "meaning": "Unit-rate strategy selection"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "C3",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "content": {
+              "meaning": "Division arithmetic"
+            }
+          }
+        ],
+        "candidate": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "context_refs": [
+            {
+              "identity": "E1-current-input",
+              "revision": "1",
+              "space": "fact"
+            }
+          ],
+          "defer_condition": "",
+          "episode": "apple-episode",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display",
+          "expected_disclosure": "预期帮助定位除法步骤，不提供正确的商。",
+          "outcome": "Execute",
+          "rationale": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。",
+          "uncertainty": "本例可见除法结果错误，未据此推断稳定能力。"
+        },
+        "materials": [
+          {
+            "id": "material_0",
+            "ref": {
+              "space": "fact",
+              "identity": "D-work-before",
+              "revision": "1"
+            },
+            "kind": "LearnerWorkSubmitted",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_1",
+            "ref": {
+              "space": "derived",
+              "identity": "E1-O",
+              "revision": "r1"
+            },
+            "kind": "Observation",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_2",
+            "ref": {
+              "space": "fact",
+              "identity": "E1-current-input",
+              "revision": "1"
+            },
+            "kind": "CurrentInteractionInput",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_3",
+            "ref": {
+              "space": "canonical",
+              "identity": "E1-Activity",
+              "revision": "v1"
+            },
+            "kind": "ActivityConstraints",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_4",
+            "ref": {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_5",
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_6",
+            "ref": {
+              "space": "canonical",
+              "identity": "RevealFullSolution",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_7",
+            "ref": {
+              "space": "canonical",
+              "identity": "C1",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_8",
+            "ref": {
+              "space": "canonical",
+              "identity": "C2",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_9",
+            "ref": {
+              "space": "canonical",
+              "identity": "C3",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "state": "AVAILABLE"
+          }
+        ],
+        "quote_registry": {
+          "candidate": [
+            {
+              "handle": "candidate_0",
+              "field": "action_identity"
+            },
+            {
+              "handle": "candidate_1",
+              "field": "action_revision"
+            },
+            {
+              "handle": "candidate_4",
+              "field": "episode"
+            },
+            {
+              "handle": "candidate_5",
+              "field": "exact_payload"
+            },
+            {
+              "handle": "candidate_6",
+              "field": "executor_target"
+            },
+            {
+              "handle": "candidate_7",
+              "field": "expected_disclosure"
+            },
+            {
+              "handle": "candidate_8",
+              "field": "outcome"
+            },
+            {
+              "handle": "candidate_9",
+              "field": "rationale"
+            },
+            {
+              "handle": "candidate_10",
+              "field": "uncertainty"
+            }
+          ],
+          "source": [
+            {
+              "handle": "source_0",
+              "ref": {
+                "space": "fact",
+                "identity": "D-work-before",
+                "revision": "1"
+              },
+              "field": "episode"
+            },
+            {
+              "handle": "source_1",
+              "ref": {
+                "space": "fact",
+                "identity": "D-work-before",
+                "revision": "1"
+              },
+              "field": "task"
+            },
+            {
+              "handle": "source_2",
+              "ref": {
+                "space": "fact",
+                "identity": "D-work-before",
+                "revision": "1"
+              },
+              "field": "text"
+            },
+            {
+              "handle": "source_3",
+              "ref": {
+                "space": "derived",
+                "identity": "E1-O",
+                "revision": "r1"
+              },
+              "field": "description"
+            },
+            {
+              "handle": "source_4",
+              "ref": {
+                "space": "fact",
+                "identity": "E1-current-input",
+                "revision": "1"
+              },
+              "field": "episode"
+            },
+            {
+              "handle": "source_5",
+              "ref": {
+                "space": "fact",
+                "identity": "E1-current-input",
+                "revision": "1"
+              },
+              "field": "source"
+            },
+            {
+              "handle": "source_6",
+              "ref": {
+                "space": "fact",
+                "identity": "E1-current-input",
+                "revision": "1"
+              },
+              "field": "text"
+            },
+            {
+              "handle": "source_7",
+              "ref": {
+                "space": "canonical",
+                "identity": "E1-Activity",
+                "revision": "v1"
+              },
+              "field": "episode"
+            },
+            {
+              "handle": "source_8",
+              "ref": {
+                "space": "canonical",
+                "identity": "E1-Activity",
+                "revision": "v1"
+              },
+              "field": "purpose"
+            },
+            {
+              "handle": "source_9",
+              "ref": {
+                "space": "canonical",
+                "identity": "E1-Activity",
+                "revision": "v1"
+              },
+              "field": "reason"
+            },
+            {
+              "handle": "source_10",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "action_identity"
+            },
+            {
+              "handle": "source_11",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "action_revision"
+            },
+            {
+              "handle": "source_12",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "exact_payload"
+            },
+            {
+              "handle": "source_13",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "executor_target"
+            },
+            {
+              "handle": "source_14",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "action_identity"
+            },
+            {
+              "handle": "source_15",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "action_revision"
+            },
+            {
+              "handle": "source_16",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "exact_payload"
+            },
+            {
+              "handle": "source_17",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "executor_target"
+            },
+            {
+              "handle": "source_18",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "action_identity"
+            },
+            {
+              "handle": "source_19",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "action_revision"
+            },
+            {
+              "handle": "source_20",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "exact_payload"
+            },
+            {
+              "handle": "source_21",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "executor_target"
+            },
+            {
+              "handle": "source_22",
+              "ref": {
+                "space": "canonical",
+                "identity": "C1",
+                "revision": "v1"
+              },
+              "field": "meaning"
+            },
+            {
+              "handle": "source_23",
+              "ref": {
+                "space": "canonical",
+                "identity": "C2",
+                "revision": "v1"
+              },
+              "field": "meaning"
+            },
+            {
+              "handle": "source_24",
+              "ref": {
+                "space": "canonical",
+                "identity": "C3",
+                "revision": "v1"
+              },
+              "field": "meaning"
+            }
+          ]
+        }
+      },
+      "model_output_example": {
+        "reviewed_fields": [
+          "outcome",
+          "action_identity",
+          "action_revision",
+          "exact_payload",
+          "executor_target",
+          "episode",
+          "rationale",
+          "context_refs",
+          "expected_disclosure",
+          "uncertainty",
+          "defer_condition"
+        ],
+        "checks": {
+          "S1": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_8"
+                    },
+                    {
+                      "handle": "candidate_0"
+                    },
+                    {
+                      "handle": "candidate_4"
+                    },
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "候选提出本回合局部提示，未把请求说成授权或声称已切换活动。"
+                },
+                {
+                  "candidate_fields": [],
+                  "source_fields": [
+                    {
+                      "handle": "source_6"
+                    },
+                    {
+                      "handle": "source_8"
+                    },
+                    {
+                      "handle": "source_16"
+                    }
+                  ],
+                  "meaning": "当前请求要求指出应检查的步骤且不给答案，已给活动允许局部提示。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "依据当前来源在Policy职责内判断提案，不把Observation标签作为权限。"
+            }
+          ],
+          "S2": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_10"
+                    },
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "完整候选合并说明可见除法失配与不推断稳定能力；稳定能力保留来自uncertainty，不称为rationale单独声明。"
+                },
+                {
+                  "candidate_fields": [],
+                  "source_fields": [
+                    {
+                      "handle": "source_2"
+                    },
+                    {
+                      "handle": "source_3"
+                    }
+                  ],
+                  "meaning": "原作答存在42÷6=8的失配，来源给出可检查的局部基础。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "材料足以支持有限提示和能力判断的保留，没有无依据的额外假设。"
+            }
+          ],
+          "S3": [
+            {
+              "relation": "CONTRADICTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_5"
+                    }
+                  ],
+                  "source_fields": [
+                    {
+                      "handle": "source_16"
+                    }
+                  ],
+                  "meaning": "若展示，点名42÷6会帮助定位除法步骤，但不提供正确商。"
+                },
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "原理由否认任何定位帮助。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "点名步骤与否认任何定位工作相冲突。"
+            }
+          ],
+          "S4": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_8"
+                    },
+                    {
+                      "handle": "candidate_5"
+                    },
+                    {
+                      "handle": "candidate_7"
+                    }
+                  ],
+                  "source_fields": [
+                    {
+                      "handle": "source_16"
+                    }
+                  ],
+                  "meaning": "候选披露是拟执行提示的预期，未声称已展示、已被利用或已掌握。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "预期帮助限于精确提示，不用候选解释扩大payload或证明实际效果。"
+            }
+          ],
+          "S5": [
+            {
+              "relation": "CONTRADICTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_8"
+                    },
+                    {
+                      "handle": "candidate_5"
+                    },
+                    {
+                      "handle": "candidate_7"
+                    }
+                  ],
+                  "source_fields": [
+                    {
+                      "handle": "source_16"
+                    }
+                  ],
+                  "meaning": "Execute提示和预期披露都指向局部定位，不给商；空defer_condition没有被说成预约。"
+                },
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "理由声称完全未替代定位。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "理由与精确提示及预期披露冲突，正确的披露字段不修正错误理由。"
+            }
+          ]
+        }
+      },
+      "host_only_expected_rule_statuses": {
+        "S3": "FAIL",
+        "S4": "PASS",
+        "S5": "FAIL",
+        "S1": "PASS",
+        "S2": "PASS"
+      },
+      "host_only_expected_overall": "FAIL"
+    },
+    {
+      "id": "unresolved",
+      "status": "AUTHOR_CONSTRUCTED_DESIGN_EXAMPLE_NOT_EXECUTED",
+      "input": {
+        "context": [
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "E1-Activity",
+              "revision": "v1"
+            },
+            "kind": "ActivityConstraints",
+            "content": {
+              "allowed_action_refs": [
+                {
+                  "identity": "AskSelfCheck",
+                  "revision": "e1-v1",
+                  "space": "canonical"
+                },
+                {
+                  "identity": "HintCheckStep",
+                  "revision": "e1-v1",
+                  "space": "canonical"
+                }
+              ],
+              "episode": "apple-episode",
+              "purpose": "IndependentDiagnosisWithLimitedHelp",
+              "reason": "This episode allows self-check or a local cue, but excludes the complete answer. This is a current activity constraint, not a general ban on teaching."
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "content": {
+              "action_identity": "AskSelfCheck",
+              "action_revision": "e1-v1",
+              "exact_payload": "请你检查一下刚才的解题过程。",
+              "executor_target": "mock-display"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "content": {
+              "action_identity": "HintCheckStep",
+              "action_revision": "e1-v1",
+              "exact_payload": "再检查一下 42÷6。",
+              "executor_target": "mock-display"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "RevealFullSolution",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "content": {
+              "action_identity": "RevealFullSolution",
+              "action_revision": "e1-v1",
+              "exact_payload": "42÷6=7，7×15=105，所以答案是105元。",
+              "executor_target": "mock-display"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "C1",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "content": {
+              "meaning": "Independent task proficiency"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "C2",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "content": {
+              "meaning": "Unit-rate strategy selection"
+            }
+          },
+          {
+            "ref": {
+              "space": "canonical",
+              "identity": "C3",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "content": {
+              "meaning": "Division arithmetic"
+            }
+          }
+        ],
+        "candidate": {
+          "action_identity": "HintCheckStep",
+          "action_revision": "e1-v1",
+          "context_refs": [
+            {
+              "identity": "E1-current-input",
+              "revision": "1",
+              "space": "fact"
+            }
+          ],
+          "defer_condition": "",
+          "episode": "apple-episode",
+          "exact_payload": "再检查一下 42÷6。",
+          "executor_target": "mock-display",
+          "expected_disclosure": "预期帮助定位除法步骤，不提供正确的商。",
+          "outcome": "Execute",
+          "rationale": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。",
+          "uncertainty": "本例可见除法结果错误，未据此推断稳定能力。"
+        },
+        "materials": [
+          {
+            "id": "material_0",
+            "ref": {
+              "space": "fact",
+              "identity": "D-work-before",
+              "revision": "1"
+            },
+            "kind": "LearnerWorkSubmitted",
+            "state": "WITHHELD_FOR_REVIEW"
+          },
+          {
+            "id": "material_1",
+            "ref": {
+              "space": "derived",
+              "identity": "E1-O",
+              "revision": "r1"
+            },
+            "kind": "Observation",
+            "state": "WITHHELD_FOR_REVIEW"
+          },
+          {
+            "id": "material_2",
+            "ref": {
+              "space": "fact",
+              "identity": "E1-current-input",
+              "revision": "1"
+            },
+            "kind": "CurrentInteractionInput",
+            "state": "WITHHELD_FOR_REVIEW"
+          },
+          {
+            "id": "material_3",
+            "ref": {
+              "space": "canonical",
+              "identity": "E1-Activity",
+              "revision": "v1"
+            },
+            "kind": "ActivityConstraints",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_4",
+            "ref": {
+              "space": "canonical",
+              "identity": "AskSelfCheck",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_5",
+            "ref": {
+              "space": "canonical",
+              "identity": "HintCheckStep",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_6",
+            "ref": {
+              "space": "canonical",
+              "identity": "RevealFullSolution",
+              "revision": "e1-v1"
+            },
+            "kind": "ActionSemantic",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_7",
+            "ref": {
+              "space": "canonical",
+              "identity": "C1",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_8",
+            "ref": {
+              "space": "canonical",
+              "identity": "C2",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "state": "AVAILABLE"
+          },
+          {
+            "id": "material_9",
+            "ref": {
+              "space": "canonical",
+              "identity": "C3",
+              "revision": "v1"
+            },
+            "kind": "Claim",
+            "state": "AVAILABLE"
+          }
+        ],
+        "quote_registry": {
+          "candidate": [
+            {
+              "handle": "candidate_0",
+              "field": "action_identity"
+            },
+            {
+              "handle": "candidate_1",
+              "field": "action_revision"
+            },
+            {
+              "handle": "candidate_4",
+              "field": "episode"
+            },
+            {
+              "handle": "candidate_5",
+              "field": "exact_payload"
+            },
+            {
+              "handle": "candidate_6",
+              "field": "executor_target"
+            },
+            {
+              "handle": "candidate_7",
+              "field": "expected_disclosure"
+            },
+            {
+              "handle": "candidate_8",
+              "field": "outcome"
+            },
+            {
+              "handle": "candidate_9",
+              "field": "rationale"
+            },
+            {
+              "handle": "candidate_10",
+              "field": "uncertainty"
+            }
+          ],
+          "source": [
+            {
+              "handle": "source_0",
+              "ref": {
+                "space": "canonical",
+                "identity": "E1-Activity",
+                "revision": "v1"
+              },
+              "field": "episode"
+            },
+            {
+              "handle": "source_1",
+              "ref": {
+                "space": "canonical",
+                "identity": "E1-Activity",
+                "revision": "v1"
+              },
+              "field": "purpose"
+            },
+            {
+              "handle": "source_2",
+              "ref": {
+                "space": "canonical",
+                "identity": "E1-Activity",
+                "revision": "v1"
+              },
+              "field": "reason"
+            },
+            {
+              "handle": "source_3",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "action_identity"
+            },
+            {
+              "handle": "source_4",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "action_revision"
+            },
+            {
+              "handle": "source_5",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "exact_payload"
+            },
+            {
+              "handle": "source_6",
+              "ref": {
+                "space": "canonical",
+                "identity": "AskSelfCheck",
+                "revision": "e1-v1"
+              },
+              "field": "executor_target"
+            },
+            {
+              "handle": "source_7",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "action_identity"
+            },
+            {
+              "handle": "source_8",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "action_revision"
+            },
+            {
+              "handle": "source_9",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "exact_payload"
+            },
+            {
+              "handle": "source_10",
+              "ref": {
+                "space": "canonical",
+                "identity": "HintCheckStep",
+                "revision": "e1-v1"
+              },
+              "field": "executor_target"
+            },
+            {
+              "handle": "source_11",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "action_identity"
+            },
+            {
+              "handle": "source_12",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "action_revision"
+            },
+            {
+              "handle": "source_13",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "exact_payload"
+            },
+            {
+              "handle": "source_14",
+              "ref": {
+                "space": "canonical",
+                "identity": "RevealFullSolution",
+                "revision": "e1-v1"
+              },
+              "field": "executor_target"
+            },
+            {
+              "handle": "source_15",
+              "ref": {
+                "space": "canonical",
+                "identity": "C1",
+                "revision": "v1"
+              },
+              "field": "meaning"
+            },
+            {
+              "handle": "source_16",
+              "ref": {
+                "space": "canonical",
+                "identity": "C2",
+                "revision": "v1"
+              },
+              "field": "meaning"
+            },
+            {
+              "handle": "source_17",
+              "ref": {
+                "space": "canonical",
+                "identity": "C3",
+                "revision": "v1"
+              },
+              "field": "meaning"
+            }
+          ]
+        }
+      },
+      "model_output_example": {
+        "reviewed_fields": [
+          "outcome",
+          "action_identity",
+          "action_revision",
+          "exact_payload",
+          "executor_target",
+          "episode",
+          "rationale",
+          "context_refs",
+          "expected_disclosure",
+          "uncertainty",
+          "defer_condition"
+        ],
+        "checks": {
+          "S1": [
+            {
+              "relation": "UNDETERMINED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_8"
+                    },
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "候选仍提出局部提示，但当前请求原文在本评审视图中被隐去。"
+                }
+              ],
+              "material_gaps": [
+                {
+                  "material_id": "material_2",
+                  "reason": "当前请求在形成时存在，本评审主动隐去，不能据此声称候选当时没有依据。"
+                }
+              ],
+              "reason": "不能用活动允许列表代替判断当前请求；当前材料不足以完成S1。"
+            }
+          ],
+          "S2": [
+            {
+              "relation": "UNDETERMINED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_10"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "候选声称可见除法失配而不推断稳定能力，原作答与Observation均未在评审视图中给出。"
+                }
+              ],
+              "material_gaps": [
+                {
+                  "material_id": "material_0",
+                  "reason": "原作答被评审视图隐去。"
+                },
+                {
+                  "material_id": "material_1",
+                  "reason": "原Observation被评审视图隐去。"
+                }
+              ],
+              "reason": "不能确认可见错误基础，也不能把评审隐去材料当作形成时缺少依据。"
+            }
+          ],
+          "S3": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_5"
+                    }
+                  ],
+                  "source_fields": [
+                    {
+                      "handle": "source_9"
+                    }
+                  ],
+                  "meaning": "若展示，点名42÷6会帮助定位除法步骤，但不提供正确商。"
+                },
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "原理由承认定位帮助，保留学习者重新计算的责任。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "提示的帮助与理由保留的重算责任一致。"
+            }
+          ],
+          "S4": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_8"
+                    },
+                    {
+                      "handle": "candidate_5"
+                    },
+                    {
+                      "handle": "candidate_7"
+                    }
+                  ],
+                  "source_fields": [
+                    {
+                      "handle": "source_9"
+                    }
+                  ],
+                  "meaning": "候选披露是拟执行提示的预期，未声称已展示、已被利用或已掌握。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "预期帮助限于精确提示，不用候选解释扩大payload或证明实际效果。"
+            }
+          ],
+          "S5": [
+            {
+              "relation": "SUPPORTED",
+              "readings": [
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_8"
+                    },
+                    {
+                      "handle": "candidate_5"
+                    },
+                    {
+                      "handle": "candidate_7"
+                    }
+                  ],
+                  "source_fields": [
+                    {
+                      "handle": "source_9"
+                    }
+                  ],
+                  "meaning": "Execute提示和预期披露都指向局部定位，不给商；空defer_condition没有被说成预约。"
+                },
+                {
+                  "candidate_fields": [
+                    {
+                      "handle": "candidate_9"
+                    }
+                  ],
+                  "source_fields": [],
+                  "meaning": "理由同样承认定位帮助并保留重算。"
+                }
+              ],
+              "material_gaps": [],
+              "reason": "完整候选在本例没有已知内部冲突；来源依据缺口在对应义务中另记，不因偏好另一行动而拒绝。"
+            }
+          ]
+        }
+      },
+      "host_only_expected_rule_statuses": {
+        "S3": "PASS",
+        "S4": "PASS",
+        "S5": "PASS",
+        "S1": "UNRESOLVED",
+        "S2": "UNRESOLVED"
+      },
+      "host_only_expected_overall": "UNRESOLVED"
+    }
+  ]
+}

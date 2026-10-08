@@ -1,0 +1,985 @@
+# DeerMind System Design Roadmap v0.6
+
+> **中文名称**：DeerMind 系统设计路线图  
+> **版本**：v0.6  
+> **文档性质**：System Design 阶段执行计划 / Design Roadmap  
+> **状态**：证据评审阶段工作路线图，Gate E/F OPEN  
+> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`  
+> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
+> **更新时间**：2026-10-07
+>
+> **修订说明**：更新已执行 Spike 的当前状态和修订工作文档集；采用语义校验保证范围与失败交互收束决定，不改变上位责任、原 §17 Completion 或 Gate E/F 标准。
+>
+> **版本说明**：v0.5 原文保留。v0.6 服务于固定实验结束后的 Evidence Review / Design Revision；工作文档集不是 System Design v1.0 冻结基线，任何批次仍绑定其原始输入版本。
+
+---
+
+## 1. 文档定位与阶段目标
+
+DeerMind 已经完成 Concept Architecture、Learning / Evaluation / Interaction / Evolution 四份 Space Design，并进一步冻结了 AI-native execution doctrine。上位架构已经回答了“系统必须维护哪些语义责任”“AI 可以在何处开放 reasoning”“什么必须由确定性机制控制”“什么改变需要 Evolution / Governance”等问题。
+
+System Design 阶段不应重新讨论这些顶层责任，也不应直接跳到数据库、微服务、LLM 供应商或 Agent framework。它的任务是把已经冻结的语义与权力边界转化成真正能够运行、验证和实现的系统机制。
+
+本文档把 System Design 的核心命题定义为：
+
+\[
+Architecture\ Semantics
+\rightarrow
+Executable\ Mechanism
+\]
+
+System Design 的完成标准不是“组件图画完”或“文档足够多”，而是达到 **Architecture-Executable Specification**：工程团队能够依据设计实现 DeerMind 的核心运行闭环，不需要在代码阶段重新决定 Event、Observation、Evidence、Belief、Policy、Candidate、Commit、Version、Replay、Authority 等关键语义究竟如何工作。
+
+### 1.1 System Design 必须解决什么
+
+本阶段至少必须把以下问题变成可执行机制：
+
+- 现实行为如何形成 Event，Event 如何成为全局事实底座；
+- AI 如何在受控 Context 下执行版本化 Reasoning Protocol；
+- Candidate 如何经过 Validation / Authority / Commit 获得系统效力；
+- Observation、Evidence、Belief、Interaction State 等 derived state 如何维护 provenance、dependency、staleness 与 recompute；
+- Learning Target、Target Assessment 与 current Target Binding projection 如何保持不同 source of truth、version dependency 与 lifecycle；
+- Interaction Policy 如何形成 Action / NoIntervention / Defer，并区分 ActionIntent 与 ActionOccurrence；
+- Goal Intent、Target Binding、External Obligation、Context Authority 与 scoped Authority Directive 如何进入 Decision Context，但不能绕过 Policy；
+- Task Canonical Tool Semantics、Target Support Boundary、Runtime Tool Availability 与 Occurred Tool Use 如何在 runtime 保持四层分离；
+- Assistance Exposure 如何形成完整 lineage，避免教学行为污染 learner evidence；
+- Semantic Version 如何绑定运行时对象，旧版本如何共存、重解释、迁移与回滚；
+- Target revision、Claim / Evidence semantic revision、Binding / Authority revision 如何执行 typed invalidation，而不是统一全量重算；
+- System Evolution 如何使用运行历史发现 Issue、形成 Hypothesis、验证 Change Proposal，并通过 Governance 激活新版本；
+- AI 不确定性、失败、stale context、部分 replay 等情况如何成为一等运行状态；
+- 隐私、审计、可观测性与运行安全如何内生于上述机制，而不是事后附加。
+
+### 1.2 本阶段明确不解决什么
+
+以下决定在 System Design 形成充分约束前不得被提前冻结：
+
+- PostgreSQL、MySQL、图数据库、向量数据库等具体存储产品；
+- Kafka、RabbitMQ 等具体消息基础设施；
+- Go、Python、Java 等最终语言与框架组合；
+- 单体、微服务或 Kubernetes 部署拓扑；
+- 具体 LLM 供应商、模型名称和 Agent framework；
+- Prompt 最终模板、token 数值、温度参数等模型调优细节；
+- 大规模容量规划与商业化部署方案；
+- MVP 的完整产品功能范围、UI 与增长机制。
+
+这些问题可以在 System Design 后段进入候选方案与 ADR，但不能反向主导上位语义设计。
+
+---
+
+## 2. System Design 的设计粒度
+
+System Design 既不能停留在“Space 对应哪些模块”的抽象层，也不应提前写成表级 SQL、每个 REST API、每个类和每个部署 YAML。DeerMind 采用 **Architecture-Executable Specification** 作为目标粒度。
+
+一个机制达到该粒度，意味着设计已经能够回答：对象是谁创建的、谁拥有 authority、真实来源是什么、如何派生、如何版本化、依赖什么、何时失效、谁消费、如何重算、是否可 replay、失败时进入什么状态。
+
+对于核心语义对象，应统一检查以下维度：
+
+| 维度 | 必须回答的问题 |
+|---|---|
+| Identity | 对象如何稳定标识，跨版本是否保持同一身份 |
+| Ownership | 哪个 Space / logical component 对其语义负责 |
+| Authority | 谁可以创建、修改、commit、activate |
+| Source of Truth | 什么是事实源，什么只是 derived view |
+| Derivation | 对象由哪些事实、Context、Protocol 或规则形成 |
+| Version | 绑定哪些 Semantic / Protocol / Model / Context 版本 |
+| Provenance | 如何追溯输入、reasoning、validation 与 commit |
+| Lifecycle | 创建、有效、stale、superseded、invalid 的生命周期是什么 |
+| Dependency | 哪些上游变化会影响该对象 |
+| Invalidation | 上游改变后如何传播失效 |
+| Consumer | 哪些后续机制可以读取，哪些不得读取 |
+| Replay | 支持 Historical Reconstruction、Re-execution 或 Reinterpretation 的哪一层 |
+
+System Design 应同时包含 Static View 与 Dynamic View。对于 DeerMind，关键 sequence diagram 和状态迁移通常比组件框图更重要，因为很多核心错误来自“对象怎样变化”和“权力在哪里跨边界”，而不是来自组件名称。
+
+### 2.1 System Design 的最低可验证问题
+
+当 System Design v1.0 完成时，至少应能够沿文档完整回答以下问题：
+
+> **某个 Observation 在提交后被发现错误并被纠正，系统具体发生什么？**
+
+答案不能停留在“重新计算相关状态”，而必须能够追踪：Observation 如何 supersede / invalidate，哪些 Evidence 被标记 stale，哪些 Learner Belief 进入重新推断，Interaction State / Decision Context 是否受影响，哪些异步任务被触发，旧结果如何保留 provenance，以及新的 Policy reasoning 如何避免使用失效 Context。
+
+System Design 还必须能够完整回答第二类问题：**Target 标准改变、Target Binding 终止或 Context Authority 版本变化后，哪些 Target Assessment、Plan、Policy Context 与 Learner Belief 应失效，哪些历史 Event 必须保持不变？** 如果只能回答“全部重算”或“继续使用旧状态”，typed invalidation 尚未达到可执行粒度。
+
+如果这类问题仍需要工程师在实现阶段自行补全语义，System Design 就尚未完成。
+
+---
+
+## 3. System Design 的工作结构
+
+System Design 不按四个 Space 直接拆成四个服务，而围绕可运行机制组织。Conceptual Space 是 semantic ownership boundary，不等于进程、服务或部署边界。
+
+本阶段采用一个总体设计加六个核心专项工作包，并保留一个横切工程包。
+
+这里必须明确区分两个维度：
+
+- **§3 Work Package 定义“必须完成哪些设计责任”**；
+- **§4 Phase 定义“这些设计责任按什么顺序形成、集成、验证与冻结”**。
+
+因此：
+
+\[
+WorkPackage \neq Phase
+\]
+
+一个 Work Package 可以跨多个 Phase 演进；一个 Phase 也可以同时推进多个 Work Package。任何 Phase 的完成都不能替代对某个 Work Package 是否真正闭合的判断。
+
+同样，Work Package 与 Document 也不是同一概念：
+
+\[
+WorkPackage \neq Document
+\]
+
+Work Package 是必须完成的设计责任；Document 是承载这些设计结果的一种正式产物。专项责任必须完成，但是否独立成文取决于复杂度与可维护性。
+
+### 3.1 总体 System Design
+
+**目标文档：`DeerMind_System_Design_v1.0.md`**
+
+它负责建立全系统 mental model，至少包含：
+
+- System Design scope 与 Non-Goals；
+- Concept / Space / AI-Native principles 到 runtime mechanism 的映射；
+- logical components 与 responsibility boundary；
+- Minimum Viable Closed Loop；
+- 主要 runtime data flow；
+- Source of Truth 与 derived state 模型；
+- synchronous / asynchronous boundary；
+- consistency model；
+- failure model；
+- version context；
+- privacy / audit / observability boundary；
+- capability staging；
+- System Design Invariants；
+- 与专项设计和 ADR 的关系。
+
+主文档负责完整闭环，不重复专项文档的深层细节。
+
+### 3.2 Runtime & Event Architecture
+
+**候选独立文档：`DeerMind_Runtime_Event_Architecture_v0.x.md` → `v1.0`（仅在独立成文时）**
+
+负责把 Global Event Model 变成工程事实契约，包括：
+
+- Event Identity、immutability 与 factual authority；
+- event time / processing time；
+- correlation、causality、episode、workflow identity；
+- learner work、external input、Target Binding occurrence、ActionOccurrence 等事实如何进入 Event History；
+- append、deduplication、ordering 与 idempotency 的语义要求；
+- factual history 与 derived semantic history 的边界；
+- Historical Reconstruction 所需的执行记录；
+- Event retention 与 ReplaySupport 的边界。
+
+### 3.3 AI Reasoning Runtime Architecture
+
+**候选独立文档：`DeerMind_AI_Reasoning_Runtime_Design_v0.x.md` → `v1.0`（仅在独立成文时）**
+
+这是 AI-native System Design 的 P0 专项，负责：
+
+- Reasoning Request / Reasoning Protocol runtime contract；
+- Context Policy、Context Assembly、Context Manifest；
+- Authority Envelope；
+- Model Routing 与 Model Adapter boundary；
+- read/context tools、reasoning tools、action tools 的权限分离；
+- Candidate generation，包括 Target / Observation / Evidence / Action / System Revision 等不同 commit class；
+- Validation Pipeline 与 Commit Boundary；
+- uncertainty / failure semantics；
+- ReasoningExecutionRecord / Execution Capsule；
+- Model / Protocol / ContextAssembly / Tool version provenance；
+- bounded agent workflow 的执行位置；
+- prompt injection / authority escalation 的系统防线。
+
+### 3.4 State, Dependency & Invalidation Architecture
+
+**候选独立文档：`DeerMind_State_Dependency_Architecture_v0.x.md` → `v1.0`（仅在独立成文时）**
+
+负责所有 derived semantics 的运行一致性：
+
+- Factual / Canonical / Derived 三类状态；
+- Observation、Evidence、Belief、Target Assessment、Interaction State、current Target Binding projection 等 materialized / derived state 的身份与存储语义；
+- dependency graph / dependency metadata；
+- stale、invalid、superseded、recomputed 的正式定义；
+- upstream correction 与 Target / Claim / Binding / Authority 变化的 typed invalidation propagation；
+- synchronous invalidation 与 asynchronous recomputation；
+- stale-read policy；
+- current view 与 historical view；
+- cache 只能是 projection，不能成为第二事实源；
+- workflow checkpoint 与 epistemic state 的边界。
+
+### 3.5 Interaction & Decision Runtime
+
+**候选独立文档：`DeerMind_Interaction_Decision_Runtime_Design_v0.x.md` → `v1.0`（仅在独立成文时）**
+
+负责从当前现实到受控 Action 的运行闭环：
+
+- Observation / Interaction State / Learner Belief / Target Assessment / Gaps / Target Binding / External Obligation / Context Authority 如何组成 Decision Context；
+- Policy reasoning protocol；
+- Trigger 与 mandate 的分离，`AuthorityDirective != PolicyBypass`；
+- admissible action space；
+- ActionCandidate / NoIntervention / Defer；
+- deterministic admissibility gate；
+- ActionIntent、Executor、ActionOccurrence；
+- plan / replanning / multi-timescale decision；
+- runtime learner condition；
+- Assistance Exposure Lineage，以及 Task Tool / Target Support / Runtime Availability / Occurred Use 四层语义；
+- Active Assessment 的运行 ownership；
+- 同会话常规输入严格串行，异常 / 用户主动中断独立处理；跨会话或外部变化导致 Context stale 时的 re-decision。
+
+### 3.6 Semantic Versioning, Replay & Migration Architecture
+
+**候选独立文档：`DeerMind_Semantic_Version_Replay_Migration_Design_v0.x.md` → `v1.0`（仅在独立成文时）**
+
+负责长期运行中语义变化与历史一致性：
+
+- Semantic Version Context；
+- Protocol / Model / Context Assembly / Tool version binding；
+- ComponentConsistencyBoundary；
+- Approved Version、Committed Version、Active Version 的区别；
+- multi-version coexistence；
+- version pinning；
+- Data Migration 与 Semantic Reinterpretation 的边界；
+- Target revision、Claim / Evidence revision、Binding / Authority revision 的 typed invalidation；
+- Historical Reconstruction；
+- Reasoning Re-execution；
+- Semantic Reinterpretation；
+- Counterfactual Evaluation 的非等价性；
+- rollback 与 partial replay；
+- retention 导致 replay completeness 降级的语义。
+
+### 3.7 Evolution & Governance Runtime
+
+**候选独立文档：`DeerMind_Evolution_Governance_Runtime_Design_v0.x.md` → `v1.0`（仅在独立成文时）**
+
+负责把 Evolution Space 的系统认识过程转成可运行工作流：
+
+- Signal / Issue lifecycle；
+- competing Hypothesis workspace；
+- Validation orchestration；
+- historical / benchmark / simulation / shadow / prospective validation；
+- Revision Candidate；
+- Governance Approval Envelope；
+- deployment / activation / rollback；
+- post-deployment validation；
+- reasoning protocol / Target / semantic model / policy 的演化路径；
+- Normative Source Change、Empirical Model Failure 与 Authority Change 的治理分层；
+- opportunity self-sealing / system-induced evidence bias 的审计入口；
+- human governance 与未来自动化 governance 的 authority boundary。
+
+该专项在第一阶段不要求全部自动化实现，但接口、状态和 authority 必须先设计清楚。
+
+### 3.8 Operations, Privacy & Observability
+
+隐私、审计、运行可观测性和系统安全属于横切责任，必须从总体设计与各专项机制内部进入，而不是最后附加。v0.6 继续将其作为 `DeerMind_System_Design_v0.x / v1.0` 的横切合同，由各 Focused Design 在自己的 enforcement point 落地；只有后续复杂度证明值得独立时，才拆成专项文档。本阶段**不新增与六个核心专项对称的第七个 Operations / Privacy / Security Runtime**。
+
+Core System Design 至少必须覆盖：
+
+- Product Constitution 的 purpose limitation / proportionality / Data Restraint；
+- **Product Context / Context Constitution 的运行接入合同**：场景特定 guardian authority、consent、child-data restriction、disclosure 与 stricter retention 必须能够进入 Authority / Data Authority / Lifecycle / Audit / Context enforcement；
+- Context minimization，以及 `StoredData != ModelVisibleData`、`MayRead != MayInfer`、`MayRetain != MayDisclose` 等 data-use boundary；
+- access / authority audit，以及 Required Audit 与 best-effort Operational Telemetry 的分离；
+- reasoning / candidate / validation / commit observability；
+- state / dependency / currentness、interaction / action、version / replay、Evolution / Governance 的关键 failure / non-resolution observability；
+- model failure、reasoning instability、validation failure、CandidateStale / CommitConflict、NoCurrentValidState、Unauthorized / DataAuthorityDenied、Action NotOccurred / Indeterminate 等最低可观察结果；
+- retention / deletion 对 replay capability 的影响；
+- SecuritySignal、privilege-escalation / confused-deputy rejection 与 authority escalation 检测；
+- degraded mode / failure containment，保持 `DegradedMode -> CapabilityReduction` 而不是 semantic substitution。
+
+其中必须保持：
+
+\[
+Observability 
+eq SourceOfTruth
+\]
+
+\[
+Metric 
+eq Issue
+\qquad
+Alert 
+eq Authority
+\qquad
+Trace 
+eq Causality
+\]
+
+Observability 可以形成诊断信息、System Signal 与 Validation Evidence，但不能直接创建 Learner Belief、System Issue、Policy Outcome、GovernanceDecision 或 Canonical Change。
+
+**Product Context 阶段边界。** Core System Design 只冻结上述“场景约束如何进入系统”的通用接入与 enforcement contract，不在本阶段定义首个小学 Product Context 的具体 guardian 权限、consent flow、儿童数据类别、家长可见性或 retention 数值。这些具体规则属于 Development Roadmap 后续 Product Context / Product & Domain Foundation，并必须在 Core Contract 允许的边界内实例化，不能反向改写 Core semantic ownership。
+
+### 3.9 Focused Design Closure 与文档封装原则
+
+§3.2–§3.7 的六个核心专项不是“可做可不做”的主题，而是 System Design 必须完成的设计责任。`Complexity Must Earn Its Keep` 只决定这些责任是否值得拆成独立文档，**不能被解释为允许跳过专项设计本身**。§3.8 横切责任同样必须被完整覆盖，只是默认由总体设计与各专项共同承载。
+
+一个专项达到 **Focused Design Closure**，至少意味着：
+
+- 核心对象、identity、owner、authority 与 source of truth 已明确；
+- 主要输入、输出、runtime contract 与 formal standing 已明确；
+- 关键状态迁移、lifecycle、failure / non-resolution path 已明确；
+- dependency、invalidation、currentness、consistency 与 concurrency 边界已明确；
+- version、provenance、replay / reconstruction 责任已明确；
+- 与相邻 Work Package 的接口和责任边界已明确；
+- 可以明确哪些能力完整实现、哪些 capability 可以 staged，而不降低 Architecture Invariant；
+- 实现团队不需要在编码阶段重新决定该专项的核心语义或运行规则。
+
+判断标准仍然是 §2 的 Architecture-Executable Specification：
+
+> **如果实现者还必须自行决定某个核心对象“是什么、谁拥有、何时有效、何时失效、如何取得正式效力或如何与其他机制组合”，该专项就尚未闭合。**
+
+专项设计结果有两种合法文档封装方式：
+
+1. **MERGED**：复杂度不足以支持独立文档，但专项责任已经在总体 System Design 中达到 Focused Design Closure；
+2. **SEPARATE**：专项具有足够独立复杂度，需要独立 Focused Design 文档承载。独立文档在 Pre-Validation 阶段使用 `v0.x`，吸收验证证据并满足对应冻结条件后才升级为 `v1.0`。
+
+Capability Staging 与文档封装是两个不同维度。某能力可以延后实现，但其语义合同仍必须闭合；不得用“以后再实现”替代 Focused Design Closure。
+
+Phase 4 结束前，§3.2–§3.7 每个 Work Package 都必须完成 Focused Design Closure，并明确其文档封装方式；§3.8 必须完成横切覆盖审计，并确认 **Core Product Context integration contract** 与 **Observability Minimum Contract** 已进入总体 System Design。这里的 §3.8 Closure 不要求实例化首个小学 Product Context 的具体 guardian / consent / child-data 规则。任何专项不得以 `UNDECIDED` 状态进入 Phase 5。
+
+---
+
+## 4. 设计顺序：先闭合运行语义，再集成并完成专项闭合，再统一验证
+
+DeerMind 不应先把所有专项分别写完再尝试拼装，也不应在每完成一个局部机制后立即用彼此独立的 Prototype 验证，从而让多个 Spike 各自形成一套局部假系统。v0.6 保留的执行顺序是：先建立最小闭环，再深化 P0 与横切机制；当主要逻辑责任已经形成后，先产出统一的 Pre-Validation System Design Candidate，用总体设计暴露跨机制缺口；随后在同一 Phase 内逐项完成 §3.2–§3.7 的 Focused Design Closure 与 §3.8 横切覆盖审计，必要时回写总体 Candidate；只有这些设计责任全部闭合后，才进入共享运行骨架的 Consolidated Architecture Spike。
+
+这种调整不降低验证要求，而是把验证从“局部机制各自证明”升级为“在同一最小系统骨架中验证关键假设及其边界组合”，同时仍然把真正的完整 composition / operability 验证留给 System Design v1.0 之后的 Architecture Validation Build。
+
+### 4.1 Phase 0 — Roadmap Freeze
+
+当前 Roadmap 负责冻结：
+
+- System Design 目标与粒度；
+- 工作包和文档系统；
+- 设计、集成与验证的顺序；
+- Exit Gate 与后续阶段；
+- 哪些技术决策暂时禁止提前冻结。
+
+Roadmap 本身允许在执行策略发生实质变化时升级版本；执行过程不得长期偏离正式 Roadmap 而仅依赖聊天结论。
+
+### 4.2 Phase 1 — Minimum Viable Closed Loop Design
+
+第一份真正的 System Design 工作不是组件图，而是 **Minimum Viable Closed Loop（MVCL）**。
+
+MVCL 是最小“架构运行闭环”，不是产品 MVP。推荐从一个极简 Solve 场景开始：一个 learner 解决一道数学题，中间产生一段可观察 work，系统形成 Observation，决定是否干预，执行或保持 NoIntervention，继续接收 learner 行为，最终形成 Evidence 并更新 Learner Belief。
+
+最小运行链应覆盖：
+
+```text
+Learner / External Reality
+→ Event
+→ Context Assembly
+→ Observation Reasoning
+→ ObservationCandidate
+→ Validation / Commit
+→ Observation
+→ Interaction State / Decision Context
+→ Policy Reasoning
+→ ActionCandidate / NoIntervention
+→ Admissibility / ActionIntent
+→ ActionOccurrence
+→ New Event
+→ Evidence Reasoning
+→ Evidence
+→ Inference
+→ Learner Belief
+→ Future Decision Context
+```
+
+MVCL 必须同时携带最小的 version、provenance、dependency、invalidation 和 assistance exposure 语义，不能为了“先跑起来”而绕过 Architecture Invariant。
+
+### 4.3 Phase 2 — P0 Mechanism Design
+
+MVCL 建立后，优先深化会决定整个系统形态的 P0 机制：
+
+1. Runtime / Event factual contract；
+2. AI Reasoning Runtime；
+3. Candidate Validation / Commit；
+4. State Dependency / Invalidation；
+5. Interaction Decision / Action Execution；
+6. Semantic Version / Replay；
+7. Assistance Exposure Lineage。
+
+这些机制不是相互独立的文档任务。每完成一块，都必须回到 MVCL 检查端到端语义是否仍然闭合。此阶段允许预注册 Architecture Assumption、falsifier 与 Validation Case，但不要求立即实现独立 Spike。
+
+### 4.4 Phase 3 — Evolution / Governance 与横切机制
+
+当对象层 runtime 已经可解释后，再深化 Evolution / Governance runtime、privacy / data authority、observability / audit、security / trust boundary 与 long-term lifecycle / recovery。这样可以避免在尚未知道核心运行对象是什么时提前构造大规模治理平台。
+
+Phase 3 的目标是完成逻辑与语义闭合，并把尚未经工程验证的结论显式登记为 Architecture Assumption；Semantic Closure 不等于 Engineering Validation。
+
+### 4.5 Phase 4 — Integrated Pre-Validation System Design Candidate 与 Focused Design Closure
+
+Phase 1–3 的主要逻辑设计完成后，先将 MVCL、P0 Mechanisms、Evolution / Governance 与横切机制重新整合为一套统一 logical architecture，形成 **Integrated Pre-Validation System Design Candidate**。
+
+首个正式集成候选从：
+
+```text
+DeerMind_System_Design_v0.1.md
+```
+
+开始；后续若在专项闭合或综合验证前后发生真实设计修订，则按文档版本规范递增 v0.x。版本号表达文档演进，不表达完成百分比。
+
+总体 Candidate 的作用是建立全系统 mental model、统一运行闭环和系统级 contract，并暴露跨专项的责任缺口。它的完成 **不自动等于 Phase 4 完成**。
+
+Phase 4 随后必须对 §3.2–§3.8 执行逐项 Coverage Review：
+
+- §3.2–§3.7 六个核心专项必须达到 §3.9 定义的 Focused Design Closure；
+- 每个专项明确采用 `MERGED` 或 `SEPARATE` 文档封装；
+- 若为 `SEPARATE`，形成相应 Pre-Validation `v0.x` Focused Design；
+- §3.8 完成横切责任覆盖审计，确认 Privacy / Data Authority、Observability / Audit、Security / Trust Boundary、Lifecycle / Recovery 已进入总体设计或相关专项，并确认 Product Context integration contract 与 Observability Minimum Contract 已闭合；具体小学 Product Context 规则不属于本 Phase Exit；
+- 专项深化若改变总体 system-level contract，必须同步修订 `DeerMind_System_Design_v0.x`，避免主文档与专项文档形成两个真相。
+
+Phase 4 Exit Criteria 为：
+
+1. `DeerMind_System_Design_v0.x` 覆盖 §3.1 的总体 System Design 责任并形成统一 logical architecture；
+2. §3.2–§3.7 六个核心专项全部达到 Focused Design Closure；
+3. §3.8 横切责任完成覆盖审计；Core Product Context integration contract、Observability Minimum Contract、Privacy / Data Authority、Audit、Security、Retention / Replay 与 degraded-mode contract 均已闭合，没有关键责任处于“实现时再决定”；
+4. 所有尚未验证的关键假设明确标记 `UNVALIDATED`，并进入 Architecture Assumption Registry；
+5. Architecture Assumption 已映射到后续 Consolidated Spike 的 Validation Dimension；
+6. Spike 所依赖的 system-level contract 与 focused contract 一致，不存在已知未解决的语义矛盾；
+7. 不以“接近 v1.0”为由提前关闭 Gate E 或 Gate F。
+
+只有满足以上条件，Phase 4 才完成并允许进入 Phase 5。
+
+### 4.6 Phase 5 — Consolidated Architecture Spike
+
+Phase 4 的 Integrated Candidate、Focused Design Closure 与横切覆盖全部完成后，设计并执行一个 **Consolidated Architecture Spike**。它使用一个共享、极薄、可丢弃的运行骨架，同时覆盖原 Spike A–F 的高风险 Architecture Assumption，并重点观察机制组合后是否仍能保持既定 invariant。
+
+综合 Spike 的目标不是证明产品可用，也不是实现完整 DeerMind，而是用真实运行证据回答：
+
+> **当前 System Design 中哪些高风险假设被支持、被否定、仍然不确定，哪些地方必须在进入 v1.0 前修订？**
+
+### 4.7 Phase 6 — Evidence Review / Design Revision / Integrated System Design v1.0
+
+综合 Spike 完成后，统一进行 Architecture Evidence Review：
+
+```text
+Pre-Validation Candidate
+→ Consolidated Architecture Spike
+→ Validation Evidence
+→ Evidence Review
+→ Design Revision / ADR / Architecture Reopen if required
+→ Gate E
+→ Gate F
+→ DeerMind_System_Design_v1.0
+```
+
+只有当 Spike Evidence 已被吸收、文档结论与证据无已知矛盾、Gate E 与 Gate F 均满足时，才能冻结 `DeerMind_System_Design_v1.0`。
+
+---
+
+## 5. Consolidated Architecture Spike：统一验证高风险架构假设
+
+DeerMind 的高风险部分包含 LLM 行为、开放语义推理、依赖重算、多版本解释、真实 Action / Exposure、authority security 等问题，仅靠纸面推导不足以确认架构可行。因此 System Design 阶段仍然必须使用真实代码与真实模型调用取得 Architecture Validation Evidence。
+
+v0.6 延续 v0.5 / v0.4：不把 A–F 作为六个彼此独立的 Spike 实施。它们改为同一个 **Consolidated Architecture Spike** 中的六组 Validation Dimension，共享最小运行骨架、数据契约、execution history、version / authority / dependency 机制与统一 Validation Report。
+
+### 5.1 综合 Spike 的共享运行骨架
+
+综合 Spike 默认采用最小但真实的共享 Harness。实现可以是单进程、in-memory、硬编码 fixture、一个真实 LLM adapter 与 mock client / executor，不要求数据库、消息队列、微服务、完整 UI、Agent framework 或生产级基础设施。
+
+共享骨架至少应能够表达：
+
+```text
+Factual History
+→ Context Assembly
+→ AI Reasoning Runtime
+→ Typed Candidate
+→ Validation / Commit
+→ Formal Semantic State
+→ Dependency / Current Resolution
+→ Decision / ActionIntent / ActionOccurrence
+→ Evidence / Learner Belief
+→ Version / Replay
+→ Authority / Security Check
+→ Reasoning / Audit History
+```
+
+六组 Validation Dimension 应尽量复用同一事实、版本、authority、history 与执行路径，而不是各自搭建互不一致的局部原型。
+
+### 5.2 Validation Dimension A — Semantic Projection / Observation Interpretation
+
+**目标**：验证开放 learner input / work 是否能在受控 Context 与当前 ontology 下形成 governable ObservationCandidate，并安全跨越 Validation / Commit Boundary。
+
+至少测试：
+
+- schema compliance；
+- grounding accuracy；
+- ambiguous / unmapped case；
+- forbidden context 是否真正被结构性排除；
+- Prompt / Protocol / Model variation 对结果的影响；
+- Context Manifest 与 provenance 是否足够解释输出；
+- model retry 是否会错误掩盖 UNKNOWN；
+- unauthorized latent learner state / Evidence / Policy judgment 是否能够被阻止进入 Observation standing。
+
+开放语义解释与边界校验必须由版本化语义规则约束下的真实 LLM reasoning 承担；确定性机制检查结构、引用、权限、版本及绑定 exact candidate 的校验结果，不能用关键词或枚举措辞替代语义判断。Dimension A 必须同时覆盖合法字段中的语义越界、合法局部解释与带归属的自述 / 引用、required validation failure / unresolved，以及未校验附言进入下游 Context 的路径。需要分别记录漏判、误判和未决；不能把 schema 检查通过、多个模型意见一致或全部拒绝当作语义边界已验证。
+
+**成功不是高准确率本身**，而是确认系统能够表达正确、错误、不确定、无法映射和 grounding failure，并能受 Candidate / Validation / Commit 机制治理。
+
+### 5.3 Validation Dimension B — Dependency & Invalidation
+
+**目标**：验证 `Observation → Evidence → Belief` 的 exact dependency、current validity barrier、stale propagation 与 asynchronous recompute 可以工程化，且旧历史仍可审计。
+
+最小实验至少覆盖：
+
+1. 提交 Observation O1；
+2. 生成 Evidence E1；
+3. 更新 Learner Belief B1；
+4. correction / invalidate O1；
+5. 当前读立即停止把 E1 / B1 当作可用 current state；
+6. transitive validity 正确传播；
+7. 异步 recompute 后形成新的 current view；
+8. 旧 revision 仍可 historical audit；
+9. 不允许通过 fallback 到旧 revision 恢复“可用性”；
+10. 观察 fan-out 与 recompute complexity 是否失控。
+
+### 5.4 Validation Dimension C — Version / Replay / Reinterpretation
+
+**目标**：验证同一 Factual History 能在不同 Semantic / Protocol / Model context 下被历史重建和重新解释，而不改写历史，也不需要一个全局 SystemSemanticVersion。
+
+至少验证：
+
+- Historical Reconstruction 与 Reasoning Re-execution 分离；
+- Context Manifest 可以重建“当时模型看到什么”；
+- Protocol / semantic versions 可在不同 boundary 并存；
+- old derived semantics 与 new reinterpretation 并存；
+- replay completeness 可以显式为 FULL / PARTIAL / UNAVAILABLE；
+- model 不可完全复现时系统仍然可 audit；
+- current activation 与 historical pinning 不冲突；
+- rollback 不改写历史。
+
+### 5.5 Validation Dimension D — Assistance Exposure Lineage
+
+**目标**：验证 Action 决策、真实执行、实际 disclosure / cognitive substitution、learner response 与 claim-relative evidence contamination 能形成完整链路，而不需要用一个模糊 assisted flag 代替。
+
+最小链路：
+
+```text
+ActionCandidate
+→ ActionIntent
+→ ActionOccurrence
+→ Actual Disclosure / Exposure Lineage
+→ Cognitive Work Substitution
+→ LearnerResponse
+→ Observation
+→ Evidence with Assistance Context
+```
+
+必须能处理“选择了 Hint 但未真正显示”“只暴露一部分信息”“learner 在 Hint 前已经提交答案”“Tool 允许但并未实际使用”“exposure lineage 不完整”等边界情况。
+
+### 5.6 Validation Dimension E — Minimal Policy / Decision Runtime
+
+**目标**：验证 AI 可以承担真实 runtime decision responsibility，而 deterministic system 只控制 admissibility / authority / execution，并保持 `Execute | NoIntervention | Defer` 与 runtime failure 的语义分离。
+
+最小输入包括：
+
+- Observation；
+- Interaction State；
+- Learner Belief；
+- Task / Target Context；
+- current Binding / Obligation / Authority；
+- available actions / runtime tool availability。
+
+至少验证：
+
+- ActionCandidate、NoIntervention、Defer 可被明确区分；
+- runtime / model failure 不会伪装成 NoIntervention / Defer；
+- 同会话普通新输入仅排队，当前轮次的理解、决策、提交和行动结果处理完成后才开始下一轮；
+- 跨会话共享状态或外部 authority / version 等变化导致 Context stale 时 Candidate 被拒绝，当前轮次收束后重新 reasoning；
+- ActionIntent 只能执行 exact approved semantics；
+- SelectedAction 与 ActionOccurrence 保持分离。
+
+单会话严格串行是正常执行策略，不属于 AA-E02 的失败证据。该假设检验的是是否仍需跨会话锁住整个 learner runtime 才能处理外部变化；普通消息到达不自动触发用户中断。具体排队与外部变化分支见 Consolidated Architecture Spike E2。
+
+### 5.7 Validation Dimension F — Reasoning Runtime / Authority Security
+
+**目标**：验证即使 untrusted content 或模型自身尝试越权，也不能通过语言形式扩大 authority；真正的 Tool / Action / Governance effect 仍由 deterministic backend authorization 控制。
+
+测试至少覆盖：
+
+- learner input 中的 prompt injection；
+- task / retrieved document 中的 indirect instruction；
+- AI-generated working state 自我授权；
+- Protocol ToolPolicy 与 backend authorization 双重限制；
+- Context Item authority provenance；
+- subject / resource / parameter scope 检查；
+- UnauthorizedTool / AuthorityEscalation 是否形成正式 Security Signal；
+- SecuritySignal 是否可追溯到真实 source occurrence，而不是成为第二事实源。
+
+### 5.8 综合 Spike 的证据与结果处理
+
+综合 Spike 必须形成统一的 `Architecture Validation Report`，并按 Validation Dimension 分区记录：
+
+- Architecture Assumption 及其 revision / 声明范围；
+- 对应 Architecture Invariant / P0 mechanism；
+- falsification condition；
+- prototype scope 与 non-goals；
+- fixtures / test cases；
+- observed evidence；
+- failure / unexpected behavior；
+- 失败归因、falsifier 判定依据与单项结论 `SUPPORTED / DENIED / INCONCLUSIVE`；
+- 对 System Design 的影响；
+- 是否需要 ADR；
+- 是否触发 Architecture Reopen；
+- follow-up / capability staging；
+- 可丢弃代码与可保留 reference code 的边界。
+
+综合 Spike 失败不是项目失败。其价值正是用统一运行证据证明当前 Pre-Validation Candidate 的某个假设不成立，并在冻结 v1.0 前完成修订。
+
+`PARTIALLY_SUPPORTED` 仅用于多个假设或预先声明的独立子范围的汇总描述，报告必须保留每项结论与证据，不能以汇总关闭尚未满足条件的单项审查。测试失败不直接等于假设被否定；应按预注册合同核实是否命中 falsifier，已确认的否定不因其他场景成功而消失。收窄范围、修订机制或安排 staging 时，保留原假设在原范围内的结论并关联后续处理；具体结果规则由 Consolidated Architecture Spike §6 定义。
+
+需要特别保持以下边界：
+
+```text
+Consolidated Architecture Spike
+    = System Design 内部的 architecture-assumption validation
+
+Architecture Validation Build
+    = System Design v1.0 之后的 full-composition / operability validation
+```
+
+前者允许极薄、硬编码、可丢弃；后者是下一 Development Phase 的端到端 reference system。二者不能合并。
+
+---
+
+## 6. 文档产物与评审门槛
+
+System Design 不采用单一超大文档承载所有细节，而采用“系统地图 + 专项深挖 + 决策记录 + 验证证据”的文档体系。
+
+### 6.1 正式设计文档
+
+System Design 的正式文档体系由“总体设计 + 必要的专项设计 + ADR + Validation Evidence”组成。文档数量不是完成标准，但任何被拆分出来的文档都必须有明确责任，任何未拆分的专项责任也必须在总体设计中达到同等闭合标准。
+
+总体设计固定形成：
+
+1. `DeerMind_System_Design_v0.x.md` — Integrated Pre-Validation Candidate / evidence-driven revision series；
+2. `DeerMind_System_Design_v1.0.md` — Gate F 通过后的正式 Integrated System Design Baseline。
+
+六个核心专项若经 Phase 4 Coverage Review 判定为 `SEPARATE`，使用以下候选文档族：
+
+- `DeerMind_Runtime_Event_Architecture_v0.x.md` → `v1.0`；
+- `DeerMind_AI_Reasoning_Runtime_Design_v0.x.md` → `v1.0`；
+- `DeerMind_State_Dependency_Architecture_v0.x.md` → `v1.0`；
+- `DeerMind_Interaction_Decision_Runtime_Design_v0.x.md` → `v1.0`；
+- `DeerMind_Semantic_Version_Replay_Migration_Design_v0.x.md` → `v1.0`；
+- `DeerMind_Evolution_Governance_Runtime_Design_v0.x.md` → `v1.0`。
+
+若某专项被判定为 `MERGED`，则不要求额外生成独立文档，但必须能够在总体设计中证明其已经达到 Focused Design Closure。`Complexity Must Earn Its Keep` 决定文档是否独立，不决定设计责任是否存在。
+
+独立 Focused Design 的 `v0.x` 表示 Pre-Validation 工作版本；只有在相关验证证据被吸收、与总体设计无已知矛盾，并满足对应冻结条件后，才升级为 `v1.0`。
+
+### 6.2 Architecture Decision Record（ADR）
+
+对具有长期实现影响、存在多个合理方案且后续可能需要重新打开的决策，使用 ADR，而不是把所有讨论塞进主文档。
+
+候选 ADR 包括：
+
+- Event History 的 authority 与物理持久化模型；
+- Derived State materialization strategy；
+- dependency representation；
+- single-writer 的工程 enforcement；
+- Semantic Version Context granularity；
+- Context snapshot / manifest retention；
+- ReasoningExecutionRecord retention；
+- commit transaction boundary；
+- synchronous vs asynchronous invalidation；
+- multi-version activation boundary。
+
+ADR 必须记录问题、候选方案、权衡、当前决定、Reopen Condition，而不是只记录“选择了什么技术”。
+
+### 6.3 Architecture Validation Report
+
+验证报告是设计证据的一部分，不是研发日志。v0.6 继续由 Consolidated Architecture Spike 形成一份统一 `Architecture Validation Report`，其中保留 A–F Validation Dimension 的独立结果与组合结论。任何依赖实验结论的 Architecture Decision 都必须能够追溯到相应 Validation Evidence。
+
+---
+
+### 6.4 Review Gates 与 System Design Exit Criteria
+
+System Design 不以“文档数量”作为完成标准。整个阶段设置多个 Review Gate，只有满足当前 Gate 才进入下一阶段。
+
+#### Gate A — MVCL Semantic Closure
+
+必须满足：
+
+- 从 Event 到 Learner Belief 再回到 Policy 的闭环完整；
+- 每个跨边界对象有明确 semantic owner；
+- AI reasoning invocation 有 Protocol / Context / Candidate / Commit 位置；
+- ActionIntent 与 ActionOccurrence 分离；
+- Assistance Exposure 可追溯；
+- UNKNOWN / failure / stale 有合法运行路径。
+
+#### Gate B — State & Consistency Closure
+
+必须满足：
+
+- Factual / Canonical / Derived state 区分明确；
+- 核心对象 identity / version / provenance 明确；
+- dependency / invalidation 语义明确；
+- synchronous 与 asynchronous consistency boundary 明确；
+- 不存在无法解释的 hidden state 或 second source of truth；
+- key correction path 可完整追踪。
+
+#### Gate C — AI-Native Execution Closure
+
+必须满足：
+
+- Reasoning Protocol 是一等设计对象；
+- Context admissibility / assembly / version 明确；
+- Authority Envelope 明确；
+- Candidate / Validation / Commit 明确；
+- Model / Tool / Protocol failure 可表达；
+- no hidden durable memory；
+- untrusted content 无法提升 authority；
+- reasoning provenance 足以进行 Historical Reconstruction。
+
+#### Gate D — Version & Evolution Closure
+
+必须满足：
+
+- semantic version binding 明确；
+- multi-version coexistence 与 activation boundary 明确；
+- Historical Reconstruction、Re-execution、Reinterpretation 不混淆；
+- migration 与 semantic reinterpretation 分离；
+- rollback 设计明确；
+- Evolution / Governance 与 runtime version activation 已闭合。
+
+#### Phase 4 Exit Check — Pre-Validation Design Closure
+
+这不是新增 Gate，而是进入 Gate E 所依赖的设计完成条件。进入 Consolidated Architecture Spike 前必须确认：
+
+- 总体 `DeerMind_System_Design_v0.x` 已完成；
+- §3.2–§3.7 全部达到 Focused Design Closure；
+- `SEPARATE` 专项已形成对应 `v0.x` 文档，`MERGED` 专项已在主文档中证明覆盖充分；
+- §3.8 横切责任已完成覆盖审计，且 Core Product Context integration contract 与 Observability Minimum Contract 已进入总体设计；具体首发 Product Context 规则不作为本阶段 Exit 条件；
+- 不存在必须由 Spike 实现者自行补全的核心语义、状态机、authority、consistency、version 或 failure contract。
+
+#### Gate E — Architecture Validation Evidence
+
+P0 与横切机制中的高风险 Architecture Assumption 必须满足至少一种状态：
+
+- 已被 Consolidated Architecture Spike 的对应 Validation Dimension 支持；
+- 已被验证证据否定，并完成相应 Design Revision / ADR；
+- 有充分工程 / 理论证据证明无需进入综合 Spike；
+- 明确作为 staged capability 延后，并证明延后不破坏 Architecture Invariant。
+
+Gate E 关注的是验证证据是否足够，而不是执行了多少个独立 Spike。不能以“开发时再看”为关闭方式；`Inconclusive` 也不能被当作 `Supported`。
+
+#### Gate F — System Design v1.0 Exit Gate
+
+只有同时满足以下条件，才能认为 System Design 阶段完成：
+
+**语义层**：Concept Architecture、Space Design、AI-Native Invariants 均已找到明确的 engineering enforcement 或受控 capability staging。
+
+**运行层**：MVCL 具有完整 sequence，核心失败路径与 correction path 不依赖未定义行为。
+
+**状态层**：核心对象的 Identity、Ownership、Authority、Source of Truth、Version、Provenance、Lifecycle、Dependency、Invalidation 与 Replay 均可回答。
+
+**AI 层**：开放输入如何进入 controlled reasoning、如何形成 Candidate、如何验证、如何 commit 已完整定义。
+
+**一致性层**：同步 / 异步边界、stale semantics、recompute、concurrency 和 failure behavior 已定义。
+
+**版本层**：旧数据、旧 reasoning、semantic migration、reinterpretation、activation 与 rollback 已定义。
+
+**验证层**：P0 与横切高风险假设已有真实 Validation Evidence；文档结论与 Consolidated Architecture Spike evidence 无已知矛盾。
+
+**实现层**：总体设计与所有必要 Focused Design 已形成一致的 System Design Baseline Set；可以设计 Architecture Validation Build，而不需要先重新发明核心语义机制。
+
+---
+
+## 7. 从 Architecture Validation Build 到 Controlled Pilot
+
+System Design v1.0 完成后，不直接进入正式 MVP。DeerMind 先构建一个 **Architecture Validation Build**：一个极薄但真实端到端运行的 reference system，用于验证各专项机制组合后是否仍然成立。
+
+### 7.1 Validation Build 的目标
+
+Consolidated Architecture Spike 在 System Design 内部使用极薄共享 Harness 验证高风险 Architecture Assumption，并允许为了 falsification 而硬编码、裁剪或替换大量非关键能力；Architecture Validation Build 则在 `System Design v1.0` 之后验证**完整设计的组合运行与 operability**。它重点发现：
+
+- Context Assembly 与 Policy reasoning 组合后是否过重；
+- dependency graph 是否出现不可控 fan-out；
+- AI reasoning latency 是否让交互闭环失效；
+- Semantic Version Context 是否过于复杂；
+- Assistance Exposure Lineage 是否可真实维护；
+- invalidation / recompute 是否导致 current view 长期不一致；
+- ReasoningExecutionRecord 是否造成不可接受的复杂度；
+- Policy Context 是否因跨 Space 信息过多而变成新的黑箱。
+
+### 7.2 建议的最小范围
+
+Validation Build 默认限制为：
+
+- 一个 learner；
+- 一个数学 Task Family；
+- 一个主要 Solution Strategy；
+- 少量 KC；
+- 一个 Solve interaction scenario；
+- 一种 Hint / AskForExplanation 类动作；
+- 基础 Observation / Evidence / Learner Belief；
+- 一个简化 Interaction Policy；
+- 一个简单版本切换场景。
+
+但必须走真实架构路径，至少包含：
+
+- Event History；
+- Context Package；
+- Reasoning Protocol；
+- Candidate / Validation / Commit；
+- provenance；
+- dependency / invalidation；
+- Assistance Exposure；
+- Historical Reconstruction；
+- minimal version context。
+
+它可以没有漂亮 UI、没有规模化部署、没有完整 Evolution automation。缺失的是 capability，不允许缺失 Architecture Invariant。
+
+### 7.3 Validation Build 的退出判断
+
+Validation Build 的目标不是证明“产品有人喜欢”，而是回答：
+
+> **这套架构作为一个真实 AI-native learning system，在组合运行时是否仍然成立？**
+
+若发现架构级问题，应返回 System Design / Space Design / Concept Architecture 对应层级，而不是在实现中用局部 workaround 掩盖。
+
+---
+
+### 7.4 MVP Definition、MVP Build 与 Controlled Pilot
+
+只有 Architecture Validation Build 通过后，才进入真正的 MVP Definition。
+
+#### 7.4.1 MVP Definition
+
+MVP 阶段重新回答产品问题：
+
+- 首批目标 learner 是谁；
+- 哪个学科与年级；
+- 哪个真实学习场景；
+- 哪类 Task；
+- 哪些能力必须产品化；
+- 交互入口是什么；
+- 需要采集什么真实数据；
+- 家长价值与信任如何呈现；
+- 成功与失败用什么指标定义。
+
+MVP Definition 不再重新设计架构，而是在已有 Architecture Capability 中选择第一批产品能力。
+
+#### 7.4.2 MVP Build
+
+MVP 可以简化 Implementation Capability，例如：
+
+- Evolution workflow 主要人工发起；
+- Governance UI 很轻；
+- replay 只覆盖有限窗口；
+- inference 采用规则、统计与 LLM 混合方式；
+- Policy 使用较少 Action 类型；
+- 单机或简单部署。
+
+但 Architecture Invariant 不得因为 MVP 范围小而被关闭。
+
+#### 7.4.3 Controlled Pilot
+
+MVP 后不直接追求规模增长，而进入 Controlled Pilot，验证此前仍然无法靠软件本身证明的教育与产品假设，包括：
+
+- Observation 在真实学习中的可靠性；
+- assistance contamination 是否可解释；
+- learner belief 是否有校准价值；
+- Task / KC granularity 是否真实可观测；
+- learner 是否愿意提供系统需要的过程证据；
+- Active Assessment 的负担是否可接受；
+- parent trust 是否建立；
+- removable scaffold / fade-out 是否真实可行。
+
+这一步的证据将成为后续 Evolution 与产品迭代的输入。
+
+---
+
+## 8. 执行纪律与当前下一步
+
+System Design 阶段采用以下执行纪律：
+
+1. **先闭环，后组件。** 每个局部设计必须能够映射回 MVCL。
+2. **先语义，后技术。** 只有责任、authority、consistency 明确后才选择实现产品。
+3. **先闭合、再集成、补齐专项闭合、再统一验证。** 高风险假设在设计阶段预注册并保持 `UNVALIDATED`；总体 Candidate 用来暴露跨机制缺口，随后完成 Focused Design Closure，之后才进入 Consolidated Architecture Spike。
+4. **ArchitectureInvariant 优先于 ImplementationCapability。** 能力可以 staged，Invariant 不能临时关闭。
+5. **明确 UNKNOWN。** 尚未解决的设计问题必须显式进入 Open Questions / Risk Register，不允许以模糊语言伪装完成。
+6. **ADR 保存决策，Validation Report 保存证据。** 主文档保持 architecture narrative。
+7. **不因为当前技术方便改变 semantic ownership。** Conceptual Space 不映射软件边界。
+8. **复杂度必须证明价值。** 新服务、新存储、新 Agent、新 Protocol、新状态类型都必须解释其不可替代责任。
+9. **专项责任不可被文档合并掩盖。** `MERGED` 只表示不单独成文，不表示该 Work Package 可以不达到 Focused Design Closure。
+
+### 8.1 当前阶段与工作依据
+
+截至 2026-10-07，固定 Spike 批次已经执行并按停止条件关闭。12 项假设和 5 项组合均有评估；7 项假设在声明范围内 SUPPORTED，AA-A02 DENIED，4 项假设 INCONCLUSIVE；2 项组合 PASS，3 项 INCONCLUSIVE。完整验收仍为 9/17，缺失路径不因实验关闭而补记完成。
+
+当前处于 Phase 5 的 Evidence Review / Design Revision 工作，原 Completion 尚未满足，并非退回尚未启动 Spike 的状态。总体 v0.2 的历史 Phase 4 Exit 与 v0.5 的旧进度说明保留为原设计输入，不表示新候选已经验证。Gate A 保留 PASS，Gate B/C/D 保留 Semantic Closure / Validation Pending，Gate E/F OPEN。
+
+后续文档和受影响实现工作采用[设计决定](spike/DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md)登记的工作集：总体设计 v0.3、AI Reasoning Runtime v0.2、Interaction Decision Runtime v0.2，及其余四份现有专项 v0.1。三份修订的规则作为本轮工作依据；整个工作集尚未满足 v1.0 冻结条件。历史专项中的旧版本引用仍指历史设计来源，不隐式改写为当前依赖；新实现的具体依据须显式列出工作集和修订决定。
+
+### 8.2 剩余验收工作与执行顺序
+
+第一步已完成合同修订及作者核对：PASS 不是真理保证；必需校验不可跳过；Observation 按预先声明目的完成必要判断；失败轮次收束后才处理新请求；Control 实际成功及结果处理完成后才按新活动继续。
+
+接下来先核实拟保留功能的实现入口和协议绑定，尤其是 X5 延后范围能否在执行入口强制保持原活动条件。没有入口证据时，不能把 X5 记为获准 STAGED。基础 Observation、Policy、Claim-relative Evaluation、权限、依赖、更正失效和串行仍必须保留。
+
+然后据受影响缺口形成一次固定补证计划，明确输入、判据、调用上限及成功、失败、未决的终止决定。既有失败不替换，不因新失败自动增加批次。最低语义义务与必要内容不通过总体评分抵消；有限样例不用于承诺开放输入的普遍正确性。若选定实现无法达到声明要求，记录范围不成立并选择改设计或保持 Gate OPEN，不能继续默认调优。
+
+本轮保留原 Spike §17.1–§17.3 和本路线图 Gate E/F 条件。变更验收范围须另行明确记录要求、理由和证据；不从原分母移除失败项目。正式 Build 在 Gate E/F 与 System Design v1.0 冻结之后。结束追加调优、采用工作合同和正式阶段退出分别记录。
+
+---
+
+## 附录 A：阶段总览
+
+```text
+Architecture Baseline
+  Concept Architecture v1.1
+  + Four Space Design v1.1
+        ↓
+AI-Native Architecture Principles v0.2
+        ↓
+System Design Roadmap v0.6
+        ↓
+Phase 1 — MVCL Design
+        ↓
+Phase 2 — P0 Mechanism Design
+        ↓
+Phase 3 — Evolution / Governance & Cross-Cutting Design
+        ↓
+Phase 4 — Integrated Pre-Validation System Design Candidate
+  DeerMind_System_Design_v0.x
+        ↓
+  Focused Design Closure §3.2–§3.7
+  + Cross-Cutting Coverage §3.8
+        ↓
+Phase 5 — Consolidated Architecture Spike
+  Validation Dimensions A–F
+        ↓
+Architecture Evidence Review / Design Revision
+        ↓
+Phase 6 — Integrated System Design v1.0
+  Gate E + Gate F
+        ↓
+Architecture Validation Build
+        ↓
+MVP Definition
+        ↓
+MVP Build
+        ↓
+Controlled Pilot
+        ↓
+Evidence-driven Evolution
+```
+
+## 附录 B：当前禁止提前冻结的技术决策
+
+在对应 System Design 问题尚未形成约束前，以下问题只允许作为候选，不允许成为架构前提：
+
+- 单体还是微服务；
+- 是否使用 Kubernetes；
+- 是否使用 Kafka / RabbitMQ；
+- 是否使用图数据库；
+- 是否需要向量数据库；
+- Go / Python / Java 的最终边界；
+- 是否采用某个 Agent framework；
+- 单模型、多模型或自托管模型；
+- Event Store 的具体产品；
+- dependency graph 的具体数据结构；
+- Reasoning Runtime 的具体 workflow engine；
+- Prompt 编排框架。
+
+这些技术选择应由 System Design 中已经明确的 consistency、authority、latency、replay、cost、privacy 与 operability 约束反向推导，而不是先选工具再重塑架构。

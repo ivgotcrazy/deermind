@@ -1,0 +1,28 @@
+{
+  "status": "PREPARED_FOR_SIX_CALL_IDENTIFICATION",
+  "source_sha256": {
+    "src/spike/run_policy_disposition_real.py": "c3171cd35b208b225fc5b40ce2dd563fb2e19425776ac4e13d853349620f5c8d",
+    "src/spike/fixtures/policy-disposition-real-v1.json": "41aadeb208aff3466eeb871340c897ebab170138f9254de9789c1ba518959e9e",
+    "src/spike/protocols/policy-e1-v3.json": "74d0269281f38d87ed040dca62b22d986be46c276ab8fd01d058e293f5d22514",
+    "src/spike/review-packages/policy-e1-v2-reviewed/cases.json": "0f022ce0fa22ddbb72eac0da8b211f517cd8c244109d151672e57d97ba2bb834",
+    "src/spike/foundation/boundary.py": "570cfd11c92186792ea1e792d7917b8e90b1ec7901a84311e92deed8ab4ede95",
+    "src/spike/foundation/policy_cases.py": "de6cb6e6f1268ff50d9c386caf6247f1573f601a805010a6766d34286c8aabe1",
+    "src/spike/foundation/policy_disposition.py": "581a2bb158a240bc5a6bae0d08c0aaae407b144e854b00577330a7807b40f840",
+    "src/spike/foundation/llm.py": "e2bc8061193697a8759693f01db375a193c5d45b80770d71364b2b64e0b08e36"
+  },
+  "maximum_message_chars": 11609,
+  "local_char_limit": 16000,
+  "planned_calls": 6,
+  "max_output_tokens": 4096,
+  "external_model_calls": 0,
+  "scripted_calls": 6,
+  "independent_review": "NOT_REVIEWED_NOT_CLAIMED",
+  "artifact_sha256": {
+    "C1.jsonl": "065204cf76d1eafce91375e0a7a256dd7e5964bb6a9c7c6e3890d252f840872f",
+    "C2.jsonl": "9bbb55a354c4ab7b4b1ef89d2fd1e35cce3af6734aac6d8f0c958758ce4100b9",
+    "C3.jsonl": "d5234fafd880d83ce5cbb9850d14e345f05a6582771db218533d465ec806ffd8",
+    "C4.jsonl": "c872d803ce610ac593e2de2eaeb76c2b60d9dc9d7cda500f541a8825cc095693",
+    "C5.jsonl": "ed4cce3752bbceb5f97330ab59d9dc92757fb23fcf2d7fa0ba29c8887f27d8fa",
+    "C6.jsonl": "18148a90d3a9516d3ce16b72d822447a13a9a03eaea9388d5ab3a197e67fe791"
+  }
+}

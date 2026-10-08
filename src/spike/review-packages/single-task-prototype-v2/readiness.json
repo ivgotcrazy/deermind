@@ -1,0 +1,25 @@
+{
+  "status": "MECHANICALLY_READY_CONTENT_UNVERIFIED",
+  "completed_at": "2026-10-07T09:58:40.297768+00:00",
+  "new_model_calls": 0,
+  "tests_run": 193,
+  "failures": 0,
+  "errors": 0,
+  "v2_mechanical_tests": 22,
+  "scripted_sessions": 12,
+  "scripted_turns": 24,
+  "scripted_calls": 144,
+  "maximum_scripted_message_chars": 18651,
+  "representative_historical_message_chars": 41907,
+  "implementation_elapsed_seconds": 2093.298,
+  "historical_integrity": {
+    "ledger_entries_checked": 870,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  },
+  "semantic_support_claimed": false
+}

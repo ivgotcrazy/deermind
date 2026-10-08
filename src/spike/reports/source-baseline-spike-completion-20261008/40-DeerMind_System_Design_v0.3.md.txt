@@ -1,0 +1,1392 @@
+# DeerMind System Design v0.3
+
+> **中文名称**：DeerMind 系统设计  
+> **版本**：v0.3  
+> **文档性质**：Evidence-driven Integrated System Design Candidate  
+> **状态**：证据吸收后的集成修订候选，待一致性评审  
+> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、Learning / Evaluation / Interaction / Evolution Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`  
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`  
+> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
+> **更新时间**：2026-10-06
+>
+> **修订说明**：吸收 A2 反证、A1 必要含义和 X5 失败收束讨论，保留职责、权限、串行和实际披露边界；修订是设计候选，不构成新增运行证据或 Gate 关闭。
+>
+> **版本说明**：v0.3 基于未改动的 v0.2，纳入 AI Reasoning Runtime v0.2 与 Interaction Decision Runtime v0.2；其余四份专项保持 v0.1。旧 Spike 输入基线、假设原命题及全部结果保留，9/17 和 Gate E/F OPEN 不变。本候选用于正式证据评审，不替换已冻结批次的设计或默认运行协议。
+
+> **工作依据**：按[语义校验与收口设计决定](spike/DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md)用于后续设计工作；该采用不等于质量已验证、默认协议切换或 v1.0 冻结。
+
+---
+
+## 1. 文档定位与设计边界
+
+### 1.1 文档目的
+
+DeerMind 的 Concept Architecture 已经回答了系统为什么必须由 Learning、Evaluation、Interaction、Evolution 四类不可约语义责任构成，并冻结了 Product Constitution、Governance、Global Event、AI-native execution 等上位约束。System Design 的任务不是重新解释这些语义，而是回答一个更直接的工程问题：**这些已经冻结的语义责任如何成为可以运行、验证、追踪、修正和长期演化的系统机制。**
+
+本文档承担总体 System Design 的集成责任。它不把既有专项设计机械拼接，而是从全系统视角建立一套统一 mental model，使实现者能够沿同一条运行链解释：现实怎样进入事实历史，AI 怎样形成 Candidate，Candidate 怎样取得正式 standing，Derived State 怎样保持 current，Interaction 怎样形成并执行 Action，Evaluation 怎样形成 Evidence 与 Learner Belief，Semantic Version 怎样共存和回放，Evolution 怎样推动系统变化而 Governance 保持最终授权边界。
+
+本文档追求的粒度是 **Architecture-Executable Specification**：实现者不应再需要在编码阶段重新决定 Event、Observation、Evidence、Belief、PolicyOutcome、ActionIntent、ActionOccurrence、Commit、Version、Authority、Replay 等核心对象的语义边界，但仍可以在不违反这些边界的前提下选择具体存储、消息、进程、语言与部署方案。
+
+### 1.2 当前状态
+
+v0.3 已吸收现有 Spike 证据，仍是设计修订候选。12 项架构假设和 5 项组合均有评估：7 项假设在声明范围内 SUPPORTED，AA-A02 DENIED，4 项假设 INCONCLUSIVE；2 项组合 PASS，3 项 INCONCLUSIVE。完整验收为 9/17。详细范围、失败与缺失路径以[当前证据清单](../../src/spike/reports/validation-progress-v1.json)为准。
+
+Gate A 保留原 PASS，Gate B/C/D 保留 Semantic Closure / Validation Pending，Gate E/F OPEN。v0.2 的 Phase 4 设计闭合判断属于历史输入基线，不是本候选已通过工程验证的证明。固定实验已执行并关闭，原 Spike Completion 尚未满足；当前进行证据吸收、设计修订及阶段范围评审，不宣告 Architecture Validation Build 已准入或 v1.0 已冻结。
+
+本候选保留每项旧结果，不将未决、否定或阶段安排换算为支持。版本号只表达文档演进。
+
+### 1.3 Scope
+
+本文档负责定义：
+
+- Concept / Space / AI-Native principles 到 runtime mechanism 的映射；
+- semantic ownership 与 runtime capability 的责任边界；
+- Minimum Viable Closed Loop 及主要 runtime data flow；
+- Factual / Canonical / Derived / Projection / Execution State 的 formal standing 与 Source of Truth；
+- dependency、current resolution、invalidation、consistency、concurrency 与 failure semantics；
+- AI Reasoning Runtime、Candidate / Validation / Commit、Context 与 provenance 的系统位置；
+- Interaction Decision、ActionIntent、Executor、ActionOccurrence 与 Assistance Exposure Lineage；
+- per-boundary Version Context、multi-version coexistence、replay、reinterpretation 与 rollback；
+- Authority、Data Authority、Security、Audit、Retention、Lifecycle 等横切运行契约；
+- Product Context / Context Constitution 如何把场景特定 authority、consent、data-use、disclosure 与 retention 约束接入 Core enforcement；
+- reasoning、candidate / commit、state / dependency、interaction / action、validation / evolution、authority / security 与 data-use 的最低 Observability Contract；
+- Evolution / Governance / Canonical Commit / Activation 的系统级闭环；
+- capability staging、Architecture Assumption、System-Level Invariant 以及后续 Consolidated Architecture Spike 的 handoff。
+
+### 1.4 Non-Goals
+
+本文档不冻结以下实现选择：
+
+- 单体、模块化单体、微服务或其他部署拓扑；
+- PostgreSQL、MySQL、图数据库、向量数据库或 Event Store 产品；
+- Kafka、RabbitMQ 或其他消息基础设施；
+- Go、Python、Java 等语言与框架边界；
+- Kubernetes、Serverless 或其他运行平台；
+- 具体 LLM Provider、模型名称、单模型 / 多模型路由；
+- Agent Framework、Workflow Engine、Prompt 编排框架；
+- dependency graph 的物理存储与索引结构；
+- 最终 API、表结构、类结构、RPC schema；
+- 生产级容量规划、HA、跨区域部署和灾难恢复；
+- MVP 的完整产品功能、UI、商业模型和增长方案。
+
+这些选择必须由本文档已经冻结的 consistency、authority、replay、privacy、latency、cost 与 operability 约束反向推导，而不能反过来重塑上位语义。
+
+### 1.5 文档关系
+
+Concept Architecture 与四份 Space Design 定义 **semantic ownership**；AI-Native Architecture Principles 定义开放 cognition 与受控 authority 的共同执行原则；本文档负责建立全系统 mental model、统一运行闭环与 system-level contract。六个 Focused Design 负责把高复杂度机制深化到实现者无需重新发明核心运行语义的粒度。
+
+当前 System Design 文档集为：
+
+| Work Package | Pre-Validation Focused Design | 与总体设计的关系 |
+|---|---|---|
+| §3.2 Runtime & Event | `DeerMind_Runtime_Event_Architecture_v0.1.md` | 深化 factual authority、Event identity / ordering / correction / replay contract |
+| §3.3 AI Reasoning Runtime | `DeerMind_AI_Reasoning_Runtime_Design_v0.2.md` | 深化 Reasoning Protocol、Context、Tool、Candidate、Validation / Commit 与 execution history |
+| §3.4 State / Dependency / Invalidation | `DeerMind_State_Dependency_Architecture_v0.1.md` | 深化 dependency、typed invalidation、Current Resolution、recompute 与 consistency |
+| §3.5 Interaction / Decision | `DeerMind_Interaction_Decision_Runtime_Design_v0.2.md` | 深化 DecisionCycle、PolicyOutcome、Plan、ActionIntent / Executor / Occurrence 与 exposure lineage |
+| §3.6 Version / Replay / Migration | `DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md` | 深化 VersionContext、compatibility、activation、migration、replay / reinterpretation |
+| §3.7 Evolution / Governance | `DeerMind_Evolution_Governance_Runtime_Design_v0.1.md` | 深化 Signal / Issue / Hypothesis / Validation / Governance / Activation / post-deployment loop |
+
+这些文档与本文档不是六套平行架构，而是同一 System Design Baseline 的不同精度层级：
+
+\[
+IntegratedSystemDesign
++
+FocusedDesigns
+=
+OneSystemDesignContractSet
+\]
+
+总体文档拥有 system-level narrative 与跨专项 contract；Focused Design 拥有相应机制的详细 executable contract。若两者发生冲突，不能由实现自行选择其一，必须在 Phase 4 / Evidence Review 中显式修订并重新建立单一真相。
+
+§3.8 Operations / Privacy / Observability 不形成第七个对称 Runtime。其横切合同由本文档统一定义，并由各 Focused Design 在自己的 enforcement point 落地。
+
+---
+
+## 2. 系统设计问题与设计约束
+
+### 2.1 从 Architecture Semantics 到 Executable Mechanism
+
+DeerMind 的核心难点不在于把四个 Space 映射成四个服务，而在于把不同认识对象、不同正式 standing 和不同 authority 的对象放进同一个长期运行系统，同时不让实现便利破坏语义边界。现实行为、规范语义、学习者判断、当前交互、行动决策和系统自我演化都需要被长期引用；它们却拥有不同的事实来源、生命周期、失效条件和修改权限。
+
+因此，System Design 的核心命题不是“选什么基础设施”，而是：
+
+\[
+Architecture\ Semantics
+\rightarrow
+Executable\ Mechanism
+\]
+
+系统必须能够把“谁拥有语义责任”“什么可以被相信”“什么可以被执行”“什么可以被改变”变成运行时可验证、可审计、可拒绝的机制，而不是依赖开发者约定或模型自律。
+
+### 2.2 五组不可消除的设计张力
+
+第一组张力是 **Open Cognition 与 Deterministic Authority**。现实中的行为、错误、策略、证据意义和教学情境无法在设计期穷举，AI 必须承担开放理解和判断；但正式状态、权限、版本、生命周期、Commit、Tool / Action execution 不能由模型临场扩权。系统必须允许 cognition 开放，同时让 authority 保持确定性。
+
+第二组张力是 **Dynamic Interpretation 与 Stable Formal State**。Observation、Evidence、Belief、PolicyOutcome 等对象可以随着新事实、新版本和新解释被修正，但历史上真正发生的 Event、真正作出的 Decision、真正执行的 Action 不能因为新理解而被重写。系统必须允许解释变化，同时保存过去当时的正式 standing。
+
+第三组张力是 **Current Adaptation 与 Historical Integrity**。DeerMind 必须始终对当前 learner、当前 Target、当前 Context Authority、当前 Semantic Version 作出最新可用判断，但长期审计和 Evolution 又要求知道过去究竟基于什么版本、什么输入、什么权限做过什么判断。因此“当前”不能通过覆盖历史得到。
+
+第四组张力是 **Asynchronous Computation 与 Synchronous Safety**。Observation、Evidence、Belief 和各种 projection 可以异步重算，但一旦系统已经知道某个依赖失效、Authority 被撤销或版本不兼容，新的正式 effect 不能继续依赖旧状态。恢复可以异步，失效安全必须同步。
+
+第五组张力是 **Semantic Completeness 与 Staged Implementation**。首个实现不可能一次具备生产级多版本迁移、完整 Governance 平台、全量隐私工作流和大规模 dependency graph，但这些能力的语义边界不能因此留给未来临时决定。DeerMind 采用：
+
+\[
+Freeze\ Full\ Semantic\ Contract;
+\qquad
+Stage\ Runtime\ Capability
+\]
+
+实现可以分阶段，Architecture Invariant 不能被阶段性降级。
+
+### 2.3 系统级 mental model
+
+从运行视角看，DeerMind 可以被理解为五类互补结构：
+
+\[
+DeerMind
+=
+SemanticOwnership
++
+GovernedState
++
+OpenCognition
++
+ControlledAction
++
+GovernedEvolution
+\]
+
+`SemanticOwnership` 决定谁有资格定义和修改某类语义；`GovernedState` 决定正式对象如何取得 standing、保持版本、依赖和历史；`OpenCognition` 通过 AI Reasoning Runtime 在受控 Context 中形成具体 Candidate；`ControlledAction` 把 decision 与现实 effect 分离，并在执行前保持权限与 precondition；`GovernedEvolution` 允许系统理解并验证自己的缺陷，但把正式结构变化留在明确 Governance 边界内。
+
+这五类结构不是五个服务。它们是全系统必须同时成立的责任。
+
+### 2.4 必须避免的实现捷径
+
+若实现把 Event、Observation、Evidence、Belief 压成一个通用“状态”，系统将无法解释一个判断来自发生事实、语义解释还是能力推断。若把 learner profile、Plan、previous hints、Target、Policy reason 等混进长期 Agent Memory，系统会形成第二套不可治理的状态系统。若把 `latest` 当作 `current`，系统会无声使用已经失效、撤权或版本不兼容的结果。若把“模型输出了某个 Tool call”当作执行权限，Prompt Injection 就会从内容问题升级为真实安全边界问题。
+
+因此 DeerMind 的复杂性主要不来自组件数量，而来自必须把事实、认识、决策、权限、历史和演化保持在正确边界内。System Design 的责任就是把这些边界从概念原则变成可运行合同。
+
+---
+
+## 3. 全局逻辑架构与责任边界
+
+### 3.1 Semantic Ownership 与 Runtime Capability 分离
+
+Conceptual Space 是 semantic ownership boundary，不是进程、服务或部署边界。Learning、Evaluation、Interaction、Evolution 决定“谁对某类语义负责”，而 Runtime Capability 决定“系统通过什么共享机制运行这些责任”。同一个进程可以承载多个 Space 的实现，一个 Space 也可以跨多个进程；只要 semantic authority 不被混淆，部署形态可以后续演进。
+
+四个 Space 的核心责任保持不变：Learning 定义 Target、Task、Solution、Knowledge 等规范学习语义；Evaluation 解释 Evidence 并作为 Learner Belief 唯一 writer；Interaction 形成 Observation、当前运行投影、PolicyOutcome、Plan 和 Action decision；Evolution 形成 SystemIssue、Hypothesis、RevisionCandidate、ValidationEvidence 和 ChangeProposal。Product Constitution 与 Context Constitution 提供高层 value / authority boundary，Governance 对正式结构变化授权，但不取代 domain semantic owner。
+
+### 3.2 Runtime Capability Map
+
+当前 logical architecture 采用以下 Runtime Capabilities：
+
+```text
+                         Product Constitution / Governance
+                                  │ authority
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                       Cross-Cutting Control                         │
+│ Authority · Data Authority · Version · Dependency · Validation     │
+│ Security · Audit · Lifecycle · Current Resolution                  │
+└─────────────────────────────────────────────────────────────────────┘
+       │                │                 │                 │
+       ▼                ▼                 ▼                 ▼
+ Factual Runtime   Semantic State    AI Reasoning      Interaction
+                        Runtime          Runtime           Runtime
+       │                │                 │                 │
+       └────────────────┴──────────┬──────┴─────────────────┘
+                                  │
+                                  ▼
+                          Evaluation Runtime
+                                  │
+                                  ▼
+                           Evolution Runtime
+```
+
+这张图表达的是 logical responsibility，而不是服务拓扑。
+
+**Factual Runtime** 负责授权 occurrence admission、Event / ActionOccurrence 等 factual records 的正式历史、correction、deduplication 与发生事实的可追溯性。它不解释 learner ability，也不决定行动。
+
+**Semantic State Runtime** 提供 shared governed-state mechanism：formal identity / revision、dependency、current resolution、invalidation、version binding、commit metadata 和历史保存。它不拥有 Observation、Belief、Policy 等 domain semantics。
+
+**AI Reasoning Runtime** 在 versioned Reasoning Protocol、controlled Context、Authority Envelope 和 Tool Policy 下执行开放 cognition，产生 typed Candidate 或明确 non-success。它没有 domain semantic ownership，也不能因为执行成功就直接取得正式 standing。
+
+开放语言、上下文含义、grounding 支持关系和语义职责边界的判断采用显式语义规则约束下的 LLM reasoning，不以关键词、正则或枚举措辞的分支替代。确定性机制负责结构、精确计算、引用、版本、权限以及所需校验记录的核验与提交执行。语义校验结果绑定 exact candidate 和规则 / Protocol / Context / execution provenance；通过意见不创造 authority，缺失、失败或未决的 required check 不得被当作通过。 PASS 是该次获准评审的通过意见，不证明每句内容必然正确；正式 standing 也不替其他职责背书。越界内容即使误放仍是错误，发现后沿原更正和新版本流程处理。下游在自身既有合同中检查输出依据和责任，不能把源类型或上游 PASS 当成能力事实、行动决定或权限，也不假定上下游模型错误相互独立。该分工由 AI-Native Architecture Principles 定义，具体 Validation Profile 与自由文本准入合同见 AI Reasoning Runtime §6.6。
+
+**Interaction Runtime** 负责 Observation formation、InteractionState / DecisionContext、Policy reasoning、Plan、ActionIntent 形成和 Action execution coordination。它拥有 runtime decision responsibility，但不能修改 Learner Belief。
+
+**Evaluation Runtime** 负责 Claim-relative Evidence interpretation、Inference 与 Learner Belief revision。它可以读取 Observation 与 factual grounding，但不能绕过 Observation / Evidence semantics 直接把 Event 升级为 Belief。
+
+**Evolution Runtime** 负责 SystemSignal assessment、Issue、Hypothesis、Validation、RevisionCandidate 和 ChangeProposal。它可以理解“系统可能错在哪里”，但不能自行授权 canonical change。
+
+### 3.3 Governance 与 Evolution 的分离
+
+Evolution 和 Governance 必须在 logical architecture 中明确分开：
+
+\[
+Evolution\ knows
+\qquad
+Governance\ authorizes
+\]
+
+Evolution 产生对系统本身的认识、候选解释和修改方案；Governance 决定某个正式 proposal 是否被授权。被授权后，canonical semantic owner 才能完成 Canonical Commit；Committed Version 还必须通过 Activation 边界才影响未来运行。
+
+因此合法变化链是：
+
+```text
+SystemSignal
+→ SystemIssue
+→ Hypothesis
+→ ValidationEvidence
+→ RevisionCandidate
+→ ChangeProposal
+→ GovernanceDecision
+→ CanonicalCommit by Semantic Owner
+→ Activation
+→ Future Runtime
+```
+
+`ValidationSuccess` 不创造 authority，`GovernanceDecision` 不等于 CanonicalVersion，`CanonicalCommit` 也不等于已经 Active。
+
+### 3.4 Shared Mechanism 不创造 Shared Semantics
+
+AI Reasoning、Commit、Current Resolution、Version Resolution、Dependency、Audit 等能力可以共享，但共享机制不能因此获得 domain ownership。例如同一个 Reasoning Runtime 可以执行 Observation interpretation、Evidence interpretation 和 Policy reasoning，但三者必须使用不同 Protocol、不同 Context Policy、不同 Candidate Type、不同 owner 和不同 Commit Class。
+
+同样，统一 Commit primitive 可以提供 immutable revision、expected-head、provenance 和 dependency registration，但不能用一个 `Commit(data)` 抹去 Factual Commit、Derived Semantic Commit、Runtime Decision Commit 和 Canonical Commit 的 authority 差异。
+
+这个原则可以压缩为：
+
+\[
+SharedRuntimeMechanism
+\neq
+SharedSemanticAuthority
+\]
+
+### 3.5 核心责任矩阵
+
+| 对象 / 责任 | Semantic Owner | 取得正式 standing 的 authority | 主要消费方 |
+|---|---|---|---|
+| Target / Task / Solution / Knowledge | Learning | Learning canonical authority + Governance when canonical change | Evaluation / Interaction / Evolution |
+| Event / ActionOccurrence | Authorized factual producer / factual admission | factual authority | Interaction / Evaluation / Evolution |
+| Observation | Interaction | Interaction derived-semantic commit | Evaluation / Interaction |
+| Evidence | Evaluation | Evaluation derived-semantic commit | Inference / Evolution |
+| Learner Belief | Evaluation | Evaluation sole-writer commit | Interaction / Evaluation / Evolution |
+| PolicyOutcome / Plan | Interaction | Interaction runtime-decision commit | Interaction / Audit / Evolution |
+| ActionIntent | Interaction | approved runtime execution authority | Executor |
+| SystemIssue / Hypothesis / RevisionCandidate | Evolution | Evolution derived-semantic standing | Validation / Governance |
+| GovernanceDecision | Governance | governance authority | semantic owner / activation |
+| CanonicalVersion | corresponding semantic owner | governance-authorized canonical commit | all downstream runtime |
+| ActivationRecord | governed activation authority | activation authorization | Version / Current Resolution |
+
+完整对象级责任见 Appendix C。
+
+### 3.6 Integrated Design 与 Focused Design 的责任分层
+
+总体 System Design 与六个 Focused Design 使用同一组 Architecture Invariant，但承担不同解释责任。
+
+总体层回答：
+
+- 系统由哪些 semantic ownership 与 runtime capability 构成；
+- 一条完整 MVCL 如何跨 Event、AI、State、Decision、Evaluation、Version 与 Evolution 闭合；
+- 跨专项的 Source of Truth、Current、Authority、Data Authority、Version、Commit、Failure 与 Audit 如何组合；
+- 一个专项的输出进入另一个专项时，哪些 standing 与 authority 必须保持不变。
+
+Focused 层回答：
+
+- 该机制内部对象的 identity、lifecycle、state transition 与 failure path；
+- 该机制如何具体执行 currentness、consistency、version、replay 与 authority contract；
+- 哪些实现能力可以 staged，哪些语义不能 staged；
+- 与相邻专项的 exact interface / handoff。
+
+因此：
+
+\[
+FocusedDetail
+
+\neq
+IndependentArchitecture
+\]
+
+以及：
+
+\[
+SharedSystemInvariant
+>
+LocalImplementationConvenience
+\]
+
+六个 Focused Design 当前均为 `SEPARATE / PRE-VALIDATION` 文档封装；它们已经达到 Focused Design Closure Candidate，但仍需通过 Consolidated Architecture Spike 与后续 Evidence Review 才能升级为冻结的 `v1.0`。
+
+---
+
+## 4. 系统状态、正式性与 Current Model
+
+### 4.1 Formal Standing 与 State Classification
+
+DeerMind 不把所有持久化对象统称为“状态”。系统首先区分一个对象对系统正式意味着什么，再区分它如何保存和解析。当前形成五类主要 standing：
+
+**Factual State** 记录授权来源对 occurrence 的正式 attestation，例如 learner work submission、external input、ActionOccurrence 和 correction。`EventTruth != WorldTruth`，但 Event 一旦合法 Commit，就成为 DeerMind 正式历史中“某授权来源曾声明该 occurrence”的事实记录。
+
+**Canonical Semantic State** 定义长期规范语义，例如 Target、Task、Solution、Knowledge、Claim、Evidence interpretation semantics、Observation ontology、Policy semantics、Reasoning Protocol。Canonical Version 与 Active Version 分离；被 Commit 的版本可以存在但尚未或不再对某 scope 生效。
+
+**Derived Formal Semantic State** 包括 Observation、Evidence、Learner Belief、PolicyOutcome、Plan、SystemIssue、Hypothesis、ValidationEvidence 等。它们由事实和 canonical semantics 派生，但一旦通过 Validation / Commit 取得 formal standing，就不是 disposable cache。
+
+**Runtime Projection** 包括 InteractionState、TargetAssessment、current TargetBinding projection、AssistanceContext、Current View 等。它们可以 materialize，但没有独立于上游 formal sources 的 truth。Materialization 只改变性能，不改变 authority。
+
+**Execution / Workflow State** 包括 ReasoningExecution、Tool execution state、Action execution state、WorkflowCheckpoint、recompute job state。它们可以是重要的 durable operational record，但不会因为被持久化就升级为 epistemic state。
+
+因此必须保持：
+
+\[
+StateClass
+\neq
+SemanticOwner
+\neq
+PersistenceClass
+\neq
+HistoryClass
+\]
+
+### 4.2 Source of Truth Model
+
+Source of Truth 不是数据库，也不是某个服务。它表示：**对于某类系统命题，哪组正式记录拥有 authoritative standing。**
+
+现实发生了什么，以 Factual History 为 authority；某个 canonical semantics 的正式版本，以 Canonical Registry 为 authority；某 scope 当前解析到哪个版本，由 Canonical Registry + Activation Records + lifecycle / compatibility resolution 决定；DeerMind 当前正式认为 learner 怎样，以 Evaluation Commit 的 Learner Belief revision 加 Current Resolution 为 authority；某次 Decision 当时决定了什么，以 committed PolicyOutcome / Decision record 为 authority；某 Action 是否发生，以 ActionOccurrence 为 authority；某 canonical change 是否被批准，以 GovernanceDecision 为 authorization authority；某版本是否已生效，以 ActivationRecord 与 active resolution 为 authority。
+
+这种模型要求：
+
+\[
+AuthoritativeFor(X)
+\neq
+GloballyAuthoritative
+\]
+
+一个对象可以对“当时执行发生了什么”具有 authority，却不对“该语义判断是否正确”具有 authority。例如 ReasoningExecutionRecord 可以权威证明模型当时看到了什么、返回了什么 Candidate，但不证明 Candidate 正确。
+
+### 4.3 Identity、Version 与 Revision
+
+DeerMind 至少区分三类 identity：semantic identity 表示“这是同一个什么东西”；canonical version 表示一个正式规范对象的哪个语义版本；derived revision 表示同一正式派生判断在新事实、纠正或重新解释下的哪个 revision。Event、ReasoningExecution、ActionIntent 等 occurrence / execution object 还拥有独立 execution identity。
+
+一般而言：
+
+```text
+Canonical semantic object → identity + version
+Derived formal object     → identity + revision
+Occurrence / execution    → occurrence / execution identity
+```
+
+但新 reality opportunity 不是旧 Evidence 的新 revision。一次新的独立 Task opportunity 通常产生新的 Evidence identity；只有 interpretation correction、semantic reinterpretation 或 grounding correction 才可能形成 revision relation。
+
+所有已 Commit 的 formal revision 都保持 immutable。更新语义上意味着 new revision、new version、correction 或 supersession，而不是静默 `UPDATE value`。同时：
+
+\[
+Immutable
+\neq
+IndefiniteRetention
+\]
+
+历史 standing 可以保留，而原始 payload 的保留周期由 Data Authority / Retention contract 另行决定。
+
+### 4.4 Derived State 与 Runtime Projection
+
+Derived Formal State 已经取得 domain standing，Projection 则只是为某 purpose 组织 current inputs 的运行视图。`TargetAssessment = Assess(TargetDefinition, LearnerBeliefs)` 可以 on-demand 计算，也可以 materialize；无论哪种方式，它都不是独立 learner truth。InteractionState 可以缓存当前 Event / Observation / time / environment projection，但 cache 丢失只能影响 availability，不能改变 system truth。
+
+因此：
+
+\[
+Materialization
+\neq
+FormalStanding
+\]
+
+以及：
+
+\[
+Projection
+\neq
+SourceOfTruth
+\]
+
+DecisionContext 与 Reasoning Context 需要进一步区分 current projection 与 historical snapshot。一个用于正式 Decision 的 DecisionContext snapshot 必须保存 exact refs，使系统可以解释当时使用了什么；但该 snapshot 不能在未来被当作新的 current SoT。
+
+### 4.5 Dependency 与 Invalidation
+
+重要 Derived Formal State 必须在 Commit 时记录足够精确的 dependency，使系统可以判断 current validity、追溯 provenance 并执行 typed invalidation。Dependency 至少区分：
+
+- `PINNED`：历史结果永久记录当时使用的 exact reference，例如某 Decision 当时使用 `Belief@r3`；
+- `CURRENT`：取得新的 current standing 时要求 upstream 仍满足当前有效性，例如 current TargetAssessment 依赖 current Target 与 current Learner Beliefs。
+
+Invalidation 不等于 Recomputation。上游失效首先改变 downstream 的 current usability；replacement state 可以稍后产生。Target Definition revision 通常使 TargetAssessment / Plan context 重新计算，而不自动否定已有 Learner Belief；Observation correction 可能使 Evidence 与 Belief 需要重新解释；Binding / Authority change 影响 Policy Context、Plan 与 Action admissibility，但不重写历史 Event 或 Target Definition。
+
+这要求 invalidation 是 typed relation，而不是统一 `valid=false` 后“全部重算”。
+
+### 4.6 Current Resolution
+
+DeerMind 明确拒绝：
+
+\[
+Current = Latest
+\]
+
+Latest revision 可能已经 stale、invalid、retired、unauthorized、data-authority denied 或 semantic-version incompatible。Current 是 purpose、scope、time 和 authority 相关的解析结果：
+
+```text
+Resolve(identity, purpose, scope)
+→ Resolve eligible canonical version
+→ Check lifecycle eligibility
+→ Check semantic validity
+→ Check authority eligibility
+→ Check data authority eligibility
+→ Bind exact dependencies
+→ Check dependency coherence
+→ Check version compatibility
+→ Check operational security eligibility
+→ Return purpose-specific Current View
+```
+
+因此不存在一个可以覆盖所有用途的全局 `is_current=true`。同一对象可以对 Historical Audit 合法，却不能用于新的 Policy decision；也可以 epistemically valid，但因为 Data Authority 被撤销而不能进入当前 Context。
+
+系统级 current usability 定义为：
+
+\[
+CurrentUsability
+=
+SemanticValidity
+\land LifecycleEligibility
+\land VersionCompatibility
+\land DependencyCoherence
+\land AuthorityEligibility
+\land DataUseEligibility
+\land SecurityEligibility
+\]
+
+### 4.7 Consistency 与 Concurrency
+
+同一会话的常规处理按完整轮次严格串行，覆盖该轮所需的理解、决策、提交与行动结果处理；后续普通输入排队，不提前进入当前 Context，也不自动中断当前轮次。异常与用户主动中断属于独立控制路径。该安排不等于锁住整个 learner 或全系统：跨会话共享状态和外部权限 / 版本等变化仍按以下一致性合同处理，详细会话边界见 Interaction & Decision Runtime §5.1。
+
+DeerMind 不要求全局强一致，而要求 **正式 effect 前的一致性**：
+
+\[
+Synchronous\ Validity\ Safety
++
+Boundary\ Snapshot\ Coherence
++
+Optimistic\ Formal\ Commit
++
+Asynchronous\ Recovery
+\]
+
+每个 Observation interpretation、Evidence interpretation、Belief inference、Decision Cycle、Validation Run、Canonical Activation 都形成自己的 semantic consistency boundary。Boundary 内使用 immutable exact-input snapshot；Reasoning 完成后、正式 Commit 前再重验 critical current dependencies、expected head、authority、data authority、version 与 lifecycle。
+
+并发写入采用 optimistic expected-head semantics，而不是 Last-Write-Wins。若两个 Belief recomputation 都以 `B@r4` 为 head，一个先 Commit 后，另一个得到 `CommitConflict`，不能只把 parent metadata 改成新 head 后继续提交；因为 reasoning 并没有看到新的 Evidence basis。`CandidateStale` 与 `CommitConflict` 也必须分离：前者表示 Candidate 所依赖的世界已经变化，后者表示目标 object head 已被另一 writer 改变。
+
+Event 层同样不假设全局总序：
+
+\[
+RecordOrder
+\neq
+OccurrenceOrder
+\neq
+ProducerOrder
+\neq
+CausalOrder
+\]
+
+Late Event 通过 append + reevaluation 处理，不重写 Factual History。
+
+### 4.8 Failure 与 Non-resolution Semantics
+
+DeerMind 不把所有 non-success 压成 `error`。至少需要保持以下语义域：
+
+| 类别 | 典型结果 | 含义 |
+|---|---|---|
+| Epistemic non-resolution | UNKNOWN / Conflict / NotIdentifiable / NonInformative | 认识程序成功执行，但系统没有足够依据形成确定结论 |
+| Reasoning failure | ModelFailure / ToolFailure / ProtocolFailure / ContextAssemblyFailure | cognition 没有成功完成 |
+| Consistency failure | CandidateStale / CommitConflict / DependencyInvalid / VersionIncompatible / NoCurrentValidState | formal effect 的一致性条件不满足 |
+| Authority failure | Unauthorized / DataAuthorityDenied / AuthorityStale | 当前没有合法 effect 权限 |
+| Execution result | NotOccurred / Indeterminate | Action 是否真实发生无法被伪造为成功或失败 |
+| Lifecycle / availability | Expired / Retired / Unavailable | 当前不能使用，但并不等于历史错误 |
+
+`UNKNOWN` 不是运行失败，`Conflict` 不是异常，`ModelFailure` 也不能伪装成 epistemic UNKNOWN。Policy 的 `NoIntervention` / `Defer` 是明确 decision outcome，不得作为 degraded mode 或 model failure 的默认替代。
+
+Degraded Mode 的合法作用是减少 capability，而不是制造语义替代：
+
+\[
+DegradedMode
+\rightarrow
+CapabilityReduction
+\]
+
+而不是：
+
+\[
+DegradedMode
+\rightarrow
+SemanticSubstitution
+\]
+
+---
+
+## 5. 核心运行闭环与动态行为
+
+### 5.1 Minimum Viable Closed Loop
+
+DeerMind 的最小系统闭环不是“收到消息 → LLM → 回复”，而是：
+
+```text
+Learner / External Reality
+→ Event
+→ Context Assembly
+→ Observation Reasoning
+→ ObservationCandidate
+→ Validation / Commit
+→ Observation
+→ Interaction State / Decision Context
+→ Policy Reasoning
+→ ActionCandidate / NoIntervention / Defer
+→ Admissibility / ActionIntent
+→ ActionOccurrence
+→ New Event
+→ Evidence Reasoning
+→ Evidence
+→ Inference
+→ Learner Belief
+→ Future Decision Context
+```
+
+这条链不是一条同步函数调用栈。每个 crossing 都有自己的 owner、version、authority、dependency 和 formal standing；某些阶段异步执行，某些 failure 合法终止，某些 state change 只触发重新判断而不自动触发 Action。
+
+### 5.2 Reality Admission 与 Observation Formation
+
+现实进入 DeerMind 时，系统首先记录“什么被授权来源声明为发生”，而不是直接解释 learner。Factual Admission 检查 event type、producer、factual authority、occurrence identity、subject、time、payload / artifact refs、correlation / causal refs 等信息，然后形成 immutable factual record。
+
+例如 `LearnerWorkSubmitted` 只证明 work 被提交；它不证明 learner 理解了什么。`ActionOccurrence` 只证明某 Action 穿过我们定义的 effect boundary；informational Action 的当前最小边界可以是 client-confirmed render，但 `Rendered != Perceived`，更不等于 learner 使用了该信息。
+
+Event 之后，Interaction 通过 Observation Reasoning 把事实解释为受控的交互语义。Context Assembly 的顺序必须是：
+
+```text
+Purpose
+→ Data Authority Admissibility
+→ Epistemic Admissibility
+→ Validity / Freshness
+→ Relevance
+→ Minimum Sufficient Context
+```
+
+Observation reasoning 通常读取 Event、Artifact、Task / Solution semantics 和 Observation ontology；既有 Learner Belief 默认不应进入以免 prior belief 扭曲 observation。AI 输出的是 `ObservationCandidate`，可以明确 mapped、ambiguous、unmapped、insufficient context 或 grounding failure。Candidate 只有在 structure、grounding、semantic contract、context validity、owner、authority 和 dependency 都满足时才能 Commit 为 Observation。
+
+### 5.3 Current Context Resolution
+
+Interaction 不能从某个 Observation 直接得到 Action。系统必须先形成 purpose-bound `DecisionContext`。DecisionContext 可以引用 current Observation、Learner Beliefs、Target、TargetAssessment、TargetBinding projection、GoalIntent、ExternalObligation、AuthorityDirective、Runtime Learner Condition、AssistanceContext、Plan、Action semantics、tool availability、time / environment 等，但只纳入当前 purpose 所需的最小充分信息。
+
+DecisionContext 是 exact-input snapshot，不是新的 Source of Truth。形成时必须通过 Current Resolution，并冻结 exact refs 与 Version Context；Policy Candidate 返回后，Commit 还要再次检查 critical dependencies，避免 reasoning 期间的并发变化使旧判断取得新 standing。
+
+`TargetAssessment` 在这里是一个重要 derived view：
+
+\[
+TargetAssessment
+=
+Assess(TargetDefinition, LearnerBeliefs)
+\]
+
+它可以得到 MeetsRequirement、BelowRequirement、InsufficientEvidence、Conflict 等结果，但 `BelowRequirement` 不能直接转换成 `teach`。Target Gap 只是一种 state difference，是否值得介入仍属于 Interaction Policy。
+
+### 5.4 Interaction Decision 与 Action Execution
+
+Policy 在合法 Action Envelope 内进行真实 judgment。Deterministic system 首先确定哪些 action type、tool、scope、parameter 当前可被允许；AI 或其他 policy mechanism 再在这些合法候选中判断什么值得做、什么是 minimum sufficient intervention，以及什么时候 NoIntervention 更合适。
+
+行动范围中的帮助限制应根据当前活动的目的、Task semantics 与适用的 Context Authority 解析，不能把 Target 的最终独立能力要求直接当作学习过程的支架禁令。当前活动目的与约束沿用 InteractionState / DecisionContext 表达并保留来源；允许自主切换时，学习者明确请求讲解可使独立诊断结束并转入教学，系统记录转换并以新上下文重新决策。请求本身不等于帮助已经暴露，也不直接证明能力不足；实际帮助及此前表现的证据价值由 Evaluation 解释。完整运行合同见 Interaction & Decision Runtime §3.5、§4.10。
+
+因此：
+
+\[
+Admissible
+\neq
+WorthDoing
+\]
+
+Policy 的正式 outcome 只有：
+
+```text
+Execute(ActionCandidate)
+NoIntervention
+Defer
+```
+
+`NoIntervention` 是积极 decision，不能以“系统没说话”代替；`Defer` 表示当前不执行并声明未来 reevaluation condition，不保存一个隐形 suspended command。新的现实变化发生后，应进入新的 Decision Cycle。
+
+Execute 路径继续经过：
+
+```text
+ActionCandidate
+→ deterministic post-reasoning admissibility
+→ ActionIntent
+→ Executor
+→ ActionOccurrence | NotOccurred | Indeterminate
+```
+
+ActionIntent 包含 exact action semantics、parameters、authority basis、decision ref、expiry、preconditions、idempotency 等。Executor 只执行 exact Intent，并在 effect 前重验当前 authority、security、data authority 与 execution preconditions；它不能重新做 pedagogy judgment，也不能 silent substitute 另一个 Action。
+
+只有真实 effect crossing 后，系统才产生 ActionOccurrence，并让这次 effect 重新进入 Factual History。`SelectedAction`、`ActionIntent` 和 `ActionOccurrence` 永远不是同一个对象。
+
+### 5.5 Evidence Formation 与 Learner Belief Revision
+
+Evaluation 不把 Observation 直接映射成“正面/负面证据”。Evidence 是 Claim-relative：
+
+\[
+Evidence
+=
+Interpret(
+Observation,
+Claim,
+EpistemicContext,
+LearningSemantics
+)
+\]
+
+同一个 Observation 对不同 Claim 可以 Supports、Contradicts、Discriminates 或 NonInformative。Task Outcome、Task Performance、Capability 不可互换；TaskSuccess 不自动证明 Task Proficiency，更不能证明更一般的 KC mastery。
+
+Assistance 是 Evidence interpretation 的关键上下文。系统必须沿真实发生链记录：
+
+```text
+ActionIntent
+→ ActionOccurrence
+→ Actual Disclosure / Payload
+→ Exposure Lineage
+→ Learner Response
+→ Observation
+→ Claim-relative Evidence
+```
+
+`SelectedAssistance != OccurredAssistance`，`OccurredAssistance != LearnerUsedAssistance`，`AssistanceOccurred != EvidenceContaminated`。同一 Hint 可以污染 Strategy Selection Claim，却仍然允许 Arithmetic Execution Claim 获得信息价值；因此 DeerMind 不维护一个 global `assisted=true` 来代替 claim-relative contamination。
+
+Evidence Commit 后，Inference 读取 current compatible Evidence set，保留 independence、correlation、freshness、conflict、assistance、delayed / transfer condition 等语义，形成 BeliefCandidate。只有 Evaluation 可以 Commit Learner Belief。新的 Belief revision 会影响未来 TargetAssessment、DecisionContext 和 Plan currentness，但不会自动创造 intervention mandate。
+
+### 5.6 Continuation、Correction 与 Re-decision
+
+State change 只意味着当前世界可能值得重新判断：
+
+\[
+StateChange
+\neq
+DecisionMandate
+\]
+
+新 Event、Belief revision、Binding change、Authority change、Plan invalidation、deadline、safety signal 或 tool availability change 都可能触发新的 Decision opportunity，但 `DecisionTrigger != InterventionMandate`。是否行动仍然需要新的 current context 和 Policy judgment。
+
+Observation correction 是系统一致性的标准路径。假设：
+
+```text
+Observation O1
+→ Evidence E1
+→ Belief B1
+```
+
+后来 Event / grounding correction 使 O1 不再 current。系统必须同步停止把依赖 O1 的 E1 / B1 用于要求 current-valid 的 effect，并使依赖这些对象的 in-flight Candidate 在 Commit revalidation 中失败；随后异步产生 O2 / E2 / B2。旧 O1 / E1 / B1 仍留在历史，用于解释过去为什么做过某些 decision。
+
+类似地，Target Definition revision 通常使 TargetAssessment 与 Plan context 重新计算，但不自动修改 Learner Belief；TargetBinding / Authority 终止影响 current policy context 和 Action execution eligibility，但不重写 TargetDefinition、LearnerBelief 或历史 Event。
+
+### 5.7 Learner Runtime Loop 与 System Evolution Loop
+
+DeerMind 同时维护两个不同闭环。
+
+Learner Runtime Loop：
+
+```text
+Reality
+→ Factual State
+→ Observation
+→ Decision
+→ Action / NoIntervention
+→ New Reality
+→ Evidence
+→ Learner Belief
+→ Future Decision
+```
+
+System Evolution Loop：
+
+```text
+Runtime History / Signals
+→ System Assessment
+→ SystemIssue
+→ Competing Hypotheses
+→ Validation
+→ RevisionCandidate
+→ ChangeProposal
+→ GovernanceDecision
+→ CanonicalCommit
+→ Activation
+→ Post-Deployment Validation
+```
+
+这两个闭环通过 formal records、Version Context 和 Validation Evidence 连接，但不能合并。learner-level anomaly 不能直接修改 canonical semantics；system-level issue 也不能直接写入 learner Belief。Evolution 可以提出改变，Governance 授权改变，未来 runtime 在新的 active semantics 下继续运行。
+
+### 5.8 Canonical 非 Happy Path
+
+系统必须把以下情况作为一等路径，而不是实现异常：
+
+- Observation 无法解释：`UnmappedPhenomenon`、`InsufficientContext`、`GroundingFailure` 可以合法终止；
+- reasoning 期间 Context 过期：Candidate 在 Commit-time revalidation 得到 `CandidateStale`；
+- 没有 current-valid Belief：返回 `NoCurrentValidState`，而不是无声 fallback；
+- Policy model failure：得到 runtime failure，不伪装成 `NoIntervention`；
+- Action execution indeterminate：保持 `Indeterminate` 并进入 reconciliation；
+- Exposure lineage 不完整：Evidence 可以 UNKNOWN / NonInformative，不能默认独立；
+- Evidence 冲突：Belief 保留 conflict / uncertainty，不通过平均值隐藏矛盾；
+- Authority / Data Authority 被撤销：semantic standing 可以仍然存在，但 current use / effect 被同步阻止；
+- Semantic Version 变化：old Evidence 需要 compatibility resolution，必要时 reinterpret / reinfer，而不是自动继承；
+- Security escalation attempt：形成 SecuritySignal，但不能因此产生 GovernanceDecision、CanonicalCommit 或 Activation。
+
+---
+
+## 6. 横切运行契约
+
+### 6.1 Boundary Execution Contract
+
+所有准备产生正式 semantic standing 或现实 effect 的运行边界，都必须有明确 `Boundary Execution Contract`。Contract 不是新的 Core Model，也不是中央服务；它定义一个 boundary 在设计上必须满足的条件：
+
+\[
+BoundaryContract
+=
+Purpose
++ SemanticOwner
++ CommitClass
++ VersionRequirements
++ DependencyRequirements
++ AuthorityRequirements
++ DataAuthorityRequirements
++ LifecycleRequirements
++ SecurityRequirements
++ AuditRequirements
+\]
+
+运行时系统基于当前正式状态把它解析为 boundary-specific execution context。统一 contract 只保证语义要求一致，不要求所有条件由同一个 God Object 或同一个服务计算。
+
+### 6.2 Semantic Input、Control 与 Provenance 三平面
+
+一个 runtime boundary 的信息必须保持三类平面分离。
+
+**Semantic Input Plane** 是 reasoning 可以看到的语义信息，例如 Event、Artifact、Task、Claim、Learner Belief、Action semantics。模型只能看到 purpose-bound、authority-filtered、minimum sufficient context。
+
+**Control Plane** 决定能不能执行和 Commit，包括 Purpose、VersionContext、DependencySet、Authority、Data Authority、Lifecycle、Security、Expected Head、Commit Preconditions 等。模型不需要、也不应该把 raw credential 或 backend authorization state 当成自然语言上下文。
+
+**Provenance / Audit Plane** 记录当时实际使用了什么：ContextManifest、Version refs、Dependency refs、Authority basis、ReasoningExecutionRecord、validation result、commit outcome、audit refs。历史记录证明过去发生过什么，但不能成为今天再次执行的 credential。
+
+因此：
+
+\[
+ModelVisibleContext
+\neq
+RuntimeControlState
+\]
+
+以及：
+
+\[
+HistoricalAuthorizationEvidence
+\neq
+ReusableAuthorization
+\]
+
+### 6.3 Version Context 与 Compatibility
+
+DeerMind 不采用一个全局 `SystemSemanticVersion`。每个 consistency boundary 固定自己的 coherent RuntimeVersionContext：
+
+```text
+RuntimeVersionContext
+├── SemanticVersionBindings
+│   ├── Target / Task / Solution / Knowledge
+│   ├── Claim / Evidence / Inference semantics
+│   ├── Observation / Policy / Action semantics
+│   └── ReasoningProtocol
+├── ExecutionVersionBindings
+│   ├── Model / provider revision
+│   ├── ContextAssemblyVersion
+│   ├── ToolVersion
+│   └── runtime adapter version
+├── ComponentConsistencyBoundary
+└── Compatibility / Resolution Provenance
+```
+
+Semantic Version 决定“结果在什么意义体系下成立”；Execution Version 主要解释“这次计算如何执行”。默认情况下 ModelVersion、adapter version 等进入 provenance，而不是 current validity dependency，除非 Evolution / Validation 证明其变化会改变 formal semantic meaning。
+
+`ProtocolVersion != ModelVersion != PromptVersion`。Reasoning Protocol 是一等认知程序，可能直接参与 semantic compatibility；Prompt 是其实现细节之一。
+
+Boundary 内 semantic versions 与 exact refs 被 pinned，但 current authority、data authority、security 与 explicit revocation 不能因为 snapshot 而永久 pinned。Rollback 只是新的 activation decision，影响未来 resolution，不修改历史 standing。
+
+### 6.4 Authority 与 Data Authority
+
+Authority 需要区分 Source、Resolution 与 Enforcement。Product / Context Constitution、GovernanceDecision、scoped grant 等产生 authority；Authority Resolution 回答特定 principal / purpose / scope / operation 当前能做什么；Context Admission、Candidate Commit、Tool backend、Executor、Canonical Activation 等位置实际 enforcement。
+
+`AuthorityEnvelope` 只是 AI reasoning 的权限上限，不是 credential。Tool call 的真实 effect 仍要经过 Protocol ToolPolicy、Execution Authority、Data Authority、resource / parameter validation 和 backend authorization。
+
+Semantic Authority 与 Data Authority 正交。Evaluation 是 Learner Belief 的 semantic owner，不意味着它可以读取任意 learner data；任何 inference 仍需要针对 purpose、subject、operation、destination 的 data use authorization。Data Authority 必须在 retrieval relevance 之前生效：
+
+```text
+Purpose
+→ Data Authority Admissibility
+→ Epistemic Admissibility
+→ Validity / Freshness
+→ Relevance
+→ Minimum Sufficient Context
+```
+
+`MayRead(X) not=> MayInfer(Y)`，`MayPersist not=> MayUse`，`MayRetain not=> MayDisclose`。Historical DataAuthorityBinding 只是当时的 provenance；当前 use 必须重新 resolution。
+
+**Product Context / Context Constitution Integration Contract。** Core System Design 不定义“父母天然拥有何种权限”“儿童数据具体保留多久”或“学校可以看到什么”；这些属于后续具体 Product Context 的实例化责任。Core 必须冻结的是：任何场景特定约束都能够作为正式 authority / data-use source 进入统一 runtime enforcement，而不改写 Core semantic ownership。
+
+逻辑接入链为：
+
+```text
+Core Constitution
++ Context Constitution
++ Context-Specific Authority / Consent / Retention / Disclosure Rules
+        ↓
+Authority Source / Data Authority Source
+        ↓
+Purpose / Scope / Subject / Operation / Destination Resolution
+        ↓
+Context Assembly
+Commit / Tool Backend
+Action Executor
+Replay / Reinterpretation
+Disclosure
+Retention / Disposition
+        ↓
+Audit
+```
+
+必须保持：
+
+\[
+ProductContextConstraint
+
+\neq
+CoreSemanticOwnership
+\]
+
+具体小学 Product Context 可以增加 guardian authority、consent、child-data restriction、parent visibility 与 stricter retention，但它只能在 Core Constitution 允许的空间内定义 scope / duration / conditions，不能把场景约束提升成通用学习架构前提。
+
+### 6.5 Security / Trust Boundary
+
+DeerMind 采用：
+
+\[
+Untrusted\ Cognition
++
+Deterministic\ Authority
++
+Least\ Privilege
++
+Backend\ Enforcement
+\]
+
+Model output、learner input、retrieved document、ToolResult、AI working state 都属于不可信内容；它们可以提供信息，但不能扩大真实 privilege。AI Runtime 不持有 ambient privileged principal，Tool access 通过 per-execution delegated scope 限制，并在 backend 再做 subject / resource / parameter 级授权。
+
+Action Tool 不能绕过 ActionIntent，Governance Tool 属于更高 privilege domain。SecuritySignal 必须追溯到 source occurrence，不能变成第二套 Factual History。Containment 只能行使预先授予的减少 / 阻断 authority，不能因为检测到风险就自动获得任意系统权限。
+
+### 6.6 Privacy、Retention 与 Lifecycle
+
+Data existence 与 data authority 分离；Retention 与 Use Authority 分离。Authority revocation 必须同步阻止未来使用，而物理删除、backup disposition、derived artifact cleanup 可以异步执行：
+
+\[
+Synchronous\ Use\ Revocation
++
+Asynchronous\ Physical\ Disposition
+\]
+
+`Deletion != SemanticInvalidation`。合法删除 raw grounding 后，某 Learner Belief 可能仍然 epistemically current，但其 replay capability 退化为 PARTIAL / UNAVAILABLE。系统必须同时保存 current validity、grounding availability、replay capability 三类不同判断。
+
+Lifecycle 不使用一个万能状态枚举。Canonical Version、Learner Belief、TargetBinding、Plan、ActionIntent、Authority Grant、Workflow 各自拥有不同 lifecycle。`Expired != Invalid`，`Retired != Deleted`，`Superseded != Wrong`，`Unavailable != Unauthorized`。Purpose-specific resolver 决定某对象对某种 use 是否仍然 eligible。
+
+### 6.7 Audit、Observability 与 Historical Reconstruction
+
+DeerMind 保持多类历史相互分离：Factual History、Reasoning Execution History、Semantic State History、Formal Commit / Effect History、Governance / Activation History、Data Access / Disposition Audit、Security Signal History、Operational Telemetry。
+
+必须保持：
+
+\[
+Observability 
+\neq SourceOfTruth
+\]
+
+\[
+Metric 
+\neq Issue
+\qquad
+Alert 
+\neq Authority
+\qquad
+Trace 
+\neq Causality
+\]
+
+Metric / Dashboard / Alert / Trace 是 derived operational views。它们可以帮助 diagnosis、形成 SystemSignal、触发 review 或支持 Validation，但不能直接创建 Learner Belief、SystemIssue、PolicyOutcome、GovernanceDecision 或 Canonical Change。
+
+**Required Audit 与 Operational Telemetry 分离。** Required Audit 可以作为既有 authority grant 的 execution condition。例如 Governance activation、privileged data access、canonical change 或高权限 Tool execution 可以要求 durable audit available；audit unavailable 时 effect 被拒绝。但 Audit Runtime 不创造 authority。普通 Operational Telemetry 即使丢失，也不能反向解释成“历史没有发生”。
+
+#### Observability Minimum Contract
+
+System Design 不冻结 Prometheus、OpenTelemetry、SIEM 或具体 dashboard 产品，但以下最低语义结果必须可由正式 histories 与 runtime outcome 持续区分。
+
+| 可观测域 | 最低必须可区分的结果 |
+|---|---|
+| **Reasoning Execution** | request / execution、success、ModelFailure、ToolFailure、ContextUnavailable、NoCandidate / NonResolved、retry、latency |
+| **Reasoning Instability** | comparable fixture 的 candidate disagreement、validation rejection、UNKNOWN / Ambiguous / Unmapped rate、retry-to-success pattern、与 Protocol / Model version 相关的显著 shift |
+| **Candidate / Validation / Commit** | CandidateProduced、ValidationFailed、Unauthorized、CandidateStale、CommitConflict、Committed、NoCommitRequired |
+| **State / Dependency / Currentness** | NoCurrentValidState、known-invalid rejection、invalidation fan-out、recompute backlog / latency、dependency resolution failure、VersionIncompatible |
+| **Interaction / Action** | Execute、NoIntervention、Defer、ActionIntent committed、Occurred、NotOccurred、Indeterminate、PreconditionInvalidated、Unauthorized |
+| **Validation / Evolution** | ValidationRun success / runtime failure、Supported / Contradicted / Inconclusive / NotIdentifiable、SystemSignal、post-deployment regression、rollback trigger |
+| **Authority / Security** | Unauthorized attempt、AuthorityStale、ToolUnauthorized、DataAuthorityDenied、prompt-injection / privilege-escalation rejection、confused-deputy rejection、ActivationBlocked、SecuritySignal source |
+| **Data Use / Privacy** | data access by purpose、external model disclosure、denied data use、retention / disposition outcome、replay denied by authorization、replay degraded by missing data |
+
+Reasoning instability 只是一个 operational / validation signal，不自动等于 semantic failure；validation failure 也必须区分“结论被证伪”与“Validation runtime 自身失败”。
+
+**Telemetry minimization。** Observability 不能以“方便调试”为理由旁路 Data Restraint。Operational Metric 默认优先记录 typed outcome、ref、count、latency、version / scope metadata，而不是复制 raw learner content、完整 prompt 或 unrestricted artifact。完整 Context / Prompt 是否进入 durable execution history，仍由 Purpose、Data Authority、retention 与 disclosure policy 决定。
+
+Rejected Candidate 不进入 Semantic State，但可以进入 Reasoning Execution History；NoIntervention、Unauthorized、CandidateStale、ModelFailure 必须可以在 audit 中被区分。TraceID 只提供 execution correlation，不代表 semantic identity、causality 或 Source of Truth。
+
+Historical Reconstruction、Reasoning Re-execution、Semantic Reinterpretation、Counterfactual Evaluation 必须分离：
+
+- Historical Reconstruction 尽可能回答“当时实际发生了什么、用了什么”；
+- Reasoning Re-execution 在已知版本环境下重新运行 cognition，但不能假装重现过去不可控模型输出；
+- Semantic Reinterpretation 用新的 semantic version 重新解释保留的事实与 artifact；
+- Counterfactual Evaluation 评估未真实发生的 alternative，不得写入历史事实。
+
+Replay capability 可以是 `FULL / PARTIAL / UNAVAILABLE`，并且：
+
+\[
+ReplayCapability
+
+\neq
+ReplayAuthorization
+\]
+
+### 6.8 Canonical Commit、Activation 与 Rollback
+
+Canonical change 必须保持完整 authority chain：
+
+```text
+RevisionCandidate
+→ ValidationEvidence
+→ ChangeProposal
+→ GovernanceDecision
+→ CanonicalChangeAuthorization
+→ Semantic Owner CanonicalCommit
+→ CommittedCanonicalVersion
+→ Activation Authorization Check
+→ ActivationRecord
+→ Active Resolution
+```
+
+GovernanceDecision 必须绑定 exact proposal、candidate 和 base version，避免 TOCTOU。若 base 已变化，旧 approval 不能自动 apply 到新 head。Canonical Commit 与 Activation 是不同 concurrency domain；一个版本可以被 Commit 但尚未 Active，也可以只对部分 scope Active。
+
+Rollback 是新的未来 activation decision，不是时间旅行。Historical execution 保持 pinned 到当时版本；新的 runtime 在 rollback 后解析到重新激活的版本。
+
+---
+
+## 7. 能力分阶段与预验证状态
+
+### 7.1 Capability Staging 原则
+
+System Design 允许实现 capability 分阶段，但不允许阶段性降低语义不变量。本文档采用四级 staging：
+
+| 级别 | 含义 |
+|---|---|
+| **S0 — Architecture Contract Mandatory** | v0.1 必须完整定义，否则 Phase 4 未闭合 |
+| **S1 — Consolidated Spike Required** | 语义完整且共享 Spike Harness 必须真实运行 |
+| **S2 — Contract Complete / Minimal Simulation** | 语义完整，Spike 中允许 hardcode / mock / in-memory |
+| **S3 — Explicitly Deferred** | 明确延后到 Architecture Validation Build 或更晚，但延后不得破坏 Invariant |
+
+首个 Consolidated Spike 共享 Harness 可以是单进程、in-memory、硬编码 fixture、一个真实 LLM adapter 与 mock client / executor。它不是 MVP，也不是生产 reference system；它只负责验证 architecture assumptions。
+
+### 7.2 Capability Matrix
+
+| Capability | Contract | Spike | 允许延后 |
+|---|---|---|---|
+| Factual Runtime / Event History | S0 | S1 | production store、partition、cross-region |
+| AI Reasoning Runtime | S0 | S1 | multi-model routing、Agent framework、production prompt platform |
+| Candidate Validation / Commit | S0 | S1 | distributed transaction implementation |
+| Dependency / Current Resolution | S0 | S1 | persistent graph、optimized fan-out scheduler |
+| Interaction Decision / Action Execution | S0 | S1 | production executor fleet、完整 UI |
+| Evaluation / Belief | S0 | S1（窄范围） | large-scale probabilistic learner model |
+| Assistance Exposure Lineage | S0 | S1 | full analytics / longitudinal aggregation |
+| Version / Replay | S0 | S1 | large-scale migration / backfill orchestration |
+| Authority / Security | S0 | S1 | production IAM / secret infrastructure specifics |
+| Data Authority / Privacy | S0 | S2 | deletion workers、consent portal、full legal workflow |
+| Audit / Observability | S0 | S2 | Prometheus / tracing / SIEM products |
+| Lifecycle / Recovery | S0 | S2 | production DR / HA / multi-region recovery |
+| Evolution / Governance | S0 | S2 | automated issue discovery、governance UI、shadow rollout platform |
+| Canonical Learning Semantics | S0 | S2 | complete curriculum / knowledge corpus |
+
+Spike Harness 必须是真正同一个小系统，而不是 A–F 六个彼此不一致的 demo。至少共享 FactualHistory、ContextAssembly、ReasoningRuntime、CandidateValidation / Commit、SemanticState、CurrentResolver、InteractionRuntime、ActionIntent / Executor、Evidence / Belief、Version / Authority / Audit spine。
+
+### 7.3 核心 System-Level Invariants
+
+正文保留以下最关键不变量，完整 Registry 见 Appendix A：
+
+\[
+Event
+\neq
+Observation
+\neq
+Evidence
+\neq
+Belief
+\neq
+Decision
+\]
+
+\[
+SourceOfTruth
+\neq
+Database
+\]
+
+\[
+Current
+\neq
+Latest
+\]
+
+\[
+Content
+\neq
+Instruction
+\neq
+Authority
+\]
+
+\[
+ActionCandidate
+\neq
+ActionIntent
+\neq
+ActionOccurrence
+\]
+
+\[
+Evolution\ knows
+\neq
+Governance\ authorizes
+\]
+
+\[
+Approval
+\neq
+CanonicalCommit
+\neq
+Activation
+\]
+
+以及：`NoCurrentValidState` 是合法系统状态；known-invalid state 不得为了 availability 被继续伪装成 current。
+
+### 7.4 Architecture Assumption
+
+Invariant 是必须保持的性质；Assumption 是待证据检验的实现判断。原 AA-A01…AA-F02 命题保留在 Appendix B，不因修订改变原 falsifier。当前逐项结果与新合同的关系见 §7.7。
+
+| Validation Dimension | 已取得的范围结论 |
+| --- | --- |
+| A Semantic Projection | AA-A01 INCONCLUSIVE；AA-A02 DENIED。校验通过足以隔离越界内容的原承诺不再作为已成立依据。 |
+| B Dependency and Invalidation | AA-B01/AA-B02 在既有内存 Harness 与声明机制范围内 SUPPORTED。 |
+| C Version and Replay | AA-C01/AA-C02 在既有版本、回放和保留范围内 SUPPORTED。 |
+| D Assistance Exposure | AA-D01/AA-D02 在实际 mock 披露及脚本 Claim-relative 表达范围内 SUPPORTED，不证明真实 Evaluation 质量。 |
+| E Policy and Decision | AA-E01/AA-E02 INCONCLUSIVE，分别保留质量争议和两条断连路径。 |
+| F Authority Security | AA-F01 在声明后端边界范围内 SUPPORTED；AA-F02 INCONCLUSIVE，五条多结果输出路径未完成。 |
+
+### 7.5 Consolidated Spike Handoff
+
+Phase 5 不再执行六个独立 Spike，而是在同一 Harness 中运行不同 validation scenarios。统一 Architecture Validation Report 必须记录：Architecture Assumption 及其 revision、对应 Invariant、falsifier、prototype scope、fixture / test case、observed evidence、unexpected behavior、失败归因与判定依据、单项结论 `SUPPORTED / DENIED / INCONCLUSIVE`、对 System Design 的影响、ADR / Reopen 判断以及 capability staging 后续处理。
+
+`PARTIALLY_SUPPORTED` 仅用于多个假设或预先声明的独立子范围的汇总描述，必须保留逐项结果，不能稀释已确认的 falsifier。Case 失败须依据预注册合同区分实现缺陷与假设被否定；命中 falsifier 后，其他场景成功或后续修复不能覆盖原结论。收窄 scope 或改变机制应关联新的假设 revision 及验证证据，具体判定遵循 Consolidated Architecture Spike §6。
+
+`Inconclusive` 不能当作 `Supported`。Assumption 被 Denied 也不自动触发 Architecture Reopen；首先判断是否可以在保留冻结 Invariant 的前提下修订 System Design。只有当证据表明某个 Architecture Invariant 本身不可实现、互相冲突、无法表达重要现实，或必须依赖长期违规 workaround 才能运行时，才进入 Architecture Reopen。
+
+### 7.6 v0.2 的历史 Pre-Validation Exit 状态
+
+以下保留 v0.2 在 Spike 前的设计闭合记录，不作为 v0.3 当前验证结论：
+
+```text
+Architecture Semantics                         CLOSED
+Runtime Ownership                              CLOSED
+State / Source of Truth                        CLOSED
+MVCL Integration                               CLOSED
+Consistency / Concurrency                      CLOSED
+Failure Model                                  CLOSED
+Version / Authority / Cross-Cutting            CLOSED
+Focused Design Closure §3.2–§3.7              CLOSED / PRE-VALIDATION
+Cross-Cutting Coverage §3.8                    CLOSED
+Product Context Integration Contract           CLOSED
+Observability Minimum Contract                 CLOSED
+Capability Staging                             CLOSED
+Architecture Assumptions A–F                   UNVALIDATED
+Engineering Validation Evidence                NOT YET
+```
+
+依据 `DeerMind_System_Design_Roadmap_v0.5` 的 Phase 4 Exit Criteria，本版本执行以下检查：
+
+| Phase 4 Exit 条件 | v0.2 判断 |
+|---|---|
+| 总体 `DeerMind_System_Design_v0.x` 覆盖 §3.1 并形成统一 logical architecture | PASS |
+| §3.2–§3.7 六个核心专项达到 Focused Design Closure | PASS |
+| §3.8 横切覆盖闭合，包含 Product Context integration 与 Observability Minimum Contract | PASS |
+| 高风险假设保持显式 `UNVALIDATED` | PASS |
+| Assumption 已映射到 Consolidated Spike A–F | PASS |
+| 总体与 Focused Contract 无已知一级 divergence | PASS |
+| Gate E / F 未被提前关闭 | PASS |
+
+因此：
+
+```text
+Phase 4 Exit Check — PASS
+Phase 5 Entry       — ALLOWED
+Gate E              — OPEN
+Gate F              — OPEN
+```
+
+这个判断是 **Design Closure Gate**，不是 Engineering Validation Gate。Phase 5 的职责仍然是用真实代码与至少一个真实 LLM adapter 对 Architecture Assumption 取得 evidence；若 evidence 否定当前设计，应先修订 v0.x / ADR，而不是把 Phase 4 PASS 当作不可挑战的冻结结论。
+
+---
+
+### 7.7 Spike 证据吸收与待验收合同
+
+AA-A02 原命题已被两次错误 Observation 提交否定。现合同保留所需语义校验及机械提交检查，但不承诺它们能发现任意开放文本的职责越界。后继问题分别考察缺失或无效校验能否绕过提交，以及明确规则、模型和输入范围内的语义质量；两者不是原命题已恢复成立。SI-04 的 owner-specific Validation / Authority / Commit 与 SI-13 的受控 reasoning 保留，语义准入的实际表现仍须 Evidence Review。
+
+Observation 的必要含义按生成前声明的目的固定。完整作答须解释有依据的方法、可见计算和已提交最终答案；未完成作答保留未知及缺失，但存在答案时仍判断答案。学习请求忠实记录来源与限制，不因旧作答存在而强制重做完整作答分析。开放适用性判断由规则与 LLM 完成，不能靠关键词或候选遗漏缩小要求，也不在失败后自动降级 profile。
+
+失败轮次关闭旧候选提交及派发资格，处理在途结果或确认隔离结束后释放队列。后续请求在新轮次按自己的合同读取获准原始事实，不继承失败 Observation 的解释。学习请求不改变活动目的；成功 Control 的实际转换事件被处理后，才按新活动重新组装 Context、形成和校验教学候选。旧活动、失败结果和实际披露历史不改写，换题答对不自动证明掌握。
+
+| 原假设 | 保留的结果 |
+| --- | --- |
+| AA-A01 | INCONCLUSIVE |
+| AA-A02 | DENIED |
+| AA-B01 | SUPPORTED |
+| AA-B02 | SUPPORTED |
+| AA-C01 | SUPPORTED |
+| AA-C02 | SUPPORTED |
+| AA-D01 | SUPPORTED |
+| AA-D02 | SUPPORTED |
+| AA-E01 | INCONCLUSIVE |
+| AA-E02 | INCONCLUSIVE |
+| AA-F01 | SUPPORTED |
+| AA-F02 | INCONCLUSIVE |
+
+A1/E1 的最低质量、X5 完整真实转换路径、E2/F2/X1/X2 缺失路径及生产恢复仍未验收。阶段移交必须说明当前范围不依赖延后能力，不能延后基本 Observation/Policy、权限、依赖和串行约束。原完整覆盖要求与新范围的对应关系见[范围映射](../../src/spike/reports/spike-scope-mapping-20261006.md)；映射不产生新的准入批准。
+
+## 8. 设计边界、下位文档与下一阶段
+
+### 8.1 主 System Design 与专项设计的边界
+
+本文件是 **Integrated System Design / System Map**，负责完整 mental model、跨机制运行闭环和 system-level contract。六个 Focused Design 已不再是“未来可能需要的文档”，而是本修订候选采用的 Focused Design 文档集：
+
+```text
+DeerMind_Runtime_Event_Architecture_v0.1.md
+DeerMind_AI_Reasoning_Runtime_Design_v0.2.md
+DeerMind_State_Dependency_Architecture_v0.1.md
+DeerMind_Interaction_Decision_Runtime_Design_v0.2.md
+DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md
+DeerMind_Evolution_Governance_Runtime_Design_v0.1.md
+```
+
+它们分别深化 Event / Factual Contract、AI Reasoning、State / Dependency、Interaction / Action、Version / Replay 与 Evolution / Governance；本文档不复制其字段、完整状态机、完整 invariant registry 或算法细节。
+
+当前文档封装判断全部为：
+
+```text
+§3.2–§3.7 = SEPARATE / PRE-VALIDATION
+```
+
+这只是文档封装，不创造新的 architecture hierarchy。原 v0.2 及专项 v0.1 构成历史 Spike 输入基线；本 v0.3 及两个专项 v0.2 构成待评审修订集合，任何 Spike 实现都不得只选择其中一份而忽略另一份。
+
+§3.8 继续采用 `MERGED / CROSS-CUTTING`：Privacy、Data Authority、Security、Audit、Observability、Lifecycle / Recovery 不建立一个拥有独立 semantic authority 的第七 Runtime，而通过本文档的统一 contract 和各专项 enforcement point 落地。
+
+### 8.2 ADR Boundary
+
+语义合同已经明确、但仍存在多个合理 engineering enforcement 的问题进入 ADR，而不是继续膨胀主文档。当前重点 ADR Candidate 包括：
+
+- Event / Formal History physical persistence；
+- Derived State materialization strategy；
+- dependency representation / reverse indexing；
+- semantic single-writer enforcement；
+- commit atomicity / optimistic concurrency implementation；
+- RuntimeVersionContext physical representation / compatibility lookup；
+- ContextManifest / ReasoningExecutionRecord provenance retention；
+- invalidation scheduling / recompute orchestration；
+- multi-version activation / rollout implementation。
+
+ADR 必须说明问题、候选方案、trade-off、当前决定、evidence dependency 与 Reopen Condition，而不是只记录技术选型。
+
+### 8.3 当前仍未冻结的 Implementation Decisions
+
+在 Consolidated Spike 取得 evidence 之前，以下选择仍然不得成为 architecture premise：
+
+```text
+Monolith vs Microservices
+Database / Event Store product
+Message Queue
+Programming Language split
+Kubernetes / deployment topology
+LLM Provider / model topology
+Agent Framework
+Dependency Graph storage
+Workflow Engine
+Prompt orchestration framework
+```
+
+后续可以用极薄实现支持 validation，但不能把 prototype implementation 反向提升成 System Design requirement。
+
+### 8.4 Architecture Reopen Conditions
+
+Phase 0 Architecture Baseline 只有在以下证据出现时才应重新打开：
+
+- 某个冻结 Invariant 无法通过任何合理 System Design enforcement 实现；
+- 两个 Architecture Invariant 在真实运行中存在不可消解冲突；
+- 重要现实无法被当前 Event / Semantic / Authority model 表达；
+- 系统只能依赖长期 workaround 才能运行，而 workaround 持续违反上位语义；
+- Consolidated Spike、Architecture Validation Build 或真实用户证据直接否定上位架构关键命题。
+
+普通实现 bug、性能问题、数据库选择、局部 schema 调整、某个 algorithm 失败或某个 Assumption Denied，默认都属于 System Design / ADR / implementation revision，而不是 Architecture Reopen。
+
+### 8.5 下一阶段
+
+v0.2 已完成 Roadmap v0.5 所要求的 Phase 4 Exit Check，因此下一正式阶段是：
+
+```text
+Integrated System Design v0.2
++ Six Focused Design v0.1
++ Cross-Cutting Contract
+        ↓
+Phase 5 — Consolidated Architecture Spike
+        ↓
+Validation Evidence A–F
+        ↓
+Architecture Evidence Review
+        ↓
+Design Revision / ADR / Architecture Reopen if required
+        ↓
+Gate E
+        ↓
+Gate F
+        ↓
+System Design Baseline v1.0
+        ↓
+Architecture Validation Build
+```
+
+Phase 5 必须把当前文档集视为一个统一 contract set，而不是只验证某个局部机制。其目标不是证明产品可用，也不是提前构建 MVP，而是验证当前高风险 Architecture Assumption 在同一个最小 AI-native learning-system 骨架中是否成立。
+
+System Design v1.0 只有在 Spike Evidence 被正式吸收、所有 Denied / Inconclusive Assumption 获得受治理处理、文档结论与 evidence 无已知矛盾、Gate E 与 Gate F 均通过后才能冻结。
+
+---
+
+## Appendix A — System-Level Invariant Registry
+
+| ID | Invariant |
+|---|---|
+| **SI-01 Semantic Ownership** | Space 是 semantic ownership boundary，不等于 service / process；每类正式语义必须有唯一、明确 owner。 |
+| **SI-02 Semantic Separation** | `Event != Observation != Evidence != Belief != Decision`；任何一层不得通过存储便利或 AI 输出直接跨层取得另一层 standing。 |
+| **SI-03 Source of Truth** | `SourceOfTruth != Database`；`SemanticOwner != PersistenceLocation != Resolver != Projection != Cache`。 |
+| **SI-04 Formal Standing** | AI、规则或工具产生的结果只有 Candidate standing；正式语义结果必须经过 owner-specific Validation / Authority / Commit。 |
+| **SI-05 Learner Belief Authority** | 只有 Evaluation 可以 Commit Learner Belief；Interaction、外部 Actor、Metric、AI Memory 均不能旁路写入。 |
+| **SI-06 Governed Evolution** | Evolution 可以认识、验证、提出修改，但不能自授权 structural / canonical / constitutional change；Governance 授权，semantic owner Commit。 |
+| **SI-07 Immutable Formal History** | 已 Commit 的 Event、revision、decision、governance record 不被静默覆盖；变化通过 correction、new revision、supersession 或新 activation 表达。 |
+| **SI-08 Current ≠ Latest** | Current 是 purpose / scope / time 相关解析结果，不得把 latest revision / version 当作 current 的替代定义。 |
+| **SI-09 Explicit Dependency** | 重要 Derived Formal State 必须保留足以判断 validity 和 provenance 的 exact dependency；`PINNED` 与 `CURRENT` dependency 分离。 |
+| **SI-10 Validity Barrier** | 已知 invalid / unauthorized / incompatible 的状态同步停止用于要求 current-valid 的 effect；replacement / recompute 可以异步。 |
+| **SI-11 No-Current Is Legal** | `NoCurrentValidState` 是合法运行状态；禁止通过 fallback 到已知失效旧 revision 伪造可用性。 |
+| **SI-12 No Self-Supporting State** | 同一 generation 的 formal validity dependency cycle 非法；跨 Event、time、revision 的学习反馈循环合法。 |
+| **SI-13 Controlled Cognition** | 每次开放 reasoning 必须受 versioned Reasoning Protocol、purpose-bound Context、Authority Envelope 和 typed Candidate contract 控制。 |
+| **SI-14 Content ≠ Authority** | `Content != Instruction != Authority`；learner input、retrieved content、tool result、working state、model output 均不得通过语言形式获得权限。 |
+| **SI-15 No Hidden Durable Memory** | Working Memory / Agent State 不得成为第二套长期语义状态；任何需要影响未来的认知必须进入正式 Candidate / Commit 路径。 |
+| **SI-16 Runtime Metadata Separation** | `ContextManifest != VersionContext != DependencySet`；execution provenance 不能默认升级成 semantic validity dependency。 |
+| **SI-17 Decision Autonomy** | `DecisionTrigger != InterventionMandate`，`Admissible != WorthDoing`；Gap、AuthorityDirective、Metric 都不能旁路 Interaction Policy 形成行动命令。 |
+| **SI-18 Outcome ≠ Failure** | `Execute / NoIntervention / Defer` 是 Policy Outcome；ModelFailure、ContextUnavailable、Unauthorized、CandidateStale 等不得伪装成 Policy Outcome。 |
+| **SI-19 Action Boundary** | `ActionCandidate != ActionIntent != ActionOccurrence`；只有真实 effect crossing 后才能产生 occurrence standing，并重新进入 factual loop。 |
+| **SI-20 Executor Narrowness** | Executor 只能执行 exact ActionIntent，并在 effect 前重验 current authority / security / preconditions；不得重新解释或替代 Policy。 |
+| **SI-21 Evidence Integrity** | Evidence 必须 Claim-relative；`SelectedAssistance != OccurredAssistance`，实际 Exposure / cognitive substitution 决定 claim-relative contamination。 |
+| **SI-22 Per-Boundary Versioning** | 不存在要求全系统同步升级的 `SystemSemanticVersion`；每个 consistency boundary 固定 coherent Version Context，并支持合法 multi-version coexistence。 |
+| **SI-23 Governed Version Change** | `Approval != CanonicalCommit != Activation`；rollback 只改变未来 resolution，不删除 canonical version、不改写历史。 |
+| **SI-24 Historical Integrity & Authority** | Historical Reconstruction、Reasoning Re-execution、Semantic Reinterpretation、Counterfactual Evaluation 必须分离；历史存在 / 可重放不意味着当前有效、当前授权或当前可披露。 |
+
+---
+
+## Appendix B — Architecture Assumption Registry
+
+本表保留 Spike 输入基线中的原假设与 falsifier。v0.3 的逐项证据结果见 §7.7；原 AA-A02 为 DENIED，不作为本候选已经成立的保证。
+
+| ID | Claim | 主要影响 Invariant | Validation | Falsifier / Denied Condition | If Denied |
+|---|---|---|---|---|---|
+| **AA-A01** | 开放 learner input 可以在不读取既有 Learner Belief 的情况下，通过受控 Task / Solution / Ontology Context 形成有用且可治理的 ObservationCandidate。 | SI-02, SI-13 | A | 模型持续必须读取既有 Belief / hidden learner profile 才能稳定形成有用 Observation，或无法维持 Observation 与 latent learner state 边界。 | 重审 Observation Context Policy 与 Observation / Belief boundary；必要时 Architecture Reopen。 |
+| **AA-A02** | Typed Candidate + grounding + 规则约束下的 LLM semantic validation + deterministic commit enforcement 足以阻止 latent learner state、Evidence judgment、Policy recommendation 获得 Observation standing，同时保留合法局部解释与带归属的自述 / 引用。 | SI-04, SI-13 | A | Forbidden semantics 被提交或作为可信 Observation 进入下游；required validation 未通过仍提交；或边界只能靠关键词 / 枚举语义分支维持。正例可用性同样必须取得证据，不能以全部拒绝宣告支持。 | 重构 Candidate / Validation Profile / Commit boundary；若开放 Observation 本质不可治理，Reopen AI-native Observation design。 |
+| **AA-B01** | `Exact Dependencies + Pull Current Resolver + synchronous validity barrier` 足以保证 correctness，不需要 authoritative push dependency graph 才能知道 current。 | SI-08, SI-09, SI-10, SI-11 | B | 仅靠 exact refs / pull resolution 无法可靠阻止 transitive invalid downstream 被当 current 使用。 | 重审 State / Dependency architecture；可能提升 push graph 为 correctness mechanism。 |
+| **AA-B02** | 同步 invalidation safety 与异步 recompute 可以分离，并在 realistic fan-out 下保持可控。 | SI-09, SI-10, SI-12 | B | correctness 只能依赖同步全量重算，或 recompute fan-out / transitive checking 失控。 | 重构 dependency granularity、materialization、recompute strategy；必要时 ADR / Reopen。 |
+| **AA-C01** | Per-Boundary Version Context 足以表达运行与历史一致性，不需要全局 `SystemSemanticVersion`。 | SI-16, SI-22, SI-23 | C | 合法运行 / 历史重建反复要求全局原子版本号才能消除意义歧义。 | 重审 version granularity 与 consistency boundary；严重时 Architecture Reopen。 |
+| **AA-C02** | 即使模型不可精确复现、部分原始数据被合法删除，Historical Reconstruction / Re-execution / Reinterpretation 仍可明确分离并诚实表达 `FULL / PARTIAL / UNAVAILABLE`。 | SI-07, SI-24 | C | 审计只能依赖模型精确复现，或数据缺失后无法解释历史 standing 与 replay capability。 | 重审 provenance / retention / replay contract；必要时提高最低保留要求。 |
+| **AA-D01** | ActionOccurrence + occurred payload / disclosure + ordered lineage 足以表达 learner-facing assistance，不需要新增独立 durable `AssistanceExposureModel`。 | SI-19, SI-21 | D | 无法从现有 occurrence / payload records 恢复足够准确的 actual exposure，必须有独立 formal exposure object。 | 允许新增专门 Exposure model，但必须证明复杂度必要。 |
+| **AA-D02** | Evaluation 能基于 actual Exposure Lineage 做 claim-relative contamination，而不需要 task-level / global `assisted` 状态。 | SI-21 | D | 同一 response 对不同 Claim 的 contamination 无法可靠分离，或 lineage 缺失迫使系统退化成 global assisted flag。 | 重审 Exposure / Evidence contract，而不是增加 learner assistance trait。 |
+| **AA-E01** | AI 可以承担真实 pedagogy / runtime Policy judgment，而 deterministic mechanism 只负责 admissibility、authority、execution，不必把教学判断重新硬编码成规则。 | SI-17, SI-18, SI-20 | E | 为获得安全稳定行为，deterministic gate 不得不编码大量何时提示、教什么、何时练习等 pedagogy semantics。 | 重审 AI / deterministic responsibility boundary；若 pedagogy 不可开放 reasoning，可能影响 AI-native doctrine。 |
+| **AA-E02** | 同会话常规轮次严格串行；coherent DecisionContext snapshot + commit-time revalidation 足以处理跨会话共享状态与外部权限 / 版本等变化，不需要跨会话锁住整个 learner runtime。 | SI-08, SI-10, SI-17 | E | 会话串行之外的真实变化仍持续出现无法识别 stale 的 race，或只能通过跨会话 learner-level 长事务 / 全局锁保证正确。 | 重审 Decision Cycle、dependency、concurrency model；单会话串行本身不构成否定证据。 |
+| **AA-F01** | 即使模型或输入完全恶意，语言内容、working state 或 AI self-assertion 也无法突破 deterministic Authority / Tool / backend enforcement。 | SI-14, SI-20 | F | 任意 prompt / model output 能通过文本或调用结构扩大真实 tool / action / governance privilege。 | 高严重度 Architecture failure；必须修订 trust boundary，必要时 Architecture Reopen。 |
+| **AA-F02** | Protocol ToolPolicy + delegated scope + backend authorization + subject / resource / parameter checks 足以避免 confused deputy，并使 SecuritySignal 可追溯到 source occurrence。 | SI-14, SI-24 | F | workload credential 被 AI 用到原 purpose / scope 外，或 security interpretation 只能形成不可追溯的第二事实系统。 | 重构 delegation、security principal、source provenance 与 enforcement boundary。 |
+
+单项 Assumption 的 Validation Result 为 `SUPPORTED / DENIED / INCONCLUSIVE`，必须绑定被验证的 revision 与 scope。`UNVALIDATED` 表示尚未验证；`STAGED` 是 capability staging 的安排，不能覆盖已获得的验证结论。`PARTIALLY_SUPPORTED` 仅作为保留逐项结果的汇总描述。`INCONCLUSIVE` 不得作为关闭 Gate E 的依据，staging 是否满足 Gate E 须按路线图独立审查。
+
+---
+
+## Appendix C — Core Object Responsibility Matrix
+
+| Object / Family | Standing | Owner | Authoritative Source | Identity / Version | 主要 Dependency | Current / Lifecycle | Replay / Rebuild |
+|---|---|---|---|---|---|---|---|
+| Event | Factual | authorized factual producer / factual admission | Factual History | event identity + occurrence identity | source / artifact / causal refs | immutable historical fact record | 不可重建为“再次发生”；可 historical read |
+| ActionOccurrence | Factual | Interaction executor as authorized factual producer | Factual History | occurrence identity | ActionIntent / execution refs | immutable occurrence | 不可由 Intent 重建 |
+| Target / Task / Solution / Knowledge | Canonical | Learning | Canonical Registry | identity + canonical version | normative source / governance refs | committed / active / retired 等 | 版本保留；可 historical resolve |
+| Claim / Evidence / Inference semantics | Canonical | Evaluation | Canonical Registry | identity + version | canonical deps | active resolution | 支持 reinterpretation |
+| Observation / Policy / Action semantics | Canonical | Interaction | Canonical Registry | identity + version | canonical deps | active resolution | 支持 historical pinning |
+| ReasoningProtocol | Canonical / execution contract | semantic owner of protocol | Canonical Registry | protocol identity + version | owner semantics / governance | active per purpose / scope | execution history pin exact version |
+| Observation | Derived Formal | Interaction | committed Observation revisions | identity + revision | Event / Artifact / Task / Solution / ontology | current via resolver | 可从 retained grounding reinterpret，但旧 revision 不删除 |
+| Evidence | Derived Formal | Evaluation | committed Evidence revisions | identity + revision | Observation / Claim / Exposure / semantics | current via compatibility + deps | 可 reinterpret；不创造新 opportunity |
+| LearnerBelief | Derived Formal | Evaluation | committed Belief revisions | identity + revision | compatible Evidence set / inference semantics | no TTL；current via validity / freshness / authority | 可 reinfer；历史保留 |
+| TargetAssessment | Projection | cross-space derived | Target + LearnerBeliefs | derived snapshot / optional materialization | current Target + Beliefs | purpose-specific current | 可重建 |
+| InteractionState | Projection | Interaction | Event / Observation / time / environment | projection identity / snapshot | factual + formal state | current projection | 可重建 |
+| BindingProjection | Projection | Interaction | binding facts + authority + lifecycle | projection | Event + authority + time | purpose-specific current | 可重建 |
+| DecisionContext | Snapshot | Interaction | exact referenced inputs | decision-bound snapshot | current state / versions / authority | immutable historical snapshot once used | 不作为 future SoT；保存 refs |
+| PolicyOutcome | Derived Formal Runtime Decision | Interaction | committed Decision history | decision / outcome identity | DecisionContext / Policy version | cycle-bound | 历史不可重写 |
+| Plan | Derived Formal | Interaction | committed Plan revisions | identity + revision | goals / target / belief / authority | revisable / expirable | 可重算；不等于 future command |
+| ActionIntent | Durable Operational Capability | Interaction | intent store / effect history | intent identity | PolicyOutcome / action semantics / authority | short-lived / expirable / revocable | 不可被历史重放为新 authority |
+| ReasoningExecutionRecord | Execution Record | AI Runtime | Reasoning Execution History | execution identity | request / protocol / context manifest / model / tools | immutable execution history | 不能靠 rerun 重建原 execution |
+| WorkflowCheckpoint | Execution State | workflow runtime | checkpoint store | workflow / checkpoint identity | pending refs | resume 前需 revalidation | 可丢弃 / 重建，不能承载 epistemic truth |
+| SystemSignal | Derived / typed operational-system signal | Evolution input | source formal records + signal history | signal identity | metrics / histories / security / validation refs | lifecycle per Evolution | 可重新 assess，不是 SystemIssue |
+| SystemIssue | Derived Formal | Evolution | committed Issue revisions | identity + revision | SystemSignals / assessments | open / unresolved / resolved etc. | 可重新评估，历史保留 |
+| SystemHypothesis | Derived Formal | Evolution | committed Hypothesis revisions | identity + revision | Issue / theory / evidence | competing / unresolved / falsified etc. | 可 validation |
+| ValidationEvidence | Derived Formal | Evolution | validation history | identity + revision | exact ValidationPlan / runs / versions | scoped validity | replay capability explicit |
+| RevisionCandidate | Proposal standing | Evolution / semantic owner depending target | proposal history | candidate identity | issue / hypothesis / validation refs | no canonical effect | 可被 supersede / reject |
+| ChangeProposal | Governance proposal | Evolution / authorized proposer | governance workflow | proposal identity / revision | exact candidate + base version | pending / approved / rejected | 无 canonical standing |
+| GovernanceDecision | Authority Record | Governance | Governance History | decision identity | exact proposal / candidate / base | immutable authorization record | 不可由 logs 推断重建 |
+| CanonicalVersion | Canonical | corresponding semantic owner | Canonical Registry | identity + version | GovernanceDecision / proposal refs | committed ≠ active | 历史保留 |
+| ActivationRecord | Authority / Control Record | governed activation authority | Activation History | activation identity | committed version / scope / authorization | determines active resolution | rollback 通过新 activation |
+| DataAccessAudit | Audit Record | audit responsibility | Audit History | audit identity | purpose / subject / operation / basis | retention policy | 不代表 data semantics |
+| SecuritySignal | Typed Security Record | security runtime / Evolution consumer | Security History + source refs | signal identity | source occurrence / enforcement event | lifecycle per security / Evolution | 不能成为第二 Factual History |
+| Metric / Trace / Log | Analytical / Diagnostic | none as semantic owner | Telemetry | operational identity | source records | best-effort unless explicitly required audit | disposable / recomputable |
+
+---
+
+## Appendix D — ADR Candidate Registry
+
+| ADR Candidate | 为什么尚未冻结 | 已知 Architecture Constraints | Evidence / Decision Timing |
+|---|---|---|---|
+| Event / Formal History physical persistence | 多种存储模型都能满足语义合同 | immutable formal history、occurrence dedup、correction、historical read | Spike 后、Architecture Validation Build 前 |
+| Derived State materialization strategy | on-demand / materialized / hybrid 都可能成立 | materialization 不创造 standing；known-invalid 不得继续 current | 受 Dimension B evidence 影响 |
+| Dependency representation / reverse indexing | graph、indexed refs、hybrid push/pull 都可能 | exact dependency、PINNED / CURRENT、sync validity barrier | 直接依赖 AA-B01 / AA-B02 |
+| Semantic single-writer enforcement | process ownership、DB constraint、service boundary 均可 | semantic owner 唯一；concurrency 不得 LWW | Spike 后形成 ADR |
+| Commit atomicity / optimistic concurrency | 物理 transaction boundary 未冻结 | expected-head、critical revalidation、no silent rebase | Dimension B / E evidence 后 |
+| RuntimeVersionContext representation | map / typed structure / registry lookup 均可 | per-boundary coherent context、no global SystemSemanticVersion | Dimension C 后 |
+| Provenance retention | ContextManifest / ExecutionRecord 保留级别需平衡成本与审计 | historical reconstruction、no CoT、privacy / retention | Dimension C + Data Authority 约束后 |
+| Invalidation scheduling / recompute orchestration | queue、scheduler、event-driven、pull-trigger 等均可 | sync invalidation safety + async recovery | Dimension B 后 |
+| Multi-version activation / rollout | scope routing、activation registry、deployment机制未冻结 | Approval ≠ Commit ≠ Activation；historical pinning | Dimension C / F 后 |
+
+---
+
+## 文档结束
+
+v0.3 是吸收现有证据的集成设计修订候选。原否定、未决及完整覆盖缺口保留；必须完成对应的设计与阶段范围评审，才能分别审查 Gate E/F 和 v1.0 冻结。
+

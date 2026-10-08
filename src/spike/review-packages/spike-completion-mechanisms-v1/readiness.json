@@ -1,0 +1,16 @@
+{
+  "status": "READY",
+  "scripted_cases": 9,
+  "scripted_calls": 19,
+  "external_calls": 0,
+  "checks": 226,
+  "historical_integrity": {
+    "ledger_entries_checked": 1068,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  }
+}

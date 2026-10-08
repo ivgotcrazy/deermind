@@ -1,0 +1,182 @@
+{
+  "schema": "design-document-review-v1",
+  "date": "2026-10-08",
+  "status": "COMPLETE_REVIEW_CORRECTED_OLD_VERSIONS_REMOVED",
+  "scope": [
+    "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+    "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+    "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+    "doc/system-design/DeerMind_System_Design_v0.3.md"
+  ],
+  "corrections": [
+    "Purpose-bound Observation obligations; A1 specifics restricted to its task Profile.",
+    "Attempt failure separated from turn termination and bounded retry.",
+    "Action grounding depends on purpose; no fictitious prerequisite learner work.",
+    "F2 current scope consistent with retained old failures.",
+    "Current source references separated from archived plans; stale next-phase section corrected."
+  ],
+  "changed_files": [
+    "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+    "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+    "doc/system-design/DeerMind_System_Design_v0.3.md",
+    "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+    "doc/system-design/DeerMind_Runtime_Event_Architecture_v0.1.md",
+    "doc/system-design/DeerMind_State_Dependency_Architecture_v0.1.md",
+    "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md",
+    "doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v0.1.md",
+    "doc/top/DeerMind_Development_Roadmap_v0.3.md",
+    "doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
+    "doc/system-design/spike/archive/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+    "doc/system-design/spike/archive/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+    "doc/system-design/spike/archive/DeerMind_Spike_Closeout_Decision_Draft_v0.1.md",
+    "src/spike/reports/design-candidate-review-20261007.md",
+    "doc/system-design/DeerMind_Cross_Cutting_Coverage_Review_v0.1.md",
+    "doc/system-design/spike/README.md"
+  ],
+  "historical_link_changes": [
+    {
+      "file": "doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
+      "old_target": "DeerMind_Interaction_Decision_Runtime_Design_v0.1.md",
+      "new_target": "../../src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md.txt"
+    },
+    {
+      "file": "doc/system-design/spike/archive/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+      "old_target": "../../DeerMind_AI_Reasoning_Runtime_Design_v0.1.md",
+      "new_target": "../../../../src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_AI_Reasoning_Runtime_Design_v0.1.md.txt"
+    },
+    {
+      "file": "doc/system-design/spike/archive/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+      "old_target": "../../DeerMind_Interaction_Decision_Runtime_Design_v0.1.md",
+      "new_target": "../../../../src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md.txt"
+    },
+    {
+      "file": "doc/system-design/spike/archive/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+      "old_target": "../../DeerMind_AI_Reasoning_Runtime_Design_v0.1.md",
+      "new_target": "../../../../src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_AI_Reasoning_Runtime_Design_v0.1.md.txt"
+    },
+    {
+      "file": "doc/system-design/spike/archive/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+      "old_target": "../../DeerMind_Interaction_Decision_Runtime_Design_v0.1.md",
+      "new_target": "../../../../src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md.txt"
+    },
+    {
+      "file": "doc/system-design/spike/archive/DeerMind_Spike_Closeout_Decision_Draft_v0.1.md",
+      "old_target": "../../DeerMind_System_Design_Roadmap_v0.5.md",
+      "new_target": "../../../../src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_System_Design_Roadmap_v0.5.md.txt"
+    },
+    {
+      "file": "src/spike/reports/design-candidate-review-20261007.md",
+      "old_target": "../../../doc/system-design/DeerMind_System_Design_Roadmap_v0.5.md",
+      "new_target": "source-baseline-design-review-20261008/originals/DeerMind_System_Design_Roadmap_v0.5.md.txt"
+    }
+  ],
+  "obsolete_versions": [
+    {
+      "source_path": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.1.md",
+      "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_AI_Reasoning_Runtime_Design_v0.1.md.txt",
+      "previous_sha256": "9712b2fb447e3a7d20b8af7a69c522ac22082d030117677adafd5f8c950efc2a",
+      "replacement": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+      "removed": true
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md",
+      "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md.txt",
+      "previous_sha256": "7eec39fd0b33300c5a2da53769e6d6eb958d59fa70dcc0f5bb2a1937047753d9",
+      "replacement": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+      "removed": true
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_Roadmap_v0.5.md",
+      "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_System_Design_Roadmap_v0.5.md.txt",
+      "previous_sha256": "0d7d83d9b7ac6762c3c66bdc05a39141b01b614c329c51fae83cf0667cd52503",
+      "replacement": "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+      "removed": true
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_v0.2.md",
+      "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_System_Design_v0.2.md.txt",
+      "previous_sha256": "a3c206c16cfaa46457b64ffc7089f7af638ad0e0c246848916c5324064dde44a",
+      "replacement": "doc/system-design/DeerMind_System_Design_v0.3.md",
+      "removed": true
+    }
+  ],
+  "preservation_manifest": "src/spike/reports/source-baseline-design-review-20261008/manifest.json",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "case_results_changed": false,
+  "new_model_calls": 0,
+  "verification": {
+    "historical_integrity": {
+      "ledger_entries_checked": 1370,
+      "frozen_source_counts": {
+        "spike-exit-v1": 223,
+        "policy-s3-diagnostic-v1": 9,
+        "single-task-prototype-v1": 49,
+        "input-capacity-v1": 54
+      }
+    },
+    "frozen_manifests_with_old_versions_checked": 39,
+    "old_source_hash_references_checked": 156,
+    "archived_process_documents_checked": 31,
+    "markdown_files_checked": 58,
+    "local_links_checked": 236,
+    "missing_links": [],
+    "links_to_removed_paths": [],
+    "git_diff_check": "PASS",
+    "code_or_protocol_changed": false,
+    "new_tests_or_model_calls": 0,
+    "limitations": "Document contract and reference review only; no new semantic-quality evidence and no Gate E/F closure."
+  },
+  "contract_review": [
+    {
+      "scenario": "Answer-only purpose",
+      "disposition": "Only declared answer judgment required; no mandatory full strategy/step analysis."
+    },
+    {
+      "scenario": "Original A1 proportional-task Profile",
+      "disposition": "Original method/arithmetic/final-result requirements and old results remain scoped to that experiment."
+    },
+    {
+      "scenario": "Incomplete or mixed input",
+      "disposition": "Preserve missing/unknown values; no post-failure narrowing of declared Profile."
+    },
+    {
+      "scenario": "Retryable model failure",
+      "disposition": "Failed attempt has no qualification; budgeted new Execution may continue same turn while later input stays queued."
+    },
+    {
+      "scenario": "Terminal failure or interruption",
+      "disposition": "Close turn eligibility; release queue only after in-flight effects end or are isolated; actual or unknown effects preserved."
+    },
+    {
+      "scenario": "Explanation without prior learner work",
+      "disposition": "Use purpose-required knowledge/task sources; do not require fictional prior work."
+    },
+    {
+      "scenario": "Explanation correcting a specific submission",
+      "disposition": "Require original task/work and preserve actual help lineage for later relevant judgment."
+    },
+    {
+      "scenario": "Current F2 and phase status",
+      "disposition": "Scoped F2 supported, historical failures retained; Phase 6 evidence review, Gates OPEN."
+    }
+  ],
+  "final_document_sha256": {
+    "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md": "18842e3de974c4b23bfcb1bacf7bd95cf8434ac2da93a44a48e541d3605231c7",
+    "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md": "26286fd413d4e8e39f172df0365567e7ae11497e9a8d7eff95974d427e8e3075",
+    "doc/system-design/DeerMind_System_Design_v0.3.md": "78a3b59fff7d3c9f1d5cef1a88f8b0d08f8251124af58ab09759fc17103c7333",
+    "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md": "8bf920ae13b20fc500de27fd875ad992c645d87bc6642ef610513454b73ef6de",
+    "doc/system-design/DeerMind_Runtime_Event_Architecture_v0.1.md": "3248bf5bc523f8750b49ae1fbca236d6d27fbe326df5c46bf1ada41cb4cb42a6",
+    "doc/system-design/DeerMind_State_Dependency_Architecture_v0.1.md": "ca545c19aa160e94c5f874fc2a63c1c3aaf1b274f0c9474cdf4794c7126a0bf0",
+    "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md": "9a17acd36aa9ea3faa3cd9eeb5eadfdab03e834384822c540e0fee51ab0b2edf",
+    "doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v0.1.md": "ebe2a531f0f6bf5383ef2671a4c7f626b0a36e310f43f5dd0cf1f994aab6cbb9",
+    "doc/top/DeerMind_Development_Roadmap_v0.3.md": "335148bd99457be0190ab88ecc6bc986a8919dd81d722a4ec649c97be374876a",
+    "doc/system-design/DeerMind_Design_Closure_Review_v0.1.md": "ebb011364da24ca7bbcc7afd904e40508459f5edae185c0a2a9955c5e79da7f6",
+    "doc/system-design/spike/archive/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md": "01fdccb5a0c6e0460b9d05be97093c39763a2f26862e33c9b0ff7e04439cec07",
+    "doc/system-design/spike/archive/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md": "f76849653cf185e1522579463eb957aede6bc2eab93cdce980fee9497995ac68",
+    "doc/system-design/spike/archive/DeerMind_Spike_Closeout_Decision_Draft_v0.1.md": "0fc6f55e30e06d0d915cc2e581cea1fad8aa4d7314c556e1714067669685736d",
+    "src/spike/reports/design-candidate-review-20261007.md": "cdf6633c8b2cf9deb53da3c629db3e74e8ee2f599c560d6e625201f6e8ae78d5",
+    "doc/system-design/DeerMind_Cross_Cutting_Coverage_Review_v0.1.md": "9e5dbee06cec34a8b1626edf73c583ae5f1f3026327021b122f96e380d870409",
+    "doc/system-design/spike/README.md": "49064472eb5d57101f7fc949b7f2322983c0f56fed3cd6485b7b8d3ec0157efc"
+  }
+}

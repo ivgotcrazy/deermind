@@ -1,0 +1,510 @@
+{
+  "name": "submit_review",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "reviewed_fields": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [
+            "outcome",
+            "action_identity",
+            "action_revision",
+            "exact_payload",
+            "executor_target",
+            "episode",
+            "rationale",
+            "context_refs",
+            "expected_disclosure",
+            "uncertainty",
+            "defer_condition"
+          ]
+        }
+      },
+      "checks": {
+        "type": "object",
+        "properties": {
+          "S1": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "relation": {
+                  "type": "string",
+                  "enum": [
+                    "SUPPORTED",
+                    "CONTRADICTED",
+                    "REQUIRED_BASIS_ABSENT",
+                    "UNDETERMINED"
+                  ]
+                },
+                "readings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "candidate_fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "handle"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "source_fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "handle"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "meaning": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "candidate_fields",
+                      "source_fields",
+                      "meaning"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "material_gaps": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "material_id": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "material_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "relation",
+                "readings",
+                "material_gaps",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "S2": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "relation": {
+                  "type": "string",
+                  "enum": [
+                    "SUPPORTED",
+                    "CONTRADICTED",
+                    "REQUIRED_BASIS_ABSENT",
+                    "UNDETERMINED"
+                  ]
+                },
+                "readings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "candidate_fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "handle"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "source_fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "handle"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "meaning": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "candidate_fields",
+                      "source_fields",
+                      "meaning"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "material_gaps": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "material_id": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "material_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "relation",
+                "readings",
+                "material_gaps",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "S3": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "relation": {
+                  "type": "string",
+                  "enum": [
+                    "SUPPORTED",
+                    "CONTRADICTED",
+                    "REQUIRED_BASIS_ABSENT",
+                    "UNDETERMINED"
+                  ]
+                },
+                "readings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "candidate_fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "handle"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "source_fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "handle"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "meaning": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "candidate_fields",
+                      "source_fields",
+                      "meaning"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "material_gaps": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "material_id": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "material_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "relation",
+                "readings",
+                "material_gaps",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "S4": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "relation": {
+                  "type": "string",
+                  "enum": [
+                    "SUPPORTED",
+                    "CONTRADICTED",
+                    "REQUIRED_BASIS_ABSENT",
+                    "UNDETERMINED"
+                  ]
+                },
+                "readings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "candidate_fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "handle"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "source_fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "handle"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "meaning": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "candidate_fields",
+                      "source_fields",
+                      "meaning"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "material_gaps": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "material_id": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "material_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "relation",
+                "readings",
+                "material_gaps",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "S5": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "relation": {
+                  "type": "string",
+                  "enum": [
+                    "SUPPORTED",
+                    "CONTRADICTED",
+                    "REQUIRED_BASIS_ABSENT",
+                    "UNDETERMINED"
+                  ]
+                },
+                "readings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "candidate_fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "handle"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "source_fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "handle"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "meaning": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "candidate_fields",
+                      "source_fields",
+                      "meaning"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "material_gaps": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "material_id": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "material_id",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "relation",
+                "readings",
+                "material_gaps",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "reviewed_fields",
+      "checks"
+    ],
+    "additionalProperties": false
+  }
+}

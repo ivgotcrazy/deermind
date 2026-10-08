@@ -61,7 +61,8 @@ class SecurityWorld:
             scope='learner-B', owner='Interaction', recorded_at=self.h.clock.advance(),
             payload={'text': 'SYNTHETIC-B-PRIVATE-PAYLOAD'}, provenance=('F-TRUSTED-SETUP',)))
         self.governance = seed(self.h, Ref(Space.CANONICAL, 'ObservationSemantics', 'v1'), kind='ObservationSemantics')
-        protocol = seed(self.h, Ref(Space.CANONICAL, 'FSecurityProtocol', 'v1'), kind='ReasoningProtocol', payload=definition)
+        protocol = seed(self.h, Ref(Space.CANONICAL, definition.get('identity', 'FSecurityProtocol'),
+            definition.get('version', 'v1')), kind='ReasoningProtocol', payload=definition)
         rules = seed(self.h, Ref(Space.CANONICAL, 'FSecurityRules', 'v1'), kind='SemanticValidationRules',
             payload={'scope': 'Uncommitted request generation only. No semantic standing or review asserted.'})
         self.protocol = Protocol(protocol, 'PolicyOutcome', 'Interaction',

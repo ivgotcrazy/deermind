@@ -1,0 +1,202 @@
+{
+  "status": "READY",
+  "plan": {
+    "schema": "observer-arithmetic-v1",
+    "source_design": "doc/system-design/spike/DeerMind_Observer_Arithmetic_Fix_v0.1.md",
+    "historical_plan": "src/spike/fixtures/single-task-engineering-v1.json",
+    "historical_assessment": "src/spike/reports/single-task-engineering-assessment-20261008.json",
+    "protocol": "src/spike/protocols/observation-observer-arithmetic-v1.json",
+    "model": {
+      "base_url": "https://api.deepseek.com/beta",
+      "model": "deepseek-flash",
+      "max_output_tokens": 4096,
+      "timeout_seconds": 60,
+      "max_input_chars": 64000
+    },
+    "budget": {
+      "max_calls": 32,
+      "wall_time_seconds": 600,
+      "transport_retries": 2
+    },
+    "cases": [
+      {
+        "id": "T03",
+        "kind": "historical_candidate",
+        "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+        "candidate": {
+          "description": "原任务为单价问题：6kg 苹果42元，求15kg 的价钱。学习者写出两步计算：42÷6＝8，8×15＝120。第一步等式42÷6＝8在算术上不正确，42÷6应为7；第二步8×15＝120本身计算正确，但基于第一步的错误商。学习者已给出终端结果120，未标注为最终答案，但该计算已完成。学习者请求指出哪一步需要检查，并明确要求不要给答案。AssistanceContext 显示无已提供的辅助记录，learner_used_assistance 为 NOT_INFERRED。"
+        },
+        "expected_arithmetic": "PASS",
+        "expected_mapping": "PASS",
+        "expected_full_review": "NONPASS_FINAL_OMISSION",
+        "original_turn": {
+          "session": "T03",
+          "turn": 1
+        }
+      },
+      {
+        "id": "T07",
+        "kind": "historical_candidate",
+        "input": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。",
+        "candidate": {
+          "description": "原任务为：6kg苹果42元，求15kg的价钱。学习者写出算式42÷6×15＝120，并称已完成。该式先求单价42÷6＝7，再乘15得105，故120这一结果不正确。学习者未写出中间步骤，只给出连等式与结果120。学习者请求只提醒其自行检查，不要指出错误位置；这是对系统回复范围的约束，不改变其已提交结果120。AssistanceContext显示无已确认的辅助记录，learner_used_assistance为NOT_INFERRED。"
+        },
+        "expected_arithmetic": "PASS",
+        "expected_mapping": "PASS",
+        "expected_full_review": "PASS",
+        "original_turn": {
+          "session": "T07",
+          "turn": 1
+        }
+      },
+      {
+        "id": "T09",
+        "kind": "historical_candidate",
+        "input": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。",
+        "candidate": {
+          "description": "任务为单价问题：6kg 苹果42元，求15kg 的价钱。学习者写出两步计算：42÷6＝8，8×15＝120，并称已完成。其中 42÷6＝8 与正确商 7 不符，属可见的算术错误；随后 8×15＝120 的乘法本身正确，但基于错误的单价。学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。学习者同时请求本次不要提示，想自己再试，这是对系统回复方式的约束，不改变其已写出的结果。AssistanceContext 显示无先前暴露与未确认项，learner_used_assistance 为 NOT_INFERRED，故无实际系统协助记录。"
+        },
+        "expected_arithmetic": "PASS",
+        "expected_mapping": "PASS",
+        "expected_full_review": "PASS",
+        "original_turn": {
+          "session": "T09",
+          "turn": 1
+        }
+      },
+      {
+        "id": "T12",
+        "kind": "historical_candidate",
+        "input": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。",
+        "candidate": {
+          "description": "任务为单价问题：6kg苹果42元，求15kg的价钱。学习者写出“42÷6＝8，8×15＝120”，其中42÷6＝8这一等式不成立，正确商应为7。学习者随后用8×15＝120，该乘法本身计算正确，但基于错误的单价8元，因此所得120元与正确结果105元不符。学习者已写出终值120，虽未标注为最终答案，但属于已提交的结果。学习者请求“给我一个步骤提示，不给答案”，这是对系统回复方式的约束，不改变其已写出120这一事实。AssistanceContext显示无先前暴露与未确认项，learner_used_assistance为NOT_INFERRED，故无实际系统协助记录。"
+        },
+        "expected_arithmetic": "PASS",
+        "expected_mapping": "PASS",
+        "expected_full_review": "PASS",
+        "original_turn": {
+          "session": "T12",
+          "turn": 1
+        }
+      },
+      {
+        "id": "N01",
+        "kind": "authored_wrong_endorsement",
+        "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+        "candidate": {
+          "description": "学习者写下42÷6＝8。这个除法等式是正确的。学习者随后写下8×15＝120，乘法等式成立，120元是原题的正确结果。"
+        },
+        "expected_arithmetic": "FAIL",
+        "expected_mapping": "PASS",
+        "expected_full_review": "NONPASS"
+      },
+      {
+        "id": "N02",
+        "kind": "authored_wrong_endorsement",
+        "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+        "candidate": {
+          "description": "学习者先算42÷6＝8，再算8×15＝120。前面的除法没有算错，最后120元也符合原题。"
+        },
+        "expected_arithmetic": "FAIL",
+        "expected_mapping": "PASS",
+        "expected_full_review": "NONPASS"
+      },
+      {
+        "id": "M01",
+        "kind": "injected_mapping_fault",
+        "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+        "candidate": {
+          "description": "学习者写下42÷6＝8。"
+        },
+        "injected_observer_position": "AFFIRMS_TRUE",
+        "expected_arithmetic": "FAIL",
+        "expected_mapping": "FAIL",
+        "expected_full_review": "NONPASS",
+        "other_criteria_not_target": true
+      },
+      {
+        "id": "M02",
+        "kind": "injected_mapping_fault",
+        "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+        "candidate": {
+          "description": "学习者写下42÷6＝8，这个除法等式正确。"
+        },
+        "injected_observer_position": "REPORTS_ONLY",
+        "expected_arithmetic": "PASS",
+        "expected_mapping": "FAIL",
+        "expected_full_review": "NONPASS",
+        "other_criteria_not_target": true
+      }
+    ],
+    "official_commits": false,
+    "automatic_followup": false
+  },
+  "source_sha256": {
+    "src/spike/foundation/actions.py": "469d23733814e8381a617bc2c9353133792534ea0149c591e4f6d061c40f9867",
+    "src/spike/foundation/action_cases.py": "ca12edb2a45f52961589ff3c53d03a6ee3feb902b4ffb0e0e8a15d8d96f9b1a0",
+    "src/spike/foundation/activity.py": "3a2cda11efd0bcdf1c7208241fa3fdd9c41775618020c5dedd117ee3818b1c02",
+    "src/spike/foundation/activity_cases.py": "d1c08da24ff1143c4c8aeb3132734e919f02b6bc025c0bc3e332082da3b37636",
+    "src/spike/foundation/arithmetic.py": "322ba1cf462e1f8b2b914d084a136d4c3635dc77241e3395e46cbf1ace52f80d",
+    "src/spike/foundation/boundary.py": "738fb688d3ef4949cd50dc182ec7d6812b18c129a28abdd43c19d0f25b5bce23",
+    "src/spike/foundation/candidate_spans.py": "9c0057eac443561133cbd40ce2d2a319e4e04bbc46c38ac0e981cd61b53b76b7",
+    "src/spike/foundation/cases.py": "91ff4d712ce4d7ec1097e62e26694e7857fed88b0211c387c2e527f5fd991b27",
+    "src/spike/foundation/claim_axes.py": "555d2b12687b58c29ca471a0fd35d10e0229e82f82f749435658a9cda9908f89",
+    "src/spike/foundation/composition_cases.py": "6340f9e91eb1019a744a9893fcb80ebdc93493d897df864bea0b648a857eea41",
+    "src/spike/foundation/content_projection.py": "a25f91b3df4797629152c9c477cd301de544ace41aec11e870f8f1210c5b4dd3",
+    "src/spike/foundation/dependency_cases.py": "bc522b01bbeda94054a9a9f62641c21523f2bf9ccf7646f21fc6016795ecb0e6",
+    "src/spike/foundation/exit_campaign.py": "007de4b75031dd6962be23bd485f49f84e6407d561654814cf94d368dbddd2b8",
+    "src/spike/foundation/expressions.py": "353b802b9d82020912b4fc5a270afa03f7c9473c6a9f0a3293206d50ce15aa53",
+    "src/spike/foundation/formation_cases.py": "2bba226eb0a9372f30f460344f1f0d67706cb7b35eb695a7dd1ccbe7a8e90b40",
+    "src/spike/foundation/guarded_cases.py": "77aa00b031cd64fb05c12c2314290b4b8e166d572ddb6168fd10f89640c5ce5f",
+    "src/spike/foundation/history_composition_cases.py": "1e84cadde63dd7b4feaf6930800d4017fdf8d8bed11dda98a0046971b1e7ca99",
+    "src/spike/foundation/llm.py": "328a35c5bbc89a1b2929dd2c0d3313b73f112639d7f27a35db1bef52b2d9c6cd",
+    "src/spike/foundation/observer_arithmetic.py": "30b24f4bc6ba330d7e2ed4ccf9a6e4dbb8dfa121c7db432a3a1e5cf4f59ef8f6",
+    "src/spike/foundation/policy.py": "2e26c0195b5155195cd2749d1977a4273f45b5630548f521797ed3f2b80b7980",
+    "src/spike/foundation/policy_cases.py": "c2f404ba89006c9aadaa8edb66893a0173370511b3678b36cf48d1db0012f2af",
+    "src/spike/foundation/policy_disposition.py": "581a2bb158a240bc5a6bae0d08c0aaae407b144e854b00577330a7807b40f840",
+    "src/spike/foundation/policy_field_quotes.py": "72f74b467e84b7925d52999e6545648597b3a5da47df1bfb272c74d6b931ff72",
+    "src/spike/foundation/policy_field_references.py": "6522c94623ecdfeaecb31324311378a53466ed0510ac6c0a412486152e12d579",
+    "src/spike/foundation/protocol_preflight.py": "0603054f7382147d971a1650c660ca8b9c8c344fc78842f16d06810e75526118",
+    "src/spike/foundation/records.py": "95abac7d39d6ef2202bb16421495666cb15c26f1f1162dd702683846aae00244",
+    "src/spike/foundation/replay.py": "36f7ee7352d24d39fde7225f5808b874a0f11cfab7773035906beb779731f0ce",
+    "src/spike/foundation/responsibility.py": "80fb8b9610fc87146db0a0ecd3054a1b768fc80abeeb61bcb9981ccb7e0291ac",
+    "src/spike/foundation/runtime.py": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
+    "src/spike/foundation/s3_diagnostic.py": "8e3e9ff98253e2e63627fa44c9801a35b0f9151de11f81c704dbd18cfd7d632f",
+    "src/spike/foundation/security.py": "7e83a20c8c6471e2d9539acf13b143e9cd5ae5971b8625791c31a6f1176f2668",
+    "src/spike/foundation/security_cases.py": "c28f787b14ebf7e53595eafa636d6cdb0b11d3306a9ad4e3121b7a59a0f6baec",
+    "src/spike/foundation/semantic_review.py": "9628df31f4c9ca6db1e36369b86cb7484d26379c886398aebeaa7804ecec902d",
+    "src/spike/foundation/serial_cases.py": "0738f953952282ddeec58ad2c3150e248c4a22dba25937ab7b5a072c86d4482a",
+    "src/spike/foundation/session.py": "1cc257457a9ff1009242812a623d8c2f4c5452371ef9dbba95a215e028cc339f",
+    "src/spike/foundation/single_task.py": "4ec43d9e11d11a6ea87ccf1abe98171c1f0cdcf7fb39c4a5ec10df022e2aeeb2",
+    "src/spike/foundation/source_conflicts.py": "cf3aa9a2a7561f9713e0972f04987cafbb310cdcd3bcf4301f23d564fc34be13",
+    "src/spike/foundation/source_handles.py": "1896f9b17d8d40351ed7792dcd9cceae864fd2e638fb8672f2a773905f9dcaa8",
+    "src/spike/foundation/structured_output.py": "803a45de9413c7f2dd7aebffa86763aeea33f78c193995f00be55653c0648113",
+    "src/spike/foundation/tool_boundary.py": "045d641a74ca747941025b8908eb7b6f1199a42695fb209dcfb10d68003a0921",
+    "src/spike/foundation/validation_dimensions.py": "1a4dd56961c35aaefc42b034528f52707f1b0a35c5383fd62b7afb2a4789f90a",
+    "src/spike/foundation/version_replay_cases.py": "0ac4ba0548ebc0174dd867ab94b64a16a637d4def5b5d368b850a03940414f2a",
+    "src/spike/foundation/working_campaign.py": "d694f2739a6a86515df3a8f6ef175907a28380af3aec9c2f573e45e89951aa8d",
+    "src/spike/foundation/working_entry.py": "ef3d137cf01ea68d8ab8a45065bbf069bf89ea8105453bde6c242a264c8576c0",
+    "src/spike/foundation/__init__.py": "44e8f9249413c3f1b454e056d38aee69c02186206d2f932feafc0fe4be60ba68",
+    "src/spike/fixtures/observer-arithmetic-v1.json": "bdafefa20846afe7f9601e3342d473aa409b00e158bd684407cbb29c391fc8d8",
+    "src/spike/run_observer_arithmetic.py": "64d4639d4082bfee219e5a9db4b51d295a6443b8cd5688f446e53d91c8f965a0",
+    "doc/system-design/spike/DeerMind_Observer_Arithmetic_Fix_v0.1.md": "bedacbe7e8c4a5b19f985553a53360ff15b4506f7c98ec458884d3e63672583c",
+    "src/spike/protocols/observation-observer-arithmetic-v1.json": "218e5d0deaa54e02a8f7abf03b1c77fd624aeb9c228d084c81f07eea4905eedd",
+    "src/spike/fixtures/single-task-engineering-v1.json": "f6634303d7a36af6d9b94e848e256ea7cded96a67f7f864d374935a4d27d93e6",
+    "src/spike/reports/single-task-engineering-assessment-20261008.json": "0156bd066c5b36ab5d91629ee51b0071bfee4b3e015290127df1fd0168217bac",
+    "src/spike/run_network_retry.py": "2946af726f14cc355d266d43cf40a94c664f43a6fdb1a9f140a5e08635ac367e",
+    "src/spike/run_single_task_prototype.py": "eff8caf3fa1db4a5d776f0f518db69260152dacc16428bb165e927cd9bd6eedb",
+    "src/spike/run_single_task_revision.py": "67d3a70ee5fd7d3126355c8c2a207fab140aa8098383f3f3c798e07106d469f8",
+    "src/spike/tests/test_observer_arithmetic.py": "f3c60ad09edc5bf3303c6be7bba0c3aa684bfded46eb7dd1f2eb1ce04f094598",
+    "src/spike/tests/test_feasibility_interfaces.py": "6b8b3a0ac614872c1bdbb71252b6fe1f78eb2318a9072dc68106432e32ea6b6b",
+    "src/spike/tests/test_indexed_observation.py": "dc6b61aebab9bd440bd2343b7127dc5a33e5c34824d850190c98006451fc1d70",
+    "src/spike/tests/test_observer_diagnostic.py": "3dec8f6016a9d8e7d1bb7a5139d9bb20c37f595f9c07ff3e23d78f6f187303f3",
+    "src/spike/tests/test_network_retry.py": "5e7d5159619f2d8cbb6d7fa6861514ab669e4733341864b519d022df2c08b007",
+    "src/spike/tests/test_structured_output.py": "dae094d53ad2e26bb62d74158236d913253c3debeaf147a074c6a59a9d39f21b",
+    "src/spike/tests/test_single_task_v2.py": "58bac48766aad2327253599dde494329a199bb0fbe64b1955712b959c9347a1c",
+    "src/spike/tests/test_single_task.py": "ab4a67e3c0147ff7db4b945bbc67c25789340392f0c067b37cc35f4b44e35369"
+  },
+  "artifact_sha256": {
+    "readiness.json": "1fd2f81687d4178789a93a3c51658f9544c00786402fec96c5b6ae144eb3d3c9",
+    "tests.txt": "c72fc8ce42d3bbde25088cd97d00494d7021733878306803e0fb708405cfebda"
+  }
+}

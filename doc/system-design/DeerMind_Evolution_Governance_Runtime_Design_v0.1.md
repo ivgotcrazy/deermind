@@ -1,15 +1,17 @@
 # DeerMind Evolution & Governance Runtime Design v0.1
 
-> **中文名称**：DeerMind 演化与治理运行设计  
-> **版本**：v0.1  
-> **文档性质**：Focused System Design / Pre-Validation Candidate  
-> **状态**：§3.7 Focused Design Closure 候选  
-> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v0.1.md`  
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.4.md`  
-> **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`、`DeerMind_AI_Reasoning_Runtime_Design_v0.1.md`、`DeerMind_State_Dependency_Architecture_v0.1.md`、`DeerMind_Interaction_Decision_Runtime_Design_v0.1.md`、`DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md`  
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-29  
+> **中文名称**：DeerMind 演化与治理运行设计<br>
+> **版本**：v0.1<br>
+> **文档性质**：Focused System Design / Pre-Validation Candidate<br>
+> **状态**：§3.7 Focused Design Closure 候选<br>
+> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v0.3.md`<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
+> **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`、`DeerMind_AI_Reasoning_Runtime_Design_v0.2.md`、`DeerMind_State_Dependency_Architecture_v0.1.md`、`DeerMind_Interaction_Decision_Runtime_Design_v0.2.md`、`DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md`<br>
+> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
+> **更新时间**：2026-09-29<br>
 > **版本说明**：v0.1 是 Evolution & Governance Runtime 的首个 Pre-Validation Focused Design Candidate。它不改变 Evolution Space 已冻结的 `SystemAssessmentModel + HypothesisModel + ValidationModel`、Governance 外置、`Signal != Issue != Hypothesis != RevisionCandidate != ValidationEvidence`、`ValidationEvidence != ChangeDecision`、`SelfImprovement != SelfAuthorization`、四级变化权限、Approval Envelope、Version Activation、Rollback 与 Post-Deployment Validation 等语义，而是把这些上位合同深化为可运行的系统认识与受治理变化机制。本文档特别强调：**Evolution Runtime 与 Governance Authority 不是一个共同 semantic owner，也不是一个“自修改运行时”**；前者形成系统认识、候选修改与验证证据，后者授予变化权限，最终 canonical commit 仍由对应 semantic owner 执行。具体组织岗位、审批 UI、工单产品、实验平台、因果推断算法、rollout 基础设施与生产级自动化编排仍不在本版本冻结范围内。
+
+> **引用维护（2026-10-08）**：本次只同步当前协作版本引用，不改变本专项合同或重标历史实验；初版形成时的闭合结论仍是历史记录。当前阶段和验证结果以 [Roadmap v0.6](DeerMind_System_Design_Roadmap_v0.6.md) 与 [统一 Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md) 为准。
 
 ---
 

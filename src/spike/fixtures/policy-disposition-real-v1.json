@@ -1,0 +1,18 @@
+{
+  "schema": "policy-disposition-fixed-identification-v1",
+  "repetitions": 1,
+  "max_calls": 6,
+  "max_output_tokens": 4096,
+  "timeout_seconds": 60,
+  "cases": [
+    {"id":"C1","source_id":"localization_acknowledged","variant":"E1-help","withhold":[],"author_expected":"PASS"},
+    {"id":"C2","source_id":"localization_erased","variant":"E1-help","withhold":[],"author_expected":"FAIL"},
+    {"id":"C3","source_id":"scoped_independent","variant":"E1-help","withhold":[],"author_expected":"PASS"},
+    {"id":"C4","source_id":"missing_review_material","variant":"E1-open","withhold":["work","before_observation"],"author_expected":"UNRESOLVED"},
+    {"id":"C5","source_id":"unsupported_multiplication","variant":"E1-open","withhold":[],"author_expected":"FAIL"},
+    {"id":"C6","source_id":"E1-help-3-historical","variant":"E1-help","withhold":[],"author_expected":null}
+  ],
+  "scope":"One semantic identification call per registered scripted candidate; no generation, utility scoring, commit or effect.",
+  "labels":"Author expectations, not independent truth. Source IDs and expectations stay out of model messages.",
+  "stop_rules":["Three consecutive model or contract failures stop remaining cases.","No retry, repair, replacement or hidden calls.","Source/request hash or input-budget mismatch prevents execution.","Keep raw model status separate from accepted structured disposition and actual identification findings."]
+}

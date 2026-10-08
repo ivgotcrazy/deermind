@@ -1,0 +1,705 @@
+{
+  "schema": "single-task-prototype-assessment-v2",
+  "date": "2026-10-07",
+  "status": "CLOSED_NO_GO",
+  "decision": "NO_GO",
+  "reason": "No complete two-turn session; one of twenty-four turns completed. Keep transport, wire-contract and semantic-classification failures separate.",
+  "document": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Result_v0.2.md",
+  "source_design": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Revision_v0.2.md",
+  "mechanical_checks_passed": true,
+  "final_tests_run": 193,
+  "new_mechanical_tests": 22,
+  "real_model_calls": 75,
+  "real_execution_seconds": 523.558,
+  "real_sessions_succeeded": 0,
+  "real_sessions_total": 12,
+  "real_turns_succeeded": 1,
+  "real_turns_failed": 23,
+  "not_run_turns": 0,
+  "H_mechanical_violations_observed": 0,
+  "C_accepted_severe_content_errors_observed": 0,
+  "failure_counts": {
+    "ContractError:CandidateHandlesNotContiguous": 3,
+    "ModelFailure:ProviderTLSFailure": 8,
+    "ContractError:workRejected:SemanticValidation:FAIL": 5,
+    "ModelFailure:ProviderRemoteDisconnected": 1,
+    "ContractError:DirectQuoteNotInCitedSource": 2,
+    "ModelFailure:ProviderTimeout": 1,
+    "ModelFailure:ProviderIncompleteRead": 3
+  },
+  "provider_failure_counts": {
+    "ProviderTLSFailure": 8,
+    "ProviderRemoteDisconnected": 1,
+    "ProviderTimeout": 1,
+    "ProviderIncompleteRead": 3
+  },
+  "formal_record_counts": {
+    "Observation": 2,
+    "PolicyOutcome": 1
+  },
+  "final_snapshot_refs": [
+    {
+      "session": "T01",
+      "snapshot_id": "e318f6c700a75a476b8e378b568d41fc91976e995148c8f00a816ae139925de2"
+    },
+    {
+      "session": "T02",
+      "snapshot_id": "fd41d91b2d2cf21a4dbe1e9581b40f7f7e63376c89055664e8c96d94d6c005cd"
+    },
+    {
+      "session": "T03",
+      "snapshot_id": "2b581571d4b95b9deee94a3be69ca1af4736eda6f1b41a2ea4dfdc113c54a8dc"
+    },
+    {
+      "session": "T04",
+      "snapshot_id": "4d52fb42c2de053224a16755910eb4940b1b74cf250c4ba0a4d04a366419eb85"
+    },
+    {
+      "session": "T05",
+      "snapshot_id": "d26aeaa31a693fab27c1d8f2e238382fcae44f720fecbcb83c9f06a262ba6132"
+    },
+    {
+      "session": "T06",
+      "snapshot_id": "4190e0be6a9e82f6dec7aeee668fec41856d695f843e70cac4654e9635666e12"
+    },
+    {
+      "session": "T07",
+      "snapshot_id": "2f4d7b4298b832045e9856076aa16c37b97932dded3cb4c60e9aeb39c6e01267"
+    },
+    {
+      "session": "T08",
+      "snapshot_id": "5c9f0a08d6fbef1d2f38215641f32d860b19e66a882970e8cb1c74f6a6c82f50"
+    },
+    {
+      "session": "T09",
+      "snapshot_id": "1bed6d07abbadc39ef342340722209a315dd95253a0400014b050c56e9be8515"
+    },
+    {
+      "session": "T10",
+      "snapshot_id": "682fd24c348bd04562bd2564e7ec1d64068d7f419deef8bc5d56c02516feb204"
+    },
+    {
+      "session": "T11",
+      "snapshot_id": "9251d74f9d267dc9b266b41f604abdc26ba3b9c340901675ed69d64685ffe46f"
+    },
+    {
+      "session": "T12",
+      "snapshot_id": "d836f5b648339bcd6a2f281f3827633a9545b996c310b45ff275e6b76583172d"
+    }
+  ],
+  "actual_generation_source_kinds_checked": true,
+  "test_labels_absent_from_real_messages": true,
+  "call_purpose_counts": {
+    "ObservationGeneration": 24,
+    "ObservationResponsibilityClassification": 19,
+    "ArithmeticExtraction": 16,
+    "ObservationSemanticValidation": 12,
+    "PolicyOutcomeGeneration": 2,
+    "PolicyOutcomeSemanticValidation": 2
+  },
+  "local_input_capacity_rejections": 0,
+  "maximum_sent_message_chars": 33656,
+  "observation_content_author_review": {
+    "generated": 19,
+    "acceptable": 18,
+    "missing_required_final_result_judgment": 1,
+    "not_generated": 5,
+    "independent_blind_review": false,
+    "production_accuracy_claimed": false
+  },
+  "completed_runtime_reviews": {
+    "total": 7,
+    "content_acceptable_candidates": 6,
+    "content_acceptable_accepted": 2,
+    "content_acceptable_rejected": 4,
+    "content_defective_candidates": 1,
+    "content_defective_accepted": 0,
+    "note": "T11/1 is rejected for other checks, while its missing final-result judgment is wrongly given PASS by the semantic reviewer. Transport/protocol failures excluded from this review-completion count, but never removed from the 24-turn acceptance denominator."
+  },
+  "semantic_classification_failure_turns": {
+    "wrong_reported_arithmetic_stance": [
+      "T04/1",
+      "T10/1",
+      "T11/1"
+    ],
+    "wrong_evidence_inference_responsibility": [
+      "T10/1",
+      "T11/1",
+      "T11/2",
+      "T12/2"
+    ],
+    "overlap_turns": [
+      "T10/1",
+      "T11/1"
+    ]
+  },
+  "rows": [
+    {
+      "id": "T01",
+      "family": "正确作答",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:CandidateHandlesNotContiguous",
+          "actual_model_calls": 4,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T01.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderTLSFailure",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T01.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T02",
+      "family": "正确作答",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderTLSFailure",
+          "actual_model_calls": 1,
+          "turn_phase": "SETTLED",
+          "observation_content": "NOT_AVAILABLE",
+          "observation_content_reason": "生成请求传输失败，没有可评审的Observation候选。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T02.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderTLSFailure",
+          "actual_model_calls": 1,
+          "turn_phase": "SETTLED",
+          "observation_content": "NOT_AVAILABLE",
+          "observation_content_reason": "生成请求传输失败，没有可评审的Observation候选。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T02.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T03",
+      "family": "定位帮助",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:CandidateHandlesNotContiguous",
+          "actual_model_calls": 4,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T03.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderTLSFailure",
+          "actual_model_calls": 2,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T03.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T04",
+      "family": "定位帮助",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:workRejected:SemanticValidation:FAIL",
+          "actual_model_calls": 4,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": "FAIL",
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T04.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:CandidateHandlesNotContiguous",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T04.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T05",
+      "family": "尚未完成",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderRemoteDisconnected",
+          "actual_model_calls": 4,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T05.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:DirectQuoteNotInCitedSource",
+          "actual_model_calls": 4,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T05.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T06",
+      "family": "尚未完成",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderTLSFailure",
+          "actual_model_calls": 6,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": "PASS",
+          "observation_committed": true,
+          "policy_generated": true,
+          "policy_content": "PASS",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T06.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderTLSFailure",
+          "actual_model_calls": 1,
+          "turn_phase": "SETTLED",
+          "observation_content": "NOT_AVAILABLE",
+          "observation_content_reason": "生成请求传输失败，没有可评审的Observation候选。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T06.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T07",
+      "family": "方法与结果",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderTLSFailure",
+          "actual_model_calls": 1,
+          "turn_phase": "SETTLED",
+          "observation_content": "NOT_AVAILABLE",
+          "observation_content_reason": "生成请求传输失败，没有可评审的Observation候选。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T07.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderTimeout",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T07.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T08",
+      "family": "方法与结果",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderTLSFailure",
+          "actual_model_calls": 1,
+          "turn_phase": "SETTLED",
+          "observation_content": "NOT_AVAILABLE",
+          "observation_content_reason": "生成请求传输失败，没有可评审的Observation候选。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T08.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "COMPLETED",
+          "quality": "PASS",
+          "category": null,
+          "runtime_failure": null,
+          "actual_model_calls": 6,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": "PASS",
+          "observation_committed": true,
+          "policy_generated": true,
+          "policy_content": "PASS",
+          "policy_committed": true,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T08.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T09",
+      "family": "请求限制",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderIncompleteRead",
+          "actual_model_calls": 2,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T09.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderIncompleteRead",
+          "actual_model_calls": 3,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T09.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T10",
+      "family": "请求限制",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:workRejected:SemanticValidation:FAIL",
+          "actual_model_calls": 4,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": "FAIL",
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T10.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ModelFailure:ProviderIncompleteRead",
+          "actual_model_calls": 2,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T10.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T11",
+      "family": "实际帮助",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:workRejected:SemanticValidation:FAIL",
+          "actual_model_calls": 4,
+          "turn_phase": "SETTLED",
+          "observation_content": "FAIL",
+          "observation_content_reason": "已识别提交结果120与回复请求，但没有明确判断120是否符合原题；final_result原始判断仍为PASS。",
+          "additional_category": "Q_REQUIRED_MEANING",
+          "work_review_status": "FAIL",
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T11.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:workRejected:SemanticValidation:FAIL",
+          "actual_model_calls": 4,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": "FAIL",
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T11.jsonl"
+        }
+      ]
+    },
+    {
+      "id": "T12",
+      "family": "实际帮助",
+      "result": "FAIL",
+      "turns": [
+        {
+          "turn": 1,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:DirectQuoteNotInCitedSource",
+          "actual_model_calls": 4,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": null,
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T12.jsonl"
+        },
+        {
+          "turn": 2,
+          "execution": "FAILED",
+          "quality": "FAIL",
+          "category": "Q_UNAVAILABLE",
+          "runtime_failure": "ContractError:workRejected:SemanticValidation:FAIL",
+          "actual_model_calls": 4,
+          "turn_phase": "SETTLED",
+          "observation_content": "PASS",
+          "observation_content_reason": "可见方法、算术、提交状态和请求归属符合本轮材料；帮助历史未被虚构。",
+          "additional_category": null,
+          "work_review_status": "FAIL",
+          "observation_committed": false,
+          "policy_generated": false,
+          "policy_content": "NOT_AVAILABLE",
+          "policy_committed": false,
+          "effect_occurred": false,
+          "evidence": "src/spike/runs/single-task-prototype-v2/cases/T12.jsonl"
+        }
+      ]
+    }
+  ],
+  "work_time": {
+    "status": "CLOSED_NO_GO",
+    "observed_start_utc": "2026-10-07T09:24:47+00:00",
+    "initial_allowance_seconds": 60,
+    "implementation_cap_seconds": 14400,
+    "real_cap_seconds": 2700,
+    "review_cap_seconds": 3600,
+    "report_cap_seconds": 900,
+    "planned_real_calls_max": 168,
+    "real_batches_max": 1,
+    "transport_retries": 0,
+    "replacement_cases": 0,
+    "authorization": "User said continue after the explicit one revision plus one complete acceptance plan.",
+    "implementation_completed_at_utc": "2026-10-07T09:58:40.297768+00:00",
+    "implementation_elapsed_seconds": 2093.298,
+    "review_started_at_utc": "2026-10-07T10:08:56.507860+00:00",
+    "real_execution_completed_at_utc": "2026-10-07T10:08:20.845641+00:00",
+    "real_execution_seconds": 523.558,
+    "review_completed_at_utc": "2026-10-07T10:17:02.291540+00:00",
+    "review_elapsed_seconds": 485.784,
+    "final_report_completed_at_utc": "2026-10-07T10:18:22.529396+00:00",
+    "report_elapsed_seconds": 80.238,
+    "total_conservative_elapsed_seconds": 3275.529,
+    "all_stage_caps_respected": true
+  },
+  "automatic_followup_campaign": false,
+  "conclusion_scope": "This concrete configuration is not a usable internal prototype. No inference of general LLM impossibility, keyword replacement, or mandatory architecture change."
+}

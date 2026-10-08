@@ -1,18 +1,20 @@
 # DeerMind State, Dependency & Invalidation Architecture v0.1
 
-> **中文名称**：DeerMind 状态、依赖与失效架构  
-> **版本**：v0.1  
-> **文档性质**：Focused System Design / Pre-Validation Candidate  
-> **状态**：§3.4 Focused Design Closure 候选  
-> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v0.1.md`  
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.4.md`  
-> **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`、`DeerMind_AI_Reasoning_Runtime_Design_v0.1.md`  
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
+> **中文名称**：DeerMind 状态、依赖与失效架构<br>
+> **版本**：v0.1<br>
+> **文档性质**：Focused System Design / Pre-Validation Candidate<br>
+> **状态**：§3.4 Focused Design Closure 候选<br>
+> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v0.3.md`<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
+> **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`、`DeerMind_AI_Reasoning_Runtime_Design_v0.2.md`<br>
+> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
 > **更新时间**：2026-09-30
 >
 > **修订说明**：细化 exact dependency 与上游 replacement 的 current 检查，同步 Spike B1；补清单会话常规轮次串行与跨会话 / 外部变化的重验边界。保留既有状态模型与 owner 职责。
 >
 > **版本说明**：v0.1 是 State, Dependency & Invalidation Architecture 的首个 Pre-Validation Focused Design Candidate。它不改变总体 System Design 已冻结的 `Current != Latest`、`Materialization != FormalStanding`、`Projection != SourceOfTruth`、typed invalidation、synchronous validity safety、asynchronous recomputation、optimistic formal commit 与 immutable history 等系统级合同，而是把这些合同深化为可直接约束实现的状态一致性机制。本版本冻结 state standing、identity / revision、exact dependency、`PINNED / CURRENT` dependency、Current Resolution、stale / invalid / superseded / recomputed 语义、typed invalidation、snapshot coherence、commit-time revalidation、owner-specific recompute、cache / materialization 边界、recovery 与 failure path；dependency graph 的具体数据结构、数据库、索引、队列、调度框架与生产级 fan-out 优化仍不在本版本冻结范围内。
+
+> **引用维护（2026-10-08）**：本次只同步当前协作版本引用，不改变本专项合同或重标历史实验；初版形成时的闭合结论仍是历史记录。当前阶段和验证结果以 [Roadmap v0.6](DeerMind_System_Design_Roadmap_v0.6.md) 与 [统一 Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md) 为准。
 
 ---
 

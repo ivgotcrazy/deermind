@@ -1,0 +1,31 @@
+{
+  "schema": "policy-disposition-local-assessment-v1",
+  "date": "2026-10-06",
+  "result": "PASS",
+  "scope": "Same-call declared disposition binding, trusted review withholding and commit rechecks; scripted semantics only",
+  "tests_run": 299,
+  "new_test_methods": 14,
+  "external_model_calls": 0,
+  "audit": {
+    "frozen_inputs_verified": 181,
+    "artifacts_verified": 16,
+    "snapshots_verified": 14,
+    "scripted_model_records": 17,
+    "prior_ledger_entries_verified": 440,
+    "archived_sources_verified": 2
+  },
+  "semantic_acceptance": "NOT_VALIDATED",
+  "profile_default": false,
+  "original_A2": "DENIED",
+  "original_E1": "INCONCLUSIVE",
+  "full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "automatic_additional_batches": false,
+  "limitations": [
+    "Mechanical checks cannot detect a contradiction the LLM fails to declare.",
+    "Trusted review withholding and generic excluded materials are implemented; production recovery and role-specific retrieval metadata are not.",
+    "No real-model semantic result or historical E1/A2 classification change."
+  ],
+  "summary_sha256": "3e72d664092d811c25ebe1e74d943e8392d9d50bbf1b7d33ca412941808cb58f"
+}

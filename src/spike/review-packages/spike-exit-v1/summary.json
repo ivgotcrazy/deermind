@@ -1,0 +1,22 @@
+{
+  "status": "OFFLINE_READY",
+  "external_model_calls": 0,
+  "blocked_network_attempts": 0,
+  "scripted_calls": 324,
+  "scripted_cases_completed": 66,
+  "scripted_stop_reason": null,
+  "maximum_message_chars": 15454,
+  "historical_compatibility_status": "PASS",
+  "historical_paths_replayed": 46,
+  "tests_run": 359,
+  "test_failures": 0,
+  "test_errors": 0,
+  "changed_frozen_sources": [],
+  "semantic_support_claimed": false,
+  "independent_blind_labels": false,
+  "real_execution_started": false,
+  "original_full_cases_completed": 9,
+  "original_A2": "DENIED",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN"
+}

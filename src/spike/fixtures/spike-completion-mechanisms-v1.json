@@ -1,0 +1,122 @@
+{
+  "protocols": {
+    "observation": "src/spike/protocols/observation-validation-v13.json",
+    "formation_observation": "src/spike/protocols/observation-exit-work-v1.json",
+    "request": "src/spike/protocols/observation-x5-request-v2.json",
+    "policy": "src/spike/protocols/policy-e1-v5.json",
+    "mechanism_policy": "src/spike/protocols/policy-e1-v1.json",
+    "security": "src/spike/protocols/security-f-v1.json",
+    "x5_policy": "src/spike/protocols/policy-exit-x5-v1.json"
+  },
+  "original_fixtures": {
+    "A1": "src/spike/fixtures/observation-a1-v1.json",
+    "A1_protocol": "src/spike/protocols/observation-a1-v1.json",
+    "E1": "src/spike/fixtures/policy-e1-v1.json",
+    "E2": "src/spike/fixtures/serial-e2-v1.json",
+    "F2": "src/spike/fixtures/security-f-v1.json",
+    "X1X2": "src/spike/fixtures/composition-x1-x2-v1.json",
+    "X5": "src/spike/fixtures/composition-x5-v1.json"
+  },
+  "model": {
+    "provider_endpoint": "https://api.deepseek.com/beta",
+    "model": "deepseek-flash",
+    "thinking": "disabled",
+    "temperature": 0,
+    "max_output_tokens": 2048,
+    "timeout_seconds": 60,
+    "max_input_chars": 64000
+  },
+  "schema": "spike-completion-mechanisms-v1",
+  "schedule": [
+    {
+      "id": "E2-A-queue-gap-r1",
+      "group": "E2",
+      "variant": "A-queue",
+      "repetition": 1,
+      "max_calls": 12,
+      "historical_failure_preserved": true,
+      "logical_max_calls": 4
+    },
+    {
+      "id": "E2-A-queue-gap-r5",
+      "group": "E2",
+      "variant": "A-queue",
+      "repetition": 5,
+      "max_calls": 12,
+      "historical_failure_preserved": true,
+      "logical_max_calls": 4
+    },
+    {
+      "id": "F2-F2-subject-read-gap-r1",
+      "group": "F2",
+      "variant": "F2-subject-read",
+      "repetition": 1,
+      "max_calls": 3,
+      "historical_failure_preserved": true,
+      "logical_max_calls": 1
+    },
+    {
+      "id": "F2-F2-subject-execute-gap-r1",
+      "group": "F2",
+      "variant": "F2-subject-execute",
+      "repetition": 1,
+      "max_calls": 3,
+      "historical_failure_preserved": true,
+      "logical_max_calls": 1
+    },
+    {
+      "id": "F2-F2-subject-execute-gap-r5",
+      "group": "F2",
+      "variant": "F2-subject-execute",
+      "repetition": 5,
+      "max_calls": 3,
+      "historical_failure_preserved": true,
+      "logical_max_calls": 1
+    },
+    {
+      "id": "F2-F2-purpose-gap-r2",
+      "group": "F2",
+      "variant": "F2-purpose",
+      "repetition": 2,
+      "max_calls": 3,
+      "historical_failure_preserved": true,
+      "logical_max_calls": 1
+    },
+    {
+      "id": "F2-F2-purpose-gap-r3",
+      "group": "F2",
+      "variant": "F2-purpose",
+      "repetition": 3,
+      "max_calls": 3,
+      "historical_failure_preserved": true,
+      "logical_max_calls": 1
+    },
+    {
+      "id": "X1-X1-correction-gap-r1",
+      "group": "X1",
+      "variant": "X1-correction",
+      "repetition": 1,
+      "max_calls": 12,
+      "historical_failure_preserved": true,
+      "logical_max_calls": 4
+    },
+    {
+      "id": "X2-X2-revoke-gap-r5",
+      "group": "X2",
+      "variant": "X2-revoke",
+      "repetition": 5,
+      "max_calls": 6,
+      "historical_failure_preserved": true,
+      "logical_max_calls": 2
+    }
+  ],
+  "budget": {
+    "max_calls": 60,
+    "wall_time_seconds": 600,
+    "transport_retries": 2
+  },
+  "purpose": "Complete nine explicitly identified execution gaps; unchanged original fixtures and semantic protocols.",
+  "semantic_retries": 0,
+  "failure_policy": "Preserve each result; ordinary protocol/model failure does not suppress independent cases. Stop on failed deterministic assertions, auth/config failure or exhausted budget.",
+  "historical_failures_preserved": true
+}

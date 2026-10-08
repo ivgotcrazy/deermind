@@ -1,0 +1,30 @@
+{
+  "status": "OFFLINE_CONTRACT_PASS_RUNTIME_INTEGRATION_REQUIRED",
+  "configuration_sha256": "33f2815faaba30989270b93a691c8ba1e371d5ef1c81ff48db3cca7f85558598",
+  "protocols_verified": 3,
+  "schemas_checked": 11,
+  "normal_cases": 6,
+  "fixed_controls": 4,
+  "planned_calls": 51,
+  "max_calls": 58,
+  "wall_time_seconds": 900,
+  "external_model_calls": 0,
+  "runtime_requests_audited": false,
+  "execution_authorized": false,
+  "independent_semantic_review": false,
+  "date": "2026-10-07",
+  "scope": "Offline schema/ref/order/budget preflight only; no provider requests",
+  "prior_preparation_issue": {
+    "protocol": "observation-x5-request-v1.json",
+    "failure": "CriterionSchemaMismatch",
+    "resolution": "Pinned existing request-v2 without modifying historical v1"
+  },
+  "source_sha256": {
+    "src/spike/fixtures/restricted-working-v1.json": "33f2815faaba30989270b93a691c8ba1e371d5ef1c81ff48db3cca7f85558598",
+    "src/spike/preflight_restricted_working.py": "ab2e63a4261bc7bcb55bda690e6d74d4b7cdf369f1090ae871b1ada89df65078",
+    "src/spike/reports/restricted-working-plan-20261007.md": "f0a1959d948a97cfc302b25de2790096fdeb72ddcca17852bc39d62b27c4ee1f",
+    "src/spike/protocols/observation-validation-v13.json": "1a90a1e163ca5bf2dcc796339ee3837fcd9a8e2bd8ccc749001d71049b5bc5d3",
+    "src/spike/protocols/observation-x5-request-v2.json": "be1207a9b365533ef0735f16e10d889eb98f3fcf19955312addb3e4f70036319",
+    "src/spike/protocols/policy-e1-v4.json": "8ce7a3c83774f9beb355c96dce0867329ed56f68077edc2a8664b63301da56cf"
+  }
+}

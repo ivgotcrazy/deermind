@@ -4,7 +4,7 @@
 
 ## 1. 本次交付
 
-[算术表达合同 v0.1](../../../doc/system-design/DeerMind_Arithmetic_Expression_Contract_v0.1.md)与独立的 [v12 实验协议](../protocols/observation-expressions-v12.json)已实现。新表示明确区分 NumericAssertion、UnevaluatedExpression、UnresolvedNumericMapping。`42÷6=?` 可保留未给出的结果为 null；程序不会补成 7，也不会用问号等文本特征决定表达类型。
+[算术表达合同 v0.1](../../../doc/system-design/spike/DeerMind_Arithmetic_Expression_Contract_v0.1.md)与独立的 [v12 实验协议](../protocols/observation-expressions-v12.json)已实现。新表示明确区分 NumericAssertion、UnevaluatedExpression、UnresolvedNumericMapping。`42÷6=?` 可保留未给出的结果为 null；程序不会补成 7，也不会用问号等文本特征决定表达类型。
 
 候选全文按 exact field 和原文覆盖；表达引用唯一定位到所属片段，结果保留字符位置和 exact Context 来源字段。候选字段在职责分类、表达抽取及综合审查 schema 中均显式限定为 `description`，不接受 `candidate.description` 等别名。协议注册预检查字段、类型、必要判据和实际规则的对应关系；正式提交重新核算绑定的表达结果，不能复用其他候选的提取或伪造计算结果。
 

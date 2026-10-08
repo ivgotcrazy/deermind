@@ -65,6 +65,7 @@ class LLMConfig:
     max_calls: int = 2
     max_output_tokens: int = 1024
     timeout_seconds: float = 60
+    max_input_chars: int = 64000
 
     def __post_init__(self):
         url = urlsplit(self.base_url)
@@ -72,14 +73,15 @@ class LLMConfig:
             raise ValueError("LLM base URL must be an HTTPS endpoint without embedded credentials or query")
         if (not self.model or type(self.max_calls) is not int or self.max_calls < 1
                 or type(self.max_output_tokens) is not int or not 1 <= self.max_output_tokens <= 393216
+                or type(self.max_input_chars) is not int or self.max_input_chars < 1
                 or not math.isfinite(self.timeout_seconds) or self.timeout_seconds <= 0):
-            raise ValueError("Invalid model or call/token/timeout limit")
+            raise ValueError("Invalid model or call/token/input/timeout limit")
 
     def public(self):
         return {"provider": "deepseek", "base_url": self.base_url, "model": self.model,
                 "max_calls": self.max_calls, "max_output_tokens": self.max_output_tokens,
                 "timeout_seconds": self.timeout_seconds, "retries": 0,
-                "thinking": "disabled", "temperature": 0, "max_input_chars": 16000,
+                "thinking": "disabled", "temperature": 0, "max_input_chars": self.max_input_chars,
                 "credential_source": "DEERMIND_LLM_API_KEY", "key_configured": bool(self.api_key)}
 
 
@@ -107,7 +109,8 @@ def load_config(repo: Path, environment=None):
                          values.get("DEERMIND_LLM_MODEL", "deepseek-flash"),
                          int(values.get("DEERMIND_LLM_MAX_CALLS", "2")),
                          int(values.get("DEERMIND_LLM_MAX_OUTPUT_TOKENS", "1024")),
-                         float(values.get("DEERMIND_LLM_TIMEOUT_SECONDS", "60")))
+                         float(values.get("DEERMIND_LLM_TIMEOUT_SECONDS", "60")),
+                         int(values.get("DEERMIND_LLM_MAX_INPUT_CHARS", "64000")))
     except (TypeError, ValueError):
         # Never echo a malformed environment value; it could contain a pasted key.
         raise ValueError("Invalid DeepSeek configuration; check endpoint and numeric limits") from None
@@ -140,13 +143,17 @@ class DeepSeekAdapter:
         self.config, self.transport = config, transport
         self.calls = 0
         self.records = []
+        self.input_rejections = []
 
     def complete(self, messages, purpose, *, output_contract=None):
         if not self.config.api_key:
             raise ModelFailure("MissingAPIKey: configure DEERMIND_LLM_API_KEY locally")
         if self.calls >= self.config.max_calls:
             raise ModelFailure("ModelCallBudgetExhausted")
-        if len(json.dumps(messages, ensure_ascii=False)) > 16000:
+        input_chars = len(json.dumps(messages, ensure_ascii=False))
+        if input_chars > self.config.max_input_chars:
+            self.input_rejections.append({"purpose": purpose, "input_chars": input_chars,
+                                          "max_input_chars": self.config.max_input_chars})
             raise ModelFailure("InputLimitExceeded")
         if output_contract is not None:
             try:
@@ -162,7 +169,7 @@ class DeepSeekAdapter:
         self.calls += 1
         record = {"execution_id": uuid4().hex, "purpose": purpose,
                   "started_at": datetime.now(timezone.utc).isoformat(), "config": self.config.public(),
-                  "messages": messages, "status": "STARTED"}
+                  "messages": messages, "input_chars": input_chars, "status": "STARTED"}
         self.records.append(record)
         request = {"model": self.config.model, "messages": messages, "stream": False,
                    "thinking": {"type": "disabled"}, "temperature": 0,

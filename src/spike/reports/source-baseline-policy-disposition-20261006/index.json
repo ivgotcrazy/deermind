@@ -1,0 +1,12 @@
+[
+  {
+    "source_path": "src/spike/foundation/boundary.py",
+    "previous_sha256": "d99630a34d0bff8200bd39c87ce306c12cb20cff062d43ec66a7e518b0058106",
+    "preserved_at": "src/spike/reports/source-baseline-policy-disposition-20261006/boundary.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/policy_cases.py",
+    "previous_sha256": "556f30ce19b47c9cdba4231a5f862ac1ee08c560b9918d16c3a3c6c5a551fd7c",
+    "preserved_at": "src/spike/reports/source-baseline-policy-disposition-20261006/policy_cases.py.txt"
+  }
+]

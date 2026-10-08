@@ -17,12 +17,12 @@ from .llm import ModelFailure
 
 class PolicyWorld(ActionWorld):
     def __init__(self, evidence, definition, fixture, variant, *, rule_revision='v1'):
-        if rule_revision not in ('v1', 'v2'):
+        if rule_revision not in ('v1', 'v2', 'v3', 'v4', 'v5'):
             raise ContractError('UnsupportedPolicyRuleRevision')
-        if (definition.get('version') == 'v2') != (rule_revision == 'v2'):
+        if (definition.get('version') in ('v2','v3','v4','v5') or rule_revision in ('v2','v3','v4','v5')) and definition.get('version') != rule_revision:
             raise ContractError('PolicyRuleRevisionMismatch')
-        if rule_revision == 'v2':
-            expected = {key: {'space': 'canonical', 'identity': identity, 'revision': 'v2'}
+        if rule_revision in ('v2','v3','v4','v5'):
+            expected = {key: {'space': 'canonical', 'identity': identity, 'revision': rule_revision}
                 for key, identity in (('protocol_ref', 'E1PolicyProtocol'),
                     ('semantic_rule_ref', 'E1PolicySemanticRules'), ('utility_rule_ref', 'E1UtilityRules'))}
             binding = definition.get('runtime_binding_requirement', {})
@@ -55,14 +55,14 @@ class PolicyWorld(ActionWorld):
             for identity, meaning in [('C1','Independent task proficiency'),('C2','Unit-rate strategy selection'),('C3','Division arithmetic')])
         ref = seed(self.h, Ref(Space.CANONICAL, 'E1PolicyProtocol', rule_revision), kind='ReasoningProtocol', payload=definition)
         rule = seed(self.h, Ref(Space.CANONICAL, 'E1PolicySemanticRules', rule_revision), kind='SemanticValidationRules',
-            payload={'format': 'legacy-v1', 'system': definition['validation_system']})
+            payload={'format': definition.get('validation_format','legacy-v1'), 'system': definition['validation_system']})
         self.utility_rule = seed(self.h, Ref(Space.CANONICAL, 'E1UtilityRules', rule_revision), kind='PolicyUtilityRules',
             payload={'system': definition['utility_system'], 'rubric': definition['utility_rubric'], 'test_only': True})
         kinds = ('Observation','LearnerWorkSubmitted','CurrentInteractionInput','ActionSemantic','ActivityConstraints','Claim')
         self.protocol = Protocol(ref, 'PolicyOutcome', 'Interaction', kinds, tuple(tuple(f) for f in definition['fields']), rule, self.endpoint)
         self.runtime.register_protocol(self.protocol)
-        bindings = (ref, rule, self.utility_rule) if rule_revision == 'v2' else (ref, rule)
-        compatibility = 'E1-compatible-v2' if rule_revision == 'v2' else 'E1-compatible'
+        bindings = (ref, rule, self.utility_rule) if rule_revision in ('v2','v3','v4','v5') else (ref, rule)
+        compatibility = 'E1-compatible-'+rule_revision if rule_revision in ('v2','v3','v4','v5') else 'E1-compatible'
         self.h.canonical.add_compatibility_fixture(Compatibility(compatibility, bindings, 'learner-A', 'learning', Decision.ALLOW))
         self.security.install_authority(AuthorityGrant('E1-reason', 'interaction','learning','learner-A',
             (ref.identity,), ('reason','validate'), 100000))

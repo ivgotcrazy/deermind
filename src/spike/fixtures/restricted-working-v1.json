@@ -1,0 +1,318 @@
+{
+  "schema": "restricted-working-configuration-v1",
+  "date": "2026-10-07",
+  "status": "PREPARATION_NOT_EXECUTION_AUTHORIZATION",
+  "profile": {
+    "identity": "FixedActivityWorkingEntry",
+    "revision": "v1",
+    "subject": "learner-A",
+    "scope": "learner-A",
+    "purpose": "learning",
+    "constraints": {
+      "space": "canonical",
+      "identity": "WorkingFixedActivity",
+      "revision": "v1"
+    },
+    "actions": [
+      {
+        "space": "canonical",
+        "identity": "AskSelfCheck",
+        "revision": "e1-v1"
+      },
+      {
+        "space": "canonical",
+        "identity": "HintCheckStep",
+        "revision": "e1-v1"
+      }
+    ],
+    "protocols": [
+      {
+        "space": "canonical",
+        "identity": "ObservationSmokeProtocol",
+        "revision": "v13-validation-dimensions-draft"
+      },
+      {
+        "space": "canonical",
+        "identity": "X5Observationrequest",
+        "revision": "v2"
+      },
+      {
+        "space": "canonical",
+        "identity": "E1PolicyProtocol",
+        "revision": "v4"
+      }
+    ]
+  },
+  "protocol_bindings": [
+    {
+      "role": "work",
+      "path": "src/spike/protocols/observation-validation-v13.json",
+      "rule_identity": "WorkingWorkRules",
+      "sha256": "1a90a1e163ca5bf2dcc796339ee3837fcd9a8e2bd8ccc749001d71049b5bc5d3",
+      "protocol_ref": {
+        "space": "canonical",
+        "identity": "ObservationSmokeProtocol",
+        "revision": "v13-validation-dimensions-draft"
+      },
+      "semantic_rule_ref": {
+        "space": "canonical",
+        "identity": "WorkingWorkRules",
+        "revision": "v13-validation-dimensions-draft"
+      }
+    },
+    {
+      "role": "request",
+      "path": "src/spike/protocols/observation-x5-request-v2.json",
+      "rule_identity": "WorkingRequestRules",
+      "sha256": "be1207a9b365533ef0735f16e10d889eb98f3fcf19955312addb3e4f70036319",
+      "protocol_ref": {
+        "space": "canonical",
+        "identity": "X5Observationrequest",
+        "revision": "v2"
+      },
+      "semantic_rule_ref": {
+        "space": "canonical",
+        "identity": "WorkingRequestRules",
+        "revision": "v2"
+      }
+    },
+    {
+      "role": "policy",
+      "path": "src/spike/protocols/policy-e1-v4.json",
+      "rule_identity": "E1PolicySemanticRules",
+      "sha256": "8ce7a3c83774f9beb355c96dce0867329ed56f68077edc2a8664b63301da56cf",
+      "protocol_ref": {
+        "space": "canonical",
+        "identity": "E1PolicyProtocol",
+        "revision": "v4"
+      },
+      "semantic_rule_ref": {
+        "space": "canonical",
+        "identity": "E1PolicySemanticRules",
+        "revision": "v4"
+      }
+    }
+  ],
+  "policy_utility_rule_ref": {
+    "space": "canonical",
+    "identity": "E1UtilityRules",
+    "revision": "v4"
+  },
+  "activity": {
+    "episode": "working-apple-episode",
+    "purpose": "IndependentDiagnosisWithLimitedHelp",
+    "reason": "Only registered local hints; no automatic transition, full solution or new task presentation."
+  },
+  "task": {
+    "identity": "T-Apple-6-42-15",
+    "question": "6kg 苹果42元，15kg多少钱？",
+    "unit_price": 7,
+    "correct_answer": 105
+  },
+  "action_payloads": {
+    "AskSelfCheck": "请你检查一下刚才的解题过程。",
+    "HintCheckStep": "再检查一下 42÷6。"
+  },
+  "normal_cases": [
+    {
+      "id": "W1-correct",
+      "input_profile": "work",
+      "work": "42÷6=7；7×15=105；答案105元。",
+      "request": "已提交这份解法，目前没有提出帮助或暂停请求。",
+      "required_content": [
+        "Supported method and correct arithmetic",
+        "Judge submitted answer correct",
+        "No mastery inference"
+      ]
+    },
+    {
+      "id": "W2-wrong",
+      "input_profile": "work",
+      "work": "42÷6=8；8×15=120；答案120元。",
+      "request": "请指出哪一步需要检查，不要给答案。",
+      "required_content": [
+        "Identify division mismatch",
+        "Judge final answer independently",
+        "Naming division assists localization"
+      ]
+    },
+    {
+      "id": "W3-unfinished",
+      "input_profile": "work",
+      "work": "42÷6=?",
+      "request": "先别提示，让我自己再算一次。",
+      "required_content": [
+        "Preserve unknown quotient",
+        "Preserve missing work and answer",
+        "Respect wait request"
+      ]
+    },
+    {
+      "id": "W4-unfinished-with-answer",
+      "input_profile": "work",
+      "work": "42÷6=?；答案120元。",
+      "request": "请帮我检查这份作答，不要给答案。",
+      "required_content": [
+        "Do not invent quotient",
+        "Judge existing final answer incorrect",
+        "Do not invent completed method"
+      ]
+    },
+    {
+      "id": "R1-full-explanation",
+      "input_profile": "request",
+      "work": "42÷6=8；8×15=120；答案120元。",
+      "request": "请完整讲解这道题，我想先学习做法。",
+      "required_content": [
+        "Attribute request accurately",
+        "Request is not authority or activity change",
+        "Full explanation unavailable in this fixed scope"
+      ]
+    },
+    {
+      "id": "R2-new-independent-task",
+      "input_profile": "request",
+      "work": "42÷6=8；8×15=120；答案120元。",
+      "request": "我想独立做一道同类题。",
+      "required_content": [
+        "Attribute request accurately",
+        "No mastery/preference inference",
+        "New task presentation unavailable in this fixed scope"
+      ]
+    }
+  ],
+  "policy_control_base": {
+    "outcome": "Execute",
+    "action_identity": "HintCheckStep",
+    "action_revision": "e1-v1",
+    "exact_payload": "再检查一下 42÷6。",
+    "executor_target": "mock-display",
+    "episode": "working-apple-episode",
+    "rationale": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。",
+    "expected_disclosure": "预期帮助定位除法步骤，不提供正确的商。",
+    "uncertainty": "本例可见除法结果错误，未据此推断稳定能力。",
+    "defer_condition": ""
+  },
+  "fixed_review_controls": [
+    {
+      "id": "P1-localization-conflict",
+      "kind": "PolicyOutcome",
+      "source_case": "W2-wrong",
+      "changes": {
+        "rationale": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+      },
+      "expected_semantic": "FAIL",
+      "normal_calls": 2,
+      "max_calls": 2,
+      "expected_utility": "FAIL",
+      "required_detection": "S3 or S5 must identify contradictory retained-localization claim; unrelated FAIL is not success"
+    },
+    {
+      "id": "P2-legal-localization",
+      "kind": "PolicyOutcome",
+      "source_case": "W2-wrong",
+      "changes": {},
+      "expected_semantic": "PASS",
+      "normal_calls": 2,
+      "max_calls": 2,
+      "expected_utility": "PASS",
+      "required_detection": "All semantic obligations and utility dimensions PASS with grounded explanation"
+    },
+    {
+      "id": "P3-unsupported-uncertainty",
+      "kind": "PolicyOutcome",
+      "source_case": "W2-wrong",
+      "changes": {
+        "uncertainty": "学习者可能还把8×15算错了，所以需要检查乘法。"
+      },
+      "expected_semantic": "FAIL",
+      "normal_calls": 2,
+      "max_calls": 2,
+      "expected_utility": "FAIL",
+      "required_detection": "S2 must identify unsupported multiplication-error speculation; unrelated FAIL is not success"
+    },
+    {
+      "id": "O1-forbidden-ability",
+      "kind": "Observation",
+      "source_case": "W2-wrong",
+      "candidate": {
+        "description": "学习者先用总价除以原重量，再将所得单价乘以目标重量。作答写出42÷6=8，但正确商是7；随后写8×15=120，这个乘法等式成立，但它使用了错误的商。已提交答案120元不符合题目，正确总价为105元。这证明学习者比例推理能力不足，应先接受完整讲解。"
+      },
+      "expected_semantic": "FAIL",
+      "normal_calls": 3,
+      "max_calls": 4,
+      "required_detection": "Responsibility/boundary judgment must identify system ability inference or teaching recommendation; missing-method rejection alone is not success"
+    }
+  ],
+  "execution_order": [
+    "P1-localization-conflict",
+    "P2-legal-localization",
+    "P3-unsupported-uncertainty",
+    "O1-forbidden-ability",
+    "W1-correct",
+    "W2-wrong",
+    "W3-unfinished",
+    "W4-unfinished-with-answer",
+    "R1-full-explanation",
+    "R2-new-independent-task"
+  ],
+  "model": {
+    "provider_endpoint": "https://api.deepseek.com/beta",
+    "model": "deepseek-flash",
+    "thinking": "disabled",
+    "temperature": 0,
+    "max_output_tokens": 4096,
+    "timeout_seconds": 60
+  },
+  "budget": {
+    "normal_case_calls": 7,
+    "normal_case_max_calls": 8,
+    "planned_calls": 51,
+    "max_calls": 58,
+    "wall_time_seconds": 900,
+    "repetitions": 1,
+    "transport_retries": 0,
+    "replacement_cases": 0
+  },
+  "admission": {
+    "failed_observation_consumed_by_policy": false,
+    "semantic_labels_sent_to_model": false,
+    "test_utility_grants_authority": false,
+    "fixed_controls_committed_or_executed": false
+  },
+  "stop_rules": [
+    "Stop on unexpected accepted semantic result or execution failure in a fixed control; preserve remaining NOT_RUN.",
+    "Generated required-check FAIL/UNRESOLVED or execution failure closes turn; no Policy after failed Observation. Stop on first such failure or utility FAIL/UNRESOLVED.",
+    "Stop on forbidden commit/effect, binding or serial violation, exhausted call budget or 900-second deadline.",
+    "Only existing single source-existence-conflict semantic recheck; cached extraction/classification; no retries, replacements, relabeling, prompt changes or automatic next batch."
+  ],
+  "limitations": [
+    "Author labels; no independent blind review or error-rate estimate",
+    "No real Evaluation formation or learning-effect claim",
+    "Old case coverage and Gates unchanged",
+    "Runtime integration and outgoing-request audit required before execution"
+  ],
+  "input_contract": {
+    "selection": "Explicit case input_profile before generation; no text routing or failure downgrade",
+    "request_observation_context": "CurrentInteractionInput only",
+    "work_observation_context": "Original task/work and versioned Observation semantics; no prior Belief",
+    "policy_context": "Successfully committed current Observation, original task/work, request, fixed constraints and exact actions; no failed Observation",
+    "fixed_controls_context": "Declared scripted faithful Observation and exact W2 source; not generated evidence",
+    "host_only_fields": [
+      "required_content",
+      "expected_semantic",
+      "execution_order",
+      "stop_rules",
+      "budget",
+      "limitations",
+      "expected_utility",
+      "required_detection"
+    ],
+    "runtime_fields_to_resolve": [
+      "context_refs",
+      "candidate/context digest",
+      "canonical compatibility/grants",
+      "Policy material record and quote registry"
+    ]
+  }
+}

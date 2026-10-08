@@ -1,0 +1,158 @@
+{
+  "schema": "bounded-spike-exit-assessment-v1",
+  "date": "2026-10-07",
+  "status": "CLOSED_CURRENT_CONFIGURATION_NOT_ACCEPTABLE",
+  "run_directory": "src/spike/runs/spike-exit-v1",
+  "transport_status": "COMPLETED",
+  "wire_schema_valid": true,
+  "field_reference_representation": "All supplied handles resolve to exact nonempty original strings; previous empty-string quote defect did not recur",
+  "runtime_review_registration": "REJECTED",
+  "valid_formal_reviews": 0,
+  "runtime_failure": "DispositionFindingNotAccounted",
+  "missing_finding_edges": [
+    {
+      "finding_id": "F2",
+      "declared_rule": "S5",
+      "check_finding_ids": [
+        "F7"
+      ]
+    }
+  ],
+  "raw_review_overall": "PASS",
+  "raw_check_statuses": {
+    "S1": "PASS",
+    "S2": "PASS",
+    "S3": "PASS",
+    "S4": "PASS",
+    "S5": "PASS"
+  },
+  "semantic_content_assessment": {
+    "status": "RAW_JUDGMENT_INCORRECT",
+    "expected_target": "S3 or S5 FAIL",
+    "candidate_rationale": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。",
+    "proposed_display": "再检查一下 42÷6。",
+    "F5": {
+      "id": "F5",
+      "rules": [
+        "S3"
+      ],
+      "relation": "SUPPORTED",
+      "candidate_quotes": [
+        {
+          "field": "rationale",
+          "start": "0",
+          "end": "30",
+          "quote": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+        },
+        {
+          "field": "exact_payload",
+          "start": "0",
+          "end": "11",
+          "quote": "再检查一下 42÷6。"
+        }
+      ],
+      "source_quotes": [
+        {
+          "field": "exact_payload",
+          "start": "0",
+          "end": "11",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "field": "text",
+          "start": "0",
+          "end": "19",
+          "quote": "请帮我检查哪一步有问题，不要直接给答案",
+          "ref": {
+            "space": "fact",
+            "identity": "E1-current-input",
+            "revision": "1"
+          }
+        }
+      ],
+      "gap_ids": [],
+      "rationale": "The cue names the step (42÷6) without giving the quotient, so it assists localization while recomputation stays learner-owned; the rationale's independence claim is limited to localization, matching the payload."
+    },
+    "explanation": "The display identifies the division step; the rationale denies any help in locating the error. Recomputing the quotient remains learner-owned, but that cannot support a denial of localization assistance. Raw F5 cites the exact contradictory fields and still declares support. No valid formal false acceptance or commit occurred."
+  },
+  "capture_limitations": [
+    "The policy-control function did not capture a final runtime snapshot when validate_with_llm raised. The case retains exact input Context, fixed candidate, actual model request/return, frozen code and top-level failure. Do not invent a persisted SemanticValidationRejected snapshot or treat this as full failure-lineage evidence."
+  ],
+  "author_review": {
+    "status": "COMPLETE_FOR_ALL_ACTUAL_MODEL_RETURNS",
+    "actual_returns": 1,
+    "independence": "Same-session author, not independent blind review",
+    "disputes_remaining": 0
+  },
+  "cases": [
+    {
+      "case": "A1",
+      "new_execution": "NOT_RUN",
+      "full_case_accepted": false,
+      "disposition": "Original gap retained; offline wiring does not replace real semantic or end-to-end evidence."
+    },
+    {
+      "case": "A2",
+      "new_execution": "NOT_RUN",
+      "full_case_accepted": false,
+      "disposition": "Original gap retained; offline wiring does not replace real semantic or end-to-end evidence."
+    },
+    {
+      "case": "E1",
+      "new_execution": "FAILED_FIRST_FIXED_CONTROL",
+      "full_case_accepted": false,
+      "disposition": "Current v5 control yields both invalid review accounting and an incorrect raw semantic judgment; E1 quality is unsupported."
+    },
+    {
+      "case": "E2",
+      "new_execution": "NOT_RUN",
+      "full_case_accepted": false,
+      "disposition": "Original gap retained; no new real execution. Old mechanical evidence remains applicable within explicitly replayed scope."
+    },
+    {
+      "case": "F2",
+      "new_execution": "NOT_RUN",
+      "full_case_accepted": false,
+      "disposition": "Original gap retained; no new real execution. Old mechanical evidence remains applicable within explicitly replayed scope."
+    },
+    {
+      "case": "X1",
+      "new_execution": "NOT_RUN",
+      "full_case_accepted": false,
+      "disposition": "Original gap retained; no new real execution. Old mechanical evidence remains applicable within explicitly replayed scope."
+    },
+    {
+      "case": "X2",
+      "new_execution": "NOT_RUN",
+      "full_case_accepted": false,
+      "disposition": "Original gap retained; no new real execution. Old mechanical evidence remains applicable within explicitly replayed scope."
+    },
+    {
+      "case": "X5",
+      "new_execution": "NOT_RUN",
+      "full_case_accepted": false,
+      "disposition": "Original gap retained; offline wiring does not replace real semantic or end-to-end evidence."
+    }
+  ],
+  "new_model_calls": 1,
+  "retries": 0,
+  "automatic_followup_campaign": false,
+  "original_full_cases_completed": 9,
+  "original_A2": "DENIED",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "scope_changes": false,
+  "source_sha256": {
+    "src/spike/runs/spike-exit-v1/adapter-records.json": "5f79de48735217c65312a42d38db3df63fbaad64fb24fbb4bb42b4763580a12d",
+    "src/spike/runs/spike-exit-v1/artifact-sha256.json": "dd22a0ee53cd3ea68f9d8326f8560f7b79cbd2dc7d7c873319d5e3057a25587b",
+    "src/spike/runs/spike-exit-v1/manifest.json": "f813085ec1797add390b26c9be57af0d00e3402dbca6a96e5f73a820b7ac6868",
+    "src/spike/runs/spike-exit-v1/results.json": "0f87be1642bce3a53c427e8694d13d8bf4a5e402b30facd38815d6dd3a3142c5",
+    "src/spike/runs/spike-exit-v1/summary.json": "a9576cba383a546db325abd719812b812ca0e2b9d5005551bf752dd22af9b01f",
+    "src/spike/runs/spike-exit-v1/cases/P1-localization-conflict-r1.jsonl": "2300e93addbc084bf0ebf71366aacc5d61516740f56b8b2f33698f715687d89e"
+  }
+}

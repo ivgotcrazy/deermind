@@ -1,0 +1,108 @@
+{
+  "schema": "single-task-prototype-design-audit-v1",
+  "completed_at_utc": "2026-10-07T06:57:52.552852+00:00",
+  "status": "DOCUMENT_AND_LEDGER_INTEGRATION_CHECKED_NOT_IMPLEMENTED",
+  "document": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md",
+  "ledger_before_change": "src/spike/reports/source-baseline-single-task-prototype-design-20261007/validation-progress-before-single-task-prototype-design.json",
+  "document_links_checked": 11,
+  "broken_document_links": [],
+  "prior_evidence_integrity": {
+    "checked": 810,
+    "mismatches": []
+  },
+  "frozen_package_integrity": {
+    "spike-exit-v1": {
+      "sources": {
+        "checked": 223,
+        "mismatches": []
+      },
+      "artifacts": {
+        "checked": 126,
+        "mismatches": []
+      }
+    },
+    "policy-s3-diagnostic-v1": {
+      "sources": {
+        "checked": 9,
+        "mismatches": []
+      },
+      "artifacts": {
+        "checked": 2,
+        "mismatches": []
+      }
+    }
+  },
+  "source_sha256": {
+    "src/spike/protocols/observation-validation-v13.json": "1a90a1e163ca5bf2dcc796339ee3837fcd9a8e2bd8ccc749001d71049b5bc5d3",
+    "src/spike/protocols/policy-e1-v2.json": "d3dbad522f226092ecb84084ae56bdb9f8e7f66452ce8f98b7137618a396a922",
+    "src/spike/protocols/policy-e1-v5.json": "89e3a6294f43c4cc557352effff6b9c7c0ecf42867d0a0cc6e1fc66be3c1023a",
+    "src/spike/foundation/working_entry.py": "ef3d137cf01ea68d8ab8a45065bbf069bf89ea8105453bde6c242a264c8576c0",
+    "src/spike/foundation/policy_cases.py": "c2f404ba89006c9aadaa8edb66893a0173370511b3678b36cf48d1db0012f2af",
+    "src/spike/foundation/working_campaign.py": "d694f2739a6a86515df3a8f6ef175907a28380af3aec9c2f573e45e89951aa8d",
+    "doc/system-design/DeerMind_System_Design_v0.3.md": "693f6a1b31b39b6cfdad2efa4c582b99f5ef4aedde2c357c76b6a05355eaa90d",
+    "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md": "b965c7a11a3ce1cdf2bd9ad9441496a62d1abbecef194a1358e53b57823f67b8",
+    "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md": "7ad58f42f71668ce95864b100339f494239912695226df674bc57c9f2517ef66",
+    "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md": "a2d400d1a9a7e89f748ebb52aa746c3717230f71323396b7aff2179e3a363963",
+    "doc/system-design/spike/DeerMind_Spike_Terminal_Assessment_v0.1.md": "06249df214760dbb259803bce455c6545f1d06bffb722e626457fd6882a12b64",
+    "doc/system-design/spike/DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md": "ed08699543f3175f91812ad9c23fb649c4a0bcf938d4a4d570b54408d1b0226f",
+    "src/spike/reports/source-baseline-single-task-prototype-design-20261007/validation-progress-before-single-task-prototype-design.json": "fed9bfd81611acad118b3b92da9bff600ae8d9d35d4c1f66257229dbf7f88643"
+  },
+  "policy_v2_v5_semantic_rules_exactly_equal": true,
+  "legacy_policy_v2_false_acceptance_history_preserved": true,
+  "acceptance_criteria": {
+    "mechanical_checks_required": [
+      "M1",
+      "M2",
+      "M3",
+      "M4",
+      "M5",
+      "M6",
+      "M7"
+    ],
+    "max_H_boundary_violations": 0,
+    "max_C_severe_content_errors": 0,
+    "planned_two_turn_sessions": 12,
+    "planned_turns": 24,
+    "minimum_successful_sessions": 10,
+    "minimum_successful_sessions_per_family": 1,
+    "families": 6,
+    "not_run_removed_from_denominator": false,
+    "audit_only_E_reported_separately": true,
+    "production_reliability_claimed": false
+  },
+  "future_stage_caps_seconds": {
+    "implementation_and_mechanical_checks": 14400,
+    "fixed_real_execution_wall_time": 2700,
+    "author_review": 3600,
+    "final_decision": 900
+  },
+  "future_total_work_cap_seconds": 21600,
+  "future_model_call_bound": {
+    "sessions": 12,
+    "turns_per_session": 2,
+    "observation_max_calls_per_turn": 5,
+    "policy_max_calls_per_turn": 2,
+    "max_calls": 168,
+    "automatic_transport_retries": 0,
+    "replacement_cases": 0
+  },
+  "new_model_calls": 0,
+  "new_runtime_test_runs": 0,
+  "runtime_modified": false,
+  "semantic_quality_verified_by_this_audit": false,
+  "historical_results_relabelled": false,
+  "original_spike_status": "TERMINATED_NOT_ACCEPTED",
+  "original_spike_completion_achieved": false,
+  "historical_full_coverage": {
+    "complete": 9,
+    "total": 17
+  },
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "automatic_followup_campaign": false,
+  "git_diff_whitespace_check": {
+    "crlf_accepted_as_line_ending": true,
+    "returncode": 0,
+    "diagnostic_lines": 0
+  }
+}

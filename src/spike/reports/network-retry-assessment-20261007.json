@@ -1,0 +1,87 @@
+{
+  "status": "CLOSED_NO_GO",
+  "reviewed_at_utc": "2026-10-07T14:19:33.760968+00:00",
+  "scope": "All new terminal outcomes, failure records, and the three committed Observations and two committed Policies; not a blinded accuracy benchmark.",
+  "network_failures_are_semantic_failures": false,
+  "fresh_batch_sessions": 9,
+  "fresh_batch_turns": 18,
+  "fresh_batch_calls": 77,
+  "fresh_batch_seconds": 281.038,
+  "completed_sessions": 0,
+  "completed_turns": 2,
+  "nontransport_failed_turns": 16,
+  "unresolved_transport_turns": 0,
+  "original_13_network_targets": {
+    "completed": 2,
+    "review_rejected": 8,
+    "locator_rejected": 2,
+    "schema_rejected": 1,
+    "transport_unresolved": 0
+  },
+  "failure_counts": {
+    "ContractError:workRejected:SemanticValidation:FAIL": 11,
+    "ContractError:CandidateHandlesNotContiguous": 4,
+    "ModelFailure:OutputSchemaMismatch": 1
+  },
+  "committed_content_review": [
+    {
+      "session": "T03",
+      "turn": 2,
+      "observation_content": "ACCEPTABLE",
+      "policy": "SCHEMA_REJECTED",
+      "reason": "Correct submitted 105 and self-report attribution; Policy referenced execution-space AssistanceContext outside allowed enum."
+    },
+    {
+      "session": "T05",
+      "turn": 1,
+      "observation_content": "ACCEPTABLE",
+      "policy": "ACCEPTABLE",
+      "reason": "Correct intermediate 7; no submitted final result; explicit wait/no-hint request; committed NoIntervention respects request."
+    },
+    {
+      "session": "T07",
+      "turn": 2,
+      "observation_content": "ACCEPTABLE",
+      "policy": "ACCEPTABLE",
+      "reason": "Correct resubmitted 105; self-report not upgraded to mastery; committed NoIntervention appropriate."
+    }
+  ],
+  "review_rejection_causes": {
+    "responsibility": 10,
+    "arithmetic_stance": 3,
+    "overlap": 2,
+    "unique_turns": 11
+  },
+  "rule_overlap": {
+    "source": "src/spike/protocols/observation-validation-v14.json",
+    "field": "responsibility_system",
+    "allowed": "local arithmetic and episode-local observations",
+    "forbidden": "declares something supports or contradicts a learner claim or mastery belief",
+    "interpretation": "The forbidden wording can include correctness judgments explicitly allowed by the other definition. This is an interface/rule-design ambiguity, not proof of inability to do the math.",
+    "controlled_causal_experiment_performed": false
+  },
+  "reviewer_omission": {
+    "session": "T09",
+    "turn": 1,
+    "criterion": "final_result",
+    "raw_status": "PASS",
+    "finding": "Rationale explicitly acknowledges missing judgment of 120 against the task but still assigns PASS. Turn was blocked elsewhere; no committed false acceptance claimed."
+  },
+  "combined_actual_calls": 83,
+  "combined_execution_seconds": 326.805,
+  "original_result_interpretation": {
+    "complete": 1,
+    "nontransport_failed": 10,
+    "transport_incomplete": 13,
+    "total": 24
+  },
+  "aborted_harness_error": "Duplicate session logging keyword; 1 failed turn preserved and 17 not run, not semantic failures.",
+  "original_historical_counts_changed": false,
+  "automatic_followup_campaign": false,
+  "conclusion": "The frozen current implementation fails the prototype gate on nontransport evidence. This does not establish general LLM impossibility or require replacing Observation architecture.",
+  "source_sha256": {
+    "src/spike/reports/network-retry-analysis-20261007.json": "aad84003860d62ed2271334e5e9e8e5f68fe339342aec4118352d650e23a7434",
+    "src/spike/runs/single-task-v2-network-retry-v2/artifact-sha256.json": "3f46958d947478df8f2a2c2f6ba93ed47b8e2d5645a09fd1749ab2b4ad979e8f",
+    "doc/system-design/spike/DeerMind_Network_Retry_Result_v0.1.md": "cb43d5784ae3d697af049f2b969afab2c2a01fd0586be2d175baa474e4351a88"
+  }
+}

@@ -1,14 +1,16 @@
 # DeerMind Cross-Cutting Coverage Review v0.1
 
-> **中文名称**：DeerMind 横切责任覆盖审计  
-> **版本**：v0.1  
-> **文档性质**：System Design Coverage Review / Phase 4 Exit Review Artifact  
-> **状态**：§3.8 Coverage Review — **NOT CLOSED / ROADMAP ALIGNMENT REQUIRED**  
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.4.md`  
-> **审计对象**：`DeerMind_System_Design_v0.1.md` 及 §3.2–§3.7 六份 Focused Design v0.1  
-> **上位约束**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Development_Roadmap_v0.2.md`  
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-29  
+> **历史记录**：保留形成时的审查结论和版本范围，不作为当前实施计划。当前工作集见 [Roadmap v0.6](DeerMind_System_Design_Roadmap_v0.6.md)，旧输入原文见 [Spike 基线索引](spike/README.md)。
+
+> **中文名称**：DeerMind 横切责任覆盖审计<br>
+> **版本**：v0.1<br>
+> **文档性质**：System Design Coverage Review / Phase 4 Exit Review Artifact<br>
+> **状态**：§3.8 Coverage Review — **NOT CLOSED / ROADMAP ALIGNMENT REQUIRED**<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.4.md`<br>
+> **审计对象**：`DeerMind_System_Design_v0.1.md` 及 §3.2–§3.7 六份 Focused Design v0.1<br>
+> **上位约束**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Development_Roadmap_v0.2.md`<br>
+> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
+> **更新时间**：2026-09-29<br>
 > **版本说明**：本文件不是新的第七个 Focused Design，也不新增 Architecture Space / Runtime。它是 Roadmap v0.4 Phase 4 Exit Check 要求的 §3.8 横切覆盖审计，用于判断 Operations / Privacy / Observability / Security 是否已经被总体 System Design 与六个 Focused Design 充分承载，以及进入 Phase 5 前是否仍存在必须补齐的横切设计缺口。
 
 ---
@@ -544,8 +546,8 @@ Unauthorized
 
 否则无法区分：
 
-> 系统决定不行动  
-> 与  
+> 系统决定不行动<br>
+> 与<br>
 > 系统想行动但失败。
 
 #### F. Validation / Evolution

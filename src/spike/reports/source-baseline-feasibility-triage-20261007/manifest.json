@@ -1,0 +1,38 @@
+[
+  {
+    "source_path": "src/spike/foundation/candidate_spans.py",
+    "previous_sha256": "a392406010ffd1770bb3bc2addd95c1c4ee2dd96899915256bd7bcab38380f5c",
+    "preserved_at": "src/spike/reports/source-baseline-feasibility-triage-20261007/candidate_spans.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/boundary.py",
+    "previous_sha256": "1f83dc17aefd8448f0fbeef723d51994399ec81c4b462dafe882873215467954",
+    "preserved_at": "src/spike/reports/source-baseline-feasibility-triage-20261007/boundary.py.txt"
+  },
+  {
+    "source_path": "src/spike/foundation/protocol_preflight.py",
+    "previous_sha256": "0867494ecb662302053b0e2d8ad0ebaa4bc40d1ba54ec78ec49fc03adf3d77cd",
+    "preserved_at": "src/spike/reports/source-baseline-feasibility-triage-20261007/protocol_preflight.py.txt"
+  },
+  {
+    "source_path": "doc/system-design/spike/README.md",
+    "previous_sha256": "4d28d2f2b2f57b299512b0cf808f4382406ff75d8fd07a3408f229dad47d7edf",
+    "preserved_at": "src/spike/reports/source-baseline-feasibility-triage-20261007/README.md.txt"
+  },
+  {
+    "source_path": "src/spike/reports/validation-progress-v1.json",
+    "previous_sha256": "45a3c9f640adf505986b17455d8ba22f9401b8a73f2b3850c57a2f9988b9452d",
+    "preserved_at": "src/spike/reports/source-baseline-feasibility-triage-20261007/validation-progress-v1.json.txt"
+  },
+  {
+    "source_path": "src/spike/run_feasibility_triage.py",
+    "previous_sha256": "1bbc999f36809b16fd12d8b334fa9c543f348b0486b1344438fa0922d2fa4993",
+    "preserved_at": "src/spike/reports/source-baseline-feasibility-triage-20261007/run_feasibility_triage.py.initial.txt"
+  },
+  {
+    "source_path": "src/spike/README.md",
+    "previous_sha256": "fb7bd8ca540d3d775c222b892b9b78f1f02debcf0e8fcf98e897b6b2cc86f7b6",
+    "preserved_at": "src/spike/reports/source-baseline-feasibility-triage-20261007/spike-README.md.txt",
+    "reason": "Replace stale executable-stage entry with current feasibility decision while retaining old runner instructions as history."
+  }
+]

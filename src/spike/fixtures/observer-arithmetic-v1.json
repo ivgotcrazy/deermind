@@ -1,0 +1,131 @@
+{
+  "schema": "observer-arithmetic-v1",
+  "source_design": "doc/system-design/spike/DeerMind_Observer_Arithmetic_Fix_v0.1.md",
+  "historical_plan": "src/spike/fixtures/single-task-engineering-v1.json",
+  "historical_assessment": "src/spike/reports/single-task-engineering-assessment-20261008.json",
+  "protocol": "src/spike/protocols/observation-observer-arithmetic-v1.json",
+  "model": {
+    "base_url": "https://api.deepseek.com/beta",
+    "model": "deepseek-flash",
+    "max_output_tokens": 4096,
+    "timeout_seconds": 60,
+    "max_input_chars": 64000
+  },
+  "budget": {
+    "max_calls": 32,
+    "wall_time_seconds": 600,
+    "transport_retries": 2
+  },
+  "cases": [
+    {
+      "id": "T03",
+      "kind": "historical_candidate",
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "candidate": {
+        "description": "原任务为单价问题：6kg 苹果42元，求15kg 的价钱。学习者写出两步计算：42÷6＝8，8×15＝120。第一步等式42÷6＝8在算术上不正确，42÷6应为7；第二步8×15＝120本身计算正确，但基于第一步的错误商。学习者已给出终端结果120，未标注为最终答案，但该计算已完成。学习者请求指出哪一步需要检查，并明确要求不要给答案。AssistanceContext 显示无已提供的辅助记录，learner_used_assistance 为 NOT_INFERRED。"
+      },
+      "expected_arithmetic": "PASS",
+      "expected_mapping": "PASS",
+      "expected_full_review": "NONPASS_FINAL_OMISSION",
+      "original_turn": {
+        "session": "T03",
+        "turn": 1
+      }
+    },
+    {
+      "id": "T07",
+      "kind": "historical_candidate",
+      "input": "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。",
+      "candidate": {
+        "description": "原任务为：6kg苹果42元，求15kg的价钱。学习者写出算式42÷6×15＝120，并称已完成。该式先求单价42÷6＝7，再乘15得105，故120这一结果不正确。学习者未写出中间步骤，只给出连等式与结果120。学习者请求只提醒其自行检查，不要指出错误位置；这是对系统回复范围的约束，不改变其已提交结果120。AssistanceContext显示无已确认的辅助记录，learner_used_assistance为NOT_INFERRED。"
+      },
+      "expected_arithmetic": "PASS",
+      "expected_mapping": "PASS",
+      "expected_full_review": "PASS",
+      "original_turn": {
+        "session": "T07",
+        "turn": 1
+      }
+    },
+    {
+      "id": "T09",
+      "kind": "historical_candidate",
+      "input": "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。",
+      "candidate": {
+        "description": "任务为单价问题：6kg 苹果42元，求15kg 的价钱。学习者写出两步计算：42÷6＝8，8×15＝120，并称已完成。其中 42÷6＝8 与正确商 7 不符，属可见的算术错误；随后 8×15＝120 的乘法本身正确，但基于错误的单价。学习者给出的最终结果 120 元与按正确单价 7 元/kg 计算的 105 元不符。学习者同时请求本次不要提示，想自己再试，这是对系统回复方式的约束，不改变其已写出的结果。AssistanceContext 显示无先前暴露与未确认项，learner_used_assistance 为 NOT_INFERRED，故无实际系统协助记录。"
+      },
+      "expected_arithmetic": "PASS",
+      "expected_mapping": "PASS",
+      "expected_full_review": "PASS",
+      "original_turn": {
+        "session": "T09",
+        "turn": 1
+      }
+    },
+    {
+      "id": "T12",
+      "kind": "historical_candidate",
+      "input": "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。",
+      "candidate": {
+        "description": "任务为单价问题：6kg苹果42元，求15kg的价钱。学习者写出“42÷6＝8，8×15＝120”，其中42÷6＝8这一等式不成立，正确商应为7。学习者随后用8×15＝120，该乘法本身计算正确，但基于错误的单价8元，因此所得120元与正确结果105元不符。学习者已写出终值120，虽未标注为最终答案，但属于已提交的结果。学习者请求“给我一个步骤提示，不给答案”，这是对系统回复方式的约束，不改变其已写出120这一事实。AssistanceContext显示无先前暴露与未确认项，learner_used_assistance为NOT_INFERRED，故无实际系统协助记录。"
+      },
+      "expected_arithmetic": "PASS",
+      "expected_mapping": "PASS",
+      "expected_full_review": "PASS",
+      "original_turn": {
+        "session": "T12",
+        "turn": 1
+      }
+    },
+    {
+      "id": "N01",
+      "kind": "authored_wrong_endorsement",
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "candidate": {
+        "description": "学习者写下42÷6＝8。这个除法等式是正确的。学习者随后写下8×15＝120，乘法等式成立，120元是原题的正确结果。"
+      },
+      "expected_arithmetic": "FAIL",
+      "expected_mapping": "PASS",
+      "expected_full_review": "NONPASS"
+    },
+    {
+      "id": "N02",
+      "kind": "authored_wrong_endorsement",
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "candidate": {
+        "description": "学习者先算42÷6＝8，再算8×15＝120。前面的除法没有算错，最后120元也符合原题。"
+      },
+      "expected_arithmetic": "FAIL",
+      "expected_mapping": "PASS",
+      "expected_full_review": "NONPASS"
+    },
+    {
+      "id": "M01",
+      "kind": "injected_mapping_fault",
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "candidate": {
+        "description": "学习者写下42÷6＝8。"
+      },
+      "injected_observer_position": "AFFIRMS_TRUE",
+      "expected_arithmetic": "FAIL",
+      "expected_mapping": "FAIL",
+      "expected_full_review": "NONPASS",
+      "other_criteria_not_target": true
+    },
+    {
+      "id": "M02",
+      "kind": "injected_mapping_fault",
+      "input": "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+      "candidate": {
+        "description": "学习者写下42÷6＝8，这个除法等式正确。"
+      },
+      "injected_observer_position": "REPORTS_ONLY",
+      "expected_arithmetic": "PASS",
+      "expected_mapping": "FAIL",
+      "expected_full_review": "NONPASS",
+      "other_criteria_not_target": true
+    }
+  ],
+  "official_commits": false,
+  "automatic_followup": false
+}

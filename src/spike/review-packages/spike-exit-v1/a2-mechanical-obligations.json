@@ -1,0 +1,48 @@
+{
+  "obligations": {
+    "missing_review": [
+      "test_boundary.BoundaryTests.test_self_attestation_missing_failed_unresolved_or_foreign_review_is_rejected"
+    ],
+    "call_or_contract_failure": [
+      "test_validation_dimensions.ValidationDimensionTests.test_failure_at_each_stage_preserves_completed_checks_and_unrun_tail",
+      "test_validation_dimensions.ValidationDimensionTests.test_wrong_field_is_failed_execution_not_completed_semantic_fail"
+    ],
+    "unresolved": [
+      "test_llm.LLMBoundaryTests.test_review_unresolved_blocks_standing"
+    ],
+    "untrusted_record": [
+      "test_exit_campaign.ExitCampaignTests.test_untrusted_validation_execution_cannot_grant_standing"
+    ],
+    "model_self_pass": [
+      "test_boundary.BoundaryTests.test_self_attestation_missing_failed_unresolved_or_foreign_review_is_rejected"
+    ],
+    "changed_candidate": [
+      "test_boundary.BoundaryTests.test_payload_dependency_and_expected_head_edits_cannot_reuse_pass"
+    ],
+    "wrong_rule": [
+      "test_exit_campaign.ExitCampaignTests.test_observation_wrong_rule_or_context_cannot_commit"
+    ],
+    "wrong_context": [
+      "test_exit_campaign.ExitCampaignTests.test_observation_wrong_rule_or_context_cannot_commit"
+    ],
+    "stale_basis": [
+      "test_boundary.BoundaryTests.test_current_correction_invalidates_frozen_candidate_without_rebinding"
+    ],
+    "downstream_audit_or_unvalidated_content": [
+      "test_content_projection.ContentProjectionTests.test_actual_generation_validation_and_manifest_use_projected_fields",
+      "test_content_projection.ContentProjectionTests.test_failed_unresolved_and_unsubmitted_candidates_have_no_formal_input",
+      "test_content_projection.ContentProjectionTests.test_seeded_derived_label_without_real_commit_proof_is_rejected"
+    ]
+  },
+  "unit_result": "unit-tests.txt",
+  "existing_actual_downstream_evidence_sha256": {
+    "src/spike/runs/context-projection-v1/cases/test_actual_generation_validation_and_manifest_use_projected_fields.jsonl": "5728bc1b3b3d6cbd3c58fd52ad6b6e4d76c0794f1da22fc49272e311bd5a812d",
+    "src/spike/runs/context-projection-v1/cases/test_failed_unresolved_and_unsubmitted_candidates_have_no_formal_input.jsonl": "035f68787d93aba0a967ae5aa1a252f492a0f5503d2fff52d4b44dc06201bdf2",
+    "src/spike/runs/context-projection-v1/cases/test_seeded_derived_label_without_real_commit_proof_is_rejected.jsonl": "83e9dcf69cc96d0fa19a271271416d32efc904811d804378094b527fdc811e48"
+  },
+  "additional_binding_evidence": [
+    "test_observation_wrong_rule_or_context_cannot_commit.jsonl",
+    "test_untrusted_validation_execution_cannot_grant_standing.jsonl"
+  ],
+  "scope": "Shared mechanical checks only; no claim that LLM PASS implies semantically correct content."
+}

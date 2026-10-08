@@ -1,5 +1,7 @@
 # DeerMind Design Closure Review v0.1
 
+> **历史记录**：保留形成时的审查结论和版本范围，不作为当前实施计划。当前工作集见 [Roadmap v0.6](DeerMind_System_Design_Roadmap_v0.6.md)，旧输入原文见 [Spike 基线索引](spike/README.md)。
+
 > **中文名称**：DeerMind 本轮设计收口审查
 >
 > **日期**：2026-09-30
@@ -30,7 +32,7 @@
 | 讲解实际发生 | Policy 选择帮助，ActionIntent 取得执行资格，Executor 记录实际展示结果 | 未发生、部分展示和无法确认分开；展示不等于学习者已理解 |
 | 新的独立机会 | 新的 learner 表现进入 Observation → Evidence 路径 | 提示前证据保留；后续判断使用真实暴露历史，新会话或新活动标签不清除影响 |
 
-[Interaction Runtime §4.10、§5.1](DeerMind_Interaction_Decision_Runtime_Design_v0.1.md)定义活动切换及串行边界，[Runtime / Event §5.6–§5.7](DeerMind_Runtime_Event_Architecture_v0.1.md)定义真实发生，[Evaluation §5.2–§5.3](../concept-design/DeerMind_Evaluation_Space_Design_v1.1.md)负责证据解释。跨会话共享状态、权限撤销和独立 owner 的 correction 仍通过既有重验机制处理，不能用这些外部情况重新引入同会话普通输入并发。
+[Interaction Runtime §4.10、§5.1](../../src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md.txt)定义活动切换及串行边界，[Runtime / Event §5.6–§5.7](DeerMind_Runtime_Event_Architecture_v0.1.md)定义真实发生，[Evaluation §5.2–§5.3](../concept-design/DeerMind_Evaluation_Space_Design_v1.1.md)负责证据解释。跨会话共享状态、权限撤销和独立 owner 的 correction 仍通过既有重验机制处理，不能用这些外部情况重新引入同会话普通输入并发。
 
 用户主动中断、异常恢复的交互细节单独处理；本轮普通闭环推演不宣称已完成这两类流程的验证。
 
@@ -63,25 +65,25 @@ Evolution / Governance 的通用 ValidationResult 仍可表达 PARTIALLY_SUPPORT
 
 A1 原有条件允许 grounded phenomenon 或 Ambiguous / Unmapped，E1 原来主要检查 outcome 合法性。仅凭这些条件，可能把始终不作解释或始终返回一个合法 outcome 的实现误判为支持了“有用解释 / 真实情境判断”。A2 的候选注入正例不能替代 A1 对实际生成能力的验证。
 
-当前 [Spike A1 / E1](DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)已分别固定三组输入：错误 / 正确 / 未完成解法，以及开放判断 / 请求检查但不要答案 / 请求暂不提示。A1 规定最低有用信息与 grounding；E1 用固定 rubric 检查依据、请求响应、认知替代成本和 outcome 一致性，允许多个合理行动。开放理由使用 test-only LLM review，未决不默认通过，也不参与运行时行动选择。
+当前 [Spike A1 / E1](spike/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)已分别固定三组输入：错误 / 正确 / 未完成解法，以及开放判断 / 请求检查但不要答案 / 请求暂不提示。A1 规定最低有用信息与 grounding；E1 用固定 rubric 检查依据、请求响应、认知替代成本和 outcome 一致性，允许多个合理行动。开放理由使用 test-only LLM review，未决不默认通过，也不参与运行时行动选择。
 
 每组配置预定至少 5 次运行，保留通过、拒绝与未决；未满足有用性要求不能仅因没有 falsifier 就判 SUPPORTED。具体执行资源与预期仍需在实测前审阅固定，这些判据尚无运行结果。
 
 ### 4.2 活动转换组合场景：已登记 X5，待执行
 
-E1 不覆盖诊断转教学；E2 验证排队与外部变化；D1 / D2 验证暴露与 Claim-relative 表达。这些 Case 各自成立不能直接证明完整转换流程已运行正确，因此新增 [Spike §13.5 的 X5](DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)，串起讲解请求排队、诊断结束、目的转换、帮助发生和新的独立机会。
+E1 不覆盖诊断转教学；E2 验证排队与外部变化；D1 / D2 验证暴露与 Claim-relative 表达。这些 Case 各自成立不能直接证明完整转换流程已运行正确，因此新增 [Spike §13.5 的 X5](spike/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)，串起讲解请求排队、诊断结束、目的转换、帮助发生和新的独立机会。
 
 X5 复用现有模型与 Harness，明确切换未生效、讲解未发生 / 部分发生 / 无法确认的变体，保留帮助前证据与真实展示时间。开放讲解使用 Action 类型的语义校验规则，不能套用 Observation 的职责限制。完整路径至少运行 5 次，四种 effect 边界分别注入并记录；合法 Defer / NoIntervention 也不能当作已完成转换链。覆盖矩阵、实施顺序与完成条件已同步为 12 个 Assumption Case 加 5 个 composition Case；这里登记的是计划覆盖，全部仍待执行。
 
 ### 4.3 Claim fixture 规范归属：已固定映射
 
-[Spike §3.5](DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)已固定 C1:v1 为 TF-ProportionalQuantity 的 TaskProficiencyClaim，C2:v1 为 KC-ProportionalRelation 的 KCClaim，C3:v1 为 KC-DivisionArithmetic 的 KCClaim，并写明各自支持条件与范围。C2 的 Strategy Selection 仅为显示名称，允许多种合法策略，不形成第三类 StrategyBelief；Evaluation Core 继续使用 TaskProficiencyBeliefs 与 KCBeliefs。
+[Spike §3.5](spike/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)已固定 C1:v1 为 TF-ProportionalQuantity 的 TaskProficiencyClaim，C2:v1 为 KC-ProportionalRelation 的 KCClaim，C3:v1 为 KC-DivisionArithmetic 的 KCClaim，并写明各自支持条件与范围。C2 的 Strategy Selection 仅为显示名称，允许多种合法策略，不形成第三类 StrategyBelief；Evaluation Core 继续使用 TaskProficiencyBeliefs 与 KCBeliefs。
 
 Evidence / Belief 的脚本实现可以隔离状态与溯源机制；实验报告必须保留这一局限，不能把脚本写入的差异解释当作真实 LLM 推断质量的证据。
 
 ## 5. 进入实现前的最小事项
 
-上述 fixture、判据和覆盖矩阵已经补齐。[Spike §15](DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)新增最小实现配置建议：Python 3.13、标准库 unittest / venv、共享 LLM adapter 和 JSON / JSONL 证据。该建议不冻结产品技术栈；实际 provider / model 与调用预算尚未指定，版本化 Protocol、规则、候选结构、rubric 和 RunManifest 需随实现落成，并在真实执行前固定。
+上述 fixture、判据和覆盖矩阵已经补齐。[Spike §15](spike/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)新增最小实现配置建议：Python 3.13、标准库 unittest / venv、共享 LLM adapter 和 JSON / JSONL 证据。该建议不冻结产品技术栈；实际 provider / model 与调用预算尚未指定，版本化 Protocol、规则、候选结构、rubric 和 RunManifest 需随实现落成，并在真实执行前固定。
 
 下一步可以按 Spike Step 0–Step 2 建立测试骨架、记录与引用基础，以及依赖 / current / version 机制，再依次接入真实模型路径。实际运行须保存文档与代码内容标识，包括未提交改动；Prompt 可以迭代，但每次变更须保留配置和运行结果，避免通过重试或改标准覆盖失败。本轮尚未创建 Spike 代码或发起模型调用。
 

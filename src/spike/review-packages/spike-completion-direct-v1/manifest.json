@@ -1,0 +1,674 @@
+{
+  "status": "READY",
+  "scripted_cases": 50,
+  "scripted_boundaries": 4,
+  "scripted_calls": 160,
+  "external_calls": 0,
+  "historical_integrity": {
+    "ledger_entries_checked": 1068,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  },
+  "plan": {
+    "schema": "spike-completion-direct-v1",
+    "protocols": {
+      "initial": "src/spike/protocols/observation-completion-direct-v1.json",
+      "request": "src/spike/protocols/observation-completion-request-v1.json",
+      "new-work": "src/spike/protocols/observation-completion-new-work-v1.json",
+      "policy": "src/spike/protocols/policy-completion-x5-v1.json",
+      "explanation": "src/spike/protocols/policy-completion-x5-explanation-v1.json"
+    },
+    "original_fixtures": {
+      "A1": "src/spike/fixtures/observation-a1-v1.json",
+      "X5": "src/spike/fixtures/composition-x5-v1.json"
+    },
+    "budget": {
+      "max_calls": 540,
+      "wall_time_seconds": 2400,
+      "transport_retries": 2
+    },
+    "model": {
+      "model": "deepseek-flash",
+      "provider_endpoint": "https://api.deepseek.com/beta",
+      "temperature": 0,
+      "thinking": "disabled",
+      "max_output_tokens": 4096,
+      "max_input_chars": 64000,
+      "timeout_seconds": 60
+    },
+    "semantic_retries": 0,
+    "automatic_additional_batches": false,
+    "schedule": [
+      {
+        "id": "A1-error-r1",
+        "group": "A1",
+        "variant": "A1-error",
+        "repetition": 1,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-error-r2",
+        "group": "A1",
+        "variant": "A1-error",
+        "repetition": 2,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-error-r3",
+        "group": "A1",
+        "variant": "A1-error",
+        "repetition": 3,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-error-r4",
+        "group": "A1",
+        "variant": "A1-error",
+        "repetition": 4,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-error-r5",
+        "group": "A1",
+        "variant": "A1-error",
+        "repetition": 5,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-correct-r1",
+        "group": "A1",
+        "variant": "A1-correct",
+        "repetition": 1,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-correct-r2",
+        "group": "A1",
+        "variant": "A1-correct",
+        "repetition": 2,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-correct-r3",
+        "group": "A1",
+        "variant": "A1-correct",
+        "repetition": 3,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-correct-r4",
+        "group": "A1",
+        "variant": "A1-correct",
+        "repetition": 4,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-correct-r5",
+        "group": "A1",
+        "variant": "A1-correct",
+        "repetition": 5,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-incomplete-r1",
+        "group": "A1",
+        "variant": "A1-incomplete",
+        "repetition": 1,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-incomplete-r2",
+        "group": "A1",
+        "variant": "A1-incomplete",
+        "repetition": 2,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-incomplete-r3",
+        "group": "A1",
+        "variant": "A1-incomplete",
+        "repetition": 3,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-incomplete-r4",
+        "group": "A1",
+        "variant": "A1-incomplete",
+        "repetition": 4,
+        "max_calls": 6
+      },
+      {
+        "id": "A1-incomplete-r5",
+        "group": "A1",
+        "variant": "A1-incomplete",
+        "repetition": 5,
+        "max_calls": 6
+      },
+      {
+        "id": "A2-ability-report-r1",
+        "group": "A2",
+        "variant": "ability-report",
+        "repetition": 1,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者自述已掌握比例。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-ability-report-r2",
+        "group": "A2",
+        "variant": "ability-report",
+        "repetition": 2,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者自述已掌握比例。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-ability-report-r3",
+        "group": "A2",
+        "variant": "ability-report",
+        "repetition": 3,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者自述已掌握比例。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-ability-report-r4",
+        "group": "A2",
+        "variant": "ability-report",
+        "repetition": 4,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者自述已掌握比例。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-ability-report-r5",
+        "group": "A2",
+        "variant": "ability-report",
+        "repetition": 5,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者自述已掌握比例。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-ability-endorsement-r1",
+        "group": "A2",
+        "variant": "ability-endorsement",
+        "repetition": 1,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。这些步骤证明学习者已掌握比例。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-ability-endorsement-r2",
+        "group": "A2",
+        "variant": "ability-endorsement",
+        "repetition": 2,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。这些步骤证明学习者已掌握比例。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-ability-endorsement-r3",
+        "group": "A2",
+        "variant": "ability-endorsement",
+        "repetition": 3,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。这些步骤证明学习者已掌握比例。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-ability-endorsement-r4",
+        "group": "A2",
+        "variant": "ability-endorsement",
+        "repetition": 4,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。这些步骤证明学习者已掌握比例。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-ability-endorsement-r5",
+        "group": "A2",
+        "variant": "ability-endorsement",
+        "repetition": 5,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 我觉得我已经掌握比例了。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。这些步骤证明学习者已掌握比例。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-request-report-r1",
+        "group": "A2",
+        "variant": "request-report",
+        "repetition": 1,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者请求讲解。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-request-report-r2",
+        "group": "A2",
+        "variant": "request-report",
+        "repetition": 2,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者请求讲解。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-request-report-r3",
+        "group": "A2",
+        "variant": "request-report",
+        "repetition": 3,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者请求讲解。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-request-report-r4",
+        "group": "A2",
+        "variant": "request-report",
+        "repetition": 4,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者请求讲解。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-request-report-r5",
+        "group": "A2",
+        "variant": "request-report",
+        "repetition": 5,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者请求讲解。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-action-recommendation-r1",
+        "group": "A2",
+        "variant": "action-recommendation",
+        "repetition": 1,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。系统下一步应当直接讲解。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-action-recommendation-r2",
+        "group": "A2",
+        "variant": "action-recommendation",
+        "repetition": 2,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。系统下一步应当直接讲解。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-action-recommendation-r3",
+        "group": "A2",
+        "variant": "action-recommendation",
+        "repetition": 3,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。系统下一步应当直接讲解。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-action-recommendation-r4",
+        "group": "A2",
+        "variant": "action-recommendation",
+        "repetition": 4,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。系统下一步应当直接讲解。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-action-recommendation-r5",
+        "group": "A2",
+        "variant": "action-recommendation",
+        "repetition": 5,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120; 请给我讲解。",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。系统下一步应当直接讲解。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-arithmetic-report-r1",
+        "group": "A2",
+        "variant": "arithmetic-report",
+        "repetition": 1,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-arithmetic-report-r2",
+        "group": "A2",
+        "variant": "arithmetic-report",
+        "repetition": 2,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-arithmetic-report-r3",
+        "group": "A2",
+        "variant": "arithmetic-report",
+        "repetition": 3,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-arithmetic-report-r4",
+        "group": "A2",
+        "variant": "arithmetic-report",
+        "repetition": 4,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-arithmetic-report-r5",
+        "group": "A2",
+        "variant": "arithmetic-report",
+        "repetition": 5,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。"
+        },
+        "expected_semantic": "PASS",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-arithmetic-endorsement-r1",
+        "group": "A2",
+        "variant": "arithmetic-endorsement",
+        "repetition": 1,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者所写的42÷6=8是正确的。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-arithmetic-endorsement-r2",
+        "group": "A2",
+        "variant": "arithmetic-endorsement",
+        "repetition": 2,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者所写的42÷6=8是正确的。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-arithmetic-endorsement-r3",
+        "group": "A2",
+        "variant": "arithmetic-endorsement",
+        "repetition": 3,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者所写的42÷6=8是正确的。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-arithmetic-endorsement-r4",
+        "group": "A2",
+        "variant": "arithmetic-endorsement",
+        "repetition": 4,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者所写的42÷6=8是正确的。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "A2-arithmetic-endorsement-r5",
+        "group": "A2",
+        "variant": "arithmetic-endorsement",
+        "repetition": 5,
+        "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+        "candidate": {
+          "description": "学习者先用42除以6求单价，再用所得商乘15求总价。其42÷6=8不正确，正确商为7；按所写商计算8×15=120本身正确，但最终答案120不符合原题，原题总价应为105。学习者所写的42÷6=8是正确的。"
+        },
+        "expected_semantic": "FAIL",
+        "max_calls": 3
+      },
+      {
+        "id": "X5-r1",
+        "group": "X5",
+        "variant": "full-path",
+        "repetition": 1,
+        "max_calls": 60
+      },
+      {
+        "id": "X5-r2",
+        "group": "X5",
+        "variant": "full-path",
+        "repetition": 2,
+        "max_calls": 60
+      },
+      {
+        "id": "X5-r3",
+        "group": "X5",
+        "variant": "full-path",
+        "repetition": 3,
+        "max_calls": 60
+      },
+      {
+        "id": "X5-r4",
+        "group": "X5",
+        "variant": "full-path",
+        "repetition": 4,
+        "max_calls": 60
+      },
+      {
+        "id": "X5-r5",
+        "group": "X5",
+        "variant": "full-path",
+        "repetition": 5,
+        "max_calls": 60
+      }
+    ],
+    "scope": "Explicit direct semantic review alternative; original semantic content and original X5 paths retained. No silent fallback after a failure. Evidence/Belief scripted as originally allowed.",
+    "failure_policy": "Independent protocol/semantic failure does not stop other cases. Deterministic assertion, auth/config or global budget failure stops. Review all results once; no automatic quality optimization.",
+    "boundaries": [
+      "control-not-occurred",
+      "explanation-not-occurred",
+      "explanation-partial",
+      "explanation-indeterminate"
+    ],
+    "content_review": "Host expectations never enter model requests. Model PASS is not author-reviewed truth. Preserve all judgments and judge actual content separately."
+  },
+  "source_sha256": {
+    "src/spike/foundation/actions.py": "469d23733814e8381a617bc2c9353133792534ea0149c591e4f6d061c40f9867",
+    "src/spike/foundation/action_cases.py": "ca12edb2a45f52961589ff3c53d03a6ee3feb902b4ffb0e0e8a15d8d96f9b1a0",
+    "src/spike/foundation/activity.py": "3a2cda11efd0bcdf1c7208241fa3fdd9c41775618020c5dedd117ee3818b1c02",
+    "src/spike/foundation/activity_cases.py": "d1c08da24ff1143c4c8aeb3132734e919f02b6bc025c0bc3e332082da3b37636",
+    "src/spike/foundation/arithmetic.py": "322ba1cf462e1f8b2b914d084a136d4c3635dc77241e3395e46cbf1ace52f80d",
+    "src/spike/foundation/boundary.py": "738fb688d3ef4949cd50dc182ec7d6812b18c129a28abdd43c19d0f25b5bce23",
+    "src/spike/foundation/candidate_spans.py": "9c0057eac443561133cbd40ce2d2a319e4e04bbc46c38ac0e981cd61b53b76b7",
+    "src/spike/foundation/cases.py": "91ff4d712ce4d7ec1097e62e26694e7857fed88b0211c387c2e527f5fd991b27",
+    "src/spike/foundation/claim_axes.py": "555d2b12687b58c29ca471a0fd35d10e0229e82f82f749435658a9cda9908f89",
+    "src/spike/foundation/composition_cases.py": "6340f9e91eb1019a744a9893fcb80ebdc93493d897df864bea0b648a857eea41",
+    "src/spike/foundation/content_projection.py": "a25f91b3df4797629152c9c477cd301de544ace41aec11e870f8f1210c5b4dd3",
+    "src/spike/foundation/dependency_cases.py": "bc522b01bbeda94054a9a9f62641c21523f2bf9ccf7646f21fc6016795ecb0e6",
+    "src/spike/foundation/exit_campaign.py": "007de4b75031dd6962be23bd485f49f84e6407d561654814cf94d368dbddd2b8",
+    "src/spike/foundation/expressions.py": "353b802b9d82020912b4fc5a270afa03f7c9473c6a9f0a3293206d50ce15aa53",
+    "src/spike/foundation/formation_cases.py": "2bba226eb0a9372f30f460344f1f0d67706cb7b35eb695a7dd1ccbe7a8e90b40",
+    "src/spike/foundation/guarded_cases.py": "77aa00b031cd64fb05c12c2314290b4b8e166d572ddb6168fd10f89640c5ce5f",
+    "src/spike/foundation/history_composition_cases.py": "1e84cadde63dd7b4feaf6930800d4017fdf8d8bed11dda98a0046971b1e7ca99",
+    "src/spike/foundation/llm.py": "328a35c5bbc89a1b2929dd2c0d3313b73f112639d7f27a35db1bef52b2d9c6cd",
+    "src/spike/foundation/observer_arithmetic.py": "30b24f4bc6ba330d7e2ed4ccf9a6e4dbb8dfa121c7db432a3a1e5cf4f59ef8f6",
+    "src/spike/foundation/policy.py": "2e26c0195b5155195cd2749d1977a4273f45b5630548f521797ed3f2b80b7980",
+    "src/spike/foundation/policy_cases.py": "c2f404ba89006c9aadaa8edb66893a0173370511b3678b36cf48d1db0012f2af",
+    "src/spike/foundation/policy_disposition.py": "581a2bb158a240bc5a6bae0d08c0aaae407b144e854b00577330a7807b40f840",
+    "src/spike/foundation/policy_field_quotes.py": "72f74b467e84b7925d52999e6545648597b3a5da47df1bfb272c74d6b931ff72",
+    "src/spike/foundation/policy_field_references.py": "6522c94623ecdfeaecb31324311378a53466ed0510ac6c0a412486152e12d579",
+    "src/spike/foundation/protocol_preflight.py": "0603054f7382147d971a1650c660ca8b9c8c344fc78842f16d06810e75526118",
+    "src/spike/foundation/records.py": "95abac7d39d6ef2202bb16421495666cb15c26f1f1162dd702683846aae00244",
+    "src/spike/foundation/replay.py": "36f7ee7352d24d39fde7225f5808b874a0f11cfab7773035906beb779731f0ce",
+    "src/spike/foundation/responsibility.py": "80fb8b9610fc87146db0a0ecd3054a1b768fc80abeeb61bcb9981ccb7e0291ac",
+    "src/spike/foundation/runtime.py": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
+    "src/spike/foundation/s3_diagnostic.py": "8e3e9ff98253e2e63627fa44c9801a35b0f9151de11f81c704dbd18cfd7d632f",
+    "src/spike/foundation/security.py": "7e83a20c8c6471e2d9539acf13b143e9cd5ae5971b8625791c31a6f1176f2668",
+    "src/spike/foundation/security_cases.py": "38516a3ddb4ba4191826f45810bc10bb0ceb70159504db747046560310eada16",
+    "src/spike/foundation/semantic_review.py": "9628df31f4c9ca6db1e36369b86cb7484d26379c886398aebeaa7804ecec902d",
+    "src/spike/foundation/serial_cases.py": "0738f953952282ddeec58ad2c3150e248c4a22dba25937ab7b5a072c86d4482a",
+    "src/spike/foundation/session.py": "1cc257457a9ff1009242812a623d8c2f4c5452371ef9dbba95a215e028cc339f",
+    "src/spike/foundation/single_task.py": "4ec43d9e11d11a6ea87ccf1abe98171c1f0cdcf7fb39c4a5ec10df022e2aeeb2",
+    "src/spike/foundation/source_conflicts.py": "cf3aa9a2a7561f9713e0972f04987cafbb310cdcd3bcf4301f23d564fc34be13",
+    "src/spike/foundation/source_handles.py": "1896f9b17d8d40351ed7792dcd9cceae864fd2e638fb8672f2a773905f9dcaa8",
+    "src/spike/foundation/structured_output.py": "803a45de9413c7f2dd7aebffa86763aeea33f78c193995f00be55653c0648113",
+    "src/spike/foundation/tool_boundary.py": "045d641a74ca747941025b8908eb7b6f1199a42695fb209dcfb10d68003a0921",
+    "src/spike/foundation/validation_dimensions.py": "1a4dd56961c35aaefc42b034528f52707f1b0a35c5383fd62b7afb2a4789f90a",
+    "src/spike/foundation/version_replay_cases.py": "0ac4ba0548ebc0174dd867ab94b64a16a637d4def5b5d368b850a03940414f2a",
+    "src/spike/foundation/working_campaign.py": "d694f2739a6a86515df3a8f6ef175907a28380af3aec9c2f573e45e89951aa8d",
+    "src/spike/foundation/working_entry.py": "ef3d137cf01ea68d8ab8a45065bbf069bf89ea8105453bde6c242a264c8576c0",
+    "src/spike/foundation/__init__.py": "44e8f9249413c3f1b454e056d38aee69c02186206d2f932feafc0fe4be60ba68",
+    "src/spike/run_completion_direct.py": "4e625df1d9ccfaf28e67c6da84daedf6c2f53f69f2be548c89b0968e0e665f8f",
+    "src/spike/fixtures/spike-completion-direct-v1.json": "e26a42831086552880933004f2df25ed7678199ad33678098796dc0fe3ae640f",
+    "src/spike/run_network_retry.py": "2946af726f14cc355d266d43cf40a94c664f43a6fdb1a9f140a5e08635ac367e",
+    "src/spike/prepare_spike_exit.py": "6a9a1bf6b2387652f4a9ba553b5df51b05714ab73571450538dc7f84ceb2c15b",
+    "src/spike/protocols/observation-completion-new-work-v1.json": "81e6f452b33b98d5fd3e62956f03875325074e481eab00f65c27ab2839f36ed3",
+    "src/spike/protocols/policy-completion-x5-explanation-v1.json": "e9380fc03d1144f6d8a3f66d952eb52228f0f928af0feb5a6794e3911f478b9d",
+    "src/spike/protocols/policy-completion-x5-v1.json": "0d72b9c74b045877ea24ebe36e0f9843bccac85af072a869831d910c8b80b5be",
+    "src/spike/protocols/observation-completion-request-v1.json": "1ef7ec243b3bbd0be2e0337dc34bad1f7fa41466eacd0b211f6992152fcd2c2c",
+    "src/spike/fixtures/composition-x5-v1.json": "b23b318a6fe3515d1be0d0ece3fa3811b641d4bd1d309139392927f5ff1b7e71",
+    "src/spike/protocols/observation-completion-direct-v1.json": "0ce04674a6913f6ef74a5bc47fd536c897ff115b47b32a8f6554efc67e45bc51",
+    "src/spike/fixtures/observation-a1-v1.json": "e2512ab5825c1b157a07ce1d34f311102c1e1172f0fcc23eadb91353989a6178"
+  },
+  "artifact_sha256": {
+    "adapter-records.json": "4d5a631d5713ccc53ee954ff5ca4929428da1227118d14c2beb3ebd843f68a1e",
+    "readiness.json": "219a822377415164de9b1bbde034d18040f88cc6833bbc34b81a30c2e48b29e2",
+    "results.json": "ff0f785603db1f8609dd4e75745b47af7cadd3c30af76d4db32f012f2feac476",
+    "cases/A1-correct-r1.jsonl": "1ab40c1e9899211434160cd25b565e174e106be5b5444abcb8fba78a8857284d",
+    "cases/A1-correct-r2.jsonl": "d58e3cf776c7f4660d27de2494b487e8b9d6852b4a9e7697c0958c4d3ddfa1ed",
+    "cases/A1-correct-r3.jsonl": "725d444301ee3d51e7f74ba9c553a0af5ae9c16937dfa1780e5cd5e1e57f622d",
+    "cases/A1-correct-r4.jsonl": "eb992d8284a5f6da92c610a788dd67da43a9e671d6c8739f81315e07e0ca2d7b",
+    "cases/A1-correct-r5.jsonl": "a04a1ccda921d3af465b0c832ac050a01932ba43e09d0cb9f18948abb6a95ece",
+    "cases/A1-error-r1.jsonl": "4e9f42b3fda86662c4938177de690f7f642142f870313311665c3301118189af",
+    "cases/A1-error-r2.jsonl": "17f603751ea13d47d3eb2721a7b237c2aa8ed2cb58a02ca55eee2d33185c56c8",
+    "cases/A1-error-r3.jsonl": "7c812f9395231cfe2df785997c0c3a8ea6f299bbdc9bc4043465178b46c23c68",
+    "cases/A1-error-r4.jsonl": "3186ed9d1019b3bb8f2d3e48cdbf81f2b37647038ba4a89de9f106a2795b819a",
+    "cases/A1-error-r5.jsonl": "3610533d81c0b70a390ef8a4e8baa33d612f1097d56213a26ec5884fd96a96d5",
+    "cases/A1-incomplete-r1.jsonl": "20c054cca3783a8982e24281e205c5aa3ec84d6e57441c1e1dd92a2b170a1aa9",
+    "cases/A1-incomplete-r2.jsonl": "ffc128fe5814be9c524e03f01a05cb10ab7379324d0ac39affcad26b918b36d0",
+    "cases/A1-incomplete-r3.jsonl": "7fe9a75bfb1cde1375062c0c915e094a18a0002e7f455611e431983e0dc1aade",
+    "cases/A1-incomplete-r4.jsonl": "6fe331c2be9a16c3b566e694f47f71c692e0e484626d67a65073545953521f52",
+    "cases/A1-incomplete-r5.jsonl": "43751450debfe47c83423cc8670a20183a8ed2be1e9409b6c1e8cbec9539ce2b",
+    "cases/A2-ability-endorsement-r1.jsonl": "4fde89d90d1de32e46783f752124fb7cc1fc52bb13ace1542a23a12108af3f53",
+    "cases/A2-ability-endorsement-r2.jsonl": "c6fc4c6cec93548e1b850d9c4386ff6b42516469d9010343318f8910ea7aa72c",
+    "cases/A2-ability-endorsement-r3.jsonl": "89d50f3e4d96de8b259e7b3a815d6a96bb715eb6dc648f20e25604fed7272fe7",
+    "cases/A2-ability-endorsement-r4.jsonl": "66fde284484e9be77eea98d899787a8fcdbd19820e4c7d27393cf7cb4bc8215d",
+    "cases/A2-ability-endorsement-r5.jsonl": "5186b49240efa812c8f3b41f1a2580de1704e109980f2e15f166ebb0ae7f720c",
+    "cases/A2-ability-report-r1.jsonl": "ddab8d819ff02313c80fa8c73214ab2b049eb560b90746a4a7e8b6cdcf701038",
+    "cases/A2-ability-report-r2.jsonl": "ee4efee017927ec23e100f2e06031c1cf0dc7c75a128294aaf538ba03cceec35",
+    "cases/A2-ability-report-r3.jsonl": "df03e36a0df822a3fd44b9a4b4e67a6a766d50e4e9adff62e3b901321d7d53ad",
+    "cases/A2-ability-report-r4.jsonl": "2fbcf74a918dd1eb3bf92e4cfdb9d89fb4cf4b49e63e1c2b24e96e1dd91937d0",
+    "cases/A2-ability-report-r5.jsonl": "b3feba9d040d2c0878c29fd2ac8e60977693c7d5e64e55e642dd7992d38a5bc8",
+    "cases/A2-action-recommendation-r1.jsonl": "5538888e50cdd801ab5dde840ea589ab5cba17641750527d7362594a92fcf511",
+    "cases/A2-action-recommendation-r2.jsonl": "f9bfe7f9a7ecb47abc363c3192c84b70593e7b4fa9fadb7bb92f6767f902b23d",
+    "cases/A2-action-recommendation-r3.jsonl": "fba0d2ee335c027776248640d1f6c879da3c77836d0b0333708f631d9db3c60c",
+    "cases/A2-action-recommendation-r4.jsonl": "3411c97ef6d4c0cc43c667d6585b457618c41ced26cfa76915ebbf5a9d971cd0",
+    "cases/A2-action-recommendation-r5.jsonl": "956e26940c266cd110d0b2fe09a427f67a36b140bbe0aa474b3dd0b468bd88b1",
+    "cases/A2-arithmetic-endorsement-r1.jsonl": "ae803c1b68bb89544fde56626e60905fa83c0c3bc91adc302d771741fdeb90cb",
+    "cases/A2-arithmetic-endorsement-r2.jsonl": "b9fcd9b2f5bdd1f067e93ef35de528a61954a8781a559619f6698d95130298f9",
+    "cases/A2-arithmetic-endorsement-r3.jsonl": "81c18cdd35f17751900b36409763f6a78183e6c4e857fc8fed5838e9f12c25bf",
+    "cases/A2-arithmetic-endorsement-r4.jsonl": "e2dbf0011fcd25bfda7057d35c18dc53d00b5b5cfb879dfed6db623787ecf11d",
+    "cases/A2-arithmetic-endorsement-r5.jsonl": "86c599e40199ebb315ea180258d7490ad0b471937a2c890806b2f9d84a9e3f91",
+    "cases/A2-arithmetic-report-r1.jsonl": "30cba621c38c4c7fbcde5c945f1baeaf0a3c59e3abe44db9cfde7dd997de76cc",
+    "cases/A2-arithmetic-report-r2.jsonl": "ad61985b21dff70b8c09df657dce8579043f18f9915b2f55e1bceb5554aee06d",
+    "cases/A2-arithmetic-report-r3.jsonl": "dc00e5ca1333fe6643c5d885604e5f81149750a618eb9789210262e0c5d16430",
+    "cases/A2-arithmetic-report-r4.jsonl": "dea15ca4c5b642b031bfed62d836840e87699a9942cf0af7e5a9403342f70f70",
+    "cases/A2-arithmetic-report-r5.jsonl": "999800283f266c0868ada91d5795a2a4bcb0db77a99422661a63643868909444",
+    "cases/A2-request-report-r1.jsonl": "0da34836f314173b78d3d4306cc63f0f7cae548c43fdf1f9a41120f271ec7256",
+    "cases/A2-request-report-r2.jsonl": "1e1ea3e181ad2d2e9017a73edc325f9e63be5e5e4c76c05decec314cca879f87",
+    "cases/A2-request-report-r3.jsonl": "5a1a7066ebf514eb847f34fafe3d3bd67272b86bb2dc56e84f8f54ba489e7f6d",
+    "cases/A2-request-report-r4.jsonl": "390ee6001dba6e216bd0917cc033fde19f875e936e5cf257cebb2fc6897cb18d",
+    "cases/A2-request-report-r5.jsonl": "cdbbf658d4a41fb2a900e6411a587f62f5d9fce0b1175b8e21f6d2cbb9f75a63",
+    "cases/X5-control-not-occurred.jsonl": "e5a9527bc53b124220b5a8eaf3e2ba969879901cdc7b71ea83cd1591c1d36929",
+    "cases/X5-explanation-indeterminate.jsonl": "87c297d19c21f08473ac473a4b81f2a743e0235f2e2a6400da7edb8873189303",
+    "cases/X5-explanation-not-occurred.jsonl": "08fa7b2182ff848820a483a7bf99f6575922007c78c2155255dd9117c7b70e2d",
+    "cases/X5-explanation-partial.jsonl": "11ed704c0a0f1cad7a14ff82529a21017ec95b71728446fc482244bcac08616c",
+    "cases/X5-r1.jsonl": "38f50127723abebdfda1d1cbef239e62a69e2f4586e6e2aef1e34d94cbd70b8b",
+    "cases/X5-r2.jsonl": "ee89bd924098d6e8e68f5281a97b8f0e5d382cf159e01de1aa55ac0de9b7a194",
+    "cases/X5-r3.jsonl": "01f30166d26592962b957ae22a32cb525be74da87ff47044d618ecb4452d7543",
+    "cases/X5-r4.jsonl": "7ea9e1cc76e6053ce8614f6c021b0e84cb910a20b620689c16109a2d6647c95f",
+    "cases/X5-r5.jsonl": "071f2848c0c0cc330e719c6c69dbb941141fc47f4383fe14bc46aa948fcce4f0"
+  }
+}

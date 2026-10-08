@@ -1,0 +1,38 @@
+{
+  "schema": "policy-field-quotes-local-assessment-v1",
+  "date": "2026-10-06",
+  "result": "PASS",
+  "scope": "Runtime string-field locators, unique exact quote expansion and unchanged declared disposition checks; scripted semantics only",
+  "tests_run": 311,
+  "new_test_methods": 12,
+  "external_model_calls": 0,
+  "audit": {
+    "frozen_inputs_verified": 187,
+    "artifacts_verified": 14,
+    "snapshots_verified": 12,
+    "scripted_model_records": 8,
+    "semantic_messages_verified": 7,
+    "maximum_recorded_message_chars": 14823,
+    "maximum_semantic_message_chars": 14823,
+    "prior_ledger_entries_verified": 484,
+    "archived_sources_verified": 2
+  },
+  "protocol": "src/spike/protocols/policy-e1-v4.json",
+  "validation_format": "policy-disposition-fields-v2",
+  "semantic_acceptance": "NOT_VALIDATED",
+  "real_protocol_usability": "NOT_VALIDATED",
+  "profile_default": false,
+  "original_A2": "DENIED",
+  "original_E1": "INCONCLUSIVE",
+  "full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "automatic_additional_batches": false,
+  "limitations": [
+    "Mechanical checks cannot detect a contradiction the LLM fails to declare.",
+    "Trusted review withholding and generic excluded materials are implemented; production recovery and role-specific retrieval metadata are not.",
+    "No real-model semantic result or historical E1/A2 classification change.",
+    "Repeated or altered quotes fail closed; no fuzzy matching, silent repair or model retry."
+  ],
+  "summary_sha256": "ce943c182b62b8dbcd1af5c0bec2519d55e538477fedd05b45181bff3c9383a3"
+}

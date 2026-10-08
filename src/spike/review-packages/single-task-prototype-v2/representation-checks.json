@@ -1,0 +1,329 @@
+{
+  "external_model_calls": 0,
+  "source_returns": 22,
+  "fixture_rows": [
+    {
+      "original_execution_id": "99da0ad831224f6eb9ca058473e07f70",
+      "candidate_handles": 11,
+      "expressions": 6,
+      "message_chars": 29936,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "3aad2d56a021445badd8be5a9d0626b3",
+      "candidate_handles": 10,
+      "expressions": 6,
+      "message_chars": 29214,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "d85f85a1c1994d3eb03974ebe6c93168",
+      "candidate_handles": 16,
+      "expressions": 6,
+      "message_chars": 32171,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "2eddeedde5734176bbc955c6259829f8",
+      "candidate_handles": 11,
+      "expressions": 7,
+      "message_chars": 32168,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "9b9bacbeea8d46228325217961ade724",
+      "candidate_handles": 14,
+      "expressions": 6,
+      "message_chars": 31233,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "3e538a4fc4f147f5a018e6d13c5afb02",
+      "candidate_handles": 12,
+      "expressions": 7,
+      "message_chars": 31979,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "cf152fc843d34b38aac74b9d36a2fe7c",
+      "candidate_handles": 12,
+      "expressions": 6,
+      "message_chars": 30398,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "2e2da82c8a834c3892e0c6e5c18c74d3",
+      "candidate_handles": 10,
+      "expressions": 4,
+      "message_chars": 26093,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "4e095d4b147a4d09b260ca7d8a3ce9e9",
+      "candidate_handles": 10,
+      "expressions": 6,
+      "message_chars": 29286,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "62b01a9aa8fd4e63b7b6d72bec9f7740",
+      "candidate_handles": 12,
+      "expressions": 3,
+      "message_chars": 24952,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "419c141cdc904bcbaf26eb6028243ee6",
+      "candidate_handles": 17,
+      "expressions": 5,
+      "message_chars": 30943,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "4517e35e42894de39c4b7f13a8a956bf",
+      "candidate_handles": 16,
+      "expressions": 8,
+      "message_chars": 36655,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "ce2d630fdc814d72af472baac4092a24",
+      "candidate_handles": 11,
+      "expressions": 4,
+      "message_chars": 26434,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "6b6aa985c7af451f9119a9b6ca4b368a",
+      "candidate_handles": 17,
+      "expressions": 7,
+      "message_chars": 34432,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "2f094987d9f24d788b110db91b7fbb3c",
+      "candidate_handles": 12,
+      "expressions": 2,
+      "message_chars": 23530,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "90cc9746980f4536bd0163dc5695991d",
+      "candidate_handles": 22,
+      "expressions": 9,
+      "message_chars": 41907,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "b4c16895e2524b139630ad61446689b0",
+      "candidate_handles": 14,
+      "expressions": 4,
+      "message_chars": 26796,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "31738765fb364243a7d7871884c6d60f",
+      "candidate_handles": 20,
+      "expressions": 9,
+      "message_chars": 41583,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "87181506e7c44380bff1bc251f10bf7f",
+      "candidate_handles": 11,
+      "expressions": 7,
+      "message_chars": 32268,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "f9413a6e05624f169c8f377876365608",
+      "candidate_handles": 17,
+      "expressions": 4,
+      "message_chars": 29080,
+      "arithmetic_status": "PASS"
+    },
+    {
+      "original_execution_id": "f48573b446c14b3584cef4a0baf9a781",
+      "candidate_handles": 15,
+      "expressions": 8,
+      "message_chars": 36484,
+      "arithmetic_status": "UNRESOLVED"
+    },
+    {
+      "original_execution_id": "10f8bb66ab1140d88864c5aef9914141",
+      "candidate_handles": 19,
+      "expressions": 5,
+      "message_chars": 31992,
+      "arithmetic_status": "PASS"
+    }
+  ],
+  "authored_type_changes": [
+    {
+      "execution_id": "2eddeedde5734176bbc955c6259829f8",
+      "fixture_type": "UnevaluatedExpression",
+      "original": {
+        "type": "NumericAssertion",
+        "text": "multiplies the price 42 by the quantity 15",
+        "speaker": "system",
+        "sources": [
+          "source_2"
+        ],
+        "stance": "reported_only",
+        "operator": "multiply",
+        "left": "42",
+        "right": "15",
+        "value": null,
+        "reason": ""
+      }
+    },
+    {
+      "execution_id": "2eddeedde5734176bbc955c6259829f8",
+      "fixture_type": "UnevaluatedExpression",
+      "original": {
+        "type": "NumericAssertion",
+        "text": "divides the product 630 by 6",
+        "speaker": "system",
+        "sources": [
+          "source_2"
+        ],
+        "stance": "reported_only",
+        "operator": "divide",
+        "left": "630",
+        "right": "6",
+        "value": null,
+        "reason": ""
+      }
+    },
+    {
+      "execution_id": "9b9bacbeea8d46228325217961ade724",
+      "fixture_type": "ScalarValue",
+      "original": {
+        "type": "NumericAssertion",
+        "text": "A final answer of 120 is given",
+        "speaker": "learner",
+        "sources": [
+          "source_2"
+        ],
+        "stance": "reported_only",
+        "operator": null,
+        "left": null,
+        "right": null,
+        "value": "120",
+        "reason": ""
+      }
+    },
+    {
+      "execution_id": "3e538a4fc4f147f5a018e6d13c5afb02",
+      "fixture_type": "ScalarValue",
+      "original": {
+        "type": "NumericAssertion",
+        "text": "A final answer of 105 is given",
+        "speaker": "system",
+        "sources": [
+          "source_2"
+        ],
+        "stance": "reported_only",
+        "operator": null,
+        "left": null,
+        "right": null,
+        "value": "105",
+        "reason": ""
+      }
+    },
+    {
+      "execution_id": "4517e35e42894de39c4b7f13a8a956bf",
+      "fixture_type": "ScalarValue",
+      "original": {
+        "type": "NumericAssertion",
+        "text": "The submitted final answer is 120",
+        "speaker": "learner",
+        "sources": [
+          "source_2"
+        ],
+        "stance": "reported_only",
+        "operator": null,
+        "left": null,
+        "right": null,
+        "value": "120",
+        "reason": "Reported learner final answer."
+      }
+    },
+    {
+      "execution_id": "4517e35e42894de39c4b7f13a8a956bf",
+      "fixture_type": "ScalarValue",
+      "original": {
+        "type": "NumericAssertion",
+        "text": "the task's correct result of 105",
+        "speaker": "system",
+        "sources": [
+          "source_1",
+          "source_2"
+        ],
+        "stance": "asserted_true",
+        "operator": null,
+        "left": null,
+        "right": null,
+        "value": "105",
+        "reason": "System states the correct result."
+      }
+    },
+    {
+      "execution_id": "90cc9746980f4536bd0163dc5695991d",
+      "fixture_type": "ScalarValue",
+      "original": {
+        "type": "NumericAssertion",
+        "text": "Final answer given: 120",
+        "speaker": "learner",
+        "sources": [
+          "source_2"
+        ],
+        "stance": "reported_only",
+        "operator": null,
+        "left": null,
+        "right": null,
+        "value": "120",
+        "reason": ""
+      }
+    },
+    {
+      "execution_id": "31738765fb364243a7d7871884c6d60f",
+      "fixture_type": "ScalarValue",
+      "original": {
+        "type": "NumericAssertion",
+        "text": "Final answer given: 120",
+        "speaker": "learner",
+        "sources": [
+          "source_2"
+        ],
+        "stance": "reported_only",
+        "operator": null,
+        "left": null,
+        "right": null,
+        "value": "120",
+        "reason": ""
+      }
+    },
+    {
+      "execution_id": "87181506e7c44380bff1bc251f10bf7f",
+      "fixture_type": "ScalarValue",
+      "original": {
+        "type": "NumericAssertion",
+        "text": "The final answer 105 matches this task's correct result.",
+        "speaker": "system",
+        "sources": [
+          "source_1",
+          "source_2"
+        ],
+        "stance": "asserted_true",
+        "operator": null,
+        "left": null,
+        "right": null,
+        "value": "105",
+        "reason": "Claim relates the final answer 105 to the task's correct result without an explicit binary operation."
+      }
+    }
+  ],
+  "semantic_support_claimed": false,
+  "maximum_message_chars": 41907,
+  "note": "Whole-candidate handles and explicit test-only type conventions; not replayed model classifications or a production repair path."
+}

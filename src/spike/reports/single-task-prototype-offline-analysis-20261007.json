@@ -1,0 +1,623 @@
+{
+  "status": "OFFLINE_RECONSTRUCTION_COMPLETE",
+  "external_model_calls": 0,
+  "reused_recorded_returns": 70,
+  "sent_messages_matched": 70,
+  "normalization": "Only generated execution Ref.identity fields; every other sent message value, schema and length must match.",
+  "all_24_terminal_outcomes_match": true,
+  "oversized_unsent_requests": [
+    {
+      "session": "T01",
+      "turn": 1,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 21200,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 475,
+        "candidate": 406,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 1930,
+        "arithmetic_result": 3292,
+        "source_registry": 720
+      }
+    },
+    {
+      "session": "T01",
+      "turn": 2,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 21038,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 464,
+        "candidate": 373,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 1897,
+        "arithmetic_result": 3226,
+        "source_registry": 709
+      }
+    },
+    {
+      "session": "T02",
+      "turn": 1,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 21417,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 468,
+        "candidate": 482,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 2106,
+        "arithmetic_result": 3271,
+        "source_registry": 713
+      }
+    },
+    {
+      "session": "T04",
+      "turn": 2,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 21158,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 463,
+        "candidate": 433,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 1957,
+        "arithmetic_result": 3220,
+        "source_registry": 708
+      }
+    },
+    {
+      "session": "T05",
+      "turn": 1,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 19403,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 465,
+        "candidate": 347,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 1414,
+        "arithmetic_result": 2368,
+        "source_registry": 710
+      }
+    },
+    {
+      "session": "T05",
+      "turn": 2,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 21056,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 464,
+        "candidate": 374,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 1898,
+        "arithmetic_result": 3226,
+        "source_registry": 709
+      }
+    },
+    {
+      "session": "T06",
+      "turn": 1,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 18363,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 461,
+        "candidate": 368,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 1207,
+        "arithmetic_result": 1648,
+        "source_registry": 706
+      }
+    },
+    {
+      "session": "T07",
+      "turn": 2,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 19368,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 466,
+        "candidate": 380,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 1504,
+        "arithmetic_result": 2190,
+        "source_registry": 711
+      }
+    },
+    {
+      "session": "T08",
+      "turn": 1,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 22527,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 479,
+        "candidate": 442,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 2280,
+        "arithmetic_result": 4051,
+        "source_registry": 724
+      }
+    },
+    {
+      "session": "T09",
+      "turn": 2,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 19210,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 464,
+        "candidate": 321,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 1443,
+        "arithmetic_result": 2180,
+        "source_registry": 709
+      }
+    },
+    {
+      "session": "T11",
+      "turn": 1,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 19792,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 473,
+        "candidate": 544,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 1687,
+        "arithmetic_result": 2237,
+        "source_registry": 718
+      }
+    },
+    {
+      "session": "T12",
+      "turn": 1,
+      "purpose": "ObservationSemanticValidation",
+      "reconstructed_message_chars": 23928,
+      "limit": 16000,
+      "system_prompt_chars": 8930,
+      "body_component_chars": {
+        "context": 472,
+        "candidate": 504,
+        "arithmetic_fixture": 48,
+        "criteria": 3983,
+        "arithmetic_extraction": 2773,
+        "arithmetic_result": 4787,
+        "source_registry": 717
+      }
+    }
+  ],
+  "unsent_lengths_are_reconstructed_not_original_wire_captures": true,
+  "failure_counts": {
+    "ModelFailure:InputLimitExceeded": 12,
+    "ContractError:InvalidBoundedDecimal": 1,
+    "ContractError:InvalidArithmeticOperatorOrStance": 6,
+    "ContractError:IncompleteResponsibilityCoverage": 2,
+    "ContractError:InvalidOrAmbiguousExpressionSpan": 3
+  },
+  "structural_findings": [
+    {
+      "session": "T01",
+      "turn": 1,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "99da0ad831224f6eb9ca058473e07f70",
+      "structural_findings": []
+    },
+    {
+      "session": "T01",
+      "turn": 2,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "3aad2d56a021445badd8be5a9d0626b3",
+      "structural_findings": []
+    },
+    {
+      "session": "T02",
+      "turn": 1,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "d85f85a1c1994d3eb03974ebe6c93168",
+      "structural_findings": []
+    },
+    {
+      "session": "T02",
+      "turn": 2,
+      "runtime_failure": "ContractError:InvalidBoundedDecimal",
+      "last_actual_call": "2eddeedde5734176bbc955c6259829f8",
+      "structural_findings": [
+        {
+          "segment": 1,
+          "expression": 0,
+          "issue": "NumericAssertionHasNullRequiredOperandOrOperator",
+          "raw": {
+            "type": "NumericAssertion",
+            "text": "multiplies the price 42 by the quantity 15",
+            "speaker": "system",
+            "sources": [
+              "source_2"
+            ],
+            "stance": "reported_only",
+            "operator": "multiply",
+            "left": "42",
+            "right": "15",
+            "value": null,
+            "reason": ""
+          }
+        },
+        {
+          "segment": 1,
+          "expression": 1,
+          "issue": "NumericAssertionHasNullRequiredOperandOrOperator",
+          "raw": {
+            "type": "NumericAssertion",
+            "text": "divides the product 630 by 6",
+            "speaker": "system",
+            "sources": [
+              "source_2"
+            ],
+            "stance": "reported_only",
+            "operator": "divide",
+            "left": "630",
+            "right": "6",
+            "value": null,
+            "reason": ""
+          }
+        }
+      ]
+    },
+    {
+      "session": "T03",
+      "turn": 1,
+      "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+      "last_actual_call": "9b9bacbeea8d46228325217961ade724",
+      "structural_findings": [
+        {
+          "segment": 3,
+          "expression": 0,
+          "issue": "NumericAssertionHasNullRequiredOperandOrOperator",
+          "raw": {
+            "type": "NumericAssertion",
+            "text": "A final answer of 120 is given",
+            "speaker": "learner",
+            "sources": [
+              "source_2"
+            ],
+            "stance": "reported_only",
+            "operator": null,
+            "left": null,
+            "right": null,
+            "value": "120",
+            "reason": ""
+          }
+        }
+      ]
+    },
+    {
+      "session": "T03",
+      "turn": 2,
+      "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+      "last_actual_call": "3e538a4fc4f147f5a018e6d13c5afb02",
+      "structural_findings": [
+        {
+          "segment": 3,
+          "expression": 0,
+          "issue": "NumericAssertionHasNullRequiredOperandOrOperator",
+          "raw": {
+            "type": "NumericAssertion",
+            "text": "A final answer of 105 is given",
+            "speaker": "system",
+            "sources": [
+              "source_2"
+            ],
+            "stance": "reported_only",
+            "operator": null,
+            "left": null,
+            "right": null,
+            "value": "105",
+            "reason": ""
+          }
+        }
+      ]
+    },
+    {
+      "session": "T04",
+      "turn": 1,
+      "runtime_failure": "ContractError:IncompleteResponsibilityCoverage",
+      "last_actual_call": "bcc6ed89f2ca420798c840b63b8cc034",
+      "structural_findings": [
+        {
+          "segment": 0,
+          "issue": "CoverageTextNotVerbatimOrLeavesGap",
+          "returned_text": "Learner states: \"42÷6 得 8，再乘 15 得 120.\"",
+          "candidate": "Learner states: \"42÷6 得 8，再乘 15 得 120。\" The division equality is locally wrong: 42÷6 is 7, not 8. The subsequent multiplication is consistent with the stated intermediate: 8×15=120. No final answer is given; the learner says \"我做完了，告诉我该回看哪一步，结果让我自己算,\" so the work is incomplete with respect to a final answer."
+        }
+      ]
+    },
+    {
+      "session": "T04",
+      "turn": 2,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "cf152fc843d34b38aac74b9d36a2fe7c",
+      "structural_findings": []
+    },
+    {
+      "session": "T05",
+      "turn": 1,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "2e2da82c8a834c3892e0c6e5c18c74d3",
+      "structural_findings": []
+    },
+    {
+      "session": "T05",
+      "turn": 2,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "4e095d4b147a4d09b260ca7d8a3ce9e9",
+      "structural_findings": []
+    },
+    {
+      "session": "T06",
+      "turn": 1,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "62b01a9aa8fd4e63b7b6d72bec9f7740",
+      "structural_findings": []
+    },
+    {
+      "session": "T06",
+      "turn": 2,
+      "runtime_failure": "ContractError:InvalidOrAmbiguousExpressionSpan",
+      "last_actual_call": "419c141cdc904bcbaf26eb6028243ee6",
+      "structural_findings": [
+        {
+          "segment": 3,
+          "expression": 0,
+          "issue": "ExpressionQuoteNotUniqueWithinOwningSegment",
+          "quote": "\"8×15＝120\"",
+          "owning_segment": "A final answer \"120\" is given; it does not match the task's correct value (105)."
+        }
+      ]
+    },
+    {
+      "session": "T07",
+      "turn": 1,
+      "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+      "last_actual_call": "4517e35e42894de39c4b7f13a8a956bf",
+      "structural_findings": [
+        {
+          "segment": 3,
+          "expression": 0,
+          "issue": "NumericAssertionHasNullRequiredOperandOrOperator",
+          "raw": {
+            "type": "NumericAssertion",
+            "text": "The submitted final answer is 120",
+            "speaker": "learner",
+            "sources": [
+              "source_2"
+            ],
+            "stance": "reported_only",
+            "operator": null,
+            "left": null,
+            "right": null,
+            "value": "120",
+            "reason": "Reported learner final answer."
+          }
+        },
+        {
+          "segment": 3,
+          "expression": 1,
+          "issue": "NumericAssertionHasNullRequiredOperandOrOperator",
+          "raw": {
+            "type": "NumericAssertion",
+            "text": "the task's correct result of 105",
+            "speaker": "system",
+            "sources": [
+              "source_1",
+              "source_2"
+            ],
+            "stance": "asserted_true",
+            "operator": null,
+            "left": null,
+            "right": null,
+            "value": "105",
+            "reason": "System states the correct result."
+          }
+        }
+      ]
+    },
+    {
+      "session": "T07",
+      "turn": 2,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "ce2d630fdc814d72af472baac4092a24",
+      "structural_findings": []
+    },
+    {
+      "session": "T08",
+      "turn": 1,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "6b6aa985c7af451f9119a9b6ca4b368a",
+      "structural_findings": []
+    },
+    {
+      "session": "T08",
+      "turn": 2,
+      "runtime_failure": "ContractError:InvalidOrAmbiguousExpressionSpan",
+      "last_actual_call": "2f094987d9f24d788b110db91b7fbb3c",
+      "structural_findings": [
+        {
+          "segment": 2,
+          "expression": 0,
+          "issue": "ExpressionQuoteNotUniqueWithinOwningSegment",
+          "quote": "42÷6＝7",
+          "owning_segment": "Both displayed equalities are locally correct (42÷6=7; 7×15=105), and the final answer 105 matches the task's correct result."
+        },
+        {
+          "segment": 2,
+          "expression": 1,
+          "issue": "ExpressionQuoteNotUniqueWithinOwningSegment",
+          "quote": "7×15＝105",
+          "owning_segment": "Both displayed equalities are locally correct (42÷6=7; 7×15=105), and the final answer 105 matches the task's correct result."
+        }
+      ]
+    },
+    {
+      "session": "T09",
+      "turn": 1,
+      "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+      "last_actual_call": "90cc9746980f4536bd0163dc5695991d",
+      "structural_findings": [
+        {
+          "segment": 4,
+          "expression": 0,
+          "issue": "NumericAssertionHasNullRequiredOperandOrOperator",
+          "raw": {
+            "type": "NumericAssertion",
+            "text": "Final answer given: 120",
+            "speaker": "learner",
+            "sources": [
+              "source_2"
+            ],
+            "stance": "reported_only",
+            "operator": null,
+            "left": null,
+            "right": null,
+            "value": "120",
+            "reason": ""
+          }
+        }
+      ]
+    },
+    {
+      "session": "T09",
+      "turn": 2,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "b4c16895e2524b139630ad61446689b0",
+      "structural_findings": []
+    },
+    {
+      "session": "T10",
+      "turn": 1,
+      "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+      "last_actual_call": "31738765fb364243a7d7871884c6d60f",
+      "structural_findings": [
+        {
+          "segment": 4,
+          "expression": 0,
+          "issue": "NumericAssertionHasNullRequiredOperandOrOperator",
+          "raw": {
+            "type": "NumericAssertion",
+            "text": "Final answer given: 120",
+            "speaker": "learner",
+            "sources": [
+              "source_2"
+            ],
+            "stance": "reported_only",
+            "operator": null,
+            "left": null,
+            "right": null,
+            "value": "120",
+            "reason": ""
+          }
+        }
+      ]
+    },
+    {
+      "session": "T10",
+      "turn": 2,
+      "runtime_failure": "ContractError:InvalidArithmeticOperatorOrStance",
+      "last_actual_call": "87181506e7c44380bff1bc251f10bf7f",
+      "structural_findings": [
+        {
+          "segment": 3,
+          "expression": 0,
+          "issue": "NumericAssertionHasNullRequiredOperandOrOperator",
+          "raw": {
+            "type": "NumericAssertion",
+            "text": "The final answer 105 matches this task's correct result.",
+            "speaker": "system",
+            "sources": [
+              "source_1",
+              "source_2"
+            ],
+            "stance": "asserted_true",
+            "operator": null,
+            "left": null,
+            "right": null,
+            "value": "105",
+            "reason": "Claim relates the final answer 105 to the task's correct result without an explicit binary operation."
+          }
+        }
+      ]
+    },
+    {
+      "session": "T11",
+      "turn": 1,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "f9413a6e05624f169c8f377876365608",
+      "structural_findings": []
+    },
+    {
+      "session": "T11",
+      "turn": 2,
+      "runtime_failure": "ContractError:IncompleteResponsibilityCoverage",
+      "last_actual_call": "6e7b512348ba4868ab8fd9ccb68dd07a",
+      "structural_findings": [
+        {
+          "segment": 0,
+          "issue": "CoverageTextNotVerbatimOrLeavesGap",
+          "returned_text": "Learner work for \"6kg 苹果42元，15kg多少钱？\" states: \"42÷6＝7，7×15＝105；谢谢刚才指出除法这一步.\"",
+          "candidate": "Learner work for \"6kg 苹果42元，15kg多少钱？\" states: \"42÷6＝7，7×15＝105；谢谢刚才指出除法这一步。\" The visible method computes a unit price via \"42÷6＝7\" and then multiplies \"7×15＝105\". The division equality \"42÷6＝7\" is locally wrong: 42÷6 equals 7? No—42÷6 = 7 is incorrect; 42÷6 = 7 is false since 6×7=42, so actually 42÷6=7 is correct. Wait, 6×7=42, so 42÷6=7 is correct. The multiplication \"7×15＝105\" is correct. The final answer \"105\" is given; it matches the correct answer for this task (unit price 7元/kg, 15kg costs 105元)."
+        }
+      ]
+    },
+    {
+      "session": "T12",
+      "turn": 1,
+      "runtime_failure": "ModelFailure:InputLimitExceeded",
+      "last_actual_call": "f48573b446c14b3584cef4a0baf9a781",
+      "structural_findings": []
+    },
+    {
+      "session": "T12",
+      "turn": 2,
+      "runtime_failure": "ContractError:InvalidOrAmbiguousExpressionSpan",
+      "last_actual_call": "10f8bb66ab1140d88864c5aef9914141",
+      "structural_findings": [
+        {
+          "segment": 1,
+          "expression": 0,
+          "issue": "ExpressionQuoteNotUniqueWithinOwningSegment",
+          "quote": "42÷6=7",
+          "owning_segment": "The division equality \"42÷6＝7\" is locally wrong (42÷6=7 is incorrect; the correct quotient is 7? no—42÷6=7 is actually correct)."
+        }
+      ]
+    }
+  ],
+  "semantic_quality_claimed": false,
+  "source_sha256": {
+    "src/spike/analyze_single_task_prototype.py": "79a735bb051e6d09adba6a9163960a2de1edf621b40e228eac95a76ee6ca5702",
+    "src/spike/runs/single-task-prototype-v1/adapter-records.json": "cc57e87b940013cb8fde81b77050b9652438049b30301451d4c9c521e9afc282",
+    "src/spike/runs/single-task-prototype-v1/results.json": "746fb0ba11bdaad499e96aeecea85b8651bfb9800516f7e797c19879f8230b84"
+  }
+}

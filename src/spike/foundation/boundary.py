@@ -13,11 +13,26 @@ from .semantic_review import check_criteria_review, check_source_review
 from .source_conflicts import check_absence_review
 from .llm import ModelFailure
 from .arithmetic import check_arithmetic_extraction, combine_arithmetic_review
-from .expressions import FORMAT as EXPRESSION_FORMAT, check_expression_extraction
+from .expressions import (FORMAT as EXPRESSION_FORMAT, FORMAT_V2 as EXPRESSION_FORMAT_V2,
+                          check_expression_extraction, check_expression_extraction_v2)
+from .observer_arithmetic import FORMAT as OBSERVER_ARITHMETIC_FORMAT, check as check_observer_arithmetic
+from .candidate_spans import (FORMAT as CANDIDATE_SPAN_FORMAT, registry as candidate_span_registry,
+    bind_contract as bind_candidate_spans, expand_classification,
+    expand_review as expand_candidate_review)
 from .claim_axes import checked_claim_axes
 from .responsibility import check_responsibility, combine_status
 from .validation_dimensions import assessment as dimension_assessment, STAGES
+from .policy_field_quotes import FORMAT as FIELD_DISPOSITION_FORMAT, contract as field_disposition_contract, registry as disposition_registry, expand as expand_disposition_quotes
+from .policy_field_references import FORMAT as FIELD_REFERENCE_FORMAT, contract as field_reference_contract, registry as field_reference_registry, expand as expand_field_references
+from .policy_disposition import FORMAT as DISPOSITION_FORMAT, contract as disposition_contract, check as check_disposition
 from .content_projection import check_profile as check_projection_profile, exact as projection_ref, project
+
+
+DISPOSITION_FORMATS = (DISPOSITION_FORMAT, FIELD_DISPOSITION_FORMAT, FIELD_REFERENCE_FORMAT)
+FIELD_DISPOSITION_HANDLERS = {
+    FIELD_DISPOSITION_FORMAT: (disposition_registry, field_disposition_contract, expand_disposition_quotes),
+    FIELD_REFERENCE_FORMAT: (field_reference_registry, field_reference_contract, expand_field_references),
+}
 
 
 def digest(value):
@@ -126,9 +141,14 @@ class BoundaryRuntime:
         self._bounded_review_results = {}
         self._arithmetic_executions = {}
         self._responsibility_executions = {}
+        self._policy_material_views = {}
+        self._policy_material_refs = {}
         self.session = None
+        self.working_entry = None
 
     def check_turn(self, context):
+        if self.working_entry is not None:
+            self.working_entry.check_context(context)
         if self.session is not None:
             self.session.check_context_open(context)
 
@@ -142,6 +162,13 @@ class BoundaryRuntime:
                               "Evidence": "Evaluation", "LearnerBelief": "Evaluation"}.get(protocol.candidate_kind):
             raise ContractError("Protocol cannot redefine semantic ownership")
         definition = self.h.get(protocol.ref).payload
+        if definition.get('validation_format') in DISPOSITION_FORMATS:
+            contract_builder = (FIELD_DISPOSITION_HANDLERS[definition['validation_format']][1]
+                if definition['validation_format'] in FIELD_DISPOSITION_HANDLERS else disposition_contract)
+            if (protocol.candidate_kind != 'PolicyOutcome'
+                    or self.h.get(protocol.semantic_rule).payload.get('format') != definition['validation_format']
+                    or definition.get('output_contracts',{}).get('validation') != contract_builder([f for f,_ in protocol.fields])):
+                raise ContractError('DispositionProtocolMismatch')
         if definition.get('context_projection') is not None:
             check_projection_profile(definition['context_projection'],protocol.allowed_context_kinds)
         if definition.get('arithmetic_extraction_format') is not None or definition.get('validation_dimensions') is not None:
@@ -381,11 +408,64 @@ class BoundaryRuntime:
         rechecks=[json_value(r.ref) for r in records if r.kind=='SemanticRecheckFailed']
         return dimension_assessment(definition,stages,criteria,review_status=review.status if review else None,recheck_failures=rechecks)
 
+    def withhold_policy_review_material(self, context, refs):
+        """Trusted host configuration: withhold from review, never from formation history."""
+        if self._contexts.get(context.identity) != context:
+            raise ContractError('UnregisteredReviewContext')
+        if self.h.get(context.protocol).payload.get('validation_format') not in DISPOSITION_FORMATS:
+            raise ContractError('DispositionProfileRequired')
+        if context.identity in self._policy_material_refs or context.identity in self._policy_material_views:
+            raise ContractError('ReviewMaterialViewFrozen')
+        refs=tuple(refs)
+        if len(refs)!=len(set(refs)) or any(r not in [i.record.ref for i in context.items] for r in refs):
+            raise ContractError('ReviewMaterialOutsideFormationContext')
+        self._policy_material_views[context.identity]=refs
+
+    def _disposition_inputs(self, context, content):
+        withheld=self._policy_material_views.get(context.identity,())
+        materials=[{'id':'material_'+str(n),'ref':json_value(i.record.ref),'kind':i.record.kind,
+            'state':'WITHHELD_FOR_REVIEW' if i.record.ref in withheld else 'AVAILABLE'} for n,i in enumerate(context.items)]
+        materials.extend({'id':'material_'+str(len(context.items)+n),'ref':json_value(ref),'kind':'EXCLUDED',
+            'state':'ACCESS_DENIED' if reason in ('Unauthorized','DataAuthorityDenied') else 'UNKNOWN'}
+            for n,(ref,reason) in enumerate(context.excluded))
+        manifest=next(r.ref for r in self.h.executions.records() if r.kind=='ContextManifest' and r.payload['context_id']==context.identity)
+        payload={'context_id':context.identity,'context_manifest_ref':json_value(manifest),'materials':materials}
+        if context.identity not in self._policy_material_refs:
+            self._policy_material_refs[context.identity]=self.execution('PolicyReviewMaterialAvailability',context.subject,payload)
+        ref=self._policy_material_refs[context.identity]
+        if self.h.get(ref).payload!=payload:
+            raise ContractError('ReviewMaterialAvailabilityBindingMismatch')
+        return [r for r in content if r['ref'] not in [json_value(x) for x in withheld]],ref,materials
+
+    def _disposition_check(self, candidate, output):
+        context=self._contexts[candidate.context_id]
+        content,ref,materials=self._disposition_inputs(context,[i.model_value() for i in context.items])
+        binding={'candidate_digest':digest(candidate),'context_id':context.identity,
+            'rule_ref':json_value(self._protocols[candidate.protocol].semantic_rule),'material_record_ref':json_value(ref)}
+        field_handlers = FIELD_DISPOSITION_HANDLERS.get(self.h.get(candidate.protocol).payload.get('validation_format'))
+        if field_handlers is not None:
+            from .structured_output import matches_schema
+            make_registry, make_contract, expand = field_handlers
+            entries = make_registry(candidate.record.payload, content)
+            if not matches_schema(output,make_contract(list(candidate.record.payload),entries)['parameters']):
+                raise ContractError('DispositionFieldSchemaMismatch')
+            output = expand(output, entries)
+        return check_disposition(output,candidate.record.payload,content,binding,materials)
+
     def _validate_with_llm(self, token, candidate, adapter):
         if self._candidates.get(candidate.identity) != candidate:
             raise ContractError("UnregisteredOrAlteredCandidate")
         self.check_turn(self._contexts[candidate.context_id])
         protocol = self._protocols[candidate.protocol]
+        if self.h.get(protocol.semantic_rule).payload.get('format') in DISPOSITION_FORMATS:
+            if candidate.identity in self._bounded_review_results:
+                return self._bounded_review_results[candidate.identity]
+            if candidate.identity in self._bounded_review_started:
+                raise ContractError('CandidateValidationAlreadyAttempted')
+            self._bounded_review_started.add(candidate.identity)
+            review=self._validate_once(token,candidate,adapter)
+            self._bounded_review_results[candidate.identity]=review
+            return review
         if self.h.get(protocol.semantic_rule).payload.get("format") not in ("source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
             return self._validate_once(token, candidate, adapter)
         if candidate.identity in self._bounded_review_results:
@@ -428,11 +508,27 @@ class BoundaryRuntime:
         profile = definition.get('arithmetic_extraction_format')
         if profile is None:
             return check_arithmetic_extraction(extraction, candidate.record.payload)
-        if profile != EXPRESSION_FORMAT:
+        if profile not in (EXPRESSION_FORMAT, EXPRESSION_FORMAT_V2, OBSERVER_ARITHMETIC_FORMAT):
             raise ContractError('UnsupportedArithmeticExtractionFormat')
         context = self._contexts[candidate.context_id]
         registry = source_registry([i.model_value() for i in context.items])
-        return check_expression_extraction(extraction, candidate.record.payload, registry)
+        checker = (check_observer_arithmetic if profile == OBSERVER_ARITHMETIC_FORMAT else
+                   check_expression_extraction_v2 if profile == EXPRESSION_FORMAT_V2 else check_expression_extraction)
+        return checker(extraction, candidate.record.payload, registry)
+
+    def _responsibility_result(self, candidate, classification):
+        definition = self.h.get(candidate.protocol).payload
+        if definition.get('candidate_encoding') == CANDIDATE_SPAN_FORMAT:
+            classification = expand_classification(classification, candidate.record.payload)
+        return check_responsibility(classification, candidate.record.payload,
+                                    admission=definition['responsibility_admission'])
+
+    def _expand_review_output(self, candidate, wire, registry):
+        definition = self.h.get(candidate.protocol).payload
+        if definition.get('candidate_encoding') == CANDIDATE_SPAN_FORMAT:
+            wire = expand_candidate_review(wire, candidate.record.payload,
+                                           definition.get('criterion_quote_encoding'))
+        return expand_review(wire, registry, definition.get('inspection_encoding'))
 
     def _checked_responsibility(self, candidate, ref):
         record = self.h.get(ref)
@@ -443,8 +539,7 @@ class BoundaryRuntime:
         if (payload.get("candidate_digest"), payload.get("context_id"), payload.get("protocol"), payload.get("rule")) != (
                 digest(candidate), candidate.context_id, json_value(protocol.ref), json_value(protocol.semantic_rule)):
             raise ContractError("ResponsibilityBindingMismatch")
-        result = check_responsibility(payload["classification"], candidate.record.payload,
-            admission=self.h.get(protocol.ref).payload["responsibility_admission"])
+        result = self._responsibility_result(candidate, payload['classification'])
         if result != payload["result"]:
             raise ContractError("ResponsibilityResultMismatch")
         return result
@@ -463,16 +558,21 @@ class BoundaryRuntime:
         rule = self.h.get(protocol.semantic_rule)
         responsibility_ref, responsibility_result = None, None
         definition = self.h.get(protocol.ref).payload
+        candidate_entries = (candidate_span_registry(candidate.record.payload)
+            if definition.get('candidate_encoding') == CANDIDATE_SPAN_FORMAT else None)
         if definition.get("responsibility_profile") == "separate-classification-v1":
             if candidate.identity not in self._responsibility_executions:
+                body = {'context': content, 'candidate': candidate.record.payload}
+                contract = definition['output_contracts']['responsibility']
+                if candidate_entries is not None:
+                    body['candidate_registry'] = candidate_entries
+                    contract = bind_candidate_spans(contract, candidate_entries)
                 messages = [{"role": "system", "content": definition["responsibility_system"]},
-                            {"role": "user", "content": json.dumps({"context": content,
-                             "candidate": candidate.record.payload}, ensure_ascii=False)}]
+                            {"role": "user", "content": json.dumps(body, ensure_ascii=False)}]
                 try:
                     classified, call = adapter.complete(messages, "ObservationResponsibilityClassification",
-                        output_contract=definition["output_contracts"]["responsibility"])
-                    result = check_responsibility(classified, candidate.record.payload,
-                        admission=definition["responsibility_admission"])
+                        output_contract=contract)
+                    result = self._responsibility_result(candidate, classified)
                 except (ModelFailure, ContractError) as exc:
                     self.execution("ResponsibilityClassificationFailed", context.subject,
                                    {"candidate_digest": digest(candidate), "reason": str(exc)})
@@ -491,14 +591,19 @@ class BoundaryRuntime:
         if rule.payload.get("format") == "arithmetic-linked-v6":
             if candidate.identity not in self._arithmetic_executions:
                 extraction_input = {"context":content, "candidate":candidate.record.payload}
-                if definition.get('arithmetic_extraction_format') == EXPRESSION_FORMAT:
+                extraction_contract = definition.get('output_contracts', {}).get('extraction')
+                if definition.get('arithmetic_extraction_format') in (EXPRESSION_FORMAT, EXPRESSION_FORMAT_V2, OBSERVER_ARITHMETIC_FORMAT):
                     extraction_input['source_registry'] = source_registry(content)
+                if candidate_entries is not None:
+                    extraction_input['candidate_registry'] = candidate_entries
+                    extraction_contract = bind_candidate_spans(extraction_contract, candidate_entries,
+                        extraction_input['source_registry'])
                 extraction_messages = [
                     {"role": "system", "content": self.h.get(protocol.ref).payload["extraction_system"]},
                     {"role": "user", "content": json.dumps(extraction_input, ensure_ascii=False)}]
                 try:
                     extracted, extraction_call = adapter.complete(extraction_messages, "ArithmeticExtraction",
-                        output_contract=self.h.get(protocol.ref).payload.get("output_contracts", {}).get("extraction"))
+                        output_contract=extraction_contract)
                     computed = self._compute_arithmetic(candidate, extracted)
                 except (ModelFailure, ContractError) as exc:
                     self.execution("ArithmeticExtractionFailed", context.subject,
@@ -536,7 +641,23 @@ class BoundaryRuntime:
                 "Existence is not speaker attribution or semantic support; do not automatically PASS. "
                 "Return a new complete review, using UNRESOLVED if support cannot be established.")
             messages[1]["content"] = json.dumps(payload, ensure_ascii=False)
+        if rule.payload.get('format') in DISPOSITION_FORMATS:
+            content,material_ref,materials=self._disposition_inputs(context,content)
+            payload={'context':content,'candidate':candidate.record.payload,'candidate_digest':digest(candidate),
+                'context_id':context.identity,'rule_ref':json_value(protocol.semantic_rule),
+                'material_record_ref':json_value(material_ref),'materials':materials}
+            messages[1]['content']=json.dumps(payload,ensure_ascii=False)
         contract = self.h.get(protocol.ref).payload.get("output_contracts", {}).get("validation")
+        field_handlers = FIELD_DISPOSITION_HANDLERS.get(rule.payload.get('format'))
+        if field_handlers is not None:
+            make_registry, make_contract, _ = field_handlers
+            payload=json.loads(messages[1]['content'])
+            entries=make_registry(candidate.record.payload,content)
+            # Original strings are already in candidate/context; send only exact locators.
+            payload['quote_registry']={side:[{k:v for k,v in row.items() if k!='text'} for row in rows]
+                for side,rows in entries.items()}
+            messages[1]['content']=json.dumps(payload,ensure_ascii=False)
+            contract=make_contract(list(candidate.record.payload),entries)
         registry = None
         if self.h.get(protocol.ref).payload.get("source_encoding") == "field-handles-v1":
             registry = source_registry(content)
@@ -544,6 +665,11 @@ class BoundaryRuntime:
             payload = json.loads(messages[1]["content"])
             payload["source_registry"] = registry
             messages[1]["content"] = json.dumps(payload, ensure_ascii=False)
+        if candidate_entries is not None:
+            contract = bind_candidate_spans(contract, candidate_entries)
+            payload = json.loads(messages[1]['content'])
+            payload['candidate_registry'] = candidate_entries
+            messages[1]['content'] = json.dumps(payload, ensure_ascii=False)
         try:
             output, call_id = adapter.complete(messages, protocol.candidate_kind + ("SemanticRecheck" if previous else "SemanticValidation"),
                 output_contract=contract)
@@ -560,7 +686,7 @@ class BoundaryRuntime:
         wire_output = output
         try:
             if registry is not None:
-                output = expand_review(wire_output, registry, self.h.get(protocol.ref).payload.get("inspection_encoding"))
+                output = self._expand_review_output(candidate, wire_output, registry)
             checked_output = (checked_claim_axes(output)
                 if self.h.get(protocol.ref).payload.get("claim_axes") == "attribution-boundary-v1" else output)
             conflicts = []
@@ -572,6 +698,8 @@ class BoundaryRuntime:
                 status, rationale = check_source_review(output, candidate.record.payload, rule.payload["criteria"], content)
             elif rule.payload.get("format") == "criteria-quotes-v2":
                 status, rationale = check_criteria_review(output, candidate.record.payload, rule.payload["criteria"])
+            elif rule.payload.get('format') in DISPOSITION_FORMATS:
+                status,rationale=self._disposition_check(candidate,output)
             elif rule.payload.get("format", "legacy-v1") == "legacy-v1":
                 if (set(output) != {"status", "rationale"} or output["status"] not in ("PASS", "FAIL", "UNRESOLVED")
                         or not isinstance(output["rationale"], str) or not output["rationale"].strip()):
@@ -596,6 +724,7 @@ class BoundaryRuntime:
                                     "model_ref": adapter.config.model, "model_call": call_id,
                                     "status": status, "fixture": False, "details": output,
                                     "source_registry": registry, "wire_output": wire_output,
+                                    **({'candidate_registry': candidate_entries} if candidate_entries is not None else {}),
                                     "source_conflicts": conflicts,
                                     "semantic_status": semantic_status,
                                     "arithmetic_execution": json_value(arithmetic_ref) if arithmetic_ref else None,
@@ -617,6 +746,11 @@ class BoundaryRuntime:
         protocol = self._protocols.get(candidate.protocol)
         if context is None or protocol is None or context.protocol != candidate.protocol:
             return "ProtocolContextMismatch"
+        if self.working_entry is not None:
+            try:
+                self.working_entry.check_candidate(candidate)
+            except ContractError as exc:
+                return str(exc)
         r = candidate.record
         if r.ref.space != Space.DERIVED or (r.kind, r.owner) != (protocol.candidate_kind, protocol.owner):
             return "CandidateStandingMismatch"
@@ -651,6 +785,14 @@ class BoundaryRuntime:
                 or execution.payload["candidate_digest"] != digest(candidate)):
             return "UntrustedValidationExecution"
         rule = self.h.get(protocol.semantic_rule)
+        if rule.payload.get('format') in DISPOSITION_FORMATS:
+            try:
+                details=json.loads(review.details_json)
+                status,_=self._disposition_check(candidate,details)
+                if execution.payload.get('details')!=details or status!=review.status:
+                    return 'DispositionValidationDetailsMismatch'
+            except (ContractError,ValueError) as exc:
+                return 'DispositionValidationEvidenceInvalid:'+str(exc)
         if rule.payload.get("format") in ("criteria-quotes-v2", "source-linked-v3", "source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
             try:
                 details = json.loads(review.details_json)
@@ -661,9 +803,11 @@ class BoundaryRuntime:
                     if self.h.get(protocol.ref).payload.get("source_encoding") == "field-handles-v1":
                         registry = source_registry(content)
                         if (execution.payload.get("source_registry") != registry
-                                or expand_review(execution.payload.get("wire_output"), registry,
-                                                 self.h.get(protocol.ref).payload.get("inspection_encoding")) != details):
+                                or self._expand_review_output(candidate, execution.payload.get("wire_output"), registry) != details):
                             return "SourceHandleBindingMismatch"
+                        if (self.h.get(protocol.ref).payload.get('candidate_encoding') == CANDIDATE_SPAN_FORMAT
+                                and execution.payload.get('candidate_registry') != candidate_span_registry(r.payload)):
+                            return 'CandidateHandleBindingMismatch'
                     if rule.payload["format"] in ("source-linked-v4", "source-linked-v5", "arithmetic-linked-v6"):
                         status, _, conflicts = check_absence_review(
                             checked_details, r.payload, rule.payload["criteria"], content,

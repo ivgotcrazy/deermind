@@ -1,0 +1,29 @@
+{
+  "schema": "field-reference-predecessor-sources-v1",
+  "date": "2026-10-07",
+  "sources": {
+    "src/spike/foundation/boundary.py": {
+      "archive_path": "src/spike/reports/source-baseline-field-references-20261007/foundation/boundary.py",
+      "sha256": "3df480165b9f68293dcfc4533a8ebbb0bb980e42dad264217dfed33fe839cf97"
+    },
+    "src/spike/foundation/policy_cases.py": {
+      "archive_path": "src/spike/reports/source-baseline-field-references-20261007/foundation/policy_cases.py",
+      "sha256": "44751d15c6526a49e60434a6fcc472f9c9c95975d4f6033fdd0b19a2ee0288af"
+    },
+    "src/spike/protocols/policy-e1-v4.json": {
+      "archive_path": "src/spike/reports/source-baseline-field-references-20261007/protocols/policy-e1-v4.json",
+      "sha256": "8ce7a3c83774f9beb355c96dce0867329ed56f68077edc2a8664b63301da56cf"
+    },
+    "doc/system-design/spike/DeerMind_Spike_Closeout_Decision_v0.2.md": {
+      "archive_path": "src/spike/reports/source-baseline-field-references-20261007/doc/system-design/spike/DeerMind_Spike_Closeout_Decision_v0.2.md",
+      "sha256": "84e53ed30bb040b6106d82b1796ab2253cd12cf9939042d560c0b054057b97aa"
+    },
+    "doc/system-design/spike/README.md": {
+      "archive_path": "src/spike/reports/source-baseline-field-references-20261007/doc/system-design/spike/README.md",
+      "sha256": "b5f395b9ba2ea1516c97de04f10e7ab029930d38644281d209ad109f186f5c38"
+    }
+  },
+  "semantic_protocol_predecessor": "v4",
+  "successor": "v5",
+  "old_v4_modified": false
+}

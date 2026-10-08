@@ -4,7 +4,7 @@
 
 ## 实现结论
 
-[下游内容准入与 Policy 责任提案](../../../doc/system-design/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md)中的字段用途投影已完成局部实现。消费协议显式声明每类输入的字段、用途及精确合同版本，生产协议声明输出字段允许的用途；Context 只将双方合同允许的字段交给消费者。审计字段仍保存在原始记录中，但不能因为消费者可读取该记录，就自动进入正式推理输入。该能力需显式启用，未改写历史协议、历史记录或整体提案的完成状态。
+[下游内容准入与 Policy 责任提案](../../../doc/system-design/spike/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md)中的字段用途投影已完成局部实现。消费协议显式声明每类输入的字段、用途及精确合同版本，生产协议声明输出字段允许的用途；Context 只将双方合同允许的字段交给消费者。审计字段仍保存在原始记录中，但不能因为消费者可读取该记录，就自动进入正式推理输入。该能力需显式启用，未改写历史协议、历史记录或整体提案的完成状态。
 
 实现位于 [content_projection.py](../foundation/content_projection.py)、[boundary.py](../foundation/boundary.py) 与 [policy.py](../foundation/policy.py)。消费协议使用 `context_projection`，格式为 `declared-fields-v1`，每条输入规则包含 `kind`、`mode`、`contract`、`fields`、`use`。正式派生输入采用 `formal` 模式，并依赖生产协议的 `output_field_uses`；原始事实采用 `source` 模式和独立的 `ContentUseContract.field_uses`。派生记录不能退回原始材料模式绕过正式来源证明。
 

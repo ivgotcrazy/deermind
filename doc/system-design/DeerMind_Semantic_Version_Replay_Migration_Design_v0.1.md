@@ -1,15 +1,17 @@
 # DeerMind Semantic Versioning, Replay & Migration Architecture v0.1
 
-> **中文名称**：DeerMind 语义版本、重放与迁移架构  
-> **版本**：v0.1  
-> **文档性质**：Focused System Design / Pre-Validation Candidate  
-> **状态**：§3.6 Focused Design Closure 候选  
-> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v0.1.md`  
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.4.md`  
-> **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`、`DeerMind_AI_Reasoning_Runtime_Design_v0.1.md`、`DeerMind_State_Dependency_Architecture_v0.1.md`、`DeerMind_Interaction_Decision_Runtime_Design_v0.1.md`  
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-29  
+> **中文名称**：DeerMind 语义版本、重放与迁移架构<br>
+> **版本**：v0.1<br>
+> **文档性质**：Focused System Design / Pre-Validation Candidate<br>
+> **状态**：§3.6 Focused Design Closure 候选<br>
+> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v0.3.md`<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
+> **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`、`DeerMind_AI_Reasoning_Runtime_Design_v0.2.md`、`DeerMind_State_Dependency_Architecture_v0.1.md`、`DeerMind_Interaction_Decision_Runtime_Design_v0.2.md`<br>
+> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
+> **更新时间**：2026-09-29<br>
 > **版本说明**：v0.1 是 Semantic Versioning, Replay & Migration Architecture 的首个 Pre-Validation Focused Design Candidate。它不改变总体 System Design 已冻结的 per-boundary versioning、`Current != Latest`、`Approval != CanonicalCommit != Activation`、multi-version coexistence、immutable history、typed invalidation 与四类 replay / reinterpretation 非等价原则，而是把这些系统级合同深化为可直接约束实现的长期版本运行机制。本版本冻结 RuntimeVersionContext、ComponentConsistencyBoundary、版本解析与兼容性、commit / activation / rollback、跨版本 current resolution、历史重建、reasoning re-execution、semantic reinterpretation、data migration、partial replay、retention / authorization 边界以及主要 failure path；具体版本号编码规则、registry 产品、migration framework、backfill engine、rollout 平台与生产级批处理基础设施仍不在本版本冻结范围内。
+
+> **引用维护（2026-10-08）**：本次只同步当前协作版本引用，不改变本专项合同或重标历史实验；初版形成时的闭合结论仍是历史记录。当前阶段和验证结果以 [Roadmap v0.6](DeerMind_System_Design_Roadmap_v0.6.md) 与 [统一 Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md) 为准。
 
 ---
 
@@ -92,7 +94,7 @@ NewUnderstanding \neq NewPast
 
 ### 1.4 与总体 System Design 的关系
 
-总体 `DeerMind_System_Design_v0.1` 已经冻结三个系统级结论：
+当前总体 `DeerMind_System_Design_v0.3` 继续保持三个系统级合同：
 
 1. DeerMind 不使用一个全局 `SystemSemanticVersion`；
 2. runtime boundary 需要 coherent Version Context；

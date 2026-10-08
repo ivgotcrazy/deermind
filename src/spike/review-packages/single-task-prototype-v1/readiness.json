@@ -1,0 +1,86 @@
+{
+  "status": "MECHANICALLY_READY_CONTENT_UNVERIFIED",
+  "completed_at": "2026-10-07T07:26:29.417384+00:00",
+  "new_model_calls": 0,
+  "tests_run": 22,
+  "failures": 0,
+  "errors": 0,
+  "matrix": {
+    "M1": {
+      "status": "PASS",
+      "tests": [
+        "test_M1_invalidated_source_is_rejected",
+        "test_M1_required_review_status_digest_and_rule"
+      ]
+    },
+    "M2": {
+      "status": "PASS",
+      "tests": [
+        "test_M2_forbidden_action_or_payload_never_displayed",
+        "test_M2_forged_owner_is_rejected",
+        "test_M2_no_evaluation_capability_and_no_scripted_states",
+        "test_M2_wrong_task_and_conversation_before_model_call"
+      ]
+    },
+    "M3": {
+      "status": "PASS",
+      "tests": [
+        "test_M3_assembled_extra_source_cannot_enter_generation",
+        "test_M3_failed_observation_does_not_generate_policy_or_enter_next_turn",
+        "test_M3_prior_policy_and_reviewer_are_absent_from_next_messages"
+      ]
+    },
+    "M4": {
+      "status": "PASS",
+      "tests": [
+        "test_M4_full_partial_none_and_unknown_help"
+      ]
+    },
+    "M5": {
+      "status": "PASS",
+      "tests": [
+        "test_M5_closed_turn_discards_late_generation",
+        "test_M5_input_at_commit_is_queued_and_closed_policy_stays_closed",
+        "test_M5_queue_during_understanding_does_not_start",
+        "test_M5_rejected_policy_cannot_be_dispatched_later",
+        "test_M5_unknown_inflight_effect_does_not_release_queue"
+      ]
+    },
+    "M6": {
+      "status": "PASS",
+      "tests": [
+        "test_M6_no_intervention_defer_and_failure_receipts"
+      ]
+    },
+    "M7": {
+      "status": "PASS",
+      "tests": [
+        "test_M7_all_fixed_sessions_have_two_turns_and_no_utility_calls",
+        "test_M7_call_budget_stops_without_replacement",
+        "test_M7_deadline_stops_before_transport",
+        "test_M7_normal_failure_does_not_stop_other_turns_or_sessions",
+        "test_M7_semantic_fail_is_recorded_without_stopping_other_sessions",
+        "test_M7_timeout_is_capped_and_late_reply_not_committed"
+      ]
+    }
+  },
+  "scripted_sessions": 12,
+  "scripted_turns": 24,
+  "scripted_calls": 144,
+  "maximum_scripted_message_chars": 15548,
+  "historical_integrity": {
+    "ledger_entries_checked": 813,
+    "frozen_packages": {
+      "spike-exit-v1": {
+        "sources": 223,
+        "artifacts": 126
+      },
+      "policy-s3-diagnostic-v1": {
+        "sources": 9,
+        "artifacts": 2
+      }
+    }
+  },
+  "semantic_support_claimed": false,
+  "ordinary_failure_continues_independent_samples": true
+}

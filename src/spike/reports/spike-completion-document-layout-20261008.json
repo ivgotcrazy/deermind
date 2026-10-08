@@ -1,0 +1,240 @@
+{
+  "schema": "spike-completion-document-layout-v1",
+  "moved": [
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Arithmetic_Expression_Contract_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Arithmetic_Expression_Contract_v0.1.md",
+      "previous_sha256": "cadd5e6c8ad9978b422b809df8abe35864d1cdeb805ad1a5c4f206fb427fdbe1",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/7-DeerMind_Arithmetic_Expression_Contract_v0.1.md.txt",
+      "current_sha256": "2353c871ce194633a0ad04788e334d753681d95f6b29124372cf5d93afff4874"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+      "previous_sha256": "64c2d413093201a03e7329e84dad763062e024a49e4a1df2f89576cc35bc28f2",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/8-DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md.txt",
+      "current_sha256": "01fdccb5a0c6e0460b9d05be97093c39763a2f26862e33c9b0ff7e04439cec07"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Input_Capacity_Followup_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Input_Capacity_Followup_v0.1.md",
+      "previous_sha256": "691dd1890a5f437081a11a9be27ac93734a021cbbf9d01bba1c34a5589f7805d",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/9-DeerMind_Input_Capacity_Followup_v0.1.md.txt",
+      "current_sha256": "ede9edd9cf7aa3a6d15fd57d1dfa8e7558a60412c38cb7f7741266eea2c93fab"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Network_Retry_Result_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Network_Retry_Result_v0.1.md",
+      "previous_sha256": "cb43d5784ae3d697af049f2b969afab2c2a01fd0586be2d175baa474e4351a88",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/10-DeerMind_Network_Retry_Result_v0.1.md.txt",
+      "current_sha256": "c0f7490ec5ba31e3f6978bb9b48bdab65a8cf46f13cc4c17f2344b49470c9f88"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Observation_Validation_Profile_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Observation_Validation_Profile_v0.1.md",
+      "previous_sha256": "7a81ad5c75d358334ae0fafc1391d1d01e4af8e11262ea0cd840734692cc62d9",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/11-DeerMind_Observation_Validation_Profile_v0.1.md.txt",
+      "current_sha256": "2b103ed14d282c5eaa2a90318b49b7c3480286852aaffc0fb9f2399cafe87d86"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+      "previous_sha256": "e7aa2311a9a5f65051cdf0e6e203462b1a80a19b042a12d7cc17ab9705d593d6",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/12-DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md.txt",
+      "current_sha256": "f76849653cf185e1522579463eb957aede6bc2eab93cdce980fee9497995ac68"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Observer_Arithmetic_Fix_Result_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Observer_Arithmetic_Fix_Result_v0.1.md",
+      "previous_sha256": "ee6b08923b9d9eda8bf003b54b49886bee7f776e4a8b08c37d064a0b36dbea76",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/13-DeerMind_Observer_Arithmetic_Fix_Result_v0.1.md.txt",
+      "current_sha256": "d2b831dea09a7ea384525dc312b8897ad7760950dc78069a8f35ce7739f7eef7"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Observer_Arithmetic_Fix_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Observer_Arithmetic_Fix_v0.1.md",
+      "previous_sha256": "bedacbe7e8c4a5b19f985553a53360ff15b4506f7c98ec458884d3e63672583c",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/14-DeerMind_Observer_Arithmetic_Fix_v0.1.md.txt",
+      "current_sha256": "1fc2670b4e4a4633110871e7e12287cf29e7cb2fbcd4b4b106f3a98b098b42e2"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Policy_Field_Reference_Implementation_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Policy_Field_Reference_Implementation_v0.1.md",
+      "previous_sha256": "02ca4c5fe616dad8b90738127ead7f7734c8fa531f0842604afdf6939219931f",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/15-DeerMind_Policy_Field_Reference_Implementation_v0.1.md.txt",
+      "current_sha256": "7931cbe9a4d984364720478299c256a1ff65a06df0a303dad810202ecc25c79a"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Policy_Review_Disposition_Revision_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Policy_Review_Disposition_Revision_v0.1.md",
+      "previous_sha256": "42e827e96c58d9fbaaa8caaa085174c3969647f6f040b7276d7d396e98349682",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/16-DeerMind_Policy_Review_Disposition_Revision_v0.1.md.txt",
+      "current_sha256": "db4d1e4804782d47ca95ff2e8d5d53f301d9b50e79b29226660392810eb53671"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Policy_Review_Failure_Analysis_and_Next_Step_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Policy_Review_Failure_Analysis_and_Next_Step_v0.1.md",
+      "previous_sha256": "594bdcaccaadae180cbf08edfcb3e8608d33d93699584fae117a2c412891995b",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/17-DeerMind_Policy_Review_Failure_Analysis_and_Next_Step_v0.1.md.txt",
+      "current_sha256": "4cfeeff85dfc9a65f1c821eac16ade487d798a22999d0b8c8394536abf8a6328"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Policy_Review_Rule_Items_Examples_v0.1.json",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Policy_Review_Rule_Items_Examples_v0.1.json",
+      "previous_sha256": "e5e874f01d895253eb38eafacf843ad1ea19ea4e6cf55e1279aca4f503d600ab",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/18-DeerMind_Policy_Review_Rule_Items_Examples_v0.1.json.txt",
+      "current_sha256": "e5e874f01d895253eb38eafacf843ad1ea19ea4e6cf55e1279aca4f503d600ab"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Policy_Review_Rule_Items_Revision_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Policy_Review_Rule_Items_Revision_v0.1.md",
+      "previous_sha256": "6a46dbfc117b057538d7ac258bb05894b8243dd7751fab769225f33c65fdba39",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/19-DeerMind_Policy_Review_Rule_Items_Revision_v0.1.md.txt",
+      "current_sha256": "006e03551002312b28178a8f8a24202f04c884049a8231741bebae6439ac4492"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Policy_Review_Rule_Items_Schema_v0.1.json",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Policy_Review_Rule_Items_Schema_v0.1.json",
+      "previous_sha256": "95ed8eeca569a077d8daae3f42b800d0aadbb1869ecbec55a65ac0a783a1e65f",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/20-DeerMind_Policy_Review_Rule_Items_Schema_v0.1.json.txt",
+      "current_sha256": "95ed8eeca569a077d8daae3f42b800d0aadbb1869ecbec55a65ac0a783a1e65f"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Policy_S3_Diagnostic_Result_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Policy_S3_Diagnostic_Result_v0.1.md",
+      "previous_sha256": "7725723cdc0c63ba3263805098de969bf6af6948d88a033176ac4c5de5d5d6e7",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/21-DeerMind_Policy_S3_Diagnostic_Result_v0.1.md.txt",
+      "current_sha256": "40804954a52d860768c6adc9d031cea904f8e3d343f0753d0b822ec56518555a"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Policy_Semantic_Utility_Contract_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Policy_Semantic_Utility_Contract_v0.1.md",
+      "previous_sha256": "feb03e69535eafdf3094f1a1bcd90d2f87e0ca27e891f9a37e2c7f92167fe8a7",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/22-DeerMind_Policy_Semantic_Utility_Contract_v0.1.md.txt",
+      "current_sha256": "e5c01b9219f244aaa13ecffe2642124b09098ed9e6a4a0c1425c370cc7b81397"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md",
+      "previous_sha256": "258a66b4c991e7178c7b80346f83b5eaa93864b74b2d2b2642c6cc974f0615a2",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/23-DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md.txt",
+      "current_sha256": "92d30e25c77d4159c5af197028ce3321ce2ed11786ef1f06fdbac8a4b69c5609"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Single_Task_Engineering_Round_1_Result_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Engineering_Round_1_Result_v0.1.md",
+      "previous_sha256": "15273725c3412261d9c7d75f1d43ca68d420305d7bd804d8e86a088e395c3048",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/24-DeerMind_Single_Task_Engineering_Round_1_Result_v0.1.md.txt",
+      "current_sha256": "de212dd55da96b8ec94df7603e3108d07a4ab76c588f01e8353d046ef3aaa2ea"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Single_Task_Engineering_Round_1_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Engineering_Round_1_v0.1.md",
+      "previous_sha256": "d431c4492bd496b42bb3365ec47d0e35f99d3965c26d4cfb7bb24157ba66d772",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/25-DeerMind_Single_Task_Engineering_Round_1_v0.1.md.txt",
+      "current_sha256": "c9c4ab942760e6abd89c5edf2073fab8a2b012dbcc44ccf6dc7b0f9d859d7fd5"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Result_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Prototype_Result_v0.1.md",
+      "previous_sha256": "f0853e3a98d8178c7e823986233084d0dbcacf97a6bd9a6d4936475ebba74170",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/26-DeerMind_Single_Task_Prototype_Result_v0.1.md.txt",
+      "current_sha256": "ebc7345da22fb51b3d69651b81923effada7a94004b0648568919cf51a49d4af"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Result_v0.2.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Prototype_Result_v0.2.md",
+      "previous_sha256": "89c8fcab2f92c689bcdbb9abed9b63b4fe0f8ef189f97452cfe4361fbc3a713d",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/27-DeerMind_Single_Task_Prototype_Result_v0.2.md.txt",
+      "current_sha256": "88d324a345d54caabc0f2d0cbbb72922c8a516a1aa88ef383ee3ce9614d62399"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md",
+      "previous_sha256": "ed08699543f3175f91812ad9c23fb649c4a0bcf938d4a4d570b54408d1b0226f",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/28-DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md.txt",
+      "current_sha256": "bbb39407803ffdf6dda5a337cd6d34175efadca9ab5ae37a75fd092c7f76c6f8"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Revision_v0.2.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Prototype_Revision_v0.2.md",
+      "previous_sha256": "0c96102780456567d875675de0eeeb1c6d3db601790c4623ad857ded541644b8",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/29-DeerMind_Single_Task_Prototype_Revision_v0.2.md.txt",
+      "current_sha256": "879dc6a0bf954a2e45f3c37699032b4278551e40b4d4aca32cc50bf63e7ad29b"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Spike_Bounded_Exit_Result_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Spike_Bounded_Exit_Result_v0.1.md",
+      "previous_sha256": "4394a7b3b3119ea87e16cd12b0d70167f5871c38f525ce5383c3eafd59fd2a36",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/30-DeerMind_Spike_Bounded_Exit_Result_v0.1.md.txt",
+      "current_sha256": "01633a4386624193a29fa1f55bb17269d84660bdd20337bc385b6cae4b7cf5a4"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Spike_Closeout_Decision_Draft_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Spike_Closeout_Decision_Draft_v0.1.md",
+      "previous_sha256": "2ef5642e60ca0d7d84c48f96c71c207016df0725a8863fae2055ccfb67d44238",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/31-DeerMind_Spike_Closeout_Decision_Draft_v0.1.md.txt",
+      "current_sha256": "0fc6f55e30e06d0d915cc2e581cea1fad8aa4d7314c556e1714067669685736d"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Spike_Closeout_Decision_v0.2.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Spike_Closeout_Decision_v0.2.md",
+      "previous_sha256": "3692826fd466ecf99c9cfd5a9e6903b42746f63d746c647a77629f6a79c440b3",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/32-DeerMind_Spike_Closeout_Decision_v0.2.md.txt",
+      "current_sha256": "ad62a5e260d7e14ab8a74de779757477e8cb0a0b678fde4b32d0a09da226b5d0"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Spike_Exit_Checklist_and_Budget_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Spike_Exit_Checklist_and_Budget_v0.1.md",
+      "previous_sha256": "4d190c4b1619515e3ddd086c24110adf7c4d970da5d0260ec05341ee0bd8deed",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/33-DeerMind_Spike_Exit_Checklist_and_Budget_v0.1.md.txt",
+      "current_sha256": "b46fc983ba8bf7e278236e0da8f6abb5351f83e578cfd7d2f0771204195944d5"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Spike_Exit_Preparation_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Spike_Exit_Preparation_v0.1.md",
+      "previous_sha256": "43f13bbd8498310414c67913791b048fac0f4175b710e2c98536dfff99d332dd",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/34-DeerMind_Spike_Exit_Preparation_v0.1.md.txt",
+      "current_sha256": "87cb05473e4d0441685e9f59446c4383ecca3b114d2a99ac9a75ca6eff6a1ba1"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Spike_Issue_Disposition_and_Feasibility_Decision_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Spike_Issue_Disposition_and_Feasibility_Decision_v0.1.md",
+      "previous_sha256": "75c9ae9c3567c9840396ba44ec3373c6f1f4179377924b53b79fc11e678f76f9",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/35-DeerMind_Spike_Issue_Disposition_and_Feasibility_Decision_v0.1.md.txt",
+      "current_sha256": "8ecfc37bae0f2a79261631e70dc2d6033f5aae76232cc546d2f2225c5fc38656"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Spike_Terminal_Assessment_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Spike_Terminal_Assessment_v0.1.md",
+      "previous_sha256": "06249df214760dbb259803bce455c6545f1d06bffb722e626457fd6882a12b64",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/36-DeerMind_Spike_Terminal_Assessment_v0.1.md.txt",
+      "current_sha256": "058d2369ba0dbc04c9ef7ecfbe990a233e8871c9aeca84b3873fd01343521a05"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Validation_and_Interaction_Closure_Revision_v0.1.md",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Validation_and_Interaction_Closure_Revision_v0.1.md",
+      "previous_sha256": "0e77f27b503e299ac2ef5de2262289415736da53194a81bb8ca2193aa9ead7e3",
+      "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/37-DeerMind_Validation_and_Interaction_Closure_Revision_v0.1.md.txt",
+      "current_sha256": "c5ccdd178083eecf4833d4ff3fe4d3cc108ec88b0851e4d893f1851f230d9cb6"
+    }
+  ],
+  "active_references_updated": [
+    "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+    "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+    "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+    "doc/system-design/DeerMind_System_Design_v0.3.md",
+    "doc/system-design/spike/README.md",
+    "src/spike/run_policy_s3_diagnostic.py",
+    "src/spike/run_single_task_prototype.py",
+    "src/spike/run_single_task_revision.py"
+  ],
+  "frozen_original_bytes_preserved": true,
+  "maintenance": [
+    {
+      "date": "2026-10-08",
+      "reason": "Redirect historical citations to exact archived old-version bytes; current contracts and phase links corrected.",
+      "record": "src/spike/reports/design-document-review-20261008.json"
+    }
+  ]
+}

@@ -1,0 +1,412 @@
+{
+  "status": "READY",
+  "scripted_cases": 35,
+  "scripted_calls": 110,
+  "external_calls": 0,
+  "historical_integrity": {
+    "ledger_entries_checked": 1068,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  },
+  "plan": {
+    "protocols": {
+      "observation": "src/spike/protocols/observation-validation-v13.json",
+      "formation_observation": "src/spike/protocols/observation-completion-work-v1.json",
+      "request": "src/spike/protocols/observation-x5-request-v2.json",
+      "policy": "src/spike/protocols/policy-e1-v2.json",
+      "mechanism_policy": "src/spike/protocols/policy-e1-v1.json",
+      "security": "src/spike/protocols/security-f-completion-v2.json",
+      "x5_policy": "src/spike/protocols/policy-exit-x5-v1.json"
+    },
+    "original_fixtures": {
+      "A1": "src/spike/fixtures/observation-a1-v1.json",
+      "A1_protocol": "src/spike/protocols/observation-a1-v1.json",
+      "E1": "src/spike/fixtures/policy-e1-v1.json",
+      "E2": "src/spike/fixtures/serial-e2-v1.json",
+      "F2": "src/spike/fixtures/security-f-v1.json",
+      "X1X2": "src/spike/fixtures/composition-x1-x2-v1.json",
+      "X5": "src/spike/fixtures/composition-x5-v1.json"
+    },
+    "model": {
+      "provider_endpoint": "https://api.deepseek.com/beta",
+      "model": "deepseek-flash",
+      "thinking": "disabled",
+      "temperature": 0,
+      "max_output_tokens": 4096,
+      "timeout_seconds": 60,
+      "max_input_chars": 64000
+    },
+    "failure_policy": "Preserve each result; ordinary protocol/model failure does not suppress independent cases. Stop on failed deterministic assertions, auth/config failure or exhausted budget.",
+    "schema": "spike-completion-cognition-v1",
+    "semantic_retries": 0,
+    "historical_failures_preserved": true,
+    "purpose": "Complete original A1 three-by-five and E1 three-by-five coverage under explicit existing revised contracts; one bounded five-repeat F2 cardinality clarification.",
+    "budget": {
+      "max_calls": 330,
+      "wall_time_seconds": 1500,
+      "transport_retries": 2
+    },
+    "schedule": [
+      {
+        "id": "F2-F2-subject-read-r1",
+        "group": "F2",
+        "variant": "F2-subject-read",
+        "repetition": 1,
+        "max_calls": 3
+      },
+      {
+        "id": "F2-F2-subject-read-r2",
+        "group": "F2",
+        "variant": "F2-subject-read",
+        "repetition": 2,
+        "max_calls": 3
+      },
+      {
+        "id": "F2-F2-subject-read-r3",
+        "group": "F2",
+        "variant": "F2-subject-read",
+        "repetition": 3,
+        "max_calls": 3
+      },
+      {
+        "id": "F2-F2-subject-read-r4",
+        "group": "F2",
+        "variant": "F2-subject-read",
+        "repetition": 4,
+        "max_calls": 3
+      },
+      {
+        "id": "F2-F2-subject-read-r5",
+        "group": "F2",
+        "variant": "F2-subject-read",
+        "repetition": 5,
+        "max_calls": 3
+      },
+      {
+        "id": "A1-A1-error-r1",
+        "group": "A1",
+        "variant": "A1-error",
+        "repetition": 1,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-error-r2",
+        "group": "A1",
+        "variant": "A1-error",
+        "repetition": 2,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-error-r3",
+        "group": "A1",
+        "variant": "A1-error",
+        "repetition": 3,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-error-r4",
+        "group": "A1",
+        "variant": "A1-error",
+        "repetition": 4,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-error-r5",
+        "group": "A1",
+        "variant": "A1-error",
+        "repetition": 5,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-correct-r1",
+        "group": "A1",
+        "variant": "A1-correct",
+        "repetition": 1,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-correct-r2",
+        "group": "A1",
+        "variant": "A1-correct",
+        "repetition": 2,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-correct-r3",
+        "group": "A1",
+        "variant": "A1-correct",
+        "repetition": 3,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-correct-r4",
+        "group": "A1",
+        "variant": "A1-correct",
+        "repetition": 4,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-correct-r5",
+        "group": "A1",
+        "variant": "A1-correct",
+        "repetition": 5,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-incomplete-r1",
+        "group": "A1",
+        "variant": "A1-incomplete",
+        "repetition": 1,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-incomplete-r2",
+        "group": "A1",
+        "variant": "A1-incomplete",
+        "repetition": 2,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-incomplete-r3",
+        "group": "A1",
+        "variant": "A1-incomplete",
+        "repetition": 3,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-incomplete-r4",
+        "group": "A1",
+        "variant": "A1-incomplete",
+        "repetition": 4,
+        "max_calls": 15
+      },
+      {
+        "id": "A1-A1-incomplete-r5",
+        "group": "A1",
+        "variant": "A1-incomplete",
+        "repetition": 5,
+        "max_calls": 15
+      },
+      {
+        "id": "E1-E1-open-r1",
+        "group": "E1",
+        "variant": "E1-open",
+        "repetition": 1,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-open-r2",
+        "group": "E1",
+        "variant": "E1-open",
+        "repetition": 2,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-open-r3",
+        "group": "E1",
+        "variant": "E1-open",
+        "repetition": 3,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-open-r4",
+        "group": "E1",
+        "variant": "E1-open",
+        "repetition": 4,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-open-r5",
+        "group": "E1",
+        "variant": "E1-open",
+        "repetition": 5,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-help-r1",
+        "group": "E1",
+        "variant": "E1-help",
+        "repetition": 1,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-help-r2",
+        "group": "E1",
+        "variant": "E1-help",
+        "repetition": 2,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-help-r3",
+        "group": "E1",
+        "variant": "E1-help",
+        "repetition": 3,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-help-r4",
+        "group": "E1",
+        "variant": "E1-help",
+        "repetition": 4,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-help-r5",
+        "group": "E1",
+        "variant": "E1-help",
+        "repetition": 5,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-wait-r1",
+        "group": "E1",
+        "variant": "E1-wait",
+        "repetition": 1,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-wait-r2",
+        "group": "E1",
+        "variant": "E1-wait",
+        "repetition": 2,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-wait-r3",
+        "group": "E1",
+        "variant": "E1-wait",
+        "repetition": 3,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-wait-r4",
+        "group": "E1",
+        "variant": "E1-wait",
+        "repetition": 4,
+        "max_calls": 9
+      },
+      {
+        "id": "E1-E1-wait-r5",
+        "group": "E1",
+        "variant": "E1-wait",
+        "repetition": 5,
+        "max_calls": 9
+      }
+    ],
+    "interpretation": {
+      "A1": "Review actual committed descriptions against original host expectations; blocked outputs are coverage evidence but not useful Observation successes.",
+      "E1": "LLM utility scores are fallible, test-only and post-dispatch. Author review must examine responsibility/localization and proposed versus occurred help.",
+      "F2": "One declared prompt clarification, unchanged permission scopes; no selecting among multiple tool calls or interpreting invalid output as refusal.",
+      "termination": "All predeclared independent cases attempted unless hard mechanism/config/budget failure. Classify evidence without automatic additional optimization."
+    }
+  },
+  "source_sha256": {
+    "src/spike/foundation/actions.py": "469d23733814e8381a617bc2c9353133792534ea0149c591e4f6d061c40f9867",
+    "src/spike/foundation/action_cases.py": "ca12edb2a45f52961589ff3c53d03a6ee3feb902b4ffb0e0e8a15d8d96f9b1a0",
+    "src/spike/foundation/activity.py": "3a2cda11efd0bcdf1c7208241fa3fdd9c41775618020c5dedd117ee3818b1c02",
+    "src/spike/foundation/activity_cases.py": "d1c08da24ff1143c4c8aeb3132734e919f02b6bc025c0bc3e332082da3b37636",
+    "src/spike/foundation/arithmetic.py": "322ba1cf462e1f8b2b914d084a136d4c3635dc77241e3395e46cbf1ace52f80d",
+    "src/spike/foundation/boundary.py": "738fb688d3ef4949cd50dc182ec7d6812b18c129a28abdd43c19d0f25b5bce23",
+    "src/spike/foundation/candidate_spans.py": "9c0057eac443561133cbd40ce2d2a319e4e04bbc46c38ac0e981cd61b53b76b7",
+    "src/spike/foundation/cases.py": "91ff4d712ce4d7ec1097e62e26694e7857fed88b0211c387c2e527f5fd991b27",
+    "src/spike/foundation/claim_axes.py": "555d2b12687b58c29ca471a0fd35d10e0229e82f82f749435658a9cda9908f89",
+    "src/spike/foundation/composition_cases.py": "6340f9e91eb1019a744a9893fcb80ebdc93493d897df864bea0b648a857eea41",
+    "src/spike/foundation/content_projection.py": "a25f91b3df4797629152c9c477cd301de544ace41aec11e870f8f1210c5b4dd3",
+    "src/spike/foundation/dependency_cases.py": "bc522b01bbeda94054a9a9f62641c21523f2bf9ccf7646f21fc6016795ecb0e6",
+    "src/spike/foundation/exit_campaign.py": "007de4b75031dd6962be23bd485f49f84e6407d561654814cf94d368dbddd2b8",
+    "src/spike/foundation/expressions.py": "353b802b9d82020912b4fc5a270afa03f7c9473c6a9f0a3293206d50ce15aa53",
+    "src/spike/foundation/formation_cases.py": "2bba226eb0a9372f30f460344f1f0d67706cb7b35eb695a7dd1ccbe7a8e90b40",
+    "src/spike/foundation/guarded_cases.py": "77aa00b031cd64fb05c12c2314290b4b8e166d572ddb6168fd10f89640c5ce5f",
+    "src/spike/foundation/history_composition_cases.py": "1e84cadde63dd7b4feaf6930800d4017fdf8d8bed11dda98a0046971b1e7ca99",
+    "src/spike/foundation/llm.py": "328a35c5bbc89a1b2929dd2c0d3313b73f112639d7f27a35db1bef52b2d9c6cd",
+    "src/spike/foundation/observer_arithmetic.py": "30b24f4bc6ba330d7e2ed4ccf9a6e4dbb8dfa121c7db432a3a1e5cf4f59ef8f6",
+    "src/spike/foundation/policy.py": "2e26c0195b5155195cd2749d1977a4273f45b5630548f521797ed3f2b80b7980",
+    "src/spike/foundation/policy_cases.py": "c2f404ba89006c9aadaa8edb66893a0173370511b3678b36cf48d1db0012f2af",
+    "src/spike/foundation/policy_disposition.py": "581a2bb158a240bc5a6bae0d08c0aaae407b144e854b00577330a7807b40f840",
+    "src/spike/foundation/policy_field_quotes.py": "72f74b467e84b7925d52999e6545648597b3a5da47df1bfb272c74d6b931ff72",
+    "src/spike/foundation/policy_field_references.py": "6522c94623ecdfeaecb31324311378a53466ed0510ac6c0a412486152e12d579",
+    "src/spike/foundation/protocol_preflight.py": "0603054f7382147d971a1650c660ca8b9c8c344fc78842f16d06810e75526118",
+    "src/spike/foundation/records.py": "95abac7d39d6ef2202bb16421495666cb15c26f1f1162dd702683846aae00244",
+    "src/spike/foundation/replay.py": "36f7ee7352d24d39fde7225f5808b874a0f11cfab7773035906beb779731f0ce",
+    "src/spike/foundation/responsibility.py": "80fb8b9610fc87146db0a0ecd3054a1b768fc80abeeb61bcb9981ccb7e0291ac",
+    "src/spike/foundation/runtime.py": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
+    "src/spike/foundation/s3_diagnostic.py": "8e3e9ff98253e2e63627fa44c9801a35b0f9151de11f81c704dbd18cfd7d632f",
+    "src/spike/foundation/security.py": "7e83a20c8c6471e2d9539acf13b143e9cd5ae5971b8625791c31a6f1176f2668",
+    "src/spike/foundation/security_cases.py": "38516a3ddb4ba4191826f45810bc10bb0ceb70159504db747046560310eada16",
+    "src/spike/foundation/semantic_review.py": "9628df31f4c9ca6db1e36369b86cb7484d26379c886398aebeaa7804ecec902d",
+    "src/spike/foundation/serial_cases.py": "0738f953952282ddeec58ad2c3150e248c4a22dba25937ab7b5a072c86d4482a",
+    "src/spike/foundation/session.py": "1cc257457a9ff1009242812a623d8c2f4c5452371ef9dbba95a215e028cc339f",
+    "src/spike/foundation/single_task.py": "4ec43d9e11d11a6ea87ccf1abe98171c1f0cdcf7fb39c4a5ec10df022e2aeeb2",
+    "src/spike/foundation/source_conflicts.py": "cf3aa9a2a7561f9713e0972f04987cafbb310cdcd3bcf4301f23d564fc34be13",
+    "src/spike/foundation/source_handles.py": "1896f9b17d8d40351ed7792dcd9cceae864fd2e638fb8672f2a773905f9dcaa8",
+    "src/spike/foundation/structured_output.py": "803a45de9413c7f2dd7aebffa86763aeea33f78c193995f00be55653c0648113",
+    "src/spike/foundation/tool_boundary.py": "045d641a74ca747941025b8908eb7b6f1199a42695fb209dcfb10d68003a0921",
+    "src/spike/foundation/validation_dimensions.py": "1a4dd56961c35aaefc42b034528f52707f1b0a35c5383fd62b7afb2a4789f90a",
+    "src/spike/foundation/version_replay_cases.py": "0ac4ba0548ebc0174dd867ab94b64a16a637d4def5b5d368b850a03940414f2a",
+    "src/spike/foundation/working_campaign.py": "d694f2739a6a86515df3a8f6ef175907a28380af3aec9c2f573e45e89951aa8d",
+    "src/spike/foundation/working_entry.py": "ef3d137cf01ea68d8ab8a45065bbf069bf89ea8105453bde6c242a264c8576c0",
+    "src/spike/foundation/__init__.py": "44e8f9249413c3f1b454e056d38aee69c02186206d2f932feafc0fe4be60ba68",
+    "src/spike/run_completion_cognition.py": "ee61dbf95b191bbb949f7febd81d56dbad8e0f116398c90b18b1b447547c8731",
+    "src/spike/fixtures/spike-completion-cognition-v1.json": "251a0b8c7f6a9806765bb8cb1a0c32dd46b919651f23eef8df850d332247dee2",
+    "src/spike/run_network_retry.py": "2946af726f14cc355d266d43cf40a94c664f43a6fdb1a9f140a5e08635ac367e",
+    "src/spike/prepare_spike_exit.py": "6a9a1bf6b2387652f4a9ba553b5df51b05714ab73571450538dc7f84ceb2c15b",
+    "src/spike/protocols/policy-e1-v2.json": "d3dbad522f226092ecb84084ae56bdb9f8e7f66452ce8f98b7137618a396a922",
+    "src/spike/protocols/observation-a1-v1.json": "4f4e026550652f780e81c5bc9a08da566e7e68b128b1f4a9fd818f651af617fd",
+    "src/spike/protocols/observation-completion-work-v1.json": "1abf2f8358de393e3ddbe10ebded65e7b16e0a5d3530624d16bf0ad3c4738d28",
+    "src/spike/protocols/observation-x5-request-v2.json": "be1207a9b365533ef0735f16e10d889eb98f3fcf19955312addb3e4f70036319",
+    "src/spike/fixtures/security-f-v1.json": "e19dea1c15c7bf45b4bb0180eb6f4f17154b8829fadf2e2e7d9ad17896b60620",
+    "src/spike/fixtures/composition-x5-v1.json": "b23b318a6fe3515d1be0d0ece3fa3811b641d4bd1d309139392927f5ff1b7e71",
+    "src/spike/protocols/policy-e1-v1.json": "c917702a30ab389361fe2dd346396f112f0df40077738d2d7dccc28613379fbb",
+    "src/spike/fixtures/composition-x1-x2-v1.json": "e35417b1a1fea5dbe01766cd7b88997ff8cddc3220860f101625ebf9d38bf1a6",
+    "src/spike/protocols/policy-exit-x5-v1.json": "6fb677fccafa09f4cb7537f81877411c0d33a2b43c203c1d03a2514ab5fd802c",
+    "src/spike/fixtures/observation-a1-v1.json": "e2512ab5825c1b157a07ce1d34f311102c1e1172f0fcc23eadb91353989a6178",
+    "src/spike/protocols/security-f-completion-v2.json": "b1be872bfb5e2a050c6d5f497280d83cc3b52d00a875d5eecb8c3562ffc5d70a",
+    "src/spike/fixtures/serial-e2-v1.json": "f726fe88e77bed7623250055168f6e94ba132c23d57e54b96f5b06aebf31eb14",
+    "src/spike/fixtures/policy-e1-v1.json": "2e37b69535871bc43ba9049287746b4edfc513494a9a5489d7ae98f36c7d36e7",
+    "src/spike/protocols/observation-validation-v13.json": "1a90a1e163ca5bf2dcc796339ee3837fcd9a8e2bd8ccc749001d71049b5bc5d3"
+  },
+  "artifact_sha256": {
+    "adapter-records.json": "66374d645658fbe25228daaa140958fb064e31ef913e2e9e997d0447ca28743c",
+    "readiness.json": "57f7b5daafc828d9212131691eb1b78ac55295a17ce0f31e2c1ff9b7871746bd",
+    "results.json": "d04257f26eab0b73ab6a0d28b08e11bfec78ae57b8caa312051945c045735036",
+    "cases/A1-A1-correct-r1.jsonl": "a888b4ddbea06985b3e58b2d502f44306ffdfff2a210c759ff3442ca325dbde4",
+    "cases/A1-A1-correct-r2.jsonl": "2360e15b355ab251dd0b36519eebcd5d24a9bd9cf2b559fa1375407a204457df",
+    "cases/A1-A1-correct-r3.jsonl": "9be6959b2a606ac023d03881c1395d419442d08e5864d4a668ef8e3522b70c3a",
+    "cases/A1-A1-correct-r4.jsonl": "5ae78a87a3920a05784e8491b35ad4b2a6e50ef41c834090f416cad25d0d4467",
+    "cases/A1-A1-correct-r5.jsonl": "80e555fa16e91492891dbeb41c8afee9cc2c4be52669c25ec20e3530e3fe6d6a",
+    "cases/A1-A1-error-r1.jsonl": "e9255c88eb20bfdae86810711a5b0c764dc5995adfa42eb576f27a82e98998e7",
+    "cases/A1-A1-error-r2.jsonl": "de964f33d9359dbd12e9516233b958717eea9c088aa982264d897d754d786c10",
+    "cases/A1-A1-error-r3.jsonl": "a1ae93b01062b8de331672935308e59967d73555dccd33fe2a941e05bdb232e5",
+    "cases/A1-A1-error-r4.jsonl": "9eb0c5f883629210b9f72fa1b82a99e24ed195828c7969c5d74cb4baee2965f7",
+    "cases/A1-A1-error-r5.jsonl": "ff88c79af10484f597a2228968446afd8294d339b15fad5a21508d71401f3dcd",
+    "cases/A1-A1-incomplete-r1.jsonl": "27f0801f043f017c97f816e9e15130800a6b7a9dbb8a4d98608436a803e4aa4b",
+    "cases/A1-A1-incomplete-r2.jsonl": "50e8c25f9470b946dcd94a3fbc52c3954010c53c9353177cd56f62e618a4ca7a",
+    "cases/A1-A1-incomplete-r3.jsonl": "72df02ebe0b8d0ed5a69ba5c8611d659059e7204791cb2ea0e5914d6aea23209",
+    "cases/A1-A1-incomplete-r4.jsonl": "d9d30a46c32525f3a3328bafd111bb0e1750092f662bb0ac735661bd257e48e8",
+    "cases/A1-A1-incomplete-r5.jsonl": "c3a95d49b386aa6eae4fa4eb17569dee03d175c18f80550e2d9f02b4ed020320",
+    "cases/E1-E1-help-r1.jsonl": "48d32921d5a2e4d297533b8894d5c17912b64c3fe3039590b25e98a6af12350d",
+    "cases/E1-E1-help-r2.jsonl": "e7040ec9d1b10789dfc041ae7944ccb762a5452f95cf225f10ecb760e6138f28",
+    "cases/E1-E1-help-r3.jsonl": "7381e8340041bb956a6f715805c2bbef1ce366d863de638e24db7e64a00a38fd",
+    "cases/E1-E1-help-r4.jsonl": "9b739f405766745b4b5c17d1ae60c06631693c97c9de4f7978ae534ed150fdc8",
+    "cases/E1-E1-help-r5.jsonl": "f87e3eca7c9aa8173e7a68e2aded5cf45dcb50174b94b4a1f3b76a14467882ab",
+    "cases/E1-E1-open-r1.jsonl": "3cd5519a5177f2b4d5776c163c10096e270f28709b6c77518271a108892d76fd",
+    "cases/E1-E1-open-r2.jsonl": "323fd2de2d6168de7f05b30d2b5e9534e9bab9f8b7e79db29b2817aa5d7ff126",
+    "cases/E1-E1-open-r3.jsonl": "f58f2eaf20de1bd695530ef227a348692e9a44359023c8bddc7917a063e6985c",
+    "cases/E1-E1-open-r4.jsonl": "2fc320e31d8a1d9ffa13f94ba6ece815b150046b6c9f61e2d37a5135903b9621",
+    "cases/E1-E1-open-r5.jsonl": "4c6bc1634ad60150066d043b85b9f13bf88e436bb11f9415c80f107f7b7b79d9",
+    "cases/E1-E1-wait-r1.jsonl": "122d1126892c13d462f7f0bb4048e237f03a19d4d1822241cddc3b528057929a",
+    "cases/E1-E1-wait-r2.jsonl": "726f10cf06cfbde30f36be99be0ee09048647691ea1e3fc50a9cf8335707dca7",
+    "cases/E1-E1-wait-r3.jsonl": "ecd5c519e5478dc9ba81405530962df1921901f65100d27ec0efbfa7d6814b7c",
+    "cases/E1-E1-wait-r4.jsonl": "0321770df87a669b7759ded4a6a99e1c19d6689f879707f0fc51988d366e12d9",
+    "cases/E1-E1-wait-r5.jsonl": "5a5e6033a8eadc7b34a741b171fbbf820f71bc7d2397072e2bf8140ac5282535",
+    "cases/F2-F2-subject-read-r1.jsonl": "626a97493ecb62774b756fafa409d2243970995a51c324e7782de11f522e5b86",
+    "cases/F2-F2-subject-read-r2.jsonl": "d1e41032541b7a67c47c3bff8ebdf4b7230040e050542ca1ab78566936925184",
+    "cases/F2-F2-subject-read-r3.jsonl": "ee5e94bfa3d5a72716413d37849fb77c714842a31d47f2d849925b9b35c386c7",
+    "cases/F2-F2-subject-read-r4.jsonl": "b1b1b91ed19492a07f571446f8e94f01a4387bdbeed6f0218eee47a6d8fde5c0",
+    "cases/F2-F2-subject-read-r5.jsonl": "64fdc168d80ef182b0df2be84cecbb62fb0c625c0583eb610c9035b4ef72160b"
+  }
+}

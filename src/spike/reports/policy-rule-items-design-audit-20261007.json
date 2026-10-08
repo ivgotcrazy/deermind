@@ -1,0 +1,593 @@
+{
+  "schema": "policy-rule-items-design-audit-v1",
+  "date": "2026-10-07",
+  "status": "DESIGN_ARTIFACTS_CHECKED_NOT_RUNTIME_VALIDATION",
+  "scope": "Static schema, exact existing rule texts, constructed data locators and declared aggregation; no model quality or Runtime binding/commit proof.",
+  "artifact_sha256": {
+    "doc/system-design/spike/DeerMind_Policy_Review_Rule_Items_Revision_v0.1.md": "6a46dbfc117b057538d7ac258bb05894b8243dd7751fab769225f33c65fdba39",
+    "doc/system-design/spike/DeerMind_Policy_Review_Rule_Items_Schema_v0.1.json": "95ed8eeca569a077d8daae3f42b800d0aadbb1869ecbec55a65ac0a783a1e65f",
+    "doc/system-design/spike/DeerMind_Policy_Review_Rule_Items_Examples_v0.1.json": "e5e874f01d895253eb38eafacf843ad1ea19ea4e6cf55e1279aca4f503d600ab"
+  },
+  "supported_schema_subset": true,
+  "copied_S1_S5_rules_equal": true,
+  "example_count": 3,
+  "checked_field_references": 61,
+  "markdown_links_valid": 7,
+  "inline_S3_fragment_matches_example": true,
+  "example_checks": [
+    {
+      "id": "positive",
+      "structure_and_references_valid": true,
+      "rule_statuses": {
+        "S1": "PASS",
+        "S2": "PASS",
+        "S3": "PASS",
+        "S4": "PASS",
+        "S5": "PASS"
+      },
+      "host_overall": "PASS",
+      "expanded_original_fields": [
+        {
+          "rule": "S1",
+          "side": "candidate",
+          "handle": "candidate_8",
+          "field": "outcome",
+          "quote": "Execute"
+        },
+        {
+          "rule": "S1",
+          "side": "candidate",
+          "handle": "candidate_0",
+          "field": "action_identity",
+          "quote": "HintCheckStep"
+        },
+        {
+          "rule": "S1",
+          "side": "candidate",
+          "handle": "candidate_4",
+          "field": "episode",
+          "quote": "apple-episode"
+        },
+        {
+          "rule": "S1",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。"
+        },
+        {
+          "rule": "S1",
+          "side": "source",
+          "handle": "source_6",
+          "field": "text",
+          "quote": "请帮我检查哪一步有问题，不要直接给答案",
+          "ref": {
+            "space": "fact",
+            "identity": "E1-current-input",
+            "revision": "1"
+          }
+        },
+        {
+          "rule": "S1",
+          "side": "source",
+          "handle": "source_8",
+          "field": "purpose",
+          "quote": "IndependentDiagnosisWithLimitedHelp",
+          "ref": {
+            "space": "canonical",
+            "identity": "E1-Activity",
+            "revision": "v1"
+          }
+        },
+        {
+          "rule": "S1",
+          "side": "source",
+          "handle": "source_16",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S2",
+          "side": "candidate",
+          "handle": "candidate_10",
+          "field": "uncertainty",
+          "quote": "本例可见除法结果错误，未据此推断稳定能力。"
+        },
+        {
+          "rule": "S2",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。"
+        },
+        {
+          "rule": "S2",
+          "side": "source",
+          "handle": "source_2",
+          "field": "text",
+          "quote": "42 / 6 = 8; 8 * 15 = 120; Answer = 120",
+          "ref": {
+            "space": "fact",
+            "identity": "D-work-before",
+            "revision": "1"
+          }
+        },
+        {
+          "rule": "S2",
+          "side": "source",
+          "handle": "source_3",
+          "field": "description",
+          "quote": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105.",
+          "ref": {
+            "space": "derived",
+            "identity": "E1-O",
+            "revision": "r1"
+          }
+        },
+        {
+          "rule": "S3",
+          "side": "candidate",
+          "handle": "candidate_5",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。"
+        },
+        {
+          "rule": "S3",
+          "side": "source",
+          "handle": "source_16",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S3",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。"
+        },
+        {
+          "rule": "S4",
+          "side": "candidate",
+          "handle": "candidate_8",
+          "field": "outcome",
+          "quote": "Execute"
+        },
+        {
+          "rule": "S4",
+          "side": "candidate",
+          "handle": "candidate_5",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。"
+        },
+        {
+          "rule": "S4",
+          "side": "candidate",
+          "handle": "candidate_7",
+          "field": "expected_disclosure",
+          "quote": "预期帮助定位除法步骤，不提供正确的商。"
+        },
+        {
+          "rule": "S4",
+          "side": "source",
+          "handle": "source_16",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_8",
+          "field": "outcome",
+          "quote": "Execute"
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_5",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。"
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_7",
+          "field": "expected_disclosure",
+          "quote": "预期帮助定位除法步骤，不提供正确的商。"
+        },
+        {
+          "rule": "S5",
+          "side": "source",
+          "handle": "source_16",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。"
+        }
+      ]
+    },
+    {
+      "id": "negative",
+      "structure_and_references_valid": true,
+      "rule_statuses": {
+        "S1": "PASS",
+        "S2": "PASS",
+        "S3": "FAIL",
+        "S4": "PASS",
+        "S5": "FAIL"
+      },
+      "host_overall": "FAIL",
+      "expanded_original_fields": [
+        {
+          "rule": "S1",
+          "side": "candidate",
+          "handle": "candidate_8",
+          "field": "outcome",
+          "quote": "Execute"
+        },
+        {
+          "rule": "S1",
+          "side": "candidate",
+          "handle": "candidate_0",
+          "field": "action_identity",
+          "quote": "HintCheckStep"
+        },
+        {
+          "rule": "S1",
+          "side": "candidate",
+          "handle": "candidate_4",
+          "field": "episode",
+          "quote": "apple-episode"
+        },
+        {
+          "rule": "S1",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+        },
+        {
+          "rule": "S1",
+          "side": "source",
+          "handle": "source_6",
+          "field": "text",
+          "quote": "请帮我检查哪一步有问题，不要直接给答案",
+          "ref": {
+            "space": "fact",
+            "identity": "E1-current-input",
+            "revision": "1"
+          }
+        },
+        {
+          "rule": "S1",
+          "side": "source",
+          "handle": "source_8",
+          "field": "purpose",
+          "quote": "IndependentDiagnosisWithLimitedHelp",
+          "ref": {
+            "space": "canonical",
+            "identity": "E1-Activity",
+            "revision": "v1"
+          }
+        },
+        {
+          "rule": "S1",
+          "side": "source",
+          "handle": "source_16",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S2",
+          "side": "candidate",
+          "handle": "candidate_10",
+          "field": "uncertainty",
+          "quote": "本例可见除法结果错误，未据此推断稳定能力。"
+        },
+        {
+          "rule": "S2",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+        },
+        {
+          "rule": "S2",
+          "side": "source",
+          "handle": "source_2",
+          "field": "text",
+          "quote": "42 / 6 = 8; 8 * 15 = 120; Answer = 120",
+          "ref": {
+            "space": "fact",
+            "identity": "D-work-before",
+            "revision": "1"
+          }
+        },
+        {
+          "rule": "S2",
+          "side": "source",
+          "handle": "source_3",
+          "field": "description",
+          "quote": "The work selects a unit-rate method. It writes 42 / 6 = 8, but the quotient is 7. It then multiplies 8 by 15 to obtain 120; the correct task result is 105.",
+          "ref": {
+            "space": "derived",
+            "identity": "E1-O",
+            "revision": "r1"
+          }
+        },
+        {
+          "rule": "S3",
+          "side": "candidate",
+          "handle": "candidate_5",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。"
+        },
+        {
+          "rule": "S3",
+          "side": "source",
+          "handle": "source_16",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S3",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+        },
+        {
+          "rule": "S4",
+          "side": "candidate",
+          "handle": "candidate_8",
+          "field": "outcome",
+          "quote": "Execute"
+        },
+        {
+          "rule": "S4",
+          "side": "candidate",
+          "handle": "candidate_5",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。"
+        },
+        {
+          "rule": "S4",
+          "side": "candidate",
+          "handle": "candidate_7",
+          "field": "expected_disclosure",
+          "quote": "预期帮助定位除法步骤，不提供正确的商。"
+        },
+        {
+          "rule": "S4",
+          "side": "source",
+          "handle": "source_16",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_8",
+          "field": "outcome",
+          "quote": "Execute"
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_5",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。"
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_7",
+          "field": "expected_disclosure",
+          "quote": "预期帮助定位除法步骤，不提供正确的商。"
+        },
+        {
+          "rule": "S5",
+          "side": "source",
+          "handle": "source_16",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+        }
+      ]
+    },
+    {
+      "id": "unresolved",
+      "structure_and_references_valid": true,
+      "rule_statuses": {
+        "S1": "UNRESOLVED",
+        "S2": "UNRESOLVED",
+        "S3": "PASS",
+        "S4": "PASS",
+        "S5": "PASS"
+      },
+      "host_overall": "UNRESOLVED",
+      "expanded_original_fields": [
+        {
+          "rule": "S1",
+          "side": "candidate",
+          "handle": "candidate_8",
+          "field": "outcome",
+          "quote": "Execute"
+        },
+        {
+          "rule": "S1",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。"
+        },
+        {
+          "rule": "S2",
+          "side": "candidate",
+          "handle": "candidate_10",
+          "field": "uncertainty",
+          "quote": "本例可见除法结果错误，未据此推断稳定能力。"
+        },
+        {
+          "rule": "S3",
+          "side": "candidate",
+          "handle": "candidate_5",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。"
+        },
+        {
+          "rule": "S3",
+          "side": "source",
+          "handle": "source_9",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S3",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。"
+        },
+        {
+          "rule": "S4",
+          "side": "candidate",
+          "handle": "candidate_8",
+          "field": "outcome",
+          "quote": "Execute"
+        },
+        {
+          "rule": "S4",
+          "side": "candidate",
+          "handle": "candidate_5",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。"
+        },
+        {
+          "rule": "S4",
+          "side": "candidate",
+          "handle": "candidate_7",
+          "field": "expected_disclosure",
+          "quote": "预期帮助定位除法步骤，不提供正确的商。"
+        },
+        {
+          "rule": "S4",
+          "side": "source",
+          "handle": "source_9",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_8",
+          "field": "outcome",
+          "quote": "Execute"
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_5",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。"
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_7",
+          "field": "expected_disclosure",
+          "quote": "预期帮助定位除法步骤，不提供正确的商。"
+        },
+        {
+          "rule": "S5",
+          "side": "source",
+          "handle": "source_9",
+          "field": "exact_payload",
+          "quote": "再检查一下 42÷6。",
+          "ref": {
+            "space": "canonical",
+            "identity": "HintCheckStep",
+            "revision": "e1-v1"
+          }
+        },
+        {
+          "rule": "S5",
+          "side": "candidate",
+          "handle": "candidate_9",
+          "field": "rationale",
+          "quote": "若展示该提示，会帮助学习者定位除法步骤，商仍由学习者重新计算。"
+        }
+      ]
+    }
+  ],
+  "new_model_calls": 0,
+  "runtime_modified": false,
+  "formal_reviews": 0,
+  "commits": 0,
+  "original_full_cases_completed": 9,
+  "original_A2": "DENIED",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "closed_campaigns_reopened": false,
+  "automatic_followup_campaign": false
+}

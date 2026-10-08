@@ -11,7 +11,7 @@ def check_dimensions(definition):
         raise ValueError('UnsupportedValidationDimensions')
     if (set(c['id'] for c in definition['criteria']) != set(sum(GROUPS.values(),[]))
             or definition.get('responsibility_profile') != 'separate-classification-v1'
-            or definition.get('arithmetic_extraction_format') != 'typed-expressions-v1'):
+            or definition.get('arithmetic_extraction_format') not in ('typed-expressions-v1','typed-expressions-v2','observer-arithmetic-v1')):
         raise ValueError('RequiredDimensionChecksMissing')
 
 

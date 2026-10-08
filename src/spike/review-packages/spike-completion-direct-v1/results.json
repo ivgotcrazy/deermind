@@ -1,0 +1,1296 @@
+{
+  "rows": [
+    {
+      "id": "A1-error-r1",
+      "group": "A1",
+      "variant": "A1-error",
+      "repetition": 1,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-error-r2",
+      "group": "A1",
+      "variant": "A1-error",
+      "repetition": 2,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-error-r3",
+      "group": "A1",
+      "variant": "A1-error",
+      "repetition": 3,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-error-r4",
+      "group": "A1",
+      "variant": "A1-error",
+      "repetition": 4,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-error-r5",
+      "group": "A1",
+      "variant": "A1-error",
+      "repetition": 5,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-correct-r1",
+      "group": "A1",
+      "variant": "A1-correct",
+      "repetition": 1,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-correct-r2",
+      "group": "A1",
+      "variant": "A1-correct",
+      "repetition": 2,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-correct-r3",
+      "group": "A1",
+      "variant": "A1-correct",
+      "repetition": 3,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-correct-r4",
+      "group": "A1",
+      "variant": "A1-correct",
+      "repetition": 4,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-correct-r5",
+      "group": "A1",
+      "variant": "A1-correct",
+      "repetition": 5,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-incomplete-r1",
+      "group": "A1",
+      "variant": "A1-incomplete",
+      "repetition": 1,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-incomplete-r2",
+      "group": "A1",
+      "variant": "A1-incomplete",
+      "repetition": 2,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-incomplete-r3",
+      "group": "A1",
+      "variant": "A1-incomplete",
+      "repetition": 3,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-incomplete-r4",
+      "group": "A1",
+      "variant": "A1-incomplete",
+      "repetition": 4,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A1-incomplete-r5",
+      "group": "A1",
+      "variant": "A1-incomplete",
+      "repetition": 5,
+      "execution": "EXECUTED",
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 2,
+      "checks": 11,
+      "failed_checks": [],
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-ability-report-r1",
+      "group": "A2",
+      "variant": "ability-report",
+      "repetition": 1,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-ability-report-r2",
+      "group": "A2",
+      "variant": "ability-report",
+      "repetition": 2,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-ability-report-r3",
+      "group": "A2",
+      "variant": "ability-report",
+      "repetition": 3,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-ability-report-r4",
+      "group": "A2",
+      "variant": "ability-report",
+      "repetition": 4,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-ability-report-r5",
+      "group": "A2",
+      "variant": "ability-report",
+      "repetition": 5,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-ability-endorsement-r1",
+      "group": "A2",
+      "variant": "ability-endorsement",
+      "repetition": 1,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-ability-endorsement-r2",
+      "group": "A2",
+      "variant": "ability-endorsement",
+      "repetition": 2,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-ability-endorsement-r3",
+      "group": "A2",
+      "variant": "ability-endorsement",
+      "repetition": 3,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-ability-endorsement-r4",
+      "group": "A2",
+      "variant": "ability-endorsement",
+      "repetition": 4,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-ability-endorsement-r5",
+      "group": "A2",
+      "variant": "ability-endorsement",
+      "repetition": 5,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-request-report-r1",
+      "group": "A2",
+      "variant": "request-report",
+      "repetition": 1,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-request-report-r2",
+      "group": "A2",
+      "variant": "request-report",
+      "repetition": 2,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-request-report-r3",
+      "group": "A2",
+      "variant": "request-report",
+      "repetition": 3,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-request-report-r4",
+      "group": "A2",
+      "variant": "request-report",
+      "repetition": 4,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-request-report-r5",
+      "group": "A2",
+      "variant": "request-report",
+      "repetition": 5,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-action-recommendation-r1",
+      "group": "A2",
+      "variant": "action-recommendation",
+      "repetition": 1,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-action-recommendation-r2",
+      "group": "A2",
+      "variant": "action-recommendation",
+      "repetition": 2,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-action-recommendation-r3",
+      "group": "A2",
+      "variant": "action-recommendation",
+      "repetition": 3,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-action-recommendation-r4",
+      "group": "A2",
+      "variant": "action-recommendation",
+      "repetition": 4,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-action-recommendation-r5",
+      "group": "A2",
+      "variant": "action-recommendation",
+      "repetition": 5,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-arithmetic-report-r1",
+      "group": "A2",
+      "variant": "arithmetic-report",
+      "repetition": 1,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-arithmetic-report-r2",
+      "group": "A2",
+      "variant": "arithmetic-report",
+      "repetition": 2,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-arithmetic-report-r3",
+      "group": "A2",
+      "variant": "arithmetic-report",
+      "repetition": 3,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-arithmetic-report-r4",
+      "group": "A2",
+      "variant": "arithmetic-report",
+      "repetition": 4,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-arithmetic-report-r5",
+      "group": "A2",
+      "variant": "arithmetic-report",
+      "repetition": 5,
+      "execution": "EXECUTED",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "expected_semantic": "PASS",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-arithmetic-endorsement-r1",
+      "group": "A2",
+      "variant": "arithmetic-endorsement",
+      "repetition": 1,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-arithmetic-endorsement-r2",
+      "group": "A2",
+      "variant": "arithmetic-endorsement",
+      "repetition": 2,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-arithmetic-endorsement-r3",
+      "group": "A2",
+      "variant": "arithmetic-endorsement",
+      "repetition": 3,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-arithmetic-endorsement-r4",
+      "group": "A2",
+      "variant": "arithmetic-endorsement",
+      "repetition": 4,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "A2-arithmetic-endorsement-r5",
+      "group": "A2",
+      "variant": "arithmetic-endorsement",
+      "repetition": 5,
+      "execution": "EXECUTED",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "expected_semantic": "FAIL",
+      "model_agrees_with_host": true,
+      "result": "PASS",
+      "checks": 8,
+      "failed_checks": [],
+      "model_calls": 1,
+      "transport_incomplete": false
+    },
+    {
+      "id": "X5-r1",
+      "group": "X5",
+      "variant": "full-path",
+      "repetition": 1,
+      "execution": "EXECUTED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "stages": [
+        {
+          "stage": "X5-O-before",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-initial",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-teaching-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-teaching",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-explain",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-practice",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-present-task",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-work",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-final",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        }
+      ],
+      "checks": 26,
+      "failed_checks": [],
+      "model_calls": 20,
+      "transport_incomplete": false
+    },
+    {
+      "id": "X5-r2",
+      "group": "X5",
+      "variant": "full-path",
+      "repetition": 2,
+      "execution": "EXECUTED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "stages": [
+        {
+          "stage": "X5-O-before",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-initial",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-teaching-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-teaching",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-explain",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-practice",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-present-task",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-work",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-final",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        }
+      ],
+      "checks": 26,
+      "failed_checks": [],
+      "model_calls": 20,
+      "transport_incomplete": false
+    },
+    {
+      "id": "X5-r3",
+      "group": "X5",
+      "variant": "full-path",
+      "repetition": 3,
+      "execution": "EXECUTED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "stages": [
+        {
+          "stage": "X5-O-before",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-initial",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-teaching-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-teaching",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-explain",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-practice",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-present-task",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-work",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-final",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        }
+      ],
+      "checks": 26,
+      "failed_checks": [],
+      "model_calls": 20,
+      "transport_incomplete": false
+    },
+    {
+      "id": "X5-r4",
+      "group": "X5",
+      "variant": "full-path",
+      "repetition": 4,
+      "execution": "EXECUTED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "stages": [
+        {
+          "stage": "X5-O-before",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-initial",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-teaching-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-teaching",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-explain",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-practice",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-present-task",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-work",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-final",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        }
+      ],
+      "checks": 26,
+      "failed_checks": [],
+      "model_calls": 20,
+      "transport_incomplete": false
+    },
+    {
+      "id": "X5-r5",
+      "group": "X5",
+      "variant": "full-path",
+      "repetition": 5,
+      "execution": "EXECUTED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "stages": [
+        {
+          "stage": "X5-O-before",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-initial",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-teaching-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-teaching",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-explain",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-request",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-switch-practice",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-present-task",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-O-new-work",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        },
+        {
+          "stage": "X5-P-final",
+          "semantic_status": "PASS",
+          "commit_status": "Committed",
+          "reason": ""
+        }
+      ],
+      "checks": 26,
+      "failed_checks": [],
+      "model_calls": 20,
+      "transport_incomplete": false
+    }
+  ],
+  "boundaries": [
+    {
+      "variant": "control-not-occurred",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "checks": 9,
+      "model_calls": 0,
+      "failed_checks": [],
+      "source_run": "X5-r1",
+      "source_stage": "switch-teaching",
+      "execution": "EXECUTED"
+    },
+    {
+      "variant": "explanation-not-occurred",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "checks": 7,
+      "model_calls": 0,
+      "failed_checks": [],
+      "source_run": "X5-r1",
+      "source_stage": "explain",
+      "execution": "EXECUTED"
+    },
+    {
+      "variant": "explanation-partial",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "checks": 6,
+      "model_calls": 0,
+      "failed_checks": [],
+      "source_run": "X5-r1",
+      "source_stage": "explain",
+      "execution": "EXECUTED"
+    },
+    {
+      "variant": "explanation-indeterminate",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "checks": 7,
+      "model_calls": 0,
+      "failed_checks": [],
+      "source_run": "X5-r1",
+      "source_stage": "explain",
+      "execution": "EXECUTED"
+    }
+  ],
+  "stop_reason": null
+}

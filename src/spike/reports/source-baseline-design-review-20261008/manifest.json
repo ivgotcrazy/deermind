@@ -1,0 +1,117 @@
+[
+  {
+    "source_path": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.1.md",
+    "previous_sha256": "9712b2fb447e3a7d20b8af7a69c522ac22082d030117677adafd5f8c950efc2a",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_AI_Reasoning_Runtime_Design_v0.1.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md",
+    "previous_sha256": "7eec39fd0b33300c5a2da53769e6d6eb958d59fa70dcc0f5bb2a1937047753d9",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_System_Design_Roadmap_v0.5.md",
+    "previous_sha256": "0d7d83d9b7ac6762c3c66bdc05a39141b01b614c329c51fae83cf0667cd52503",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_System_Design_Roadmap_v0.5.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_System_Design_v0.2.md",
+    "previous_sha256": "a3c206c16cfaa46457b64ffc7089f7af638ad0e0c246848916c5324064dde44a",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_System_Design_v0.2.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+    "previous_sha256": "550b6fb1c9f60199addd9413527ff6b465e4875ecc497865615ff5bd2da9cb27",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/0-DeerMind_AI_Reasoning_Runtime_Design_v0.2.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+    "previous_sha256": "e12465079a73cc802878305bf95dd2cf0ffe6fdddfc8e1dd68af2d2bfbc6371a",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/1-DeerMind_Interaction_Decision_Runtime_Design_v0.2.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_System_Design_v0.3.md",
+    "previous_sha256": "e47b8f823c747eb165e4ec2918e0b8f3232af98549c3408ffab33d109da8b49b",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/2-DeerMind_System_Design_v0.3.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+    "previous_sha256": "02b5cb18e84fd27c5b679e31f441844e78d750f910715992c6752544caa89ba3",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/3-DeerMind_System_Design_Roadmap_v0.6.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_Runtime_Event_Architecture_v0.1.md",
+    "previous_sha256": "36cb9ddfe56330ae77c484d694095e4686e90d12fe7e9bf7617a614801030df0",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/4-DeerMind_Runtime_Event_Architecture_v0.1.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_State_Dependency_Architecture_v0.1.md",
+    "previous_sha256": "7b0db9b6d1f973713631e3033bfbb37ec0c2451e5cecc96bdd2b4d5930f2fdfa",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/5-DeerMind_State_Dependency_Architecture_v0.1.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md",
+    "previous_sha256": "f7fff479db762823fb9404454ed3acef4457953c5a0a2db77e962b8ff93a29eb",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/6-DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v0.1.md",
+    "previous_sha256": "1ed00ac2ce4621dbcd0f5834d9b8d8b8e9707c7e34c9b675a10e1aea961c0e31",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/7-DeerMind_Evolution_Governance_Runtime_Design_v0.1.md.txt"
+  },
+  {
+    "source_path": "doc/top/DeerMind_Development_Roadmap_v0.3.md",
+    "previous_sha256": "a1472ae6eac1d01d51eb88597cd22f2913ac5ae346cad20f5ba7b2424760e529",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/8-DeerMind_Development_Roadmap_v0.3.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
+    "previous_sha256": "5a506409b073247459f74f49e883573b5c92390a7cc848ea593ab4669b5e854b",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/9-DeerMind_Design_Closure_Review_v0.1.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/spike/archive/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+    "previous_sha256": "33fe089d3c39cde33dd83406fb3a95b7c6418edd075d510bb4b7749c880e7657",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/10-DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/spike/archive/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+    "previous_sha256": "56b5f31ee9555cf0356fc1ef5ffbf8b5e6e5e7b29615df3ecf5a43b4c50cd1a1",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/11-DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/spike/archive/DeerMind_Spike_Closeout_Decision_Draft_v0.1.md",
+    "previous_sha256": "3690c261390361d1a1c38d520a64f0fba33c9a2b7412c3804cd6279fd664f2be",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/12-DeerMind_Spike_Closeout_Decision_Draft_v0.1.md.txt"
+  },
+  {
+    "source_path": "src/spike/reports/design-candidate-review-20261007.md",
+    "previous_sha256": "c0f7cee7eec894da8f7896d7521914244d381df1b698eacdc182dc56fb0a908a",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/13-design-candidate-review-20261007.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/DeerMind_Cross_Cutting_Coverage_Review_v0.1.md",
+    "previous_sha256": "079a41fa048c02fdb0b024656373ac1f7552c395aa7286e9efe9e320a6d2f6ee",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/14-DeerMind_Cross_Cutting_Coverage_Review_v0.1.md.txt"
+  },
+  {
+    "source_path": "doc/system-design/spike/README.md",
+    "previous_sha256": "0ccf4cd1c31e6bd070bc579dabc3b38b3863f2363b6aea3bcb75332f7442493c",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/15-README.md.txt"
+  },
+  {
+    "source_path": "src/spike/reports/validation-progress-v1.json",
+    "previous_sha256": "ec440c084f382409091e3fb9747da84880c6365bfdf9662b47589b235d2794a5",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/16-validation-progress-v1.json.txt"
+  },
+  {
+    "source_path": "src/spike/reports/spike-completion-document-layout-20261008.json",
+    "previous_sha256": "387adf29472f69533d4f96573a270d96b799b8eb25817902026a8b07bbe8425c",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/17-spike-completion-document-layout-20261008.json.txt"
+  },
+  {
+    "source_path": "src/spike/reports/spike-completion-integrity-20261008.json",
+    "previous_sha256": "f203c0957888f90dc74ce8bbe7cf9b04351d4f35facf95110cfd09e1303eef38",
+    "preserved_at": "src/spike/reports/source-baseline-design-review-20261008/before-review/18-spike-completion-integrity-20261008.json.txt"
+  }
+]

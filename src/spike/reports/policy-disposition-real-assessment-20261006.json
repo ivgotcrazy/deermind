@@ -1,0 +1,227 @@
+{
+  "schema": "policy-disposition-real-identification-assessment-v1",
+  "date": "2026-10-06",
+  "result": "INCONCLUSIVE",
+  "operational_result": "STOPPED_PROTOCOL_UNUSABLE_IN_FIXED_SAMPLE",
+  "planned": 6,
+  "external_model_calls": 3,
+  "valid_semantic_reviews": 0,
+  "execution_failed": 3,
+  "not_run": 3,
+  "stop_reason": "THREE_CONSECUTIVE_EXECUTION_FAILURES",
+  "diagnostics": [
+    {
+      "id": "C1",
+      "raw_model_status": "PASS",
+      "accepted_status": null,
+      "execution_reason": "OutputSchemaMismatch",
+      "raw_S3": {
+        "id": "S3",
+        "status": "PASS",
+        "reason_code": "SATISFIED",
+        "rationale": "Rationale and expected_disclosure state the cue assists localization while the quotient remains learner-recomputed; no claim of independent unassisted work or stable mastery is made.",
+        "finding_ids": [
+          "F4"
+        ]
+      },
+      "offline_quote_and_shape_issues": [
+        {
+          "at": "output.checks[0]",
+          "extra_keys": [
+            "finding_ids_note"
+          ],
+          "missing_keys": []
+        },
+        {
+          "finding": "F1",
+          "side": "candidate",
+          "field": "action_revision",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F1",
+          "side": "source",
+          "field": "allowed_action_refs",
+          "reason": "DispositionQuoteFieldInvalid"
+        },
+        {
+          "finding": "F3",
+          "side": "candidate",
+          "field": "uncertainty",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F3",
+          "side": "source",
+          "field": "description",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F4",
+          "side": "candidate",
+          "field": "rationale",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F4",
+          "side": "candidate",
+          "field": "expected_disclosure",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F4",
+          "side": "source",
+          "field": "purpose",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F5",
+          "side": "candidate",
+          "field": "expected_disclosure",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F6",
+          "side": "candidate",
+          "field": "defer_condition",
+          "reason": "DispositionQuoteMismatch"
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "raw_model_status": "FAIL",
+      "accepted_status": null,
+      "execution_reason": "DispositionQuoteFieldInvalid",
+      "raw_S3": {
+        "id": "S3",
+        "status": "FAIL",
+        "reason_code": "CONTENT_DEFECT",
+        "rationale": "The rationale claims the hint substitutes no localization work and fully preserves independent error-location responsibility, but the exact payload names the specific step 42÷6, which E1-O identifies as the erroneous step; a cue naming a step assists localization, so the retained-responsibility claim is contradicted by the candidate's own payload.",
+        "finding_ids": [
+          "F3"
+        ]
+      },
+      "offline_quote_and_shape_issues": [
+        {
+          "finding": "F1",
+          "side": "source",
+          "field": "allowed_action_refs",
+          "reason": "DispositionQuoteFieldInvalid"
+        },
+        {
+          "finding": "F2",
+          "side": "candidate",
+          "field": "uncertainty",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F2",
+          "side": "source",
+          "field": "text",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F3",
+          "side": "candidate",
+          "field": "rationale",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F3",
+          "side": "source",
+          "field": "description",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F5",
+          "side": "candidate",
+          "field": "defer_condition",
+          "reason": "DispositionQuoteMismatch"
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "raw_model_status": "PASS",
+      "accepted_status": null,
+      "execution_reason": "DispositionQuoteFieldInvalid",
+      "raw_S3": {
+        "id": "S3",
+        "status": "PASS",
+        "reason_code": "SATISFIED",
+        "rationale": "The rationale claims only that recomputation remains learner-owned within the scope of not supplying the quotient; the payload names the step (42÷6) as a localization cue without providing the value, so the independence claim is scoped to unassisted recomputation rather than the whole diagnosis.",
+        "finding_ids": [
+          "F4"
+        ]
+      },
+      "offline_quote_and_shape_issues": [
+        {
+          "finding": "F2",
+          "side": "source",
+          "field": "allowed_action_refs",
+          "reason": "DispositionQuoteFieldInvalid"
+        },
+        {
+          "finding": "F3",
+          "side": "candidate",
+          "field": "uncertainty",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F3",
+          "side": "source",
+          "field": "text",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F4",
+          "side": "candidate",
+          "field": "rationale",
+          "reason": "DispositionQuoteMismatch"
+        },
+        {
+          "finding": "F6",
+          "side": "candidate",
+          "field": "defer_condition",
+          "reason": "DispositionQuoteMismatch"
+        }
+      ]
+    }
+  ],
+  "usage_totals": {
+    "prompt_tokens": 12427,
+    "completion_tokens": 6122,
+    "total_tokens": 18549
+  },
+  "maximum_completion_tokens": 2074,
+  "returned_models": [
+    "deepseek-flash"
+  ],
+  "returned_fingerprints": [
+    "aeb56401ca74e127821c4f9126dcb669"
+  ],
+  "finish_reasons": [
+    "tool_calls",
+    "tool_calls",
+    "tool_calls"
+  ],
+  "elapsed_seconds": 21.94153,
+  "audit": {
+    "prior_ledger_hashes_verified": 466,
+    "snapshots_verified": 9,
+    "prepared_input_chars": 11609,
+    "frozen_sources_verified": 8
+  },
+  "automatic_additional_batches": false,
+  "original_A2": "DENIED",
+  "original_E1": "INCONCLUSIVE",
+  "full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "source_sha256": {
+    "src/spike/runs/policy-disposition-real-v1/summary.json": "9f56d555489cf063ed7be48b3366a6e97ef5d41e242ad81d538d9c489cf3b9f3",
+    "src/spike/runs/policy-disposition-real-v1/adapter-records.json": "330f9d78f2e4c38d1cb0d9b2b81f5163c68375446588fef1942c7a1f7436f18e",
+    "src/spike/review-packages/policy-disposition-real-v1/manifest.json": "610d8258ddaa1aaa73570aaa7aa06f991cfc0ea6fdd189c14753d2a65a596673"
+  }
+}

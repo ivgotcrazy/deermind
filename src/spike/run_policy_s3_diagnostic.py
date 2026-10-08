@@ -1,0 +1,144 @@
+"""Prepare or run one immutable, finite S3 diagnostic with author review gates."""
+import argparse
+from dataclasses import replace
+from datetime import datetime, timezone
+import json
+from pathlib import Path
+import time
+
+from foundation.llm import DeepSeekAdapter, load_config
+from foundation.s3_diagnostic import (ROOT, FIXTURE, ORIGINAL, PROTOCOL, audit_request,
+    build_plan, hashed, object_hash, run_plan, write)
+
+PACK = ROOT / 'src/spike/review-packages/policy-s3-diagnostic-v1'
+RUN = ROOT / 'src/spike/runs/policy-s3-diagnostic-v1'
+SOURCES = [FIXTURE, ORIGINAL, PROTOCOL,
+    'src/spike/foundation/s3_diagnostic.py', 'src/spike/run_policy_s3_diagnostic.py',
+    'src/spike/tests/test_s3_diagnostic.py', 'src/spike/foundation/llm.py',
+    'src/spike/foundation/structured_output.py',
+    'doc/system-design/spike/archive/DeerMind_Policy_Review_Failure_Analysis_and_Next_Step_v0.1.md']
+
+
+def configuration():
+    config = load_config(ROOT)
+    if not config.api_key or config.model != 'deepseek-flash':
+        raise ValueError('DiagnosticConfiguredModelOrKeyMismatch')
+    return replace(config, base_url='https://api.deepseek.com/beta', max_calls=12,
+                   max_output_tokens=1024, timeout_seconds=60)
+
+
+def verify():
+    manifest = json.loads((PACK / 'manifest.json').read_text(encoding='utf-8'))
+    for rel, digest in manifest['source_sha256'].items():
+        if hashed(ROOT / rel) != digest:
+            raise ValueError('DiagnosticFrozenSourceMismatch')
+    for rel, digest in manifest['artifact_sha256'].items():
+        if hashed(PACK / rel) != digest:
+            raise ValueError('DiagnosticFrozenArtifactMismatch')
+    if configuration().public() != manifest['public_model_config']:
+        raise ValueError('DiagnosticModelConfigurationMismatch')
+    return json.loads((PACK / 'plan.json').read_text(encoding='utf-8'))
+
+
+def author_review(spec, row, deadline):
+    path = RUN / 'reviews' / (spec['id'] + '.json')
+    request = {'case_id': spec['id'], 'records_sha256': row['records_sha256'],
+        'output': row['output'], 'decision_file': path.relative_to(RUN).as_posix(),
+        'required_fields': ['case_id', 'records_sha256', 'decision', 'action_meaning_correct',
+                            'rationale_claim_correct', 'reason_correct', 'note'],
+        'review_independence': 'Same-session author; not independent blind review'}
+    write(RUN / 'review-request.json', request)
+    print(json.dumps({'event': 'AUTHOR_REVIEW_REQUIRED', 'case_id': spec['id'],
+        'records_sha256': row['records_sha256']}, ensure_ascii=True), flush=True)
+    while time.monotonic() < deadline:
+        if path.exists():
+            try:
+                review = json.loads(path.read_text(encoding='utf-8'))
+                return (review.get('case_id') == spec['id']
+                    and review.get('records_sha256') == row['records_sha256']
+                    and review.get('decision') == 'ACCEPT'
+                    and all(review.get(k) is True for k in ('action_meaning_correct',
+                            'rationale_claim_correct', 'reason_correct'))
+                    and isinstance(review.get('note'), str) and bool(review['note'].strip()))
+            except (ValueError, OSError):
+                return False
+        time.sleep(min(0.25, max(0, deadline - time.monotonic())))
+    return False
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--prepare', action='store_true')
+    parser.add_argument('--run', action='store_true')
+    args = parser.parse_args()
+    if args.prepare and args.run:
+        parser.error('prepare and run are separate stages')
+    config = configuration()
+    if args.prepare:
+        plan = build_plan()
+        for spec in plan['schedule']:
+            payload = audit_request(spec['messages'])
+            assert object_hash(payload['candidate']) == spec['candidate_sha256']
+        PACK.mkdir(parents=True, exist_ok=False)
+        write(PACK / 'plan.json', plan)
+        write(PACK / 'outgoing-requests.json', [s['messages'] for s in plan['schedule']])
+        write(PACK / 'manifest.json', {'status': 'PREPARED', 'external_model_calls': 0,
+            'public_model_config': config.public(),
+            'source_sha256': {p: hashed(ROOT / p) for p in SOURCES},
+            'artifact_sha256': {p.name: hashed(p) for p in PACK.iterdir() if p.is_file()},
+            'authorization': 'User continue on 2026-10-07 under proposed S3-only finite scope',
+            'automatic_followup_campaign': False})
+        verify()
+        print(json.dumps({'status': 'PREPARED', 'max_calls': 12, 'wall_seconds': 900,
+            'maximum_message_chars': max(len(json.dumps(s['messages'], ensure_ascii=False))
+                for s in plan['schedule']), 'external_model_calls': 0}, ensure_ascii=True))
+        return 0
+    plan = verify()
+    if not args.run:
+        print(json.dumps({'status': 'ALREADY_RESERVED' if RUN.exists() else 'READY_NOT_STARTED',
+            'max_calls': 12, 'wall_seconds': 900, 'public_config': config.public()}, ensure_ascii=True))
+        return 0
+    RUN.mkdir(parents=True, exist_ok=False)
+    (RUN / 'reviews').mkdir()
+    started = datetime.now(timezone.utc).isoformat()
+    clock_start = time.monotonic()
+    write(RUN / 'manifest.json', {'started_at': started,
+        'preparation_manifest_sha256': hashed(PACK / 'manifest.json'),
+        'source_sha256': json.loads((PACK / 'manifest.json').read_text(encoding='utf-8'))['source_sha256'],
+        'public_model_config': config.public(), 'attempt': 1,
+        'max_calls': 12, 'wall_seconds': 900, 'retries': 0,
+        'authorization': 'User continue on 2026-10-07 under S3-only finite scope',
+        'replacement_cases': 0, 'automatic_followup_campaign': False,
+        'formal_Runtime_admission': False, 'action_execution': False})
+    adapter = DeepSeekAdapter(config)
+    try:
+        result = run_plan(plan, adapter, review=author_review,
+            save=lambda name, value: write(RUN / name, value), before=verify,
+            deadline=clock_start + 900)
+    except BaseException:
+        write(RUN / 'adapter-records.json', adapter.records)
+        write(RUN / 'interruption.json', {'status': 'INTERRUPTED_NO_RESUME',
+            'actual_model_calls': adapter.calls})
+        raise
+    write(RUN / 'adapter-records.json', adapter.records)
+    write(RUN / 'results.json', result)
+    summary = {'status': 'CLOSED_STOPPED' if result['stop_reason'] else 'CLOSED_SCOPED_DIAGNOSTIC_PASS',
+        'started_at': started, 'completed_at': datetime.now(timezone.utc).isoformat(),
+        'elapsed_seconds': round(time.monotonic() - clock_start, 3),
+        'actual_model_calls': adapter.calls, 'max_calls': 12, 'wall_seconds': 900,
+        'stop_reason': result['stop_reason'],
+        'completed_cases': sum(r['execution'] == 'COMPLETED' for r in result['rows']),
+        'failed_cases': sum(r['execution'] == 'FAILED' for r in result['rows']),
+        'not_run_cases': sum(r['execution'] == 'NOT_RUN' for r in result['rows']),
+        'original_full_cases_completed': 9, 'original_A2': 'DENIED', 'gate_E': 'OPEN', 'gate_F': 'OPEN',
+        'review_independence': plan['review_independence'], 'full_S1_S5_support_claimed': False,
+        'retries': 0, 'replacement_cases': 0, 'automatic_followup_campaign': False}
+    write(RUN / 'summary.json', summary)
+    write(RUN / 'artifact-sha256.json', {p.relative_to(RUN).as_posix(): hashed(p)
+        for p in sorted(RUN.rglob('*')) if p.is_file()})
+    print(json.dumps(summary, ensure_ascii=True, indent=2), flush=True)
+    return 1 if result['stop_reason'] else 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

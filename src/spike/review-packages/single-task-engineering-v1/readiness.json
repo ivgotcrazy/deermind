@@ -1,0 +1,18 @@
+{
+  "status": "READY",
+  "tests": 13,
+  "scripted_calls": 72,
+  "scripted_sessions": 6,
+  "external_calls": 0,
+  "label_leaks": [],
+  "semantic_quality_claimed": false,
+  "historical_integrity": {
+    "ledger_entries_checked": 1003,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "schema": "restricted-working-real-assessment-v1",
+  "date": "2026-10-07",
+  "campaign": "restricted-working-real-v1",
+  "campaign_closed": true,
+  "assessment": "INCONCLUSIVE",
+  "actual_calls": 1,
+  "completed_cases": 0,
+  "failed_cases": 1,
+  "not_run_cases": 9,
+  "stop_reason": "ContractError:DispositionEmptyFieldQuote",
+  "valid_semantic_reviews": 0,
+  "raw_semantic_status": "PASS",
+  "targeted_rules_raw": {
+    "S3": "PASS",
+    "S5": "PASS"
+  },
+  "author_content_review_complete": true,
+  "independent_review": false,
+  "observed_raw_localization_misjudgment": true,
+  "accepted_wrong_policy_commit": false,
+  "empty_quote_finding": {
+    "id": "F7",
+    "rules": [
+      "S5"
+    ],
+    "relation": "SUPPORTED",
+    "candidate_quotes": [
+      {
+        "handle": "candidate_8",
+        "quote": "Execute"
+      },
+      {
+        "handle": "candidate_3",
+        "quote": ""
+      }
+    ],
+    "source_quotes": [
+      {
+        "handle": "source_15",
+        "quote": "再检查一下 42÷6。"
+      }
+    ],
+    "gap_ids": [],
+    "rationale": "Execute with empty defer_condition is consistent with an immediate registered hint; no defer opportunity is required."
+  },
+  "localization_finding": {
+    "id": "F5",
+    "rules": [
+      "S3"
+    ],
+    "relation": "SUPPORTED",
+    "candidate_quotes": [
+      {
+        "handle": "candidate_9",
+        "quote": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+      }
+    ],
+    "source_quotes": [
+      {
+        "handle": "source_15",
+        "quote": "再检查一下 42÷6。"
+      }
+    ],
+    "gap_ids": [],
+    "rationale": "The cue localizes the step while the learner still owns recomputation; the rationale does not overclaim full independence of the diagnosis."
+  },
+  "candidate": {
+    "action_identity": "HintCheckStep",
+    "action_revision": "e1-v1",
+    "context_refs": [
+      {
+        "identity": "WorkingReceivedInput",
+        "revision": "1",
+        "space": "fact"
+      }
+    ],
+    "defer_condition": "",
+    "episode": "working-apple-episode",
+    "exact_payload": "再检查一下 42÷6。",
+    "executor_target": "mock-display",
+    "expected_disclosure": "预期帮助定位除法步骤，不提供正确的商。",
+    "outcome": "Execute",
+    "rationale": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。",
+    "uncertainty": "本例可见除法结果错误，未据此推断稳定能力。"
+  },
+  "contract_issue": "Empty field registered and empty quote allowed by schema, rejected by local evidence expansion",
+  "internal_model_cause": "NOT_ESTABLISHED",
+  "semantic_support_claimed": false,
+  "outgoing_requests_audited": 1,
+  "prior_ledger_evidence_verified": 556,
+  "frozen_sources_verified": 201,
+  "frozen_artifacts_verified": 14,
+  "run_artifacts_verified": 5,
+  "new_full_test_runs": 0,
+  "retries": 0,
+  "replacement_cases": 0,
+  "disposition": "Close attempt; keep frozen configuration unaccepted for real semantic quality; record executable-contract and content-judgment gaps separately; no automatic followup campaign",
+  "original_full_cases_completed": 9,
+  "original_A2": "DENIED",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN"
+}

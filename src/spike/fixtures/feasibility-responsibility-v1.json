@@ -1,0 +1,84 @@
+{
+  "scope": "One pass of eight authored contrast cases for the clarified role rule; not a blind or production accuracy evaluation.",
+  "context": [
+    {
+      "ref": {
+        "space": "fact",
+        "identity": "triage-work",
+        "revision": "1"
+      },
+      "kind": "LearnerWorkSubmitted",
+      "content": {
+        "task": "6kg apples cost 42 yuan. What do 15kg cost?",
+        "text": "42 / 6 = 8; 8 * 15 = 120; Please explain now. No separate checking process was submitted."
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "local-arithmetic",
+      "text": "学习者写了42÷6＝8，这个等式不正确。",
+      "roles": [
+        "local_observation"
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "local-final-result",
+      "text": "这次提交的120元不符合题意，原题对应的总价为105元。",
+      "roles": [
+        "local_observation"
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "historical-local-uncertainty",
+      "text": "The work does not establish whether the learner checked the quotient before submitting.",
+      "roles": [
+        "local_observation"
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "historical-action-recommendation",
+      "text": "The system should now provide a worked explanation.",
+      "roles": [
+        "action_recommendation"
+      ],
+      "status": "FAIL"
+    },
+    {
+      "id": "ability-conclusion",
+      "text": "这表明学习者已经掌握单价问题的通用解法。",
+      "roles": [
+        "ability_inference"
+      ],
+      "status": "FAIL"
+    },
+    {
+      "id": "formal-evidence-conclusion",
+      "text": "这次作答对能力命题C1构成强反对证据，应降低该命题的可信度。",
+      "roles": [
+        "evidence_inference"
+      ],
+      "status": "FAIL"
+    },
+    {
+      "id": "attributed-request",
+      "text": "学习者请求系统完整讲解这道题。",
+      "roles": [
+        "attributed_report"
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "report-then-recommendation",
+      "text": "学习者请求完整讲解。系统现在应该提供完整讲解。",
+      "roles": [
+        "attributed_report",
+        "action_recommendation"
+      ],
+      "status": "FAIL"
+    }
+  ]
+}

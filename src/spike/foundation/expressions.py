@@ -6,6 +6,7 @@ from .runtime import ContractError
 
 
 FORMAT = 'typed-expressions-v1'
+FORMAT_V2 = 'typed-expressions-v2'
 TYPES = ('NumericAssertion', 'UnevaluatedExpression', 'UnresolvedNumericMapping')
 OPERATORS = ('add', 'subtract', 'multiply', 'divide')
 STANCES = ('asserted_true', 'asserted_false', 'reported_only', 'not_asserted', 'unresolved')
@@ -101,3 +102,93 @@ def check_expression_extraction(output, candidate, registry):
         raise ContractError('IncompleteExpressionCoverage')
     overall = 'FAIL' if 'FAIL' in statuses else 'UNRESOLVED' if 'UNRESOLVED' in statuses else 'PASS'
     return {'format':FORMAT, 'status':overall, 'mapping_required':True, 'checks':checks}
+
+
+def extraction_contract_v2():
+    """Distinct scalar, equation and unevaluated variants with exact locator IDs."""
+    def string(choices=None):
+        return {'type': 'string', **({'enum': list(choices)} if choices is not None else {})}
+    def obj(properties):
+        return {'type': 'object', 'properties': properties, 'required': list(properties),
+                'additionalProperties': False}
+    def nullable(schema):
+        return {'anyOf': [schema, {'type': 'null'}]}
+    null = {'type': 'null'}
+    variants = []
+    for kind in (*TYPES, 'ScalarValue'):
+        if kind == 'NumericAssertion':
+            numeric = {'operator': string(OPERATORS), 'left': string(), 'right': string(), 'value': string()}
+            stances = ('asserted_true', 'asserted_false', 'reported_only')
+        elif kind == 'ScalarValue':
+            numeric = {'operator': null, 'left': null, 'right': null, 'value': string()}
+            stances = ('asserted_true', 'asserted_false', 'reported_only')
+        elif kind == 'UnevaluatedExpression':
+            numeric = {'operator': nullable(string(OPERATORS)), 'left': nullable(string()),
+                       'right': nullable(string()), 'value': null}
+            stances = ('not_asserted', 'reported_only')
+        else:
+            numeric = {k: null for k in ('operator', 'left', 'right', 'value')}
+            stances = STANCES
+        variants.append(obj({'type': string((kind,)),
+            'span_ids': {'type': 'array', 'items': string()}, 'speaker': string(SPEAKERS),
+            'sources': {'type': 'array', 'items': string()}, 'stance': string(stances),
+            **numeric, 'reason': string()}))
+    segment = obj({'span_ids': {'type': 'array', 'items': string()},
+        'coverage': string(('COMPLETE', 'UNRESOLVED')),
+        'expressions': {'type': 'array', 'items': {'anyOf': variants}}})
+    return {'name': 'submit_extraction', 'parameters': obj({'segments': {'type': 'array', 'items': segment}})}
+
+
+def check_expression_extraction_v2(output, candidate, sources):
+    from .candidate_spans import registry, partition, span
+    from .structured_output import matches_schema
+    if not matches_schema(output, extraction_contract_v2()['parameters']):
+        raise ContractError('InvalidIndexedExpressionShape')
+    entries, lookup = registry(candidate), {s['handle']: s for s in sources}
+    checks, statuses = [], []
+    for index, (segment, segment_span) in enumerate(partition(output['segments'], candidate, entries)):
+        if segment['coverage'] == 'UNRESOLVED':
+            statuses.append('UNRESOLVED')
+        if len(segment['expressions']) > 64:
+            raise ContractError('TooManyIndexedExpressions')
+        for position, item in enumerate(segment['expressions']):
+            bound = span(item['span_ids'], entries)
+            if (bound['field'] != segment_span['field'] or bound['start'] < segment_span['start']
+                    or bound['end'] > segment_span['end']):
+                raise ContractError('ExpressionOutsideIndexedSegment')
+            refs, kind = item['sources'], item['type']
+            if any(r not in lookup for r in refs) or len(refs) != len(set(refs)):
+                raise ContractError('InvalidExpressionSourceHandle')
+            if kind != 'UnresolvedNumericMapping' and not refs:
+                raise ContractError('ExpressionSourceRequired')
+            computed, relation, status = None, None, 'NOT_APPLICABLE'
+            if kind == 'NumericAssertion':
+                assertion = {k: item[k] for k in ('operator', 'left', 'right', 'value', 'stance')}
+                result = check_arithmetic_extraction({'segments': [{'field': bound['field'],
+                    'text': bound['text'], 'coverage': 'COMPLETE', 'assertions': [assertion]}]},
+                    {bound['field']: bound['text']})['checks'][0]
+                computed, status = result['computed'], result['status']
+                if computed is not None:
+                    relation = Fraction(computed) == number(item['value'])
+            elif kind == 'ScalarValue':
+                number(item['value'])
+                # No invented binary operation, no arithmetic truth approval.
+                # Source support and task-result correctness remain mandatory LLM criteria.
+            elif kind == 'UnevaluatedExpression':
+                if item['operator'] is None and any(item[k] is not None for k in ('left', 'right')):
+                    raise ContractError('UnevaluatedOperandWithoutOperator')
+                for key in ('left', 'right'):
+                    if item[key] is not None:
+                        number(item[key])
+            else:
+                if not item['reason'].strip():
+                    raise ContractError('UnresolvedMappingRequiresReasonAndNullNumbers')
+                status = 'UNRESOLVED'
+            if item['speaker'] == 'unresolved':
+                status = 'UNRESOLVED'
+            statuses.append(status)
+            checks.append({'segment': index, 'expression': position, **bound, **item,
+                'bound_sources': [lookup[r] for r in refs], 'computed': computed,
+                'relation_holds': relation, 'status': status})
+    overall = 'FAIL' if 'FAIL' in statuses else 'UNRESOLVED' if 'UNRESOLVED' in statuses else 'PASS'
+    return {'format': FORMAT_V2, 'status': overall, 'mapping_required': True, 'checks': checks}

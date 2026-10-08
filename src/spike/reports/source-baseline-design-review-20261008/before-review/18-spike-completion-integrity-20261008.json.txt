@@ -1,0 +1,73 @@
+{
+  "schema": "spike-completion-integrity-v1",
+  "date": "2026-10-08",
+  "status": "PASS",
+  "historical_integrity": {
+    "ledger_entries_checked": 1338,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  },
+  "current_batches": {
+    "spike-completion-mechanisms-v1": {
+      "sources_checked": 64,
+      "historical_versions_used": 1,
+      "preparation_artifacts_checked": 12,
+      "run_artifacts_checked": 13,
+      "status": "PASS"
+    },
+    "spike-completion-cognition-v1": {
+      "sources_checked": 63,
+      "historical_versions_used": 0,
+      "preparation_artifacts_checked": 38,
+      "run_artifacts_checked": 39,
+      "status": "PASS"
+    },
+    "spike-completion-direct-v1": {
+      "sources_checked": 56,
+      "historical_versions_used": 0,
+      "preparation_artifacts_checked": 57,
+      "run_artifacts_checked": 58,
+      "status": "PASS"
+    },
+    "spike-completion-x5-context-v2": {
+      "sources_checked": 56,
+      "historical_versions_used": 0,
+      "preparation_artifacts_checked": 12,
+      "run_artifacts_checked": 13,
+      "status": "PASS"
+    }
+  },
+  "archived_documents_checked": 31,
+  "markdown_files_checked": 39,
+  "local_links_checked": 201,
+  "missing_links": [],
+  "git_diff_check": "PASS with core.whitespace=cr-at-eol",
+  "layout_related_tests": {
+    "count": 20,
+    "passed": true,
+    "external_calls": 0,
+    "modules": [
+      "test_completion_direct",
+      "test_input_capacity",
+      "test_s3_diagnostic"
+    ],
+    "log": "test_direct_review_cannot_omit_criterion_or_replace_exact_quotation (test_completion_direct.CompletionDirectTests.test_direct_review_cannot_omit_criterion_or_replace_exact_quotation) ... ok\ntest_explanation_has_required_exact_profile_before_intent_and_new_task_uses_own_math (test_completion_direct.CompletionDirectTests.test_explanation_has_required_exact_profile_before_intent_and_new_task_uses_own_math) ... ok\ntest_failed_action_content_review_never_creates_explanation_intent_or_exposure (test_completion_direct.CompletionDirectTests.test_failed_action_content_review_never_creates_explanation_intent_or_exposure) ... ok\ntest_default_sends_messages_above_previous_limit_intact (test_input_capacity.InputCapacityTests.test_default_sends_messages_above_previous_limit_intact) ... ok\ntest_env_file_and_environment_precedence (test_input_capacity.InputCapacityTests.test_env_file_and_environment_precedence) ... ok\ntest_exact_limit_allowed_and_one_character_over_rejected_without_call (test_input_capacity.InputCapacityTests.test_exact_limit_allowed_and_one_character_over_rejected_without_call) ... ok\ntest_invalid_limits_and_sanitized_config_errors (test_input_capacity.InputCapacityTests.test_invalid_limits_and_sanitized_config_errors) ... ok\ntest_old_limit_can_be_selected_for_historical_replay (test_input_capacity.InputCapacityTests.test_old_limit_can_be_selected_for_historical_replay) ... ok\ntest_changed_request_rejected_before_transport (test_s3_diagnostic.S3DiagnosticTests.test_changed_request_rejected_before_transport) ... ok\ntest_correct_status_but_author_rejects_meaning_stops (test_s3_diagnostic.S3DiagnosticTests.test_correct_status_but_author_rejects_meaning_stops) ... ok\ntest_deadline_before_call_and_global_call_cap (test_s3_diagnostic.S3DiagnosticTests.test_deadline_before_call_and_global_call_cap) ... ok\ntest_host_label_rejected_before_transport (test_s3_diagnostic.S3DiagnosticTests.test_host_label_rejected_before_transport) ... ok\ntest_missing_review_does_not_advance (test_s3_diagnostic.S3DiagnosticTests.test_missing_review_does_not_advance) ... ok\ntest_nonempty_judgments_required_even_if_status_matches (test_s3_diagnostic.S3DiagnosticTests.test_nonempty_judgments_required_even_if_status_matches) ... ok\ntest_review_time_uses_shared_deadline (test_s3_diagnostic.S3DiagnosticTests.test_review_time_uses_shared_deadline) ... ok\ntest_stale_review_hash_or_incomplete_meaning_review_rejected (test_s3_diagnostic.S3DiagnosticTests.test_stale_review_hash_or_incomplete_meaning_review_rejected) ... ok\ntest_timeout_capped_and_late_return_stops_before_review (test_s3_diagnostic.S3DiagnosticTests.test_timeout_capped_and_late_return_stops_before_review) ... ok\ntest_transport_failure_persisted_and_never_retried (test_s3_diagnostic.S3DiagnosticTests.test_transport_failure_persisted_and_never_retried) ... ok\ntest_twelve_calls_and_candidate_changes_only_in_rationale (test_s3_diagnostic.S3DiagnosticTests.test_twelve_calls_and_candidate_changes_only_in_rationale) ... ok\ntest_wrong_status_stops_without_next_call (test_s3_diagnostic.S3DiagnosticTests.test_wrong_status_stops_without_next_call) ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 0.818s\n\nOK\n"
+  },
+  "primary_report_sha256": "d578e509889ce47725fb5b89b27e9b71ab7982516e6b99aef7ca4b90e5d47187",
+  "evidence_entries_after_registration": 1338,
+  "scope": "Integrity/structural verification only; never overrides semantic errors or phase gates.",
+  "final_document_review": {
+    "completion": "MET under original section 17.1; no acceptance-standard amendment",
+    "case_results": "A2 DENIED, E1/X5 INCONCLUSIVE unchanged",
+    "next_phase": "System Design Phase 6 Evidence Review / Design Revision",
+    "gate_E": "OPEN",
+    "gate_F": "OPEN",
+    "new_model_calls": 0,
+    "code_changed_since_recorded_tests": false,
+    "checks": "Historical hashes, all registered raw evidence, four frozen source packages, archive original/current bytes, local Markdown links and git diff whitespace."
+  }
+}

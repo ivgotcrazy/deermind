@@ -1,0 +1,31 @@
+# DeerMind Policy 字段引用实现与本地验证 v0.1
+
+日期：2026-10-07。状态：可选 v5 表示合同已实现并通过本地验证；真实语义质量未验收。[阶段收口决定](DeerMind_Spike_Closeout_Decision_v0.2.md)中的字段引用修复已落实。此次没有模型调用，没有重开已关闭的真实试验。
+
+## 1. 修复内容与调用路径
+
+旧 v4 要求模型返回字段编号和引文。首项真实返回引用了空 defer_condition，schema 接受该返回，本地却禁止空引文，导致整份审查不可用。新的 [policy-e1-v5.json](../../../src/spike/protocols/policy-e1-v5.json)显式使用 `policy-disposition-fields-v3`；每条 candidate_quotes 或 source_quotes 只能含 handle，模型不能返回引文、字符范围或额外字段。
+
+运行时从本次候选及获准的 review material view 枚举非空字符串字段，给出精确定位编号。模型仍在同一次语义校验中判断 S1–S5、选择字段、给出含义关系和简短理由。运行时读取所选字段的完整原文，生成从零开始到字段长度的字符范围，再执行既有证据、绑定、覆盖和裁决一致性检查。原文复制与位置计算由代码承担；依据是否支持结论继续由规则与 LLM 判断。
+
+该表示不要求模型选择引文片段，重复短语和 Unicode 字符不再导致模型猜测位置。代价是证据粒度扩大到整个字段；简短理由仍须解释相关含义，完整字段存在不证明 SUPPORTED 关系正确。运行时没有新增语义分类器或额外 reviewer，也不替模型识别自然语言矛盾。
+
+空字符串、数组、对象及非字符串值不进入引文编号清单，但保留在候选及 reviewed_fields 中。缺少任何候选字段的覆盖仍拒绝审查。Execute 的空 defer_condition 不需要伪造引文；NoIntervention 的空动作字段同样保留检查。Defer 的非空条件形状仍由已有准入检查约束，条件是否表达真实未来决策机会仍属于语义义务。被隐去的来源不进入编号清单，UNRESOLVED 不能提交。
+
+实现位于 [policy_field_references.py](../../../src/spike/foundation/policy_field_references.py)，由 [BoundaryRuntime](../../../src/spike/foundation/boundary.py)在注册、出站合同、校验及提交时重查处显式选择。PolicyWorld 新增 v5 的精确 Protocol、semantic rule 和 utility rule 版本绑定。旧 v1–v4 仍使用各自的返回合同；默认协议和 restricted-working-v1 配置不变，尚未把其固定入口升级到 v5。
+
+## 2. 有限验证结果
+
+[离线验证入口](../../../src/spike/run_policy_field_references.py)禁止网络，无 provider 执行模式，也不加载 API key。完整本地回归 347 项通过，新增 [15 项验证](../../../src/spike/tests/test_policy_field_references.py)，没有失败、错误、跳过或网络连接尝试。运行时冻结的 210 项输入在执行期间保持不变；新专项保存 15 份逐例证据和 15 条脚本 adapter 请求，最大消息 14,899 字符，低于现有 16,000 字符上限。
+
+新增验证覆盖生成到正式提交及动态 schema、空值与类型排除、Unicode 和重复文本的精确展开、NoIntervention 字段覆盖、Defer 条件形状、空字段漏查、伪造空字段编号、模型自写引文、错误 Context 绑定、隐去来源及未决拒绝、未知来源编号、已声明矛盾与整体裁决一致性、提交时重查，以及旧版本或返回合同混用拒绝。错误返回不产生有效审查，已尝试的同一候选不自动重审。
+
+另一个测试明确构造错误的定位责任陈述，再注入结构合法的语义 PASS；候选仍可能正式提交。这是对机械检查保证范围的反例保留，不是本次真实模型误放，也不计作语义质量通过。只有 LLM 已声明的矛盾才能被裁决一致性检查可靠拒绝；正确引用和正确聚合不能证明模型已经找出了应当发现的矛盾。
+
+原文与未改动的 v4 协议保存在 [来源副本](../../../src/spike/reports/source-baseline-field-references-20261007/source-map.json)。[运行摘要](../../../src/spike/runs/policy-field-references-v1/summary.json)、[逐项测试输出](../../../src/spike/runs/policy-field-references-v1/unit-tests.txt)和 [运行 manifest](../../../src/spike/runs/policy-field-references-v1/manifest.json)保存可核对的本地证据。来源冻结描述的是测试执行期间的版本；本报告及收口状态更新发生在测试结束之后。
+
+## 3. 当前结论与下一步
+
+字段引用表示在声明的本地范围内通过。原始 v4 的空引文失败、定位责任误判和九项 NOT_RUN 均保留；新的 v5 尚未取得真实模型质量或可用性结论。原完整覆盖仍为 9/17，A2 仍 DENIED，Gate E/F 保持 OPEN。
+
+下一步核对工作文档集及相邻专项的受影响接口，明确剩余 Gate 条件。本地修复完成不自动授权新的真实试验，不增加 prompt 调优或 reviewer，也不将旧批次的失败改记为成功。若后续决定需要 v5 的真实质量证据，应另行固定有限问题、输入、预算和各种结果的处置。

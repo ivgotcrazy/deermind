@@ -1,0 +1,257 @@
+{
+  "schema": "spike-completion-assessment-v1",
+  "date": "2026-10-08",
+  "status": "SPIKE_EXECUTION_COMPLETE_PHASE6_EVIDENCE_REVIEW_REQUIRED",
+  "batches": {
+    "spike-completion-mechanisms-v1": {
+      "directory": "src/spike/runs/spike-completion-mechanisms-v1",
+      "summary": {
+        "status": "EXECUTED_EVIDENCE_REVIEW_REQUIRED",
+        "actual_calls": 19,
+        "elapsed_seconds": 43.723,
+        "planned": 9,
+        "complete": 8,
+        "passed_checks": 209,
+        "failed_checks": 0,
+        "transport_extra_attempts": 0,
+        "transport_incomplete": 0,
+        "stop_reason": null
+      },
+      "artifact_manifest_sha256": "0744df55f2082b2469d710590761a3822165b0e009f7605f8853ddb07aedaef2"
+    },
+    "spike-completion-cognition-v1": {
+      "directory": "src/spike/runs/spike-completion-cognition-v1",
+      "summary": {
+        "status": "EXECUTED_REVIEW_REQUIRED",
+        "actual_calls": 108,
+        "elapsed_seconds": 291.12,
+        "planned": 35,
+        "executed": 35,
+        "stop_reason": null,
+        "passed_checks": 343,
+        "failed_checks": 0,
+        "transport_extra_attempts": 0,
+        "transport_incomplete": 0
+      },
+      "artifact_manifest_sha256": "02591aac662930bd47dd65d29e74a4817d9694287bad2a025f730e88a01d6c86"
+    },
+    "spike-completion-direct-v1": {
+      "directory": "src/spike/runs/spike-completion-direct-v1",
+      "summary": {
+        "status": "EXECUTED_REVIEW_REQUIRED",
+        "actual_calls": 160,
+        "elapsed_seconds": 334.537,
+        "planned": 50,
+        "executed": 50,
+        "stop_reason": null,
+        "boundary_complete": 4,
+        "passed_checks": 564,
+        "failed_checks": 0,
+        "transport_extra_attempts": 0,
+        "transport_incomplete": 0
+      },
+      "artifact_manifest_sha256": "7a567c460373cf3d73a48cdffad7317792bb0864bfc323128ad422fb0d6d5993"
+    },
+    "spike-completion-x5-context-v2": {
+      "directory": "src/spike/runs/spike-completion-x5-context-v2",
+      "summary": {
+        "status": "EXECUTED_REVIEW_REQUIRED",
+        "actual_calls": 96,
+        "elapsed_seconds": 211.826,
+        "planned": 5,
+        "complete": 3,
+        "boundary_complete": 4,
+        "stop_reason": null,
+        "passed_checks": 155,
+        "failed_checks": 0,
+        "transport_extra_attempts": 0,
+        "transport_incomplete": 0
+      },
+      "artifact_manifest_sha256": "d471e098cdc0f263d44419902ddb05f35ddda7bb024e41dbf7f1ff589777a892"
+    }
+  },
+  "E1_author_review": {
+    "reviewed_runs": 15,
+    "raw_llm_passes": 15,
+    "identified_defect_runs": 4,
+    "cases": [
+      {
+        "case_run": "E1-E1-open-r2",
+        "source": "src/spike/runs/spike-completion-cognition-v1/cases/E1-E1-open-r2.jsonl",
+        "source_sha256": "d662b51822dc7d662f0154dd951873e07abd05fe3427abf8a6468a9df7dc56cb",
+        "candidate_id": "9f430290a3d34271bf04abcbc1b38b04",
+        "field": "expected_disclosure",
+        "exact_excerpt": "redo 8×15",
+        "full_field": "The display shows only the cue to recheck 42÷6. It does not state the correct quotient, the corrected product, or the final answer, so the learner still must recompute 42÷6 and redo 8×15 themselves. Whether the learner attends to or acts on the cue is unknown.",
+        "reviewer": "Codex author audit; not independent human or blind evaluation",
+        "author_assessment": "CONTENT_DEFECT",
+        "basis": "Recomputing the corrected quotient must feed the later multiplication; describing a repeat of the old 8x15 conflates original and corrected work.",
+        "raw_semantic_status": "PASS",
+        "raw_utility_status": "PASS",
+        "raw_results_unchanged": true
+      },
+      {
+        "case_run": "E1-E1-open-r3",
+        "source": "src/spike/runs/spike-completion-cognition-v1/cases/E1-E1-open-r3.jsonl",
+        "source_sha256": "9cb2913c7b8073508242723c90c5bf921b8b1fa8ba747b0fb7621aa6d99e2a24",
+        "candidate_id": "144521d2dc6a4cd9921a92d2b9249b14",
+        "field": "rationale",
+        "exact_excerpt": "preserving independent diagnosis",
+        "full_field": "Learner submitted 42/6=8 then 8*15=120; the observation records the quotient should be 7 and the result 105, so the error is localized to the division step while the unit-rate strategy (C2) is correctly selected. The current input states no help or pause request, and the activity permits only self-check or a local cue, excluding the full answer. HintCheckStep names the specific step to re-examine without supplying the corrected quotient or final answer, so the learner retains the recomputation and the diagnosis of the arithmetic. AskSelfCheck would be less informative given the error is already localized; RevealFullSolution is not admissible. Cost: the cue narrows attention to one step, which may reduce search but does not remove learner work. Benefit: it targets the actual faulty step while preserving independent diagnosis.",
+        "reviewer": "Codex author audit; not independent human or blind evaluation",
+        "author_assessment": "CONTENT_DEFECT",
+        "basis": "The rationale explicitly describes a localization cue but ends with unqualified independent diagnosis; original S3 scoring remains unsatisfied.",
+        "raw_semantic_status": "PASS",
+        "raw_utility_status": "PASS",
+        "raw_results_unchanged": true
+      },
+      {
+        "case_run": "E1-E1-help-r3",
+        "source": "src/spike/runs/spike-completion-cognition-v1/cases/E1-E1-help-r3.jsonl",
+        "source_sha256": "77ee4b8fc2c0ca0aa3a525ba165e9cfe8f7a70ab3e16fa5fa8bef21ff6ff7fa0",
+        "candidate_id": "bb019d5c0c0d47c8b6cee61b482f0782",
+        "field": "expected_disclosure",
+        "exact_excerpt": "redo 8×15",
+        "full_field": "The display shows only the cue \"再检查一下 42÷6。\" It localizes the division step but does not state the correct quotient, the corrected product, or the final answer, so the learner still must recompute 42÷6 and redo 8×15 themselves.",
+        "reviewer": "Codex author audit; not independent human or blind evaluation",
+        "author_assessment": "CONTENT_DEFECT",
+        "basis": "The same obsolete intermediate value remains in the stated learner follow-up despite recomputing the quotient.",
+        "raw_semantic_status": "PASS",
+        "raw_utility_status": "PASS",
+        "raw_results_unchanged": true
+      },
+      {
+        "case_run": "E1-E1-wait-r3",
+        "source": "src/spike/runs/spike-completion-cognition-v1/cases/E1-E1-wait-r3.jsonl",
+        "source_sha256": "56cbf8c13d4ad9cc00ca1ff16db8575a3100ac78b7d73d7e15a4007ac97166d3",
+        "candidate_id": "16e74ebc15014ba1af53ea955f372cb2",
+        "field": "rationale",
+        "exact_excerpt": "either admissible action",
+        "full_field": "Learner explicitly asks to retry unaided (\"先别提示，让我自己再算一次\"). The activity permits AskSelfCheck or HintCheckStep, but the request is not authority to change activity; it is a stated preference that both admissible actions would override by pushing a display cue. The error is a single arithmetic slip (42/6 written as 8) with a correct unit-rate strategy, so the learner retains full responsibility for recomputation and no cue is needed now. Substitution cost of either admissible action is low but nonzero (it localizes the check to a step the learner is already positioned to verify); benefit is also low given the explicit request. Minimum sufficient intervention is to hold.",
+        "reviewer": "Codex author audit; not independent human or blind evaluation",
+        "author_assessment": "CONTENT_DEFECT",
+        "basis": "The rationale attributes step localization to either action, but AskSelfCheck is the generic self-check action; one action effect is assigned to both.",
+        "raw_semantic_status": "PASS",
+        "raw_utility_status": "PASS",
+        "raw_results_unchanged": true
+      }
+    ],
+    "other_results": "No additional definitive same-rule defect recorded; this is not independent quality certification. Some future-uncertainty or implicit-cue readings remain interpretive. No raw score overwritten.",
+    "conclusion": "INCONCLUSIVE under original all-runs rubric; mechanism feasibility observed without hardcoded pedagogy."
+  },
+  "direct_A2": {
+    "positive_attempts": 15,
+    "positive_commits": 15,
+    "negative_attempts": 15,
+    "negative_valid_rejections": 13,
+    "negative_commits": 2,
+    "false_admission_runs": [
+      "A2-action-recommendation-r2",
+      "A2-action-recommendation-r5"
+    ],
+    "status": "Original DENIED retained; direct profile also fails the strong isolation proposition. Mandatory-validation enforcement is a separate mechanistic property."
+  },
+  "direct_A1": {
+    "planned": 15,
+    "executed": 15,
+    "committed": 15,
+    "author_review": "All three original input meanings are present: local route and independent final result judgment for complete work; no invented learner quotient/final result for incomplete work. No prohibited history sent. Limited fixture support; absence of supplied help records is not proof of no real-world help.",
+    "status": "SUPPORTED in explicitly revised direct profile, not a rewrite of previous partial runs."
+  },
+  "X5_first_direct_audit": {
+    "raw_full_paths": 5,
+    "raw_boundaries": 4,
+    "accepted_as_final_profile": false,
+    "defect": "Explanation Policy/ActionSemantic context omitted original learner work; later Policy omitted actual prior explanation occurrence. Raw PASS cannot replace these sources.",
+    "correction": "Explicit v2-context profile adds authorized exact source records without prompt, action or criterion change; 5 repeats and 4 boundaries predeclared in separate batch."
+  },
+  "mechanical_tests": "src/spike/reports/completion-mechanical-tests-20261008.json",
+  "historical_results_preserved": true,
+  "network_failures_count_as_semantic_failure": false,
+  "new_accuracy_optimization_authorized_by_this_assessment": false,
+  "X5_context_revision": {
+    "actual_full_paths": 3,
+    "attempted_paths": 5,
+    "boundaries_complete": 4,
+    "result": "INCONCLUSIVE under original five-complete-repeat criterion",
+    "failure_runs": [
+      {
+        "id": "X5-r1",
+        "reason": "InvalidStructuredOutput",
+        "stage_count": 8,
+        "model_calls": 18
+      },
+      {
+        "id": "X5-r5",
+        "reason": "InvalidStructuredOutput",
+        "stage_count": 8,
+        "model_calls": 18
+      }
+    ],
+    "source_checks": "All outbound explanation contexts contain original work; all later Policy contexts contain the actual preceding ActionOccurrence. Cases retain exact refs; 155 checks passed.",
+    "content_limits": [
+      "Fixed explanation, not arbitrary generated lesson.",
+      "Scripted Claim-relative Evidence/Belief is within original Spike scope, not real Evaluation quality.",
+      "Some Policy rationales still discount prior teaching because the task/episode changed; scripted Evaluation correctly preserves its actual lineage.",
+      "Original v1 context omission findings are retained; new prompt/model/action content is unchanged."
+    ],
+    "format_failure_evidence": {
+      "runs": [
+        "X5-r1",
+        "X5-r5"
+      ],
+      "completion_tokens": [
+        457,
+        461
+      ],
+      "max_output_tokens": 4096,
+      "finish_reason": "tool_calls",
+      "cause": "Malformed JSON tool arguments with surplus closing structure; parser rejected, no silent repair. Not local length limit, output truncation or network failure."
+    }
+  },
+  "total_new_model_calls": 383,
+  "total_batch_seconds": 881.206,
+  "current_assumptions": {
+    "SUPPORTED": [
+      "AA-A01",
+      "AA-B01",
+      "AA-B02",
+      "AA-C01",
+      "AA-C02",
+      "AA-D01",
+      "AA-D02",
+      "AA-E02",
+      "AA-F01",
+      "AA-F02"
+    ],
+    "DENIED": [
+      "AA-A02"
+    ],
+    "INCONCLUSIVE": [
+      "AA-E01"
+    ]
+  },
+  "current_compositions": {
+    "PASS": [
+      "X1",
+      "X2",
+      "X3",
+      "X4"
+    ],
+    "INCONCLUSIVE": [
+      "X5"
+    ]
+  },
+  "current_phase": "Development Phase 1; System Design Phase 5 Spike complete, handoff to Phase 6 Evidence Review / Design Revision. Not Architecture Validation Build.",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "original_completion": "MET under original section 17.1: execution, repeat histories, actual full-path and boundary coverage, evidence, classifications, design consequences, complexity review and unified report delivered. E1/X5 original all-run support/pass conditions remain unmet.",
+  "decision_required": "No acceptance-standard amendment is needed to complete Spike. Phase 6 must formally dispose of A2 denial and E1/X5 inconclusive results before Gate E; no automatic additional quality batch.",
+  "completion_basis": {
+    "execution_completion": "Original Spike section 17.1 allows DENIED / INCONCLUSIVE; section 17.2 separates Completion from Gate E.",
+    "next_stage": "System Design Roadmap v0.6 section 4.7 Phase 6",
+    "standards_changed": false,
+    "case_results_changed": false,
+    "draft_correction": "Prior report draft conflated unmet E1/X5 support/pass conditions with execution completion; original draft bytes preserved."
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "policy-review-contract-counterfactual-v1",
+  "date": "2026-10-07",
+  "scope": "One offline deterministic checker call pair; no model call, no Runtime ValidationResult, commit, effect or original-evidence modification. Not a repaired original run.",
+  "original_return": {
+    "file": "src/spike/runs/spike-exit-v1/adapter-records.json",
+    "sha256": "5f79de48735217c65312a42d38db3df63fbaad64fb24fbb4bb42b4763580a12d",
+    "checker_error": "DispositionFindingNotAccounted"
+  },
+  "counterfactual_change": {
+    "path": "checks[S5].finding_ids",
+    "original": [
+      "F7"
+    ],
+    "counterfactual": [
+      "F7",
+      "F2"
+    ]
+  },
+  "counterfactual_checker_status": "PASS",
+  "semantic_opinions_unchanged": true,
+  "interpretation": "Fixing the missing cross-reference allows the mechanical checker to accept this review. The wrong S3/F5 compatibility opinion remains. This proves format repair alone does not address the observed semantic error; it does not prove a formal commit or action occurred.",
+  "actual_new_model_calls": 0,
+  "new_formal_reviews": 0,
+  "old_full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN"
+}

@@ -1,0 +1,66 @@
+{
+  "schema": "working-design-entry-audit-v1",
+  "date": "2026-10-07",
+  "scope": "Code inspection and existing scripted local mechanism tests; no staged runtime profile implemented",
+  "new_model_calls": 0,
+  "new_test_runs": 1,
+  "network_forbidden": true,
+  "local_tests": {
+    "modules": [
+      "test_turn_closure",
+      "test_serial",
+      "test_activity_composition"
+    ],
+    "tests_run": 30,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "output": "..............................\n----------------------------------------------------------------------\nRan 30 tests in 6.035s\n\nOK\n",
+    "passed": true
+  },
+  "entry_findings": {
+    "required_semantic_validation_and_exact_binding": "PRESENT",
+    "policy_activity_allowlist": "PRESENT_WHEN_POLICY_ADMISSION_PROFILE_SELECTED",
+    "commit_authority_dependency_currentness": "PRESENT_LOCAL_SINGLE_PROCESS",
+    "serial_closure_and_successful_control_continuation": "PRESENT_WHEN_SERIAL_SESSION_REGISTERED",
+    "session_mandatory_for_all_worlds": false,
+    "staged_no_transition_profile_registered": false,
+    "X5_automated_control_path": "STILL_ENABLED_IN_ORIGINAL_X5_HARNESS",
+    "default_protocols_changed": false,
+    "new_working_contracts_automatically_bound_to_old_entrypoints": false
+  },
+  "limitations": [
+    "Scripted cognition does not establish semantic quality.",
+    "LocalWorld replaces Observation with explicitly local legacy fixtures; not real v11/v12 usability proof.",
+    "No production remote cancellation or recovery evidence.",
+    "No X5 staged-scope acceptance or original case upgrade."
+  ],
+  "source_sha256": {
+    "src/spike/foundation/boundary.py": "adf3503e09c4c4264b5808f69f592013f4c04c6d09240a05ef183faa1caa6f24",
+    "src/spike/foundation/policy.py": "2e26c0195b5155195cd2749d1977a4273f45b5630548f521797ed3f2b80b7980",
+    "src/spike/foundation/session.py": "1cc257457a9ff1009242812a623d8c2f4c5452371ef9dbba95a215e028cc339f",
+    "src/spike/foundation/actions.py": "a546fa818f2f996b83ff2c2783f552b54b0ab9bed629476d13827c58130cc047",
+    "src/spike/foundation/activity.py": "3a2cda11efd0bcdf1c7208241fa3fdd9c41775618020c5dedd117ee3818b1c02",
+    "src/spike/foundation/activity_cases.py": "d1c08da24ff1143c4c8aeb3132734e919f02b6bc025c0bc3e332082da3b37636",
+    "src/spike/foundation/policy_cases.py": "44751d15c6526a49e60434a6fcc472f9c9c95975d4f6033fdd0b19a2ee0288af",
+    "src/spike/foundation/formation_cases.py": "2bba226eb0a9372f30f460344f1f0d67706cb7b35eb695a7dd1ccbe7a8e90b40",
+    "src/spike/tests/test_turn_closure.py": "7952755788da69371eb850d15356f02099745d2b81703bb30fb7e99291fe078b",
+    "src/spike/tests/test_serial.py": "bd8c42258240334d9b78f673a09572b23063a3975534da612d3a1aadd3c5dbdb",
+    "src/spike/tests/test_activity_composition.py": "58779a406ee4b2714b04247025fb14d36980b50b90b9fd125b0d02ed90375325",
+    "src/spike/run_activity_composition_validation.py": "ce2d149391706ddd5716f902daeb0e2f60ad7b4afd6976bc9e37cc7ec2fe7ec8",
+    "src/spike/run_policy_validation.py": "7b067b9a491d35cf15bb87c66b06c93d80ae6a90e19bdd6cee310a630781a647",
+    "src/spike/run_formation_validation.py": "cfa82a21ff136c086b2c18ecce836ddbc10b588a95dab8dbdf1b33ad50b3a86a",
+    "src/spike/run_expression_validation.py": "e5275d571661bef13ee1b9dfab8a24b699cc8b024bafd67e127e456863c5e704",
+    "src/spike/fixtures/policy-e1-v1.json": "2e37b69535871bc43ba9049287746b4edfc513494a9a5489d7ae98f36c7d36e7",
+    "src/spike/fixtures/observation-a1-v1.json": "e2512ab5825c1b157a07ce1d34f311102c1e1172f0fcc23eadb91353989a6178",
+    "src/spike/protocols/observation-smoke-v11.json": "defebd7aaec09350e8d4b8f46e944e418df326034408a0e9bfe387e3ba5ef8f1",
+    "src/spike/protocols/observation-expressions-v12.json": "52fa35deb74bc3e5b8a59007e72f3ab7298cdef307c2a74eb4dba55b49705592",
+    "src/spike/protocols/policy-e1-v4.json": "8ce7a3c83774f9beb355c96dce0867329ed56f68077edc2a8664b63301da56cf",
+    "src/spike/protocols/policy-x5-v1.json": "8ba9b46e5258336ad118d240ef18707d7a33c04e49e087c007040d582843bdef",
+    "src/spike/protocols/observation-x5-request-v1.json": "30f0eb4cab6a736ef8c6b5f3542775ec8614b9a4d99f1da7b8dbcb27df0f2cc7",
+    "src/spike/protocols/observation-x5-new-work-v1.json": "07232aa87ee446b82c7eabdc1e278d662d22855d2afeb5878125b65e092eda3d"
+  },
+  "original_full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN"
+}

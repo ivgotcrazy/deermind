@@ -1,0 +1,71 @@
+{
+  "schema": "spike-completion-x5-context-v2",
+  "protocols": {
+    "initial": "src/spike/protocols/observation-completion-direct-v1.json",
+    "request": "src/spike/protocols/observation-completion-request-v1.json",
+    "new-work": "src/spike/protocols/observation-completion-new-work-v1.json",
+    "policy": "src/spike/protocols/policy-completion-x5-context-v2.json",
+    "explanation": "src/spike/protocols/policy-completion-x5-explanation-context-v2.json"
+  },
+  "basis": "src/spike/runs/spike-completion-direct-v1",
+  "reason": "Author audit found actual source absence: original work omitted from explanation Policy; prior explanation occurrence omitted from later Policy contexts. This is an explicit context-contract implementation repair, not a semantic prompt optimization.",
+  "unchanged": [
+    "generation_system",
+    "validation_system",
+    "model",
+    "semantic_criteria",
+    "original_four_turn_X5_path",
+    "four_effect_boundaries",
+    "action_payloads",
+    "scripted_Evaluation"
+  ],
+  "budget": {
+    "max_calls": 300,
+    "wall_time_seconds": 1200,
+    "transport_retries": 2
+  },
+  "model": {
+    "model": "deepseek-flash",
+    "provider_endpoint": "https://api.deepseek.com/beta",
+    "temperature": 0,
+    "thinking": "disabled",
+    "max_output_tokens": 4096,
+    "max_input_chars": 64000,
+    "timeout_seconds": 60
+  },
+  "schedule": [
+    {
+      "id": "X5-r1",
+      "repetition": 1,
+      "max_calls": 60
+    },
+    {
+      "id": "X5-r2",
+      "repetition": 2,
+      "max_calls": 60
+    },
+    {
+      "id": "X5-r3",
+      "repetition": 3,
+      "max_calls": 60
+    },
+    {
+      "id": "X5-r4",
+      "repetition": 4,
+      "max_calls": 60
+    },
+    {
+      "id": "X5-r5",
+      "repetition": 5,
+      "max_calls": 60
+    }
+  ],
+  "boundaries": [
+    "control-not-occurred",
+    "explanation-not-occurred",
+    "explanation-partial",
+    "explanation-indeterminate"
+  ],
+  "semantic_retries": 0,
+  "automatic_additional_batches": false
+}

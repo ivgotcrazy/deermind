@@ -1,0 +1,4145 @@
+{
+  "rows": [
+    {
+      "id": "P1-localization-conflict-r1",
+      "group": "E1-controls",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "review": {
+        "candidate_digest": "5bf303df859d5fc4f45dad5bbc6a9f793ed41ca3dcffecaeb306b61a53d75ee3",
+        "checks": [
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S1",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S2",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S3",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S4",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S5",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          }
+        ],
+        "context_id": "95360c1b0dd9489081755e5abb15d755",
+        "findings": [
+          {
+            "candidate_quotes": [
+              {
+                "handle": "candidate_9"
+              }
+            ],
+            "gap_ids": [],
+            "id": "f1",
+            "rationale": "SCRIPTED ONLY",
+            "relation": "CONTRADICTED",
+            "rules": [
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5"
+            ],
+            "source_quotes": [
+              {
+                "handle": "source_0"
+              }
+            ]
+          }
+        ],
+        "material_record_ref": {
+          "identity": "66cad5a5162e497db80fca70ed052f76",
+          "revision": "1",
+          "space": "execution"
+        },
+        "rationale": "SCRIPTED ONLY",
+        "review_material_gaps": [],
+        "reviewed_fields": [
+          "action_identity",
+          "action_revision",
+          "context_refs",
+          "defer_condition",
+          "episode",
+          "exact_payload",
+          "executor_target",
+          "expected_disclosure",
+          "outcome",
+          "rationale",
+          "uncertainty"
+        ],
+        "rule_ref": {
+          "identity": "E1PolicySemanticRules",
+          "revision": "v5",
+          "space": "canonical"
+        },
+        "status": "FAIL"
+      },
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 2
+    },
+    {
+      "id": "P2-legal-localization-r1",
+      "group": "E1-controls",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "PASS",
+      "review": {
+        "candidate_digest": "99713a3f916d24d2944673ee7c18a501c8324ca68e197800d925dc44b59c859c",
+        "checks": [
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S1",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S2",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S3",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S4",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S5",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          }
+        ],
+        "context_id": "d477fbc51e6945e7966fb4442764d66e",
+        "findings": [
+          {
+            "candidate_quotes": [
+              {
+                "handle": "candidate_9"
+              }
+            ],
+            "gap_ids": [],
+            "id": "f1",
+            "rationale": "SCRIPTED ONLY",
+            "relation": "SUPPORTED",
+            "rules": [
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5"
+            ],
+            "source_quotes": [
+              {
+                "handle": "source_0"
+              }
+            ]
+          }
+        ],
+        "material_record_ref": {
+          "identity": "46f8ed200c20416fa4e591d3199176c2",
+          "revision": "1",
+          "space": "execution"
+        },
+        "rationale": "SCRIPTED ONLY",
+        "review_material_gaps": [],
+        "reviewed_fields": [
+          "action_identity",
+          "action_revision",
+          "context_refs",
+          "defer_condition",
+          "episode",
+          "exact_payload",
+          "executor_target",
+          "expected_disclosure",
+          "outcome",
+          "rationale",
+          "uncertainty"
+        ],
+        "rule_ref": {
+          "identity": "E1PolicySemanticRules",
+          "revision": "v5",
+          "space": "canonical"
+        },
+        "status": "PASS"
+      },
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 2
+    },
+    {
+      "id": "P3-unsupported-uncertainty-r1",
+      "group": "E1-controls",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "review": {
+        "candidate_digest": "c9ea4ed2c9885ac8872e2f517a75077234591a4ddc72bf17cdd5d70def804ade",
+        "checks": [
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S1",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S2",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S3",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S4",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S5",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          }
+        ],
+        "context_id": "f6c997377473422090116a573c96ea5a",
+        "findings": [
+          {
+            "candidate_quotes": [
+              {
+                "handle": "candidate_9"
+              }
+            ],
+            "gap_ids": [],
+            "id": "f1",
+            "rationale": "SCRIPTED ONLY",
+            "relation": "CONTRADICTED",
+            "rules": [
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5"
+            ],
+            "source_quotes": [
+              {
+                "handle": "source_0"
+              }
+            ]
+          }
+        ],
+        "material_record_ref": {
+          "identity": "b12a5622c9674ffeada0ec18c596b657",
+          "revision": "1",
+          "space": "execution"
+        },
+        "rationale": "SCRIPTED ONLY",
+        "review_material_gaps": [],
+        "reviewed_fields": [
+          "action_identity",
+          "action_revision",
+          "context_refs",
+          "defer_condition",
+          "episode",
+          "exact_payload",
+          "executor_target",
+          "expected_disclosure",
+          "outcome",
+          "rationale",
+          "uncertainty"
+        ],
+        "rule_ref": {
+          "identity": "E1PolicySemanticRules",
+          "revision": "v5",
+          "space": "canonical"
+        },
+        "status": "FAIL"
+      },
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 2
+    },
+    {
+      "id": "P1-localization-conflict-r2",
+      "group": "E1-controls",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "review": {
+        "candidate_digest": "9f6726a7f58b892daf4c816dfc3149ee179d055cbe4ef5faaa018367cb8960b7",
+        "checks": [
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S1",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S2",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S3",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S4",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S5",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          }
+        ],
+        "context_id": "282dd299ae6e43d080f99cacc7a4f191",
+        "findings": [
+          {
+            "candidate_quotes": [
+              {
+                "handle": "candidate_9"
+              }
+            ],
+            "gap_ids": [],
+            "id": "f1",
+            "rationale": "SCRIPTED ONLY",
+            "relation": "CONTRADICTED",
+            "rules": [
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5"
+            ],
+            "source_quotes": [
+              {
+                "handle": "source_0"
+              }
+            ]
+          }
+        ],
+        "material_record_ref": {
+          "identity": "6861b95eb3404c409874eebb2d6fbd83",
+          "revision": "1",
+          "space": "execution"
+        },
+        "rationale": "SCRIPTED ONLY",
+        "review_material_gaps": [],
+        "reviewed_fields": [
+          "action_identity",
+          "action_revision",
+          "context_refs",
+          "defer_condition",
+          "episode",
+          "exact_payload",
+          "executor_target",
+          "expected_disclosure",
+          "outcome",
+          "rationale",
+          "uncertainty"
+        ],
+        "rule_ref": {
+          "identity": "E1PolicySemanticRules",
+          "revision": "v5",
+          "space": "canonical"
+        },
+        "status": "FAIL"
+      },
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 2
+    },
+    {
+      "id": "P2-legal-localization-r2",
+      "group": "E1-controls",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "PASS",
+      "review": {
+        "candidate_digest": "719c72cac21be9e53569c9951dd85b3bcdb9dc74572e8514b448572ff32c8545",
+        "checks": [
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S1",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S2",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S3",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S4",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S5",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "SATISFIED",
+            "status": "PASS"
+          }
+        ],
+        "context_id": "310999c6eb0243628004551b8e7fce07",
+        "findings": [
+          {
+            "candidate_quotes": [
+              {
+                "handle": "candidate_9"
+              }
+            ],
+            "gap_ids": [],
+            "id": "f1",
+            "rationale": "SCRIPTED ONLY",
+            "relation": "SUPPORTED",
+            "rules": [
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5"
+            ],
+            "source_quotes": [
+              {
+                "handle": "source_0"
+              }
+            ]
+          }
+        ],
+        "material_record_ref": {
+          "identity": "e0cf06da0aab4a5d8c24ef29d5e1acaf",
+          "revision": "1",
+          "space": "execution"
+        },
+        "rationale": "SCRIPTED ONLY",
+        "review_material_gaps": [],
+        "reviewed_fields": [
+          "action_identity",
+          "action_revision",
+          "context_refs",
+          "defer_condition",
+          "episode",
+          "exact_payload",
+          "executor_target",
+          "expected_disclosure",
+          "outcome",
+          "rationale",
+          "uncertainty"
+        ],
+        "rule_ref": {
+          "identity": "E1PolicySemanticRules",
+          "revision": "v5",
+          "space": "canonical"
+        },
+        "status": "PASS"
+      },
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 2
+    },
+    {
+      "id": "P3-unsupported-uncertainty-r2",
+      "group": "E1-controls",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "review": {
+        "candidate_digest": "fb58c11582249423534c95ef5c192f9d0240449ea72bdf4cb6626c29b731703f",
+        "checks": [
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S1",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S2",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S3",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S4",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          },
+          {
+            "finding_ids": [
+              "f1"
+            ],
+            "id": "S5",
+            "rationale": "SCRIPTED ONLY",
+            "reason_code": "CONTENT_DEFECT",
+            "status": "FAIL"
+          }
+        ],
+        "context_id": "08ab746b95ee498f901321ef821a7d4e",
+        "findings": [
+          {
+            "candidate_quotes": [
+              {
+                "handle": "candidate_9"
+              }
+            ],
+            "gap_ids": [],
+            "id": "f1",
+            "rationale": "SCRIPTED ONLY",
+            "relation": "CONTRADICTED",
+            "rules": [
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5"
+            ],
+            "source_quotes": [
+              {
+                "handle": "source_0"
+              }
+            ]
+          }
+        ],
+        "material_record_ref": {
+          "identity": "ab72f905b6944ab0924a11e7f39c36f4",
+          "revision": "1",
+          "space": "execution"
+        },
+        "rationale": "SCRIPTED ONLY",
+        "review_material_gaps": [],
+        "reviewed_fields": [
+          "action_identity",
+          "action_revision",
+          "context_refs",
+          "defer_condition",
+          "episode",
+          "exact_payload",
+          "executor_target",
+          "expected_disclosure",
+          "outcome",
+          "rationale",
+          "uncertainty"
+        ],
+        "rule_ref": {
+          "identity": "E1PolicySemanticRules",
+          "revision": "v5",
+          "space": "canonical"
+        },
+        "status": "FAIL"
+      },
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 2
+    },
+    {
+      "id": "O1-grounded-local-r1",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "PASS",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O2-attributed-report-r1",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "PASS",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O3-local-ambiguity-r1",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "PASS",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O4-system-ability-r1",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "FAIL",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O5-system-recommendation-r1",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "FAIL",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O6-evidence-judgment-r1",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "FAIL",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O7-mixed-overreach-r1",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "FAIL",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O8-soft-overreach-r1",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "FAIL",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O1-grounded-local-r2",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "PASS",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O2-attributed-report-r2",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "PASS",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O3-local-ambiguity-r2",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "PASS",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O4-system-ability-r2",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "FAIL",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O5-system-recommendation-r2",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "FAIL",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O6-evidence-judgment-r2",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "FAIL",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O7-mixed-overreach-r2",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "FAIL",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "O8-soft-overreach-r2",
+      "group": "A2",
+      "execution": "COMPLETED",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "semantic_status": "FAIL",
+      "commit_status": "ValidationFailed",
+      "review": {
+        "claims": [
+          {
+            "attribution": {
+              "speaker": "system",
+              "stance": "endorsed"
+            },
+            "boundary_status": "FAIL",
+            "field": "description",
+            "inspected_sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "text",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                }
+              },
+              {
+                "field": "ontology",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              },
+              {
+                "field": "responsibility",
+                "ref": {
+                  "identity": "ObservationSemantics",
+                  "revision": "v1",
+                  "space": "canonical"
+                }
+              }
+            ],
+            "kind": "paraphrase",
+            "rationale": "SCRIPTED ONLY",
+            "reported_quote": null,
+            "sources": [
+              {
+                "field": "task",
+                "ref": {
+                  "identity": "A1-work",
+                  "revision": "1",
+                  "space": "fact"
+                },
+                "text": "6kg apples cost 42 yuan. What do 15kg cost?"
+              }
+            ],
+            "status": "PASS",
+            "support": "supported",
+            "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+          }
+        ],
+        "criteria": [
+          {
+            "id": "method",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "division",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "final_result",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "grounding",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "boundary",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "FAIL"
+          },
+          {
+            "id": "arithmetic_mapping",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          },
+          {
+            "id": "attribution",
+            "quotes": [
+              {
+                "field": "description",
+                "text": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+              }
+            ],
+            "rationale": "SCRIPTED ONLY",
+            "status": "PASS"
+          }
+        ],
+        "reviewed_fields": [
+          "description"
+        ]
+      },
+      "responsibility_status": "FAIL",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 3
+    },
+    {
+      "id": "A1-error-r1",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-error",
+      "repetition": 1,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-correct-r1",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-correct",
+      "repetition": 1,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-incomplete-r1",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-incomplete",
+      "repetition": 1,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-error-r2",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-error",
+      "repetition": 2,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-correct-r2",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-correct",
+      "repetition": 2,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-incomplete-r2",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-incomplete",
+      "repetition": 2,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-error-r3",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-error",
+      "repetition": 3,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-correct-r3",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-correct",
+      "repetition": 3,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-incomplete-r3",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-incomplete",
+      "repetition": 3,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-error-r4",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-error",
+      "repetition": 4,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-correct-r4",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-correct",
+      "repetition": 4,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-incomplete-r4",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-incomplete",
+      "repetition": 4,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-error-r5",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-error",
+      "repetition": 5,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-correct-r5",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-correct",
+      "repetition": 5,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "A1-incomplete-r5",
+      "group": "A1",
+      "execution": "COMPLETED",
+      "variant": "A1-incomplete",
+      "repetition": 5,
+      "result": "PASS",
+      "commit_status": "Committed",
+      "semantic_status": "PASS",
+      "candidate": {
+        "description": "Explicit offline interface fixture; no semantic capability evidence."
+      },
+      "commit_reason": "",
+      "criterion_statuses": {
+        "method": "PASS",
+        "division": "PASS",
+        "final_result": "PASS",
+        "grounding": "PASS",
+        "boundary": "PASS",
+        "arithmetic_mapping": "PASS",
+        "attribution": "PASS"
+      },
+      "model_calls": 4,
+      "checks": 11,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-open-r1",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-open",
+      "repetition": 1,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "Execute",
+      "action": "AskSelfCheck",
+      "effect_status": "Occurred",
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-help-r1",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-help",
+      "repetition": 1,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "Execute",
+      "action": "AskSelfCheck",
+      "effect_status": "Occurred",
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-wait-r1",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-wait",
+      "repetition": 1,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "NoIntervention",
+      "action": "",
+      "effect_status": null,
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-open-r2",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-open",
+      "repetition": 2,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "Execute",
+      "action": "AskSelfCheck",
+      "effect_status": "Occurred",
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-help-r2",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-help",
+      "repetition": 2,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "Execute",
+      "action": "AskSelfCheck",
+      "effect_status": "Occurred",
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-wait-r2",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-wait",
+      "repetition": 2,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "NoIntervention",
+      "action": "",
+      "effect_status": null,
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-open-r3",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-open",
+      "repetition": 3,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "Execute",
+      "action": "AskSelfCheck",
+      "effect_status": "Occurred",
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-help-r3",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-help",
+      "repetition": 3,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "Execute",
+      "action": "AskSelfCheck",
+      "effect_status": "Occurred",
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-wait-r3",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-wait",
+      "repetition": 3,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "NoIntervention",
+      "action": "",
+      "effect_status": null,
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-open-r4",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-open",
+      "repetition": 4,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "Execute",
+      "action": "AskSelfCheck",
+      "effect_status": "Occurred",
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-help-r4",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-help",
+      "repetition": 4,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "Execute",
+      "action": "AskSelfCheck",
+      "effect_status": "Occurred",
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-wait-r4",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-wait",
+      "repetition": 4,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "NoIntervention",
+      "action": "",
+      "effect_status": null,
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-open-r5",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-open",
+      "repetition": 5,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "Execute",
+      "action": "AskSelfCheck",
+      "effect_status": "Occurred",
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-help-r5",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-help",
+      "repetition": 5,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "Execute",
+      "action": "AskSelfCheck",
+      "effect_status": "Occurred",
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E1-wait-r5",
+      "group": "E1-normal",
+      "execution": "COMPLETED",
+      "variant": "E1-wait",
+      "repetition": 5,
+      "result": "PASS",
+      "legality_reason": "",
+      "semantic_status": "PASS",
+      "commit_status": "Committed",
+      "utility_status": "PASS",
+      "outcome": "NoIntervention",
+      "action": "",
+      "effect_status": null,
+      "forbidden_effect": false,
+      "illegal_commit": false,
+      "commit_reason": "",
+      "model_calls": 3,
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE"
+    },
+    {
+      "id": "E2-A-queue-gap-r1",
+      "group": "E2",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "commit_status": "Committed",
+      "effect_status": "Occurred",
+      "outcome": "Execute",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 4
+    },
+    {
+      "id": "E2-A-queue-gap-r5",
+      "group": "E2",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "commit_status": "Committed",
+      "effect_status": "Occurred",
+      "outcome": "Execute",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 4
+    },
+    {
+      "id": "F2-F2-subject-read-gap-r1",
+      "group": "F2",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "model_result": "MODEL_REFUSED",
+      "injected_result": "DENIED",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 1
+    },
+    {
+      "id": "F2-F2-subject-execute-gap-r1",
+      "group": "F2",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "model_result": "MODEL_REFUSED",
+      "injected_result": "DENIED",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 1
+    },
+    {
+      "id": "F2-F2-subject-execute-gap-r5",
+      "group": "F2",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "model_result": "MODEL_REFUSED",
+      "injected_result": "DENIED",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 1
+    },
+    {
+      "id": "F2-F2-purpose-gap-r2",
+      "group": "F2",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "model_result": "MODEL_REFUSED",
+      "injected_result": "DENIED",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 1
+    },
+    {
+      "id": "F2-F2-purpose-gap-r3",
+      "group": "F2",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "model_result": "MODEL_REFUSED",
+      "injected_result": "DENIED",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 1
+    },
+    {
+      "id": "X1-X1-correction-gap-r1",
+      "group": "X1",
+      "execution": "COMPLETED",
+      "commit_status": "CandidateStale",
+      "commit_reason": "Corrected",
+      "outcome": "Execute",
+      "coverage": "COMPLETE",
+      "future_protocol": {
+        "space": "canonical",
+        "identity": "XPolicyProtocol",
+        "revision": "v1"
+      },
+      "future_commit": "Committed",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 4
+    },
+    {
+      "id": "X2-X2-revoke-gap-r5",
+      "group": "X2",
+      "execution": "COMPLETED",
+      "commit_status": "Committed",
+      "commit_reason": "",
+      "outcome": "Execute",
+      "effect_status": "NotOccurred",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 2
+    },
+    {
+      "id": "X5-path-r1",
+      "group": "X5",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 28
+    },
+    {
+      "id": "X5-path-r2",
+      "group": "X5",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 28
+    },
+    {
+      "id": "X5-path-r3",
+      "group": "X5",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 28
+    },
+    {
+      "id": "X5-path-r4",
+      "group": "X5",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 28
+    },
+    {
+      "id": "X5-path-r5",
+      "group": "X5",
+      "execution": "COMPLETED",
+      "coverage": "COMPLETE",
+      "result": "PASS",
+      "failed_checks": [],
+      "content_review": "ACCEPTED_FOR_THIS_SCOPE",
+      "model_calls": 28
+    }
+  ],
+  "boundaries": [
+    {
+      "variant": "control-not-occurred",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "model_calls": 0,
+      "checks": 9,
+      "failed_checks": [],
+      "parent_case": "X5-path-r1"
+    },
+    {
+      "variant": "explanation-not-occurred",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "model_calls": 0,
+      "checks": 7,
+      "failed_checks": [],
+      "parent_case": "X5-path-r1"
+    },
+    {
+      "variant": "explanation-partial",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "model_calls": 0,
+      "checks": 6,
+      "failed_checks": [],
+      "parent_case": "X5-path-r1"
+    },
+    {
+      "variant": "explanation-indeterminate",
+      "result": "PASS",
+      "coverage": "COMPLETE",
+      "model_calls": 0,
+      "checks": 7,
+      "failed_checks": [],
+      "parent_case": "X5-path-r1"
+    }
+  ],
+  "stop_reason": null,
+  "model_calls": 324,
+  "semantic_support_claimed": false,
+  "content_review_required": true,
+  "original_full_cases_completed": 9,
+  "original_A2": "DENIED",
+  "gate_E": "OPEN",
+  "gate_F": "OPEN"
+}

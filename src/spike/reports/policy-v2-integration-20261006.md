@@ -2,7 +2,7 @@
 
 日期：2026-10-06。局部运行机制已实现并验证，语义质量尚未验证。
 
-[上一阶段合同](../../../doc/system-design/DeerMind_Policy_Semantic_Utility_Contract_v0.1.md)中的 v2 规则已显式接入 PolicyWorld 和 run_policy_case 的 `rule_revision='v2'` 路径。协议、语义规则及 utility 规则全部绑定 v2，并共同进入兼容性依据和 VersionContext。直接从默认 v1 入口加载 v2 或声明不一致引用会拒绝。v1 默认入口与旧协议文件保留，行动目录仍使用原有 e1-v1 精确引用；规则版本升级不暗中改变行动内容或授权。
+[上一阶段合同](../../../doc/system-design/spike/DeerMind_Policy_Semantic_Utility_Contract_v0.1.md)中的 v2 规则已显式接入 PolicyWorld 和 run_policy_case 的 `rule_revision='v2'` 路径。协议、语义规则及 utility 规则全部绑定 v2，并共同进入兼容性依据和 VersionContext。直接从默认 v1 入口加载 v2 或声明不一致引用会拒绝。v1 默认入口与旧协议文件保留，行动目录仍使用原有 e1-v1 精确引用；规则版本升级不暗中改变行动内容或授权。
 
 测试评分开始前核对其精确引用、候选 Context 的协议与语义绑定，以及已注册协议内容；替换为 v1 评分规则会在调用模型前拒绝。该检查不把评分变成生产校验，也不改变评分不能授权行动的职责。[修改前源文件](source-baseline-policy-v2-20261006/index.json)保留，旧 manifest 和结论未改写。v2 JSON 和合同中的未集成标记是上一阶段冻结快照；当前局部实现状态由本报告和进度清单记录。
 

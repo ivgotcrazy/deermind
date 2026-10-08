@@ -1,0 +1,150 @@
+{
+  "status": "READY",
+  "scripted_paths": 5,
+  "scripted_boundaries": 4,
+  "scripted_calls": 100,
+  "external_calls": 0,
+  "plan": {
+    "schema": "spike-completion-x5-context-v2",
+    "protocols": {
+      "initial": "src/spike/protocols/observation-completion-direct-v1.json",
+      "request": "src/spike/protocols/observation-completion-request-v1.json",
+      "new-work": "src/spike/protocols/observation-completion-new-work-v1.json",
+      "policy": "src/spike/protocols/policy-completion-x5-context-v2.json",
+      "explanation": "src/spike/protocols/policy-completion-x5-explanation-context-v2.json"
+    },
+    "basis": "src/spike/runs/spike-completion-direct-v1",
+    "reason": "Author audit found actual source absence: original work omitted from explanation Policy; prior explanation occurrence omitted from later Policy contexts. This is an explicit context-contract implementation repair, not a semantic prompt optimization.",
+    "unchanged": [
+      "generation_system",
+      "validation_system",
+      "model",
+      "semantic_criteria",
+      "original_four_turn_X5_path",
+      "four_effect_boundaries",
+      "action_payloads",
+      "scripted_Evaluation"
+    ],
+    "budget": {
+      "max_calls": 300,
+      "wall_time_seconds": 1200,
+      "transport_retries": 2
+    },
+    "model": {
+      "model": "deepseek-flash",
+      "provider_endpoint": "https://api.deepseek.com/beta",
+      "temperature": 0,
+      "thinking": "disabled",
+      "max_output_tokens": 4096,
+      "max_input_chars": 64000,
+      "timeout_seconds": 60
+    },
+    "schedule": [
+      {
+        "id": "X5-r1",
+        "repetition": 1,
+        "max_calls": 60
+      },
+      {
+        "id": "X5-r2",
+        "repetition": 2,
+        "max_calls": 60
+      },
+      {
+        "id": "X5-r3",
+        "repetition": 3,
+        "max_calls": 60
+      },
+      {
+        "id": "X5-r4",
+        "repetition": 4,
+        "max_calls": 60
+      },
+      {
+        "id": "X5-r5",
+        "repetition": 5,
+        "max_calls": 60
+      }
+    ],
+    "boundaries": [
+      "control-not-occurred",
+      "explanation-not-occurred",
+      "explanation-partial",
+      "explanation-indeterminate"
+    ],
+    "semantic_retries": 0,
+    "automatic_additional_batches": false
+  },
+  "source_sha256": {
+    "src/spike/foundation/actions.py": "469d23733814e8381a617bc2c9353133792534ea0149c591e4f6d061c40f9867",
+    "src/spike/foundation/action_cases.py": "ca12edb2a45f52961589ff3c53d03a6ee3feb902b4ffb0e0e8a15d8d96f9b1a0",
+    "src/spike/foundation/activity.py": "3a2cda11efd0bcdf1c7208241fa3fdd9c41775618020c5dedd117ee3818b1c02",
+    "src/spike/foundation/activity_cases.py": "d1c08da24ff1143c4c8aeb3132734e919f02b6bc025c0bc3e332082da3b37636",
+    "src/spike/foundation/arithmetic.py": "322ba1cf462e1f8b2b914d084a136d4c3635dc77241e3395e46cbf1ace52f80d",
+    "src/spike/foundation/boundary.py": "738fb688d3ef4949cd50dc182ec7d6812b18c129a28abdd43c19d0f25b5bce23",
+    "src/spike/foundation/candidate_spans.py": "9c0057eac443561133cbd40ce2d2a319e4e04bbc46c38ac0e981cd61b53b76b7",
+    "src/spike/foundation/cases.py": "91ff4d712ce4d7ec1097e62e26694e7857fed88b0211c387c2e527f5fd991b27",
+    "src/spike/foundation/claim_axes.py": "555d2b12687b58c29ca471a0fd35d10e0229e82f82f749435658a9cda9908f89",
+    "src/spike/foundation/composition_cases.py": "6340f9e91eb1019a744a9893fcb80ebdc93493d897df864bea0b648a857eea41",
+    "src/spike/foundation/content_projection.py": "a25f91b3df4797629152c9c477cd301de544ace41aec11e870f8f1210c5b4dd3",
+    "src/spike/foundation/dependency_cases.py": "bc522b01bbeda94054a9a9f62641c21523f2bf9ccf7646f21fc6016795ecb0e6",
+    "src/spike/foundation/exit_campaign.py": "007de4b75031dd6962be23bd485f49f84e6407d561654814cf94d368dbddd2b8",
+    "src/spike/foundation/expressions.py": "353b802b9d82020912b4fc5a270afa03f7c9473c6a9f0a3293206d50ce15aa53",
+    "src/spike/foundation/formation_cases.py": "2bba226eb0a9372f30f460344f1f0d67706cb7b35eb695a7dd1ccbe7a8e90b40",
+    "src/spike/foundation/guarded_cases.py": "77aa00b031cd64fb05c12c2314290b4b8e166d572ddb6168fd10f89640c5ce5f",
+    "src/spike/foundation/history_composition_cases.py": "1e84cadde63dd7b4feaf6930800d4017fdf8d8bed11dda98a0046971b1e7ca99",
+    "src/spike/foundation/llm.py": "328a35c5bbc89a1b2929dd2c0d3313b73f112639d7f27a35db1bef52b2d9c6cd",
+    "src/spike/foundation/observer_arithmetic.py": "30b24f4bc6ba330d7e2ed4ccf9a6e4dbb8dfa121c7db432a3a1e5cf4f59ef8f6",
+    "src/spike/foundation/policy.py": "2e26c0195b5155195cd2749d1977a4273f45b5630548f521797ed3f2b80b7980",
+    "src/spike/foundation/policy_cases.py": "c2f404ba89006c9aadaa8edb66893a0173370511b3678b36cf48d1db0012f2af",
+    "src/spike/foundation/policy_disposition.py": "581a2bb158a240bc5a6bae0d08c0aaae407b144e854b00577330a7807b40f840",
+    "src/spike/foundation/policy_field_quotes.py": "72f74b467e84b7925d52999e6545648597b3a5da47df1bfb272c74d6b931ff72",
+    "src/spike/foundation/policy_field_references.py": "6522c94623ecdfeaecb31324311378a53466ed0510ac6c0a412486152e12d579",
+    "src/spike/foundation/protocol_preflight.py": "0603054f7382147d971a1650c660ca8b9c8c344fc78842f16d06810e75526118",
+    "src/spike/foundation/records.py": "95abac7d39d6ef2202bb16421495666cb15c26f1f1162dd702683846aae00244",
+    "src/spike/foundation/replay.py": "36f7ee7352d24d39fde7225f5808b874a0f11cfab7773035906beb779731f0ce",
+    "src/spike/foundation/responsibility.py": "80fb8b9610fc87146db0a0ecd3054a1b768fc80abeeb61bcb9981ccb7e0291ac",
+    "src/spike/foundation/runtime.py": "b0bb1af59bb6bfcc1bada9ac09cca9be07e3a8e0f4b8efaf02f1c61b04f10f1e",
+    "src/spike/foundation/s3_diagnostic.py": "8e3e9ff98253e2e63627fa44c9801a35b0f9151de11f81c704dbd18cfd7d632f",
+    "src/spike/foundation/security.py": "7e83a20c8c6471e2d9539acf13b143e9cd5ae5971b8625791c31a6f1176f2668",
+    "src/spike/foundation/security_cases.py": "38516a3ddb4ba4191826f45810bc10bb0ceb70159504db747046560310eada16",
+    "src/spike/foundation/semantic_review.py": "9628df31f4c9ca6db1e36369b86cb7484d26379c886398aebeaa7804ecec902d",
+    "src/spike/foundation/serial_cases.py": "0738f953952282ddeec58ad2c3150e248c4a22dba25937ab7b5a072c86d4482a",
+    "src/spike/foundation/session.py": "1cc257457a9ff1009242812a623d8c2f4c5452371ef9dbba95a215e028cc339f",
+    "src/spike/foundation/single_task.py": "4ec43d9e11d11a6ea87ccf1abe98171c1f0cdcf7fb39c4a5ec10df022e2aeeb2",
+    "src/spike/foundation/source_conflicts.py": "cf3aa9a2a7561f9713e0972f04987cafbb310cdcd3bcf4301f23d564fc34be13",
+    "src/spike/foundation/source_handles.py": "1896f9b17d8d40351ed7792dcd9cceae864fd2e638fb8672f2a773905f9dcaa8",
+    "src/spike/foundation/structured_output.py": "803a45de9413c7f2dd7aebffa86763aeea33f78c193995f00be55653c0648113",
+    "src/spike/foundation/tool_boundary.py": "045d641a74ca747941025b8908eb7b6f1199a42695fb209dcfb10d68003a0921",
+    "src/spike/foundation/validation_dimensions.py": "1a4dd56961c35aaefc42b034528f52707f1b0a35c5383fd62b7afb2a4789f90a",
+    "src/spike/foundation/version_replay_cases.py": "0ac4ba0548ebc0174dd867ab94b64a16a637d4def5b5d368b850a03940414f2a",
+    "src/spike/foundation/working_campaign.py": "d694f2739a6a86515df3a8f6ef175907a28380af3aec9c2f573e45e89951aa8d",
+    "src/spike/foundation/working_entry.py": "ef3d137cf01ea68d8ab8a45065bbf069bf89ea8105453bde6c242a264c8576c0",
+    "src/spike/foundation/__init__.py": "44e8f9249413c3f1b454e056d38aee69c02186206d2f932feafc0fe4be60ba68",
+    "src/spike/run_completion_x5_context.py": "e32fd6b9422abdf668ed41c2b4e385c9b02f7674cef5c9080310077a8995b644",
+    "src/spike/fixtures/spike-completion-x5-context-v2.json": "983a0932b02d4f667c065f1ad9296f9343dd86b6211043d14a4825e7dfa1f113",
+    "src/spike/run_completion_direct.py": "4e625df1d9ccfaf28e67c6da84daedf6c2f53f69f2be548c89b0968e0e665f8f",
+    "src/spike/run_network_retry.py": "2946af726f14cc355d266d43cf40a94c664f43a6fdb1a9f140a5e08635ac367e",
+    "src/spike/prepare_spike_exit.py": "6a9a1bf6b2387652f4a9ba553b5df51b05714ab73571450538dc7f84ceb2c15b",
+    "src/spike/fixtures/composition-x5-v1.json": "b23b318a6fe3515d1be0d0ece3fa3811b641d4bd1d309139392927f5ff1b7e71",
+    "src/spike/protocols/observation-completion-direct-v1.json": "0ce04674a6913f6ef74a5bc47fd536c897ff115b47b32a8f6554efc67e45bc51",
+    "src/spike/protocols/observation-completion-request-v1.json": "1ef7ec243b3bbd0be2e0337dc34bad1f7fa41466eacd0b211f6992152fcd2c2c",
+    "src/spike/protocols/observation-completion-new-work-v1.json": "81e6f452b33b98d5fd3e62956f03875325074e481eab00f65c27ab2839f36ed3",
+    "src/spike/protocols/policy-completion-x5-context-v2.json": "6e1fde1465e8630fd812139b026e5d53c52085cce6ef5462faa4281d0a4174be",
+    "src/spike/protocols/policy-completion-x5-explanation-context-v2.json": "73c150d097c9fafd48f9c949a8532f4dbdbab8b876205a5bbdee38d1dd6d95e3"
+  },
+  "artifact_sha256": {
+    "adapter-records.json": "f585294b222a423cb409f8d615bb63782f6db97efcfd41b133c32254cafe1594",
+    "readiness.json": "dc717b97ca7084a09d767b864141eb46d3c8ef44168bfbf4218ad4a6d060e90a",
+    "results.json": "c04f436d51c22254d55c2184c68e41e6168280ea7db5a2eab3a79fef41569560",
+    "cases/X5-control-not-occurred.jsonl": "b7d82c3d636f39f91d7365c3665e550b2a9e58276d2d7602e52c9562fd1db55a",
+    "cases/X5-explanation-indeterminate.jsonl": "e4f979c0076003e8f449679e73a6c1faa0752ef718072d01eaa07d4b585456f1",
+    "cases/X5-explanation-not-occurred.jsonl": "63a48e3ee2b10f2ecca7d01d15b2fbe781f931a4e324fa2d6e4aa419ca61c2d9",
+    "cases/X5-explanation-partial.jsonl": "a211d4ab426ca9ad6dea4ad85592b0daac8d16edde4a3e307c073f82437099b1",
+    "cases/X5-r1.jsonl": "b8a2945e53fa3d0e638f9c5fdb1b3368ee49c33a56f1f02cb7f2cbd81a697c99",
+    "cases/X5-r2.jsonl": "2a8e4a0daa378da0e576aac5abdef4bf2f38fb76842377c7420d5975e9d9b604",
+    "cases/X5-r3.jsonl": "aa13dce11f491c4bdaaf3b2d6c7fc192d19d4e87e81738fc9120abbe306afbff",
+    "cases/X5-r4.jsonl": "8eec2b90cdfb998a1d7618354dd6931914aae065881d8e6b12cfc6fb1c9d9e8c",
+    "cases/X5-r5.jsonl": "a57b57a98a126731163c7841e63dd9f01258f460558f3de6f2f51b63edd5fa36"
+  }
+}

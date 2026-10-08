@@ -1,0 +1,52 @@
+{
+  "schema": "restricted-working-entry-local-assessment-v1",
+  "date": "2026-10-07",
+  "scope": "Opt-in fixed-activity protocol/session/commit/effect restrictions; scripted cognition and mock effects only",
+  "result": "PASS",
+  "tests_run": 322,
+  "new_test_methods": 11,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "blocked_network_attempts": 0,
+  "external_model_calls": 0,
+  "test_output": "..................................................................................................................................................................................................................................................................................................................................\n----------------------------------------------------------------------\nRan 322 tests in 17.512s\n\nOK\n",
+  "source_sha256": {
+    "src/spike/foundation/working_entry.py": "ef3d137cf01ea68d8ab8a45065bbf069bf89ea8105453bde6c242a264c8576c0",
+    "src/spike/foundation/boundary.py": "3df480165b9f68293dcfc4533a8ebbb0bb980e42dad264217dfed33fe839cf97",
+    "src/spike/foundation/actions.py": "469d23733814e8381a617bc2c9353133792534ea0149c591e4f6d061c40f9867",
+    "src/spike/tests/test_working_entry.py": "42765b12c17bb2f33eaedf5943ccca39cc6406f8c1de8cc8f554eec0e7edc05f"
+  },
+  "default_protocols_changed": false,
+  "original_A2": "DENIED",
+  "original_full_cases_completed": 9,
+  "gate_E": "OPEN",
+  "gate_F": "OPEN",
+  "limitations": [
+    "Allowed actions are trusted exact registrations, not semantic classifications.",
+    "Arbitrary scope configuration does not prove A1/E1 minimum semantic quality.",
+    "No new production executor or real-model X5 path.",
+    "Fixture tests use existing explicit protocol bindings; no new automatic profile migration.",
+    "Legacy Control intent denial applies to future dispatch, not cancellation of already in-flight effects."
+  ],
+  "new_test_runs": 4,
+  "local_run_history": [
+    {
+      "tests": 9,
+      "errors": 2,
+      "cause": "Fixture read grants missing"
+    },
+    {
+      "tests": 40,
+      "passed": true
+    },
+    {
+      "tests": 321,
+      "passed": true
+    },
+    {
+      "tests": 322,
+      "passed": true
+    }
+  ]
+}

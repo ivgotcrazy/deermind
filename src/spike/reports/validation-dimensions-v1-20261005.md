@@ -4,7 +4,7 @@
 
 ## 1. 交付与行为
 
-[Observation Validation Profile v0.1](../../../doc/system-design/DeerMind_Observation_Validation_Profile_v0.1.md)已明确方法、局部算术和最终答案分别依据原材料适用。A1 已有完整与不完整作答规则，本次将其与未求值表达合同结合，形成独立 [v13 实验协议](../protocols/observation-validation-v13.json)。全部七项判据仍必需，不按关键词分流，不在失败后降级 profile。没有中间步骤不能免除对已提交最终答案的判断；来源确有缺失或局部歧义时，候选可以忠实保留它们，不能替学习者补出作答。
+[Observation Validation Profile v0.1](../../../doc/system-design/spike/DeerMind_Observation_Validation_Profile_v0.1.md)已明确方法、局部算术和最终答案分别依据原材料适用。A1 已有完整与不完整作答规则，本次将其与未求值表达合同结合，形成独立 [v13 实验协议](../protocols/observation-validation-v13.json)。全部七项判据仍必需，不按关键词分流，不在失败后降级 profile。没有中间步骤不能免除对已提交最终答案的判断；来源确有缺失或局部歧义时，候选可以忠实保留它们，不能替学习者补出作答。
 
 分项记录区分内容检查、必要含义检查和执行状态。已经完成的 FAIL 或 UNRESOLVED 保留为有效检查结果；断连、超时和字段违约记录 FAILED，结论为 null，后续未执行项保留 NOT_RUN。部分执行的聚合状态为 INCOMPLETE。各项结果保留 exact 来源，复核失败另留失败引用，不覆盖先前有效审查。
 

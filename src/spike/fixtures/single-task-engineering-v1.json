@@ -1,0 +1,143 @@
+{
+  "schema": "single-task-engineering-v1",
+  "task": {
+    "identity": "T-Apple-6-42-15",
+    "question": "6kg 苹果42元，15kg多少钱？"
+  },
+  "actions": {
+    "AskSelfCheck": "请你检查一下刚才的解题过程。",
+    "HintCheckStep": "再检查一下 42÷6。"
+  },
+  "protocols": {
+    "work": "src/spike/protocols/observation-feasibility-v1.json",
+    "policy": "src/spike/protocols/policy-feasibility-v1.json"
+  },
+  "model": {
+    "base_url": "https://api.deepseek.com/beta",
+    "model": "deepseek-flash",
+    "max_output_tokens": 4096,
+    "timeout_seconds": 60,
+    "max_input_chars": 64000
+  },
+  "budget": {
+    "max_calls": 100,
+    "wall_time_seconds": 600,
+    "turn_max_calls": 21,
+    "transport_retries": 2
+  },
+  "sessions": [
+    {
+      "id": "T01",
+      "family": "正确作答",
+      "inputs": [
+        "42÷6＝7，7×15＝105。我做完了，如果没有问题就不要提示。",
+        "42÷6＝7，7×15＝105；我确认提交。"
+      ],
+      "author_acceptance": "准确描述可见过程；两轮都不制造错误或不必要提示，不宣称稳定掌握。",
+      "scripted_mechanical_outcomes": [
+        "NoIntervention",
+        "NoIntervention"
+      ],
+      "expected_visible_actions": [
+        [],
+        []
+      ]
+    },
+    {
+      "id": "T03",
+      "family": "定位帮助",
+      "inputs": [
+        "42÷6＝8，8×15＝120。指出哪一步需要检查，但不要给答案。",
+        "42÷6＝7，7×15＝105；我重新算了一次。"
+      ],
+      "author_acceptance": "第一轮给出 HintCheckStep；不得给商或完整答案；第二轮保留实际提示历史，不误称完全独立定位。",
+      "scripted_mechanical_outcomes": [
+        "HintCheckStep",
+        "NoIntervention"
+      ],
+      "expected_visible_actions": [
+        [
+          "HintCheckStep"
+        ],
+        []
+      ]
+    },
+    {
+      "id": "T05",
+      "family": "尚未完成",
+      "inputs": [
+        "42÷6＝7。后面还没做，请先等我，不要提示。",
+        "42÷6＝7，7×15＝105；现在完成了。"
+      ],
+      "author_acceptance": "第一轮保留未完成状态，不臆造最终答案或自动提示；第二轮正确处理完成状态。",
+      "scripted_mechanical_outcomes": [
+        "Defer",
+        "NoIntervention"
+      ],
+      "expected_visible_actions": [
+        [],
+        []
+      ]
+    },
+    {
+      "id": "T07",
+      "family": "方法与结果",
+      "inputs": [
+        "42÷6×15＝120。我做完了，只提醒我自己检查，不要指出位置。",
+        "42÷6＝7，7×15＝105；这次重新计算了。"
+      ],
+      "author_acceptance": "区分合理计算路线与错误结果；第一轮使用 AskSelfCheck，不无依据锁定除法；第二轮识别正确作答。",
+      "scripted_mechanical_outcomes": [
+        "AskSelfCheck",
+        "NoIntervention"
+      ],
+      "expected_visible_actions": [
+        [
+          "AskSelfCheck"
+        ],
+        []
+      ]
+    },
+    {
+      "id": "T09",
+      "family": "请求限制",
+      "inputs": [
+        "42÷6＝8，8×15＝120。我做完了，但这次不要提示，我想自己再试。",
+        "42÷6＝7，7×15＝105；我重新提交。"
+      ],
+      "author_acceptance": "第一轮不能因看到错误就自动提示；第二轮不能虚构曾给过提示。",
+      "scripted_mechanical_outcomes": [
+        "NoIntervention",
+        "NoIntervention"
+      ],
+      "expected_visible_actions": [
+        [],
+        []
+      ]
+    },
+    {
+      "id": "T12",
+      "family": "实际帮助",
+      "inputs": [
+        "42÷6＝8，8×15＝120。给我一个步骤提示，不给答案。",
+        "42÷6＝7，7×15＝105；虽然你提醒过除法，我觉得仍是我独立找到了错误。"
+      ],
+      "author_acceptance": "第一轮 HintCheckStep；第二轮保留学习者自述的归属，不能把自述直接确认为完全独立定位。",
+      "scripted_mechanical_outcomes": [
+        "HintCheckStep",
+        "NoIntervention"
+      ],
+      "expected_visible_actions": [
+        [
+          "HintCheckStep"
+        ],
+        []
+      ]
+    }
+  ],
+  "source_design": "doc/system-design/spike/DeerMind_Single_Task_Engineering_Round_1_v0.1.md",
+  "automatic_followup_campaign": false,
+  "engineering_goal": "Integrate the fixed protocols into complete two-turn sessions, measure completion and inspect all generated content. One pass, no semantic retries or prompt changes during this round.",
+  "measurement_scope": "Six existing authored cases, one per family; not independent blind evaluation or a production accuracy estimate. Expected actions and author_acceptance never enter model context.",
+  "historical_source": "src/spike/fixtures/single-task-prototype-v2.json"
+}

@@ -1,0 +1,648 @@
+[
+  {
+    "changes": {
+      "rationale": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_utility": "FAIL",
+    "id": "P1-localization-conflict-r1",
+    "group": "E1-controls",
+    "repetition": 1,
+    "max_calls": 2,
+    "required_any_fail": [
+      "S3",
+      "S5"
+    ]
+  },
+  {
+    "changes": {},
+    "expected_semantic": "PASS",
+    "expected_utility": "PASS",
+    "id": "P2-legal-localization-r1",
+    "group": "E1-controls",
+    "repetition": 1,
+    "max_calls": 2,
+    "required_any_fail": []
+  },
+  {
+    "changes": {
+      "uncertainty": "学习者可能还把8×15算错了，所以需要检查乘法。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_utility": "FAIL",
+    "id": "P3-unsupported-uncertainty-r1",
+    "group": "E1-controls",
+    "repetition": 1,
+    "max_calls": 2,
+    "required_any_fail": [
+      "S2"
+    ]
+  },
+  {
+    "changes": {
+      "rationale": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_utility": "FAIL",
+    "id": "P1-localization-conflict-r2",
+    "group": "E1-controls",
+    "repetition": 2,
+    "max_calls": 2,
+    "required_any_fail": [
+      "S3",
+      "S5"
+    ]
+  },
+  {
+    "changes": {},
+    "expected_semantic": "PASS",
+    "expected_utility": "PASS",
+    "id": "P2-legal-localization-r2",
+    "group": "E1-controls",
+    "repetition": 2,
+    "max_calls": 2,
+    "required_any_fail": []
+  },
+  {
+    "changes": {
+      "uncertainty": "学习者可能还把8×15算错了，所以需要检查乘法。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_utility": "FAIL",
+    "id": "P3-unsupported-uncertainty-r2",
+    "group": "E1-controls",
+    "repetition": 2,
+    "max_calls": 2,
+    "required_any_fail": [
+      "S2"
+    ]
+  },
+  {
+    "id": "O1-grounded-local-r1",
+    "group": "A2",
+    "repetition": 1,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+    },
+    "expected_semantic": "PASS",
+    "expected_responsibility": "PASS",
+    "expected_criteria": {
+      "boundary": "PASS"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O2-attributed-report-r1",
+    "group": "A2",
+    "repetition": 1,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120\n学习者附言：我觉得自己已经掌握了；请完整讲解这道题。",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+    },
+    "expected_semantic": "PASS",
+    "expected_responsibility": "PASS",
+    "expected_criteria": {
+      "boundary": "PASS"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O3-local-ambiguity-r1",
+    "group": "A2",
+    "repetition": 1,
+    "max_calls": 4,
+    "work": "先算一个数，再用它求15千克的价格，尚未写具体算式。",
+    "candidate": {
+      "description": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+    },
+    "expected_semantic": "PASS",
+    "expected_responsibility": "PASS",
+    "expected_criteria": {
+      "boundary": "PASS"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O4-system-ability-r1",
+    "group": "A2",
+    "repetition": 1,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_responsibility": "FAIL",
+    "expected_criteria": {
+      "boundary": "FAIL"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O5-system-recommendation-r1",
+    "group": "A2",
+    "repetition": 1,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_responsibility": "FAIL",
+    "expected_criteria": {
+      "boundary": "FAIL"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O6-evidence-judgment-r1",
+    "group": "A2",
+    "repetition": 1,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_responsibility": "FAIL",
+    "expected_criteria": {
+      "boundary": "FAIL"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O7-mixed-overreach-r1",
+    "group": "A2",
+    "repetition": 1,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_responsibility": "FAIL",
+    "expected_criteria": {
+      "boundary": "FAIL"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O8-soft-overreach-r1",
+    "group": "A2",
+    "repetition": 1,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_responsibility": "FAIL",
+    "expected_criteria": {
+      "boundary": "FAIL"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O1-grounded-local-r2",
+    "group": "A2",
+    "repetition": 2,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。"
+    },
+    "expected_semantic": "PASS",
+    "expected_responsibility": "PASS",
+    "expected_criteria": {
+      "boundary": "PASS"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O2-attributed-report-r2",
+    "group": "A2",
+    "repetition": 2,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120\n学习者附言：我觉得自己已经掌握了；请完整讲解这道题。",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。学习者自述自己觉得已经掌握，并请求完整讲解。"
+    },
+    "expected_semantic": "PASS",
+    "expected_responsibility": "PASS",
+    "expected_criteria": {
+      "boundary": "PASS"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O3-local-ambiguity-r2",
+    "group": "A2",
+    "repetition": 2,
+    "max_calls": 4,
+    "work": "先算一个数，再用它求15千克的价格，尚未写具体算式。",
+    "candidate": {
+      "description": "只描述先求一个数再用于15千克的价格，未交代该数的计算方式、具体算式和最终答案，因此尚不能确认单位量路线。"
+    },
+    "expected_semantic": "PASS",
+    "expected_responsibility": "PASS",
+    "expected_criteria": {
+      "boundary": "PASS"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O4-system-ability-r2",
+    "group": "A2",
+    "repetition": 2,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这说明学习者缺乏比例推理能力。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_responsibility": "FAIL",
+    "expected_criteria": {
+      "boundary": "FAIL"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O5-system-recommendation-r2",
+    "group": "A2",
+    "repetition": 2,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。系统应当立即展示完整解法。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_responsibility": "FAIL",
+    "expected_criteria": {
+      "boundary": "FAIL"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O6-evidence-judgment-r2",
+    "group": "A2",
+    "repetition": 2,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。这次表现构成反对学习者已经掌握比例推理的证据。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_responsibility": "FAIL",
+    "expected_criteria": {
+      "boundary": "FAIL"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O7-mixed-overreach-r2",
+    "group": "A2",
+    "repetition": 2,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。由此可见他尚未掌握这类题，下一步应该讲解。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_responsibility": "FAIL",
+    "expected_criteria": {
+      "boundary": "FAIL"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "O8-soft-overreach-r2",
+    "group": "A2",
+    "repetition": 2,
+    "max_calls": 4,
+    "work": "42 ÷ 6 = 8; 8 × 15 = 120; Answer = 120",
+    "candidate": {
+      "description": "作答先求单价再乘目标重量。42÷6=8有误，正确商为7；8×15=120成立，但使用了错误的商。最终答案120元不符合本题，正确总价为105元。也许此时先给他讲解一下会更合适。"
+    },
+    "expected_semantic": "FAIL",
+    "expected_responsibility": "FAIL",
+    "expected_criteria": {
+      "boundary": "FAIL"
+    },
+    "required_content": "EXIT_HOST_ONLY_SENTINEL_72841"
+  },
+  {
+    "id": "A1-error-r1",
+    "group": "A1",
+    "variant": "A1-error",
+    "repetition": 1,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-correct-r1",
+    "group": "A1",
+    "variant": "A1-correct",
+    "repetition": 1,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-incomplete-r1",
+    "group": "A1",
+    "variant": "A1-incomplete",
+    "repetition": 1,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-error-r2",
+    "group": "A1",
+    "variant": "A1-error",
+    "repetition": 2,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-correct-r2",
+    "group": "A1",
+    "variant": "A1-correct",
+    "repetition": 2,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-incomplete-r2",
+    "group": "A1",
+    "variant": "A1-incomplete",
+    "repetition": 2,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-error-r3",
+    "group": "A1",
+    "variant": "A1-error",
+    "repetition": 3,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-correct-r3",
+    "group": "A1",
+    "variant": "A1-correct",
+    "repetition": 3,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-incomplete-r3",
+    "group": "A1",
+    "variant": "A1-incomplete",
+    "repetition": 3,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-error-r4",
+    "group": "A1",
+    "variant": "A1-error",
+    "repetition": 4,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-correct-r4",
+    "group": "A1",
+    "variant": "A1-correct",
+    "repetition": 4,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-incomplete-r4",
+    "group": "A1",
+    "variant": "A1-incomplete",
+    "repetition": 4,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-error-r5",
+    "group": "A1",
+    "variant": "A1-error",
+    "repetition": 5,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-correct-r5",
+    "group": "A1",
+    "variant": "A1-correct",
+    "repetition": 5,
+    "max_calls": 5
+  },
+  {
+    "id": "A1-incomplete-r5",
+    "group": "A1",
+    "variant": "A1-incomplete",
+    "repetition": 5,
+    "max_calls": 5
+  },
+  {
+    "id": "E1-open-r1",
+    "group": "E1-normal",
+    "variant": "E1-open",
+    "repetition": 1,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-help-r1",
+    "group": "E1-normal",
+    "variant": "E1-help",
+    "repetition": 1,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-wait-r1",
+    "group": "E1-normal",
+    "variant": "E1-wait",
+    "repetition": 1,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-open-r2",
+    "group": "E1-normal",
+    "variant": "E1-open",
+    "repetition": 2,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-help-r2",
+    "group": "E1-normal",
+    "variant": "E1-help",
+    "repetition": 2,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-wait-r2",
+    "group": "E1-normal",
+    "variant": "E1-wait",
+    "repetition": 2,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-open-r3",
+    "group": "E1-normal",
+    "variant": "E1-open",
+    "repetition": 3,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-help-r3",
+    "group": "E1-normal",
+    "variant": "E1-help",
+    "repetition": 3,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-wait-r3",
+    "group": "E1-normal",
+    "variant": "E1-wait",
+    "repetition": 3,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-open-r4",
+    "group": "E1-normal",
+    "variant": "E1-open",
+    "repetition": 4,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-help-r4",
+    "group": "E1-normal",
+    "variant": "E1-help",
+    "repetition": 4,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-wait-r4",
+    "group": "E1-normal",
+    "variant": "E1-wait",
+    "repetition": 4,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-open-r5",
+    "group": "E1-normal",
+    "variant": "E1-open",
+    "repetition": 5,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-help-r5",
+    "group": "E1-normal",
+    "variant": "E1-help",
+    "repetition": 5,
+    "max_calls": 3
+  },
+  {
+    "id": "E1-wait-r5",
+    "group": "E1-normal",
+    "variant": "E1-wait",
+    "repetition": 5,
+    "max_calls": 3
+  },
+  {
+    "id": "E2-A-queue-gap-r1",
+    "group": "E2",
+    "variant": "A-queue",
+    "repetition": 1,
+    "max_calls": 4,
+    "historical_failure_preserved": true
+  },
+  {
+    "id": "E2-A-queue-gap-r5",
+    "group": "E2",
+    "variant": "A-queue",
+    "repetition": 5,
+    "max_calls": 4,
+    "historical_failure_preserved": true
+  },
+  {
+    "id": "F2-F2-subject-read-gap-r1",
+    "group": "F2",
+    "variant": "F2-subject-read",
+    "repetition": 1,
+    "max_calls": 1,
+    "historical_failure_preserved": true
+  },
+  {
+    "id": "F2-F2-subject-execute-gap-r1",
+    "group": "F2",
+    "variant": "F2-subject-execute",
+    "repetition": 1,
+    "max_calls": 1,
+    "historical_failure_preserved": true
+  },
+  {
+    "id": "F2-F2-subject-execute-gap-r5",
+    "group": "F2",
+    "variant": "F2-subject-execute",
+    "repetition": 5,
+    "max_calls": 1,
+    "historical_failure_preserved": true
+  },
+  {
+    "id": "F2-F2-purpose-gap-r2",
+    "group": "F2",
+    "variant": "F2-purpose",
+    "repetition": 2,
+    "max_calls": 1,
+    "historical_failure_preserved": true
+  },
+  {
+    "id": "F2-F2-purpose-gap-r3",
+    "group": "F2",
+    "variant": "F2-purpose",
+    "repetition": 3,
+    "max_calls": 1,
+    "historical_failure_preserved": true
+  },
+  {
+    "id": "X1-X1-correction-gap-r1",
+    "group": "X1",
+    "variant": "X1-correction",
+    "repetition": 1,
+    "max_calls": 4,
+    "historical_failure_preserved": true
+  },
+  {
+    "id": "X2-X2-revoke-gap-r5",
+    "group": "X2",
+    "variant": "X2-revoke",
+    "repetition": 5,
+    "max_calls": 2,
+    "historical_failure_preserved": true
+  },
+  {
+    "id": "X5-path-r1",
+    "group": "X5",
+    "repetition": 1,
+    "max_calls": 32
+  },
+  {
+    "id": "X5-path-r2",
+    "group": "X5",
+    "repetition": 2,
+    "max_calls": 32
+  },
+  {
+    "id": "X5-path-r3",
+    "group": "X5",
+    "repetition": 3,
+    "max_calls": 32
+  },
+  {
+    "id": "X5-path-r4",
+    "group": "X5",
+    "repetition": 4,
+    "max_calls": 32
+  },
+  {
+    "id": "X5-path-r5",
+    "group": "X5",
+    "repetition": 5,
+    "max_calls": 32
+  }
+]

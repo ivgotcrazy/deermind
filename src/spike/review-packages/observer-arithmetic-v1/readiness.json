@@ -1,0 +1,15 @@
+{
+  "status": "READY",
+  "tests": 38,
+  "external_calls": 0,
+  "semantic_quality_claimed": false,
+  "historical_integrity": {
+    "ledger_entries_checked": 1035,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  }
+}

@@ -1,0 +1,311 @@
+{
+  "schema": "spike-feasibility-disposition-v1",
+  "date": "2026-10-07",
+  "decision": "LIMITED_FEASIBILITY_ESTABLISHED_ENGINEERING_EXPLORATION_ALLOWED",
+  "phase_status": "FEASIBILITY_REVIEW_CLOSED_WITH_LIMITATIONS",
+  "authority": "Current user instruction to classify and process mechanism, simple engineering and later optimization issues, then advance Spike; follows explicit agreement that Spike tests initial feasibility.",
+  "conclusion_scope": "Controlled architecture mechanisms and finite semantic component feasibility. No usable complete prototype, general semantic isolation, real Evaluation validity, or autonomous full teaching capability established.",
+  "historical_acceptance": {
+    "full_cases_completed": 9,
+    "total": 17,
+    "A2": "DENIED",
+    "frozen_prototype": "NO_GO",
+    "gate_E": "OPEN",
+    "gate_F": "OPEN",
+    "rewritten": false
+  },
+  "issues": [
+    {
+      "id": "I01",
+      "category": "CORE_ASSUMPTION",
+      "disposition": "OLD_GUARANTEE_REJECTED",
+      "decision": "Semantic PASS cannot guarantee content purity; retain probabilistic review and deterministic authority/commit/effect checks."
+    },
+    {
+      "id": "I02",
+      "category": "CORE_RULE",
+      "disposition": "CLARIFIED_AND_BOUNDED_CHECKED",
+      "decision": "Local answer correctness and bounded observation uncertainty are not formal Evidence valuation. Eight role probes completed."
+    },
+    {
+      "id": "I03",
+      "category": "CORE_MECHANISM",
+      "disposition": "CONTROLLED_EVIDENCE_SUPPORTED",
+      "decision": "Required review, exact binding, staleness, downstream projection, backend authorization and serial result handling retained."
+    },
+    {
+      "id": "I04",
+      "category": "CORE_MECHANISM",
+      "disposition": "CONTROLLED_EVIDENCE_SUPPORTED",
+      "decision": "X5 control and disclosure lifecycle plus four failure/partial/unknown effect branches checked with scripted cognition."
+    },
+    {
+      "id": "I05",
+      "category": "SIMPLE_ENGINEERING",
+      "disposition": "FIXED_OPT_IN",
+      "decision": "Exact ordered disjoint criterion selections expand to separate quotes; claim and expression continuity unchanged."
+    },
+    {
+      "id": "I06",
+      "category": "SIMPLE_ENGINEERING",
+      "disposition": "FIXED_OPT_IN",
+      "decision": "Policy can cite supplied execution-space AssistanceContext; exact context membership and authority still checked."
+    },
+    {
+      "id": "I07",
+      "category": "SIMPLE_ENGINEERING",
+      "disposition": "PREVIOUSLY_FIXED",
+      "decision": "Input capacity 64000 characters; no remaining local-size blocker observed."
+    },
+    {
+      "id": "I08",
+      "category": "SIMPLE_ENGINEERING",
+      "disposition": "PREVIOUSLY_FIXED",
+      "decision": "ScalarValue and UnevaluatedExpression represent actual shapes without invented equations; semantic typing remains fallible."
+    },
+    {
+      "id": "I09",
+      "category": "SIMPLE_ENGINEERING",
+      "disposition": "PREVIOUSLY_FIXED",
+      "decision": "Retry session metadata collision fixed; aborted execution preserved."
+    },
+    {
+      "id": "I10",
+      "category": "SIMPLE_ENGINEERING",
+      "disposition": "FIXED",
+      "decision": "This probe initially used environment endpoint incompatible with strict outputs; zero external calls. Runner now selects declared protocol endpoint."
+    },
+    {
+      "id": "I11",
+      "category": "EXECUTION_CONDITION",
+      "disposition": "SEPARATED_FROM_SEMANTICS",
+      "decision": "Old disconnects stay incomplete; prior fresh 77-call retry and current 8 calls have no network failure."
+    },
+    {
+      "id": "I12",
+      "category": "ENGINEERING_ROBUSTNESS",
+      "disposition": "DEFERRED",
+      "decision": "Multiple-result envelopes, schema and source completeness failures remain explicit failures; no arbitrary wrapper repair or source invention."
+    },
+    {
+      "id": "I13",
+      "category": "SEMANTIC_QUALITY",
+      "disposition": "DEFERRED",
+      "decision": "Role false rejections and speaker/stance extraction errors need independent data and engineering evaluation, not keyword routing."
+    },
+    {
+      "id": "I14",
+      "category": "SEMANTIC_QUALITY",
+      "disposition": "DEFERRED",
+      "decision": "Missing final-answer judgment incorrectly receiving PASS remains a recorded quality defect. Required criteria remain mandatory."
+    },
+    {
+      "id": "I15",
+      "category": "SEMANTIC_QUALITY",
+      "disposition": "DEFERRED",
+      "decision": "Policy localization/recomputation explanations and grounded uncertainty need quality evaluation; actual effects remain independently recorded."
+    },
+    {
+      "id": "I16",
+      "category": "ENGINEERING_PERFORMANCE",
+      "disposition": "DEFERRED",
+      "decision": "Evaluate usable session completion, latency, cost and recovery in engineering; do not add unlimited reviewers."
+    },
+    {
+      "id": "I17",
+      "category": "UNVALIDATED_CAPABILITY",
+      "disposition": "DISABLED_PENDING_SEPARATE_VALIDATION",
+      "decision": "Real full X5 and real Evaluation/Belief remain unvalidated, not proven optimization tasks. Fixed task/hints only for next prototype."
+    }
+  ],
+  "remaining_case_dispositions": [
+    {
+      "case_id": "A1",
+      "current_stage_disposition": "LIMITED_FORMATION_FEASIBILITY",
+      "basis": "Partial real formation and commits exist; quality and session completion remain engineering work.",
+      "original_result_changed": false
+    },
+    {
+      "case_id": "A2",
+      "current_stage_disposition": "OLD_ASSUMPTION_DENIED_REVISED_SCOPE_LIMITED_FEASIBILITY",
+      "basis": "Original DENIED stands; finite modified role/admission evidence supports exploration, not general semantic isolation.",
+      "original_result_changed": false
+    },
+    {
+      "case_id": "E1",
+      "current_stage_disposition": "LIMITED_POLICY_EXECUTION_FEASIBILITY",
+      "basis": "15 real Policy paths with scripted Observation and mock effects; quality disputes preserved.",
+      "original_result_changed": false
+    },
+    {
+      "case_id": "E2",
+      "current_stage_disposition": "SERIAL_MECHANISM_SUPPORTED_IN_OBSERVED_SCOPE",
+      "basis": "13/15 original real paths; representative controlled regression passed; no all-repeat completion requirement.",
+      "original_result_changed": false
+    },
+    {
+      "case_id": "F2",
+      "current_stage_disposition": "BACKEND_AUTHORITY_SUPPORTED_IN_OBSERVED_SCOPE",
+      "basis": "20/25 original real paths and 25 controlled denials; model envelope reliability remains separate.",
+      "original_result_changed": false
+    },
+    {
+      "case_id": "X1",
+      "current_stage_disposition": "CORRECTION_MECHANISM_SUPPORTED_IN_OBSERVED_SCOPE",
+      "basis": "4/5 original real paths and controlled correction regression; original incomplete execution preserved.",
+      "original_result_changed": false
+    },
+    {
+      "case_id": "X2",
+      "current_stage_disposition": "VERSION_REVOCATION_SUPPORTED_IN_OBSERVED_SCOPE",
+      "basis": "9/10 original real paths and controlled revoke regression; original incomplete execution preserved.",
+      "original_result_changed": false
+    },
+    {
+      "case_id": "X5",
+      "current_stage_disposition": "MECHANICS_SUPPORTED_REAL_COMPOSITION_UNVALIDATED",
+      "basis": "One controlled full path plus four boundaries; real chain still 0/5 in historical batch and capability disabled.",
+      "original_result_changed": false
+    }
+  ],
+  "offline": {
+    "status": "PASS",
+    "external_model_calls": 0,
+    "scripted_calls": 41,
+    "mechanism_cases": 7,
+    "completed_cases": 7,
+    "effect_boundaries": [
+      {
+        "variant": "control-not-occurred",
+        "result": "PASS",
+        "coverage": "COMPLETE",
+        "model_calls": 0,
+        "checks": 9,
+        "failed_checks": [],
+        "parent_case": "X5-path-r1"
+      },
+      {
+        "variant": "explanation-not-occurred",
+        "result": "PASS",
+        "coverage": "COMPLETE",
+        "model_calls": 0,
+        "checks": 7,
+        "failed_checks": [],
+        "parent_case": "X5-path-r1"
+      },
+      {
+        "variant": "explanation-partial",
+        "result": "PASS",
+        "coverage": "COMPLETE",
+        "model_calls": 0,
+        "checks": 6,
+        "failed_checks": [],
+        "parent_case": "X5-path-r1"
+      },
+      {
+        "variant": "explanation-indeterminate",
+        "result": "PASS",
+        "coverage": "COMPLETE",
+        "model_calls": 0,
+        "checks": 7,
+        "failed_checks": [],
+        "parent_case": "X5-path-r1"
+      }
+    ],
+    "tests": 104,
+    "test_failures": 0,
+    "test_errors": 0,
+    "stop_reason": null,
+    "historical_quote_cases": 4,
+    "historical_policy_reference_cases": 1,
+    "model_semantics_and_real_X5_validated": false
+  },
+  "role_probe": {
+    "status": "BOUNDED_PROBE_FINISHED",
+    "actual_calls": 8,
+    "elapsed_seconds": 7.838,
+    "cases": 8,
+    "completed": 8,
+    "matched": 7,
+    "retries": 0,
+    "formal_commits": 0,
+    "general_accuracy_or_isolation_claimed": false,
+    "automatic_followup": false
+  },
+  "probe_disposition_matches": 8,
+  "raw_label_mismatches": [
+    "local-arithmetic"
+  ],
+  "human_review": [
+    {
+      "case_id": "local-arithmetic",
+      "original_expected_roles": [
+        "local_observation"
+      ],
+      "observed_roles": [
+        "attributed_report",
+        "local_observation"
+      ],
+      "finding": "Original expected role set is too coarse. Reporting the learner equality and judging it false have distinct roles under the frozen rule. The model split is reasonable.",
+      "reviewer": "implementing assistant; not an independent blind reviewer",
+      "fixture_and_raw_result_changed": false,
+      "accounting": "Keep raw role match count 7/8. Admission-table statuses match 8/8. No production accuracy estimate."
+    }
+  ],
+  "new_external_calls_total": 8,
+  "initial_probe_setup_failure": {
+    "run": "src/spike/runs/feasibility-responsibility-v1",
+    "reason": "StrictOutputEndpointMismatch",
+    "external_calls": 0,
+    "semantic_failure": false
+  },
+  "new_formal_semantic_commits": 0,
+  "next_stage": {
+    "scope": "Restricted fixed-task prototype engineering, not formal Build Gate approval",
+    "enabled_candidates": [
+      "fixed single task",
+      "registered local hints",
+      "NoIntervention",
+      "Defer"
+    ],
+    "disabled_capabilities": [
+      "automatic activity transition",
+      "automatic new task",
+      "formal Evidence writes",
+      "formal Belief writes"
+    ],
+    "first_work": [
+      "integrate explicit protocol versions into next engineering fixture",
+      "evaluate false rejection, required-content coverage and usable session completion on independently reviewed cases",
+      "freeze per-iteration objective and budget before calls"
+    ],
+    "automatic_next_spike_batch": false,
+    "reopen_mechanism_on": [
+      "missing mandatory validation admitted",
+      "forged or stale basis accepted",
+      "cross-subject or unauthorized effect",
+      "planned action mistaken for actual occurrence"
+    ]
+  },
+  "source_sha256": {
+    "doc/system-design/spike/DeerMind_Spike_Issue_Disposition_and_Feasibility_Decision_v0.1.md": "75c9ae9c3567c9840396ba44ec3373c6f1f4179377924b53b79fc11e678f76f9",
+    "src/spike/reports/assumption-aa-a02-v9-20261003.json": "369a5adb46358e9d3ca26d3f71be3a5b79ba761ec2dee0fd29a9e31e05daef1e",
+    "src/spike/reports/observation-responsibility-v10-20261003.md": "84ce46795135fd112c123e280f59167988aa7bf32e240f2ccbe6b4754d6b6168",
+    "src/spike/reports/observation-closeout-v11-20261004.md": "8ea2a38df4a1e6fdfb7482a7a46d4ab44c2e0aa94c60f7033e0f32e5d8197d29",
+    "src/spike/reports/validation-profile-closeout-v11-20261004.json": "35897e79d9dd06aafe4dbbf0299d277bf6d445cdce67cacc0f2f877e8b4fd0be",
+    "src/spike/reports/assumption-e1-20261004.json": "968cbd946938a846e0aa16552ae8770e2cbd571ed1009487e09623ba7820f58b",
+    "src/spike/reports/remaining-mechanism-review-20261006.json": "adda3ccaaefe9c4090dcaf27cfd788cfa4db0d16fad009b7c6e08dd6fd689213",
+    "src/spike/reports/network-retry-analysis-20261007.json": "aad84003860d62ed2271334e5e9e8e5f68fe339342aec4118352d650e23a7434",
+    "src/spike/runs/feasibility-triage-offline-v1/summary.json": "9ee65d5ca50253ce52276767e6024205e22cdfcbd9ad06124be3c7b06ceef9d1",
+    "src/spike/runs/feasibility-triage-offline-v1/historical-interface-checks.json": "423d402ee493d4896e0280dd896f50b9f23c57796dd6fabe823f4aaaeb8caee2",
+    "src/spike/runs/feasibility-triage-offline-v1/mechanism-results.json": "78c6624b55cd82ca0549c7d3ed492c7f45ddc949049494d2479a81e8fe4bcea6",
+    "src/spike/runs/feasibility-responsibility-v2/summary.json": "f6bf15b0028b24ed0f09fb28b087acf641aae05bc5588579a11455c55c948ea8",
+    "src/spike/runs/feasibility-responsibility-v2/results.json": "a6a55c116b24fb4b433aa609508b9917164adc896df7b3f4a5447437b22ffa16",
+    "src/spike/runs/feasibility-responsibility-v1/summary.json": "2100e771dfcc299d184f483a5549d51fc99495cfe3280956f815762ff7292290",
+    "src/spike/protocols/observation-feasibility-v1.json": "94267d302356fdeac67be31483745594ca22dce8d03db13d6ee84fa34b0943c8",
+    "src/spike/protocols/policy-feasibility-v1.json": "d13afc7a13214b1890f5afc3bf2b7c5da298e1cda927adf14d8f892dee716367",
+    "src/spike/fixtures/feasibility-responsibility-v1.json": "0231a18b477de3d12cce51d37636994c68b7eeb50f15980b6a8ad325db31a813",
+    "src/spike/run_feasibility_triage.py": "8368a41219b9c2252e5fe7e2fd3c4c9172051d0109eccd2e584ae95054db75b4",
+    "src/spike/tests/test_feasibility_interfaces.py": "6b8b3a0ac614872c1bdbb71252b6fe1f78eb2318a9072dc68106432e32ea6b6b"
+  }
+}

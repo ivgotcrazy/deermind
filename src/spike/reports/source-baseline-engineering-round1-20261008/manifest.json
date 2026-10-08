@@ -1,0 +1,20 @@
+[
+  {
+    "source_path": "src/spike/README.md",
+    "previous_sha256": "13c1c92ece6d748f156d08b5fbac47aee0eb4d850f95f9e5202e32537938242b",
+    "preserved_at": "src/spike/reports/source-baseline-engineering-round1-20261008/0-README.md.txt",
+    "reason": "Update current engineering-stage entry and preserve prior feasibility-stage ledger and document entry."
+  },
+  {
+    "source_path": "doc/system-design/spike/README.md",
+    "previous_sha256": "0ec67878db499ae560592fcadbff30e114a4dfae8dc4ac62346a32f42e1da661",
+    "preserved_at": "src/spike/reports/source-baseline-engineering-round1-20261008/1-README.md.txt",
+    "reason": "Update current engineering-stage entry and preserve prior feasibility-stage ledger and document entry."
+  },
+  {
+    "source_path": "src/spike/reports/validation-progress-v1.json",
+    "previous_sha256": "387fa33668c0070a90d42424b782e1ea11ccf880837680f95e78d20baa1e0419",
+    "preserved_at": "src/spike/reports/source-baseline-engineering-round1-20261008/2-validation-progress-v1.json.txt",
+    "reason": "Update current engineering-stage entry and preserve prior feasibility-stage ledger and document entry."
+  }
+]

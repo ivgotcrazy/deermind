@@ -1,0 +1,18 @@
+test_bad_quote_handles_and_disjoint_claims_still_rejected (test_feasibility_interfaces.FeasibilityInterfaceTests.test_bad_quote_handles_and_disjoint_claims_still_rejected) ... ok
+test_commit_reexpands_exact_quotes_and_rejects_tampered_wire (test_feasibility_interfaces.FeasibilityInterfaceTests.test_commit_reexpands_exact_quotes_and_rejects_tampered_wire) ... ok
+test_disjoint_quotes_keep_exact_separate_text_and_legacy_rejects (test_feasibility_interfaces.FeasibilityInterfaceTests.test_disjoint_quotes_keep_exact_separate_text_and_legacy_rejects) ... ok
+test_execution_reference_is_usable_but_forged_reference_cannot_commit (test_feasibility_interfaces.FeasibilityInterfaceTests.test_execution_reference_is_usable_but_forged_reference_cannot_commit) ... ok
+test_unknown_quote_encoding_fails_preflight (test_feasibility_interfaces.FeasibilityInterfaceTests.test_unknown_quote_encoding_fails_preflight) ... ok
+test_call_budget_and_wall_deadline_prevent_extra_attempts (test_network_retry.NetworkRetryTests.test_call_budget_and_wall_deadline_prevent_extra_attempts) ... ok
+test_full_selected_batch_logs_retries_and_continues_after_schema_failure (test_network_retry.NetworkRetryTests.test_full_selected_batch_logs_retries_and_continues_after_schema_failure) ... ok
+test_logical_seven_call_limit_is_separate_from_transport_attempts (test_network_retry.NetworkRetryTests.test_logical_seven_call_limit_is_separate_from_transport_attempts) ... ok
+test_nonretryable_errors_stop_without_wait (test_network_retry.NetworkRetryTests.test_nonretryable_errors_stop_without_wait) ... ok
+test_selects_only_nine_affected_sessions_and_retains_both_original_inputs (test_network_retry.NetworkRetryTests.test_selects_only_nine_affected_sessions_and_retains_both_original_inputs) ... ok
+test_semantic_fail_and_invalid_model_output_never_retry (test_network_retry.NetworkRetryTests.test_semantic_fail_and_invalid_model_output_never_retry) ... ok
+test_three_failed_attempts_stop_and_remain_visible (test_network_retry.NetworkRetryTests.test_three_failed_attempts_stop_and_remain_visible) ... ok
+test_transport_retry_preserves_exact_request_and_keeps_failed_attempt (test_network_retry.NetworkRetryTests.test_transport_retry_preserves_exact_request_and_keeps_failed_attempt) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 2.472s
+
+OK

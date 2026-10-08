@@ -1,0 +1,7 @@
+{
+  "status": "READY",
+  "scripted_paths": 5,
+  "scripted_boundaries": 4,
+  "scripted_calls": 100,
+  "external_calls": 0
+}

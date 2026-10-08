@@ -1,0 +1,1377 @@
+# DeerMind AI Reasoning Runtime Design v0.2
+
+> **中文名称**：DeerMind AI 推理运行时设计  
+> **版本**：v0.2  
+> **文档性质**：Evidence-driven Focused System Design Candidate  
+> **状态**：证据吸收后的专项修订候选  
+> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v0.3.md`  
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`  
+> **关联专项**：`DeerMind_Runtime_Event_Architecture_v0.1.md`  
+> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
+> **更新时间**：2026-10-06
+>
+> **修订说明**：合入校验意见的保证范围、目的明确的 Observation 必要含义和失败执行记录；保留 required checks、职责、权限和原反证。
+>
+> **版本说明**：基于保留不变的 v0.1，服务于总体设计 v0.3 的修订评审。局部机制与模型质量分别描述，不替换历史批次或默认协议；Gate E/F 和原实验结论不变。
+
+> **工作依据**：按[语义校验与收口设计决定](DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md)用于后续设计工作；该采用不等于质量已验证、默认协议切换或 v1.0 冻结。
+
+---
+
+## 1. 文档定位与设计命题
+
+### 1.1 为什么需要独立 AI Reasoning Runtime Design
+
+DeerMind 不是“传统业务流程外面套一层 LLM”。Observation、Evidence、Interaction Policy、System Hypothesis 与 Revision Candidate 等核心认识都可能需要开放式 AI reasoning；与此同时，事实权、语义权、执行权和系统变更权又不能交给生成式模型临场决定。
+
+如果没有独立的 AI Reasoning Runtime contract，实现通常会滑向两个极端。
+
+第一种是把 AI 降级成无状态函数：
+
+```text
+input
+→ prompt
+→ model
+→ output
+```
+
+这样无法解释模型为什么看到了这些信息、为什么有权使用这些 Tool、输出属于什么 semantic role、失败如何表达、结果怎样取得正式 standing，也无法支撑长期 replay、audit 与 evolution。
+
+第二种是把 AI 升级成长期自治 Agent：让 Agent 自己决定读什么、记什么、调用什么、写入什么。这样虽然灵活，却会形成隐藏状态、影子权限与跨 Space 的第二套 semantic ownership。
+
+因此本专项的核心设计命题是：
+
+\[
+\boxed{
+AIReasoningRuntime
+=
+ControlledCognitionExecution
+}
+\]
+
+并且：
+
+\[
+\boxed{
+OpenCognition \neq OpenAuthority
+}
+\]
+
+AI Runtime 的责任是**执行受版本化 Protocol、受控 Context 与显式 Authority Envelope 约束的开放认知计算，并产出 typed Candidate 或明确 non-success**；它不是 semantic owner，也不是 authority owner。
+
+### 1.2 本文档解决什么
+
+本文档负责定义：
+
+- Reasoning Purpose、Reasoning Request、Reasoning Protocol 与 Reasoning Execution 的身份和生命周期；
+- Reasoning Protocol 的最小正式合同及其与 Prompt / Model Adapter 的边界；
+- Context Policy、Context Assembly、Context Package 与 Context Manifest；
+- epistemic admissibility、Data Authority、freshness、relevance 与 Minimum Sufficient Context 的解析顺序；
+- Authority Envelope 的形成、用途与边界；
+- Model Routing、Model Adapter 与 routing provenance；
+- Read / Context Tool、Reasoning Tool、Action Tool、Governance Tool 的权限分层；
+- Tool request、backend authorization 与 ToolResult 的运行合同；
+- Derived Semantic / Runtime Decision / Canonical / Evolution Candidate 的共同与不同规则；
+- Validation Pipeline 与 Commit Boundary 的责任分离；
+- NoCandidate、UNKNOWN、Ambiguous、Unmapped 与 Model / Tool / Protocol failure 的不同语义；
+- retry、timeout、partial execution、stale context 与 commit-time revalidation；
+- Working Memory、Workflow Checkpoint 与 durable System State 的边界；
+- bounded Agent Workflow 的架构位置；
+- ReasoningExecutionRecord、ContextManifest、VersionContext 与 DependencySet 的关系；
+- Historical Reconstruction、Reasoning Re-execution 与 Semantic Reinterpretation 的运行边界；
+- prompt injection、indirect injection、self-authorization 与 confused deputy 的结构性防线；
+- AI Reasoning Runtime 的 capability staging 与 Consolidated Architecture Spike handoff。
+
+### 1.3 本文档不解决什么
+
+本文档不冻结：
+
+- OpenAI、Anthropic、自托管模型或其他具体 provider；
+- 单模型、多模型、大小模型组合的最终产品策略；
+- Prompt 文本、few-shot 示例与具体 system message；
+- temperature、top-p、token budget 等模型参数；
+- LangGraph、Temporal、AutoGen 或其他 Agent / Workflow Framework；
+- Tool API 的最终 RPC / JSON / protobuf schema；
+- Context Store、向量数据库或检索产品；
+- 具体 retry 次数、timeout 数值、并发数、队列优先级；
+- ReasoningExecutionRecord 的最终物理存储和 retention 时长；
+- 生产级模型成本优化、容量、跨区域部署与 HA；
+- 各 Space 内部的领域 reasoning 算法本身。
+
+这些属于后续 Component Design、ADR 或实现优化，但不得改变本文档冻结的运行语义。
+
+### 1.4 与总体 System Design 和相邻专项的关系
+
+总体 `DeerMind_System_Design_v0.3` 定义 AI Reasoning Runtime 在全系统中的位置：Context 由正式状态解析而来，AI 产生 Candidate，Candidate 通过 Validation / Commit 取得 standing，所有 formal effect 在 commit / execution 前重新验证 current authority、dependency、version 与 data authority。
+
+本文档把该责任深化为 Focused Design Closure，但不接管其他专项：
+
+```text
+Runtime & Event Architecture
+    owns factual occurrence contract
+        ↓ factual grounding
+AI Reasoning Runtime
+    executes controlled cognition
+        ↓ typed Candidate / execution provenance
+State / Dependency Architecture
+    owns currentness / invalidation / formal state consistency
+        ↓
+Interaction / Evaluation / Evolution owners
+    own domain semantics and owner-specific commit policy
+```
+
+AI Runtime 可以共享执行机制，但：
+
+\[
+SharedRuntimeMechanism
+\neq
+SharedSemanticAuthority
+\]
+
+---
+
+## 2. 运行时心智模型与责任边界
+
+### 2.1 核心运行链
+
+一次正式 AI cognition 不是“一次模型调用”，而是一条受控运行链：
+
+```text
+Reasoning Purpose
+→ Reasoning Request
+→ Resolve Reasoning Protocol
+→ Resolve Authority Envelope
+→ Assemble Authorized Context
+→ Freeze Context Package / Manifest / Version Context
+→ Select Model Adapter
+→ Execute Reasoning / Allowed Tools
+→ Candidate | NoCandidate | Explicit Non-Success
+→ Validation
+→ Owner / Authority / Currentness Revalidation
+→ Commit Attempt or Controlled Termination
+→ ReasoningExecutionRecord Finalization
+```
+
+这条链的关键在于：**AI 开放的是 reasoning 内容，系统冻结的是 reasoning 的资格、边界、输出类型和生效方式。**
+
+### 2.2 AI Runtime 拥有什么，不拥有什么
+
+AI Runtime 拥有以下运行责任：
+
+1. 执行一个已经解析到具体版本的 Reasoning Protocol；
+2. 调用 Context Assembly，获得该 Protocol 对当前 Purpose 合法的输入；
+3. 根据 routing policy 选择兼容模型并通过 Model Adapter 执行；
+4. 在 Tool Policy 和 Authority Envelope 内发起 Tool Request；
+5. 产出符合 Output Contract 的 typed Candidate 或明确 non-success；
+6. 捕获可治理 provenance、failure 与 execution history；
+7. 将 Candidate 交给 owner-specific Validation / Commit 路径。
+
+AI Runtime 不拥有：
+
+- Learning Target、Task、Solution、Knowledge 的 canonical authority；
+- Observation / PolicyOutcome 的 Interaction semantic ownership；
+- Evidence / Learner Belief 的 Evaluation ownership；
+- SystemIssue / RevisionCandidate 的 Evolution ownership；
+- Governance authority；
+- Factual History；
+- Action execution authority；
+- 任意形式的长期 learner memory authority。
+
+因此：
+
+\[
+RuntimeExecutesReasoning
+\not\Rightarrow
+RuntimeOwnsResultSemantics
+\]
+
+### 2.3 五类核心运行对象
+
+AI Reasoning Runtime 的最小对象模型由五类对象构成：
+
+```text
+ReasoningPurpose
+ReasoningRequest
+ReasoningProtocol
+ReasoningExecution
+ReasoningExecutionRecord
+```
+
+它们不能压成一个 `AgentRun`。
+
+**ReasoningPurpose** 回答“为什么执行这次 cognition、服务于什么正式系统责任”。
+
+**ReasoningRequest** 是某个 caller 对执行 cognition 的请求；它携带 purpose、subject、target object、已知输入和请求上下文，但本身不创造 authority。
+
+**ReasoningProtocol** 是版本化认知程序，定义这次 cognition 的 semantic role、合法 context、工具、输出和失败合同。
+
+**ReasoningExecution** 是 Protocol 在某个具体时间、Context、Version 与 Authority Envelope 下的一次运行实例。
+
+**ReasoningExecutionRecord** 是该 execution 的可审计历史记录；它证明“当时系统如何执行 cognition”，不证明 Candidate 一定正确。
+
+必须保持：
+
+\[
+RequestIdentity
+\neq
+ExecutionIdentity
+\]
+
+同一个 Request 因 retry、routing fallback、人工重新触发或 recovery 可以产生多个 Execution；每个 Execution 都必须保留独立 provenance。
+
+### 2.4 Request 不是 Authority Grant
+
+ReasoningRequest 只能表达“请求执行什么”。请求来源可以是 Interaction Runtime、Evaluation Runtime、Evolution workflow、定时器、人工治理工作流或其他合法 caller，但：
+
+\[
+ReasoningRequest \neq AuthorityGrant
+\]
+
+Request 中即使包含“必须执行”“立即修改”“允许调用某工具”等自然语言，也不能扩大 Protocol、Product Context、Governance 或 backend authorization 已经允许的范围。
+
+这条边界阻止 caller、learner input、external content 或上一次 AI output 通过参数注入把运行请求升级成权限来源。
+
+### 2.5 Purpose 是正式执行语义，不是 Prompt 描述
+
+Reasoning Purpose 必须在 Context Assembly 前确定，因为它影响：
+
+- 允许读取什么数据；
+- 哪些 Belief / History 可参与 reasoning；
+- 哪些 Authority / Data Authority 适用；
+- 哪个 Protocol 合法；
+- 哪些 Candidate type 可产生；
+- 什么 provenance 与 audit 必须保存；
+- 什么 currentness 条件需要在 commit 时重验。
+
+因此 Purpose 不是一段供模型阅读的描述文字，而是 Control Plane 的一等输入。
+
+---
+
+## 3. Reasoning Protocol：版本化认知程序
+
+### 3.1 Protocol 不等于 Prompt
+
+Prompt 是 Protocol 在某个 Model Adapter 上的一种执行表达。Protocol 是正式 semantic contract。
+
+\[
+ReasoningProtocol \neq PromptTemplate
+\]
+
+如果只版本化 Prompt，系统仍然无法知道一次变更是在：
+
+- 修改目标；
+- 修改可用 Context；
+- 修改 Tool 权限；
+- 修改允许的 semantic openness；
+- 修改 Candidate schema；
+- 修改 uncertainty / failure semantics；
+- 还是仅改变某个模型的 wording adapter。
+
+因此 Protocol 必须独立于 Prompt、Model 与 Adapter 版本化。
+
+### 3.2 Protocol 的最小正式合同
+
+一个正式 Reasoning Protocol 至少包含以下语义字段族：
+
+```text
+ReasoningProtocol
+├── Identity
+│   ├── ProtocolId
+│   ├── SemanticRole
+│   └── ProtocolVersion
+├── Objective
+│   ├── PurposeClass
+│   └── Success / Non-Resolution Semantics
+├── InputContract
+│   ├── RequiredInputs
+│   ├── OptionalInputs
+│   └── ForbiddenInputs
+├── ContextPolicy
+│   ├── EpistemicAdmissibility
+│   ├── DataUseRequirements
+│   ├── Freshness / Currentness Requirements
+│   └── MinimumSufficientContext Policy
+├── ToolPolicy
+│   ├── AllowedToolClasses
+│   ├── AllowedOperations
+│   └── Delegation / Scope Constraints
+├── SemanticOpenness
+├── AuthorityLevel / MaximumAuthorityEnvelope
+├── OutputContract
+│   ├── CandidateType(s)
+│   └── NoCandidate / Non-Success Forms
+├── GroundingPolicy
+├── UncertaintyPolicy
+├── ValidationPolicy
+├── FailurePolicy
+└── VersionCompatibility / Evolution Metadata
+```
+
+本文档冻结这些**语义字段族**，不冻结具体 JSON Schema。
+
+### 3.3 Semantic Role 决定认知责任
+
+Protocol 必须只承担一个清晰 semantic role。
+
+例如：
+
+- `ObservationInterpretationProtocol`：解释当前 occurrence / artifact 在 Interaction 语义上是什么；
+- `EvidenceInterpretationProtocol`：判断 Observation 相对于 Claim 的证据意义；
+- `BeliefInferenceProtocol`：基于 compatible Evidence set 形成 BeliefCandidate；
+- `InteractionDecisionProtocol`：在当前 DecisionContext 与 admissible action space 中做 runtime judgment；
+- `SystemHypothesisProtocol`：解释 system-level anomaly；
+- `RevisionProposalProtocol`：提出 canonical revision candidate。
+
+禁止使用一个“万能 Reasoning Protocol”同时形成 Observation、Evidence、Belief、Policy 和 canonical change，因为这会重新混淆 Space ownership。
+
+### 3.4 Semantic Openness 与 Authority Level 正交
+
+Protocol 必须显式声明 semantic openness。最低可以区分：
+
+```text
+Closed Ontology
+→ Open Interpretation
+→ Ontology Extension Candidate
+→ Structural Redesign Candidate
+```
+
+开放程度决定模型可以提出多大的新结构；Authority Level 决定这些结果最多可以取得什么系统效力。二者不能绑定成同一枚举。
+
+例如 Domain Structure Discovery 可以高度开放，但只能输出低 authority 的 canonical candidate；Interaction Decision 对 ontology 可能是 closed / bounded，却会产生真实 learner-facing decision candidate。
+
+因此：
+
+\[
+SemanticOpenness \perp AuthorityLevel
+\]
+
+### 3.5 Protocol 的激活与版本变化
+
+Protocol 是 canonical semantic responsibility 的一部分。一个 Protocol Version 可以处于：
+
+```text
+Committed
+→ Eligible
+→ Active for Scope
+→ Superseded / Deprecated
+→ Retired
+```
+
+具体 lifecycle 由 Version / Replay 专项深化，但 AI Runtime 必须遵守两个规则：
+
+1. 每次 execution 绑定 exact active ProtocolVersion；
+2. Protocol 改变后，已有 historical execution 继续绑定旧版本，不被重写。
+
+`ProtocolVersion != PromptVersion != ModelVersion`。
+
+---
+
+## 4. Context Policy、Assembly 与 Authority Envelope
+
+### 4.1 Context 不是“检索到的相关文本”
+
+DeerMind 的 Context 是 Purpose-Bound Projection，不是 RAG top-k 文本集合：
+
+\[
+Context
+=
+PurposeBoundProjection(GovernedSystemState)
+\]
+
+Context Assembly 必须先决定一个信息**有没有资格进入此次 reasoning**，之后才讨论它是否相关。
+
+### 4.2 Context Assembly 的正式顺序
+
+每次 Context Assembly 至少遵循：
+
+```text
+Purpose
+→ Resolve Protocol
+→ Resolve Data Authority Admissibility
+→ Resolve Epistemic Admissibility
+→ Resolve Current Validity / Freshness
+→ Resolve Version Compatibility
+→ Relevance
+→ Sufficiency
+→ Minimum Sufficient Context
+→ Freeze Snapshot
+```
+
+其中 Data Authority 必须在 relevance / retrieval expansion 之前生效，避免系统先读取无权读取的数据，再用“最终没给模型看”作为补救。
+
+### 4.3 Context Item 的必要语义
+
+每个进入 Context Package 的 item 至少在逻辑上需要表达：
+
+```text
+ContextItem
+├── SourceRef / ExactRef
+├── SemanticClass
+│   ├── Factual
+│   ├── Canonical
+│   ├── DerivedSemantic
+│   ├── RuntimeProjection
+│   └── ExternalContent
+├── EpistemicStatus
+├── AuthorityStatus
+├── DataAuthorityBasis
+├── VersionRef
+├── Freshness / Currentness
+├── DependencyRole
+└── InclusionReason
+```
+
+同一自然语言内容既可能是 learner request、task content、external evidence source 或 authority directive 的载体；系统不能让模型根据文字语气自己判断 authority class。
+
+### 4.4 Context Requirement 状态
+
+Protocol 对 Context item / class 的需求至少允许表达：
+
+```text
+RequiredPresent
+Optional
+RequiredMissing
+Forbidden
+Stale
+Unavailable
+AuthorityDenied
+DataAuthorityDenied
+VersionIncompatible
+```
+
+这些状态必须保留，因为：
+
+- `RequiredMissing` 可能合法结束为 `InsufficientContext`；
+- `Forbidden` 表示即使高度相关也不得参与；
+- `Stale` 与 `Unavailable` 不等价；
+- `AuthorityDenied` 不是 epistemic uncertainty；
+- `VersionIncompatible` 不能通过模型“尽量理解”来绕过。
+
+### 4.5 Minimum Sufficient Context
+
+Context 最小化不是“尽可能少”，而是：
+
+> 在满足 Protocol 的 grounding、quality 与 safety 要求前提下，只暴露完成当前 semantic role 所需的最少充分信息。
+
+这同时服务：
+
+- 避免 prior Belief 污染 Observation；
+- 降低 confirmation bias；
+- 降低隐私泄露与 data-use surface；
+- 降低 prompt injection surface；
+- 降低 token / latency / cost；
+- 让 provenance 与 dependency 更可解释。
+
+### 4.6 Context Expansion Request
+
+模型可以发现当前 Context 不足并提出：
+
+```text
+ContextExpansionRequest
+```
+
+但 Request 只是 cognition output，不是读取授权。
+
+扩展请求必须重新经过：
+
+```text
+Purpose
+→ Protocol ContextPolicy
+→ Data Authority
+→ Epistemic Admissibility
+→ Currentness / Version
+→ Minimum Sufficient Check
+```
+
+如果扩展被拒绝，execution 必须能够以 `InsufficientContext`、`AuthorityDenied` 或其他准确结果结束，而不是隐藏地访问更多数据。
+
+### 4.7 Context Package、Manifest 与 DecisionContext 的边界
+
+必须区分：
+
+**Context Package**：本次 reasoning 实际可见的 immutable semantic snapshot。
+
+**Context Manifest**：记录 Package 是如何形成的、包含 / 排除了什么、exact refs / versions / authority basis / freshness / assembly version 等 provenance。
+
+**DecisionContext**：Interaction Space 为一次 Decision Cycle 定义的领域语义输入；它可以被 Context Assembly 消费，但不是 AI Runtime 的通用 Context 类型。
+
+**VersionContext**：本次 consistency boundary 的版本绑定。
+
+**DependencySet**：决定 formal result validity / currentness 的依赖集合。
+
+因此：
+
+\[
+ContextManifest
+\neq
+VersionContext
+\neq
+DependencySet
+\]
+
+且：
+
+\[
+ContextPackage
+\neq
+SourceOfTruth
+\]
+
+### 4.8 Authority Envelope 的形成
+
+每次 execution 必须解析一个 Authority Envelope。逻辑上：
+
+\[
+AuthorityEnvelope
+=
+ProtocolMaximum
+\cap SemanticOwnerAuthority
+\cap ProductContextAuthority
+\cap ConstitutionConstraints
+\cap RuntimeConstraints
+\]
+
+它至少约束：
+
+- 可执行的 Protocol；
+- 可读取的 Context class / scope；
+- 可生成 Candidate type；
+- 可使用的 Tool class / operation；
+- 可触达的 subject / resource / action scope；
+- 最大 Commit Class；
+- semantic openness 上限。
+
+Authority Envelope 是**权限上限描述**，不是 backend credential：
+
+\[
+AuthorityEnvelope \neq SecurityCredential
+\]
+
+真正 effect 仍由 commit / tool / executor backend 独立授权。
+
+### 4.9 Pinned Context 不能冻结未来权限
+
+Context Package 可以保存“当时看到的 exact snapshot”，但 current authority、Data Authority、security revocation 不能因为被 snapshot pin 住而永久有效。
+
+因此：
+
+\[
+PinnedSemanticContext
+\neq
+PinnedPermission
+\]
+
+历史 authorization basis 用于解释过去，不可作为未来重新执行的 credential。
+
+---
+
+## 5. Model、Tool 与 Bounded Workflow 执行
+
+### 5.1 Model Routing 不拥有 semantic contract
+
+Model Router 的责任是根据 Protocol 的 capability requirements、当前 availability、成本、latency、stability / variability expectation 与 provider constraints 选择兼容执行路径。
+
+它不能：
+
+- 因模型能力不足而改变 Candidate type；
+- 因 fallback model 不支持某字段而删除 semantic contract；
+- 因成本原因扩大 / 缩小 authority；
+- 把 Protocol failure 偷换成另一个语义任务；
+- 因 provider convenience 修改 Context admissibility。
+
+因此：
+
+\[
+RoutingAdaptation
+\neq
+SemanticContractMutation
+\]
+
+### 5.2 Model Adapter 的职责
+
+Model Adapter 负责把 Protocol 的已冻结语义合同适配为某 provider / model 的技术调用，包括：
+
+- prompt / message construction；
+- structured output mode；
+- tool calling transport；
+- multimodal payload adaptation；
+- token / truncation handling；
+- provider-specific response normalization；
+- provider usage / error mapping。
+
+Adapter 不拥有 Protocol semantics。若某模型无法满足 Required Output / Tool / Context contract，应返回 incompatibility / execution failure，而不是静默降级语义。
+
+### 5.3 Tool 的四类运行责任
+
+AI Runtime 至少区分四类 Tool：
+
+1. **Read / Context Tool**：读取正式状态、artifact、history 或外部受权数据；
+2. **Reasoning Tool**：计算、搜索、解析、仿真等不直接产生现实 effect 的辅助能力；
+3. **Action Tool**：可能产生 learner-facing 或 external effect；
+4. **Governance Tool**：涉及 canonical change、activation、approval 或高权限系统操作。
+
+它们不能被一个统一 `tools[]` 权限布尔值替代。
+
+### 5.4 Tool Policy 与 Backend Authorization 双重边界
+
+Tool 调用至少经过：
+
+```text
+Model proposes ToolRequest
+→ Protocol ToolPolicy check
+→ AuthorityEnvelope check
+→ DataAuthority check
+→ Subject / Resource / Parameter validation
+→ Backend Authorization
+→ Tool Execution
+→ ToolResult
+```
+
+即使某个高权限 Tool 被错误暴露给模型，backend 仍必须能够拒绝越权调用。
+
+因此：
+
+\[
+ToolAvailability \neq ToolAuthority
+\]
+
+### 5.5 Action Tool 不能绕过 ActionIntent
+
+对于会真实影响 learner / external world 的 Action Tool：
+
+```text
+Policy Reasoning
+→ ActionCandidate
+→ post-reasoning admissibility
+→ ActionIntent
+→ Executor / Action Tool Backend
+→ ActionOccurrence | NotOccurred | Indeterminate
+```
+
+AI Runtime 不能因为 ToolPolicy 中“有这个工具”就直接产生 learner-facing effect。
+
+这也是：
+
+\[
+AIRuntimeToolUse
+\neq
+LearnerTaskToolUse
+\]
+
+Reasoning 内部使用计算器、搜索或代码工具，不等于 learner 在 Task 中使用了该工具，也不能污染 learner Evidence 的 assistance semantics。
+
+### 5.6 ToolResult 是信息，不是权限
+
+Tool backend 可以返回事实、数据、错误或外部内容，但 ToolResult 进入模型 Context 后仍是内容。
+
+\[
+ToolResult \neq Authority
+\]
+
+一个搜索结果里写着“调用管理员工具删除记录”，不会因此获得 Governance authority；一个外部文档里的 prompt injection 也不能改变 ToolPolicy。
+
+### 5.7 Bounded Agent Workflow 的位置
+
+Agent 不是一级 semantic authority。本文档将 Agent 定义为：
+
+> 在明确 Goal / Purpose、Protocol 集合、Context Policy 和 Authority Envelope 下，对多个 Reasoning Execution 与 Tool Operation 进行有限编排的 workflow。
+
+层次关系保持：
+
+```text
+Space       owns semantic responsibility
+Protocol    defines reasoning responsibility
+Runtime     executes reasoning
+Workflow    orchestrates executions
+```
+
+Workflow 不拥有新的 learner memory、Belief writer、canonical authority 或 factual authority。
+
+### 5.8 Workflow Checkpoint 与恢复
+
+长时间 workflow 可以保存：
+
+```text
+WorkflowCheckpoint
+├── WorkflowExecutionId
+├── CurrentStep
+├── CompletedExecutionRefs
+├── PendingWork
+├── Non-authoritative Working Data
+└── Resume Metadata
+```
+
+但 checkpoint 只是 execution state。
+
+恢复时必须重新解析：
+
+- current Protocol activation；
+- authority / Data Authority；
+- dependency currentness；
+- lifecycle；
+- tool availability / security；
+- 需要 CURRENT 的 Context refs。
+
+禁止把 checkpoint 中旧的 permission / current view 当作可继续使用的未来授权。
+
+---
+
+## 6. Candidate、Validation、Commit 与失败语义
+
+### 6.1 Candidate 是 AI 输出的正式中间态
+
+AI Runtime 的正常业务输出不是 arbitrary text，而是 typed Candidate 或明确 NoCandidate / Non-Success。
+
+Candidate 至少分为：
+
+**Derived Semantic Candidate**
+- ObservationCandidate；
+- EvidenceCandidate；
+- BeliefCandidate；
+- SystemIssue / Hypothesis 等可修正 derived semantics。
+
+**Runtime Decision Candidate**
+- ActionCandidate；
+- NoIntervention；
+- Defer；
+- PlanCandidate。
+
+**Canonical / Structural Candidate**
+- TargetCandidate；
+- Task / KC / ObservationSemantics / PolicySemantics Candidate；
+- ReasoningProtocolRevisionCandidate。
+
+**Evolution Internal Candidate**
+- Hypothesis；
+- RevisionCandidate；
+- ValidationPlanCandidate。
+
+同一个统一 Candidate envelope 可以共享 provenance / version / validation metadata，但不能因此抹平不同 owner 与 commit authority。
+
+### 6.2 AI 不能产生 Factual Commit
+
+模型可以生成关于事实的解释或提出“可能发生了 X”，但 Factual History 必须由 Runtime & Event Architecture 定义的 factual admission 形成。
+
+因此：
+
+\[
+AICandidate \not\Rightarrow FactualEvent
+\]
+
+如果 AI 识别到某个外部 occurrence，需要形成 Event，仍必须有可授权的 source / producer / occurrence attestation path；不能把模型判断直接写成事实。
+
+### 6.3 NoCandidate 是合法结果
+
+Protocol 可以成功执行但不产生 Candidate。例如：
+
+- 当前输入无法映射；
+- 证据不足；
+- competing interpretations 无法区分；
+- 系统判断没有值得提交的新信息；
+- 需要更多 Context 但无权读取；
+- 当前不存在合理 Action。
+
+因此：
+
+```text
+ExecutionSucceeded
+not=> CandidateProduced
+```
+
+`NoCandidate` 必须有 typed reason，而不是空响应。
+
+### 6.4 Epistemic Non-Resolution 与 Runtime Failure 分离
+
+必须至少区分：
+
+| 类别 | 示例 | 语义 |
+|---|---|---|
+| Epistemic non-resolution | UNKNOWN / Ambiguous / Unmapped / InsufficientEvidence / NotIdentifiable | cognition 合法运行，但无法形成确定认识 |
+| Context non-resolution | RequiredMissing / ContextUnavailable / DataAuthorityDenied / VersionIncompatible | 缺少合法输入条件 |
+| Model execution failure | ModelTimeout / ProviderFailure / InvalidStructuredOutput | 模型调用未正确完成 |
+| Tool failure | ToolUnavailable / ToolTimeout / ToolUnauthorized / ToolResultInvalid | 辅助执行失败 |
+| Protocol failure | UnsupportedProtocol / AdapterIncompatible / ProtocolViolation | 当前执行栈无法满足 Protocol contract |
+| Consistency failure | CandidateStale / CommitConflict / DependencyInvalid | Candidate 形成后正式生效条件变化 |
+| Authority failure | Unauthorized / AuthorityStale | 当前不存在合法 effect authority |
+
+特别地：
+
+\[
+ModelFailure \neq UNKNOWN
+\]
+
+### 6.5 Retry 创建新 Execution
+
+Retry 不是把失败历史“重做掉”。每次 retry：
+
+- 创建新的 ReasoningExecutionId；
+- 保留 parent / retry relation；
+- 重新确认需要 CURRENT 的 Context / Authority；
+- 记录新的 routing / model / tool provenance；
+- 不覆盖旧 ExecutionRecord。
+
+因此：
+
+\[
+Retry \neq HistoryRewrite
+\]
+
+并且系统不得无限 retry 直到模型给出一个“看起来确定”的答案，从而掩盖真实 UNKNOWN / instability。
+
+### 6.6 Validation 是分层且 owner-sensitive 的
+
+Validation Pipeline 不采用一个万能 Validator。逻辑层至少包括：
+
+```text
+L1 Structural Validation
+L2 Grounding Validation
+L3 Semantic Contract Validation
+L4 Context / Dependency / Version Validity
+L5 Semantic Quality Validation
+L6 Empirical Validation when required
+L7 Governance Authorization when required
+```
+
+AI Runtime 负责执行 / 编排 Protocol 所声明的 validation profile，但每层的 authority 来源不同。
+
+开放内容的理解、grounding 的含义支持关系、断言归属与 semantic boundary 判断，必须通过显式语义规则约束下的 LLM reasoning 完成。关键词、正则或枚举措辞的分支不得作为语义裁决器。结构、引用存在性、精确计算、版本与权限条件仍由确定性机制检查；Validator 不替 Evaluation 推断学习者能力，也不替 Policy 选择教学行动，但必须校验内容是否越过相应职责。
+
+Validation Profile 应声明规则与版本、被检查的候选字段、允许使用的 Context、所需检查、通过 / 失败 / 未决条件，以及按风险采用的复核方式。语义校验产生可追溯的 validation result，绑定 exact Candidate revision / payload、Protocol / rule version、Context refs、执行与模型 provenance、相关内容定位、判断依据及未决项；它沿用现有 execution / validation 记录，不新增 semantic owner。确定性 gate 核验所需记录来自获准的校验 execution、对应当前提交的候选且满足 profile，候选正文中的“已验证”声明不具备同等效力。候选内容变化后必须重新完成所需校验，不能沿用旧内容的通过结果。
+
+Profile 要求的语义边界检查未决或执行失败时，不得把它当作通过，也不得降级为关键词裁决。可以请求所需 Context、按协议重试或返回明确 non-resolution；这与一个已符合合同、但诚实表达现象歧义的 Observation 不同，后者仍可取得 standing。校验 execution 也受 Context / Authority / Data Authority 约束，不能借校验之名读取原语义角色禁止的 Learner Belief，或取得 Action / Governance 权限。
+
+自由文本的用途必须由 OutputContract 声明：参与正式语义的描述与解释同样接受检查，引用与自述保留来源归属；仅供审计的 rationale 不自动成为下游正式输入。ContextAssembler 按已声明用途选择内容，不能把整段模型原文或未校验附言作为可信 Observation 传入后续 reasoning。需要重新使用原始材料时，按对应 Protocol 的普通材料重新准入，不继承不存在的语义校验或 authority。
+
+语义校验 PASS 是对 exact candidate 的一次获准通过意见，不是内容必然正确的证明。required checks 缺失、执行失败、未决或绑定不一致时不得提交；全部 PASS 也不创造跨职责资格。AA-A02 的原隔离承诺已被否定，越界内容误提交仍是错误。下游按自身既有合同判断其输出的依据和职责，不默认增加一次上游全文复审，也不假定多次 LLM 判断的错误独立。
+
+Observation Profile 在生成前固定本轮目的和必要含义。完整作答要求有依据的方法、可见局部计算和已提交最终答案的独立判断；不完整作答忠实保留未知和缺失，不补造学生提交值，仍有答案时不能跳过判断。请求专用 Profile 记录请求归属、对象和限制，不把请求变为教学决定，也不因 Context 包含旧作答而重评整题。混合输入按声明目的处理；适用性判断仍依赖规则与 LLM，不能按关键词或候选遗漏放宽要求。
+
+检查执行状态与语义结论分别记录：只有已完成且满足返回合同的检查才有 PASS/FAIL/UNRESOLVED；调用或格式失败保留失败原因，未执行项没有通过结论。缺少必要含义的候选不能因已写部分正确而提交，也不能失败后自动降级 profile。旧失败记录可以成为轮次收束依据，新请求使用新候选、新 Context 和相应校验；运行时不替候选补写含义。
+
+`L7` 本质上是 authorization，不是“更高质量的模型评价”。
+
+### 6.7 Validation Success 不产生 Commit Authority
+
+\[
+ValidationSuccess \neq CommitAuthority
+\]
+
+Candidate 即使通过所有 semantic / empirical validation，也必须由正确 owner、当前 authority 与 commit policy 决定是否取得 formal standing。
+
+### 6.8 Commit 是 Formal Standing Acquisition
+
+从 AI Runtime 视角，Commit 至少要求：
+
+```text
+RequiredValidationPassed
+AND OwnerResolved
+AND AuthorityAvailable
+AND VersionBound
+AND ProvenanceComplete
+AND CriticalDependenciesCurrent
+```
+
+满足后 Candidate 才具备 commit eligibility。
+
+Commit 本身由 deterministic formal-state mechanism 完成：
+
+\[
+Commit
+=
+FormalStandingAcquisition
+\]
+
+而不是：
+
+\[
+Commit = Persistence
+\]
+
+AI Runtime 可以 orchestrate commit attempt，但不能自行成为 semantic owner 或 authority source。
+
+### 6.9 Commit-time Revalidation
+
+Context 在 reasoning 开始时合法，不代表 Candidate 返回时仍然合法。
+
+Commit 前必须重新检查至少：
+
+- expected head；
+- CURRENT critical dependencies；
+- current authority；
+- current Data Authority；
+- Protocol / semantic version eligibility；
+- lifecycle；
+- security / revocation；
+- owner-specific validation requirements。
+
+如果失效，应返回 `CandidateStale` / `Unauthorized` / `VersionIncompatible` 等准确状态，不能修改 metadata 后继续提交。
+
+### 6.10 Candidate Stale 不自动 Rebase
+
+Reasoning 是基于 immutable snapshot 发生的。若 snapshot 中关键事实改变：
+
+```text
+old Context
+→ Candidate
+→ critical dependency changed
+→ CandidateStale
+```
+
+不得只把 Candidate dependency ref 更新成新版本后提交，因为模型并没有看到新世界。
+
+正确路径是新的 Reasoning Execution。
+
+### 6.11 Policy Outcome 与 Runtime Failure 分离
+
+Interaction Protocol 可以输出：
+
+```text
+Execute(ActionCandidate)
+NoIntervention
+Defer
+```
+
+这些是业务 decision outcome。
+
+ModelFailure、ContextAssemblyFailure、Unauthorized、CandidateStale、ToolFailure 不能伪装成 `NoIntervention` 或 `Defer`。
+
+只有正式定义并授权的 `FallbackPolicyProtocol` 才能在 degraded condition 下产生新的 Policy Outcome。
+
+---
+
+## 7. Version、Provenance、History 与安全边界
+
+### 7.1 Reasoning 是版本化计算
+
+每次正式 Reasoning Execution 至少绑定：
+
+```text
+ExecutionVersionContext
+├── ProtocolVersion
+├── SemanticVersionBindings
+├── ModelIdentity / ProviderRevision
+├── ContextAssemblyVersion
+├── ToolVersion(s)
+├── ModelAdapterVersion
+└── RoutingPolicyVersion when behaviorally relevant
+```
+
+其中：
+
+- Protocol / semantic versions 可能参与结果的 semantic compatibility；
+- Model / Adapter / routing / tool implementation 默认首先属于 execution provenance；
+- 只有当 Evolution / validation 证明某 execution version 会改变 formal meaning 时，才升级为 semantic validity dependency。
+
+因此：
+
+\[
+ExecutionProvenanceDependency
+\neq
+SemanticValidityDependency
+\]
+
+### 7.2 Context Manifest 的职责
+
+Context Manifest 必须支持回答：
+
+- 这次 execution 的 Purpose 是什么；
+- 使用哪个 ProtocolVersion；
+- 系统考虑过哪些 Context source；
+- 哪些 item 被纳入、排除、拒绝或因 stale 不可用；
+- 每个纳入 item 的 exact ref / version / freshness / authority basis；
+- ContextAssemblyVersion；
+- data-use / access audit refs；
+- 最终模型实际可见 Context 的 identity / digest / reconstructable representation；
+- 哪些 Context Expansion Request 被允许或拒绝。
+
+Context Manifest 是 provenance，不是 Source of Truth，也不能成为未来读取权限。
+
+### 7.3 ReasoningExecutionRecord 的最小合同
+
+ReasoningExecutionRecord 至少需要表达：
+
+```text
+ReasoningExecutionRecord
+├── ExecutionIdentity
+│   ├── ExecutionId
+│   ├── RequestRef
+│   ├── Parent / Retry / WorkflowRef
+│   └── Purpose
+├── Protocol
+│   ├── ProtocolId
+│   └── ProtocolVersion
+├── Execution Versions
+│   ├── Model / Provider Revision
+│   ├── AdapterVersion
+│   ├── ContextAssemblyVersion
+│   ├── ToolVersion(s)
+│   └── relevant semantic versions
+├── Context
+│   ├── ContextManifestRef
+│   └── exact input refs / snapshot identity
+├── Authority
+│   ├── AuthorityEnvelopeBasis
+│   └── DataAuthorityBasis / audit refs
+├── Tool Execution Summary
+│   ├── ToolRequest refs
+│   └── ToolResult refs / statuses
+├── Result
+│   ├── CandidateRef(s) or Non-Success
+│   └── model-visible structured output needed for audit
+├── Validation / Commit
+│   ├── ValidationResultRef(s)
+│   └── CommitOutcomeRef if attempted
+└── Timing / Failure
+    ├── StartedAt / CompletedAt
+    ├── ExecutionStatus
+    └── FailureCategory / Detail
+```
+
+它不要求保存模型私有 chain-of-thought。
+
+需要保存的是系统**实际观察到并用于正式判断**的 provenance，而不是内部不可治理推理草稿。
+
+### 7.4 Working Memory 不能成为 Durable Memory
+
+Reasoning Execution 可以拥有临时 Working Memory，但只允许在当前 execution / bounded workflow 中辅助 cognition。
+
+若某信息需要跨 execution 影响未来行为，必须转化为：
+
+- 正式 Event；
+- Observation / Evidence / Belief；
+- Plan / Policy state；
+- SystemIssue / Hypothesis；
+- canonical semantic object；
+- 或其他有明确 owner 的 typed System State。
+
+因此：
+
+\[
+DurableMemory \Rightarrow ExplicitSystemState
+\]
+
+### 7.5 Historical Reconstruction 不重新调用模型
+
+Historical Reconstruction 的目标是回答：
+
+> 当时系统实际使用什么 Protocol、Context、Model / Tool，模型输出了什么 Candidate，经过了什么 validation / authority / commit？
+
+它依赖 ReasoningExecutionRecord、ContextManifest、Tool execution records 与 formal state history，不依赖重新调用模型。
+
+Reasoning Re-execution 是另一种能力：它重新运行 cognition，用于 regression / drift / variability 分析，但默认不保证相同输出。
+
+Semantic Reinterpretation 又是另一种能力：它故意使用新的 semantics / protocol 重新解释旧 factual grounding。
+
+三者必须保持：
+
+\[
+HistoricalReconstruction
+\neq
+ReasoningReexecution
+\neq
+SemanticReinterpretation
+\]
+
+### 7.6 Content、Instruction、Authority 三分
+
+所有进入模型的文本 / 多模态内容都必须被视为**信息载体**，而不是凭自然语言语气获得 authority。
+
+\[
+Content \neq Instruction \neq Authority
+\]
+
+系统层面的 instruction 来自被激活 Protocol、Context Policy 与 Tool Policy；真实 authority 来自 Product / Context Constitution、Governance、scoped grants 与 backend authorization。
+
+### 7.7 Prompt Injection 的结构性防线
+
+Prompt Injection 不应主要靠“让模型识别恶意提示”。系统必须在模型之外保持：
+
+- Context Item semantic / authority classification；
+- Protocol-bound instruction hierarchy；
+- ToolPolicy；
+- per-execution Authority Envelope；
+- backend subject / resource / parameter authorization；
+- ActionIntent boundary；
+- Governance Tool isolation；
+- Data Authority filtering；
+- commit-time revalidation；
+- SecuritySignal audit。
+
+因此即使模型被完全诱导，最坏结果也应限制在“生成越界 Candidate / ToolRequest，被 deterministic layer 拒绝”，而不是获得真实 privilege。
+
+### 7.8 AI Runtime 不持有 Ambient Privileged Principal
+
+AI Runtime 不应以一个长期高权限 service credential 代表模型自由访问所有资源。
+
+合法的执行权限应是：
+
+```text
+Execution
+→ scoped delegated authorization
+→ exact purpose / subject / resource / operation
+→ backend enforcement
+```
+
+权限必须可衰减、可撤销、可审计，并且不能被 model text 扩大。
+
+### 7.9 外部模型 Provider 是 Data Processing Destination
+
+当 Context 离开 DeerMind 控制边界发送到外部 provider 时，这不仅是“调用模型”，也是数据使用 / disclosure decision。
+
+Context Assembly 与 Model Adapter 必须能够尊重：
+
+- purpose；
+- subject；
+- destination / provider class；
+- data category；
+- allowed disclosure；
+- retention / logging policy；
+- regional / Product Context constraints。
+
+因此“可以在 DeerMind 内部读取某数据”并不自动意味着“可以发送给任意模型 provider”。
+
+---
+
+## 8. 运行生命周期、分阶段与 Focused Design Closure
+
+### 8.1 Reasoning Execution 生命周期
+
+一次 execution 的逻辑生命周期为：
+
+```text
+Requested
+→ RequestValidated
+→ ProtocolResolved
+→ AuthorityResolved
+→ ContextResolving
+→ Ready
+→ Running
+→ CandidateProduced | NoCandidate | NonResolved | ExecutionFailed
+→ Validation
+→ CommitEligible | ValidationFailed | Stale | Unauthorized
+→ CommitAttempted | NoCommitRequired
+→ Committed | CommitConflict | CandidateStale | Rejected | Deferred
+→ Finalized
+```
+
+这不是要求实现使用一个全局 enum；它冻结的是必须可区分的语义阶段与终态。
+
+### 8.2 Recovery 原则
+
+进程崩溃、模型超时、Tool timeout 或 workflow restart 不得改变历史语义。
+
+Recovery 只能从 durable execution record / checkpoint 恢复“已完成到哪里”，不能：
+
+- 把未保存的模型输出猜出来；
+- 把 intent 当成 occurrence；
+- 把旧 authority snapshot 当作当前 permission；
+- 把未完成 execution 自动标成成功；
+- 用重新运行结果冒充过去实际结果。
+
+如果过去输出未被可靠记录，则 Historical Reconstruction 可以降级为 `PARTIAL / UNAVAILABLE`，而不是伪造 provenance。
+
+### 8.3 Capability Staging
+
+本专项采用总体 System Design 的 staging 原则：
+
+| 能力 | v0.1 Contract | Consolidated Spike | 可后置 |
+|---|---|---|---|
+| Reasoning Purpose / Request / Execution | S0 | S1 | 生产级调度优化 |
+| Versioned Reasoning Protocol | S0 | S1 | 大规模 protocol registry / authoring UI |
+| Context Policy / Assembly / Manifest | S0 | S1 | 高级检索优化、分布式 context service |
+| Authority Envelope | S0 | S1 | 生产级 IAM 集成细节 |
+| Typed Candidate | S0 | S1 | 全量 domain candidate catalog |
+| Validation / Commit Handoff | S0 | S1 | 分布式事务实现 |
+| One real Model Adapter | S0 | S1 | 多 provider 智能路由 |
+| Tool Policy + backend authorization boundary | S0 | S1（代表性工具） | 完整工具生态 |
+| ReasoningExecutionRecord | S0 | S1 | 长期归档 / 冷存储优化 |
+| Working Memory / no hidden durable state | S0 | S1 | 复杂 bounded workflow |
+| Bounded Agent Workflow | S0 contract | S2 minimal / optional | Agent framework / production workflow platform |
+| Prompt injection containment | S0 | S1 | 生产级 security analytics / SIEM |
+| Provider destination / data authority | S0 | S2 representative | 完整 legal / consent workflow |
+
+### 8.4 Consolidated Spike 中本专项需要验证什么
+
+本专项主要支撑 Validation Dimension A、E、F，并与 B、C 交叉。
+
+**Dimension A — Semantic Projection** 重点验证：
+
+- Protocol / Context / Candidate contract 是否足以形成 governable Observation；
+- Forbidden Context 是否能在模型调用前结构性排除；
+- Unmapped / Ambiguous / GroundingFailure 是否能被保留；
+- 规则约束下的 LLM semantic validation 是否能识别合法字段中的 latent learner state、Evidence / Policy judgment 越界，并保留合法局部解释、引用与 self-report；
+- 确定性 gate 是否核验 exact-candidate validation result，缺失、失败或未决检查是否阻止不合格提交，未校验附言是否会泄漏到下游 Context。
+
+**Dimension E — Policy / Decision** 重点验证：
+
+- AI 能否在 admissible action space 内承担真实 judgment；
+- deterministic layer 是否只做 legality / authority / execution，而不会被迫重新编码 pedagogy；
+- ModelFailure 是否能与 NoIntervention / Defer 分离；
+- context stale 时 Candidate 是否被安全拒绝。
+
+**Dimension F — Authority Security** 重点验证：
+
+- malicious learner / retrieved content / ToolResult 是否无法扩大 authority；
+- Protocol ToolPolicy + scoped delegation + backend authorization 是否形成真实边界；
+- Governance / Action effect 是否不能被普通 reasoning tool path 绕过。
+
+### 8.5 原假设证据与后继验证要求
+
+AA-A02 原命题为 DENIED；A1/E1 等质量与组成要求保留未决。B/C/D/F1 的限定机制支持见总体设计 v0.3 §7.7，不扩展为生产可靠性。以下相关后继问题尚未取得足够质量或完整范围支持：
+
+- typed Candidate + validation 能否足够可靠地阻止 semantic boundary leakage；
+- Minimum Sufficient Context 是否能在不引入 prior contamination 的同时维持足够 reasoning quality；
+- per-execution Authority Envelope + backend authorization 是否足以抵御真实 prompt injection / confused deputy；
+- AI Policy judgment 与 deterministic legality 是否可以长期保持职责分离；
+- Context Manifest / ExecutionRecord 是否足够支持真实 Historical Reconstruction，而成本仍可接受；
+- 多模型 routing 是否能在不改变 Protocol semantics 的情况下安全演进。
+
+后续验证须绑定具体命题和范围，保留原结论。尤其不能再把 typed Candidate + validation 的普遍语义隔离写成已成立事实，也不能以脚本结果代替模型质量。
+
+### 8.6 Focused Design Closure 判断
+
+截至 v0.1，本专项已经明确：
+
+```text
+Reasoning Purpose / Request / Execution identity      CLOSED
+Reasoning Protocol contract                          CLOSED
+Context Policy / Assembly / Manifest                 CLOSED
+Authority Envelope                                   CLOSED
+Model Routing / Adapter boundary                     CLOSED
+Tool classes / authorization boundary                CLOSED
+Candidate classes                                    CLOSED
+Validation / Commit handoff                          CLOSED
+Failure / non-resolution / retry semantics           CLOSED
+Working Memory / Workflow Checkpoint boundary        CLOSED
+Reasoning Execution provenance / history             CLOSED
+Version / replay interface                           CLOSED
+Prompt injection / trust boundary                    CLOSED
+Implementation technology choices                    OPEN by design
+Architecture Validation Evidence                     NOT YET
+```
+
+因此本文档达到 **§3.3 Focused Design Closure Candidate**。是否最终冻结为 v1.0，仍取决于 Consolidated Architecture Spike、相关 ADR、与 §3.4–§3.7 的交叉设计以及 Gate E / F evidence review。
+
+### 8.7 与后续专项的 Handoff
+
+本文档向 §3.4 State / Dependency & Invalidation 交付以下已冻结接口：
+
+- Context Package 是 immutable snapshot，不是 Source of Truth；
+- ContextManifest、VersionContext、DependencySet 分离；
+- formal Candidate 需要 exact dependency / currentness revalidation；
+- CandidateStale 不能 metadata-only rebase；
+- ExecutionRecord 属于 execution history，不等于 semantic state；
+- Working Memory / WorkflowCheckpoint 不得成为 hidden durable epistemic state。
+
+§3.4 需要进一步回答：这些 dependency 如何正式表示、current resolver 如何解析、typed invalidation 如何传播、materialization / recompute 如何工作，而不重新定义本专项的 cognition contract。
+
+---
+
+## Appendix A — AI Reasoning Runtime Invariant Registry
+
+| ID | Invariant |
+|---|---|
+| **AR-01 Controlled Cognition** | 每次正式 AI cognition 必须绑定明确 Purpose、active Reasoning Protocol、受控 Context 与 Authority Envelope。 |
+| **AR-02 Runtime Is Not Owner** | AI Reasoning Runtime 只执行 cognition，不拥有 Learning / Evaluation / Interaction / Evolution semantic authority。 |
+| **AR-03 Request ≠ Authority** | ReasoningRequest、learner request、external actor request 或自然语言命令均不能自行创造 execution / commit authority。 |
+| **AR-04 Protocol ≠ Prompt** | Reasoning Protocol 是版本化认知程序；Prompt / Adapter 是实现表达。 |
+| **AR-05 Purpose Before Context** | Context Assembly 必须先确定 Purpose / Protocol / Authority，再处理 relevance。 |
+| **AR-06 Data Authority Before Retrieval** | Data-use eligibility 必须在 relevance / retrieval expansion 前生效。 |
+| **AR-07 Minimum Sufficient Context** | 模型只获得完成当前 semantic role 所需的最小充分、合法 Context。 |
+| **AR-08 Context Is Projection** | Context Package 是 purpose-bound immutable snapshot，不是 Source of Truth。 |
+| **AR-09 Metadata Separation** | `ContextManifest != VersionContext != DependencySet`。 |
+| **AR-10 Pinned Context ≠ Pinned Permission** | snapshot 可以保存历史输入，但 authority / data authority / security revocation 必须在 effect 前按 current state 重验。 |
+| **AR-11 Open Cognition ≠ Open Authority** | semantic openness 与 authority level 正交；AI 不可自行扩大 Authority Envelope。 |
+| **AR-12 AuthorityEnvelope ≠ Credential** | Authority Envelope 描述 execution 上限，真实 effect 仍由 deterministic backend authorization。 |
+| **AR-13 Candidate Before Standing** | AI 输出默认先成为 typed Candidate / NoCandidate / Non-Success，不直接成为正式 state。 |
+| **AR-14 AI Cannot Factual Commit** | AI interpretation 不得直接创建 Factual Event；事实 standing 必须经过 factual admission。 |
+| **AR-15 Validation ≠ Authority** | `ValidationSuccess != CommitAuthority`。 |
+| **AR-16 Persistence ≠ Commit** | 保存输出不等于取得 formal standing；Commit 是 owner / authority / version / provenance / dependency 受控的正式生效。 |
+| **AR-17 Commit-Time Revalidation** | Candidate commit 前必须重新检查 critical dependencies、current authority、data authority、version、lifecycle 与 security。 |
+| **AR-18 No Metadata-Only Rebase** | stale Candidate 不得仅更新 dependency / head metadata 后提交，必须重新 reasoning。 |
+| **AR-19 ModelFailure ≠ UNKNOWN** | runtime execution failure 与 epistemic non-resolution 必须分离。 |
+| **AR-20 Retry Is New Execution** | retry 形成新的 execution identity 并保留失败历史，不能覆盖前次执行。 |
+| **AR-21 No Hidden Durable Memory** | 跨 execution 持续影响行为的认识必须进入有 owner 的显式 System State。 |
+| **AR-22 Workflow Checkpoint ≠ Epistemic State** | workflow 恢复状态不自动取得 learner / semantic standing。 |
+| **AR-23 Tool Availability ≠ Tool Authority** | Tool 暴露、模型选择调用与 backend permission 是三件不同的事。 |
+| **AR-24 Action Tool Requires ActionIntent** | learner / external effect 不能通过普通 AI Tool call 绕过 ActionIntent / Executor boundary。 |
+| **AR-25 ToolResult ≠ Authority** | Tool / retrieved content 只提供信息，不因文本内容获得新的权限。 |
+| **AR-26 No Ambient AI Privilege** | AI Runtime 不持有供模型自由支配的长期高权限 principal。 |
+| **AR-27 Content ≠ Instruction ≠ Authority** | 文本命令语气不得改变正式 instruction hierarchy 或 authority。 |
+| **AR-28 Reasoning Is Versioned Computation** | 正式 AI-derived result 必须可追溯 Protocol、semantic context、model/provider、ContextAssembly、Tool 与 Adapter 版本。 |
+| **AR-29 Provenance ≠ Validity Dependency** | execution provenance 默认不自动成为 semantic currentness dependency。 |
+| **AR-30 Historical Reconstruction ≠ Re-execution** | 过去实际执行记录与未来重新调用模型严格分离。 |
+| **AR-31 Rejected Candidate Remains Execution History** | 被拒 Candidate 不进入 semantic state，但其 execution provenance 可进入 Reasoning Execution History。 |
+| **AR-32 No CoT Dependency** | 系统 audit / replay 不依赖保存模型私有 chain-of-thought。 |
+| **AR-33 Routing Cannot Mutate Semantics** | model routing / fallback 不得静默改变 Protocol output、Context 或 authority contract。 |
+| **AR-34 Agent Is Orchestration Only** | bounded Agent Workflow 只编排 Protocol / Tool execution，不拥有新的 semantic / authority boundary。 |
+
+---
+
+## Appendix B — Core Runtime Object Contract Matrix
+
+| Object | Standing | Owner / Authority | Identity | Version | Durable? | 主要 Dependency | 关键边界 |
+|---|---|---|---|---|---|---|---|
+| ReasoningPurpose | Control semantic | Caller + Protocol constraints | purpose identity / class | purpose schema version if needed | execution provenance | product / runtime purpose | 不是自然语言 request |
+| ReasoningRequest | Execution request | authorized caller | RequestId | request schema version | 是 | purpose / requested protocol / input refs | 不创造 authority |
+| ReasoningProtocol | Canonical semantic state | protocol semantic owner + governed canonical change | ProtocolId | ProtocolVersion | 是 | canonical semantics / governance | 不等于 Prompt |
+| AuthorityEnvelope | Runtime control projection | Authority Resolver | Execution-scoped | authority basis versions | snapshot + audit basis | protocol / context authority / constitution | 不是 credential |
+| ContextPackage | Runtime immutable projection | Context Assembler | ContextPackageId | ContextAssemblyVersion + bound semantic versions | execution lifetime / retained as policy requires | exact source refs | 不是 SoT |
+| ContextManifest | Provenance record | Context Assembler / Audit | ManifestId | assembly version | 是（retention 可配置） | context selection / exclusion basis | 不等于 VersionContext / DependencySet |
+| ReasoningExecution | Execution state | AI Runtime | ExecutionId | execution version context | execution lifetime | request / protocol / context | 不拥有 domain semantics |
+| Candidate | Pre-standing semantic result | domain protocol / candidate type | CandidateId | protocol / semantic version refs | 至少保留到 outcome；audit 按策略 | context / tool / reasoning refs | 未 Commit 不具目标 standing |
+| ToolRequest | Execution operation request | Protocol + Envelope bounded | ToolRequestId | ToolVersion / policy version | execution/audit | execution / parameters / scope | 不等于 backend auth |
+| ToolResult | Execution result / content | Tool backend as source of result | ToolResultId | ToolVersion | 按 provenance 策略 | ToolRequest | 不自动拥有 authority |
+| WorkflowCheckpoint | Execution / recovery state | workflow runtime | CheckpointId | workflow definition version | 可 durable | completed execution refs | 不具 epistemic authority |
+| ReasoningExecutionRecord | Execution history | AI Runtime / audit mechanism | ExecutionRecordId / ExecutionId | all bound versions | 是 | manifest / tools / candidate / outcome | 不证明 Candidate 正确 |
+
+---
+
+## Appendix C — Failure and Terminal Outcome Registry
+
+| Domain | Terminal / Result | 是否可 retry | 是否可直接产生 Candidate | 说明 |
+|---|---|---:|---:|---|
+| Epistemic | UNKNOWN / Ambiguous / Unmapped / InsufficientEvidence | 仅有新信息时 | 否或协议定义的 uncertainty candidate | cognition 成功但无法确定 |
+| Context | RequiredMissing / ContextUnavailable | 条件变化后 | 否 | 缺少输入 |
+| Data Authority | DataAuthorityDenied | 权限变化后 | 否 | 不得读取 / 使用数据 |
+| Authority | Unauthorized / AuthorityStale | 权限变化后 | 否 | 不具 effect 权限 |
+| Model | ModelTimeout / ProviderFailure | 可，形成新 Execution | 否 | 模型执行失败 |
+| Model Output | InvalidOutput / SchemaViolation | 可按 Protocol policy | 否 | 输出无法满足合同 |
+| Tool | ToolUnavailable / ToolTimeout | 可按 policy | 视 Protocol | Tool execution failure |
+| Tool Authority | ToolUnauthorized | 权限变化后 | 否 | backend 拒绝 |
+| Grounding | GroundingFailure | 有新 grounding 时 | 否 | 引用无法成立 |
+| Protocol | ProtocolViolation / AdapterIncompatible | 修复 / 改路由后 | 否 | 执行栈不兼容 |
+| Consistency | CandidateStale | 必须新 reasoning | 否 | critical context 已变化 |
+| Concurrency | CommitConflict | 通常新 reasoning / recompute | 否 | expected head 改变 |
+| Policy | NoIntervention | 不属于 retry | 是，正式 decision candidate | 明确业务决策 |
+| Policy | Defer | 新 trigger 后重评 | 是，正式 decision candidate | 不保存 suspended command |
+| Commit | ValidationFailed | 取决于原因 | 否 | validation 不通过 |
+| Commit | Committed | 否 | 已取得 standing | formal effect 成功 |
+
+---
+
+## Appendix D — Focused Design Decision Record
+
+### D.1 文档封装判断
+
+本专项判定为：
+
+```text
+SEPARATE
+```
+
+理由不是 Roadmap 预先要求独立文档，而是 AI Reasoning Runtime 已形成足够独立且长期稳定的运行责任：Protocol、Context、Authority Envelope、Model / Tool execution、Candidate、Validation / Commit handoff、Failure、Workflow、Execution History 与 trust boundary 共同构成跨四个 Space 复用的复杂执行合同。如果全部保留在总体 System Design，会迫使主文档承担大量协议与生命周期细节，并降低总体 mental model 的清晰度。
+
+### D.2 被拒绝的替代方案
+
+**方案一：万能 DeerMind Agent。** 优点是实现入口简单，缺点是 semantic ownership、memory、tool authority、decision 与 evolution 会重新收敛到一个黑箱，不可接受。
+
+**方案二：四个 Space 各自一个 Agent。** 优点是表面上对应四个 Space，缺点是把 semantic ownership 错误映射成 process / agent boundary，并导致重复 Context、隐藏状态和跨 Agent authority 冲突。
+
+**方案三：Prompt 即 Protocol。** 优点是开发快，缺点是无法稳定版本化 Context policy、Tool policy、Candidate / failure contract，也无法区分语义变化与 wording 调整。
+
+**方案四：模型直接调用高权限 Tool 作为系统 effect。** 优点是路径短，缺点是把 LLM 变成真实 security boundary，并绕过 ActionIntent / Governance / backend authorization。
+
+**方案五：保存完整 Agent Memory 作为长期个性化状态。** 优点是使用方便，缺点是形成 hidden second source of truth 与 hidden writer，破坏 Learner Belief / Interaction State / History 的正式 ownership。
+
+当前选择的代价是需要显式管理 Protocol、Context、Candidate、Version、Provenance 与 Authority，系统复杂度高于普通 LLM 应用；但这部分复杂度直接购买了 DeerMind 的可审计、可修正、可证伪和长期可演化能力，因此满足 `Complexity Must Earn Its Keep`。
