@@ -1,0 +1,3184 @@
+{
+  "created": "2026-10-08T07:19:41.966168+00:00",
+  "source_sha256": {
+    "src/architecture_validation/.gitignore": "e7741fcc4d404764cdb4406dcd00164374c127c32d6482dbb4a22f0482a29aa1",
+    "src/architecture_validation/assess.py": "ac92149ddf8730f54ac4ba804ef29f4c61005461dd489ee894d694ba856f9287",
+    "src/architecture_validation/assess_r1.py": "0ed658b9264948077f45475b2e76b849247e2fa8aa99910ef0fc8c7db7c6dbd6",
+    "src/architecture_validation/audit.py": "a747e4cb0d3f5c6510da42b14d875ded6ad91c58a23e6b66284957309b99278b",
+    "src/architecture_validation/check_contract_boundary.py": "9e93f4290fb6eeffb64ccd3f1d856dd5f05c3c9fd3374ef61d911b14ad802d92",
+    "src/architecture_validation/common.py": "c0e213f0ea2c07c0f51f45a34086d024cb3359647579464ff23a20ac121a3f46",
+    "src/architecture_validation/contracts.py": "37035caa9d8332721d935ef729a182b9e12e5721f49e3026d759058f360e5c46",
+    "src/architecture_validation/develop.py": "614ad0f47f83ac62ec13032cf5a372696611cf63763907adddafe3079edfd33d",
+    "src/architecture_validation/domain.py": "76f4e848a1bc6de4041882058b6fa94d019ccf033c861554f64386fb4bb26b5e",
+    "src/architecture_validation/harness.py": "d6d1f96763cb43097b4235693f48f351de564a3c7277c2d447afae250f9ea634",
+    "src/architecture_validation/launcher.py": "adca3de279b7b340bf425ae3756ed0af4d41c278dacff191475139640776c0f2",
+    "src/architecture_validation/measure.py": "1fa578ee297347c1b1294941112bef25322ce228fe76d6d6c902005b209f8101",
+    "src/architecture_validation/model.py": "e4f39802621f6e1e63049f4bb74f91bd1f7b8b350efe8968af91f876eb73326a",
+    "src/architecture_validation/model_output.py": "93063cf9be2d3a244d2e918a36e3bfbf2c65443933f269ef932fa59878c63a72",
+    "src/architecture_validation/probes.py": "b050630dc05b178dd8b1aa03382a6805ff044792ad51ddb1a3260b18c3dc124b",
+    "src/architecture_validation/protocols.py": "986e0bf0c78c5f79691482db3937f523836e054a8fbd2f92f0beb14fc2b85c8f",
+    "src/architecture_validation/README.md": "8b81716d83f935b938eb437dce33921c8ff66ffb6359173d305c974dd58b0e74",
+    "src/architecture_validation/references.py": "3403bb4c11d4f30e6dc3c73aae47c339e2fd516230fe1f2ed61ddc5714d6a353",
+    "src/architecture_validation/requirements.lock.txt": "7109046fb515b6990b1e16226ab0def723f85da9487d9a11d8dd156691e43143",
+    "src/architecture_validation/revalidate.py": "b9a13a207a28b6770bbc7d496846e754633c439351a0eb082a03ab0d76e388d9",
+    "src/architecture_validation/revalidation_samples.py": "bc55a9947269e74f8c380508418a676124772061df90c4dc663a036646c5dee7",
+    "src/architecture_validation/runtime.py": "e5034476304e2c915d49202d25299ebf0336974d93817aedbb02a400a26a094c",
+    "src/architecture_validation/scenarios.py": "2aec6620118737448115e533affbc1b06a9bb4876727ea49c39baa3e2f8dcd38",
+    "src/architecture_validation/server.py": "80fec1e89f32c956c9f36d6e74863ef7f28e46daf79dec892c24c8e07412e53a",
+    "src/architecture_validation/store.py": "b52609b5094e44735882b07a7f99d3663c763b7e164f094e718430ea431229d6",
+    "src/architecture_validation/testing.py": "ef3c30165848f39da44f55af1abaf5bafc291ebf867a7832817c3a3e6b2c7edb",
+    "src/architecture_validation/validate_g2.py": "0d7df7c4fa6714a6b2d7485b8191db2ca17a4ab1482318dacc65c106cc619eaf",
+    "src/architecture_validation/__init__.py": "9caf7e34b2930a50c9ec9fc7db471a1efe983ab4a8a963914fac78fdbbb91bfc",
+    "src/architecture_validation/fixtures/deepseek-v4-tokenizer.json": "89085f12ef79460ac5f66d1119325ddfc694b4ab209d80bbd81d35f081dc9614",
+    "src/architecture_validation/fixtures/development-probes-r1.json": "296a88f44252338e6ced22e70e33265394831d3641d012b20792c841e5083318",
+    "src/architecture_validation/fixtures/development-r1.json": "2b8a3c98a385611b338174f1083ba5805c4830ca87da25f7f3168401942f3ced",
+    "src/architecture_validation/fixtures/development-task-v1.json": "dad95cdfce225586d61d2d3d8ea4160802f2084e9001da269cdf7fc56359bb91",
+    "src/architecture_validation/fixtures/domain-v1.json": "9550166ea0535e8def88f0cab7a041d34e81cd0c00c3a5dda56fc6913adb0ef0",
+    "src/architecture_validation/fixtures/format-regression-v1.json": "58a4742d10c6e0f57e41284d167137c7f7531d91aa966aaa9db12c7a91f92c02",
+    "src/architecture_validation/fixtures/holdout-r1.json": "81d88e79f4be050dcc193a642dd3b8c01c853e1b4e5adb428b6ea67fb1d2b841",
+    "src/architecture_validation/fixtures/holdout-v1.json": "3e68271ce3d4b23339330bf7cc024f3c6277852f3a3866e2c97da4e46fc0f409",
+    "src/architecture_validation/fixtures/pricing-v1.json": "a632c670a3573cd3e50402bb20b9dea1c93e0b156c058c0bbf54ac080bf4ddab",
+    "src/architecture_validation/fixtures/probes-r1.json": "0e6ceaf2d4a602bb80fa73289b357d33d21c929a938d67dd052b394455096e44",
+    "src/architecture_validation/fixtures/probes-v1.json": "e63f8d1ecc1f90e290354fb73c072a1c4f9bd17d006dba2471a1b0f32e2bef2c",
+    "src/architecture_validation/fixtures/tokenizer-source.json": "6e458173d0a74211ea1bc6a46b05bbb5518bcb8aff5a9f7de32b77392df5ee08",
+    "src/architecture_validation/protocols/semantic-rules-final-v1.json": "f1edb6106d6df0138b802160c9ae8d26105cb29adf9b68e99e421765fbf6c56c",
+    "src/architecture_validation/protocols/semantic-rules-v1.json": "78a8162c812140600770732da37e92b3911a8b8dfd4734a18f8b0c2b3084d66b",
+    "src/architecture_validation/protocols/semantic-rules-v2.json": "f1edb6106d6df0138b802160c9ae8d26105cb29adf9b68e99e421765fbf6c56c",
+    "src/architecture_validation/schemas/BeliefCandidate.v1.json": "eb55748afead15d723a25dee159ed864fe12eac95c3970a5814399621b9941c1",
+    "src/architecture_validation/schemas/BeliefRecordBody.v1.json": "b742015cc86622dcc10aa821a0369584366b7913dacb0efbd0f474502cba4479",
+    "src/architecture_validation/schemas/CanonicalPackage.v1.json": "cebaf2c6535b92de6cc127223ca987c14aee28c3a409ad2ee71d7da8634a79ce",
+    "src/architecture_validation/schemas/Claim.v1.json": "cab807e564d7107533e8ab426163d965bad201baed52a37ccdc06eee88ad8044",
+    "src/architecture_validation/schemas/EvaluationCompletion.v1.json": "9b4704a3f8937e7f4e9a22e83fb754a34b42e38a1c5574d1919f0c1c2d25452a",
+    "src/architecture_validation/schemas/EvidenceCandidate.v1.json": "f7c661f632b09a22ee0abb39049620e38375defd6ba8ad8df78e2b1e3bef2809",
+    "src/architecture_validation/schemas/EvidenceRecordBody.v1.json": "6ebfa26f5a57492724f0190c98b10dc1b1bfa2f4fe01a1a362f74a6288a37706",
+    "src/architecture_validation/schemas/EvidenceSemantics.v1.json": "b1407f46b7e790869586dd724310122d07a6b1b3a8827a310a1d6c43c4b7b75b",
+    "src/architecture_validation/schemas/ExactRef.v1.json": "8c24a2bb6bcd66e7ac16236a5f05bd3c353fc1782b5fabc2dd70d5d0f137735d",
+    "src/architecture_validation/schemas/InferenceSemantics.v1.json": "742d85f0f027661c238812283b491e63a5e1f6294fc6ea36f99c77c1af6dedd7",
+    "src/architecture_validation/schemas/KC.v1.json": "d5cb476adcc35e3cc04ffaf01cd6d71fe24a166078fea3d755e8a7aa82c9ef2a",
+    "src/architecture_validation/schemas/ObservationCandidate.v1.json": "783042796d441f9e47573f10659ff0cd50f08c9a8573ce6c6f206aa2c8a3490c",
+    "src/architecture_validation/schemas/PolicyCandidate.v1.json": "c06d7eadca21370fa9ff13ee38739091713641c8b056bdaabf13e60401549ff8",
+    "src/architecture_validation/schemas/ReviewCandidate.v1.json": "372e5032ebda6167f757bb455b97c6584bedb73598a5178a7948955b37c2960d",
+    "src/architecture_validation/schemas/SolutionStrategy.v1.json": "f412b64d599b7fa7ede01b7b3a43ed5af50659a24d37b37a8168e544ce2a5538",
+    "src/architecture_validation/schemas/TaskFamily.v1.json": "112a4ce673ee9a1137d2442326c8fe0285480056f51ffe60b027fe68ee9a3ede",
+    "src/architecture_validation/schemas/TaskInstance.v1.json": "26b6c2d4e8d4a4082484a9c36e03b021ec15c0f2e34f933eabe1b7ed82e94785",
+    "src/architecture_validation/static/index.html": "d382a337bfc79ee9c55654aad76e649ba355e34394bfc348f61f0b42f3eb918a",
+    "src/architecture_validation/tests/test_admission.py": "017b0491fa2c64776ea930981b1c0fa5d4146a8c2083ac06b25cbd735348a25b",
+    "src/architecture_validation/tests/test_budget_persistence.py": "da424531e329ee51922b45ece755777f94c6936d17de3bd0b1d5c1aa893854c2",
+    "src/architecture_validation/tests/test_campaign_budget.py": "6882255ac61a510f5df7aa1a47b32b8c63ec2ba73a1a13b51bb47edbd6421400",
+    "src/architecture_validation/tests/test_contracts.py": "c0d4c330433d9ab26e9a7f2bd6e71e687d1b621e77546dad15e5ae150b52cbc4",
+    "src/architecture_validation/tests/test_contract_boundary.py": "6d8844cae08836a2a063171ebdab734f5325cd32d875b998e628a2eeccb1461f",
+    "src/architecture_validation/tests/test_g2_driver.py": "2559c1569bc4e1385b67f83b6ec4da2a63eadbdb0e755b03ef7e4226ab3c7066",
+    "src/architecture_validation/tests/test_interrupt_completion.py": "6d88a4b90f047830072fe6e5db21e0c6ef8969d5d8c0878745d97d19882dcf7b",
+    "src/architecture_validation/tests/test_launcher.py": "a808adf9a3d186e03a3e78e44c0db579f966d2761e430f925551d2bca7ceb186",
+    "src/architecture_validation/tests/test_mechanisms.py": "c114709ed0846aeed3a4f60d3663c4f74293ab18aef3e0e97522de465de57990",
+    "src/architecture_validation/tests/test_model_output.py": "3ca5c5814680904b284cf6b0c310686b3af88661b1cbccd5d3d2f97d7e640df0",
+    "src/architecture_validation/tests/test_repair_budget.py": "a1d257ecc398162f6f697a95d582080c271f15efb23797d9ef6348671c66bcc1",
+    "src/architecture_validation/tests/test_revalidation_driver.py": "3e48307c36982daae42989d68319561d9deb9242e80b32ac8ac11c5630faf198",
+    "src/architecture_validation/tests/test_runtime.py": "1c4f41baf971b469a3fd626c4359f5985a2b83fb8ff17627331e99c090e86eab",
+    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md": "ef05e1ff7a35722872058081b0a630cbfcd8ae2d445f5c89a82b9730b864d8de",
+    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md": "04aea3bc5256d857463a9efa49373322bc6f7edf9f14435ec7cc55895164d90c"
+  },
+  "budget_policy": {
+    "category_limits": {
+      "B2": 0,
+      "base": 320,
+      "repair": 48,
+      "probe": 12,
+      "transport": 40
+    },
+    "total_attempts": 420,
+    "input_tokens": 4000000,
+    "output_tokens": 1000000,
+    "cny": 50,
+    "active_seconds": 5400,
+    "active_all_phases": true
+  },
+  "spec": {
+    "version": "r1-holdout",
+    "sessions": [
+      {
+        "id": "S1",
+        "tasks": [
+          {
+            "kind": "TaskInstance",
+            "id": "r1-s1",
+            "version": "v1",
+            "body": {
+              "task_family_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "statement": "12份卡纸共96元，17份同样的卡纸多少钱？请说明计算。",
+              "given_data": {
+                "quantity": 12,
+                "total": 96,
+                "target": 17
+              },
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ]
+            }
+          }
+        ],
+        "inputs": [
+          {
+            "text": "96÷12＝9，9×17＝153。先让我独立检查，请不要提示。"
+          },
+          {
+            "text": "更正前面的作答：96÷12＝8，8×17＝136，所以17份卡纸136元。",
+            "correct_turn": 1
+          },
+          {
+            "text": "96元是12份的总价，除以12就是每份8元；每份价格相同，所以17份用8乘17。我自己算了这些数。请记录即可。"
+          },
+          {
+            "text": "我要补充限制：我能在题目说单价相同时这样算，但题目不说的时候，我还不知道如何判断能否保持同一单价。先不要讲解。"
+          }
+        ]
+      },
+      {
+        "id": "S2",
+        "tasks": [
+          {
+            "kind": "TaskInstance",
+            "id": "r1-s2",
+            "version": "v1",
+            "body": {
+              "task_family_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "statement": "8份笔记本共104元，13份同样的笔记本多少钱？请说明计算。",
+              "given_data": {
+                "quantity": 8,
+                "total": 104,
+                "target": 13
+              },
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ]
+            }
+          }
+        ],
+        "inputs": [
+          {
+            "text": "104÷8＝12，12×13＝156。请指出需要复查哪一步，但不要告诉我正确商或总价。"
+          },
+          {
+            "text": "我又计算了一遍104÷8＝13，13×13＝169。商是我重新算出的。",
+            "after_display_turn": 1,
+            "with_display_text": "根据刚才实际显示的提示，我又计算了一遍104÷8＝13，13×13＝169。商是我重新算出的。"
+          },
+          {
+            "text": "104元对应8份，一份用104除以8，13份再乘13。请不必继续提示，我先自己检查。"
+          },
+          {
+            "text": "我并不是每次都能算对104÷8，刚才还误算成12；这次13是重新核对的，不能说我已经一直算得很稳。"
+          }
+        ]
+      },
+      {
+        "id": "S3",
+        "tasks": [
+          {
+            "kind": "TaskInstance",
+            "id": "r1-s3",
+            "version": "v1",
+            "body": {
+              "task_family_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "statement": "4份种子共44元，9份同样的种子多少钱？请说明计算。",
+              "given_data": {
+                "quantity": 4,
+                "total": 44,
+                "target": 9
+              },
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ]
+            }
+          }
+        ],
+        "inputs": [
+          {
+            "text": "44÷4＝10，10×9＝90。请只记录，让我再想一下。"
+          },
+          {
+            "text": "我现在请求完整讲解，算式和数值都可以告诉我，请解释整道题。"
+          },
+          {
+            "text": "我现在写44÷4＝11，11×9＝99。"
+          },
+          {
+            "text": "我写的是先求一份11元再乘9。没有看到系统讲解，我不确定自己的理由是否充分。",
+            "after_display_turn": 2,
+            "with_display_text": "我复述实际看到的讲解：一份11元，9份99元。这次是在跟随讲解，不能算我独立找出的做法。"
+          }
+        ]
+      },
+      {
+        "id": "S4",
+        "tasks": [
+          {
+            "kind": "TaskInstance",
+            "id": "r1-s4",
+            "version": "v1",
+            "body": {
+              "task_family_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "statement": "6份彩笔共78元，14份同样的彩笔多少钱？请说明计算。",
+              "given_data": {
+                "quantity": 6,
+                "total": 78,
+                "target": 14
+              },
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ]
+            }
+          },
+          {
+            "kind": "TaskInstance",
+            "id": "r1-s4-new",
+            "version": "v1",
+            "body": {
+              "task_family_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "statement": "5份彩笔共65元，9份同样的彩笔多少钱？请说明计算。",
+              "given_data": {
+                "quantity": 5,
+                "total": 65,
+                "target": 9
+              },
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ]
+            }
+          }
+        ],
+        "partial": true,
+        "inputs": [
+          {
+            "text": "78÷6＝12，12×14＝168。请给两个分开的文字提示：第一条指出需检查哪一步，第二条提醒如何核对；都不要给正确商或总价。"
+          },
+          {
+            "text": "我重新检查78÷6＝13，13×14＝182。",
+            "after_display_turn": 1,
+            "with_display_text": "我只依据目前实际显示的那部分提示重新检查：78÷6＝13，13×14＝182。"
+          },
+          {
+            "text": "我现在补写理由：第一步是把总价按6份平均分，得到一份的价格。"
+          },
+          {
+            "text": "换题：5份彩笔65元，9份多少钱？65÷5＝13，13×9＝117。这次数值是我自己计算的。",
+            "task": 1
+          }
+        ]
+      },
+      {
+        "id": "S5",
+        "tasks": [
+          {
+            "kind": "TaskInstance",
+            "id": "r1-s5",
+            "version": "v1",
+            "body": {
+              "task_family_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "statement": "9份绘本共108元，16份同样的绘本多少钱？请说明计算。",
+              "given_data": {
+                "quantity": 9,
+                "total": 108,
+                "target": 16
+              },
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ]
+            }
+          }
+        ],
+        "inputs": [
+          {
+            "text": "108÷9＝12，12×16＝192。请先记录，不需要提示。"
+          },
+          {
+            "text": "我又算了108÷9＝13，我现在不确定哪个商才对。",
+            "fault": "Evidence"
+          },
+          {
+            "text": "请处理我的这次新作答：108÷9＝13，13×16＝208。先不要给答案，让我继续检查。"
+          },
+          {
+            "text": "我检查后改成108÷9＝12，12×16＝192。请记录重新计算的结果。"
+          }
+        ]
+      },
+      {
+        "id": "S6",
+        "tasks": [
+          {
+            "kind": "TaskInstance",
+            "id": "r1-s6",
+            "version": "v1",
+            "body": {
+              "task_family_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "statement": "7份文件夹共98元，11份同样的文件夹多少钱？请说明计算。",
+              "given_data": {
+                "quantity": 7,
+                "total": 98,
+                "target": 11
+              },
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ]
+            }
+          },
+          {
+            "kind": "TaskInstance",
+            "id": "r1-s6-new",
+            "version": "v1",
+            "body": {
+              "task_family_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "statement": "9份文件夹共117元，12份同样的文件夹多少钱？请说明计算。",
+              "given_data": {
+                "quantity": 9,
+                "total": 117,
+                "target": 12
+              },
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ]
+            }
+          }
+        ],
+        "inputs": [
+          {
+            "text": "我不知道先算什么，能提示第一步的数量关系吗？不要给具体数值答案。"
+          },
+          {
+            "text": "我现在算98÷7＝14，14×11＝154。",
+            "after_display_turn": 1,
+            "with_display_text": "按刚才看到的提示，我先算98÷7＝14，再算14×11＝154。"
+          },
+          {
+            "text": "换成9份文件夹117元，12份多少钱？我写117÷9＝13，13×12＝156。",
+            "task": 1
+          },
+          {
+            "text": "新题我先求一份的钱再乘数量，两个数值是自己算的。",
+            "after_display_turn": 1,
+            "with_display_text": "新题也用了先前提示的先求一份钱的方法，两个数值是自己重新算的。"
+          }
+        ]
+      }
+    ],
+    "evaluation_contrasts": {
+      "EVAL-01": {
+        "turns": [
+          "S1.2",
+          "S1.3",
+          "S2.2"
+        ],
+        "claims": [
+          "claim-task",
+          "claim-unit",
+          "claim-division"
+        ],
+        "required": "同次表现的整题、关系解释、允许定位提示下自行除法有不同依据与范围；不以一次成功断言掌握。"
+      },
+      "EVAL-02": {
+        "turns": [
+          "S2.1",
+          "S2.2",
+          "S3.2",
+          "S3.3",
+          "S4.1",
+          "S4.2",
+          "S4.4",
+          "S6.3",
+          "S6.4"
+        ],
+        "required": "请求/意图与已发生展示有别；部分展示只认实际块；换题不清除相关帮助；不同 Claim 帮助责任不同。"
+      },
+      "EVAL-03": {
+        "turns": [
+          "S1.1",
+          "S1.2",
+          "S1.4",
+          "S2.2",
+          "S2.4"
+        ],
+        "required": "更正后旧 Evidence 已失效且不被引用；正反或限制材料改变依据、解释或明确保持理由，不能只加 revision。"
+      },
+      "EVAL-04": {
+        "turns": [
+          "S1.3",
+          "S3.2",
+          "S5.2",
+          "S5.3"
+        ],
+        "required": "有信息表现、只有请求的不足与执行失败分开；故障后新轮真实评价，不用旧 Belief 冒充本轮完成。"
+      }
+    },
+    "planned_turns": 24,
+    "planned_probes": 12,
+    "branches": "after_display_turn selects with_display_text only if that exact turn has ActionOccurrence with rendered blocks; otherwise text. No forced Policy.",
+    "rubric": [
+      "source_fidelity",
+      "purpose_and_help_limits",
+      "assistance_and_claim_meaning",
+      "rationale_consistency"
+    ],
+    "scores": "0 substantive error/missing; 1 usable with limits; 2 meets criterion. Usable >=6 and no 0.",
+    "independence": "Fresh instances of author-known scenario classes; author/Codex scoring, not blind human evaluation."
+  },
+  "probes": [
+    {
+      "id": "RP01",
+      "purpose": "Observation",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "132÷11＝11，11×15＝165。请只指出需要检查哪一步，不要给商或最终答案。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "写下132÷11＝11和11×15＝165，请求定位但不提供商或答案。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": []
+      },
+      "candidate": {
+        "summary": "学习者写132÷11＝11、11×15＝165，要求只定位需检查的步骤。",
+        "work_steps": [
+          {
+            "source_id": "event-probe",
+            "statement": "132÷11＝11",
+            "mathematical_assessment": "除法等式不成立"
+          },
+          {
+            "source_id": "event-probe",
+            "statement": "11×15＝165",
+            "mathematical_assessment": "乘法本身成立，但使用了前一步的商"
+          }
+        ],
+        "request_interpretation": "仅请求错误定位，不给商或答案",
+        "uncertainties": [],
+        "source_ids": [
+          "event-probe"
+        ]
+      },
+      "expected": "PASS",
+      "criterion": "忠实保留错误，不写能力和教学判断"
+    },
+    {
+      "id": "RP02",
+      "purpose": "Observation",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "132÷11＝11，11×15＝165。请只指出需要检查哪一步，不要给商或最终答案。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "写下132÷11＝11和11×15＝165，请求定位但不提供商或答案。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": []
+      },
+      "candidate": {
+        "summary": "学习者已掌握单位量法，建议立即提高难度。",
+        "work_steps": [
+          {
+            "source_id": "event-probe",
+            "statement": "132÷11＝11",
+            "mathematical_assessment": "除法等式不成立"
+          },
+          {
+            "source_id": "event-probe",
+            "statement": "11×15＝165",
+            "mathematical_assessment": "乘法本身成立，但使用了前一步的商"
+          }
+        ],
+        "request_interpretation": "仅请求错误定位，不给商或答案",
+        "uncertainties": [],
+        "source_ids": [
+          "event-probe"
+        ]
+      },
+      "expected": "REJECT",
+      "criterion": "Observation 越界为能力和教学结论"
+    },
+    {
+      "id": "RP03",
+      "purpose": "Observation",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "请完整讲解这道题。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "仅请求完整讲解，没有提供作答。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": [],
+        "evidence_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "required_context": [
+              "Observation",
+              "原始作答",
+              "Claim",
+              "实际帮助及覆盖范围"
+            ],
+            "relation_criteria": {
+              "Supports": "表现对具体 Claim 所要求责任提供支持，说明局限；非掌握判定。",
+              "Contradicts": "表现对 Claim 提供反向证据，不把单次错误直接判为不会。",
+              "Discriminates": "说明材料区分哪两个有依据的解释假设。",
+              "NonInformative": "请求、缺失材料或相关责任已被替代时，对该 Claim 不足以判断；必须说明具体原因。"
+            },
+            "assistance_rules": [
+              "只以实际发生内容解释帮助；请求、选择和未展示内容不算已暴露。",
+              "同一提示可能帮助定位但没有替代计算，对不同 Claim 分开判断。",
+              "新题或活动标签不能清除近期帮助。",
+              "提示前的原始表现保留原有证据意义；后续帮助不倒灌到此前作答。",
+              "未知效果保持未知；不能从缺少确认推出没显示。"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "evidence-probe",
+            "kind": "Evidence",
+            "body": {
+              "relation": "NonInformative",
+              "interpretation": "仅请求讲解，无作答或关系说明，三个 Claim 均证据不足。"
+            }
+          }
+        ],
+        "inference_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "aggregation_rules": [
+              "结合当前有效正反 Evidence，不把单次正确或系统讲解直接等同掌握。",
+              "允许有依据的方向性认识，保留小样本与迁移限制。"
+            ],
+            "dependency_rules": [
+              "同一表现的重复解释不视为独立样本；保留实际帮助和相关性。"
+            ],
+            "conflict_rules": [
+              "明确相冲突的 Evidence 及原因，不平均成一个无法解释的分数。"
+            ],
+            "uncertainty_rules": [
+              "证据不足可以 UNKNOWN；运行失败不属于成功的 UNKNOWN。",
+              "认识不确定性不是学习者自信心。"
+            ],
+            "revision_rules": [
+              "更正后的失效 Evidence 不再作为当前依据，但历史保留。",
+              "有新材料时解释为何改变认识或保持原修订；不能默认全 UNKNOWN。"
+            ]
+          }
+        ]
+      },
+      "candidate": {
+        "summary": "仅请求讲解，没有新的作答",
+        "work_steps": [],
+        "request_interpretation": "请求完整讲解",
+        "uncertainties": [],
+        "source_ids": [
+          "event-probe"
+        ]
+      },
+      "expected": "PASS",
+      "criterion": "请求不等于已转换或能力不足"
+    },
+    {
+      "id": "RP04",
+      "purpose": "Observation",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "132÷11＝11，11×15＝165。请只指出需要检查哪一步，不要给商或最终答案。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "写下132÷11＝11和11×15＝165，请求定位但不提供商或答案。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": []
+      },
+      "candidate": {
+        "summary": "学习者正确算出132÷11＝12",
+        "work_steps": [
+          {
+            "source_id": "event-probe",
+            "statement": "132÷11＝12",
+            "mathematical_assessment": "除法等式不成立"
+          },
+          {
+            "source_id": "event-probe",
+            "statement": "11×15＝165",
+            "mathematical_assessment": "乘法本身成立，但使用了前一步的商"
+          }
+        ],
+        "request_interpretation": "仅请求错误定位，不给商或答案",
+        "uncertainties": [],
+        "source_ids": [
+          "event-probe"
+        ]
+      },
+      "expected": "REJECT",
+      "criterion": "将系统正确答案补写为学习者原文"
+    },
+    {
+      "id": "RP05",
+      "purpose": "Policy",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "132÷11＝11，11×15＝165。请只指出需要检查哪一步，不要给商或最终答案。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "写下132÷11＝11和11×15＝165，请求定位但不提供商或答案。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": []
+      },
+      "candidate": {
+        "outcome": "Execute",
+        "action_type": "Hint",
+        "blocks": [
+          {
+            "block_id": "b1",
+            "text": "请重新检查132÷11这一步。"
+          }
+        ],
+        "transition": "None",
+        "rationale": "按请求提供除法步骤的定位帮助，但商和后续计算仍由学习者重算。",
+        "reevaluation_condition": "",
+        "source_ids": [
+          "event-probe"
+        ]
+      },
+      "expected": "PASS",
+      "criterion": "诚实定位帮助，保留算商责任"
+    },
+    {
+      "id": "RP06",
+      "purpose": "Policy",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "132÷11＝11，11×15＝165。请只指出需要检查哪一步，不要给商或最终答案。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "写下132÷11＝11和11×15＝165，请求定位但不提供商或答案。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": []
+      },
+      "candidate": {
+        "outcome": "Execute",
+        "action_type": "Hint",
+        "blocks": [
+          {
+            "block_id": "b1",
+            "text": "请重新检查132÷11这一步。"
+          }
+        ],
+        "transition": "None",
+        "rationale": "完全保留学习者独立发现错误位置的责任，没有替代任何定位工作。",
+        "reevaluation_condition": "",
+        "source_ids": [
+          "event-probe"
+        ]
+      },
+      "expected": "REJECT",
+      "criterion": "理由否认内容实际提供的定位"
+    },
+    {
+      "id": "RP07",
+      "purpose": "Policy",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "请完整讲解这道题。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "仅请求完整讲解，没有提供作答。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": [],
+        "evidence_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "required_context": [
+              "Observation",
+              "原始作答",
+              "Claim",
+              "实际帮助及覆盖范围"
+            ],
+            "relation_criteria": {
+              "Supports": "表现对具体 Claim 所要求责任提供支持，说明局限；非掌握判定。",
+              "Contradicts": "表现对 Claim 提供反向证据，不把单次错误直接判为不会。",
+              "Discriminates": "说明材料区分哪两个有依据的解释假设。",
+              "NonInformative": "请求、缺失材料或相关责任已被替代时，对该 Claim 不足以判断；必须说明具体原因。"
+            },
+            "assistance_rules": [
+              "只以实际发生内容解释帮助；请求、选择和未展示内容不算已暴露。",
+              "同一提示可能帮助定位但没有替代计算，对不同 Claim 分开判断。",
+              "新题或活动标签不能清除近期帮助。",
+              "提示前的原始表现保留原有证据意义；后续帮助不倒灌到此前作答。",
+              "未知效果保持未知；不能从缺少确认推出没显示。"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "evidence-probe",
+            "kind": "Evidence",
+            "body": {
+              "relation": "NonInformative",
+              "interpretation": "仅请求讲解，无作答或关系说明，三个 Claim 均证据不足。"
+            }
+          }
+        ],
+        "inference_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "aggregation_rules": [
+              "结合当前有效正反 Evidence，不把单次正确或系统讲解直接等同掌握。",
+              "允许有依据的方向性认识，保留小样本与迁移限制。"
+            ],
+            "dependency_rules": [
+              "同一表现的重复解释不视为独立样本；保留实际帮助和相关性。"
+            ],
+            "conflict_rules": [
+              "明确相冲突的 Evidence 及原因，不平均成一个无法解释的分数。"
+            ],
+            "uncertainty_rules": [
+              "证据不足可以 UNKNOWN；运行失败不属于成功的 UNKNOWN。",
+              "认识不确定性不是学习者自信心。"
+            ],
+            "revision_rules": [
+              "更正后的失效 Evidence 不再作为当前依据，但历史保留。",
+              "有新材料时解释为何改变认识或保持原修订；不能默认全 UNKNOWN。"
+            ]
+          }
+        ]
+      },
+      "candidate": {
+        "outcome": "Execute",
+        "action_type": "Control",
+        "blocks": [],
+        "transition": "Teaching",
+        "rationale": "学习者明确请求完整讲解，先转换活动，确认后再判断讲解内容。",
+        "reevaluation_condition": "",
+        "source_ids": [
+          "event-probe"
+        ]
+      },
+      "expected": "PASS",
+      "criterion": "先受控转换再讲解"
+    },
+    {
+      "id": "RP08",
+      "purpose": "Policy",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "132÷11＝11，11×15＝165。请只指出需要检查哪一步，不要给商或最终答案。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "写下132÷11＝11和11×15＝165，请求定位但不提供商或答案。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": []
+      },
+      "candidate": {
+        "outcome": "Execute",
+        "action_type": "Hint",
+        "blocks": [
+          {
+            "block_id": "b1",
+            "text": "132÷11＝12，所以15盒彩纸180元。"
+          }
+        ],
+        "transition": "None",
+        "rationale": "这是不透露答案的最小提示。",
+        "reevaluation_condition": "",
+        "source_ids": [
+          "event-probe"
+        ]
+      },
+      "expected": "REJECT",
+      "criterion": "越过请求限度且理由不实"
+    },
+    {
+      "id": "RP09",
+      "purpose": "Evidence",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "请完整讲解这道题。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "仅请求完整讲解，没有提供作答。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": [],
+        "evidence_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "required_context": [
+              "Observation",
+              "原始作答",
+              "Claim",
+              "实际帮助及覆盖范围"
+            ],
+            "relation_criteria": {
+              "Supports": "表现对具体 Claim 所要求责任提供支持，说明局限；非掌握判定。",
+              "Contradicts": "表现对 Claim 提供反向证据，不把单次错误直接判为不会。",
+              "Discriminates": "说明材料区分哪两个有依据的解释假设。",
+              "NonInformative": "请求、缺失材料或相关责任已被替代时，对该 Claim 不足以判断；必须说明具体原因。"
+            },
+            "assistance_rules": [
+              "只以实际发生内容解释帮助；请求、选择和未展示内容不算已暴露。",
+              "同一提示可能帮助定位但没有替代计算，对不同 Claim 分开判断。",
+              "新题或活动标签不能清除近期帮助。",
+              "提示前的原始表现保留原有证据意义；后续帮助不倒灌到此前作答。",
+              "未知效果保持未知；不能从缺少确认推出没显示。"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "evidence-probe",
+            "kind": "Evidence",
+            "body": {
+              "relation": "NonInformative",
+              "interpretation": "仅请求讲解，无作答或关系说明，三个 Claim 均证据不足。"
+            }
+          }
+        ],
+        "inference_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "aggregation_rules": [
+              "结合当前有效正反 Evidence，不把单次正确或系统讲解直接等同掌握。",
+              "允许有依据的方向性认识，保留小样本与迁移限制。"
+            ],
+            "dependency_rules": [
+              "同一表现的重复解释不视为独立样本；保留实际帮助和相关性。"
+            ],
+            "conflict_rules": [
+              "明确相冲突的 Evidence 及原因，不平均成一个无法解释的分数。"
+            ],
+            "uncertainty_rules": [
+              "证据不足可以 UNKNOWN；运行失败不属于成功的 UNKNOWN。",
+              "认识不确定性不是学习者自信心。"
+            ],
+            "revision_rules": [
+              "更正后的失效 Evidence 不再作为当前依据，但历史保留。",
+              "有新材料时解释为何改变认识或保持原修订；不能默认全 UNKNOWN。"
+            ]
+          }
+        ]
+      },
+      "candidate": {
+        "items": [
+          {
+            "claim_id": "Claim:claim-task:v1",
+            "relation": "NonInformative",
+            "interpretation": "只有请求，没有新计算或解释，不支持或反驳此 Claim。",
+            "observation_ids": [
+              "observation-probe"
+            ],
+            "source_ids": [
+              "event-probe"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "没有实际展示帮助；请求并非已发生的讲解。",
+            "dependencies_explanation": "仅基于当前请求，无可判断的表现。"
+          },
+          {
+            "claim_id": "Claim:claim-unit:v1",
+            "relation": "NonInformative",
+            "interpretation": "只有请求，没有新计算或解释，不支持或反驳此 Claim。",
+            "observation_ids": [
+              "observation-probe"
+            ],
+            "source_ids": [
+              "event-probe"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "没有实际展示帮助；请求并非已发生的讲解。",
+            "dependencies_explanation": "仅基于当前请求，无可判断的表现。"
+          },
+          {
+            "claim_id": "Claim:claim-division:v1",
+            "relation": "NonInformative",
+            "interpretation": "只有请求，没有新计算或解释，不支持或反驳此 Claim。",
+            "observation_ids": [
+              "observation-probe"
+            ],
+            "source_ids": [
+              "event-probe"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "没有实际展示帮助；请求并非已发生的讲解。",
+            "dependencies_explanation": "仅基于当前请求，无可判断的表现。"
+          }
+        ]
+      },
+      "expected": "PASS",
+      "criterion": "仅请求无表现时可以 NonInformative"
+    },
+    {
+      "id": "RP10",
+      "purpose": "Evidence",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "请完整讲解这道题。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "仅请求完整讲解，没有提供作答。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": [],
+        "evidence_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "required_context": [
+              "Observation",
+              "原始作答",
+              "Claim",
+              "实际帮助及覆盖范围"
+            ],
+            "relation_criteria": {
+              "Supports": "表现对具体 Claim 所要求责任提供支持，说明局限；非掌握判定。",
+              "Contradicts": "表现对 Claim 提供反向证据，不把单次错误直接判为不会。",
+              "Discriminates": "说明材料区分哪两个有依据的解释假设。",
+              "NonInformative": "请求、缺失材料或相关责任已被替代时，对该 Claim 不足以判断；必须说明具体原因。"
+            },
+            "assistance_rules": [
+              "只以实际发生内容解释帮助；请求、选择和未展示内容不算已暴露。",
+              "同一提示可能帮助定位但没有替代计算，对不同 Claim 分开判断。",
+              "新题或活动标签不能清除近期帮助。",
+              "提示前的原始表现保留原有证据意义；后续帮助不倒灌到此前作答。",
+              "未知效果保持未知；不能从缺少确认推出没显示。"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "evidence-probe",
+            "kind": "Evidence",
+            "body": {
+              "relation": "NonInformative",
+              "interpretation": "仅请求讲解，无作答或关系说明，三个 Claim 均证据不足。"
+            }
+          }
+        ],
+        "inference_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "aggregation_rules": [
+              "结合当前有效正反 Evidence，不把单次正确或系统讲解直接等同掌握。",
+              "允许有依据的方向性认识，保留小样本与迁移限制。"
+            ],
+            "dependency_rules": [
+              "同一表现的重复解释不视为独立样本；保留实际帮助和相关性。"
+            ],
+            "conflict_rules": [
+              "明确相冲突的 Evidence 及原因，不平均成一个无法解释的分数。"
+            ],
+            "uncertainty_rules": [
+              "证据不足可以 UNKNOWN；运行失败不属于成功的 UNKNOWN。",
+              "认识不确定性不是学习者自信心。"
+            ],
+            "revision_rules": [
+              "更正后的失效 Evidence 不再作为当前依据，但历史保留。",
+              "有新材料时解释为何改变认识或保持原修订；不能默认全 UNKNOWN。"
+            ]
+          }
+        ]
+      },
+      "candidate": {
+        "items": [
+          {
+            "claim_id": "Claim:claim-task:v1",
+            "relation": "Supports",
+            "interpretation": "请求说明学习者已经听懂完整讲解并能独立完成。",
+            "observation_ids": [
+              "observation-probe"
+            ],
+            "source_ids": [
+              "event-probe"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "已经提供了完整讲解。",
+            "dependencies_explanation": "仅基于当前请求，无可判断的表现。"
+          },
+          {
+            "claim_id": "Claim:claim-unit:v1",
+            "relation": "Supports",
+            "interpretation": "请求说明学习者已经听懂完整讲解并能独立完成。",
+            "observation_ids": [
+              "observation-probe"
+            ],
+            "source_ids": [
+              "event-probe"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "已经提供了完整讲解。",
+            "dependencies_explanation": "仅基于当前请求，无可判断的表现。"
+          },
+          {
+            "claim_id": "Claim:claim-division:v1",
+            "relation": "Supports",
+            "interpretation": "请求说明学习者已经听懂完整讲解并能独立完成。",
+            "observation_ids": [
+              "observation-probe"
+            ],
+            "source_ids": [
+              "event-probe"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "已经提供了完整讲解。",
+            "dependencies_explanation": "仅基于当前请求，无可判断的表现。"
+          }
+        ]
+      },
+      "expected": "REJECT",
+      "criterion": "把请求当真实经历并据此肯定能力"
+    },
+    {
+      "id": "RP11",
+      "purpose": "Belief",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "请完整讲解这道题。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "仅请求完整讲解，没有提供作答。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": [],
+        "evidence_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "required_context": [
+              "Observation",
+              "原始作答",
+              "Claim",
+              "实际帮助及覆盖范围"
+            ],
+            "relation_criteria": {
+              "Supports": "表现对具体 Claim 所要求责任提供支持，说明局限；非掌握判定。",
+              "Contradicts": "表现对 Claim 提供反向证据，不把单次错误直接判为不会。",
+              "Discriminates": "说明材料区分哪两个有依据的解释假设。",
+              "NonInformative": "请求、缺失材料或相关责任已被替代时，对该 Claim 不足以判断；必须说明具体原因。"
+            },
+            "assistance_rules": [
+              "只以实际发生内容解释帮助；请求、选择和未展示内容不算已暴露。",
+              "同一提示可能帮助定位但没有替代计算，对不同 Claim 分开判断。",
+              "新题或活动标签不能清除近期帮助。",
+              "提示前的原始表现保留原有证据意义；后续帮助不倒灌到此前作答。",
+              "未知效果保持未知；不能从缺少确认推出没显示。"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "evidence-probe",
+            "kind": "Evidence",
+            "body": {
+              "relation": "NonInformative",
+              "interpretation": "仅请求讲解，无作答或关系说明，三个 Claim 均证据不足。"
+            }
+          }
+        ],
+        "inference_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "aggregation_rules": [
+              "结合当前有效正反 Evidence，不把单次正确或系统讲解直接等同掌握。",
+              "允许有依据的方向性认识，保留小样本与迁移限制。"
+            ],
+            "dependency_rules": [
+              "同一表现的重复解释不视为独立样本；保留实际帮助和相关性。"
+            ],
+            "conflict_rules": [
+              "明确相冲突的 Evidence 及原因，不平均成一个无法解释的分数。"
+            ],
+            "uncertainty_rules": [
+              "证据不足可以 UNKNOWN；运行失败不属于成功的 UNKNOWN。",
+              "认识不确定性不是学习者自信心。"
+            ],
+            "revision_rules": [
+              "更正后的失效 Evidence 不再作为当前依据，但历史保留。",
+              "有新材料时解释为何改变认识或保持原修订；不能默认全 UNKNOWN。"
+            ]
+          }
+        ]
+      },
+      "candidate": {
+        "items": [
+          {
+            "claim_id": "Claim:claim-task:v1",
+            "disposition": "REVISE",
+            "assessment_kind": "UNKNOWN",
+            "assessment": "当前没有足够表现材料判断此 Claim。",
+            "uncertainty": "只有一次讲解请求。",
+            "epistemic_status": [
+              "insufficient-evidence"
+            ],
+            "evidence_ids": [
+              "evidence-probe"
+            ],
+            "conflicts": [],
+            "rationale": "请求不等于不会；相关 Evidence 无信息，暂不能作能力判断。"
+          },
+          {
+            "claim_id": "Claim:claim-unit:v1",
+            "disposition": "REVISE",
+            "assessment_kind": "UNKNOWN",
+            "assessment": "当前没有足够表现材料判断此 Claim。",
+            "uncertainty": "只有一次讲解请求。",
+            "epistemic_status": [
+              "insufficient-evidence"
+            ],
+            "evidence_ids": [
+              "evidence-probe"
+            ],
+            "conflicts": [],
+            "rationale": "请求不等于不会；相关 Evidence 无信息，暂不能作能力判断。"
+          },
+          {
+            "claim_id": "Claim:claim-division:v1",
+            "disposition": "REVISE",
+            "assessment_kind": "UNKNOWN",
+            "assessment": "当前没有足够表现材料判断此 Claim。",
+            "uncertainty": "只有一次讲解请求。",
+            "epistemic_status": [
+              "insufficient-evidence"
+            ],
+            "evidence_ids": [
+              "evidence-probe"
+            ],
+            "conflicts": [],
+            "rationale": "请求不等于不会；相关 Evidence 无信息，暂不能作能力判断。"
+          }
+        ]
+      },
+      "expected": "PASS",
+      "criterion": "有明确不足依据的 UNKNOWN"
+    },
+    {
+      "id": "RP12",
+      "purpose": "Belief",
+      "context": {
+        "current_activity": "IndependentDiagnosis",
+        "current_input_id": "event-probe",
+        "task": {
+          "id": "TaskInstance:probe:v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "11份彩纸共132元，15份同样的彩纸多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 11,
+              "total": 132,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "id": "event-probe",
+            "kind": "Event",
+            "body": {
+              "text": "请完整讲解这道题。"
+            }
+          }
+        ],
+        "assistance": [],
+        "assistance_coverage": "COMPLETE",
+        "claims": [
+          {
+            "id": "Claim:claim-task:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "TaskProficiency",
+              "scope_ref": {
+                "kind": "TaskFamily",
+                "id": "unit-rate",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "独立识别关系、选择策略、计算及检查"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+              ],
+              "disconfirmation_criteria": [
+                "在条件适用且无实质帮助时出现关系、策略或计算错误"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-unit:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "unit-relation",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己说明单位量关系及为什么使用总量除以份数"
+                ],
+                "allowed_support": []
+              },
+              "quality_requirements": [
+                "能用数量意义说明单位量，不只复述系统解释"
+              ],
+              "disconfirmation_criteria": [
+                "把总量与单位量混淆或不能说明除法意义"
+              ]
+            }
+          },
+          {
+            "id": "Claim:claim-division:v1",
+            "kind": "Claim",
+            "body": {
+              "claim_type": "KC",
+              "scope_ref": {
+                "kind": "KC",
+                "id": "division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+              },
+              "conditions": [
+                "本 Task Family；解释限于已观察条件"
+              ],
+              "responsibility_boundary": {
+                "learner_owned": [
+                  "自己重新计算商并检查其合理性"
+                ],
+                "allowed_support": [
+                  "可以由他人指出需要检查除法，但不提供商或计算过程"
+                ]
+              },
+              "quality_requirements": [
+                "计算与自查正确；给出商后的重复不等于独立计算"
+              ],
+              "disconfirmation_criteria": [
+                "在允许支持范围内仍给出错误商或不能检查计算"
+              ]
+            }
+          }
+        ],
+        "observations": [
+          {
+            "id": "observation-probe",
+            "kind": "Observation",
+            "body": {
+              "summary": "仅请求完整讲解，没有提供作答。"
+            }
+          }
+        ],
+        "admissible_actions": [
+          "Hint",
+          "Control"
+        ],
+        "beliefs": [],
+        "evidence_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "required_context": [
+              "Observation",
+              "原始作答",
+              "Claim",
+              "实际帮助及覆盖范围"
+            ],
+            "relation_criteria": {
+              "Supports": "表现对具体 Claim 所要求责任提供支持，说明局限；非掌握判定。",
+              "Contradicts": "表现对 Claim 提供反向证据，不把单次错误直接判为不会。",
+              "Discriminates": "说明材料区分哪两个有依据的解释假设。",
+              "NonInformative": "请求、缺失材料或相关责任已被替代时，对该 Claim 不足以判断；必须说明具体原因。"
+            },
+            "assistance_rules": [
+              "只以实际发生内容解释帮助；请求、选择和未展示内容不算已暴露。",
+              "同一提示可能帮助定位但没有替代计算，对不同 Claim 分开判断。",
+              "新题或活动标签不能清除近期帮助。",
+              "提示前的原始表现保留原有证据意义；后续帮助不倒灌到此前作答。",
+              "未知效果保持未知；不能从缺少确认推出没显示。"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "evidence-probe",
+            "kind": "Evidence",
+            "body": {
+              "relation": "NonInformative",
+              "interpretation": "仅请求讲解，无作答或关系说明，三个 Claim 均证据不足。"
+            }
+          }
+        ],
+        "inference_semantics": [
+          {
+            "applicable_claim_refs": [
+              {
+                "kind": "Claim",
+                "id": "claim-task",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-unit",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+              },
+              {
+                "kind": "Claim",
+                "id": "claim-division",
+                "version": "v1",
+                "revision": 0,
+                "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+              }
+            ],
+            "aggregation_rules": [
+              "结合当前有效正反 Evidence，不把单次正确或系统讲解直接等同掌握。",
+              "允许有依据的方向性认识，保留小样本与迁移限制。"
+            ],
+            "dependency_rules": [
+              "同一表现的重复解释不视为独立样本；保留实际帮助和相关性。"
+            ],
+            "conflict_rules": [
+              "明确相冲突的 Evidence 及原因，不平均成一个无法解释的分数。"
+            ],
+            "uncertainty_rules": [
+              "证据不足可以 UNKNOWN；运行失败不属于成功的 UNKNOWN。",
+              "认识不确定性不是学习者自信心。"
+            ],
+            "revision_rules": [
+              "更正后的失效 Evidence 不再作为当前依据，但历史保留。",
+              "有新材料时解释为何改变认识或保持原修订；不能默认全 UNKNOWN。"
+            ]
+          }
+        ]
+      },
+      "candidate": {
+        "items": [
+          {
+            "claim_id": "Claim:claim-task:v1",
+            "disposition": "REVISE",
+            "assessment_kind": "DIRECTIONAL",
+            "assessment": "学习者不会此类任务且没有掌握相关能力。",
+            "uncertainty": "只有一次讲解请求。",
+            "epistemic_status": [
+              "insufficient-evidence"
+            ],
+            "evidence_ids": [
+              "evidence-probe"
+            ],
+            "conflicts": [],
+            "rationale": "因为学习者请求讲解，因此可以确定不会。"
+          },
+          {
+            "claim_id": "Claim:claim-unit:v1",
+            "disposition": "REVISE",
+            "assessment_kind": "DIRECTIONAL",
+            "assessment": "学习者不会此类任务且没有掌握相关能力。",
+            "uncertainty": "只有一次讲解请求。",
+            "epistemic_status": [
+              "insufficient-evidence"
+            ],
+            "evidence_ids": [
+              "evidence-probe"
+            ],
+            "conflicts": [],
+            "rationale": "因为学习者请求讲解，因此可以确定不会。"
+          },
+          {
+            "claim_id": "Claim:claim-division:v1",
+            "disposition": "REVISE",
+            "assessment_kind": "DIRECTIONAL",
+            "assessment": "学习者不会此类任务且没有掌握相关能力。",
+            "uncertainty": "只有一次讲解请求。",
+            "epistemic_status": [
+              "insufficient-evidence"
+            ],
+            "evidence_ids": [
+              "evidence-probe"
+            ],
+            "conflicts": [],
+            "rationale": "因为学习者请求讲解，因此可以确定不会。"
+          }
+        ]
+      },
+      "expected": "REJECT",
+      "criterion": "以请求和无信息 Evidence 断言不会"
+    }
+  ],
+  "model": {
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-flash"
+  },
+  "parameters": {
+    "thinking": "disabled",
+    "temperature": 0,
+    "max_tokens": 8192,
+    "timeout": 60
+  },
+  "admission": {
+    "basis": "Latest 62 offline checks plus real two-turn explanation/evaluation/policy chain; user authorized remaining G2 validation.",
+    "prior_R1_admission_unchanged": true
+  },
+  "independence": "Previously prepared, unexecuted R1 formal instances; author-known scenario families, not independent blinded evaluation."
+}

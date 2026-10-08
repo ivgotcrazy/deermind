@@ -1,0 +1,63 @@
+{
+  "created": "2026-10-08T07:19:42.168624+00:00",
+  "id": "S1",
+  "status": "IMPLEMENTATION_INSPECTION_REQUIRED",
+  "turns": [
+    {
+      "id": "turn_bdc117b780994bd9976971a9b0f2a8f0",
+      "sid": "S1",
+      "message_key": "1",
+      "event_id": "event_7693b61958d24deca65135e15060761d",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791443998.9885762,
+      "label": "S1.1",
+      "wall_seconds": 28.733732300002885,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_1333ef955a644e279d0fd64da4343b15",
+      "sid": "S1",
+      "message_key": "2",
+      "event_id": "event_5f02f197cdf5477daf0d93cb9b70eb61",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444029.6047387,
+      "label": "S1.2",
+      "wall_seconds": 22.81080650000513,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_d9e903345ff9471cbc2bd339a96d21b9",
+      "sid": "S1",
+      "message_key": "3",
+      "event_id": "event_352ed830705c40c0a67f136c5d6aac4e",
+      "status": "FAILED",
+      "phase": "EVIDENCE_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "SchemaMismatch:items/0",
+      "created": 1791444054.9770153,
+      "label": "S1.3",
+      "wall_seconds": 32.80002099999547,
+      "injected_fault": null,
+      "branch": "base"
+    }
+  ],
+  "coverage_notes": [],
+  "stop_reason": "SchemaMismatch:items/0",
+  "browser": {
+    "text": "",
+    "rendered": []
+  },
+  "completed": "2026-10-08T07:21:29.999450+00:00",
+  "wall_seconds": 107.83079889999499
+}

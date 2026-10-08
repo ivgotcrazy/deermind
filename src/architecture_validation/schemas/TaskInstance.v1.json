@@ -1,0 +1,70 @@
+{
+  "type": "object",
+  "properties": {
+    "task_family_ref": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "content_hash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "version",
+        "revision",
+        "content_hash"
+      ],
+      "additionalProperties": false
+    },
+    "statement": {
+      "type": "string"
+    },
+    "given_data": {
+      "type": "object",
+      "properties": {
+        "quantity": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        },
+        "target": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "quantity",
+        "total",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "applicable_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "task_family_ref",
+    "statement",
+    "given_data",
+    "applicable_conditions"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

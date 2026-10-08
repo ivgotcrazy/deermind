@@ -2,7 +2,7 @@
 
 当前实现合同为以下七份 v1.0。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录冻结依据、Gate E/F 与后续 Build 范围；[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.6.md)保持阶段规划。
 
-当前工作处于Development Phase 2。Build输出统一放在`build/`；[Build Plan v0.4](build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md)保留原验收条件和各批次边界，[Build Validation Report v0.3](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)是统一结果入口。完整验收R2已结束：75项离线检查通过，6/6段完成预定路径，14/24轮内容可用，EVAL-01/03满足、02/04未满足，G2 HOLD。剩余缺口集中在缺失材料被误当反证、方法帮助跨题影响及错误Evidence传播；网络失败全部恢复、格式阻塞已修复。当前不进入MVP Definition，不追加本批模型调用。人工复测使用仓库根目录`deermind.cmd start`，参数见[实现README](../../src/architecture_validation/README.md)。
+当前工作进入 Development Phase 2。Build 相关输出统一放在 `build/`；[Build 设计与验证方案 v0.2](build/DeerMind_Architecture_Validation_Build_Plan_v0.2.md)已明确组件、最小数据合同、Evaluation 专项验收、失败分支、预算和 G2 条件。下一步先完成 B2 的 schema、核心定义与实例冻结，再实现最小真实闭环；尚未取得 Build 运行结果或通过 G2。
 
 - [DeerMind_System_Design_v1.0](DeerMind_System_Design_v1.0.md)
 - [DeerMind_Runtime_Event_Architecture_v1.0](DeerMind_Runtime_Event_Architecture_v1.0.md)

@@ -1,0 +1,300 @@
+{
+  "counts": {
+    "B2": 23,
+    "base": 0,
+    "repair": 0,
+    "probe": 0,
+    "transport": 0
+  },
+  "total_attempts": 23,
+  "input_tokens": 83658,
+  "output_tokens": 41117,
+  "estimated_cny": 0.4962520000000001,
+  "active_b4_seconds": 94.27686959999846,
+  "reservations": {
+    "attempt_4c36aca48a9e461c827adab0b2249860": {
+      "logical_id": "logical_754149381b7e46c48543c42bd398cbfb",
+      "input": 2430,
+      "output": 8192,
+      "cost": 0.070396,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 1562,
+      "actual_output": 477,
+      "actual_estimated_cny": 0.00694,
+      "seconds": 3.7670521000036388
+    },
+    "attempt_282f8cae312847f1a7390c9643311f89": {
+      "logical_id": "logical_176839ab0827403c850b09295ae77841",
+      "input": 3611,
+      "output": 8192,
+      "cost": 0.072758,
+      "status": "FAILED",
+      "segment": "contract-boundary-v1",
+      "seconds": 5.119115999994392
+    },
+    "attempt_e3d1ca2d575b4acbb618de9683c235c3": {
+      "logical_id": "logical_176839ab0827403c850b09295ae77841",
+      "input": 3611,
+      "output": 8192,
+      "cost": 0.072758,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 2507,
+      "actual_output": 251,
+      "actual_estimated_cny": 0.007022,
+      "seconds": 2.0002536999963922
+    },
+    "attempt_622e227a9b944ad3b48892368c13eb92": {
+      "logical_id": "logical_7a4d541f866f4e82916dda3e9200b66d",
+      "input": 4009,
+      "output": 8192,
+      "cost": 0.073554,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 2825,
+      "actual_output": 653,
+      "actual_estimated_cny": 0.010874,
+      "seconds": 4.290366199995333
+    },
+    "attempt_d1e904c8ab454a2280fc5a5d9ba9a713": {
+      "logical_id": "logical_675a41826d544b1485d8c9bc919c0e39",
+      "input": 5319,
+      "output": 8192,
+      "cost": 0.076174,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 3873,
+      "actual_output": 307,
+      "actual_estimated_cny": 0.010202,
+      "seconds": 2.170344699996349
+    },
+    "attempt_3b12b51bd7e24102862ebbb4f0d1d9c2": {
+      "logical_id": "logical_f59e1904c4414958acd08cd94512889d",
+      "input": 5504,
+      "output": 8192,
+      "cost": 0.076544,
+      "status": "FAILED",
+      "segment": "contract-boundary-v1",
+      "seconds": 5.116621499997564
+    },
+    "attempt_f204c6851a4c42549cbac5343f8f10a2": {
+      "logical_id": "logical_f59e1904c4414958acd08cd94512889d",
+      "input": 5504,
+      "output": 8192,
+      "cost": 0.076544,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 4021,
+      "actual_output": 684,
+      "actual_estimated_cny": 0.013514,
+      "seconds": 4.405809000003501
+    },
+    "attempt_6288def3e5104d26b04a538eca746f7b": {
+      "logical_id": "logical_9458b816da0c4e72b3b9c78a7923862e",
+      "input": 6884,
+      "output": 8192,
+      "cost": 0.079304,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 5125,
+      "actual_output": 324,
+      "actual_estimated_cny": 0.012842,
+      "seconds": 2.2367359999989276
+    },
+    "attempt_04a1afafa822422791467b5d72843d95": {
+      "logical_id": "logical_03b57b926d064e28b3f1b2c839ed42e3",
+      "input": 4827,
+      "output": 8192,
+      "cost": 0.07519,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 3480,
+      "actual_output": 133,
+      "actual_estimated_cny": 0.008024,
+      "seconds": 1.7650666999979876
+    },
+    "attempt_153465a58bae4496a853cda04f241777": {
+      "logical_id": "logical_c33ebf76527849ddac82dd6fdf908e25",
+      "input": 5622,
+      "output": 8192,
+      "cost": 0.07678,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 4116,
+      "actual_output": 287,
+      "actual_estimated_cny": 0.010528,
+      "seconds": 2.006278000000748
+    },
+    "attempt_dea9592301864b0dbef22e9c9f6ed6f4": {
+      "logical_id": "logical_44786df240bb46729e95013775facf0c",
+      "input": 4825,
+      "output": 8192,
+      "cost": 0.075186,
+      "status": "FAILED",
+      "segment": "contract-boundary-v1",
+      "seconds": 5.16829339999822
+    },
+    "attempt_52eaa0565f654143b22879dc46f2a2d9": {
+      "logical_id": "logical_44786df240bb46729e95013775facf0c",
+      "input": 4825,
+      "output": 8192,
+      "cost": 0.075186,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 3478,
+      "actual_output": 287,
+      "actual_estimated_cny": 0.009252,
+      "seconds": 2.122312500003318
+    },
+    "attempt_c3b9822d7c4d49a697f7e7ecfe383c59": {
+      "logical_id": "logical_2f84a3cb73bd442d8048ec188c0fc232",
+      "input": 5812,
+      "output": 8192,
+      "cost": 0.07716,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 4268,
+      "actual_output": 256,
+      "actual_estimated_cny": 0.010584,
+      "seconds": 1.6224144000007072
+    },
+    "attempt_29cacc9289a94b8fba984b1aa4f1d522": {
+      "logical_id": "logical_5ed6c925cb4340aab6ab10e341abe29f",
+      "input": 2839,
+      "output": 8192,
+      "cost": 0.071214,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 1889,
+      "actual_output": 431,
+      "actual_estimated_cny": 0.007226,
+      "seconds": 2.4216204000040307
+    },
+    "attempt_0dbe091088044fee807488af50d85e4e": {
+      "logical_id": "logical_9a5f3bd7bd974b589bce4cfffa5e8a01",
+      "input": 3997,
+      "output": 8192,
+      "cost": 0.07353,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 2816,
+      "actual_output": 306,
+      "actual_estimated_cny": 0.00808,
+      "seconds": 1.9597645000030752
+    },
+    "attempt_7826617f235d4798a966b99f02a8dd65": {
+      "logical_id": "logical_217a3cf3adc642768fabd97c3d4dff20",
+      "input": 4375,
+      "output": 8192,
+      "cost": 0.074286,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 3118,
+      "actual_output": 855,
+      "actual_estimated_cny": 0.013076,
+      "seconds": 5.043920999996772
+    },
+    "attempt_10ca8ac356404f769e0a1e81837b76a8": {
+      "logical_id": "logical_3b0c151b27584ffe97b8385d4a886c22",
+      "input": 5955,
+      "output": 8192,
+      "cost": 0.077446,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 4382,
+      "actual_output": 353,
+      "actual_estimated_cny": 0.011588,
+      "seconds": 2.479505399998743
+    },
+    "attempt_8e6b0f949fe543b8978d4a6d4a6cf47e": {
+      "logical_id": "logical_307aa00e5b074b3c821a07a63c912dcd",
+      "input": 8779,
+      "output": 8192,
+      "cost": 0.083094,
+      "status": "FAILED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 6641,
+      "actual_output": 924,
+      "actual_estimated_cny": 0.020674,
+      "seconds": 4.263880899998185
+    },
+    "attempt_89eadaa601cf4e85867a5739607ffd1b": {
+      "logical_id": "logical_fa0096e8b2494ce48453d00cf15b94eb",
+      "input": 8801,
+      "output": 8192,
+      "cost": 0.083138,
+      "status": "FAILED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 6659,
+      "actual_output": 1090,
+      "actual_estimated_cny": 0.022038,
+      "seconds": 4.821228700006031
+    },
+    "attempt_792fa654b4434b928e44f69f3df24ba1": {
+      "logical_id": "logical_f858cb14beb24bafbf26d95b6778bcbf",
+      "input": 2906,
+      "output": 8192,
+      "cost": 0.071348,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 1943,
+      "actual_output": 265,
+      "actual_estimated_cny": 0.006006,
+      "seconds": 1.888799200001813
+    },
+    "attempt_0c8f030762434530b9683fdea06c68f3": {
+      "logical_id": "logical_ef1c17db1e27472cb9ce5f39e2c84075",
+      "input": 2994,
+      "output": 8192,
+      "cost": 0.071524,
+      "status": "FAILED",
+      "segment": "contract-boundary-v1",
+      "seconds": 5.160247799998615
+    },
+    "attempt_7a57f2153ae243f1ac844d58a627233c": {
+      "logical_id": "logical_ef1c17db1e27472cb9ce5f39e2c84075",
+      "input": 2994,
+      "output": 8192,
+      "cost": 0.071524,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 2013,
+      "actual_output": 245,
+      "actual_estimated_cny": 0.005986,
+      "seconds": 2.3176144000026397
+    },
+    "attempt_dd8b3bb7531b44709bc042cf3cf2e8c4": {
+      "logical_id": "logical_be96ba81f69f46f6ba25f9b3b6eb2fee",
+      "input": 2987,
+      "output": 8192,
+      "cost": 0.07151,
+      "status": "COMPLETED",
+      "segment": "contract-boundary-v1",
+      "actual_input": 2008,
+      "actual_output": 221,
+      "actual_estimated_cny": 0.005784,
+      "seconds": 1.7512281000017538
+    }
+  },
+  "policy": {
+    "category_limits": {
+      "B2": 40,
+      "base": 0,
+      "repair": 0,
+      "probe": 0,
+      "transport": 0
+    },
+    "total_attempts": 40,
+    "development_segment_attempts": 40,
+    "input_tokens": 800000,
+    "output_tokens": 160000,
+    "cny": 5,
+    "active_seconds": 900,
+    "active_all_phases": true
+  },
+  "campaign": "CONTRACT-BOUNDARY-V1",
+  "segment_counts": {
+    "contract-boundary-v1": 23
+  }
+}

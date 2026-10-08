@@ -1,0 +1,31 @@
+{
+  "created": "2026-10-08T05:33:35.203178+00:00",
+  "run": "r1-dev1",
+  "admitted": false,
+  "normal_turns_completed": 3,
+  "planned_turns": 6,
+  "complete_sessions": 0,
+  "probes_matched": 13,
+  "probes_planned": 13,
+  "reference_failures": 0,
+  "reviewer": "Implementation author / Codex, not independent human review",
+  "findings": [
+    {
+      "unit": "D1.3",
+      "finding": "Belief review invents requirements that limited directional belief needs independent repeated verification; treats written mathematical explanation as merely unverifiable self-report; disputes revisions that update evidence basis."
+    },
+    {
+      "unit": "D2.1",
+      "finding": "Initial Policy review rejects requested error-location hint; one allowed regeneration completes. Rationale should explicitly acknowledge location assistance."
+    },
+    {
+      "unit": "D2.2",
+      "finding": "One Belief review falsely requires cross-Claim evidence and denies provided prior belief; recovery commits evaluation, then Policy reviewer omits purpose rule and no recovery remains."
+    },
+    {
+      "unit": "D2.3",
+      "finding": "Control really occurs; Explanation reviews reject showing calculations despite new full-explanation request."
+    }
+  ],
+  "next": "Only dev2 remains. Clarify observable performance vs external self-report, finite directional conclusions, REVISE semantics and per-Claim evidence index; fix four-rule review schema and bounded feedback. No formal batch yet."
+}

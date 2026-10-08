@@ -1,0 +1,24 @@
+{
+  "created": "2026-10-08T09:40:33.341196+00:00",
+  "id": "D6",
+  "status": "RUNNING",
+  "turns": [
+    {
+      "id": "turn_0e29bbcbfb19469d83eaf08279f19a94",
+      "sid": "D6",
+      "message_key": "1",
+      "event_id": "event_ab55d7f671a745afb1a045df3264ef6a",
+      "status": "FAILED",
+      "phase": "BELIEF_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "RequiredValidationNotPassed",
+      "created": 1791452442.9244714,
+      "label": "D6.1",
+      "wall_seconds": 51.25609660000191,
+      "injected_fault": null,
+      "branch": "base"
+    }
+  ],
+  "coverage_notes": []
+}

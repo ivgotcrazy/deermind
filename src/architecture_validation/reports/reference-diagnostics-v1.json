@@ -1,0 +1,253 @@
+{
+  "analysis": "Identity lookup only, no offline semantic repair or replay counted as real success",
+  "failures": [
+    {
+      "turn_id": "turn_83f66fed08174bef873c297c3f727aeb",
+      "context_id": "context_461f2b6e6d854c0484c4893763d7212e",
+      "purpose": "Belief",
+      "attempt": 0,
+      "non_record_ids": [
+        "evidence:S1:observation:event_2d8bd757d79e45048d443a92f77907bf:canonical:Claim:claim-task",
+        "evidence:S1:observation:event_81f0b99c6279475c8540a076d11695ea:canonical:Claim:claim-task",
+        "evidence:S1:observation:event_81f0b99c6279475c8540a076d11695ea:canonical:Claim:claim-unit",
+        "evidence:S1:observation:event_2d8bd757d79e45048d443a92f77907bf:canonical:Claim:claim-division",
+        "evidence:S1:observation:event_81f0b99c6279475c8540a076d11695ea:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_83f66fed08174bef873c297c3f727aeb",
+      "context_id": "context_215fb09579ee42be9be2381d8b3c2156",
+      "purpose": "Belief",
+      "attempt": 1,
+      "non_record_ids": [
+        "evidence:S1:observation:event_2d8bd757d79e45048d443a92f77907bf:canonical:Claim:claim-task",
+        "evidence:S1:observation:event_81f0b99c6279475c8540a076d11695ea:canonical:Claim:claim-task",
+        "evidence:S1:observation:event_81f0b99c6279475c8540a076d11695ea:canonical:Claim:claim-unit",
+        "evidence:S1:observation:event_2d8bd757d79e45048d443a92f77907bf:canonical:Claim:claim-division",
+        "evidence:S1:observation:event_81f0b99c6279475c8540a076d11695ea:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_bd40c1ae1afa43f485f4730256818221",
+      "context_id": "context_2bf7fda9e2c44e3ea150bea5b61d7c5c",
+      "purpose": "Belief",
+      "attempt": 0,
+      "non_record_ids": [
+        "evidence:S1:observation:event_2d8bd757d79e45048d443a92f77907bf:canonical:Claim:claim-task",
+        "evidence:S1:observation:event_81f0b99c6279475c8540a076d11695ea:canonical:Claim:claim-task",
+        "evidence:S1:observation:event_54a5893206c5482b9f3af55e31370409:canonical:Claim:claim-task",
+        "evidence:S1:observation:event_81f0b99c6279475c8540a076d11695ea:canonical:Claim:claim-unit",
+        "evidence:S1:observation:event_54a5893206c5482b9f3af55e31370409:canonical:Claim:claim-unit",
+        "evidence:S1:observation:event_2d8bd757d79e45048d443a92f77907bf:canonical:Claim:claim-division",
+        "evidence:S1:observation:event_81f0b99c6279475c8540a076d11695ea:canonical:Claim:claim-division",
+        "evidence:S1:observation:event_54a5893206c5482b9f3af55e31370409:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_364006478f3d4e068dd674b523e63cf6",
+      "context_id": "context_54ba890a519e465e90e4827d9d4a0be4",
+      "purpose": "Belief",
+      "attempt": 0,
+      "non_record_ids": [
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_364006478f3d4e068dd674b523e63cf6",
+      "context_id": "context_ce0a0fee5cae4e228be2ef27ab9429d8",
+      "purpose": "Belief",
+      "attempt": 1,
+      "non_record_ids": [
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_f2e37267d103496098d99c2af4d55e04",
+      "context_id": "context_2de8513916b6427b914e8bb97be10ad0",
+      "purpose": "Belief",
+      "attempt": 0,
+      "non_record_ids": [
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_f2e37267d103496098d99c2af4d55e04",
+      "context_id": "context_9e376fe1e4864e56beaba918b68d09e8",
+      "purpose": "Belief",
+      "attempt": 1,
+      "non_record_ids": [
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_445084b2ae3345598ca090bd3cb1e2e9",
+      "context_id": "context_9d2e9ca2e2194bf2913d007afd51ad44",
+      "purpose": "Belief",
+      "attempt": 0,
+      "non_record_ids": [
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_7f5a690f257546a586db99a6c2f267e8:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_7f5a690f257546a586db99a6c2f267e8:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_7f5a690f257546a586db99a6c2f267e8:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_445084b2ae3345598ca090bd3cb1e2e9",
+      "context_id": "context_71eab6bd4f5e447cbe27054afb4f4b7d",
+      "purpose": "Belief",
+      "attempt": 1,
+      "non_record_ids": [
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_7f5a690f257546a586db99a6c2f267e8:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-task",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_7f5a690f257546a586db99a6c2f267e8:canonical:Claim:claim-unit",
+        "evidence:S2:observation:event_26ee0cd0fa304540809dd14205ad4798:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_4ea49eb674394f7599e4eae027cf98a0:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_7f5a690f257546a586db99a6c2f267e8:canonical:Claim:claim-division",
+        "evidence:S2:observation:event_708a5f24fdec480faa23d69c731aaa0a:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_e920d6b2f4cc4840af66171d32425062",
+      "context_id": "context_b438bbfc650646ec9dfca94067ec8893",
+      "purpose": "Belief",
+      "attempt": 0,
+      "non_record_ids": [
+        "evidence:S3:observation:event_1d24c805940d42a69effc0e2fa525fa4:canonical:Claim:claim-task",
+        "evidence:S3:observation:event_36f48559261c4757aa3ff497600b4be2:canonical:Claim:claim-task",
+        "evidence:S3:observation:event_1d24c805940d42a69effc0e2fa525fa4:canonical:Claim:claim-unit",
+        "evidence:S3:observation:event_36f48559261c4757aa3ff497600b4be2:canonical:Claim:claim-unit",
+        "evidence:S3:observation:event_1d24c805940d42a69effc0e2fa525fa4:canonical:Claim:claim-division",
+        "evidence:S3:observation:event_36f48559261c4757aa3ff497600b4be2:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_f52fdc9ea8974503bd391deab1e3d767",
+      "context_id": "context_64369511096e40c0b721a4dc58aec26e",
+      "purpose": "Belief",
+      "attempt": 0,
+      "non_record_ids": [
+        "evidence:S3:observation:event_1d24c805940d42a69effc0e2fa525fa4:canonical:Claim:claim-task",
+        "evidence:S3:observation:event_36f48559261c4757aa3ff497600b4be2:canonical:Claim:claim-task",
+        "evidence:S3:observation:event_d3c36bacc1a24272a429c445ad45fa88:canonical:Claim:claim-task",
+        "evidence:S3:observation:event_1d24c805940d42a69effc0e2fa525fa4:canonical:Claim:claim-unit",
+        "evidence:S3:observation:event_36f48559261c4757aa3ff497600b4be2:canonical:Claim:claim-unit",
+        "evidence:S3:observation:event_d3c36bacc1a24272a429c445ad45fa88:canonical:Claim:claim-unit",
+        "evidence:S3:observation:event_1d24c805940d42a69effc0e2fa525fa4:canonical:Claim:claim-division",
+        "evidence:S3:observation:event_36f48559261c4757aa3ff497600b4be2:canonical:Claim:claim-division",
+        "evidence:S3:observation:event_d3c36bacc1a24272a429c445ad45fa88:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_f52fdc9ea8974503bd391deab1e3d767",
+      "context_id": "context_9f70ae8f8e8d470dbf291effcd3a7165",
+      "purpose": "Belief",
+      "attempt": 1,
+      "non_record_ids": [
+        "evidence:S3:observation:event_1d24c805940d42a69effc0e2fa525fa4:canonical:Claim:claim-task",
+        "evidence:S3:observation:event_36f48559261c4757aa3ff497600b4be2:canonical:Claim:claim-task",
+        "evidence:S3:observation:event_d3c36bacc1a24272a429c445ad45fa88:canonical:Claim:claim-task",
+        "evidence:S3:observation:event_1d24c805940d42a69effc0e2fa525fa4:canonical:Claim:claim-unit",
+        "evidence:S3:observation:event_36f48559261c4757aa3ff497600b4be2:canonical:Claim:claim-unit",
+        "evidence:S3:observation:event_d3c36bacc1a24272a429c445ad45fa88:canonical:Claim:claim-unit",
+        "evidence:S3:observation:event_1d24c805940d42a69effc0e2fa525fa4:canonical:Claim:claim-division",
+        "evidence:S3:observation:event_36f48559261c4757aa3ff497600b4be2:canonical:Claim:claim-division",
+        "evidence:S3:observation:event_d3c36bacc1a24272a429c445ad45fa88:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_a827ca78f7584354aa03c6d8310b94db",
+      "context_id": "context_b57c6cde110e4d189d46596496eff105",
+      "purpose": "Belief",
+      "attempt": 0,
+      "non_record_ids": [
+        "evidence:S4:observation:event_81d9720898c942e29d8f7a562e8c71d5:canonical:Claim:claim-task",
+        "evidence:S4:observation:event_bdedd3918ab141659941c56bd9a98d7e:canonical:Claim:claim-task",
+        "evidence:S4:observation:event_81d9720898c942e29d8f7a562e8c71d5:canonical:Claim:claim-unit",
+        "evidence:S4:observation:event_bdedd3918ab141659941c56bd9a98d7e:canonical:Claim:claim-unit",
+        "evidence:S4:observation:event_81d9720898c942e29d8f7a562e8c71d5:canonical:Claim:claim-division",
+        "evidence:S4:observation:event_bdedd3918ab141659941c56bd9a98d7e:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    },
+    {
+      "turn_id": "turn_a827ca78f7584354aa03c6d8310b94db",
+      "context_id": "context_5b329beb69cb49539c45da0f1aed9899",
+      "purpose": "Belief",
+      "attempt": 1,
+      "non_record_ids": [
+        "evidence:S4:observation:event_81d9720898c942e29d8f7a562e8c71d5:canonical:Claim:claim-task",
+        "evidence:S4:observation:event_bdedd3918ab141659941c56bd9a98d7e:canonical:Claim:claim-task",
+        "evidence:S4:observation:event_81d9720898c942e29d8f7a562e8c71d5:canonical:Claim:claim-unit",
+        "evidence:S4:observation:event_bdedd3918ab141659941c56bd9a98d7e:canonical:Claim:claim-unit",
+        "evidence:S4:observation:event_81d9720898c942e29d8f7a562e8c71d5:canonical:Claim:claim-division",
+        "evidence:S4:observation:event_bdedd3918ab141659941c56bd9a98d7e:canonical:Claim:claim-division"
+      ],
+      "all_non_record_ids_are_explicit_unambiguous_aliases": true,
+      "run": "b4-primary-v1"
+    }
+  ]
+}

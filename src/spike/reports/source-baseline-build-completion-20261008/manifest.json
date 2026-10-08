@@ -1,0 +1,16 @@
+{
+  "created": "2026-10-08T04:33:16.627006+00:00",
+  "reason": "Preserve pre-Build-completion status before publishing B5 and G2 HOLD",
+  "files": [
+    {
+      "source_path": "doc/system-design/README.md",
+      "previous_sha256": "05c71a42ba31d23a30d1a18ad689a651fd4fe5f559fdda2ad6b35da49a09304d",
+      "preserved_at": "src/spike/reports/source-baseline-build-completion-20261008/1-README.md.txt"
+    },
+    {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "51ff4e9c232a3b97bb5c92ced03adb20c6011e4e0e498082ebb5e17fcdba47d2",
+      "preserved_at": "src/spike/reports/source-baseline-build-completion-20261008/2-validation-progress-v1.json.txt"
+    }
+  ]
+}

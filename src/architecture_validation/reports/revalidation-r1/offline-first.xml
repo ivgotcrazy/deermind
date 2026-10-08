@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="8" time="10.666" timestamp="2026-10-08T13:20:34.983706+08:00" hostname="Star"><testcase classname="src.architecture_validation.tests.test_runtime" name="test_persistent_normal_and_evaluation_failure" time="0.339" /><testcase classname="src.architecture_validation.tests.test_runtime" name="test_browser_actual_occurrence" time="7.851" /><testcase classname="src.architecture_validation.tests.test_contracts" name="test_normative_coordinates_and_claim_support_are_distinct" time="0.008" /><testcase classname="src.architecture_validation.tests.test_contracts" name="test_structural_positive_and_negative_examples" time="0.004" /><testcase classname="src.architecture_validation.tests.test_contracts" name="test_unknown_is_not_execution_failure" time="0.001" /><testcase classname="src.architecture_validation.tests.test_admission" name="test_token_estimate_four_turns_without_api" time="1.198" /><testcase classname="src.architecture_validation.tests.test_admission" name="test_exact_alias_binding" time="0.090" /><testcase classname="src.architecture_validation.tests.test_admission" name="test_supplied_derived_id_aliases_across_four_turns" time="0.128"><failure message="AssertionError: assert 'FAILED' == 'COMPLETED'&#10;  &#10;  - COMPLETED&#10;  + FAILED">tmp_path = WindowsPath('C:/Users/Administrator/AppData/Local/Temp/pytest-of-Administrator/pytest-2/test_supplied_derived_id_alias0')
+
+    def test_supplied_derived_id_aliases_across_four_turns(tmp_path):
+        st=Store(tmp_path/'derived-alias.sqlite');st.bootstrap();q=st.canonical(task('d',6,42,15));st.start_session('s')
+        model=ScriptedModel();original=model.complete
+        def aliases(system,ctx,schema,purpose,category='base'):
+            output,record=original(system,ctx,schema,purpose,category)
+            if purpose=='Belief':
+                for item in output['items']:item['evidence_ids']=[st.ref(i)['id'] for i in item['evidence_ids']]
+            if purpose=='Evidence':
+                for item in output['items']:item['observation_ids']=[st.ref(i)['id'] for i in item['observation_ids']]
+            return output,record
+        model.complete=aliases;engine=Engine(st,model,test_mode=True)
+        for n in range(4):
+            t=st.enqueue('s',str(n),'新作答',q);st.claim_turn(engine.worker_epoch);engine.process(t['id'])
+&gt;           assert st.turn(t['id'])['status']=='COMPLETED'
+E           AssertionError: assert 'FAILED' == 'COMPLETED'
+E             
+E             - COMPLETED
+E             + FAILED
+
+src\architecture_validation\tests\test_admission.py:51: AssertionError</failure></testcase></testsuite></testsuites>

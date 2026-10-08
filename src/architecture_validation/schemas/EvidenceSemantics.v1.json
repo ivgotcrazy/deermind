@@ -1,0 +1,80 @@
+{
+  "type": "object",
+  "properties": {
+    "applicable_claim_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "content_hash": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "version",
+          "revision",
+          "content_hash"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required_context": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relation_criteria": {
+      "type": "object",
+      "properties": {
+        "Supports": {
+          "type": "string"
+        },
+        "Contradicts": {
+          "type": "string"
+        },
+        "Discriminates": {
+          "type": "string"
+        },
+        "NonInformative": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "Supports",
+        "Contradicts",
+        "Discriminates",
+        "NonInformative"
+      ],
+      "additionalProperties": false
+    },
+    "assistance_rules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "applicable_claim_refs",
+    "required_context",
+    "relation_criteria",
+    "assistance_rules"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

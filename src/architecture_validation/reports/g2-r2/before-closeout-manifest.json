@@ -1,0 +1,38 @@
+[
+  {
+    "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
+    "previous_sha256": "ef05e1ff7a35722872058081b0a630cbfcd8ae2d445f5c89a82b9730b864d8de",
+    "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
+    "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
+  },
+  {
+    "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
+    "previous_sha256": "04aea3bc5256d857463a9efa49373322bc6f7edf9f14435ec7cc55895164d90c",
+    "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
+    "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
+  },
+  {
+    "source_path": "doc/system-design/README.md",
+    "previous_sha256": "d938454cc5fbf21ac4b488c6cd989527a9f04d1cfb966736cca0761cc4f0b637",
+    "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/doc__system-design__README.md.txt",
+    "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
+  },
+  {
+    "source_path": "src/architecture_validation/README.md",
+    "previous_sha256": "8b81716d83f935b938eb437dce33921c8ff66ffb6359173d305c974dd58b0e74",
+    "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/src__architecture_validation__README.md.txt",
+    "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
+  },
+  {
+    "source_path": "src/architecture_validation/reports/progress.json",
+    "previous_sha256": "7acd765d978c83a8d50a80b65c982b49c9aed6dbfedc36092c7fb762d5baef35",
+    "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/src__architecture_validation__reports__progress.json.txt",
+    "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
+  },
+  {
+    "source_path": "src/spike/reports/validation-progress-v1.json",
+    "previous_sha256": "b9c30e0c2f09b3b7b2096e899ab1d8701a7d7b10fcd466d6a001a7d9eebf8c60",
+    "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/src__spike__reports__validation-progress-v1.json.txt",
+    "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
+  }
+]

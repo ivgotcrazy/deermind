@@ -1,0 +1,15 @@
+{
+  "verified_at": "2026-10-08T03:28:38.248095+00:00",
+  "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "verification": "Fetched official HTML price table locally; web tool timed out on this page",
+  "model": "deepseek-flash",
+  "served_model": "DeepSeek-V4.1-Flash",
+  "currency": "CNY",
+  "input_per_million_peak_uncached": 2,
+  "output_per_million_peak": 8,
+  "cost_method": "Conservative peak uncached rates, no cache/off-peak discount assumed",
+  "response_format": "json_object",
+  "thinking": "disabled",
+  "temperature": 0,
+  "max_output_tokens": 8192
+}

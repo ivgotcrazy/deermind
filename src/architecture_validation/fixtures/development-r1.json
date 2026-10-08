@@ -1,0 +1,88 @@
+{
+  "version": "r1-dev",
+  "sessions": [
+    {
+      "id": "D1",
+      "tasks": [
+        {
+          "kind": "TaskInstance",
+          "id": "r1-d1",
+          "version": "v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "6份练习本共42元，15份同样的练习本多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 6,
+              "total": 42,
+              "target": 15
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "text": "42÷6＝8，8×15＝120。先让我自己检查，不需要提示。"
+        },
+        {
+          "text": "更正刚才写的除法：42÷6＝7，7×15＝105。我自己重算的，请先不要提示。",
+          "correct_turn": 1
+        },
+        {
+          "text": "42元是6本的总价，除以6得到每本7元，因为这些本子单价相同，所以再乘15。请先记录。"
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "tasks": [
+        {
+          "kind": "TaskInstance",
+          "id": "r1-d2",
+          "version": "v1",
+          "body": {
+            "task_family_ref": {
+              "kind": "TaskFamily",
+              "id": "unit-rate",
+              "version": "v1",
+              "revision": 0,
+              "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+            },
+            "statement": "8份练习本共56元，13份同样的练习本多少钱？请说明计算。",
+            "given_data": {
+              "quantity": 8,
+              "total": 56,
+              "target": 13
+            },
+            "applicable_conditions": [
+              "正比例；单价相同"
+            ]
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "text": "56÷8＝8，8×13＝104。请只指出哪一步要检查，不给商和总价。"
+        },
+        {
+          "text": "我重新算了56÷8＝7，7×13＝91，商是我自己算的。",
+          "after_display_turn": 1,
+          "with_display_text": "看过刚才实际显示的提示后，我重新算了56÷8＝7，7×13＝91，商是我自己算的。"
+        },
+        {
+          "text": "我现在想听完整讲解，请解释每一步为何这样算，并告诉我计算结果。"
+        }
+      ]
+    }
+  ],
+  "planned_turns": 6,
+  "purpose": "development only; full independent/correction and assistance-followup chains required"
+}

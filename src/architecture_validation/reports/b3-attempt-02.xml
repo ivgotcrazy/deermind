@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="42.661" timestamp="2026-10-08T12:01:39.864164+08:00" hostname="Star"><testcase classname="src.architecture_validation.tests.test_mechanisms" name="test_M08_B" time="41.472" /></testsuite></testsuites>

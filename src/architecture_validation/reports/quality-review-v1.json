@@ -1,0 +1,621 @@
+{
+  "created": "2026-10-08T04:32:01.266216+00:00",
+  "reviewer": "Implementation author / Codex; not independent blinded human review",
+  "rubric_source": "fixtures/holdout-v1.json",
+  "unit_reviews": [
+    {
+      "unit": "S1.1",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "total": 2,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "RequiredValidationNotPassed",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_5cca1727f7a548699ccd2235746e748e",
+        "evaluationcompletion_db4cd95b33e34cb993ea34bdf34485c9",
+        "runtimefailure_3fedad66812747048a8806d428c9fbd8"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S1.2",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        2,
+        2,
+        1
+      ],
+      "total": 7,
+      "usable": true,
+      "status": "COMPLETED",
+      "failure": "",
+      "review_reason": "有依据地区分计算支持与关系解释不足；Policy 将任何提示都说成替代责任，表述偏强。",
+      "supporting_record_ids": [
+        "observation_213e493fa6084f349a84befac270a2b8",
+        "evidence_c704257771b542a7b8f655d2524e6f6c",
+        "evidence_c2a2fe430e7d414a970bd21fc32f7915",
+        "evidence_d637119d75694f2ea9e6967baa03782f",
+        "belief_baaba81c466447bb91c30dbdda4bf323",
+        "belief_7d59a33c7e6c4b7f84792c4d74361991",
+        "belief_75aca292db1d4f8888c7d5fe906afb94",
+        "evaluationcompletion_054b0286c0f4446285ded40fe25f5fb3",
+        "decision_ca02e991dcd44b549d5b4b31639dd8e1"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S1.3",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        1,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "UnknownOrWrongSource",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_f49061e43161493dbde4529177dc8fbc",
+        "evidence_e9da598477a5490cb651be8ff26fc0f4",
+        "evidence_935b6cf23977436483c1e8674ba467ed",
+        "evidence_7a903a33f6c74634980934b03ebdbf7b",
+        "evaluationcompletion_658d8d920dab43ffb4edb08c27bc8bc1",
+        "runtimefailure_0285ecc19d494fb3a5ea05346ec4f18b"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S1.4",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        1,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "UnknownOrWrongSource",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_478d51752f7d4d85b52c983c434e9c9f",
+        "evidence_82e96fa612414adab46b483c7c6ea9f1",
+        "evidence_62fdbc78cf8448b7a4c5d42a3f191e71",
+        "evidence_5917a85c462b447a9133a0549244c980",
+        "evaluationcompletion_77efe0e4d7fa478da9211c8449443869",
+        "runtimefailure_b01b20d78e1646c09bf52ba6d883e51b"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S2.1",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "total": 7,
+      "usable": true,
+      "status": "COMPLETED",
+      "failure": "",
+      "review_reason": "提示定位除法且未给商；额外建议乘法验算，略超过只指出步骤的最窄请求。",
+      "supporting_record_ids": [
+        "observation_84ad2e0029ad4c9a9e60417bdb7b2348",
+        "evidence_b55728d92018478fa2fb013c9cad9a7e",
+        "evidence_c0eaccda0b0642398ddf968346a96ba2",
+        "evidence_4f0eb25019c64b40abbf0eaebcdf59be",
+        "belief_e7a1f2f1ed2e4f53a34b337f2d9cd527",
+        "belief_b2a31affbcfb4abcaa1483d5c732258a",
+        "belief_c4ef89624b0943f7a32a3908c909169e",
+        "evaluationcompletion_9a0510f5e8594ee89aea61a64da20b89",
+        "decision_fb0bdae06a1f49ee99d4c1c2db5873f8"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S2.2",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        1,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "UnknownOrWrongSource",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_fc6757d7c26e405f8c39cf05163c8861",
+        "evidence_af8293177c41474a9de69564fa3e505d",
+        "evidence_2025fbdfb275459086945411c4133ac4",
+        "evidence_4e05eb24b9db4f45a0f1e40301da46d4",
+        "evaluationcompletion_87d7d7bb78764fc4a504b2ae0a44de1a",
+        "runtimefailure_6b2513ac2ae24f1f82baf935dafbd7bc"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S2.3",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        1,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "UnknownOrWrongSource",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_c6c482085a3d4964a936e20896f24a65",
+        "evidence_aada50688fb2443aaba2608d13a21f52",
+        "evidence_59aa5b069f9644fda0d60292b6055a0d",
+        "evidence_1a5d43ee740b4c0fbe89a74d3d45d685",
+        "evaluationcompletion_a21f4de76d3746d7b81e6877f4ca6416",
+        "runtimefailure_e8d6eaa3a82c421388d409f921498e32"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S2.4",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        1,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "UnknownOrWrongSource",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_776d8bce9dc54a41a4118af84e9a71c5",
+        "evidence_8b9daae4716b49958982b5de2b01abb3",
+        "evidence_28020fd14401439b86c58f7b795c70ea",
+        "evidence_2012af43cf504e65b1d9861e8fc5384d",
+        "evaluationcompletion_3fd4fe36260f426db424904ae82b6a40",
+        "runtimefailure_83f5221300f742c9b3a086e50e401594"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S3.1",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        2,
+        2,
+        1
+      ],
+      "total": 7,
+      "usable": true,
+      "status": "COMPLETED",
+      "failure": "",
+      "review_reason": "保留独立思考、不过度断言能力；不干预理由泛称提示替代计算，表述偏强。",
+      "supporting_record_ids": [
+        "observation_38dcdfb9d0124cc5aad5b54981ac53c1",
+        "evidence_ebdd8e15c7c24da3a9cadccef6d5f5f1",
+        "evidence_94e4c3a8a60a45fbab44131921a6c654",
+        "evidence_824f474cc5a44e50ba7d925c9290788c",
+        "belief_5aea595639134753a0ea457732dd4a64",
+        "belief_1576c2663fa044259583ae3fa3c44b96",
+        "belief_79bdd5ce4fb240f1a6586f338b758c23",
+        "evaluationcompletion_dac369ac75934c16b9d75774d1ae93aa",
+        "decision_339502e48bae40b4b4934383819dd0bc"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S3.2",
+      "implementation_version": "v1",
+      "scores": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 0,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "RequiredValidationNotPassed",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "runtimefailure_00ab2719ad1e406c935c9fe9a09513b7"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S3.3",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        1,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "UnknownOrWrongSource",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_cbeab1c8902e483bab604a07836b0b9b",
+        "evidence_86229242a2a84947991ab17b85b5ac7d",
+        "evidence_03a427b89fd64290a6c9f910af97bf1e",
+        "evidence_d72bdd19a9d74bb9ade146264b18868c",
+        "evaluationcompletion_155abd420d144456b676d6ca0d71529c",
+        "runtimefailure_05aaab798f6c4ff29d4d1538caaf84ad"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S3.4",
+      "implementation_version": "v1",
+      "scores": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "total": 1,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "UnknownOrWrongSource",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。 来源把未确认的讲解自述写成实际经历。",
+      "supporting_record_ids": [
+        "observation_d85fb35fd1474fd9acbdb96cf358a744",
+        "evidence_e39ff9fa015f4cd6899856ba336a40eb",
+        "evidence_4fb8937bd1664c4093b368d50e751a87",
+        "evidence_2be2e7173dc64fcca8f953172b7cc35a",
+        "evaluationcompletion_85b8bd54b47b4d9e98c1b9aa36d1af32",
+        "runtimefailure_f5c1b8378b54477d9c63f2a75e2af47c"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S4.1",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "total": 2,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "RequiredValidationNotPassed",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_b48f8e05a7614b87bd15ee1568a4de95",
+        "evaluationcompletion_4a5ae7c759704ceabb7cbd401442e6a6",
+        "runtimefailure_04b6031077da4e158763878cb1056cc7"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S4.2",
+      "implementation_version": "v1",
+      "scores": [
+        1,
+        2,
+        0,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "status": "COMPLETED",
+      "failure": "",
+      "review_reason": "该会话没有 ActionOccurrence，却把学习者所称提示当成影响表现的真实帮助；Belief 已正式提交。",
+      "supporting_record_ids": [
+        "observation_f026c61279274c45bbd25433396b53c2",
+        "evidence_89917154652b44a8b6def2cc98ec1fb3",
+        "evidence_f46600cd9e984272a879b107b044370e",
+        "evidence_5736e74fc2f74ff18cf479b7447d76ad",
+        "belief_ab995571e3c44493b27afb18e0b67c03",
+        "belief_f17b683c5d164cfba138043c3fedec74",
+        "belief_037956de9ade4fc9a605bfa2036e9649",
+        "evaluationcompletion_e2545d880e0e4db597dcb939611113f3",
+        "decision_83db277b62564aafaf6150cbc552bfd6"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S4.3",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        1,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "UnknownOrWrongSource",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_b8063adaeb814034b76c105a9da7ce52",
+        "evidence_9b62166dc6664dfbbdc8be3007590fec",
+        "evidence_3a420d29b60c480e954b17f699326d4c",
+        "evidence_487edf7844fb4f8f8d6509a98b7aa997",
+        "evaluationcompletion_f7789b158f0246af9f45cac1efdc3c37",
+        "runtimefailure_3878d724814647b4a76f11b4fd835c53"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S4.4",
+      "implementation_version": "v1",
+      "scores": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "total": 1,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "RequiredValidationNotPassed",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。 Observation 混用了前题关系说明与本轮新题提交。",
+      "supporting_record_ids": [
+        "observation_24851aebb5e94eff8023d48f77997a08",
+        "evaluationcompletion_0f08b59c39e349d2a42175ce92059528",
+        "runtimefailure_d85250a1613d4cb69d6ab3be09390387"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S5.1",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        2,
+        2,
+        1
+      ],
+      "total": 7,
+      "usable": true,
+      "status": "COMPLETED",
+      "failure": "",
+      "review_reason": "正确区分计算表现与未观察到关系解释；Policy 关于任何提示都会替代责任的理由偏强。",
+      "supporting_record_ids": [
+        "observation_1f0d4ceedd1144cd8bf07bb12d39ab59",
+        "evidence_36093e8445f34adc95e4c1bc8b1bb5ff",
+        "evidence_e10fa65544404b1d8bf8f7157699f809",
+        "evidence_dfd8f2e1860a4d80a06ae90db4d81a5d",
+        "belief_4c7ab565a50e4e48a98f3b73fff40f33",
+        "belief_af59b836e2e04f89a189092a23bf5e64",
+        "belief_e7597cd70bf74deba1661739b5601c78",
+        "evaluationcompletion_6289e56e76004b848cc58ea7688c6534",
+        "decision_6e85308928994f5f902cdfd9b51474d4"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S5.2",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 8,
+      "usable": true,
+      "status": "FAILED",
+      "failure": "InjectedEvaluationFailure",
+      "review_reason": "预定 Evaluation 故障如实形成 FAILED，未调用依赖它的 Policy；按故障场景准则评分。",
+      "supporting_record_ids": [
+        "observation_3d52d61e631047ffa7ea9629e6b2996d",
+        "evaluationcompletion_f5a8bc2f75c54426bd52ea5b06f824a8",
+        "runtimefailure_b52b146c41e84fdb9997d37cee3cec3c"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S5.3",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "total": 2,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "RequiredValidationNotPassed",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_7503f4a3eefd41c3a0a6b7f61e4bc8bf",
+        "evaluationcompletion_b0991f3525ea46a398a49ca98b0e8b76",
+        "runtimefailure_ea8c2e16e5804324aeb27648d7d4a904"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S5.4",
+      "implementation_version": "v1",
+      "scores": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "total": 2,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "CallBudgetExhausted",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_207052cb78864bf184dd27f40f4ba6c6",
+        "evaluationcompletion_efc33b28cb894fcdb58e086733ec9158",
+        "runtimefailure_2fc1c5202bcc410491f32333665c974c"
+      ],
+      "trace": "runs/b4-primary-v1/review-packets.json"
+    },
+    {
+      "unit": "S6.1",
+      "implementation_version": "v2",
+      "scores": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 8,
+      "usable": true,
+      "status": "COMPLETED",
+      "failure": "",
+      "review_reason": "只有起步请求时保留有依据 UNKNOWN，按请求给方向提示并真实确认展示。",
+      "supporting_record_ids": [
+        "observation_feacd9f81b9f4355968c695dd1922fad",
+        "evidence_8a128f56977d4ce0b4e749082d67fe15",
+        "evidence_0be00eca1a274167a8850430eae21356",
+        "evidence_c56d794ee14d4a9c9cc98f558f2a13f9",
+        "belief_03aa1d1b74bf46bf9d757fb3c7ff5270",
+        "belief_330f34ca4c6e448ab371808acf052b9b",
+        "belief_e9c0bb418862449ab74a18ffa2443560",
+        "evaluationcompletion_d00d05eb07e4403faf82a826c443abe9",
+        "decision_47670c0bd3a94f189f10df259f69096f"
+      ],
+      "trace": "runs/b4-continuation-v2/review-packets.json"
+    },
+    {
+      "unit": "S6.2",
+      "implementation_version": "v2",
+      "scores": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "total": 2,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "ClaimCoverageMismatch",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_fa58419a9a8a42c2b87da860a54dd3ea",
+        "evaluationcompletion_fd88f355812b47af80745ef1f7fec5da",
+        "runtimefailure_450b643b80b343d394ba0551ceb94726"
+      ],
+      "trace": "runs/b4-continuation-v2/review-packets.json"
+    },
+    {
+      "unit": "S6.3",
+      "implementation_version": "v2",
+      "scores": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "total": 0,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "ImplementationError:PermissionError",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "runtimefailure_401292628d3c4fd3950b864305c13c21"
+      ],
+      "trace": "runs/b4-continuation-v2/review-packets.json"
+    },
+    {
+      "unit": "S6.4",
+      "implementation_version": "v2",
+      "scores": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "total": 2,
+      "usable": false,
+      "status": "FAILED",
+      "failure": "ClaimCoverageMismatch",
+      "review_reason": "未形成完整所需评价和 Policy；已有 Observation/Evidence 单列保留，不以局部输出冒充整轮可用。",
+      "supporting_record_ids": [
+        "observation_27097c67870b4ec2ac2d6460ad6f459e",
+        "evaluationcompletion_dee1225d1abd4669af5debad66e4e823",
+        "runtimefailure_965b537f813242abbbc44b3be256702e"
+      ],
+      "trace": "runs/b4-continuation-v2/review-packets.json"
+    }
+  ],
+  "evaluation": [
+    {
+      "dimension": "EVAL-01",
+      "result": "INCONCLUSIVE",
+      "units": [
+        "S1.2",
+        "S1.3",
+        "S2.2"
+      ],
+      "finding": "S1.2 展示不同 Claim 的有限方向性判断与 UNKNOWN；指定 S1.3、S2.2 没有完成 Belief，预定对照不全。"
+    },
+    {
+      "dimension": "EVAL-02",
+      "result": "NOT SATISFIED",
+      "units": [
+        "S2.1",
+        "S2.2",
+        "S3.2",
+        "S3.3",
+        "S4.1",
+        "S4.2",
+        "S4.4",
+        "S6.3",
+        "S6.4"
+      ],
+      "finding": "S4.2 无实际帮助记录，却正式写成提示后的重算表现；部分展示与讲解转换未实际发生，其后脚本中的帮助自述不可充当发生事实。"
+    },
+    {
+      "dimension": "EVAL-03",
+      "result": "INCONCLUSIVE",
+      "units": [
+        "S1.1",
+        "S1.2",
+        "S1.4",
+        "S2.2",
+        "S2.4"
+      ],
+      "finding": "S1 更正形成 Observation 修订，但原轮没有成功 Evidence/Belief；后续指定 Belief 未形成，没有真实 Belief 前后修订对照。"
+    },
+    {
+      "dimension": "EVAL-04",
+      "result": "INCONCLUSIVE",
+      "units": [
+        "S1.3",
+        "S3.2",
+        "S5.2",
+        "S5.3"
+      ],
+      "finding": "预定执行故障准确阻断 Policy；指定有信息/不足对照和故障后恢复均未完整形成。S6.1 合法 UNKNOWN 只列补充证据，不替代缺失对照。"
+    }
+  ],
+  "no_semantic_keyword_scoring": true,
+  "g2": "HOLD",
+  "cross_version_counts_are_descriptive_only": true
+}

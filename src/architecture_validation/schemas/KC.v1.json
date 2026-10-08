@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "definition": {
+      "type": "string"
+    },
+    "application_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cognitive_effect": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "definition",
+    "application_conditions",
+    "cognitive_effect"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

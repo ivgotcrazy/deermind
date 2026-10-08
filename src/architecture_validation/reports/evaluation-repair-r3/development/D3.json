@@ -1,0 +1,78 @@
+{
+  "created": "2026-10-08T09:38:32.366182+00:00",
+  "id": "D3",
+  "status": "MEASURED",
+  "turns": [
+    {
+      "id": "turn_3e6b06beb9c6457bb204125bba9d759d",
+      "sid": "D3",
+      "message_key": "1",
+      "event_id": "event_3c3329d8a5b74746890e93d5db876fb0",
+      "status": "FAILED",
+      "phase": "OBSERVATION_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "RequiredValidationNotPassed",
+      "created": 1791452319.608349,
+      "label": "D3.1",
+      "wall_seconds": 18.896989500004565,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_bdc5e1d20cc54b72bcd275ddcc5a955b",
+      "sid": "D3",
+      "message_key": "2",
+      "event_id": "event_45c447f610ef42959f26046154a9fba0",
+      "status": "FAILED",
+      "phase": "OBSERVATION_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "RequiredValidationNotPassed",
+      "created": 1791452340.9099872,
+      "label": "D3.2",
+      "wall_seconds": 17.524586900006398,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_fd553a86d910472a9115a65f2e4f84d8",
+      "sid": "D3",
+      "message_key": "3",
+      "event_id": "event_bf468de9bc3043d98d2934a311066860",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791452361.3066616,
+      "label": "D3.3",
+      "wall_seconds": 25.928794499996002,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_ef987bdffc51491da5e8ec4dfd305aab",
+      "sid": "D3",
+      "message_key": "4",
+      "event_id": "event_3fb57f95c40c4174ab5ea069b2193596",
+      "status": "FAILED",
+      "phase": "EVIDENCE_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "RequiredValidationNotPassed",
+      "created": 1791452389.5996027,
+      "label": "D3.4",
+      "wall_seconds": 41.38398469999083,
+      "injected_fault": null,
+      "branch": "no-confirmed-display"
+    }
+  ],
+  "coverage_notes": [],
+  "browser": {
+    "text": "",
+    "rendered": []
+  },
+  "completed": "2026-10-08T09:40:33.191715+00:00",
+  "wall_seconds": 120.82553119999648
+}

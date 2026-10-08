@@ -1,0 +1,19 @@
+{
+  "created": "2026-10-08T04:04:37.181080+00:00",
+  "run_dir": "runs/b2-real-04",
+  "source_database": "b2-real-03",
+  "turns": [
+    {
+      "id": "turn_1f7ca9fd58bf40628d23908b94b67506",
+      "sid": "development",
+      "message_key": "3",
+      "event_id": "event_029bd2f2f903403c9cfd5d31cdcc80c9",
+      "status": "FAILED",
+      "phase": "EVIDENCE_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 2,
+      "error": "ReviewUnknownSource",
+      "created": 1791432246.786505
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "created": "2026-10-08T05:47:20.203034+00:00",
+  "phase": "Development Phase 2 / R1 closeout",
+  "status": "BOUNDED_REPAIR_COMPLETE_FORMAL_NOT_ADMITTED",
+  "gate_G2": "HOLD",
+  "initial_B2_B5": "COMPLETE_G2_HOLD; historical progress preserved in R1 baseline",
+  "R1": {
+    "development_rounds_executed": 2,
+    "latest_completed_turns": 4,
+    "latest_planned_turns": 6,
+    "latest_complete_sessions": 0,
+    "latest_planned_sessions": 2,
+    "formal_campaign_started": false,
+    "assessment": "src/architecture_validation/reports/revalidation-r1/assessment.json",
+    "admission": "src/architecture_validation/reports/revalidation-r1/admission.json",
+    "resources": {
+      "http_response_records": 128,
+      "reservations": 128,
+      "missing_response_records": [],
+      "input_tokens": 434446,
+      "output_tokens": 48653,
+      "conservative_cny": 1.258116,
+      "transport_failures": 0,
+      "active_segments_seconds": 430.3886480999936,
+      "admission_timer_seconds": 429.1150842999996,
+      "timer_difference_explanation": "Segment wall time additionally includes adapter/tokenizer startup before the budget active timer begins; both are disclosed and below cap.",
+      "turn_seconds": {
+        "n": 12,
+        "median": 25.633651899999677,
+        "p95_nearest_rank": 35.1640871999989,
+        "max": 35.1640871999989
+      },
+      "max_input_admission_estimate": 12421
+    },
+    "verification": {
+      "baseline.zip": 60,
+      "r1-dev1-source.zip": 66,
+      "r1-dev2-source.zip": 66,
+      "evidence.zip": 322,
+      "delivery-source-v1.zip": 55,
+      "build-evidence-v1.zip": 347,
+      "initial_delivery_artifacts": 45,
+      "measured_source_files_unchanged": 63,
+      "formal_system_designs_unchanged": 7,
+      "document_links": 296,
+      "formal_stop_guard_without_API": true,
+      "credential_scan": "PASS"
+    }
+  },
+  "report": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.2.md",
+  "next_step": "Review the bounded result and decide a new generation/review contract experiment; no additional calls or MVP Definition automatically started",
+  "spike_results_unchanged": [
+    "A2 DENIED",
+    "E1 INCONCLUSIVE",
+    "X5 INCONCLUSIVE"
+  ],
+  "closed_utc": "2026-10-08T05:52:35.052152+00:00"
+}

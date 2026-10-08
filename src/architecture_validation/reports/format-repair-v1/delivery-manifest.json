@@ -1,0 +1,25 @@
+{
+  "created": "2026-10-08T06:54:54.202855+00:00",
+  "status": "FORMAT_IMPLEMENTATION_FIX_VERIFIED_2_OF_2_G2_HOLD",
+  "artifact_sha256": {
+    "src/architecture_validation/reports/format-repair-v1/api-budget.json": "c12fc2efb1c00bf921bf4d59315b4097ddc8b42aab5157cf4fb93720a20ae85f",
+    "src/architecture_validation/reports/format-repair-v1/assessment.json": "feb8d9f2b393566c9b57cc3a53b5ba3616966bd90cd2cb126ebed04c00d67310",
+    "src/architecture_validation/reports/format-repair-v1/baseline-files-manifest.json": "f64ba61ffd6f13e8626274d984c6d44b03bc4e3c4f4f91378d511e8c600d6d92",
+    "src/architecture_validation/reports/format-repair-v1/delivery-source-manifest.json": "2696cbeaf8d219b3c46a0be904b692b4fa284a18aa6cfed4d1b68bd3194d839a",
+    "src/architecture_validation/reports/format-repair-v1/delivery-source.zip": "22a30abbd5030b4c2c7a83d039fdbd0455be1bb3d870edb21f3cc90b7eaa2197",
+    "src/architecture_validation/reports/format-repair-v1/evidence-manifest.json": "9b3e9736f4ac5fb1f033ff41c4380a8e3fc35658d28d32d7609f091f6f37418d",
+    "src/architecture_validation/reports/format-repair-v1/evidence.zip": "9399a839ce33c68265499037be7af8abbaa6884311c957df02dbcffbf220e402",
+    "src/architecture_validation/reports/format-repair-v1/freeze.json": "2aa174238c7ded45ad90a1cda35670e0b4c6aca601f960107d8f22c538fa9b99",
+    "src/architecture_validation/reports/format-repair-v1/integrity.json": "6a564f348bef08727dfa67317ebf18caf12a1469257837312e88e86cecec695d",
+    "src/architecture_validation/reports/format-repair-v1/offline.xml": "c3958f1ac4ec092c675697fae803d4930fee47fcd6b264d32e0b4541683d861a",
+    "src/architecture_validation/reports/format-repair-v1/parser-tests.xml": "82cbf168ab58140f84c5707b8852adab3f99764124a7df6e83c2d7c28407df29",
+    "src/architecture_validation/reports/format-repair-v1/result.json": "9b3d27cebe7b9523faa0228cbec5e86477bcf8bc20a09bda0f9267b00322dcda",
+    "src/architecture_validation/reports/format-repair-v1/source.zip": "71e8e8bd52f677f282d6f2fe85c79588c70f3de61a04a4affac9ca6f9acf0858",
+    "src/architecture_validation/reports/format-repair-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt": "ab3d36b6dd7872bd3ba05094f62e1f2d8492dce1cef92654f4b0cfc0d7b56bdc",
+    "src/architecture_validation/reports/format-repair-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt": "e9aabb7c8bbd880c794e6b4f1aeda4ba6388e1ddcfeba09d6411a2d74646f98f",
+    "src/architecture_validation/reports/format-repair-v1/baseline-files/doc__system-design__README.md.txt": "6cdb871c3dd77d163111e0f88ea67b05570fb82ea0610e4942bb4fd116bf2686",
+    "src/architecture_validation/reports/format-repair-v1/baseline-files/src__architecture_validation__README.md.txt": "5764f756e509a0f1a43f10b80bb627301f748e5d466f4c5f69654c915ea20a57",
+    "src/architecture_validation/reports/format-repair-v1/baseline-files/src__architecture_validation__reports__progress.json.txt": "8b6335c0b1e9d5b58b7145a83abda6ce40c5a05dae62353968c3cd962be17b2c",
+    "src/architecture_validation/reports/format-repair-v1/baseline-files/src__spike__reports__validation-progress-v1.json.txt": "7ef1575cb4d164f8f79b58fa8f832088b6ec2fbac8d5ba1360b33b5c5174bbe8"
+  }
+}

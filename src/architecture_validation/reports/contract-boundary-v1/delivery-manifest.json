@@ -1,0 +1,25 @@
+{
+  "created": "2026-10-08T06:31:08.336929+00:00",
+  "status": "MANUAL_LAUNCHER_DELIVERED_BOUNDED_CHECK_CLOSED_G2_HOLD",
+  "artifact_sha256": {
+    "src/architecture_validation/reports/contract-boundary-v1/api-budget.json": "c8c8e468d93b2261b33e649164e292de819bca8809414af66510b138f07acc55",
+    "src/architecture_validation/reports/contract-boundary-v1/assessment.json": "88cdc595d39005f34d1c28a4d210550459e1eff48908eed651082b67f8069d80",
+    "src/architecture_validation/reports/contract-boundary-v1/baseline.json": "9c34a4ed82ec8d3ecf3c355feeb15c29858d64c4028eed09c0188960637ad056",
+    "src/architecture_validation/reports/contract-boundary-v1/baseline.zip": "e59d6ec7afd701c1460a43d7b282bb0e5d504f6d7ad17c721304fe302d64f3ba",
+    "src/architecture_validation/reports/contract-boundary-v1/delivery-source-manifest.json": "da6f358aa83596a890d6aa890268b77f6b08626fab1f27709f1f6f085c8721dd",
+    "src/architecture_validation/reports/contract-boundary-v1/delivery-source.zip": "a1bddfbbdff2c11689102781cb4f7f94ffce8e704efd94eff9fc1c635b2bd841",
+    "src/architecture_validation/reports/contract-boundary-v1/evidence-manifest.json": "1015a47a7b1f8bd0443ee6d0b81fac2666b15844e4088431af99cd93642a290b",
+    "src/architecture_validation/reports/contract-boundary-v1/evidence.zip": "8e3fc2b73ab7fb7ccf869b599ac3123e6f90322e8026c8ba7051651b373776f3",
+    "src/architecture_validation/reports/contract-boundary-v1/freeze.json": "baf709bcdd990db3c36fa13dbcc0348eb96f785f3e915022b80e07cb0bf8261a",
+    "src/architecture_validation/reports/contract-boundary-v1/integrity.json": "f298a414bc34553297284eb71606b53fc68555978637d775ce1435a667a43e0c",
+    "src/architecture_validation/reports/contract-boundary-v1/launcher-smoke.json": "3651364d81dbbdf91493475061e84b7335b59402cfd5c50297f2ebc7bf5d3074",
+    "src/architecture_validation/reports/contract-boundary-v1/offline.xml": "258f1d373cd4d6d0adfc66f3aa375beeb1b728b7144d3ca5e1d420fbd35aa23c",
+    "src/architecture_validation/reports/contract-boundary-v1/result.json": "4a5727dc22b445e430ef7c79088210041be89a28bb7a7e6d0223c74168dfe0cc",
+    "src/architecture_validation/reports/contract-boundary-v1/source.zip": "08697c3237fa62b10e256b1551a579f2e95e751540981c2e1b7ffd2209bd1c67",
+    "src/architecture_validation/reports/contract-boundary-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.3.md.txt": "989c534e85cb551a3d5010b671546267e0840e0c61c1a8a2d63ce728bbefc9b4",
+    "src/architecture_validation/reports/contract-boundary-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.2.md.txt": "ff8911862fb1ffa15892af037ed26202f62fdf94900f270ba0eabe4dd6ad3efd",
+    "src/architecture_validation/reports/contract-boundary-v1/baseline-files/doc__system-design__README.md.txt": "e0572c58722eebd72d1f49d894a546fa15f6036d479638c38e742d8c416930b1",
+    "src/architecture_validation/reports/contract-boundary-v1/baseline-files/src__architecture_validation__reports__progress.json.txt": "1b85a0551473fbab72de29d412bbcd6b5fc9f65f5eb2098dab65b1b762a4d1f7",
+    "src/architecture_validation/reports/contract-boundary-v1/baseline-files/src__spike__reports__validation-progress-v1.json.txt": "75e0ece069a9ce7015cc45ae78429fc0271259aa2b48e44b8515911794ec73ae"
+  }
+}

@@ -1,0 +1,314 @@
+{
+  "schema_version": "v1",
+  "package_id": "unit-rate-build",
+  "package_revision": "v1",
+  "proposals": [
+    {
+      "kind": "TaskFamily",
+      "id": "unit-rate",
+      "version": "v1",
+      "body": {
+        "definition": "先求单位量再按目标数量缩放的正比例应用题",
+        "conditions": [
+          "整数数量与总价，关系为正比例"
+        ],
+        "responsibilities": [
+          "识别单位量关系",
+          "选择除后乘策略",
+          "自行计算并说明数量单位"
+        ],
+        "quality_requirements": [
+          "关系、计算及单位合理",
+          "说明依据而非只猜最终数值"
+        ]
+      }
+    },
+    {
+      "kind": "KC",
+      "id": "unit-relation",
+      "version": "v1",
+      "body": {
+        "definition": "单位量关系",
+        "application_conditions": [
+          "本 Task Family 的正整数场景"
+        ],
+        "cognitive_effect": "由总量与份数说明每份量"
+      }
+    },
+    {
+      "kind": "KC",
+      "id": "division",
+      "version": "v1",
+      "body": {
+        "definition": "整数除法",
+        "application_conditions": [
+          "本 Task Family 的正整数场景"
+        ],
+        "cognitive_effect": "自行求商并检查除法结果"
+      }
+    },
+    {
+      "kind": "KC",
+      "id": "scaling",
+      "version": "v1",
+      "body": {
+        "definition": "按数量缩放",
+        "application_conditions": [
+          "本 Task Family 的正整数场景"
+        ],
+        "cognitive_effect": "用单位量计算目标数量的总量"
+      }
+    },
+    {
+      "kind": "SolutionStrategy",
+      "id": "unit-method",
+      "version": "v1",
+      "body": {
+        "task_family_ref": {
+          "kind": "TaskFamily",
+          "id": "unit-rate",
+          "version": "v1",
+          "revision": 0,
+          "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+        },
+        "method": "总价除以数量求单位价，再乘目标数量",
+        "steps": [
+          {
+            "id": "unit",
+            "responsibility": "求单位量",
+            "inputs": [
+              "total",
+              "quantity"
+            ],
+            "outputs": [
+              "unit_value"
+            ]
+          },
+          {
+            "id": "scale",
+            "responsibility": "按目标数量缩放",
+            "inputs": [
+              "unit_value",
+              "target"
+            ],
+            "outputs": [
+              "target_total"
+            ]
+          }
+        ],
+        "kc_refs": [
+          {
+            "kind": "KC",
+            "id": "unit-relation",
+            "version": "v1",
+            "revision": 0,
+            "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+          },
+          {
+            "kind": "KC",
+            "id": "division",
+            "version": "v1",
+            "revision": 0,
+            "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+          },
+          {
+            "kind": "KC",
+            "id": "scaling",
+            "version": "v1",
+            "revision": 0,
+            "content_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Claim",
+      "id": "claim-task",
+      "version": "v1",
+      "body": {
+        "claim_type": "TaskProficiency",
+        "scope_ref": {
+          "kind": "TaskFamily",
+          "id": "unit-rate",
+          "version": "v1",
+          "revision": 0,
+          "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+        },
+        "conditions": [
+          "本 Task Family；解释限于已观察条件"
+        ],
+        "responsibility_boundary": {
+          "learner_owned": [
+            "独立识别关系、选择策略、计算及检查"
+          ],
+          "allowed_support": []
+        },
+        "quality_requirements": [
+          "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+        ],
+        "disconfirmation_criteria": [
+          "在条件适用且无实质帮助时出现关系、策略或计算错误"
+        ]
+      }
+    },
+    {
+      "kind": "Claim",
+      "id": "claim-unit",
+      "version": "v1",
+      "body": {
+        "claim_type": "KC",
+        "scope_ref": {
+          "kind": "KC",
+          "id": "unit-relation",
+          "version": "v1",
+          "revision": 0,
+          "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f"
+        },
+        "conditions": [
+          "本 Task Family；解释限于已观察条件"
+        ],
+        "responsibility_boundary": {
+          "learner_owned": [
+            "自己说明单位量关系及为什么使用总量除以份数"
+          ],
+          "allowed_support": []
+        },
+        "quality_requirements": [
+          "能用数量意义说明单位量，不只复述系统解释"
+        ],
+        "disconfirmation_criteria": [
+          "把总量与单位量混淆或不能说明除法意义"
+        ]
+      }
+    },
+    {
+      "kind": "Claim",
+      "id": "claim-division",
+      "version": "v1",
+      "body": {
+        "claim_type": "KC",
+        "scope_ref": {
+          "kind": "KC",
+          "id": "division",
+          "version": "v1",
+          "revision": 0,
+          "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93"
+        },
+        "conditions": [
+          "本 Task Family；解释限于已观察条件"
+        ],
+        "responsibility_boundary": {
+          "learner_owned": [
+            "自己重新计算商并检查其合理性"
+          ],
+          "allowed_support": [
+            "可以由他人指出需要检查除法，但不提供商或计算过程"
+          ]
+        },
+        "quality_requirements": [
+          "计算与自查正确；给出商后的重复不等于独立计算"
+        ],
+        "disconfirmation_criteria": [
+          "在允许支持范围内仍给出错误商或不能检查计算"
+        ]
+      }
+    },
+    {
+      "kind": "EvidenceSemantics",
+      "id": "evidence-rules",
+      "version": "v1",
+      "body": {
+        "applicable_claim_refs": [
+          {
+            "kind": "Claim",
+            "id": "claim-task",
+            "version": "v1",
+            "revision": 0,
+            "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+          },
+          {
+            "kind": "Claim",
+            "id": "claim-unit",
+            "version": "v1",
+            "revision": 0,
+            "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+          },
+          {
+            "kind": "Claim",
+            "id": "claim-division",
+            "version": "v1",
+            "revision": 0,
+            "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+          }
+        ],
+        "required_context": [
+          "Observation",
+          "原始作答",
+          "Claim",
+          "实际帮助及覆盖范围"
+        ],
+        "relation_criteria": {
+          "Supports": "表现对具体 Claim 所要求责任提供支持，说明局限；非掌握判定。",
+          "Contradicts": "表现对 Claim 提供反向证据，不把单次错误直接判为不会。",
+          "Discriminates": "说明材料区分哪两个有依据的解释假设。",
+          "NonInformative": "请求、缺失材料或相关责任已被替代时，对该 Claim 不足以判断；必须说明具体原因。"
+        },
+        "assistance_rules": [
+          "只以实际发生内容解释帮助；请求、选择和未展示内容不算已暴露。",
+          "同一提示可能帮助定位但没有替代计算，对不同 Claim 分开判断。",
+          "新题或活动标签不能清除近期帮助。",
+          "提示前的原始表现保留原有证据意义；后续帮助不倒灌到此前作答。",
+          "未知效果保持未知；不能从缺少确认推出没显示。"
+        ]
+      }
+    },
+    {
+      "kind": "InferenceSemantics",
+      "id": "inference-rules",
+      "version": "v1",
+      "body": {
+        "applicable_claim_refs": [
+          {
+            "kind": "Claim",
+            "id": "claim-task",
+            "version": "v1",
+            "revision": 0,
+            "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2"
+          },
+          {
+            "kind": "Claim",
+            "id": "claim-unit",
+            "version": "v1",
+            "revision": 0,
+            "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39"
+          },
+          {
+            "kind": "Claim",
+            "id": "claim-division",
+            "version": "v1",
+            "revision": 0,
+            "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642"
+          }
+        ],
+        "aggregation_rules": [
+          "结合当前有效正反 Evidence，不把单次正确或系统讲解直接等同掌握。",
+          "允许有依据的方向性认识，保留小样本与迁移限制。"
+        ],
+        "dependency_rules": [
+          "同一表现的重复解释不视为独立样本；保留实际帮助和相关性。"
+        ],
+        "conflict_rules": [
+          "明确相冲突的 Evidence 及原因，不平均成一个无法解释的分数。"
+        ],
+        "uncertainty_rules": [
+          "证据不足可以 UNKNOWN；运行失败不属于成功的 UNKNOWN。",
+          "认识不确定性不是学习者自信心。"
+        ],
+        "revision_rules": [
+          "更正后的失效 Evidence 不再作为当前依据，但历史保留。",
+          "有新材料时解释为何改变认识或保持原修订；不能默认全 UNKNOWN。"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "type": "object",
+  "properties": {
+    "claim_ref": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "content_hash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "version",
+        "revision",
+        "content_hash"
+      ],
+      "additionalProperties": false
+    },
+    "observation_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "content_hash": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "version",
+          "revision",
+          "content_hash"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "grounding": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "record_ref": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "revision": {
+                "type": "integer"
+              },
+              "content_hash": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "id",
+              "version",
+              "revision",
+              "content_hash"
+            ],
+            "additionalProperties": false
+          },
+          "content_path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "record_ref",
+          "content_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "relation": {
+      "type": "string",
+      "enum": [
+        "Supports",
+        "Contradicts",
+        "Discriminates",
+        "NonInformative"
+      ]
+    },
+    "interpretation": {
+      "type": "string"
+    },
+    "epistemic_context": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assistance_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "revision": {
+                "type": "integer"
+              },
+              "content_hash": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "id",
+              "version",
+              "revision",
+              "content_hash"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "coverage": {
+          "type": "string",
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "UNKNOWN"
+          ]
+        },
+        "observation_interval": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assistance_relevance": {
+          "type": "string"
+        },
+        "dependencies_explanation": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "conditions",
+        "assistance_refs",
+        "coverage",
+        "observation_interval",
+        "assistance_relevance",
+        "dependencies_explanation"
+      ],
+      "additionalProperties": false
+    },
+    "evidence_semantics_ref": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "content_hash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "version",
+        "revision",
+        "content_hash"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "claim_ref",
+    "observation_refs",
+    "grounding",
+    "relation",
+    "interpretation",
+    "epistemic_context",
+    "evidence_semantics_ref"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

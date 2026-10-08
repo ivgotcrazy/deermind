@@ -1,0 +1,30 @@
+{
+  "created": "2026-10-08T04:02:23.967118+00:00",
+  "run_dir": "runs\\b2-real-03",
+  "turns": [
+    {
+      "id": "turn_08bad7ffc5f5481380c0c67f3e6d6ec0",
+      "sid": "development",
+      "message_key": "1",
+      "event_id": "event_30783615664a46e7bf371e5ae39a06a3",
+      "status": "COMPLETED",
+      "phase": "INTENT_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791432096.7342172
+    },
+    {
+      "id": "turn_26f7161c47c9492a9e9535c8a701fe3f",
+      "sid": "development",
+      "message_key": "2",
+      "event_id": "event_1d1e4038ccf6406b928a5dabba5c56f4",
+      "status": "FAILED",
+      "phase": "EVIDENCE_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "ClaimCoverageMismatch",
+      "created": 1791432118.6994386
+    }
+  ]
+}

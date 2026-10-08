@@ -1,0 +1,57 @@
+{
+  "created": "2026-10-08T04:35:20.164473+00:00",
+  "status": "PASS_WITH_DISCLOSED_LOCAL_PRE_HTTP_RESERVATION_GAP",
+  "errors": [],
+  "frozen_source_counts": {
+    "preflight-freeze-v1": 39,
+    "preflight-freeze-v2": 39,
+    "preflight-freeze-v3": 42,
+    "preflight-freeze-v4": 46,
+    "b4-freeze-v1": 48,
+    "b4-freeze-v2": 50
+  },
+  "contract_sources_checked": 23,
+  "run_integrity": {
+    "b2-real-01": {
+      "record_hashes_checked": 59,
+      "exact_references_checked": 26,
+      "sqlite_quick_check": "ok"
+    },
+    "b2-real-02": {
+      "record_hashes_checked": 105,
+      "exact_references_checked": 136,
+      "sqlite_quick_check": "ok"
+    },
+    "b2-real-03": {
+      "record_hashes_checked": 108,
+      "exact_references_checked": 138,
+      "sqlite_quick_check": "ok"
+    },
+    "b2-real-04": {
+      "record_hashes_checked": 141,
+      "exact_references_checked": 233,
+      "sqlite_quick_check": "ok"
+    },
+    "b4-primary-v1": {
+      "record_hashes_checked": 651,
+      "exact_references_checked": 975,
+      "sqlite_quick_check": "ok"
+    },
+    "b4-continuation-v2": {
+      "record_hashes_checked": 128,
+      "exact_references_checked": 104,
+      "sqlite_quick_check": "ok"
+    }
+  },
+  "missing_attempt_records": {
+    "attempt_9e27486365f8444abe6ff70cd32f952b": {
+      "logical_id": "logical_97d2e55ec5f94b1596c0e96e714112a3",
+      "input": 3281,
+      "output": 8192,
+      "cost": 0.072098,
+      "status": "RESERVED"
+    }
+  },
+  "semantic_configuration_unchanged_between_measured_versions": true,
+  "budgets_within_limits": true
+}

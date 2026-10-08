@@ -2,7 +2,7 @@
 
 当前实现合同为以下七份 v1.0。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录冻结依据、Gate E/F 与后续 Build 范围；[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.6.md)保持阶段规划。
 
-当前工作处于Development Phase 2。Build输出统一放在`build/`；[Build Plan v0.4](build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md)保留原验收条件和各批次边界，[Build Validation Report v0.3](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)是统一结果入口。完整验收R2已结束：75项离线检查通过，6/6段完成预定路径，14/24轮内容可用，EVAL-01/03满足、02/04未满足，G2 HOLD。剩余缺口集中在缺失材料被误当反证、方法帮助跨题影响及错误Evidence传播；网络失败全部恢复、格式阻塞已修复。当前不进入MVP Definition，不追加本批模型调用。人工复测使用仓库根目录`deermind.cmd start`，参数见[实现README](../../src/architecture_validation/README.md)。
+当前工作处于Development Phase 2。Build输出统一放在 `build/`；[Build Plan v0.4](build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md)保留原验收标准、R1安排及后续有限合同边界检查。[Build Validation Report v0.3](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)整合首次B2–B5、R1和最新两轮检查：格式实现问题已修复，补测两轮均完成，含完整讲解后的Evaluation/Policy；已知语义误放单独保留，G2保持HOLD，正式复验未启动。人工复测可用仓库根目录 `deermind.cmd start`，参数见[实现README](../../src/architecture_validation/README.md)。当前不进入MVP Definition；发现实现缺陷即修复并复验，涉及设计取舍才进入讨论，正式验收条件不降低。
 
 - [DeerMind_System_Design_v1.0](DeerMind_System_Design_v1.0.md)
 - [DeerMind_Runtime_Event_Architecture_v1.0](DeerMind_Runtime_Event_Architecture_v1.0.md)

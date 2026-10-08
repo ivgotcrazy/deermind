@@ -1,0 +1,78 @@
+{
+  "created": "2026-10-08T07:39:33.629374+00:00",
+  "id": "S5",
+  "status": "MEASURED",
+  "turns": [
+    {
+      "id": "turn_0de3a8b281f24f62a1d17908c1d3963b",
+      "sid": "S5",
+      "message_key": "1",
+      "event_id": "event_caf86be158354a29811b3697ac60cd4a",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445182.8596776,
+      "label": "S5.1",
+      "wall_seconds": 26.79156409999996,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_3bf05d6a77f1478580706248ad42a755",
+      "sid": "S5",
+      "message_key": "2",
+      "event_id": "event_a1d78b01848b4fd9911ce997244597a2",
+      "status": "FAILED",
+      "phase": "OBSERVATION_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "InjectedEvaluationFailure",
+      "created": 1791445216.538528,
+      "label": "S5.2",
+      "wall_seconds": 10.380913000000874,
+      "injected_fault": "Evidence",
+      "branch": "base"
+    },
+    {
+      "id": "turn_67df672ebfd344ea9a9d4753c01859b4",
+      "sid": "S5",
+      "message_key": "3",
+      "event_id": "event_a899c8f937dc4e3ca4aa96fb86ae5823",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445231.8664908,
+      "label": "S5.3",
+      "wall_seconds": 30.413392200003727,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_12e6516114a040669c408c5a4dc1537b",
+      "sid": "S5",
+      "message_key": "4",
+      "event_id": "event_1c8e67046c3b47b6a54617ed14d84c15",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445267.8156183,
+      "label": "S5.4",
+      "wall_seconds": 35.139623199997004,
+      "injected_fault": null,
+      "branch": "base"
+    }
+  ],
+  "coverage_notes": [],
+  "browser": {
+    "text": "",
+    "rendered": []
+  },
+  "completed": "2026-10-08T07:41:46.235597+00:00",
+  "wall_seconds": 132.60620680000284
+}

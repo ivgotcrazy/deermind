@@ -1,0 +1,36 @@
+{
+  "created": "2026-10-08T06:51:07.395578+00:00",
+  "source_sha256": {
+    "src/architecture_validation/runs/format-repair-v1/browser.png": "a43376ae48e69fb582f9022f119f9102c0d9a5473639cec2f5d6d8be3df1bca1",
+    "src/architecture_validation/runs/format-repair-v1/records.json": "41c1e8cf0513605b8c5fb459a244066458d5f17b0b9c859dab1845c2ba7946f8",
+    "src/architecture_validation/runs/format-repair-v1/runtime.sqlite": "b61a1cbc77c042b41e2d079a45ffdf935f674bc801a3ae4673f0d18da9e6ce8a",
+    "src/architecture_validation/runs/format-repair-v1/runtime.sqlite-shm": "ba509c6b0006f22f7c0fd2b6baccf16dc4b66d464400ae351f3c1012b64e2145",
+    "src/architecture_validation/runs/format-repair-v1/runtime.sqlite-wal": "d27439a5048e207d438dbee1cef6ebcd6e3f3c9b52982173173262b65d76ebd3",
+    "src/architecture_validation/runs/format-repair-v1/server.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_0486ba446f1b4329b0a71891f5a01789.json": "9989731bbcb2115b7ee6280824f3acc4c43f1fa0629de824fa22f0e619406cc1",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_08bce110cd9e44b8868920baac57f171.json": "c3b49f15d3aa8fdfd91b8e723415d8f531c25fbde45c8ecb18fef0038683c94a",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_0c86d2dd15e24f699db159d9e4a5e761.json": "0d534fbc085bf897dcfb252e50613c5618cd317afc0eb3c85d5254ebeebeff78",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_266b263ab9f645a6abb68d2c5e6e42db.json": "1a005e51ba1d41266708b0b6fb4620e834c533b87431b4438f0b7dbc896ba0f3",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_2f59a80db28548459173ce1c14484f2e.json": "995aa46b77d9d85152ab0b4ca501626e153ca28b0a21ef903c7809fee21e1fc7",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_35265360d23846318f8b95d700b4e227.json": "66096f45f6e37d6cddb5f8b57e3896e59d8939db62cb5cb0b0c547a20a06564f",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_3bd6bf721c2f4ec3ae799528decc3f26.json": "9e2b810f111caa6ed1f36f858bb102c0998165897b54eb4e53ab760c21397700",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_4dfdef60398c48019281c01b2154f4c3.json": "3071a4e3600153160f56a3f85c8bd8ba5cd7bbdf365c933be87c570b347a148c",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_556e083c8ca6439e9f6e2d48038b10bd.json": "346a7aab8057cbacaebc89cd875751499df4d62bc4ad5d10782975c28ae1f3b8",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_5bbc3fdb47584760b0f7c9008b88bca2.json": "2cadb6b8f78afdf8c6e90d9e83d6db896ced866155cf606315ba7fe12ad05c71",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_5e82bf7a230b4af29a72aead42b0c123.json": "a30ecc2352208698e82bbddf1df1f3f14ad80a2d83278768b956d590980066f3",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_6349e750821c4334a858b8d96a1e4582.json": "fe3c84f4d5b922565b84e0f5a9160692bd4d658f0aabd74b709fa0fccafeb27a",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_6d7cd61ee59f439fa13ec93317abf880.json": "77f31eb727dcc7738c522abbc4ba7f8a8560e1a64282eb5afa58aba88a9a0c1d",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_9badf058e1064721a00c2abecb11735c.json": "83a9f295badb74bfa556561256f4aa90b0fd17b2a404a53789171677880d1317",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_a6c0070b426a41aa8df0151a661b4a9f.json": "37773e5867f1244037d742c8e95da3cba0409d5300be5a9cf6f475b90bf14c06",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_be39f9b7a9444aef926c3ed442364620.json": "d28160f6b7369fa8e3a34e38336a74dfc61c191959b9e9ddab9e2918bdfe608c",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_c128c040c24b4ee687642e03e3ead9e9.json": "fd4557082d41d3c3e34ed22187ad5ba575db38b163e00d2b29bd993564c904f2",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_ce21cb1d480c4c11b7a8905270161cb0.json": "2a8a5d5aa7637f0d9e050d7f8a53d15bb0ab10f2e4947805aa2ef392548671a5",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_e7cabbbfc4b64d96b3086b2985b58caf.json": "e3fcea61a62d60a7b30065b18ccd09f382a12917bc26ae4d2d8705de396f7089",
+    "src/architecture_validation/runs/format-repair-v1/model-calls/attempt_f1ec393d04a649a6a3d8d06a312247fe.json": "e92d4700ab1f0bb558ef1aedaafe8782f3dba8600ab11330728b032c7efb88fb"
+  },
+  "excludes": [
+    "server.control.json",
+    "*.lock",
+    ".env"
+  ]
+}

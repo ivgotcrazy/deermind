@@ -1,0 +1,77 @@
+{
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "claim_id": {
+            "type": "string"
+          },
+          "relation": {
+            "type": "string",
+            "enum": [
+              "Supports",
+              "Contradicts",
+              "Discriminates",
+              "NonInformative"
+            ]
+          },
+          "interpretation": {
+            "type": "string"
+          },
+          "observation_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assistance_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "coverage": {
+            "type": "string",
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "UNKNOWN"
+            ]
+          },
+          "assistance_relevance": {
+            "type": "string"
+          },
+          "dependencies_explanation": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id",
+          "relation",
+          "interpretation",
+          "observation_ids",
+          "source_ids",
+          "assistance_ids",
+          "coverage",
+          "assistance_relevance",
+          "dependencies_explanation"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "items"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

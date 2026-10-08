@@ -1,0 +1,18 @@
+{
+  "created": "2026-10-08T06:54:10.569169+00:00",
+  "status": "PASS",
+  "checks": {
+    "source.zip": 76,
+    "evidence.zip": 26,
+    "record_hashes": 141,
+    "exact_references": 452,
+    "parser-tests.xml": 18,
+    "offline.xml": 62,
+    "markdown_links": 311
+  },
+  "measured_executables_unchanged": true,
+  "historical_contract_boundary_artifacts_unchanged": true,
+  "formal_v1_designs_unchanged": 7,
+  "credential_scan": "PASS",
+  "budget_usage_matches": true
+}

@@ -1,0 +1,279 @@
+{
+  "created": "2026-10-08T04:10:05.765089+00:00",
+  "paths": {
+    "test_M01_A": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.193
+    },
+    "test_M01_B": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.296
+    },
+    "test_M02_A": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.355
+    },
+    "test_M02_B": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.434
+    },
+    "test_M03_A": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.232
+    },
+    "test_M03_B": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.227
+    },
+    "test_M04_A": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.179
+    },
+    "test_M04_B": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.21
+    },
+    "test_M05_A": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.476
+    },
+    "test_M05_B": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.415
+    },
+    "test_M06_A": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.337
+    },
+    "test_M06_B": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.255
+    },
+    "test_M07_A": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 23.464
+    },
+    "test_M07_B": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 22.777
+    },
+    "test_M08_A": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.343
+    },
+    "test_M08_B": {
+      "status": "PASS",
+      "source": "b3-attempt-02.xml",
+      "seconds": 41.472
+    },
+    "test_M09_A": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 33.118
+    },
+    "test_M09_B": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 27.526
+    },
+    "test_M10_A": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 0.317
+    },
+    "test_M10_B": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 31.451
+    },
+    "test_M11_A": {
+      "status": "PASS",
+      "source": "b3-final-increment.xml",
+      "seconds": 0.325
+    },
+    "test_M11_B": {
+      "status": "PASS",
+      "source": "b3-attempt-01.xml",
+      "seconds": 1.388
+    },
+    "test_M12_A": {
+      "status": "PASS",
+      "source": "b3-final-increment.xml",
+      "seconds": 0.521
+    },
+    "test_M12_B": {
+      "status": "PASS",
+      "source": "b3-final-increment.xml",
+      "seconds": 0.248
+    }
+  },
+  "attempts": [
+    {
+      "case": "test_M01_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M01_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M02_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M02_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M03_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M03_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M04_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M04_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M05_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M05_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M06_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M06_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M07_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M07_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M08_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M08_B",
+      "status": "FAIL",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M09_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M09_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M10_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M10_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M11_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M11_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M12_A",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M12_B",
+      "status": "PASS",
+      "source": "b3-attempt-01.xml"
+    },
+    {
+      "case": "test_M08_B",
+      "status": "PASS",
+      "source": "b3-attempt-02.xml"
+    },
+    {
+      "case": "test_M11_A",
+      "status": "PASS",
+      "source": "b3-final-increment.xml"
+    },
+    {
+      "case": "test_M12_A",
+      "status": "PASS",
+      "source": "b3-final-increment.xml"
+    },
+    {
+      "case": "test_M12_B",
+      "status": "PASS",
+      "source": "b3-final-increment.xml"
+    }
+  ],
+  "planned_paths": 24,
+  "passed_paths": 24,
+  "failed_initial_assertion": "M08_B initially counted subsequent-turn NotOccurred; corrected to inspect affected turn only. Original failure preserved.",
+  "fanout_boundary": "Synthetic dependency-graph timings; real owner recomputation M11_A and M12_A.",
+  "supplemental_checks": [
+    "b3-cancel-late-return-fix.xml",
+    "b3-derived-alias-fix.xml",
+    "b3-continuation-readiness.xml",
+    "b3-local-persistence-fix.xml",
+    "b2-delivery-browser.xml"
+  ],
+  "scope_note": "Original 24 paths plus targeted checks after ordinary implementation fixes; fixed responses prove mechanics only."
+}

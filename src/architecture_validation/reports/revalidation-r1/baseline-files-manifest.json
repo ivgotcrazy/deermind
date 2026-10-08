@@ -1,0 +1,30 @@
+{
+  "created": "2026-10-08T05:47:20.194771+00:00",
+  "files": [
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.2.md",
+      "previous_sha256": "e67d6886284757e2a8481996782de13a3191b51b1642fb961ad2e2db54ff1199",
+      "preserved_at": "src/architecture_validation/reports/revalidation-r1/baseline-files/1-DeerMind_Architecture_Validation_Build_Plan_v0.2.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.1.md",
+      "previous_sha256": "e27ed13d20778a480f35f69d329250c0750440bb2ac261450b196dced8ac3c22",
+      "preserved_at": "src/architecture_validation/reports/revalidation-r1/baseline-files/2-DeerMind_Architecture_Validation_Build_Validation_Report_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/README.md",
+      "previous_sha256": "75fdd17b9a3723b5fc603a1373f89e1710ea40008bfe4c9e65f27f91e01042e5",
+      "preserved_at": "src/architecture_validation/reports/revalidation-r1/baseline-files/3-README.md.txt"
+    },
+    {
+      "source_path": "src/architecture_validation/reports/progress.json",
+      "previous_sha256": "7849b85e4e2b3034d03d62f125515f89b06644aa6d3ab6283d236b83352653cf",
+      "preserved_at": "src/architecture_validation/reports/revalidation-r1/baseline-files/4-progress.json.txt"
+    },
+    {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "409650148593de2468c504abe2ea5bf02c4922a15cc2d2a79c6d46eb907f8841",
+      "preserved_at": "src/architecture_validation/reports/revalidation-r1/baseline-files/5-validation-progress-v1.json.txt"
+    }
+  ]
+}

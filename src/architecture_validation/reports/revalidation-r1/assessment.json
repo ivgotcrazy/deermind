@@ -1,0 +1,86 @@
+{
+  "created": "2026-10-08T05:42:41.503461+00:00",
+  "stage": "Development Phase 2 / bounded R1",
+  "reviewer": "Implementation author / Codex; no independent blinded human review",
+  "formal_campaign_started": false,
+  "formal_turns": 0,
+  "formal_probes": 0,
+  "gate_G2": "HOLD",
+  "runs": {
+    "r1-dev1": {
+      "planned_turns": 6,
+      "normal_completed_turns": 3,
+      "content_usable_turns": 3,
+      "complete_three_turn_sessions": 0,
+      "probes": 13,
+      "probe_matched": 13,
+      "false_accepts": [],
+      "actual_displays": 1,
+      "actual_activity_transitions": 1,
+      "belief_revisions_after_first": 9,
+      "failures_by_type": {
+        "RequiredValidationNotPassed": 7
+      },
+      "model_response_records": 69,
+      "active_seconds": 227.15987479999603,
+      "turn_seconds": {
+        "n": 6,
+        "median": 27.441928649997863,
+        "p95_nearest_rank": 35.1640871999989,
+        "max": 35.1640871999989
+      },
+      "record_count": 306,
+      "source_changes_during_run": []
+    },
+    "r1-dev2": {
+      "planned_turns": 6,
+      "normal_completed_turns": 4,
+      "content_usable_turns": 4,
+      "complete_three_turn_sessions": 0,
+      "probes": 13,
+      "probe_matched": 12,
+      "false_accepts": [
+        "P06"
+      ],
+      "actual_displays": 1,
+      "actual_activity_transitions": 1,
+      "belief_revisions_after_first": 7,
+      "failures_by_type": {
+        "RequiredValidationNotPassed": 2,
+        "SchemaMismatch:items/0": 1,
+        "ActionNotAdmissible": 1
+      },
+      "model_response_records": 59,
+      "active_seconds": 203.22877329999756,
+      "turn_seconds": {
+        "n": 6,
+        "median": 25.403288400000747,
+        "p95_nearest_rank": 34.661121600001934,
+        "max": 34.661121600001934
+      },
+      "record_count": 269,
+      "source_changes_during_run": []
+    }
+  },
+  "errors": [],
+  "resources": {
+    "http_response_records": 128,
+    "reservations": 128,
+    "missing_response_records": [],
+    "input_tokens": 434446,
+    "output_tokens": 48653,
+    "conservative_cny": 1.258116,
+    "transport_failures": 0,
+    "active_segments_seconds": 430.3886480999936,
+    "admission_timer_seconds": 429.1150842999996,
+    "timer_difference_explanation": "Segment wall time additionally includes adapter/tokenizer startup before the budget active timer begins; both are disclosed and below cap.",
+    "turn_seconds": {
+      "n": 12,
+      "median": 25.633651899999677,
+      "p95_nearest_rank": 35.1640871999989,
+      "max": 35.1640871999989
+    },
+    "max_input_admission_estimate": 12421
+  },
+  "conclusion": "Two development rounds exhausted; readiness not met. No formal G2 retest occurred; retain original HOLD without predicting how unrun heldout samples would perform."
+}

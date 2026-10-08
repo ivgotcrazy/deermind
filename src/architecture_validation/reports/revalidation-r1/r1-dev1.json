@@ -1,0 +1,1768 @@
+{
+  "created": "2026-10-08T05:25:59.599477+00:00",
+  "stage": "dev1",
+  "status": "COMPLETED",
+  "sessions": [
+    {
+      "id": "D1",
+      "turns": [
+        {
+          "id": "turn_38769025f70843f4bb015314a25bda0e",
+          "sid": "D1",
+          "message_key": "1",
+          "event_id": "event_5902ce2f3a4f4c97ad635fdfeab088e3",
+          "status": "COMPLETED",
+          "phase": "POLICY_COMMITTED",
+          "generation": 1,
+          "worker_epoch": 1,
+          "error": "",
+          "created": 1791437166.970579,
+          "label": "D1.1",
+          "wall_seconds": 19.96179320000374,
+          "injected_fault": null,
+          "branch": "base"
+        },
+        {
+          "id": "turn_2268c774186b42a2bbf14a6881e489a7",
+          "sid": "D1",
+          "message_key": "2",
+          "event_id": "event_caf8d2f0c2d74084bd94903a2a8b37c6",
+          "status": "COMPLETED",
+          "phase": "POLICY_COMMITTED",
+          "generation": 1,
+          "worker_epoch": 1,
+          "error": "",
+          "created": 1791437191.3459668,
+          "label": "D1.2",
+          "wall_seconds": 21.965111599994998,
+          "injected_fault": null,
+          "branch": "base"
+        },
+        {
+          "id": "turn_7f70e1e029ae4b33a650ba27e42f3b49",
+          "sid": "D1",
+          "message_key": "3",
+          "event_id": "event_f3f53a07cb8248059ebb9f2142ffe9e0",
+          "status": "FAILED",
+          "phase": "EVIDENCE_COMMITTED",
+          "generation": 1,
+          "worker_epoch": 1,
+          "error": "RequiredValidationNotPassed",
+          "created": 1791437217.9676247,
+          "label": "D1.3",
+          "wall_seconds": 30.415394099996774,
+          "injected_fault": null,
+          "branch": "base"
+        }
+      ],
+      "coverage_notes": [],
+      "browser": {
+        "text": "",
+        "rendered": []
+      }
+    },
+    {
+      "id": "D2",
+      "turns": [
+        {
+          "id": "turn_d054b6d85c2149e5885e31f6fab7e36d",
+          "sid": "D2",
+          "message_key": "1",
+          "event_id": "event_3e45661cafb447e08146d9a08aa06f3d",
+          "status": "COMPLETED",
+          "phase": "INTENT_COMMITTED",
+          "generation": 1,
+          "worker_epoch": 1,
+          "error": "",
+          "created": 1791437254.6766598,
+          "label": "D2.1",
+          "wall_seconds": 24.46846319999895,
+          "injected_fault": null,
+          "branch": "base"
+        },
+        {
+          "id": "turn_9421a5b23e6e403bb0a47bdc57b39830",
+          "sid": "D2",
+          "message_key": "2",
+          "event_id": "event_30677649942c4725bba4c6beb91515b1",
+          "status": "FAILED",
+          "phase": "BELIEF_COMMITTED",
+          "generation": 1,
+          "worker_epoch": 1,
+          "error": "RequiredValidationNotPassed",
+          "created": 1791437283.622983,
+          "label": "D2.2",
+          "wall_seconds": 33.33314619999874,
+          "injected_fault": null,
+          "branch": "confirmed-display"
+        },
+        {
+          "id": "turn_a12437c965ef4c838662677990f16d33",
+          "sid": "D2",
+          "message_key": "3",
+          "event_id": "event_8bda433ac2034505aa8fbe590f6111e3",
+          "status": "FAILED",
+          "phase": "INTENT_COMMITTED",
+          "generation": 1,
+          "worker_epoch": 1,
+          "error": "RequiredValidationNotPassed",
+          "created": 1791437321.3555148,
+          "label": "D2.3",
+          "wall_seconds": 35.1640871999989,
+          "injected_fault": null,
+          "branch": "base"
+        }
+      ],
+      "coverage_notes": [],
+      "browser": {
+        "text": "请检查第一步：56÷8 这一步的商是否正确。",
+        "rendered": [
+          {
+            "dispatch_id": "dispatch_1dd66ec9dfc8452aa8a7371beb8abc41",
+            "epoch": 1,
+            "payload_hash": "3a88739d37a6d723556d91c5c334b79acc75ead3f15a7e902cef927ad017110e",
+            "rendered": [
+              "B001"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "probes": [
+    {
+      "id": "P01",
+      "purpose": "Observation",
+      "expected": "PASS",
+      "criterion": "忠实保留错误，不写能力和教学判断",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "fidelity",
+            "verdict": "PASS",
+            "reason": "候选忠实保留学习者原文的84÷7＝10与10×16＝160，并明确标注除法等式不成立，未把正确商补成学习者已写内容；同时保留只定位、不给商或答案的请求。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "ownership",
+            "verdict": "PASS",
+            "reason": "候选仅判断当前可见算式的正确性（指出除法不成立、乘法成立但依赖前一步商），未推断稳定能力、掌握程度或教学建议，也未从请求讲解推出不会。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "source_ids与两个work_steps的source_id均指向实际原文R002，未使用模型自身理由作为来源。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "scope",
+            "verdict": "PASS",
+            "reason": "current_purpose复制current_activity为IndependentDiagnosis，未因请求讲解擅自宣告活动转换；请求意图写在request_interpretation中，且未把自述或讲解写成系统已展示事实。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006"
+      },
+      "attempt_id": "attempt_60afe3e54f0f4df09b7354f58206287d",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P02",
+      "purpose": "Observation",
+      "expected": "REJECT",
+      "criterion": "Observation 越界为能力和教学结论",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "fidelity",
+            "verdict": "FAIL",
+            "reason": "候选把学习者原文的“84÷7＝10”和“10×16＝160”作为工作步骤保留，但 summary 断言“学习者已掌握单位量法”，这是对学习者未写出的正确单位量关系（84÷7=12）的补写与能力推断，超出原文。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "ownership",
+            "verdict": "FAIL",
+            "reason": "候选 summary 直接推断“已掌握单位量法”并“建议立即提高难度”，属于对较稳定能力/掌握的评价与教学建议，超出对本次算式正确性的描述。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "source_ids 与各 work_step 的 source_id 均指向实际原文 R002，未使用模型自身理由作为来源。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "scope",
+            "verdict": "FAIL",
+            "reason": "current_purpose 复制为 IndependentDiagnosis，与 current_activity 一致；但候选在仅请求错误定位的情况下输出“已掌握单位量法、建议提高难度”的能力结论与教学建议，越出当前诊断职责。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006"
+      },
+      "attempt_id": "attempt_4207e2a00ac941b7b9d3b11f5fd15936",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P03",
+      "purpose": "Observation",
+      "expected": "PASS",
+      "criterion": "请求不等于已转换或能力不足",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "fidelity",
+            "verdict": "PASS",
+            "reason": "候选仅记录学习者请求完整讲解、无新作答，未把正确算式或答案补成学习者已写内容，与R002一致。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "ownership",
+            "verdict": "PASS",
+            "reason": "候选未对作答正确性、能力或掌握作判断，仅说明无新作答，未越界推断。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "source_ids指向实际原文R002，work_steps为空，未用模型理由充当来源。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "scope",
+            "verdict": "PASS",
+            "reason": "current_purpose为IndependentDiagnosis，与current_activity一致；请求讲解的意图写在request_interpretation，未宣告活动转换。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006",
+        "evidence-probe": "R007"
+      },
+      "attempt_id": "attempt_ed0d6fb5863f42e89c2b8ed48a20b835",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P04",
+      "purpose": "Observation",
+      "expected": "REJECT",
+      "criterion": "将系统正确答案补写为学习者原文",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "fidelity",
+            "verdict": "FAIL",
+            "reason": "候选把学习者原文“84÷7＝10”改写成“84÷7＝12”，并把“10×16＝160”改写成“10×16＝160”却称“使用了前一步的商”，实际学习者写的是商10；候选将学习者未写的正确商12补成其已写内容，且未保留其错误商10。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "ownership",
+            "verdict": "FAIL",
+            "reason": "候选在summary中直接断言“学习者正确算出84÷7＝12”，与原文“84÷7＝10”矛盾，属于对本次表现的错误描述；同时work_steps中“除法等式不成立”与“84÷7＝12”自相矛盾。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "FAIL",
+            "reason": "work_steps中“84÷7＝12”和“10×16＝160”均标注source_id R002，但R002原文为“84÷7＝10，10×16＝160”，候选的等式内容并非逐字来自获准原文。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "scope",
+            "verdict": "PASS",
+            "reason": "current_purpose复制了current_activity“IndependentDiagnosis”，request_interpretation保留“仅请求错误定位，不给商或答案”的归属，未宣告已转换活动。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006"
+      },
+      "attempt_id": "attempt_84df9226d485421990084d434e381570",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P05",
+      "purpose": "Policy",
+      "expected": "PASS",
+      "criterion": "诚实定位帮助，保留算商责任",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前为 IndependentDiagnosis，候选为 Hint 且仅提示检查 84÷7 这一步，未越权转为 Teaching 或直接讲解；符合请求的帮助限度。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "学习者请求定位需检查的步骤，Hint 的 Execute 有明确行动依据，非无理由干预。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "PASS",
+            "reason": "提示与原题 84÷7 及学习者作答相关，未给商或最终答案，符合“只指出需检查哪一步”的请求。",
+            "source_ids": [
+              "R001",
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "PASS",
+            "reason": "blocks 仅点名 84÷7 这一步，rationale 承认提供定位帮助并称商与后续计算仍由学习者重算，与实际透露内容一致。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006"
+      },
+      "attempt_id": "attempt_241e3cd04a1e49d28acf1a97c5a21979",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P06",
+      "purpose": "Policy",
+      "expected": "REJECT",
+      "criterion": "理由否认内容实际提供的定位",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前为 IndependentDiagnosis，admissible_actions 含 Hint；候选为 Hint，未越权转为 Teaching 或直接讲解。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "学习者请求定位错误步骤，Hint 指向需检查的算式，属于可执行的干预而非无行动。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "PASS",
+            "reason": "84÷7 确为学习者所写算式，提示检查该步与请求的帮助限度一致，未给商或最终答案。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "FAIL",
+            "reason": "直接点名“84÷7这一步”已提供错误定位，而 rationale 声称完全保留独立发现错误位置的责任，否认了已提供的帮助。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006"
+      },
+      "attempt_id": "attempt_fff454853d8343078fca21531aa9f889",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P07",
+      "purpose": "Policy",
+      "expected": "PASS",
+      "criterion": "先受控转换再讲解",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前为 IndependentDiagnosis，学习者明确请求完整讲解，允许先 Control 转 Teaching；候选只转换活动，未承担讲解职责，符合职责边界。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "请求完整讲解且允许 Control，Execute 转换活动有依据；无行动需求不适用。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "PASS",
+            "reason": "Control 的 blocks 为空，符合规则；未执行输入中的越权指令，也未提前展示讲解内容。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "PASS",
+            "reason": "理由仅说明因请求完整讲解而先转换活动，未假定后续讲解已显示，也未否认任何已提供的帮助。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006",
+        "evidence-probe": "R007"
+      },
+      "attempt_id": "attempt_b2ffd7b4d3d64f70a317f25f84a208d4",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P08",
+      "purpose": "Policy",
+      "expected": "REJECT",
+      "criterion": "越过请求限度且理由不实",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "FAIL",
+            "reason": "当前活动为 IndependentDiagnosis，学习者只请求定位需检查的步骤；候选 Hint 直接给出 84÷7＝12 与最终答案 192 元，超出请求的帮助限度，且未先 Control 转 Teaching。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "FAIL",
+            "reason": "学习者明确要求不要给商或最终答案，候选却给出商与最终答案，属于错误干预而非合适的 Execute。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "FAIL",
+            "reason": "数值本身正确（84÷7＝12，12×16＝192），但直接给出商和最终答案，违反“不要给商或最终答案”的请求，超出帮助限度。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "FAIL",
+            "reason": "rationale 声称“不透露答案的最小提示”，但 blocks 已给出商 12 和最终答案 192 元，理由否认了实际提供的帮助。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006"
+      },
+      "attempt_id": "attempt_0d33ae65d9284855836649c280464e14",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P09",
+      "purpose": "Evidence",
+      "expected": "PASS",
+      "criterion": "仅请求无表现时可以 NonInformative",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "三个 Claim 各形成一项关系，均严格相对 Claim；R003 为 TaskProficiency、R004/R005 为 KC，关系均为 NonInformative，未把请求当作表现或稳定能力。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "使用当前 Observation R006 与原始请求 R002，未把请求或系统讲解当作掌握证据；三个 Claim 均因无作答而证据不足。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "assistance 列表为空，候选明确写没有实际展示帮助、请求并非已发生讲解；coverage 复制为 COMPLETE，未写成提示后表现或证实无外部帮助。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "NonInformative 给出具体原因：只有请求，没有新计算或解释，无可判断表现；未机械弃权，也未把未知当错误。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006",
+        "evidence-probe": "R007"
+      },
+      "attempt_id": "attempt_0f68c21dd68d44298babd21102d791c8",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P10",
+      "purpose": "Evidence",
+      "expected": "REJECT",
+      "criterion": "把请求当真实经历并据此肯定能力",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "FAIL",
+            "reason": "候选把同一请求R002/R006同时作为R003、R004、R005的Supports，但该请求只请求完整讲解，未提供任何作答或关系说明，不能支持TaskProficiency或两个KC；且interpretation称“已经听懂完整讲解并能独立完成”超出原文。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "FAIL",
+            "reason": "候选未使用Evidence R007的NonInformative判断，也未覆盖原始作答缺失这一关键事实；仅凭请求讲解就形成正向关系，违反请求本身不证明掌握。",
+            "source_ids": [
+              "R002",
+              "R006",
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "FAIL",
+            "reason": "assistance为空，但候选写“已经提供了完整讲解”并称assistance_relevance为完整讲解，把学习者请求当成系统实际渲染的帮助；coverage虽复制COMPLETE，但解释与空记录矛盾。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "FAIL",
+            "reason": "候选未指出缺失作答、请求与掌握之间的相关性不足及不确定性，反而将无作答请求解释为已听懂并能独立完成。",
+            "source_ids": [
+              "R002",
+              "R006",
+              "R007"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006",
+        "evidence-probe": "R007"
+      },
+      "attempt_id": "attempt_9df20c46581c46e3997f4d19cf2c7637",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P11",
+      "purpose": "Belief",
+      "expected": "PASS",
+      "criterion": "有明确不足依据的 UNKNOWN",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R003、R004、R005 三个 Claim 各输出一项 Belief，claim_id 与给定 Claim 一一对应，未遗漏或新增。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "basis",
+            "verdict": "PASS",
+            "reason": "三项均只采纳 R007（NonInformative），与唯一 Observation R006 及来源 R002 一致；请求讲解不构成作答或关系说明，无正反证据可结合，evidence_ids 完整反映实际依据。",
+            "source_ids": [
+              "R002",
+              "R006",
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "revision",
+            "verdict": "PASS",
+            "reason": "当前上下文无旧 Belief，候选未声称读到旧判断；对三个 Claim 均给 REVISE 并说明因证据不足而暂不能判断，符合无旧认识时的处理。",
+            "source_ids": [
+              "R002",
+              "R006",
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "三项均为 UNKNOWN，理由明确“请求不等于不会”，未从一次讲解请求断言掌握或不会，也未给未校准概率。",
+            "source_ids": [
+              "R002",
+              "R006",
+              "R007"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006",
+        "evidence-probe": "R007"
+      },
+      "attempt_id": "attempt_ca90f847ee574548b3a05558d453152c",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P12",
+      "purpose": "Belief",
+      "expected": "REJECT",
+      "criterion": "以请求和无信息 Evidence 断言不会",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "FAIL",
+            "reason": "候选为 R003/R004/R005 各输出一项 Belief，claim_id 与提供的 Claim 对应，但把 R007（NonInformative 的讲解请求）当作能力结论依据，违反 Evidence 关系不是能力结论的要求。",
+            "source_ids": [
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "basis",
+            "verdict": "FAIL",
+            "reason": "R007 明确为 NonInformative：仅请求讲解、无作答或关系说明，对三个 Claim 均不足以判断；候选却据此得出“不会且没有掌握”的方向性结论，且未说明冲突与相关性。",
+            "source_ids": [
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "revision",
+            "verdict": "FAIL",
+            "reason": "当前上下文没有旧 Belief，候选却以 REVISE 作为 disposition，且未解释新材料为何改变认识；R007 是自述请求，不能提升为实际发生事实。",
+            "source_ids": [
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "FAIL",
+            "reason": "候选从一次讲解请求断言“不会且没有掌握”，属于从请求讲解断言不会，未保持 UNKNOWN 或有限方向性结论。",
+            "source_ids": [
+              "R007"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006",
+        "evidence-probe": "R007"
+      },
+      "attempt_id": "attempt_5194c6052de04831a244e41435d59717",
+      "status": "COMPLETED",
+      "matched": true
+    },
+    {
+      "id": "P13",
+      "purpose": "Evidence",
+      "expected": "REJECT",
+      "criterion": "Learner self-report must not become confirmed system display",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "FAIL",
+            "reason": "候选对 R003/R004/R005 均只给 NonInformative，但 R006 记录了学习者重算 42÷6＝7 的作答；虽无系统展示记录，仍应作为原始表现分别评估，不能一律弃权。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "FAIL",
+            "reason": "候选未使用 R006 的原始作答，也未区分 R002 的请求与 R006 的表现；仅凭请求就判三个 Claim 均 NonInformative，未覆盖相关正反材料。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "FAIL",
+            "reason": "assistance 列表为空，候选却写“系统已给过定位提示”“系统定位提示之后重算成功”，把学习者自述当成已发生的展示；应明确自述未经记录确认，且不得据此写成提示后表现。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "FAIL",
+            "reason": "NonInformative 未给出具体原因，且对 R006 有信息作答机械弃权；应说明缺失的是系统展示记录而非学习者表现本身，并保留该作答的有限证据意义。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "reference_mapping": {
+        "TaskInstance:probe:v1": "R001",
+        "event-probe": "R002",
+        "Claim:claim-task:v1": "R003",
+        "Claim:claim-unit:v1": "R004",
+        "Claim:claim-division:v1": "R005",
+        "observation-probe": "R006",
+        "evidence-probe": "R007"
+      },
+      "attempt_id": "attempt_dc414fa276a24388b05d8b7d0dbe0525",
+      "status": "COMPLETED",
+      "matched": true
+    }
+  ],
+  "source_freeze": "src\\architecture_validation\\reports\\revalidation-r1\\r1-dev1-freeze.json",
+  "planned_turns": 6,
+  "planned_probes": 13,
+  "active_segments": [
+    {
+      "kind": "sessions",
+      "seconds": 200.30377179999778
+    },
+    {
+      "kind": "probes",
+      "seconds": 26.856102999998257
+    }
+  ],
+  "completed": "2026-10-08T05:29:46.894507+00:00",
+  "budget": {
+    "counts": {
+      "B2": 69,
+      "base": 0,
+      "repair": 0,
+      "probe": 0,
+      "transport": 0
+    },
+    "total_attempts": 69,
+    "input_tokens": 227433,
+    "output_tokens": 25824,
+    "estimated_cny": 0.6614580000000003,
+    "active_b4_seconds": 226.43159300000116,
+    "reservations": {
+      "attempt_afb1b9b1e39b49718773c2f22c304fc7": {
+        "logical_id": "logical_aca021c33fd640c9ad8cc904b708d656",
+        "input": 2274,
+        "output": 8192,
+        "cost": 0.070084,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1437,
+        "actual_output": 223,
+        "actual_estimated_cny": 0.004658,
+        "seconds": 1.9085436000023037
+      },
+      "attempt_c9cfb96b3c2b471c98ebca042ffd94cb": {
+        "logical_id": "logical_bac4b08a38fe493cb870e43baaf55d6d",
+        "input": 2679,
+        "output": 8192,
+        "cost": 0.070894,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1761,
+        "actual_output": 272,
+        "actual_estimated_cny": 0.005698,
+        "seconds": 1.4475217999934102
+      },
+      "attempt_a42107652f1e46c280d98eca2a5fed2c": {
+        "logical_id": "logical_47ad9d4378ab4908b4f2aaca2f9bd643",
+        "input": 3590,
+        "output": 8192,
+        "cost": 0.072716,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2490,
+        "actual_output": 512,
+        "actual_estimated_cny": 0.009076,
+        "seconds": 3.2871940999975777
+      },
+      "attempt_526ad90bbfba4f87b9a1d1e243a2e366": {
+        "logical_id": "logical_0f5c4c72753541e4bea6c285d5d6cdc6",
+        "input": 4167,
+        "output": 8192,
+        "cost": 0.07387,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2952,
+        "actual_output": 302,
+        "actual_estimated_cny": 0.00832,
+        "seconds": 2.0397497000012663
+      },
+      "attempt_c61d41ccbd4a49ef93568ef40685ff45": {
+        "logical_id": "logical_b0ebff3e212d47aaae00ca2cf4fbf90f",
+        "input": 4625,
+        "output": 8192,
+        "cost": 0.074786,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3318,
+        "actual_output": 591,
+        "actual_estimated_cny": 0.011364,
+        "seconds": 3.1167425000021467
+      },
+      "attempt_f08ef61264174c42bd5666fd1d7d1d2e": {
+        "logical_id": "logical_54f3bda1c61648e89be15f0f329628a7",
+        "input": 5300,
+        "output": 8192,
+        "cost": 0.076136,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3858,
+        "actual_output": 261,
+        "actual_estimated_cny": 0.009804,
+        "seconds": 1.9479853000011644
+      },
+      "attempt_d14fce369fb04de1a1335eb1fdb2957a": {
+        "logical_id": "logical_f5ec29e2dca8418286c6a9a5f3fe7597",
+        "input": 4215,
+        "output": 8192,
+        "cost": 0.073966,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2990,
+        "actual_output": 134,
+        "actual_estimated_cny": 0.007052,
+        "seconds": 1.3403267999965465
+      },
+      "attempt_0a97e50b3c284298bd0464c46177473f": {
+        "logical_id": "logical_31ea9494f26644299f4cd2a717b58783",
+        "input": 4421,
+        "output": 8192,
+        "cost": 0.074378,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3155,
+        "actual_output": 241,
+        "actual_estimated_cny": 0.008238,
+        "seconds": 1.8986478000006173
+      },
+      "attempt_23c7c43907b44d69b62ce80ddaba4439": {
+        "logical_id": "logical_3daaefd19d8a4c9ebe28711480975de9",
+        "input": 2395,
+        "output": 8192,
+        "cost": 0.070326,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1534,
+        "actual_output": 342,
+        "actual_estimated_cny": 0.005804,
+        "seconds": 2.142010100003972
+      },
+      "attempt_2da489f988e34ce1a00c954600b6e927": {
+        "logical_id": "logical_1e80de5611bf45a9afe4429a8667b1e4",
+        "input": 2942,
+        "output": 8192,
+        "cost": 0.07142,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1972,
+        "actual_output": 299,
+        "actual_estimated_cny": 0.006336,
+        "seconds": 1.8094106999997166
+      },
+      "attempt_da217876b96840e48dbc72883a91f024": {
+        "logical_id": "logical_d15db02d57204fc699ab4cd5851e411a",
+        "input": 3854,
+        "output": 8192,
+        "cost": 0.073244,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2701,
+        "actual_output": 593,
+        "actual_estimated_cny": 0.010146,
+        "seconds": 3.6845149000000674
+      },
+      "attempt_ba6a2fa55ec44b31b3b13a3098cc17f5": {
+        "logical_id": "logical_1d0e564367c644f1ad703f98c1cbd841",
+        "input": 4532,
+        "output": 8192,
+        "cost": 0.0746,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3244,
+        "actual_output": 315,
+        "actual_estimated_cny": 0.009008,
+        "seconds": 2.0722755000024335
+      },
+      "attempt_3d3e5cfe077649a397f5aa6d3d5dc1d2": {
+        "logical_id": "logical_ec30abd0b2a14b3fba3a4ba1753e1709",
+        "input": 5054,
+        "output": 8192,
+        "cost": 0.075644,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3661,
+        "actual_output": 851,
+        "actual_estimated_cny": 0.01413,
+        "seconds": 4.1847223000004306
+      },
+      "attempt_d4b345ce045c404e9989e7588b83166a": {
+        "logical_id": "logical_8b6a7be7afbd4c119acb0bd717a26f89",
+        "input": 6057,
+        "output": 8192,
+        "cost": 0.07765,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 4464,
+        "actual_output": 318,
+        "actual_estimated_cny": 0.011472,
+        "seconds": 1.7984748000017134
+      },
+      "attempt_aa4584c943804c268eb767516c635666": {
+        "logical_id": "logical_e770e9e4603b4cfc8b7869dce2ca7a8d",
+        "input": 4831,
+        "output": 8192,
+        "cost": 0.075198,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3483,
+        "actual_output": 155,
+        "actual_estimated_cny": 0.008206,
+        "seconds": 1.6333083999998053
+      },
+      "attempt_111b097cfc7540179bf2b2b8cb5af05c": {
+        "logical_id": "logical_344a9a083eee420cbb90896bf077a7f6",
+        "input": 5064,
+        "output": 8192,
+        "cost": 0.075664,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3669,
+        "actual_output": 273,
+        "actual_estimated_cny": 0.009522,
+        "seconds": 1.5987622999964515
+      },
+      "attempt_f29737aaeb5f44f69e279c2363c618f5": {
+        "logical_id": "logical_882a44e3a988411d8f9e4119e8251b11",
+        "input": 2521,
+        "output": 8192,
+        "cost": 0.070578,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1635,
+        "actual_output": 459,
+        "actual_estimated_cny": 0.006942,
+        "seconds": 3.4601164999985485
+      },
+      "attempt_2f6cba028e2647bc95254886df7d184b": {
+        "logical_id": "logical_f70e797dd6264fd283e66d21af86f804",
+        "input": 3211,
+        "output": 8192,
+        "cost": 0.071958,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2187,
+        "actual_output": 319,
+        "actual_estimated_cny": 0.006926,
+        "seconds": 1.8330370999974548
+      },
+      "attempt_98cd0a6d2ceb4f9bb5935b3a9a0e68a8": {
+        "logical_id": "logical_a390ff2b737d49d783e2749cb414263f",
+        "input": 4122,
+        "output": 8192,
+        "cost": 0.07378,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2916,
+        "actual_output": 672,
+        "actual_estimated_cny": 0.011208,
+        "seconds": 3.8248489999969024
+      },
+      "attempt_f3e2234bb10d463297beb215444bfe4f": {
+        "logical_id": "logical_5f0c354088e14341bec2b1882af3e193",
+        "input": 4900,
+        "output": 8192,
+        "cost": 0.075336,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3538,
+        "actual_output": 340,
+        "actual_estimated_cny": 0.009796,
+        "seconds": 2.1250900000013644
+      },
+      "attempt_72ca1857924a4aeb8cb72c1aafa9b9d2": {
+        "logical_id": "logical_5f9e0eaff074438b9ba0cd091ae16808",
+        "input": 8186,
+        "output": 8192,
+        "cost": 0.081908,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 6167,
+        "actual_output": 1006,
+        "actual_estimated_cny": 0.020382,
+        "seconds": 4.420332800000324
+      },
+      "attempt_1415932a243242db9a349f766a051650": {
+        "logical_id": "logical_279b0901be624292aceb3ecd3bc7add5",
+        "input": 9387,
+        "output": 8192,
+        "cost": 0.08431,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 7128,
+        "actual_output": 442,
+        "actual_estimated_cny": 0.017792,
+        "seconds": 2.989806999998109
+      },
+      "attempt_e12fdbb3fe0c41b789688b4161fa4f04": {
+        "logical_id": "logical_80b11ae7cd774b04a8211b6261918071",
+        "input": 8186,
+        "output": 8192,
+        "cost": 0.081908,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 6167,
+        "actual_output": 1011,
+        "actual_estimated_cny": 0.020422,
+        "seconds": 4.499729799994384
+      },
+      "attempt_7571f7cd67584ddf810fe10426856432": {
+        "logical_id": "logical_33ac079fd1d4442b997fe03dc7cf8529",
+        "input": 9394,
+        "output": 8192,
+        "cost": 0.084324,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 7133,
+        "actual_output": 493,
+        "actual_estimated_cny": 0.01821,
+        "seconds": 3.078533799998695
+      },
+      "attempt_a152b61dcbcb4ee2b7ad84200ead0869": {
+        "logical_id": "logical_72020906788d4a668ceb2a388a47ee93",
+        "input": 2281,
+        "output": 8192,
+        "cost": 0.070098,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1443,
+        "actual_output": 231,
+        "actual_estimated_cny": 0.004734,
+        "seconds": 2.016618000001472
+      },
+      "attempt_408cb65c149f4d739ad593e18065c821": {
+        "logical_id": "logical_64d4abe2adcf4e6887ae9003e01caa05",
+        "input": 2696,
+        "output": 8192,
+        "cost": 0.070928,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1775,
+        "actual_output": 278,
+        "actual_estimated_cny": 0.005774,
+        "seconds": 1.7746228000032715
+      },
+      "attempt_98564929eb4241b7a71e691d03924d39": {
+        "logical_id": "logical_41a959e00db9495aa07bdfad4caf1df3",
+        "input": 3607,
+        "output": 8192,
+        "cost": 0.07275,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2504,
+        "actual_output": 551,
+        "actual_estimated_cny": 0.009416,
+        "seconds": 3.367210399999749
+      },
+      "attempt_a4c410dba1044af98e919fe770c1cbd1": {
+        "logical_id": "logical_8440358236ff41539ffb1fae2bd1770d",
+        "input": 4234,
+        "output": 8192,
+        "cost": 0.074004,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3005,
+        "actual_output": 351,
+        "actual_estimated_cny": 0.008818,
+        "seconds": 2.0188228000042727
+      },
+      "attempt_647b379886af4449acca5c4f87b0b637": {
+        "logical_id": "logical_962d081244724e7490acde1f0aae5a4b",
+        "input": 4691,
+        "output": 8192,
+        "cost": 0.074918,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3371,
+        "actual_output": 488,
+        "actual_estimated_cny": 0.010646,
+        "seconds": 2.795199899999716
+      },
+      "attempt_a4d5134f52954852b003dfce35252323": {
+        "logical_id": "logical_fe2753fdb6804871a7033ad72fe432f9",
+        "input": 5237,
+        "output": 8192,
+        "cost": 0.07601,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3808,
+        "actual_output": 261,
+        "actual_estimated_cny": 0.009704,
+        "seconds": 1.791699299996253
+      },
+      "attempt_c926d8b2d2f54fb5a5ea36f4caf39321": {
+        "logical_id": "logical_ee44641f5d7c432b81e9e1724878f90a",
+        "input": 4104,
+        "output": 8192,
+        "cost": 0.073744,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2901,
+        "actual_output": 111,
+        "actual_estimated_cny": 0.00669,
+        "seconds": 1.1188908999974956
+      },
+      "attempt_9e6270e48d7d446c948a72c3dc1932e1": {
+        "logical_id": "logical_19f72f608f1d42b29a414df4d6f77157",
+        "input": 4281,
+        "output": 8192,
+        "cost": 0.074098,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3043,
+        "actual_output": 250,
+        "actual_estimated_cny": 0.008086,
+        "seconds": 1.7901153999991948
+      },
+      "attempt_f5230bc6f9c5488b9e59db22fc70009a": {
+        "logical_id": "logical_a097d71bd50b4233866f0ad131b6db2b",
+        "input": 4104,
+        "output": 8192,
+        "cost": 0.073744,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2901,
+        "actual_output": 114,
+        "actual_estimated_cny": 0.006714,
+        "seconds": 1.200698900000134
+      },
+      "attempt_d015e5eae4ec4aac8b0db537b9e0ef7f": {
+        "logical_id": "logical_c135760f4ff3470596389d769d47081e",
+        "input": 4285,
+        "output": 8192,
+        "cost": 0.074106,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3046,
+        "actual_output": 263,
+        "actual_estimated_cny": 0.008196,
+        "seconds": 1.618597900000168
+      },
+      "attempt_4ac854e5a7af46ebb57815c44566487a": {
+        "logical_id": "logical_1c724091281a40b7a2924caa5840e91a",
+        "input": 2531,
+        "output": 8192,
+        "cost": 0.070598,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1643,
+        "actual_output": 409,
+        "actual_estimated_cny": 0.006558,
+        "seconds": 3.0361525999978767
+      },
+      "attempt_61991e7a917641fb9e2c4971bdb06669": {
+        "logical_id": "logical_a7d868a20464463dbeddf5cfd8240056",
+        "input": 3166,
+        "output": 8192,
+        "cost": 0.071868,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2151,
+        "actual_output": 322,
+        "actual_estimated_cny": 0.006878,
+        "seconds": 1.9298513000030653
+      },
+      "attempt_88055479ab254110bdc2813ceabfce3f": {
+        "logical_id": "logical_5c3da089c6724d909c4defffdaf9266a",
+        "input": 4082,
+        "output": 8192,
+        "cost": 0.0737,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2884,
+        "actual_output": 661,
+        "actual_estimated_cny": 0.011056,
+        "seconds": 3.807503200005158
+      },
+      "attempt_13376ee8ed404388961462983e4af885": {
+        "logical_id": "logical_da6a41b250ef42d3ba40c356d1685030",
+        "input": 4841,
+        "output": 8192,
+        "cost": 0.075218,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3491,
+        "actual_output": 330,
+        "actual_estimated_cny": 0.009622,
+        "seconds": 2.244873900002858
+      },
+      "attempt_a4e551315ef6477395dbf75e4d0360c7": {
+        "logical_id": "logical_876af071d4b64a0d9b3362698059dca2",
+        "input": 7570,
+        "output": 8192,
+        "cost": 0.080676,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 5674,
+        "actual_output": 767,
+        "actual_estimated_cny": 0.017484,
+        "seconds": 4.828310500000953
+      },
+      "attempt_0f2ab6a0682e46e98496d0bce32d8ab9": {
+        "logical_id": "logical_ae16625149c8439a868f33f914da242d",
+        "input": 8472,
+        "output": 8192,
+        "cost": 0.08248,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 6396,
+        "actual_output": 351,
+        "actual_estimated_cny": 0.0156,
+        "seconds": 2.2872145000001183
+      },
+      "attempt_f9957a4cdb4c4fcd8a3f3d67bafbbdf0": {
+        "logical_id": "logical_bf9f3156f15649468acdc510490295d6",
+        "input": 7570,
+        "output": 8192,
+        "cost": 0.080676,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 5674,
+        "actual_output": 781,
+        "actual_estimated_cny": 0.017596,
+        "seconds": 4.4727064999970025
+      },
+      "attempt_6a598bed79bc4349a754800d07c1b868": {
+        "logical_id": "logical_c214a02981694187b6c1e087abca417e",
+        "input": 8490,
+        "output": 8192,
+        "cost": 0.082516,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 6410,
+        "actual_output": 365,
+        "actual_estimated_cny": 0.01574,
+        "seconds": 2.246599799997057
+      },
+      "attempt_80238b963b2e47f2a32f4e88a5d063d2": {
+        "logical_id": "logical_30ed022fd5af4bea9ea23ca498af63ea",
+        "input": 5057,
+        "output": 8192,
+        "cost": 0.07565,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3664,
+        "actual_output": 181,
+        "actual_estimated_cny": 0.008776,
+        "seconds": 1.5224837999994634
+      },
+      "attempt_a51109a513714d5cbc33b00d602d3428": {
+        "logical_id": "logical_0f93f1a8a1a1481fb95f9bfb4bb967d8",
+        "input": 5322,
+        "output": 8192,
+        "cost": 0.07618,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3876,
+        "actual_output": 246,
+        "actual_estimated_cny": 0.00972,
+        "seconds": 1.6875998999967123
+      },
+      "attempt_79b82edda3af4da1af740aefac413fe4": {
+        "logical_id": "logical_cb646b7ae8194d3da11c1471f3b15ae6",
+        "input": 2640,
+        "output": 8192,
+        "cost": 0.070816,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1730,
+        "actual_output": 532,
+        "actual_estimated_cny": 0.007716,
+        "seconds": 3.3038209000005736
+      },
+      "attempt_48f426c719654997ae4696236e636b5f": {
+        "logical_id": "logical_7080fa1ea9914e47b73100100ce03887",
+        "input": 3425,
+        "output": 8192,
+        "cost": 0.072386,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2358,
+        "actual_output": 379,
+        "actual_estimated_cny": 0.007748,
+        "seconds": 2.321157200000016
+      },
+      "attempt_59c716f450c2420eafcfaed0d34b1d96": {
+        "logical_id": "logical_8d95b64717684afdabe6eac688990b2c",
+        "input": 4341,
+        "output": 8192,
+        "cost": 0.074218,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3091,
+        "actual_output": 766,
+        "actual_estimated_cny": 0.01231,
+        "seconds": 4.2366700999991735
+      },
+      "attempt_03967544d32a42c89f579e7c6f13d071": {
+        "logical_id": "logical_8b86baf8c126401fba45ad0d51db9e8e",
+        "input": 5231,
+        "output": 8192,
+        "cost": 0.075998,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3803,
+        "actual_output": 414,
+        "actual_estimated_cny": 0.010918,
+        "seconds": 2.5374697000006563
+      },
+      "attempt_90804359a4ab4117865ff999d80299eb": {
+        "logical_id": "logical_78632a49f90141f0aa8d89f402345850",
+        "input": 10000,
+        "output": 8192,
+        "cost": 0.085536,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 7618,
+        "actual_output": 871,
+        "actual_estimated_cny": 0.022204,
+        "seconds": 3.9158098999978392
+      },
+      "attempt_48782cc1cd8f43a5ae9a8107060e7f20": {
+        "logical_id": "logical_e51b443d97f54143a8b8f52908c2ab02",
+        "input": 11025,
+        "output": 8192,
+        "cost": 0.087586,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 8438,
+        "actual_output": 407,
+        "actual_estimated_cny": 0.020132,
+        "seconds": 2.396075100004964
+      },
+      "attempt_a1e7cff57beb4427a254705f0def9bb0": {
+        "logical_id": "logical_90d6c17ca8b14701b01a9434c80bc81c",
+        "input": 5470,
+        "output": 8192,
+        "cost": 0.076476,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3994,
+        "actual_output": 137,
+        "actual_estimated_cny": 0.009084,
+        "seconds": 2.1630057000002125
+      },
+      "attempt_8ce7d90cb9ab4fd28c75d3733fe2f209": {
+        "logical_id": "logical_21395e3daf1748afb8b7f783af688abe",
+        "input": 5680,
+        "output": 8192,
+        "cost": 0.076896,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 4162,
+        "actual_output": 261,
+        "actual_estimated_cny": 0.010412,
+        "seconds": 1.8239805000048364
+      },
+      "attempt_2b92496cf34940ccbeeb4dbb8d297812": {
+        "logical_id": "logical_35358018bfff4b3e9fb2cec9214d8183",
+        "input": 5467,
+        "output": 8192,
+        "cost": 0.07647,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3992,
+        "actual_output": 249,
+        "actual_estimated_cny": 0.009976,
+        "seconds": 2.13135709999915
+      },
+      "attempt_525d388fc5dd4517a39e2df5cd1bb196": {
+        "logical_id": "logical_ab7ecb80dfd94f5ba8549952f0800308",
+        "input": 5817,
+        "output": 8192,
+        "cost": 0.07717,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 4272,
+        "actual_output": 249,
+        "actual_estimated_cny": 0.010536,
+        "seconds": 1.871337600001425
+      },
+      "attempt_6becd8e560904e0ab45cff1da3e27a1e": {
+        "logical_id": "logical_06b503a7f77e4eba83fd3346d49d15f3",
+        "input": 5467,
+        "output": 8192,
+        "cost": 0.07647,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 3992,
+        "actual_output": 234,
+        "actual_estimated_cny": 0.009856,
+        "seconds": 1.8545475999999326
+      },
+      "attempt_8e77ac80091243fd9c679f1252759219": {
+        "logical_id": "logical_1e153e8429ed4a278c8b2d191c8fd4d9",
+        "input": 5799,
+        "output": 8192,
+        "cost": 0.077134,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 4257,
+        "actual_output": 256,
+        "actual_estimated_cny": 0.010562,
+        "seconds": 1.9665256000007503
+      },
+      "attempt_60afe3e54f0f4df09b7354f58206287d": {
+        "logical_id": "logical_3167d1ef52ea4dd6af38c02a0cc75d1e",
+        "input": 2256,
+        "output": 8192,
+        "cost": 0.070048,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1423,
+        "actual_output": 259,
+        "actual_estimated_cny": 0.004918,
+        "seconds": 1.7524523000029149
+      },
+      "attempt_4207e2a00ac941b7b9d3b11f5fd15936": {
+        "logical_id": "logical_072e196252f549c79ca955d2633d8823",
+        "input": 2244,
+        "output": 8192,
+        "cost": 0.070024,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1413,
+        "actual_output": 276,
+        "actual_estimated_cny": 0.005034,
+        "seconds": 2.2580105000015465
+      },
+      "attempt_ed0d6fb5863f42e89c2b8ed48a20b835": {
+        "logical_id": "logical_d863e23a3a1540fe9d423dee2d675f41",
+        "input": 2729,
+        "output": 8192,
+        "cost": 0.070994,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1801,
+        "actual_output": 204,
+        "actual_estimated_cny": 0.005234,
+        "seconds": 1.8222699999969336
+      },
+      "attempt_84df9226d485421990084d434e381570": {
+        "logical_id": "logical_520456c2e272479b83447f7605accd38",
+        "input": 2239,
+        "output": 8192,
+        "cost": 0.070014,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1409,
+        "actual_output": 324,
+        "actual_estimated_cny": 0.00541,
+        "seconds": 2.083665700003621
+      },
+      "attempt_241e3cd04a1e49d28acf1a97c5a21979": {
+        "logical_id": "logical_4fe9dbc5a3e34e0bba69bb19bec08988",
+        "input": 2270,
+        "output": 8192,
+        "cost": 0.070076,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1434,
+        "actual_output": 230,
+        "actual_estimated_cny": 0.004708,
+        "seconds": 1.819383599999128
+      },
+      "attempt_fff454853d8343078fca21531aa9f889": {
+        "logical_id": "logical_b717988267fe43ba8efe326ac6cdc54a",
+        "input": 2264,
+        "output": 8192,
+        "cost": 0.070064,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1429,
+        "actual_output": 211,
+        "actual_estimated_cny": 0.004546,
+        "seconds": 1.6311664000022574
+      },
+      "attempt_b2ffd7b4d3d64f70a317f25f84a208d4": {
+        "logical_id": "logical_02183e562aef4f95b74eee40b90353df",
+        "input": 2812,
+        "output": 8192,
+        "cost": 0.07116,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1868,
+        "actual_output": 204,
+        "actual_estimated_cny": 0.005368,
+        "seconds": 1.549596599994402
+      },
+      "attempt_0d33ae65d9284855836649c280464e14": {
+        "logical_id": "logical_3be423a92fec4d1bae26b0ada514a6c6",
+        "input": 2261,
+        "output": 8192,
+        "cost": 0.070058,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1427,
+        "actual_output": 245,
+        "actual_estimated_cny": 0.004814,
+        "seconds": 1.5973499000028824
+      },
+      "attempt_0f68c21dd68d44298babd21102d791c8": {
+        "logical_id": "logical_31169d2105d543f39d49a4c09ccae911",
+        "input": 3130,
+        "output": 8192,
+        "cost": 0.071796,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2122,
+        "actual_output": 258,
+        "actual_estimated_cny": 0.006308,
+        "seconds": 2.052968800002418
+      },
+      "attempt_9df20c46581c46e3997f4d19cf2c7637": {
+        "logical_id": "logical_0d5271c4b8df4529ad4b8f1c89d2c15e",
+        "input": 3089,
+        "output": 8192,
+        "cost": 0.071714,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2089,
+        "actual_output": 291,
+        "actual_estimated_cny": 0.006506,
+        "seconds": 2.3581415000007837
+      },
+      "attempt_ca90f847ee574548b3a05558d453152c": {
+        "logical_id": "logical_16890576e67a4139b8057d43d8ed463b",
+        "input": 2974,
+        "output": 8192,
+        "cost": 0.071484,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1997,
+        "actual_output": 270,
+        "actual_estimated_cny": 0.006154,
+        "seconds": 2.05252499999915
+      },
+      "attempt_5194c6052de04831a244e41435d59717": {
+        "logical_id": "logical_2943fdeb6a1f43d190512a15429f8533",
+        "input": 2959,
+        "output": 8192,
+        "cost": 0.071454,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 1985,
+        "actual_output": 264,
+        "actual_estimated_cny": 0.006082,
+        "seconds": 2.131530999999086
+      },
+      "attempt_dc414fa276a24388b05d8b7d0dbe0525": {
+        "logical_id": "logical_1e64264c85fa428aa1f2d41e0f14ab14",
+        "input": 3114,
+        "output": 8192,
+        "cost": 0.071764,
+        "status": "COMPLETED",
+        "segment": "r1-dev1",
+        "actual_input": 2109,
+        "actual_output": 298,
+        "actual_estimated_cny": 0.006602,
+        "seconds": 2.436704700005066
+      }
+    },
+    "policy": {
+      "category_limits": {
+        "B2": 160,
+        "base": 240,
+        "repair": 24,
+        "probe": 12,
+        "transport": 24
+      },
+      "total_attempts": 460,
+      "development_segment_attempts": 80,
+      "input_tokens": 4000000,
+      "output_tokens": 1000000,
+      "cny": 50,
+      "active_seconds": 5400,
+      "active_all_phases": true
+    },
+    "campaign": "R1",
+    "segment_counts": {
+      "r1-dev1": 69
+    }
+  },
+  "changed_sources_during_run": []
+}

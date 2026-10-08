@@ -1,0 +1,89 @@
+{
+  "created": "2026-10-08T07:34:20.591256+00:00",
+  "id": "S3",
+  "status": "MEASURED",
+  "turns": [
+    {
+      "id": "turn_41c6529016ef42c7bf221da1e07c34d0",
+      "sid": "S3",
+      "message_key": "1",
+      "event_id": "event_5d414004b66d4b9bb5df23be8c653f67",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444873.3239877,
+      "label": "S3.1",
+      "wall_seconds": 21.12190499999997,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_1fb6f97f33a24c5789796f5830b05cc8",
+      "sid": "S3",
+      "message_key": "2",
+      "event_id": "event_103df9d53b3e4308ab721a4611b2b9b1",
+      "status": "COMPLETED",
+      "phase": "INTENT_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444899.232357,
+      "label": "S3.2",
+      "wall_seconds": 27.69555599999876,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_d340ec21009f4beda539f6d421e20233",
+      "sid": "S3",
+      "message_key": "3",
+      "event_id": "event_449b3706da284aa284522d8976b9f2ea",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444932.0032325,
+      "label": "S3.3",
+      "wall_seconds": 38.91387740000209,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_fd9cff942bb74a8da33884d2047ebd19",
+      "sid": "S3",
+      "message_key": "4",
+      "event_id": "event_c87ff96f903f4d01ac614f0ea8470e9d",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444976.5021086,
+      "label": "S3.4",
+      "wall_seconds": 33.296907299998566,
+      "injected_fault": null,
+      "branch": "confirmed-display"
+    }
+  ],
+  "coverage_notes": [],
+  "browser": {
+    "text": "这道题是正比例问题：4份种子共44元，先求1份的价钱，再按9份缩放。\n你之前写的 44÷4＝10 这一步不对：44÷4 的正确商是 11，所以每份是 11 元。\n因此 9份的总价是 11×9＝99 元。",
+    "rendered": [
+      {
+        "dispatch_id": "dispatch_a16c01fb47d94ef594323d4fc26937e1",
+        "epoch": 1,
+        "payload_hash": "ee0e0714d5761e434da7af35007147ac8fd28ff99a6510ff48b9d499752c04f9",
+        "rendered": [
+          "B1",
+          "B2",
+          "B3"
+        ]
+      }
+    ]
+  },
+  "completed": "2026-10-08T07:36:53.675195+00:00",
+  "wall_seconds": 153.08391040000424
+}

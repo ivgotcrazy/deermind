@@ -1,0 +1,90 @@
+{
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "claim_id": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string",
+            "enum": [
+              "REVISE",
+              "UNCHANGED"
+            ]
+          },
+          "assessment_kind": {
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "DIRECTIONAL"
+            ]
+          },
+          "assessment": {
+            "type": "string"
+          },
+          "uncertainty": {
+            "type": "string"
+          },
+          "epistemic_status": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "conflicts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "evidence_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "explanation": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "evidence_ids",
+                "explanation"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id",
+          "disposition",
+          "assessment_kind",
+          "assessment",
+          "uncertainty",
+          "epistemic_status",
+          "evidence_ids",
+          "conflicts",
+          "rationale"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "items"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

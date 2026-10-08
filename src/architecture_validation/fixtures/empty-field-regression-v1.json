@@ -1,0 +1,239 @@
+{
+  "source": "g2-r2 v1 S1.3 generation failures",
+  "cases": [
+    {
+      "attempt_id": "attempt_2b70d2d0a8444b4bb45f6abf227c16a0",
+      "source_sha256": "c17f4f70e2afee2dc20121b3ef58101a7770d10951512524a3d1fa9a88eff242",
+      "schema": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "assessment": {
+                  "type": "string"
+                },
+                "assessment_kind": {
+                  "enum": [
+                    "UNKNOWN",
+                    "DIRECTIONAL"
+                  ],
+                  "type": "string"
+                },
+                "claim_id": {
+                  "enum": [
+                    "R023",
+                    "R027",
+                    "R031"
+                  ],
+                  "type": "string"
+                },
+                "conflicts": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "evidence_ids": {
+                        "items": {
+                          "enum": [
+                            "R098",
+                            "R099",
+                            "R100",
+                            "R137",
+                            "R138",
+                            "R139"
+                          ],
+                          "type": "string"
+                        },
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "explanation": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "evidence_ids",
+                      "explanation"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "disposition": {
+                  "enum": [
+                    "REVISE",
+                    "UNCHANGED"
+                  ],
+                  "type": "string"
+                },
+                "epistemic_status": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "evidence_ids": {
+                  "items": {
+                    "enum": [
+                      "R098",
+                      "R099",
+                      "R100",
+                      "R137",
+                      "R138",
+                      "R139"
+                    ],
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "rationale": {
+                  "type": "string"
+                },
+                "uncertainty": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "claim_id",
+                "disposition",
+                "assessment_kind",
+                "assessment",
+                "uncertainty",
+                "epistemic_status",
+                "evidence_ids",
+                "conflicts",
+                "rationale"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "content": "{\"items\":[{\"claim_id\":\"R023\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"在本次独立诊断条件下，学习者先出现96÷12＝9的除法错误，随后更正为96÷12＝8、8×17＝136，并在R123中说明单位量关系与缩放方法；这支持其在自查或更正后能完成本类任务，但独立首次计算仍可能出错，不足以断言稳定独立完成。\",\"uncertainty\":\"样本仅一次任务、一次更正；受控通道无帮助记录但外部帮助未知，R123“我自己算了这些数”为未经核实的自述，不能据此校准概率或断言长期稳定独立完成。\",\"epistemic_status\":[\"有限正向证据\",\"首次计算曾出错\",\"更正后正确\",\"稳定性未确认\"],\"evidence_ids\":[\"R098\",\"R137\"],\"conflicts\":[{\"evidence_ids\":[\"R098\",\"R137\"],\"explanation\":\"R098仅以R084的更正作答为据判为正向支持；R137补充R045的首次除法错误与R123的方法说明，区分“稳定独立完成”与“自查或更正后能完成、独立首次计算仍可能出错”，故不能仅凭更正后正确断言稳定掌握。\"}],\"rationale\":\"R098（Supports）以R084完整更正作答为据；R137（Discriminates）结合R045的96÷12＝9错误、R084更正及R123方法说明，指出独立首次计算仍存疑。R045的失效错误按revision_rules不再作为当前正向依据，但作为区分性材料保留。依据集合扩大且不确定性明确，故REVISE。\",\"assessment_kind_note\":null},{\"claim_id\":\"R027\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"在本次独立诊断条件下，R123明确说明96元是12份总价、除以12得每份8元、每份价格相同故17份用8×17，符合“由总量与份数说明每份量”的单位量关系要求，构成有限正向证据；仅一次说明，不足以断言稳定掌握。\",\"uncertainty\":\"仅一次说明，且未涉及其他数量场景；受控通道无帮助记录但外部帮助未知，R123为学习者自述性文本，不能单独证明稳定掌握。\",\"epistemic_status\":[\"有限正向证据\",\"单次说明\",\"稳定性未确认\"],\"evidence_ids\":[\"R099\",\"R138\"],\"conflicts\":[],\"rationale\":\"R099（NonInformative）原以R084未提供语言解释为由判UNKNOWN；R138（Supports）新增R123的单位量关系说明，直接满足该Claim要求，故依据集合改变，由UNKNOWN改为有限方向性正向认识。缺少解释不等于理解错误，R099不再支持UNKNOWN结论。\",\"assessment_kind_note\":null},{\"claim_id\":\"R031\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"在本次独立诊断条件下，学习者首次写96÷12＝9，后更正为96÷12＝8并得136，R123复述正确商；这支持其在更正后能正确求商，但首次求商出错、更正是否独立完成无法由文本确定，不足以断言稳定独立计算与自查能力。\",\"uncertainty\":\"仅一次任务；受控通道无帮助记录但外部帮助未知，R084更正来源未在受控通道记录，不能据此认定学习者自行定位错误或稳定独立计算。\",\"epistemic_status\":[\"有限正向证据\",\"首次求商出错\",\"更正后正确\",\"独立性未确认\"],\"evidence_ids\":[\"R100\",\"R139\"],\"conflicts\":[{\"evidence_ids\":[\"R100\",\"R139\"],\"explanation\":\"R100仅以R084自行重算商并检查为据判为正向支持；R139补充R045的96÷12＝9错误，区分“能独立正确求商并检查”与“首次求商出错、经更正后才正确”，故更正后的正确不能等同于独立计算正确。\"}],\"rationale\":\"R100（Supports）以R084更正后商正确为据；R139（Discriminates）结合R045首次商错误、R084更正及R123复述，指出独立计算与自查能力仍不确定。R045错误保留为先前表现，不倒灌也不因更正抹去。依据集合扩大且不确定性明确，故REVISE。\",\"assessment_kind_note\":null}]}"
+    },
+    {
+      "attempt_id": "attempt_a823aa0bef9f4777832f81eff719dcf2",
+      "source_sha256": "9709c45b1512d174fac9c7959fc791dc6f988f59b60f2fe308225304d668d879",
+      "schema": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "assessment": {
+                  "type": "string"
+                },
+                "assessment_kind": {
+                  "enum": [
+                    "UNKNOWN",
+                    "DIRECTIONAL"
+                  ],
+                  "type": "string"
+                },
+                "claim_id": {
+                  "enum": [
+                    "R023",
+                    "R027",
+                    "R031"
+                  ],
+                  "type": "string"
+                },
+                "conflicts": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "evidence_ids": {
+                        "items": {
+                          "enum": [
+                            "R098",
+                            "R099",
+                            "R100",
+                            "R137",
+                            "R138",
+                            "R139"
+                          ],
+                          "type": "string"
+                        },
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "explanation": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "evidence_ids",
+                      "explanation"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "disposition": {
+                  "enum": [
+                    "REVISE",
+                    "UNCHANGED"
+                  ],
+                  "type": "string"
+                },
+                "epistemic_status": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "evidence_ids": {
+                  "items": {
+                    "enum": [
+                      "R098",
+                      "R099",
+                      "R100",
+                      "R137",
+                      "R138",
+                      "R139"
+                    ],
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "rationale": {
+                  "type": "string"
+                },
+                "uncertainty": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "claim_id",
+                "disposition",
+                "assessment_kind",
+                "assessment",
+                "uncertainty",
+                "epistemic_status",
+                "evidence_ids",
+                "conflicts",
+                "rationale"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "content": "{\"items\":[{\"claim_id\":\"R023\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"在本次独立诊断条件下，学习者先出现96÷12＝9的计算错误，随后更正为96÷12＝8、8×17＝136，并在R123中说明单位量关系与缩放方法；这支持其能识别关系、选择除后乘策略并在更正后完成计算，但独立首次计算仍可能出错，不足以断言稳定独立完成本类任务。\",\"uncertainty\":\"样本仅一次任务、一次更正；受控通道无帮助记录但外部帮助未知，R123“我自己算了这些数”为未经核实的自述，不能据此校准概率或断言长期稳定独立完成。\",\"epistemic_status\":[\"有限正向证据\",\"首次计算曾出错\",\"更正后正确\",\"稳定性未确认\"],\"evidence_ids\":[\"R098\",\"R137\"],\"conflicts\":[{\"evidence_ids\":[\"R098\",\"R137\"],\"explanation\":\"R098仅以R084的更正作答为据，呈现关系、策略与计算均正确；R137同时纳入R045的96÷12＝9错误与R123的方法说明，指出首次独立计算出错、更正后正确，二者可区分“稳定独立完成”与“更正后能完成但首次计算仍可能出错”，故不能仅凭R098断言稳定掌握。\"}],\"rationale\":\"按claim_evidence_index，R023本轮依据R098与R137。R098（Supports）以R084完整更正作答支持关系识别、策略选择与计算正确；R137（Discriminates）补充R045的除法错误与R123的正确方法说明，说明独立首次计算仍存疑。R045的先前错误已被R084更正，按revision_rules不再作为当前依据，仅作历史保留。综合正反材料，方向由“完整正确”修订为“更正后能完成、独立首次计算仍可能出错”的有限正向认识。\",\"epistemic_status_note\":\"\"},{\"claim_id\":\"R027\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"在本次独立诊断条件下，R123中学习者用数量意义说明96元是12份总价、除以12得每份8元、每份价格相同故17份用8×17，符合“由总量与份数说明每份量”的要求，构成有限正向证据；仅一次说明，不足以断言稳定掌握。\",\"uncertainty\":\"仅一次说明，且未涉及其他数量场景；受控通道无帮助记录但外部帮助未知，R123为学习者自述性文本，不能单独证明稳定掌握或校准概率。\",\"epistemic_status\":[\"有限正向证据\",\"单次说明\",\"稳定性未确认\"],\"evidence_ids\":[\"R099\",\"R138\"],\"conflicts\":[],\"rationale\":\"按claim_evidence_index，R027本轮依据R099与R138。R099（NonInformative）指出R084只写算式与结果、未提供单位量关系的语言解释，故此前判UNKNOWN；R138（Supports）显示R123明确说明96元是12份总价、除以12得每份8元、每份价格相同故17份用8×17，补齐了该Claim要求的说明材料。依据集合由“缺少说明”变为“已有一次正确说明”，故修订为有限方向性正向认识，而非稳定掌握。\",\"epistemic_status_note\":\"\"},{\"claim_id\":\"R031\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"在本次独立诊断条件下，学习者首次写96÷12＝9，随后更正为96÷12＝8并得136，R123又复述正确商；这支持其在更正后能自行重算商并检查，但首次求商出错、更正是否独立完成无法由文本确定，不足以断言稳定独立计算与自查能力。\",\"uncertainty\":\"仅一次任务、一次更正；受控通道无帮助记录但外部帮助未知，R084的更正来源未在受控通道中记录，不能视为系统帮助，也不能据此认定学习者自行定位错误。\",\"epistemic_status\":[\"有限正向证据\",\"首次求商出错\",\"更正后正确\",\"独立性未确认\"],\"evidence_ids\":[\"R100\",\"R139\"],\"conflicts\":[{\"evidence_ids\":[\"R100\",\"R139\"],\"explanation\":\"R100仅以R084自行重算商并检查为据，呈现更正后求商与检查正确；R139同时纳入R045的96÷12＝9错误与R123的复述，指出首次求商出错、更正后正确，二者可区分“能独立正确求商并检查”与“首次求商出错、经更正后才正确”，故不能仅凭R100断言稳定独立计算与自查。\"}],\"rationale\":\"按claim_evidence_index，R031本轮依据R100与R139。R100（Supports）以R084自行重算96÷12＝8并检查后得136为据，支持更正后的求商与检查；R139（Discriminates）补充R045的96÷12＝9错误与R123的复述，说明首次求商出错、更正是否独立完成无法由文本确定。R045的错误保留为先前表现，不倒灌本轮，也不因更正而抹去。综合正反材料，方向由“自行重算并检查”修订为“更正后能正确求商、独立首次计算与自查仍不确定”的有限正向认识。\",\"epistemic_status_note\":\"\"}]}"
+    }
+  ]
+}

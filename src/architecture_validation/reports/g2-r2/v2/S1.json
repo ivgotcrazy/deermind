@@ -1,0 +1,78 @@
+{
+  "created": "2026-10-08T07:29:03.158737+00:00",
+  "id": "S1",
+  "status": "MEASURED",
+  "turns": [
+    {
+      "id": "turn_8d48663aaeae4d61b9d06967da23ed9f",
+      "sid": "S1",
+      "message_key": "1",
+      "event_id": "event_d27b6b03ec604bdd90c902b12bac4537",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444555.7753248,
+      "label": "S1.1",
+      "wall_seconds": 23.982901099996525,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_6e27c4d7616347908b3c40e5789a791e",
+      "sid": "S1",
+      "message_key": "2",
+      "event_id": "event_84fe52dc553b420284ab6d669790a726",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444585.543734,
+      "label": "S1.2",
+      "wall_seconds": 24.6612352000011,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_13fb7a57ccfd472aa8b422850bb1ba43",
+      "sid": "S1",
+      "message_key": "3",
+      "event_id": "event_d3f05a8ee4dd4ef7b81f5f3beebd2a1b",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444614.678566,
+      "label": "S1.3",
+      "wall_seconds": 29.620430200004193,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_c29c92bf4c9f4890aff579fbc8e91fd2",
+      "sid": "S1",
+      "message_key": "4",
+      "event_id": "event_33984aa7881048c49441c1baead5fff3",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444648.1886735,
+      "label": "S1.4",
+      "wall_seconds": 33.43286649999936,
+      "injected_fault": null,
+      "branch": "base"
+    }
+  ],
+  "coverage_notes": [],
+  "browser": {
+    "text": "",
+    "rendered": []
+  },
+  "completed": "2026-10-08T07:31:25.207055+00:00",
+  "wall_seconds": 142.04829040000186
+}

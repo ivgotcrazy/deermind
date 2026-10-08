@@ -1,0 +1,40 @@
+{
+  "created": "2026-10-08T06:25:40.536396+00:00",
+  "source_sha256": {
+    "src/architecture_validation/runs/contract-boundary-v1/browser.png": "a4321b1197a2151859882580f646ce64ae786a238bfbed6630438548eaf79de5",
+    "src/architecture_validation/runs/contract-boundary-v1/records.json": "f14723dfdea9a5abb96a89c8f5cea545022de7d6c27d805db74b57ae7dee31f3",
+    "src/architecture_validation/runs/contract-boundary-v1/runtime.sqlite": "56fdad0d514a68110a88674679c85a1e797d113968236b0593cf349d3a266532",
+    "src/architecture_validation/runs/contract-boundary-v1/runtime.sqlite-shm": "2aeec8aae43fa9c544f0b8b0e5986a279a275a61f22c1b98fc321728af8f6a36",
+    "src/architecture_validation/runs/contract-boundary-v1/runtime.sqlite-wal": "fd359cfec85dfa3d99efe3c354d56e7b459fa1e3b7b725f55fd1ffefb293fad1",
+    "src/architecture_validation/runs/contract-boundary-v1/server.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_04a1afafa822422791467b5d72843d95.json": "0678fc45e36608b11b1326393db13b250ca6bde1ba89216853dfc9ccffb915ec",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_0c8f030762434530b9683fdea06c68f3.json": "dd9deeebe2f0673c40d012ed628103a6a7c18318cefa1117507debc4c8419250",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_0dbe091088044fee807488af50d85e4e.json": "698e97ffc4c3571b4dc56c1cb19ae44921f0da92b967a87f8df229204fb7a2ef",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_10ca8ac356404f769e0a1e81837b76a8.json": "922b2c64ce723aadaa10c036073effcace213acaf29f1db4899be202929b7c50",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_153465a58bae4496a853cda04f241777.json": "2332e643ec1839534338267b9bf499d03183cca5742a40fcdd6c82c142fe6e77",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_282f8cae312847f1a7390c9643311f89.json": "09dc4b9a176167570ef0b1155e3b33277aec9102af3d9d4262427b47009f5c62",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_29cacc9289a94b8fba984b1aa4f1d522.json": "13a6320781855f1db2be53ddeaf3b0425edb15779bc2d4b12fbe4e96c5fbd9eb",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_3b12b51bd7e24102862ebbb4f0d1d9c2.json": "487f56d4176f1d730a37303e5de2565f51dc1d1fea5a9319b33a242cec706f8a",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_4c36aca48a9e461c827adab0b2249860.json": "6cbd3e61f6635b2791f390bfe7a463da9d9a65d697710d86a5895e618f3130f1",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_52eaa0565f654143b22879dc46f2a2d9.json": "2a3d144505c2e22bc9f1f9fffe24b634c7a5ef50ee15e7f45d9823b7d69c16f0",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_622e227a9b944ad3b48892368c13eb92.json": "68c2dc1ae912dc83df2569aa3209350b5a7967fb279995987c02a166799451c4",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_6288def3e5104d26b04a538eca746f7b.json": "e2d4b3acf8a22ed64b4edef4bea0e2c055f53bc30f19fe5ddc954d8b0601cfb1",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_7826617f235d4798a966b99f02a8dd65.json": "81a9b2f876134591722b91f187e7e7ec2647705157d18f21e61666c6d93e42dc",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_792fa654b4434b928e44f69f3df24ba1.json": "d49e0cf5b3176c89f64fbb8f3aaceb45087d84e68cf81588992a76d377351b8f",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_7a57f2153ae243f1ac844d58a627233c.json": "c1fc65869ccfe6b71ebb7ed600e13cb38dae32b58534b0a89216b8e22579a628",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_89eadaa601cf4e85867a5739607ffd1b.json": "9b09a339c9aeb17a6825010615a83411cd4284a0489c9994b11ffa1c93bb1b35",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_8e6b0f949fe543b8978d4a6d4a6cf47e.json": "af3d2553bda4f68f360ecccd7686013b812a6935406c0b94a083728a31e05618",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_c3b9822d7c4d49a697f7e7ecfe383c59.json": "6515d68d918d5eac475eb275d0e517159cb461de137fc206984c8971625aff0d",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_d1e904c8ab454a2280fc5a5d9ba9a713.json": "44f9d0cfcb56d29beafca4ae29936d1521f11dbfd0430b2bddc2834b38461a9c",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_dd8b3bb7531b44709bc042cf3cf2e8c4.json": "07bd340f413409ae193e12dd0b015f2400cfab0ddb652cffb41b5ea7f2853997",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_dea9592301864b0dbef22e9c9f6ed6f4.json": "0610e35f07102ef334cee66063697db9ac18f553aff84fee5587baca454b1005",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_e3d1ca2d575b4acbb618de9683c235c3.json": "d3b5f04d2a22751f1acc93a521edf48b0b7e1eaf1302c039b403caabfb443f33",
+    "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_f204c6851a4c42549cbac5343f8f10a2.json": "43f1936ca2f67d9de64fb019a4aebd7684a34d012ca16c6fd68d5eb61a252f83"
+  },
+  "excludes": [
+    "server.control.json",
+    "*.lock",
+    ".env"
+  ],
+  "archive_sha256": "8e3fc2b73ab7fb7ccf869b599ac3123e6f90322e8026c8ba7051651b373776f3"
+}

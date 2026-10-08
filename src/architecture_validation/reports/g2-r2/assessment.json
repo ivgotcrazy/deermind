@@ -1,0 +1,478 @@
+{
+  "created": "2026-10-08T09:13:56.366269+00:00",
+  "status": "CLOSED",
+  "stage": "Development Phase 2 Architecture Validation Build",
+  "gate_G2": "HOLD",
+  "scoring_version": "v2 only; v1 retained separately",
+  "reviewer": "Implementation author / Codex; not independent blinded human assessment",
+  "sessions": {
+    "S1": {
+      "path_completed": true,
+      "normal_completed": 4,
+      "planned_faults_handled": 0,
+      "content_usable": 4,
+      "wall_seconds": 142.04829040000186,
+      "records": 200,
+      "record_bytes": 1355201,
+      "database_bytes": 1781760,
+      "exact_references_checked": 781
+    },
+    "S2": {
+      "path_completed": true,
+      "normal_completed": 4,
+      "planned_faults_handled": 0,
+      "content_usable": 4,
+      "wall_seconds": 175.01986269999907,
+      "records": 202,
+      "record_bytes": 1574964,
+      "database_bytes": 1990656,
+      "exact_references_checked": 884
+    },
+    "S3": {
+      "path_completed": true,
+      "normal_completed": 4,
+      "planned_faults_handled": 0,
+      "content_usable": 0,
+      "wall_seconds": 153.08391040000424,
+      "records": 213,
+      "record_bytes": 1552028,
+      "database_bytes": 1814528,
+      "exact_references_checked": 892
+    },
+    "S4": {
+      "path_completed": true,
+      "normal_completed": 4,
+      "planned_faults_handled": 0,
+      "content_usable": 0,
+      "wall_seconds": 159.44955710000067,
+      "records": 207,
+      "record_bytes": 1539980,
+      "database_bytes": 1884160,
+      "exact_references_checked": 862
+    },
+    "S5": {
+      "path_completed": true,
+      "normal_completed": 3,
+      "planned_faults_handled": 1,
+      "content_usable": 4,
+      "wall_seconds": 132.60620680000284,
+      "records": 175,
+      "record_bytes": 1126032,
+      "database_bytes": 851968,
+      "exact_references_checked": 652
+    },
+    "S6": {
+      "path_completed": true,
+      "normal_completed": 4,
+      "planned_faults_handled": 0,
+      "content_usable": 2,
+      "wall_seconds": 152.31379530000413,
+      "records": 203,
+      "record_bytes": 1430310,
+      "database_bytes": 1830912,
+      "exact_references_checked": 836
+    }
+  },
+  "content_usable": 14,
+  "planned_turns": 24,
+  "complete_scenario_paths": 6,
+  "normal_completed_turns": 23,
+  "expected_fault_paths": 1,
+  "evaluation": {
+    "EVAL-01": {
+      "status": "SATISFIED",
+      "reason": "预定S1.2/S1.3/S2.2展示同次表现对不同Claim的不同意义，并限制一次成功的推断。其他场景出现的同类错误仍计入逐轮评分。",
+      "predeclared_contrast": {
+        "turns": [
+          "S1.2",
+          "S1.3",
+          "S2.2"
+        ],
+        "claims": [
+          "claim-task",
+          "claim-unit",
+          "claim-division"
+        ],
+        "required": "同次表现的整题、关系解释、允许定位提示下自行除法有不同依据与范围；不以一次成功断言掌握。"
+      },
+      "record_ids": [
+        "observation_3d269b9605ac49839f03e1e99f5a3355",
+        "evidence_dcd7654dd88343ec98ebb2e6d60604fc",
+        "evidence_89b056d55b494387a9b1529ee933d841",
+        "evidence_534ce2c1c395426ba6b8987712e32dff",
+        "belief_bec15f1e667c4fa7a7b60a64d247a56e",
+        "belief_d95c0dfb8d4b4c0285a8f31c0ca8042c",
+        "belief_f09b75f756f04bc9bdcb33986cccf3bb",
+        "evaluationcompletion_7173f713975c4225a579bcfdf721c2b3",
+        "decision_d0e54a8663684a06a725901ff972aa24",
+        "observation_dbab620b2f5140eba2fe8f17c6a1ef9f",
+        "evidence_eda396b6bc6145bebb0b4f9c07801924",
+        "evidence_b0b165839f0e4bc88c03cb43ca5c72ba",
+        "evidence_943ef94e34464bbabdde5c3687b01466",
+        "belief_562c4559ae734946943f2a5db6b58b6c",
+        "belief_c07b0dfd95d94f35b7ec91483aff6acc",
+        "belief_25a7c63541c94b4aabc4dfe518e7349e",
+        "evaluationcompletion_78213a31550f47a8acb404f3827e0a1e",
+        "decision_3da457669cd54683a7ae3207ddfbf18a",
+        "observation_1a96a58fd6e84d6880aa80823b1c92a3",
+        "evidence_96c5bba6603a405693414200ef11974a",
+        "evidence_48eef1da51354c4484b6e100991ee966",
+        "evidence_fd3ed64e1f7b4aeeaa49a2293566d48d",
+        "belief_79a362f5b53e48638504b8afe91223b5",
+        "belief_2deb573da6e947908a1621d0f0e2e03b",
+        "evaluationcompletion_49f93a5427274d53b6ab6e212b95832e",
+        "decision_55a05a64f6724a5ab22bcf79410ab6c6"
+      ]
+    },
+    "EVAL-02": {
+      "status": "NOT SATISFIED",
+      "reason": "定位/完整讲解/部分展示对照已取得；S6.3按题号变化排除旧方法提示，S6.4明确自述沿用后仍支持整题独立完成，换题对照失败。",
+      "predeclared_contrast": {
+        "turns": [
+          "S2.1",
+          "S2.2",
+          "S3.2",
+          "S3.3",
+          "S4.1",
+          "S4.2",
+          "S4.4",
+          "S6.3",
+          "S6.4"
+        ],
+        "required": "请求/意图与已发生展示有别；部分展示只认实际块；换题不清除相关帮助；不同 Claim 帮助责任不同。"
+      },
+      "record_ids": [
+        "observation_59af69def2894941b0bee7d440944696",
+        "evidence_5b3d2a8cdad04d0ca78428b1f43d04c2",
+        "evidence_265e3ee0f695466dabd7b6312111d248",
+        "evidence_5de848a3b3c84d009a9f26b3a49fb277",
+        "belief_8bf39001d1544b39acb65532e1372f6e",
+        "belief_7b8cd0786acc4f4bac4c218e305bea26",
+        "belief_0ce6e132537a41c6bdf26f66073e1049",
+        "evaluationcompletion_fdfad23f9d6d48319065175bff08a4c9",
+        "decision_f26a647ce448455296dfa3792f68ee5b",
+        "actionoccurrence_788d226e17ee4fbd9fc6cc7f8a75b2a7",
+        "observation_1a96a58fd6e84d6880aa80823b1c92a3",
+        "evidence_96c5bba6603a405693414200ef11974a",
+        "evidence_48eef1da51354c4484b6e100991ee966",
+        "evidence_fd3ed64e1f7b4aeeaa49a2293566d48d",
+        "belief_79a362f5b53e48638504b8afe91223b5",
+        "belief_2deb573da6e947908a1621d0f0e2e03b",
+        "evaluationcompletion_49f93a5427274d53b6ab6e212b95832e",
+        "decision_55a05a64f6724a5ab22bcf79410ab6c6",
+        "observation_cc3510833328499caa751ececab60b75",
+        "evidence_3fd59bc0edbb40f0b2f3f6c38a896e1a",
+        "evidence_b238332a06224a5aa1b7d46e6b6f8a5e",
+        "evidence_f9634907a5de48c98e571df6f391bebe",
+        "belief_e9d577aeff0e4ba4935bc5e377c21eea",
+        "belief_82a7f4651432439483fd0b8cc9162525",
+        "belief_455b6409814f4692b2a6ebfdc1b8f4ea",
+        "evaluationcompletion_f57d28065d4d4d98a41e53a9cd362313",
+        "decision_6446dce593c34f489952b8cf0de75920",
+        "decision_b012c72791fa40399b46fb80f448ea2b",
+        "actionoccurrence_8a2be5d29c614c87a3460513709a612e",
+        "observation_04686ce68f0d445e917274759bceca50",
+        "evidence_d9391673fe8a4bed81d5027d2f9b38d4",
+        "evidence_5d55a2f7166c412fa0d7d50d8e94b885",
+        "evidence_08edc9b3142c4bc5bc23b4f9a51b5f95",
+        "belief_7abb25018b81413da3baaa5ba075fb50",
+        "belief_ec95fb7f7a444033a8d926ea6b32db6c",
+        "belief_c8522316518b4e3697f8dbe682ff086f",
+        "evaluationcompletion_0689233d28494ba89d61e824df345f8b",
+        "decision_2e254309a85848b69530c2572c71b739",
+        "observation_bfd0bc589c974528b3ec8674d3e0391e",
+        "evidence_80dd5d61d76249a99603e1539ce0e3d6",
+        "evidence_4090ddfa68964f4586c4a41355196487",
+        "evidence_9ea3eea045774e329cecd4f897ccd69d",
+        "belief_eaf65d624b174a4fb979412e888786d2",
+        "belief_f5b885cd226248f9b53d3f7e3a1b19e8",
+        "belief_d986ce0337474303b54a3154dc9d07ce",
+        "evaluationcompletion_90a3929077d346e39d440d56d0cd1a54",
+        "decision_bfd16277844d47539944885275fd5ce0",
+        "actionoccurrence_9dc6fc6e3412478f8d37700d75a8cc8c",
+        "observation_facd23a78a6c4298a9c7e970852f8573",
+        "evidence_e46e416c92634dbabc1a927ef1220146",
+        "evidence_acb40eae1d4642009d81d9369a4ea96a",
+        "evidence_bfcdb32d911f4d17ab20e14396ace4b1",
+        "belief_53c5e72c71c345d8ad1522eff8286d7e",
+        "belief_f51456a49cc4488b91fef5aa97ec8212",
+        "belief_84938e134afc48fe81c65cfd36684e4f",
+        "evaluationcompletion_d4eb8196a89f4fda8c3bd7650a36e10e",
+        "decision_bd280540a16c4052a590e0011a00d89e",
+        "observation_c1a4e7bade474a988dbf8cea3c238dce",
+        "evidence_5c5207996038442b80cca6e4dd7c0b4b",
+        "evidence_6291c91459cd48f99dbf5008e32ab926",
+        "evidence_c78e7075b11a4f4b850cb35953a645cb",
+        "belief_ba0b8c7e45554f3a8c00a18ee9b66a65",
+        "belief_18f9563bb5014c21bbe238606eab4ea4",
+        "belief_a3d5180dec5d4d7b8c2f1884bfbe04f0",
+        "evaluationcompletion_445d4696c8584e63a336aa101b74c790",
+        "decision_436e09ce21ec41c7ae71fc90342eb69d",
+        "observation_ff3fb07dafb741538b4c78b5e88284cc",
+        "evidence_8a3e580d24b74032baf57a7e8457bfec",
+        "evidence_73af0c1e846b443da6e86a48c0d24894",
+        "evidence_1eb58e6263e94257bd79f5d00a530a39",
+        "belief_6c9d7ece37c54acc89205516023b0c2c",
+        "belief_4ee47cf8c392466c84a29737afafbf48",
+        "evaluationcompletion_77756e209af44618b854f7d6e4ce0ad4",
+        "decision_e9824b4c7f194d18a8b3cb2b2102de0b",
+        "observation_50fa97f3430d4f32b190e8606d1665da",
+        "evidence_c1a3f35efaad42e990c2c157b8960b47",
+        "evidence_3895f8b3ff704206bf1d962874b5ba5b",
+        "evidence_dc5da3ea3cfa411cbcc0f78a1ada9e4a",
+        "belief_ec4816511cea4db58e5cb981ecd13e50",
+        "belief_c19d041727bc4ebc90c42f533a5ecc31",
+        "evaluationcompletion_192b918c89b6484386ac274aebcb4457",
+        "decision_046fdbd5cb584e0d94059ed5d3527e5a"
+      ]
+    },
+    "EVAL-03": {
+      "status": "SATISFIED",
+      "reason": "预定S1更正使旧Evidence失效并从当前Belief依据移除；新解释、限制及S2正反材料真实改变依据和理由，非只增revision。",
+      "predeclared_contrast": {
+        "turns": [
+          "S1.1",
+          "S1.2",
+          "S1.4",
+          "S2.2",
+          "S2.4"
+        ],
+        "required": "更正后旧 Evidence 已失效且不被引用；正反或限制材料改变依据、解释或明确保持理由，不能只加 revision。"
+      },
+      "record_ids": [
+        "observation_ad12a4d7c80549ada2525d6f1075426d",
+        "evidence_5fc48e92e25d49e2aa377cd2c3a90d54",
+        "evidence_724d5ebe596548798c1f7402898556dd",
+        "evidence_61b08d24aaa14361a7195b422fdc5ee9",
+        "belief_76b8fb8329434e70aa4bfaac40efaae7",
+        "belief_a120d5d147104c0ba7656e66be573b9b",
+        "belief_42902fa273034b438622926c6a2b3848",
+        "evaluationcompletion_68f1110f1a1640ab8009d9a7defd8267",
+        "decision_bb7f5f343860446eaf9b96ffe107be0d",
+        "observation_3d269b9605ac49839f03e1e99f5a3355",
+        "evidence_dcd7654dd88343ec98ebb2e6d60604fc",
+        "evidence_89b056d55b494387a9b1529ee933d841",
+        "evidence_534ce2c1c395426ba6b8987712e32dff",
+        "belief_bec15f1e667c4fa7a7b60a64d247a56e",
+        "belief_d95c0dfb8d4b4c0285a8f31c0ca8042c",
+        "belief_f09b75f756f04bc9bdcb33986cccf3bb",
+        "evaluationcompletion_7173f713975c4225a579bcfdf721c2b3",
+        "decision_d0e54a8663684a06a725901ff972aa24",
+        "observation_f7cb4450c71646cba26cb438a6a063d5",
+        "evidence_7351bc1bb71d42f7ad863a71b54cd03b",
+        "evidence_168d591b5bf946debb54941416ed9d1b",
+        "evidence_d9294db5b1d64e09a5a3653d4ff29baa",
+        "belief_ff367510122d47f1a1dc7cfc57464827",
+        "belief_9511a8114d0e41cf9bef2205c08408aa",
+        "belief_b7e24594a74c473c8bac857b27ceb0a3",
+        "evaluationcompletion_503a2a757f2c41719d636f05d49e9120",
+        "decision_9fe2082f29df4b1fb8eb1bd41bd25af5",
+        "observation_1a96a58fd6e84d6880aa80823b1c92a3",
+        "evidence_96c5bba6603a405693414200ef11974a",
+        "evidence_48eef1da51354c4484b6e100991ee966",
+        "evidence_fd3ed64e1f7b4aeeaa49a2293566d48d",
+        "belief_79a362f5b53e48638504b8afe91223b5",
+        "belief_2deb573da6e947908a1621d0f0e2e03b",
+        "evaluationcompletion_49f93a5427274d53b6ab6e212b95832e",
+        "decision_55a05a64f6724a5ab22bcf79410ab6c6",
+        "observation_9fe1f9874c3c4e578a92254364ffe7df",
+        "evidence_89c7f09402e54a498a80ab6ceb683423",
+        "evidence_4586c7be314648a2b1aaa4099ee613ae",
+        "evidence_6f57dafbaaf54ee094acb5ecd4a88e01",
+        "belief_3c7ae3933e8543f3ae21b6257c49b042",
+        "belief_3ecd4c91b5e3492c80b40ca961a92ef0",
+        "belief_caed67489c094dc8bcdee34eed67e72d",
+        "evaluationcompletion_68c147e68d06483d97807ee0016d18ec",
+        "decision_262e1457cb194c1d9d10e15aa7a5b390"
+      ]
+    },
+    "EVAL-04": {
+      "status": "NOT SATISFIED",
+      "reason": "有信息说明与注入故障/后续恢复已区分；S3.2新Evidence虽认定缺少关系说明不足判断，Belief仍据相同缺失材料保留反向推断，预定不足对照未完整成立。",
+      "predeclared_contrast": {
+        "turns": [
+          "S1.3",
+          "S3.2",
+          "S5.2",
+          "S5.3"
+        ],
+        "required": "有信息表现、只有请求的不足与执行失败分开；故障后新轮真实评价，不用旧 Belief 冒充本轮完成。"
+      },
+      "record_ids": [
+        "observation_dbab620b2f5140eba2fe8f17c6a1ef9f",
+        "evidence_eda396b6bc6145bebb0b4f9c07801924",
+        "evidence_b0b165839f0e4bc88c03cb43ca5c72ba",
+        "evidence_943ef94e34464bbabdde5c3687b01466",
+        "belief_562c4559ae734946943f2a5db6b58b6c",
+        "belief_c07b0dfd95d94f35b7ec91483aff6acc",
+        "belief_25a7c63541c94b4aabc4dfe518e7349e",
+        "evaluationcompletion_78213a31550f47a8acb404f3827e0a1e",
+        "decision_3da457669cd54683a7ae3207ddfbf18a",
+        "observation_cc3510833328499caa751ececab60b75",
+        "evidence_3fd59bc0edbb40f0b2f3f6c38a896e1a",
+        "evidence_b238332a06224a5aa1b7d46e6b6f8a5e",
+        "evidence_f9634907a5de48c98e571df6f391bebe",
+        "belief_e9d577aeff0e4ba4935bc5e377c21eea",
+        "belief_82a7f4651432439483fd0b8cc9162525",
+        "belief_455b6409814f4692b2a6ebfdc1b8f4ea",
+        "evaluationcompletion_f57d28065d4d4d98a41e53a9cd362313",
+        "decision_6446dce593c34f489952b8cf0de75920",
+        "decision_b012c72791fa40399b46fb80f448ea2b",
+        "actionoccurrence_8a2be5d29c614c87a3460513709a612e",
+        "observation_00d22581090e429aabb1eb7ab24d8d19",
+        "evaluationcompletion_8a58855607324ad79b3a163108d83a3f",
+        "observation_dd328e0593fb439788522f208a21bc8a",
+        "evidence_4a8751d9ca064d429e0efeee4ed87ce9",
+        "evidence_e4a91c110f3f478d983a369c331918d0",
+        "evidence_592d23f92a2d4a218978557460aa2f1c",
+        "belief_cb84b2aa1382415688b6edf64a9d56df",
+        "belief_ed762f73480741ba85ba05310afa3b89",
+        "evaluationcompletion_07a0fa7be0004956adb82bb328d94556",
+        "decision_1c634327c3b8487aa983ed3d6607d95d"
+      ]
+    }
+  },
+  "offline_checks": 75,
+  "offline_mechanism_paths": 24,
+  "probes": {
+    "planned": 12,
+    "completed": 12,
+    "matched": 11,
+    "false_accepts": [
+      "RP06"
+    ],
+    "false_rejects": [],
+    "unresolved": [],
+    "format_failures": [],
+    "positive_denominator": 6,
+    "negative_denominator": 6
+  },
+  "resources": {
+    "versions": {
+      "v1": {
+        "attempts": 23,
+        "logical_requests": 22,
+        "confirmed_input_tokens": 78068,
+        "confirmed_output_tokens": 10242,
+        "confirmed_usage_cny": 0.238072,
+        "transport_failures": 1,
+        "normalization_operations": {},
+        "conservative_cny_including_unconfirmed_attempts": 0.320376
+      },
+      "v2": {
+        "attempts": 211,
+        "logical_requests": 200,
+        "confirmed_input_tokens": 839214,
+        "confirmed_output_tokens": 87437,
+        "confirmed_usage_cny": 2.377924,
+        "transport_failures": 11,
+        "normalization_operations": {
+          "coalesce_identical_duplicate": 18,
+          "remove_empty_unrecognized_field": 9
+        },
+        "conservative_cny_including_unconfirmed_attempts": 3.222672
+      }
+    },
+    "budget": {
+      "counts": {
+        "B2": 0,
+        "base": 209,
+        "repair": 1,
+        "probe": 12,
+        "transport": 12
+      },
+      "total_attempts": 234,
+      "input_tokens": 987592,
+      "output_tokens": 195983,
+      "estimated_cny": 3.543048000000002,
+      "active_b4_seconds": 978.4126850999892,
+      "policy": {
+        "category_limits": {
+          "B2": 0,
+          "base": 320,
+          "repair": 48,
+          "probe": 12,
+          "transport": 40
+        },
+        "total_attempts": 420,
+        "input_tokens": 4000000,
+        "output_tokens": 1000000,
+        "cny": 50,
+        "active_seconds": 5400,
+        "active_all_phases": true
+      },
+      "campaign": "G2-R2",
+      "segment_counts": {
+        "S1": 56,
+        "S2": 34,
+        "S3": 36,
+        "S4": 33,
+        "S5": 28,
+        "S6": 34,
+        "probes": 13
+      }
+    },
+    "unrecovered_transport_logical_requests": [],
+    "v2_wall_seconds_including_startup": 946.4380200000087,
+    "turn_seconds": {
+      "n": 24,
+      "median": 28.88366120000137,
+      "p95_nearest_rank": 40.4915531000006,
+      "max": 45.03200810000271
+    },
+    "normal_turn_seconds": {
+      "n": 23,
+      "median": 29.364500800002133,
+      "p95_nearest_rank": 40.4915531000006,
+      "max": 45.03200810000271
+    },
+    "stage_seconds": {
+      "context_seconds": {
+        "n": 94,
+        "median": 0.011461500002042158,
+        "p95_nearest_rank": 0.027130300004500896,
+        "max": 0.03452669999387581
+      },
+      "generation_seconds": {
+        "n": 94,
+        "median": 3.5283625000010943,
+        "p95_nearest_rank": 9.824128899999778,
+        "max": 10.773853899998358
+      },
+      "review_seconds": {
+        "n": 94,
+        "median": 2.30719560000216,
+        "p95_nearest_rank": 5.878186800000549,
+        "max": 9.024527900000976
+      },
+      "commit_seconds": {
+        "n": 94,
+        "median": 0.009747550000611227,
+        "p95_nearest_rank": 0.021846899995580316,
+        "max": 0.03265370000008261
+      },
+      "total_seconds": {
+        "n": 94,
+        "median": 5.876899449998746,
+        "p95_nearest_rank": 12.875401500001317,
+        "max": 14.267687599996862
+      }
+    },
+    "stage_totals": {
+      "context_seconds": 1.307520999944245,
+      "generation_seconds": 362.2346948000122,
+      "review_seconds": 256.82564860003185,
+      "commit_seconds": 1.077073400003428,
+      "total_seconds": 623.5904326999953
+    },
+    "max_input_admission_estimate": 16067
+  },
+  "integrity_errors": [],
+  "source_verification": {
+    "created": "2026-10-08T08:01:53.242746+00:00",
+    "frozen_files_checked": 77,
+    "changed_sources_during_execution": [],
+    "verified_before_report_updates": true
+  },
+  "decision": "Mechanism paths run; content quality and two predeclared Evaluation contrasts fail. This configuration does not pass G2; no evidence of an architectural impossibility. No further model calls in R2."
+}

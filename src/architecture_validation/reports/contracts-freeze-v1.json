@@ -1,0 +1,33 @@
+{
+  "created_at": "2026-10-08T03:28:38.240139+00:00",
+  "status": "FROZEN",
+  "schema_files": 17,
+  "contract_tests_passed": 3,
+  "python": "3.13.5",
+  "representation": "Wire model source IDs resolve only through immutable supplied context registry; formal records retain exact refs. Empty version and revision zero encode absent ref coordinates.",
+  "source_sha256": {
+    "schemas/BeliefCandidate.v1.json": "eb55748afead15d723a25dee159ed864fe12eac95c3970a5814399621b9941c1",
+    "schemas/BeliefRecordBody.v1.json": "b742015cc86622dcc10aa821a0369584366b7913dacb0efbd0f474502cba4479",
+    "schemas/CanonicalPackage.v1.json": "cebaf2c6535b92de6cc127223ca987c14aee28c3a409ad2ee71d7da8634a79ce",
+    "schemas/Claim.v1.json": "cab807e564d7107533e8ab426163d965bad201baed52a37ccdc06eee88ad8044",
+    "schemas/EvaluationCompletion.v1.json": "9b4704a3f8937e7f4e9a22e83fb754a34b42e38a1c5574d1919f0c1c2d25452a",
+    "schemas/EvidenceCandidate.v1.json": "f7c661f632b09a22ee0abb39049620e38375defd6ba8ad8df78e2b1e3bef2809",
+    "schemas/EvidenceRecordBody.v1.json": "6ebfa26f5a57492724f0190c98b10dc1b1bfa2f4fe01a1a362f74a6288a37706",
+    "schemas/EvidenceSemantics.v1.json": "b1407f46b7e790869586dd724310122d07a6b1b3a8827a310a1d6c43c4b7b75b",
+    "schemas/ExactRef.v1.json": "8c24a2bb6bcd66e7ac16236a5f05bd3c353fc1782b5fabc2dd70d5d0f137735d",
+    "schemas/InferenceSemantics.v1.json": "742d85f0f027661c238812283b491e63a5e1f6294fc6ea36f99c77c1af6dedd7",
+    "schemas/KC.v1.json": "d5cb476adcc35e3cc04ffaf01cd6d71fe24a166078fea3d755e8a7aa82c9ef2a",
+    "schemas/ObservationCandidate.v1.json": "783042796d441f9e47573f10659ff0cd50f08c9a8573ce6c6f206aa2c8a3490c",
+    "schemas/PolicyCandidate.v1.json": "c06d7eadca21370fa9ff13ee38739091713641c8b056bdaabf13e60401549ff8",
+    "schemas/ReviewCandidate.v1.json": "372e5032ebda6167f757bb455b97c6584bedb73598a5178a7948955b37c2960d",
+    "schemas/SolutionStrategy.v1.json": "f412b64d599b7fa7ede01b7b3a43ed5af50659a24d37b37a8168e544ce2a5538",
+    "schemas/TaskFamily.v1.json": "112a4ce673ee9a1137d2442326c8fe0285480056f51ffe60b027fe68ee9a3ede",
+    "schemas/TaskInstance.v1.json": "26b6c2d4e8d4a4082484a9c36e03b021ec15c0f2e34f933eabe1b7ed82e94785",
+    "domain.py": "76f4e848a1bc6de4041882058b6fa94d019ccf033c861554f64386fb4bb26b5e",
+    "contracts.py": "37035caa9d8332721d935ef729a182b9e12e5721f49e3026d759058f360e5c46",
+    "protocols.py": "fa95147ea4003f312c89d1bc0e25bcf942c489f7bbc674a4478d0256ffba3b8e",
+    "fixtures/domain-v1.json": "9550166ea0535e8def88f0cab7a041d34e81cd0c00c3a5dda56fc6913adb0ef0",
+    "requirements.lock.txt": "d9e52a06a811320b8060eb06d3ac36e9ec888ed6db972100a8c1d2e98861f244",
+    "tests/test_contracts.py": "c0d4c330433d9ab26e9a7f2bd6e71e687d1b621e77546dad15e5ae150b52cbc4"
+  }
+}

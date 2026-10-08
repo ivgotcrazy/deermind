@@ -1,0 +1,12 @@
+{
+  "created": "2026-10-08T07:28:59.519751+00:00",
+  "cause": "S1.3 Belief emitted schema-undefined empty note fields on both attempts. Strict additionalProperties rejected otherwise valid candidates.",
+  "attempts": [
+    "attempt_2b70d2d0a8444b4bb45f6abf227c16a0",
+    "attempt_a823aa0bef9f4777832f81eff719dcf2"
+  ],
+  "fix": "Normalize only explicitly forbidden null or empty-string extras; preserve raw output and repair paths. Unknown substantive values remain rejected. Schema errors now name the failed rule.",
+  "regression": "format-fix-tests.xml: 29 passed, including both original outputs and real adapter audit tests",
+  "versioning": "v1 retained. v2 reruns S1 from the start and all remaining cases under one frozen implementation. No cross-version score aggregation.",
+  "budget": "The same R2 420-attempt/CNY50/90-active-minute ceiling includes v1."
+}

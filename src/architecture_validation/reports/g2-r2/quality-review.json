@@ -1,0 +1,654 @@
+{
+  "created": "2026-10-08T09:13:56.375306+00:00",
+  "reviewer": "Implementation author / Codex; not independent blinded human assessment",
+  "rubric": [
+    "source_fidelity",
+    "purpose_and_help_limits",
+    "assistance_and_claim_meaning",
+    "rationale_consistency"
+  ],
+  "semantic_keyword_scoring": false,
+  "units": [
+    {
+      "unit": "S1.1",
+      "scores": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 8,
+      "usable": true,
+      "reason": "独立错误作答分别解释为整题/除法反向与关系说明不足；不干预。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S1/review-packets.json",
+      "record_ids": [
+        "observation_ad12a4d7c80549ada2525d6f1075426d",
+        "evidence_5fc48e92e25d49e2aa377cd2c3a90d54",
+        "evidence_724d5ebe596548798c1f7402898556dd",
+        "evidence_61b08d24aaa14361a7195b422fdc5ee9",
+        "belief_76b8fb8329434e70aa4bfaac40efaae7",
+        "belief_a120d5d147104c0ba7656e66be573b9b",
+        "belief_42902fa273034b438622926c6a2b3848",
+        "evaluationcompletion_68f1110f1a1640ab8009d9a7defd8267",
+        "decision_bb7f5f343860446eaf9b96ffe107be0d"
+      ]
+    },
+    {
+      "unit": "S1.2",
+      "scores": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "total": 7,
+      "usable": true,
+      "reason": "更正形成有效新依据，整题和除法有限支持、关系UNKNOWN；旧乘法“随之不正确”表述不精确。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S1/review-packets.json",
+      "record_ids": [
+        "observation_3d269b9605ac49839f03e1e99f5a3355",
+        "evidence_dcd7654dd88343ec98ebb2e6d60604fc",
+        "evidence_89b056d55b494387a9b1529ee933d841",
+        "evidence_534ce2c1c395426ba6b8987712e32dff",
+        "belief_bec15f1e667c4fa7a7b60a64d247a56e",
+        "belief_d95c0dfb8d4b4c0285a8f31c0ca8042c",
+        "belief_f09b75f756f04bc9bdcb33986cccf3bb",
+        "evaluationcompletion_7173f713975c4225a579bcfdf721c2b3",
+        "decision_d0e54a8663684a06a725901ff972aa24"
+      ]
+    },
+    {
+      "unit": "S1.3",
+      "scores": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 8,
+      "usable": true,
+      "reason": "新数量意义说明使关系Claim从UNKNOWN变为有限DIRECTIONAL；保留同题相关性。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S1/review-packets.json",
+      "record_ids": [
+        "observation_dbab620b2f5140eba2fe8f17c6a1ef9f",
+        "evidence_eda396b6bc6145bebb0b4f9c07801924",
+        "evidence_b0b165839f0e4bc88c03cb43ca5c72ba",
+        "evidence_943ef94e34464bbabdde5c3687b01466",
+        "belief_562c4559ae734946943f2a5db6b58b6c",
+        "belief_c07b0dfd95d94f35b7ec91483aff6acc",
+        "belief_25a7c63541c94b4aabc4dfe518e7349e",
+        "evaluationcompletion_78213a31550f47a8acb404f3827e0a1e",
+        "decision_3da457669cd54683a7ae3207ddfbf18a"
+      ]
+    },
+    {
+      "unit": "S1.4",
+      "scores": [
+        2,
+        2,
+        1,
+        2
+      ],
+      "total": 7,
+      "usable": true,
+      "reason": "新增适用条件自述限制结论，未宣布稳定掌握；将条件识别限制也泛化到除法Claim，范围略宽。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S1/review-packets.json",
+      "record_ids": [
+        "observation_f7cb4450c71646cba26cb438a6a063d5",
+        "evidence_7351bc1bb71d42f7ad863a71b54cd03b",
+        "evidence_168d591b5bf946debb54941416ed9d1b",
+        "evidence_d9294db5b1d64e09a5a3653d4ff29baa",
+        "belief_ff367510122d47f1a1dc7cfc57464827",
+        "belief_9511a8114d0e41cf9bef2205c08408aa",
+        "belief_b7e24594a74c473c8bac857b27ceb0a3",
+        "evaluationcompletion_503a2a757f2c41719d636f05d49e9120",
+        "decision_9fe2082f29df4b1fb8eb1bd41bd25af5"
+      ]
+    },
+    {
+      "unit": "S2.1",
+      "scores": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 8,
+      "usable": true,
+      "reason": "定位提示实际展示，未给商；理由承认提供定位，提示前评价未倒灌。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S2/review-packets.json",
+      "record_ids": [
+        "observation_59af69def2894941b0bee7d440944696",
+        "evidence_5b3d2a8cdad04d0ca78428b1f43d04c2",
+        "evidence_265e3ee0f695466dabd7b6312111d248",
+        "evidence_5de848a3b3c84d009a9f26b3a49fb277",
+        "belief_8bf39001d1544b39acb65532e1372f6e",
+        "belief_7b8cd0786acc4f4bac4c218e305bea26",
+        "belief_0ce6e132537a41c6bdf26f66073e1049",
+        "evaluationcompletion_fdfad23f9d6d48319065175bff08a4c9",
+        "decision_f26a647ce448455296dfa3792f68ee5b",
+        "actionoccurrence_788d226e17ee4fbd9fc6cc7f8a75b2a7"
+      ]
+    },
+    {
+      "unit": "S2.2",
+      "scores": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 8,
+      "usable": true,
+      "reason": "实际定位后的正确商，对整题独立与允许定位支持的除法Claim分别解释。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S2/review-packets.json",
+      "record_ids": [
+        "observation_1a96a58fd6e84d6880aa80823b1c92a3",
+        "evidence_96c5bba6603a405693414200ef11974a",
+        "evidence_48eef1da51354c4484b6e100991ee966",
+        "evidence_fd3ed64e1f7b4aeeaa49a2293566d48d",
+        "belief_79a362f5b53e48638504b8afe91223b5",
+        "belief_2deb573da6e947908a1621d0f0e2e03b",
+        "evaluationcompletion_49f93a5427274d53b6ab6e212b95832e",
+        "decision_55a05a64f6724a5ab22bcf79410ab6c6"
+      ]
+    },
+    {
+      "unit": "S2.3",
+      "scores": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "total": 6,
+      "usable": true,
+      "reason": "新的数量关系说明取得有限支持；提示B2对关系说明的影响论证偏弱，仍未断言独立掌握。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S2/review-packets.json",
+      "record_ids": [
+        "observation_4c37a2c8fa6749fa995135430a90f568",
+        "evidence_5d963dc6562345f9b1f41b717aca5672",
+        "evidence_6705e48a78eb444492c7eadbd3fb5627",
+        "evidence_9c81e5c576b94e189f4f86abfe1f7d49",
+        "belief_04d8d2df9687492291d5452129bc5807",
+        "belief_b8b47454c3fa4ebeacfda23c770f9873",
+        "belief_b50da818bca54e0f82b56143747c38f5",
+        "evaluationcompletion_0776b0c81a15481cbdf672d9b809548b",
+        "decision_c385d1b1d6924c88a0d68bc081744289"
+      ]
+    },
+    {
+      "unit": "S2.4",
+      "scores": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "total": 6,
+      "usable": true,
+      "reason": "自述不稳定被用于限制已有结论；关系Claim的支持条件说明与既有支持表述未完全协调。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S2/review-packets.json",
+      "record_ids": [
+        "observation_9fe1f9874c3c4e578a92254364ffe7df",
+        "evidence_89c7f09402e54a498a80ab6ceb683423",
+        "evidence_4586c7be314648a2b1aaa4099ee613ae",
+        "evidence_6f57dafbaaf54ee094acb5ecd4a88e01",
+        "belief_3c7ae3933e8543f3ae21b6257c49b042",
+        "belief_3ecd4c91b5e3492c80b40ca961a92ef0",
+        "belief_caed67489c094dc8bcdee34eed67e72d",
+        "evaluationcompletion_68c147e68d06483d97807ee0016d18ec",
+        "decision_262e1457cb194c1d9d10e15aa7a5b390"
+      ]
+    },
+    {
+      "unit": "S3.1",
+      "scores": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "total": 4,
+      "usable": false,
+      "reason": "把错误商及未说明数量意义误作单位量理解的反证，Evidence与Belief均提交。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S3/review-packets.json",
+      "record_ids": [
+        "observation_afbe40ac5d9442bb8f77ad3d612b76c4",
+        "evidence_b943ca973d49499b9e80947e8f6e5f46",
+        "evidence_d9d2dda9f0cc411baa9b6e21449b778a",
+        "evidence_0486690f1676478ca9e99db94042d188",
+        "belief_f9312fcef87a4d96a1b7fcd9c02666aa",
+        "belief_d0eb0c6a3d524332a3162d4b706ad315",
+        "belief_01ebf461276e4a809513710a770265b0",
+        "evaluationcompletion_e149a5ce5b844dd1a5eebaa0043a0a21",
+        "decision_f3316249c2aa42a3b174eec45ae5fd3e"
+      ]
+    },
+    {
+      "unit": "S3.2",
+      "scores": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "total": 4,
+      "usable": false,
+      "reason": "讲解请求与实际讲解区分正确；新关系Evidence为NonInformative，但Belief仍据旧错误维持反向推断。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S3/review-packets.json",
+      "record_ids": [
+        "observation_cc3510833328499caa751ececab60b75",
+        "evidence_3fd59bc0edbb40f0b2f3f6c38a896e1a",
+        "evidence_b238332a06224a5aa1b7d46e6b6f8a5e",
+        "evidence_f9634907a5de48c98e571df6f391bebe",
+        "belief_e9d577aeff0e4ba4935bc5e377c21eea",
+        "belief_82a7f4651432439483fd0b8cc9162525",
+        "belief_455b6409814f4692b2a6ebfdc1b8f4ea",
+        "evaluationcompletion_f57d28065d4d4d98a41e53a9cd362313",
+        "decision_6446dce593c34f489952b8cf0de75920",
+        "decision_b012c72791fa40399b46fb80f448ea2b",
+        "actionoccurrence_8a2be5d29c614c87a3460513709a612e"
+      ]
+    },
+    {
+      "unit": "S3.3",
+      "scores": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "total": 4,
+      "usable": false,
+      "reason": "正确识别完整答案帮助、未将复现当独立计算；单位量Belief继续引用错误反证。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S3/review-packets.json",
+      "record_ids": [
+        "observation_04686ce68f0d445e917274759bceca50",
+        "evidence_d9391673fe8a4bed81d5027d2f9b38d4",
+        "evidence_5d55a2f7166c412fa0d7d50d8e94b885",
+        "evidence_08edc9b3142c4bc5bc23b4f9a51b5f95",
+        "belief_7abb25018b81413da3baaa5ba075fb50",
+        "belief_ec95fb7f7a444033a8d926ea6b32db6c",
+        "belief_c8522316518b4e3697f8dbe682ff086f",
+        "evaluationcompletion_0689233d28494ba89d61e824df345f8b",
+        "decision_2e254309a85848b69530c2572c71b739"
+      ]
+    },
+    {
+      "unit": "S3.4",
+      "scores": [
+        1,
+        2,
+        0,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "reason": "单位量错误反证继续传播；整题新Evidence另以帮助前后材料混合为由弱化原始无帮助错误，时序解释不当。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S3/review-packets.json",
+      "record_ids": [
+        "observation_0f9730263b9e46aa911537cfdc001c4b",
+        "evidence_552359ae8bf14ac590a0db687ccda3a8",
+        "evidence_3e8fd466c79742139f04418358462ae6",
+        "evidence_0c974f994c24418e9db93882a2b424aa",
+        "belief_1b6d9549c5e6406486fbf483d9aac4b6",
+        "belief_7e8ca2e33a064408a96a6b47169d2acb",
+        "belief_cafd8580df584baba1b96d042584b3c4",
+        "evaluationcompletion_2dce8edd50914ff0a3d10efdcdaf8ccb",
+        "decision_b196c158e0a9411bab21acb90e9e3322"
+      ]
+    },
+    {
+      "unit": "S4.1",
+      "scores": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "total": 4,
+      "usable": false,
+      "reason": "两块Hint中只有B1实际展示；单位量Claim再次把错误商及缺少解释误作反证。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S4/review-packets.json",
+      "record_ids": [
+        "observation_bfd0bc589c974528b3ec8674d3e0391e",
+        "evidence_80dd5d61d76249a99603e1539ce0e3d6",
+        "evidence_4090ddfa68964f4586c4a41355196487",
+        "evidence_9ea3eea045774e329cecd4f897ccd69d",
+        "belief_eaf65d624b174a4fb979412e888786d2",
+        "belief_f5b885cd226248f9b53d3f7e3a1b19e8",
+        "belief_d986ce0337474303b54a3154dc9d07ce",
+        "evaluationcompletion_90a3929077d346e39d440d56d0cd1a54",
+        "decision_bfd16277844d47539944885275fd5ce0",
+        "actionoccurrence_9dc6fc6e3412478f8d37700d75a8cc8c"
+      ]
+    },
+    {
+      "unit": "S4.2",
+      "scores": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "total": 4,
+      "usable": false,
+      "reason": "只归因实际B1且区分整题/除法责任；单位量Belief仍把旧错误反证与新无信息并用。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S4/review-packets.json",
+      "record_ids": [
+        "observation_facd23a78a6c4298a9c7e970852f8573",
+        "evidence_e46e416c92634dbabc1a927ef1220146",
+        "evidence_acb40eae1d4642009d81d9369a4ea96a",
+        "evidence_bfcdb32d911f4d17ab20e14396ace4b1",
+        "belief_53c5e72c71c345d8ad1522eff8286d7e",
+        "belief_f51456a49cc4488b91fef5aa97ec8212",
+        "belief_84938e134afc48fe81c65cfd36684e4f",
+        "evaluationcompletion_d4eb8196a89f4fda8c3bd7650a36e10e",
+        "decision_bd280540a16c4052a590e0011a00d89e"
+      ]
+    },
+    {
+      "unit": "S4.3",
+      "scores": [
+        1,
+        2,
+        0,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "reason": "实际B1范围保持；仍引用错误反证，并把“按6份平均分得到一份”说成未说明为何除，低估已有说明。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S4/review-packets.json",
+      "record_ids": [
+        "observation_fdab103fb0d04b73832568bc9076bfda",
+        "evidence_af603de66cbf4d5887eea8ba5b29024c",
+        "evidence_40453447c4664b32904aa3b78e8a3002",
+        "evidence_8c1c9a05cfd043a0a45cf9fd9eaa937c",
+        "belief_b71f5cbfa51247db9578959993ccf9ee",
+        "belief_b6a7d1a4cf7144e59873c5e64b0b051c",
+        "belief_7b4b295750a84715942b1ed1ec9a7da0",
+        "evaluationcompletion_0e3dd71cc1874a7fa0f41610fa460503",
+        "decision_16ea353097dc4a39aa05cabc27fcaa9b"
+      ]
+    },
+    {
+      "unit": "S4.4",
+      "scores": [
+        1,
+        2,
+        0,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "reason": "保留部分帮助引用但换题影响论证不足；单位量错误反证及对已给平均分理由的误读持续。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S4/review-packets.json",
+      "record_ids": [
+        "observation_c1a4e7bade474a988dbf8cea3c238dce",
+        "evidence_5c5207996038442b80cca6e4dd7c0b4b",
+        "evidence_6291c91459cd48f99dbf5008e32ab926",
+        "evidence_c78e7075b11a4f4b850cb35953a645cb",
+        "belief_ba0b8c7e45554f3a8c00a18ee9b66a65",
+        "belief_18f9563bb5014c21bbe238606eab4ea4",
+        "belief_a3d5180dec5d4d7b8c2f1884bfbe04f0",
+        "evaluationcompletion_445d4696c8584e63a336aa101b74c790",
+        "decision_436e09ce21ec41c7ae71fc90342eb69d"
+      ]
+    },
+    {
+      "unit": "S5.1",
+      "scores": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 8,
+      "usable": true,
+      "reason": "正确算式产生有限支持，单位量说明不足合法UNKNOWN，不干预。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S5/review-packets.json",
+      "record_ids": [
+        "observation_dd968520138c4399a51bb80546c1f016",
+        "evidence_0a617830d2e84e9da70d7d6728ad72cb",
+        "evidence_7ce53be335294aacacc58a2c069a34ca",
+        "evidence_b9959854eb2f4726bd692760f4bbd09d",
+        "belief_bcfeb0bad103499db169f20ba79e968a",
+        "belief_88a587adddfd44e082fc98e93822333a",
+        "belief_3603fb258fa748d680552a870849754e",
+        "evaluationcompletion_0e55f70f4ad1485bab19e0dccf35f8cb",
+        "decision_a48e818be41b4ca6af92f0106f7f9e27"
+      ]
+    },
+    {
+      "unit": "S5.2",
+      "scores": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 8,
+      "usable": true,
+      "reason": "预定Evidence故障正确形成FAILED且无本轮Decision/成功评价；按异常路径正确性评分，不算自然模型失败。",
+      "status": "FAILED",
+      "error": "InjectedEvaluationFailure",
+      "expected_fault_handled": true,
+      "trace": "runs/g2-r2/v2/S5/review-packets.json",
+      "record_ids": [
+        "observation_00d22581090e429aabb1eb7ab24d8d19",
+        "evaluationcompletion_8a58855607324ad79b3a163108d83a3f"
+      ]
+    },
+    {
+      "unit": "S5.3",
+      "scores": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 8,
+      "usable": true,
+      "reason": "故障后新轮真实生成评价，正确纳入新反向表现；未复用旧完成记录。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S5/review-packets.json",
+      "record_ids": [
+        "observation_dd328e0593fb439788522f208a21bc8a",
+        "evidence_4a8751d9ca064d429e0efeee4ed87ce9",
+        "evidence_e4a91c110f3f478d983a369c331918d0",
+        "evidence_592d23f92a2d4a218978557460aa2f1c",
+        "belief_cb84b2aa1382415688b6edf64a9d56df",
+        "belief_ed762f73480741ba85ba05310afa3b89",
+        "evaluationcompletion_07a0fa7be0004956adb82bb328d94556",
+        "decision_1c634327c3b8487aa983ed3d6607d95d"
+      ]
+    },
+    {
+      "unit": "S5.4",
+      "scores": [
+        2,
+        2,
+        2,
+        1
+      ],
+      "total": 7,
+      "usable": true,
+      "reason": "修正后正反依据并存，关系仍UNKNOWN；“最终错误、之后改正”的时间措辞冗余。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S5/review-packets.json",
+      "record_ids": [
+        "observation_0eb60ef5198849b0b345ecf886f260a3",
+        "evidence_cb86165111fd4fa0a2a40f9ad86076bd",
+        "evidence_d1cedc3fe3a34fe6932ce21027176c42",
+        "evidence_8aa18629665640b4a7f539bd58c2835d",
+        "belief_981abe854a0a43f29d1087f05ce3d4e3",
+        "belief_592449a58ba74d7dac18564a866a971b",
+        "belief_926a84cf42f840b5becea58ff09e164a",
+        "evaluationcompletion_e02cca4d37724132ba4a43befd2ae20b",
+        "decision_2743dc9294944633af31d1ca3a0be161"
+      ]
+    },
+    {
+      "unit": "S6.1",
+      "scores": [
+        2,
+        2,
+        2,
+        1
+      ],
+      "total": 7,
+      "usable": true,
+      "reason": "纯请求合法UNKNOWN；实际给出数量关系提示，理由“只点名待检查”描述偏轻。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S6/review-packets.json",
+      "record_ids": [
+        "observation_900289a0a9ad4529a3c899eb1724f6fa",
+        "evidence_30fb5998872c47e0acc12916f7ba1bef",
+        "evidence_40d37ec0c8954a0990b7081808277af9",
+        "evidence_14249d88e6e841f4bf69d45a234d5223",
+        "belief_915776e0fe6246b4a009b4f772d04fbe",
+        "belief_605e67e032cd40e887128ceefe55d2f7",
+        "belief_870443f6107c4179bcdbdbbeafe96e1c",
+        "evaluationcompletion_1d88120d39714e828d9695eb66b2a79e",
+        "decision_bfd80df6eb4541cbbe856a59cfe4797d",
+        "actionoccurrence_d6a96da7e1c74dcea36fb226042eed6e"
+      ]
+    },
+    {
+      "unit": "S6.2",
+      "scores": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "total": 8,
+      "usable": true,
+      "reason": "方法帮助替代关系识别、不替代求商；三项Claim责任分开，除法有限支持。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S6/review-packets.json",
+      "record_ids": [
+        "observation_2592ea45b0ed4b9f8757e1e526c6f081",
+        "evidence_77530c2e2fea48e9a3d51834d0f4e0b7",
+        "evidence_9d5c33ec601b4289a766885e4dd98cb0",
+        "evidence_555a5107947e45259e382ddbd656f380",
+        "belief_34080489f4294bceb439db15fb7b6db2",
+        "evaluationcompletion_df0a8ae2c7ae4253bb9988b6cdf13592",
+        "decision_724ceaccf59949d69dedc1b09a731b6b"
+      ]
+    },
+    {
+      "unit": "S6.3",
+      "scores": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "total": 4,
+      "usable": false,
+      "reason": "明确因提示属于旧题就判新题独立完成，忽略先求单位量的方法迁移，形成不成立的整题支持。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S6/review-packets.json",
+      "record_ids": [
+        "observation_ff3fb07dafb741538b4c78b5e88284cc",
+        "evidence_8a3e580d24b74032baf57a7e8457bfec",
+        "evidence_73af0c1e846b443da6e86a48c0d24894",
+        "evidence_1eb58e6263e94257bd79f5d00a530a39",
+        "belief_6c9d7ece37c54acc89205516023b0c2c",
+        "belief_4ee47cf8c392466c84a29737afafbf48",
+        "evaluationcompletion_77756e209af44618b854f7d6e4ce0ad4",
+        "decision_e9824b4c7f194d18a8b3cb2b2102de0b"
+      ]
+    },
+    {
+      "unit": "S6.4",
+      "scores": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "total": 4,
+      "usable": false,
+      "reason": "学习者明确说明沿用旧提示，除法Evidence承认延续，但整题Evidence仍称两题独立、Belief继续使用错误支持。",
+      "status": "COMPLETED",
+      "error": "",
+      "expected_fault_handled": false,
+      "trace": "runs/g2-r2/v2/S6/review-packets.json",
+      "record_ids": [
+        "observation_50fa97f3430d4f32b190e8606d1665da",
+        "evidence_c1a3f35efaad42e990c2c157b8960b47",
+        "evidence_3895f8b3ff704206bf1d962874b5ba5b",
+        "evidence_dc5da3ea3cfa411cbcc0f78a1ada9e4a",
+        "belief_ec4816511cea4db58e5cb981ecd13e50",
+        "belief_c19d041727bc4ebc90c42f533a5ecc31",
+        "evaluationcompletion_192b918c89b6484386ac274aebcb4457",
+        "decision_046fdbd5cb584e0d94059ed5d3527e5a"
+      ]
+    }
+  ],
+  "propagation_note": "S3/S4 failures include persistent downstream effects of two initial bad unit-relation Evidence items; ten unusable turns are not ten independent root causes."
+}

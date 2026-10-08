@@ -1,0 +1,87 @@
+{
+  "created": "2026-10-08T07:41:46.426317+00:00",
+  "id": "S6",
+  "status": "MEASURED",
+  "turns": [
+    {
+      "id": "turn_5f01f9f98eab49a5a3bcec482e22a314",
+      "sid": "S6",
+      "message_key": "1",
+      "event_id": "event_40ccf88a609b4f5d8deacba9f026a17e",
+      "status": "COMPLETED",
+      "phase": "INTENT_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445323.4654171,
+      "label": "S6.1",
+      "wall_seconds": 20.682552700003725,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_08b21764132c4f0d8c1074602b2c903f",
+      "sid": "S6",
+      "message_key": "2",
+      "event_id": "event_3e7393f9b7504541872e56d899160789",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445348.9343882,
+      "label": "S6.2",
+      "wall_seconds": 24.241636600003403,
+      "injected_fault": null,
+      "branch": "confirmed-display"
+    },
+    {
+      "id": "turn_6f9098aeec6e48dda7af6600c2a5f125",
+      "sid": "S6",
+      "message_key": "3",
+      "event_id": "event_704361e9eb7a41ecbbb4811880833dbd",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445378.362213,
+      "label": "S6.3",
+      "wall_seconds": 28.402821600000607,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_953fbc05bb07469696b0926a83c4db13",
+      "sid": "S6",
+      "message_key": "4",
+      "event_id": "event_d630c64a2d41482f8c97e264297d2fa1",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445410.66225,
+      "label": "S6.4",
+      "wall_seconds": 45.03200810000271,
+      "injected_fault": null,
+      "branch": "confirmed-display"
+    }
+  ],
+  "coverage_notes": [],
+  "browser": {
+    "text": "先看已知的7份和98元：要得到每份多少元，需要用总量除以份数，也就是先算 98÷7 这一步的数量关系。",
+    "rendered": [
+      {
+        "dispatch_id": "dispatch_80c765354569440db73d1d43825c92b8",
+        "epoch": 1,
+        "payload_hash": "57b9a58a96cb7836e6afe194887caf623fc4c1d6c5a31e3f55aef6e683357257",
+        "rendered": [
+          "B1"
+        ]
+      }
+    ]
+  },
+  "completed": "2026-10-08T07:44:18.740121+00:00",
+  "wall_seconds": 152.31379530000413
+}

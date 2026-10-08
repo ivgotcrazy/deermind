@@ -1,0 +1,19 @@
+{
+  "checks": [
+    {
+      "mode": "scripted",
+      "cmd_from_other_directory": true,
+      "background_survives_command_exit": true,
+      "reused_process": true,
+      "startup_api_calls": 0
+    },
+    {
+      "mode": "real",
+      "cmd_from_other_directory": true,
+      "background_survives_command_exit": true,
+      "reused_process": true,
+      "startup_api_calls": 0
+    }
+  ],
+  "services_left_running": false
+}

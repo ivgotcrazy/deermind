@@ -1,0 +1,26 @@
+{
+  "created": "2026-10-08T09:21:19.551725+00:00",
+  "status": "PASS",
+  "errors": [],
+  "markdown_links_checked": 302,
+  "formal_v1_designs_unchanged": 7,
+  "evidence_files_checked": {
+    "v1": 30,
+    "v2": 253
+  },
+  "frozen_v2_files_unchanged_during_execution": 77,
+  "record_hashes_checked": 1200,
+  "exact_references_checked": 4907,
+  "semantic_accuracy_not_implied": true,
+  "spike_history_verified": {
+    "ledger_entries_checked": 1466,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  },
+  "git_diff_check": "PASS",
+  "v2_archive_api_credential_scan": "PASS"
+}

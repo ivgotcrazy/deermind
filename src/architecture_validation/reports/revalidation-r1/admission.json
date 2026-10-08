@@ -1,0 +1,14 @@
+{
+  "created": "2026-10-08T05:42:42.215510+00:00",
+  "admitted": false,
+  "source": "Build Plan v0.3 section 7.1",
+  "complete_sessions_latest": 0,
+  "required_complete_sessions": 2,
+  "reason": "Latest development run completes 4/6 turns and 0/2 whole sessions; known semantic false acceptance remains. Two allowed development rounds used.",
+  "new_evidence": [
+    "Real hint followed by real Evidence/Belief/Policy on D2.1-D2.2",
+    "UNKNOWN to limited DIRECTIONAL update on D1.2-D1.3",
+    "Activity transitions actually occur, but explanations do not render."
+  ],
+  "next_action": "Close R1. No third development round or formal call without a new bounded decision."
+}

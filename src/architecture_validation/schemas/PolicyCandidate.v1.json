@@ -1,0 +1,71 @@
+{
+  "type": "object",
+  "properties": {
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "Execute",
+        "NoIntervention",
+        "Defer"
+      ]
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "Hint",
+        "Explanation",
+        "Control",
+        "None"
+      ]
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "block_id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "block_id",
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "transition": {
+      "type": "string",
+      "enum": [
+        "Teaching",
+        "None"
+      ]
+    },
+    "rationale": {
+      "type": "string"
+    },
+    "reevaluation_condition": {
+      "type": "string"
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "outcome",
+    "action_type",
+    "blocks",
+    "transition",
+    "rationale",
+    "reevaluation_condition",
+    "source_ids"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

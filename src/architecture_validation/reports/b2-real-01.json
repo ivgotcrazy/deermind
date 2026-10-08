@@ -1,0 +1,18 @@
+{
+  "created": "2026-10-08T03:54:46.475692+00:00",
+  "run_dir": "runs\\b2-real-01",
+  "turns": [
+    {
+      "id": "turn_e151557c430d4e36a01f5c412db10432",
+      "sid": "development",
+      "message_key": "1",
+      "event_id": "event_085043b7405b48c38c56df2fcd2b74a0",
+      "status": "FAILED",
+      "phase": "RECEIVED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "RequiredValidationNotPassed",
+      "created": 1791431675.387327
+    }
+  ]
+}

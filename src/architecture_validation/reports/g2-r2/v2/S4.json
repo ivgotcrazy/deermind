@@ -1,0 +1,87 @@
+{
+  "created": "2026-10-08T07:36:53.876756+00:00",
+  "id": "S4",
+  "status": "MEASURED",
+  "turns": [
+    {
+      "id": "turn_d326e73f941448a1866ee6457068e68c",
+      "sid": "S4",
+      "message_key": "1",
+      "event_id": "event_d7e5139749714113bb218e2922004b4e",
+      "status": "COMPLETED",
+      "phase": "INTENT_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445036.1374485,
+      "label": "S4.1",
+      "wall_seconds": 26.121550899995782,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_c929a9ff7efe4b958cf6a829d61f3e97",
+      "sid": "S4",
+      "message_key": "2",
+      "event_id": "event_2c473c5435534306a43279179262418c",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445066.0391176,
+      "label": "S4.2",
+      "wall_seconds": 25.504945200002112,
+      "injected_fault": null,
+      "branch": "confirmed-display"
+    },
+    {
+      "id": "turn_d2d755ffd5b54458bcf71df93915818f",
+      "sid": "S4",
+      "message_key": "3",
+      "event_id": "event_6f747d2478074472859a9ffd19917c8a",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445095.5489855,
+      "label": "S4.3",
+      "wall_seconds": 29.85560070000065,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_98ebb5944b47443d83bf961b1274aa10",
+      "sid": "S4",
+      "message_key": "4",
+      "event_id": "event_fa47fab119624957beb0f44b5d61f073",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791445129.1658068,
+      "label": "S4.4",
+      "wall_seconds": 40.4915531000006,
+      "injected_fault": null,
+      "branch": "base"
+    }
+  ],
+  "coverage_notes": [],
+  "browser": {
+    "text": "请检查第一步：78÷6 这一步的商是否正确。你写的 12 需要重新核对。",
+    "rendered": [
+      {
+        "dispatch_id": "dispatch_22ef277a92034ef59b95d2186e1f8c22",
+        "epoch": 1,
+        "payload_hash": "36540f2cc252ab6bc675a8a35d41e777232012101374cecfe6c8b62352aa9228",
+        "rendered": [
+          "B1"
+        ]
+      }
+    ]
+  },
+  "completed": "2026-10-08T07:39:33.326307+00:00",
+  "wall_seconds": 159.44955710000067
+}

@@ -1,0 +1,88 @@
+{
+  "created": "2026-10-08T07:31:25.378229+00:00",
+  "id": "S2",
+  "status": "MEASURED",
+  "turns": [
+    {
+      "id": "turn_ee851dbd0d0542b5b42e928bc5a1e61e",
+      "sid": "S2",
+      "message_key": "1",
+      "event_id": "event_a74fd38c8a7d414687d97d02caea493e",
+      "status": "COMPLETED",
+      "phase": "INTENT_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444717.6587381,
+      "label": "S2.1",
+      "wall_seconds": 26.137421500003256,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_447c3fecd7a14a3ca37152888b9e19d6",
+      "sid": "S2",
+      "message_key": "2",
+      "event_id": "event_e1e7f2e509a24309b9c5fc626adc6f5d",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444747.5153477,
+      "label": "S2.2",
+      "wall_seconds": 40.15354320000188,
+      "injected_fault": null,
+      "branch": "confirmed-display"
+    },
+    {
+      "id": "turn_d27f96df8666427cbd1750ab7b22fb7d",
+      "sid": "S2",
+      "message_key": "3",
+      "event_id": "event_4f1dea454aca4f7d847b7012e89c8ae1",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444792.8224802,
+      "label": "S2.3",
+      "wall_seconds": 29.364500800002133,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_a7dd572691c1443b86e84badb1e6327f",
+      "sid": "S2",
+      "message_key": "4",
+      "event_id": "event_f2911c2817ff4e0bba376616a2d2d0c3",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791444826.4315345,
+      "label": "S2.4",
+      "wall_seconds": 29.873965300001146,
+      "injected_fault": null,
+      "branch": "base"
+    }
+  ],
+  "coverage_notes": [],
+  "browser": {
+    "text": "请复查第一步：104÷8 的商与你写的 12 不符，这一步需要重新计算。\n第二步 12×13＝156 在取 12 为单位量的前提下乘法本身正确，但它依赖第一步的单位量，第一步修正后总价需随之重算。",
+    "rendered": [
+      {
+        "dispatch_id": "dispatch_4c9aa4479b5e4991ac5ac4dfbc80a08a",
+        "epoch": 1,
+        "payload_hash": "bbd64a48753739c79adb4ed1a515d9faaf366f4b2eb8b0a60fb803609e5cc98a",
+        "rendered": [
+          "B1",
+          "B2"
+        ]
+      }
+    ]
+  },
+  "completed": "2026-10-08T07:34:20.398091+00:00",
+  "wall_seconds": 175.01986269999907
+}

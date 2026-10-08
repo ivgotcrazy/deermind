@@ -1,0 +1,51 @@
+{
+  "created": "2026-10-08T06:51:07.225786+00:00",
+  "classification": "IMPLEMENTATION_DEFECT_RESOLVED",
+  "original_failure": "Model emitted conflicts: [] twice in each of three Belief items; strict response-content parser rejected identical duplicates.",
+  "change": "Only identical duplicate model JSON fields coalesce, using type-aware structural comparison and exact numeric spellings. Raw response and JSON Pointer audit retained. Conflicting values still reject. Provider envelope, schemas, semantic rules, owner and commit guards unchanged.",
+  "original_outputs_replayed": 2,
+  "targeted_offline_checks": 18,
+  "completed_turns": 2,
+  "planned_turns": 2,
+  "full_two_turn_sessions": 1,
+  "explanation_rendered": true,
+  "post_explanation_evaluation": "SUCCEEDED",
+  "post_explanation_policy": "NoIntervention",
+  "new_belief_revisions": [
+    "belief_6cbe933fc0454232a15f114ac78a74fc",
+    "belief_b8d3ef4d3346476696c9666615f90698",
+    "belief_ba920f41a3a740b6b23cc3f541595845"
+  ],
+  "live_normalizations": [
+    {
+      "attempt_id": "attempt_6349e750821c4334a858b8d96a1e4582",
+      "purpose": "Belief",
+      "repairs": [
+        {
+          "operation": "coalesce_identical_duplicate",
+          "path": "/items/0/conflicts"
+        },
+        {
+          "operation": "coalesce_identical_duplicate",
+          "path": "/items/1/conflicts"
+        },
+        {
+          "operation": "coalesce_identical_duplicate",
+          "path": "/items/2/conflicts"
+        }
+      ]
+    }
+  ],
+  "semantic_review_note": "One first-turn Evidence review rejected a scope explanation; existing single regeneration recovered. No prompts or semantic rules changed. Full execution does not certify general semantic correctness. Earlier P06 and block-level attribution defects remain historical semantic evidence; no probes rerun.",
+  "scope_note": "Targeted implementation regression using known development inputs; not a fresh holdout, no G2 acceptance claim. Original failed run preserved separately.",
+  "calls": 20,
+  "transport_failures": 0,
+  "input_tokens": 75545,
+  "output_tokens": 8255,
+  "conservative_cny": 0.21713000000000005,
+  "wall_seconds": 82.2828423999963,
+  "budget_active_seconds": 76.15354239999579,
+  "gate_G2": "HOLD",
+  "formal_campaign_started": false,
+  "full_offline_checks_passed": 62
+}

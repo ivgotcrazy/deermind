@@ -1,0 +1,21 @@
+{
+  "created": "2026-10-08T05:51:32.491833+00:00",
+  "status": "PASS",
+  "errors": [],
+  "checks": {
+    "baseline.zip": 60,
+    "r1-dev1-source.zip": 66,
+    "r1-dev2-source.zip": 66,
+    "evidence.zip": 322,
+    "delivery-source-v1.zip": 55,
+    "build-evidence-v1.zip": 347,
+    "initial_delivery_artifacts": 45,
+    "measured_source_files_unchanged": 63,
+    "formal_system_designs_unchanged": 7,
+    "document_links": 296,
+    "formal_stop_guard_without_API": true,
+    "credential_scan": "PASS"
+  },
+  "semantic_accuracy_not_implied": true,
+  "stage_result": "G2 HOLD; R1 formal not admitted"
+}

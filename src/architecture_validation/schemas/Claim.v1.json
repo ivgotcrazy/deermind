@@ -1,0 +1,90 @@
+{
+  "type": "object",
+  "properties": {
+    "claim_type": {
+      "type": "string",
+      "enum": [
+        "TaskProficiency",
+        "KC"
+      ]
+    },
+    "scope_ref": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "content_hash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "version",
+        "revision",
+        "content_hash"
+      ],
+      "additionalProperties": false
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "responsibility_boundary": {
+      "type": "object",
+      "properties": {
+        "learner_owned": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowed_support": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "learner_owned",
+        "allowed_support"
+      ],
+      "additionalProperties": false
+    },
+    "quality_requirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "disconfirmation_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "claim_type",
+    "scope_ref",
+    "conditions",
+    "responsibility_boundary",
+    "quality_requirements",
+    "disconfirmation_criteria"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

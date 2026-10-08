@@ -1,0 +1,23 @@
+{
+  "kind": "TaskInstance",
+  "id": "dev",
+  "version": "v1",
+  "body": {
+    "task_family_ref": {
+      "kind": "TaskFamily",
+      "id": "unit-rate",
+      "version": "v1",
+      "revision": 0,
+      "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d"
+    },
+    "statement": "6份练习本共42元，15份同样的练习本多少钱？请说明计算。",
+    "given_data": {
+      "quantity": 6,
+      "total": 42,
+      "target": 15
+    },
+    "applicable_conditions": [
+      "正比例；单价相同"
+    ]
+  }
+}

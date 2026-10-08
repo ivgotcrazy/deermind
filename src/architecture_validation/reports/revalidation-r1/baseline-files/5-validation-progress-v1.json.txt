@@ -1707,205 +1707,6 @@
       "source_path": "src/spike/reports/validation-progress-v1.json",
       "previous_sha256": "51ff4e9c232a3b97bb5c92ced03adb20c6011e4e0e498082ebb5e17fcdba47d2",
       "preserved_at": "src/spike/reports/source-baseline-build-completion-20261008/2-validation-progress-v1.json.txt"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.2.md",
-      "previous_sha256": "e67d6886284757e2a8481996782de13a3191b51b1642fb961ad2e2db54ff1199",
-      "preserved_at": "src/architecture_validation/reports/revalidation-r1/baseline-files/1-DeerMind_Architecture_Validation_Build_Plan_v0.2.md.txt"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.1.md",
-      "previous_sha256": "e27ed13d20778a480f35f69d329250c0750440bb2ac261450b196dced8ac3c22",
-      "preserved_at": "src/architecture_validation/reports/revalidation-r1/baseline-files/2-DeerMind_Architecture_Validation_Build_Validation_Report_v0.1.md.txt"
-    },
-    {
-      "source_path": "doc/system-design/README.md",
-      "previous_sha256": "75fdd17b9a3723b5fc603a1373f89e1710ea40008bfe4c9e65f27f91e01042e5",
-      "preserved_at": "src/architecture_validation/reports/revalidation-r1/baseline-files/3-README.md.txt"
-    },
-    {
-      "source_path": "src/architecture_validation/reports/progress.json",
-      "previous_sha256": "7849b85e4e2b3034d03d62f125515f89b06644aa6d3ab6283d236b83352653cf",
-      "preserved_at": "src/architecture_validation/reports/revalidation-r1/baseline-files/4-progress.json.txt"
-    },
-    {
-      "source_path": "src/spike/reports/validation-progress-v1.json",
-      "previous_sha256": "409650148593de2468c504abe2ea5bf02c4922a15cc2d2a79c6d46eb907f8841",
-      "preserved_at": "src/architecture_validation/reports/revalidation-r1/baseline-files/5-validation-progress-v1.json.txt"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.3.md",
-      "previous_sha256": "989c534e85cb551a3d5010b671546267e0840e0c61c1a8a2d63ce728bbefc9b4",
-      "preserved_at": "src/architecture_validation/reports/contract-boundary-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.3.md.txt",
-      "reason": "Preserve R1 closeout before authorized contract-boundary and manual launcher work"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.2.md",
-      "previous_sha256": "ff8911862fb1ffa15892af037ed26202f62fdf94900f270ba0eabe4dd6ad3efd",
-      "preserved_at": "src/architecture_validation/reports/contract-boundary-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.2.md.txt",
-      "reason": "Preserve R1 closeout before authorized contract-boundary and manual launcher work"
-    },
-    {
-      "source_path": "doc/system-design/README.md",
-      "previous_sha256": "e0572c58722eebd72d1f49d894a546fa15f6036d479638c38e742d8c416930b1",
-      "preserved_at": "src/architecture_validation/reports/contract-boundary-v1/baseline-files/doc__system-design__README.md.txt",
-      "reason": "Preserve R1 closeout before authorized contract-boundary and manual launcher work"
-    },
-    {
-      "source_path": "src/architecture_validation/reports/progress.json",
-      "previous_sha256": "1b85a0551473fbab72de29d412bbcd6b5fc9f65f5eb2098dab65b1b762a4d1f7",
-      "preserved_at": "src/architecture_validation/reports/contract-boundary-v1/baseline-files/src__architecture_validation__reports__progress.json.txt",
-      "reason": "Preserve R1 closeout before authorized contract-boundary and manual launcher work"
-    },
-    {
-      "source_path": "src/spike/reports/validation-progress-v1.json",
-      "previous_sha256": "75e0ece069a9ce7015cc45ae78429fc0271259aa2b48e44b8515911794ec73ae",
-      "preserved_at": "src/architecture_validation/reports/contract-boundary-v1/baseline-files/src__spike__reports__validation-progress-v1.json.txt",
-      "reason": "Preserve R1 closeout before authorized contract-boundary and manual launcher work"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
-      "previous_sha256": "ab3d36b6dd7872bd3ba05094f62e1f2d8492dce1cef92654f4b0cfc0d7b56bdc",
-      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
-      "reason": "User-directed immediate implementation repair; preserve pre-repair conclusions"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
-      "previous_sha256": "e9aabb7c8bbd880c794e6b4f1aeda4ba6388e1ddcfeba09d6411a2d74646f98f",
-      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
-      "reason": "User-directed immediate implementation repair; preserve pre-repair conclusions"
-    },
-    {
-      "source_path": "doc/system-design/README.md",
-      "previous_sha256": "6cdb871c3dd77d163111e0f88ea67b05570fb82ea0610e4942bb4fd116bf2686",
-      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/doc__system-design__README.md.txt",
-      "reason": "User-directed immediate implementation repair; preserve pre-repair conclusions"
-    },
-    {
-      "source_path": "src/architecture_validation/README.md",
-      "previous_sha256": "5764f756e509a0f1a43f10b80bb627301f748e5d466f4c5f69654c915ea20a57",
-      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/src__architecture_validation__README.md.txt",
-      "reason": "User-directed immediate implementation repair; preserve pre-repair conclusions"
-    },
-    {
-      "source_path": "src/architecture_validation/reports/progress.json",
-      "previous_sha256": "8b6335c0b1e9d5b58b7145a83abda6ce40c5a05dae62353968c3cd962be17b2c",
-      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/src__architecture_validation__reports__progress.json.txt",
-      "reason": "User-directed immediate implementation repair; preserve pre-repair conclusions"
-    },
-    {
-      "source_path": "src/spike/reports/validation-progress-v1.json",
-      "previous_sha256": "7ef1575cb4d164f8f79b58fa8f832088b6ec2fbac8d5ba1360b33b5c5174bbe8",
-      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/src__spike__reports__validation-progress-v1.json.txt",
-      "reason": "User-directed immediate implementation repair; preserve pre-repair conclusions"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
-      "previous_sha256": "be36f2283beafb5aa4ed29582e8f5d5fc760c22ea9d0479375ab7cf46f73a7d4",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
-      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
-      "previous_sha256": "4ca63ba6604f679405d6d63c98311e5fb1f78ac5406cbe6efd1a01990c244d95",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
-      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
-    },
-    {
-      "source_path": "doc/system-design/README.md",
-      "previous_sha256": "d938454cc5fbf21ac4b488c6cd989527a9f04d1cfb966736cca0761cc4f0b637",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/doc__system-design__README.md.txt",
-      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
-    },
-    {
-      "source_path": "src/architecture_validation/README.md",
-      "previous_sha256": "8b81716d83f935b938eb437dce33921c8ff66ffb6359173d305c974dd58b0e74",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/src__architecture_validation__README.md.txt",
-      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
-    },
-    {
-      "source_path": "src/architecture_validation/reports/progress.json",
-      "previous_sha256": "ec020dfbcda7ecdb87a8ccef79c308e168ec940d775be1848758bcafd08b9b95",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/src__architecture_validation__reports__progress.json.txt",
-      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
-    },
-    {
-      "source_path": "src/spike/reports/validation-progress-v1.json",
-      "previous_sha256": "e95c0cf7c2d95a1257841ccee3d2b4c16eea4cead3e7e960451186d694d51e51",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/src__spike__reports__validation-progress-v1.json.txt",
-      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
-      "previous_sha256": "ef05e1ff7a35722872058081b0a630cbfcd8ae2d445f5c89a82b9730b864d8de",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
-      "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
-      "previous_sha256": "04aea3bc5256d857463a9efa49373322bc6f7edf9f14435ec7cc55895164d90c",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
-      "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
-    },
-    {
-      "source_path": "doc/system-design/README.md",
-      "previous_sha256": "d938454cc5fbf21ac4b488c6cd989527a9f04d1cfb966736cca0761cc4f0b637",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/doc__system-design__README.md.txt",
-      "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
-    },
-    {
-      "source_path": "src/architecture_validation/README.md",
-      "previous_sha256": "8b81716d83f935b938eb437dce33921c8ff66ffb6359173d305c974dd58b0e74",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/src__architecture_validation__README.md.txt",
-      "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
-    },
-    {
-      "source_path": "src/architecture_validation/reports/progress.json",
-      "previous_sha256": "7acd765d978c83a8d50a80b65c982b49c9aed6dbfedc36092c7fb762d5baef35",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/src__architecture_validation__reports__progress.json.txt",
-      "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
-    },
-    {
-      "source_path": "src/spike/reports/validation-progress-v1.json",
-      "previous_sha256": "b9c30e0c2f09b3b7b2096e899ab1d8701a7d7b10fcd466d6a001a7d9eebf8c60",
-      "preserved_at": "src/architecture_validation/reports/g2-r2/before-closeout/src__spike__reports__validation-progress-v1.json.txt",
-      "reason": "Preserve R2-running documents before final G2 assessment and consolidated report"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
-      "previous_sha256": "e43b4a48a65c46de729070d47792fa488579259f37d5c2a03bb1cb1ae5ba11b1",
-      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
-      "reason": "Preserve R2 closeout before user-authorized targeted Evaluation repair R3"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
-      "previous_sha256": "82dd29f86532d037fe11a4eba41afc97d98d6aac92fd5c94c65eae5bece5d744",
-      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
-      "reason": "Preserve R2 closeout before user-authorized targeted Evaluation repair R3"
-    },
-    {
-      "source_path": "doc/system-design/README.md",
-      "previous_sha256": "46a755cf3e0442c83436c430fd486ebaf105d9ef9545c3f67b56af199cbe0939",
-      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/baseline-files/doc__system-design__README.md.txt",
-      "reason": "Preserve R2 closeout before user-authorized targeted Evaluation repair R3"
-    },
-    {
-      "source_path": "src/architecture_validation/README.md",
-      "previous_sha256": "04fd5badb8f5dfcb549ce7f9d0e7696dcb6490ad8804b3306ebe6cf16e657ec6",
-      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/baseline-files/src__architecture_validation__README.md.txt",
-      "reason": "Preserve R2 closeout before user-authorized targeted Evaluation repair R3"
-    },
-    {
-      "source_path": "src/architecture_validation/reports/progress.json",
-      "previous_sha256": "a442b4824e8ab48b64e0af3eab69bd8a57aec1406dbe8ecbd459ddc0227f82d3",
-      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/baseline-files/src__architecture_validation__reports__progress.json.txt",
-      "reason": "Preserve R2 closeout before user-authorized targeted Evaluation repair R3"
-    },
-    {
-      "source_path": "src/spike/reports/validation-progress-v1.json",
-      "previous_sha256": "d36cb889922b63aeade0a8ed89b40fe6b5089a88aae7444ec5c76196d46b7c3b",
-      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/baseline-files/src__spike__reports__validation-progress-v1.json.txt",
-      "reason": "Preserve R2 closeout before user-authorized targeted Evaluation repair R3"
     }
   ],
   "contract_revision_proposals": [
@@ -3824,7 +3625,7 @@
     "src/spike/reports/source-baseline-phase6-20261008/10-DeerMind_Development_Roadmap_v0.3.md.txt": "335148bd99457be0190ab88ecc6bc986a8919dd81d722a4ec649c97be374876a",
     "src/spike/reports/source-baseline-phase6-20261008/11-DeerMind_Architecture_Validation_Report_v0.1.md.txt": "d578e509889ce47725fb5b89b27e9b71ab7982516e6b99aef7ca4b90e5d47187",
     "src/spike/reports/source-baseline-phase6-20261008/12-README.md.txt": "49064472eb5d57101f7fc949b7f2322983c0f56fed3cd6485b7b8d3ec0157efc",
-    "doc/system-design/README.md": "e0572c58722eebd72d1f49d894a546fa15f6036d479638c38e742d8c416930b1",
+    "doc/system-design/README.md": "75fdd17b9a3723b5fc603a1373f89e1710ea40008bfe4c9e65f27f91e01042e5",
     "src/spike/reports/source-baseline-phase6-20261008/manifest.json": "66d3504ef9d095fa12cd78f93780f7cfa3c0d44da9b238d6267c33c91c721578",
     "doc/system-design/DeerMind_System_Design_Evidence_Review_v1.0.md": "fe0e2d063f1b4a26d0543bbfa797a8c058e1cd9bc0b542f5dc112f095debc748",
     "src/spike/reports/source-baseline-phase6-20261008/13-DeerMind_AI_Reasoning_Runtime_Design_v1.0.md.txt": "8d5d15f4a4cf6bf49f5d50de2d9a3bcf2996bc15b5ea08220387a3e1fbd060f4",
@@ -3892,15 +3693,7 @@
     "src/spike/reports/source-baseline-build-completion-20261008/1-README.md.txt": "05c71a42ba31d23a30d1a18ad689a651fd4fe5f559fdda2ad6b35da49a09304d",
     "src/spike/reports/source-baseline-build-completion-20261008/2-validation-progress-v1.json.txt": "51ff4e9c232a3b97bb5c92ced03adb20c6011e4e0e498082ebb5e17fcdba47d2",
     "src/spike/reports/source-baseline-build-completion-20261008/manifest.json": "3b14abc286e87c6f7a3e2a8f3953ed38f4fbd2aedd1f790a6e4caff033eb56ce",
-    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.1.md": "e27ed13d20778a480f35f69d329250c0750440bb2ac261450b196dced8ac3c22",
-    "src/architecture_validation/reports/revalidation-r1/baseline-files/1-DeerMind_Architecture_Validation_Build_Plan_v0.2.md.txt": "e67d6886284757e2a8481996782de13a3191b51b1642fb961ad2e2db54ff1199",
-    "src/architecture_validation/reports/revalidation-r1/baseline-files/2-DeerMind_Architecture_Validation_Build_Validation_Report_v0.1.md.txt": "e27ed13d20778a480f35f69d329250c0750440bb2ac261450b196dced8ac3c22",
-    "src/architecture_validation/reports/revalidation-r1/baseline-files/3-README.md.txt": "75fdd17b9a3723b5fc603a1373f89e1710ea40008bfe4c9e65f27f91e01042e5",
-    "src/architecture_validation/reports/revalidation-r1/baseline-files/4-progress.json.txt": "7849b85e4e2b3034d03d62f125515f89b06644aa6d3ab6283d236b83352653cf",
-    "src/architecture_validation/reports/revalidation-r1/baseline-files/5-validation-progress-v1.json.txt": "409650148593de2468c504abe2ea5bf02c4922a15cc2d2a79c6d46eb907f8841",
-    "src/architecture_validation/reports/revalidation-r1/baseline-files-manifest.json": "5f7d901804b6b143c9af057836431d98c143eb907554a1c9c366eabb1cdda54a",
-    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.2.md": "ff8911862fb1ffa15892af037ed26202f62fdf94900f270ba0eabe4dd6ad3efd",
-    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.3.md": "989c534e85cb551a3d5010b671546267e0840e0c61c1a8a2d63ce728bbefc9b4"
+    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.1.md": "e27ed13d20778a480f35f69d329250c0750440bb2ac261450b196dced8ac3c22"
   },
   "document_layout": {
     "directory": "doc/system-design/spike",
@@ -4335,7 +4128,22 @@
     "aborted_run": "src/spike/runs/single-task-v2-network-retry-v1",
     "local_tests_passed": 8
   },
-  "current_phase": "Development Phase 2 — targeted Evaluation repair R3; G2 HOLD",
+  "current_phase": {
+    "development_phase": "Phase 2 Architecture Validation Build - B1-B5 delivery complete; G2 HOLD",
+    "system_design_phase": "Phase 6 COMPLETE; System Design Baseline v1.0",
+    "spike_completion": "MET",
+    "gate_E": "PASS",
+    "gate_F": "PASS",
+    "architecture_validation_build_authorized": true,
+    "roadmaps": [
+      "doc/top/DeerMind_Development_Roadmap_v0.3.md",
+      "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md"
+    ],
+    "next_step": "Review a bounded Phase 2 repair plan; no new real batch or MVP Definition automatically started",
+    "project_gate_G1": "PASS",
+    "architecture_validation_build_implemented": true,
+    "project_gate_G2": "HOLD"
+  },
   "engineering_round_1": {
     "status": "ROUND_CLOSED_WITH_ACTIONABLE_FAILURES",
     "plan_document": "doc/system-design/spike/DeerMind_Single_Task_Engineering_Round_1_v0.1.md",
@@ -4478,10 +4286,12 @@
   "gate_status_scope": "Current formal Phase 6 decision; original OPEN gate snapshots preserved in historical source revisions.",
   "next_work_scope": "Completed Spike W1-W5 delivery record; current_phase and build_next_work describe current work.",
   "build_next_work": {
-    "status": "R2_CLOSED_G2_HOLD",
-    "next": "Bounded semantic repair for Evaluation missing-vs-counterevidence and cross-task assistance; no more R2 calls and no automatic MVP transition.",
-    "immediate_implementation_repair_authorized": true,
-    "no_automatic_G2_gate_override": true
+    "id": "G2_HOLD_REVIEW",
+    "status": "AWAITING_NEXT_STAGE_DECISION",
+    "task": "Review a bounded Phase 2 repair plan; no new real batch or MVP Definition automatically started",
+    "plan_document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.2.md",
+    "report_document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.1.md",
+    "automatic_llm_batch": false
   },
   "doc_latest_version_cleanup": {
     "record": "src/spike/reports/doc-latest-version-cleanup-20261008.json",
@@ -4522,7 +4332,7 @@
   "build_validation": {
     "status": "B2_B5_COMPLETE_G2_HOLD",
     "date": "2026-10-08",
-    "report_document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
+    "report_document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.1.md",
     "implementation": "src/architecture_validation/",
     "mechanism_paths_passed": 24,
     "planned_turns_executed": 24,
@@ -4533,79 +4343,6 @@
     "conservative_CNY": 2.0731319999999993,
     "gate_G2": "HOLD",
     "evidence_manifest": "src/architecture_validation/reports/build-evidence-manifest-v1.json",
-    "quality_review": "src/architecture_validation/reports/quality-review-v1.json",
-    "scope": "Historical initial B2-B5 result. Current R1 result is build_revalidation_r1."
-  },
-  "build_revalidation_r1": {
-    "status": "CLOSED_FORMAL_NOT_ADMITTED",
-    "gate_G2": "HOLD",
-    "development_rounds": 2,
-    "latest_completed_turns": 4,
-    "latest_planned_turns": 6,
-    "latest_complete_three_turn_sessions": 0,
-    "formal_campaign_started": false,
-    "http_response_records": 128,
-    "conservative_CNY": 1.258116,
-    "report_document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
-    "assessment": "src/architecture_validation/reports/revalidation-r1/assessment.json"
-  },
-  "build_contract_boundary_v1": {
-    "status": "CLOSED_G2_HOLD",
-    "plan": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
-    "report": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
-    "assessment": "src/architecture_validation/reports/contract-boundary-v1/assessment.json",
-    "manual_entry": "deermind.cmd",
-    "completed_turns": 1,
-    "planned_turns": 2,
-    "explanation_rendered": true,
-    "formal_campaign_started": false
-  },
-  "build_format_repair_v1": {
-    "status": "IMPLEMENTATION_DEFECT_RESOLVED",
-    "assessment": "src/architecture_validation/reports/format-repair-v1/assessment.json",
-    "completed_turns": 2,
-    "planned_turns": 2,
-    "offline_checks_passed": 62,
-    "gate_G2": "HOLD",
-    "formal_campaign_started": false
-  },
-  "build_g2_r2": {
-    "status": "CLOSED",
-    "gate_G2": "HOLD",
-    "planned_turns": 24,
-    "normal_completed_turns": 23,
-    "expected_fault_paths": 1,
-    "complete_scenario_paths": 6,
-    "content_usable_turns": 14,
-    "evaluation": {
-      "EVAL-01": "SATISFIED",
-      "EVAL-02": "NOT SATISFIED",
-      "EVAL-03": "SATISFIED",
-      "EVAL-04": "NOT SATISFIED"
-    },
-    "probes": {
-      "planned": 12,
-      "completed": 12,
-      "matched": 11,
-      "false_accepts": [
-        "RP06"
-      ],
-      "false_rejects": [],
-      "unresolved": [],
-      "format_failures": [],
-      "positive_denominator": 6,
-      "negative_denominator": 6
-    },
-    "offline_tests_passed": 75,
-    "assessment": "src/architecture_validation/reports/g2-r2/assessment.json",
-    "http_attempts": 234,
-    "conservative_cny": 3.543048000000002,
-    "all_transport_failures_recovered": true,
-    "no_further_R2_calls": true
-  },
-  "build_evaluation_repair_r3": {
-    "status": "RUNNING",
-    "plan": "Build Plan v0.4 section 7.5",
-    "assessment_pending": true
+    "quality_review": "src/architecture_validation/reports/quality-review-v1.json"
   }
 }

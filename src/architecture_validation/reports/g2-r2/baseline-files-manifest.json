@@ -1,0 +1,42 @@
+{
+  "created": "2026-10-08T07:19:25.309266+00:00",
+  "sources": {
+    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md": {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
+      "previous_sha256": "be36f2283beafb5aa4ed29582e8f5d5fc760c22ea9d0479375ab7cf46f73a7d4",
+      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
+      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
+    },
+    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md": {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
+      "previous_sha256": "4ca63ba6604f679405d6d63c98311e5fb1f78ac5406cbe6efd1a01990c244d95",
+      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
+      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
+    },
+    "doc/system-design/README.md": {
+      "source_path": "doc/system-design/README.md",
+      "previous_sha256": "d938454cc5fbf21ac4b488c6cd989527a9f04d1cfb966736cca0761cc4f0b637",
+      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/doc__system-design__README.md.txt",
+      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
+    },
+    "src/architecture_validation/README.md": {
+      "source_path": "src/architecture_validation/README.md",
+      "previous_sha256": "8b81716d83f935b938eb437dce33921c8ff66ffb6359173d305c974dd58b0e74",
+      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/src__architecture_validation__README.md.txt",
+      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
+    },
+    "src/architecture_validation/reports/progress.json": {
+      "source_path": "src/architecture_validation/reports/progress.json",
+      "previous_sha256": "ec020dfbcda7ecdb87a8ccef79c308e168ec940d775be1848758bcafd08b9b95",
+      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/src__architecture_validation__reports__progress.json.txt",
+      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
+    },
+    "src/spike/reports/validation-progress-v1.json": {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "e95c0cf7c2d95a1257841ccee3d2b4c16eea4cead3e7e960451186d694d51e51",
+      "preserved_at": "src/architecture_validation/reports/g2-r2/baseline-files/src__spike__reports__validation-progress-v1.json.txt",
+      "reason": "Preserve format-repair closeout before user-authorized complete G2 R2 coverage"
+    }
+  },
+  "code_baseline": "src/architecture_validation/reports/format-repair-v1/delivery-source.zip"
+}

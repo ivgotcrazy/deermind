@@ -1,0 +1,4 @@
+runs/
+*.sqlite*
+*.worker.lock
+*.control.json

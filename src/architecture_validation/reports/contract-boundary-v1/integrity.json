@@ -1,0 +1,27 @@
+{
+  "created": "2026-10-08T06:30:10.246906+00:00",
+  "status": "PASS",
+  "checks": {
+    "baseline.zip": 70,
+    "source.zip": 73,
+    "evidence.zip": 29,
+    "R1_artifacts_preserved": 36,
+    "v1_system_designs_unchanged": 7,
+    "record_hashes": 124,
+    "exact_references": 304,
+    "markdown_links": 307
+  },
+  "budget_attempt_ids_match": true,
+  "credential_scan": "PASS",
+  "R1_formal_admission_still_false": true,
+  "spike_history": {
+    "ledger_entries_checked": 1466,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  },
+  "notes": "Current README and documents updated after frozen run; measured runtime sources unchanged."
+}

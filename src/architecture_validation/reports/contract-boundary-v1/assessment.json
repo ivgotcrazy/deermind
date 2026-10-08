@@ -1,0 +1,102 @@
+{
+  "created": "2026-10-08T06:25:40.356559+00:00",
+  "kind": "bounded development check; not G2 acceptance",
+  "completed_turns": 1,
+  "planned_turns": 2,
+  "full_two_turn_sessions": 0,
+  "explanation_rendered": true,
+  "observation_activity_backend_bound": true,
+  "post_transition_policy": "Explanation",
+  "after_explanation_evidence_committed": true,
+  "after_explanation_belief_committed": false,
+  "post_explanation_policy_executed": false,
+  "structural_failure": {
+    "reason": "Duplicate conflicts key twice in each of three Belief items; identical empty arrays. Repeated on the single allowed regeneration. Strict parser rejects duplicate object keys before semantic review. Not truncation or a network failure.",
+    "attempts": [
+      {
+        "attempt_id": "attempt_89eadaa601cf4e85867a5739607ffd1b",
+        "finish_reason": "stop",
+        "duplicates": [
+          {
+            "key": "conflicts",
+            "equal": true
+          },
+          {
+            "key": "conflicts",
+            "equal": true
+          },
+          {
+            "key": "conflicts",
+            "equal": true
+          }
+        ]
+      },
+      {
+        "attempt_id": "attempt_8e6b0f949fe543b8978d4a6d4a6cf47e",
+        "finish_reason": "stop",
+        "duplicates": [
+          {
+            "key": "conflicts",
+            "equal": true
+          },
+          {
+            "key": "conflicts",
+            "equal": true
+          },
+          {
+            "key": "conflicts",
+            "equal": true
+          }
+        ]
+      }
+    ]
+  },
+  "semantic_quality": [
+    {
+      "scope": "turn1",
+      "finding": "Current calculation, limited claim-specific inference, Control and full Explanation consistent with request; explanation gives 7 and 105, actual three-block rendering confirmed."
+    },
+    {
+      "scope": "turn2 evidence",
+      "finding": "All three Claims retain non-independent scope after full explanation. However division assistance_relevance incorrectly calls B1 allowed location-only support although B1 explicitly gives quotient 7; it then attributes the excess to B3. This local attribution error passed review and remains a semantic defect.",
+      "record_id": "evidence_1caf651e3c2b47bd8a3744c66f80365d"
+    },
+    {
+      "scope": "P06",
+      "finding": "False acceptance persists: candidate denies location assistance while naming division to check. Probe never committed as live Decision."
+    }
+  ],
+  "probes": [
+    {
+      "id": "P01",
+      "matched": true,
+      "accepted": true
+    },
+    {
+      "id": "P05",
+      "matched": true,
+      "accepted": true
+    },
+    {
+      "id": "P06",
+      "matched": false,
+      "accepted": true
+    }
+  ],
+  "resources": {
+    "http_attempts": 23,
+    "transport_failures": 4,
+    "all_transport_recovered": true,
+    "confirmed_usage_input": 66724,
+    "confirmed_usage_output": 8349,
+    "usage_based_cny": 0.20024,
+    "conservative_cny_including_unconfirmed_transport_reservations": 0.4962520000000001,
+    "wall_seconds": 104.21647739999753,
+    "budget_active_seconds": 94.27686959999846,
+    "clock_scope": "Budget timer sums active adapter segments; wall time additionally includes server/browser startup, teardown and inter-stage bookkeeping."
+  },
+  "reviewer": "Implementation author/Codex; not an independent blinded assessment",
+  "gate_G2": "HOLD",
+  "formal_campaign_started": false,
+  "stop": "Predeclared two turns and three probes exhausted; no further repair run."
+}

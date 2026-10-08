@@ -1,0 +1,241 @@
+{
+  "source_archive": "reports/contract-boundary-v1/evidence.zip",
+  "cases": [
+    {
+      "attempt_id": "attempt_89eadaa601cf4e85867a5739607ffd1b",
+      "source_file": "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_89eadaa601cf4e85867a5739607ffd1b.json",
+      "source_sha256": "9b09a339c9aeb17a6825010615a83411cd4284a0489c9994b11ffa1c93bb1b35",
+      "content": "{\"items\":[{\"claim_id\":\"R023\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"在无已渲染帮助的条件下，学习者能独立识别正比例关系并选择“总量÷份数→单位量×目标数量”的策略，但本次计算执行出错（42÷6算成8，最终120元，正确105元），且未体现检查；R097 的正确算式与说明发生在 R095 已渲染完整过程（含商7与答案105）之后且自述参考讲解，不能作为独立完成证据；仅一次无帮助作答，只能作有限方向性判断，不足以认定稳定独立完成。\",\"uncertainty\":\"无帮助条件下的独立表现仅一次且计算错误；R097 受已渲染讲解影响，无法提供独立样本；迁移到其他数量与情境未知，不能断言稳定掌握或稳定不会。\",\"epistemic_status\":[\"有限方向性\",\"样本不足\",\"计算执行错误\",\"检查环节未体现\",\"后续表现受已渲染帮助影响\"],\"evidence_ids\":[\"R059\",\"R111\"],\"conflicts\":[],\"rationale\":\"R059 绑定 R023，区分“策略正确但计算出错”与“关系/策略理解错误”，更支持前者；R111 显示 R097 的正确结果紧随 R095 完整讲解（B1 给出商7、B3 给出答案105）且自述参考讲解，属 NonInformative，不能提升为独立完成证据。assistance 覆盖 COMPLETE 且 R095 已渲染，故 R097 不能归因于学习者独立表现；请求讲解只是请求意图。依据集合较旧 Belief 增加 R111 并明确帮助倒灌限制，故 REVISE。\",\"conflicts\":[]},{\"claim_id\":\"R027\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"学习者写出“42÷6”以总量除以份数求单位量，方向符合单位量关系；但未用数量意义说明为何这样除，且商算错（应为7），仅构成有限正向证据；R097 中“先求每份价格再乘15份”的说明紧随 R095 讲解且自述参考讲解，无法区分是自行说明还是复述系统解释，不足以认定已能独立说明单位量关系。\",\"uncertainty\":\"缺少独立的语言性数量意义说明，唯一一次无帮助计算错误；R097 的说明受已渲染讲解影响，不能作为独立说明样本；不能判定其已掌握或不会说明单位量关系。\",\"epistemic_status\":[\"有限正向\",\"缺少数量意义说明\",\"计算错误\",\"后续说明受已渲染帮助影响\"],\"evidence_ids\":[\"R060\",\"R112\"],\"conflicts\":[],\"rationale\":\"R060 对 R027 为 Supports，仅见算式形式而无数量意义说明，且商错误；R112 显示 R097 的说明与 R095 讲解高度重合且自述参考讲解，属 NonInformative，不能作为独立说明单位量关系的证据。无已渲染帮助时请求讲解不证明其已能说明。依据集合较旧 Belief 增加 R112 并明确复述与独立说明的区分，故 REVISE。\",\"conflicts\":[]},{\"claim_id\":\"R031\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"在无任何已渲染帮助的情况下，学习者自行计算42÷6得8（应为7），商错误且未体现检查；后续8×15＝120虽按其所写数值乘法正确，但基于错误单位量，最终答案不正确。R095 的 B1 已直接指出商应为7、B3 给出完整过程与答案，R097 的42÷6＝7是在该定位与答案已提供后写出，不能证明学习者自己重新计算并检查了商。当前材料对“自行求商并检查除法结果”提供反向的有限证据，单次错误不足以断言其不会。\",\"uncertainty\":\"仅一次无帮助错误、单一任务实例；R095 已超出“仅指出需检查除法”的允许支持范围并直接给出商，R097 无法作为独立重算与自查证据；不能据此判定稳定不会，也不能排除后续在允许提示下能自查。\",\"epistemic_status\":[\"反向有限证据\",\"单次错误\",\"检查未体现\",\"后续重算受已渲染帮助影响\"],\"evidence_ids\":[\"R061\",\"R113\"],\"conflicts\":[],\"rationale\":\"R061 对 R031 为 Contradicts，商错误且无检查表现；R113 显示 R095 的 B1 已直接给出商7、B3 给出完整过程，R097 的正确商发生在帮助之后，属 NonInformative，帮助倒灌不能使此前错误变为正确，也不能把获提示后的重算当作独立计算与自查。assistance 覆盖 COMPLETE 且 R095 已渲染，请求完整讲解与答案属请求而非已发生展示。依据集合较旧 Belief 增加 R113 并明确帮助倒灌限制，故 REVISE。\",\"conflicts\":[]}]}",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "claim_id": {
+                  "type": "string",
+                  "enum": [
+                    "R023",
+                    "R027",
+                    "R031"
+                  ]
+                },
+                "disposition": {
+                  "type": "string",
+                  "enum": [
+                    "REVISE",
+                    "UNCHANGED"
+                  ]
+                },
+                "assessment_kind": {
+                  "type": "string",
+                  "enum": [
+                    "UNKNOWN",
+                    "DIRECTIONAL"
+                  ]
+                },
+                "assessment": {
+                  "type": "string"
+                },
+                "uncertainty": {
+                  "type": "string"
+                },
+                "epistemic_status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "evidence_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "R059",
+                      "R060",
+                      "R061",
+                      "R111",
+                      "R112",
+                      "R113"
+                    ]
+                  },
+                  "uniqueItems": true
+                },
+                "conflicts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "evidence_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "R059",
+                            "R060",
+                            "R061",
+                            "R111",
+                            "R112",
+                            "R113"
+                          ]
+                        },
+                        "uniqueItems": true
+                      },
+                      "explanation": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "evidence_ids",
+                      "explanation"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "claim_id",
+                "disposition",
+                "assessment_kind",
+                "assessment",
+                "uncertainty",
+                "epistemic_status",
+                "evidence_ids",
+                "conflicts",
+                "rationale"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "attempt_id": "attempt_8e6b0f949fe543b8978d4a6d4a6cf47e",
+      "source_file": "src/architecture_validation/runs/contract-boundary-v1/model-calls/attempt_8e6b0f949fe543b8978d4a6d4a6cf47e.json",
+      "source_sha256": "af3d2553bda4f68f360ecccd7686013b812a6935406c0b94a083728a31e05618",
+      "content": "{\"items\":[{\"claim_id\":\"R023\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"在无已渲染帮助时，学习者能独立识别正比例关系并选择“总量÷份数→单位量×目标数量”的策略，但计算执行出错（42÷6算成8，最终120元，正确105元），且未体现检查；R095渲染讲解后R097写出正确算式并自述参考讲解，不能作为独立完成证据。仅一次独立作答，只能作有限方向性判断，不足以认定稳定独立完成。\",\"uncertainty\":\"独立样本仅一次且计算错误与检查缺失并存；R097受R095完整讲解影响，不能计入独立表现；迁移到其他数量与情境未知。\",\"epistemic_status\":[\"有限方向性\",\"独立样本不足\",\"计算执行错误\",\"检查环节未体现\",\"后续表现受已渲染帮助影响\"],\"evidence_ids\":[\"R059\",\"R111\"],\"conflicts\":[],\"rationale\":\"R059对R023为Discriminates，支持“策略正确但计算出错”而非关系/策略理解错误；R111为NonInformative，因R095已渲染完整过程并直接给出商7与答案105，R097不能作为独立完成证据。依据集合较旧Belief R069新增R111并明确其非独立性质，故REVISE。\",\"conflicts\":[]},{\"claim_id\":\"R027\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"学习者写出“42÷6”以总量除以份数求单位量，方向符合单位量关系；但未用数量意义说明为何这样除，且商算错（应为7），仅构成有限正向证据。R095渲染讲解后R097的说明与讲解高度重合且自述参考讲解，无法区分是独立说明还是复述系统解释，不足以认定已能独立说明单位量关系。\",\"uncertainty\":\"缺少语言性数量意义说明，唯一一次独立计算错误；R097的说明紧随R095完整讲解且自述参考，不能作为独立说明证据；不能判定其已掌握或不会说明单位量关系。\",\"epistemic_status\":[\"有限正向\",\"缺少数量意义说明\",\"计算错误\",\"后续说明受已渲染帮助影响\"],\"evidence_ids\":[\"R060\",\"R112\"],\"conflicts\":[],\"rationale\":\"R060对R027为Supports，仅见算式形式而无数量意义说明且商错误；R112为NonInformative，因R097的说明与R095讲解高度重合且自述参考讲解，无法区分独立说明与复述。依据集合较旧Belief R070新增R112并明确其非独立性质，故REVISE。\",\"conflicts\":[]},{\"claim_id\":\"R031\",\"disposition\":\"REVISE\",\"assessment_kind\":\"DIRECTIONAL\",\"assessment\":\"在无任何已渲染帮助的情况下，学习者自行计算42÷6得8（应为7），商错误且未体现检查；后续8×15＝120虽按其所写数值乘法正确，但基于错误单位量，最终答案不正确。R095的B1已直接指出商应为7、B3给出完整过程与答案，R097的42÷6＝7是在该定位与答案已提供后写出，不能证明学习者自己重新计算并检查了商。当前材料对“自行求商并检查除法结果”提供反向的有限证据，单次错误不足以断言其不会。\",\"uncertainty\":\"仅一次独立错误、单一任务实例；R095已超出“仅指出需检查除法”的允许支持范围并直接给出商，R097不能作为独立重算与自查证据；不能据此判定稳定不会，也不能排除后续在允许提示下能自查。\",\"epistemic_status\":[\"反向有限证据\",\"单次错误\",\"检查未体现\",\"后续重算受已渲染帮助影响\"],\"evidence_ids\":[\"R061\",\"R113\"],\"conflicts\":[],\"rationale\":\"R061对R031为Contradicts，商错误且无检查表现；R113为NonInformative，因R095已直接给出商7与完整过程，R097的正确商不能归为允许支持下的独立重算。依据集合较旧Belief R071新增R113并明确其非独立性质，故REVISE。\",\"conflicts\":[]}]}",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "claim_id": {
+                  "type": "string",
+                  "enum": [
+                    "R023",
+                    "R027",
+                    "R031"
+                  ]
+                },
+                "disposition": {
+                  "type": "string",
+                  "enum": [
+                    "REVISE",
+                    "UNCHANGED"
+                  ]
+                },
+                "assessment_kind": {
+                  "type": "string",
+                  "enum": [
+                    "UNKNOWN",
+                    "DIRECTIONAL"
+                  ]
+                },
+                "assessment": {
+                  "type": "string"
+                },
+                "uncertainty": {
+                  "type": "string"
+                },
+                "epistemic_status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "evidence_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "R059",
+                      "R060",
+                      "R061",
+                      "R111",
+                      "R112",
+                      "R113"
+                    ]
+                  },
+                  "uniqueItems": true
+                },
+                "conflicts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "evidence_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "R059",
+                            "R060",
+                            "R061",
+                            "R111",
+                            "R112",
+                            "R113"
+                          ]
+                        },
+                        "uniqueItems": true
+                      },
+                      "explanation": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "evidence_ids",
+                      "explanation"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "claim_id",
+                "disposition",
+                "assessment_kind",
+                "assessment",
+                "uncertainty",
+                "epistemic_status",
+                "evidence_ids",
+                "conflicts",
+                "rationale"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

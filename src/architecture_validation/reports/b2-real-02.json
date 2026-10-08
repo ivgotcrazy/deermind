@@ -1,0 +1,30 @@
+{
+  "created": "2026-10-08T03:59:07.196043+00:00",
+  "run_dir": "runs\\b2-real-02",
+  "turns": [
+    {
+      "id": "turn_0ded53c4dd494eadb684efed49e4b175",
+      "sid": "development",
+      "message_key": "1",
+      "event_id": "event_c8289a0d8db84257a6f8d6f49852cf6c",
+      "status": "COMPLETED",
+      "phase": "INTENT_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791431894.5923777
+    },
+    {
+      "id": "turn_94011357f5cd4154928eb26f811a34b4",
+      "sid": "development",
+      "message_key": "2",
+      "event_id": "event_7200a8c09d724350b5c3f02088ab085d",
+      "status": "FAILED",
+      "phase": "OBSERVATION_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "RequiredValidationNotPassed",
+      "created": 1791431918.3992457
+    }
+  ]
+}

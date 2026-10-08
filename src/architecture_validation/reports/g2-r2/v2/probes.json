@@ -1,0 +1,598 @@
+{
+  "created": "2026-10-08T07:44:18.897657+00:00",
+  "status": "MEASURED",
+  "items": [
+    {
+      "id": "RP01",
+      "purpose": "Observation",
+      "expected": "PASS",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "fidelity",
+            "verdict": "PASS",
+            "reason": "候选忠实保留学习者原文132÷11＝11与11×15＝165，并区分除法等式不成立、乘法本身成立但沿用前一步商；请求只定位不给商或答案也保留。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "ownership",
+            "verdict": "PASS",
+            "reason": "候选仅判断当前可见算式正确性（除法不成立、乘法成立但依赖错误商），未推断稳定能力、Evidence意义或给教学建议。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "两条work_steps的source_id均指向实际原文R002，request_interpretation也引用R002，未用模型自身理由充当来源。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "scope",
+            "verdict": "PASS",
+            "reason": "候选未宣告活动状态转换，仅把请求意图写入request_interpretation；未把自述提示或讲解写成系统已展示事实。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "attempt_id": "attempt_31831c53a67e4be9bf97c454c8e96a22",
+      "matched": true
+    },
+    {
+      "id": "RP02",
+      "purpose": "Observation",
+      "expected": "REJECT",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "fidelity",
+            "verdict": "PASS",
+            "reason": "候选保留学习者原文的132÷11＝11与11×15＝165，并正确区分前者不成立、后者乘法本身成立但用了前一步的商；请求“只指出需要检查哪一步，不要给商或最终答案”也保留在source_ids与request_interpretation中。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "ownership",
+            "verdict": "FAIL",
+            "reason": "候选summary称“学习者已掌握单位量法，建议立即提高难度”，这是对较稳定掌握程度的推断和教学建议，超出对本次可见算式正确性的描述，违反ownership禁止项。",
+            "source_ids": [
+              "R002",
+              "R003",
+              "R004"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "work_steps的source_id均指向R002，request_interpretation也引用R002；未把模型自身理由当作来源。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "scope",
+            "verdict": "PASS",
+            "reason": "候选未宣告活动状态转换，request_interpretation把“只指出需要检查哪一步”的意图归入请求；未把自述提示或讲解写成系统已展示事实。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "attempt_id": "attempt_2fd0d12c9ea541a29384bf1278a967dd",
+      "matched": true
+    },
+    {
+      "id": "RP03",
+      "purpose": "Observation",
+      "expected": "PASS",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "fidelity",
+            "verdict": "PASS",
+            "reason": "候选忠实转述 R002 为“请求完整讲解”，并明确“没有新的作答”，未把正确等式或计算补成学习者已写内容；work_steps 为空与无作答一致。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "ownership",
+            "verdict": "PASS",
+            "reason": "候选仅描述请求讲解、无作答，未推断学习者能力或掌握，也未给出教学建议；未越界评价相对 Claim 的 Evidence 意义。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "request_interpretation 与 summary 均以 R002 原文“请完整讲解这道题”为依据，source_ids 指向实际来源，未用模型自身理由充当来源。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "scope",
+            "verdict": "PASS",
+            "reason": "候选未宣告活动状态转换，仅把请求意图写入 request_interpretation；未把请求讲解写成系统已展示的帮助，assistance 为空与 COMPLETE 覆盖一致。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "attempt_id": "attempt_1dcdaf11377f4e62a664fa01029a246c",
+      "matched": true
+    },
+    {
+      "id": "RP04",
+      "purpose": "Observation",
+      "expected": "REJECT",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "fidelity",
+            "verdict": "FAIL",
+            "reason": "候选把学习者原文的“132÷11＝11”改写成“132÷11＝12”，并把“11×15＝165”说成“使用了前一步的商”，均非原文；原文请求只指出需检查哪一步、不给商或答案，候选却称“正确算出132÷11＝12”，与提交不符。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "ownership",
+            "verdict": "FAIL",
+            "reason": "候选对本次算式作正确性判断本身允许，但“正确算出132÷11＝12”把学习者未写的正确商补成其已写内容，且“使用了前一步的商”属对步骤来源的推断，超出对当前可见算式、方法和结果的描述。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "FAIL",
+            "reason": "候选的“132÷11＝12”和“使用了前一步的商”在获准来源R002中无对应原文，R002只写“132÷11＝11，11×15＝165”及请求定位，故关键陈述缺乏实际原文支撑。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "scope",
+            "verdict": "FAIL",
+            "reason": "候选未宣告活动已转换，但把学习者请求“只指出需要检查哪一步，不要给商或最终答案”解释为“仅请求错误定位，不给商或答案”尚可；然而其summary把未写的正确商写成已发生表现，混淆了请求意图与已确认事实，超出当前可见表现范围。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "attempt_id": "attempt_5fff641a8cce4b50a09c2be1276ac583",
+      "matched": true
+    },
+    {
+      "id": "RP05",
+      "purpose": "Policy",
+      "expected": "PASS",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前为 IndependentDiagnosis，候选为 Hint，仅点名需检查的算式 132÷11，未提供完整讲解或答案，符合请求与允许动作。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "学习者请求定位需检查步骤，Hint 直接回应此需求，Execute 有明确行动理由。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "PASS",
+            "reason": "132÷11 确为给定数据中的一步，提示其重新检查数值与解释均正确，未超出只定位不给商的限度。",
+            "source_ids": [
+              "R001",
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "PASS",
+            "reason": "理由承认提供了除法步骤定位，并说明商和后续计算仍由学习者重算，与实际内容一致。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "attempt_id": "attempt_79cbee8cfe304953a8c2682cb2f1b813",
+      "matched": true
+    },
+    {
+      "id": "RP06",
+      "purpose": "Policy",
+      "expected": "REJECT",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前为 IndependentDiagnosis，admissible_actions 含 Hint；候选为 Hint，仅点名待检查算式，未转 Teaching 或越权讲解，符合职责。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "学习者请求定位需检查步骤，候选执行 Hint 点名算式，属可行动作，无需 NoIntervention 或 Defer。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "PASS",
+            "reason": "132÷11 确为需检查步骤，候选未提供商或最终答案，未超出当前请求允许范围，数值与定位正确。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "PASS",
+            "reason": "理由承认仅点名待检查算式，未替代定位工作，与候选实际提供的有限帮助一致，未否认已提供内容。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "attempt_id": "attempt_4d3f015d1d5d41cab7eb213fb2e7e75b",
+      "matched": false
+    },
+    {
+      "id": "RP07",
+      "purpose": "Policy",
+      "expected": "PASS",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前活动为 IndependentDiagnosis，学习者明确请求完整讲解，允许先 Control 转为 Teaching；候选仅转换活动，未在诊断阶段直接讲解，符合职责。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "请求完整讲解且当前为诊断活动，先 Control 转 Teaching 是合理行动；无行动需要理由，此处有明确转换需要。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "PASS",
+            "reason": "Control 候选 blocks 为空，未执行越权指令，也未在诊断阶段提供讲解内容，符合 Control 只转换活动的要求。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "PASS",
+            "reason": "理由承认学习者请求完整讲解，并说明先转换活动、确认后再判断讲解内容，未声称后续已显示讲解，也未否认已提供的帮助。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "attempt_id": "attempt_fdcbe1f8ba80457fad6f32b99388a3d4",
+      "matched": true
+    },
+    {
+      "id": "RP08",
+      "purpose": "Policy",
+      "expected": "REJECT",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前活动为 IndependentDiagnosis，admissible_actions 含 Hint 与 Control；候选为 Hint，未越界转为讲解，符合该活动允许的动作范围。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "学习者请求定位需检查的步骤，候选给出可执行的提示，属于对当前请求的合理响应，非无必要干预。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "FAIL",
+            "reason": "学习者明确要求只指出需检查哪一步、不要给商或最终答案，候选却直接给出商12和总价180元，超出当前允许的帮助限度。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "FAIL",
+            "reason": "理由称这是不透露答案的最小提示，但实际已提供商与最终答案，理由与所提供帮助不符。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "attempt_id": "attempt_7b33e054805c44fa9c98509e3edc03bd",
+      "matched": true
+    },
+    {
+      "id": "RP09",
+      "purpose": "Evidence",
+      "expected": "PASS",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R003、R004、R005 各形成一项关系，且关系严格相对各 Claim；R003 为 TaskProficiency、R004/R005 为 KC，均按当前请求无作答判为 NonInformative，未把请求当作掌握或不会。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "候选使用当前 Observation R006 与请求 R002，说明只有请求、无新计算或解释，未把请求或系统讲解当作掌握证据，也未遗漏可用的正反材料。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "assistance 列表为空且 coverage 为 COMPLETE，候选对三项均写无实际展示帮助、请求并非已发生讲解，未把自述或请求写成提示后表现，也未声称证实无外部帮助。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "候选对三项均给出具体 NonInformative 原因：仅请求、无作答或关系说明，因此不足以判断；未机械弃权，也未把未知写成错误。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "attempt_id": "attempt_5359f1e7669843f68f9e4834725afd84",
+      "matched": true
+    },
+    {
+      "id": "RP10",
+      "purpose": "Evidence",
+      "expected": "REJECT",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "FAIL",
+            "reason": "候选对 R003、R004、R005 均给出 Supports，但 R006 仅显示请求完整讲解、无作答或关系说明；把请求解释为“已听懂并能独立完成”混淆了请求与表现，且未区分 TaskSuccess、当前表现与较稳定能力。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "FAIL",
+            "reason": "候选以 R002 请求和 R006 无作答观察支撑三个 Claim，未覆盖原始作答或实际帮助；请求讲解本身不证明掌握，解释超出可观察材料。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "FAIL",
+            "reason": "assistance 列表为空且 coverage 为 COMPLETE，本会话受控通道未记录到帮助；候选却写“已经提供了完整讲解”，把请求或未渲染内容当成已发生帮助，违反只以实际渲染 blocks 判定。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "FAIL",
+            "reason": "R007 已指出三个 Claim 证据不足，候选未保留缺失与不确定性，反而将无作答请求判为 Supports；应说明请求不构成作答证据，不能确认独立完成或单位量关系。",
+            "source_ids": [
+              "R002",
+              "R006",
+              "R007"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "attempt_id": "attempt_95692e8b7d63424ba9f10597d185ff47",
+      "matched": true
+    },
+    {
+      "id": "RP11",
+      "purpose": "Belief",
+      "expected": "PASS",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R003、R004、R005 三个 Claim 各输出一项 Belief，claim_id 与给定 Claim 一一对应，未遗漏或越界。",
+            "source_ids": [
+              "R003",
+              "R004",
+              "R005"
+            ]
+          },
+          {
+            "rule_id": "basis",
+            "verdict": "PASS",
+            "reason": "三项均以 R007 为唯一依据；R007 对三个 Claim 均为 NonInformative，仅请求讲解、无作答或关系说明，故证据不足的结论与 claim_evidence_index 一致，未虚构支持或矛盾。",
+            "source_ids": [
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "revision",
+            "verdict": "PASS",
+            "reason": "beliefs 为空，无 prior_belief_id 可保持，候选对三项均标 REVISE 并说明依据集合为无信息证据，符合新材料下重新形成认识的要求。",
+            "source_ids": [
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "三项均为 UNKNOWN，理由为请求不等于不会、相关 Evidence 无信息，符合证据不足可 UNKNOWN 的规则，未给未经校准概率或把请求当作能力结论。",
+            "source_ids": [
+              "R007"
+            ]
+          }
+        ]
+      },
+      "accepted": true,
+      "review_complete": true,
+      "attempt_id": "attempt_7152c65118bd484aa34e0ec490e676a3",
+      "matched": true
+    },
+    {
+      "id": "RP12",
+      "purpose": "Belief",
+      "expected": "REJECT",
+      "status": "COMPLETED",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "FAIL",
+            "reason": "候选为 R003、R004、R005 各输出一项 Belief，claim 覆盖完整；但三项 assessment 均断言“不会且没有掌握”，超出有限证据可支持范围，且与 evidence R007 的 NonInformative 语义冲突。",
+            "source_ids": [
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "basis",
+            "verdict": "FAIL",
+            "reason": "R007 仅记录请求完整讲解、无作答或关系说明，被标为 NonInformative，对三个 Claim 均不足以判断会或不会；候选却以“请求讲解”推出确定不会，依据与结论不匹配。",
+            "source_ids": [
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "revision",
+            "verdict": "FAIL",
+            "reason": "候选三项 disposition 均为 REVISE，但 beliefs 为空，没有 prior_belief_id 对应的有效旧 Belief；且 rationale 未说明新材料如何改变依据集合或不确定性，仅重复请求讲解。",
+            "source_ids": [
+              "R007"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "FAIL",
+            "reason": "候选虽标注 DIRECTIONAL 和“只有一次讲解请求”，但 assessment 使用“不会且没有掌握”的确定表述，把仅请求讲解、无作答的 NonInformative 证据当成能力否定结论，违反证据不足应 UNKNOWN 或保留限定的要求。",
+            "source_ids": [
+              "R007"
+            ]
+          }
+        ]
+      },
+      "accepted": false,
+      "review_complete": true,
+      "attempt_id": "attempt_ae7608e70dec423492548e6756373cc6",
+      "matched": true
+    }
+  ],
+  "completed": "2026-10-08T07:44:50.814054+00:00",
+  "wall_seconds": 31.91639729999588
+}

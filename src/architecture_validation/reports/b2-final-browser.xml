@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="12.590" timestamp="2026-10-08T12:27:30.711020+08:00" hostname="Star"><testcase classname="src.architecture_validation.tests.test_runtime" name="test_browser_actual_occurrence" time="12.228" /></testsuite></testsuites>

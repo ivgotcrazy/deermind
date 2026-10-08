@@ -1,0 +1,33 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>DeerMind Build</title>
+<style>body{font:17px/1.7 system-ui;max-width:760px;margin:50px auto;padding:0 24px;color:#20332e;background:#f6f8f5}h1{font-size:25px}article{white-space:pre-wrap;background:white;border:1px solid #d9e4dc;padding:18px;margin:14px 0;border-radius:10px}textarea{width:95%;min-height:90px;padding:10px;font:inherit}button{padding:10px 18px;margin:8px 8px 8px 0;background:#26624d;color:white;border:0;border-radius:6px}#status{color:#566c62}#task{font-weight:500}</style>
+<h1>DeerMind</h1><p id="mode"></p><p id="task">架构验证交互</p><div id="conversation"></div><p id="status" role="status">正在连接</p>
+<textarea id="input" placeholder="写下你的计算或请求"></textarea><br><button id="send">提交</button><button id="interrupt">中断当前处理</button>
+<script>
+const args=new URLSearchParams(location.hash.slice(1)),token=args.get('token'),sid=args.get('session'),task=args.get('task');
+let epoch=0,stopped=false,inflight=null;const acknowledgements=new Set();
+window.buildTest={maxBlocks:Infinity,dropAck:false,pauseDispatch:false,rendered:[]};
+async function api(path,method='GET',body){let r=await fetch(path,{method,headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});let x=await r.json();if(!r.ok)throw Error(x.error||x.detail);return x;}
+function show(text,kind){let a=document.createElement('article');a.textContent=text;a.dataset.kind=kind;document.querySelector('#conversation').append(a);return a;}
+async function confirm(d,rendered){let p=api('/channel/'+sid+'/ack','POST',{dispatch_id:d.dispatch_id,epoch:d.epoch,payload_hash:d.payload_hash,rendered});acknowledgements.add(p);try{await p;}finally{acknowledgements.delete(p);}}
+async function poll(){if(stopped)return;let captured=epoch;
+ try{let state=await api('/sessions/'+sid),last=state.turns.at(-1);document.querySelector('#status').textContent=state.session.isolated?'正在核对上次展示结果':state.session.active_turn?'正在处理':last?.status==='FAILED'?'上一轮未完成：'+last.error+'。可以修改输入后重试。':last?.status==='COMPLETED'?'本轮处理完成，可以继续输入。':'可以继续输入';
+  if(window.buildTest.pauseDispatch)return;
+  let d=await api('/channel/'+sid+'/dispatch','POST',{epoch:captured});if(!d||d.control_completed||stopped||captured!==epoch)return;
+  let key='deermind:'+sid+':'+d.dispatch_id,prior=localStorage.getItem(key);
+  if(prior){let saved=JSON.parse(prior);if(saved.payload_hash!==d.payload_hash)throw Error('PayloadMismatch');if(saved.state==='confirmed')await confirm(d,saved.rendered);return;}
+  localStorage.setItem(key,JSON.stringify({state:'uncertain',payload_hash:d.payload_hash,rendered:[]}));
+  let rendered=[];
+  for(let block of d.payload.blocks.slice(0,window.buildTest.maxBlocks)){if(stopped||captured!==epoch)break;let node=show(block.text,'assistant');node.dataset.block=block.block_id;rendered.push(block.block_id);}
+  await new Promise(requestAnimationFrame);await new Promise(requestAnimationFrame);
+  if(stopped||captured!==epoch)return;
+  localStorage.setItem(key,JSON.stringify({state:'confirmed',payload_hash:d.payload_hash,rendered}));
+  window.buildTest.rendered.push({dispatch_id:d.dispatch_id,epoch:d.epoch,payload_hash:d.payload_hash,rendered});
+  if(!window.buildTest.dropAck)await confirm(d,rendered);
+ }catch(e){document.querySelector('#status').textContent='处理暂不可用：'+e.message;}}
+window.stopChannel=async()=>{stopped=true;if(inflight)await inflight;await Promise.allSettled([...acknowledgements]);
+ for(let d of window.buildTest.rendered){try{await confirm(d,d.rendered);}catch(e){}}
+ let result=await api('/channel/'+sid+'/stop','POST',{epoch});epoch=result.epoch;stopped=false;return epoch;};
+document.querySelector('#send').onclick=async()=>{let text=document.querySelector('#input').value;if(!text)return;const button=document.querySelector('#send');button.disabled=true;try{await api('/sessions/'+sid+'/inputs','POST',{key:crypto.randomUUID(),text,task_id:task});show(text,'learner');document.querySelector('#input').value='';}catch(e){document.querySelector('#status').textContent='提交未成功：'+e.message;}finally{button.disabled=false;}};
+document.querySelector('#interrupt').onclick=async()=>{await api('/sessions/'+sid+'/interrupt','POST');await window.stopChannel();};
+(async()=>{try{if(!token||!sid||!task){document.querySelector('#send').disabled=true;throw Error('请通过 deermind.cmd start 打开已配置的测试页面。');}let health=await api('/health');document.querySelector('#mode').textContent=health.model_mode==='real'?'真实模型 · 提交输入后调用模型':'离线演示 · 使用固定响应';let s=await api('/sessions','POST',{id:sid});epoch=s.epoch;let problem=await api('/tasks/'+encodeURIComponent(task));document.querySelector('#task').textContent=problem.statement;let history=await api('/sessions/'+sid+'/history');for(let item of history.items)show(item.text,item.kind);window.channelEpoch=()=>epoch;setInterval(()=>{if(!inflight){inflight=poll().finally(()=>inflight=null);}},100);}catch(e){document.querySelector('#status').textContent=e.message;}})();
+</script></html>

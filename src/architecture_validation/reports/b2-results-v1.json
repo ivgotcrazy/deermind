@@ -1,0 +1,18 @@
+{
+  "created": "2026-10-08T04:10:05.766745+00:00",
+  "status": "COMPLETE_WITH_DISCLOSED_DEVELOPMENT_FAILURES",
+  "HTTP_attempts": 40,
+  "real_full_first_turns": 2,
+  "real_multi_turn_followup_status": "Development followup failures retained: semantic review, claim identity, review identity. Exact supplied aliases resolved by deterministic code and offline tests; no budget extension.",
+  "formal_schema_count": 17,
+  "core_tests": [
+    "b2-contract-final.xml",
+    "b2-final-check.xml"
+  ],
+  "source_history": [
+    "preflight-freeze-v1.json",
+    "preflight-freeze-v2.json",
+    "preflight-freeze-v3.json",
+    "preflight-freeze-v4.json"
+  ]
+}

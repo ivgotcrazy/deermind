@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "work_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "mathematical_assessment": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "statement",
+          "mathematical_assessment"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "request_interpretation": {
+      "type": "string"
+    },
+    "current_purpose": {
+      "type": "string",
+      "enum": [
+        "IndependentDiagnosis",
+        "Teaching"
+      ]
+    },
+    "uncertainties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "summary",
+    "work_steps",
+    "request_interpretation",
+    "current_purpose",
+    "uncertainties",
+    "source_ids"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

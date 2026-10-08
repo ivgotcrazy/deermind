@@ -1,0 +1,30 @@
+{
+  "created": "2026-10-08T06:46:53.022035+00:00",
+  "sources": {
+    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md": {
+      "previous_sha256": "ab3d36b6dd7872bd3ba05094f62e1f2d8492dce1cef92654f4b0cfc0d7b56bdc",
+      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt"
+    },
+    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md": {
+      "previous_sha256": "e9aabb7c8bbd880c794e6b4f1aeda4ba6388e1ddcfeba09d6411a2d74646f98f",
+      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt"
+    },
+    "doc/system-design/README.md": {
+      "previous_sha256": "6cdb871c3dd77d163111e0f88ea67b05570fb82ea0610e4942bb4fd116bf2686",
+      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/doc__system-design__README.md.txt"
+    },
+    "src/architecture_validation/README.md": {
+      "previous_sha256": "5764f756e509a0f1a43f10b80bb627301f748e5d466f4c5f69654c915ea20a57",
+      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/src__architecture_validation__README.md.txt"
+    },
+    "src/architecture_validation/reports/progress.json": {
+      "previous_sha256": "8b6335c0b1e9d5b58b7145a83abda6ce40c5a05dae62353968c3cd962be17b2c",
+      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/src__architecture_validation__reports__progress.json.txt"
+    },
+    "src/spike/reports/validation-progress-v1.json": {
+      "previous_sha256": "7ef1575cb4d164f8f79b58fa8f832088b6ec2fbac8d5ba1360b33b5c5174bbe8",
+      "preserved_at": "src/architecture_validation/reports/format-repair-v1/baseline-files/src__spike__reports__validation-progress-v1.json.txt"
+    }
+  },
+  "code_baseline": "src/architecture_validation/reports/contract-boundary-v1/delivery-source.zip"
+}

@@ -1,0 +1,350 @@
+{
+  "created": "2026-10-08T04:32:01.674742+00:00",
+  "g2": "HOLD",
+  "versions": {
+    "v1": {
+      "planned_executed_turns": 20,
+      "completed_normal_turns": 5,
+      "content_usable_turns": 5,
+      "full_four_turn_sessions": 0
+    },
+    "v2": {
+      "planned_executed_turns": 4,
+      "completed_normal_turns": 1,
+      "content_usable_turns": 1,
+      "full_four_turn_sessions": 0
+    }
+  },
+  "descriptive_only_all_versions": {
+    "turns_executed": 24,
+    "completed_normal_turns": 6,
+    "content_usable_turns": 6,
+    "full_four_turn_sessions": 0,
+    "failures": {
+      "RequiredValidationNotPassed": 5,
+      "COMPLETED": 6,
+      "UnknownOrWrongSource": 8,
+      "InjectedEvaluationFailure": 1,
+      "CallBudgetExhausted": 1,
+      "ClaimCoverageMismatch": 2,
+      "ImplementationError:PermissionError": 1
+    }
+  },
+  "probes": {
+    "positive_pass": 4,
+    "positive_planned": 6,
+    "negative_rejected": 5,
+    "negative_planned": 6,
+    "false_accepts": [
+      "P06"
+    ],
+    "false_rejects": [
+      "P01",
+      "P07"
+    ]
+  },
+  "budget": {
+    "counts": {
+      "B2": 40,
+      "base": 120,
+      "repair": 24,
+      "probe": 12,
+      "transport": 0
+    },
+    "total_attempts": 196,
+    "input_tokens": 594090,
+    "output_tokens": 110619,
+    "estimated_cny": 2.0731319999999993,
+    "active_b4_seconds": 627.1541962000047
+  },
+  "captured_http_response_records": 195,
+  "missing_attempt_records": {
+    "attempt_9e27486365f8444abe6ff70cd32f952b": {
+      "logical_id": "logical_97d2e55ec5f94b1596c0e96e714112a3",
+      "input": 3281,
+      "output": 8192,
+      "cost": 0.072098,
+      "status": "RESERVED"
+    }
+  },
+  "captured_input_tokens": 590809,
+  "captured_output_tokens": 102427,
+  "captured_conservative_CNY": 2.001034,
+  "confirmed_transport_failures": 0,
+  "B4_active_seconds": 627.7395284000013,
+  "latency_seconds": {
+    "planned_turn_wall": {
+      "n": 24,
+      "mean": 21.174245612500272,
+      "median": 22.83475764999821,
+      "p95_nearest_rank": 30.27943189999496,
+      "max": 31.23325979999936
+    },
+    "HTTP_all_phases": {
+      "n": 195,
+      "mean": 2.817981486666712,
+      "median": 2.420812600001227,
+      "p95_nearest_rank": 5.0254450000065845,
+      "max": 6.112231200000679
+    },
+    "queue_and_first_context": {
+      "n": 24,
+      "mean": 0.03581915299097697,
+      "median": 0.03263044357299805,
+      "p95_nearest_rank": 0.06388711929321289,
+      "max": 0.06723141670227051
+    },
+    "display_dispatch_to_client_ack": {
+      "n": 2,
+      "mean": 0.032826,
+      "median": 0.032826,
+      "p95_nearest_rank": 0.038056,
+      "max": 0.038056
+    },
+    "context_seconds": {
+      "n": 48,
+      "mean": 0.00896020208392656,
+      "median": 0.007164850001572631,
+      "p95_nearest_rank": 0.01758279999921797,
+      "max": 0.030655500006105285
+    },
+    "generation_seconds": {
+      "n": 48,
+      "mean": 2.8776916020830563,
+      "median": 2.8124841999997443,
+      "p95_nearest_rank": 4.803474399996048,
+      "max": 5.407308699999703
+    },
+    "review_seconds": {
+      "n": 48,
+      "mean": 2.3143915645831235,
+      "median": 2.288565849994484,
+      "p95_nearest_rank": 2.8428627000030247,
+      "max": 2.991666500005522
+    },
+    "commit_seconds": {
+      "n": 48,
+      "mean": 0.00830733333320192,
+      "median": 0.007525050001277123,
+      "p95_nearest_rank": 0.01404029999685008,
+      "max": 0.02623650000168709
+    }
+  },
+  "model_response_ids": [
+    "deepseek-flash"
+  ],
+  "input_admission_max": 14884,
+  "token_margin_overruns": [],
+  "record_counts": {
+    "ChangeProposal": 28,
+    "GovernanceDecision": 28,
+    "TaskFamily": 2,
+    "ActivationRecord": 28,
+    "KC": 6,
+    "SolutionStrategy": 2,
+    "Claim": 6,
+    "EvidenceSemantics": 2,
+    "InferenceSemantics": 2,
+    "TaskInstance": 8,
+    "Event": 24,
+    "Context": 82,
+    "ReasoningExecution": 143,
+    "Candidate": 64,
+    "Validation": 63,
+    "AttemptFailure": 33,
+    "Observation": 22,
+    "CommitRecord": 48,
+    "StageTiming": 48,
+    "EvaluationCompletion": 22,
+    "RuntimeFailure": 18,
+    "TurnTiming": 24,
+    "Evidence": 42,
+    "Belief": 18,
+    "Decision": 6,
+    "ActionIntent": 2,
+    "DispatchRecord": 2,
+    "ActionOccurrence": 2,
+    "ReasoningExecutionFailure": 2,
+    "RecoveryOmitted": 2
+  },
+  "record_sizes": [
+    {
+      "unit": "S1.1",
+      "records": 24,
+      "serialized_record_bytes": 108269
+    },
+    {
+      "unit": "S1.2",
+      "records": 39,
+      "serialized_record_bytes": 228640
+    },
+    {
+      "unit": "S1.3",
+      "records": 28,
+      "serialized_record_bytes": 232126
+    },
+    {
+      "unit": "S1.4",
+      "records": 31,
+      "serialized_record_bytes": 265213
+    },
+    {
+      "unit": "S2.1",
+      "records": 48,
+      "serialized_record_bytes": 271131
+    },
+    {
+      "unit": "S2.2",
+      "records": 28,
+      "serialized_record_bytes": 234089
+    },
+    {
+      "unit": "S2.3",
+      "records": 28,
+      "serialized_record_bytes": 279544
+    },
+    {
+      "unit": "S2.4",
+      "records": 28,
+      "serialized_record_bytes": 325894
+    },
+    {
+      "unit": "S3.1",
+      "records": 39,
+      "serialized_record_bytes": 218306
+    },
+    {
+      "unit": "S3.2",
+      "records": 15,
+      "serialized_record_bytes": 64329
+    },
+    {
+      "unit": "S3.3",
+      "records": 31,
+      "serialized_record_bytes": 207880
+    },
+    {
+      "unit": "S3.4",
+      "records": 28,
+      "serialized_record_bytes": 262393
+    },
+    {
+      "unit": "S4.1",
+      "records": 24,
+      "serialized_record_bytes": 138507
+    },
+    {
+      "unit": "S4.2",
+      "records": 45,
+      "serialized_record_bytes": 301144
+    },
+    {
+      "unit": "S4.3",
+      "records": 28,
+      "serialized_record_bytes": 242694
+    },
+    {
+      "unit": "S4.4",
+      "records": 24,
+      "serialized_record_bytes": 167278
+    },
+    {
+      "unit": "S5.1",
+      "records": 39,
+      "serialized_record_bytes": 204268
+    },
+    {
+      "unit": "S5.2",
+      "records": 15,
+      "serialized_record_bytes": 44863
+    },
+    {
+      "unit": "S5.3",
+      "records": 24,
+      "serialized_record_bytes": 134597
+    },
+    {
+      "unit": "S5.4",
+      "records": 21,
+      "serialized_record_bytes": 119719
+    },
+    {
+      "unit": "S6.1",
+      "records": 42,
+      "serialized_record_bytes": 201627
+    },
+    {
+      "unit": "S6.2",
+      "records": 16,
+      "serialized_record_bytes": 66601
+    },
+    {
+      "unit": "S6.3",
+      "records": 6,
+      "serialized_record_bytes": 22474
+    },
+    {
+      "unit": "S6.4",
+      "records": 16,
+      "serialized_record_bytes": 82672
+    }
+  ],
+  "databases": {
+    "b4-primary-v1": {
+      "sqlite_bytes": 4812800,
+      "wal_bytes": 4202432
+    },
+    "b4-continuation-v2": {
+      "sqlite_bytes": 4096,
+      "wal_bytes": 3901672
+    }
+  },
+  "actual_display_occurrences": 2,
+  "actual_partial_occurrences": 0,
+  "actual_activity_transitions": 0,
+  "belief_revisions": {
+    "1": 18
+  },
+  "fanout": [
+    {
+      "boundary": "synthetic dependency graph; real owner recomputation separately M11_A",
+      "measurements": [
+        {
+          "depth": 4,
+          "fixed_graph_rebuild_ms": 5.031699998653494,
+          "invalidation_ms": 3.0005000007804483,
+          "nodes": 10
+        },
+        {
+          "depth": 7,
+          "fixed_graph_rebuild_ms": 49.087799998233095,
+          "invalidation_ms": 6.691800001135562,
+          "nodes": 100
+        },
+        {
+          "depth": 10,
+          "fixed_graph_rebuild_ms": 627.4673000007169,
+          "invalidation_ms": 52.15989999851445,
+          "nodes": 1000
+        }
+      ]
+    }
+  ],
+  "recovery_intervals": [
+    {
+      "source": "runs/b3-attempt-01/test_M10_B0/late-ack/records.json",
+      "last_durable_record_to_recovery_seconds": 3.539355,
+      "unknown_effect": true
+    },
+    {
+      "source": "runs/b3-attempt-01/test_M09_B0/crash-intent/records.json",
+      "last_durable_record_to_recovery_seconds": 3.151947,
+      "unknown_effect": false
+    },
+    {
+      "source": "runs/b3-attempt-01/test_M09_A0/crash-candidate/records.json",
+      "last_durable_record_to_recovery_seconds": 5.303376,
+      "unknown_effect": false
+    }
+  ]
+}
