@@ -1,0 +1,27 @@
+{
+  "verified_at": "2026-10-08T10:11:36.878897+00:00",
+  "model": "deepseek-flash",
+  "documented_version": "DeepSeek-V4.1-Flash",
+  "currency": "CNY",
+  "input_cache_miss_per_million": 2,
+  "output_per_million": 8,
+  "accounting": "Conservative peak and cache-miss rates; no discount assumed. Provider bill may be lower. Usage includes thinking output.",
+  "thinking": "enabled with reasoning_effort=high; temperature omitted because unsupported",
+  "sources": {
+    "thinking": {
+      "url": "https://api-docs.deepseek.com/guides/thinking_mode",
+      "path": "reports/reasoning-comparison-r4/provider-docs/thinking.html",
+      "sha256": "35350389e59872d3733f7b7f99f5485c6cbc95f1bc2a71a47ba3ecf30bd7a060"
+    },
+    "pricing": {
+      "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing",
+      "path": "reports/reasoning-comparison-r4/provider-docs/pricing.html",
+      "sha256": "5a7b1832592387340f2fc456399b34b89b05f3fa167c2e35909e2fa4afe021e3"
+    },
+    "chat-completion": {
+      "url": "https://api-docs.deepseek.com/api/create-chat-completion",
+      "path": "reports/reasoning-comparison-r4/provider-docs/chat-completion.html",
+      "sha256": "e7133a7c2a7c2662567cca2e2392b503f97c2fb583009ff85f878744e0a36ba7"
+    }
+  }
+}

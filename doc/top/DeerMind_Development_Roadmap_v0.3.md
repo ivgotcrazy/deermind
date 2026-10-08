@@ -503,11 +503,11 @@ Production Readiness Failure
 
 ### 8.2 当前项目位置
 
-Phase 0 Architecture Baseline 保持原冻结版本。2026-10-08 System Design 内部 Phase 6 完成证据处置与一致性评审，Gate E/F 通过，项目 G1 满足。当前进入 **Development Phase 2 — Architecture Validation Build 的设计准备**，尚无该 Build 的实现完成或 G2 通过结论。
+Phase 0 Architecture Baseline 保持原冻结版本。System Design 内部 Phase 6及项目G1已完成。2026-10-08 Architecture Validation Build完成退出评审，**项目G2 PASS，限定准入Development Phase 3 MVP Definition**。该新决定采用用户确认的能力分期：真实机制组合与最低纠错路径已有证据，语义质量和完整维护能力仍待后续工程验收。原R2的14/24、EVAL-02/04未满足及原条件HOLD，R3/R4失败全部保留；不是把原实验改为通过。依据与限制见[Build Validation Report §9](../system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。
 
-现行系统设计为总体及六项专项 v1.0。A2 原否定、E1/X5 原未决和旧 9/17 保留；本次准入依据撤回错误保证、明确能力分期和完整合同，详见[Phase 6 证据评审](../system-design/DeerMind_System_Design_Evidence_Review_v1.0.md)。该文件同时给出下一阶段工作和停止条件；[统一 Spike Validation Report](../system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md)继续保存原实验结果。
+现行系统设计为总体及六项专项 v1.0。A2 原否定、E1/X5 原未决和旧 9/17 保留；当时G1准入依据撤回错误保证、明确能力分期和完整合同，详见[Phase 6 证据评审](../system-design/DeerMind_System_Design_Evidence_Review_v1.0.md)。该文件同时给出下一阶段工作和停止条件；[统一 Spike Validation Report](../system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md)继续保存原实验结果。
 
-下一步先形成 Build 的组件与验证方案，再实现并验证真实窄范围闭环。不能把 Spike 的脚本 Evaluation、内存状态或 mock 展示当作 Build 已完成。两级路线图的阶段顺序和 Gate 条文保持不变。
+下一步形成MVP Definition，明确目标用户、核心场景、价值假设、产品与人工责任边界及最低成功指标。之后依次进入Product & Domain Foundation、MVP Engineering和Internal Alpha；本次不准入真实儿童Pilot。Build的R5准确率优化方案未启动，转为后续候选工程输入；缺失/反证、帮助归因、审查质量、完整纠错及成本分别按报告STG-01–04负责和验收。没有承诺后续一定解决；若拟定价值依赖未经支持的能力，须保留待验证假设和重开条件。两级路线图的顺序、核心责任及后续质量Gate不变。
 
 ### 8.3 当前明确不提前冻结的事项
 

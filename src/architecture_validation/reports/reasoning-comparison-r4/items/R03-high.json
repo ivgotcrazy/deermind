@@ -1,0 +1,85 @@
+{
+  "created": "2026-10-08T10:16:58.652149+00:00",
+  "case": "R03",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Belief",
+  "expected": "FAIL",
+  "input_sha256": "63e24c7134bcbbda389bfc465215cb6558e583f06561d741926e79da2903ab88",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_345727df583a4d688bb65c66cbc45d32",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 各输出一项 Belief，均给出有限方向性评估，未把 Evidence 关系直接当作稳定能力结论，也未越过当前用途。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R059",
+              "R060",
+              "R061",
+              "R098",
+              "R099",
+              "R100"
+            ]
+          },
+          {
+            "rule_id": "basis",
+            "verdict": "PASS",
+            "reason": "按 claim_evidence_index 逐项采用了对应全部证据：R023 依据 R059/R098，R027 依据 R060/R099，R031 依据 R061/R100；并正确解释 R060/R061 等反向证据，且把 R099 的 NonInformative 与反向证据区分。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R059",
+              "R060",
+              "R061",
+              "R098",
+              "R099",
+              "R100",
+              "R039"
+            ]
+          },
+          {
+            "rule_id": "revision",
+            "verdict": "PASS",
+            "reason": "存在旧 Belief R069/R070/R071，但新材料 R098/R099/R100 改变了依据集合，候选选择 REVISE 符合修订规则；未在方向不变时错误要求 UNCHANGED。",
+            "source_ids": [
+              "R069",
+              "R070",
+              "R071",
+              "R098",
+              "R099",
+              "R100"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "三项均为 DIRECTIONAL，明确限定单次作答、缺少口头解释及后续是否修正未知，未断言稳定掌握或不会，也未给未经校准概率；R084 为请求而非已渲染帮助，候选未将其当作支持。",
+            "source_ids": [
+              "R045",
+              "R084",
+              "R023",
+              "R027",
+              "R031",
+              "R039"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": false
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:17:07.892590+00:00",
+  "status": "COMPLETED"
+}

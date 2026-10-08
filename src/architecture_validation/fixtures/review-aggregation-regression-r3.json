@@ -1,0 +1,683 @@
+{
+  "cases": [
+    {
+      "source": "replays.json:R06",
+      "review": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "R023:claim",
+            "verdict": "PASS",
+            "reason": "R023要求独立识别关系、选择策略、计算及检查。R051显示学习者独立写出96÷12＝9、9×17＝153，第一步商错误（应为8），最终153错误，且未展示检查；这直接对计算与检查责任构成反向证据。候选判Contradicts与原始表现一致，且未把单次错误夸大为稳定不会。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "R023:grounding",
+            "verdict": "PASS",
+            "reason": "候选引用R051原始作答与R045输入，覆盖了错误商、错误总价及无帮助记录的正反材料；对“一次错误只作局部反向证据”的局限也有说明，未把请求独立检查当作已发生帮助。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "R023:assistance",
+            "verdict": "PASS",
+            "reason": "assistance为空且coverage为COMPLETE，本会话受控通道未渲染任何帮助块；候选正确指出“先让我独立检查”只是请求而非已发生帮助，因此该Claim的独立作答责任未被替代，判定与记录一致。",
+            "source_ids": [
+              "R045"
+            ]
+          },
+          {
+            "rule_id": "R023:uncertainty",
+            "verdict": "PASS",
+            "reason": "候选指出一次错误只能作局部反向证据、不能判定稳定不会，并说明学习者是否已自行发现错误无法确定；缺失与不确定性交代具体，未机械弃权。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "R027:claim",
+            "verdict": "PASS",
+            "reason": "R027要求自己说明单位量关系及为何用总量除以份数。R051只有算式96÷12＝9和9×17＝153，没有数量意义的关系说明；缺少解释不等于给出错误解释，候选判NonInformative并说明错误商可能源于计算而非关系理解，符合关系判定标准。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "R027:grounding",
+            "verdict": "PASS",
+            "reason": "候选以R051实际文本为依据，指出未出现单位量关系说明，并区分“没有解释”与“错误解释”；未把请求独立检查或系统讲解当作掌握证据，覆盖了相关正反材料。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "R027:assistance",
+            "verdict": "PASS",
+            "reason": "assistance为空，无已渲染帮助块替代“自己说明单位量关系”的责任；候选正确说明请求独立检查不构成对单位量关系的讲解或提示，判定与COMPLETE覆盖一致。",
+            "source_ids": [
+              "R045"
+            ]
+          },
+          {
+            "rule_id": "R027:uncertainty",
+            "verdict": "PASS",
+            "reason": "候选具体说明缺失的是单位量关系说明，且错误商可能源于计算而非关系理解，故本轮不足以判断该KC；NonInformative原因具体，未对全部作答机械弃权。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "R031:claim",
+            "verdict": "PASS",
+            "reason": "R031允许他人指出需检查除法但不提供商或过程，学习者须自己重新计算商并检查合理性。R051显示96÷12得9而非8，且未展示对商的检查；在无允许支持条件下出现错误商，构成反向证据。候选判Contradicts并限定为单次错误，符合标准。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "R031:grounding",
+            "verdict": "PASS",
+            "reason": "候选引用R051的错误商与未展示检查，并说明本会话无定位帮助记录，错误是在无允许支持条件下出现；同时保留“单次错误不能直接判定稳定不会”的局限，依据充分。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "R031:assistance",
+            "verdict": "PASS",
+            "reason": "assistance为空，无已渲染块指出需检查除法或提供过程；候选正确指出“先让我独立检查”不是已发生的定位帮助，因此求商与自查责任未被替代，判定与记录一致。",
+            "source_ids": [
+              "R045"
+            ]
+          },
+          {
+            "rule_id": "R031:uncertainty",
+            "verdict": "PASS",
+            "reason": "候选指出单次计算错误不能直接判定稳定不会，并说明无允许支持记录；对缺失与不确定性的说明具体，未把未知当作错误。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "replays.json:R09",
+      "review": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "R023:claim",
+            "verdict": "PASS",
+            "reason": "R023 要求独立完成本类任务；实际表现为 R049 请求第一步关系提示、R091 在提示后提交 98÷7＝14 与 14×11＝154。候选判 NonInformative，理由是本轮关系识别已获 R089 帮助且仅一次作答，符合“相关责任已被替代时不足以判断”的标准，未把缺失当错误。",
+            "source_ids": [
+              "R049",
+              "R091",
+              "R097"
+            ]
+          },
+          {
+            "rule_id": "R023:grounding",
+            "verdict": "PASS",
+            "reason": "候选引用 R049 的求助与 R091 的两步计算，并说明 R089 已替代关系识别责任、商仍由学习者算出，覆盖了正反材料；未把请求或系统讲解当作掌握证据。",
+            "source_ids": [
+              "R049",
+              "R091",
+              "R097"
+            ]
+          },
+          {
+            "rule_id": "R023:assistance",
+            "verdict": "PASS",
+            "reason": "assistance_coverage 为 COMPLETE，R089 实际渲染 B1，指出需用总量除以份数（98÷7）的关系；候选据此说明关系识别责任被替代、未替代求商，与已渲染块一致。",
+            "source_ids": [
+              "R089"
+            ]
+          },
+          {
+            "rule_id": "R023:uncertainty",
+            "verdict": "PASS",
+            "reason": "候选指出仅一次作答、关系识别已获帮助，故不足以判断稳定独立完成能力；NonInformative 有具体原因，未机械弃权。",
+            "source_ids": [
+              "R049",
+              "R091",
+              "R097"
+            ]
+          },
+          {
+            "rule_id": "R027:claim",
+            "verdict": "PASS",
+            "reason": "R027 要求自己说明单位量关系及为何用总量除以份数；R091 只写 98÷7＝14 的算式，未作关系说明，且 R089 已给出该关系。候选判 NonInformative 并说明“缺少解释≠解释错误”，符合标准。",
+            "source_ids": [
+              "R049",
+              "R091",
+              "R097"
+            ]
+          },
+          {
+            "rule_id": "R027:grounding",
+            "verdict": "PASS",
+            "reason": "候选引用 R091 的算式与 R089 已渲染的关系说明，说明学习者未独立给出解释、材料不足以支持或反驳掌握，覆盖相关正反材料。",
+            "source_ids": [
+              "R089",
+              "R091",
+              "R097"
+            ]
+          },
+          {
+            "rule_id": "R027:assistance",
+            "verdict": "PASS",
+            "reason": "R089 实际渲染 B1，直接说明“用总量除以份数”的单位量关系，替代了本 Claim 的核心解释责任；候选据此判定，与已渲染块一致。",
+            "source_ids": [
+              "R089"
+            ]
+          },
+          {
+            "rule_id": "R027:uncertainty",
+            "verdict": "PASS",
+            "reason": "候选指出 R091 未用数量意义说明单位量关系、R089 已提供该关系，故现有材料不足以判断能否自己说明；NonInformative 原因具体。",
+            "source_ids": [
+              "R089",
+              "R091",
+              "R097"
+            ]
+          },
+          {
+            "rule_id": "R031:claim",
+            "verdict": "PASS",
+            "reason": "R031 允许他人指出需检查除法但不提供商或计算过程；R089 只指出 98÷7 的关系，商 14 与 154 由 R091 自行算出且正确。候选判 Supports 并说明未写单位、未展示检查，属有限正向证据，符合标准。",
+            "source_ids": [
+              "R049",
+              "R091",
+              "R097"
+            ]
+          },
+          {
+            "rule_id": "R031:grounding",
+            "verdict": "PASS",
+            "reason": "候选引用 R091 的两步正确计算与 R089 未给商的定位帮助，说明计算责任由学习者承担、但缺单位与检查展示，覆盖正反材料。",
+            "source_ids": [
+              "R089",
+              "R091",
+              "R097"
+            ]
+          },
+          {
+            "rule_id": "R031:assistance",
+            "verdict": "PASS",
+            "reason": "R089 实际渲染 B1，仅指出需先算 98÷7 的数量关系，未提供商或计算过程，符合本 Claim 允许的支持范围；候选据此说明未替代求商，与已渲染块一致。",
+            "source_ids": [
+              "R089"
+            ]
+          },
+          {
+            "rule_id": "R031:uncertainty",
+            "verdict": "PASS",
+            "reason": "候选指出表现发生在 R089 提示之后、未写单位、未展示检查，故仅为有限正向证据，不能判定稳定掌握；不确定性说明具体。",
+            "source_ids": [
+              "R089",
+              "R091",
+              "R097"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "src/architecture_validation/runs/evaluation-repair-r3/development/D3/records.json:validation_89f73635d92f4a8c8440a9386cc2716f",
+      "review": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "reason": "R023要求独立识别关系、选择策略、计算及检查。原文R045只出现44÷4＝10和10×9＝90，未说明关系或策略依据，且44÷4算错；算错商不等于混淆数量关系，缺少关系说明也不等于给出错误解释，故对整题熟练度确实不足以判断，NonInformative成立。",
+            "rule_id": "R023:claim",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "observation_0614055069494e99a29f9620dee9404e"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R051原始作答与R045文本，覆盖了算式、错误商及缺失的关系说明与检查表现，未把请求或自述当作掌握证据，正反材料均有交代。",
+            "rule_id": "R023:grounding",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "observation_0614055069494e99a29f9620dee9404e"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，本会话受控通道未记录到帮助，外部帮助未知；无帮助替代该整题责任，候选说明与记录一致。",
+            "rule_id": "R023:assistance",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选指出仅一次含计算错误的作答、缺少关系说明与检查表现，无法判定熟练或不会，缺失与不确定性说明具体，未机械弃权。",
+            "rule_id": "R023:uncertainty",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "observation_0614055069494e99a29f9620dee9404e"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "R027要求自己说明单位量关系及除法意义。原文只有两个算式，没有用数量意义说明单位量或为何总量除以份数；缺少关系说明不等于给出错误关系解释，故NonInformative成立。",
+            "rule_id": "R027:claim",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "observation_0614055069494e99a29f9620dee9404e"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选依据R045原文确认无关系说明，并正确区分“没有解释”与“错误解释”，未把算错商当作混淆数量关系的证据。",
+            "rule_id": "R027:grounding",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "observation_0614055069494e99a29f9620dee9404e"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，本会话受控通道未记录到帮助，无帮助替代说明单位量关系的责任，候选说明与记录一致。",
+            "rule_id": "R027:assistance",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选具体说明缺失的是单位量关系与除法意义说明，且无反向关系解释，故不足以判断，原因具体。",
+            "rule_id": "R027:uncertainty",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "observation_0614055069494e99a29f9620dee9404e"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "R031要求自己重新计算商并检查合理性。原文44÷4＝10，正确商应为11，本次求商错误且无检查表现，构成对本次计算与自查的反向证据；候选同时限定单次错误不判定稳定不会，Contradicts使用恰当。",
+            "rule_id": "R031:claim",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "observation_0614055069494e99a29f9620dee9404e"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R051的数学评估确认44÷4正确商为11、10×9因单位量错误导致90不正确，并指出无检查表现，正反材料覆盖充分。",
+            "rule_id": "R031:grounding",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "observation_0614055069494e99a29f9620dee9404e"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，本会话受控通道未记录到帮助，无帮助替代求商或检查责任，候选说明与记录一致。",
+            "rule_id": "R031:assistance",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选明确反向证据仅限本次表现、不直接判定稳定不会，并指出后续是否自行修正未知，不确定性说明具体。",
+            "rule_id": "R031:uncertainty",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "observation_0614055069494e99a29f9620dee9404e"
+            ],
+            "verdict": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "source": "src/architecture_validation/runs/evaluation-repair-r3/development/D3/records.json:validation_3a3252d6e7f147bdae7651c855301e0a",
+      "review": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "reason": "R023要求独立识别关系、选择策略、计算及检查。R045原始作答“44÷4＝10，10×9＝90”在无帮助条件下出现错误商（正确为11），后续缩放基于错误单位量，构成计算与检查责任的反向表现，Contradicts关系与原始表现一致。",
+            "rule_id": "R023:claim",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "event_45c447f610ef42959f26046154a9fba0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R045原始作答与R069讲解请求，覆盖正反材料：R045提供错误商的反向证据，R069仅为请求不证明掌握或不会，未把请求当作能力证据，grounding充分。",
+            "rule_id": "R023:grounding",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "event_45c447f610ef42959f26046154a9fba0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，本会话受控通道未记录任何实际渲染帮助块，故不存在帮助替代独立识别关系、选择策略、计算或检查的情况，候选判断与记录一致。",
+            "rule_id": "R023:assistance",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选指出R045“让我再想一下”后是否已自行修正本轮材料未显示，R069请求讲解是否意味着放弃自行求解无法仅由请求文本确定，缺失与不确定性说明具体，未机械弃权。",
+            "rule_id": "R023:uncertainty",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "event_45c447f610ef42959f26046154a9fba0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "R027要求用数量意义说明单位量关系。R045只给出算式“44÷4＝10，10×9＝90”，没有用数量意义说明为何用总量除以份数得到单位量，也无把总量与单位量混淆的反向解释，NonInformative关系与原文表现一致。",
+            "rule_id": "R027:claim",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "event_45c447f610ef42959f26046154a9fba0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R045算式与R069讲解请求，说明缺少关系说明不等于给出错误关系解释，算错商属计算维度不能据此判定混淆数量关系，grounding覆盖相关材料且未越界。",
+            "rule_id": "R027:grounding",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "event_45c447f610ef42959f26046154a9fba0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，本会话未记录任何实际帮助块，不存在系统讲解替代学习者自行说明单位量关系的情况，候选判断与记录一致。",
+            "rule_id": "R027:assistance",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选具体说明NonInformative原因：R045只有算式无关系说明，R069是讲解请求不含关系说明，对“能说明单位量关系”既无正向也无反向证据，不确定性说明具体。",
+            "rule_id": "R027:uncertainty",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "event_45c447f610ef42959f26046154a9fba0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "R031要求自行求商并检查。R045中学习者自行计算44÷4得10（正确为11），未显示对商的合理性检查，随后10×9＝90沿用错误单位量，在无帮助条件下出现错误商，Contradicts关系与原始表现一致。",
+            "rule_id": "R031:claim",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "event_45c447f610ef42959f26046154a9fba0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R045原始作答与R069讲解请求，说明除法错误发生在任何帮助之前其证据意义保留，R069请求完整讲解不改变此前错误商，grounding覆盖正反材料。",
+            "rule_id": "R031:grounding",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "event_45c447f610ef42959f26046154a9fba0"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，本会话未记录任何实际帮助块，不存在他人指出需要检查除法或提供商与计算过程的情况，错误商不能归因于帮助替代，候选判断与记录一致。",
+            "rule_id": "R031:assistance",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选指出R045除法错误发生在任何帮助之前其证据意义保留，R069请求完整讲解不构成新的独立计算表现，缺失与不确定性说明具体，未把请求当作能力证据。",
+            "rule_id": "R031:uncertainty",
+            "source_ids": [
+              "event_3c3329d8a5b74746890e93d5db876fb0",
+              "event_45c447f610ef42959f26046154a9fba0"
+            ],
+            "verdict": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "source": "src/architecture_validation/runs/evaluation-repair-r3/development/N1/records.json:validation_9b6bbd42f9e241a99f451fccf46185ca",
+      "review": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "reason": "R023要求独立识别关系、选择策略、计算及检查。R051显示学习者把总价42元当单价，直接42×15=630，未识别“6份共42元”的单位量关系、未选先除后乘策略，构成该Claim的反向表现，Contradicts关系成立。",
+            "rule_id": "R023:claim",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R045原始作答与R051观察，覆盖错误关系识别与策略选择的正反材料，并说明无帮助可解释，grounding充分。",
+            "rule_id": "R023:grounding",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，本会话受控通道未记录任何已渲染帮助，故错误不能归因于系统帮助替代，判定正确。",
+            "rule_id": "R023:assistance",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选指出本轮未展示是否已尝试或掌握正确先除后乘方法，且自述认知过程无法独立核实，不确定性说明具体。",
+            "rule_id": "R023:uncertainty",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "R027要求说明单位量关系及为何用总量除以份数。R051中学习者自述把42元当成每份价格，即把总量当单位量，未说明除法意义，构成总量与单位量混淆的反向表现，Contradicts成立。",
+            "rule_id": "R027:claim",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R045自述与R051观察，覆盖混淆总量与单位量的反向材料，并说明无帮助替代，grounding充分。",
+            "rule_id": "R027:grounding",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，无已渲染帮助，混淆不能归因于系统解释替代，判定正确。",
+            "rule_id": "R027:assistance",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选指出自述认知过程无法独立核实，且本轮未展示是否掌握正确除法意义，不确定性说明具体。",
+            "rule_id": "R027:uncertainty",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "R031允许他人指出需检查除法但不提供商或过程，学习者需自行求商并检查。R051显示未出现42÷6求商过程，基于错误关系给出42×15=630，无帮助条件下给出错误结果且未检查，构成反向表现，Contradicts成立。",
+            "rule_id": "R031:claim",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R045原始算式与R051观察，覆盖未求商、未检查的反向材料，并说明无帮助替代，grounding充分。",
+            "rule_id": "R031:grounding",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，无已渲染帮助，不存在他人指出检查或提供商的替代，错误计算由学习者承担，判定正确。",
+            "rule_id": "R031:assistance",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选指出本轮未展示是否已尝试或掌握正确求商与检查方法，不确定性说明具体。",
+            "rule_id": "R031:uncertainty",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "source": "src/architecture_validation/runs/evaluation-repair-r3/development/N1/records.json:validation_a00677ca307a4bb091396ae8874ff3f9",
+      "review": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "reason": "R023要求独立识别关系、选择策略、计算及检查。R051显示学习者把总价42元当作单价，写出42×15＝630，未识别“6份共42元”的单位量关系，也未采用先除后乘策略，属于本类任务所需关系识别与策略选择上的反向表现，Contradicts关系成立。",
+            "rule_id": "R023:claim",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R045原始作答与R051观察，覆盖了错误关系与错误策略的正向材料；assistance为空且coverage为COMPLETE，说明本会话受控通道未记录帮助，未把请求或自述当作已发生帮助。",
+            "rule_id": "R023:grounding",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，本会话受控通道未渲染任何帮助块，因此不存在帮助替代独立识别关系、选择策略、计算或检查的情况，候选对帮助范围的说明与实际记录一致。",
+            "rule_id": "R023:assistance",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选指出该反向表现来自原始提交、一次错误只作局部反向证据，不直接判定稳定不会，并说明未受本系统帮助影响，符合有限证据结论的要求。",
+            "rule_id": "R023:uncertainty",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "R027要求说明单位量关系及为何用总量除以份数。R051中学习者明确把42元说成“每份的价格”，而题目中42元是6份总价，属于把总量与单位量混淆，未说明除法意义，Contradicts关系成立。",
+            "rule_id": "R027:claim",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R045原始作答与R051观察，覆盖了混淆总量与单位量的反向材料；assistance为空且coverage为COMPLETE，未把请求或自述当作已发生帮助。",
+            "rule_id": "R027:grounding",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，本会话受控通道未渲染任何帮助块，未替代学习者自己说明单位量关系及为何用总量除以份数，候选对帮助范围的说明与实际记录一致。",
+            "rule_id": "R027:assistance",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选指出混淆表述直接出现在原始作答中、非由帮助造成，并说明该证据针对单位量关系说明，符合有限证据结论的要求。",
+            "rule_id": "R027:uncertainty",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "R031要求自行求商并检查除法结果。R051显示学习者未求商42÷6，而是用错误关系直接算42×15＝630，既未得到正确商7，也未展示对除法计算的检查，Contradicts关系成立。",
+            "rule_id": "R031:claim",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选引用R045原始作答与R051观察，覆盖了未求商、未检查的反向材料；assistance为空且coverage为COMPLETE，未把请求或自述当作已发生帮助。",
+            "rule_id": "R031:grounding",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "assistance为空且coverage为COMPLETE，本会话受控通道未渲染任何帮助块，未替代求商或检查，候选对帮助范围的说明与实际记录一致。",
+            "rule_id": "R031:assistance",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "候选指出错误商与缺少检查均来自原始提交、一次表现只提供局部反向证据，不直接判定稳定不会，符合有限证据结论的要求。",
+            "rule_id": "R031:uncertainty",
+            "source_ids": [
+              "event_f5d6dc82b39141858385c927255a0b09",
+              "observation_50834c9508874f7590ea217634a539fe"
+            ],
+            "verdict": "PASS"
+          }
+        ]
+      }
+    }
+  ],
+  "meaning": "Only deterministic verdict aggregation is checked; no semantic verdict changed."
+}

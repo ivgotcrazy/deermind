@@ -1,0 +1,48 @@
+{
+  "scope": "Read-only R2 source copied; manual exact targets, no error detection or semantic recomputation",
+  "source": "src/architecture_validation/runs/g2-r2/v2/S3/runtime.sqlite",
+  "source_sha256": "2761d7b0a4e85ae173a2b3f4e1040cbf9358a23debf6b7b5bf7e0a135144cf57",
+  "targets": [
+    "evidence_d9d2dda9f0cc411baa9b6e21449b778a"
+  ],
+  "affected": [
+    "actionintent_3bfd9b986e244d46b172eaa5165c525c",
+    "actionintent_d6830cb9d4764cacbc424c74872f99d5",
+    "belief_01ebf461276e4a809513710a770265b0",
+    "belief_1b6d9549c5e6406486fbf483d9aac4b6",
+    "belief_455b6409814f4692b2a6ebfdc1b8f4ea",
+    "belief_7abb25018b81413da3baaa5ba075fb50",
+    "belief_7e8ca2e33a064408a96a6b47169d2acb",
+    "belief_82a7f4651432439483fd0b8cc9162525",
+    "belief_c8522316518b4e3697f8dbe682ff086f",
+    "belief_cafd8580df584baba1b96d042584b3c4",
+    "belief_d0eb0c6a3d524332a3162d4b706ad315",
+    "belief_e9d577aeff0e4ba4935bc5e377c21eea",
+    "belief_ec95fb7f7a444033a8d926ea6b32db6c",
+    "belief_f9312fcef87a4d96a1b7fcd9c02666aa",
+    "decision_2e254309a85848b69530c2572c71b739",
+    "decision_6446dce593c34f489952b8cf0de75920",
+    "decision_b012c72791fa40399b46fb80f448ea2b",
+    "decision_b196c158e0a9411bab21acb90e9e3322",
+    "decision_f3316249c2aa42a3b174eec45ae5fd3e",
+    "evaluationcompletion_0689233d28494ba89d61e824df345f8b",
+    "evaluationcompletion_2dce8edd50914ff0a3d10efdcdaf8ccb",
+    "evaluationcompletion_e149a5ce5b844dd1a5eebaa0043a0a21",
+    "evaluationcompletion_f57d28065d4d4d98a41e53a9cd362313",
+    "evidence_d9d2dda9f0cc411baa9b6e21449b778a"
+  ],
+  "prior_current_beliefs": [
+    "belief_1b6d9549c5e6406486fbf483d9aac4b6",
+    "belief_7e8ca2e33a064408a96a6b47169d2acb",
+    "belief_cafd8580df584baba1b96d042584b3c4"
+  ],
+  "old_records_unchanged": 213,
+  "api_calls": 0,
+  "new_actions": 0,
+  "affected_beliefs": [
+    "belief_1b6d9549c5e6406486fbf483d9aac4b6",
+    "belief_7e8ca2e33a064408a96a6b47169d2acb",
+    "belief_cafd8580df584baba1b96d042584b3c4"
+  ],
+  "remaining_current_beliefs": []
+}

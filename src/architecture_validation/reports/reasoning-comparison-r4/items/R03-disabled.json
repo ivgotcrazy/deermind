@@ -1,0 +1,69 @@
+{
+  "created": "2026-10-08T10:16:55.155408+00:00",
+  "case": "R03",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Belief",
+  "expected": "FAIL",
+  "input_sha256": "63e24c7134bcbbda389bfc465215cb6558e583f06561d741926e79da2903ab88",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_9eaf94276bd1477392f6d59d9fdba781",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 三个 Claim 各输出一项 Belief，claim_id 与 claim_evidence_index 一一对应，无遗漏或多余。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031"
+            ]
+          },
+          {
+            "rule_id": "basis",
+            "verdict": "PASS",
+            "reason": "各项以 claim_evidence_index 为索引并结合全部相关正反 Evidence：R023 采用 R059、R098（均 Contradicts），R027 采用 R060（Contradicts）与 R099（NonInformative），R031 采用 R061、R100（均 Contradicts）；evidence_ids 与实际依据一致，未虚构矛盾，R099 被正确标为无信息而非反向证据。",
+            "source_ids": [
+              "R059",
+              "R098",
+              "R060",
+              "R099",
+              "R061",
+              "R100"
+            ]
+          },
+          {
+            "rule_id": "revision",
+            "verdict": "PASS",
+            "reason": "三项均标 REVISE，因新增 R098、R099、R100 改变了依据集合（R099 为无信息，R098/R100 补充反向证据），符合 revision_rules 中“有新材料时解释为何改变认识”的要求；旧 Belief R069、R070、R071 已作为 prior_belief_id 引用，未错误声称 UNCHANGED。",
+            "source_ids": [
+              "R069",
+              "R070",
+              "R071"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "三项均为 DIRECTIONAL 并明确限定单次作答、单一题目、缺少口头解释、后续是否自行修正未知，未断言稳定掌握或完全不会，也未给未经校准概率，符合有限方向性认识的要求。",
+            "source_ids": [
+              "R059",
+              "R060",
+              "R061"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": false
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:16:57.285149+00:00",
+  "status": "COMPLETED"
+}

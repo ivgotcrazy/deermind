@@ -1,0 +1,68 @@
+{
+  "created": "2026-10-08T10:20:55.387279+00:00",
+  "case": "R08",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "PASS",
+  "input_sha256": "e61a4f571aab8bf7d7e38a30924bfa440ca42ab045072fbd7d4c33067a69d6d3",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_6c9da2308a934712b713ebbedc1e1f69",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 三个 Claim 各形成一项关系，分别标为 Discriminates、NonInformative、Supports，并区分 TaskProficiency 与 KC 的当前表现和稳定能力，关系均相对各自 Claim。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "解释使用 R045 首轮 104÷8＝12、12×13＝156 的错误，R087 修正为 13 与 169，并引用 R085 实际渲染的定位提示；未把请求或系统讲解当作掌握证据，覆盖正反材料。",
+            "source_ids": [
+              "R045",
+              "R087",
+              "R085",
+              "R093"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "仅以 R085 实际渲染的 B1、B2 判定帮助：B1 指出第一步商与 12 不符需重算，未给商；B2 说明第二步依赖第一步。候选按各 Claim 的 allowed_support 分别解释，未把获提示重算当成无定位独立完成，coverage 复制为 COMPLETE。",
+            "source_ids": [
+              "R085",
+              "R023",
+              "R027",
+              "R031"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "指出 R087 自述阅读提示与自行重算无法仅凭文本核实、渲染不等于理解、外部帮助未知；R027 因缺少单位关系说明而判 NonInformative 并给出具体原因，未机械弃权。",
+            "source_ids": [
+              "R087",
+              "R085",
+              "R027"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:20:57.589370+00:00",
+  "status": "COMPLETED"
+}

@@ -1,0 +1,62 @@
+{
+  "created": "2026-10-08T10:15:37.772513+00:00",
+  "case": "R01",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "FAIL",
+  "input_sha256": "0a9858ceab8922e65bd88c4fd6acddc99b118bcb218819a3a43cdd68562a06a0",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_2fe20a9536004692a2ddbe6b39a0cbbf",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为R023、R027、R031三个Claim各形成一项关系，分别标为Contradicts，关系严格相对各Claim；R023为TaskProficiency、R027与R031为KC，区分了任务整体独立完成、单位量关系说明与除法计算检查，未把单次错误直接判为稳定不会。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "三项解释均基于R051中原始作答“44÷4＝10，10×9＝90”及R045请求，覆盖正反材料：承认先求单位量再缩放方向正确，同时指出商错、未说明单位量关系、未检查；未把请求或系统讲解当作掌握证据。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "assistance为空且coverage为COMPLETE，候选三项均未虚构提示后表现，明确本会话受控通道未记录帮助块、外部帮助未知；对R031指出无定位帮助，未将获提示重算当成独立完成。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "候选指出单次作答不能判定完全不会、缺少口头解释不能排除计算失误、是否已意识到商应为11不可知，并说明单位量关系与整数除法耦合导致有限反向证据，未机械弃权。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": false
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:15:40.677753+00:00",
+  "status": "COMPLETED"
+}

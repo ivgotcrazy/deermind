@@ -1,8 +1,8 @@
 # DeerMind Architecture Validation Build
 
-这是 Development Phase 2 的单进程参考实现。它运行 Event → Observation → Evidence → Belief → Policy → 受控浏览器展示确认，并保存来源、精确引用、候选、语义校验、owner 提交、失效依赖及恢复记录。真实生成和审查使用 DeepSeek；`scripted` 模式只用于工程机制检查，不证明模型能力。
+这是已完成Development Phase 2的单进程参考实现。当前项目G2 PASS，限定准入MVP Definition，语义质量及完整维护能力分期；新决定见[统一报告§9](../../doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。原R2仍为14/24、EVAL-02/04未满足及原条件HOLD，R3/R4失败保留；没有新的完整真实模型成绩。默认继续使用R2语义、非思考模式和确定性总评汇总。
 
-完整验收R2已结束，G2仍为HOLD。75项离线检查通过，6/6段完成四轮预定路径，但内容可用14/24、EVAL-02/04未满足；缺口集中于Evaluation对缺失材料和跨题帮助的解释及错误依据传播。格式实现阻塞已修复，传输失败全部重试恢复，不计入语义扣分。结果见[Build Validation Report v0.3](../../doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)。人工启动方式如下。
+本次最低纠错验证为9项离线检查（6项新增检查及3项已有回归），没有模型API调用或运行代码修改。已识别错误可通过受控内部owner/Store路径隔离并处理下游；自动发现错误、独立维护接口及其恢复编排尚未交付。`/admin/recompute`会从Observation重跑至Policy，不是Evaluation-only维护接口。R5未执行，已转为后续工程候选输入，不自动启动30次请求专项。
 
 ## 一键启动与人工复测
 
@@ -79,3 +79,7 @@ SQLite 是唯一持久化权威，日志不是恢复正式状态的替代品。�
 阶段结果以 `doc/system-design/build/` 下的统一 Build Validation Report 为准；方案中的通过门槛和既有 Spike 否定结论不会因参考实现存在而自动满足。
 
 R2已关闭，结果、逐轮评分和审计在`reports/g2-r2/assessment.json`与`quality-review.json`。`v2/source.zip`保存测量时源码，`v2-evidence.zip`保存运行材料；v1失败单独保留，不合并评分。`assess_g2.py`为运行后离线评分与核对程序，不调用模型，也拒绝覆盖已关闭结论。R2使用`holdout-r1.json`和`probes-r1.json`在当次freeze中保存的输入，不应把更早的`holdout-v1.json`当作本次成绩对应样本。
+
+R3专项结果在`reports/evaluation-repair-r3/`，`admission.json`为false，正式阶段未执行；实验源码及默认配置回退分别留档。当前审查总评由程序对所有必需分项计算，模型原始总评另存审计；任一分项FAIL或UNRESOLVED、缺项、空理由及结构错误均不能提交。语义分项仍可能误判。不要删除冻结清单或改写admission来绕过已关闭批次的停止条件。
+
+R4证据位于`reports/reasoning-comparison-r4/`。`compare_reasoning`在存在关闭评阅后拒绝再次调用模型；`assess_reasoning`为离线作者评阅程序，拒绝覆盖已关闭结论。思考参数只在实验显式传入，启动脚本和默认服务参数不变。

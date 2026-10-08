@@ -1,0 +1,41 @@
+{
+  "created": "2026-10-08T10:31:53.656192+00:00",
+  "status": "PASS",
+  "errors": [],
+  "markdown_links_checked": 318,
+  "formal_v1_designs_unchanged": 7,
+  "R2_R3_closed_artifacts_verified": 81,
+  "frozen_source_files_verified": 87,
+  "evidence_files_verified": 35,
+  "default_semantic_prompts_runtime_scripted_model_and_aggregation_unchanged": true,
+  "offline_tests_passed": 90,
+  "spike_history_verified": {
+    "ledger_entries_checked": 1466,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  },
+  "paired_input_audit": {
+    "errors": [],
+    "paired_exact_inputs_verified": 16,
+    "attempt_records_verified": 35,
+    "frozen_source_files_verified": 87,
+    "actual_response_model_aliases": {
+      "deepseek-flash": 32
+    }
+  },
+  "closed_guard": {
+    "created": "2026-10-08T10:30:56.341688+00:00",
+    "status": "PASS",
+    "failure": "ComparisonAlreadyClosed",
+    "budget_unchanged": true,
+    "new_api_calls": 0
+  },
+  "git_diff_check": "PASS",
+  "git_whitespace_note": "CRLF accepted; measurement bytes preserved",
+  "semantic_accuracy_not_implied": true,
+  "closeout_note": "Removed one extra final blank line in the plan; initial audit preserved. No measurement or code changed."
+}

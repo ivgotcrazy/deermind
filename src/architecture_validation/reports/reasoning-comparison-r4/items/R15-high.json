@@ -1,0 +1,80 @@
+{
+  "created": "2026-10-08T10:23:02.241686+00:00",
+  "case": "R15",
+  "arm": "high",
+  "role": "generation",
+  "purpose": "Evidence",
+  "expected": "AUTHOR_REVIEW",
+  "input_sha256": "c25a9d481b1bf93f307d09b1206a3b4daa9876a0d87cadae70a8b6a829403cf2",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_28efe28001b54edab9ed1cdfb23b3631",
+      "output": {
+        "items": [
+          {
+            "claim_id": "R023",
+            "relation": "Supports",
+            "interpretation": "R134 记录 R128（新题 9份117元求12份）学习者独立写出 117÷9＝13、13×12＝156，策略与商正确，为 R023 的独立完成提供有限正向证据；但仅一次独立表现，且 R091 是在 R089 定位后完成，不能据此判定稳定掌握。R049 的提示请求本身不证明不会。",
+            "observation_ids": [
+              "R134"
+            ],
+            "source_ids": [
+              "R128",
+              "R091",
+              "R049"
+            ],
+            "assistance_ids": [
+              "R089"
+            ],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "R089 实际渲染，只给出“总量除以份数、先算98÷7”的关系定位，未给商；因此 R091 不能算无定位帮助的独立完成。R023 的 allowed_support 为空，R089 不能作为 R023 的允许支持；R128 在本轮之前无本系统帮助记录。R091 自述是否读用提示无法确认。",
+            "dependencies_explanation": "R023 依赖独立识别关系、选择策略、计算及检查；R031 只覆盖计算维度，R027 的解释维度未见独立说明。R128 可支持当前独立表现，但不等于跨题稳定能力。"
+          },
+          {
+            "claim_id": "R027",
+            "relation": "NonInformative",
+            "interpretation": "R128 只写 117÷9＝13、13×12＝156，未用数量意义说明为什么总量除以份数得到每份量；R091 自述“按刚才看到的提示”，是在 R089 系统说明后执行或复述步骤，不能当作学习者自己说明单位量关系。R049 请求第一步关系提示也不证明掌握或不会。缺少解释不等于理解错，故对 R027 所要求的独立说明无充分可判定材料。",
+            "observation_ids": [
+              "R134"
+            ],
+            "source_ids": [
+              "R049",
+              "R091",
+              "R128"
+            ],
+            "assistance_ids": [
+              "R089"
+            ],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "R089 实际渲染了“要得到每份多少元，需要用总量除以份数，先算98÷7”这一系统说明，未给商。它对 R091 有定位或示范作用；R027 的 allowed_support 为空，不能把复述该提示算作学习者独立说明。阅读与理解同样未经确认。",
+            "dependencies_explanation": "R027 与 R031 维度不同：R031 的商正确不自动证明能说明单位量关系；R023 的独立完成也要求该解释责任，但当前材料未覆盖。缺少关系解释不构成反向证据。"
+          },
+          {
+            "claim_id": "R031",
+            "relation": "Supports",
+            "interpretation": "R128 独立写出 117÷9＝13，商正确；R091 在 R089 只给“先算98÷7”定位、未给商和计算过程的情况下写出 98÷7＝14，商也正确。材料支持整数除法计算责任，但未展示检查或自查步骤，且一次独立新题加一次受定位帮助后计算仅为有限正向证据。",
+            "observation_ids": [
+              "R134"
+            ],
+            "source_ids": [
+              "R049",
+              "R091",
+              "R128"
+            ],
+            "assistance_ids": [
+              "R089"
+            ],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "R089 实际渲染，只定位“用总量除以份数、先算98÷7”，未给商14或计算过程；R049 也明确请求不要给具体数值答案。按 R031 的 allowed_support，指出需检查或定位除法不提供商或过程，商仍由学习者计算；但不能把 R091 写成完全无帮助的独立完成，R128 则无此帮助倒灌。",
+            "dependencies_explanation": "R031 只覆盖整数除法计算与检查；R128 的正确商同时支持 R023 的计算维度，但不等于 R027 的单位量关系解释。R091 受 R089 定位帮助，不能倒灌到 R128 或证明自查已发生。"
+          }
+        ]
+      },
+      "status": "COMPLETED"
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:23:47.510871+00:00",
+  "status": "COMPLETED"
+}

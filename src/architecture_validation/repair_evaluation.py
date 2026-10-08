@@ -9,6 +9,7 @@ from .common import BASE,ROOT,Rejected,now,write_json
 from .contracts import validate
 from .model import Budget,RealModel,load_config
 from .protocols import system,review_system
+from .review import aggregate_review
 from .revalidate import prepare_probe
 from .validate_g2 import run_session,verify_frozen,probes
 
@@ -54,8 +55,8 @@ def replay_all(frozen):
             validate(case['schema'],output)
             value.update(status='COMPLETED',output=output,attempt_id=rec['attempt_id'])
             if case['role']=='review':
-                passed=output['verdict']=='PASS' and all(c['verdict']=='PASS' for c in output['checks'])
-                value.update(accepted=passed,matched=passed if case['expected']=='PASS' else output['verdict']=='FAIL')
+                effective=aggregate_review(output);passed=effective=='PASS'
+                value.update(effective_verdict=effective,accepted=passed,matched=passed if case['expected']=='PASS' else effective=='FAIL')
             else:value['author_assessment']='PENDING'
         except Rejected as exc:value.update(status='FAILED',failure=str(exc))
         result['items'].append(value);write_json(dest,result)
@@ -76,8 +77,8 @@ def formal_probes(frozen):
         value={k:probe[k] for k in ('id','purpose','expected')}
         try:
             sem,schema,_=prepare_probe(probe);output,rec=model.complete(review_system(probe['purpose']),sem,schema,'Probe:'+probe['purpose'],'probe');validate(schema,output)
-            accepted=output['verdict']=='PASS' and all(c['verdict']=='PASS' for c in output['checks'])
-            value.update(status='COMPLETED',output=output,attempt_id=rec['attempt_id'],accepted=accepted,matched=accepted if probe['expected']=='PASS' else output['verdict'] in ('FAIL','UNRESOLVED'))
+            effective=aggregate_review(output);accepted=effective=='PASS'
+            value.update(status='COMPLETED',output=output,effective_verdict=effective,attempt_id=rec['attempt_id'],accepted=accepted,matched=accepted if probe['expected']=='PASS' else effective in ('FAIL','UNRESOLVED'))
         except Rejected as exc:value.update(status='FAILED',failure=str(exc))
         result['items'].append(value);write_json(dest,result);print(json.dumps({'probe':probe['id'],'status':value['status'],'matched':value.get('matched')}),flush=True)
         if any(mark in value.get('failure','') for mark in ('BudgetExhausted','Transport','ProviderHTTP','LocalBudget')):

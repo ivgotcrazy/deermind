@@ -1,0 +1,81 @@
+{
+  "created": "2026-10-08T10:17:08.653125+00:00",
+  "case": "R04",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "FAIL",
+  "input_sha256": "bb0318ac0c982be7a50642cee6bc6a6cd3a301feb80f54750e78627116b7e171",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_6b67670dfe2a4721b65e9904c037f0ff",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 各生成一项关系，分别对应 TaskProficiency、单位量关系 KC 和整数除法 KC；R023 标 Supports 并只称一次换题不足以证明稳定掌握，R027 因缺少数量意义解释标 NonInformative 而非 Contradicts，R031 标 Supports 并指出未展示检查过程，关系均相对具体 Claim，未把缺少单位关系解释误判为理解错误。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R134",
+              "R128",
+              "R003",
+              "R007",
+              "R011"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "使用 R134 当前观察和 R128 原始作答，并提及 R089 实际帮助；覆盖 117÷9=13、13×12=156 的正确表现，也指出无单位量说明、无检查、仅一次换题等限制，并说明系统讲解本身不证明掌握。",
+            "source_ids": [
+              "R134",
+              "R128",
+              "R089",
+              "R091",
+              "R049"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "FAIL",
+            "reason": "R089 实际渲染的块给出“需要用总量除以份数”这一同 Task Family 的一般方法，不只是 7/98 特定数字；候选却以“只涉及先前任务”排除其与当前 117/9 任务的相关性，并在 R023 仍将换题后的完整正确算式作为“独立完成”的 Supports，未按“新题不能清除近期帮助”说明此前方法帮助对当前独立识别和策略选择的影响。",
+            "source_ids": [
+              "R089",
+              "R128",
+              "R091",
+              "R049",
+              "R023",
+              "R031"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "候选指出 R027 缺少数量意义解释、R031 未展示检查过程、R023 仅一次换题不足以证明稳定掌握；未把受控通道无记录写成无外部帮助，也未把系统讲解当作学习者掌握证明。",
+            "source_ids": [
+              "R134",
+              "R128",
+              "R089",
+              "R091",
+              "R049",
+              "R023",
+              "R027",
+              "R031"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "FAIL",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:18:11.822253+00:00",
+  "status": "COMPLETED"
+}

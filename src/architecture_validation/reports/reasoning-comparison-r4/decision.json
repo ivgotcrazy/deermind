@@ -1,0 +1,8 @@
+{
+  "created": "2026-10-08T10:26:50.185663+00:00",
+  "promising_arm": null,
+  "deploy": false,
+  "formal_admitted": false,
+  "status": "CLOSED",
+  "reason": "Critical R01/R03/R05 remain false accepts; all high-mode generations miss their frozen targets."
+}

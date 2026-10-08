@@ -1,7 +1,7 @@
 {
   "created": "2026-10-08T09:40:33.341196+00:00",
   "id": "D6",
-  "status": "RUNNING",
+  "status": "MEASURED",
   "turns": [
     {
       "id": "turn_0e29bbcbfb19469d83eaf08279f19a94",
@@ -18,7 +18,61 @@
       "wall_seconds": 51.25609660000191,
       "injected_fault": null,
       "branch": "base"
+    },
+    {
+      "id": "turn_87ec42bb63644179a42da68229ef922b",
+      "sid": "D6",
+      "message_key": "2",
+      "event_id": "event_c4fe455a6e6849e2bd108f56f66c4e6e",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791452496.5243866,
+      "label": "D6.2",
+      "wall_seconds": 26.78189569999813,
+      "injected_fault": null,
+      "branch": "no-confirmed-display"
+    },
+    {
+      "id": "turn_9c8389ed6d8142ffa072b84c0d52f25d",
+      "sid": "D6",
+      "message_key": "3",
+      "event_id": "event_b5bb610e4d084735959e23b74dd56d4b",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791452527.7868886,
+      "label": "D6.3",
+      "wall_seconds": 43.20321389999299,
+      "injected_fault": null,
+      "branch": "base"
+    },
+    {
+      "id": "turn_4ad40624b5f9436a829facbeac1edc65",
+      "sid": "D6",
+      "message_key": "4",
+      "event_id": "event_e5f7baccd332406a8b20b24a8bb4b593",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791452576.3198195,
+      "label": "D6.4",
+      "wall_seconds": 41.83434770000167,
+      "injected_fault": null,
+      "branch": "no-confirmed-display"
     }
   ],
-  "coverage_notes": []
+  "coverage_notes": [],
+  "browser": {
+    "text": "",
+    "rendered": []
+  },
+  "completed": "2026-10-08T09:43:38.498974+00:00",
+  "wall_seconds": 185.15777429999434
 }

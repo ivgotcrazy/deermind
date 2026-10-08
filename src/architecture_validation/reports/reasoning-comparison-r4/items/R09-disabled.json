@@ -1,0 +1,67 @@
+{
+  "created": "2026-10-08T10:20:58.470374+00:00",
+  "case": "R09",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "PASS",
+  "input_sha256": "0fe3da39fee960fdede5cc821007bd366e6083f1713e9fb1c30075b27b851b93",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_4e5ae4b99d784851a6c93b9fabbfd207",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 三个 Claim 各形成一项关系，并区分 TaskProficiency（R023）与 KC（R027、R031）；关系均相对各自 Claim 判定，未混用。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "三项均引用当前 Observation R097 与原始作答 R049、R091，并纳入实际帮助 R089；R023 说明帮助后表现不能作独立完成证据，R027 说明复述系统解释不满足自述要求，R031 说明未给商故计算责任仍由学习者承担，正反材料覆盖到位。",
+            "source_ids": [
+              "R049",
+              "R091",
+              "R097",
+              "R089"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "仅以实际渲染的 R089 判定帮助，coverage 复制为 COMPLETE；R023 指出帮助后表现不能归为独立完成，R027 指出 R089 已替代关系说明责任，R031 指出 R089 未给商故计算仍由学习者完成，未把请求或自述当作已发生帮助。",
+            "source_ids": [
+              "R089",
+              "R049",
+              "R091"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "R023、R027 均给出 NonInformative 的具体原因（帮助替代独立责任、材料不足以判断能否自述关系），R031 说明仅有限正向证据且未写单位、未展示检查；未对全部有信息作答机械弃权。",
+            "source_ids": [
+              "R097",
+              "R089",
+              "R091"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:21:01.605014+00:00",
+  "status": "COMPLETED"
+}

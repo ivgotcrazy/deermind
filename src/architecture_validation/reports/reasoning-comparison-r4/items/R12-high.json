@@ -1,0 +1,61 @@
+{
+  "created": "2026-10-08T10:21:53.961199+00:00",
+  "case": "R12",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Policy",
+  "expected": "FAIL",
+  "input_sha256": "e7b1ded71ba2179343d871fdb92dddd0930337efbd92ee258428d7bd1c42d76c",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_355f4331421a44b487475b53577df92f",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前活动是 IndependentDiagnosis，允许使用 Hint；学习者明确请求只指出需要检查的步骤，候选用 Hint 点名 132÷11，未提供完整讲解，符合当前职责与帮助限度。",
+            "source_ids": [
+              "R001",
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "学习者明确请求指出检查步骤，存在可执行的帮助需求；候选选择 Execute 并给出对应提示，依据充分，无需 NoIntervention 或 Defer。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "PASS",
+            "reason": "Hint 点名的 132÷11 确为错误步骤，且未提供商 12 或修正后的总价；没有超出当前“只指出需要检查哪一步，不给商或答案”的请求范围。",
+            "source_ids": [
+              "R001",
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "FAIL",
+            "reason": "实际 Hint 已点名 132÷11，向学习者提供了错误步骤的定位；理由却称完全保留独立发现错误位置、没有替代任何定位工作，直接否认了已提供的帮助，与候选实际内容不符。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "FAIL",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:22:08.823714+00:00",
+  "status": "COMPLETED"
+}

@@ -15,8 +15,7 @@ class ScriptedModel:
             self.fail_next=None;raise Rejected('InjectedEvaluationFailure')
         if purpose.startswith('Review:'):
             p=purpose.split(':',1)[1]
-            names=[v['properties']['rule_id']['const'] for v in schema['properties']['checks'].get('prefixItems',[])] or list(RULES[p])
-            output={'verdict':self.review_verdict,'checks':[{'rule_id':k,'verdict':self.review_verdict,'reason':'固定机制夹具意见，不证明语义正确','source_ids':[]} for k in names]}
+            output={'verdict':self.review_verdict,'checks':[{'rule_id':k,'verdict':self.review_verdict,'reason':'固定机制夹具意见，不证明语义正确','source_ids':[]} for k in RULES[p]]}
         elif purpose=='Observation':
             output={'summary':'固定机制夹具观察','work_steps':[],'request_interpretation':'机制测试输入',
                     'current_purpose':context['current_activity'],'uncertainties':[],'source_ids':[context['current_input_id']]}

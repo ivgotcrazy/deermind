@@ -1,0 +1,212 @@
+{
+  "created": "2026-10-08T09:53:16.916078+00:00",
+  "status": "CLOSED_NOT_ADMITTED",
+  "gate_G2": "HOLD",
+  "formal_started": false,
+  "formal_calls": 0,
+  "scope": "One targeted semantic profile; not a new G2 formal measurement",
+  "reviewer": "Implementation author / Codex, not independent blinded human assessment",
+  "reviews": [
+    {
+      "unit": "R01",
+      "expected": "FAIL",
+      "raw_verdict": "FAIL",
+      "raw_matched": true,
+      "derived_verdict": "FAIL",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R02",
+      "expected": "FAIL",
+      "raw_verdict": "FAIL",
+      "raw_matched": true,
+      "derived_verdict": "FAIL",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R03",
+      "expected": "FAIL",
+      "raw_verdict": "PASS",
+      "raw_matched": false,
+      "derived_verdict": "PASS",
+      "derived_matched": false,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R04",
+      "expected": "FAIL",
+      "raw_verdict": "PASS",
+      "raw_matched": false,
+      "derived_verdict": "PASS",
+      "derived_matched": false,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R05",
+      "expected": "FAIL",
+      "raw_verdict": "FAIL",
+      "raw_matched": true,
+      "derived_verdict": "FAIL",
+      "derived_matched": true,
+      "original_result_unchanged": true,
+      "reason_quality": "Reject label matches, but fails to explain prior-method carryover and incorrectly treats repeated evidence explanation as making revision impermissible."
+    },
+    {
+      "unit": "R06",
+      "expected": "PASS",
+      "raw_verdict": "FAIL",
+      "raw_matched": false,
+      "derived_verdict": "PASS",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R07",
+      "expected": "PASS",
+      "raw_verdict": "PASS",
+      "raw_matched": true,
+      "derived_verdict": "PASS",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R08",
+      "expected": "PASS",
+      "raw_verdict": "PASS",
+      "raw_matched": true,
+      "derived_verdict": "PASS",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R09",
+      "expected": "PASS",
+      "raw_verdict": "FAIL",
+      "raw_matched": false,
+      "derived_verdict": "PASS",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R10",
+      "expected": "PASS",
+      "raw_verdict": "FAIL",
+      "raw_matched": false,
+      "derived_verdict": "FAIL",
+      "derived_matched": false,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R11",
+      "expected": "PASS",
+      "raw_verdict": "PASS",
+      "raw_matched": true,
+      "derived_verdict": "PASS",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R12",
+      "expected": "FAIL",
+      "raw_verdict": "PASS",
+      "raw_matched": false,
+      "derived_verdict": "PASS",
+      "derived_matched": false,
+      "original_result_unchanged": true
+    }
+  ],
+  "generations": [
+    {
+      "unit": "R13",
+      "target_met": true,
+      "whole_output_usable": false,
+      "reason": "Unit omission and arithmetic error separated, but task arithmetic counterevidence is discarded solely for being one sample."
+    },
+    {
+      "unit": "R14",
+      "target_met": true,
+      "whole_output_usable": true,
+      "reason": "Wrong historical unit counterevidence explicitly excluded; legitimate UNKNOWN grounded in NonInformative evidence."
+    },
+    {
+      "unit": "R15",
+      "target_met": false,
+      "whole_output_usable": false,
+      "reason": "Acknowledges method responsibility was replaced, but still supports the no-help whole-task Claim and calls the work independent."
+    },
+    {
+      "unit": "R16",
+      "target_met": false,
+      "whole_output_usable": false,
+      "reason": "Original conflicting JSON rejected; one format recovery succeeded, but still retains earlier false independence evidence after dropping only the later repetition."
+    }
+  ],
+  "live": {
+    "D3": {
+      "completed": 1,
+      "planned": 4,
+      "usable": 1,
+      "wall_seconds": 120.82553119999648
+    },
+    "D6": {
+      "completed": 3,
+      "planned": 4,
+      "usable": 1,
+      "wall_seconds": 185.15777429999434
+    },
+    "N1": {
+      "completed": 0,
+      "planned": 1,
+      "usable": 0,
+      "wall_seconds": 30.502976999996463
+    },
+    "N2": {
+      "completed": 1,
+      "planned": 1,
+      "usable": 1,
+      "wall_seconds": 53.43125890000374
+    }
+  },
+  "live_completed": 5,
+  "live_usable": 3,
+  "live_planned": 10,
+  "four_turn_sessions_completed": 0,
+  "uncovered": [
+    "D3 requested full explanation not displayed",
+    "D6 method hint not displayed, so live cross-task help contrast missing"
+  ],
+  "raw_evaluation_review_labels_matched": 5,
+  "derived_evaluation_review_labels_matched": 7,
+  "derivation_note": "Offline mechanical correction on original check verdicts; not a rerun and does not change original transaction or session outcomes.",
+  "resources": {
+    "http_attempts": 104,
+    "logical_requests": 94,
+    "transport_failures": 10,
+    "unrecovered_transport": [],
+    "confirmed_input_tokens": 418578,
+    "confirmed_output_tokens": 59196,
+    "confirmed_usage_cny": 1.310724,
+    "conservative_cny": 2.082098000000001,
+    "budget_active_seconds": 450.9440602000104,
+    "live_turn_seconds": {
+      "n": 10,
+      "median": 33.572767799996655,
+      "p95_nearest_rank": 51.25609660000191,
+      "max": 51.25609660000191
+    }
+  },
+  "integrity": {
+    "errors": [],
+    "records_checked": 529,
+    "exact_refs_checked": 1739,
+    "databases_checked": 4,
+    "frozen_source_verification": {
+      "created": "2026-10-08T09:46:52.907259+00:00",
+      "files": 82,
+      "changed_sources_during_execution": []
+    }
+  },
+  "deployment_decision": "Experimental semantic prompt and per-Claim review profile rolled back to R2. Keep only deterministic overall-review aggregation fix. No claim that rollback+fix has new full G2 measurements."
+}

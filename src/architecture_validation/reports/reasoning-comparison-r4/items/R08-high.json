@@ -1,0 +1,76 @@
+{
+  "created": "2026-10-08T10:20:11.622357+00:00",
+  "case": "R08",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "PASS",
+  "input_sha256": "e61a4f571aab8bf7d7e38a30924bfa440ca42ab045072fbd7d4c33067a69d6d3",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_f280143444ad401985154b215741671e",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 各形成且仅形成一项关系；R023 作为 TaskProficiency 区分稳定独立完成与需定位后修正，不将一次作答当稳定掌握；R027 未因缺少单位关系解释判为不会；R031 以允许支持范围内的重算作为有限 Supports。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R093",
+              "R045",
+              "R087"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "候选以 R093 当前观察、R045/R087 原始作答和 R085 实际帮助为依据；同时处理 R045 除法错误与 R087 修正后的正确计算；未把请求或 R085 系统讲解本身当作掌握或不掌握的证据。",
+            "source_ids": [
+              "R093",
+              "R045",
+              "R087",
+              "R085",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "只引用 assistance 中实际渲染的 R085 B1/B2；coverage 复制 assistance_coverage 为 COMPLETE；B1 指出第一步错误需重算而未给商，R031 的重算只作有限正向证据，未当成无定位帮助的独立完成；R027 未把系统讲解当作学习者说明。",
+            "source_ids": [
+              "R085",
+              "R045",
+              "R087",
+              "R023",
+              "R027",
+              "R031"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "指出 R023 独立完成证据有限、R031 自述独立程度无法仅凭文本核实、R027 缺少单位关系说明等缺失与不确定性；R027 的 NonInformative 给出具体原因，未对有信息作答机械弃权。",
+            "source_ids": [
+              "R093",
+              "R045",
+              "R087",
+              "R027",
+              "R031"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:20:54.810076+00:00",
+  "status": "COMPLETED"
+}

@@ -1,0 +1,62 @@
+{
+  "created": "2026-10-08T10:21:40.743794+00:00",
+  "case": "R11",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Policy",
+  "expected": "PASS",
+  "input_sha256": "5131d11d75de0d6b24f4f0a00114e33f3da4da2810ae387d9a30eb4f06bf82a9",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_3f7420078b3e430495c7d70c1ab67352",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前为 IndependentDiagnosis，admissible_actions 含 Hint 与 Control；候选为 Hint，仅点名待检查算式，未转活动也未越权讲解，符合请求“只指出需要检查哪一步”。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "学习者请求定位检查步骤，候选执行 Hint 点名 132÷11 这一步，属于当前诊断阶段可用的最小帮助，无需 Control 或 NoIntervention。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "PASS",
+            "reason": "132÷11 确为给定数据中的一步，且该步计算有误（应为12），点名检查正确；未提供商或最终答案，未超出请求允许范围。",
+            "source_ids": [
+              "R001",
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "PASS",
+            "reason": "理由承认提供了除法步骤定位，并说明商和后续计算仍由学习者重算，与实际内容一致，未否认已提供的帮助。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:21:42.290802+00:00",
+  "status": "COMPLETED"
+}

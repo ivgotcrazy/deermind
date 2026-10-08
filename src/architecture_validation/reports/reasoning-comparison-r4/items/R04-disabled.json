@@ -1,0 +1,69 @@
+{
+  "created": "2026-10-08T10:18:12.259847+00:00",
+  "case": "R04",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "FAIL",
+  "input_sha256": "bb0318ac0c982be7a50642cee6bc6a6cd3a301feb80f54750e78627116b7e171",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_06940de0176340718a1db337ca924162",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为R023、R027、R031各形成一项关系，且关系严格相对各Claim：R023为TaskProficiency、R027与R031为KC，分别给出Supports、NonInformative、Supports，未把一次作答夸大为稳定掌握。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R134"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "解释使用本轮原始作答R128（117÷9＝13、13×12＝156）及Observation R134，并区分R089为先前7份98元任务的系统讲解；未把请求或系统讲解当作掌握证据，正反材料覆盖合理。",
+            "source_ids": [
+              "R128",
+              "R134",
+              "R089",
+              "R049",
+              "R091"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "仅以实际渲染的R089（先算98÷7数量关系、未给商）判定帮助，并明确其针对先前任务、不构成本题支持；coverage复制为COMPLETE，未把自述或请求当作已展示帮助。",
+            "source_ids": [
+              "R089",
+              "R091",
+              "R049"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "对R027给出NonInformative的具体原因：只有算式、无单位量关系说明；同时指出一次换题作答不足以证明稳定掌握、R089是否被阅读无法确认、外部帮助未知，未机械弃权。",
+            "source_ids": [
+              "R134",
+              "R128",
+              "R089"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": false
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:18:17.546190+00:00",
+  "status": "COMPLETED"
+}

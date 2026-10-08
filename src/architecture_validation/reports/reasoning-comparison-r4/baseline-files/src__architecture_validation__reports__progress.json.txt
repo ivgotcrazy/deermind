@@ -1,0 +1,145 @@
+{
+  "created": "2026-10-08T05:47:20.203034+00:00",
+  "phase": "Development Phase 2 / R3 targeted repair closed, not admitted",
+  "status": "R3_CLOSED_NOT_ADMITTED_G2_HOLD",
+  "gate_G2": "HOLD",
+  "initial_B2_B5": "COMPLETE_G2_HOLD; historical progress preserved in R1 baseline",
+  "R1": {
+    "development_rounds_executed": 2,
+    "latest_completed_turns": 4,
+    "latest_planned_turns": 6,
+    "latest_complete_sessions": 0,
+    "latest_planned_sessions": 2,
+    "formal_campaign_started": false,
+    "assessment": "src/architecture_validation/reports/revalidation-r1/assessment.json",
+    "admission": "src/architecture_validation/reports/revalidation-r1/admission.json",
+    "resources": {
+      "http_response_records": 128,
+      "reservations": 128,
+      "missing_response_records": [],
+      "input_tokens": 434446,
+      "output_tokens": 48653,
+      "conservative_cny": 1.258116,
+      "transport_failures": 0,
+      "active_segments_seconds": 430.3886480999936,
+      "admission_timer_seconds": 429.1150842999996,
+      "timer_difference_explanation": "Segment wall time additionally includes adapter/tokenizer startup before the budget active timer begins; both are disclosed and below cap.",
+      "turn_seconds": {
+        "n": 12,
+        "median": 25.633651899999677,
+        "p95_nearest_rank": 35.1640871999989,
+        "max": 35.1640871999989
+      },
+      "max_input_admission_estimate": 12421
+    },
+    "verification": {
+      "baseline.zip": 60,
+      "r1-dev1-source.zip": 66,
+      "r1-dev2-source.zip": 66,
+      "evidence.zip": 322,
+      "delivery-source-v1.zip": 55,
+      "build-evidence-v1.zip": 347,
+      "initial_delivery_artifacts": 45,
+      "measured_source_files_unchanged": 63,
+      "formal_system_designs_unchanged": 7,
+      "document_links": 296,
+      "formal_stop_guard_without_API": true,
+      "credential_scan": "PASS"
+    }
+  },
+  "report": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
+  "next_step": "Controlled reasoning-configuration or reviewer-model comparison on fixed failures and legal controls; verify capability and cost first. No more R3 calls.",
+  "spike_results_unchanged": [
+    "A2 DENIED",
+    "E1 INCONCLUSIVE",
+    "X5 INCONCLUSIVE"
+  ],
+  "closed_utc": "2026-10-08T09:56:32.395616+00:00",
+  "contract_boundary_v1": {
+    "assessment": "src/architecture_validation/reports/contract-boundary-v1/assessment.json",
+    "completed_turns": 1,
+    "planned_turns": 2,
+    "explanation_rendered": true,
+    "offline_tests_passed": 44,
+    "resources": {
+      "http_attempts": 23,
+      "transport_failures": 4,
+      "all_transport_recovered": true,
+      "confirmed_usage_input": 66724,
+      "confirmed_usage_output": 8349,
+      "usage_based_cny": 0.20024,
+      "conservative_cny_including_unconfirmed_transport_reservations": 0.4962520000000001,
+      "wall_seconds": 104.21647739999753,
+      "budget_active_seconds": 94.27686959999846,
+      "clock_scope": "Budget timer sums active adapter segments; wall time additionally includes server/browser startup, teardown and inter-stage bookkeeping."
+    }
+  },
+  "format_repair_v1": {
+    "assessment": "src/architecture_validation/reports/format-repair-v1/assessment.json",
+    "completed_turns": 2,
+    "planned_turns": 2,
+    "full_offline_checks_passed": 62,
+    "live_identical_duplicates_normalized": 3,
+    "post_explanation_evaluation": "SUCCEEDED",
+    "post_explanation_policy": "NoIntervention",
+    "calls": 20,
+    "conservative_cny": 0.21713000000000005
+  },
+  "execution_policy": {
+    "implementation_defects": "Fix immediately and retest affected paths; preserve versions and original failures",
+    "design_tradeoffs": "Discuss when meaning, responsibilities or acceptance criteria must change",
+    "resource_limits": "Existing authorized caps remain in force"
+  },
+  "g2_r2": {
+    "status": "CLOSED",
+    "gate_G2": "HOLD",
+    "planned_turns": 24,
+    "normal_completed_turns": 23,
+    "expected_fault_paths": 1,
+    "complete_scenario_paths": 6,
+    "content_usable_turns": 14,
+    "evaluation": {
+      "EVAL-01": "SATISFIED",
+      "EVAL-02": "NOT SATISFIED",
+      "EVAL-03": "SATISFIED",
+      "EVAL-04": "NOT SATISFIED"
+    },
+    "probes": {
+      "planned": 12,
+      "completed": 12,
+      "matched": 11,
+      "false_accepts": [
+        "RP06"
+      ],
+      "false_rejects": [],
+      "unresolved": [],
+      "format_failures": [],
+      "positive_denominator": 6,
+      "negative_denominator": 6
+    },
+    "offline_tests_passed": 75,
+    "assessment": "src/architecture_validation/reports/g2-r2/assessment.json",
+    "http_attempts": 234,
+    "conservative_cny": 3.543048000000002,
+    "all_transport_failures_recovered": true,
+    "no_further_R2_calls": true
+  },
+  "evaluation_repair_r3": {
+    "status": "CLOSED_NOT_ADMITTED",
+    "gate_G2": "HOLD",
+    "formal_calls": 0,
+    "live_completed": 5,
+    "live_planned": 10,
+    "live_content_usable": 3,
+    "raw_evaluation_review_labels_matched": 5,
+    "derived_evaluation_review_labels_matched": 7,
+    "evaluation_review_cases": 10,
+    "default_semantic_profile": "R2 restored",
+    "implementation_fix": "Program derives overall verdict from required check verdicts; raw model verdict retained",
+    "final_offline_tests_passed": 81,
+    "http_attempts": 104,
+    "conservative_cny": 2.082098,
+    "all_transport_failures_recovered": true,
+    "assessment": "src/architecture_validation/reports/evaluation-repair-r3/assessment.json"
+  }
+}

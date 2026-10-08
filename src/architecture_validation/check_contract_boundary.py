@@ -14,6 +14,7 @@ from .harness import Server
 from .model import Budget,RealModel,load_config
 from .protocols import review_system
 from .revalidate import prepare_probe
+from .review import aggregate_review
 
 
 REPORTS=BASE/'reports/contract-boundary-v1'
@@ -86,9 +87,9 @@ def main(*,reports=REPORTS,run=RUN,probe_ids=('P01','P05','P06')):
                 sem,schema,mapping=prepare_probe(probe)
                 output,record=model.complete(review_system(probe['purpose']),sem,schema,'Probe:'+probe['purpose'],'probe')
                 validate(schema,output)
-                accepted=output['verdict']=='PASS' and all(check['verdict']=='PASS' for check in output['checks'])
-                value.update(status='COMPLETED',output=output,attempt_id=record['attempt_id'],accepted=accepted,
-                             matched=accepted if probe['expected']=='PASS' else output['verdict'] in ('FAIL','UNRESOLVED'))
+                effective=aggregate_review(output);accepted=effective=='PASS'
+                value.update(status='COMPLETED',output=output,effective_verdict=effective,attempt_id=record['attempt_id'],accepted=accepted,
+                             matched=accepted if probe['expected']=='PASS' else effective in ('FAIL','UNRESOLVED'))
             except Rejected as exc:
                 value.update(status='FAILED',failure=str(exc))
                 stop=True;report['stop_reason']=str(exc)

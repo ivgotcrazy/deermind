@@ -1,0 +1,68 @@
+{
+  "created": "2026-10-08T10:22:18.466302+00:00",
+  "case": "R13",
+  "arm": "disabled",
+  "role": "generation",
+  "purpose": "Evidence",
+  "expected": "AUTHOR_REVIEW",
+  "input_sha256": "ec5ebf2553f8b614d205618e668db374bfd89e3875efbaa1ab09892de457c63e",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_ccc5d08b43494bf19598672daadf2227",
+      "output": {
+        "items": [
+          {
+            "claim_id": "R023",
+            "relation": "Contradicts",
+            "interpretation": "学习者选择了先除后乘的正确策略方向，但44÷4算成10，导致单位量与最终结果均错误；这直接违反“独立识别关系、选择策略、计算及检查”中计算与检查的责任，构成对稳定独立完成本类任务的反向证据。",
+            "observation_ids": [
+              "R051"
+            ],
+            "source_ids": [
+              "R045"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "本会话受控通道未记录任何帮助块，故不存在可归因的提示或定位支持；学习者“让我再想一下”是自述性请求，不构成已发生的帮助。",
+            "dependencies_explanation": "该错误发生在无任何系统帮助的条件下，因此可归因于学习者自身的计算与检查环节；但仅一次作答只能提供局部反向证据，不能据此判定稳定不会。"
+          },
+          {
+            "claim_id": "R027",
+            "relation": "NonInformative",
+            "interpretation": "学习者只写出算式，未用数量意义说明单位量关系或为什么用总量除以份数；缺少单位关系解释不等于把单位关系理解错，因此本轮材料对该 KC 不足以判断。",
+            "observation_ids": [
+              "R051"
+            ],
+            "source_ids": [
+              "R045"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "无任何实际渲染的帮助块，故不存在系统讲解或提示可被误当作学习者自己的说明。",
+            "dependencies_explanation": "该 Claim 要求学习者自己说明单位量关系，而本轮文本未提供此类说明；请求“只记录”也不证明掌握或不会，故为信息不足而非反向证据。"
+          },
+          {
+            "claim_id": "R031",
+            "relation": "Contradicts",
+            "interpretation": "在允许支持范围内（可由他人指出需检查除法，但不提供商或过程），学习者本轮未获任何帮助，却给出44÷4＝10的错误商，且未表现出对商的合理性检查；这违反“自己重新计算商并检查其合理性”的责任。",
+            "observation_ids": [
+              "R051"
+            ],
+            "source_ids": [
+              "R045"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "本会话未记录任何帮助块，因此不存在“已获定位帮助后重算”的情形；错误商是在无帮助条件下产生的。",
+            "dependencies_explanation": "错误商直接落在该 KC 的核心责任上，且无帮助可解释为外部替代；但单次错误只提供局部反向证据，不能直接判定稳定不会。"
+          }
+        ]
+      },
+      "status": "COMPLETED"
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:22:22.347570+00:00",
+  "status": "COMPLETED"
+}

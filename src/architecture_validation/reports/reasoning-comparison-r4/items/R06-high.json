@@ -1,0 +1,71 @@
+{
+  "created": "2026-10-08T10:19:06.633735+00:00",
+  "case": "R06",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "PASS",
+  "input_sha256": "e3c63732b39df8382eccff15b1bcd5c804b3c65561b59a6543150df68cb7ac4b",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_96d24a4c6ae04ce886bbab99f2a31fa6",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "三项 Claim 均各形成一项关系：R023、R031 在无允许帮助下的计算/检查错误判为 Contradicts，R027 因未提供单位量说明判为 NonInformative；均区分单次表现与稳定能力，未把缺少单位关系解释等同于理解错误。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "使用原始作答 R045 和观察 R051，覆盖错误商、后续乘法及“先独立检查”请求；未将请求或系统讲解当成掌握/不会的证据，也未遗漏相关责任内容。",
+            "source_ids": [
+              "R045",
+              "R051",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "assistance 为空且 coverage=COMPLETE，候选未把请求当作已发生帮助；对 R031 明确无定位帮助且商仍由学习者计算，未把获提示重算当作独立完成，coverage 仅反映声明通道的记录范围。",
+            "source_ids": [
+              "R045",
+              "R035",
+              "R023",
+              "R027",
+              "R031"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "对 R023/R031 注明单次错误不能直接判定稳定不会；对 R027 的 NonInformative 给出具体原因：缺少单位量说明、错误商可能源于计算而非关系理解，与观察中未确定事项一致。",
+            "source_ids": [
+              "R051",
+              "R035",
+              "R023",
+              "R027",
+              "R031"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:19:20.228375+00:00",
+  "status": "COMPLETED"
+}

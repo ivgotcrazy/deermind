@@ -1,0 +1,81 @@
+{
+  "created": "2026-10-08T10:21:02.026747+00:00",
+  "case": "R09",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "PASS",
+  "input_sha256": "0fe3da39fee960fdede5cc821007bd366e6083f1713e9fb1c30075b27b851b93",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_b7b97127289c4813a2f60c6b6abcd76d",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 各形成一项关系，并分别相对 TaskProficiency、单位量 KC、整数除法 KC 判断：R023 因无 allowed_support 的实际定位帮助后表现不归为独立完成；R027 因系统已给单位量关系且学习者未自述解释，不判掌握也不判理解错；R031 在只给定位未给商时按允许支持判为有限 Supports。区分了当前表现与较稳定能力。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R097",
+              "R089",
+              "R091",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "使用 R097 的原始作答与 R089 实际渲染块：R049 仅是请求提示，未当作掌握证据；R091 的 98÷7＝14、14×11＝154 与提示内容被分开评价，正向与缺失（单位、检查）均有覆盖，未把系统讲解或请求本身当作掌握或不会。",
+            "source_ids": [
+              "R097",
+              "R049",
+              "R091",
+              "R089",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "仅以 R089 实际渲染块判定帮助：R023、R027 的 allowed_support 为空，R089 已给单位量关系，故不能算独立完成；R031 允许指出检查除法但不给商，R089 未给商，商由 R091 中学习者算出。coverage 复制 COMPLETE，未把帮助倒灌到此前表现，也未确认外部帮助。",
+            "source_ids": [
+              "R089",
+              "R091",
+              "R097",
+              "R023",
+              "R027",
+              "R031",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "对 R023、R027 的 NonInformative 给出具体原因（帮助替代独立责任、仅一次作答、未自述单位关系），R031 指出未写单位与检查、仅一次表现，并保留 R091 自述“看到提示”未核实及单位缺失等不确定点。未对全部有信息作答机械弃权。",
+            "source_ids": [
+              "R097",
+              "R049",
+              "R091",
+              "R089",
+              "R023",
+              "R027",
+              "R031",
+              "R035"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:21:24.699462+00:00",
+  "status": "COMPLETED"
+}

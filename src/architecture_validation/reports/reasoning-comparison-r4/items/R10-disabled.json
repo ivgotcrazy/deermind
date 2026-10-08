@@ -1,0 +1,75 @@
+{
+  "created": "2026-10-08T10:21:37.637348+00:00",
+  "case": "R10",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Belief",
+  "expected": "PASS",
+  "input_sha256": "1790dfe070388bf7c119de8bd18e7227948310fcefc12ffa565ca8ab6ac97854",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_6452b7f5bbcb4411a488705bd92da8f6",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 三个 Claim 各输出一项 Belief，claim_id 与 claim_evidence_index 一致，无遗漏或多余。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031"
+            ]
+          },
+          {
+            "rule_id": "basis",
+            "verdict": "PASS",
+            "reason": "三项均以 claim_evidence_index 为索引：R023 采用 R059(Supports)与 R113(Contradicts)，R027 采用 R060、R114(NonInformative)，R031 采用 R061(Supports)与 R115(Contradicts)；evidence_ids 与实际依据一致，conflicts 说明同一任务内不同次表现的不一致，未虚构矛盾，未跨 Claim 挪用材料。",
+            "source_ids": [
+              "R059",
+              "R113",
+              "R060",
+              "R114",
+              "R061",
+              "R115"
+            ]
+          },
+          {
+            "rule_id": "revision",
+            "verdict": "PASS",
+            "reason": "R023、R031 因新增反向 Evidence R113、R115 改变依据集合与不确定性，标 REVISE 合理；R027 有 claim_evidence_index 中 prior_belief_id R070 对应的有效旧 Belief，assessment 逐字复制并说明新增 R114 未改变证据不足性质，标 UNCHANGED 合规。",
+            "source_ids": [
+              "R069",
+              "R070",
+              "R071",
+              "R113",
+              "R114",
+              "R115"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "R023、R031 为 DIRECTIONAL 并明确限定单任务内不一致、未独立复测、不能断言完全不会；R027 为 UNKNOWN 并说明缺少解释不等于理解错误，未给未经校准概率，未把请求暂缓反馈当作已发生帮助。",
+            "source_ids": [
+              "R059",
+              "R113",
+              "R060",
+              "R114",
+              "R061",
+              "R115"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:21:39.836127+00:00",
+  "status": "COMPLETED"
+}

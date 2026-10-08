@@ -1,0 +1,91 @@
+{
+  "created": "2026-10-08T13:32:26.908667+00:00",
+  "decision_id": "G2-STAGING-20261008",
+  "decision_type": "AUTHORIZED_SCOPE_AND_CAPABILITY_STAGING_REVIEW",
+  "authorization": "User confirmed proceeding with limited Build exit, moving semantic quality optimization to subsequent engineering; retain original measurements and verify minimum correction mechanisms.",
+  "status": "CLOSED",
+  "gate_G2": "PASS",
+  "admission_scope": "MVP_DEFINITION_ONLY",
+  "qualification": "Mechanism composition with explicitly staged semantic quality; not a passed original semantic acceptance campaign.",
+  "historical_measurement": {
+    "batch": "R2",
+    "gate_under_original_criteria": "HOLD",
+    "usable_turns": 14,
+    "planned_turns": 24,
+    "original_required_usable_turns": 18,
+    "EVAL_02": "NOT SATISFIED",
+    "EVAL_04": "NOT SATISFIED"
+  },
+  "new_model_calls": 0,
+  "new_semantic_measurement": false,
+  "runtime_source_changed": false,
+  "mechanism_verification": {
+    "new_fixed_response_checks": 4,
+    "actual_database_copy_checks": 2,
+    "existing_regressions": 3,
+    "total_passed": 9,
+    "result": "mechanism-tests.xml",
+    "initial_failure": "One authored assertion incorrectly required every current Belief to be invalidated. The S6 unit Claim Belief has no dependency on the targeted errors. Corrected the test to preserve unaffected state; runtime unchanged; initial XML and test source retained."
+  },
+  "mechanism_scope": {
+    "verified": [
+      "authorized exact-target invalidation",
+      "CURRENT dependents and pending effect blocked",
+      "owner replacement and Belief recomputation through existing Candidate/Validation/Commit in a controlled active turn",
+      "failed replacement cannot restore invalid old state or forge successful UNKNOWN",
+      "persistent quarantine and a later ordinary turn uses current valid basis",
+      "original events, interpretations and occurred actions remain unchanged"
+    ],
+    "not_verified": [
+      "automatic semantic error discovery",
+      "quality of replacement produced by a real model",
+      "standalone post-turn Evaluation-only maintenance API or job orchestration",
+      "all unrelated semantic mistakes discovered by dependency graph"
+    ],
+    "manual_boundary": "Known exact targets supplied by an authorized operator at a controlled boundary. Direct Store invocation is a test/operator primitive, not a newly delivered browser or maintenance-service feature."
+  },
+  "staging": [
+    {
+      "id": "STG-01",
+      "issue": "Missing material versus counterevidence; assistance relevance across tasks",
+      "owner": "AI/Cognitive Runtime + Domain",
+      "implementation_stage": "Phase 5 MVP Engineering",
+      "acceptance_stage": "Phase 6 Internal Alpha before Pilot",
+      "required_evidence": "Separate development examples and held-out semantic benchmark; false accept/reject and reasons, not only labels; quality thresholds frozen for MVP scope"
+    },
+    {
+      "id": "STG-02",
+      "issue": "Review false acceptance/rejection and candidate influence",
+      "owner": "AI/Cognitive Runtime",
+      "implementation_stage": "Phase 5 MVP Engineering",
+      "acceptance_stage": "Phase 6 Internal Alpha before Pilot",
+      "required_evidence": "Task decomposition, few-shot, source-grounded verification and model/configuration comparisons, measured against untouched benchmark and cost/latency limits"
+    },
+    {
+      "id": "STG-03",
+      "issue": "Automatic error discovery and standalone owner-maintenance orchestration",
+      "owner": "Evaluation + Core Platform",
+      "implementation_stage": "Phase 5 MVP Engineering",
+      "acceptance_stage": "G5 feature scope and Phase 6 failure/recovery acceptance before Pilot",
+      "required_evidence": "Authorized exact targets, serial admission, revision binding, failed replacement stays unavailable, affected Beliefs re-inferred, no replay of historical teaching actions"
+    },
+    {
+      "id": "STG-04",
+      "issue": "Latency, context volume, records and recomputation cost",
+      "owner": "AI/Cognitive Runtime + Core Platform",
+      "implementation_stage": "Phase 5 MVP Engineering",
+      "acceptance_stage": "Phase 6 Internal Alpha; reopen earlier if costs invalidate MVP",
+      "required_evidence": "Measure real MVP interaction budget; no assumption that 19-call decomposition improves quality or total latency"
+    }
+  ],
+  "conditions": [
+    "No assertion of generally reliable learner assessment, calibrated mastery or learning gains",
+    "No autonomous teaching service or real-child Pilot authorized by this gate",
+    "MVP Definition must treat current semantic limits as constraints, not promised solved capabilities",
+    "Ownership, required checks, strict serial execution, authority, currentness and factual history remain mandatory",
+    "If minimum invariant-preserving correction fails, or proposed core value depends on unsupported semantic capability, reopen relevant stage rather than silent bypass"
+  ],
+  "R5_disposition": "NOT_STARTED_DEFERRED_TO_MVP_ENGINEERING; no R5 call budget activated; original proposal retained as optional design input",
+  "next_stage": "Development Phase 3 MVP Definition",
+  "next_deliverable": "MVP definition covering target learner/user, single core scenario, value hypothesis, capability boundaries and measurable success criteria; Product & Domain Foundation precedes MVP Engineering"
+}

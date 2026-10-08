@@ -1,0 +1,63 @@
+{
+  "created": "2026-10-08T10:19:20.665091+00:00",
+  "case": "R06",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "PASS",
+  "input_sha256": "e3c63732b39df8382eccff15b1bcd5c804b3c65561b59a6543150df68cb7ac4b",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_882ea4f3a32845f3b1f8403641500ebf",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为R023、R027、R031三个Claim各形成一项关系，并分别区分TaskProficiency（R023）、单位量关系KC（R027）、整数除法KC（R031）；关系严格相对各Claim，未把单次错误直接判为稳定不会。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "三项均引用Observation R051与原始作答R045：R023、R031以96÷12＝9的错误商为反向证据，R027以缺少单位量关系说明为由判NonInformative，覆盖正反材料；未把请求独立检查当作已发生帮助或掌握证据。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "assistance为空且coverage为COMPLETE，候选三项均未把请求或自述写成已渲染帮助；R023、R031说明无帮助条件下独立作答，R027说明请求不构成单位量关系讲解，符合按Claim分别解释的要求。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "R023、R031指出单次错误只能作局部反向证据、不能判定稳定不会；R027给出NonInformative的具体原因（缺少单位量关系说明，错误商可能源于计算而非关系理解），未机械弃权。",
+            "source_ids": [
+              "R045",
+              "R051"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:19:28.921277+00:00",
+  "status": "COMPLETED"
+}

@@ -1,0 +1,77 @@
+{
+  "created": "2026-10-08T10:22:37.191735+00:00",
+  "case": "R14",
+  "arm": "high",
+  "role": "generation",
+  "purpose": "Belief",
+  "expected": "AUTHOR_REVIEW",
+  "input_sha256": "fc925d34b278f2ad26978fcbb116373f69080822d928f7915d50669d591da744",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_325fd9bc056444d282335df5dfcde1fb",
+      "output": {
+        "items": [
+          {
+            "claim_id": "R023",
+            "disposition": "REVISE",
+            "assessment_kind": "DIRECTIONAL",
+            "assessment": "在无帮助条件下独立作答本类正比例任务时，策略方向正确但计算错误，尚不足以判定能稳定独立完成；R084 的讲解请求未提供新的计算，也不构成已发生的帮助。",
+            "uncertainty": "仅一次独立作答、单一题目，且学习者要求再想一下，是否自行修正未知；R084 未提供新计算，外部帮助未知；不能据此断言稳定掌握或完全不会。",
+            "epistemic_status": [
+              "有限方向性认识",
+              "单次作答",
+              "无帮助条件下观察"
+            ],
+            "evidence_ids": [
+              "R059",
+              "R098"
+            ],
+            "conflicts": [],
+            "rationale": "claim_evidence_index 将 R059、R098 均关联到 R023。R059 依据 R045 显示策略方向正确但 44÷4=10 算错，直接违反独立完成责任；R098 补充 R045 后续算式 10×9=90 及 R084 请求讲解，说明计算链条在求商处断裂，R084 未提供新计算，也不是已渲染帮助。两者均为反向证据，因仅一次作答且属同一表现的重复解释，只支持有限方向性认识，故 REVISE 依据集合而非改判稳定不会。"
+          },
+          {
+            "claim_id": "R027",
+            "disposition": "REVISE",
+            "assessment_kind": "DIRECTIONAL",
+            "assessment": "在无帮助条件下，学习者使用了总量除以份数的形式，但商错误且未在文本中说明单位量关系；缺少解释本身不足以判断理解，所以尚不能确认其能用数量意义说明单位量。",
+            "uncertainty": "缺少口头解释，无法区分单位量关系理解问题与单纯计算失误；R099 表明缺解释本身非信息性；仅一次表现，不能断言不会说明单位量关系。",
+            "epistemic_status": [
+              "有限方向性认识",
+              "关系与计算耦合",
+              "缺少解释非信息性"
+            ],
+            "evidence_ids": [
+              "R060",
+              "R099"
+            ],
+            "conflicts": [],
+            "rationale": "claim_evidence_index 关联 R060、R099。R060 基于 R045 的 44÷4=10 且无单位量关系说明，对“能用数量意义说明单位量”作有限反向证据；R099 则指出仅缺口头解释不足以判断理解，属 NonInformative，因此不能把“未说明”单独当作不会说明。综合看，商错误与无解释使确认掌握的条件未满足，但证据不足以判定关系理解错误，故保持 DIRECTIONAL 并 REVISE 依据。"
+          },
+          {
+            "claim_id": "R031",
+            "disposition": "REVISE",
+            "assessment_kind": "DIRECTIONAL",
+            "assessment": "在无帮助条件下，学习者自行计算 44÷4 得 10，商错误且未表现出检查；R084 请求完整讲解但未被渲染为帮助，尚不能确认其能独立正确求商并自查。",
+            "uncertainty": "仅一次错误，且请求讲解后是否自行检查改正未知；本会话未记录定位帮助，外部帮助未知；不能据此判定稳定不会。",
+            "epistemic_status": [
+              "有限方向性认识",
+              "单次错误",
+              "无帮助条件下观察"
+            ],
+            "evidence_ids": [
+              "R061",
+              "R100"
+            ],
+            "conflicts": [],
+            "rationale": "claim_evidence_index 关联 R061、R100。R061 显示无帮助条件下 44÷4=10 商错且无检查迹象，违反自行求商并检查责任；R100 结合 R045 与 R084 进一步确认该错误，且 R084 只是讲解请求，未使用“他人指出检查”的允许支持。两次解释源于同一表现，不是独立样本，故只支持有限反向方向性，REVISE 依据。"
+          }
+        ]
+      },
+      "status": "COMPLETED"
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:22:52.357677+00:00",
+  "status": "COMPLETED"
+}

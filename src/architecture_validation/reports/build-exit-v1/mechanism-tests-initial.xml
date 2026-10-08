@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="9" time="4.795" timestamp="2026-10-08T21:30:12.733602+08:00" hostname="Star"><testcase classname="src.architecture_validation.tests.test_build_exit" name="test_known_error_owner_replacement_and_pending_effect" time="0.314" /><testcase classname="src.architecture_validation.tests.test_build_exit" name="test_failed_replacement_never_restores_known_error[generation]" time="0.257" /><testcase classname="src.architecture_validation.tests.test_build_exit" name="test_failed_replacement_never_restores_known_error[validation]" time="0.289" /><testcase classname="src.architecture_validation.tests.test_build_exit" name="test_quarantine_persists_and_next_turn_uses_fresh_basis" time="0.362" /><testcase classname="src.architecture_validation.tests.test_build_exit" name="test_existing_error_records_can_be_quarantined_without_rewriting_history[S3-targets0]" time="0.149" /><testcase classname="src.architecture_validation.tests.test_build_exit" name="test_existing_error_records_can_be_quarantined_without_rewriting_history[S6-targets1]" time="0.121"><failure message="assert False&#10; +  where False = all(&lt;generator object test_existing_error_records_can_be_quarantined_without_rewriting_history.&lt;locals&gt;.&lt;genexpr&gt; at 0x000001C02EEDEF80&gt;)">tmp_path = WindowsPath('C:/Users/Administrator/AppData/Local/Temp/pytest-of-Administrator/pytest-19/test_existing_error_records_ca1')
+sid = 'S6'
+targets = ['evidence_8a3e580d24b74032baf57a7e8457bfec', 'evidence_c1a3f35efaad42e990c2c157b8960b47']
+
+    @pytest.mark.parametrize('sid,targets', [
+        ('S3', ['evidence_d9d2dda9f0cc411baa9b6e21449b778a']),
+        ('S6', ['evidence_8a3e580d24b74032baf57a7e8457bfec', 'evidence_c1a3f35efaad42e990c2c157b8960b47']),
+    ])
+    def test_existing_error_records_can_be_quarantined_without_rewriting_history(tmp_path, sid, targets):
+        source = BASE / 'runs/g2-r2/v2' / sid / 'runtime.sqlite'
+        source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+        destination = tmp_path / 'copy.sqlite'
+        with sqlite3.connect(source.resolve().as_uri() + '?mode=ro', uri=True) as src:
+            with sqlite3.connect(destination) as dst:
+                src.backup(dst)
+        store = Store(destination)
+        try:
+            before = {r['id']: deepcopy(r) for r in store.rows()}
+            old_beliefs = [r['id'] for r in store.rows('Belief', sid, current=True)]
+            assert old_beliefs
+            affected = store.invalidate(targets[0], 'admin')
+            if len(targets) &gt; 1:
+                assert targets[1] not in affected and store.current(targets[1])
+                affected += store.invalidate(targets[1], 'admin')
+&gt;           assert all(not store.current(rid) for rid in targets + old_beliefs)
+E           assert False
+E            +  where False = all(&lt;generator object test_existing_error_records_can_be_quarantined_without_rewriting_history.&lt;locals&gt;.&lt;genexpr&gt; at 0x000001C02EEDEF80&gt;)
+
+src\architecture_validation\tests\test_build_exit.py:188: AssertionError</failure></testcase><testcase classname="src.architecture_validation.tests.test_mechanisms" name="test_M11_A" time="1.090" /><testcase classname="src.architecture_validation.tests.test_mechanisms" name="test_M12_A" time="0.527" /><testcase classname="src.architecture_validation.tests.test_mechanisms" name="test_M12_B" time="0.532" /></testsuite></testsuites>

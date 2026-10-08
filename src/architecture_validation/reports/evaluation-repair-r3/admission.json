@@ -1,0 +1,7 @@
+{
+  "created": "2026-10-08T09:53:16.937245+00:00",
+  "admitted": false,
+  "reason": "R03/R04 false acceptance, R10 false rejection, R15/R16 generation errors; live paths incomplete and help contrasts missing. Mechanical overall-verdict fix does not cure these semantic failures.",
+  "formal_calls": 0,
+  "no_additional_semantic_tuning_in_R3": true
+}

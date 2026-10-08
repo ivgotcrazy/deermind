@@ -1,0 +1,12 @@
+{
+  "restored_files": [
+    "protocols.py",
+    "runtime.py",
+    "revalidate.py",
+    "testing.py"
+  ],
+  "baseline": "baseline-source.zip",
+  "reason": "One targeted semantic profile did not meet admission and produced false rejections; restore measured R2 semantic behavior and retain only separately verified deterministic aggregation fix.",
+  "experimental_code": "source.zip",
+  "original_results_unchanged": true
+}

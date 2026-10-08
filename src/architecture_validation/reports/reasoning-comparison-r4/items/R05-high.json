@@ -1,0 +1,93 @@
+{
+  "created": "2026-10-08T10:18:20.965586+00:00",
+  "case": "R05",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Belief",
+  "expected": "FAIL",
+  "input_sha256": "6ebf1ae87abb6225e4a63c0b1e4caa96856ed4872c5386d1c5c301fe973e89ff",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_1ac9f15e39234c4f9b164d983fe8c4a0",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 三个 Claim 各输出一项 Belief，无缺项或额外 Claim；R023/R031 仅将 Supports 证据用作有限方向性判断，R027 未把 NonInformative 证据推成会或不会，未把 Evidence 关系直接等同稳定掌握。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R142",
+              "R180",
+              "R064",
+              "R181",
+              "R107",
+              "R182"
+            ]
+          },
+          {
+            "rule_id": "basis",
+            "verdict": "PASS",
+            "reason": "三项分别以 claim_evidence_index 的 R063/R105/R142/R180、R064/R106/R143/R181、R065/R107/R144/R182 为索引，逐条说明 NonInformative 或 Supports 及与各 Claim 责任的相关性；evidence_ids 与实际采用依据一致，未虚构矛盾，conflicts 为空符合无实际冲突。",
+            "source_ids": [
+              "R063",
+              "R105",
+              "R142",
+              "R180",
+              "R064",
+              "R106",
+              "R143",
+              "R181",
+              "R065",
+              "R107",
+              "R144",
+              "R182"
+            ]
+          },
+          {
+            "rule_id": "revision",
+            "verdict": "PASS",
+            "reason": "R023、R031 有 R152/R153 旧 Belief 在 beliefs 中，因新增 R180/R182 扩大依据集合作 REVISE；R027 的 UNCHANGED 有 R074 旧 Belief，逐字复制原 assessment，并说明新增 R106/R143/R181 均 NonInformative 故保持 UNKNOWN；R166 自述未被当作已确认帮助或计算。",
+            "source_ids": [
+              "R152",
+              "R153",
+              "R074",
+              "R180",
+              "R182",
+              "R106",
+              "R143",
+              "R181",
+              "R166"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "R023、R031 以 limited_positive_evidence 作 DIRECTIONAL，明确保留一次作答、先前定位帮助及未展示检查等限制；R027 因无关系说明输出 UNKNOWN，未在仅请求无表现时判断会或不会，也未给未校准概率。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R142",
+              "R180",
+              "R064",
+              "R181",
+              "R107",
+              "R182"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": false
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:19:06.023120+00:00",
+  "status": "COMPLETED"
+}

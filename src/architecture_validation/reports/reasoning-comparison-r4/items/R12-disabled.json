@@ -1,0 +1,60 @@
+{
+  "created": "2026-10-08T10:22:09.329102+00:00",
+  "case": "R12",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Policy",
+  "expected": "FAIL",
+  "input_sha256": "e7b1ded71ba2179343d871fdb92dddd0930337efbd92ee258428d7bd1c42d76c",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_85ec2396687543328ec7606baa0ae1e3",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前为 IndependentDiagnosis，学习者请求只指出需检查的步骤；候选为 Hint，仅点名“132÷11这一步”，未给商或答案，符合请求的帮助限度，也未越权转为讲解。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "候选选择 Execute 并给出可执行的检查提示，针对学习者请求定位错误步骤，属于当前允许的 Hint 动作，无越权或多余干预。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "PASS",
+            "reason": "提示只点名待检查算式 132÷11，未提供正确商或最终答案，数值与解释未超出当前请求允许范围，也无计算错误。",
+            "source_ids": [
+              "R002",
+              "R006"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "PASS",
+            "reason": "理由承认仅点名待检查算式，未替代定位工作；这与实际内容一致，未否认已提供的定位帮助，也未声称提供了商或答案。",
+            "source_ids": [
+              "R002"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": false
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:22:17.215300+00:00",
+  "status": "COMPLETED"
+}

@@ -1,0 +1,65 @@
+{
+  "created": "2026-10-08T10:19:29.930441+00:00",
+  "case": "R07",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "PASS",
+  "input_sha256": "be311c353164aaf7d41fe09f277a79a125075ee959773652427642b1fa33144d",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_e07e746156c74c6499d9945f8ec8ea66",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 三个 Claim 各形成一项关系，且关系严格相对各 Claim：R023 为 TaskProficiency 的 Supports，R027 为单位量关系 KC 的 NonInformative，R031 为整数除法 KC 的 Supports；区分了任务表现与 KC，未把一次更正作答当作稳定掌握。",
+            "source_ids": [
+              "R045",
+              "R084",
+              "R090"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "各项均引用当前 Observation R090 及原始作答 R045、R084：R023 用 R084 的 96÷12＝8、8×17＝136 作有限正向证据并保留 R045 错误；R027 指出只有算式、无单位量关系说明；R031 用学习者自行给出正确商作有限支持。请求“不要提示”未被当作掌握或不会的证据。",
+            "source_ids": [
+              "R045",
+              "R084",
+              "R090"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "assistance 列表为空且 coverage 为 COMPLETE，候选据此说明本会话受控通道未记录帮助块，无提示后表现可归因，并明确 R045“请不要提示”是请求、外部帮助未知；未把自述或请求写成已发生的帮助，coverage 复制为 COMPLETE。",
+            "source_ids": [
+              "R045",
+              "R084"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "R023、R031 均指出仅一次更正作答不足以证明稳定掌握；R027 给出 NonInformative 的具体原因——缺少单位量关系的说明材料；同时说明外部帮助未知，未对全部有信息作答机械弃权。",
+            "source_ids": [
+              "R045",
+              "R084",
+              "R090"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:19:33.342571+00:00",
+  "status": "COMPLETED"
+}

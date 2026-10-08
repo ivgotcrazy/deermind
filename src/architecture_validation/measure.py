@@ -9,6 +9,7 @@ from .contracts import WIRE, validate
 from .harness import Server
 from .model import RealModel, Budget
 from .protocols import RULES, review_system
+from .review import aggregate_review
 
 
 def load(name):return json.loads((BASE/name).read_text(encoding='utf-8'))
@@ -76,9 +77,9 @@ def main():
                 output,record=model.complete(review_system(probe['purpose']),probe['context']|{'candidate':probe['candidate'],'candidate_id':probe['id']},WIRE['Review'],'Probe:'+probe['purpose'],'probe')
                 validate(WIRE['Review'],output)
                 complete=len(output['checks'])==len(RULES[probe['purpose']]) and {c['rule_id'] for c in output['checks']}==set(RULES[probe['purpose']])
-                passed=output['verdict']=='PASS' and complete and all(c['verdict']=='PASS' for c in output['checks'])
+                effective=aggregate_review(output);passed=effective=='PASS' and complete
                 result.update(output=output,attempt_id=record['attempt_id'],review_complete=complete,accepted=passed,
-                    matched=(passed if probe['expected']=='PASS' else output['verdict'] in ('FAIL','UNRESOLVED') and complete),status='COMPLETED')
+                    matched=(passed if probe['expected']=='PASS' else effective in ('FAIL','UNRESOLVED') and complete),effective_verdict=effective,status='COMPLETED')
             except Rejected as exc:result.update(status='FAILED',failure=str(exc),matched=False)
             report['probes'].append(result);write_json(dest,report);print({'unit':probe['id'],'status':result['status'],'matched':result['matched']},flush=True)
             if 'Transport' in result.get('failure','') or 'BudgetExhausted' in result.get('failure',''):stopped=True;break

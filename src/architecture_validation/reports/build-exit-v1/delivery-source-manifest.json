@@ -1,0 +1,11 @@
+{
+  "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md": "0c4e08483174c902062c31cff99b3e20195ad0dbeae8647f93f1f82c7200d2b7",
+  "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md": "19ebb37cb8f881bfc0452561cb26327f7af867696623b13fa6b31f66fcb3500e",
+  "doc/system-design/README.md": "fa8789b3b8a44ed3d541f86689d7def2006e626a62629aee7c5822167e617822",
+  "src/architecture_validation/README.md": "07e1e3a25e83a13814e9b488b4f4852a0e83f7c7f7b08972dec46a414ad34397",
+  "src/architecture_validation/reports/progress.json": "3623268e8933d6bf488e011331e29a04d49325c8fda39ec1faaf7ef21205e247",
+  "src/spike/reports/validation-progress-v1.json": "1e80bca46d3b2af00fee71c06b22ee71a1b716c5b6b1ba3e25e7b998afc2d5de",
+  "doc/top/DeerMind_Development_Roadmap_v0.3.md": "b2b210b2162d4ac0fa6d0e0ecf6d6a8131a9284954651f7e785848a2d4bdc367",
+  "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md": "e24f93cf21e97e1378ad6e7101eda0dd239bad87d77473a25d917d1d41efe88f",
+  "src/architecture_validation/tests/test_build_exit.py": "ee8d5dd35d20934e910011f505f3ecd8a790e65e7f5c53d4314268c9c4a5fc9b"
+}

@@ -1,0 +1,31 @@
+{
+  "created": "2026-10-08T10:02:36.710477+00:00",
+  "status": "PASS",
+  "errors": [],
+  "markdown_links_checked": 309,
+  "formal_v1_designs_unchanged": 7,
+  "frozen_experimental_source_files_verified": 82,
+  "r2_closed_artifacts_verified": 42,
+  "default_protocols_and_scripted_model_match_R2": true,
+  "evidence_files_verified": 132,
+  "evidence_api_credential_scan": "PASS",
+  "records_checked": 529,
+  "exact_refs_checked": 1739,
+  "databases_checked": 4,
+  "spike_history_verified": {
+    "ledger_entries_checked": 1466,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  },
+  "final_offline_tests_passed": 81,
+  "http_attempts_accounted": 104,
+  "formal_calls": 0,
+  "transport_failures_recovered": 10,
+  "git_diff_check": "PASS",
+  "git_whitespace_note": "CRLF treated as valid line endings; raw measurement bytes preserved",
+  "semantic_accuracy_not_implied": true
+}

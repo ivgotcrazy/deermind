@@ -1,0 +1,76 @@
+{
+  "created": "2026-10-08T10:19:34.180552+00:00",
+  "case": "R07",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "PASS",
+  "input_sha256": "be311c353164aaf7d41fe09f277a79a125075ee959773652427642b1fa33144d",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_8af353e3b44b4aa1a3414af495f62965",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 各建一项关系，无遗漏。R023 以 R084 作有限支持并注明一次更正不足以证明稳定掌握；R027 因缺少单位量关系说明而判 NonInformative，未误判为不会；R031 以学习者输入中的正确商作有限支持，并说明一次更正不足。三者未混同当前表现与较稳定能力，也未把缺少解释当成理解错误。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R090",
+              "R045",
+              "R084",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "各关系均以 Observation R090 和原始作答 R045、R084 为依据：既保留 R045 的错误，也使用 R084 的更正；R045‘不要提示’被当作请求而非掌握或不会的证据；实际帮助为空，未虚构帮助效果。",
+            "source_ids": [
+              "R090",
+              "R045",
+              "R084",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "assistance 列表为空且 coverage 复制为 COMPLETE，候选只说明受控通道未记录帮助并指外部帮助未知；未把请求或自述当成已渲染提示，未写成提示后表现，也未将 R084 说成系统帮助后的结果。R031 的商来自学习者输入，且无允许支持记录，可作有限支持。",
+            "source_ids": [
+              "R045",
+              "R084",
+              "R090",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "候选指出 R023/R031 一次更正不足以证明稳定掌握，R027 缺少说明单位量关系的材料，故判 NonInformative 并给出具体原因；未对有信息作答机械弃权，也标明外部帮助未知。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R090",
+              "R045",
+              "R084",
+              "R035"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:20:11.113940+00:00",
+  "status": "COMPLETED"
+}

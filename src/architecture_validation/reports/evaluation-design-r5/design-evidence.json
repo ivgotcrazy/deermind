@@ -1,0 +1,40 @@
+{
+  "created": "2026-10-08T10:45:25.944466+00:00",
+  "kind": "READ_ONLY_CODE_AND_EXISTING_RECORD_AUDIT",
+  "new_model_calls": 0,
+  "fresh_semantic_validation": false,
+  "sources": {
+    "R4_assessment": "src/architecture_validation/reports/reasoning-comparison-r4/assessment.json",
+    "R2_S6_records": "src/architecture_validation/runs/g2-r2/v2/S6/records.json"
+  },
+  "findings": {
+    "per_generation_claims": 3,
+    "review_receives_candidate": true,
+    "current_recompute_target_kind": "Observation",
+    "current_recompute_process_includes_policy": true,
+    "invalidating_S6_R142_reaches_S6_R180": false,
+    "specific_evidence_records": [
+      {
+        "alias_in_S6": "R142",
+        "exact_record_id": "evidence_8a3e580d24b74032baf57a7e8457bfec",
+        "object": "evidence:S6:observation:event_704361e9eb7a41ecbbb4811880833dbd:canonical:Claim:claim-task",
+        "body_sha256": "4cfb4c451340e185b0fa463a0cbe6badd6aaa6376cadac4908c9018a87c37944",
+        "evidence_parents": []
+      },
+      {
+        "alias_in_S6": "R180",
+        "exact_record_id": "evidence_c1a3f35efaad42e990c2c157b8960b47",
+        "object": "evidence:S6:observation:event_d630c64a2d41482f8c97e264297d2fa1:canonical:Claim:claim-task",
+        "body_sha256": "0b77f98d68cc561b88e918454802f18b97548366760eeed73cd77b9054d30644",
+        "evidence_parents": []
+      }
+    ]
+  },
+  "source_sha256": {
+    "src/architecture_validation/runtime.py": "3ec452eaed841bece9ad3057651283afe38edc5077da9173e4785467635e4785",
+    "src/architecture_validation/store.py": "b52609b5094e44735882b07a7f99d3663c763b7e164f094e718430ea431229d6",
+    "src/architecture_validation/server.py": "80fec1e89f32c956c9f36d6e74863ef7f28e46daf79dec892c24c8e07412e53a",
+    "src/architecture_validation/references.py": "3403bb4c11d4f30e6dc3c73aae47c339e2fd516230fe1f2ed61ddc5714d6a353",
+    "src/architecture_validation/protocols.py": "986e0bf0c78c5f79691482db3937f523836e054a8fbd2f92f0beb14fc2b85c8f"
+  }
+}

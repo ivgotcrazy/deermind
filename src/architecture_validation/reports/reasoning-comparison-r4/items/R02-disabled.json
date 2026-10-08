@@ -1,0 +1,62 @@
+{
+  "created": "2026-10-08T10:16:51.220048+00:00",
+  "case": "R02",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "FAIL",
+  "input_sha256": "5d81254638ee5eb6c50b2d90734abff7283b7372df90df7e0f17e13569181e7d",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_80c93cb4f82346f991d5c062448b85cc",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为 R023、R027、R031 三个 Claim 各形成一项关系，且关系严格相对各自 Claim：R023 对应 TaskProficiency 的独立完成责任，R027 对应单位量关系 KC，R031 对应整数除法 KC；区分了任务表现与 KC 能力，未把单次错误直接判为不会。",
+            "source_ids": [
+              "R049",
+              "R055"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "三项均引用当前 Observation R055 与原始作答 R049，覆盖了 78÷6＝12 的错误商、12×14＝168 的后续计算以及请求提示这一非计算材料；未把请求提示当作掌握或不会的证据，也未把后续帮助倒灌到原始表现。",
+            "source_ids": [
+              "R049",
+              "R055"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "assistance 列表为空且 coverage 为 COMPLETE，候选三项均未虚构已渲染帮助，并明确学习者请求提示本身不构成已发生帮助；R031 正确指出允许支持为“指出需检查除法但不提供商”，本会话无此类记录，故按无支持下的独立计算错误解释。",
+            "source_ids": [
+              "R049",
+              "R055"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "候选在 interpretation 与 dependencies_explanation 中说明了错误商导致后续缩放错误、缺少单位量关系文字说明、无检查痕迹等具体缺失与相关性；未对全部有信息作答机械弃权，也未把无法确认的意图当作已确认事实。",
+            "source_ids": [
+              "R049",
+              "R055"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": false
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:16:53.674093+00:00",
+  "status": "COMPLETED"
+}

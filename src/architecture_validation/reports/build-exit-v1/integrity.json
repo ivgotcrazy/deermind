@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "g2-r2": {
+    "artifacts_checked": 42,
+    "historical_paths_resolved": 0,
+    "mismatches": []
+  },
+  "evaluation-repair-r3": {
+    "artifacts_checked": 39,
+    "historical_paths_resolved": 0,
+    "mismatches": []
+  },
+  "reasoning-comparison-r4": {
+    "artifacts_checked": 60,
+    "historical_paths_resolved": 0,
+    "mismatches": []
+  },
+  "evaluation-design-r5": {
+    "artifacts_checked": 16,
+    "historical_paths_resolved": 6,
+    "mismatches": []
+  },
+  "formal_designs": {
+    "checked": 7,
+    "mismatches": []
+  },
+  "prior_runtime_sources": {
+    "checked": 87,
+    "mismatches": []
+  },
+  "local_markdown_targets": {
+    "checked": 328,
+    "missing": []
+  },
+  "historical_report_body_unchanged": true,
+  "current_gate_and_historical_measurement_separate": true,
+  "new_model_calls": 0,
+  "new_semantic_measurement": false
+}

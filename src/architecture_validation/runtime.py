@@ -6,8 +6,9 @@ import time
 
 from .common import Rejected, digest, now
 from .contracts import WIRE, FORMAL_EVIDENCE, FORMAL_BELIEF, COMPLETION, validate
-from .protocols import RULES, system, review_system,review_rule_ids
+from .protocols import RULES, system, review_system
 from .references import Bindings
+from .review import aggregate_review
 
 
 def compact(value):
@@ -128,7 +129,7 @@ class Engine:
                 } for c in bindings.rows.values() if c['kind']=='Claim']
         if review:
             check=schema['properties']['checks']['items'];ordered=[]
-            for name in review_rule_ids(purpose,bindings.allowed(['Claim'])):
+            for name in RULES[purpose]:
                 bound=deepcopy(check);bound['properties']['rule_id']={'const':name};ordered.append(bound)
             schema['properties']['checks']={'type':'array','prefixItems':ordered,'items':False,'minItems':len(ordered),'maxItems':len(ordered)}
         prompt=review_system(purpose) if review else system(purpose)
@@ -242,15 +243,15 @@ class Engine:
                 review_start=time.perf_counter()
                 review,rid=self.call(tid,purpose,ctx,WIRE['Review'],review=True,category=category)
                 review_seconds=time.perf_counter()-review_start
-                checks=review['checks'];required=set(review_rule_ids(purpose,Bindings(self.store,self.store.get(ctx)).allowed(['Claim'])))
-                complete=(len(checks)==len(required) and {c['rule_id'] for c in checks}==required)
+                checks=review['checks'];required=set(RULES[purpose]);complete=(len(checks)==len(required) and {c['rule_id'] for c in checks}==required)
                 complete=complete and all(c['verdict']=='PASS' and c['reason'] for c in checks)
                 bindings=Bindings(self.store,self.store.get(ctx))
                 try:
                     for check in checks:check['source_ids']=[bindings.resolve(i) for i in check['source_ids']]
                 except Rejected:raise Rejected('ReviewUnknownSource')
                 vr=self.store.record('Validation',{'context_id':ctx,'candidate_id':candidate,'candidate_hash':self.store.get(candidate)['hash'],
-                    'verdict':review['verdict'],'required_checks_complete':bool(complete),'rule_hash':digest(RULES[purpose]),'review_scope_version':'per-claim-v1','checks':checks,'review_execution':rid},
+                    'verdict':aggregate_review(review),'model_verdict':review['verdict'],'verdict_aggregation':'required-checks-v1',
+                    'required_checks_complete':bool(complete),'rule_hash':digest(RULES[purpose]),'checks':checks,'review_execution':rid},
                     sid=self.store.turn(tid)['sid'],turn=tid,dependencies=[(candidate,'PINNED','reviewed'),(rid,'PINNED','review execution')])
                 self.reviews.setdefault(tid,[]).append(vr)
                 hook=self.hooks.get('before_commit')

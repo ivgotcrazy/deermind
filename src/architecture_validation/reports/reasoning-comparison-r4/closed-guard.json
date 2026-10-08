@@ -1,0 +1,7 @@
+{
+  "created": "2026-10-08T10:30:56.341688+00:00",
+  "status": "PASS",
+  "failure": "ComparisonAlreadyClosed",
+  "budget_unchanged": true,
+  "new_api_calls": 0
+}

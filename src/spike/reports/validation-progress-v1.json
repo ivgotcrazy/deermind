@@ -1906,6 +1906,162 @@
       "previous_sha256": "d36cb889922b63aeade0a8ed89b40fe6b5089a88aae7444ec5c76196d46b7c3b",
       "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/baseline-files/src__spike__reports__validation-progress-v1.json.txt",
       "reason": "Preserve R2 closeout before user-authorized targeted Evaluation repair R3"
+    },
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
+      "previous_sha256": "7b26c6085a4253215e7ead95de049f39e25eac64a0a947ba0d483d38389d7a38",
+      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/before-closeout/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
+      "reason": "Preserve R3 running state before final targeted failure, rollback and implementation-fix report"
+    },
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
+      "previous_sha256": "82dd29f86532d037fe11a4eba41afc97d98d6aac92fd5c94c65eae5bece5d744",
+      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/before-closeout/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
+      "reason": "Preserve R3 running state before final targeted failure, rollback and implementation-fix report"
+    },
+    {
+      "source_path": "doc/system-design/README.md",
+      "previous_sha256": "46a755cf3e0442c83436c430fd486ebaf105d9ef9545c3f67b56af199cbe0939",
+      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/before-closeout/doc__system-design__README.md.txt",
+      "reason": "Preserve R3 running state before final targeted failure, rollback and implementation-fix report"
+    },
+    {
+      "source_path": "src/architecture_validation/README.md",
+      "previous_sha256": "04fd5badb8f5dfcb549ce7f9d0e7696dcb6490ad8804b3306ebe6cf16e657ec6",
+      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/before-closeout/src__architecture_validation__README.md.txt",
+      "reason": "Preserve R3 running state before final targeted failure, rollback and implementation-fix report"
+    },
+    {
+      "source_path": "src/architecture_validation/reports/progress.json",
+      "previous_sha256": "063ee0f2be2eb63b55141eba99fae695e9cbb9a001a6161212c5e5060300a8ec",
+      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/before-closeout/src__architecture_validation__reports__progress.json.txt",
+      "reason": "Preserve R3 running state before final targeted failure, rollback and implementation-fix report"
+    },
+    {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "7e1545bd368af92defb891d7056587fb11ffbf8ec39e0c30f73fb02d5189ee47",
+      "preserved_at": "src/architecture_validation/reports/evaluation-repair-r3/before-closeout/src__spike__reports__validation-progress-v1.json.txt",
+      "reason": "Preserve R3 running state before final targeted failure, rollback and implementation-fix report"
+    },
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
+      "previous_sha256": "268e44685afc2ae661efab7154dbcde2ccae8529f34dd43661858effc7a08f01",
+      "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
+      "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+    },
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
+      "previous_sha256": "ef8485249385fed17682ef59004e739a220ce85346752b03c21348db613f1fdd",
+      "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
+      "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+    },
+    {
+      "source_path": "doc/system-design/README.md",
+      "previous_sha256": "079111329da19457ad653a74522e85658ab024ae6fa0f476405468b9d86d6286",
+      "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/doc__system-design__README.md.txt",
+      "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+    },
+    {
+      "source_path": "src/architecture_validation/README.md",
+      "previous_sha256": "6fcc081e1343ee46e05028e280443da109b1e4d261e501e2b961642c66b1beed",
+      "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/src__architecture_validation__README.md.txt",
+      "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+    },
+    {
+      "source_path": "src/architecture_validation/reports/progress.json",
+      "previous_sha256": "c9fa95ba06f6ce6de4129147c2c4a2224bfaa66a0a792ae903df86953d78f837",
+      "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/src__architecture_validation__reports__progress.json.txt",
+      "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+    },
+    {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "d31ead09e91e3347fd34bf0cf2c03a056643bfd662551db0a8d9981a1489d4fd",
+      "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/src__spike__reports__validation-progress-v1.json.txt",
+      "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+    },
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
+      "previous_sha256": "a6f68a49967ef3f1ea74a9b711db432bd63028d7abaa9a41b22da59d3086dd21",
+      "preserved_at": "src/architecture_validation/reports/evaluation-design-r5/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
+      "reason": "Preserve closed R4 baseline before Evaluation implementation design; no new model run"
+    },
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
+      "previous_sha256": "50f3eb5eb6d4a71fb298a552f4fea0cb3edba84b8ef8d3541e250302d04c3f6f",
+      "preserved_at": "src/architecture_validation/reports/evaluation-design-r5/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
+      "reason": "Preserve closed R4 baseline before Evaluation implementation design; no new model run"
+    },
+    {
+      "source_path": "doc/system-design/README.md",
+      "previous_sha256": "f0c71055c11f57e6ae74b9b42d81c4ee9ad526333d48db2674e0ec7434bfed96",
+      "preserved_at": "src/architecture_validation/reports/evaluation-design-r5/baseline-files/doc__system-design__README.md.txt",
+      "reason": "Preserve closed R4 baseline before Evaluation implementation design; no new model run"
+    },
+    {
+      "source_path": "src/architecture_validation/README.md",
+      "previous_sha256": "550c7ff8cd42bf6f87e821e6b58fd883b8260df64f1d0e0c2deb692dd8ae73f2",
+      "preserved_at": "src/architecture_validation/reports/evaluation-design-r5/baseline-files/src__architecture_validation__README.md.txt",
+      "reason": "Preserve closed R4 baseline before Evaluation implementation design; no new model run"
+    },
+    {
+      "source_path": "src/architecture_validation/reports/progress.json",
+      "previous_sha256": "6c698b12c027a9a2485be3d16dc96d014ab675adc2f3b0a8f6bb11d5e3ff97d5",
+      "preserved_at": "src/architecture_validation/reports/evaluation-design-r5/baseline-files/src__architecture_validation__reports__progress.json.txt",
+      "reason": "Preserve closed R4 baseline before Evaluation implementation design; no new model run"
+    },
+    {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "6c3cf7cb3ff93a54abaf066867d8a1078e0d6230f5bb3cd0f60a415177bd5e46",
+      "preserved_at": "src/architecture_validation/reports/evaluation-design-r5/baseline-files/src__spike__reports__validation-progress-v1.json.txt",
+      "reason": "Preserve closed R4 baseline before Evaluation implementation design; no new model run"
+    },
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
+      "previous_sha256": "018c30fe26971a2b132565ddc14238b883df74a0d26c58f84ae7e91c40a0fc0b",
+      "preserved_at": "src/architecture_validation/reports/build-exit-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
+      "reason": "Preserve pre-exit review state; user authorized semantic quality staging and limited phase admission without rewriting prior measurements"
+    },
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
+      "previous_sha256": "1ef5fac6d5137994bd360e676dd8fb232731f4b96e85f4c36d13fed0e76d13ce",
+      "preserved_at": "src/architecture_validation/reports/build-exit-v1/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
+      "reason": "Preserve pre-exit review state; user authorized semantic quality staging and limited phase admission without rewriting prior measurements"
+    },
+    {
+      "source_path": "doc/system-design/README.md",
+      "previous_sha256": "81b84881b585efc862c3d1aebb44f1edee8a027ec101dda05019fd812f08215b",
+      "preserved_at": "src/architecture_validation/reports/build-exit-v1/baseline-files/doc__system-design__README.md.txt",
+      "reason": "Preserve pre-exit review state; user authorized semantic quality staging and limited phase admission without rewriting prior measurements"
+    },
+    {
+      "source_path": "src/architecture_validation/README.md",
+      "previous_sha256": "3785895b1d2c0ab200494bd70d4c86dba3ed67d52a8c775af5fa329f92ef433d",
+      "preserved_at": "src/architecture_validation/reports/build-exit-v1/baseline-files/src__architecture_validation__README.md.txt",
+      "reason": "Preserve pre-exit review state; user authorized semantic quality staging and limited phase admission without rewriting prior measurements"
+    },
+    {
+      "source_path": "src/architecture_validation/reports/progress.json",
+      "previous_sha256": "02566bb8067a29caee97d8f6be09733c046539e081b64a6607c33caeff03469e",
+      "preserved_at": "src/architecture_validation/reports/build-exit-v1/baseline-files/src__architecture_validation__reports__progress.json.txt",
+      "reason": "Preserve pre-exit review state; user authorized semantic quality staging and limited phase admission without rewriting prior measurements"
+    },
+    {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "b0f3cb9c5c426044143dc176a8b096ad7541cc7315b08d6b423bb9256c14e7c3",
+      "preserved_at": "src/architecture_validation/reports/build-exit-v1/baseline-files/src__spike__reports__validation-progress-v1.json.txt",
+      "reason": "Preserve pre-exit review state; user authorized semantic quality staging and limited phase admission without rewriting prior measurements"
+    },
+    {
+      "source_path": "doc/top/DeerMind_Development_Roadmap_v0.3.md",
+      "previous_sha256": "511c26777a2f2551185af3f1d93511b896ed412d33f7e370d33f3e904147e9f5",
+      "preserved_at": "src/architecture_validation/reports/build-exit-v1/baseline-files/doc__top__DeerMind_Development_Roadmap_v0.3.md.txt",
+      "reason": "Preserve pre-exit review state; user authorized semantic quality staging and limited phase admission without rewriting prior measurements"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+      "previous_sha256": "f9dccb4d08eea43ec5c377be7befc99249f8654fc0727124fff7d6954d5f75d5",
+      "preserved_at": "src/architecture_validation/reports/build-exit-v1/baseline-files/doc__system-design__DeerMind_System_Design_Roadmap_v0.6.md.txt",
+      "reason": "Preserve pre-exit review state; user authorized semantic quality staging and limited phase admission without rewriting prior measurements"
     }
   ],
   "contract_revision_proposals": [
@@ -4335,7 +4491,7 @@
     "aborted_run": "src/spike/runs/single-task-v2-network-retry-v1",
     "local_tests_passed": 8
   },
-  "current_phase": "Development Phase 2 — targeted Evaluation repair R3; G2 HOLD",
+  "current_phase": "Development Phase 3 / MVP Definition admitted; Build closed with G2 PASS and explicitly staged capabilities",
   "engineering_round_1": {
     "status": "ROUND_CLOSED_WITH_ACTIONABLE_FAILURES",
     "plan_document": "doc/system-design/spike/DeerMind_Single_Task_Engineering_Round_1_v0.1.md",
@@ -4477,12 +4633,7 @@
   },
   "gate_status_scope": "Current formal Phase 6 decision; original OPEN gate snapshots preserved in historical source revisions.",
   "next_work_scope": "Completed Spike W1-W5 delivery record; current_phase and build_next_work describe current work.",
-  "build_next_work": {
-    "status": "R2_CLOSED_G2_HOLD",
-    "next": "Bounded semantic repair for Evaluation missing-vs-counterevidence and cross-task assistance; no more R2 calls and no automatic MVP transition.",
-    "immediate_implementation_repair_authorized": true,
-    "no_automatic_G2_gate_override": true
-  },
+  "build_next_work": "Development Phase 3 MVP Definition: target learner/user, one core scenario, value hypothesis, product and human responsibilities, success metrics; carry STG-01..04 limitations. Product & Domain Foundation precedes MVP Engineering. No R5 or new full G2 model campaign.",
   "doc_latest_version_cleanup": {
     "record": "src/spike/reports/doc-latest-version-cleanup-20261008.json",
     "status": "COMPLETE",
@@ -4534,7 +4685,7 @@
     "gate_G2": "HOLD",
     "evidence_manifest": "src/architecture_validation/reports/build-evidence-manifest-v1.json",
     "quality_review": "src/architecture_validation/reports/quality-review-v1.json",
-    "scope": "Historical initial B2-B5 result. Current R1 result is build_revalidation_r1."
+    "scope": "Historical initial B2-B5 result, unchanged. Current project admission is build_exit_v1/current_phase; latest full measurement remains build_g2_r2."
   },
   "build_revalidation_r1": {
     "status": "CLOSED_FORMAL_NOT_ADMITTED",
@@ -4604,8 +4755,91 @@
     "no_further_R2_calls": true
   },
   "build_evaluation_repair_r3": {
-    "status": "RUNNING",
-    "plan": "Build Plan v0.4 section 7.5",
-    "assessment_pending": true
+    "status": "CLOSED_NOT_ADMITTED",
+    "gate_G2": "HOLD",
+    "formal_calls": 0,
+    "live_completed": 5,
+    "live_planned": 10,
+    "live_content_usable": 3,
+    "raw_evaluation_review_labels_matched": 5,
+    "derived_evaluation_review_labels_matched": 7,
+    "evaluation_review_cases": 10,
+    "default_semantic_profile": "R2 restored",
+    "implementation_fix": "Program derives overall verdict from required check verdicts; raw model verdict retained",
+    "final_offline_tests_passed": 81,
+    "http_attempts": 104,
+    "conservative_cny": 2.082098,
+    "all_transport_failures_recovered": true,
+    "assessment": "src/architecture_validation/reports/evaluation-repair-r3/assessment.json"
+  },
+  "build_reasoning_comparison_r4": {
+    "status": "CLOSED_NO_PROMISING_ARM",
+    "gate_G2": "HOLD",
+    "formal_calls": 0,
+    "planned_primary_calls": 32,
+    "completed_primary_calls": 32,
+    "disabled_evaluation_labels_matched": 5,
+    "high_evaluation_labels_matched": 7,
+    "evaluation_review_cases_per_arm": 10,
+    "disabled_generation_targets_met": 1,
+    "high_generation_targets_met": 0,
+    "generation_cases_per_arm": 4,
+    "final_offline_tests_passed": 90,
+    "http_attempts": 35,
+    "conservative_cny": 1.890798,
+    "transport_failures": 3,
+    "all_transport_recovered": true,
+    "default_config_changed": false,
+    "assessment": "src/architecture_validation/reports/reasoning-comparison-r4/assessment.json"
+  },
+  "build_evaluation_design_r5": {
+    "prepared_utc": "2026-10-08T10:58:22.994906+00:00",
+    "status": "DESIGN_READY_NOT_IMPLEMENTED",
+    "plan": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md#8-evaluation任务拆分与错误evidence更正方案",
+    "evidence": "src/architecture_validation/reports/evaluation-design-r5/design-evidence.json",
+    "implementation_started": false,
+    "new_model_calls": 0,
+    "fresh_semantic_validation": false,
+    "formal_system_designs_changed": false,
+    "gate_conditions_changed": false,
+    "runtime_default_changed": false,
+    "next_work_item": "R5-1",
+    "pilot_planned_logical_requests": 30,
+    "scope": "Historical design proposal, not implemented or measured. Former steps and budgets are not an active campaign; current decision is build_exit_v1.",
+    "current_disposition": "NOT_STARTED_DEFERRED_TO_MVP_ENGINEERING",
+    "active": false
+  },
+  "current_project_status": "G2_PASS_MVP_DEFINITION_ONLY",
+  "build_exit_v1": {
+    "decision_id": "G2-STAGING-20261008",
+    "decision_type": "AUTHORIZED_SCOPE_AND_CAPABILITY_STAGING_REVIEW",
+    "gate_G2": "PASS",
+    "admission_scope": "MVP_DEFINITION_ONLY",
+    "qualification": "Mechanism composition with explicitly staged semantic quality; not a passed original semantic acceptance campaign.",
+    "historical_measurement": {
+      "batch": "R2",
+      "gate_under_original_criteria": "HOLD",
+      "usable_turns": 14,
+      "planned_turns": 24,
+      "original_required_usable_turns": 18,
+      "EVAL_02": "NOT SATISFIED",
+      "EVAL_04": "NOT SATISFIED"
+    },
+    "new_model_calls": 0,
+    "new_semantic_measurement": false,
+    "R5_disposition": "NOT_STARTED_DEFERRED_TO_MVP_ENGINEERING; no R5 call budget activated; original proposal retained as optional design input",
+    "next_stage": "Development Phase 3 MVP Definition",
+    "assessment": "src/architecture_validation/reports/build-exit-v1/assessment.json",
+    "mechanism_checks_passed": 9,
+    "new_fixed_response_checks": 4,
+    "actual_database_copy_checks": 2,
+    "existing_regressions": 3,
+    "source_runtime_changed": false,
+    "staging_ids": [
+      "STG-01",
+      "STG-02",
+      "STG-03",
+      "STG-04"
+    ]
   }
 }

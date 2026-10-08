@@ -95,7 +95,12 @@ class Budget:
 
 class RealModel:
     mode='real'
-    def __init__(self,phase,run_dir,budget_path=None):
+    def __init__(self,phase,run_dir,budget_path=None,*,thinking='disabled',reasoning_effort=None,max_tokens=8192,timeout=60):
+        if thinking not in ('disabled','enabled'):raise Rejected('UnsupportedThinkingMode')
+        if reasoning_effort not in (None,'low','high','max') or (thinking=='disabled' and reasoning_effort is not None):raise Rejected('UnsupportedReasoningEffort')
+        if not isinstance(max_tokens,int) or isinstance(max_tokens,bool) or not 1<=max_tokens<=32768:raise Rejected('UnsupportedOutputLimit')
+        if timeout not in (60,120):raise Rejected('UnsupportedRequestTimeout')
+        self.thinking=thinking;self.reasoning_effort=reasoning_effort;self.max_tokens=max_tokens;self.timeout=timeout
         self.phase=phase;self.run_dir=Path(run_dir);self.run_dir.mkdir(parents=True,exist_ok=True)
         self.config=load_config();self.budget=Budget(budget_path or BASE/'reports/api-budget-v1.json')
         self.budget.segment=self.run_dir.parent.name
@@ -104,7 +109,10 @@ class RealModel:
         if phase=='B4' or self.budget.policy.get('active_all_phases'):self.budget.start_active()
 
     def public(self):
-        return {k:v for k,v in self.config.items() if k!='api_key'}|{'thinking':'disabled','temperature':0,'response_format':'json_object','max_tokens':8192,'timeout':60}
+        parameters={'thinking':self.thinking,'response_format':'json_object','max_tokens':self.max_tokens,'timeout':self.timeout}
+        if self.thinking=='disabled':parameters['temperature']=0
+        else:parameters['reasoning_effort']=self.reasoning_effort or 'high'
+        return {k:v for k,v in self.config.items() if k!='api_key'}|parameters
 
     def complete(self,system,context,schema,purpose,category='base'):
         logical=uid('logical')
@@ -114,21 +122,24 @@ class RealModel:
         estimate=sum(len(self.tokenizer.encode(m['content'],add_special_tokens=False).ids) for m in messages)
         bound=math.ceil(estimate*1.25)+512
         if bound>32000 or len(dumps(messages))>200000:raise Rejected('InputLimitExceeded')
-        payload={'model':self.config['model'],'messages':messages,'response_format':{'type':'json_object'},'thinking':{'type':'disabled'},'temperature':0,'max_tokens':8192,'stream':False}
+        payload={'model':self.config['model'],'messages':messages,'response_format':{'type':'json_object'},'thinking':{'type':self.thinking},'max_tokens':self.max_tokens,'stream':False}
+        if self.thinking=='disabled':payload['temperature']=0
+        else:payload['reasoning_effort']=self.reasoning_effort or 'high'
         for retry in range(3):
             if self.consecutive_transport>=3:raise Rejected('TransportPaused')
             if retry:time.sleep((1,3)[retry-1])
-            attempt=self.budget.reserve(self.phase,category if not retry else 'transport',bound,8192,logical)
+            attempt=self.budget.reserve(self.phase,category if not retry else 'transport',bound,self.max_tokens,logical)
             record={'logical_id':logical,'attempt_id':attempt,'purpose':purpose,'category':category,'retry':retry,'started':now(),'config':self.public(),'messages':messages,'schema':schema,'input_admission_estimate':bound,'offline_tokens':estimate}
             started=time.perf_counter();usage=None;transport=False;failure=None
             try:
                 req=urllib.request.Request(self.config['base_url']+'/chat/completions',data=dumps(payload).encode('utf-8'),
                      headers={'Authorization':'Bearer '+self.config['api_key'],'Content-Type':'application/json'},method='POST')
-                with urllib.request.build_opener(NoRedirect()).open(req,timeout=60) as response:
+                with urllib.request.build_opener(NoRedirect()).open(req,timeout=self.timeout) as response:
                     raw=response.read(4_000_001)
                 if len(raw)>4_000_000:raise Rejected('ProviderResponseTooLarge')
                 result=strict_json(raw);usage=result.get('usage');choice=result['choices'][0]
                 record.update(response_id=result.get('id'),response_model=result.get('model'),usage=usage,finish_reason=choice.get('finish_reason'),content=choice['message'].get('content'))
+                if self.thinking=='enabled':record['reasoning_content']=choice['message'].get('reasoning_content')
                 if choice.get('finish_reason')!='stop':raise Rejected('IncompleteModelOutput')
                 try:
                     output,normalization=parse_model_output(record['content'])

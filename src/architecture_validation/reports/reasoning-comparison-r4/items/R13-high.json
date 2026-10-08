@@ -1,0 +1,68 @@
+{
+  "created": "2026-10-08T10:22:23.481077+00:00",
+  "case": "R13",
+  "arm": "high",
+  "role": "generation",
+  "purpose": "Evidence",
+  "expected": "AUTHOR_REVIEW",
+  "input_sha256": "ec5ebf2553f8b614d205618e668db374bfd89e3875efbaa1ab09892de457c63e",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_2c7a632e06ff403d9bac874384799575",
+      "output": {
+        "items": [
+          {
+            "claim_id": "R023",
+            "relation": "Contradicts",
+            "interpretation": "原始作答在无帮助条件下采用“先求单位量、再按9份缩放”的策略，方向正确；但44÷4误算为10，导致最终90错误，且文本无检查记录。TaskProficiency要求独立计算及检查，本题出现计算错误，构成反向证据；单次错误不直接判定为稳定不会。",
+            "observation_ids": [
+              "R051"
+            ],
+            "source_ids": [
+              "R045"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "assistance为空且COMPLETE：本会话受控通道未记录任何提示或帮助；“请只记录”是请求，不是已渲染帮助，故原始作答按无系统帮助解释。",
+            "dependencies_explanation": "任务熟练度依赖单位量关系与整数除法两个KC；本题关系/策略方向正确，但整数除法出错且未见自查，熟练度claim因此收到计算与检查责任上的反向证据。"
+          },
+          {
+            "claim_id": "R027",
+            "relation": "Supports",
+            "interpretation": "写出44÷4的算式结构，显示把总价按4份分成单位量的关系方向，与单位量关系一致；但学习者未用数量意义说明，且商10错误属于计算维度，不直接反证关系理解。仅一条作答，支持有限。",
+            "observation_ids": [
+              "R051"
+            ],
+            "source_ids": [
+              "R045"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "assistance为空且COMPLETE：本会话受控通道未记录任何提示或帮助；没有实际展示的单位量提示可供归因，请求“只记录”也不证明理解或未理解。",
+            "dependencies_explanation": "单位量关系KC与整数除法KC可分离；除法结果错误不自动构成单位量关系的反向证据，但缺少口头说明使正向证据仅限算式结构，不能据以确认掌握。"
+          },
+          {
+            "claim_id": "R031",
+            "relation": "Contradicts",
+            "interpretation": "44÷4=10给出错误商，且文本中没有复查或合理性检查。R031允许的支持仅是他人指出需要检查除法，且本会话实际无帮助；学习者应自行重算并检查，本观察在无帮助条件下仍出现错误商，构成反向证据。单次错误不直接判定为稳定不会。",
+            "observation_ids": [
+              "R051"
+            ],
+            "source_ids": [
+              "R045"
+            ],
+            "assistance_ids": [],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "assistance为空且COMPLETE：本会话受控通道未记录定位或计算帮助；不能把错误商解释为获提示后重算的结果，也没有记录显示曾获得检查定位。",
+            "dependencies_explanation": "整数除法KC是求单位量和按数量缩放的基础；错误商直接指向该KC中“自行重算并检查”的责任，而本题未显示检查，故与claim要求相冲突。"
+          }
+        ]
+      },
+      "status": "COMPLETED"
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:22:36.742752+00:00",
+  "status": "COMPLETED"
+}

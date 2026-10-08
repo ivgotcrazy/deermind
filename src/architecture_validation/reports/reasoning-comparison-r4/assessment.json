@@ -1,0 +1,90 @@
+{
+  "created": "2026-10-08T10:26:50.183922+00:00",
+  "status": "CLOSED_NO_PROMISING_ARM",
+  "gate_G2": "HOLD",
+  "formal_calls": 0,
+  "arms": {
+    "disabled": {
+      "evaluation_labels_matched": 5,
+      "evaluation_review_cases": 10,
+      "fully_correct_review_labels_and_reasons": 5,
+      "false_accepts": 5,
+      "negative_cases": 5,
+      "false_rejects": 0,
+      "positive_cases": 5,
+      "policy_labels_matched": 1,
+      "policy_cases": 2,
+      "generation_targets_met": 1,
+      "generation_whole_usable": 1,
+      "generation_cases": 4,
+      "http_attempts": 18,
+      "logical_requests": 16,
+      "transport_failures": 2,
+      "primary_format_failures": 0,
+      "format_recoveries": 0,
+      "confirmed_input_tokens": 77863,
+      "confirmed_output_tokens": 7347,
+      "confirmed_usage_peak_estimate_cny": 0.214502,
+      "successful_request_api_seconds": {
+        "n": 16,
+        "median": 2.619705699995393,
+        "p95_nearest_rank": 5.254631699994206,
+        "max": 5.254631699994206
+      },
+      "promising_for_next_live_experiment": false,
+      "conservative_cny": 0.754758
+    },
+    "high": {
+      "evaluation_labels_matched": 7,
+      "evaluation_review_cases": 10,
+      "fully_correct_review_labels_and_reasons": 6,
+      "false_accepts": 3,
+      "negative_cases": 5,
+      "false_rejects": 0,
+      "positive_cases": 5,
+      "policy_labels_matched": 2,
+      "policy_cases": 2,
+      "generation_targets_met": 0,
+      "generation_whole_usable": 0,
+      "generation_cases": 4,
+      "http_attempts": 17,
+      "logical_requests": 16,
+      "transport_failures": 1,
+      "primary_format_failures": 0,
+      "format_recoveries": 0,
+      "confirmed_input_tokens": 78263,
+      "confirmed_output_tokens": 88925,
+      "confirmed_usage_peak_estimate_cny": 0.867926,
+      "successful_request_api_seconds": {
+        "n": 16,
+        "median": 25.04726629999641,
+        "p95_nearest_rank": 63.12762830000429,
+        "max": 63.12762830000429
+      },
+      "promising_for_next_live_experiment": false,
+      "conservative_cny": 1.13604
+    }
+  },
+  "resources": {
+    "http_attempts": 35,
+    "logical_requests": 32,
+    "transport_failures": 3,
+    "unrecovered_transport": [],
+    "confirmed_input_tokens": 156126,
+    "confirmed_output_tokens": 96272,
+    "confirmed_usage_peak_estimate_cny": 1.082428,
+    "conservative_cny": 1.8907979999999993,
+    "active_seconds": 498.90557650000846
+  },
+  "integrity": {
+    "errors": [],
+    "paired_exact_inputs_verified": 16,
+    "attempt_records_verified": 35,
+    "frozen_source_files_verified": 87,
+    "actual_response_model_aliases": {
+      "deepseek-flash": 32
+    }
+  },
+  "decision": "Neither arm meets the predeclared next-experiment screen. Keep the default non-thinking profile; no live or full G2 follow-on in this campaign. Model alias is recorded, not a pinned provider weight version.",
+  "limitations": "One primary response per arm per author-known case. Generation cases are independent replays of original contexts, not a connected end-to-end recovery. This experiment does not evaluate a high-mode reviewer on newly generated disabled-mode candidates."
+}

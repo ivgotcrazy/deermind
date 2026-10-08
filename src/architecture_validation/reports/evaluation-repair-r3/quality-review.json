@@ -1,0 +1,357 @@
+{
+  "reviewer": "Implementation author / Codex, not independent blinded human assessment",
+  "units": [
+    {
+      "unit": "D3.1",
+      "status": "FAILED",
+      "scores": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "total": 2,
+      "usable": false,
+      "reason": "初次错误误拒合法有限反向判断，恢复审查12项PASS但总评FAIL，未提交Evidence。",
+      "records": [
+        "observation_0614055069494e99a29f9620dee9404e",
+        "evaluationcompletion_70bb242d772f4cf18a406f99cb2ee59b"
+      ]
+    },
+    {
+      "unit": "D3.2",
+      "status": "FAILED",
+      "scores": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "total": 2,
+      "usable": false,
+      "reason": "Observation先遭误拒，恢复后Evidence分项PASS总评FAIL；未执行请求讲解。",
+      "records": [
+        "observation_a64e6626610f4042a3c614cdeee42dac",
+        "evaluationcompletion_e8118bf983674fd4b7df23798662aed9"
+      ]
+    },
+    {
+      "unit": "D3.3",
+      "status": "COMPLETED",
+      "scores": [
+        2,
+        2,
+        2,
+        1
+      ],
+      "total": 7,
+      "usable": true,
+      "reason": "无真实讲解的情况下正确计算获得有限支持、关系说明UNKNOWN；不把未显示内容算帮助。",
+      "records": [
+        "observation_26b7e26936f340868145af7093d64aaf",
+        "evidence_96ff52dd6db2495aa909a13fa2a5d0d3",
+        "evidence_c58bf2d96f15405ea434e18ed82b6cf4",
+        "evidence_11eca4a74842491a9a70ce7a6b695cd6",
+        "belief_007a9f150369439c9eeaaf03589e1aab",
+        "belief_26edf95d3faa4a8abe758081ae5106dc",
+        "belief_e3de1c4ad0284a6b8b749e81c368a772",
+        "evaluationcompletion_d7b7855a42e54d978af77f3e502c5b92",
+        "decision_b3ffcc7b5d8940668169fd2f14002521"
+      ]
+    },
+    {
+      "unit": "D3.4",
+      "status": "FAILED",
+      "scores": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "total": 2,
+      "usable": false,
+      "reason": "Belief初次与恢复审查对REVISE/UNCHANGED提出相反要求，缺失完整评价与Policy。",
+      "records": [
+        "observation_c06795770a0743f3900d3288e8ae1af4",
+        "evidence_528f610dca864de4a90dea16217e04e6",
+        "evidence_d448b330b23f45bc8b8bb4152558422f",
+        "evidence_fafe9027a71c4b4c89561297e51396ee",
+        "evaluationcompletion_46cc7f3a0fb640d8adcc6cbbf56c66dc"
+      ]
+    },
+    {
+      "unit": "D6.1",
+      "status": "FAILED",
+      "scores": [
+        2,
+        0,
+        2,
+        0
+      ],
+      "total": 4,
+      "usable": false,
+      "reason": "纯请求评价合法UNKNOWN，但合法提示理由被误拒，没有实际展示。",
+      "records": [
+        "observation_a7776bfde1064fedb796c63d4c4895c0",
+        "evidence_2356fdcb949d46fc87cb126524b85ff0",
+        "evidence_c183baf94bd74b309565992506b4c4ea",
+        "evidence_a67430c6ee9e44e59164f2819bb70478",
+        "belief_f3c6d0ede4814f2ab7a6e9db97f30b72",
+        "belief_dbaaa45b42794e8b9ecd51ce82ef17d1",
+        "belief_a3fa23899b324c599b5cd9da745f1ed7",
+        "evaluationcompletion_628e8a591b0f4cc19882f3f3cba6a7d9"
+      ]
+    },
+    {
+      "unit": "D6.2",
+      "status": "COMPLETED",
+      "scores": [
+        2,
+        2,
+        2,
+        1
+      ],
+      "total": 7,
+      "usable": true,
+      "reason": "遵循没有实际提示的输入分支，正确计算得到有限支持；没有假造提示后表现。",
+      "records": [
+        "observation_e85422c401b24a669364a985434a422e",
+        "evidence_2b08c8f95f124bf5b851fbf424ce5919",
+        "evidence_ef6049b5015e4553bc463b92c1103bfc",
+        "evidence_083ba10a8ef645beb7f5c9e513b4fc4a",
+        "belief_b04406e6919c4f6aace92631bcc0e485",
+        "belief_e025410b08f44f6d8ec510f97c540568",
+        "belief_fb67f53628d4408783b011c270b30a09",
+        "evaluationcompletion_fab4b426d9b04f62b7eecfe63e5c4875",
+        "decision_d1416756f50848c881ddfdb17f79ded4"
+      ]
+    },
+    {
+      "unit": "D6.3",
+      "status": "COMPLETED",
+      "scores": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "total": 4,
+      "usable": false,
+      "reason": "无实际方法提示，因此此例不覆盖原跨题帮助条件；Belief又仅因换题排除旧题同Claim有效Evidence。",
+      "records": [
+        "observation_bea643a00a6543418be97f1813ab4d38",
+        "evidence_8aa70ccc36724181baacfe7d33694624",
+        "evidence_dcccd16402084468a5e34092cf49ab17",
+        "evidence_c745bcf1fa4a47aa83b17acb446957a3",
+        "belief_5380fd7f7143406da6f86b21419df596",
+        "belief_a74aac7bb5d1451ca0437539fa8adefd",
+        "belief_e9efd7171aa94003afe45744f799b9ad",
+        "evaluationcompletion_f641d83bcd37486687fd99e1e2cf94ce",
+        "decision_bc712cce0fb845ec8cb7c0c1e9fd445b"
+      ]
+    },
+    {
+      "unit": "D6.4",
+      "status": "COMPLETED",
+      "scores": [
+        1,
+        2,
+        0,
+        0
+      ],
+      "total": 3,
+      "usable": false,
+      "reason": "继续无理由排除同族旧题Evidence，且把已有新题Belief说成针对旧题；未完成原帮助对照。",
+      "records": [
+        "observation_10d0586250f1470ea0da65725e18e95e",
+        "evidence_4e4be1812d4c46cdacc478186de54e67",
+        "evidence_b27073b7fdef4fb6a19e180bf0e343f8",
+        "evidence_c4b20aa13fd240bf9fd7c1dc023d2de2",
+        "belief_640abd9b3ffa4c28bcc5ef037387a5de",
+        "belief_1b22131e610d46e5ae025518eda6007c",
+        "belief_19503db792bb4ed78a910eec00dbf111",
+        "evaluationcompletion_3ac7cda8e0b54ef69061846d30231e5f",
+        "decision_d09990fb082b4c29b1e4bac1b0407099"
+      ]
+    },
+    {
+      "unit": "N1.1",
+      "status": "FAILED",
+      "scores": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "total": 2,
+      "usable": false,
+      "reason": "明确数量关系混淆候选两次取得全分项PASS，总评均FAIL导致不提交。",
+      "records": [
+        "observation_50834c9508874f7590ea217634a539fe",
+        "evaluationcompletion_62aefb530f164b61b659e6e62baf2621"
+      ]
+    },
+    {
+      "unit": "N2.1",
+      "status": "COMPLETED",
+      "scores": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "total": 6,
+      "usable": true,
+      "reason": "平均分说明和正确计算得到有限支持；理由仍过度要求额外除法解释。",
+      "records": [
+        "observation_ba9dd15c78b540e4a06200a966db6825",
+        "evidence_a9082f3eb3504588980563a093575476",
+        "evidence_d1c14fe1cd42407c8504417c69206dc2",
+        "evidence_eefc76b13ca148d9ba519f290f415be0",
+        "belief_3a2d90d5dde844eaad5ea3de276a141f",
+        "belief_73b954e1c330434b9e65ef6613540323",
+        "belief_dcb9300229b54860965e01f98dec1de9",
+        "evaluationcompletion_d19b3e5d8deb472693ad3a6f855b3e58",
+        "decision_3bb38ba5b3134d1bb1833712e1c6a6af"
+      ]
+    }
+  ],
+  "replays": [
+    {
+      "unit": "R01",
+      "expected": "FAIL",
+      "raw_verdict": "FAIL",
+      "raw_matched": true,
+      "derived_verdict": "FAIL",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R02",
+      "expected": "FAIL",
+      "raw_verdict": "FAIL",
+      "raw_matched": true,
+      "derived_verdict": "FAIL",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R03",
+      "expected": "FAIL",
+      "raw_verdict": "PASS",
+      "raw_matched": false,
+      "derived_verdict": "PASS",
+      "derived_matched": false,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R04",
+      "expected": "FAIL",
+      "raw_verdict": "PASS",
+      "raw_matched": false,
+      "derived_verdict": "PASS",
+      "derived_matched": false,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R05",
+      "expected": "FAIL",
+      "raw_verdict": "FAIL",
+      "raw_matched": true,
+      "derived_verdict": "FAIL",
+      "derived_matched": true,
+      "original_result_unchanged": true,
+      "reason_quality": "Reject label matches, but fails to explain prior-method carryover and incorrectly treats repeated evidence explanation as making revision impermissible."
+    },
+    {
+      "unit": "R06",
+      "expected": "PASS",
+      "raw_verdict": "FAIL",
+      "raw_matched": false,
+      "derived_verdict": "PASS",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R07",
+      "expected": "PASS",
+      "raw_verdict": "PASS",
+      "raw_matched": true,
+      "derived_verdict": "PASS",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R08",
+      "expected": "PASS",
+      "raw_verdict": "PASS",
+      "raw_matched": true,
+      "derived_verdict": "PASS",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R09",
+      "expected": "PASS",
+      "raw_verdict": "FAIL",
+      "raw_matched": false,
+      "derived_verdict": "PASS",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R10",
+      "expected": "PASS",
+      "raw_verdict": "FAIL",
+      "raw_matched": false,
+      "derived_verdict": "FAIL",
+      "derived_matched": false,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R11",
+      "expected": "PASS",
+      "raw_verdict": "PASS",
+      "raw_matched": true,
+      "derived_verdict": "PASS",
+      "derived_matched": true,
+      "original_result_unchanged": true
+    },
+    {
+      "unit": "R12",
+      "expected": "FAIL",
+      "raw_verdict": "PASS",
+      "raw_matched": false,
+      "derived_verdict": "PASS",
+      "derived_matched": false,
+      "original_result_unchanged": true
+    }
+  ],
+  "generations": [
+    {
+      "unit": "R13",
+      "target_met": true,
+      "whole_output_usable": false,
+      "reason": "Unit omission and arithmetic error separated, but task arithmetic counterevidence is discarded solely for being one sample."
+    },
+    {
+      "unit": "R14",
+      "target_met": true,
+      "whole_output_usable": true,
+      "reason": "Wrong historical unit counterevidence explicitly excluded; legitimate UNKNOWN grounded in NonInformative evidence."
+    },
+    {
+      "unit": "R15",
+      "target_met": false,
+      "whole_output_usable": false,
+      "reason": "Acknowledges method responsibility was replaced, but still supports the no-help whole-task Claim and calls the work independent."
+    },
+    {
+      "unit": "R16",
+      "target_met": false,
+      "whole_output_usable": false,
+      "reason": "Original conflicting JSON rejected; one format recovery succeeded, but still retains earlier false independence evidence after dropping only the later repetition."
+    }
+  ],
+  "keyword_scoring": false
+}

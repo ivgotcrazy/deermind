@@ -1,0 +1,30 @@
+{
+  "created": "2026-10-08T09:44:09.316433+00:00",
+  "id": "N2",
+  "status": "MEASURED",
+  "turns": [
+    {
+      "id": "turn_963a949523e847568e2ce2908aec8bfa",
+      "sid": "N2",
+      "message_key": "1",
+      "event_id": "event_4f054dd0ae644d89b3d3054763cbf8a2",
+      "status": "COMPLETED",
+      "phase": "POLICY_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "",
+      "created": 1791452659.4965816,
+      "label": "N2.1",
+      "wall_seconds": 40.36363989999518,
+      "injected_fault": null,
+      "branch": "base"
+    }
+  ],
+  "coverage_notes": [],
+  "browser": {
+    "text": "",
+    "rendered": []
+  },
+  "completed": "2026-10-08T09:45:02.747692+00:00",
+  "wall_seconds": 53.43125890000374
+}

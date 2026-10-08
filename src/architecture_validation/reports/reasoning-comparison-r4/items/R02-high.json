@@ -1,0 +1,69 @@
+{
+  "created": "2026-10-08T10:16:19.098093+00:00",
+  "case": "R02",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Evidence",
+  "expected": "FAIL",
+  "input_sha256": "5d81254638ee5eb6c50b2d90734abff7283b7372df90df7e0f17e13569181e7d",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_14ba5cced09847448d4ef5e3e5e442f2",
+      "output": {
+        "verdict": "FAIL",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "FAIL",
+            "reason": "已为 R023/R027/R031 各形成关系，但 R027 的 Contradicts 不严格：学习者写出 78÷6，方向可作有限正向或待查，商错属整数除法表现；以“未说明单位量关系”推出反向证据，与“缺少单位关系解释不等于把单位关系理解错”冲突。R023、R031 可成立，但一项违约即 FAIL。",
+            "source_ids": [
+              "R027",
+              "R049",
+              "R055",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "grounding",
+            "verdict": "PASS",
+            "reason": "关系判断引用 R055 当前 Observation 与 R049 原始作答，说明无实际渲染帮助，未把请求当成掌握或不会；正反材料来源可追溯。R027 的归因问题已在 claim/uncertainty 记，不另罚。",
+            "source_ids": [
+              "R049",
+              "R055",
+              "R035"
+            ]
+          },
+          {
+            "rule_id": "assistance",
+            "verdict": "PASS",
+            "reason": "assistance 实际为空，coverage=COMPLETE 是声明通道覆盖；候选逐 Claim 说明无实际渲染块，请求提示不等于已获得帮助，R031 的允许定位帮助未被记录，也没有写成提示后独立完成或证实无外部帮助。",
+            "source_ids": [
+              "R031",
+              "R049",
+              "R035",
+              "R055"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "FAIL",
+            "reason": "未指出 R055 已列的不确定性：学习者是否已发现商错、请求意图不能推出不会；反而在 R027 把缺失解释、R031 把未展示检查当作确定的反向证据。应说明缺失与不可核实，不能机械弃权也不应过度归因。",
+            "source_ids": [
+              "R055",
+              "R027",
+              "R031",
+              "R035"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "FAIL",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:16:50.525378+00:00",
+  "status": "COMPLETED"
+}

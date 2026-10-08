@@ -1,0 +1,30 @@
+{
+  "status": "DESIGN_ONLY_PASS",
+  "g2-r2": {
+    "artifacts_checked": 42,
+    "mismatches": []
+  },
+  "evaluation-repair-r3": {
+    "artifacts_checked": 39,
+    "mismatches": []
+  },
+  "reasoning-comparison-r4": {
+    "artifacts_checked": 60,
+    "mismatches": []
+  },
+  "formal_designs": {
+    "checked": 7,
+    "mismatches": []
+  },
+  "runtime_and_sources": {
+    "checked": 87,
+    "mismatches": []
+  },
+  "local_markdown_targets": {
+    "checked": 323,
+    "missing": []
+  },
+  "new_model_calls": 0,
+  "fresh_semantic_validation": false,
+  "gate_G2": "HOLD"
+}

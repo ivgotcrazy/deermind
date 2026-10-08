@@ -1,0 +1,4918 @@
+{
+  "scope": "Fixed-response mechanism check; no model accuracy claim",
+  "api_calls": 0,
+  "scripted_calls": [
+    "Observation",
+    "Review:Observation",
+    "Evidence",
+    "Review:Evidence",
+    "Belief",
+    "Review:Belief",
+    "Evidence"
+  ],
+  "records": [
+    {
+      "seq": 1,
+      "id": "changeproposal_1ec2d8946f774505ad79538d3a7005ec",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_1ec2d8946f774505ad79538d3a7005ec",
+      "revision": 0,
+      "version": "",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+        "id": "unit-rate",
+        "kind": "TaskFamily",
+        "version": "v1"
+      },
+      "hash": "9e1a8a2b18c953b84baa900ecc8e0cffd320b7a9c6db0a79d58169ce2c477141",
+      "created": "2026-10-08T13:30:51.015099+00:00"
+    },
+    {
+      "seq": 2,
+      "id": "governancedecision_3e5d85c749f74dc28ba08142ddb53ef1",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_3e5d85c749f74dc28ba08142ddb53ef1",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_1ec2d8946f774505ad79538d3a7005ec",
+        "scope": "canonical:TaskFamily:unit-rate"
+      },
+      "hash": "c15e0421d119c00a8a4b01acd1a2ede8d36aa5fe3e60171f25957ec187ee5104",
+      "created": "2026-10-08T13:30:51.015180+00:00"
+    },
+    {
+      "seq": 3,
+      "id": "TaskFamily:unit-rate:v1",
+      "kind": "TaskFamily",
+      "obj": "canonical:TaskFamily:unit-rate",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "conditions": [
+          "整数数量与总价，关系为正比例"
+        ],
+        "definition": "先求单位量再按目标数量缩放的正比例应用题",
+        "quality_requirements": [
+          "关系、计算及单位合理",
+          "说明依据而非只猜最终数值"
+        ],
+        "responsibilities": [
+          "识别单位量关系",
+          "选择除后乘策略",
+          "自行计算并说明数量单位"
+        ]
+      },
+      "hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+      "created": "2026-10-08T13:30:51.015210+00:00"
+    },
+    {
+      "seq": 4,
+      "id": "activationrecord_4361120bb6f44d73810d0a963f910b30",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_4361120bb6f44d73810d0a963f910b30",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+          "id": "unit-rate",
+          "kind": "TaskFamily",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "fb6d22c34487f5888a37f4f5395e1d08d35c70f4e557445534da7ea5fdcc9e54",
+      "created": "2026-10-08T13:30:51.015360+00:00"
+    },
+    {
+      "seq": 5,
+      "id": "changeproposal_7410af4a62c6440b88f4bdc50b6a7f12",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_7410af4a62c6440b88f4bdc50b6a7f12",
+      "revision": 0,
+      "version": "",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+        "id": "unit-relation",
+        "kind": "KC",
+        "version": "v1"
+      },
+      "hash": "e78c05e5a5974d26b493be3132e639fa4211283c04598ad47013857ec8797807",
+      "created": "2026-10-08T13:30:51.016660+00:00"
+    },
+    {
+      "seq": 6,
+      "id": "governancedecision_c2af90215dcc4116bba74ae824aa8ab6",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_c2af90215dcc4116bba74ae824aa8ab6",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_7410af4a62c6440b88f4bdc50b6a7f12",
+        "scope": "canonical:KC:unit-relation"
+      },
+      "hash": "46c4e82157595ef2e059cd1a555d07ab57ea3d647495bd9dd5a28e584f5c4845",
+      "created": "2026-10-08T13:30:51.016707+00:00"
+    },
+    {
+      "seq": 7,
+      "id": "KC:unit-relation:v1",
+      "kind": "KC",
+      "obj": "canonical:KC:unit-relation",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "application_conditions": [
+          "本 Task Family 的正整数场景"
+        ],
+        "cognitive_effect": "由总量与份数说明每份量",
+        "definition": "单位量关系"
+      },
+      "hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+      "created": "2026-10-08T13:30:51.016732+00:00"
+    },
+    {
+      "seq": 8,
+      "id": "activationrecord_8cd9e2e1b1994badb6aa2e77b3f57925",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_8cd9e2e1b1994badb6aa2e77b3f57925",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+          "id": "unit-relation",
+          "kind": "KC",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "80dd9f94d550caf89e405449bc39fb82dd7c409c2f4ff40d27f4e6669b014002",
+      "created": "2026-10-08T13:30:51.016820+00:00"
+    },
+    {
+      "seq": 9,
+      "id": "changeproposal_8ce195d4345b4a4ab2fb2eb31bda992d",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_8ce195d4345b4a4ab2fb2eb31bda992d",
+      "revision": 0,
+      "version": "",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+        "id": "division",
+        "kind": "KC",
+        "version": "v1"
+      },
+      "hash": "190067c7cacea717c30ed576fa663991eed2d41ae66734dfcce99ebef7b7845e",
+      "created": "2026-10-08T13:30:51.018250+00:00"
+    },
+    {
+      "seq": 10,
+      "id": "governancedecision_ac5fab7df9574bcd8871710bf1ff1bd4",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_ac5fab7df9574bcd8871710bf1ff1bd4",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_8ce195d4345b4a4ab2fb2eb31bda992d",
+        "scope": "canonical:KC:division"
+      },
+      "hash": "12b8f5196e43a2b30c59e6558b4ba624623e06b94548ca98b3027567bc7d3ac7",
+      "created": "2026-10-08T13:30:51.018296+00:00"
+    },
+    {
+      "seq": 11,
+      "id": "KC:division:v1",
+      "kind": "KC",
+      "obj": "canonical:KC:division",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "application_conditions": [
+          "本 Task Family 的正整数场景"
+        ],
+        "cognitive_effect": "自行求商并检查除法结果",
+        "definition": "整数除法"
+      },
+      "hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+      "created": "2026-10-08T13:30:51.018326+00:00"
+    },
+    {
+      "seq": 12,
+      "id": "activationrecord_d357dc9e676046f591aa27a294381619",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_d357dc9e676046f591aa27a294381619",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+          "id": "division",
+          "kind": "KC",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "b2a5ea335a461c1059b6ed3e7ff445cd535f05ecb7712b451478adfa0a8c3f13",
+      "created": "2026-10-08T13:30:51.018415+00:00"
+    },
+    {
+      "seq": 13,
+      "id": "changeproposal_2f18f3268000424081f3450f96a8ce86",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_2f18f3268000424081f3450f96a8ce86",
+      "revision": 0,
+      "version": "",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+        "id": "scaling",
+        "kind": "KC",
+        "version": "v1"
+      },
+      "hash": "cbc9e85edb1e080d3d89d4c48445e99eeb86d6edb6e091f9107fbb578dc3946c",
+      "created": "2026-10-08T13:30:51.019872+00:00"
+    },
+    {
+      "seq": 14,
+      "id": "governancedecision_b9c2dbb5b47f46fcbd314f627a9c856b",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_b9c2dbb5b47f46fcbd314f627a9c856b",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_2f18f3268000424081f3450f96a8ce86",
+        "scope": "canonical:KC:scaling"
+      },
+      "hash": "a21b907f4b397235122f9acd0c18569f46285b5c2af47b9c83a8a1b18f3377f0",
+      "created": "2026-10-08T13:30:51.019932+00:00"
+    },
+    {
+      "seq": 15,
+      "id": "KC:scaling:v1",
+      "kind": "KC",
+      "obj": "canonical:KC:scaling",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "application_conditions": [
+          "本 Task Family 的正整数场景"
+        ],
+        "cognitive_effect": "用单位量计算目标数量的总量",
+        "definition": "按数量缩放"
+      },
+      "hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+      "created": "2026-10-08T13:30:51.019959+00:00"
+    },
+    {
+      "seq": 16,
+      "id": "activationrecord_4b6f0d51821444b88329a91fa400c185",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_4b6f0d51821444b88329a91fa400c185",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+          "id": "scaling",
+          "kind": "KC",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "714e21b51fa7cb4fd845386dc277e82955e4dedbb0397b0a9e1f013fa37b4573",
+      "created": "2026-10-08T13:30:51.020060+00:00"
+    },
+    {
+      "seq": 17,
+      "id": "changeproposal_4e34b952c2e74c31936ed73826ab3455",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_4e34b952c2e74c31936ed73826ab3455",
+      "revision": 0,
+      "version": "",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "be25c5a06749e477a14bf09e9f8fd326444792994c2df961819a43d2b97cea85",
+        "id": "unit-method",
+        "kind": "SolutionStrategy",
+        "version": "v1"
+      },
+      "hash": "aae54506729ffe90315fff52f84417427308995101ed83f9f6f6a1eb2f8bfc40",
+      "created": "2026-10-08T13:30:51.021678+00:00"
+    },
+    {
+      "seq": 18,
+      "id": "governancedecision_516d86aa442f4a75b89b6a07aae8d0bc",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_516d86aa442f4a75b89b6a07aae8d0bc",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "be25c5a06749e477a14bf09e9f8fd326444792994c2df961819a43d2b97cea85",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_4e34b952c2e74c31936ed73826ab3455",
+        "scope": "canonical:SolutionStrategy:unit-method"
+      },
+      "hash": "d643b9690c9e85b876dea656475bdc4f1442ed22937630a906c38ea2461b608c",
+      "created": "2026-10-08T13:30:51.021747+00:00"
+    },
+    {
+      "seq": 19,
+      "id": "SolutionStrategy:unit-method:v1",
+      "kind": "SolutionStrategy",
+      "obj": "canonical:SolutionStrategy:unit-method",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "kc_refs": [
+          {
+            "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+            "id": "unit-relation",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          {
+            "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+            "id": "division",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          {
+            "content_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+            "id": "scaling",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          }
+        ],
+        "method": "总价除以数量求单位价，再乘目标数量",
+        "steps": [
+          {
+            "id": "unit",
+            "inputs": [
+              "total",
+              "quantity"
+            ],
+            "outputs": [
+              "unit_value"
+            ],
+            "responsibility": "求单位量"
+          },
+          {
+            "id": "scale",
+            "inputs": [
+              "unit_value",
+              "target"
+            ],
+            "outputs": [
+              "target_total"
+            ],
+            "responsibility": "按目标数量缩放"
+          }
+        ],
+        "task_family_ref": {
+          "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+          "id": "unit-rate",
+          "kind": "TaskFamily",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "be25c5a06749e477a14bf09e9f8fd326444792994c2df961819a43d2b97cea85",
+      "created": "2026-10-08T13:30:51.021808+00:00"
+    },
+    {
+      "seq": 20,
+      "id": "activationrecord_b46d41a9f2b54322b41cc02f66907b38",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_b46d41a9f2b54322b41cc02f66907b38",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "be25c5a06749e477a14bf09e9f8fd326444792994c2df961819a43d2b97cea85",
+          "id": "unit-method",
+          "kind": "SolutionStrategy",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "e476b15f3e96d272202acbd9afa012f07d12ed41376db54fda8548687f30fa58",
+      "created": "2026-10-08T13:30:51.021950+00:00"
+    },
+    {
+      "seq": 21,
+      "id": "changeproposal_8e838a58dbcd4ebb9c0ec74dd0e841aa",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_8e838a58dbcd4ebb9c0ec74dd0e841aa",
+      "revision": 0,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+        "id": "claim-task",
+        "kind": "Claim",
+        "version": "v1"
+      },
+      "hash": "2ad7f46a1523040c028ae04f75753278c349d771c686ec27e5b74a86740752d0",
+      "created": "2026-10-08T13:30:51.023764+00:00"
+    },
+    {
+      "seq": 22,
+      "id": "governancedecision_275be2a86ee74eab9c1008cb8ea73adc",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_275be2a86ee74eab9c1008cb8ea73adc",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_8e838a58dbcd4ebb9c0ec74dd0e841aa",
+        "scope": "canonical:Claim:claim-task"
+      },
+      "hash": "e87d7563fe02e70b9f4dc7c37bd49c27660a592456341754800917a01e92ed21",
+      "created": "2026-10-08T13:30:51.023839+00:00"
+    },
+    {
+      "seq": 23,
+      "id": "Claim:claim-task:v1",
+      "kind": "Claim",
+      "obj": "canonical:Claim:claim-task",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Evaluation",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "claim_type": "TaskProficiency",
+        "conditions": [
+          "本 Task Family；解释限于已观察条件"
+        ],
+        "disconfirmation_criteria": [
+          "在条件适用且无实质帮助时出现关系、策略或计算错误"
+        ],
+        "quality_requirements": [
+          "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+        ],
+        "responsibility_boundary": {
+          "allowed_support": [],
+          "learner_owned": [
+            "独立识别关系、选择策略、计算及检查"
+          ]
+        },
+        "scope_ref": {
+          "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+          "id": "unit-rate",
+          "kind": "TaskFamily",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+      "created": "2026-10-08T13:30:51.023904+00:00"
+    },
+    {
+      "seq": 24,
+      "id": "activationrecord_c5ab4dec552242c2a4d0b3871bf7f2b4",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_c5ab4dec552242c2a4d0b3871bf7f2b4",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+          "id": "claim-task",
+          "kind": "Claim",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "c67d507d6b79d18795456d672e4e664da23e667e299d18131b9638770de0df1f",
+      "created": "2026-10-08T13:30:51.024042+00:00"
+    },
+    {
+      "seq": 25,
+      "id": "changeproposal_c130ba1f0af141259d9d78bc9b0f0cb6",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_c130ba1f0af141259d9d78bc9b0f0cb6",
+      "revision": 0,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+        "id": "claim-unit",
+        "kind": "Claim",
+        "version": "v1"
+      },
+      "hash": "96d34e62cfe38a3685f429d0843124946ddd64d13de8ec7fff3074762884ec33",
+      "created": "2026-10-08T13:30:51.025709+00:00"
+    },
+    {
+      "seq": 26,
+      "id": "governancedecision_173cf697a6c14dd69c320b89f8eaa5d6",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_173cf697a6c14dd69c320b89f8eaa5d6",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_c130ba1f0af141259d9d78bc9b0f0cb6",
+        "scope": "canonical:Claim:claim-unit"
+      },
+      "hash": "d224a91e96859da438ee46a9e9068ce33f56a685197de44fbb794b6909ca79d6",
+      "created": "2026-10-08T13:30:51.025805+00:00"
+    },
+    {
+      "seq": 27,
+      "id": "Claim:claim-unit:v1",
+      "kind": "Claim",
+      "obj": "canonical:Claim:claim-unit",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Evaluation",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "claim_type": "KC",
+        "conditions": [
+          "本 Task Family；解释限于已观察条件"
+        ],
+        "disconfirmation_criteria": [
+          "把总量与单位量混淆或不能说明除法意义"
+        ],
+        "quality_requirements": [
+          "能用数量意义说明单位量，不只复述系统解释"
+        ],
+        "responsibility_boundary": {
+          "allowed_support": [],
+          "learner_owned": [
+            "自己说明单位量关系及为什么使用总量除以份数"
+          ]
+        },
+        "scope_ref": {
+          "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+          "id": "unit-relation",
+          "kind": "KC",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+      "created": "2026-10-08T13:30:51.025865+00:00"
+    },
+    {
+      "seq": 28,
+      "id": "activationrecord_aa47dadde3f347b498247abe37a70fdb",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_aa47dadde3f347b498247abe37a70fdb",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+          "id": "claim-unit",
+          "kind": "Claim",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "738f14f490f100e473c0eb03232628341d688c3a9908e021e48251204359b213",
+      "created": "2026-10-08T13:30:51.026007+00:00"
+    },
+    {
+      "seq": 29,
+      "id": "changeproposal_d8134406d877420294e83f9a8cabc0f8",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_d8134406d877420294e83f9a8cabc0f8",
+      "revision": 0,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+        "id": "claim-division",
+        "kind": "Claim",
+        "version": "v1"
+      },
+      "hash": "b999675e974eef3f99e0e9772b294dc9b027cabdfa8e1b502b972efe8cf0a593",
+      "created": "2026-10-08T13:30:51.027548+00:00"
+    },
+    {
+      "seq": 30,
+      "id": "governancedecision_1e27da31fec94728bc41759ca7509961",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_1e27da31fec94728bc41759ca7509961",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_d8134406d877420294e83f9a8cabc0f8",
+        "scope": "canonical:Claim:claim-division"
+      },
+      "hash": "8338efed099d0b9e79e81dfbde7107b98f9f6e6da2ab90999771ce8b738ccb29",
+      "created": "2026-10-08T13:30:51.027609+00:00"
+    },
+    {
+      "seq": 31,
+      "id": "Claim:claim-division:v1",
+      "kind": "Claim",
+      "obj": "canonical:Claim:claim-division",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Evaluation",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "claim_type": "KC",
+        "conditions": [
+          "本 Task Family；解释限于已观察条件"
+        ],
+        "disconfirmation_criteria": [
+          "在允许支持范围内仍给出错误商或不能检查计算"
+        ],
+        "quality_requirements": [
+          "计算与自查正确；给出商后的重复不等于独立计算"
+        ],
+        "responsibility_boundary": {
+          "allowed_support": [
+            "可以由他人指出需要检查除法，但不提供商或计算过程"
+          ],
+          "learner_owned": [
+            "自己重新计算商并检查其合理性"
+          ]
+        },
+        "scope_ref": {
+          "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+          "id": "division",
+          "kind": "KC",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+      "created": "2026-10-08T13:30:51.027653+00:00"
+    },
+    {
+      "seq": 32,
+      "id": "activationrecord_3ca6cc307d084a5da13b3142df7598ef",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_3ca6cc307d084a5da13b3142df7598ef",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+          "id": "claim-division",
+          "kind": "Claim",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "f109ec36f0129a7b9c727af37b0935ab2c5030e76c289a0c84582227e99cb1fb",
+      "created": "2026-10-08T13:30:51.027781+00:00"
+    },
+    {
+      "seq": 33,
+      "id": "changeproposal_5235229ace964896a6473e784c69e9e6",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_5235229ace964896a6473e784c69e9e6",
+      "revision": 0,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+        "id": "evidence-rules",
+        "kind": "EvidenceSemantics",
+        "version": "v1"
+      },
+      "hash": "ad92eade66a4bf3decf600b55dc5e9c065ece1336ac8673e59289e50eef7e20b",
+      "created": "2026-10-08T13:30:51.029426+00:00"
+    },
+    {
+      "seq": 34,
+      "id": "governancedecision_3b8131fb4353466ba64fda96fb93c9a1",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_3b8131fb4353466ba64fda96fb93c9a1",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_5235229ace964896a6473e784c69e9e6",
+        "scope": "canonical:EvidenceSemantics:evidence-rules"
+      },
+      "hash": "d57805540ec638856503cbf98db10fb6739bd68ae7db1f1d25559bc20b8bbe50",
+      "created": "2026-10-08T13:30:51.029496+00:00"
+    },
+    {
+      "seq": 35,
+      "id": "EvidenceSemantics:evidence-rules:v1",
+      "kind": "EvidenceSemantics",
+      "obj": "canonical:EvidenceSemantics:evidence-rules",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Evaluation",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "applicable_claim_refs": [
+          {
+            "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+            "id": "claim-task",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          {
+            "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+            "id": "claim-unit",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          {
+            "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+            "id": "claim-division",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          }
+        ],
+        "assistance_rules": [
+          "只以实际发生内容解释帮助；请求、选择和未展示内容不算已暴露。",
+          "同一提示可能帮助定位但没有替代计算，对不同 Claim 分开判断。",
+          "新题或活动标签不能清除近期帮助。",
+          "提示前的原始表现保留原有证据意义；后续帮助不倒灌到此前作答。",
+          "未知效果保持未知；不能从缺少确认推出没显示。"
+        ],
+        "relation_criteria": {
+          "Contradicts": "表现对 Claim 提供反向证据，不把单次错误直接判为不会。",
+          "Discriminates": "说明材料区分哪两个有依据的解释假设。",
+          "NonInformative": "请求、缺失材料或相关责任已被替代时，对该 Claim 不足以判断；必须说明具体原因。",
+          "Supports": "表现对具体 Claim 所要求责任提供支持，说明局限；非掌握判定。"
+        },
+        "required_context": [
+          "Observation",
+          "原始作答",
+          "Claim",
+          "实际帮助及覆盖范围"
+        ]
+      },
+      "hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+      "created": "2026-10-08T13:30:51.029551+00:00"
+    },
+    {
+      "seq": 36,
+      "id": "activationrecord_dab86de9bfb24e7f9df89588a819273f",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_dab86de9bfb24e7f9df89588a819273f",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+          "id": "evidence-rules",
+          "kind": "EvidenceSemantics",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "802432e62ecd7fb2b313625c661dc6e3a73bfc4fd01b7e8a947e00aa0e6514c2",
+      "created": "2026-10-08T13:30:51.029678+00:00"
+    },
+    {
+      "seq": 37,
+      "id": "changeproposal_c40dcd61d10949b398b7eebc37198f47",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_c40dcd61d10949b398b7eebc37198f47",
+      "revision": 0,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+        "id": "inference-rules",
+        "kind": "InferenceSemantics",
+        "version": "v1"
+      },
+      "hash": "16c87e996f1b7acf3f14cf9bf328211d5a0ef93c0d6fd4b240f27c7832828678",
+      "created": "2026-10-08T13:30:51.031116+00:00"
+    },
+    {
+      "seq": 38,
+      "id": "governancedecision_d348cc5a44ba4bf7aa8638cc943d52a8",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_d348cc5a44ba4bf7aa8638cc943d52a8",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_c40dcd61d10949b398b7eebc37198f47",
+        "scope": "canonical:InferenceSemantics:inference-rules"
+      },
+      "hash": "f1752e54babc6023f4645983b26d54e21a6347b3c8b67bf05fe7265b8e7fe637",
+      "created": "2026-10-08T13:30:51.031181+00:00"
+    },
+    {
+      "seq": 39,
+      "id": "InferenceSemantics:inference-rules:v1",
+      "kind": "InferenceSemantics",
+      "obj": "canonical:InferenceSemantics:inference-rules",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Evaluation",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "aggregation_rules": [
+          "结合当前有效正反 Evidence，不把单次正确或系统讲解直接等同掌握。",
+          "允许有依据的方向性认识，保留小样本与迁移限制。"
+        ],
+        "applicable_claim_refs": [
+          {
+            "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+            "id": "claim-task",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          {
+            "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+            "id": "claim-unit",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          {
+            "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+            "id": "claim-division",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          }
+        ],
+        "conflict_rules": [
+          "明确相冲突的 Evidence 及原因，不平均成一个无法解释的分数。"
+        ],
+        "dependency_rules": [
+          "同一表现的重复解释不视为独立样本；保留实际帮助和相关性。"
+        ],
+        "revision_rules": [
+          "更正后的失效 Evidence 不再作为当前依据，但历史保留。",
+          "有新材料时解释为何改变认识或保持原修订；不能默认全 UNKNOWN。"
+        ],
+        "uncertainty_rules": [
+          "证据不足可以 UNKNOWN；运行失败不属于成功的 UNKNOWN。",
+          "认识不确定性不是学习者自信心。"
+        ]
+      },
+      "hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+      "created": "2026-10-08T13:30:51.031234+00:00"
+    },
+    {
+      "seq": 40,
+      "id": "activationrecord_0c1f7cb3931349ab8524329fb927e0d9",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_0c1f7cb3931349ab8524329fb927e0d9",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+          "id": "inference-rules",
+          "kind": "InferenceSemantics",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "aceb769b44bc9afe0df8125b09e7fb92d1df657acfbfeb916b4b8663abc4e971",
+      "created": "2026-10-08T13:30:51.031359+00:00"
+    },
+    {
+      "seq": 41,
+      "id": "changeproposal_37e81e84b99a46a092c1a1415df67dca",
+      "kind": "ChangeProposal",
+      "obj": "changeproposal_37e81e84b99a46a092c1a1415df67dca",
+      "revision": 0,
+      "version": "",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "base": null,
+        "body_hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+        "id": "exit-mechanism",
+        "kind": "TaskInstance",
+        "version": "v1"
+      },
+      "hash": "00e6365c51c369e08371f97ece0198f9b69d099fbae6114c4e6ce27bd718cf99",
+      "created": "2026-10-08T13:30:51.034619+00:00"
+    },
+    {
+      "seq": 42,
+      "id": "governancedecision_be9ce46224d14069bedfdded39a8aeba",
+      "kind": "GovernanceDecision",
+      "obj": "governancedecision_be9ce46224d14069bedfdded39a8aeba",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "authorized_actor": "admin",
+        "body_hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+        "decision": "APPROVE",
+        "proposal": "changeproposal_37e81e84b99a46a092c1a1415df67dca",
+        "scope": "canonical:TaskInstance:exit-mechanism"
+      },
+      "hash": "17a209ae9ac7dd0f75e01eb1b1fb0d71cde7ec8f970fc8ecfc6dca24243accc3",
+      "created": "2026-10-08T13:30:51.034677+00:00"
+    },
+    {
+      "seq": 43,
+      "id": "TaskInstance:exit-mechanism:v1",
+      "kind": "TaskInstance",
+      "obj": "canonical:TaskInstance:exit-mechanism",
+      "revision": 0,
+      "version": "v1",
+      "owner": "Learning",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "applicable_conditions": [
+          "正比例；单价相同"
+        ],
+        "given_data": {
+          "quantity": 6,
+          "target": 15,
+          "total": 42
+        },
+        "statement": "6份练习本共42元，15份同样的练习本多少钱？请说明计算。",
+        "task_family_ref": {
+          "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+          "id": "unit-rate",
+          "kind": "TaskFamily",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+      "created": "2026-10-08T13:30:51.034721+00:00"
+    },
+    {
+      "seq": 44,
+      "id": "activationrecord_49d5ec70bbec464e891974f5d029f928",
+      "kind": "ActivationRecord",
+      "obj": "activationrecord_49d5ec70bbec464e891974f5d029f928",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "actor": "admin",
+        "previous": null,
+        "version_ref": {
+          "content_hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+          "id": "exit-mechanism",
+          "kind": "TaskInstance",
+          "revision": 0,
+          "version": "v1"
+        }
+      },
+      "hash": "415b82b552a883ba564b5d05b57ac39cea3ef5e9b0f2fa2969ec330059564457",
+      "created": "2026-10-08T13:30:51.034827+00:00"
+    },
+    {
+      "seq": 45,
+      "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+      "kind": "Event",
+      "obj": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+      "revision": 0,
+      "version": "",
+      "owner": "Learner",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "correction_of": null,
+        "task_ref": {
+          "content_hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+          "id": "exit-mechanism",
+          "kind": "TaskInstance",
+          "revision": 0,
+          "version": "v1"
+        },
+        "text": "机制夹具作答",
+        "type": "LearnerInput"
+      },
+      "hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+      "created": "2026-10-08T13:30:51.040113+00:00"
+    },
+    {
+      "seq": 46,
+      "id": "context_b62340224a9a4e82a499c31bdf369388",
+      "kind": "Context",
+      "obj": "context_b62340224a9a4e82a499c31bdf369388",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "control": {
+          "activity_rev": 0,
+          "auth_rev": 0,
+          "expected_heads": {
+            "canonical:KC:division": "KC:division:v1",
+            "canonical:KC:scaling": "KC:scaling:v1",
+            "canonical:KC:unit-relation": "KC:unit-relation:v1",
+            "canonical:SolutionStrategy:unit-method": "SolutionStrategy:unit-method:v1",
+            "canonical:TaskFamily:unit-rate": "TaskFamily:unit-rate:v1",
+            "canonical:TaskInstance:exit-mechanism": "TaskInstance:exit-mechanism:v1"
+          },
+          "generation": 0,
+          "purpose": "Observation",
+          "refs": [
+            "event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "TaskInstance:exit-mechanism:v1",
+            "TaskFamily:unit-rate:v1",
+            "KC:unit-relation:v1",
+            "KC:division:v1",
+            "KC:scaling:v1",
+            "SolutionStrategy:unit-method:v1"
+          ],
+          "sid": "s",
+          "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+          "worker_epoch": 1
+        },
+        "semantic": {
+          "assistance": [],
+          "assistance_coverage": "COMPLETE",
+          "current_activity": "IndependentDiagnosis",
+          "current_input_id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+          "domain": [
+            {
+              "body": {
+                "conditions": [
+                  "整数数量与总价，关系为正比例"
+                ],
+                "definition": "先求单位量再按目标数量缩放的正比例应用题",
+                "quality_requirements": [
+                  "关系、计算及单位合理",
+                  "说明依据而非只猜最终数值"
+                ],
+                "responsibilities": [
+                  "识别单位量关系",
+                  "选择除后乘策略",
+                  "自行计算并说明数量单位"
+                ]
+              },
+              "created": "2026-10-08T13:30:51.015210+00:00",
+              "id": "TaskFamily:unit-rate:v1",
+              "kind": "TaskFamily",
+              "object_id": "unit-rate",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "由总量与份数说明每份量",
+                "definition": "单位量关系"
+              },
+              "created": "2026-10-08T13:30:51.016732+00:00",
+              "id": "KC:unit-relation:v1",
+              "kind": "KC",
+              "object_id": "unit-relation",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "自行求商并检查除法结果",
+                "definition": "整数除法"
+              },
+              "created": "2026-10-08T13:30:51.018326+00:00",
+              "id": "KC:division:v1",
+              "kind": "KC",
+              "object_id": "division",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "用单位量计算目标数量的总量",
+                "definition": "按数量缩放"
+              },
+              "created": "2026-10-08T13:30:51.019959+00:00",
+              "id": "KC:scaling:v1",
+              "kind": "KC",
+              "object_id": "scaling",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "prior_tasks": [],
+          "purpose": "Observation",
+          "source_contract": {
+            "activity": "current_activity is confirmed runtime state; purpose is the processing stage. activity_at_observation describes the historical observation and cannot override current_activity.",
+            "coverage_scope": "This session, controlled application channel, before current evaluation. External help remains unknown.",
+            "display": "Only assistance entries confirm this system rendered their listed blocks; rendering does not prove reading or comprehension.",
+            "events": "LearnerInput is learner text, including unverified self-reports of help.",
+            "partial": "PARTIAL occurrence contains only rendered blocks; omitted blocks are not assistance."
+          },
+          "sources": [
+            {
+              "body": {
+                "correction_of": null,
+                "task_ref": {
+                  "id": "exit-mechanism",
+                  "kind": "TaskInstance",
+                  "revision": 0,
+                  "version": "v1"
+                },
+                "text": "机制夹具作答",
+                "type": "LearnerInput"
+              },
+              "created": "2026-10-08T13:30:51.040113+00:00",
+              "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "kind": "Event",
+              "object_id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": ""
+            }
+          ],
+          "strategy": [
+            {
+              "body": {
+                "kc_refs": [
+                  {
+                    "id": "unit-relation",
+                    "kind": "KC",
+                    "revision": 0,
+                    "version": "v1"
+                  },
+                  {
+                    "id": "division",
+                    "kind": "KC",
+                    "revision": 0,
+                    "version": "v1"
+                  },
+                  {
+                    "id": "scaling",
+                    "kind": "KC",
+                    "revision": 0,
+                    "version": "v1"
+                  }
+                ],
+                "method": "总价除以数量求单位价，再乘目标数量",
+                "steps": [
+                  {
+                    "id": "unit",
+                    "inputs": [
+                      "total",
+                      "quantity"
+                    ],
+                    "outputs": [
+                      "unit_value"
+                    ],
+                    "responsibility": "求单位量"
+                  },
+                  {
+                    "id": "scale",
+                    "inputs": [
+                      "unit_value",
+                      "target"
+                    ],
+                    "outputs": [
+                      "target_total"
+                    ],
+                    "responsibility": "按目标数量缩放"
+                  }
+                ],
+                "task_family_ref": {
+                  "id": "unit-rate",
+                  "kind": "TaskFamily",
+                  "revision": 0,
+                  "version": "v1"
+                }
+              },
+              "created": "2026-10-08T13:30:51.021808+00:00",
+              "id": "SolutionStrategy:unit-method:v1",
+              "kind": "SolutionStrategy",
+              "object_id": "unit-method",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "task": {
+            "body": {
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ],
+              "given_data": {
+                "quantity": 6,
+                "target": 15,
+                "total": 42
+              },
+              "statement": "6份练习本共42元，15份同样的练习本多少钱？请说明计算。",
+              "task_family_ref": {
+                "id": "unit-rate",
+                "kind": "TaskFamily",
+                "revision": 0,
+                "version": "v1"
+              }
+            },
+            "created": "2026-10-08T13:30:51.034721+00:00",
+            "id": "TaskInstance:exit-mechanism:v1",
+            "kind": "TaskInstance",
+            "object_id": "exit-mechanism",
+            "revision": 0,
+            "standing": "current-valid admitted by ContextAssembler",
+            "version": "v1"
+          }
+        }
+      },
+      "hash": "2ddda978f6462b72d1ab2c0209b3a8e5392c97f6f3880bb2db9c7abfbcf45cb3",
+      "created": "2026-10-08T13:30:51.045663+00:00"
+    },
+    {
+      "seq": 47,
+      "id": "reasoningexecution_634f2e4d6be44e30a5ddfc84b4b2e2cc",
+      "kind": "ReasoningExecution",
+      "obj": "reasoningexecution_634f2e4d6be44e30a5ddfc84b4b2e2cc",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "context_id": "context_b62340224a9a4e82a499c31bdf369388",
+        "mode": "scripted-mechanism",
+        "model_record": {
+          "fixture": true,
+          "mode": "scripted-mechanism",
+          "purpose": "Observation"
+        },
+        "model_reference_bindings": {
+          "R003": {
+            "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+            "id": "unit-rate",
+            "kind": "TaskFamily",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R007": {
+            "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+            "id": "unit-relation",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R011": {
+            "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+            "id": "division",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R015": {
+            "content_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+            "id": "scaling",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R019": {
+            "content_hash": "be25c5a06749e477a14bf09e9f8fd326444792994c2df961819a43d2b97cea85",
+            "id": "unit-method",
+            "kind": "SolutionStrategy",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R043": {
+            "content_hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+            "id": "exit-mechanism",
+            "kind": "TaskInstance",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R045": {
+            "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+            "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Event",
+            "revision": 0,
+            "version": ""
+          }
+        },
+        "output": {
+          "request_interpretation": "机制测试输入",
+          "source_ids": [
+            "R045"
+          ],
+          "summary": "固定机制夹具观察",
+          "uncertainties": [],
+          "work_steps": []
+        },
+        "purpose": "Observation",
+        "role": "generation",
+        "status": "COMPLETED"
+      },
+      "hash": "c5bc64d657b029d2e122274d8fcf648711933efe4823591218f66c7b7fc46bcb",
+      "created": "2026-10-08T13:30:51.047998+00:00"
+    },
+    {
+      "seq": 48,
+      "id": "candidate_02b3c83d6ece445590c28ebe6eb4a35a",
+      "kind": "Candidate",
+      "obj": "candidate_02b3c83d6ece445590c28ebe6eb4a35a",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "context_id": "context_b62340224a9a4e82a499c31bdf369388",
+        "formal_payload_hash": "52be31951f3186f0cab2c53b79245c9f2f73903fd7fd6306dec37b0c531ca0f4",
+        "formal_payloads": [
+          {
+            "current_purpose": "IndependentDiagnosis",
+            "request_interpretation": "机制测试输入",
+            "source_ids": [
+              "event_d38b0ec4865f41c98eeefcec70f73c8e"
+            ],
+            "summary": "固定机制夹具观察",
+            "uncertainties": [],
+            "work_steps": []
+          }
+        ],
+        "generation_execution": "reasoningexecution_634f2e4d6be44e30a5ddfc84b4b2e2cc",
+        "target_kind": "Observation",
+        "unchanged": [],
+        "wire": {
+          "request_interpretation": "机制测试输入",
+          "source_ids": [
+            "R045"
+          ],
+          "summary": "固定机制夹具观察",
+          "uncertainties": [],
+          "work_steps": []
+        }
+      },
+      "hash": "db350434c2360bf0189ac806618b860188b099998ff5129fae57391bbcf0ffc9",
+      "created": "2026-10-08T13:30:51.050478+00:00"
+    },
+    {
+      "seq": 49,
+      "id": "reasoningexecution_870a0c80fd074e0288cc120b8de42103",
+      "kind": "ReasoningExecution",
+      "obj": "reasoningexecution_870a0c80fd074e0288cc120b8de42103",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "context_id": "context_b62340224a9a4e82a499c31bdf369388",
+        "mode": "scripted-mechanism",
+        "model_record": {
+          "fixture": true,
+          "mode": "scripted-mechanism",
+          "purpose": "Review:Observation"
+        },
+        "model_reference_bindings": {
+          "R003": {
+            "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+            "id": "unit-rate",
+            "kind": "TaskFamily",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R007": {
+            "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+            "id": "unit-relation",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R011": {
+            "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+            "id": "division",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R015": {
+            "content_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+            "id": "scaling",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R019": {
+            "content_hash": "be25c5a06749e477a14bf09e9f8fd326444792994c2df961819a43d2b97cea85",
+            "id": "unit-method",
+            "kind": "SolutionStrategy",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R043": {
+            "content_hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+            "id": "exit-mechanism",
+            "kind": "TaskInstance",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R045": {
+            "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+            "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Event",
+            "revision": 0,
+            "version": ""
+          }
+        },
+        "output": {
+          "checks": [
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "fidelity",
+              "source_ids": [],
+              "verdict": "PASS"
+            },
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "ownership",
+              "source_ids": [],
+              "verdict": "PASS"
+            },
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "grounding",
+              "source_ids": [],
+              "verdict": "PASS"
+            },
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "scope",
+              "source_ids": [],
+              "verdict": "PASS"
+            }
+          ],
+          "verdict": "PASS"
+        },
+        "purpose": "Observation",
+        "role": "review",
+        "status": "COMPLETED"
+      },
+      "hash": "222214b1ed86b1ec73da9f4414a732729c530dc2f60382bc59913e1f8d62d14e",
+      "created": "2026-10-08T13:30:51.053135+00:00"
+    },
+    {
+      "seq": 50,
+      "id": "validation_09da2178176b486ca7a6c64db35e6b42",
+      "kind": "Validation",
+      "obj": "validation_09da2178176b486ca7a6c64db35e6b42",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "candidate_hash": "db350434c2360bf0189ac806618b860188b099998ff5129fae57391bbcf0ffc9",
+        "candidate_id": "candidate_02b3c83d6ece445590c28ebe6eb4a35a",
+        "checks": [
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "fidelity",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "ownership",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "grounding",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "scope",
+            "source_ids": [],
+            "verdict": "PASS"
+          }
+        ],
+        "context_id": "context_b62340224a9a4e82a499c31bdf369388",
+        "model_verdict": "PASS",
+        "required_checks_complete": true,
+        "review_execution": "reasoningexecution_870a0c80fd074e0288cc120b8de42103",
+        "rule_hash": "5e3e1738db3bc1618859fc6b48dcdd198b5c9c5a68d9d295c1bd0e0651ea1e71",
+        "verdict": "PASS",
+        "verdict_aggregation": "required-checks-v1"
+      },
+      "hash": "55f29a6fa60aa1457b3c14a74fb97531f5b9ecdc44411e016e28338819bba3d5",
+      "created": "2026-10-08T13:30:51.055490+00:00"
+    },
+    {
+      "seq": 51,
+      "id": "observation_974fa9305e884b0e94dc660bfe4da85f",
+      "kind": "Observation",
+      "obj": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+      "revision": 1,
+      "version": "",
+      "owner": "Interaction",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "current_purpose": "IndependentDiagnosis",
+        "request_interpretation": "机制测试输入",
+        "source_ids": [
+          "event_d38b0ec4865f41c98eeefcec70f73c8e"
+        ],
+        "summary": "固定机制夹具观察",
+        "uncertainties": [],
+        "work_steps": []
+      },
+      "hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+      "created": "2026-10-08T13:30:51.057512+00:00"
+    },
+    {
+      "seq": 52,
+      "id": "commitrecord_d2eeb11f5f1a46cfbf931dee487cf65f",
+      "kind": "CommitRecord",
+      "obj": "commitrecord_d2eeb11f5f1a46cfbf931dee487cf65f",
+      "revision": 0,
+      "version": "",
+      "owner": "Interaction",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "candidate": "candidate_02b3c83d6ece445590c28ebe6eb4a35a",
+        "outputs": [
+          "observation_974fa9305e884b0e94dc660bfe4da85f"
+        ],
+        "owner": "Interaction",
+        "review": "validation_09da2178176b486ca7a6c64db35e6b42"
+      },
+      "hash": "d209baa26c3425c05eb6ea975632df3b5d67ec3312f2c493a821a4533197f428",
+      "created": "2026-10-08T13:30:51.057610+00:00"
+    },
+    {
+      "seq": 53,
+      "id": "stagetiming_332b6c36f0e242f9bfba52d5ced48e9e",
+      "kind": "StageTiming",
+      "obj": "stagetiming_332b6c36f0e242f9bfba52d5ced48e9e",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "attempt": 0,
+        "commit_seconds": 0.0019843000000037136,
+        "context_seconds": 0.004015900000013062,
+        "generation_seconds": 0.002494299999852956,
+        "purpose": "Observation",
+        "review_seconds": 0.0030249999999796273,
+        "total_seconds": 0.015710200000285113
+      },
+      "hash": "2721ab996695a331c096193400768c2d927d0a48d3a40c0d2b018506e6445347",
+      "created": "2026-10-08T13:30:51.058842+00:00"
+    },
+    {
+      "seq": 54,
+      "id": "context_08319dc7441d4752875c6e515a16701c",
+      "kind": "Context",
+      "obj": "context_08319dc7441d4752875c6e515a16701c",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "control": {
+          "activity_rev": 0,
+          "auth_rev": 0,
+          "expected_heads": {
+            "canonical:Claim:claim-division": "Claim:claim-division:v1",
+            "canonical:Claim:claim-task": "Claim:claim-task:v1",
+            "canonical:Claim:claim-unit": "Claim:claim-unit:v1",
+            "canonical:EvidenceSemantics:evidence-rules": "EvidenceSemantics:evidence-rules:v1",
+            "canonical:KC:division": "KC:division:v1",
+            "canonical:KC:scaling": "KC:scaling:v1",
+            "canonical:KC:unit-relation": "KC:unit-relation:v1",
+            "canonical:TaskFamily:unit-rate": "TaskFamily:unit-rate:v1",
+            "canonical:TaskInstance:exit-mechanism": "TaskInstance:exit-mechanism:v1",
+            "observation:event_d38b0ec4865f41c98eeefcec70f73c8e": "observation_974fa9305e884b0e94dc660bfe4da85f"
+          },
+          "generation": 0,
+          "purpose": "Evidence",
+          "refs": [
+            "event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "TaskInstance:exit-mechanism:v1",
+            "TaskFamily:unit-rate:v1",
+            "KC:unit-relation:v1",
+            "KC:division:v1",
+            "KC:scaling:v1",
+            "Claim:claim-task:v1",
+            "Claim:claim-unit:v1",
+            "Claim:claim-division:v1",
+            "observation_974fa9305e884b0e94dc660bfe4da85f",
+            "EvidenceSemantics:evidence-rules:v1"
+          ],
+          "sid": "s",
+          "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+          "worker_epoch": 1
+        },
+        "semantic": {
+          "assistance": [],
+          "assistance_coverage": "COMPLETE",
+          "claims": [
+            {
+              "body": {
+                "claim_type": "TaskProficiency",
+                "conditions": [
+                  "本 Task Family；解释限于已观察条件"
+                ],
+                "disconfirmation_criteria": [
+                  "在条件适用且无实质帮助时出现关系、策略或计算错误"
+                ],
+                "quality_requirements": [
+                  "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+                ],
+                "responsibility_boundary": {
+                  "allowed_support": [],
+                  "learner_owned": [
+                    "独立识别关系、选择策略、计算及检查"
+                  ]
+                },
+                "scope_ref": {
+                  "id": "unit-rate",
+                  "kind": "TaskFamily",
+                  "revision": 0,
+                  "version": "v1"
+                }
+              },
+              "created": "2026-10-08T13:30:51.023904+00:00",
+              "id": "Claim:claim-task:v1",
+              "kind": "Claim",
+              "object_id": "claim-task",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "claim_type": "KC",
+                "conditions": [
+                  "本 Task Family；解释限于已观察条件"
+                ],
+                "disconfirmation_criteria": [
+                  "把总量与单位量混淆或不能说明除法意义"
+                ],
+                "quality_requirements": [
+                  "能用数量意义说明单位量，不只复述系统解释"
+                ],
+                "responsibility_boundary": {
+                  "allowed_support": [],
+                  "learner_owned": [
+                    "自己说明单位量关系及为什么使用总量除以份数"
+                  ]
+                },
+                "scope_ref": {
+                  "id": "unit-relation",
+                  "kind": "KC",
+                  "revision": 0,
+                  "version": "v1"
+                }
+              },
+              "created": "2026-10-08T13:30:51.025865+00:00",
+              "id": "Claim:claim-unit:v1",
+              "kind": "Claim",
+              "object_id": "claim-unit",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "claim_type": "KC",
+                "conditions": [
+                  "本 Task Family；解释限于已观察条件"
+                ],
+                "disconfirmation_criteria": [
+                  "在允许支持范围内仍给出错误商或不能检查计算"
+                ],
+                "quality_requirements": [
+                  "计算与自查正确；给出商后的重复不等于独立计算"
+                ],
+                "responsibility_boundary": {
+                  "allowed_support": [
+                    "可以由他人指出需要检查除法，但不提供商或计算过程"
+                  ],
+                  "learner_owned": [
+                    "自己重新计算商并检查其合理性"
+                  ]
+                },
+                "scope_ref": {
+                  "id": "division",
+                  "kind": "KC",
+                  "revision": 0,
+                  "version": "v1"
+                }
+              },
+              "created": "2026-10-08T13:30:51.027653+00:00",
+              "id": "Claim:claim-division:v1",
+              "kind": "Claim",
+              "object_id": "claim-division",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "current_activity": "IndependentDiagnosis",
+          "current_input_id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+          "domain": [
+            {
+              "body": {
+                "conditions": [
+                  "整数数量与总价，关系为正比例"
+                ],
+                "definition": "先求单位量再按目标数量缩放的正比例应用题",
+                "quality_requirements": [
+                  "关系、计算及单位合理",
+                  "说明依据而非只猜最终数值"
+                ],
+                "responsibilities": [
+                  "识别单位量关系",
+                  "选择除后乘策略",
+                  "自行计算并说明数量单位"
+                ]
+              },
+              "created": "2026-10-08T13:30:51.015210+00:00",
+              "id": "TaskFamily:unit-rate:v1",
+              "kind": "TaskFamily",
+              "object_id": "unit-rate",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "由总量与份数说明每份量",
+                "definition": "单位量关系"
+              },
+              "created": "2026-10-08T13:30:51.016732+00:00",
+              "id": "KC:unit-relation:v1",
+              "kind": "KC",
+              "object_id": "unit-relation",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "自行求商并检查除法结果",
+                "definition": "整数除法"
+              },
+              "created": "2026-10-08T13:30:51.018326+00:00",
+              "id": "KC:division:v1",
+              "kind": "KC",
+              "object_id": "division",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "用单位量计算目标数量的总量",
+                "definition": "按数量缩放"
+              },
+              "created": "2026-10-08T13:30:51.019959+00:00",
+              "id": "KC:scaling:v1",
+              "kind": "KC",
+              "object_id": "scaling",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "evidence_semantics": [
+            {
+              "body": {
+                "applicable_claim_refs": [
+                  {
+                    "id": "claim-task",
+                    "kind": "Claim",
+                    "revision": 0,
+                    "version": "v1"
+                  },
+                  {
+                    "id": "claim-unit",
+                    "kind": "Claim",
+                    "revision": 0,
+                    "version": "v1"
+                  },
+                  {
+                    "id": "claim-division",
+                    "kind": "Claim",
+                    "revision": 0,
+                    "version": "v1"
+                  }
+                ],
+                "assistance_rules": [
+                  "只以实际发生内容解释帮助；请求、选择和未展示内容不算已暴露。",
+                  "同一提示可能帮助定位但没有替代计算，对不同 Claim 分开判断。",
+                  "新题或活动标签不能清除近期帮助。",
+                  "提示前的原始表现保留原有证据意义；后续帮助不倒灌到此前作答。",
+                  "未知效果保持未知；不能从缺少确认推出没显示。"
+                ],
+                "relation_criteria": {
+                  "Contradicts": "表现对 Claim 提供反向证据，不把单次错误直接判为不会。",
+                  "Discriminates": "说明材料区分哪两个有依据的解释假设。",
+                  "NonInformative": "请求、缺失材料或相关责任已被替代时，对该 Claim 不足以判断；必须说明具体原因。",
+                  "Supports": "表现对具体 Claim 所要求责任提供支持，说明局限；非掌握判定。"
+                },
+                "required_context": [
+                  "Observation",
+                  "原始作答",
+                  "Claim",
+                  "实际帮助及覆盖范围"
+                ]
+              },
+              "created": "2026-10-08T13:30:51.029551+00:00",
+              "id": "EvidenceSemantics:evidence-rules:v1",
+              "kind": "EvidenceSemantics",
+              "object_id": "evidence-rules",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "observations": [
+            {
+              "body": {
+                "current_purpose": "IndependentDiagnosis",
+                "request_interpretation": "机制测试输入",
+                "source_ids": [
+                  "event_d38b0ec4865f41c98eeefcec70f73c8e"
+                ],
+                "summary": "固定机制夹具观察",
+                "uncertainties": [],
+                "work_steps": []
+              },
+              "created": "2026-10-08T13:30:51.057512+00:00",
+              "id": "observation_974fa9305e884b0e94dc660bfe4da85f",
+              "kind": "Observation",
+              "object_id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "revision": 1,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": ""
+            }
+          ],
+          "prior_tasks": [],
+          "purpose": "Evidence",
+          "source_contract": {
+            "activity": "current_activity is confirmed runtime state; purpose is the processing stage. activity_at_observation describes the historical observation and cannot override current_activity.",
+            "coverage_scope": "This session, controlled application channel, before current evaluation. External help remains unknown.",
+            "display": "Only assistance entries confirm this system rendered their listed blocks; rendering does not prove reading or comprehension.",
+            "events": "LearnerInput is learner text, including unverified self-reports of help.",
+            "partial": "PARTIAL occurrence contains only rendered blocks; omitted blocks are not assistance."
+          },
+          "sources": [
+            {
+              "body": {
+                "correction_of": null,
+                "task_ref": {
+                  "id": "exit-mechanism",
+                  "kind": "TaskInstance",
+                  "revision": 0,
+                  "version": "v1"
+                },
+                "text": "机制夹具作答",
+                "type": "LearnerInput"
+              },
+              "created": "2026-10-08T13:30:51.040113+00:00",
+              "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "kind": "Event",
+              "object_id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": ""
+            }
+          ],
+          "task": {
+            "body": {
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ],
+              "given_data": {
+                "quantity": 6,
+                "target": 15,
+                "total": 42
+              },
+              "statement": "6份练习本共42元，15份同样的练习本多少钱？请说明计算。",
+              "task_family_ref": {
+                "id": "unit-rate",
+                "kind": "TaskFamily",
+                "revision": 0,
+                "version": "v1"
+              }
+            },
+            "created": "2026-10-08T13:30:51.034721+00:00",
+            "id": "TaskInstance:exit-mechanism:v1",
+            "kind": "TaskInstance",
+            "object_id": "exit-mechanism",
+            "revision": 0,
+            "standing": "current-valid admitted by ContextAssembler",
+            "version": "v1"
+          }
+        }
+      },
+      "hash": "8364b9dbc471bc10a326441daefc319d4f49c75a367a126aae68c04b41f7471c",
+      "created": "2026-10-08T13:30:51.062499+00:00"
+    },
+    {
+      "seq": 55,
+      "id": "reasoningexecution_8732a5f8178d4311b86c3e4349c245af",
+      "kind": "ReasoningExecution",
+      "obj": "reasoningexecution_8732a5f8178d4311b86c3e4349c245af",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "context_id": "context_08319dc7441d4752875c6e515a16701c",
+        "mode": "scripted-mechanism",
+        "model_record": {
+          "fixture": true,
+          "mode": "scripted-mechanism",
+          "purpose": "Evidence"
+        },
+        "model_reference_bindings": {
+          "R003": {
+            "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+            "id": "unit-rate",
+            "kind": "TaskFamily",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R007": {
+            "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+            "id": "unit-relation",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R011": {
+            "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+            "id": "division",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R015": {
+            "content_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+            "id": "scaling",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R023": {
+            "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+            "id": "claim-task",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R027": {
+            "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+            "id": "claim-unit",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R031": {
+            "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+            "id": "claim-division",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R035": {
+            "content_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+            "id": "evidence-rules",
+            "kind": "EvidenceSemantics",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R043": {
+            "content_hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+            "id": "exit-mechanism",
+            "kind": "TaskInstance",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R045": {
+            "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+            "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Event",
+            "revision": 0,
+            "version": ""
+          },
+          "R051": {
+            "content_hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+            "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Observation",
+            "revision": 1,
+            "version": ""
+          }
+        },
+        "output": {
+          "items": [
+            {
+              "assistance_ids": [],
+              "assistance_relevance": "仅验证来源传递",
+              "claim_id": "R023",
+              "coverage": "COMPLETE",
+              "dependencies_explanation": "显式测试模式",
+              "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+              "observation_ids": [
+                "R051"
+              ],
+              "relation": "Contradicts",
+              "source_ids": [
+                "R045"
+              ]
+            },
+            {
+              "assistance_ids": [],
+              "assistance_relevance": "仅验证来源传递",
+              "claim_id": "R027",
+              "coverage": "COMPLETE",
+              "dependencies_explanation": "显式测试模式",
+              "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+              "observation_ids": [
+                "R051"
+              ],
+              "relation": "Contradicts",
+              "source_ids": [
+                "R045"
+              ]
+            },
+            {
+              "assistance_ids": [],
+              "assistance_relevance": "仅验证来源传递",
+              "claim_id": "R031",
+              "coverage": "COMPLETE",
+              "dependencies_explanation": "显式测试模式",
+              "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+              "observation_ids": [
+                "R051"
+              ],
+              "relation": "Contradicts",
+              "source_ids": [
+                "R045"
+              ]
+            }
+          ]
+        },
+        "purpose": "Evidence",
+        "role": "generation",
+        "status": "COMPLETED"
+      },
+      "hash": "b8e4426253bd3df4aa8d09199722a443464046b6fcf93b179bafe420d4825481",
+      "created": "2026-10-08T13:30:51.065255+00:00"
+    },
+    {
+      "seq": 56,
+      "id": "candidate_ea2bd46509f843dc8d3a4b975d6b0b50",
+      "kind": "Candidate",
+      "obj": "candidate_ea2bd46509f843dc8d3a4b975d6b0b50",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "context_id": "context_08319dc7441d4752875c6e515a16701c",
+        "formal_payload_hash": "73e394a8febf5a2a4c76584ea8c478e87c6feba34d13dc6c8872d9a020fd9c28",
+        "formal_payloads": [
+          {
+            "claim_ref": {
+              "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+              "id": "claim-task",
+              "kind": "Claim",
+              "revision": 0,
+              "version": "v1"
+            },
+            "epistemic_context": {
+              "assistance_refs": [],
+              "assistance_relevance": "仅验证来源传递",
+              "conditions": [
+                "本 Task Family"
+              ],
+              "coverage": "COMPLETE",
+              "dependencies_explanation": "显式测试模式",
+              "observation_interval": [
+                "2026-10-08T13:30:51.040113+00:00",
+                "2026-10-08T13:30:51.040113+00:00"
+              ]
+            },
+            "evidence_semantics_ref": {
+              "content_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+              "id": "evidence-rules",
+              "kind": "EvidenceSemantics",
+              "revision": 0,
+              "version": "v1"
+            },
+            "grounding": [
+              {
+                "content_path": "/body/text",
+                "record_ref": {
+                  "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+                  "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+                  "kind": "Event",
+                  "revision": 0,
+                  "version": ""
+                }
+              }
+            ],
+            "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+            "observation_refs": [
+              {
+                "content_hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+                "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+                "kind": "Observation",
+                "revision": 1,
+                "version": ""
+              }
+            ],
+            "relation": "Contradicts"
+          },
+          {
+            "claim_ref": {
+              "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+              "id": "claim-unit",
+              "kind": "Claim",
+              "revision": 0,
+              "version": "v1"
+            },
+            "epistemic_context": {
+              "assistance_refs": [],
+              "assistance_relevance": "仅验证来源传递",
+              "conditions": [
+                "本 Task Family"
+              ],
+              "coverage": "COMPLETE",
+              "dependencies_explanation": "显式测试模式",
+              "observation_interval": [
+                "2026-10-08T13:30:51.040113+00:00",
+                "2026-10-08T13:30:51.040113+00:00"
+              ]
+            },
+            "evidence_semantics_ref": {
+              "content_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+              "id": "evidence-rules",
+              "kind": "EvidenceSemantics",
+              "revision": 0,
+              "version": "v1"
+            },
+            "grounding": [
+              {
+                "content_path": "/body/text",
+                "record_ref": {
+                  "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+                  "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+                  "kind": "Event",
+                  "revision": 0,
+                  "version": ""
+                }
+              }
+            ],
+            "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+            "observation_refs": [
+              {
+                "content_hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+                "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+                "kind": "Observation",
+                "revision": 1,
+                "version": ""
+              }
+            ],
+            "relation": "Contradicts"
+          },
+          {
+            "claim_ref": {
+              "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+              "id": "claim-division",
+              "kind": "Claim",
+              "revision": 0,
+              "version": "v1"
+            },
+            "epistemic_context": {
+              "assistance_refs": [],
+              "assistance_relevance": "仅验证来源传递",
+              "conditions": [
+                "本 Task Family"
+              ],
+              "coverage": "COMPLETE",
+              "dependencies_explanation": "显式测试模式",
+              "observation_interval": [
+                "2026-10-08T13:30:51.040113+00:00",
+                "2026-10-08T13:30:51.040113+00:00"
+              ]
+            },
+            "evidence_semantics_ref": {
+              "content_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+              "id": "evidence-rules",
+              "kind": "EvidenceSemantics",
+              "revision": 0,
+              "version": "v1"
+            },
+            "grounding": [
+              {
+                "content_path": "/body/text",
+                "record_ref": {
+                  "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+                  "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+                  "kind": "Event",
+                  "revision": 0,
+                  "version": ""
+                }
+              }
+            ],
+            "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+            "observation_refs": [
+              {
+                "content_hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+                "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+                "kind": "Observation",
+                "revision": 1,
+                "version": ""
+              }
+            ],
+            "relation": "Contradicts"
+          }
+        ],
+        "generation_execution": "reasoningexecution_8732a5f8178d4311b86c3e4349c245af",
+        "target_kind": "Evidence",
+        "unchanged": [],
+        "wire": {
+          "items": [
+            {
+              "assistance_ids": [],
+              "assistance_relevance": "仅验证来源传递",
+              "claim_id": "R023",
+              "coverage": "COMPLETE",
+              "dependencies_explanation": "显式测试模式",
+              "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+              "observation_ids": [
+                "R051"
+              ],
+              "relation": "Contradicts",
+              "source_ids": [
+                "R045"
+              ]
+            },
+            {
+              "assistance_ids": [],
+              "assistance_relevance": "仅验证来源传递",
+              "claim_id": "R027",
+              "coverage": "COMPLETE",
+              "dependencies_explanation": "显式测试模式",
+              "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+              "observation_ids": [
+                "R051"
+              ],
+              "relation": "Contradicts",
+              "source_ids": [
+                "R045"
+              ]
+            },
+            {
+              "assistance_ids": [],
+              "assistance_relevance": "仅验证来源传递",
+              "claim_id": "R031",
+              "coverage": "COMPLETE",
+              "dependencies_explanation": "显式测试模式",
+              "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+              "observation_ids": [
+                "R051"
+              ],
+              "relation": "Contradicts",
+              "source_ids": [
+                "R045"
+              ]
+            }
+          ]
+        }
+      },
+      "hash": "a546d040ebb2213c5af234d114125fbf49f350faf3b0f956ac930e81022b64b2",
+      "created": "2026-10-08T13:30:51.070388+00:00"
+    },
+    {
+      "seq": 57,
+      "id": "reasoningexecution_a343cfff3f9a416d93519d61c4e8be4e",
+      "kind": "ReasoningExecution",
+      "obj": "reasoningexecution_a343cfff3f9a416d93519d61c4e8be4e",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "context_id": "context_08319dc7441d4752875c6e515a16701c",
+        "mode": "scripted-mechanism",
+        "model_record": {
+          "fixture": true,
+          "mode": "scripted-mechanism",
+          "purpose": "Review:Evidence"
+        },
+        "model_reference_bindings": {
+          "R003": {
+            "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+            "id": "unit-rate",
+            "kind": "TaskFamily",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R007": {
+            "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+            "id": "unit-relation",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R011": {
+            "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+            "id": "division",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R015": {
+            "content_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+            "id": "scaling",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R023": {
+            "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+            "id": "claim-task",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R027": {
+            "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+            "id": "claim-unit",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R031": {
+            "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+            "id": "claim-division",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R035": {
+            "content_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+            "id": "evidence-rules",
+            "kind": "EvidenceSemantics",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R043": {
+            "content_hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+            "id": "exit-mechanism",
+            "kind": "TaskInstance",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R045": {
+            "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+            "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Event",
+            "revision": 0,
+            "version": ""
+          },
+          "R051": {
+            "content_hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+            "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Observation",
+            "revision": 1,
+            "version": ""
+          }
+        },
+        "output": {
+          "checks": [
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "claim",
+              "source_ids": [],
+              "verdict": "PASS"
+            },
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "grounding",
+              "source_ids": [],
+              "verdict": "PASS"
+            },
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "assistance",
+              "source_ids": [],
+              "verdict": "PASS"
+            },
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "uncertainty",
+              "source_ids": [],
+              "verdict": "PASS"
+            }
+          ],
+          "verdict": "PASS"
+        },
+        "purpose": "Evidence",
+        "role": "review",
+        "status": "COMPLETED"
+      },
+      "hash": "9d838b4d19a4622e7af18697b1d950c4e6d7fdb9d5fe6b47a0761db5d4787382",
+      "created": "2026-10-08T13:30:51.073823+00:00"
+    },
+    {
+      "seq": 58,
+      "id": "validation_419732d57d4743e581cdb1e85802809c",
+      "kind": "Validation",
+      "obj": "validation_419732d57d4743e581cdb1e85802809c",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "candidate_hash": "a546d040ebb2213c5af234d114125fbf49f350faf3b0f956ac930e81022b64b2",
+        "candidate_id": "candidate_ea2bd46509f843dc8d3a4b975d6b0b50",
+        "checks": [
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "claim",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "grounding",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "assistance",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "uncertainty",
+            "source_ids": [],
+            "verdict": "PASS"
+          }
+        ],
+        "context_id": "context_08319dc7441d4752875c6e515a16701c",
+        "model_verdict": "PASS",
+        "required_checks_complete": true,
+        "review_execution": "reasoningexecution_a343cfff3f9a416d93519d61c4e8be4e",
+        "rule_hash": "a5d3a12307b93972cfa2abaa4bb07a5f3b2a9c9add439a0d3dd1b7f0de13c092",
+        "verdict": "PASS",
+        "verdict_aggregation": "required-checks-v1"
+      },
+      "hash": "27fa207c14f3a42529903c00b620d661d976b631e1bd6dd29dc43cb8e6130f97",
+      "created": "2026-10-08T13:30:51.076228+00:00"
+    },
+    {
+      "seq": 59,
+      "id": "evidence_81aab8888d4c412fba58c1af2fa4ccbb",
+      "kind": "Evidence",
+      "obj": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+      "revision": 1,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "claim_ref": {
+          "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+          "id": "claim-task",
+          "kind": "Claim",
+          "revision": 0,
+          "version": "v1"
+        },
+        "epistemic_context": {
+          "assistance_refs": [],
+          "assistance_relevance": "仅验证来源传递",
+          "conditions": [
+            "本 Task Family"
+          ],
+          "coverage": "COMPLETE",
+          "dependencies_explanation": "显式测试模式",
+          "observation_interval": [
+            "2026-10-08T13:30:51.040113+00:00",
+            "2026-10-08T13:30:51.040113+00:00"
+          ]
+        },
+        "evidence_semantics_ref": {
+          "content_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+          "id": "evidence-rules",
+          "kind": "EvidenceSemantics",
+          "revision": 0,
+          "version": "v1"
+        },
+        "grounding": [
+          {
+            "content_path": "/body/text",
+            "record_ref": {
+              "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+              "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "kind": "Event",
+              "revision": 0,
+              "version": ""
+            }
+          }
+        ],
+        "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+        "observation_refs": [
+          {
+            "content_hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+            "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Observation",
+            "revision": 1,
+            "version": ""
+          }
+        ],
+        "relation": "Contradicts"
+      },
+      "hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+      "created": "2026-10-08T13:30:51.078529+00:00"
+    },
+    {
+      "seq": 60,
+      "id": "evidence_80e4feb462834a2c8eabdd6bc96a5532",
+      "kind": "Evidence",
+      "obj": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+      "revision": 1,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "claim_ref": {
+          "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+          "id": "claim-unit",
+          "kind": "Claim",
+          "revision": 0,
+          "version": "v1"
+        },
+        "epistemic_context": {
+          "assistance_refs": [],
+          "assistance_relevance": "仅验证来源传递",
+          "conditions": [
+            "本 Task Family"
+          ],
+          "coverage": "COMPLETE",
+          "dependencies_explanation": "显式测试模式",
+          "observation_interval": [
+            "2026-10-08T13:30:51.040113+00:00",
+            "2026-10-08T13:30:51.040113+00:00"
+          ]
+        },
+        "evidence_semantics_ref": {
+          "content_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+          "id": "evidence-rules",
+          "kind": "EvidenceSemantics",
+          "revision": 0,
+          "version": "v1"
+        },
+        "grounding": [
+          {
+            "content_path": "/body/text",
+            "record_ref": {
+              "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+              "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "kind": "Event",
+              "revision": 0,
+              "version": ""
+            }
+          }
+        ],
+        "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+        "observation_refs": [
+          {
+            "content_hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+            "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Observation",
+            "revision": 1,
+            "version": ""
+          }
+        ],
+        "relation": "Contradicts"
+      },
+      "hash": "c44f6b095452bfabeeaa4061eccec7150a9ca53ecd46bf81b51d8e7c4f55eecc",
+      "created": "2026-10-08T13:30:51.078684+00:00"
+    },
+    {
+      "seq": 61,
+      "id": "evidence_eab5b09e39f34f56a96d2d7225f79609",
+      "kind": "Evidence",
+      "obj": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+      "revision": 1,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "claim_ref": {
+          "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+          "id": "claim-division",
+          "kind": "Claim",
+          "revision": 0,
+          "version": "v1"
+        },
+        "epistemic_context": {
+          "assistance_refs": [],
+          "assistance_relevance": "仅验证来源传递",
+          "conditions": [
+            "本 Task Family"
+          ],
+          "coverage": "COMPLETE",
+          "dependencies_explanation": "显式测试模式",
+          "observation_interval": [
+            "2026-10-08T13:30:51.040113+00:00",
+            "2026-10-08T13:30:51.040113+00:00"
+          ]
+        },
+        "evidence_semantics_ref": {
+          "content_hash": "dc03dea902421440170ead7fe58bd4ab072da451965c9e2f349fcb51509d0e65",
+          "id": "evidence-rules",
+          "kind": "EvidenceSemantics",
+          "revision": 0,
+          "version": "v1"
+        },
+        "grounding": [
+          {
+            "content_path": "/body/text",
+            "record_ref": {
+              "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+              "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "kind": "Event",
+              "revision": 0,
+              "version": ""
+            }
+          }
+        ],
+        "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+        "observation_refs": [
+          {
+            "content_hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+            "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Observation",
+            "revision": 1,
+            "version": ""
+          }
+        ],
+        "relation": "Contradicts"
+      },
+      "hash": "03c8503766fb2ea3bcf777e316ad163b80c9e57a3900c54fcf198b90bafae13d",
+      "created": "2026-10-08T13:30:51.078826+00:00"
+    },
+    {
+      "seq": 62,
+      "id": "commitrecord_a9719e59fc264b9a9b2f6bf58fece4da",
+      "kind": "CommitRecord",
+      "obj": "commitrecord_a9719e59fc264b9a9b2f6bf58fece4da",
+      "revision": 0,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "candidate": "candidate_ea2bd46509f843dc8d3a4b975d6b0b50",
+        "outputs": [
+          "evidence_81aab8888d4c412fba58c1af2fa4ccbb",
+          "evidence_80e4feb462834a2c8eabdd6bc96a5532",
+          "evidence_eab5b09e39f34f56a96d2d7225f79609"
+        ],
+        "owner": "Evaluation",
+        "review": "validation_419732d57d4743e581cdb1e85802809c"
+      },
+      "hash": "b78a0e395fd1f38a9bc6cb50442168b85ff651ebc41e70fde6baba00cc81af55",
+      "created": "2026-10-08T13:30:51.078949+00:00"
+    },
+    {
+      "seq": 63,
+      "id": "stagetiming_6a0cdf3ab11942dd95b65e3c20af30dc",
+      "kind": "StageTiming",
+      "obj": "stagetiming_6a0cdf3ab11942dd95b65e3c20af30dc",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "attempt": 0,
+        "commit_seconds": 0.0028471999994508224,
+        "context_seconds": 0.002827199999956065,
+        "generation_seconds": 0.002923000000009779,
+        "purpose": "Evidence",
+        "review_seconds": 0.0031504999997196137,
+        "total_seconds": 0.019202999999833992
+      },
+      "hash": "ac815896c92b5504298304eaba89370b8545cf31a7998fbd923f6da118cc0bb4",
+      "created": "2026-10-08T13:30:51.080322+00:00"
+    },
+    {
+      "seq": 64,
+      "id": "context_15970e3b444f4112a1ac4404c7ac9fa6",
+      "kind": "Context",
+      "obj": "context_15970e3b444f4112a1ac4404c7ac9fa6",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "control": {
+          "activity_rev": 0,
+          "auth_rev": 0,
+          "expected_heads": {
+            "belief:s:canonical:Claim:claim-division": null,
+            "belief:s:canonical:Claim:claim-task": null,
+            "belief:s:canonical:Claim:claim-unit": null,
+            "canonical:Claim:claim-division": "Claim:claim-division:v1",
+            "canonical:Claim:claim-task": "Claim:claim-task:v1",
+            "canonical:Claim:claim-unit": "Claim:claim-unit:v1",
+            "canonical:InferenceSemantics:inference-rules": "InferenceSemantics:inference-rules:v1",
+            "canonical:KC:division": "KC:division:v1",
+            "canonical:KC:scaling": "KC:scaling:v1",
+            "canonical:KC:unit-relation": "KC:unit-relation:v1",
+            "canonical:TaskFamily:unit-rate": "TaskFamily:unit-rate:v1",
+            "canonical:TaskInstance:exit-mechanism": "TaskInstance:exit-mechanism:v1",
+            "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division": "evidence_eab5b09e39f34f56a96d2d7225f79609",
+            "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task": "evidence_81aab8888d4c412fba58c1af2fa4ccbb",
+            "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit": "evidence_80e4feb462834a2c8eabdd6bc96a5532",
+            "observation:event_d38b0ec4865f41c98eeefcec70f73c8e": "observation_974fa9305e884b0e94dc660bfe4da85f"
+          },
+          "generation": 0,
+          "purpose": "Belief",
+          "refs": [
+            "event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "TaskInstance:exit-mechanism:v1",
+            "TaskFamily:unit-rate:v1",
+            "KC:unit-relation:v1",
+            "KC:division:v1",
+            "KC:scaling:v1",
+            "Claim:claim-task:v1",
+            "Claim:claim-unit:v1",
+            "Claim:claim-division:v1",
+            "observation_974fa9305e884b0e94dc660bfe4da85f",
+            "InferenceSemantics:inference-rules:v1",
+            "evidence_81aab8888d4c412fba58c1af2fa4ccbb",
+            "evidence_80e4feb462834a2c8eabdd6bc96a5532",
+            "evidence_eab5b09e39f34f56a96d2d7225f79609"
+          ],
+          "sid": "s",
+          "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+          "worker_epoch": 1
+        },
+        "semantic": {
+          "assistance": [],
+          "assistance_coverage": "COMPLETE",
+          "beliefs": [],
+          "claims": [
+            {
+              "body": {
+                "claim_type": "TaskProficiency",
+                "conditions": [
+                  "本 Task Family；解释限于已观察条件"
+                ],
+                "disconfirmation_criteria": [
+                  "在条件适用且无实质帮助时出现关系、策略或计算错误"
+                ],
+                "quality_requirements": [
+                  "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+                ],
+                "responsibility_boundary": {
+                  "allowed_support": [],
+                  "learner_owned": [
+                    "独立识别关系、选择策略、计算及检查"
+                  ]
+                },
+                "scope_ref": {
+                  "id": "unit-rate",
+                  "kind": "TaskFamily",
+                  "revision": 0,
+                  "version": "v1"
+                }
+              },
+              "created": "2026-10-08T13:30:51.023904+00:00",
+              "id": "Claim:claim-task:v1",
+              "kind": "Claim",
+              "object_id": "claim-task",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "claim_type": "KC",
+                "conditions": [
+                  "本 Task Family；解释限于已观察条件"
+                ],
+                "disconfirmation_criteria": [
+                  "把总量与单位量混淆或不能说明除法意义"
+                ],
+                "quality_requirements": [
+                  "能用数量意义说明单位量，不只复述系统解释"
+                ],
+                "responsibility_boundary": {
+                  "allowed_support": [],
+                  "learner_owned": [
+                    "自己说明单位量关系及为什么使用总量除以份数"
+                  ]
+                },
+                "scope_ref": {
+                  "id": "unit-relation",
+                  "kind": "KC",
+                  "revision": 0,
+                  "version": "v1"
+                }
+              },
+              "created": "2026-10-08T13:30:51.025865+00:00",
+              "id": "Claim:claim-unit:v1",
+              "kind": "Claim",
+              "object_id": "claim-unit",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "claim_type": "KC",
+                "conditions": [
+                  "本 Task Family；解释限于已观察条件"
+                ],
+                "disconfirmation_criteria": [
+                  "在允许支持范围内仍给出错误商或不能检查计算"
+                ],
+                "quality_requirements": [
+                  "计算与自查正确；给出商后的重复不等于独立计算"
+                ],
+                "responsibility_boundary": {
+                  "allowed_support": [
+                    "可以由他人指出需要检查除法，但不提供商或计算过程"
+                  ],
+                  "learner_owned": [
+                    "自己重新计算商并检查其合理性"
+                  ]
+                },
+                "scope_ref": {
+                  "id": "division",
+                  "kind": "KC",
+                  "revision": 0,
+                  "version": "v1"
+                }
+              },
+              "created": "2026-10-08T13:30:51.027653+00:00",
+              "id": "Claim:claim-division:v1",
+              "kind": "Claim",
+              "object_id": "claim-division",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "current_activity": "IndependentDiagnosis",
+          "current_input_id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+          "domain": [
+            {
+              "body": {
+                "conditions": [
+                  "整数数量与总价，关系为正比例"
+                ],
+                "definition": "先求单位量再按目标数量缩放的正比例应用题",
+                "quality_requirements": [
+                  "关系、计算及单位合理",
+                  "说明依据而非只猜最终数值"
+                ],
+                "responsibilities": [
+                  "识别单位量关系",
+                  "选择除后乘策略",
+                  "自行计算并说明数量单位"
+                ]
+              },
+              "created": "2026-10-08T13:30:51.015210+00:00",
+              "id": "TaskFamily:unit-rate:v1",
+              "kind": "TaskFamily",
+              "object_id": "unit-rate",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "由总量与份数说明每份量",
+                "definition": "单位量关系"
+              },
+              "created": "2026-10-08T13:30:51.016732+00:00",
+              "id": "KC:unit-relation:v1",
+              "kind": "KC",
+              "object_id": "unit-relation",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "自行求商并检查除法结果",
+                "definition": "整数除法"
+              },
+              "created": "2026-10-08T13:30:51.018326+00:00",
+              "id": "KC:division:v1",
+              "kind": "KC",
+              "object_id": "division",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "用单位量计算目标数量的总量",
+                "definition": "按数量缩放"
+              },
+              "created": "2026-10-08T13:30:51.019959+00:00",
+              "id": "KC:scaling:v1",
+              "kind": "KC",
+              "object_id": "scaling",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "evidence": [
+            {
+              "body": {
+                "claim_ref": {
+                  "id": "claim-task",
+                  "kind": "Claim",
+                  "revision": 0,
+                  "version": "v1"
+                },
+                "epistemic_context": {
+                  "assistance_refs": [],
+                  "assistance_relevance": "仅验证来源传递",
+                  "conditions": [
+                    "本 Task Family"
+                  ],
+                  "coverage": "COMPLETE",
+                  "dependencies_explanation": "显式测试模式",
+                  "observation_interval": [
+                    "2026-10-08T13:30:51.040113+00:00",
+                    "2026-10-08T13:30:51.040113+00:00"
+                  ]
+                },
+                "evidence_semantics_ref": {
+                  "id": "evidence-rules",
+                  "kind": "EvidenceSemantics",
+                  "revision": 0,
+                  "version": "v1"
+                },
+                "grounding": [
+                  {
+                    "content_path": "/body/text",
+                    "record_ref": {
+                      "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+                      "kind": "Event",
+                      "revision": 0,
+                      "version": ""
+                    }
+                  }
+                ],
+                "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+                "observation_refs": [
+                  {
+                    "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+                    "kind": "Observation",
+                    "revision": 1,
+                    "version": ""
+                  }
+                ],
+                "relation": "Contradicts"
+              },
+              "created": "2026-10-08T13:30:51.078529+00:00",
+              "id": "evidence_81aab8888d4c412fba58c1af2fa4ccbb",
+              "kind": "Evidence",
+              "object_id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+              "revision": 1,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": ""
+            },
+            {
+              "body": {
+                "claim_ref": {
+                  "id": "claim-unit",
+                  "kind": "Claim",
+                  "revision": 0,
+                  "version": "v1"
+                },
+                "epistemic_context": {
+                  "assistance_refs": [],
+                  "assistance_relevance": "仅验证来源传递",
+                  "conditions": [
+                    "本 Task Family"
+                  ],
+                  "coverage": "COMPLETE",
+                  "dependencies_explanation": "显式测试模式",
+                  "observation_interval": [
+                    "2026-10-08T13:30:51.040113+00:00",
+                    "2026-10-08T13:30:51.040113+00:00"
+                  ]
+                },
+                "evidence_semantics_ref": {
+                  "id": "evidence-rules",
+                  "kind": "EvidenceSemantics",
+                  "revision": 0,
+                  "version": "v1"
+                },
+                "grounding": [
+                  {
+                    "content_path": "/body/text",
+                    "record_ref": {
+                      "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+                      "kind": "Event",
+                      "revision": 0,
+                      "version": ""
+                    }
+                  }
+                ],
+                "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+                "observation_refs": [
+                  {
+                    "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+                    "kind": "Observation",
+                    "revision": 1,
+                    "version": ""
+                  }
+                ],
+                "relation": "Contradicts"
+              },
+              "created": "2026-10-08T13:30:51.078684+00:00",
+              "id": "evidence_80e4feb462834a2c8eabdd6bc96a5532",
+              "kind": "Evidence",
+              "object_id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+              "revision": 1,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": ""
+            },
+            {
+              "body": {
+                "claim_ref": {
+                  "id": "claim-division",
+                  "kind": "Claim",
+                  "revision": 0,
+                  "version": "v1"
+                },
+                "epistemic_context": {
+                  "assistance_refs": [],
+                  "assistance_relevance": "仅验证来源传递",
+                  "conditions": [
+                    "本 Task Family"
+                  ],
+                  "coverage": "COMPLETE",
+                  "dependencies_explanation": "显式测试模式",
+                  "observation_interval": [
+                    "2026-10-08T13:30:51.040113+00:00",
+                    "2026-10-08T13:30:51.040113+00:00"
+                  ]
+                },
+                "evidence_semantics_ref": {
+                  "id": "evidence-rules",
+                  "kind": "EvidenceSemantics",
+                  "revision": 0,
+                  "version": "v1"
+                },
+                "grounding": [
+                  {
+                    "content_path": "/body/text",
+                    "record_ref": {
+                      "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+                      "kind": "Event",
+                      "revision": 0,
+                      "version": ""
+                    }
+                  }
+                ],
+                "interpretation": "故意注入的错误评价夹具；不代表模型判断",
+                "observation_refs": [
+                  {
+                    "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+                    "kind": "Observation",
+                    "revision": 1,
+                    "version": ""
+                  }
+                ],
+                "relation": "Contradicts"
+              },
+              "created": "2026-10-08T13:30:51.078826+00:00",
+              "id": "evidence_eab5b09e39f34f56a96d2d7225f79609",
+              "kind": "Evidence",
+              "object_id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+              "revision": 1,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": ""
+            }
+          ],
+          "inference_semantics": [
+            {
+              "body": {
+                "aggregation_rules": [
+                  "结合当前有效正反 Evidence，不把单次正确或系统讲解直接等同掌握。",
+                  "允许有依据的方向性认识，保留小样本与迁移限制。"
+                ],
+                "applicable_claim_refs": [
+                  {
+                    "id": "claim-task",
+                    "kind": "Claim",
+                    "revision": 0,
+                    "version": "v1"
+                  },
+                  {
+                    "id": "claim-unit",
+                    "kind": "Claim",
+                    "revision": 0,
+                    "version": "v1"
+                  },
+                  {
+                    "id": "claim-division",
+                    "kind": "Claim",
+                    "revision": 0,
+                    "version": "v1"
+                  }
+                ],
+                "conflict_rules": [
+                  "明确相冲突的 Evidence 及原因，不平均成一个无法解释的分数。"
+                ],
+                "dependency_rules": [
+                  "同一表现的重复解释不视为独立样本；保留实际帮助和相关性。"
+                ],
+                "revision_rules": [
+                  "更正后的失效 Evidence 不再作为当前依据，但历史保留。",
+                  "有新材料时解释为何改变认识或保持原修订；不能默认全 UNKNOWN。"
+                ],
+                "uncertainty_rules": [
+                  "证据不足可以 UNKNOWN；运行失败不属于成功的 UNKNOWN。",
+                  "认识不确定性不是学习者自信心。"
+                ]
+              },
+              "created": "2026-10-08T13:30:51.031234+00:00",
+              "id": "InferenceSemantics:inference-rules:v1",
+              "kind": "InferenceSemantics",
+              "object_id": "inference-rules",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "observations": [
+            {
+              "body": {
+                "current_purpose": "IndependentDiagnosis",
+                "request_interpretation": "机制测试输入",
+                "source_ids": [
+                  "event_d38b0ec4865f41c98eeefcec70f73c8e"
+                ],
+                "summary": "固定机制夹具观察",
+                "uncertainties": [],
+                "work_steps": []
+              },
+              "created": "2026-10-08T13:30:51.057512+00:00",
+              "id": "observation_974fa9305e884b0e94dc660bfe4da85f",
+              "kind": "Observation",
+              "object_id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "revision": 1,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": ""
+            }
+          ],
+          "prior_tasks": [],
+          "purpose": "Belief",
+          "source_contract": {
+            "activity": "current_activity is confirmed runtime state; purpose is the processing stage. activity_at_observation describes the historical observation and cannot override current_activity.",
+            "coverage_scope": "This session, controlled application channel, before current evaluation. External help remains unknown.",
+            "display": "Only assistance entries confirm this system rendered their listed blocks; rendering does not prove reading or comprehension.",
+            "events": "LearnerInput is learner text, including unverified self-reports of help.",
+            "partial": "PARTIAL occurrence contains only rendered blocks; omitted blocks are not assistance."
+          },
+          "sources": [
+            {
+              "body": {
+                "correction_of": null,
+                "task_ref": {
+                  "id": "exit-mechanism",
+                  "kind": "TaskInstance",
+                  "revision": 0,
+                  "version": "v1"
+                },
+                "text": "机制夹具作答",
+                "type": "LearnerInput"
+              },
+              "created": "2026-10-08T13:30:51.040113+00:00",
+              "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "kind": "Event",
+              "object_id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": ""
+            }
+          ],
+          "task": {
+            "body": {
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ],
+              "given_data": {
+                "quantity": 6,
+                "target": 15,
+                "total": 42
+              },
+              "statement": "6份练习本共42元，15份同样的练习本多少钱？请说明计算。",
+              "task_family_ref": {
+                "id": "unit-rate",
+                "kind": "TaskFamily",
+                "revision": 0,
+                "version": "v1"
+              }
+            },
+            "created": "2026-10-08T13:30:51.034721+00:00",
+            "id": "TaskInstance:exit-mechanism:v1",
+            "kind": "TaskInstance",
+            "object_id": "exit-mechanism",
+            "revision": 0,
+            "standing": "current-valid admitted by ContextAssembler",
+            "version": "v1"
+          }
+        }
+      },
+      "hash": "aa72e0ab7869d04da7e71d06d30a24669b1b48d03e039fff4bd3a6063193af2b",
+      "created": "2026-10-08T13:30:51.084662+00:00"
+    },
+    {
+      "seq": 65,
+      "id": "reasoningexecution_e559e021ccd14d7192ceee47bdf14259",
+      "kind": "ReasoningExecution",
+      "obj": "reasoningexecution_e559e021ccd14d7192ceee47bdf14259",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "context_id": "context_15970e3b444f4112a1ac4404c7ac9fa6",
+        "mode": "scripted-mechanism",
+        "model_record": {
+          "fixture": true,
+          "mode": "scripted-mechanism",
+          "purpose": "Belief"
+        },
+        "model_reference_bindings": {
+          "R003": {
+            "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+            "id": "unit-rate",
+            "kind": "TaskFamily",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R007": {
+            "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+            "id": "unit-relation",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R011": {
+            "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+            "id": "division",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R015": {
+            "content_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+            "id": "scaling",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R023": {
+            "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+            "id": "claim-task",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R027": {
+            "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+            "id": "claim-unit",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R031": {
+            "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+            "id": "claim-division",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R039": {
+            "content_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+            "id": "inference-rules",
+            "kind": "InferenceSemantics",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R043": {
+            "content_hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+            "id": "exit-mechanism",
+            "kind": "TaskInstance",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R045": {
+            "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+            "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Event",
+            "revision": 0,
+            "version": ""
+          },
+          "R051": {
+            "content_hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+            "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Observation",
+            "revision": 1,
+            "version": ""
+          },
+          "R059": {
+            "content_hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          "R060": {
+            "content_hash": "c44f6b095452bfabeeaa4061eccec7150a9ca53ecd46bf81b51d8e7c4f55eecc",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          "R061": {
+            "content_hash": "03c8503766fb2ea3bcf777e316ad163b80c9e57a3900c54fcf198b90bafae13d",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          }
+        },
+        "output": {
+          "items": [
+            {
+              "assessment": "固定未知夹具",
+              "assessment_kind": "UNKNOWN",
+              "claim_id": "R023",
+              "conflicts": [],
+              "disposition": "REVISE",
+              "epistemic_status": [
+                "FixtureOnly"
+              ],
+              "evidence_ids": [
+                "R059",
+                "R060",
+                "R061"
+              ],
+              "rationale": "固定夹具，不计为真实评价",
+              "uncertainty": "这是机制测试"
+            },
+            {
+              "assessment": "固定未知夹具",
+              "assessment_kind": "UNKNOWN",
+              "claim_id": "R027",
+              "conflicts": [],
+              "disposition": "REVISE",
+              "epistemic_status": [
+                "FixtureOnly"
+              ],
+              "evidence_ids": [
+                "R059",
+                "R060",
+                "R061"
+              ],
+              "rationale": "固定夹具，不计为真实评价",
+              "uncertainty": "这是机制测试"
+            },
+            {
+              "assessment": "固定未知夹具",
+              "assessment_kind": "UNKNOWN",
+              "claim_id": "R031",
+              "conflicts": [],
+              "disposition": "REVISE",
+              "epistemic_status": [
+                "FixtureOnly"
+              ],
+              "evidence_ids": [
+                "R059",
+                "R060",
+                "R061"
+              ],
+              "rationale": "固定夹具，不计为真实评价",
+              "uncertainty": "这是机制测试"
+            }
+          ]
+        },
+        "purpose": "Belief",
+        "role": "generation",
+        "status": "COMPLETED"
+      },
+      "hash": "b1ca1e5372f380a186c50a5db83c53fd099d8a6bef0376d65e876cc2250c67b6",
+      "created": "2026-10-08T13:30:51.088768+00:00"
+    },
+    {
+      "seq": 66,
+      "id": "candidate_09c2542ca12c4ca08a5266b5b2006358",
+      "kind": "Candidate",
+      "obj": "candidate_09c2542ca12c4ca08a5266b5b2006358",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "context_id": "context_15970e3b444f4112a1ac4404c7ac9fa6",
+        "formal_payload_hash": "dd5431cb112c7f0acb3379b7d8d0d9572653ad6249c3b1b6d056d64af36b6150",
+        "formal_payloads": [
+          {
+            "assessment": {
+              "kind": "UNKNOWN",
+              "statement": "固定未知夹具"
+            },
+            "claim_ref": {
+              "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+              "id": "claim-task",
+              "kind": "Claim",
+              "revision": 0,
+              "version": "v1"
+            },
+            "conflicts": [],
+            "epistemic_status": [
+              "FixtureOnly"
+            ],
+            "epistemic_uncertainty": "这是机制测试",
+            "evidence_basis": [
+              {
+                "content_hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+                "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+                "kind": "Evidence",
+                "revision": 1,
+                "version": ""
+              },
+              {
+                "content_hash": "c44f6b095452bfabeeaa4061eccec7150a9ca53ecd46bf81b51d8e7c4f55eecc",
+                "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+                "kind": "Evidence",
+                "revision": 1,
+                "version": ""
+              },
+              {
+                "content_hash": "03c8503766fb2ea3bcf777e316ad163b80c9e57a3900c54fcf198b90bafae13d",
+                "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+                "kind": "Evidence",
+                "revision": 1,
+                "version": ""
+              }
+            ],
+            "inference_rationale": "固定夹具，不计为真实评价",
+            "inference_semantics_ref": {
+              "content_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+              "id": "inference-rules",
+              "kind": "InferenceSemantics",
+              "revision": 0,
+              "version": "v1"
+            },
+            "prior_belief_ref": null
+          },
+          {
+            "assessment": {
+              "kind": "UNKNOWN",
+              "statement": "固定未知夹具"
+            },
+            "claim_ref": {
+              "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+              "id": "claim-unit",
+              "kind": "Claim",
+              "revision": 0,
+              "version": "v1"
+            },
+            "conflicts": [],
+            "epistemic_status": [
+              "FixtureOnly"
+            ],
+            "epistemic_uncertainty": "这是机制测试",
+            "evidence_basis": [
+              {
+                "content_hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+                "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+                "kind": "Evidence",
+                "revision": 1,
+                "version": ""
+              },
+              {
+                "content_hash": "c44f6b095452bfabeeaa4061eccec7150a9ca53ecd46bf81b51d8e7c4f55eecc",
+                "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+                "kind": "Evidence",
+                "revision": 1,
+                "version": ""
+              },
+              {
+                "content_hash": "03c8503766fb2ea3bcf777e316ad163b80c9e57a3900c54fcf198b90bafae13d",
+                "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+                "kind": "Evidence",
+                "revision": 1,
+                "version": ""
+              }
+            ],
+            "inference_rationale": "固定夹具，不计为真实评价",
+            "inference_semantics_ref": {
+              "content_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+              "id": "inference-rules",
+              "kind": "InferenceSemantics",
+              "revision": 0,
+              "version": "v1"
+            },
+            "prior_belief_ref": null
+          },
+          {
+            "assessment": {
+              "kind": "UNKNOWN",
+              "statement": "固定未知夹具"
+            },
+            "claim_ref": {
+              "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+              "id": "claim-division",
+              "kind": "Claim",
+              "revision": 0,
+              "version": "v1"
+            },
+            "conflicts": [],
+            "epistemic_status": [
+              "FixtureOnly"
+            ],
+            "epistemic_uncertainty": "这是机制测试",
+            "evidence_basis": [
+              {
+                "content_hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+                "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+                "kind": "Evidence",
+                "revision": 1,
+                "version": ""
+              },
+              {
+                "content_hash": "c44f6b095452bfabeeaa4061eccec7150a9ca53ecd46bf81b51d8e7c4f55eecc",
+                "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+                "kind": "Evidence",
+                "revision": 1,
+                "version": ""
+              },
+              {
+                "content_hash": "03c8503766fb2ea3bcf777e316ad163b80c9e57a3900c54fcf198b90bafae13d",
+                "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+                "kind": "Evidence",
+                "revision": 1,
+                "version": ""
+              }
+            ],
+            "inference_rationale": "固定夹具，不计为真实评价",
+            "inference_semantics_ref": {
+              "content_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+              "id": "inference-rules",
+              "kind": "InferenceSemantics",
+              "revision": 0,
+              "version": "v1"
+            },
+            "prior_belief_ref": null
+          }
+        ],
+        "generation_execution": "reasoningexecution_e559e021ccd14d7192ceee47bdf14259",
+        "target_kind": "Belief",
+        "unchanged": [],
+        "wire": {
+          "items": [
+            {
+              "assessment": "固定未知夹具",
+              "assessment_kind": "UNKNOWN",
+              "claim_id": "R023",
+              "conflicts": [],
+              "disposition": "REVISE",
+              "epistemic_status": [
+                "FixtureOnly"
+              ],
+              "evidence_ids": [
+                "R059",
+                "R060",
+                "R061"
+              ],
+              "rationale": "固定夹具，不计为真实评价",
+              "uncertainty": "这是机制测试"
+            },
+            {
+              "assessment": "固定未知夹具",
+              "assessment_kind": "UNKNOWN",
+              "claim_id": "R027",
+              "conflicts": [],
+              "disposition": "REVISE",
+              "epistemic_status": [
+                "FixtureOnly"
+              ],
+              "evidence_ids": [
+                "R059",
+                "R060",
+                "R061"
+              ],
+              "rationale": "固定夹具，不计为真实评价",
+              "uncertainty": "这是机制测试"
+            },
+            {
+              "assessment": "固定未知夹具",
+              "assessment_kind": "UNKNOWN",
+              "claim_id": "R031",
+              "conflicts": [],
+              "disposition": "REVISE",
+              "epistemic_status": [
+                "FixtureOnly"
+              ],
+              "evidence_ids": [
+                "R059",
+                "R060",
+                "R061"
+              ],
+              "rationale": "固定夹具，不计为真实评价",
+              "uncertainty": "这是机制测试"
+            }
+          ]
+        }
+      },
+      "hash": "69899df6ba91dc03b6b1fad1ccc384995f6ff080377ec3e0b2e83549331c0dda",
+      "created": "2026-10-08T13:30:51.095477+00:00"
+    },
+    {
+      "seq": 67,
+      "id": "reasoningexecution_e64f5ccd47b643e2832555fc6e211d31",
+      "kind": "ReasoningExecution",
+      "obj": "reasoningexecution_e64f5ccd47b643e2832555fc6e211d31",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "context_id": "context_15970e3b444f4112a1ac4404c7ac9fa6",
+        "mode": "scripted-mechanism",
+        "model_record": {
+          "fixture": true,
+          "mode": "scripted-mechanism",
+          "purpose": "Review:Belief"
+        },
+        "model_reference_bindings": {
+          "R003": {
+            "content_hash": "9b05b254a919b660d7b3feade7ad9e1794698da7a1da3e43fa699f5f8030692d",
+            "id": "unit-rate",
+            "kind": "TaskFamily",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R007": {
+            "content_hash": "9d0cad18a3e95bc1c5afa042c38d5945e5461563447613a8c59509fe0e1e7b7f",
+            "id": "unit-relation",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R011": {
+            "content_hash": "0f626e2e459ef9f5adbe49e073d8dc499bb5186daec8e3ce6bf65695de888f93",
+            "id": "division",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R015": {
+            "content_hash": "9a1b84a1a64f3721528260445f0ac2ef787c4b77d988e097dc3606686793f46f",
+            "id": "scaling",
+            "kind": "KC",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R023": {
+            "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+            "id": "claim-task",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R027": {
+            "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+            "id": "claim-unit",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R031": {
+            "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+            "id": "claim-division",
+            "kind": "Claim",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R039": {
+            "content_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+            "id": "inference-rules",
+            "kind": "InferenceSemantics",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R043": {
+            "content_hash": "c00b7c06bf11f6ec9a20ee370c77d5053bff21d3d4795df9a577eea1c2cb4084",
+            "id": "exit-mechanism",
+            "kind": "TaskInstance",
+            "revision": 0,
+            "version": "v1"
+          },
+          "R045": {
+            "content_hash": "c16d84ea842ec4add5712fc4b5ccd6ecd479157ab02f71f5546a61e023d02c47",
+            "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Event",
+            "revision": 0,
+            "version": ""
+          },
+          "R051": {
+            "content_hash": "ff8cf6278856a16cd8d20d2a2298a1f0aac201458031b32b46ab2623f717f54f",
+            "id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "kind": "Observation",
+            "revision": 1,
+            "version": ""
+          },
+          "R059": {
+            "content_hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          "R060": {
+            "content_hash": "c44f6b095452bfabeeaa4061eccec7150a9ca53ecd46bf81b51d8e7c4f55eecc",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          "R061": {
+            "content_hash": "03c8503766fb2ea3bcf777e316ad163b80c9e57a3900c54fcf198b90bafae13d",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          }
+        },
+        "output": {
+          "checks": [
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "claim",
+              "source_ids": [],
+              "verdict": "PASS"
+            },
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "basis",
+              "source_ids": [],
+              "verdict": "PASS"
+            },
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "revision",
+              "source_ids": [],
+              "verdict": "PASS"
+            },
+            {
+              "reason": "固定机制夹具意见，不证明语义正确",
+              "rule_id": "uncertainty",
+              "source_ids": [],
+              "verdict": "PASS"
+            }
+          ],
+          "verdict": "PASS"
+        },
+        "purpose": "Belief",
+        "role": "review",
+        "status": "COMPLETED"
+      },
+      "hash": "18062ca52c2769561d6c0691b845905003172509d4f3a24d48c8a5d56407ba69",
+      "created": "2026-10-08T13:30:51.099119+00:00"
+    },
+    {
+      "seq": 68,
+      "id": "validation_ea64904f6b4d4b919e7045c17e6aa705",
+      "kind": "Validation",
+      "obj": "validation_ea64904f6b4d4b919e7045c17e6aa705",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "candidate_hash": "69899df6ba91dc03b6b1fad1ccc384995f6ff080377ec3e0b2e83549331c0dda",
+        "candidate_id": "candidate_09c2542ca12c4ca08a5266b5b2006358",
+        "checks": [
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "claim",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "basis",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "revision",
+            "source_ids": [],
+            "verdict": "PASS"
+          },
+          {
+            "reason": "固定机制夹具意见，不证明语义正确",
+            "rule_id": "uncertainty",
+            "source_ids": [],
+            "verdict": "PASS"
+          }
+        ],
+        "context_id": "context_15970e3b444f4112a1ac4404c7ac9fa6",
+        "model_verdict": "PASS",
+        "required_checks_complete": true,
+        "review_execution": "reasoningexecution_e64f5ccd47b643e2832555fc6e211d31",
+        "rule_hash": "84dd7e1d708849279e87df5e20f64a4fadfed78846663993877057220f7200be",
+        "verdict": "PASS",
+        "verdict_aggregation": "required-checks-v1"
+      },
+      "hash": "2531c7c9f323d12dc0a2fa2a7be29e1f0077b9dc533f58cc397558d0a80653e5",
+      "created": "2026-10-08T13:30:51.105730+00:00"
+    },
+    {
+      "seq": 69,
+      "id": "belief_3a817f760bb84503bed488fe57ed6672",
+      "kind": "Belief",
+      "obj": "belief:s:canonical:Claim:claim-task",
+      "revision": 1,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "assessment": {
+          "kind": "UNKNOWN",
+          "statement": "固定未知夹具"
+        },
+        "claim_ref": {
+          "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+          "id": "claim-task",
+          "kind": "Claim",
+          "revision": 0,
+          "version": "v1"
+        },
+        "conflicts": [],
+        "epistemic_status": [
+          "FixtureOnly"
+        ],
+        "epistemic_uncertainty": "这是机制测试",
+        "evidence_basis": [
+          {
+            "content_hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          {
+            "content_hash": "c44f6b095452bfabeeaa4061eccec7150a9ca53ecd46bf81b51d8e7c4f55eecc",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          {
+            "content_hash": "03c8503766fb2ea3bcf777e316ad163b80c9e57a3900c54fcf198b90bafae13d",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          }
+        ],
+        "inference_rationale": "固定夹具，不计为真实评价",
+        "inference_semantics_ref": {
+          "content_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+          "id": "inference-rules",
+          "kind": "InferenceSemantics",
+          "revision": 0,
+          "version": "v1"
+        },
+        "prior_belief_ref": null
+      },
+      "hash": "3be43e7e26a06714bef5e2643090727d4e99394370a650c73e4d19e9e1849fa4",
+      "created": "2026-10-08T13:30:51.108812+00:00"
+    },
+    {
+      "seq": 70,
+      "id": "belief_a05d9196f05348f0af9dff0595fa44b9",
+      "kind": "Belief",
+      "obj": "belief:s:canonical:Claim:claim-unit",
+      "revision": 1,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "assessment": {
+          "kind": "UNKNOWN",
+          "statement": "固定未知夹具"
+        },
+        "claim_ref": {
+          "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+          "id": "claim-unit",
+          "kind": "Claim",
+          "revision": 0,
+          "version": "v1"
+        },
+        "conflicts": [],
+        "epistemic_status": [
+          "FixtureOnly"
+        ],
+        "epistemic_uncertainty": "这是机制测试",
+        "evidence_basis": [
+          {
+            "content_hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          {
+            "content_hash": "c44f6b095452bfabeeaa4061eccec7150a9ca53ecd46bf81b51d8e7c4f55eecc",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          {
+            "content_hash": "03c8503766fb2ea3bcf777e316ad163b80c9e57a3900c54fcf198b90bafae13d",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          }
+        ],
+        "inference_rationale": "固定夹具，不计为真实评价",
+        "inference_semantics_ref": {
+          "content_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+          "id": "inference-rules",
+          "kind": "InferenceSemantics",
+          "revision": 0,
+          "version": "v1"
+        },
+        "prior_belief_ref": null
+      },
+      "hash": "5efc3b0122c1f73a2fc1e152c794623e924c757424965307d87ed8ed9a44440b",
+      "created": "2026-10-08T13:30:51.109034+00:00"
+    },
+    {
+      "seq": 71,
+      "id": "belief_e02e689df43749ed808df737043631d7",
+      "kind": "Belief",
+      "obj": "belief:s:canonical:Claim:claim-division",
+      "revision": 1,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "assessment": {
+          "kind": "UNKNOWN",
+          "statement": "固定未知夹具"
+        },
+        "claim_ref": {
+          "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+          "id": "claim-division",
+          "kind": "Claim",
+          "revision": 0,
+          "version": "v1"
+        },
+        "conflicts": [],
+        "epistemic_status": [
+          "FixtureOnly"
+        ],
+        "epistemic_uncertainty": "这是机制测试",
+        "evidence_basis": [
+          {
+            "content_hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          {
+            "content_hash": "c44f6b095452bfabeeaa4061eccec7150a9ca53ecd46bf81b51d8e7c4f55eecc",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          {
+            "content_hash": "03c8503766fb2ea3bcf777e316ad163b80c9e57a3900c54fcf198b90bafae13d",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          }
+        ],
+        "inference_rationale": "固定夹具，不计为真实评价",
+        "inference_semantics_ref": {
+          "content_hash": "fdd20b2f182f82f32061daa665fa59dee924a3769ca1791a4747ae7d70f2058f",
+          "id": "inference-rules",
+          "kind": "InferenceSemantics",
+          "revision": 0,
+          "version": "v1"
+        },
+        "prior_belief_ref": null
+      },
+      "hash": "2db5427f1c9afda39bcc2d0423ea3d86603cf6f2d8eda295fc9bfb60d549eb43",
+      "created": "2026-10-08T13:30:51.109232+00:00"
+    },
+    {
+      "seq": 72,
+      "id": "commitrecord_9989b54e8bfa4d5687043f6063b01936",
+      "kind": "CommitRecord",
+      "obj": "commitrecord_9989b54e8bfa4d5687043f6063b01936",
+      "revision": 0,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "candidate": "candidate_09c2542ca12c4ca08a5266b5b2006358",
+        "outputs": [
+          "belief_3a817f760bb84503bed488fe57ed6672",
+          "belief_a05d9196f05348f0af9dff0595fa44b9",
+          "belief_e02e689df43749ed808df737043631d7"
+        ],
+        "owner": "Evaluation",
+        "review": "validation_ea64904f6b4d4b919e7045c17e6aa705"
+      },
+      "hash": "ddf9019239041d396e8b8db3be81ab27036db6e92cc119f555eb57dee861145f",
+      "created": "2026-10-08T13:30:51.109372+00:00"
+    },
+    {
+      "seq": 73,
+      "id": "stagetiming_5ce70596cb2741d5ab549b94dfdd8723",
+      "kind": "StageTiming",
+      "obj": "stagetiming_5ce70596cb2741d5ab549b94dfdd8723",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "attempt": 0,
+        "commit_seconds": 0.0038214999995034304,
+        "context_seconds": 0.0037316999996619415,
+        "generation_seconds": 0.005433199999970384,
+        "purpose": "Belief",
+        "review_seconds": 0.007603799999742478,
+        "total_seconds": 0.028414100000190956
+      },
+      "hash": "42404d7e050f6f69913d924ea7f464b86a2289fd35fcd2e086c674185927cadf",
+      "created": "2026-10-08T13:30:51.111069+00:00"
+    },
+    {
+      "seq": 74,
+      "id": "evaluationcompletion_abf2ef29d8c34257bb88e8c53b1132d6",
+      "kind": "EvaluationCompletion",
+      "obj": "evaluationcompletion_abf2ef29d8c34257bb88e8c53b1132d6",
+      "revision": 0,
+      "version": "",
+      "owner": "Evaluation",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "belief_results": [
+          {
+            "belief_ref": {
+              "content_hash": "3be43e7e26a06714bef5e2643090727d4e99394370a650c73e4d19e9e1849fa4",
+              "id": "belief:s:canonical:Claim:claim-task",
+              "kind": "Belief",
+              "revision": 1,
+              "version": ""
+            },
+            "claim_ref": {
+              "content_hash": "fa1576d81ed47305ae30983925f2d9bbd1a6ba3b431ed2c3dcfc57e06597d6b2",
+              "id": "claim-task",
+              "kind": "Claim",
+              "revision": 0,
+              "version": "v1"
+            },
+            "disposition": "REVISE",
+            "reason": "固定夹具，不计为真实评价"
+          },
+          {
+            "belief_ref": {
+              "content_hash": "5efc3b0122c1f73a2fc1e152c794623e924c757424965307d87ed8ed9a44440b",
+              "id": "belief:s:canonical:Claim:claim-unit",
+              "kind": "Belief",
+              "revision": 1,
+              "version": ""
+            },
+            "claim_ref": {
+              "content_hash": "bb5aa688bed9076c7184c9779453766d972e2061e6122fef93e3d05cd27afa39",
+              "id": "claim-unit",
+              "kind": "Claim",
+              "revision": 0,
+              "version": "v1"
+            },
+            "disposition": "REVISE",
+            "reason": "固定夹具，不计为真实评价"
+          },
+          {
+            "belief_ref": {
+              "content_hash": "2db5427f1c9afda39bcc2d0423ea3d86603cf6f2d8eda295fc9bfb60d549eb43",
+              "id": "belief:s:canonical:Claim:claim-division",
+              "kind": "Belief",
+              "revision": 1,
+              "version": ""
+            },
+            "claim_ref": {
+              "content_hash": "a16a55d519998858ad881873a665a41c293fbeddb6ab36245af4429d70dec642",
+              "id": "claim-division",
+              "kind": "Claim",
+              "revision": 0,
+              "version": "v1"
+            },
+            "disposition": "REVISE",
+            "reason": "固定夹具，不计为真实评价"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "content_hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          {
+            "content_hash": "c44f6b095452bfabeeaa4061eccec7150a9ca53ecd46bf81b51d8e7c4f55eecc",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-unit",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          },
+          {
+            "content_hash": "03c8503766fb2ea3bcf777e316ad163b80c9e57a3900c54fcf198b90bafae13d",
+            "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-division",
+            "kind": "Evidence",
+            "revision": 1,
+            "version": ""
+          }
+        ],
+        "execution_refs": [
+          {
+            "content_hash": "c5bc64d657b029d2e122274d8fcf648711933efe4823591218f66c7b7fc46bcb",
+            "id": "reasoningexecution_634f2e4d6be44e30a5ddfc84b4b2e2cc",
+            "kind": "ReasoningExecution",
+            "revision": 0,
+            "version": ""
+          },
+          {
+            "content_hash": "222214b1ed86b1ec73da9f4414a732729c530dc2f60382bc59913e1f8d62d14e",
+            "id": "reasoningexecution_870a0c80fd074e0288cc120b8de42103",
+            "kind": "ReasoningExecution",
+            "revision": 0,
+            "version": ""
+          },
+          {
+            "content_hash": "b8e4426253bd3df4aa8d09199722a443464046b6fcf93b179bafe420d4825481",
+            "id": "reasoningexecution_8732a5f8178d4311b86c3e4349c245af",
+            "kind": "ReasoningExecution",
+            "revision": 0,
+            "version": ""
+          },
+          {
+            "content_hash": "9d838b4d19a4622e7af18697b1d950c4e6d7fdb9d5fe6b47a0761db5d4787382",
+            "id": "reasoningexecution_a343cfff3f9a416d93519d61c4e8be4e",
+            "kind": "ReasoningExecution",
+            "revision": 0,
+            "version": ""
+          },
+          {
+            "content_hash": "b1ca1e5372f380a186c50a5db83c53fd099d8a6bef0376d65e876cc2250c67b6",
+            "id": "reasoningexecution_e559e021ccd14d7192ceee47bdf14259",
+            "kind": "ReasoningExecution",
+            "revision": 0,
+            "version": ""
+          },
+          {
+            "content_hash": "18062ca52c2769561d6c0691b845905003172509d4f3a24d48c8a5d56407ba69",
+            "id": "reasoningexecution_e64f5ccd47b643e2832555fc6e211d31",
+            "kind": "ReasoningExecution",
+            "revision": 0,
+            "version": ""
+          }
+        ],
+        "execution_status": "SUCCEEDED",
+        "failure_reason": "",
+        "input_context_ref": {
+          "content_hash": "aa72e0ab7869d04da7e71d06d30a24669b1b48d03e039fff4bd3a6063193af2b",
+          "id": "context_15970e3b444f4112a1ac4404c7ac9fa6",
+          "kind": "Context",
+          "revision": 0,
+          "version": ""
+        },
+        "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+        "validation_refs": [
+          {
+            "content_hash": "27fa207c14f3a42529903c00b620d661d976b631e1bd6dd29dc43cb8e6130f97",
+            "id": "validation_419732d57d4743e581cdb1e85802809c",
+            "kind": "Validation",
+            "revision": 0,
+            "version": ""
+          },
+          {
+            "content_hash": "2531c7c9f323d12dc0a2fa2a7be29e1f0077b9dc533f58cc397558d0a80653e5",
+            "id": "validation_ea64904f6b4d4b919e7045c17e6aa705",
+            "kind": "Validation",
+            "revision": 0,
+            "version": ""
+          }
+        ]
+      },
+      "hash": "5231ef9c8b3e2ae3b0fdc4bac927b8536331a5e9517bcc1828e005b1c1134eaf",
+      "created": "2026-10-08T13:30:51.116076+00:00"
+    },
+    {
+      "seq": 75,
+      "id": "correction_b38c87e2516c4756aee9dac03e707275",
+      "kind": "Correction",
+      "obj": "correction_b38c87e2516c4756aee9dac03e707275",
+      "revision": 0,
+      "version": "",
+      "owner": "Governance",
+      "sid": "",
+      "turn_id": "",
+      "body": {
+        "affected": [
+          "evidence_81aab8888d4c412fba58c1af2fa4ccbb",
+          "belief_3a817f760bb84503bed488fe57ed6672",
+          "belief_a05d9196f05348f0af9dff0595fa44b9",
+          "belief_e02e689df43749ed808df737043631d7",
+          "evaluationcompletion_abf2ef29d8c34257bb88e8c53b1132d6"
+        ],
+        "target": {
+          "content_hash": "734aae03e0512f2cd8f2c271f7cef661069b300150671a4fcdd6d84861c6de8f",
+          "id": "evidence:s:observation:event_d38b0ec4865f41c98eeefcec70f73c8e:canonical:Claim:claim-task",
+          "kind": "Evidence",
+          "revision": 1,
+          "version": ""
+        }
+      },
+      "hash": "981930dff786422ba843baae9fdab7f4dde0fcf4efd5d7fa9f374ee9724a54ed",
+      "created": "2026-10-08T13:30:51.122911+00:00"
+    },
+    {
+      "seq": 76,
+      "id": "context_0ed1cc2487c9449794711539faa0c758",
+      "kind": "Context",
+      "obj": "context_0ed1cc2487c9449794711539faa0c758",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "control": {
+          "activity_rev": 0,
+          "auth_rev": 0,
+          "expected_heads": {
+            "canonical:Claim:claim-division": "Claim:claim-division:v1",
+            "canonical:Claim:claim-task": "Claim:claim-task:v1",
+            "canonical:Claim:claim-unit": "Claim:claim-unit:v1",
+            "canonical:EvidenceSemantics:evidence-rules": "EvidenceSemantics:evidence-rules:v1",
+            "canonical:KC:division": "KC:division:v1",
+            "canonical:KC:scaling": "KC:scaling:v1",
+            "canonical:KC:unit-relation": "KC:unit-relation:v1",
+            "canonical:TaskFamily:unit-rate": "TaskFamily:unit-rate:v1",
+            "canonical:TaskInstance:exit-mechanism": "TaskInstance:exit-mechanism:v1",
+            "observation:event_d38b0ec4865f41c98eeefcec70f73c8e": "observation_974fa9305e884b0e94dc660bfe4da85f"
+          },
+          "generation": 0,
+          "purpose": "Evidence",
+          "refs": [
+            "event_d38b0ec4865f41c98eeefcec70f73c8e",
+            "TaskInstance:exit-mechanism:v1",
+            "TaskFamily:unit-rate:v1",
+            "KC:unit-relation:v1",
+            "KC:division:v1",
+            "KC:scaling:v1",
+            "Claim:claim-task:v1",
+            "Claim:claim-unit:v1",
+            "Claim:claim-division:v1",
+            "observation_974fa9305e884b0e94dc660bfe4da85f",
+            "EvidenceSemantics:evidence-rules:v1"
+          ],
+          "sid": "s",
+          "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+          "worker_epoch": 1
+        },
+        "semantic": {
+          "assistance": [],
+          "assistance_coverage": "COMPLETE",
+          "claims": [
+            {
+              "body": {
+                "claim_type": "TaskProficiency",
+                "conditions": [
+                  "本 Task Family；解释限于已观察条件"
+                ],
+                "disconfirmation_criteria": [
+                  "在条件适用且无实质帮助时出现关系、策略或计算错误"
+                ],
+                "quality_requirements": [
+                  "相对稳定地独立完成本类任务；一次作答只能提供局部证据"
+                ],
+                "responsibility_boundary": {
+                  "allowed_support": [],
+                  "learner_owned": [
+                    "独立识别关系、选择策略、计算及检查"
+                  ]
+                },
+                "scope_ref": {
+                  "id": "unit-rate",
+                  "kind": "TaskFamily",
+                  "revision": 0,
+                  "version": "v1"
+                }
+              },
+              "created": "2026-10-08T13:30:51.023904+00:00",
+              "id": "Claim:claim-task:v1",
+              "kind": "Claim",
+              "object_id": "claim-task",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "claim_type": "KC",
+                "conditions": [
+                  "本 Task Family；解释限于已观察条件"
+                ],
+                "disconfirmation_criteria": [
+                  "把总量与单位量混淆或不能说明除法意义"
+                ],
+                "quality_requirements": [
+                  "能用数量意义说明单位量，不只复述系统解释"
+                ],
+                "responsibility_boundary": {
+                  "allowed_support": [],
+                  "learner_owned": [
+                    "自己说明单位量关系及为什么使用总量除以份数"
+                  ]
+                },
+                "scope_ref": {
+                  "id": "unit-relation",
+                  "kind": "KC",
+                  "revision": 0,
+                  "version": "v1"
+                }
+              },
+              "created": "2026-10-08T13:30:51.025865+00:00",
+              "id": "Claim:claim-unit:v1",
+              "kind": "Claim",
+              "object_id": "claim-unit",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "claim_type": "KC",
+                "conditions": [
+                  "本 Task Family；解释限于已观察条件"
+                ],
+                "disconfirmation_criteria": [
+                  "在允许支持范围内仍给出错误商或不能检查计算"
+                ],
+                "quality_requirements": [
+                  "计算与自查正确；给出商后的重复不等于独立计算"
+                ],
+                "responsibility_boundary": {
+                  "allowed_support": [
+                    "可以由他人指出需要检查除法，但不提供商或计算过程"
+                  ],
+                  "learner_owned": [
+                    "自己重新计算商并检查其合理性"
+                  ]
+                },
+                "scope_ref": {
+                  "id": "division",
+                  "kind": "KC",
+                  "revision": 0,
+                  "version": "v1"
+                }
+              },
+              "created": "2026-10-08T13:30:51.027653+00:00",
+              "id": "Claim:claim-division:v1",
+              "kind": "Claim",
+              "object_id": "claim-division",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "current_activity": "IndependentDiagnosis",
+          "current_input_id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+          "domain": [
+            {
+              "body": {
+                "conditions": [
+                  "整数数量与总价，关系为正比例"
+                ],
+                "definition": "先求单位量再按目标数量缩放的正比例应用题",
+                "quality_requirements": [
+                  "关系、计算及单位合理",
+                  "说明依据而非只猜最终数值"
+                ],
+                "responsibilities": [
+                  "识别单位量关系",
+                  "选择除后乘策略",
+                  "自行计算并说明数量单位"
+                ]
+              },
+              "created": "2026-10-08T13:30:51.015210+00:00",
+              "id": "TaskFamily:unit-rate:v1",
+              "kind": "TaskFamily",
+              "object_id": "unit-rate",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "由总量与份数说明每份量",
+                "definition": "单位量关系"
+              },
+              "created": "2026-10-08T13:30:51.016732+00:00",
+              "id": "KC:unit-relation:v1",
+              "kind": "KC",
+              "object_id": "unit-relation",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "自行求商并检查除法结果",
+                "definition": "整数除法"
+              },
+              "created": "2026-10-08T13:30:51.018326+00:00",
+              "id": "KC:division:v1",
+              "kind": "KC",
+              "object_id": "division",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            },
+            {
+              "body": {
+                "application_conditions": [
+                  "本 Task Family 的正整数场景"
+                ],
+                "cognitive_effect": "用单位量计算目标数量的总量",
+                "definition": "按数量缩放"
+              },
+              "created": "2026-10-08T13:30:51.019959+00:00",
+              "id": "KC:scaling:v1",
+              "kind": "KC",
+              "object_id": "scaling",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "evidence_semantics": [
+            {
+              "body": {
+                "applicable_claim_refs": [
+                  {
+                    "id": "claim-task",
+                    "kind": "Claim",
+                    "revision": 0,
+                    "version": "v1"
+                  },
+                  {
+                    "id": "claim-unit",
+                    "kind": "Claim",
+                    "revision": 0,
+                    "version": "v1"
+                  },
+                  {
+                    "id": "claim-division",
+                    "kind": "Claim",
+                    "revision": 0,
+                    "version": "v1"
+                  }
+                ],
+                "assistance_rules": [
+                  "只以实际发生内容解释帮助；请求、选择和未展示内容不算已暴露。",
+                  "同一提示可能帮助定位但没有替代计算，对不同 Claim 分开判断。",
+                  "新题或活动标签不能清除近期帮助。",
+                  "提示前的原始表现保留原有证据意义；后续帮助不倒灌到此前作答。",
+                  "未知效果保持未知；不能从缺少确认推出没显示。"
+                ],
+                "relation_criteria": {
+                  "Contradicts": "表现对 Claim 提供反向证据，不把单次错误直接判为不会。",
+                  "Discriminates": "说明材料区分哪两个有依据的解释假设。",
+                  "NonInformative": "请求、缺失材料或相关责任已被替代时，对该 Claim 不足以判断；必须说明具体原因。",
+                  "Supports": "表现对具体 Claim 所要求责任提供支持，说明局限；非掌握判定。"
+                },
+                "required_context": [
+                  "Observation",
+                  "原始作答",
+                  "Claim",
+                  "实际帮助及覆盖范围"
+                ]
+              },
+              "created": "2026-10-08T13:30:51.029551+00:00",
+              "id": "EvidenceSemantics:evidence-rules:v1",
+              "kind": "EvidenceSemantics",
+              "object_id": "evidence-rules",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": "v1"
+            }
+          ],
+          "observations": [
+            {
+              "body": {
+                "current_purpose": "IndependentDiagnosis",
+                "request_interpretation": "机制测试输入",
+                "source_ids": [
+                  "event_d38b0ec4865f41c98eeefcec70f73c8e"
+                ],
+                "summary": "固定机制夹具观察",
+                "uncertainties": [],
+                "work_steps": []
+              },
+              "created": "2026-10-08T13:30:51.057512+00:00",
+              "id": "observation_974fa9305e884b0e94dc660bfe4da85f",
+              "kind": "Observation",
+              "object_id": "observation:event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "revision": 1,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": ""
+            }
+          ],
+          "prior_tasks": [],
+          "purpose": "Evidence",
+          "source_contract": {
+            "activity": "current_activity is confirmed runtime state; purpose is the processing stage. activity_at_observation describes the historical observation and cannot override current_activity.",
+            "coverage_scope": "This session, controlled application channel, before current evaluation. External help remains unknown.",
+            "display": "Only assistance entries confirm this system rendered their listed blocks; rendering does not prove reading or comprehension.",
+            "events": "LearnerInput is learner text, including unverified self-reports of help.",
+            "partial": "PARTIAL occurrence contains only rendered blocks; omitted blocks are not assistance."
+          },
+          "sources": [
+            {
+              "body": {
+                "correction_of": null,
+                "task_ref": {
+                  "id": "exit-mechanism",
+                  "kind": "TaskInstance",
+                  "revision": 0,
+                  "version": "v1"
+                },
+                "text": "机制夹具作答",
+                "type": "LearnerInput"
+              },
+              "created": "2026-10-08T13:30:51.040113+00:00",
+              "id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "kind": "Event",
+              "object_id": "event_d38b0ec4865f41c98eeefcec70f73c8e",
+              "revision": 0,
+              "standing": "current-valid admitted by ContextAssembler",
+              "version": ""
+            }
+          ],
+          "task": {
+            "body": {
+              "applicable_conditions": [
+                "正比例；单价相同"
+              ],
+              "given_data": {
+                "quantity": 6,
+                "target": 15,
+                "total": 42
+              },
+              "statement": "6份练习本共42元，15份同样的练习本多少钱？请说明计算。",
+              "task_family_ref": {
+                "id": "unit-rate",
+                "kind": "TaskFamily",
+                "revision": 0,
+                "version": "v1"
+              }
+            },
+            "created": "2026-10-08T13:30:51.034721+00:00",
+            "id": "TaskInstance:exit-mechanism:v1",
+            "kind": "TaskInstance",
+            "object_id": "exit-mechanism",
+            "revision": 0,
+            "standing": "current-valid admitted by ContextAssembler",
+            "version": "v1"
+          }
+        }
+      },
+      "hash": "8364b9dbc471bc10a326441daefc319d4f49c75a367a126aae68c04b41f7471c",
+      "created": "2026-10-08T13:30:51.125760+00:00"
+    },
+    {
+      "seq": 77,
+      "id": "reasoningexecutionfailure_6b8c87d1ee244172a3075231e6d57d15",
+      "kind": "ReasoningExecutionFailure",
+      "obj": "reasoningexecutionfailure_6b8c87d1ee244172a3075231e6d57d15",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "context_id": "context_0ed1cc2487c9449794711539faa0c758",
+        "mode": "scripted-mechanism",
+        "purpose": "Evidence",
+        "reason": "InjectedEvaluationFailure",
+        "role": "generation"
+      },
+      "hash": "b1653d480a35a415eb48d0ade9ce86971e6ccb2501c87fcc8c41ea3407bdbccb",
+      "created": "2026-10-08T13:30:51.128066+00:00"
+    },
+    {
+      "seq": 78,
+      "id": "attemptfailure_188babf462ca419e9e3d03b6135f11ef",
+      "kind": "AttemptFailure",
+      "obj": "attemptfailure_188babf462ca419e9e3d03b6135f11ef",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "attempt": 0,
+        "context": "context_0ed1cc2487c9449794711539faa0c758",
+        "purpose": "Evidence",
+        "reason": "InjectedEvaluationFailure"
+      },
+      "hash": "16336f1aa8cec89368c0ca00a7f0bf948aa9e07c2222a93d28211fff56a8805c",
+      "created": "2026-10-08T13:30:51.129241+00:00"
+    },
+    {
+      "seq": 79,
+      "id": "recoveryrecord_830a7ed826e546b9bece917da611b3b3",
+      "kind": "RecoveryRecord",
+      "obj": "recoveryrecord_830a7ed826e546b9bece917da611b3b3",
+      "revision": 0,
+      "version": "",
+      "owner": "Runtime",
+      "sid": "s",
+      "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+      "body": {
+        "pending_intent": false,
+        "turn_id": "turn_1ed8d78636684638b11feaa8f65cc853",
+        "unknown_effect": false,
+        "worker_epoch": 2
+      },
+      "hash": "eec89d46c8e3e11cfb3a43ad69dbba6454b36682fbd01f3e1309383c4b40f6c1",
+      "created": "2026-10-08T13:30:51.132489+00:00"
+    }
+  ]
+}

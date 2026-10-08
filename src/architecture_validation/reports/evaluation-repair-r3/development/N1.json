@@ -1,0 +1,30 @@
+{
+  "created": "2026-10-08T09:43:38.646802+00:00",
+  "id": "N1",
+  "status": "MEASURED",
+  "turns": [
+    {
+      "id": "turn_a50115cb6bdd4dfdaae730439e0e257d",
+      "sid": "N1",
+      "message_key": "1",
+      "event_id": "event_f5d6dc82b39141858385c927255a0b09",
+      "status": "FAILED",
+      "phase": "OBSERVATION_COMMITTED",
+      "generation": 1,
+      "worker_epoch": 1,
+      "error": "RequiredValidationNotPassed",
+      "created": 1791452628.7847202,
+      "label": "N1.1",
+      "wall_seconds": 18.65324290000717,
+      "injected_fault": null,
+      "branch": "base"
+    }
+  ],
+  "coverage_notes": [],
+  "browser": {
+    "text": "",
+    "rendered": []
+  },
+  "completed": "2026-10-08T09:44:09.149768+00:00",
+  "wall_seconds": 30.502976999996463
+}

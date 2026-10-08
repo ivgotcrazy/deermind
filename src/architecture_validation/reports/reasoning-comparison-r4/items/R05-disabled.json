@@ -1,0 +1,75 @@
+{
+  "created": "2026-10-08T10:18:18.114899+00:00",
+  "case": "R05",
+  "arm": "disabled",
+  "role": "review",
+  "purpose": "Belief",
+  "expected": "FAIL",
+  "input_sha256": "6ebf1ae87abb6225e4a63c0b1e4caa96856ed4872c5386d1c5c301fe973e89ff",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_04555737a33b45ad9ad5e31ca8608da7",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "候选为三个 Claim（R023、R027、R031）各输出一项 Belief，claim_id 与 claim_evidence_index 一致，未遗漏或新增 Claim。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031"
+            ]
+          },
+          {
+            "rule_id": "basis",
+            "verdict": "PASS",
+            "reason": "各项以 claim_evidence_index 为索引并结合正反 Evidence：R023 用 R063/R105（NonInformative）与 R142/R180（Supports）；R027 用 R064/R106/R143/R181（均 NonInformative）；R031 用 R065（NonInformative）与 R107/R144/R182（Supports）。R180/R181/R182 综合 R091、R128 并明确 R166 自述不可核实，未把自述当已确认事实，依据与相关性说明成立。",
+            "source_ids": [
+              "R063",
+              "R105",
+              "R142",
+              "R180",
+              "R064",
+              "R106",
+              "R143",
+              "R181",
+              "R065",
+              "R107",
+              "R144",
+              "R182"
+            ]
+          },
+          {
+            "rule_id": "revision",
+            "verdict": "PASS",
+            "reason": "R023、R031 因新增 R180/R182 扩大依据集合而 REVISE，理由说明依据变化；R027 有有效旧 Belief R074，UNCHANGED 且逐字复制其 assessment，并说明四份证据仍为 NonInformative、方向未变。",
+            "source_ids": [
+              "R074",
+              "R152",
+              "R153"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "R023、R031 为 DIRECTIONAL 并限定一次换题作答、先前定位帮助、未展示检查、R166 自述不可核实等条件；R027 为 UNKNOWN 并说明无单位量关系或除法意义表述。均未给未经校准概率，未把请求或自述当作会/不会的结论。",
+            "source_ids": [
+              "R049",
+              "R089",
+              "R166"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": false
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:18:20.214835+00:00",
+  "status": "COMPLETED"
+}

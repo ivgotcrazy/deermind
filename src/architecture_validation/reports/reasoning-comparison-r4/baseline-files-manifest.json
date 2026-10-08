@@ -1,0 +1,38 @@
+[
+  {
+    "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md",
+    "previous_sha256": "268e44685afc2ae661efab7154dbcde2ccae8529f34dd43661858effc7a08f01",
+    "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt",
+    "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+  },
+  {
+    "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
+    "previous_sha256": "ef8485249385fed17682ef59004e739a220ce85346752b03c21348db613f1fdd",
+    "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt",
+    "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+  },
+  {
+    "source_path": "doc/system-design/README.md",
+    "previous_sha256": "079111329da19457ad653a74522e85658ab024ae6fa0f476405468b9d86d6286",
+    "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/doc__system-design__README.md.txt",
+    "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+  },
+  {
+    "source_path": "src/architecture_validation/README.md",
+    "previous_sha256": "6fcc081e1343ee46e05028e280443da109b1e4d261e501e2b961642c66b1beed",
+    "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/src__architecture_validation__README.md.txt",
+    "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+  },
+  {
+    "source_path": "src/architecture_validation/reports/progress.json",
+    "previous_sha256": "c9fa95ba06f6ce6de4129147c2c4a2224bfaa66a0a792ae903df86953d78f837",
+    "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/src__architecture_validation__reports__progress.json.txt",
+    "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+  },
+  {
+    "source_path": "src/spike/reports/validation-progress-v1.json",
+    "previous_sha256": "d31ead09e91e3347fd34bf0cf2c03a056643bfd662551db0a8d9981a1489d4fd",
+    "preserved_at": "src/architecture_validation/reports/reasoning-comparison-r4/baseline-files/src__spike__reports__validation-progress-v1.json.txt",
+    "reason": "Preserve closed R3 baseline before fixed reasoning-mode comparison R4"
+  }
+]

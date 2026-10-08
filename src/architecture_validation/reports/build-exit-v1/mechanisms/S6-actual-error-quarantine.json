@@ -1,0 +1,36 @@
+{
+  "scope": "Read-only R2 source copied; manual exact targets, no error detection or semantic recomputation",
+  "source": "src/architecture_validation/runs/g2-r2/v2/S6/runtime.sqlite",
+  "source_sha256": "f23df14d1b848d62a823c824c73e1699af702b17121493343829b590d8cfe282",
+  "targets": [
+    "evidence_8a3e580d24b74032baf57a7e8457bfec",
+    "evidence_c1a3f35efaad42e990c2c157b8960b47"
+  ],
+  "affected": [
+    "belief_4ee47cf8c392466c84a29737afafbf48",
+    "belief_6c9d7ece37c54acc89205516023b0c2c",
+    "belief_c19d041727bc4ebc90c42f533a5ecc31",
+    "belief_ec4816511cea4db58e5cb981ecd13e50",
+    "decision_046fdbd5cb584e0d94059ed5d3527e5a",
+    "decision_e9824b4c7f194d18a8b3cb2b2102de0b",
+    "evaluationcompletion_192b918c89b6484386ac274aebcb4457",
+    "evaluationcompletion_77756e209af44618b854f7d6e4ce0ad4",
+    "evidence_8a3e580d24b74032baf57a7e8457bfec",
+    "evidence_c1a3f35efaad42e990c2c157b8960b47"
+  ],
+  "prior_current_beliefs": [
+    "belief_605e67e032cd40e887128ceefe55d2f7",
+    "belief_ec4816511cea4db58e5cb981ecd13e50",
+    "belief_c19d041727bc4ebc90c42f533a5ecc31"
+  ],
+  "old_records_unchanged": 203,
+  "api_calls": 0,
+  "new_actions": 0,
+  "affected_beliefs": [
+    "belief_ec4816511cea4db58e5cb981ecd13e50",
+    "belief_c19d041727bc4ebc90c42f533a5ecc31"
+  ],
+  "remaining_current_beliefs": [
+    "belief_605e67e032cd40e887128ceefe55d2f7"
+  ]
+}

@@ -13,7 +13,8 @@ from .contracts import WIRE, validate
 from .harness import Server
 from .measure import packet
 from .model import Budget, RealModel
-from .protocols import RULES, review_system,review_rule_ids
+from .protocols import RULES, review_system
+from .review import aggregate_review
 
 REPORTS=BASE/'reports/revalidation-r1'
 BUDGET=REPORTS/'api-budget.json'
@@ -68,7 +69,7 @@ def prepare_probe(probe):
     sem=project(context);sem['candidate']=project(probe['candidate'])
     schema=deepcopy(WIRE['Review']);schema['properties']['checks']['items']['properties']['source_ids']={'type':'array','items':{'type':'string','enum':list(mapping.values())},'uniqueItems':True}
     check=schema['properties']['checks']['items'];ordered=[]
-    for name in review_rule_ids(probe['purpose'],[c['id'] for c in sem.get('claims',[])]):
+    for name in RULES[probe['purpose']]:
         bound=deepcopy(check);bound['properties']['rule_id']={'const':name};ordered.append(bound)
     schema['properties']['checks']={'type':'array','prefixItems':ordered,'items':False,'minItems':len(ordered),'maxItems':len(ordered)}
     return sem,schema,mapping
@@ -132,11 +133,10 @@ def main():
                 sem,schema,mapping=prepare_probe(probe)
                 output,record=model.complete(review_system(probe['purpose']),sem,schema,'Probe:'+probe['purpose'],'probe')
                 validate(schema,output)
-                required={c['properties']['rule_id']['const'] for c in schema['properties']['checks']['prefixItems']}
-                complete=len(output['checks'])==len(required) and {c['rule_id'] for c in output['checks']}==required
-                accepted=output['verdict']=='PASS' and complete and all(c['verdict']=='PASS' for c in output['checks'])
-                value.update(output=output,accepted=accepted,review_complete=complete,reference_mapping=mapping,attempt_id=record['attempt_id'],status='COMPLETED',
-                    matched=accepted if probe['expected']=='PASS' else output['verdict'] in ('FAIL','UNRESOLVED') and complete)
+                complete=len(output['checks'])==len(RULES[probe['purpose']]) and {c['rule_id'] for c in output['checks']}==set(RULES[probe['purpose']])
+                effective=aggregate_review(output);accepted=effective=='PASS' and complete
+                value.update(output=output,effective_verdict=effective,accepted=accepted,review_complete=complete,reference_mapping=mapping,attempt_id=record['attempt_id'],status='COMPLETED',
+                    matched=accepted if probe['expected']=='PASS' else effective in ('FAIL','UNRESOLVED') and complete)
             except Rejected as exc:value.update(status='FAILED',failure=str(exc),matched=False)
             report['probes'].append(value);write_json(dest,report)
             print(json.dumps({'unit':probe['id'],'status':value['status'],'matched':value['matched']}),flush=True)

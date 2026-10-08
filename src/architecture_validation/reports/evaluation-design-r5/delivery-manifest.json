@@ -1,0 +1,24 @@
+{
+  "created": "2026-10-08T10:59:34.518769+00:00",
+  "status": "DESIGN_READY_NOT_IMPLEMENTED",
+  "gate_G2": "HOLD",
+  "new_model_calls": 0,
+  "artifacts_sha256": {
+    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.4.md": "018c30fe26971a2b132565ddc14238b883df74a0d26c58f84ae7e91c40a0fc0b",
+    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md": "1ef5fac6d5137994bd360e676dd8fb232731f4b96e85f4c36d13fed0e76d13ce",
+    "doc/system-design/README.md": "81b84881b585efc862c3d1aebb44f1edee8a027ec101dda05019fd812f08215b",
+    "src/architecture_validation/README.md": "3785895b1d2c0ab200494bd70d4c86dba3ed67d52a8c775af5fa329f92ef433d",
+    "src/architecture_validation/reports/evaluation-design-r5/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Plan_v0.4.md.txt": "a6f68a49967ef3f1ea74a9b711db432bd63028d7abaa9a41b22da59d3086dd21",
+    "src/architecture_validation/reports/evaluation-design-r5/baseline-files/doc__system-design__build__DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md.txt": "50f3eb5eb6d4a71fb298a552f4fea0cb3edba84b8ef8d3541e250302d04c3f6f",
+    "src/architecture_validation/reports/evaluation-design-r5/baseline-files/doc__system-design__README.md.txt": "f0c71055c11f57e6ae74b9b42d81c4ee9ad526333d48db2674e0ec7434bfed96",
+    "src/architecture_validation/reports/evaluation-design-r5/baseline-files/src__architecture_validation__README.md.txt": "550c7ff8cd42bf6f87e821e6b58fd883b8260df64f1d0e0c2deb692dd8ae73f2",
+    "src/architecture_validation/reports/evaluation-design-r5/baseline-files/src__architecture_validation__reports__progress.json.txt": "6c698b12c027a9a2485be3d16dc96d014ab675adc2f3b0a8f6bb11d5e3ff97d5",
+    "src/architecture_validation/reports/evaluation-design-r5/baseline-files/src__spike__reports__validation-progress-v1.json.txt": "6c3cf7cb3ff93a54abaf066867d8a1078e0d6230f5bb3cd0f60a415177bd5e46",
+    "src/architecture_validation/reports/evaluation-design-r5/baseline-files-manifest.json": "8f748af8d930a855c5b827f72e42f91055d627629e9c9505ee05e65ca17080ac",
+    "src/architecture_validation/reports/evaluation-design-r5/design-evidence.json": "572899f8536b9526b124995e441d555b35da5ef5548be644144b75476fdbb2cc",
+    "src/architecture_validation/reports/evaluation-design-r5/history-verification.json": "e2b8f8c999355b45d84b1cb48b68e98989f9c7b9b212eece04890689f4f925e9",
+    "src/architecture_validation/reports/evaluation-design-r5/verification.json": "74bd213e6d2e7d5fe066295b0f55c98667f4f520f74ebe03dcb03d5d47e4a48c",
+    "src/architecture_validation/reports/progress.json": "02566bb8067a29caee97d8f6be09733c046539e081b64a6607c33caeff03469e",
+    "src/spike/reports/validation-progress-v1.json": "b0f3cb9c5c426044143dc176a8b096ad7541cc7315b08d6b423bb9256c14e7c3"
+  }
+}

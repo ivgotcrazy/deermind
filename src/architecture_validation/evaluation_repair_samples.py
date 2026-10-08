@@ -4,9 +4,16 @@ import hashlib
 import json
 from .common import BASE,ROOT,write_json
 from .domain import task
-from .protocols import review_rule_ids
+from .protocols import RULES
 from .revalidate import prepare_probe
 from .scenarios import EVAL_CONTRASTS
+
+
+def review_rule_ids(purpose,claim_ids):
+    # Preparation of the historical R3 experimental profile, not runtime policy.
+    if purpose in ('Evidence','Belief'):
+        return [f'{claim}:{rule}' for claim in claim_ids for rule in RULES[purpose]]
+    return list(RULES[purpose])
 
 
 def bind_checks(schema,purpose,context):

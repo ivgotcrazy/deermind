@@ -1,0 +1,77 @@
+{
+  "created": "2026-10-08T10:23:47.972033+00:00",
+  "case": "R16",
+  "arm": "high",
+  "role": "generation",
+  "purpose": "Belief",
+  "expected": "AUTHOR_REVIEW",
+  "input_sha256": "e374c318d313dbb5b79531cb4e7f6b860f21ac23706148e7ae8177f322e81a2f",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_e36acdc9a31742ebaa862eeec395541b",
+      "output": {
+        "items": [
+          {
+            "claim_id": "R023",
+            "disposition": "REVISE",
+            "assessment_kind": "DIRECTIONAL",
+            "assessment": "在独立诊断任务中，学习者对9份117元求12份总价自行写出117÷9＝13、13×12＝156，策略与计算均正确；结合先前7份98元在获R089定位提示后仍自行算出98÷7＝14、14×11＝154，显示对识别单位量关系、选择除后乘策略并完成计算有初步正向表现；但第一次作答受定位提示，第二次仅一次独立换题，未展示检查，尚不足以判断稳定掌握。",
+            "uncertainty": "仅两次同族作答，其中一次受R089定位提示；无独立检查过程，R166的方法自述不能核实独立性。",
+            "epistemic_status": [
+              "limited_positive_evidence"
+            ],
+            "evidence_ids": [
+              "R063",
+              "R105",
+              "R142",
+              "R180"
+            ],
+            "conflicts": [],
+            "rationale": "R063为NonInformative（R049仅请求提示）；R105为NonInformative（R091发生在R089定位提示后，allowed_support为空，不能算独立完成）；R142为Supports（R128独立写出117÷9=13、13×12=156）；R180为Supports，并纳入R091/R128两题的正确计算，但其中R166自述不可核实，故只给有限正向方向性判断。"
+          },
+          {
+            "claim_id": "R027",
+            "disposition": "REVISE",
+            "assessment_kind": "UNKNOWN",
+            "assessment": "仍无足够证据判断学习者能否用数量意义说明单位量关系及为何用总量除以份数；R049仅请求提示，R091、R128只给出算式，R166的方法自述不构成关系解释，未展示相关自主说明。",
+            "uncertainty": "缺少单位量关系或除法意义的自主解释；正确计算和方法自述不能替代该KC说明。",
+            "epistemic_status": [
+              "insufficient_evidence"
+            ],
+            "evidence_ids": [
+              "R064",
+              "R106",
+              "R143",
+              "R181"
+            ],
+            "conflicts": [],
+            "rationale": "R064、R106、R143、R181均为NonInformative：R049无说明；R091/R128只有98÷7=14、117÷9=13等算式；R089已渲染系统讲解“用总量除以份数”，复述或方法自述均不满足学习者自己说明单位量关系的要求，故不能判断掌握或不会。"
+          },
+          {
+            "claim_id": "R031",
+            "disposition": "REVISE",
+            "assessment_kind": "DIRECTIONAL",
+            "assessment": "学习者能在R089定位帮助下自行算出98÷7＝14与14×11＝154，并在独立诊断任务中自行算出117÷9＝13与13×12＝156，两次整数除法求商及按数量缩放计算均正确，显示对自行求商有初步正向表现；但均未展示检查过程，第一次受定位帮助，R166的“自己重新算”属自述不可核实，尚不足以判断稳定掌握。",
+            "uncertainty": "两次作答均未展示检查过程，第一次发生在允许的定位帮助之后；样本有限，无法判断独立计算与自查的稳定性。",
+            "epistemic_status": [
+              "limited_positive_evidence"
+            ],
+            "evidence_ids": [
+              "R065",
+              "R107",
+              "R144",
+              "R182"
+            ],
+            "conflicts": [],
+            "rationale": "R065为NonInformative（R049无计算提交）；R107、R144、R182均为Supports：R091自行算出98÷7=14、14×11=154，R128自行算出117÷9=13、13×12=156，商与结果正确；R089仅指出先算98÷7，未提供商或过程，但第一次仍属受提示后计算；R166自述无法核验检查，故只作方向性判断。"
+          }
+        ]
+      },
+      "status": "COMPLETED"
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:24:15.479277+00:00",
+  "status": "COMPLETED"
+}

@@ -1,0 +1,85 @@
+{
+  "created": "2026-10-08T10:21:25.221177+00:00",
+  "case": "R10",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Belief",
+  "expected": "PASS",
+  "input_sha256": "1790dfe070388bf7c119de8bd18e7227948310fcefc12ffa565ca8ab6ac97854",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_cbfcca16079f4ed79662f06c92c693db",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "claim",
+            "verdict": "PASS",
+            "reason": "claim_evidence_index 列出 R023、R027、R031 三个 Claim，候选恰为三者各输出一项 Belief，claim_id 一一对应且无遗漏、无多余或合并他项。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R039"
+            ]
+          },
+          {
+            "rule_id": "basis",
+            "verdict": "PASS",
+            "reason": "逐项以索引为纲并引用当前有效正反 Evidence：R023 用 R059（Supports）与 R113（Contradicts），R027 用 R060 与 R114（均 NonInformative），R031 用 R061（Supports）与 R115（Contradicts）；evidence_ids 与实际采纳一致，理由说明各自相关性与依据，未因未引用他 Claim 材料而虚判遗漏。",
+            "source_ids": [
+              "R023",
+              "R027",
+              "R031",
+              "R059",
+              "R113",
+              "R060",
+              "R114",
+              "R061",
+              "R115",
+              "R039"
+            ]
+          },
+          {
+            "rule_id": "revision",
+            "verdict": "PASS",
+            "reason": "R023、R031 有对应旧 Belief R069、R071，因新增反向 Evidence（R113、R115）改变依据集合与不确定性，均标 REVISE 并说明改变理由；R027 的 UNCHANGED 有旧 Belief R070，assessment.kind 与 statement 逐字一致，并说明新增 R114 仍属 NonInformative、未改变证据不足性质。",
+            "source_ids": [
+              "R069",
+              "R070",
+              "R071",
+              "R059",
+              "R113",
+              "R060",
+              "R114",
+              "R061",
+              "R115",
+              "R039"
+            ]
+          },
+          {
+            "rule_id": "uncertainty",
+            "verdict": "PASS",
+            "reason": "R027 记 UNKNOWN（缺单位量关系说明，既不支持也不反驳）；R023、R031 为 DIRECTIONAL，明确限定单任务内正反并存、无独立复测与迁移限制，未断言稳定掌握或完全不会，也未给未经校准的概率。",
+            "source_ids": [
+              "R059",
+              "R113",
+              "R060",
+              "R114",
+              "R061",
+              "R115",
+              "R039"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:21:37.174424+00:00",
+  "status": "COMPLETED"
+}

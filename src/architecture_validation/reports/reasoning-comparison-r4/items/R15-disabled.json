@@ -1,0 +1,79 @@
+{
+  "created": "2026-10-08T10:22:57.835691+00:00",
+  "case": "R15",
+  "arm": "disabled",
+  "role": "generation",
+  "purpose": "Evidence",
+  "expected": "AUTHOR_REVIEW",
+  "input_sha256": "c25a9d481b1bf93f307d09b1206a3b4daa9876a0d87cadae70a8b6a829403cf2",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_a6b6e7cbd48e402d9b492a9615fadf84",
+      "output": {
+        "items": [
+          {
+            "claim_id": "R023",
+            "relation": "Supports",
+            "interpretation": "当前题R128独立写出117÷9=13、13×12=156，两步均正确，符合先求单位量再按目标数量缩放的策略，对“相对稳定地独立完成本类任务”提供有限正向证据；但仅一次换题作答，且此前同族题曾请求第一步关系提示，不足以证明稳定掌握。",
+            "observation_ids": [
+              "R134"
+            ],
+            "source_ids": [
+              "R128",
+              "R091",
+              "R049"
+            ],
+            "assistance_ids": [
+              "R089"
+            ],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "R089仅出现在先前7份98元任务中，提示先算98÷7的数量关系，未给数值；当前题R128之前无本系统帮助记录，故当前表现不受该提示倒灌。",
+            "dependencies_explanation": "TaskProficiency要求独立识别关系、选择策略、计算及检查；当前题完整正确支持该责任，但样本仅一次，且先前同族题的关系定位曾依赖提示，稳定性证据有限。"
+          },
+          {
+            "claim_id": "R027",
+            "relation": "NonInformative",
+            "interpretation": "R128只写出算式与结果，未用数量意义说明为什么用总量除以份数；R091虽写“按刚才看到的提示”先算98÷7，但该关系定位来自R089提示，且仍属复述步骤而非学习者自述单位量意义。缺少单位关系解释不等于理解错误，故对本Claim不足以判断。",
+            "observation_ids": [
+              "R134"
+            ],
+            "source_ids": [
+              "R128",
+              "R091",
+              "R049"
+            ],
+            "assistance_ids": [
+              "R089"
+            ],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "R089在先前任务中直接给出“总量除以份数”的数量关系，属于对单位量关系的定位帮助；该帮助不能证明学习者已能自己说明单位量意义，也不能作为反向证据。",
+            "dependencies_explanation": "KC要求学习者自己说明单位量关系及为何用总量除以份数；现有材料只有算式和复述提示，缺少学习者自主的关系说明，故信息不足。"
+          },
+          {
+            "claim_id": "R031",
+            "relation": "Supports",
+            "interpretation": "R128中117÷9=13、13×12=156计算正确，且是在当前题无本系统提示条件下自行给出，对“自己重新计算商并检查其合理性”提供有限正向证据；但未展示检查过程，仅一次正确不足以证明稳定。",
+            "observation_ids": [
+              "R134"
+            ],
+            "source_ids": [
+              "R128",
+              "R091"
+            ],
+            "assistance_ids": [
+              "R089"
+            ],
+            "coverage": "COMPLETE",
+            "assistance_relevance": "R089只提示先算98÷7的数量关系，未提供商或计算过程，符合该Claim允许的“指出需要检查除法”类定位支持；当前题R128无提示，商由学习者自行算出。",
+            "dependencies_explanation": "KC允许他人指出需检查除法但不提供商或过程，学习者须自行计算并检查；R128的商由学习者独立算出且正确，支持计算责任，但检查合理性未外显。"
+          }
+        ]
+      },
+      "status": "COMPLETED"
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:23:01.657061+00:00",
+  "status": "COMPLETED"
+}

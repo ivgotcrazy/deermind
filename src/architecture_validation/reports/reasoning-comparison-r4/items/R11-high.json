@@ -1,0 +1,60 @@
+{
+  "created": "2026-10-08T10:21:43.376064+00:00",
+  "case": "R11",
+  "arm": "high",
+  "role": "review",
+  "purpose": "Policy",
+  "expected": "PASS",
+  "input_sha256": "5131d11d75de0d6b24f4f0a00114e33f3da4da2810ae387d9a30eb4f06bf82a9",
+  "attempts": [
+    {
+      "kind": "primary",
+      "attempt_id": "attempt_32927e91ae984ca7b447762ccd8aefce",
+      "output": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "rule_id": "purpose",
+            "verdict": "PASS",
+            "reason": "当前活动为 IndependentDiagnosis，可行动作含 Hint；R002 仅请求指出需检查哪一步且不要给商或答案，候选 Hint 点名 132÷11 这一步，符合该请求的帮助限度。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "utility",
+            "verdict": "PASS",
+            "reason": "学习者在 R002 中明确请求定位待检查步骤，候选以 Execute 提供 Hint 与可行动作一致，无需 NoIntervention 或 Defer，也未把错误本身当作自动干预命令。",
+            "source_ids": [
+              "R002"
+            ]
+          },
+          {
+            "rule_id": "content",
+            "verdict": "PASS",
+            "reason": "候选仅让学习者重新检查 132÷11 这一步，确实定位到需检查的算式，未给出商或总价；action_type 为 Hint，不是 Control，不适用 Control blocks 必须为空的要求，也未执行越权指令。",
+            "source_ids": [
+              "R002",
+              "R005"
+            ]
+          },
+          {
+            "rule_id": "rationale",
+            "verdict": "PASS",
+            "reason": "理由承认提供了“除法步骤的定位帮助”，并说明商和后续计算仍由学习者重算；这与 R005 允许指出需检查除法但不提供商或计算过程的边界一致，未否认已提供的帮助。",
+            "source_ids": [
+              "R002",
+              "R005"
+            ]
+          }
+        ]
+      },
+      "status": "COMPLETED",
+      "effective_verdict": "PASS",
+      "label_matched": true
+    }
+  ],
+  "author_assessment": "PENDING",
+  "completed": "2026-10-08T10:21:53.550302+00:00",
+  "status": "COMPLETED"
+}

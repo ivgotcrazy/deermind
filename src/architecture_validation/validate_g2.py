@@ -16,6 +16,7 @@ from .measure import packet
 from .model import Budget,RealModel,load_config
 from .protocols import review_system
 from .revalidate import prepare_probe,select_input
+from .review import aggregate_review
 
 OUT=BASE/'reports/g2-r2'
 BUDGET=OUT/'api-budget.json'
@@ -132,9 +133,9 @@ def run_probes(frozen,scope=OUT,run_root=BASE/'runs/g2-r2'):
             output,record=model.complete(review_system(probe['purpose']),sem,schema,'Probe:'+probe['purpose'],'probe')
             validate(schema,output)
             complete=True  # Strict prefixItems enforces every required rule/Claim.
-            accepted=output['verdict']=='PASS' and all(c['verdict']=='PASS' for c in output['checks'])
+            effective=aggregate_review(output);accepted=effective=='PASS'
             value.update(status='COMPLETED',output=output,accepted=accepted,review_complete=complete,
-                attempt_id=record['attempt_id'],matched=accepted if probe['expected']=='PASS' else output['verdict'] in ('FAIL','UNRESOLVED'))
+                attempt_id=record['attempt_id'],effective_verdict=effective,matched=accepted if probe['expected']=='PASS' else effective in ('FAIL','UNRESOLVED'))
         except Rejected as exc:
             value.update(status='FAILED',failure=str(exc),matched=False)
         result['items'].append(value);write_json(dest,result)
