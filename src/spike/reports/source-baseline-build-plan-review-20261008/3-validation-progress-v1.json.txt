@@ -1682,21 +1682,6 @@
       "source_path": ".gitignore",
       "previous_sha256": "c76b1296223613a0a66a1ba260d8c51da769c95af4897a02e49fef928670736d",
       "preserved_at": "src/spike/reports/source-baseline-build-plan-20261008/3-gitignore.txt"
-    },
-    {
-      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.1.md",
-      "previous_sha256": "11e5c6ce203a0c31f4c3ec2bed5c5ca9c1023729d12c0b0f67e752744555a483",
-      "preserved_at": "src/spike/reports/source-baseline-build-plan-review-20261008/1-DeerMind_Architecture_Validation_Build_Plan_v0.1.md.txt"
-    },
-    {
-      "source_path": "doc/system-design/README.md",
-      "previous_sha256": "6ed7b3a18d5ed6690b568cd8d451d075cd45cca86e2b45be5cb415dced8e0401",
-      "preserved_at": "src/spike/reports/source-baseline-build-plan-review-20261008/2-README.md.txt"
-    },
-    {
-      "source_path": "src/spike/reports/validation-progress-v1.json",
-      "previous_sha256": "f00a411a53d91e8d754673c52ea70a71df0a07f4042e8b61c1f8e04395617bd6",
-      "preserved_at": "src/spike/reports/source-baseline-build-plan-review-20261008/3-validation-progress-v1.json.txt"
     }
   ],
   "contract_revision_proposals": [
@@ -3615,7 +3600,7 @@
     "src/spike/reports/source-baseline-phase6-20261008/10-DeerMind_Development_Roadmap_v0.3.md.txt": "335148bd99457be0190ab88ecc6bc986a8919dd81d722a4ec649c97be374876a",
     "src/spike/reports/source-baseline-phase6-20261008/11-DeerMind_Architecture_Validation_Report_v0.1.md.txt": "d578e509889ce47725fb5b89b27e9b71ab7982516e6b99aef7ca4b90e5d47187",
     "src/spike/reports/source-baseline-phase6-20261008/12-README.md.txt": "49064472eb5d57101f7fc949b7f2322983c0f56fed3cd6485b7b8d3ec0157efc",
-    "doc/system-design/README.md": "05c71a42ba31d23a30d1a18ad689a651fd4fe5f559fdda2ad6b35da49a09304d",
+    "doc/system-design/README.md": "6ed7b3a18d5ed6690b568cd8d451d075cd45cca86e2b45be5cb415dced8e0401",
     "src/spike/reports/source-baseline-phase6-20261008/manifest.json": "66d3504ef9d095fa12cd78f93780f7cfa3c0d44da9b238d6267c33c91c721578",
     "doc/system-design/DeerMind_System_Design_Evidence_Review_v1.0.md": "fe0e2d063f1b4a26d0543bbfa797a8c058e1cd9bc0b542f5dc112f095debc748",
     "src/spike/reports/source-baseline-phase6-20261008/13-DeerMind_AI_Reasoning_Runtime_Design_v1.0.md.txt": "8d5d15f4a4cf6bf49f5d50de2d9a3bcf2996bc15b5ea08220387a3e1fbd060f4",
@@ -3674,12 +3659,7 @@
     "src/spike/reports/source-baseline-build-plan-20261008/manifest.json": "6dbb23da225df03fde994ed5975be2715c0a0f4142b5e04ecac818d878aaa860",
     "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.1.md": "11e5c6ce203a0c31f4c3ec2bed5c5ca9c1023729d12c0b0f67e752744555a483",
     "src/spike/reports/source-baseline-build-plan-20261008/3-gitignore.txt": "c76b1296223613a0a66a1ba260d8c51da769c95af4897a02e49fef928670736d",
-    ".gitignore": "4674c70f6951e14d48e63ed9bd6900a14a42f68898eb7ceed415bedd699a41b0",
-    "src/spike/reports/source-baseline-build-plan-review-20261008/1-DeerMind_Architecture_Validation_Build_Plan_v0.1.md.txt": "11e5c6ce203a0c31f4c3ec2bed5c5ca9c1023729d12c0b0f67e752744555a483",
-    "src/spike/reports/source-baseline-build-plan-review-20261008/2-README.md.txt": "6ed7b3a18d5ed6690b568cd8d451d075cd45cca86e2b45be5cb415dced8e0401",
-    "src/spike/reports/source-baseline-build-plan-review-20261008/3-validation-progress-v1.json.txt": "f00a411a53d91e8d754673c52ea70a71df0a07f4042e8b61c1f8e04395617bd6",
-    "src/spike/reports/source-baseline-build-plan-review-20261008/manifest.json": "4b866d065f171a0004277f8b341ab7106168f5e0ce652bfabdcc4c369d5e0606",
-    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.2.md": "e67d6886284757e2a8481996782de13a3191b51b1642fb961ad2e2db54ff1199"
+    ".gitignore": "4674c70f6951e14d48e63ed9bd6900a14a42f68898eb7ceed415bedd699a41b0"
   },
   "document_layout": {
     "directory": "doc/system-design/spike",
@@ -4125,7 +4105,7 @@
       "doc/top/DeerMind_Development_Roadmap_v0.3.md",
       "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md"
     ],
-    "next_step": "Build B2 schema, core definitions and example freeze before dependent component implementation under Build Plan v0.2; no automatic Spike accuracy batch",
+    "next_step": "Build B2 minimal real vertical implementation under Build Plan v0.1; no automatic Spike accuracy batch",
     "project_gate_G1": "PASS",
     "architecture_validation_build_implemented": false
   },
@@ -4273,8 +4253,8 @@
   "build_next_work": {
     "id": "B2",
     "status": "PLANNED",
-    "task": "Freeze executable schemas, core Claim/Evidence/Inference definitions and examples first; then implement the minimal real vertical loop under Build Plan v0.2",
-    "plan_document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.2.md",
+    "task": "Minimal real vertical implementation with persistent storage, controlled browser acknowledgement, real narrow Evaluation and model adapter",
+    "plan_document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.1.md",
     "automatic_llm_batch": false
   },
   "doc_latest_version_cleanup": {
@@ -4296,8 +4276,8 @@
   "build_design_plan": {
     "work_item": "B1",
     "status": "DOCUMENT_DELIVERED",
-    "document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.2.md",
-    "document_sha256": "e67d6886284757e2a8481996782de13a3191b51b1642fb961ad2e2db54ff1199",
+    "document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.1.md",
+    "document_sha256": "11e5c6ce203a0c31f4c3ec2bed5c5ca9c1023729d12c0b0f67e752744555a483",
     "date": "2026-10-08",
     "implementation_started": false,
     "real_llm_calls_this_delivery": 0,
@@ -4306,10 +4286,6 @@
     "learner_turns_planned": 24,
     "semantic_probes_planned": 12,
     "stage_http_attempt_cap": 340,
-    "budget_scope": "Prospective Build plan, not executed results or automatic API authorization",
-    "revision": "v0.2",
-    "evaluation_acceptance_dimensions": 4,
-    "data_contract_scope": "Build Plan Appendix A; executable schema and core definitions freeze first in B2 before dependent component implementation",
-    "evaluation_failure_policy": "Required evaluation failure blocks Policy; no default NoIntervention or Defer outcome"
+    "budget_scope": "Prospective Build plan, not executed results or automatic API authorization"
   }
 }

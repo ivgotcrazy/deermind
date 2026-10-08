@@ -1,0 +1,21 @@
+{
+  "schema": "build-plan-review-source-baseline-v1",
+  "date": "2026-10-08",
+  "sources": [
+    {
+      "source_path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.1.md",
+      "previous_sha256": "11e5c6ce203a0c31f4c3ec2bed5c5ca9c1023729d12c0b0f67e752744555a483",
+      "preserved_at": "src/spike/reports/source-baseline-build-plan-review-20261008/1-DeerMind_Architecture_Validation_Build_Plan_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/README.md",
+      "previous_sha256": "6ed7b3a18d5ed6690b568cd8d451d075cd45cca86e2b45be5cb415dced8e0401",
+      "preserved_at": "src/spike/reports/source-baseline-build-plan-review-20261008/2-README.md.txt"
+    },
+    {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "f00a411a53d91e8d754673c52ea70a71df0a07f4042e8b61c1f8e04395617bd6",
+      "preserved_at": "src/spike/reports/source-baseline-build-plan-review-20261008/3-validation-progress-v1.json.txt"
+    }
+  ]
+}
