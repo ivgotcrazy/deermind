@@ -241,33 +241,5 @@
     "runtime_code_changed": false,
     "git_diff_check": "PASS",
     "new_model_calls": 0
-  },
-  "followup_retirements": [
-    {
-      "source_path": "doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
-      "previous_sha256": "63dac4321389f92cb8328bfb84f64eef188da347aed70bebf53963b0758f8e6e",
-      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/29-DeerMind_Design_Closure_Review_v0.1.md.txt",
-      "reason": "User requested removal of completed pre-Spike design review from doc; historical evidence retained under src/spike",
-      "status": "COMPLETE",
-      "updated_files": [
-        "doc/system-design/README.md",
-        "doc/system-design/spike/README.md"
-      ],
-      "new_model_calls": 0,
-      "verification": {
-        "historical_integrity": {
-          "ledger_entries_checked": 1443,
-          "frozen_source_counts": {
-            "spike-exit-v1": 223,
-            "policy-s3-diagnostic-v1": 9,
-            "single-task-prototype-v1": 49,
-            "input-capacity-v1": 54
-          }
-        },
-        "local_links_checked": 260,
-        "missing_links": [],
-        "git_diff_check": "PASS"
-      }
-    }
-  ]
+  }
 }

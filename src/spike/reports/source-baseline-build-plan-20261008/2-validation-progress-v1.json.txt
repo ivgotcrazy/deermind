@@ -1667,21 +1667,6 @@
       "source_path": "doc/system-design/spike/README.md",
       "previous_sha256": "e5e2ceae9b171d14240826005e1cdc0ba264958c7d353a3d44fa6b33bfeb587a",
       "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/31-README.md.txt"
-    },
-    {
-      "source_path": "doc/system-design/README.md",
-      "previous_sha256": "846e6be07ef0adc4c620df0182df09b6a49256efdd83070b3d569b0688aaadf4",
-      "preserved_at": "src/spike/reports/source-baseline-build-plan-20261008/1-README.md.txt"
-    },
-    {
-      "source_path": "src/spike/reports/validation-progress-v1.json",
-      "previous_sha256": "22ea822e4c116cb2e4544d4fad64af300f12433cb7b620c6c9183b8a0f2273fa",
-      "preserved_at": "src/spike/reports/source-baseline-build-plan-20261008/2-validation-progress-v1.json.txt"
-    },
-    {
-      "source_path": ".gitignore",
-      "previous_sha256": "c76b1296223613a0a66a1ba260d8c51da769c95af4897a02e49fef928670736d",
-      "preserved_at": "src/spike/reports/source-baseline-build-plan-20261008/3-gitignore.txt"
     }
   ],
   "contract_revision_proposals": [
@@ -3600,7 +3585,7 @@
     "src/spike/reports/source-baseline-phase6-20261008/10-DeerMind_Development_Roadmap_v0.3.md.txt": "335148bd99457be0190ab88ecc6bc986a8919dd81d722a4ec649c97be374876a",
     "src/spike/reports/source-baseline-phase6-20261008/11-DeerMind_Architecture_Validation_Report_v0.1.md.txt": "d578e509889ce47725fb5b89b27e9b71ab7982516e6b99aef7ca4b90e5d47187",
     "src/spike/reports/source-baseline-phase6-20261008/12-README.md.txt": "49064472eb5d57101f7fc949b7f2322983c0f56fed3cd6485b7b8d3ec0157efc",
-    "doc/system-design/README.md": "6ed7b3a18d5ed6690b568cd8d451d075cd45cca86e2b45be5cb415dced8e0401",
+    "doc/system-design/README.md": "846e6be07ef0adc4c620df0182df09b6a49256efdd83070b3d569b0688aaadf4",
     "src/spike/reports/source-baseline-phase6-20261008/manifest.json": "66d3504ef9d095fa12cd78f93780f7cfa3c0d44da9b238d6267c33c91c721578",
     "doc/system-design/DeerMind_System_Design_Evidence_Review_v1.0.md": "fe0e2d063f1b4a26d0543bbfa797a8c058e1cd9bc0b542f5dc112f095debc748",
     "src/spike/reports/source-baseline-phase6-20261008/13-DeerMind_AI_Reasoning_Runtime_Design_v1.0.md.txt": "8d5d15f4a4cf6bf49f5d50de2d9a3bcf2996bc15b5ea08220387a3e1fbd060f4",
@@ -3653,13 +3638,7 @@
     "src/spike/reports/source-baseline-doc-version-cleanup-20261008/28-manifest.json.txt": "261b592d28b694db3a731396366357cd8b59954d904d2dc2bd17ae38867f4483",
     "src/spike/reports/source-baseline-doc-version-cleanup-20261008/29-DeerMind_Design_Closure_Review_v0.1.md.txt": "63dac4321389f92cb8328bfb84f64eef188da347aed70bebf53963b0758f8e6e",
     "src/spike/reports/source-baseline-doc-version-cleanup-20261008/30-README.md.txt": "d8f1af0f42dadfc05f7ff26cc53e870394fa149ac6a9ed515d94ebb9167a463d",
-    "src/spike/reports/source-baseline-doc-version-cleanup-20261008/31-README.md.txt": "e5e2ceae9b171d14240826005e1cdc0ba264958c7d353a3d44fa6b33bfeb587a",
-    "src/spike/reports/source-baseline-build-plan-20261008/1-README.md.txt": "846e6be07ef0adc4c620df0182df09b6a49256efdd83070b3d569b0688aaadf4",
-    "src/spike/reports/source-baseline-build-plan-20261008/2-validation-progress-v1.json.txt": "22ea822e4c116cb2e4544d4fad64af300f12433cb7b620c6c9183b8a0f2273fa",
-    "src/spike/reports/source-baseline-build-plan-20261008/manifest.json": "6dbb23da225df03fde994ed5975be2715c0a0f4142b5e04ecac818d878aaa860",
-    "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.1.md": "11e5c6ce203a0c31f4c3ec2bed5c5ca9c1023729d12c0b0f67e752744555a483",
-    "src/spike/reports/source-baseline-build-plan-20261008/3-gitignore.txt": "c76b1296223613a0a66a1ba260d8c51da769c95af4897a02e49fef928670736d",
-    ".gitignore": "4674c70f6951e14d48e63ed9bd6900a14a42f68898eb7ceed415bedd699a41b0"
+    "src/spike/reports/source-baseline-doc-version-cleanup-20261008/31-README.md.txt": "e5e2ceae9b171d14240826005e1cdc0ba264958c7d353a3d44fa6b33bfeb587a"
   },
   "document_layout": {
     "directory": "doc/system-design/spike",
@@ -4105,7 +4084,7 @@
       "doc/top/DeerMind_Development_Roadmap_v0.3.md",
       "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md"
     ],
-    "next_step": "Build B2 minimal real vertical implementation under Build Plan v0.1; no automatic Spike accuracy batch",
+    "next_step": "Build component and bounded validation plan; no automatic LLM accuracy batch",
     "project_gate_G1": "PASS",
     "architecture_validation_build_implemented": false
   },
@@ -4251,10 +4230,9 @@
   "gate_status_scope": "Current formal Phase 6 decision; original OPEN gate snapshots preserved in historical source revisions.",
   "next_work_scope": "Completed Spike W1-W5 delivery record; current_phase and build_next_work describe current work.",
   "build_next_work": {
-    "id": "B2",
+    "id": "B1",
     "status": "PLANNED",
-    "task": "Minimal real vertical implementation with persistent storage, controlled browser acknowledgement, real narrow Evaluation and model adapter",
-    "plan_document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.1.md",
+    "task": "Component design and bounded validation plan under Phase 2; scope and B1-B5 sequence defined in Phase 6 review section 5",
     "automatic_llm_batch": false
   },
   "doc_latest_version_cleanup": {
@@ -4272,20 +4250,5 @@
     },
     "verification": "PASS",
     "retired_process_documents": 1
-  },
-  "build_design_plan": {
-    "work_item": "B1",
-    "status": "DOCUMENT_DELIVERED",
-    "document": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Plan_v0.1.md",
-    "document_sha256": "11e5c6ce203a0c31f4c3ec2bed5c5ca9c1023729d12c0b0f67e752744555a483",
-    "date": "2026-10-08",
-    "implementation_started": false,
-    "real_llm_calls_this_delivery": 0,
-    "mechanism_paths_planned": 24,
-    "real_sessions_planned": 6,
-    "learner_turns_planned": 24,
-    "semantic_probes_planned": 12,
-    "stage_http_attempt_cap": 340,
-    "budget_scope": "Prospective Build plan, not executed results or automatic API authorization"
   }
 }

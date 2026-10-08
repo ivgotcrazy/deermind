@@ -2,7 +2,7 @@
 
 实验结论只见 [Architecture Validation Report v0.1](DeerMind_Architecture_Validation_Report_v0.1.md)。Spike 已完成；A2 DENIED、E1/X5 INCONCLUSIVE 保持。其后的[Phase 6 证据评审](../DeerMind_System_Design_Evidence_Review_v1.0.md)已完成设计处置及 Gate E/F，准入总体 Phase 2 的 Build 设计准备。当前系统设计为总体及六项专项 v1.0。
 
-[原综合Spike设计](DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)保留为验收依据。[历史过程材料](archive/README.md)集中归档，不再作为并行结论或后续运行计划。总体设计、专项及当前证据评审位于上级目录。
+[原综合Spike设计](DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)保留为验收依据。[历史过程材料](archive/README.md)集中归档，不再作为并行结论或后续运行计划。总体设计、专项和Design Closure Review仍在上级目录。
 
 代码、冻结Protocol、JSON/JSONL运行和机器台账见[src/spike](../../../src/spike/README.md)。归档前原文字节及SHA256见[迁移映射](../../../src/spike/reports/spike-completion-document-layout-20261008.json)。原失败、A2否定、旧9/17及各批次配置不被覆盖。
 

@@ -2,8 +2,6 @@
 
 当前实现合同为以下七份 v1.0。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录冻结依据、Gate E/F 与后续 Build 范围；[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.6.md)保持阶段规划。
 
-当前工作进入 Development Phase 2。Build 相关输出统一放在 `build/`；[Build 设计与验证方案 v0.1](build/DeerMind_Architecture_Validation_Build_Plan_v0.1.md)已完成首版，规定组件、真实闭环、验证范围、预算和 G2 条件。下一步为 B2 最小真实闭环实现，尚未取得 Build 运行结果或通过 G2。
-
 - [DeerMind_System_Design_v1.0](DeerMind_System_Design_v1.0.md)
 - [DeerMind_Runtime_Event_Architecture_v1.0](DeerMind_Runtime_Event_Architecture_v1.0.md)
 - [DeerMind_AI_Reasoning_Runtime_Design_v1.0](DeerMind_AI_Reasoning_Runtime_Design_v1.0.md)

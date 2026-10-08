@@ -1,0 +1,21 @@
+{
+  "schema": "build-plan-source-baseline-v1",
+  "date": "2026-10-08",
+  "sources": [
+    {
+      "source_path": "doc/system-design/README.md",
+      "previous_sha256": "846e6be07ef0adc4c620df0182df09b6a49256efdd83070b3d569b0688aaadf4",
+      "preserved_at": "src/spike/reports/source-baseline-build-plan-20261008/1-README.md.txt"
+    },
+    {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "22ea822e4c116cb2e4544d4fad64af300f12433cb7b620c6c9183b8a0f2273fa",
+      "preserved_at": "src/spike/reports/source-baseline-build-plan-20261008/2-validation-progress-v1.json.txt"
+    },
+    {
+      "source_path": ".gitignore",
+      "previous_sha256": "c76b1296223613a0a66a1ba260d8c51da769c95af4897a02e49fef928670736d",
+      "preserved_at": "src/spike/reports/source-baseline-build-plan-20261008/3-gitignore.txt"
+    }
+  ]
+}

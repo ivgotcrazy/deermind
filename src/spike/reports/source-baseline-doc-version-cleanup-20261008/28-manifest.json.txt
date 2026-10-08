@@ -126,36 +126,6 @@
       "source_path": "src/spike/reports/spike-completion-document-layout-20261008.json",
       "previous_sha256": "7337050a6f582c080101f7ccf51bb8a09c36b502c91e424011888468103e4ff3",
       "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/25-spike-completion-document-layout-20261008.json.txt"
-    },
-    {
-      "source_path": "src/spike/reports/validation-progress-v1.json",
-      "previous_sha256": "d6125d85bb4bf51e14bcb45ed7d1923452cfcf773662b32b8a9727faf20b6f3e",
-      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/26-validation-progress-v1.json.txt"
-    },
-    {
-      "source_path": "src/spike/reports/doc-latest-version-cleanup-20261008.json",
-      "previous_sha256": "44e30a497d7646a8cae8564c38dddc2285035cf1ac5bc557a5d452ed69416186",
-      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/27-doc-latest-version-cleanup-20261008.json.txt"
-    },
-    {
-      "source_path": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/manifest.json",
-      "previous_sha256": "261b592d28b694db3a731396366357cd8b59954d904d2dc2bd17ae38867f4483",
-      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/28-manifest.json.txt"
-    },
-    {
-      "source_path": "doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
-      "previous_sha256": "63dac4321389f92cb8328bfb84f64eef188da347aed70bebf53963b0758f8e6e",
-      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/29-DeerMind_Design_Closure_Review_v0.1.md.txt"
-    },
-    {
-      "source_path": "doc/system-design/README.md",
-      "previous_sha256": "d8f1af0f42dadfc05f7ff26cc53e870394fa149ac6a9ed515d94ebb9167a463d",
-      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/30-README.md.txt"
-    },
-    {
-      "source_path": "doc/system-design/spike/README.md",
-      "previous_sha256": "e5e2ceae9b171d14240826005e1cdc0ba264958c7d353a3d44fa6b33bfeb587a",
-      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/31-README.md.txt"
     }
   ]
 }
