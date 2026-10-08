@@ -118,7 +118,7 @@
       "current_path": "doc/system-design/spike/archive/DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md",
       "previous_sha256": "258a66b4c991e7178c7b80346f83b5eaa93864b74b2d2b2642c6cc974f0615a2",
       "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/23-DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md.txt",
-      "current_sha256": "13089b22301048168c6d7327558523a46892ecdb0fb2e134106651ed06cdfd2b"
+      "current_sha256": "92d30e25c77d4159c5af197028ce3321ce2ed11786ef1f06fdbac8a4b69c5609"
     },
     {
       "source_path": "doc/system-design/spike/DeerMind_Single_Task_Engineering_Round_1_Result_v0.1.md",
@@ -136,13 +136,10 @@
     },
     {
       "source_path": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Result_v0.1.md",
-      "current_path": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/7-DeerMind_Single_Task_Prototype_Result_v0.1.md.txt",
+      "current_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Prototype_Result_v0.1.md",
       "previous_sha256": "f0853e3a98d8178c7e823986233084d0dbcacf97a6bd9a6d4936475ebba74170",
       "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/26-DeerMind_Single_Task_Prototype_Result_v0.1.md.txt",
-      "current_sha256": "ebc7345da22fb51b3d69651b81923effada7a94004b0648568919cf51a49d4af",
-      "previous_doc_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Prototype_Result_v0.1.md",
-      "latest_document_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Prototype_Result_v0.2.md",
-      "location_kind": "historical_source_snapshot"
+      "current_sha256": "ebc7345da22fb51b3d69651b81923effada7a94004b0648568919cf51a49d4af"
     },
     {
       "source_path": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Result_v0.2.md",
@@ -156,7 +153,7 @@
       "current_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md",
       "previous_sha256": "ed08699543f3175f91812ad9c23fb649c4a0bcf938d4a4d570b54408d1b0226f",
       "preserved_at": "src/spike/reports/source-baseline-spike-completion-20261008/28-DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md.txt",
-      "current_sha256": "e266a0335741d000ba2535218966fb6ed4a3e20ed545840016736e27a197e5b8"
+      "current_sha256": "bbb39407803ffdf6dda5a337cd6d34175efadca9ab5ae37a75fd092c7f76c6f8"
     },
     {
       "source_path": "doc/system-design/spike/DeerMind_Single_Task_Prototype_Revision_v0.2.md",
@@ -238,11 +235,6 @@
       "date": "2026-10-08",
       "reason": "Redirect historical citations to exact archived old-version bytes; current contracts and phase links corrected.",
       "record": "src/spike/reports/design-document-review-20261008.json"
-    },
-    {
-      "date": "2026-10-08",
-      "reason": "Keep only latest versions under doc; retain exact historical bytes under src/spike and repair citations",
-      "record": "src/spike/reports/doc-latest-version-cleanup-20261008.json"
     }
   ]
 }

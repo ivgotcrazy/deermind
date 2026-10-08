@@ -3,14 +3,14 @@
 > **中文名称**：DeerMind 系统设计路线图<br>
 > **版本**：v0.6<br>
 > **文档性质**：System Design 阶段执行计划 / Design Roadmap<br>
-> **状态**：System Design Phase 6 完成，Gate E/F PASS；Architecture Validation Build 准入<br>
+> **状态**：证据评审阶段工作路线图，Gate E/F OPEN<br>
 > **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`<br>
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
 > **更新时间**：2026-10-08
 >
 > **修订说明**：更新已执行 Spike 的当前状态和修订工作文档集；采用语义校验保证范围与失败交互收束决定，不改变上位责任、原 §17 Completion 或 Gate E/F 标准。
 >
-> **版本说明**：v0.5 原始字节保存在 Spike 证据归档中，当前工作入口为 v0.6。v0.6 记录固定实验之后的 Evidence Review / Design Revision 与阶段准入；当前总体及六项专项已形成 v1.0 基线，任何历史批次仍绑定其原始输入版本。
+> **版本说明**：v0.5 原始字节保存在 Spike 证据归档中，当前工作入口为 v0.6。v0.6 服务于固定实验结束后的 Evidence Review / Design Revision；工作文档集不是 System Design v1.0 冻结基线，任何批次仍绑定其原始输入版本。
 
 ---
 
@@ -905,17 +905,19 @@ System Design 阶段采用以下执行纪律：
 
 ### 8.1 当前阶段与工作依据
 
-2026-10-08 内部 Phase 6 证据评审、设计修订和整套一致性核对完成。Gate E/F 通过，总体及六项专项 v1.0 构成当前 System Design Baseline Set。具体决策和逐项 Gate 依据见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)。
+截至2026-10-08，本轮有界补证、证据复核和统一报告已完成。12项假设在各自声明范围内为10项SUPPORTED、AA-A02 DENIED、AA-E01 INCONCLUSIVE；组合X1–X4为PASS，X5为INCONCLUSIVE。旧9/17与所有失败记录保留，不用新结果改写旧批次。
 
-项目 G1 满足，准入总体 Development Phase 2 Architecture Validation Build；Build 尚未完成实现或验证，G2 未评审。Spike 原结果保持 10 SUPPORTED、A2 DENIED、E1 INCONCLUSIVE，以及 X1–X4 PASS、X5 INCONCLUSIVE。历史 9/17 和失败批次不改写。
+当前仍为总体Development Phase 1 System Design；内部Phase 5 Spike已按原§17.1完成，进入本路线图§4.7的Phase 6 Evidence Review / Design Revision。E1全样例理由质量、X5五次全链均完成的原通过条件仍未满足，二者保留INCONCLUSIVE；这不等于计划尚未执行。Gate E/F OPEN，尚未进入Build。
+
+工作集为总体设计v0.3、AI Reasoning Runtime v0.2、Interaction Decision Runtime v0.2及其余四项专项v0.1。新补证及来源装配修复见[统一Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。历史输入、冻结Protocol与原反证不改写，工作集尚未冻结v1.0。
 
 ### 8.2 Phase 6工作及执行顺序
 
-Phase 6 已完成 A2 保证范围修订、E1/X5 能力分期处置、总体/专项/横切一致性评审及 Gate E/F。当前执行顺序转为[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md) §5 的 Build 工作：组件与验证方案、最小真实纵向闭环、组合与恢复验证、有界质量/成本测量、G2 评审。
+Phase 6依次正式吸收A2否定和已写入工作设计的后果，处置E1/X5未决，审查总体/专项/横切设计一致性，再逐项评Gate E/F。具体交付和关闭条件见统一报告第8节。未决需要明确的继任实验或符合Gate E的能力延后论证，不能仅凭有限成功就改写SUPPORTED，也不能笼统移交“以后优化”。
 
-A2 不再承诺绝对语义隔离；E1/X5 未决不被改成支持。基本真实 Policy、Observation、权限、依赖、串行、实际帮助及 Evaluation sole writer 不延后，广泛语义质量与运行成功率须取得新工程证据。
+当前允许Phase 5向Phase 6交接，不允许进入总体Phase 2。Gate E/F实际满足并冻结System Design v1.0后，才启动Architecture Validation Build。若Phase 6需要补证，先定义修订命题、范围、样本、预算和停止条件；不自动追加模型准确率调优。
 
-原 Spike §11.1、§13.5、§17.1–§17.3 与本路线图 Gate E/F 条文未修改。当前不自动追加模型实验；Build 先冻结范围、判据、预算与停止条件，再运行有界验证。
+原Spike §11.1、§13.5、§17.1–§17.3与本路线图Gate E/F条文保持不变。Spike完成执行及报告、用例通过、假设受支持、Gate关闭和正式Build准入分别记录。§17.1允许否定/未决结论，§17.2明确完成Spike后才进行Evidence Review和Gate审查。
 
 ---
 

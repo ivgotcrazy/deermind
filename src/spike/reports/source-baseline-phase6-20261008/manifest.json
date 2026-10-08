@@ -1,0 +1,228 @@
+{
+  "schema": "phase6-source-baseline-v1",
+  "date": "2026-10-08",
+  "sources": [
+    {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "c18286c291277ba6f3ea30628865df752d9dd7a2871ce51633482c1d07379f02",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/1-validation-progress-v1.json.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_v0.3.md",
+      "previous_sha256": "78a3b59fff7d3c9f1d5cef1a88f8b0d08f8251124af58ab09759fc17103c7333",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/2-DeerMind_System_Design_v0.3.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Runtime_Event_Architecture_v0.1.md",
+      "previous_sha256": "3248bf5bc523f8750b49ae1fbca236d6d27fbe326df5c46bf1ada41cb4cb42a6",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/3-DeerMind_Runtime_Event_Architecture_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+      "previous_sha256": "18842e3de974c4b23bfcb1bacf7bd95cf8434ac2da93a44a48e541d3605231c7",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/4-DeerMind_AI_Reasoning_Runtime_Design_v0.2.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_State_Dependency_Architecture_v0.1.md",
+      "previous_sha256": "ca545c19aa160e94c5f874fc2a63c1c3aaf1b274f0c9474cdf4794c7126a0bf0",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/5-DeerMind_State_Dependency_Architecture_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+      "previous_sha256": "26286fd413d4e8e39f172df0365567e7ae11497e9a8d7eff95974d427e8e3075",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/6-DeerMind_Interaction_Decision_Runtime_Design_v0.2.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md",
+      "previous_sha256": "9a17acd36aa9ea3faa3cd9eeb5eadfdab03e834384822c540e0fee51ab0b2edf",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/7-DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v0.1.md",
+      "previous_sha256": "ebe2a531f0f6bf5383ef2671a4c7f626b0a36e310f43f5dd0cf1f994aab6cbb9",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/8-DeerMind_Evolution_Governance_Runtime_Design_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+      "previous_sha256": "8bf920ae13b20fc500de27fd875ad992c645d87bc6642ef610513454b73ef6de",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/9-DeerMind_System_Design_Roadmap_v0.6.md.txt"
+    },
+    {
+      "source_path": "doc/top/DeerMind_Development_Roadmap_v0.3.md",
+      "previous_sha256": "335148bd99457be0190ab88ecc6bc986a8919dd81d722a4ec649c97be374876a",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/10-DeerMind_Development_Roadmap_v0.3.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md",
+      "previous_sha256": "d578e509889ce47725fb5b89b27e9b71ab7982516e6b99aef7ca4b90e5d47187",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/11-DeerMind_Architecture_Validation_Report_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/spike/README.md",
+      "previous_sha256": "49064472eb5d57101f7fc949b7f2322983c0f56fed3cd6485b7b8d3ec0157efc",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/12-README.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.0.md",
+      "previous_sha256": "8d5d15f4a4cf6bf49f5d50de2d9a3bcf2996bc15b5ea08220387a3e1fbd060f4",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/13-DeerMind_AI_Reasoning_Runtime_Design_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.0.md",
+      "previous_sha256": "e81bc9e9aa9385b92a2cfea45a6d190f31790a9fa5af8d09dc4f4010dfdb7b8e",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/14-DeerMind_Evolution_Governance_Runtime_Design_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md",
+      "previous_sha256": "1b7b1fb38b9b0f4c09849bc11664875fbf072bc05713a4ab085e9ae10401dbec",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/15-DeerMind_Interaction_Decision_Runtime_Design_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Runtime_Event_Architecture_v1.0.md",
+      "previous_sha256": "908cc16fb308aaacc1b02f32cc27b6dc66d2f3cdf0983225caf872b753fea338",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/16-DeerMind_Runtime_Event_Architecture_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md",
+      "previous_sha256": "604e4b0af296ecdd148bd4c1b914412eac659da5257140f5d3f59b177bd45aec",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/17-DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_State_Dependency_Architecture_v1.0.md",
+      "previous_sha256": "eba593ee73ae5e2a5deb475bc004d176ef2e49df079ad2ccf4951935f38210f0",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/18-DeerMind_State_Dependency_Architecture_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_v1.0.md",
+      "previous_sha256": "6d1cb347bd55aa4d7c1e1c81c0b45dc5cae60b46181a3b4af6e4e1bd2373fa25",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/19-DeerMind_System_Design_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+      "previous_sha256": "a0cd3bf2b437a712da3c2d3b9e4f244df8d5240379dca8c8f571891f80584592",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/20-DeerMind_System_Design_Roadmap_v0.6.md.txt"
+    },
+    {
+      "source_path": "doc/top/DeerMind_Development_Roadmap_v0.3.md",
+      "previous_sha256": "0b4e7e1c2ad0c86e7745e92d4c8066e4087d4b691b1745071703c817b72c9d29",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/21-DeerMind_Development_Roadmap_v0.3.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+      "previous_sha256": "3607ee499e629b605f3554b2694dbe084e44f745b7c4c721294ac7d9fb97bec4",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Arithmetic_Expression_Contract_v0.1.md",
+      "previous_sha256": "9d07b137cef21d3d63e67b5fd32595e87d0008f13073154cb8bac50f5de9d397",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Arithmetic_Expression_Contract_v0.1.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md",
+      "previous_sha256": "32e8818ae47833e3020cbe72078bb297a57cb81653737a7f39097623381f8560",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/recovered-DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md.txt",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
+      "previous_sha256": "0057151a8821adfd0962147a826dc72c98f3893f0f82726398c36051163d3680",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+      "previous_sha256": "b0d55cfdb51b86f9f99a2160995f6bb6f2fb5137455eb4e8503982af71fa289b",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+      "previous_sha256": "7b336cdc005daa113ec659f4b761c0b6eca6c7a02c32525c284d372c6650c68b",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Observation_Validation_Profile_v0.1.md",
+      "previous_sha256": "bfb665f96ce4c003ad9b20a81ca02ebcdda12453b04cb0f2a9452987c105c47d",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Observation_Validation_Profile_v0.1.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+      "previous_sha256": "7a0d682a01069bcf9f170ecaab7b376326c0e1740235b36415438a81f881f8e0",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Policy_Review_Disposition_Revision_v0.1.md",
+      "previous_sha256": "fb512f2bfbe776b70a11fc38ebb589a3e30585a3d05a839533abb973211582e1",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Policy_Review_Disposition_Revision_v0.1.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Policy_Semantic_Utility_Contract_v0.1.md",
+      "previous_sha256": "a203a28a9e9d2df7034a7835537758a39236294f36776aca024699b248b5e70e",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Policy_Semantic_Utility_Contract_v0.1.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md",
+      "previous_sha256": "5ca6d204f7f81428d4caba3331d58c7f52bd793db0f7ec9195ecd0e4dfdadbdb",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Spike_Closeout_Decision_Draft_v0.1.md",
+      "previous_sha256": "9f509e43daa7182f29c853e4421f47b6dc29629b661fb2f8c1f8fbc15a7dffc6",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Spike_Closeout_Decision_Draft_v0.1.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+      "previous_sha256": "8b312c35867887e7f79661a6e5b5dd3574d0db2b458d95448f35ff13f8da10ac",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_v0.3.md",
+      "previous_sha256": "991c7053e7bf3f3642cd2a78eb5ac4d8c14a79735308c5f533471bc28304dad2",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_System_Design_v0.3.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Validation_and_Interaction_Closure_Revision_v0.1.md",
+      "previous_sha256": "3f7934330e804160e7254c770a769d5a628cc8d43c91fef4b2dcdbdfc091eebb",
+      "preserved_at": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Validation_and_Interaction_Closure_Revision_v0.1.md",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "src/spike/foundation/boundary.py",
+      "previous_sha256": "3df480165b9f68293dcfc4533a8ebbb0bb980e42dad264217dfed33fe839cf97",
+      "preserved_at": "src/spike/reports/source-baseline-field-references-20261007/foundation/boundary.py",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "src/spike/foundation/policy_cases.py",
+      "previous_sha256": "44751d15c6526a49e60434a6fcc472f9c9c95975d4f6033fdd0b19a2ee0288af",
+      "preserved_at": "src/spike/reports/source-baseline-field-references-20261007/foundation/policy_cases.py",
+      "recovery": "Registered existing exact bytes during Phase 6 manifest audit; no source reconstruction"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_Evidence_Review_v1.0.md",
+      "previous_sha256": "63dacfeaac039c979dbec15f417c04f485ccba7220e8ec46d5d886eb0cd7e046",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/39-DeerMind_System_Design_Evidence_Review_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_Evidence_Review_v1.0.md",
+      "previous_sha256": "e1dc0d222882e79db5b6b0eb2c07c4602de0800c14dfe8ccd60f0163fe352e22",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/40-DeerMind_System_Design_Evidence_Review_v1.0.md.txt"
+    },
+    {
+      "source_path": "src/spike/reports/phase6-review-integrity-20261008.json",
+      "previous_sha256": "9c07f0649bfd9afb9d0678138f512789162818b45f768c4d748d9f9b41e3a817",
+      "preserved_at": "src/spike/reports/source-baseline-phase6-20261008/41-phase6-review-integrity-20261008.json.txt"
+    }
+  ]
+}

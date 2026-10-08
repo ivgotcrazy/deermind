@@ -40,7 +40,7 @@ E2/F2/X1/X2 的 46/55 有限结果足以建议保留已观察到的机制方向�
 
 ## 4. 一致性检查与退出结论
 
-核对了[总体设计 v0.3](source-baseline-doc-version-cleanup-20261008/9-DeerMind_System_Design_v0.3.md.txt) §3.2、§7.7、附录 A/B，[AI 推理运行时 v0.2](source-baseline-doc-version-cleanup-20261008/2-DeerMind_AI_Reasoning_Runtime_Design_v0.2.md.txt) §6.6、§8.5，以及[交互决策运行时 v0.2](source-baseline-doc-version-cleanup-20261008/4-DeerMind_Interaction_Decision_Runtime_Design_v0.2.md.txt) §7.13、§8.10 和附录。三份修订的必需校验、失败旧候选禁用、实际 Control 条件及真实披露责任一致；历史原假设明确作为旧输入保留。未发现这些修订之间的合同冲突，这不等于完整基线或实现验收通过。
+核对了[总体设计 v0.3](../../../doc/system-design/DeerMind_System_Design_v0.3.md) §3.2、§7.7、附录 A/B，[AI 推理运行时 v0.2](../../../doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md) §6.6、§8.5，以及[交互决策运行时 v0.2](../../../doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md) §7.13、§8.10 和附录。三份修订的必需校验、失败旧候选禁用、实际 Control 条件及真实披露责任一致；历史原假设明确作为旧输入保留。未发现这些修订之间的合同冲突，这不等于完整基线或实现验收通过。
 
 发现一项尚未整合的状态问题：路线图 v0.5 §8 仍写 Phase 4 IN PROGRESS / Spike NOT STARTED，新总体设计已记录固定实验执行结束。该段是旧路线图快照，不能再作为当前进度说明；正式基线采用时应更新为证据评审状态并保留历史版本。其他专项仍引用旧总体版本，因此三份候选不能单独宣告整个 Baseline Set 一致冻结。
 

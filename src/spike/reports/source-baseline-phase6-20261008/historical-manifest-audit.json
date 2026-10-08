@@ -1,0 +1,172 @@
+{
+  "found": [],
+  "issues": [
+    {
+      "pack": "policy-e1-v2",
+      "source": "src/spike/prepare_policy_v2_review.py",
+      "expected": "707b8149d0f062009e913b9818085858bf497b993737a3b97e4f6cffe1616031"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+      "expected": "3607ee499e629b605f3554b2694dbe084e44f745b7c4c721294ac7d9fb97bec4"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Arithmetic_Expression_Contract_v0.1.md",
+      "expected": "9d07b137cef21d3d63e67b5fd32595e87d0008f13073154cb8bac50f5de9d397"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md",
+      "expected": "32e8818ae47833e3020cbe72078bb297a57cb81653737a7f39097623381f8560"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
+      "expected": "0057151a8821adfd0962147a826dc72c98f3893f0f82726398c36051163d3680"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+      "expected": "b0d55cfdb51b86f9f99a2160995f6bb6f2fb5137455eb4e8503982af71fa289b"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+      "expected": "7b336cdc005daa113ec659f4b761c0b6eca6c7a02c32525c284d372c6650c68b"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Observation_Validation_Profile_v0.1.md",
+      "expected": "bfb665f96ce4c003ad9b20a81ca02ebcdda12453b04cb0f2a9452987c105c47d"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+      "expected": "7a0d682a01069bcf9f170ecaab7b376326c0e1740235b36415438a81f881f8e0"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Policy_Review_Disposition_Revision_v0.1.md",
+      "expected": "fb512f2bfbe776b70a11fc38ebb589a3e30585a3d05a839533abb973211582e1"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Policy_Semantic_Utility_Contract_v0.1.md",
+      "expected": "a203a28a9e9d2df7034a7835537758a39236294f36776aca024699b248b5e70e"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md",
+      "expected": "5ca6d204f7f81428d4caba3331d58c7f52bd793db0f7ec9195ecd0e4dfdadbdb"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Spike_Closeout_Decision_Draft_v0.1.md",
+      "expected": "9f509e43daa7182f29c853e4421f47b6dc29629b661fb2f8c1f8fbc15a7dffc6"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+      "expected": "8b312c35867887e7f79661a6e5b5dd3574d0db2b458d95448f35ff13f8da10ac"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_System_Design_v0.3.md",
+      "expected": "991c7053e7bf3f3642cd2a78eb5ac4d8c14a79735308c5f533471bc28304dad2"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "doc/system-design/DeerMind_Validation_and_Interaction_Closure_Revision_v0.1.md",
+      "expected": "3f7934330e804160e7254c770a769d5a628cc8d43c91fef4b2dcdbdfc091eebb"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "src/spike/foundation/boundary.py",
+      "expected": "3df480165b9f68293dcfc4533a8ebbb0bb980e42dad264217dfed33fe839cf97"
+    },
+    {
+      "pack": "restricted-working-v1",
+      "source": "src/spike/foundation/policy_cases.py",
+      "expected": "44751d15c6526a49e60434a6fcc472f9c9c95975d4f6033fdd0b19a2ee0288af"
+    }
+  ],
+  "resolved_locations": {
+    "32e8818ae47833e3020cbe72078bb297a57cb81653737a7f39097623381f8560": {
+      "file": "doc/system-design/spike/DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md",
+      "method": "exact"
+    },
+    "3607ee499e629b605f3554b2694dbe084e44f745b7c4c721294ac7d9fb97bec4": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+      "method": "exact"
+    },
+    "9d07b137cef21d3d63e67b5fd32595e87d0008f13073154cb8bac50f5de9d397": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Arithmetic_Expression_Contract_v0.1.md",
+      "method": "exact"
+    },
+    "0057151a8821adfd0962147a826dc72c98f3893f0f82726398c36051163d3680": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
+      "method": "exact"
+    },
+    "b0d55cfdb51b86f9f99a2160995f6bb6f2fb5137455eb4e8503982af71fa289b": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Downstream_Admission_Policy_Responsibility_Revision_v0.1.md",
+      "method": "exact"
+    },
+    "7b336cdc005daa113ec659f4b761c0b6eca6c7a02c32525c284d372c6650c68b": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+      "method": "exact"
+    },
+    "bfb665f96ce4c003ad9b20a81ca02ebcdda12453b04cb0f2a9452987c105c47d": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Observation_Validation_Profile_v0.1.md",
+      "method": "exact"
+    },
+    "7a0d682a01069bcf9f170ecaab7b376326c0e1740235b36415438a81f881f8e0": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Observation_Validation_Turn_Closure_Revision_v0.1.md",
+      "method": "exact"
+    },
+    "fb512f2bfbe776b70a11fc38ebb589a3e30585a3d05a839533abb973211582e1": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Policy_Review_Disposition_Revision_v0.1.md",
+      "method": "exact"
+    },
+    "a203a28a9e9d2df7034a7835537758a39236294f36776aca024699b248b5e70e": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Policy_Semantic_Utility_Contract_v0.1.md",
+      "method": "exact"
+    },
+    "5ca6d204f7f81428d4caba3331d58c7f52bd793db0f7ec9195ecd0e4dfdadbdb": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md",
+      "method": "exact"
+    },
+    "9f509e43daa7182f29c853e4421f47b6dc29629b661fb2f8c1f8fbc15a7dffc6": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Spike_Closeout_Decision_Draft_v0.1.md",
+      "method": "exact"
+    },
+    "8b312c35867887e7f79661a6e5b5dd3574d0db2b458d95448f35ff13f8da10ac": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+      "method": "exact"
+    },
+    "991c7053e7bf3f3642cd2a78eb5ac4d8c14a79735308c5f533471bc28304dad2": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_System_Design_v0.3.md",
+      "method": "exact"
+    },
+    "3f7934330e804160e7254c770a769d5a628cc8d43c91fef4b2dcdbdfc091eebb": {
+      "file": "src/spike/reports/source-baseline-spike-document-layout-20261007/doc/system-design/DeerMind_Validation_and_Interaction_Closure_Revision_v0.1.md",
+      "method": "exact"
+    },
+    "3df480165b9f68293dcfc4533a8ebbb0bb980e42dad264217dfed33fe839cf97": {
+      "file": "src/spike/reports/source-baseline-field-references-20261007/foundation/boundary.py",
+      "method": "exact"
+    },
+    "44751d15c6526a49e60434a6fcc472f9c9c95975d4f6033fdd0b19a2ee0288af": {
+      "file": "src/spike/reports/source-baseline-field-references-20261007/foundation/policy_cases.py",
+      "method": "exact"
+    }
+  },
+  "remaining": [
+    {
+      "pack": "policy-e1-v2",
+      "source": "src/spike/prepare_policy_v2_review.py",
+      "expected": "707b8149d0f062009e913b9818085858bf497b993737a3b97e4f6cffe1616031"
+    }
+  ]
+}

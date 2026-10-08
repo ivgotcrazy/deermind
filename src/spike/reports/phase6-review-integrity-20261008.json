@@ -1,0 +1,223 @@
+{
+  "schema": "phase6-review-integrity-v1",
+  "date": "2026-10-08",
+  "status": "PASS_WITH_DISCLOSED_HISTORICAL_SOURCE_EXCEPTION",
+  "scope": "Current Phase 6 baseline; unchanged gate criteria and experimental classifications; all 16 preparation-package manifests with one pre-existing source exception, plus the four current completion-run manifest sources and preparation bindings",
+  "history": {
+    "ledger_entries_checked": 1404,
+    "frozen_source_counts": {
+      "spike-exit-v1": 223,
+      "policy-s3-diagnostic-v1": 9,
+      "single-task-prototype-v1": 49,
+      "input-capacity-v1": 54
+    }
+  },
+  "frozen_manifests": [
+    {
+      "package": "input-capacity-v1",
+      "sources": 54,
+      "artifacts": 0,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "observer-arithmetic-v1",
+      "sources": 62,
+      "artifacts": 2,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "policy-disposition-real-v1",
+      "sources": 8,
+      "artifacts": 6,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "policy-e1-v2",
+      "sources": 4,
+      "artifacts": 3,
+      "unresolved_historical_sources": [
+        "src/spike/prepare_policy_v2_review.py"
+      ],
+      "status": "HISTORICAL_SOURCE_EXCEPTION"
+    },
+    {
+      "package": "policy-e1-v2-final",
+      "sources": 4,
+      "artifacts": 3,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "policy-e1-v2-reviewed",
+      "sources": 6,
+      "artifacts": 5,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "policy-s3-diagnostic-v1",
+      "sources": 9,
+      "artifacts": 2,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "restricted-working-v1",
+      "sources": 201,
+      "artifacts": 14,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "single-task-engineering-v1",
+      "sources": 59,
+      "artifacts": 10,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "single-task-prototype-v1",
+      "sources": 49,
+      "artifacts": 16,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "single-task-prototype-v2",
+      "sources": 67,
+      "artifacts": 18,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "spike-completion-cognition-v1",
+      "sources": 63,
+      "artifacts": 38,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "spike-completion-direct-v1",
+      "sources": 56,
+      "artifacts": 57,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "spike-completion-mechanisms-v1",
+      "sources": 64,
+      "artifacts": 12,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "spike-completion-x5-context-v2",
+      "sources": 56,
+      "artifacts": 12,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    },
+    {
+      "package": "spike-exit-v1",
+      "sources": 223,
+      "artifacts": 126,
+      "unresolved_historical_sources": [],
+      "status": "PASS"
+    }
+  ],
+  "historical_source_exceptions": [
+    {
+      "pack": "policy-e1-v2",
+      "source": "src/spike/prepare_policy_v2_review.py",
+      "expected": "707b8149d0f062009e913b9818085858bf497b993737a3b97e4f6cffe1616031"
+    }
+  ],
+  "old_case_results_unchanged": true,
+  "old_cases_counts_milestones_unchanged": true,
+  "gate_criteria_unchanged": true,
+  "invariant_registry_checks": [
+    {
+      "source": "DeerMind_System_Design_v0.3.md",
+      "baseline": "DeerMind_System_Design_v1.0.md",
+      "unchanged_rows": 24
+    },
+    {
+      "source": "DeerMind_Runtime_Event_Architecture_v0.1.md",
+      "baseline": "DeerMind_Runtime_Event_Architecture_v1.0.md",
+      "unchanged_rows": 20
+    },
+    {
+      "source": "DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+      "baseline": "DeerMind_AI_Reasoning_Runtime_Design_v1.0.md",
+      "unchanged_rows": 34
+    },
+    {
+      "source": "DeerMind_State_Dependency_Architecture_v0.1.md",
+      "baseline": "DeerMind_State_Dependency_Architecture_v1.0.md",
+      "unchanged_rows": 30
+    },
+    {
+      "source": "DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+      "baseline": "DeerMind_Interaction_Decision_Runtime_Design_v1.0.md",
+      "unchanged_rows": 36
+    },
+    {
+      "source": "DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md",
+      "baseline": "DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md",
+      "unchanged_rows": 37
+    },
+    {
+      "source": "DeerMind_Evolution_Governance_Runtime_Design_v0.1.md",
+      "baseline": "DeerMind_Evolution_Governance_Runtime_Design_v1.0.md",
+      "unchanged_rows": 40
+    }
+  ],
+  "documents_checked": 66,
+  "local_links_checked": 306,
+  "missing_links": [],
+  "git_diff_check": "PASS",
+  "new_model_calls": 0,
+  "code_tests": "No runtime code changed; prior 79 focused mechanical checks retained as evidence, not rerun",
+  "baseline_sha256": {
+    "doc/system-design/DeerMind_System_Design_v1.0.md": "3158951fe1b82d05da68d4cbfbe5f814ca2667d5e4529eda77dbffa25b96e877",
+    "doc/system-design/DeerMind_Runtime_Event_Architecture_v1.0.md": "482f7f66c788a8c7ba0facf24c2819ec057370019194bed8123774311510e1a4",
+    "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.0.md": "35598d7d7856f0cdd52a16bba850c751746f11dfb0456ed26482f615e5b45439",
+    "doc/system-design/DeerMind_State_Dependency_Architecture_v1.0.md": "0baf41a76aae85cf44eb295a6c8250bb1604b190897e38427d8df199174c86d8",
+    "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md": "74e02c3aef0e058d767241a79a323eb75411b726e1a27ed9e0c74d5c6ca2962a",
+    "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md": "62491b854238e40858e10d008da57959a4669c2662c44fb7b41b0e8262238744",
+    "doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.0.md": "436379c4c3c586fb35dc948243d0911a90fa888c27c5bad17275001c69edba7c",
+    "doc/system-design/DeerMind_System_Design_Evidence_Review_v1.0.md": "fe0e2d063f1b4a26d0543bbfa797a8c058e1cd9bc0b542f5dc112f095debc748"
+  },
+  "review_source_manifest": "src/spike/reports/source-baseline-phase6-20261008/manifest.json",
+  "baseline_state": "FROZEN_V1_0_GATES_E_F_G1_PASS_BUILD_DESIGN_ADMITTED",
+  "build_implemented": false,
+  "current_run_manifest_checks": [
+    {
+      "batch": "spike-completion-mechanisms-v1",
+      "source_refs": 64,
+      "preparation_manifest_sha256": "c53ebd75a1725ab249e56723efc35f81cc2de7d1aeb8368cccae18a5029e65ab",
+      "status": "PASS"
+    },
+    {
+      "batch": "spike-completion-cognition-v1",
+      "source_refs": 63,
+      "preparation_manifest_sha256": "daa224333328cda393a5cc659215a264de20c0682f2dc3c1b01608b741a4c71d",
+      "status": "PASS"
+    },
+    {
+      "batch": "spike-completion-direct-v1",
+      "source_refs": 56,
+      "preparation_manifest_sha256": "4a1d89d69134a44a4334edc72e404615be49d3c0e18eb7ff68f5c383aac22481",
+      "status": "PASS"
+    },
+    {
+      "batch": "spike-completion-x5-context-v2",
+      "source_refs": 56,
+      "preparation_manifest_sha256": "bedda3b5dcd691e5680124722e78b7feda2e7f31aac039c234c8c49b405b5490",
+      "status": "PASS"
+    }
+  ]
+}

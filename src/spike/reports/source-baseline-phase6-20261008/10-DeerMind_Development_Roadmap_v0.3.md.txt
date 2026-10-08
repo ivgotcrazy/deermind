@@ -8,7 +8,7 @@
 > **专项路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
 > **更新时间**：2026-10-08（当前状态同步；阶段顺序不变）<br>
-> **版本说明**：v0.3 保留 v0.2 的全生命周期阶段、G0–G9 Evidence Gate、Reopen 机制以及“通用学习架构 + 小学首个 Product Context”的项目定位，不改变 Architecture Validation Build、MVP Definition、Product & Domain Foundation、MVP Engineering、Internal Alpha、Controlled Pilot、Production Candidate 与 Productionization 的总体顺序。本版本初次修订对齐当时 System Design Roadmap v0.5 的阶段执行语义；现行阶段路线图为 v0.6，执行顺序保持：System Design 内部采用 **MVCL → P0 / 横切机制语义闭合 → Integrated Pre-Validation Candidate → §3.2–§3.7 Focused Design Closure → §3.8 Cross-Cutting Coverage → Consolidated Architecture Spike → Evidence Review / Design Revision → Gate E / Gate F → System Design Baseline v1.0**；六个 Focused Design 是必须完成的设计责任，是否独立成文由复杂度决定。同时再次明确 Core System Design 只冻结 Product Context / Context Constitution 的通用接入与 enforcement contract，首个小学 Product Context 的 guardian authority、consent、儿童数据、家长可见性、学校现实与具体 retention 规则仍由后续 MVP Definition / Product & Domain Foundation 阶段实例化。
+> **版本说明**：v0.3 保留 v0.2 的全生命周期阶段、G0–G9 Evidence Gate、Reopen 机制以及“通用学习架构 + 小学首个 Product Context”的项目定位，不改变 Architecture Validation Build、MVP Definition、Product & Domain Foundation、MVP Engineering、Internal Alpha、Controlled Pilot、Production Candidate 与 Productionization 的总体顺序。本次修订只对齐 `DeerMind_System_Design_Roadmap_v0.5.md` 的阶段执行语义：System Design 内部采用 **MVCL → P0 / 横切机制语义闭合 → Integrated Pre-Validation Candidate → §3.2–§3.7 Focused Design Closure → §3.8 Cross-Cutting Coverage → Consolidated Architecture Spike → Evidence Review / Design Revision → Gate E / Gate F → System Design Baseline v1.0**；六个 Focused Design 是必须完成的设计责任，是否独立成文由复杂度决定。同时再次明确 Core System Design 只冻结 Product Context / Context Constitution 的通用接入与 enforcement contract，首个小学 Product Context 的 guardian authority、consent、儿童数据、家长可见性、学校现实与具体 retention 规则仍由后续 MVP Definition / Product & Domain Foundation 阶段实例化。
 
 ---
 
@@ -200,7 +200,7 @@ System Design Baseline v1.0
 
 **Reopen Condition**：Architecture Validation Build 证明 Consolidated Spike 中成立的局部假设在真实组合运行中失败，或后续产品 / 真实用户场景暴露 System Design 无法表达的核心 runtime requirement。若问题来自更上层 semantic ownership / invariant，则继续回到 Space Design / Concept Architecture，而不是在实现中长期打补丁。
 
-当前状态：**Phase 1 System Design 已完成；Gate E/F 与项目 G1 满足，准入 Phase 2 Architecture Validation Build。** 原 Spike 的 A2 否定、E1/X5 未决保留，正式处置及当前范围见 §8.2。
+当前状态：**正在执行Phase 1 — System Design；内部Phase 5 Spike已完成，进入System Design Roadmap v0.6的Phase 6证据评审与设计修订。** 2026-10-08统一报告已交付；E1/X5保留原未决，Gate E/F保持OPEN。下一步见§8.2。
 
 ### 3.3 Phase 2 — Architecture Validation Build
 
@@ -503,11 +503,13 @@ Production Readiness Failure
 
 ### 8.2 当前项目位置
 
-Phase 0 Architecture Baseline 保持原冻结版本。2026-10-08 System Design 内部 Phase 6 完成证据处置与一致性评审，Gate E/F 通过，项目 G1 满足。当前进入 **Development Phase 2 — Architecture Validation Build 的设计准备**，尚无该 Build 的实现完成或 G2 通过结论。
+Phase 0 Architecture Baseline保持原冻结版本。项目当前仍处于**Development Phase 1 — System Design**；内部Phase 5 Spike的实现、执行、分析及统一报告完成，按System Design Roadmap v0.6进入Phase 6 Evidence Review / Design Revision，不是Architecture Validation Build。
 
-现行系统设计为总体及六项专项 v1.0。A2 原否定、E1/X5 原未决和旧 9/17 保留；本次准入依据撤回错误保证、明确能力分期和完整合同，详见[Phase 6 证据评审](../system-design/DeerMind_System_Design_Evidence_Review_v1.0.md)。该文件同时给出下一阶段工作和停止条件；[统一 Spike Validation Report](../system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md)继续保存原实验结果。
+现行工作集为System Design v0.3、AI Reasoning Runtime v0.2、Interaction Decision Runtime v0.2及其余四项专项v0.1。2026-10-08补证、失败分析与复杂度审查见[统一Spike Validation Report](../system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md)。旧9/17、A2否定及所有未决历史保留。
 
-下一步先形成 Build 的组件与验证方案，再实现并验证真实窄范围闭环。不能把 Spike 的脚本 Evaluation、内存状态或 mock 展示当作 Build 已完成。两级路线图的阶段顺序和 Gate 条文保持不变。
+Spike按原§17.1完成，E1/X5原通过条件和未决结果均未修改；执行完成不要求所有假设都受支持。Phase 6仍须正式吸收A2否定、处置E1/X5未决并审查设计一致性；Gate E/F OPEN。Evidence Review、受影响设计修订、Gate E、Gate F、System Design v1.0、G1与总体Phase 2依次处理，报告交付不自动批准Build。
+
+两级路线图的阶段顺序和Gate条件保持不变；本次只同步当前位置和已有证据。只有System Design Roadmap Gate F满足后，Development Roadmap才允许从Phase 1进入Phase 2。
 
 ### 8.3 当前明确不提前冻结的事项
 

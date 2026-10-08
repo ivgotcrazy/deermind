@@ -13,13 +13,13 @@
 | 工作责任 | 采用的文档 |
 |---|---|
 | 当前路线图 | [System Design Roadmap v0.6](../../DeerMind_System_Design_Roadmap_v0.6.md) |
-| 总体合同 | [System Design v0.3](../../DeerMind_System_Design_v0.3.md) |
-| 受控推理与校验 | [AI Reasoning Runtime v0.2](../../DeerMind_AI_Reasoning_Runtime_Design_v0.2.md) |
-| 决策、串行与行动 | [Interaction Decision Runtime v0.2](../../DeerMind_Interaction_Decision_Runtime_Design_v0.2.md) |
-| 事实与发生 | [Runtime Event Architecture v0.1](../../DeerMind_Runtime_Event_Architecture_v0.1.md) |
-| 依赖与当前性 | [State Dependency Architecture v0.1](../../DeerMind_State_Dependency_Architecture_v0.1.md) |
-| 版本与回放 | [Semantic Version Replay Migration v0.1](../../DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md) |
-| 演化与治理 | [Evolution Governance Runtime v0.1](../../DeerMind_Evolution_Governance_Runtime_Design_v0.1.md) |
+| 总体合同 | [System Design v0.3](../../../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/9-DeerMind_System_Design_v0.3.md.txt) |
+| 受控推理与校验 | [AI Reasoning Runtime v0.2](../../../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/2-DeerMind_AI_Reasoning_Runtime_Design_v0.2.md.txt) |
+| 决策、串行与行动 | [Interaction Decision Runtime v0.2](../../../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/4-DeerMind_Interaction_Decision_Runtime_Design_v0.2.md.txt) |
+| 事实与发生 | [Runtime Event Architecture v0.1](../../../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/5-DeerMind_Runtime_Event_Architecture_v0.1.md.txt) |
+| 依赖与当前性 | [State Dependency Architecture v0.1](../../../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/8-DeerMind_State_Dependency_Architecture_v0.1.md.txt) |
+| 版本与回放 | [Semantic Version Replay Migration v0.1](../../../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/6-DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md.txt) |
+| 演化与治理 | [Evolution Governance Runtime v0.1](../../../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/3-DeerMind_Evolution_Governance_Runtime_Design_v0.1.md.txt) |
 
 四份未修订专项的版本与原文保留；其中旧版本引用表达当时的来源关系，不等于三份新候选已成为它们的历史输入。后续实现须列出本工作集及本决定，受影响跨专项接口仍须逐项核对。发现冲突时明确修订相应专项，不用“最新版本优先”隐式改变语义。工作集的采用不宣布整个 Baseline Set 已冻结。
 

@@ -1,0 +1,131 @@
+{
+  "schema": "doc-latest-version-source-baseline-v1",
+  "date": "2026-10-08",
+  "sources": [
+    {
+      "source_path": "src/spike/reports/validation-progress-v1.json",
+      "previous_sha256": "64e37b75b1760fc9844b9e021ee88dc1f22b527265163f4149180cbe637ff5a5",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/1-validation-progress-v1.json.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v0.2.md",
+      "previous_sha256": "d94c3e970166676e83f6df955825079412e844fd9add64443e8802e4515c86e8",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/2-DeerMind_AI_Reasoning_Runtime_Design_v0.2.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v0.1.md",
+      "previous_sha256": "d41ce1d5e81457c7e0ed82e94d7a5e5c87e237e6d015889edb9ae7c07be3ee8e",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/3-DeerMind_Evolution_Governance_Runtime_Design_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v0.2.md",
+      "previous_sha256": "46c445ea4bff1e6dc9d03ab04ee660860f36876b60ace8158e41e42e651597ad",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/4-DeerMind_Interaction_Decision_Runtime_Design_v0.2.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Runtime_Event_Architecture_v0.1.md",
+      "previous_sha256": "4d7e1220a334e72656b67d4cf3488843d3e9dd5b534f4e2148d9058272d3fae6",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/5-DeerMind_Runtime_Event_Architecture_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md",
+      "previous_sha256": "51654ebf38f1d29d0db9a5c17e0d171c254afe2f31410f20478769a63f7f3c7a",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/6-DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Prototype_Result_v0.1.md",
+      "previous_sha256": "ebc7345da22fb51b3d69651b81923effada7a94004b0648568919cf51a49d4af",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/7-DeerMind_Single_Task_Prototype_Result_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_State_Dependency_Architecture_v0.1.md",
+      "previous_sha256": "0a19a598b193e8461a5e4cce5a9b7c191ee4043cc49c167247ee369d1661fb00",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/8-DeerMind_State_Dependency_Architecture_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_v0.3.md",
+      "previous_sha256": "e71e2c9eff5865e05329bf847a820375131680a98d7317aa90203eb520605af3",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/9-DeerMind_System_Design_v0.3.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.0.md",
+      "previous_sha256": "35598d7d7856f0cdd52a16bba850c751746f11dfb0456ed26482f615e5b45439",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/10-DeerMind_AI_Reasoning_Runtime_Design_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Design_Closure_Review_v0.1.md",
+      "previous_sha256": "ebb011364da24ca7bbcc7afd904e40508459f5edae185c0a2a9955c5e79da7f6",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/11-DeerMind_Design_Closure_Review_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.0.md",
+      "previous_sha256": "436379c4c3c586fb35dc948243d0911a90fa888c27c5bad17275001c69edba7c",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/12-DeerMind_Evolution_Governance_Runtime_Design_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md",
+      "previous_sha256": "74e02c3aef0e058d767241a79a323eb75411b726e1a27ed9e0c74d5c6ca2962a",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/13-DeerMind_Interaction_Decision_Runtime_Design_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Runtime_Event_Architecture_v1.0.md",
+      "previous_sha256": "482f7f66c788a8c7ba0facf24c2819ec057370019194bed8123774311510e1a4",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/14-DeerMind_Runtime_Event_Architecture_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md",
+      "previous_sha256": "62491b854238e40858e10d008da57959a4669c2662c44fb7b41b0e8262238744",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/15-DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_State_Dependency_Architecture_v1.0.md",
+      "previous_sha256": "0baf41a76aae85cf44eb295a6c8250bb1604b190897e38427d8df199174c86d8",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/16-DeerMind_State_Dependency_Architecture_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/DeerMind_System_Design_v1.0.md",
+      "previous_sha256": "3158951fe1b82d05da68d4cbfbe5f814ca2667d5e4529eda77dbffa25b96e877",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/17-DeerMind_System_Design_v1.0.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/README.md",
+      "previous_sha256": "1f9ff359a28b96d9cb15c57d8d6732f8e2a7ff947ce21b3fce56dd5e87a80623",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/18-README.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/spike/README.md",
+      "previous_sha256": "a8a5f008f4f6742827751609748ad9661804993dc70d5965e555f272ee928330",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/19-README.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/spike/archive/DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md",
+      "previous_sha256": "92d30e25c77d4159c5af197028ce3321ce2ed11786ef1f06fdbac8a4b69c5609",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/20-DeerMind_Semantic_Validation_and_Spike_Exit_Decision_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/spike/archive/DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md",
+      "previous_sha256": "bbb39407803ffdf6dda5a337cd6d34175efadca9ab5ae37a75fd092c7f76c6f8",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/21-DeerMind_Single_Task_Prototype_Revision_and_Acceptance_v0.1.md.txt"
+    },
+    {
+      "source_path": "doc/system-design/spike/archive/README.md",
+      "previous_sha256": "e0e5219f153510d77365eb54ef2d52ec0e766e0251e9e3c5a9708a1f7aca175e",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/22-README.md.txt"
+    },
+    {
+      "source_path": "src/spike/reports/design-candidate-review-20261007.md",
+      "previous_sha256": "cdf6633c8b2cf9deb53da3c629db3e74e8ee2f599c560d6e625201f6e8ae78d5",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/23-design-candidate-review-20261007.md.txt"
+    },
+    {
+      "source_path": "src/spike/reports/spike-scope-mapping-20261006.md",
+      "previous_sha256": "4ad7e97e2ae8a48093523e3b1a06d733fc847fe53a6fd23b05f0d3323d51272f",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/24-spike-scope-mapping-20261006.md.txt"
+    },
+    {
+      "source_path": "src/spike/reports/spike-completion-document-layout-20261008.json",
+      "previous_sha256": "7337050a6f582c080101f7ccf51bb8a09c36b502c91e424011888468103e4ff3",
+      "preserved_at": "src/spike/reports/source-baseline-doc-version-cleanup-20261008/25-spike-completion-document-layout-20261008.json.txt"
+    }
+  ]
+}

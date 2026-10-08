@@ -1,0 +1,115 @@
+# DeerMind System Design Evidence Review v1.0
+
+> **中文名称**：DeerMind 系统设计证据评审<br>
+> **日期**：2026-10-08<br>
+> **性质**：System Design Phase 6 决策记录、设计一致性评审与阶段准入依据<br>
+> **状态**：评审完成；Gate E、Gate F 与项目 G1 通过，准入 Architecture Validation Build 的设计与实现。
+
+本次评审认为，现有证据足以支持建立一个受控、窄范围的真实系统继续验证架构。它不支持承诺语义判断可靠率、教学效果或自主教学的产品可用性。A2 仍为 DENIED，E1、X5 仍为 INCONCLUSIVE；这些实验结果没有因阶段推进而改变。阶段准入来自明确撤回被否定的保证、限定后续能力范围、保留全部核心约束和核对整套设计合同，而不是把失败改成通过。
+
+评审输入为[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)、其中关联的冻结方案与原始执行，以及总体设计和六项专项。评审采用 [System Design Roadmap v0.6 §6.4](DeerMind_System_Design_Roadmap_v0.6.md) 的原 Gate 条件。本文复用全部已取得证据，未产生新的模型实验；对机制可行性的判断属于事后工程评审，不能称为一场新的预注册实验或独立质量评估。
+
+## 1. 三项问题的正式处置
+
+### 1.1 ADR 001 语义校验的保证范围
+
+**问题。** A2 已证明，模型可能识别出候选文本包含教学建议，却仍给职责边界 PASS，随后由正确执行绑定检查的程序提交 Observation。增加一条“必须校验”的要求不能消除这种错误。原先依靠语义审查隔离全部越界内容的强保证被否定。
+
+**方案与权衡。** 继续叠加审查模型仍不能取得绝对保证，还会增加关联误判、误拒和调用成本；关键词分类不能承担开放含义判断；删除语义审查则会放弃已有的防线。因此采用上位 AI-Native Principles 已允许的可错认识模型：明确语义规则与 LLM 审查负责内容判断，确定性机制负责必需校验确实执行、精确绑定、权限、版本、依赖和提交。二者保留不同的保证范围。
+
+**决定。** 原假设 AA-A02 保持 DENIED。修订后的设计承诺为：没有有效的 required-check 记录就不能取得正式资格；记录必须属于当前 exact candidate、Profile、Protocol、Context 和 execution；一个合法 PASS 只证明获准评审给出了通过意见，不证明内容永远正确。Observation 的错误不因正式提交而变成合法的能力判断或行动命令，也不会自动取得 Evaluation writer 或 Executor 权限。下游必须按自身用途和职责判断输入；这种分层控制不保证模型不会受错误内容影响，也不假设多个模型的错误相互独立。
+
+发现已提交语义错误后，由原 semantic owner 形成 correction / replacement，阻止已知失效内容继续用于要求 current 的新提交，并由下游 owner 重新判断。已发生的帮助和行动事实不回写；错误被发现前可能已影响合法行动，这一残余风险必须保留。内容层正确率、误放率和纠错效果进入后续工程测量，不能用结构检查通过率代替。
+
+**证据与边界。** A2 的原反例和本轮两次错误提交同时保留。已有精确候选绑定、缺失/失败/未决/外来校验拒绝、来源投影和 correction 测试支持修订后的程序边界，见[机械检查记录](../../src/spike/reports/completion-mechanical-tests-20261008.json)。这些测试没有证明语义正确率。此决定按 Gate E 的“否定后完成 Design Revision / ADR”路径关闭设计处置，不把 AA-A02 改为 SUPPORTED。
+
+**重新打开条件。** 若实现必须让自由文本直接授予权限、让非 Evaluation owner 写 Belief，或必须绕过所需校验才能运行，应重新打开相关 System Design；若责任分离本身无法表达必要行为，再上溯 Space / Concept Architecture。普通语义误判首先进入质量与 correction 工作，不能只凭出现误判就判定顶层架构不可行。
+
+### 1.2 ADR 002 Policy 和完整会话的验证边界
+
+**问题。** E1 新增 15 条路径均执行了真实 LLM 选择、校验和后端约束，但作者发现四条内容缺陷，模型评分全部 PASS。X5 来源修复配置只有三次完整，另外两次在最后新作答的语义复核中返回非法 JSON；四种效果边界完成。部分 Policy 文字还错误地弱化先前帮助的影响。原 E1 全样例质量标准和 X5 五次完整标准均未满足。
+
+**方案与权衡。** 继续重跑到全部成功不能消除已知失败，且不能给出可靠率；用确定性教学规则替换 Policy 会改变要验证的架构；放弃真实 Policy 或只演示成功路径会留下核心缺口。采用的方案是保留真实基本 Policy 与完整失败路径，将广泛情境下的选择/理由质量、帮助相关性判断和会话运行成功率列为显式工程验证责任。进入下一阶段的能力只是受控研究系统，不是已合格的自主教学产品。
+
+**决定。** E1、X5 原结论保持 INCONCLUSIVE。当前设计命题分别是“真实 LLM 可以在给定可行动作和来源内形成 Policy 候选，由独立后端执行合法性约束”，以及“完整串行活动转换可以运行；失败、未发生、部分发生和未知效果都有合法终点”。已有 15 条 E1 执行和 X5 的全部五次尝试、四个边界为这两个较窄命题提供有限工程依据；它们不是对原质量假设的重新判定。
+
+E1 的理由继续是正式决策的可审计说明，仍须语义检查；理由错误仍属于质量缺陷。Executor 依据已校验的 exact action payload 与 preconditions 执行，不能把理由中的文字当成额外指令。Evaluation 依据实际作答、帮助事实和 Claim 判断，不能把“保持独立诊断”等 Policy 自述当成独立完成的证据。理由用于后续 Policy 或 Evolution 时，必须通过该用途的准入合同，不能以“仅供审计”为名豁免所有后续使用。
+
+X5 必须继续真实执行：排队求教，完成当前轮；形成 Control，处理实际转换结果；按新活动重建 Context 并重新决策；校验实际讲解内容后展示；保留实际帮助来源；新作答再走 Observation、Policy 和 Claim-relative Evaluation。单次执行失败可以按预先声明的 Protocol 有界重试；达到终止条件后关闭旧轮资格，处理或隔离在途效果，再释放队列。超时不证明未发生，切换任务不自动抹去帮助影响。
+
+**不能延后的责任。** Observation、真实 Policy、required checks、权限与版本、精确依赖、整个会话轮次串行、真实效果记录、Claim-relative Evidence 和 Evaluation sole writer 均保持。脚本 Evaluation 只说明 Spike 的关系表达能运行；Build 必须实现窄范围的真实 Evidence / Belief 路径，不能继续用预写结论冒充学习者判断。
+
+**能力延后的理由。** 延后的是经过独立样本证明的广泛语义质量与可用性承诺。有限 Build 使用合成学习者和受控任务、有限动作、显式 non-success，所有结果用于研究审查，不据此宣布学习者掌握或交付自主教学服务。核心语义错误仍是错误，机械拒绝也不等于业务成功。该范围不依赖“所有语义输出正确”或“每轮必定完成”才能保持 owner、authority、standing、lineage 和历史约束。Gate E 对剩余质量与运行能力采用显式 staging 路径，不能据此关闭其产品质量验收。
+
+**重新打开条件。** 若只依赖 LLM 无法在受控任务中得到有教学意义的基本选择、失败不能收束、无法保存真实帮助、必须硬编码开放教学判断或长期绕过职责边界才能走完主链，则回到 System Design。若质量未达标但合同仍成立，结束当轮工程实验，记录不可接受范围和下一决策，不无限追加样本。
+
+## 2. Gate E 逐项证据判断
+
+“支持”均指原报告声明的配置与范围，不包含持久化恢复、规模部署或跨领域质量保证。下面把实验结论与阶段处置分开记录。
+
+| 对象 | 原实验结论 | 当前设计责任与 Gate E 路径 |
+| --- | --- | --- |
+| A1 | SUPPORTED，旧未决保留 | 直接逐准则 Profile 下三类输入各五次形成有效 Observation；支持窄范围可行性。Profile 按用途声明必要含义，不推广比例题字段为全局要求。 |
+| A2 | DENIED | ADR 001 撤回绝对语义隔离；完成对应修订。机械边界保留，语义误判不被掩盖。 |
+| B1、B2 | SUPPORTED | 内存范围的 exact dependency、pull resolution、同步失效/异步重算证据支持机制。持久化事务与实际 fan-out 在 Build 验证。 |
+| C1、C2 | SUPPORTED | 支持按边界绑定版本、区分历史重建与新执行、诚实表示部分回放。生产迁移编排可延后，历史与权限合同不延后。 |
+| D1、D2 | SUPPORTED，mock 披露与脚本 Evaluation 范围 | 支持从实际发生记录重建帮助及表达 Claim-relative 关系；真实 Evaluation 判断质量尚未验证，按原能力分期进入 Build。 |
+| E1 | INCONCLUSIVE | ADR 002：保留基本真实 Policy 与合法性边界，显式延后广泛教学质量承诺；禁止改标原用例 SUPPORTED。 |
+| E2 | SUPPORTED，旧未决保留 | 已补齐两个排队缺口；支持严格串行及外部变化重验。生产重启恢复仍需 Build。 |
+| F1、F2 | SUPPORTED，F2 为单结果契约修订范围 | 后端身份、数据用途、Tool 权限与正向对照有真实证据；旧多结果失败不覆盖。 |
+| X1–X4 | PASS | 更正、撤权/激活、实际帮助、历史回放的受控组合证据保留；不存在以新输入换绑旧候选或用旧许可绕过新拒绝的设计依赖。 |
+| X5 | INCONCLUSIVE | ADR 002：完整机制路径与四种效果边界已有证据；格式成功率及帮助解释质量显式延后，未知效果和失败收束不可延后。 |
+| 横切及 Evolution | 原 S0/S2/S3 分期 | Data Authority、审计、保留/删除、恢复、Governance、canonical commit 与 activation 合同完整；生产产品、自动化平台与具体 Product Context 规则按原路线图延后。 |
+
+**Gate E：PASS，范围为上述修订合同与受控能力分期。** 通过依据是逐项证据和处置已足以支持 Build；不是认为 E1、X5 原实验已经获得支持。保留原保证、扩大使用范围或取消 staging 时，不能复用本结论直接准入。
+
+## 3. 设计一致性与 Gate F
+
+本次核对总体设计、六项专项、上位 AI-Native Principles、两级 Roadmap 与历史横切审查。上位原则本已允许可错的派生认识，因此撤回绝对语义隔离不需要改变 Space ownership。历史横切审查提出的 Product Context 范围冲突和可观测性缺口，已分别由总体设计 §6.4 和 §6.7 承接；历史 NOT CLOSED 不能替代当前合同审查。
+
+| Gate F 层面 | 当前承载与核对结果 |
+| --- | --- |
+| 语义层 | 总体 §3、§7；各专项 Invariant Registry；ADR 001/002。owner、authority、模型可错性和分期兼容，没有把职责分离解释成内容永不出错。 |
+| 运行层 | 总体 §5；Interaction §5、§7.13；Event §5–8。主链、更正、无行动、stale、中断、重试终止和未知效果均有终点，普通输入串行覆盖整个 effect 处理。 |
+| 状态层 | 总体 §4、Appendix C；State §2–6 及对象矩阵。identity、version、provenance、lifecycle、dependency、current/historical、recompute 和 owner 明确。 |
+| AI 层 | AI Runtime §3–8；Interaction §3–5。Protocol、Context、Candidate、Validation、Commit 分开；Profile 按目的选择，单次失败和轮次终止不混淆。 |
+| 一致性层 | State §4；Interaction §5、§7。同步失效先于新 effect、异步 replacement、expected-head、外部变化重验、队列边界一致。 |
+| 版本层 | Version §3–9；Evolution §6–7。commit、activation、rollback 分离；新执行不冒充历史；当前权限约束历史访问。 |
+| 验证层 | 本文 §1–2 与统一报告。保留全部否定/未决、脚本/mock 限制、原始失败、来源修复和语义质量缺陷，未以代码断言证明教学正确。 |
+| 实现层 | 总体及六项专项共同形成 v1.0 基线。组件、数据库和生产设施仍可选择，但不能重新决定核心对象的 authority、standing、currentness 或 effect 含义。 |
+
+还核对了四组容易发生偏差的边界：讲解原始作答是用途相关要求，概念讲解不伪造前置作答；错误定位提示允许但不能称作完全独立定位；模型重试不释放普通输入队列；实际帮助记录不会因换题或 episode 标签而自动无关。各项最终合同分别承载于 AI Runtime §6.6、§8.5 和 Interaction §4.10、§7.13，避免由测试脚本临时补语义。
+
+**Gate F：PASS。项目 G1 随之满足。** 这里完成的是可实施的系统设计，不是生产系统验证。当前没有证据要求重新打开 Concept Architecture / Space Design；Build 对真实组合运行取得的新证据仍可否定本次决定。本文由同一工作会话完成证据评审，不构成独立教育专家评估或独立安全认证。
+
+## 4. v1.0 基线和历史边界
+
+冻结的基线为以下七份文件；冻结指实现合同受版本管理约束，不表示以后不能修订。
+
+| 责任 | 现行基线 |
+| --- | --- |
+| 总体 | [System Design v1.0](DeerMind_System_Design_v1.0.md) |
+| Runtime / Event | [Runtime Event v1.0](DeerMind_Runtime_Event_Architecture_v1.0.md) |
+| AI reasoning | [AI Reasoning Runtime v1.0](DeerMind_AI_Reasoning_Runtime_Design_v1.0.md) |
+| State / dependency | [State Dependency v1.0](DeerMind_State_Dependency_Architecture_v1.0.md) |
+| Interaction / decision | [Interaction Decision v1.0](DeerMind_Interaction_Decision_Runtime_Design_v1.0.md) |
+| Version / replay | [Version Replay Migration v1.0](DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md) |
+| Evolution / governance | [Evolution Governance v1.0](DeerMind_Evolution_Governance_Runtime_Design_v1.0.md) |
+
+本次不改变上位概念架构、Space Design、AI-Native Principles、两级路线图的阶段顺序及原 Gate 条文。统一 Spike 报告继续是实验结论入口；本文件只承载其后的设计决定。旧设计输入和冻结实验继续按原路径/hash 追溯，不对旧批次重新命名版本，不改写旧 9/17 快照。
+
+## 5. 后续工程工作与停止条件
+
+进入总体 Development Phase 2 的首项工作是制定并实施 Architecture Validation Build。范围采用 Development Roadmap §3.3 和 System Design Roadmap §7.2：一个合成 learner、一个数学 Task Family、一个主要策略、少量 KC、Solve 场景、有限提示/解释动作、基础 Observation / Evidence / Belief、简化真实 Policy 和一个版本切换。沿用 Spike 任务材料不代表它已被选为产品首发学科或内容库。
+
+| 工作 | 必须交付的结果 | 退出或停止条件 |
+| --- | --- | --- |
+| B1 组件与验证方案 | 模块边界、持久化/事务和单会话执行方案、真实模型适配、展示确认、测试模式与真实认知分离；冻结场景、质量评分、调用/费用预算和停止条件 | 在编码前可逐步追踪主链和失败链，不需要新增核心语义。具体技术由该工作选择，不在本评审虚构为已实现。 |
+| B2 最小真实纵向闭环 | Event → Context → LLM Candidate → Validation/Commit → Policy → 实际展示确认 → 窄范围真实 Evidence/Belief → 新 Decision；最小持久化和恢复 | 基本链完整，脚本答案不冒充 Evaluation。若 owner/authority/lineage 只能绕过才能实现，立即回到设计。 |
+| B3 组合与恢复验证 | 更正、撤权、输入排队、中断、格式失败、效果未知、重启、重复提交、版本切换和历史重建 | 所有预定路径有结论；核心不变量失败先修复或否定，不继续靠更多模型轮次掩盖。 |
+| B4 有界质量及成本测量 | 独立留出样本上的语义误放/误拒、Policy 选择与理由、实际帮助相关性、真实 Evaluation、完整会话成功率、延迟和调用成本；模型评分与人工审查分列 | 一轮按预先预算完成即出结论。网络失败可原配置有界重试，保留全部尝试；语义/格式失败计入对应质量结果，不无限续跑追求全 PASS。 |
+| B5 Build 评审 | 独立的 Build validation report 和 G2 判断，解释能力、成本及仍不可接受范围 | G2 通过才进入 MVP Definition；未通过时给出修订、收窄或停止决定。不得把当前 G1 当成 G2。 |
+
+生产高可用、多地区恢复、大规模迁移和完整治理平台按后续工程阶段展开。实际学习效果、儿童使用规则和真实用户风险需要 Product & Domain Foundation、Internal Alpha / Evaluation 及 Pilot 的相应证据。真实 Evaluation 的最低路径属于 Build，不能把它整体推迟到 Pilot。
+
+下一批实验的数量、预算和产品质量门槛尚未批准，B1 必须先形成具体方案；本评审不触发新的 API 调用。当前阶段推进不依赖继续消除 Spike 的所有模型错误。

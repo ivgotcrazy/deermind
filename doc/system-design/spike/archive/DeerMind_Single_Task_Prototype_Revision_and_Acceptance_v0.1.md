@@ -165,9 +165,9 @@ H 是机械失效；C 和 Q 是内容质量的两个严重程度；E 是当前�
 
 | 现有文档位置 | 保留的含义 | 当前工作修订 |
 |---|---|---|
-| [System Design v0.3](../../DeerMind_System_Design_v0.3.md) §1.2、§4.1–4.2、§5.4–5.5 | standing 不等于世界事实；owner 与效力分离；实际帮助与 Evaluation 责任链保留。 | §1.2 的 9/17 进行中安排以终局评估为准；本原型采用第二节的来源与能力限制，不启用长期状态写入。 |
-| [AI Reasoning Runtime v0.2](../../DeerMind_AI_Reasoning_Runtime_Design_v0.2.md) §6.6–6.8、§8.4–8.5 | 语义 PASS 可错；必需检查、提交授权及版本绑定仍必需。 | 不再以解释完全无缺陷作为所有工程路径的前置条件；用机械检查和任务质量两套结果报告，停止默认 v6 实现。 |
-| [Interaction Decision Runtime v0.2](../../DeerMind_Interaction_Decision_Runtime_Design_v0.2.md) §5.8、§6.1–6.3、§7.11、§7.13 | 展示不等于认知；帮助投影有来源；Policy 理由不成为学习者事实；失败收束与严格串行保留。 | 将这些原则落实到本原型实际出站输入、执行器内容及第二轮帮助记录；首版不自动切换教学。 |
+| [System Design v0.3](../../../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/9-DeerMind_System_Design_v0.3.md.txt) §1.2、§4.1–4.2、§5.4–5.5 | standing 不等于世界事实；owner 与效力分离；实际帮助与 Evaluation 责任链保留。 | §1.2 的 9/17 进行中安排以终局评估为准；本原型采用第二节的来源与能力限制，不启用长期状态写入。 |
+| [AI Reasoning Runtime v0.2](../../../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/2-DeerMind_AI_Reasoning_Runtime_Design_v0.2.md.txt) §6.6–6.8、§8.4–8.5 | 语义 PASS 可错；必需检查、提交授权及版本绑定仍必需。 | 不再以解释完全无缺陷作为所有工程路径的前置条件；用机械检查和任务质量两套结果报告，停止默认 v6 实现。 |
+| [Interaction Decision Runtime v0.2](../../../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/4-DeerMind_Interaction_Decision_Runtime_Design_v0.2.md.txt) §5.8、§6.1–6.3、§7.11、§7.13 | 展示不等于认知；帮助投影有来源；Policy 理由不成为学习者事实；失败收束与严格串行保留。 | 将这些原则落实到本原型实际出站输入、执行器内容及第二轮帮助记录；首版不自动切换教学。 |
 | [Roadmap v0.6](../../DeerMind_System_Design_Roadmap_v0.6.md) §8.1–8.2 与 Gate E/F | 正式阶段准入及一致 Baseline Set 条件不变。 | 原综合 Spike 已终止未接受；本工作包是内部实现探索，不计作已获准的 Architecture Validation Build。 |
 
 原台账保持 TERMINATED_NOT_ACCEPTED，原 §17 Completion 未达到，Gate E/F 仍 OPEN。九项完整覆盖是终止时的历史记录。A2 的 DENIED 不撤销；A1/E1 未获质量验收；E2/F2/X1/X2 的未完成真实路径及 X5 缺口保留。新原型的机械注入和十二个会话不回填旧案例，不把分母改成十二后宣称原 Spike 通过。

@@ -32,7 +32,7 @@
 | 讲解实际发生 | Policy 选择帮助，ActionIntent 取得执行资格，Executor 记录实际展示结果 | 未发生、部分展示和无法确认分开；展示不等于学习者已理解 |
 | 新的独立机会 | 新的 learner 表现进入 Observation → Evidence 路径 | 提示前证据保留；后续判断使用真实暴露历史，新会话或新活动标签不清除影响 |
 
-[Interaction Runtime §4.10、§5.1](../../src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md.txt)定义活动切换及串行边界，[Runtime / Event §5.6–§5.7](../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/5-DeerMind_Runtime_Event_Architecture_v0.1.md.txt)定义真实发生，[Evaluation §5.2–§5.3](../concept-design/DeerMind_Evaluation_Space_Design_v1.1.md)负责证据解释。跨会话共享状态、权限撤销和独立 owner 的 correction 仍通过既有重验机制处理，不能用这些外部情况重新引入同会话普通输入并发。
+[Interaction Runtime §4.10、§5.1](../../src/spike/reports/source-baseline-design-review-20261008/originals/DeerMind_Interaction_Decision_Runtime_Design_v0.1.md.txt)定义活动切换及串行边界，[Runtime / Event §5.6–§5.7](DeerMind_Runtime_Event_Architecture_v0.1.md)定义真实发生，[Evaluation §5.2–§5.3](../concept-design/DeerMind_Evaluation_Space_Design_v1.1.md)负责证据解释。跨会话共享状态、权限撤销和独立 owner 的 correction 仍通过既有重验机制处理，不能用这些外部情况重新引入同会话普通输入并发。
 
 用户主动中断、异常恢复的交互细节单独处理；本轮普通闭环推演不宣称已完成这两类流程的验证。
 

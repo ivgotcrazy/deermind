@@ -1,0 +1,2219 @@
+# DeerMind Evolution & Governance Runtime Design v1.0
+
+> **中文名称**：DeerMind 演化与治理运行设计<br>
+> **版本**：v1.0<br>
+> **文档性质**：System Design Baseline<br>
+> **状态**：Gate E/F 评审通过后的实现合同基线<br>
+> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v1.0.md`<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
+> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
+> **更新时间**：2026-10-08
+
+本版本在 `DeerMind_Evolution_Governance_Runtime_Design_v0.1.md` 的合同基础上吸收 Phase 6 证据处置，统一当前验证状态和跨专项引用。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录 A2 否定、E1/X5 未决的正式后果、Gate E/F 依据和后续能力分期。v1.0 冻结的是实现合同，不是模型质量或生产可靠率。原实验与旧设计输入按其原始版本保留，见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。
+---
+
+## 1. 文档定位与设计命题
+
+### 1.1 为什么需要独立 Evolution / Governance Runtime Design
+
+DeerMind 的运行机制即使在某一时刻完全符合 Concept Architecture，也不能假定这些机制永远正确。
+
+随着真实运行持续发生，系统可能出现：
+
+- Observation semantics 对某类输入长期误解；
+- Evidence mapping 在新的场景中失去区分力；
+- Learner Belief calibration 持续偏差；
+- Interaction Policy 形成过度干预；
+- Target / Responsibility Boundary 与真实外部标准错位；
+- Reasoning Protocol 在新输入分布上产生系统性失败；
+- 已批准的 Policy 通过机会分配形成 self-sealing data；
+- 新规范来源使旧 Target 不再适用；
+- Context Authority 的边界需要重新审查。
+
+如果系统只有“上线功能”而没有正式的系统认识闭环，那么这些变化只能靠人工临时发现和修补；如果系统直接把运行指标接到自动修改机制，又会退化成一个可以用自己的数据证明自己、并自动扩张语义和权限的自修改 Agent。
+
+因此本专项要解决的不是“如何自动优化模型”，而是：
+
+> **DeerMind 如何形成关于自身的可质疑认识，如何验证候选改变，以及这些认识如何在不破坏 authority boundary 的前提下进入正式变化。**
+
+核心设计命题是：
+
+\[
+\boxed{
+SystemKnowledgeFormation
+\neq
+ChangeAuthorization
+\neq
+CanonicalCommit
+\neq
+Activation
+}
+\]
+
+以及：
+
+\[
+\boxed{
+Evolution\ knows
+\qquad
+Governance\ authorizes
+\qquad
+SemanticOwner\ commits
+}
+\]
+
+### 1.2 为什么本文档名称中有 Governance，但不能合并 Ownership
+
+Roadmap 将该 Work Package 命名为 `Evolution & Governance Runtime`，是因为两者必须形成一条完整的系统变化链。
+
+但这不意味着存在一个：
+
+```text
+EvolutionGovernanceRuntime
+```
+
+同时拥有：
+
+- System Issue；
+- Hypothesis；
+- Validation Evidence；
+- Governance Decision；
+- Canonical semantic state；
+- Activation authority。
+
+这种设计会把“认为某个修改是好的”与“有权正式修改系统”合并，直接破坏 Concept Architecture。
+
+因此本文档使用统一运行叙事，但保持至少四个责任域：
+
+```text
+Evolution
+    owns system knowledge
+
+Governance
+    owns change authorization
+
+Semantic Owner
+    owns canonical semantic commit
+
+Activation Control
+    applies authorized activation under current control conditions
+```
+
+它们可以由同一部署进程承载，也可以分成多个服务，但 semantic ownership 不能因为部署方便而合并。
+
+### 1.3 本文档解决什么
+
+本文档负责定义：
+
+- System Signal 如何进入 Evolution intake；
+- Signal、Assessment、Issue 的身份与生命周期；
+- problem-driven 与 theory-driven 两类入口；
+- competing Hypothesis workspace；
+- Revision Candidate 的运行合同；
+- Hypothesis Validation 与 Revision Validation 的分离；
+- Validation Plan / Run / Evidence 的关系；
+- historical、benchmark、simulation、shadow、bounded production、prospective 与 post-deployment validation orchestration；
+- `Use Least Costly Sufficient Validation` 的运行约束；
+- system-induced evidence bias 与 opportunity self-sealing 的审计入口；
+- Empirical Model Failure、Normative Source Change、Authority Change 的分流；
+- Change Proposal package；
+- Level 1–4 change classification；
+- Approval Envelope；
+- Governance Decision；
+- Canonical Change Authorization；
+- owner-side Canonical Commit；
+- Activation、bounded rollout、rollback；
+- Post-Deployment Validation；
+- authority、version、dependency、audit 与 failure semantics；
+- human / AI 在 Evolution 与 Governance 中的不同位置；
+- first-stage capability staging。
+
+### 1.4 本文档不解决什么
+
+本文档不冻结：
+
+- 公司的实际治理委员会、审批岗位或组织架构；
+- 人工审批 UI / 工单系统；
+- 某类 Issue 的具体统计检测算法；
+- OPE、RCT、Bayesian comparison、causal inference 等具体验证方法；
+- benchmark 数据集产品与实验平台；
+- shadow / canary / feature flag 产品；
+- workflow engine；
+- Governance 是否由某个现有企业系统承载；
+- 具体 SLA、审批时限；
+- 自动 change proposal ranking；
+- 通用“AI 自主治理”；
+- Constitution 的具体修订流程细节；
+- 生产级 multi-region activation 平台。
+
+System Design 必须冻结运行合同、状态与 authority；实现手段仍可后续选择。
+
+---
+
+## 2. 心智模型：两条闭环，四个权力边界
+
+### 2.1 系统认识闭环
+
+Evolution 的第一条闭环是：
+
+```text
+Reality / Runtime History
+→ SystemSignal
+→ SystemAssessment
+→ SystemIssue
+→ CompetingHypotheses
+→ RevisionCandidate
+→ Validation
+→ ValidationEvidence
+→ Assessment Update
+```
+
+它回答：
+
+> **DeerMind 现在应该如何认识自己的系统有效性？**
+
+这条闭环可以高度自动化，包括 AI 辅助分析、假设生成、validation plan candidate、历史 replay 与报告生成。
+
+但它不能自动获得 structural change authority。
+
+### 2.2 受治理变化闭环
+
+第二条闭环是：
+
+```text
+Validated ChangeProposal
+→ GovernanceDecision
+→ CanonicalChangeAuthorization
+→ SemanticOwner CanonicalCommit
+→ ActivationDecision / ActivationRecord
+→ Production
+→ PostDeploymentValidation
+→ SystemAssessment
+```
+
+它回答：
+
+> **哪些变化被允许正式进入系统，以及上线后是否继续成立？**
+
+### 2.3 两条闭环不能合并成 Optimization Loop
+
+禁止设计成：
+
+```text
+metric degrades
+→ model proposes fix
+→ test passes
+→ auto deploy
+```
+
+因为其中至少省略了：
+
+- Signal 是否真构成 Issue；
+- competing explanation；
+- validation independence；
+- normative vs empirical source；
+- authority delta；
+- dependency impact；
+- Governance authorization；
+- owner commit；
+- activation scope；
+- post-deployment falsification。
+
+因此：
+
+\[
+OptimizationSuccess
+\not\Rightarrow
+ChangeAuthority
+\]
+
+### 2.4 四个正式责任域
+
+本专项冻结四类不同 standing：
+
+| 责任域 | 拥有的正式 standing | 不拥有 |
+|---|---|---|
+| Evolution | SystemIssue、Hypothesis、RevisionCandidate、ValidationEvidence、ChangeProposal | Canonical semantic authority、Constitution authority |
+| Governance | GovernanceDecision、ApprovalEnvelope、CanonicalChangeAuthorization、Activation / Rollback authorization | Domain semantic authorship、learner-level Policy judgment |
+| Semantic Owner | CanonicalVersion / canonical object commit | 自行扩张 Governance permission |
+| Runtime Activation | ActivationRecord、scope-specific activation effect | 重新决定 semantic correctness 或创造 Governance authority |
+
+### 2.5 Governance 不是第五个 Space
+
+Governance 是 authority boundary，不是新的认识论 Space。
+
+它回答：
+
+> 谁可以在什么条件下，使某个已经定义清楚的 change candidate 获得正式变化权限？
+
+因此：
+
+\[
+Governance \neq EvolutionSpace
+\]
+
+也不需要：
+
+```text
+GovernanceModel
+```
+
+与四个 Conceptual Space 对称存在。
+
+---
+
+## 3. System Signal 与 Issue Runtime
+
+### 3.1 System Signal 是线索，不是问题结论
+
+System Signal 可以来自：
+
+- formal semantic outcome；
+- calibration / quality metric；
+- failure history；
+- audit finding；
+- human report；
+- expert review；
+- external normative source；
+- security / authority anomaly；
+- post-deployment outcome；
+- opportunity allocation audit；
+- replay / validation result。
+
+但：
+
+\[
+SystemSignal \neq SystemIssue
+\]
+
+Signal 只意味着：
+
+> 存在值得 System Assessment 查看的一条信息。
+
+### 3.2 Signal 不拥有独立事实历史
+
+System Signal 可以引用：
+
+- Event；
+- ReasoningExecutionRecord；
+- Semantic State；
+- Commit history；
+- Governance / Activation history；
+- telemetry / metric；
+- SecuritySignal。
+
+但它不创建第二个“现实历史”。
+
+如果一个 Signal 来自 learner-facing occurrence，它必须追溯到 Factual History；如果来自 operational telemetry，则明确其 telemetry source；如果来自 SecuritySignal，则追溯到对应 source occurrence / audit record。
+
+因此：
+
+\[
+SignalHistory \neq SecondFactualHistory
+\]
+
+### 3.3 Signal Intake 的最小合同
+
+逻辑上：
+
+```text
+SystemSignal
+├── SignalId
+├── SignalType
+├── SourceRefs
+├── SubjectComponentRef
+├── ObservedDeviation / Concern
+├── Time / Scope
+├── CollectionPurpose
+├── DataAuthorityBasis
+├── Provenance
+└── InitialUncertainty
+```
+
+Signal 可以由：
+
+- deterministic detector；
+- metric rule；
+- human report；
+- AI analysis；
+
+产生 Candidate。
+
+AI 产生 SignalCandidate 时仍需走 owner validation / commit；模型输出不能自动成为 formal SystemIssue。
+
+### 3.4 没有可检验预期，就没有合法 System Assessment
+
+Evolution 不应只看“指标变差”。
+
+要判断某个组件是否存在问题，必须知道该组件原本声称：
+
+- 在什么 Validity Scope 下；
+- 对哪些输入；
+- 应表现出什么可观察性质；
+- 哪些 deviation 足以成为 concern。
+
+因此：
+
+\[
+NoAssessmentWithoutExpectation
+\]
+
+一个可演化组件至少需要 Evolution Contract：
+
+```text
+Identity
+Version
+ValidityScope
+FalsifiableExpectation
+ObservableOutcome
+KnownLimitations
+DependencyRefs
+ReplaySupport
+```
+
+### 3.5 System Assessment 的输出
+
+System Assessment 的合法结果至少包括：
+
+```text
+NoIssue
+IssueCandidate
+InsufficientEvidence
+Conflict
+NotIdentifiable
+NeedsMoreObservation
+NormativeChangeDetected
+AuthorityConcernDetected
+```
+
+不能要求每个 Signal 都形成 Issue。
+
+### 3.6 System Issue 的身份
+
+一个 formal SystemIssue 至少应表达：
+
+```text
+SystemIssue
+├── IssueId
+├── AffectedComponent / SemanticIdentity
+├── AffectedVersion(s)
+├── ValidityScope
+├── ViolatedExpectation / Concern
+├── EvidenceBasis
+├── Severity / Impact
+├── Uncertainty
+├── KnownConfounders
+├── DataGenerationContext
+├── DependencyRefs
+├── Lifecycle
+└── Provenance
+```
+
+SystemIssue 描述：
+
+> **什么在什么范围内可能有问题。**
+
+它不描述最终原因。
+
+### 3.7 Issue Lifecycle
+
+最低生命周期可表示为：
+
+```text
+OPEN
+UNDER_ASSESSMENT
+SUPPORTED
+UNRESOLVED
+NOT_IDENTIFIABLE
+SUPERSEDED
+RESOLVED
+CLOSED_NO_ISSUE
+```
+
+本文档冻结语义，而不要求物理 enum 必须完全一致。
+
+重要的是：
+
+- `UNRESOLVED` 合法；
+- `NOT_IDENTIFIABLE` 合法；
+- `CLOSED_NO_ISSUE` 不等于删除历史；
+- Issue 可以被后续 evidence reopen / supersede；
+- Issue resolution 不等于自动 change deployment。
+
+### 3.8 Empirical、Normative、Authority 三类问题必须分流
+
+System Assessment 必须能区分：
+
+**Empirical Model Failure**  
+系统关于现实的可检验预期被 evidence 挑战。
+
+**Normative Source Change**  
+外部正式规范、标准、制度或定义来源发生变化。
+
+**Authority Change / Concern**  
+谁有权做什么、在什么 scope 下被允许的正式边界发生变化或需要重新审查。
+
+因此：
+
+\[
+NormativeSourceChange
+\neq
+EmpiricalModelFailure
+\neq
+AuthorityChange
+\]
+
+典型错误是：
+
+```text
+external standard changed
+→ model calibration failed
+→ optimize model
+```
+
+正确路径可能是：
+
+```text
+NormativeSourceChange
+→ Target / semantic revision proposal
+→ Governance
+→ new canonical version
+```
+
+### 3.9 SafetySignal 不产生 EmergencyAuthority
+
+如果系统发现新的 safety concern：
+
+```text
+SafetySignal
+→ SystemAssessment
+→ Issue / Hypothesis
+→ Context / Constitutional ChangeProposal
+```
+
+不能：
+
+```text
+SafetySignal
+→ model grants itself more control
+```
+
+因此：
+
+\[
+SafetySignal \neq EmergencyAuthority
+\]
+
+---
+
+## 4. Hypothesis 与 Revision Candidate Runtime
+
+### 4.1 Hypothesis 回答原因，不是修改方案
+
+Hypothesis 是对 Issue 的可证伪解释。
+
+例如：
+
+```text
+Issue:
+Observation 对跨行手写持续误读
+
+Hypothesis H1:
+stroke grouping semantics 不足
+
+Hypothesis H2:
+输入采集分辨率不足
+
+Hypothesis H3:
+training distribution 不覆盖该书写模式
+```
+
+只有保留 competing hypotheses，系统才能避免：
+
+```text
+first plausible explanation
+=
+truth
+```
+
+### 4.2 Hypothesis 的最低合同
+
+```text
+Hypothesis
+├── HypothesisId
+├── IssueRefs
+├── Claim / Explanation
+├── Mechanism
+├── FalsifiableExpectation
+├── DiscriminatingEvidenceNeed
+├── ValidityScope
+├── SupportingEvidenceRefs
+├── ContradictingEvidenceRefs
+├── CompetingHypothesisRefs
+├── Uncertainty
+├── Status
+└── Provenance
+```
+
+### 4.3 Hypothesis 可以来自 AI，也可以来自 Human
+
+AI 可以生成：
+
+```text
+HypothesisCandidate
+```
+
+Human / expert 也可以提交：
+
+```text
+HypothesisCandidate
+```
+
+但：
+
+\[
+SourceAuthority
+\neq
+HypothesisValidity
+\]
+
+专家来源可以提高 prior attention / review priority，但不能绕过 Validation。
+
+### 4.4 Competing Hypothesis 是正式能力
+
+Hypothesis workspace 必须支持：
+
+- 多个同时存在的解释；
+- supporting / contradicting evidence；
+- discrimination plan；
+- `UNRESOLVED`；
+- `NOT_IDENTIFIABLE`；
+- scope-specific result。
+
+禁止只保存：
+
+```text
+root_cause = X
+```
+
+然后让后续系统围绕这个单点解释自我闭合。
+
+### 4.5 Revision Candidate 与 Hypothesis 分离
+
+Hypothesis 回答：
+
+> 为什么可能出问题？
+
+Revision Candidate 回答：
+
+> 如果要改变系统，具体候选修改是什么？
+
+因此：
+
+\[
+Hypothesis \neq RevisionCandidate
+\]
+
+同一个 Hypothesis 可以对应多个 Revision Candidate；一个 Revision Candidate 也可以影响多个 Hypothesis / Issue。
+
+### 4.6 Revision Candidate 的最低合同
+
+```text
+RevisionCandidate
+├── CandidateId
+├── TargetSemanticIdentity / Component
+├── BaseVersionRef
+├── ProposedSemanticDiff
+├── MechanismRationale
+├── RelatedIssueRefs
+├── RelatedHypothesisRefs
+├── ExpectedEffect
+├── ValidityScope
+├── DependencyImpact
+├── TypedInvalidationImpact
+├── Compatibility / MigrationImpact
+├── AuthorityDelta
+├── DataAuthorityImpact
+├── SecurityImpact
+├── Risk
+├── RollbackPossibility
+├── CandidateVersionIdentity
+└── Provenance
+```
+
+### 4.7 Revision Candidate 没有 deployment standing
+
+即使 Candidate：
+
+- 由高级专家提出；
+- 已在 benchmark 表现更好；
+- AI confidence 很高；
+- Validation Evidence 很强；
+
+也仍然：
+
+\[
+RevisionCandidate \neq CanonicalVersion
+\]
+
+并且：
+
+\[
+ValidationSuccess
+\not\Rightarrow
+CommitAuthority
+\]
+
+---
+
+## 5. Validation Orchestration
+
+### 5.1 Validation 的职责
+
+Validation 不是“测试通过就上线”。
+
+它回答两个不同问题：
+
+**Hypothesis Validation**
+
+> 这个解释是否真正说明了 Issue？
+
+**Revision Validation**
+
+> 即使解释正确，这个 Candidate 是否真的改善问题，并且副作用可接受？
+
+因此：
+
+\[
+HypothesisValidation
+\neq
+RevisionValidation
+\]
+
+### 5.2 Validation Plan
+
+任何非平凡 Validation 都应有显式 Validation Plan：
+
+```text
+ValidationPlan
+├── ValidationPurpose
+├── Issue / Hypothesis / Candidate Refs
+├── Falsifier
+├── ExpectedDiscrimination
+├── RequiredEvidence
+├── MethodClass
+├── DataScope
+├── DataAuthorityRequirement
+├── VersionContext
+├── Cohort / Scenario Scope
+├── Safety / Risk Constraints
+├── IndependenceRequirement
+├── StopCondition
+├── Success / Failure Interpretation
+└── Provenance
+```
+
+ValidationPlan 可以由 AI 生成 Candidate，但高风险 prospective validation、learner experiment 或 authority-sensitive operation 必须经过相应授权。
+
+### 5.3 Validation Run
+
+每一次实际 Validation Run 必须绑定：
+
+```text
+ValidationRunId
+ExactValidationPlanRef
+ExactCandidate / Hypothesis Refs
+RuntimeVersionContext
+Input / Dataset Refs
+DataAuthorityBasis
+ExecutionEnvironment
+ObservedOutputs
+MethodLimitations
+```
+
+这使 Validation 结果可重建，而不是只保留一个“pass”。
+
+### 5.4 Validation Evidence 的正式输出
+
+Validation 输出：
+
+```text
+ValidationEvidence
+```
+
+至少表达：
+
+- Supports；
+- Contradicts；
+- Discriminates；
+- NonInformative；
+- scope；
+- uncertainty；
+- bias；
+- subgroup effect；
+- evidence dependency；
+- identifiability limit；
+- replay / reproducibility capability。
+
+因此：
+
+\[
+ValidationResult \neq ChangeDecision
+\]
+
+### 5.5 Validation 的合法终点
+
+合法结果包括：
+
+```text
+SUPPORTED
+PARTIALLY_SUPPORTED
+CONTRADICTED
+INCONCLUSIVE
+NOT_IDENTIFIABLE
+VALID_ONLY_IN_SCOPE
+HARM_OR_REGRESSION_FOUND
+```
+
+`INCONCLUSIVE` 不能转换成 `SUPPORTED`。
+
+### 5.6 使用最低充分验证
+
+Validation 方法按风险与识别需求选择，不形成固定流水线。
+
+可选方法包括：
+
+```text
+Historical Analysis
+Historical Replay / Reinterpretation
+Expert Review
+Benchmark / Curated Test Set
+Simulation
+Shadow Validation
+Bounded Production Validation
+Limited Prospective Validation
+Post-Deployment Validation
+```
+
+原则：
+
+\[
+UseLeastCostlySufficientValidation
+\]
+
+含义不是“永远用最便宜方法”，而是：
+
+> 在能够真正区分问题的前提下，避免使用更高成本、更高风险、更侵入 learner 的方法。
+
+### 5.7 Historical Validation 的边界
+
+Historical Replay / Reinterpretation 可以回答：
+
+> 如果使用新 semantics 重新解释旧 factual grounding，会发生什么？
+
+不能自动回答：
+
+> 如果当时 Policy 不同，learner 会怎样？
+
+因此：
+
+\[
+FactualReplay \neq CounterfactualEvaluation
+\]
+
+需要 counterfactual inference 时，必须显式声明额外 causal assumptions / methodology。
+
+### 5.8 Shadow Validation
+
+Shadow Validation 的基本语义：
+
+```text
+Production Input / Historical Input
+→ Candidate Version executes without authoritative effect
+→ Compare against active version / expected outcome
+→ ValidationEvidence
+```
+
+Shadow execution：
+
+- 不获得 learner-facing Action authority；
+- 不生成“实际发生”的 learner action；
+- 可以形成 execution history；
+- 不能把 shadow outcome 冒充 production factual effect。
+
+### 5.9 Bounded Production Validation
+
+如果必须在真实运行中验证 Candidate：
+
+```text
+ValidationIntent
+→ Governance Authorization
+→ bounded scope
+→ Interaction Policy
+→ actual runtime decision
+→ factual occurrence
+→ ValidationEvidence
+```
+
+关键边界：
+
+\[
+GovernanceApproval
+\neq
+LearnerLevelExecutionCommand
+\]
+
+即使某个 validation experiment 被批准，面对具体 learner 的当前行动仍然必须通过 Interaction Policy 和当前 authority / data authority / safety constraints。
+
+### 5.10 Prospective Learner Experiment
+
+Learner experiment 只有在：
+
+- 更低风险方法无法提供充分识别；
+- Data Authority 合法；
+- Product / Context constraints 允许；
+- Governance 授权；
+- stop condition 明确；
+- harm monitoring 可用；
+
+时才可执行。
+
+“实验有价值”本身不创造 learner data authority。
+
+### 5.11 Validation Independence
+
+系统必须防止 self-closed validation。
+
+例如：
+
+```text
+Belief says learner weak
+→ Policy gives only easy tasks
+→ observed success on easy tasks
+→ system confirms learner weak
+```
+
+这不是独立验证。
+
+Evolution 必须审计：
+
+- opportunity allocation；
+- action exposure；
+- target binding；
+- authority constraints；
+- learner selection；
+- missing counterexamples；
+- policy-induced / system-induced data bias。
+
+### 5.12 System-Induced Evidence Bias
+
+Production data 不是天然无偏现实样本。
+
+可观察数据受到：
+
+```text
+Target
++ LearnerBelief
++ TargetAssessment
++ InteractionPolicy
++ ContextAuthority
++ Tool / Support availability
++ Environment
+```
+
+共同塑造。
+
+因此：
+
+\[
+ObservedProductionData
+\neq
+UnbiasedRealitySample
+\]
+
+Evolution 的 validation 需要把 data-generation provenance 作为 evidence context。
+
+### 5.13 Opportunity Self-Sealing
+
+如果系统已有判断持续控制未来 opportunity，使反证越来越不可能出现，就产生 self-sealing。
+
+例如：
+
+```text
+Belief: learner cannot solve hard tasks
+→ Policy stops presenting hard tasks
+→ no contradictory evidence
+→ Belief appears stable
+```
+
+Evolution 必须把这种模式作为正式 System Signal / validation bias。
+
+---
+
+## 6. Change Proposal 与 Governance Runtime
+
+### 6.1 Change Proposal 是进入 Governance 的正式边界
+
+Governance 不应该从 raw logs 重新完成 Evolution 的全部分析。
+
+Evolution 需要形成结构化：
+
+```text
+ChangeProposal
+```
+
+它是：
+
+> **已经整理好的、可供授权决策使用的 evidence package。**
+
+### 6.2 Change Proposal 的最低合同
+
+```text
+ChangeProposal
+├── ProposalId
+├── SystemIssueRefs
+├── EvidenceBasis
+├── CompetingHypotheses
+├── Preferred / Unresolved Hypothesis State
+├── RevisionCandidateRef
+├── ValidationEvidenceRefs
+├── ValidityScope
+├── IdentifiabilityLimits
+├── KnownRisks
+├── DependencyImpact
+├── TypedInvalidationPath
+├── Version / CompatibilityImpact
+├── MigrationImpact
+├── NormativeSourceChange
+├── AuthorityDelta
+├── DataAuthorityImpact
+├── Constitutional / Context Impact
+├── ActivationBoundary
+├── RollbackPlan
+├── PostDeploymentValidationPlan
+└── Recommendation
+```
+
+### 6.3 Proposal 不等于 Governance Decision
+
+\[
+ChangeProposal \neq GovernanceDecision
+\]
+
+Evolution 可以推荐：
+
+```text
+Approve
+Reject
+MoreValidation
+BoundedDeployment
+```
+
+但 Recommendation 不产生 authority。
+
+### 6.4 四级变化分类
+
+Governance 必须首先识别变化等级。
+
+| Level | 典型变化 | Runtime authority |
+|---|---|---|
+| **L1 — Learner Adaptation** | Task、Support、Plan、当前节奏、是否主动评估 | Evaluation + Interaction 在当前 formal semantics / Context Authority 内运行 |
+| **L2 — Bounded System Adaptation** | 已批准参数范围、bounded calibration、Policy Variant、预授权 rollback | Approval Envelope 内自动执行 |
+| **L3 — Structural / Semantic Evolution** | Target / Task / KC identity、Claim / Evidence / Inference、Observation / State / Action / Policy semantics | 必须进入正式 human Governance |
+| **L4 — Constitutional / Authority Boundary Change** | Core Constitution、Context Constitution、合法 authority / Emergency Envelope 边界 | 对应 Constitutional / Context Governance |
+
+### 6.5 Level 1 不是 System Evolution
+
+Learner-level adaptation：
+
+```text
+choose next task
+change scaffold
+update plan
+NoIntervention
+```
+
+只是系统在现有正式规则下服务具体 learner。
+
+它不能被误记成 canonical system evolution。
+
+### 6.6 Level 2 Approval Envelope
+
+对于明确低风险、受限的 system adaptation，可以预授权：
+
+\[
+ApprovalEnvelope
+=
+Scope
++
+AllowedVariants
++
+RiskLimit
++
+EvidenceThreshold
++
+ActivationBoundary
++
+RollbackCondition
++
+Expiration
+\]
+
+可以进一步包含：
+
+```text
+Owner
+SubjectScope
+VersionBounds
+DataAuthorityConstraints
+AuditRequirements
+SecurityConstraints
+```
+
+Envelope 是已有 Governance authority 的 scoped representation，不是 Evolution 自己生成的新权力。
+
+### 6.7 Approval Envelope 的运行判断
+
+```text
+Candidate Adaptation
+→ resolve current ApprovalEnvelope
+→ check exact scope / variant / risk / evidence / expiry
+→ inside envelope?
+    yes → bounded authorized path
+    no  → formal Governance review
+```
+
+必须保持：
+
+\[
+InsideEnvelope
+\neq
+ValidationPassed
+\]
+
+两者都需要，但回答不同问题：
+
+- validation：候选是否值得相信；
+- envelope：是否已被授权自动采用。
+
+### 6.8 Level 3 不允许自动审批
+
+Level 3 改变 DeerMind 对学习、学习者、交互或系统的正式语义。
+
+因此即使：
+
+```text
+benchmark +10%
+shadow better
+model confidence high
+```
+
+也不能自动 canonical commit。
+
+必须有正式 GovernanceDecision。
+
+### 6.9 Level 4 不得降级成产品优化
+
+Level 4 改变：
+
+> DeerMind 有没有权这样做。
+
+所以：
+
+\[
+EmpiricalBenefit
+\neq
+ConstitutionalJustification
+\]
+
+以及：
+
+\[
+ValidationSuccess
+\not\Rightarrow
+AuthorityExpansion
+\]
+
+### 6.10 GovernanceDecision 的合法结果
+
+至少包括：
+
+```text
+Approve
+Reject
+NeedMoreEvidence
+ApproveAdditionalValidation
+ApproveShadowRun
+ApproveBoundedDeployment
+MaintainCurrentVersion
+Rollback
+EscalateToHigherGovernance
+```
+
+不能把 Governance 强制变成二元 `approve/reject`。
+
+### 6.11 GovernanceDecision 的正式合同
+
+```text
+GovernanceDecision
+├── DecisionId
+├── ProposalRef
+├── CandidateRef
+├── ExactBaseVersionRef
+├── ChangeLevel
+├── DecisionOutcome
+├── AuthorizedScope
+├── Conditions
+├── Expiration
+├── ActivationBoundary
+├── RollbackConditions
+├── RequiredAudit
+├── AuthorityBasis
+├── DecisionMaker / GovernancePrincipal
+├── RationaleSummary
+├── EvidenceRefs
+└── Time
+```
+
+### 6.12 GovernanceDecision 必须进入正式历史
+
+每次正式授权必须能够回答：
+
+- 谁授权；
+- 以什么权限；
+- 基于什么 Evidence；
+- 哪些不确定性仍存在；
+- 接受了什么风险；
+- 对哪个 exact candidate；
+- 基于哪个 exact base；
+- 作用于什么 scope；
+- 如何回滚。
+
+Governance 不能成为“系统外部人工黑箱”。
+
+### 6.13 AI 在 Governance 中的位置
+
+AI 可以：
+
+- 总结 Change Proposal；
+- 对照 Constitution；
+- 找遗漏风险；
+- 检查 evidence package；
+- 生成 GovernanceDecisionCandidate；
+- 生成 alternative / impact analysis。
+
+但：
+
+\[
+AIGovernanceRecommendation
+\neq
+GovernanceAuthority
+\]
+
+高等级 Governance 必须由被 Constitution / Context Governance 正式授权的 principal 作出。
+
+---
+
+## 7. Canonical Commit、Activation 与 Rollback
+
+### 7.1 Governance 授权后仍未完成变化
+
+标准链路：
+
+```text
+GovernanceDecision
+→ CanonicalChangeAuthorization
+→ SemanticOwner CanonicalCommit
+→ CommittedCanonicalVersion
+→ Activation Authorization Check
+→ ActivationRecord
+→ Active Resolution
+```
+
+必须保持：
+
+\[
+Approval
+\neq
+CanonicalCommit
+\neq
+Activation
+\]
+
+### 7.2 Canonical Commit 由 Semantic Owner 执行
+
+例如：
+
+- Learning semantics revision → Learning owner commit；
+- Evidence / Inference semantics → Evaluation owner commit；
+- Policy / Action semantics → Interaction owner commit；
+- Reasoning Protocol canonical revision → Protocol semantic owner commit。
+
+Governance 不因为“批准了”就成为所有 domain semantics 的 writer。
+
+### 7.3 GovernanceDecision 必须绑定 exact base
+
+若：
+
+```text
+proposal based on Policy@v4
+```
+
+审批后：
+
+```text
+Policy@v5 already committed
+```
+
+旧 GovernanceDecision 不能自动 apply 到 v5。
+
+应产生：
+
+```text
+ApprovalBaseStale
+or
+CanonicalCommitConflict
+```
+
+然后重新审查。
+
+### 7.4 Canonical Commit 与 Activation 分离
+
+某版本可以：
+
+```text
+Committed
+but
+NotActive
+```
+
+这对：
+
+- shadow validation；
+- staged rollout；
+- future activation；
+- governance review；
+
+都很重要。
+
+### 7.5 Activation 必须遵守 Version Architecture
+
+Activation 使用 §3.6 的 scope-relative、multi-version contract。
+
+ActivationRecord 至少绑定：
+
+```text
+SemanticIdentity
+VersionRef
+Scope
+Purpose
+StartCondition
+End / Expiration
+GovernanceAuthorizationRef
+PreviousActivationHead
+RollbackTarget when relevant
+```
+
+### 7.6 Activation 本身不能重新判断语义优劣
+
+Activation mechanism 的职责是：
+
+> 按已经授权的范围实施版本生效。
+
+它不是第二个 Evolution / Governance engine。
+
+### 7.7 Security 可以阻断 Activation，但不能批准 Change
+
+如果 Security / compliance condition 不满足：
+
+```text
+GovernanceDecision = Approve
+CanonicalVersion = Committed
+SecurityEligibility = denied
+```
+
+结果可以是：
+
+```text
+ActivationBlocked
+```
+
+但 Security 不能因为“风险低”反向创造 Governance approval。
+
+### 7.8 Rollback 是新的 Activation Decision
+
+Rollback：
+
+- 不删除新版本；
+- 不修改历史 execution；
+- 不把过去改写成旧版本；
+- 不自动撤销 Evolution knowledge。
+
+它只是：
+
+> 对未来 resolution 重新激活一个已授权版本。
+
+### 7.9 Pre-Authorized Automatic Rollback
+
+Governance 可以预先定义：
+
+```text
+RollbackCondition
++
+RollbackTarget
++
+Scope
++
+MaxDelay
++
+AuditRequirement
+```
+
+运行时条件满足后，deterministic mechanism 可执行自动 rollback。
+
+这是行使既有授权，不是系统临时创造 authority。
+
+### 7.10 Rollback 后仍需 Post-Deployment Validation
+
+Rollback 也形成新的现实后果，需要进入：
+
+```text
+PostDeploymentValidation
+→ SystemAssessment
+```
+
+因为 rollback 本身可能只是风险 containment，不代表 root cause 已解决。
+
+---
+
+## 8. Post-Deployment Validation 与持续演化
+
+### 8.1 上线不是 Validation 结束
+
+正式 activation 后：
+
+```text
+Production
+→ Outcomes / Signals
+→ PostDeploymentValidation
+→ ValidationEvidence
+→ SystemAssessment
+```
+
+因此：
+
+\[
+ValidationDoesNotEndAtDeployment
+\]
+
+### 8.2 Post-Deployment Validation 绑定原 Change Proposal
+
+部署后验证必须知道：
+
+- 原 Issue；
+- Hypothesis；
+- Candidate；
+- Validation Evidence；
+- authorized scope；
+- expected benefit；
+- expected side effects；
+- stop / rollback condition；
+- cohort / validity scope。
+
+否则只能看到“指标变化”，无法解释变化是否支持原设计。
+
+### 8.3 结果可以否定已批准变化
+
+Governance approval 不是“该版本永久正确”的声明。
+
+生产 evidence 可以得到：
+
+```text
+Hypothesis not supported in production
+Unexpected subgroup harm
+Opportunity distortion
+Calibration regression
+Authority side effect
+Data cost too high
+```
+
+这些会形成新 Signal / Issue。
+
+### 8.4 Post-Deployment 不应只看单一 KPI
+
+至少考虑：
+
+- semantic quality；
+- learner outcome；
+- uncertainty / calibration；
+- attention cost；
+- cognitive substitution；
+- opportunity allocation；
+- subgroup heterogeneity；
+- failure / fallback rate；
+- Data Authority / privacy impact；
+- security / authority anomalies；
+- operability。
+
+一个 metric 提升不能覆盖 Constitution-bound constraint。
+
+### 8.5 System-induced Evidence Bias 继续存在
+
+新版本上线后会改变未来数据分布。
+
+因此 validation 必须知道：
+
+```text
+VersionActivation
+→ changed policy / semantics
+→ changed opportunities
+→ changed observed data
+```
+
+不能用新版本自己制造的数据分布无条件证明新版本正确。
+
+### 8.6 Maintain Current Version 是合法结论
+
+如果：
+
+- evidence 不足；
+- competing hypotheses unresolved；
+- benefit 小于 migration / cognitive / privacy cost；
+- risk 不可接受；
+- validity scope 太窄；
+- authority 无法合法获得；
+
+Governance / Evolution 可以得出：
+
+```text
+MaintainCurrentVersion
+```
+
+这不是“项目失败”，而是受治理系统的正常结论。
+
+---
+
+## 9. Authority、Data Authority 与 Security Contract
+
+### 9.1 Evolution Knowledge 没有变更权限
+
+正式保持：
+
+\[
+EvolutionProposal
+\neq
+ChangeAuthority
+\]
+
+Evolution 的 SystemIssue、Hypothesis、ValidationEvidence 可以很强，但不能：
+
+- canonical commit；
+- activation；
+- expand authority；
+- grant data access；
+- change Constitution。
+
+### 9.2 Validation 需要独立 Data Authority
+
+“为了验证系统”是新的 purpose。
+
+因此：
+
+```text
+production data exists
+not=>
+validation may use it
+```
+
+每次 ValidationRun 需要解析：
+
+```text
+Purpose = SystemValidation
+Subject / Scope
+Data Type
+Operation
+Destination
+Retention
+Disclosure
+Current DataAuthority
+```
+
+### 9.3 Validation Value 不创造 Data Authority
+
+\[
+ValidationValue \neq DataAuthority
+\]
+
+即使某类数据极其有价值，也不能因此无限采集、保留或跨 purpose 使用。
+
+### 9.4 Historical Replay 也需要当前 Authorization
+
+历史数据当时合法保存，不代表今天可以再次用于 validation。
+
+\[
+HistoricalExistence
+\neq
+CurrentUseAuthorization
+\]
+
+Replay / reinterpretation 仍需当前 Data Authority。
+
+### 9.5 Governance Tool 属于高权限 Tool Domain
+
+AI Runtime 中 Governance Tool 必须与普通 Reasoning / Action Tool 分离。
+
+例如：
+
+- submit ChangeProposal；
+- record GovernanceDecision；
+- issue CanonicalChangeAuthorization；
+- activate version；
+- rollback version；
+
+都需要独立 backend authorization。
+
+模型能够“调用工具”不等于拥有其真实 effect authority。
+
+### 9.6 Confused Deputy 防线
+
+高权限 workflow 必须校验：
+
+```text
+Principal
+Purpose
+ProposalRef
+CandidateRef
+BaseVersion
+Scope
+Parameters
+GovernanceDecisionRef
+Current Authority
+```
+
+禁止只因为模型传入：
+
+```text
+approved=true
+```
+
+就执行 canonical change。
+
+### 9.7 Security Signal 与 Governance Authority 分离
+
+Security 可以：
+
+- block；
+- contain；
+- revoke credential；
+-触发预授权 rollback；
+-产生 SecuritySignal / SystemSignal。
+
+但：
+
+\[
+SecuritySignal \neq GovernanceDecision
+\]
+
+安全 containment 是行使既有 reduction / blocking authority，不是系统任意扩权。
+
+---
+
+## 10. Consistency、Concurrency 与 Failure Model
+
+### 10.1 Evolution 不要求全局串行
+
+多个 Issue、Hypothesis、Validation 可以并行。
+
+例如：
+
+```text
+Issue I1 → H1/H2 → Validation V1
+Issue I2 → H3    → Validation V2
+```
+
+它们不需要全局锁。
+
+正式一致性边界存在于：
+
+- SystemIssue commit；
+- Hypothesis / RevisionCandidate commit；
+- ValidationRun snapshot；
+- ChangeProposal；
+- GovernanceDecision；
+- CanonicalCommit；
+- Activation。
+
+### 10.2 Evolution Object 使用不可静默覆盖的 Revision
+
+SystemIssue、Hypothesis、RevisionCandidate、ChangeProposal 需要 revision / supersession history。
+
+禁止：
+
+```text
+UPDATE issue SET explanation = ...
+```
+
+把原来 reasoning basis 静默覆盖。
+
+### 10.3 Validation Run 使用 exact snapshot
+
+ValidationRun 必须绑定：
+
+- exact Candidate；
+- exact Hypothesis；
+- exact Dataset / History refs；
+- exact VersionContext；
+- ValidationPlan revision；
+- authority / data authority basis。
+
+如果其中 critical dependency 在 run 前失效，应得到：
+
+```text
+ValidationContextStale
+```
+
+### 10.4 Governance TOCTOU
+
+从 Proposal 到 GovernanceDecision 再到 CanonicalCommit 之间，base version 可能变化。
+
+所以：
+
+```text
+GovernanceDecision
+binds exact base
+```
+
+Commit 时再检查 expected head。
+
+### 10.5 Failure Taxonomy
+
+至少区分：
+
+**Epistemic / Evolution Non-resolution**
+```text
+NoIssue
+InsufficientEvidence
+Unresolved
+NotIdentifiable
+Inconclusive
+ConflictingEvidence
+```
+
+**Validation Runtime Failure**
+```text
+ValidationContextUnavailable
+ValidationToolFailure
+ReplayUnavailable
+ModelFailure
+DatasetUnavailable
+```
+
+**Authority / Data Failure**
+```text
+ValidationUnauthorized
+DataAuthorityDenied
+GovernanceUnauthorized
+ApprovalEnvelopeExpired
+```
+
+**Consistency Failure**
+```text
+CandidateStale
+ProposalStale
+ApprovalBaseStale
+CanonicalCommitConflict
+ActivationConflict
+```
+
+**Deployment / Post-validation**
+```text
+ActivationBlocked
+RollbackTriggered
+UnexpectedRegression
+PostValidationInconclusive
+```
+
+这些不能互相伪装。
+
+### 10.6 Validation Runtime Failure 不等于 Evidence Against Hypothesis
+
+如果 benchmark service down：
+
+```text
+ValidationToolFailure
+```
+
+不能解释成：
+
+```text
+Hypothesis contradicted
+```
+
+同样，DataAuthorityDenied 也不是 negative evidence。
+
+### 10.7 Governance 不决策也是合法状态
+
+Governance 可以：
+
+```text
+NeedMoreEvidence
+MaintainCurrentVersion
+```
+
+不要求所有 Proposal 最终必须产生 change。
+
+### 10.8 Recovery 不得丢失 Authorization History
+
+Process restart 后可以重新恢复 workflow，但：
+
+- GovernanceDecision 不得重新生成；
+- ChangeProposal ref 不得替换；
+- exact candidate / base 不得丢失；
+- Activation history 不得由当前状态反推伪造；
+- workflow checkpoint 不得保存“隐形新权限”。
+
+---
+
+## 11. Human、AI 与自动化边界
+
+### 11.1 AI 可以自动化大量 Evolution cognition
+
+允许 AI：
+
+- Signal triage；
+- anomaly summarization；
+- IssueCandidate generation；
+- competing Hypothesis generation；
+- RevisionCandidate generation；
+- ValidationPlanCandidate；
+- historical analysis；
+- report synthesis；
+- ChangeProposal draft；
+- post-deployment analysis。
+
+这些都属于：
+
+\[
+OpenCognition
+\]
+
+### 11.2 AI 不能把认知结果升级为 Authority
+
+即使 AI 完成完整分析：
+
+```text
+Issue
+→ Hypothesis
+→ Validation
+→ Recommendation
+```
+
+仍然：
+
+\[
+Recommendation \neq Authorization
+\]
+
+### 11.3 Level 2 自动化必须在 Approval Envelope 内
+
+Level 2 自动 change 不是“AI 自主治理”。
+
+它实际上是：
+
+```text
+Governance pre-authorizes bounded envelope
+→ runtime verifies candidate is inside envelope
+→ deterministic authority mechanism permits bounded effect
+```
+
+### 11.4 Level 3 / Level 4 的 Human Governance
+
+当前 DeerMind 基线要求 Level 3 / Level 4 进入人工 Governance。
+
+未来如果治理机制进一步自动化，也必须：
+
+- 先通过更高层 Governance 授权；
+- 不改变 Constitution；
+- 有 clear accountability；
+- 可审计；
+- 可撤销；
+- 不允许 AI 自己扩展自身 governance authority。
+
+### 11.5 Human 也不能绕过 Semantic Contract
+
+Human 可以：
+
+- 提 Signal；
+- 提 Hypothesis；
+- 提 Candidate；
+- 要求 Validation；
+- 作 GovernanceDecision。
+
+但 Human 权威也不意味着：
+
+```text
+expert says so
+→ canonical truth
+```
+
+不同 standing 仍然必须走自己的 formal path。
+
+---
+
+## 12. 与其他 Work Package 的运行契约
+
+### 12.1 Runtime & Event Architecture
+
+提供：
+
+- occurrence truth；
+- ActionOccurrence；
+- ExternalInput；
+- correction；
+- factual provenance。
+
+Evolution 可以引用、重解释和验证这些历史，但不能重写 Event。
+
+\[
+HistoricalFact \neq LaterInterpretation
+\]
+
+### 12.2 AI Reasoning Runtime
+
+提供：
+
+- versioned Reasoning Protocol；
+- ContextManifest；
+- Candidate；
+- ReasoningExecutionRecord；
+- Tool / Model provenance。
+
+Evolution 大量 cognition 可通过 AI Runtime 执行，但 formal Evolution object 仍需 owner commit；Governance authority 不进入模型自由 reasoning。
+
+### 12.3 State / Dependency / Invalidation
+
+Evolution object 需要：
+
+- exact dependency；
+- version；
+- provenance；
+- current / historical resolution。
+
+RevisionCandidate 必须显式给出 typed dependency impact。
+
+当 canonical version 激活后，downstream invalidation 由 State / Dependency contract 执行，而不是 Evolution 直接修改各 Space 状态。
+
+### 12.4 Interaction / Decision Runtime
+
+ prospective validation / bounded experiment 需要 Interaction 真实决定具体 learner-level action。
+
+Governance 可以批准 validation scope，但：
+
+\[
+GovernanceApproval
+\neq
+InteractionPolicyOutcome
+\]
+
+只有实际发生 Action 才进入 Event。
+
+### 12.5 Semantic Version / Replay / Migration
+
+本专项依赖 §3.6 提供：
+
+- CanonicalVersion；
+- RuntimeVersionContext；
+- compatibility；
+- multi-version coexistence；
+- Historical Reconstruction；
+- Reinterpretation；
+- ActivationRecord；
+- rollback semantics。
+
+Evolution 负责评价版本是否有效，不重新定义 version mechanics。
+
+### 12.6 Domain Semantic Owners
+
+每个 owner 必须提供 Evolution Contract：
+
+```text
+Identity
+Version
+ValidityScope
+FalsifiableExpectation
+Provenance
+Dependency
+ReplaySupport
+```
+
+Evolution 提出 revision；owner 执行 canonical commit。
+
+### 12.7 Product Context / Context Constitution
+
+提供：
+
+- 当前 authority；
+- Data Authority；
+- context-specific restrictions；
+- consent / guardian constraints；
+- activation / expiration；
+- governance provenance。
+
+Evolution 可以发现问题并形成 Proposal，但不能自己改变这些 authority。
+
+---
+
+## 13. Capability Staging 与 Focused Design Closure
+
+### 13.1 S0 — Architecture Contract Mandatory
+
+本版本必须完整冻结：
+
+- Evolution 与 Governance ownership separation；
+- Signal / Issue / Hypothesis / RevisionCandidate / ValidationEvidence 分层；
+- 两条 loop；
+- formal non-resolution states；
+- Hypothesis / Revision Validation 分离；
+- ValidationEvidence != ChangeDecision；
+- ChangeProposal boundary；
+- Level 1–4 change classification；
+- ApprovalEnvelope contract；
+- GovernanceDecision contract；
+- owner-side canonical commit；
+- Activation / Rollback；
+- Post-Deployment Validation；
+- DataAuthority / Security boundary；
+- system-induced evidence bias / self-sealing concern；
+- failure / concurrency semantics。
+
+### 13.2 S2 — Consolidated Spike 中允许最小模拟
+
+Roadmap 当前把 Evolution / Governance 主要实现能力放在 S2。
+
+因此首个 Consolidated Spike 可以：
+
+- 使用预构造 SystemIssue；
+- 使用 hardcoded RevisionCandidate；
+- 使用 mock GovernanceDecision；
+- 执行真实 canonical commit / activation 的最小 path；
+- 验证 authority / version / audit chain；
+- 不实现完整 issue discovery / validation platform。
+
+这不降低 S0 semantic contract。
+
+### 13.3 S3 — 可以后置的生产能力
+
+可后置：
+
+- automatic issue discovery platform；
+- large-scale hypothesis workspace；
+- full experiment orchestration；
+- statistical causal toolkit；
+- governance UI；
+- organization-level approval workflow；
+- shadow rollout platform；
+- automated post-deployment dashboards；
+- large-scale multi-version rollout；
+- automated migration analysis。
+
+### 13.4 本专项不新增 Validation Dimension G
+
+Roadmap 已冻结 Consolidated Spike A–F 六个 Validation Dimension。
+
+Evolution / Governance 不单独新增 G。
+
+其关键合同通过：
+
+- Dimension C：Version / Replay；
+- Dimension E：Policy / runtime decision boundary；
+- Dimension F：Authority / Security；
+- 以及 A–D 产生的 evidence handling；
+
+被间接验证。
+
+完整 Evolution operability 留给 Architecture Validation Build 与后续 system validation。
+
+### 13.5 Focused Design Closure 判断
+
+本专项合同纳入 System Design v1.0 基线，与总体及其余五项专项完成一致性评审。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+
+本专项按原 S0/S2/S3 分期承载 System Assessment、Validation、Governance、Canonical Commit、Activation 和 Post-Deployment 合同，不新增 Dimension G，也不把版本/权限机制证据写成自动演化平台已经验证。
+
+### 13.6 下一步
+
+当前系统设计内部 Phase 6 已完成，Gate E/F 通过；总体 Development Phase 2 准入。下一工作是 Architecture Validation Build 的组件与验证方案，随后实现真实窄范围闭环，见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md) §5。Spike 原否定/未决保持；后续证据可触发新版本修订，不能在实现中静默改变本合同。
+
+Build 允许最小人工 Governance 流程，仍必须记录 exact proposal / base / authorization 和 activation。自动发现问题、实验平台、审批 UI 与生产 rollout 按原能力分期展开。
+
+## Appendix A — Evolution / Governance Invariant Registry
+
+| ID | Invariant |
+|---|---|
+| **EG-01** | `LearnerAdaptation != SystemEvolution`。 |
+| **EG-02** | `SystemSignal != SystemIssue`。 |
+| **EG-03** | `Issue != Hypothesis != RevisionCandidate != ValidationEvidence`。 |
+| **EG-04** | `NoAssessmentWithoutExpectation`。 |
+| **EG-05** | 每个重要可演化组件都应具有 Falsifiable Expectation 与 Validity Scope。 |
+| **EG-06** | `SourceAuthority != HypothesisValidity`。 |
+| **EG-07** | 重要 Issue 必须允许 competing hypotheses。 |
+| **EG-08** | `Unresolved`、`NotIdentifiable` 是合法状态。 |
+| **EG-09** | `HypothesisValidation != RevisionValidation`。 |
+| **EG-10** | `ValidationEvidence != ChangeDecision`。 |
+| **EG-11** | `ValidationFailure != EvidenceAgainstHypothesis`。 |
+| **EG-12** | 使用最低充分 Validation，不为系统验证天然制造 learner experiment。 |
+| **EG-13** | `FactualReplay != CounterfactualEvaluation`。 |
+| **EG-14** | Replay 不能创造历史中不存在的 Evidence Opportunity / Responsibility Condition。 |
+| **EG-15** | Production evidence 是 system-shaped，不是假定无偏的 reality sample。 |
+| **EG-16** | Opportunity self-sealing 必须可被审计并进入 System Signal。 |
+| **EG-17** | `NormativeSourceChange != EmpiricalModelFailure != AuthorityChange`。 |
+| **EG-18** | `ValidationSuccess not=> AuthorityExpansion`。 |
+| **EG-19** | `SafetySignal != EmergencyAuthority`。 |
+| **EG-20** | `Evolution knows != Governance authorizes`。 |
+| **EG-21** | `EvolutionProposal != ChangeAuthority`。 |
+| **EG-22** | Governance 不属于 Evolution Space，也不是新的 Conceptual Space。 |
+| **EG-23** | `ChangeProposal != GovernanceDecision`。 |
+| **EG-24** | Level 1 learner adaptation 不是 canonical system evolution。 |
+| **EG-25** | Level 2 automation 必须处于 current ApprovalEnvelope 内。 |
+| **EG-26** | Level 3 structural / semantic evolution 必须进入 formal Governance。 |
+| **EG-27** | Level 4 constitutional / authority change 不得降级为普通优化。 |
+| **EG-28** | `EmpiricalBenefit != ConstitutionalJustification`。 |
+| **EG-29** | `Approval != CanonicalCommit != Activation`。 |
+| **EG-30** | Canonical Commit 由对应 Semantic Owner 执行。 |
+| **EG-31** | GovernanceDecision 必须绑定 exact proposal / candidate / base version。 |
+| **EG-32** | Activation mechanism 不拥有 semantic judgment。 |
+| **EG-33** | Security 可以阻断 effect，不能创造 Governance approval。 |
+| **EG-34** | `Rollback != HistoryRewrite`。 |
+| **EG-35** | Post-Deployment Validation 必须回到 System Assessment。 |
+| **EG-36** | `ValidationValue != DataAuthority`。 |
+| **EG-37** | Historical data existence 不等于当前 validation use authorization。 |
+| **EG-38** | AI 可以开放 cognition，但不能通过 recommendation 获得 Governance authority。 |
+| **EG-39** | Human input 也不能绕过 formal standing / validation contract。 |
+| **EG-40** | Governance history 必须可审计，不得成为人工黑箱。 |
+
+---
+
+## Appendix B — Core Object Responsibility Matrix
+
+| Object / Record | Semantic Owner / Authority | Standing | 主要依赖 | 主要下游 |
+|---|---|---|---|---|
+| SystemSignal | Evolution intake / owner commit | Evolution input standing | Event / telemetry / audit / semantic history | SystemAssessment |
+| SystemAssessmentResult | Evolution | Derived system knowledge | Signal + expectation + scope | Issue / terminal state |
+| SystemIssue | Evolution | Formal system knowledge | Assessment evidence | Hypothesis / ChangeProposal |
+| Hypothesis | Evolution | Formal explanatory candidate | Issue + evidence | Validation |
+| RevisionCandidate | Evolution candidate responsibility | Candidate | Hypothesis / target semantic owner / base version | Validation / ChangeProposal |
+| ValidationPlan | Evolution / Validation owner | Execution plan | Hypothesis / Candidate / purpose / authority | ValidationRun |
+| ValidationRun | Validation runtime | Execution history | exact plan / data / version / authority | ValidationEvidence |
+| ValidationEvidence | Evolution / Validation | Formal system evidence | ValidationRun | Assessment / ChangeProposal |
+| ChangeProposal | Evolution | Governance input package | Issue / hypothesis / candidate / validation | Governance |
+| ApprovalEnvelope | Governance | Bounded change authority | Constitution / GovernanceDecision | Level 2 adaptation |
+| GovernanceDecision | Governance | Formal authorization decision | exact Proposal / Candidate / base | CanonicalChangeAuthorization |
+| CanonicalChangeAuthorization | Governance | Scoped commit authority | GovernanceDecision | SemanticOwner CanonicalCommit |
+| CanonicalVersion | Corresponding semantic owner | Canonical semantic standing | Authorized Candidate | Activation |
+| ActivationRecord | Authorized activation mechanism | Formal activation history | CanonicalVersion + authorization | Runtime Version Resolution |
+| RollbackAuthorization | Governance / preauthorized envelope | Activation authority | risk / condition / target | Rollback ActivationRecord |
+| PostDeploymentValidation | Evolution / Validation | Validation execution/evidence | Activation + production outcomes | SystemAssessment |
+
+---
+
+## Appendix C — Change Level Decision Matrix
+
+| 问题 | L1 | L2 | L3 | L4 |
+|---|---:|---:|---:|---:|
+| 只影响单 learner 当前 Task / Support / Plan | ✓ |  |  |  |
+| 改变已批准 envelope 内参数或 variant |  | ✓ |  |  |
+| 改变 Target / Claim / Evidence / Policy semantics |  |  | ✓ |  |
+| 改变 canonical identity / split / merge |  |  | ✓ |  |
+| 改变谁拥有 learner-facing control authority |  |  |  | ✓ |
+| 改变 Context Constitution 的合法强制范围 |  |  |  | ✓ |
+| 安全版本按预授权条件 rollback |  | ✓ |  |  |
+| 新 safety concern 要求更大 authority |  |  |  | ✓ |
+| 新 benchmark 证明某 policy 效果更好 | 不直接决定 level | 不自动授权 | 可能支持 L3 Proposal | 不能证明 L4 authority |
+
+---
+
+## Appendix D — Validation Method Contract Matrix
+
+| Method | 真实 learner effect | Counterfactual strength | 主要风险 | Governance / Data Authority |
+|---|---:|---:|---|---|
+| Historical Analysis | 否 | 低–中 | selection / system-induced bias | 当前 data-use authority |
+| Historical Replay / Reinterpretation | 否 | 低 | missing grounding / old opportunity | 当前 replay authorization |
+| Expert Review | 否 | 低 | expert bias | review access authority |
+| Benchmark / Curated Set | 否 | 低–中 | benchmark mismatch | dataset authority |
+| Simulation | 否 | 方法依赖 | model misspecification | simulation input authority |
+| Shadow Validation | 对正式 effect 否 | 中 | production distribution bias | shadow execution / data authority |
+| Bounded Production Validation | 是 | 中–高 | real-world harm | explicit Governance + Interaction |
+| Prospective Learner Experiment | 是 | 高潜力 | learner risk / attention cost | strong Governance + consent / authority |
+| Post-Deployment Validation | 已有 production effect | 中 | feedback / exposure bias | production + validation authority |
+
+---
+
+## Appendix E — Governance Decision State Examples
+
+```text
+Proposal P1
+→ GovernanceDecision: NeedMoreEvidence
+→ ValidationPlan V2
+→ ValidationEvidence VE2
+→ revised Proposal P2
+```
+
+```text
+Proposal P3
+→ GovernanceDecision: ApproveBoundedDeployment
+→ CanonicalCommit v5
+→ Activation scope=A
+→ PostDeploymentValidation
+→ Maintain / Expand / Rollback proposal
+```
+
+```text
+Proposal P4
+→ GovernanceDecision: Reject
+→ Candidate remains historical
+→ no CanonicalCommit
+```
+
+```text
+ApprovalEnvelope E1
+→ bounded calibration candidate C1
+→ inside envelope
+→ automatic authorized commit / activation path
+→ audit
+```
+
+```text
+candidate C2
+→ outside E1
+→ cannot auto-adopt
+→ formal Governance
+```
+
+---
+
+## Appendix F — 当前不冻结的实现决策
+
+以下仍属于后续 ADR / implementation design，而不是本专项的架构结论：
+
+- System Signal physical store；
+- anomaly detection engine；
+- metric query platform；
+- Hypothesis workspace UI；
+- validation experiment DSL；
+- benchmark runner；
+- replay farm；
+- simulation framework；
+- causal inference library；
+- feature flag / canary platform；
+- Governance portal；
+- approval notification system；
+- human identity / signing implementation；
+- organization role mapping；
+- canonical registry product；
+- rollout scheduler；
+- post-deployment dashboard；
+- Issue dedup algorithm；
+- automated proposal ranking；
+- LLM used for Evolution analysis；
+- workflow engine。
+
+这些技术选择必须服从本文档冻结的 ownership、authority、version、provenance、validation independence、audit 与 rollback contract。

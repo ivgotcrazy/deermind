@@ -1,6 +1,6 @@
 # Spike 历史过程材料
 
-此目录保存已执行批次的方案、合同草案、修订及过程结果。它们用于追溯当时的决定，不作为新的运行计划、阶段位置或验收结论。
+此目录保存不同过程文档各自的最新版本，涵盖已执行批次的方案、合同草案、修订及结果。它们用于追溯当时的决定，不作为新的运行计划、阶段位置或验收结论。同一文档的旧版本从 `doc/` 删除；实验校验仍需的历史副本和原始记录保存在 `src/spike/`，并允许多个版本共存。
 
 现行结论只见 [Architecture Validation Report](../DeerMind_Architecture_Validation_Report_v0.1.md)。原实验设计仍在[上级目录](../DeerMind_Consolidated_Architecture_Spike_Design_v0.1.md)。
 
