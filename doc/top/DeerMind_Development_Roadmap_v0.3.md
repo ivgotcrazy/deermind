@@ -7,7 +7,7 @@
 > **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`<br>
 > **专项路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-08（当前状态同步；阶段顺序不变）<br>
+> **更新时间**：2026-10-09（G3 与当前状态同步；阶段顺序不变）<br>
 > **版本说明**：v0.3 保留 v0.2 的全生命周期阶段、G0–G9 Evidence Gate、Reopen 机制以及“通用学习架构 + 小学首个 Product Context”的项目定位，不改变 Architecture Validation Build、MVP Definition、Product & Domain Foundation、MVP Engineering、Internal Alpha、Controlled Pilot、Production Candidate 与 Productionization 的总体顺序。本版本初次修订对齐当时 System Design Roadmap v0.5 的阶段执行语义；现行阶段路线图为 v0.6，执行顺序保持：System Design 内部采用 **MVCL → P0 / 横切机制语义闭合 → Integrated Pre-Validation Candidate → §3.2–§3.7 Focused Design Closure → §3.8 Cross-Cutting Coverage → Consolidated Architecture Spike → Evidence Review / Design Revision → Gate E / Gate F → System Design Baseline v1.0**；六个 Focused Design 是必须完成的设计责任，是否独立成文由复杂度决定。同时再次明确 Core System Design 只冻结 Product Context / Context Constitution 的通用接入与 enforcement contract，首个小学 Product Context 的 guardian authority、consent、儿童数据、家长可见性、学校现实与具体 retention 规则仍由后续 MVP Definition / Product & Domain Foundation 阶段实例化。
 
 ---
@@ -286,6 +286,8 @@ DeerMind 与普通 SaaS 的显著区别是：软件开发完成并不意味着�
 
 **领域基础**负责：首版 curriculum scope、Task Families / Task Instances、Solution Strategies、初始 KC model、Task–Solution–KC grounding、初始 validation / benchmark set，以及 canonical domain semantics 的最小 governance 流程。
 
+首版已将基础领域演化纳入必要能力。Phase 4 在领域与产品基础中共同明确管理员发起或选择处理、AI 辅助评估与候选、有限验证、单人审核发布和生效后检查，聚焦 KC、Task Family、Solution 与教材映射的必要新增和局部修正。初始建模保留建设入口，复用检查与发布；其他既定维护需求不因演化聚焦而删除。范围与责任见[MVP Definition §7](../mvp/DeerMind_MVP_Definition_v0.1.md#7-模型管理与运行可观察性)，具体行为和后续详细设计责任见[需求规格 §7.1](../mvp/DeerMind_MVP_Requirements_and_Acceptance_v0.1.md#71-基础领域演化的最小行为合同)。
+
 AI 可以大量辅助 Task / Solution / KC 的拆分、评估和候选生成，但首版 canonical domain model 仍必须受 Learning Space 与 Governance 约束，不能把“模型能生成内容”误当成“领域模型已经可靠”。
 
 **主要产物**：核心 UX / Product Flow、Domain Bootstrap Package、初始 benchmark / evaluation set、内容与领域质量审查规则、MVP 数据与 consent flow 设计。
@@ -313,6 +315,8 @@ MVP Engineering 的目标不是把所有 DeerMind 能力实现，而是实现 Ph
 **Product Capability**：MVP user journey、学习输入、Action presentation、correction、parent-facing trust / report experience、consent / privacy experience、domain content delivery。
 
 MVP 可以保留大量 staged capability，例如 Evolution 主要人工发起、Governance UI 很轻、Replay 只保留有限窗口、Policy Action 类型有限、部署形态简单。staged 的是能力成熟度，不是语义纪律。
+
+对当前 MVP，Evolution 的最低交付为人工主导、AI 辅助的基础领域演化真实流程。Phase 5 完成记录与接口、LLM 任务、有限验证、授权提交、生效及影响恢复的详细设计与实现，并评估实际新增工作量；Phase 6 按[验证方案 §2.1](../mvp/DeerMind_MVP_Validation_Plan_v0.1.md#21-基础领域演化的有限验收)统一验收。持续自动发现、通用实验编排、跨模型自动修订和大规模多版本平台后置，不另开 Evolution Spike。基础扩展须有成功与后续使用证据，非成功结果同样可查；不能以空流程、模拟结论或版本号变化替代实际能力，也不要求每个候选成功后才能结束本阶段。
 
 **MVP Feature Complete Gate**：Phase 3 定义的 MVP 核心价值链端到端可用；核心 AI / data / architecture path 使用真实实现而不是测试旁路；已知缺失能力明确记录；可以进入系统化质量验证，而不再进行大范围功能定义。
 
@@ -503,24 +507,28 @@ Production Readiness Failure
 
 ### 8.2 当前项目位置
 
-Phase 0 Architecture Baseline 保持原冻结版本。System Design 内部 Phase 6及项目G1已完成。2026-10-08 Architecture Validation Build完成退出评审，**项目G2 PASS，限定准入Development Phase 3 MVP Definition**。该新决定采用用户确认的能力分期：真实机制组合与最低纠错路径已有证据，语义质量和完整维护能力仍待后续工程验收。原R2的14/24、EVAL-02/04未满足及原条件HOLD，R3/R4失败全部保留；不是把原实验改为通过。依据与限制见[Build Validation Report §9](../system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。
+**2026-10-09，项目 G3 PASS，MVP Definition 已冻结，当前进入 Development Phase 4 Product & Domain Foundation。** [MVP Definition §11](../mvp/DeerMind_MVP_Definition_v0.1.md#11-g3-评审与阶段完成条件)记录逐项评审与重开条件；[需求与验收规格](../mvp/DeerMind_MVP_Requirements_and_Acceptance_v0.1.md)和[验证方案](../mvp/DeerMind_MVP_Validation_Plan_v0.1.md)共同构成交付。该结论确认产品范围与验证假设清楚，不表示 MVP 已实现、质量达标或获准 Pilot。
+
+Phase 0 Architecture Baseline、System Design 内部 Phase 6 和项目 G1 保持原结论。2026-10-08 Build 退出的 G2 PASS 是此前进入 Definition 的依据：真实机制组合与最低纠错路径已有局部证据，语义质量和完整维护仍待工程验收。原 R2 的 14/24、EVAL-02/04 未满足及原条件 HOLD，R3/R4 失败全部保留。依据与限制见[Build Validation Report §9](../system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。
 
 现行系统设计为总体及六项专项 v1.0。A2 原否定、E1/X5 原未决和旧 9/17 保留；当时G1准入依据撤回错误保证、明确能力分期和完整合同，详见[Phase 6 证据评审](../system-design/DeerMind_System_Design_Evidence_Review_v1.0.md)。该文件同时给出下一阶段工作和停止条件；[统一 Spike Validation Report](../system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md)继续保存原实验结果。
 
-下一步形成MVP Definition，明确目标用户、核心场景、价值假设、产品与人工责任边界及最低成功指标。之后依次进入Product & Domain Foundation、MVP Engineering和Internal Alpha；本次不准入真实儿童Pilot。Build的R5准确率优化方案未启动，转为后续候选工程输入；缺失/反证、帮助归因、审查质量、完整纠错及成本分别按报告STG-01–04负责和验收。没有承诺后续一定解决；若拟定价值依赖未经支持的能力，须保留待验证假设和重开条件。两级路线图的顺序、核心责任及后续质量Gate不变。
+Phase 4 下一步交付三类角色的核心 UX/流程、Domain Bootstrap Package、初始评测集、内容与领域质量审查规则，以及数据、authority mapping 和 consent flow。优先设计纲内新题从帮助、入库、评价到 Evolution 评估、候选验证和单人审核发布的组合路径；具体教材允许随后补齐，但实际课程大纲与初始领域内容不能省略后通过 G4。G4 后才进入 MVP Engineering，之后完成 Internal Alpha 与 G6 Pilot Readiness。Build 的 R5 未启动，仍是后续工程候选输入；STG-01–04 的质量和维护责任由 MVP 三份文档承接，不保证后续必定达标。两级路线图的阶段顺序、核心责任和后续质量 Gate 不变。
+
+当前 D09 已明确采用基础领域演化能力，作为系统维护和扩展领域模型的必要组成。[Phase 4 产品与领域基础设计草案](../mvp/foundation/DeerMind_MVP_Product_and_Domain_Foundation_v0.1.md)已展开纲内新题的当下帮助、题目保存、适用评价、后台演化与发布后检查；三端完整 UX、实际领域包、数据授权及参考评测仍需完成。G4 尚未评审，工程详细设计、实现和运行验证按 Phase 5–6 推进；G3 准入继续成立，不回到已关闭的 Spike 或 Build 追加实验。
 
 ### 8.3 当前明确不提前冻结的事项
 
-在对应阶段没有获得足够约束前，以下事项不能成为项目路线图前提：
+Definition 已确定首个六年级数学场景、校内与校外两空间完全隔离、五个学习场景、学生和家长独立 Android APK 及管理员电脑 Web；首轮种子观察为一名孩子、四周、每天全部使用最多 30 分钟。这些决定以 MVP Definition 为准，不再列作产品形态或首轮周期待决。以下内容仍需对应阶段的约束与证据：
 
-- 第一个 MVP 的最终年级、学科范围和用户入口；
-- App / Web / 小程序的最终产品形态；
+- 实际教材、两空间大纲、首批领域内容及具体任务覆盖；
+- 三端详细交互、告知与授权数据流程、完整实机环境；
 - PostgreSQL / MySQL / 图数据库 / 向量数据库等具体技术；
 - Kafka / RabbitMQ / workflow engine；
 - 单体 / 微服务 / Kubernetes；
 - Go / Python / Java 的最终职责边界；
 - 具体 LLM 供应商、模型与 Agent framework；
-- Pilot 用户数量、周期与地域；
+- 首轮 Pilot 的实际日期、问题纳入和参考材料，以及后续扩大用户或地域的安排；
 - 正式 Production Release 日期；
 - 商业增长与规模化策略。
 

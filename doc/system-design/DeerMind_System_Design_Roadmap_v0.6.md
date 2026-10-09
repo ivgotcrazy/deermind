@@ -3,10 +3,10 @@
 > **中文名称**：DeerMind 系统设计路线图<br>
 > **版本**：v0.6<br>
 > **文档性质**：System Design 阶段执行计划 / Design Roadmap<br>
-> **状态**：System Design Phase 6完成，Gate E/F PASS；Build已收口，G2限定范围PASS，准入MVP Definition，见§8.1<br>
+> **状态**：System Design Phase 6 完成，Gate E/F PASS；Build 已收口；MVP Definition 的 G3 PASS，当前进入 Development Phase 4，见 §8.1<br>
 > **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`<br>
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-08
+> **更新时间**：2026-10-09
 >
 > **修订说明**：更新已执行 Spike 的当前状态和修订工作文档集；采用语义校验保证范围与失败交互收束决定，不改变上位责任、原 §17 Completion 或 Gate E/F 标准。
 >
@@ -907,15 +907,19 @@ System Design 阶段采用以下执行纪律：
 
 2026-10-08 内部 Phase 6 证据评审、设计修订和整套一致性核对完成。Gate E/F 通过，总体及六项专项 v1.0 构成当前 System Design Baseline Set。具体决策和逐项 Gate 依据见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)。
 
-项目G1满足；Architecture Validation Build现已收口，当前项目G2 PASS，限定准入Development Phase 3 MVP Definition，依据与能力分期见[Build退出评审](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。原R2质量测量仍为14/24、EVAL-02/04未满足及原条件HOLD，R3/R4失败保留；新准入不表示语义质量通过。Spike原结果保持10 SUPPORTED、A2 DENIED、E1 INCONCLUSIVE，以及X1–X4 PASS、X5 INCONCLUSIVE。历史9/17和失败批次不改写。
+2026-10-09，项目 G3 PASS，MVP Definition 三份基线冻结，当前进入 Development Phase 4 Product & Domain Foundation，见[MVP Definition §11](../mvp/DeerMind_MVP_Definition_v0.1.md#11-g3-评审与阶段完成条件)。这里的 Development Phase 4 与本路线图内部 System Design 阶段分别计数；系统设计基线保持不变，G3 不代表 MVP 实现、质量或 Pilot 准入通过。
+
+项目 G1 与此前 Build 退出的 G2 保持原结论，依据与能力分期见[Build 退出评审](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。原 R2 为 14/24、EVAL-02/04 未满足及原条件 HOLD，R3/R4 失败保留。Spike 原结果为 10 SUPPORTED、A2 DENIED、E1 INCONCLUSIVE，以及 X1–X4 PASS、X5 INCONCLUSIVE；历史 9/17 和失败批次不改写。
 
 ### 8.2 Phase 6工作及执行顺序
 
-Phase 6已完成A2保证范围修订、E1/X5能力分期处置及Gate E/F。后续Build B1–B5和当前退出评审均已完成。本次9项最低纠错及回归检查通过，零新增模型调用，七份v1.0设计不变。当前工作转为MVP Definition，再按Development Roadmap依次完成产品/领域基础、MVP工程与Internal Alpha。
+System Design Phase 6 已完成 A2 保证范围修订、E1/X5 能力分期处置及 Gate E/F，后续 Build B1–B5 和退出评审已完成。Build 退出时的 9 项最低纠错及回归检查通过，未新增模型调用。MVP Definition 现已完成，下一步按 Development Roadmap 交付产品/领域基础：三类角色交互、领域包、初始评测与审查规则、数据和授权流程，重点落实纲内新题的当下帮助与后续 Evolution 维护。G4 后进入 MVP 工程，再完成 Internal Alpha；本次未修改七份 v1.0 系统设计或启动新实验。
+
+MVP 对 Evolution 的当前能力选择是[基础领域演化](../mvp/DeerMind_MVP_Definition_v0.1.md#7-模型管理与运行可观察性)：管理员发起或选择处理，AI 辅助具体领域问题评估、原因解释、候选与有限验证，单人审核后由相应 owner 提交，并检查生效与影响。必要新增和局部修正须真实可用，持续自动诊断、通用实验编排和跨模型自动修订后置。此为既有 System Assessment、Hypothesis、Validation 与 Governance 合同的有限实现范围；Phase 4/5 完成产品与工程细化，按[MVP 验证方案 §2.1](../mvp/DeerMind_MVP_Validation_Plan_v0.1.md#21-基础领域演化的有限验收)进入工程及 Alpha 统一验收，不另开 Spike，不将有限结果写成完整 Evolution 已验证。
 
 A2 不再承诺绝对语义隔离；E1/X5 未决不被改成支持。基本真实 Policy、Observation、权限、依赖、串行、实际帮助及 Evaluation sole writer 不延后，广泛语义质量与运行成功率须取得新工程证据。
 
-原Spike与本路线图Gate E/F条文未修改。R5准确率优化未启动，转为后续工程候选方案，不再阻止Build退出；原测量门槛及失败仍保存。当前准入仅支持在已知能力和风险下定义产品，不保证后续质量必然达标。后续模型实验须结合明确的产品范围、独立基准和预算重新安排，不能挪用已关闭Build账本或自动延长旧实验。
+原 Spike 与本路线图 Gate E/F 条文未修改。R5 准确率优化未启动，保留为后续工程候选方案；原测量门槛及失败仍保存。G3 基于产品范围与假设的清晰度准入 Phase 4，不保证后续质量必然达标。后续模型实验须结合已定 MVP 范围、独立参考、有限样本和停止条件安排，不能挪用已关闭 Build 账本或自动延长旧实验。
 
 ---
 
