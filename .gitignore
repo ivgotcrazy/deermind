@@ -55,3 +55,7 @@ env/
 
 # Architecture Spike evidence (each run is kept locally)
 src/spike/runs/
+
+# MVP interaction prototype browser evidence (reproducible locally)
+src/mvp_prototype/test-results/
+src/mvp_prototype/playwright-report/

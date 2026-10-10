@@ -2,9 +2,9 @@
 
 当前实现合同为以下七份 v1.0。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录冻结依据、Gate E/F 与后续 Build 范围；[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.6.md)保持阶段规划。
 
-当前项目 **G3 PASS，MVP Definition 已冻结，进入 Development Phase 4 Product & Domain Foundation**。阶段评审、三份交付及后续责任见[MVP Definition §11](../mvp/DeerMind_MVP_Definition_v0.1.md#11-g3-评审与阶段完成条件)；G3 不表示产品实现或质量已通过，也不准入真实用户 Pilot。
+**当前工作（2026-10-10）：MVP 三阶段交付框架与大纲评审。** 新入口见 [MVP 文档框架](../mvp/README.md)；四份旧文档归档参考，先确认大纲再填充正文。此前 G3 PASS 与进入 Development Phase 4 的[历史记录](../mvp/archive/DeerMind_MVP_Definition_v0.1.md#11-g3-评审与阶段完成条件)保留，但不自动代表新文档已经完成或新范围已经通过评审。
 
-MVP 包含[基础领域演化能力](../mvp/DeerMind_MVP_Definition_v0.1.md#7-模型管理与运行可观察性)：人工主导、AI 辅助的领域模型新增与局部修正，复用检查、版本和治理发布，补齐实际评估与有限验证。其详细设计和实现按 Phase 4–6 推进，纳入统一工程及 Alpha 验收，不另开 Evolution Spike；七份系统设计基线的责任与历史证据保持。
+归档 MVP 基线中的[基础领域演化选择](../mvp/archive/DeerMind_MVP_Definition_v0.1.md#7-模型管理与运行可观察性)及其后续质量责任保留供新文档核对承接；明确确认的决定不因归档自动撤销。此次文档整理不修改七份系统设计基线的责任与历史证据，也不另开 Evolution Spike。
 
 Architecture Validation Build 已收口，此前 G2 准入与能力分期见[统一 Validation Report §9](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。原 R2 仍为 6/6 段完成路径、14/24 轮内容可用、EVAL-02/04 未满足及原条件 HOLD；R3/R4 失败不改写。Build 退出时 9 项定向机制及回归检查通过，未新增模型调用。R5 未启动，仍是后续工程候选输入，不再作为 Build 退出前置要求。
 
@@ -18,6 +18,6 @@ Build输出统一位于`build/`；[Build Plan v0.4](build/DeerMind_Architecture_
 - [DeerMind_Semantic_Version_Replay_Migration_Design_v1.0](DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md)
 - [DeerMind_Evolution_Governance_Runtime_Design_v1.0](DeerMind_Evolution_Governance_Runtime_Design_v1.0.md)
 
-`doc/` 及其子目录对同一文档只保留最新版本，旧版本由 Git/GitHub 历史追溯。`src/spike/` 允许保留多版本文档、代码快照和实验资料；校验所需的历史字节与索引继续保存在该目录。
+`doc/` 当前文档对同一交付物保留最新工作版本，日常历史由 Git/GitHub 追溯。按本轮明确要求，`doc/mvp/archive/` 额外保留此次框架重建前的四份文档供参考，不作为新文档基线。`src/spike/` 允许保留多版本文档、代码快照和实验资料；校验所需的历史字节与索引继续保存在该目录。
 
 [统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)是唯一 Spike 实验结论入口。`spike/archive/` 保留不同过程文档各自的最新版本；Cross-Cutting Coverage Review 保留其历史审查范围，不替代本次 Phase 6 评审。

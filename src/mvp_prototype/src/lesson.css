@@ -1,0 +1,55 @@
+.lesson-workspace { min-width: 0; }
+.lesson-header { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; }
+.lesson-header h1 { margin-bottom: 8px; }
+.lesson-header-actions { display: flex; gap: 18px; flex-shrink: 0; }
+.lesson-demo-note { font-size: 11px; color: #7b867d; margin: 0 0 24px; }
+.lesson-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 28px; align-items: start; }
+.lesson-outline { padding-top: 12px; }
+.lesson-outline > button { display: flex; align-items: flex-start; width: 100%; text-align: left; gap: 12px; padding: 14px 10px; border-radius: 10px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
+.lesson-outline > button[aria-current='step'] { background: #e7eee3; color: #285b46; }
+.lesson-step-number { border: 1px solid #c8d4c4; width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center; flex-shrink: 0; font-size: 12px; }
+.lesson-outline small { display: block; color: #7b867d; font-size: 11px; margin-top: 4px; }
+.lesson-outline > p { font-size: 11px; padding: 8px 10px; }
+.lesson-switch { border-top: 1px solid var(--line); padding: 20px 10px; margin-top: 12px; }
+.lesson-switch .text-button { text-align: left; }
+.lesson-content { padding: 30px 34px; scroll-margin-top: 65px; }
+.lesson-content-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.lesson-content h2 { font-size: 25px; margin: 16px 0 20px; }
+.lesson-content .lesson-explanation { font-size: 17px; line-height: 1.95; color: #3d5146; }
+.lesson-formula { margin: 24px 0; padding: 18px 20px; border-left: 3px solid #a1b99a; background: #f4f7f0; font-size: 23px; line-height: 1.8; overflow-wrap: anywhere; }
+.lesson-content .lesson-takeaway { color: #3c5847; font-size: 15px; }
+.lesson-fraction-figure { margin: 26px 0 20px; padding: 18px; background: #fafaf6; border-radius: 12px; }
+.fraction-row { display: flex; gap: 12px; align-items: center; margin: 12px 0; font-size: 14px; }
+.fraction-row > strong { width: 28px; flex-shrink: 0; }
+.fraction-bar { display: flex; width: min(280px, 72%); border: 1px solid #96ae8b; border-radius: 5px; overflow: hidden; }
+.fraction-bar span { width: 25%; padding: 12px 0; text-align: center; border-right: 1px solid #96ae8b; color: #788474; font-size: 12px; }
+.fraction-bar span:last-child { border: 0; }
+.fraction-bar span.filled { background: #d3e2c8; color: #2d5037; }
+.lesson-fraction-figure figcaption { font-size: 12px; color: #6a7968; margin-top: 16px; }
+.lesson-discussion { border-top: 1px solid var(--line); margin-top: 26px; scroll-margin-top: 70px; }
+.lesson-discussion-toggle { width: 100%; display: flex; gap: 9px; align-items: center; padding: 20px 0 12px; font-size: 13px; }
+.lesson-discussion-toggle span { margin-left: auto; color: var(--muted); font-size: 12px; }
+.lesson-followup { padding: 18px 20px 4px; background: #f7f5ed; border-radius: 10px; margin-top: 12px; }
+.lesson-followup h3 { font-size: 15px; margin-bottom: 3px; }
+.lesson-followup small { color: #8a8577; font-size: 10px; }
+.lesson-followup p { margin-top: 10px; font-size: 15px; color: #485849; }
+.lesson-next { border-top: 1px solid var(--line); margin-top: 26px; padding-top: 18px; }
+.lesson-next p { font-size: 12px; }
+.lesson-summary { padding: 26px; margin-bottom: 20px; background: #f2f5ea; }
+.lesson-history-entry { padding: 18px 0; border-bottom: 1px solid var(--line); }
+.lesson-history-entry strong { display: block; margin: 10px 0; }
+.lesson-unavailable { padding: 36px; }
+.lesson-resume { display: flex; flex-wrap: wrap; gap: 10px 20px; padding: 18px 22px; margin-bottom: 22px; align-items: center; }
+.lesson-resume > strong { margin-right: auto; font-size: 14px; }
+@media (max-width: 1100px) { .lesson-layout { grid-template-columns: 160px minmax(0, 1fr); gap: 18px; } .lesson-content { padding: 24px; } }
+@media (max-width: 800px) {
+  .lesson-layout { grid-template-columns: 1fr; gap: 12px; }
+  .lesson-outline { display: flex; flex-wrap: wrap; gap: 8px; }
+  .lesson-outline > .eyebrow, .lesson-outline > p { display: none; }
+  .lesson-outline > button { flex: 1; min-width: 110px; margin: 0; padding: 10px; }
+  .lesson-switch { width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 5px 14px; margin: 0; padding: 12px; }
+  .lesson-switch .eyebrow { margin: 0; }
+  .lesson-header { flex-direction: column; gap: 0; }
+  .lesson-header-actions { margin-bottom: 12px; }
+}
+@media (max-width: 500px) { .lesson-content { padding: 20px 16px; } .lesson-content h2 { font-size: 22px; } .lesson-formula { font-size: 18px; } .lesson-step-number { display: none; } }
