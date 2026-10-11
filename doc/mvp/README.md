@@ -1,7 +1,7 @@
 # MVP 文档框架与交付入口
 
 > **文档性质**：MVP 文档导航与阶段交付入口<br>
-> **状态**：Phase 3 已形成 G3 待确认稿；作者审查建议通过，待用户整体范围确认；Phase 4/5 仍为大纲<br>
+> **状态**：Phase 3 根据用户审阅意见完善图文表达与正文组织；G3 暂不通过，Phase 4 暂不启动；Phase 4/5 仍为大纲<br>
 > **维护责任**：Codex 负责本轮整理与一致性检查<br>
 > **写作规范**：[设计文档规范 v1.0（维护修订）](../top/DeerMind_Design_Document_Standard_v1.0.md)；[MVP 共同规则](MVP_Governance.md)<br>
 > **版本与评审**：工作修订由 Git 追溯；准确基线与结论见 [Gate 记录](MVP_Gate_Reviews.md)<br>
@@ -9,7 +9,7 @@
 
 ---
 
-Phase 3 三份正文已形成可供 G3 整体确认的版本：产品定义说明价值、范围及可行性前提，需求规格展开三端业务，验证方案规定质量与后续证据责任。作者审查及准确输入见 [G3 记录](MVP_Gate_Reviews.md#2-g3--mvp-definition)。当前建议进入 Phase 4，用户尚未作出本轮整体范围确认，不将局部选择或作者检查冒充 G3 通过。
+Phase 3 三份正文供用户审阅：产品定义说明价值、范围及可行性前提，需求规格展开三端业务，验证方案规定质量与后续证据责任。正文按主题组织，并列规则逐项列出，关联说明与业务规则分开；相应业务图帮助理解整体关系，文字完整维护逻辑、条件与边界。作者审查、表达检查及准确输入见 [G3 记录](MVP_Gate_Reviews.md#2-g3--mvp-definition)。用户已明确先审阅、暂不通过 G3；当前不启动 Phase 4，不将表达改进或作者检查冒充范围批准。
 
 现有四份 MVP 文档保存在 [archive](archive/README.md)，供历史核对。明确确认的约束不因归档失效；具体承接仍须逐项核对，不能自动沿用旧版的“已冻结”状态。现有[原型](../../src/mvp_prototype/README.md)保留作参考，本轮不修改产品交互或实现。
 
@@ -51,6 +51,21 @@ Phase 3 承担产品范围、业务行为和验收承诺，Phase 4 承担具体�
 ## 3. 使用与后续工作
 
 本次重点阅读[产品定义 §5–§7](phase-3-definition/MVP_Definition.md#5-完整-mvp-范围与能力边界)和[需求规格 §3](phase-3-definition/MVP_Requirements_and_Acceptance.md#3-三端功能与业务流程)，分别检查完整范围及三端如何工作；[验证方案](phase-3-definition/MVP_Validation_Plan.md)规定怎样分阶段取得质量和价值证据。Phase 4/5 仍为大纲，实际活动组织、页面与技术方案尚未交付，不把旧原型或章节提示当作新方案。
+
+可以先按下列图示建立整体认识，再阅读所在章节的规范描述和验收条件。图是正文的对应视图，不是另一套精简需求或正式界面方案。
+
+查验具体规则时，可直接阅读[行为验收 §6](phase-3-definition/MVP_Requirements_and_Acceptance.md#6-行为验收场景)：23 组场景分别列出前置情境和预期结果；质量目标见[指标目标 §2.1](phase-3-definition/MVP_Validation_Plan.md#21-指标目标)，计算条件、限制与准备责任见[测量口径 §2.2](phase-3-definition/MVP_Validation_Plan.md#22-测量口径与准备)。这些是尚待执行的要求，不是验收结果。
+
+| 阅读问题 | 图示及所在位置 |
+| --- | --- |
+| 学生、家长和管理员各做什么 | [Definition §2](phase-3-definition/MVP_Definition.md#2-用户角色与使用情境)，图 DEF-01 |
+| 主动求助和系统建议如何形成后续学习 | [Definition §5](phase-3-definition/MVP_Definition.md#5-完整-mvp-范围与能力边界)，图 DEF-02 |
+| 教材、领域定义、个人记录和判断是什么关系 | [Requirements §1](phase-3-definition/MVP_Requirements_and_Acceptance.md#1-范围术语与需求组织)，图 REQ-01 |
+| 讲解如何推进，独立检测求助后如何处理 | [Requirements §3.2](phase-3-definition/MVP_Requirements_and_Acceptance.md#32-学生求助检验与回看)，图 REQ-02、REQ-03 |
+| 后台如何从案例查到模型与运行依据 | [Requirements §3.5](phase-3-definition/MVP_Requirements_and_Acceptance.md#35-管理员查看模型与实际运行)，图 REQ-04 |
+| 章节状态与近期作答为何分开统计 | [Requirements §3.9](phase-3-definition/MVP_Requirements_and_Acceptance.md#39-章节学习情况与统计口径)，图 REQ-05 |
+| 三端如何衔接教材发布、个人采用、学习及修订 | [Requirements §3.10](phase-3-definition/MVP_Requirements_and_Acceptance.md#310-三端贯通业务示例)，图 REQ-06 |
+| 定义、资产、工程、质量与使用价值怎样分阶段验证 | [Validation §1](phase-3-definition/MVP_Validation_Plan.md#1-验证问题与阶段责任)，图 VAL-01 |
 
 现行模型依据为 [正式概念与系统设计入口](../concept-design/README.md)，DEC-007 替代早期独立能力本体候选。DEC-011–016 已明确目标权限、已有空间更新、章节统计、必要基础回补及按需产品内介入；OPEN-002–004 保留实际教材、投入和服务条件核验，责任与不阻塞定义的理由见 Definition §7。模型有效性、内容质量和实际投入继续凭后续资产及测量判断。
 
