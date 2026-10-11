@@ -1,15 +1,15 @@
-# DeerMind Interaction & Decision Runtime Design v1.0
+# DeerMind Interaction & Decision Runtime Design v1.1
 
 > **中文名称**：DeerMind 交互与决策运行时设计<br>
-> **版本**：v1.0<br>
+> **版本**：v1.1<br>
 > **文档性质**：System Design Baseline<br>
-> **状态**：Gate E/F 评审通过后的实现合同基线<br>
-> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、`DeerMind_Interaction_Space_Design_v1.1.md`、`DeerMind_Evaluation_Space_Design_v1.1.md`、`DeerMind_Learning_Space_Design_v1.1.md`、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v1.0.md`<br>
+> **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
+> **上位基线**：[Concept Architecture v1.2](../concept-design/DeerMind_Concept_Architecture_v1.2.md)、[Domain Space v1.0](../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution v1.2、[AI-Native Principles v0.3](../top/DeerMind_AI_Native_Architecture_Principles_v0.3.md)；总体合同为 [System Design v1.1](DeerMind_System_Design_v1.1.md)<br>
 > **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-08
+> **更新时间**：2026-10-11
 
-本版本在 [DeerMind_Interaction_Decision_Runtime_Design_v0.2.md 历史副本](../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/4-DeerMind_Interaction_Decision_Runtime_Design_v0.2.md.txt) 的合同基础上吸收 Phase 6 证据处置，统一当前验证状态和跨专项引用。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录 A2 否定、E1/X5 未决的正式后果、Gate E/F 依据和后续能力分期。v1.0 冻结的是实现合同，不是模型质量或生产可靠率。原实验与旧设计输入按其原始版本保留，见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。
+本版本在原 System Design v1.0 合同上承接 Domain 与 Learning Space 的对象和 owner 修订。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计命题
@@ -119,7 +119,7 @@ Interaction Runtime 的职责不是“让 AI 尽可能多地参与”，而是�
 
 ### 1.4 与总体 System Design 和 Interaction Space 的关系
 
-`Interaction Space Design v1.1` 定义 Interaction 的稳定语义责任；总体 `DeerMind_System_Design_v1.0` 把 Interaction 放入全系统 MVCL、Current Resolution、AI Runtime、State / Dependency、Event History 和 Evaluation 闭环中；本文档把其中的 Decision 与 Action 部分深化到 Focused Design Closure。
+`Interaction Space Design v1.2` 定义 Interaction 的稳定语义责任；总体 `DeerMind_System_Design_v1.1` 把 Interaction 放入全系统 MVCL、Current Resolution、AI Runtime、State / Dependency、Event History 和 Evaluation 闭环中；本文档把其中的 Decision 与 Action 部分深化到 Focused Design Closure。
 
 ```text
 Interaction Space
@@ -391,9 +391,9 @@ Decision Context 中不同输入必须保留自己的来源与 semantic class：
 
 | 输入 | Source / Owner | 不能被误解释为 |
 |---|---|---|
-| Learning Target / Responsibility Boundary | Learning | learner preference |
+| LearningTarget / ResponsibilityBoundary | Learning Space | learner preference |
 | Learner Belief | Evaluation | Event fact |
-| Target Assessment / Gaps | Evaluation + Learning derived view | Action command |
+| TargetAssessment / Gaps | Evaluation 基于产品目标与 Belief 的派生视图 | Action command |
 | Observation | Interaction | Learner Belief |
 | Interaction State | Interaction projection | factual source |
 | Goal Intent | learner-originating runtime input | Learning Target |
@@ -711,7 +711,7 @@ Interaction 不维护一个全局 `assisted=true` learner state。
 
 工具相关运行语义必须分成四层：
 
-1. **Task Canonical Tool Semantics**：完成 Task 在领域规范上允许 / 要求什么工具，属于 Learning；
+1. **Task Canonical Tool Semantics**：完成 Task 在领域规范上允许 / 要求什么工具，属于 Domain；
 2. **Target Support / Responsibility Boundary**：Target 是否允许把某项认知责任长期外部化，属于 Learning Target；
 3. **Runtime Tool Availability**：当前现实中工具是否可用，属于 Interaction / Environment；
 4. **Occurred Tool Use**：本次 learner / system 实际是否使用，属于 factual occurrence / exposure lineage。
@@ -871,7 +871,7 @@ Policy 可以为了现实义务帮助 learner 完成任务，同时仍需要控�
 
 learner 说“我想今晚把作业做完”可以形成 Goal Intent；这不自动创建新的 Learning Target，也不改变已有 Target responsibility boundary。
 
-同样，Policy 可以提出 `TargetCandidate`，但正式 Target Definition 仍属于 Learning 的 canonical change path。
+同样，Policy 可以提出 `TargetCandidate`，但正式 Target Definition 仍属于 Learning Space 的受控定义与发布路径。
 
 #### 独立诊断转入教学
 
@@ -1533,18 +1533,13 @@ State Runtime 为 Interaction 提供：
 
 Interaction 负责定义“哪些变化在 Interaction 语义上意味着什么”，State Runtime 负责执行一致性机制。
 
-### 8.4 Learning Space
+### 8.4 Domain 与 Learning Space
 
-Learning 提供：
+Domain 提供 ProblemTemplate、SolutionTemplate、KC、知识 grounding、问题工具条件与结构对应关系；Learning Space 提供材料及映射、LearningTarget、范围和支持责任。两者各自的身份、版本、适用 scope 与当前 binding 必须可分辨，Interaction 不拥有其规范写入权。
 
-- Learning Target；
-- Target requirement；
-- Responsibility / Support Boundary；
-- Task / Solution / Knowledge semantics；
-- Task Canonical Tool Semantics；
-- Action grounding 所需 canonical coordinates。
+DecisionContext 按当前用途装配具体问题的实际来源、绑定参数、呈现条件与实际帮助，不从参考方法合成学习者轨迹。模板结构对应可以影响选题，但不能直接产生重复题禁令、强制复习或能力结论。是否再次检测、换表示、讲解或等待，由 Policy 结合有效 Evidence / Belief、目标和当前负担决定。
 
-Interaction 不能修改这些 canonical semantics。
+学习活动采用 SolutionTemplate 的分支、验证、回退或循环时，具体执行仍受当前活动、预算、退出与中断合同约束；Domain 方法不是一个不经 Policy 的行动程序。
 
 ### 8.5 Evaluation Space
 
@@ -1595,7 +1590,7 @@ Interaction 使用这些横切 resolver 的结果，但不吸收其 ownership。
 
 ### 8.9 Focused Design Closure 判断
 
-本专项合同纳入 System Design v1.0 基线，与总体及其余五项专项完成一致性评审。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.1 在此基础上更新领域与产品输入合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 ### 8.10 当前保留的 Architecture Assumption
 
@@ -1635,7 +1630,7 @@ Policy rationale 是可审计的语义说明，不是额外执行指令或学习
 
 ### 8.12 Roadmap Handoff
 
-当前系统设计内部 Phase 6 已完成，Gate E/F 通过；总体 Development Phase 2 准入。下一工作是 Architecture Validation Build 的组件与验证方案，随后实现真实窄范围闭环，见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md) §5。Spike 原否定/未决保持；后续证据可触发新版本修订，不能在实现中静默改变本合同。
+系统设计内部 Phase 6、Gate E/F 与后续 Build 已按原基线收口。本轮领域复核已传导至当前合同，现恢复 MVP Phase 3 的范围与验证条件评审，随后按 Roadmap 准备 Phase 4 资产并进入 Phase 5 工程。旧实验的否定与未决保持；新模型的具体资产、实现迁移与质量需按实际交付验证，见[当前系统设计入口](README.md)。
 
 ## Appendix A — Interaction & Decision Runtime Invariant Registry
 
@@ -1810,4 +1805,3 @@ Plan 状态迁移不能直接执行 Action。
 | concurrent stale → re-decision | §5.3–5.5、§7.4–7.5 | CLOSED / 有界机制证据；语义或组合结论仍受限制 |
 | authority does not bypass Policy | §2.5、§4.11、§8.8 | CLOSED |
 | failure / recovery / audit | §7，含 §7.13 尝试失败与轮次终止的区分 | 合同已明确；远程停止、迟到效果对账及崩溃恢复仍待验证 |
-

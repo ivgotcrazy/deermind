@@ -20,6 +20,8 @@
 
 下游交付：[MVP 分步实施与验证计划](MVP_Incremental_Delivery_Plan.md)、[MVP 交付与运行交接](MVP_Delivery_and_Handover.md)。
 
+概念输入采用 [Domain Space v1.0](../../concept-design/DeerMind_Domain_Space_Design_v1.0.md) 与[Learning Space v1.0](../../concept-design/DeerMind_Learning_Space_Design_v1.0.md)。领域包、材料映射和目标定义分别归属；旧实现与实验按原基线保留，不能只把 TaskFamily 改名后宣称完成迁移。本条更新依赖，不表示本文正文、资产或工程已完成。
+
 共同规则、术语编号和待决事项统一见[文档共同管理规则](../MVP_Governance.md)。
 
 ## 1. 实现范围与架构映射

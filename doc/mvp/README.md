@@ -1,6 +1,6 @@
 # MVP 文档框架与交付入口
 
-**当前状态：2026-10-10，已按框架评审意见完成大纲修订；尚未填充新的项目正文，也未形成本轮 G3/G4/G5 结论。**
+**当前状态：2026-10-11，领域模型复核的阶段性语义结论已纳入正式设计：Domain 定义问题模板、解法模板和 KC；Learning Space 定义材料、范围和目标；个人状态仍属 Evaluation。OPEN-006 的概念归属已明确，可恢复 Phase 3 内容评审；本轮没有 G3/G4/G5 通过结论。**
 
 现有四份 MVP 文档保存在 [archive](archive/README.md)，供历史核对。明确确认的约束不因归档失效；具体承接仍须逐项核对，不能自动沿用旧版的“已冻结”状态。现有[原型](../../src/mvp_prototype/README.md)保留作参考，本轮不修改产品交互或实现。
 
@@ -39,6 +39,8 @@ Phase 6 Internal Alpha & Evaluation、Phase 7 Controlled Pilot 是后续独立�
 
 ## 3. 使用与后续工作
 
-本轮只修订大纲和共同规则，不预设活动、客户端、供应商或量化指标。大纲采用通用的问题结构，同时显式覆盖适用的 AI、领域内容、数据与运营责任。章节提示的替换、状态和基线维护遵循[共同规则](MVP_Governance.md)；主体文档最后一章仅判断自身完成情况，整个阶段在独立 Gate 记录中评审。
+当前已有[产品定义内容草案](phase-3-definition/MVP_Definition.md)和[主要决定、待决与风险记录](MVP_Governance.md)，另已形成[行为与验收草案](phase-3-definition/MVP_Requirements_and_Acceptance.md)和[验证方案首稿](phase-3-definition/MVP_Validation_Plan.md)；Phase 4/5 仍为大纲。活动划分和具体技术方案仍由后续依据推导，不把现有原型直接作为新需求。大纲采用通用的问题结构，同时显式覆盖适用的 AI、领域内容、数据与运营责任。章节提示的替换、状态和基线维护遵循[共同规则](MVP_Governance.md)；主体文档最后一章仅判断自身完成情况，整个阶段在独立 Gate 记录中评审。
 
-后续从 Phase 3 的证据、历史决定承接与需求比较开始，先确认价值和范围，再将需求转为活动与交互、准备领域和验证材料，最后分步实施。关键不确定事项集中登记并提出讨论；新的具体产品正文仍待进入内容讨论时形成。
+当前依照 [正式概念与系统设计入口](../concept-design/README.md) 恢复 Phase 3，继续核对范围、成功标准与验证条件。DEC-007 替代早期独立能力本体候选；OPEN-001 等其他待决保留。领域实例、模板粒度和映射质量由 Phase 4 的实际资产及后续验证检验，不能用旧 Spike/Build 的机制证据代替。
+
+[学习模型复核稿](../concept-design/DeerMind_Learning_Model_Reassessment.md) 保留探索过程，当前结论与替代关系见其 §8。正式模型以 Domain Space v1.0、Learning Space v1.0、Concept / Evaluation / Interaction / Evolution v1.2 和 System Design v1.1 为准；实现与历史实验尚未按新模型迁移。

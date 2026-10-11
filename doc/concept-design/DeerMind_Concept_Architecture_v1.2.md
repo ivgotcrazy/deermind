@@ -1,13 +1,13 @@
-# DeerMind Concept Architecture v1.1
+# DeerMind Concept Architecture v1.2
 
 > **中文名称**：DeerMind 概念架构  
-> **版本**：v1.1  
+> **版本**：v1.2  
 > **文档性质**：顶层概念架构 / Architecture Baseline  
-> **状态**：架构冻结基线  
+> **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论  
 > **上位文档**：DeerMind Product Thesis v1.0、DeerMind Product Constitution v1.0  
-> **下位文档**：Learning / Evaluation / Interaction / Evolution Space Design、AI-Native Architecture Principles、System Design  
-> **更新时间**：2026-09-27  
-> **版本说明**：v1.1 在 v1.0 四空间架构、全局事件模型、Evaluation 单写 Learner Belief、Interaction 决策权、Evolution / Governance 分离以及受控演化机制保持不变的前提下，完成三项上位语义修订：第一，DeerMind Core 从儿童学习场景一般化为面向真实学习过程的一般学习架构，小学保留为首个 Product Context；第二，Learning Space 正式增加 Learning Target 责任，使显式成功语义成为评估与交互的规范前提；第三，Product Constitution 的价值内容完全上移至 Product Constitution v1.0，Concept Architecture 只定义如何在架构层落实这些权限边界。经四份 Space Design v1.1 对齐与 Cross-Document Freeze Gate，本版本进一步收口 Authority Directive 不得绕过 Interaction Policy，并冻结 Target Binding 的事实、合法性与当前运行投影责任链；v1.1 现作为正式架构冻结基线。
+> **下位文档**：[Domain Space v1.0](DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution Space v1.2、AI-Native Architecture Principles v0.3、System Design v1.1  
+> **更新时间**：2026-10-11  
+> **版本说明**：v1.2 将原架构 Learning Space 的领域责任明确为 Domain Space，将 LearningMaterial 与 LearningTarget 归于 Learning Space，并以 ProblemTemplate、SolutionTemplate、KnowledgeComponent 统一领域对象。四个核心 Space、Event / Observation / Evidence / Belief 分层、Evaluation 单写、Interaction 决策与 Governance 授权边界保持。模板粒度与教学效果仍待实证；旧 Freeze Gate、Spike、Build 的结论只适用于其原始版本。
 
 ---
 
@@ -23,7 +23,7 @@ DeerMind 当前仍采用四个一级语义空间：
 \boxed{
 DeerMind
 =
-LearningSpace
+DomainSpace
 +
 EvaluationSpace
 +
@@ -33,7 +33,7 @@ EvolutionSpace
 }
 \]
 
-四个空间分别面向四类不同的对象：**学习领域及其规范学习目标、学习者、交互、系统**。前三个空间构成面向真实学习过程的对象层学习系统；演化空间位于元层，负责认识和检验 DeerMind 自身。Learning Target 的引入扩展了 Learning Space 的内部责任，但没有产生第五类一级语义对象。
+四个空间分别面向四类对象：**领域规范、学习者、交互、系统**。Domain、Evaluation、Interaction 构成对象层；Evolution 位于元层。Learning Space 处于 Product Context 层，组织材料、学习范围与目标，不作为第五个核心语义空间。
 
 除了四个空间，系统还需要三个横切责任。**全局事件模型**提供全局事实契约，记录“什么确实发生过”；**Product Constitution** 作为上位文档限定系统不可通过普通优化突破的权限边界；**Governance** 规定谁有权在什么条件下改变正式系统语义与权限。三者都很重要，但都不构成第五个空间。
 
@@ -49,7 +49,7 @@ EvolutionSpace
 - MVP 的功能排期和具体研发阶段；
 - 治理机制的组织岗位、审批界面和运营工作流。
 
-这些问题可以改变系统的实现方式，但不应反向改变本文档定义的语义责任。v1.1 已作为冻结基线；如果后续实现验证或实证结果证明这些责任无法表达某个重要问题，应明确通过 Evolution / Governance 重新打开对应架构判断，而不是通过实现细节静默改变语义归属。
+这些问题可以改变系统的实现方式，但不应反向改变本文档定义的语义责任。本版明确当前采用的语义合同；如果后续实现验证或实证结果证明这些责任无法表达某个重要问题，应明确通过 Evolution / Governance 重新打开对应架构判断，而不是通过实现细节静默改变语义归属。
 
 ---
 
@@ -59,11 +59,11 @@ EvolutionSpace
 
 ### 2.1 学习必须有显式成功语义与稳定领域语义
 
-DeerMind 如果只知道“有哪些任务、解法和知识”，仍然不知道一个具体学习目的下究竟要达到什么范围、什么标准、在什么条件和支持边界下才算目标成立。没有显式成功语义，系统既无法可靠评价能力，也无法解释为什么某些任务重要、为什么某些证据足够或不足。
+学习目标需要说明范围、质量、条件与由学习者承担的责任；领域模型需要独立定义问题、方法和知识，能够服务不同课程与目标。若把两者混为一个对象，目标差异会驱动重复领域定义；若只有知识点和题库，则无法明确综合解决问题的责任。
 
-因此，Learning Space 不仅需要独立于具体学习者的 Task、Solution 与 Knowledge 领域语义，还必须能够把模糊意图、外部要求或领域目标解释为正式 Learning Target。Target 负责表达规范要求；Task、Solution、Knowledge 则提供能力表现、处理策略和知识基础（grounding）。四者都需要稳定身份、版本与来源，能够被 Evaluation、Interaction 与 Evolution 共同引用并接受后续修订。
+因此 Domain Space 以 ProblemTemplate 定义问题结构与变化范围，以 SolutionTemplate 定义可适用的方法，以 KnowledgeComponent 定义可复用认知结构或功能。Learning Space 以 LearningMaterial 组织内容，并通过 LearningTarget 引用领域对象，表达特定学习范围和达成要求。两类规范均有来源、身份、版本与适用限制，但由不同责任层维护。
 
-这导出 **Learning Space**。它首先回答“什么叫达到这个学习目标”，然后才有资格回答“哪些任务体现该能力、这些任务怎样处理、依赖哪些知识结构”。
+问题不等于人的能力；问题及其责任维度为能力评价提供参照。实际能力是根据具体表现推断的潜在状态，由 Evaluation 维护。计算、解释、选法和检查结果可以提供不同证据，不能以一个答案正确替代全部责任。
 
 ### 2.2 学习者的认知状态不可直接观察
 
@@ -87,7 +87,7 @@ DeerMind 永远不能直接读取一个学习者“真正会不会”。系统�
 
 ### 2.4 长期运行的系统必须允许“自己可能错”
 
-即使学习空间、评估空间和交互空间的边界完全正确，它们内部的模型仍可能错误。某种 KC 划分可能没有解释力，某种观察可能经常误读行为，证据规则可能产生系统性偏差，交互策略也可能在短期指标上表现良好却削弱长期学习自主或制造不必要依赖。
+即使领域空间、评估空间和交互空间的边界完全正确，它们内部的模型仍可能错误。某种 KC 划分可能没有解释力，某种观察可能经常误读行为，证据规则可能产生系统性偏差，交互策略也可能在短期指标上表现良好却削弱长期学习自主或制造不必要依赖。
 
 因此 DeerMind 不能只在固定模型下适应学习者，还必须持续检验自己的模型、语义和策略。系统需要区分“运行中出现了异常”“我们认为系统哪里可能有问题”“为什么可能出问题”“什么证据足以支持修改”。
 
@@ -107,7 +107,8 @@ DeerMind 永远不能直接读取一个学习者“真正会不会”。系统�
 
 | 现实问题 | 必须维护的责任 | 架构归属 |
 |---|---|---|
-| 学习必须有显式成功语义和稳定领域坐标 | 定义 Learning Target、Task、Solution、Knowledge | Learning Space |
+| 领域坐标必须稳定且可复用 | 定义 ProblemTemplate、SolutionTemplate、KnowledgeComponent | Domain Space |
+| 不同课程有不同材料、范围与目标 | 定义 LearningMaterial、LearningTarget | Learning Space / Product Context |
 | 学习者状态不可直接观察 | 从 Observation 形成 Evidence，并维护 Learner Belief | Evaluation Space |
 | 认识不等于行动 | 理解当前交互，维护运行状态并决定是否行动 | Interaction Space |
 | 系统自己的模型可能失效 | 发现、解释并验证系统问题 | Evolution Space |
@@ -115,49 +116,50 @@ DeerMind 永远不能直接读取一个学习者“真正会不会”。系统�
 | 系统能力和优化收益不能自动扩张权限 | 约束价值与权限边界 | Product Constitution v1.0 |
 | 正式改变需要独立授权 | 定义变更与激活权限 | Governance |
 
-四个 Space 仍对应四类不可约语义对象；Learning Target 进入 Learning Space，是对“学习领域及其规范目标”责任的补全，而不是新增一级语义世界。
+四个核心 Space 的数量不变。材料和目标拥有明确的产品层定义责任，不构成额外的认识、信念或行动策略空间。
 
 ## 3. DeerMind 顶层架构
 
-DeerMind 的顶层可以理解为“两层四空间”，再加上一条全局事实底座和两类横切约束。对象层直接参与学习过程；元层观察并检验对象层是否仍然有效。
+核心架构保持对象层与元层四个空间。Learning Space 为核心运行提供课程材料和目标；全局事件模型记录事实，Product Constitution 与 Governance 分别约束价值权限和变更授权。图中产品容器与核心语义空间属于不同抽象层。
 
 ```mermaid
 flowchart TB
-    CONST["Product Constitution\n价值与不可协商约束"]
-    GOV["Governance\n变更权限"]
-
-    EVENT["Global Event Model\n不可变运行事实 / Event History"]
-
-    subgraph OBJ["Object-Level Learning System"]
-        LS["Learning Space\nTarget + Domain"]
-        ES["Evaluation Space\nLearner"]
-        IS["Interaction Space\nInteraction"]
+    CONST["Product Constitution"]
+    GOV["Governance"]
+    LS["Learning Space\nLearningMaterial + LearningTarget"]
+    EVENT["Global Event Model\n发生事实与来源"]
+    subgraph OBJ["对象层核心语义空间"]
+        DS["Domain Space\nProblemTemplate + SolutionTemplate + KC"]
+        ES["Evaluation Space\nLearner Belief"]
+        IS["Interaction Space\n观察、状态与决策"]
     end
-
-    EVO["Evolution Space\nSystem"]
-
-    LS -->|"Target / Domain 规范语义"| ES
-    LS -->|"Target / Domain 规范语义"| IS
-    EVENT -->|"事实与历史"| IS
+    EVO["Evolution Space\n系统认识与验证"]
+    LS -. "映射与版本引用" .-> DS
+    LS -->|"目标与材料上下文"| ES
+    LS -->|"目标与材料上下文"| IS
+    DS -->|"领域定义"| ES
+    DS -->|"领域定义"| IS
+    EVENT -->|"事实历史"| IS
     IS -->|"Observation"| ES
-    ES -->|"Learner Belief"| IS
-    IS -->|"Occurred Action / Runtime Event"| EVENT
-
-    OBJ -->|"运行结果、偏差、System Signal"| EVO
-    EVENT -->|"历史事实与溯源"| EVO
-    EVO -->|"Validated Change Proposal"| GOV
-    GOV -->|"Approved Version / Envelope"| OBJ
-
+    ES -->|"Belief 与派生评价"| IS
+    IS -->|"实际发生的行动"| EVENT
+    OBJ -->|"运行结果与失配"| EVO
+    LS -->|"目标与映射失配"| EVO
+    EVENT -->|"可追溯历史"| EVO
+    EVO -->|"受验证的变更提案"| GOV
+    GOV -->|"授权，由各 owner 提交"| OBJ
+    GOV -->|"产品规范变更授权"| LS
     CONST -. "约束" .-> OBJ
-    CONST -. "约束" .-> EVO
+    CONST -. "约束" .-> LS
     CONST -. "约束" .-> GOV
+    CONST -. "约束" .-> EVO
 ```
 
-### 3.1 对象层：理解并参与真实学习
+### 3.1 对象层与产品学习上下文
 
-学习空间、评估空间和交互空间共同构成对象层学习系统。学习空间提供正式 Learning Target 与统一领域坐标；评估空间在这些坐标上形成对学习者的可修正认识；交互把当前事实、正式目标、学习者信念、外部义务与现实约束组合成行动决策。
+Domain 提供共享领域坐标；Evaluation 在这些坐标上解释个人表现；Interaction 结合目标、当前状态与评价选择行动。Learning Space 提供明确版本的材料范围、目标和合法绑定关系。产品的课程容器不是核心 Space 的部署划分，同一个实现进程可以承载多个责任。
 
-这三者必须协作，但不能互相取代。学习空间不能因为某个学习者当前表现不好就修改 KC 语义；评估空间不能因为发现认识缺口就直接要求教学；交互空间也不能为了方便决策而私自修改学习者信念。
+Domain 不能因一次个人失败就修改 KC；产品目标不能因为暂时未达就被自动降低；Evaluation 不能直接命令教学；Interaction 也不能为了行动便利修改个人 Belief。规范定义、个人认识与当前决策始终分开。
 
 ### 3.2 元层：系统认识自己
 
@@ -185,33 +187,17 @@ Product Constitution v1.0 作为 Concept Architecture 的上位文档，规定 D
 
 四个空间分别拥有不同的语义对象和写入权限。这里仅定义它们在概念架构中必须稳定的职责；具体实体、关系、数据结构和推理方法由对应专项设计文档继续展开。
 
-### 4.1 学习空间：定义学习目标与领域语义
+### 4.1 Domain Space：定义问题、方法与知识
 
-学习空间是 DeerMind 的规范学习语义层。它不仅定义领域中的任务、解法和知识，还定义在一个正式学习目标下“什么范围和标准才算目标成立”。其他空间必须围绕同一组 Target 与领域对象进行观察、评估、决策和验证。
+Domain Space 的核心对象为 ProblemTemplate、SolutionTemplate、KnowledgeComponent。ProblemTemplate 表达问题关系、参数约束、目标与完成责任，不是题干填空格式。SolutionTemplate 表达参数化方法及其子问题、结果组合、依赖、分支和退出条件。KC 提供可复用认知结构或功能的定义，包括概念性与程序性知识。
 
-\[
-\boxed{
-LearningSpace
-=
-TargetModel
-+
-TaskModel
-+
-SolutionModel
-+
-KnowledgeModel
-}
-\]
+一个问题模板可以有零个、一个或多个已知方法；方法也可适用于多个问题模板。方法通过子问题继续选择方法形成递归结构，但不存在每个问题固有的唯一解法树。构建期允许未映射或部分方法，正式使用的正确性和 grounding 要求由用途决定，不能把未决候选作为确定依据。
 
-四个模型承担不同责任：**Target Model** 回答“学到什么范围、达到什么标准、在什么条件和责任边界下才算目标成立”；**Task Model** 回答“能力在哪些情境化认知或行动责任中体现”；**Solution Model** 回答“这些 Task 可以怎样有效处理”；**Knowledge Model** 回答“处理这些 Task / Solution 依赖哪些可复用知识或技能结构”。
+域模型提供模板间结构对应与差异，支持判断表面不同的问题是否有共同结构。相同模板不代表同难度、等价证据或无需再练；复习和检测策略仍由 Interaction 依据评价与目标决定。KC grounding 以所用方法为条件，参考解法不能当作实际学习者轨迹。
 
-Target 是规范性语义，而不是 Learner State。它可以来源于学习者意图、合法外部制度要求或专业领域目标的解释，但 `Goal Intent`、`External Standard / Obligation` 与正式 `Learning Target` 必须保持区分。External Standard 在其制度范围内可以具有真实约束力，但不能自动成为普遍的能力真理；Learning Target 必须保留其来源、解释与适用范围。Learning Target 也不拥有学习路径：教学顺序、计划和当前下一步行动仍属于 Interaction Policy 的策略责任。
+具体题目和解法在运行时实例化并保留版本与参数，但不在规范对象图中另建一套核心模型。Domain 不持有个人能力状态，也不持有 LearningTarget；详见 [Domain Space Design](DeerMind_Domain_Space_Design_v1.0.md)。
 
-Task、Solution 与 Knowledge 提供可共享的领域结构；Target 则在这些结构之上表达当前学习目的对应的规范要求。Target 不应退化成 KC checklist，也不应因为某个学习者当前水平不同就被静默改写。Learning Space 可以拥有多个 Target，并允许它们在范围、成功语义、条件和认知责任边界上显式版本化。
-
-学习空间不拥有“某个学习者是否已经达到 Target”“某个学习者是否掌握某个 KC”，不判断一次行为是否构成 Evidence，也不决定当前应该采取什么行动。`KC`、`Task Family` 和 `Learning Target` 属于 Learning Space；`KCBelief`、`TaskProficiencyBelief` 属于 Evaluation Space；Target 是否被当前 Learner Beliefs 支持则属于跨 Space 派生判断。
-
-Learning Space v1.1 将负责展开 Target Model、Task / Solution / Knowledge 的通用化语义以及它们之间的版本与 grounding 契约。当前 v1.0 Space Design 在完成该修订前不再视为与本候选 Concept v1.1 完全对齐。
+Learning Space 拥有 LearningMaterial 与 LearningTarget。章节是材料内部结构；目标引用领域范围，定义质量、支持与认知责任，保持与 GoalIntent、外部制度要求、目标绑定和教学计划的区别。目标不是 KC 清单，其定义与发布责任见[学习空间设计](DeerMind_Learning_Space_Design_v1.0.md)。
 
 ### 4.2 评估空间：形成对学习者的可修正认识
 
@@ -259,7 +245,7 @@ Only\ EvaluationSpace\ may\ revise\ LearnerBelief
 
 同样重要的是，Evaluation Space 不决定行动。它可以暴露 Learner Belief、不确定性与认识缺口（Epistemic Gap）；Target 要求与 Learner Belief 的比较也可以形成 Target Assessment / Target Gap，但这些都不能直接要求系统出题、提示或教学。是否行动属于 Interaction Policy。
 
-Evaluation Space 的核心模型结构保持 v1.0 结论不变；后续 v1.1 对齐只需要补充面向 Target 的输入、证据条件与派生评估契约。
+Evaluation 的三个核心模型保持；条件性 TaskProficiencyClaim 以版本明确的问题范围为参照，KCBelief 仍引用规范 KC，不新增独立 CapabilityDefinition 或 TargetBelief。这里沿用 TaskProficiency 名称表示承担任务的条件性能力，不再依赖旧 Domain TaskFamily 本体。
 
 ### 4.3 交互空间：理解当前交互并决定是否行动
 
@@ -303,7 +289,7 @@ Defer
 
 Learner 是 Core Architecture 中必然存在的学习主体；其他外部 Actor 是否存在、拥有什么合法权限，由具体 Product Context / Context Constitution 定义。小学场景可能存在 Parent / Guardian、Teacher、School，大学场景可能存在 Institution，职业学习可能存在 Employer 或 Certification Body；这些角色都不能因为现实身份而自动取得 DeerMind 的认识写入权或无限行动控制权。外部输入必须保留来源与权限语义，并区分 `Request`、`Constraint`、`Obligation` 与 `Authority Directive`。即使 Authority Directive 来自合法 Context Authority，也只能在明确 scope 内约束合法候选空间，不能绕过 Interaction Policy、Constitutional Envelope 或当前适用性检查。
 
-Interaction Space 的核心模型结构保持 v1.0 结论不变；后续 v1.1 对齐需要清理旧有家长特定假设，并正式接入 Learning Target、Target Assessment、Context Authority 与由 Constitution 派生的约束。
+Interaction 的四模型结构保持，分别消费产品目标和 Domain 定义，维护目标绑定投影、实例上下文、实际帮助暴露与受约束的行动决策。
 
 ### 4.4 演化空间：认识并验证 DeerMind 自身
 
@@ -327,15 +313,15 @@ ValidationModel
 
 验证模型检验假设和修订候选。历史重放、专家复核、影子验证、替代模型、外部结果，以及有限的前瞻性验证都可以成为验证手段。历史重放只能回答“已经发生的事实在新模型下如何被重新解释”，不能单独回答“如果当时采用另一种策略会发生什么”。方法选择取决于变更影响、可识别性、可逆性、学习者负担和证据独立性；如果在可接受条件下仍无法可靠识别，`NotIdentifiable` 是合法结果。
 
-演化空间的输出是新的认识、证据和变更提案，而不是自动部署权限。验证证据必须重新回到系统评估；结构性或语义性变化必须进入 Governance。Learning Target Definition、Target 成功语义、Task / KC identity、Evidence 语义、State Type 与 Policy 语义 都属于可能被 Evolution 检验、但不能由运行时模型自行改写的正式语义。
+演化空间的输出是新的认识、证据和变更提案，而不是自动部署权限。验证证据必须重新回到系统评估；结构性或语义性变化必须进入 Governance。Learning Target Definition、Target 成功语义、ProblemTemplate / KC identity、Evidence 语义、State Type 与 Policy 语义 都属于可能被 Evolution 检验、但不能由运行时模型自行改写的正式语义。
 
-Evolution Space 的三个核心模型保持 v1.0 结论不变；后续一致性修订主要增加 Learning Target 等新的规范语义 的演化对象与版本影响。
+Evolution 的三个核心模型保持，领域修订交给 Domain owner，材料映射与目标修订交给产品 owner；验证与授权分离，不由一次目标未达直接产生目标降级。
 
 ---
 
 ## 5. 系统运行与反馈闭环
 
-静态职责只能说明“谁负责什么”；DeerMind 真正运行时，需要把这些职责连接成几个不同速度的反馈回路。v1.1 继续保留 v1.0 已冻结、且仍对系统结构有决定意义的四条闭环。
+静态职责只能说明“谁负责什么”；DeerMind 真正运行时，需要把这些职责连接成几个不同速度的反馈回路。本版继续保留既有四条反馈闭环。
 
 ### 5.1 快速交互闭环：不必先更新长期信念
 
@@ -443,7 +429,9 @@ DeerMind 最重要的架构价值并不只在于有四个 Space，而在于它�
 
 | 语义对象 | 主要归属 | 依据 | 生命周期与权威 |
 |---|---|---|---|
-| Learning Target | Learning Space | Goal Intent、External Standard / Obligation、领域模型与专业解释 | 规范语义；有身份与版本；不描述特定学习者当前会什么 |
+| LearningTarget | Learning Space | GoalIntent、ExternalStandard / Obligation、领域引用与专业解释 | 规范要求；有身份与版本；不描述个人当前会什么 |
+| LearningMaterial / 材料映射 | Learning Space | 真实材料、内部结构及受审查的领域映射 | 原始来源与解释分开；不直接构成个人能力证据 |
+| ProblemTemplate / SolutionTemplate / KC | Domain Space | 领域分析、问题及方法依据、受治理发布 | 提供共享规范定义，不决定个人目标或当前状态 |
 | Event | Global Event Model | 已发生的现实或系统事实 | 追加式事实；后续解释不能改写 |
 | Observation | Interaction Space | Event、学习产物、当前语境 | 可随 Observation Model 版本重新解释 |
 | Evidence | Evaluation Space | Observation、Learner Claim、条件与溯源信息 | 可修正；只说明对某个 Learner Claim 的证据关系 |
@@ -475,11 +463,11 @@ Belief
 
 ### 6.2 规范领域语义与学习者信念必须分离
 
-Learning Space 定义 Learning Target、Task、Solution、KC 等规范坐标；Evaluation Space 在这些坐标上维护面向特定学习者的 Belief。Target 要求说明“应达到什么”，Learner Belief 说明“基于当前 Evidence，我们相信学习者能做到什么”，两者属于不同权威。
+Domain Space 定义问题、方法和 KC；Learning Space 定义材料、范围与 LearningTarget；Evaluation 在明确的领域坐标与条件下维护个人 Belief。目标说明期望达到什么，Belief 说明现有证据支持什么，两者不是同一权威。
 
 因此必须长期保持：`Requirement != Evidence != Belief`。一个正式 Target 要求学习者独立完成某类 Task，不会因此产生任何学习者能力证据；反过来，一个学习者当前达不到某个 Target，也不能直接修改 Target 本身。只有当跨学习者、跨时间或外部现实证据表明规范 Target / Domain Model 自身失效时，问题才进入 Evolution。
 
-这同样意味着 Learning Target、Task 与 KC 的版本变化可能使既有 Target Assessment 失效，但不能静默重写历史 Event 或过去在当时语义下成立的 学习者表现。
+这同样意味着 LearningTarget、ProblemTemplate、SolutionTemplate 与 KC 的版本变化可能使既有 Target Assessment 失效，但不能静默重写历史 Event 或过去在当时语义下成立的 学习者表现。
 
 ### 6.3 认识状态与运行时状态必须分离
 
@@ -517,7 +505,7 @@ Context 也不是万能容器。它只是多个 Space、Product Context 与现�
 
 ### 6.6 版本、溯源、重放与失效传播
 
-DeerMind 的正式语义会演化，因此任何重要派生结论都必须能够回答：它基于哪个 Learning Target 版本、哪个 Task / KC 版本、哪个 Observation Model、Evidence Rule 和 Inference Model 形成。Target Assessment 至少依赖 `Target Version + Learner Belief Version`；Target Definition 改版不能静默继承旧 Target Assessment。
+DeerMind 的正式语义会演化，因此任何重要派生结论都必须能够回答：它基于哪个 Learning Target 版本、哪个 ProblemTemplate / KC 版本、哪个 Observation Model、Evidence Rule 和 Inference Model 形成。Target Assessment 至少依赖 `Target Version + Learner Belief Version`；Target Definition 改版不能静默继承旧 Target Assessment。
 
 当上游语义被修正或替换时，下游当前结论必须能够被定位并重新评估；但已经发生的 Event、Action Occurrence 和当时真实存在的外部约束不被重写。语义失效要求重新评估，不等于要求全系统同步重算；具体优先级、批量、异步和影响范围机制属于 System Design。
 
@@ -573,7 +561,7 @@ AuthorityToExecuteChange
 |---|---|---|
 | L1 — 学习者适应 | 当前任务、提示强度、节奏、是否主动评估 | 评估空间 + 交互正常运行 |
 | L2 — 有界系统适应 | 已批准范围内的参数校准、策略变体切换、回滚 | 可在批准包络（Approval Envelope）内自动执行 |
-| L3 — 结构/语义演化 | Learning Target Definition、Task / KC identity、State Type、Evidence、Inference、Action 与 Policy 语义 | 必须由相应 Governance 明确批准 |
+| L3 — 结构/语义演化 | Learning Target Definition、ProblemTemplate / KC identity、State Type、Evidence、Inference、Action 与 Policy 语义 | 必须由相应 Governance 明确批准 |
 | L4 — 宪法性变更 | Product Constitution v1.0 的 Core Constitutional Domain、不可侵犯核心边界或修订规则 | 进入独立 Constitutional Governance，不能由普通系统演化生效 |
 
 L2 的自动化只在预先批准的适用范围、风险上限、证据阈值、激活边界、回滚条件和有效期内成立。超出边界必须重新进入治理机制。
@@ -652,19 +640,19 @@ LLM 可以发现新现象，却不能在运行中任意创造正式状态类型�
 **D7 — 概念空间不等于软件部署边界。**  
 四个空间是语义责任，不是四个服务。系统设计可以把一个空间拆成多个服务，也可以让多个模型共享基础设施，只要语义归属和写入权限不被破坏。
 
-**D8 — Learning Target 属于 Learning Space，而不是第五个 Space 或独立 Capability Space。**  
-Target 表达的是领域与学习目的之间的规范要求，它引用和约束 Task / Solution / Knowledge 语义，但不维护独立 Learner Belief 或行动策略。Capability 在当前架构中仍通过 由 Target 定义的 Task requirements 与 Evaluation 的 Task / KC Beliefs 被表达；只有未来出现无法被这一结构解释的重要反例，才重新考虑独立 Capability Model。
+**D8 — 领域定义与产品目标分开，不增加独立能力本体。**  
+Domain Space 定义问题、方法和 KC；Learning Space 定义材料、范围与目标。前者提供能力的领域参照，Evaluation 维护个人能力认识。相比独立 CapabilityDefinition，此方案减少平行能力树和与题目族的重复定义，但要求 ProblemTemplate 保留真正影响责任、求解与证据的差异。重要反例无法表达时再重新打开对象划分。
 
 **D9 — 市场进入边界不能成为架构边界。**  
 小学是 DeerMind 首个 Product Context，但 Parent、Guardian、School、未成年人数据规则和特定教学流程不构成 Core Architecture 的必要前提。Core 只冻结一般学习所需的语义责任；具体场景通过 Context Constitution、外部权限和产品策略增加约束。
 
 ### 8.2 当前主要风险与开放问题
 
-v1.1 的主要风险不在于“四 Space 是否成立”，而在于新增 Target、Context Authority 与 Constitution 映射是否在下游实现中重新发生语义泄漏。以下风险用于定义失败模式，而不是提前设计实现。
+本版的主要风险不在于“四 Space 是否成立”，而在于新增 Target、Context Authority 与 Constitution 映射是否在下游实现中重新发生语义泄漏。以下风险用于定义失败模式，而不是提前设计实现。
 
 | 失败模式 | 触发条件 | 后果 | 缓解方式 | 重新打开条件 |
 |---|---|---|---|---|
-| Target 形式化过度 | 为追求完整而把开放学习目标提前拆成僵硬分类体系或 DSL | Learning Space 失去对未知与领域差异的容纳能力 | 允许未决或部分解析的 Target；坚持 `Model Complexity <= Observability` | 多领域持续证明当前 Target 表达无法同时满足可解释性与开放性 |
+| Target 形式化过度 | 为追求完整而把开放学习目标提前拆成僵硬分类体系或 DSL | 产品目标失去对未知与领域差异的容纳能力 | 允许未决或部分解析的 Target；坚持 `Model Complexity <= Observability` | 多领域持续证明当前 Target 表达无法同时满足可解释性与开放性 |
 | Target / Learner 语义回流 | Target 要求被当成 Evidence，或 Learner Belief 反向静默改写 Target | `Requirement != Evidence != Belief` 被破坏，能力判断自我实现 | 强制跨 Space 语义归属、版本依赖与派生评估 | 下游无法在不复制本体结构的情况下实现 Target Assessment |
 | 场景污染 | 小学 Parent / School 权限 或其他市场规则逐步写回 Core | Market Entry Boundary 再次成为 Architecture Boundary | Context Constitution 单独定义场景权限；Core 只保留通用责任 | 多个场景反复要求同一新增责任且无法由 Context 表达 |
 | 宪法复制下沉 | 各 Space 重新维护自己的宪法原则副本 | 上位 Constitution 漂移，冲突处理与权限解释不一致 | Concept 只定义落实机制，价值内容唯一引用 Product Constitution v1.0 | 下位机制无法在不新增独立宪法语义 的情况下落实约束 |
@@ -674,7 +662,7 @@ v1.1 的主要风险不在于“四 Space 是否成立”，而在于新增 Targ
 
 | 类别 | 问题 | 当前状态 |
 |---|---|---|
-| 概念性 | Learning Target 在开放领域需要多强的组合表达能力 | Target 责任已确认；不提前冻结 DSL，先由 Learning Space v1.1 定义最小充分语义 |
+| 概念性 | Learning Target 在开放领域需要多强的组合表达能力 | Target 责任已确认；不提前冻结 DSL，由 Learning Space v1.0 定义最小充分语义 |
 | 概念性 | Canonical Target 与具体 Target Binding 是否需要不同正式类型 | Definition / Binding 与 owner chain 已冻结；是否增加独立正式类型或 Model 继续保持开放 |
 | 实证性 | “反证机会”在不同学习领域如何被可靠观察与验证 | Constitution 与 Concept 已冻结防自我封闭边界，具体判据需要真实场景验证 |
 | 实证性 | Target Assessment 是否能跨长期、高噪声任务保持有意义 | 语义归属已明确，可靠性需通过校准、迁移和长期预测验证 |
@@ -687,19 +675,17 @@ v1.1 的主要风险不在于“四 Space 是否成立”，而在于新增 Targ
 
 这些开放问题分别属于 Space Design、Product Context、System Design、Governance 或实证验证，不应为了“把 Concept 写完整”而提前发明新的顶层模型。
 
-### 8.3 v1.1 Freeze Gate 结论与下游传导
+### 8.3 当前结论及证据边界
 
-Concept Architecture v1.1 已完成 Learning / Evaluation / Interaction / Evolution Space v1.1 的跨文档一致性审计。Freeze Gate 确认四类一级语义责任、Target / Learner Belief / Target Assessment / Policy 边界、Constitution / Context Authority 约束以及 typed invalidation 之间不存在已知一级矛盾。
+本版正式承接用户确认的模型方向及本轮文档更新授权：Domain 与 Learning Space 分离，域内采用问题模板、解法模板和 KC；目标归于产品层，个人状态归于 Evaluation。数学与 Kubernetes 案例用于检查概念表达，不是运行验证或教学效果证据。
 
-本轮最终关闭两个冻结前 blocker：第一，将旧 `Command` 语义统一收敛为 scoped `Authority Directive`，并明确 `AuthorityDirective != PolicyBypass`；第二，冻结 Target Binding 的责任链——发生事实属于 Global Event Model，合法性与 authority scope 来自 Product Context / Context Constitution，当前有效 binding projection 与生命周期语义由 Interaction Space 负责。该结论不要求新增 TargetBindingModel。
+旧 v1.1 Freeze Gate、既有 Spike 和 Build 的结果按当时版本保留。它们支持的事件、权限与执行机制不因本轮模型更新自动作废，但也不能证明新模板划分、映射和能力解释已经有效。本轮文档修订不新增 G3、G4、G5 通过结论。
 
-AI-Native Architecture Principles、System Design Roadmap 与 Development Roadmap 仍需对 v1.1 冻结基线做下游版本传导，但这些文档不拥有 Concept / Space semantic ownership，因此其版本更新不构成本次架构冻结的前置条件。若后续 AI-native / System Design 发现无法实现的重要反例，应通过正式 Reopen 机制重新进入架构层，而不是静默改变本基线。
+### 8.4 下游传导与后续工作
 
-### 8.4 进入 System Design 的条件
+Domain Space v1.0、Learning Space v1.0、Evaluation / Interaction / Evolution v1.2、AI-Native Principles v0.3 与 System Design v1.1 共同承接新合同。旧实现中的 TaskFamily、策略包和版本来源需在工程交付中逐项映射；不能只更名后宣称数据迁移和验证完成。
 
-Concept v1.1 与四份 Space Design 完成对齐后，System Design 才应以新的冻结架构为输入。下一阶段至少需要解决最小可运行闭环、AI 输出进入正式语义的投影协议、版本与失效传播、辅助暴露链（assistance exposure lineage）、Governance / Context Authority 权限投影、Target Assessment 的缓存与重算，以及 Event Grounding / 数据生命周期。
-
-进入 System Design 后，能力仍可以分阶段实现，但架构不变量不能以 MVP 为理由降级：**Implementation Capability may be staged; Architecture Invariant remains mandatory.**
+Development Roadmap 的阶段顺序保持。当前回到 Phase 3 的需求与成功标准复核；Phase 4 用实际领域和评测资产检验粒度与映射；Phase 5 实现和验证新的运行合同。重大概念反例需要重新讨论，统计校准与实现优化不要求在概念阶段全部完成。
 
 ### 8.5 结语
 
@@ -713,11 +699,11 @@ DeerMind 的核心挑战不是让 AI“更聪明地教学”，而是让一个�
 
 ## 附录 A — 完整架构不变量
 
-下表在 v1.0 完整不变量清单基础上增加 v1.1 的 Target、Product Context 与 Constitution 派生边界，作为后续 Space 对齐和 System Design 的审计检查表。正文仍只保留十条需要长期记忆的 Core Invariant；这里的条目用于展开具体 contract。
+下表保留既有分层、权限与历史不变量，并补充本次领域及产品目标归属。旧版本的评审记录保持其原始基线。
 
 | ID | 不变量 | 含义 |
 |---|---|---|
-| I1 | 四类一级语义对象 | 顶层责任只对应学习领域、学习者、交互和系统 |
+| I1 | 四类一级语义对象 | Domain、Evaluation、Interaction、Evolution 分别对应领域、学习者、交互和系统；产品容器不另立核心 Space |
 | I2 | 全局事件模型不是第五个 Space | 事件提供事实底座，但不形成独立的信念或策略世界 |
 | I3 | `Event ≠ Observation ≠ Evidence ≠ Belief` | 事实、观察、证据和信念必须分层 |
 | I4 | 观察语义由交互空间负责 | Observation 由 Interaction Space 生成，Evaluation Space 不建立第二套原始行为解释 |
@@ -760,6 +746,10 @@ DeerMind 的核心挑战不是让 AI“更聪明地教学”，而是让一个�
 | I41 | 权限覆盖不改写认识语义 | Safety、Guardian、Institution 等权限覆盖不能自动形成 Evidence 或 Learner Belief |
 | I42 | 群体先验不能替代个体证据 | 群体先验可以作为受限认识来源，但必须允许个体 Evidence 修正和反证 |
 | I43 | Target Binding 是受治理的运行关系 | Binding 发生事实属于 Event；合法性 / scope 属于 Product Context / Context Constitution；当前有效 projection 由 Interaction 负责 |
+
+| I44 | 产品目标与领域定义分离 | LearningMaterial / LearningTarget 由 Learning Space 拥有；ProblemTemplate / SolutionTemplate / KC 由 Domain 拥有 |
+| I45 | 结构对应不是证据等价 | 同模板不保证同难度、独立证据或迁移成立；方法定义不是实际执行轨迹 |
+| I46 | 能力参照与个人能力分离 | 问题责任定义可观察要求，Evaluation 在有条件的 Claim 上维护个人认识 |
 
 ---
 
@@ -804,22 +794,21 @@ DeerMind 吸收成熟理论中的职责分离和验证思想，但不复制任�
 
 ## 附录 D — 设计历史与资产迁移
 
-Concept Architecture v1.1 建立在 v1.0 四 Space 基线以及 Product Thesis v1.0、Product Constitution v1.0 和随后对 Target / capability 的压力测试之上。v1.0 仍作为历史冻结基线保留，用于语义差异；v1.1 经四 Space 对齐与 Cross-Document Freeze Gate 后成为当前正式架构冻结基线。
+v1.1 曾将 Target 与 Task / Solution / Knowledge 一并放在架构 Learning Space。本轮复核发现这与产品课程空间混名，也不利于领域跨目标复用。v1.2 保留四 Space 与运行不变量，重新明确下列归属。旧基线由 Git 历史保存；当前目录只维护最新正式版本。
 
-历史设计中的主要资产已经重新归位：
+| 历史资产或名称 | 当前归属与迁移要求 |
+| --- | --- |
+| 架构 Learning Space | Domain Space；目标与材料另外归于 Learning Space |
+| TaskFamily | 检查语义后映射为 ProblemTemplate；不保证一对一，不直接重标旧证据 |
+| Solution Strategy / Task Topology | SolutionTemplate 的适用条件、子问题、依赖与控制结构 |
+| Knowledge / KC | KnowledgeComponent；保留概念性与程序性认知含义 |
+| LearningTarget | Learning Space；Definition / Binding / Assessment 分层保持 |
+| Material / 章节 | LearningMaterial 及内部结构，映射到版本明确的 Domain 对象 |
+| Learner Model | Evaluation；TaskProficiency / KC Beliefs 的名称保留，领域引用合同更新 |
+| Observation / Action / Plan | Interaction；实际 occurrence 仍以 Event 为依据 |
+| 系统验证与修订候选 | Evolution；正式变更权限由 Governance 授予 |
 
-| 历史资产 | 当前归属 |
-|---|---|
-| Goal / Curriculum Requirement / Target | Learning Space 的 Learning Target + Product Context 中的 External Standard / Obligation |
-| Domain / Task / Solution / Knowledge | Learning Space |
-| Learner Model / Student State | Evaluation Space |
-| Observation / Action / Scaffolding / Review / Fade-out | Interaction Space |
-| System Validation / Model Improvement | Evolution Space |
-| Event | Global Event Model / Event History |
-| Parent / Learner / Teacher / Employer 等输入 | External Event + Interaction 语义；其权限由 Product Context / Context Constitution 定义 |
-| 长期价值与权限边界 | Product Constitution v1.0 |
-| 系统结构变更权限 | Governance |
+未采用独立 CapabilityDefinition、ProblemFamily、ProblemRequirementInstance 或 MaterialSection 作为本版核心对象。它们曾在探索中讨论，不能因为出现在复核过程稿中继续被视为当前正式模型。
 
-v1.1 的目的不是扩大顶层架构，而是把已经冻结的 Product Thesis / Constitution 与新的 Learning Target 责任准确传导到四 Space 体系中。四类一级语义责任仍保持稳定；变化发生在责任边界和跨 Space 契约，而不是新增一个更大的模块集合。
 
 ---

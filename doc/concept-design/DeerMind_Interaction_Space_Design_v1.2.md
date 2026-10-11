@@ -1,18 +1,18 @@
-# DeerMind Interaction Space Design v1.1
+# DeerMind Interaction Space Design v1.2
 
 > **中文名称**：DeerMind 交互空间设计  
-> **版本**：v1.1  
+> **版本**：v1.2  
 > **文档性质**：Space Design / Architecture Baseline  
-> **状态**：架构冻结基线  
-> **上位基线**：DeerMind Concept Architecture v1.1  
-> **关联基线**：DeerMind Learning Space Design v1.1；DeerMind Evaluation Space Design v1.1  
+> **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论  
+> **上位基线**：DeerMind Concept Architecture v1.2  
+> **关联基线**：[DeerMind Domain Space Design v1.0](DeerMind_Domain_Space_Design_v1.0.md)；[Learning Space v1.0](DeerMind_Learning_Space_Design_v1.0.md)；[Evaluation Space v1.2](DeerMind_Evaluation_Space_Design_v1.2.md)  
 > **上位价值约束**：DeerMind Product Thesis v1.0；DeerMind Product Constitution v1.0  
 > **写作规范**：DeerMind Design Document Standard v1.0  
-> **更新时间**：2026-09-30
+> **更新时间**：2026-10-11  
 >
 > **修订说明**：细化既有“目标责任边界不禁止临时支架”原则，补充当前活动的帮助约束与诊断转入教学的语义；明确 Observation 的局部解释、自述归属和自由文本校验边界。保留既有模型、ownership 与 authority 边界，同步 AI Runtime、Evaluation 与 Spike 合同。
 >
-> **版本说明**：v1.1 保留 v1.0 的 Observation Model、Interaction State Model、Action Model、Interaction Policy 四模型结构，以及 Runtime Learner Condition、NoIntervention、Minimum Sufficient Intervention、多时间尺度规划、assistance exposure lineage、Observation 修正与失效传播、Evolution Contract 等成熟语义。本版本完成五项对齐：第一，正式接入 Learning Target、Target Assessment、Target Gap、Epistemic Gap 与 Target Support / Responsibility Boundary；第二，分离 Goal Intent、Learning Target、External Obligation、Target Binding 与 Plan；第三，将 Parent / School 等首发场景角色从 Core Actor 假设中移除，外部 Actor 权限改由 Product Context / Context Constitution 定义；第四，把工具语义拆分为 Task Canonical Tool Semantics、Target Support Boundary、Runtime Tool Availability 与 Occurred Tool Use；第五，补充 Context Authority、反证机会与版本失效对 Policy 的约束。经 Evolution v1.1 对齐与 Cross-Document Freeze Gate，本版本进一步冻结 Target Binding projection 的 Interaction ownership；v1.1 现作为架构冻结基线。
+> **版本说明**：v1.2 承接 Domain Space 与 Learning Space 的职责分离，更新领域模板、目标来源与版本依赖；保留本 Space 既有模型、单写与治理边界。旧 v1.1 Freeze Gate 及 Spike / Build 为原始版本下的历史证据，本轮未重新执行或改写其结果。
 
 ---
 
@@ -66,7 +66,7 @@ InteractionPolicy
 - Task Canonical Tool Semantics、Target Support Boundary、Runtime Tool Availability 与 Occurred Tool Use 的分层；
 - 外部 Request、Constraint、Obligation 与 Authority Directive 的边界；
 - Product Context / Context Constitution 如何向 Policy 提供限域 authority，而不创建第二事实源；
-- Interaction 与 Learning、Evaluation、Global Event Model、Evolution / Governance 的契约；
+- Interaction 与 Domain、Learning Space、Evaluation、Global Event Model、Evolution / Governance 的契约；
 - 规范语义的版本、失效传播和历史重放责任。
 
 ### 1.2 本文档不解决什么
@@ -84,11 +84,11 @@ Interaction Space 不负责：
 - 规定 Interaction State 的最终数据库结构、缓存方式或分布式一致性机制；
 - 冻结 Policy 的最终规则、学习算法或优化器。
 
-这些内容分别属于 Learning、Evaluation、Product Context / Context Constitution、Evolution / Governance 或后续 System Design。
+这些内容分别属于 Domain、Learning Space、Evaluation、Product Context / Context Constitution、Evolution / Governance 或后续 System Design。
 
 ### 1.3 Interaction Space 的基本责任边界
 
-根据 Concept Architecture v1.1，Interaction Space 是 Object-Level Learning System 中唯一拥有**当前行动决策**的 Space。Learning 提供 Learning Target、Task 与 Responsibility Boundary 等规范坐标，Evaluation 提供 Learner Belief、Target Assessment、Target Gap 与 Epistemic Gap 等可修正认识，Product Context / Context Constitution 提供当前合法外部权限与约束，而 Interaction 负责把这些来源保持分层并与当前现实组合起来，决定此刻应该发生什么。
+根据 Concept Architecture v1.2，Interaction Space 是 Object-Level Learning System 中唯一拥有**当前行动决策**的 Space。Domain 提供问题与方法定义，Learning Space 提供 LearningTarget 与目标责任，Evaluation 提供 Learner Belief、Target Assessment、Target Gap 与 Epistemic Gap 等可修正认识，Product Context / Context Constitution 提供当前合法外部权限与约束，而 Interaction 负责把这些来源保持分层并与当前现实组合起来，决定此刻应该发生什么。
 
 因此：
 
@@ -259,7 +259,7 @@ ExternalObligation
 Plan
 \]
 
-Goal Intent 表达 learner 的现实目的；Learning Target 由 Learning Space 定义能力成功语义；External Obligation 来自合法现实制度或场景约束；Plan 只是 Interaction Policy 对未来交互机会的可修正安排。Interaction 可以协调它们，但不能把一个对象静默改写成另一个对象。
+Goal Intent 表达 learner 的现实目的；LearningTarget 由 Learning Space 定义范围与成功语义；External Obligation 来自合法现实制度或场景约束；Plan 只是 Interaction Policy 对未来交互机会的可修正安排。Interaction 可以协调它们，但不能把一个对象静默改写成另一个对象。
 
 这意味着约束来源必须保持可见。学校要求、认证截止时间、组织安全规则或 guardian 权限都可以真实影响决策，但不应为了产品叙事被伪装成 learner 自己选择的学习目标。
 
@@ -279,7 +279,7 @@ Authority
 
 ### 2.10 Target Gap、Epistemic Gap 与 Action 必须分离
 
-Evaluation v1.1 已经区分 Target Gap 与 Epistemic Gap。前者表示现有 Evidence 已支持“当前能力低于某项 Target requirement”，后者表示系统还不知道是否达到 requirement。
+Evaluation 已区分 Target Gap 与 Epistemic Gap。前者表示现有 Evidence 已支持“当前能力低于某项 Target requirement”，后者表示系统还不知道是否达到 requirement。
 
 Interaction 必须继续保持：
 
@@ -320,7 +320,7 @@ flowchart LR
     H --> E
 ```
 
-这张图只表达 Interaction Space 内部的主要运行关系。Learning Space 提供规范领域语义，Evaluation Space 提供 Learner Belief / Epistemic Gap，Global Event Model 提供不可变运行事实；这些跨 Space 契约将在第 6 章展开。
+这张图只表达 Interaction Space 内部的主要运行关系。Domain Space 提供规范领域语义，Learning Space 提供材料与目标，Evaluation Space 提供 Learner Belief / Epistemic Gap，Global Event Model 提供不可变运行事实；这些跨 Space 契约将在第 6 章展开。
 
 ### 3.1 Observation Model：把事实转成当前可用的交互语义
 
@@ -338,7 +338,8 @@ Observation
 Interpret(
 EventScope,
 EventGroundedArtifacts,
-LearningSemantics,
+DomainSemantics,
+ProductLearningContext,
 InteractionSemantics
 )
 \]
@@ -384,7 +385,7 @@ PriorBelief
 
 这样的 confirmation loop。
 
-Observation 可以跨多个 Event 形成。例如，只有结合一组连续书写步骤，系统才可能判断学习者使用了某种 Solution Strategy。关键不在“一条 Observation 对应一个 Event”，而在于 Observation 必须声明清楚自己的范围和溯源信息。
+Observation 可以跨多个 Event 形成。例如，只有结合一组连续书写步骤，系统才可能判断学习者使用了某种 SolutionTemplate。关键不在“一条 Observation 对应一个 Event”，而在于 Observation 必须声明清楚自己的范围和溯源信息。
 
 Observation resolution 同样需要克制。如果最终答案是否正确已经足以支持当前决策，就不应为了“更智能”而强制解析完整思维过程。
 
@@ -640,7 +641,7 @@ LearningEffect
 
 ### 3.4 Interaction Policy：决定是否行动以及如何行动
 
-Interaction Policy 是 Interaction Space 的决策责任。它综合 Learning Space 提供的 Learning Target / Responsibility Boundary、当前 Observation、Interaction State、Evaluation 提供的 Learner Belief / Target Assessment / Target Gap / Epistemic Gap、Interaction 维护的当前有效 Target Binding projection、Product Context / Context Constitution 提供的 External Obligation / Context Authority、Available Action 和 Product Constitution，对当前是否值得行动、为什么行动以及如何行动作出判断。
+Interaction Policy 是 Interaction Space 的决策责任。它综合 Learning Space 提供的 LearningTarget / ResponsibilityBoundary、当前 Observation、Interaction State、Evaluation 提供的 Learner Belief / Target Assessment / Target Gap / Epistemic Gap、Interaction 维护的当前有效 Target Binding projection、Product Context / Context Constitution 提供的 External Obligation / Context Authority、Available Action 和 Product Constitution，对当前是否值得行动、为什么行动以及如何行动作出判断。
 
 \[
 InteractionPolicy:
@@ -653,7 +654,8 @@ Policy 必须保留不同输入的 authority source，而不能为了实现方�
 
 | 决策输入 | 规范来源 |
 |---|---|
-| Learning Target、Required Capability、Responsibility Boundary | Learning Space |
+| LearningTarget、Required Capability、ResponsibilityBoundary | Learning Space |
+| ProblemTemplate、SolutionTemplate、KC、结构对应与差异 | Domain Space |
 | Learner Belief、Target Assessment、Target Gap、Epistemic Gap | Evaluation Space |
 | Observation、Interaction State、Assistance Context | Interaction Space |
 | Goal Intent | Runtime / learner-originating Event |
@@ -817,7 +819,7 @@ InteractionPolicy
 
 #### 当前活动的帮助范围与目的转换
 
-Target 规定最终能力达成的标准，当前活动则需要明确正在学习、诊断还是承担其他目的，以及适用的帮助限制。Interaction 通过已有 Interaction State 与 DecisionContext 表达当前活动的目的、约束及其来源；规范要求来自 Learning 的 Task semantics 和适用的 Product Context / Context Authority，活动中的选择与转换由 Policy 在这些约束内决定。这不新增 Activity Model，也不赋予 Policy 修改 Target 或外部权限的权力。
+Target 规定最终能力达成的标准，当前活动则需要明确正在学习、诊断还是承担其他目的，以及适用的帮助限制。Interaction 通过已有 Interaction State 与 DecisionContext 表达当前活动的目的、约束及其来源；问题完成要求来自 Domain 的 ProblemTemplate 和适用的 Product Context / Context Authority，活动中的选择与转换由 Policy 在这些约束内决定。这不新增 Activity Model，也不赋予 Policy 修改 Target 或外部权限的权力。
 
 普通学习活动可以允许暂时替代部分目标认知责任的提示、演示乃至完整讲解，是否值得采用仍由 Policy 根据学习价值、认知替代和注意成本判断。明确要求独立完成的诊断活动可以限制此类帮助，但该限制属于当前活动的要求，不能由 Target 的最终独立能力要求直接推广到整个学习过程。
 
@@ -844,7 +846,8 @@ NeededCognitiveSubstitution\downarrow
 ```mermaid
 flowchart TB
     GE["Global Event Model / Event History"]
-    LS["Learning Space"]
+    DS["Domain Space\n问题、方法与 KC"]
+    LS["Learning Space\n材料、范围与目标"]
     ES["Evaluation Space"]
     PC["Product Context / Context Constitution"]
 
@@ -857,8 +860,10 @@ flowchart TB
 
     GE --> OM
     GE --> SM
-    LS --> OM
-    LS --> IP
+    DS -->|"问题与方法定义"| OM
+    DS -->|"领域条件"| IP
+    LS -->|"材料上下文"| OM
+    LS -->|"目标及责任边界"| IP
     PC --> IP
 
     OM --> SM
@@ -1059,7 +1064,7 @@ BetterPolicy
 
 Interaction 需要知道当前哪些 Target 与 learner 存在实际运行关系，以及这些关系来自自主选择、明确接受、现实义务还是其他合法来源。但 Target Binding 不属于 Target Definition，也不应被静默压入 Interaction State 形成新的 canonical truth。
 
-v1.1 冻结 Target Binding 的责任链：
+Target Binding 保持以下责任链：
 
 > **Binding 的发生事实进入 Event History；外部 Binding 的合法 authority 与 scope 由 Product Context / Context Constitution 定义；Interaction Space 负责从这些来源形成当前仍然有效的 Target Binding projection，并维护其生命周期、staleness 与对 Policy / Plan 的依赖语义。**
 
@@ -1087,32 +1092,15 @@ Interaction Policy 应在风险、Target、负担和现实约束允许的范围�
 
 Interaction Space 是 Object-Level 中连接现实与决策的枢纽，因此它与其他 Space 的接口必须比普通软件模块接口更严格地区分 semantic ownership。
 
-### 6.1 Learning Space → Interaction：提供规范目标、Task 与责任边界
+### 6.1 Domain 与 Learning Space → Interaction：分别提供领域和目标
 
-Interaction 从 Learning Space v1.1 读取：
+Interaction 从 Domain 读取 ProblemTemplate、SolutionTemplate、KC、方法 grounding、适用工具条件、模板间结构对应与差异；从 Learning Space 读取材料范围、映射、LearningTarget 及支持与责任要求。每项输入都有明确身份、版本和适用范围，不允许用当前页面章节名称替代规范引用。
 
-- Learning Target / Target Version；
-- Required Task Capabilities 与 Target Conditions；
-- Target Support / Responsibility Boundary；
-- Task Family / Task Instance、Task Objective 与 Task Success Semantics；
-- Solution Strategy / Solution Task Topology；
-- KC 与 Knowledge Grounding；
-- Task Canonical Tool Semantics；
-- 规范对象的 identity、version 与 validity scope。
+Interaction 根据目标、有效评价与现实约束选择具体问题或讲解活动。问题形成时保留模板版本、参数、来源与实际呈现；方法应用保留适用条件与执行过程。只有真实提交、工具使用与帮助展示才能进入 occurrence 历史。参考解法不是学习者轨迹，生成题目也不直接改变 Domain 模型。
 
-Interaction 不修改这些规范语义，也不能把当前现实限制写回 Target。特别需要区分：
+域模型帮助判断结构相同或不同，是否重复练习、延迟重测、使用另一表征或补充解释仍由 Policy 决定。同模板不代表信息价值已经耗尽，不同题面也不代表是独立的新检测。系统不得把这些关系压成单一题目相似度来替代语义判断。
 
-\[
-TaskCanonicalToolSemantics
-\neq
-TargetSupportBoundary
-\neq
-RuntimeToolAvailability
-\neq
-OccurredToolUse
-\]
-
-Task 层说明领域上什么工具合法或改变 Task 语义；Target 层说明哪些责任必须由 learner 承担、哪些允许外部化；Interaction State 表达当前工具是否可用；Occurred Tool Use 只有真实发生后才成为 Event / Observation 输入。
+领域允许的工具、目标允许外部化的责任、当前工具可用性和实际使用四者保持区分。Interaction 不能修改 Domain 定义或正式目标；需要扩展时提出受控候选。产品材料和目标的创建、修订与绑定权限由产品合同规定。
 
 ### 6.2 Interaction → Evaluation：Observation 与真实信息暴露
 
@@ -1380,7 +1368,7 @@ NewApprovedVersion
 
 ## 8. 关键架构决策、风险与下一阶段
 
-Interaction Space v1.1 不把当前结构视为不可挑战的终局，而是明确当前选择背后的理由、代价和重新打开条件。
+Interaction Space v1.2 不把当前结构视为不可挑战的终局，而是明确当前选择背后的理由、代价和重新打开条件。
 
 ### 8.1 关键架构决策
 
@@ -1449,7 +1437,7 @@ Learning Space 定义 Target；Interaction 从 Event 与 Context Authority 输�
 
 ### 8.4 System Design Handoff
 
-Interaction Space v1.1 已经定义冻结基线下后续实现必须尊重的语义合同。System Design 至少需要进一步解决：
+Interaction Space v1.2 定义当前语义合同，System Design v1.1 对应落实下列运行责任；具体实现按 MVP 工程阶段交付：
 
 - Event → Observation 的 semantic projection protocol；
 - LLM Observation 输出的 schema 验证、依据、不确定性和 unmapped path；
@@ -1659,43 +1647,8 @@ Target、Binding、Belief 或 Authority 已变化，旧 Plan 仍排队自动执�
 
 ---
 
-## 附录 D — v1.0 → v1.1 对齐说明
+## 附录 D — 本版调整与历史边界
 
-v1.1 是对 Concept Architecture v1.1、Learning Space v1.1 与 Evaluation Space v1.1 的语义对齐，不是新的 Interaction Core Model 版本。
+v1.2 保留本 Space 的核心模型、事实与认识分层、权限、未知、历史和受治理变更等合同，调整其规范输入与引用路径。Domain Space v1.0 提供问题模板、方法和 KC；Learning Space v1.0 提供材料、映射和目标。两组规范分别拥有版本和提交责任，不能由旧 Learning Space 的单一输入包代替。
 
-本次对齐：
-
-- 保留 `ObservationModel + InteractionStateModel + ActionModel + InteractionPolicy` 四模型结构；
-- 保留 Fast Interaction Loop、派生 Interaction State、受控 State Type 与 Runtime Learner Condition；
-- 保留 Assistance Context 不是 exposure 事实源、Action Specification / Occurrence / Event 分层；
-- 保留 `Elicit / Expose / Control`、Information Disclosure、Cognitive Work Substitution；
-- 保留 `Execute(Action) / NoIntervention / Defer`、Minimum Sufficient Intervention、Active Assessment、Fade-out 与 Multi-timescale Planning 的 Policy 归属；
-- 正式接入 Learning Target、Target Assessment、Target Gap、Epistemic Gap 与 Target Support / Responsibility Boundary；
-- 将 Goal Intent、Learning Target、Target Binding、External Obligation 与 Plan 分层；
-- 将 Parent / School 等首发场景角色从 Core Actor 假设移除，权限由 Product Context / Context Constitution 定义；
-- 将 `Command` 收敛为 scoped `Authority Directive`，明确 `AuthorityDirective != PolicyBypass`；
-- 将工具 / 支持语义扩展为 Task Canonical Tool Semantics、Target Support Boundary、Runtime Tool Availability 与 Occurred Tool Use 四层；
-- 增加 opportunity allocation / disconfirmation opportunity 对 Policy 的约束；
-- 增加 Target / Binding / Context Authority 变化后的 Policy / Plan 失效路径；
-- 更新 Failure Modes、Open Questions、Invariant Registry 与压力测试场景。
-
-v1.1 未新增第五个 Interaction Model，也没有把 Context Authority、Safety、Fairness 或 Target Binding 提升为 Interaction Core Model。Cross-Document Freeze Gate 已通过；Target Binding 仅冻结为由 Event / Context Authority 支撑、由 Interaction 维护 current projection 的跨责任运行关系。
-
----
-
-## 结语
-
-Interaction Space 的成熟，不体现在 DeerMind 可以生成多少种教学动作，而体现在它能够清楚地区分：
-
-> **发生了什么，系统如何理解，什么仍然有效，系统能做什么，以及现在究竟是否值得做。**
-
-这套结构允许 DeerMind 在必要时快速响应，也允许它在长期Learner Belief 和现实约束面前保持克制。它要求系统对真实发生的行为留下事实依据，对短期运行状态保持可重建，对帮助造成的信息暴露保持可追溯，并让每一个干预都必须与 `NoIntervention` 竞争其正当性。
-
-最终，Interaction Space 不是一个让 AI“持续参与”的机制，而是一个让 DeerMind **只在值得且有权参与时参与，并且知道自己为什么参与、依据什么权限参与** 的机制。
-
-\[
-Observe\ clearly,
-maintain\ only\ what\ is\ current,
-act\ deliberately,
-and\ know\ when\ not\ to\ act
-\]
+原 v1.1 的完整文本及 Freeze Gate 叙述由 Git 保存。本轮没有重跑旧实验，也没有将当时评审改写为新模型通过；实现代码与领域包仍须按实际工程交付迁移。当前修订依赖的规范和运行合同见[概念设计入口](README.md)。

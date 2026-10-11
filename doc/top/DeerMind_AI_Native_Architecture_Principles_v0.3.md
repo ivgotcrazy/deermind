@@ -1,22 +1,22 @@
-# DeerMind AI-Native Architecture Principles v0.2
+# DeerMind AI-Native Architecture Principles v0.3
 
 > **中文名称**：DeerMind AI 原生架构原则  
-> **版本**：v0.2  
+> **版本**：v0.3  
 > **文档性质**：Concept Architecture 与 System Design 之间的横切架构原则 / AI-Native Execution Doctrine  
-> **状态**：架构冻结基线  
-> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md` 及四份 Space Design v1.1  
+> **状态**：与本轮领域及产品目标合同对齐；执行原则保持  
+> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.2.md` 及Domain Space v1.0、Learning Space v1.0 与 Evaluation / Interaction / Evolution v1.2  
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-09-30
+> **更新时间**：2026-10-11  
 >
 > **修订说明**：明确开放语义解释与校验采用语义规则约束下的 LLM reasoning，区分语义判断与确定性结构、权限、提交执行；保留既有 Space ownership 与 authority 边界，并传导至 AI Runtime、Observation 与 Spike 验证合同。
 >
-> **版本说明**：v0.2 在 v0.1 的 Open Cognition / Controlled Authority、Reasoning Protocol、Candidate / Validation / Commit、版本化 reasoning 与 Governed Evolution 主干保持不变的前提下，对齐冻结的 Concept Architecture v1.1 与四份 Space Design v1.1。新增或明确 Learning Target / Target Assessment / Target Binding 的不同运行权威，Context Authority 与 scoped Authority Directive 不得绕过 Interaction Policy，Target / Belief / Policy 的 typed invalidation，以及 Validation / Replay 不能创造新的 authority 或 data authority。v0.2 作为当前 AI-native execution doctrine 的冻结基线。
+> **版本说明**：v0.3 承接 Concept Architecture v1.2、Domain Space v1.0 与 Learning Space v1.0，区分领域定义、产品目标与材料映射的 authority。Open Cognition / Controlled Authority、Candidate / Validation / Commit、Protocol、历史与 typed invalidation 原则保持；不新增实验通过结论。
 
 ---
 
 ## 1. 文档定位与核心命题
 
-DeerMind 的 Concept Architecture 已经回答了系统必须维护哪些不可约的语义责任：学习领域由 Learning Space 负责，学习者认识由 Evaluation Space 负责，当前交互与行动决策由 Interaction Space 负责，系统对自身的认识与验证由 Evolution Space 负责；全局事件模型记录发生事实，Product Constitution 提供不可被普通优化覆盖的价值边界，Governance 规定系统变更权限。
+DeerMind 的 Concept Architecture 已经回答了系统必须维护哪些不可约的语义责任：问题、方法与 KC 的领域定义由 Domain Space 负责，材料、范围与目标由 Learning Space 负责，学习者认识由 Evaluation Space 负责，当前交互与行动决策由 Interaction Space 负责，系统对自身的认识与验证由 Evolution Space 负责；全局事件模型记录发生事实，Product Constitution 提供不可被普通优化覆盖的价值边界，Governance 规定系统变更权限。
 
 但当这些概念进入可运行系统时，还存在一个传统软件架构没有充分回答的问题：**如果现实世界中的对象、状态、关系和判断无法在设计期穷举，而大量具体理解、分析、结构发现、假设生成和情境决策必须由 AI 在运行时完成，那么系统如何既保持开放认知能力，又不失去事实边界、语义边界和权力边界？**
 
@@ -32,7 +32,7 @@ DeerMind 的 Concept Architecture 已经回答了系统必须维护哪些不可�
 Input \rightarrow PredefinedLogic \rightarrow Output
 \]
 
-DeerMind 面对的不是这种封闭世界。真实学习过程中会不断出现无法提前列举的表达、错误、解题策略、上下文关系、认知现象和系统异常；Learning Target、Task、Solution、KC 等领域结构本身也可能随着长期证据被重新理解。若要求工程师提前把所有对象和判断规则写成静态流程，系统最终只能覆盖被预见的部分现实，无法承担 Concept Architecture 所要求的长期认识责任。
+DeerMind 面对的不是这种封闭世界。真实学习过程中会不断出现无法提前列举的表达、错误、解题策略、上下文关系、认知现象和系统异常；LearningTarget 等产品规范与 ProblemTemplate、SolutionTemplate、KC 等领域定义本身也可能随着长期证据被重新理解。若要求工程师提前把所有对象和判断规则写成静态流程，系统最终只能覆盖被预见的部分现实，无法承担 Concept Architecture 所要求的长期认识责任。
 
 因此 DeerMind 的设计重点不是提前冻结“每种现实应该得到什么答案”，而是提前冻结：
 
@@ -125,7 +125,7 @@ AI Cognition 承担传统静态程序难以穷举的认知计算，例如：
 
 - 理解自然语言和多模态输入；
 - 解释 learner work 与学习行为；
-- 解释或生成 Learning Target Candidate，并分解 Task、Solution 和潜在知识结构；
+- 解释或生成 LearningTarget 候选、材料映射候选，以及 ProblemTemplate / SolutionTemplate / KC 候选，保持产品与 Domain 的分别提交权限；
 - 解释 Observation 对具体 Claim 的证据意义；
 - 生成 competing hypotheses；
 - 在当前 Context 下规划并选择 Action；
@@ -319,7 +319,7 @@ AI reasoning 默认只应获得完成当前 semantic role 所需的最少充分�
 - Provenance Capture；
 - Failure Handling。
 
-但 Runtime 自身不拥有 Learning、Evaluation、Interaction 或 Evolution authority。Space 决定 semantic responsibility，Protocol 定义某次 reasoning responsibility，Runtime 负责执行。
+但 Runtime 自身不拥有 Domain、产品定义、Evaluation、Interaction 或 Evolution authority。Space 决定 semantic responsibility，Protocol 定义某次 reasoning responsibility，Runtime 负责执行。
 
 这避免两种相反但同样危险的设计：一是把四个 Space 简单做成四个自治 Agent；二是建立一个拥有所有语义与权力的万能 DeerMind Agent。
 
@@ -489,7 +489,7 @@ DurableMemory \Rightarrow ExplicitSystemState
 DeerMind 至少区分四类常被统称为“memory”的对象：
 
 - **Working Memory**：一次 reasoning execution 内的临时工作状态，不具有长期 authority；
-- **System State**：Event、Learning Target、Learner Belief、Interaction State、Task/KC、System Issue 等正式持久状态；
+- **System State**：Event、Learning Target、Learner Belief、Interaction State、ProblemTemplate / KC、System Issue 等正式持久状态；
 - **Derived Recall View**：针对当前 purpose 从历史和正式状态投影出的相关回忆，不构成新事实源；
 - **Workflow Checkpoint**：长时间 Agent / workflow 为恢复执行而保存的进度状态，不自动获得 epistemic authority。
 
@@ -515,7 +515,7 @@ Context 不是一串被压平的文本。一个 Context Item 至少在语义上�
 
 因此同一个信息可以“可读取、可引用”，但并不“可服从”。制度性 authority conflict 也不能让 LLM 临场自由裁决，而应由 canonical rule 决定优先级。
 
-Target 与 Binding 也必须保持同样的权威分层。AI 可以提出 `TargetCandidate` 或 `TargetBindingCandidate`，但二者不是同一种 commit：Target Definition 的正式语义属于 Learning Space 并通过受治理 canonical commit 生效；Binding occurrence 的事实进入 Event History，外部 Binding 的合法 authority / scope 来自 Product Context / Context Constitution，当前有效 Binding projection 由 Interaction 形成。任何自然语言表达都不能同时取得这三类 authority。
+Target 与 Binding 也必须保持同样的权威分层。AI 可以提出 `TargetCandidate` 或 `TargetBindingCandidate`，但二者不是同一种 commit：Target Definition 的正式语义属于 Learning Space 并通过其受控定义与发布路径生效；ProblemTemplate / SolutionTemplate / KC 的 canonical commit 属于 Domain owner；Binding occurrence 的事实进入 Event History，外部 Binding 的合法 authority / scope 来自 Product Context / Context Constitution，当前有效 Binding projection 由 Interaction 形成。任何自然语言表达都不能同时取得这三类 authority。
 
 
 ### 6.5 Tool Access 是 Authority 的延伸
@@ -767,7 +767,7 @@ Reasoning quality、validation success、replay value 或 safety signal 都不�
 
 第二种是**万能 DeerMind Agent**：让一个长期 Agent 同时理解输入、维护 learner memory、形成 Evidence、更新 Belief、做 Action、修改 KC 并自我演化。它具有很强的表面灵活性，却把 Event、Observation、Evidence、Belief、Decision 和 Evolution 重新混成一个不可治理黑箱，直接破坏 Concept Architecture 的 semantic ownership。
 
-第三种是**四 Space = 四 Agent**：让 Learning Agent、Evaluation Agent、Interaction Agent、Evolution Agent 通过自然语言对话协作。它看似忠实映射了四个 Space，实际上把 semantic boundary 错误映射成 Agent process boundary，并容易产生重复认识、隐藏状态和权力冲突。
+第三种是**四 Space = 四 Agent**：让 Domain Agent、Evaluation Agent、Interaction Agent、Evolution Agent 通过自然语言对话协作。它看似忠实映射了四个 Space，实际上把 semantic boundary 错误映射成 Agent process boundary，并容易产生重复认识、隐藏状态和权力冲突。
 
 DeerMind 当前选择的是：**共享 AI Reasoning Runtime，受版本化 Reasoning Protocol 驱动；Space 保留 semantic ownership；AI output 通过 Candidate、Validation、Authority 与 Commit 进入正式系统。**
 
@@ -822,4 +822,3 @@ System\ Design
 | Reasoning Execution Record | 对一次 AI cognition 的系统级可审计执行记录，不等同于私有 chain-of-thought |
 | Historical Reconstruction | 基于已记录历史重建当时真实 execution，而不是重新调用模型猜测当时结果 |
 | Semantic Reinterpretation | 使用新的语义与 reasoning version 对旧 factual history 形成新的 derived semantics |
-

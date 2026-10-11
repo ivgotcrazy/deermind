@@ -88,13 +88,13 @@ X5 必须继续真实执行：排队求教，完成当前轮；形成 Control，
 
 | 责任 | 现行基线 |
 | --- | --- |
-| 总体 | [System Design v1.0](DeerMind_System_Design_v1.0.md) |
-| Runtime / Event | [Runtime Event v1.0](DeerMind_Runtime_Event_Architecture_v1.0.md) |
-| AI reasoning | [AI Reasoning Runtime v1.0](DeerMind_AI_Reasoning_Runtime_Design_v1.0.md) |
-| State / dependency | [State Dependency v1.0](DeerMind_State_Dependency_Architecture_v1.0.md) |
-| Interaction / decision | [Interaction Decision v1.0](DeerMind_Interaction_Decision_Runtime_Design_v1.0.md) |
-| Version / replay | [Version Replay Migration v1.0](DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md) |
-| Evolution / governance | [Evolution Governance v1.0](DeerMind_Evolution_Governance_Runtime_Design_v1.0.md) |
+| 总体 | [System Design v1.0](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_System_Design_v1.0.md) |
+| Runtime / Event | [Runtime Event v1.0](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Runtime_Event_Architecture_v1.0.md) |
+| AI reasoning | [AI Reasoning Runtime v1.0](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.0.md) |
+| State / dependency | [State Dependency v1.0](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_State_Dependency_Architecture_v1.0.md) |
+| Interaction / decision | [Interaction Decision v1.0](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md) |
+| Version / replay | [Version Replay Migration v1.0](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md) |
+| Evolution / governance | [Evolution Governance v1.0](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.0.md) |
 
 本次不改变上位概念架构、Space Design、AI-Native Principles、两级路线图的阶段顺序及原 Gate 条文。统一 Spike 报告继续是实验结论入口；本文件只承载其后的设计决定。旧设计输入和冻结实验继续按原路径/hash 追溯，不对旧批次重新命名版本，不改写旧 9/17 快照。
 

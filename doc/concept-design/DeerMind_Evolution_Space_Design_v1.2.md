@@ -1,23 +1,23 @@
-# DeerMind Evolution Space Design v1.1
+# DeerMind Evolution Space Design v1.2
 
 > **中文名称**：DeerMind 演化空间设计  
-> **版本**：v1.1  
+> **版本**：v1.2  
 > **文档性质**：Space Design / Architecture Baseline  
-> **状态**：架构冻结基线  
-> **上位基线**：DeerMind Concept Architecture v1.1  
-> **关联基线**：DeerMind Learning Space Design v1.1；DeerMind Evaluation Space Design v1.1；DeerMind Interaction Space Design v1.1  
+> **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论  
+> **上位基线**：DeerMind Concept Architecture v1.2  
+> **关联基线**：[DeerMind Domain Space Design v1.0](DeerMind_Domain_Space_Design_v1.0.md)；[Learning Space v1.0](DeerMind_Learning_Space_Design_v1.0.md)；[Evaluation Space v1.2](DeerMind_Evaluation_Space_Design_v1.2.md)；[Interaction Space v1.2](DeerMind_Interaction_Space_Design_v1.2.md)  
 > **上位价值约束**：DeerMind Product Thesis v1.0；DeerMind Product Constitution v1.0  
 > **写作规范**：DeerMind Design Document Standard v1.0  
-> **更新时间**：2026-09-27  
-> **版本说明**：v1.1 保留 v1.0 的 `SystemAssessmentModel + HypothesisModel + ValidationModel` 三模型结构、Governance 外置、Signal / Issue / Hypothesis / Revision / Validation Evidence 分层、最低充分验证、Historical Replay、禁止自我封闭验证、Approval Envelope、四级变化权限、Evolution Contract、Version Activation、Rollback 与 Post-Deployment Validation 等核心结论。本版本主要完成五项语义对齐：第一，将 Learning Target Definition、Target Responsibility / Support Boundary 等正式纳入 Versioned Evolution Contract；第二，区分经验模型失效、规范来源变化与 authority boundary 变化，避免把所有改变都解释成普通模型优化；第三，引入 typed dependency invalidation，使 Target、Learner Belief 与 Policy / Plan 的失效路径保持不同；第四，把 Policy-induced data bias 扩展为更一般的 System-induced evidence bias，并正式审计 Opportunity self-sealing；第五，使 Context Authority、Safety 与 Constitutional Change 的提案、验证和授权边界与 Product Constitution v1.0 对齐。经四 Space Cross-Document Freeze Gate，本版本现作为架构冻结基线；AI-Native / System Design 的后续版本传导不改变本 Space 的 semantic ownership。
+> **更新时间**：2026-10-11  
+> **版本说明**：v1.2 承接 Domain Space 与 Learning Space 的职责分离，更新领域模板、目标来源与版本依赖；保留本 Space 既有模型、单写与治理边界。旧 v1.1 Freeze Gate 及 Spike / Build 为原始版本下的历史证据，本轮未重新执行或改写其结果。
 
 ---
 
 ## 1. 文档定位与设计命题
 
-DeerMind 的前三个 Space 在一套已经批准的系统语义下运行：Learning Space 定义学习领域，Evaluation Space 形成对学习者的认识，Interaction Space 理解当前交互并决定是否行动。即使这三个 Space 的职责边界完全正确，它们内部的模型仍然可能错。
+DeerMind 的对象层在一套经授权采用的系统语义下运行：Domain Space 定义问题、方法与 KC，Learning Space 定义材料与目标，Evaluation Space 形成对学习者的认识，Interaction Space 理解当前交互并决定是否行动。即使这三个 Space 的职责边界完全正确，它们内部的模型仍然可能错。
 
-Learning Target 可能把错误的能力要求写成正式标准，Task Family 的粒度可能过粗，某个 KC 可能没有稳定复用价值；Observation Model 可能系统性误读某类行为；Evidence / Inference 可能把受助表现高估为 learner-owned capability；Interaction Policy 也可能在短期任务完成率上表现良好，却长期增加认知替代、减少反证机会或错误扩大外部 authority 的运行影响。对于一个长期运行的 AI Learning Expert，这些都不能被当成偶发“bug”而只靠人工事后修补。
+Learning Target 可能把错误的能力要求写成正式标准，ProblemTemplate 的粒度可能过粗，某个 KC 可能没有稳定复用价值；Observation Model 可能系统性误读某类行为；Evidence / Inference 可能把受助表现高估为 learner-owned capability；Interaction Policy 也可能在短期任务完成率上表现良好，却长期增加认知替代、减少反证机会或错误扩大外部 authority 的运行影响。对于一个长期运行的 AI Learning Expert，这些都不能被当成偶发“bug”而只靠人工事后修补。
 
 Evolution Space 因此处理一个 Meta-Level 问题：
 
@@ -62,7 +62,7 @@ Governance\ authorizes
 本文档定义 Evolution Space 的稳定语义责任，包括：
 
 - 运行信号如何被评估为 System Issue；
-- Learning Target、Task / Solution / Knowledge、Learner Claim、Evidence、Observation、Action / Policy 等正式语义如何进入可演化体系；
+- Learning Target、ProblemTemplate / SolutionTemplate / KnowledgeComponent、Learner Claim、Evidence、Observation、Action / Policy 等正式语义如何进入可演化体系；
 - System Issue 如何保持证据、范围、不确定性与生命周期；
 - 问题、解释、候选修改和验证证据为什么必须分离；
 - Hypothesis 如何保持可证伪并支持竞争解释；
@@ -513,7 +513,7 @@ Evolution Space 不应成为所有 monitoring tool 的垃圾桶。
 
 Signal 可以来自：
 
-- Learning Space 的 Target validity / grounding failure、Task / Solution / Knowledge 失配；
+- Domain Space 的模板、方法、KC 失配；Learning Space 的目标有效性、材料映射与来源失配；
 - Target Responsibility Boundary 与真实能力要求持续失配；
 - Evaluation 的 Target Assessment calibration、Support contamination、Evidence / Inference failure；
 - Interaction 的 Observation、State、Action 或 Policy failure；
@@ -603,7 +603,7 @@ System Belief 属于 Assessment 的内部认识论 mechanism。
 
 同一个系统问题可能跨时间、跨版本持续，也可能被多个 Signal 重复发现。因此 Issue 需要稳定身份、merge / 拆分 / resolve / reopen 等生命周期语义。
 
-但“哪些 Signal 属于同一个 underlying issue”本身可能具有不确定性。v1.1 不冻结 Issue merge algorithm。
+但“哪些 Signal 属于同一个 underlying issue”本身可能具有不确定性。本版不冻结 Issue merge algorithm。
 
 ### 4.7 Assessment 不能被单一指标绑架
 
@@ -859,7 +859,7 @@ SoleInterpreterOfValidationEvidence
 }
 \]
 
-如果 Learning Space 的 KC 划分本身可能有错，就不能只使用完全依赖同一 KC 划分形成的派生 Evidence 来证明该结构正确。
+如果 Domain Space 的 KC 划分本身可能有错，就不能只使用完全依赖同一 KC 划分形成的派生 Evidence 来证明该结构正确。
 
 结构性验证应根据风险和成本引入足够独立的锚点，例如：
 
@@ -1058,7 +1058,7 @@ ReplaySupport
 
 ### 6.1 Stable Identity：变化不能抹掉历史对象
 
-Learning Target Definition、Task Family、Solution Strategy、KC、Learner Claim、Evidence / Inference semantics、Observation semantics、State Type、Action semantics、Interaction Policy 等对象，即使未来被拆分、merge、retire，也必须保留可追踪的历史身份。
+Learning Target Definition、ProblemTemplate、SolutionTemplate、KC、Learner Claim、Evidence / Inference semantics、Observation semantics、State Type、Action semantics、Interaction Policy 等对象，即使未来被拆分、merge、retire，也必须保留可追踪的历史身份。
 
 Target 尤其不能因为标准升级就覆盖旧定义。旧 Target Version 下的 Target Assessment、Plan、Interaction context 和 learner history 必须能够继续解释“当时依据什么要求做出了什么判断”。
 
@@ -1199,6 +1199,8 @@ SemanticDependenciesMustBeTraceable
 
 这不要求新增独立 Dependency Model，但要求 System Design 支持 typed dependency tracking、version pinning 与精确失效。
 
+领域问题和产品目标问题必须分别路由。模板或 KC 的修订由 Domain owner 提交；材料映射与 LearningTarget 的修订由产品 owner 提交，均按对应 Governance 权限生效。零个已知方法、未映射题目或新颖有效解法可以形成模型扩展线索；个体失败本身不足以证明模型有错，也不能触发自动降低目标。
+
 ### 6.8 多版本共存是演化能力的一部分
 
 Validation 与 rollout 需要允许正式与候选版本并存，以支持：
@@ -1213,11 +1215,12 @@ Validation 与 rollout 需要允许正式与候选版本并存，以支持：
 
 ### 6.9 各 Space 与上位 Context 对 Evolution 的最小责任
 
-四个 Space 的 v1.1 文档已经分别定义自身 Evolution Contract。这里不重复内部字段，只冻结横向责任：
+Domain Space v1.0、Learning Space v1.0 与三个核心 Space v1.2 分别定义自身 Evolution Contract。这里不重复内部字段，只冻结横向责任：
 
 | 来源 | 至少需要可演化 / 可审计的信息 |
 |---|---|
-| Learning | Target / Task / Solution / KC identity、version、Responsibility semantics、Validity Scope、historical mapping、split / merge / retire history |
+| Domain | ProblemTemplate / SolutionTemplate / KC 的 identity、version、适用责任、结构关系、grounding 与迁移历史 |
+| Learning Space | LearningMaterial、映射和 LearningTarget 的来源、版本、责任边界、范围与修订依据 |
 | Evaluation | Claim / Evidence / Inference version、Evidence Basis、Belief revision、Target Assessment dependencies、calibration、replay support |
 | Interaction | Observation / State / Action / Policy version、Target / Authority projection、decision context、opportunity allocation、exposure lineage、selected vs occurred action、rationale 与 result |
 | Product Context / Context Constitution | 当前生效 authority / constraint version、scope、activation / expiration 与 governance provenance |
@@ -1456,7 +1459,7 @@ EmergencyAuthority
 
 ## 8. 架构决策、风险、开放问题与 System Design Handoff
 
-Evolution Space v1.1 的目标不是构建一个永远自动改变自己的系统，而是建立一个能够**科学地怀疑自己、保留竞争解释、选择足够证据，并把真正变化交给治理授权**的机制。
+Evolution Space v1.2 的目标不是构建一个永远自动改变自己的系统，而是建立一个能够**科学地怀疑自己、保留竞争解释、选择足够证据，并把真正变化交给治理授权**的机制。
 
 ### 8.1 关键架构决策
 
@@ -1501,7 +1504,7 @@ Context / Constitutional authority 的扩张、收缩与 Emergency Envelope 变�
 | 类别 | 问题 | 当前状态 |
 |---|---|---|
 | 概念性 | Normative Source Change 与 Empirical Model Failure 在混合场景中的判定边界 | 原则已冻结；需要更多跨领域反例验证 |
-| 概念性 | Target revision 何时真正改变 Learner Claim semantics，而不仅是 Required Standard | 默认只失效 Target Assessment；边界由 Evaluation / Learning 联合验证 |
+| 概念性 | Target revision 何时真正改变 Learner Claim semantics，而不仅是 Required Standard | 默认只失效 Target Assessment；边界由 Evaluation / Domain / 产品目标 owner 联合分析 |
 | 概念性 | System-induced evidence bias 的最小充分 provenance 集 | 已冻结必须可解释 data generation；具体字段不冻结 |
 | 实证性 | Opportunity self-sealing 指标能否可靠区分合理个性化与机会封闭 | 需跨数学、职业学习等真实场景验证 |
 | 实证性 | Target validity / Responsibility Boundary 的系统级校准应使用哪些外部 outcome | 保持多方法验证，不冻结单一 benchmark |
@@ -1553,7 +1556,7 @@ Evolution 本身需要持续回答：
 
 ### 8.5 System Design Handoff
 
-Evolution Space v1.1 已经形成“系统如何形成可演化知识并保持 authority boundary”的冻结语义合同。System Design 至少需要进一步解决：
+Evolution Space v1.2 定义系统认识、验证与授权分离的当前合同，System Design v1.1 对应承接下列责任；其具体实现按后续工程范围逐步交付：
 
 - System Signal ingestion、classification 与 empirical / normative / authority-change 类型识别；
 - System Issue store、身份、merge / 拆分 / 生命周期；
@@ -1775,73 +1778,8 @@ Target Responsibility Boundary 改变后，历史 replay 只能重新解释已�
 
 ---
 
-## 附录 D — v1.0 → v1.1 语义修订说明
+## 附录 D — 本版调整与历史边界
 
-v1.1 不是 Evolution Core Model 重构，而是对 Product Constitution v1.0、Concept Architecture v1.1 以及 Learning / Evaluation / Interaction Space v1.1 的语义对齐。
+v1.2 保留本 Space 的核心模型、事实与认识分层、权限、未知、历史和受治理变更等合同，调整其规范输入与引用路径。Domain Space v1.0 提供问题模板、方法和 KC；Learning Space v1.0 提供材料、映射和目标。两组规范分别拥有版本和提交责任，不能由旧 Learning Space 的单一输入包代替。
 
-**保留不变的核心包括：**
-
-- `SystemAssessmentModel + HypothesisModel + ValidationModel` 三模型；
-- Governance 不属于 Evolution Space；
-- problem-driven / theory-driven 合法入口；
-- Signal / Issue / Hypothesis / Revision Candidate / Validation Evidence 分层；
-- No Assessment Without Expectation、System Validity Is Conditional；
-- competing hypotheses、Unresolved、NotIdentifiable；
-- Hypothesis Validation / Revision Validation 分离；
-- least-costly sufficient validation 与 validation ladder；
-- Historical Replay、Replayable Grounding、Shadow Validation；
-- 禁止 self-closed validation；
-- Evidence Dependency、Validity Scope、heterogeneous effect、多维 Outcome；
-- learner experiment 的 Governance + Interaction execution boundary；
-- `FactualReplay != CounterfactualEvaluation`；
-- Evolution Contract、multi-version coexistence、Version Activation / Consistency Boundary；
-- Approval Envelope、Rollback、Governance history、Post-Deployment Validation；
-- Evolution 自身可被验证但不可自我授权。
-
-**v1.1 的主要 semantic diff 包括：**
-
-1. Learning Target Definition 与 Target Responsibility / Support Boundary 进入正式 Evolution Contract；
-2. `NormativeSourceChange != EmpiricalModelFailure`，制度 / 标准变化不再被普通模型优化语义吸收；
-3. `ValidationSuccess not=> AuthorityExpansion`，Context / Constitutional authority 变化显式回到 Governance；
-4. Semantic dependency 从“可追踪”升级为 typed invalidation，区分 Target、Belief 与 Policy / Plan 的失效路径；
-5. Policy-induced data bias 扩展为 System-induced evidence bias；
-6. Opportunity self-sealing 成为正式 Evolution concern；
-7. Target replay 明确不能创造历史中缺失的 Responsibility / Evidence Opportunity；
-8. Replay / Validation value 不再以“儿童隐私”表述，而统一受 Product Constitution 的 Data Restraint 与 Product Context 约束；
-9. Level 4 更新为 Core Constitution / Context Constitution 中价值与 authority boundary 的变化；
-10. Open Questions 按 Conceptual / Empirical / Governance / Implementation 分类，主要风险改为 Failure Mode 结构。
-
-v1.1 没有新增第四个 Evolution Model，也没有把 Fairness、Safety、Target Evolution 或 Governance 提升为独立 Space / Model。变化发生在被 Evolution 认识和验证的对象、依赖失效规则与 authority boundary，而不是顶层职责扩张。
-
----
-
-## 结语
-
-Evolution Space 的目标不是让 DeerMind 更频繁地改变自己，而是让系统拥有一种受约束的科学态度：**现实可以证明我们错，第一种解释可能不是正确解释，找到支持证据不等于完成验证，而认为某个改变正确也不等于拥有改变系统的权力。**
-
-因此 Evolution 真正维护的是一条从现实到系统自我认识、再到受治理变化的链路：
-
-\[
-Reality
-\rightarrow
-Assessment
-\rightarrow
-Hypothesis
-\rightarrow
-Validation
-\rightarrow
-Governance
-\rightarrow
-Change
-\rightarrow
-Reality
-\]
-
-一个成熟的 DeerMind 不应该“永远相信自己”，也不应该“永远修改自己”或“因为效果更好就扩大自己的权力”。它应该知道什么时候有足够理由怀疑，什么时候证据不足，什么时候问题不可识别，什么时候候选变化值得进入 Governance，以及什么时候最正确的决定仍然是保持当前版本。
-
-\[
-Doubt\ systematically,
-validate\ independently,
-change\ only\ with\ authority,
-and\ keep\ testing\ after\ change
-\]
+原 v1.1 的完整文本及 Freeze Gate 叙述由 Git 保存。本轮没有重跑旧实验，也没有将当时评审改写为新模型通过；实现代码与领域包仍须按实际工程交付迁移。当前修订依赖的规范和运行合同见[概念设计入口](README.md)。

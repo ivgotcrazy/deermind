@@ -1,18 +1,18 @@
-# DeerMind Evaluation Space Design v1.1
+# DeerMind Evaluation Space Design v1.2
 
 > **中文名称**：DeerMind 评估空间设计  
-> **版本**：v1.1  
+> **版本**：v1.2  
 > **文档性质**：Space Design / Architecture Baseline  
-> **状态**：架构冻结基线  
-> **上位基线**：DeerMind Concept Architecture v1.1  
-> **上位领域基线**：DeerMind Learning Space Design v1.1  
+> **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论  
+> **上位基线**：DeerMind Concept Architecture v1.2  
+> **上位领域基线**：[DeerMind Domain Space Design v1.0](DeerMind_Domain_Space_Design_v1.0.md)；[Learning Space v1.0](DeerMind_Learning_Space_Design_v1.0.md)  
 > **上位价值约束**：DeerMind Product Thesis v1.0、DeerMind Product Constitution v1.0  
 > **写作规范**：DeerMind Design Document Standard v1.0  
-> **更新时间**：2026-09-30
+> **更新时间**：2026-10-11  
 >
 > **修订说明**：补充诊断转入教学时的证据解释，区分讲解请求与实际暴露，并保留既有表现的证据价值；不改变 Claim Space 或 Evaluation ownership。
 >
-> **版本说明**：v1.1 保留 v1.0 的 LearnerStateModel / EvidenceModel / InferenceModel 三模型、TaskProficiencyBeliefs + KCBeliefs 的 Learner State Core、Evaluation 单写 Learner Belief、Observation / Evidence / Belief 分层、UNKNOWN、Assistance / Contamination、Evidence Dependency、Freshness、Conflict、Disconfirmation、Evolution Contract 与历史不可重写等核心结论；本版本主要完成四项语义对齐：第一，Task Proficiency Claim 升级为对 Conditions、Support / Responsibility Boundary 与 Quality Requirement 敏感的能力命题；第二，Assistance 与 Contamination 改为相对于 Claim / Target Responsibility Boundary 解释；第三，正式接入 Target Assessment / Target Gap，但不新增 TargetBelief、CapabilityBelief 或第四个 Core Model；第四，补充 Equal Epistemic Standing、Authority Override、Target Version 与派生判断失效等上位约束。经 Interaction / Evolution v1.1 对齐与 Cross-Document Freeze Gate，本版本现作为架构冻结基线。
+> **版本说明**：v1.2 承接 Domain Space 与 Learning Space 的职责分离，更新领域模板、目标来源与版本依赖；保留本 Space 既有模型、单写与治理边界。旧 v1.1 Freeze Gate 及 Spike / Build 为原始版本下的历史证据，本轮未重新执行或改写其结果。
 
 ---
 
@@ -20,7 +20,7 @@
 
 Evaluation Space 解决的不是“给学习者打一个分数”，也不是维护一个越来越复杂的学习者画像。它面对的是一个更基本的问题：**DeerMind 永远无法直接读取学习者真实的认知状态，却必须根据有限、受条件影响、可能互相冲突的行为证据，形成长期、可修正的能力认识。**
 
-Learning Space v1.1 已经把 Learning Target、Task、Solution 与 Knowledge 的规范责任分开，并明确 Target 可以规定能力成立所需的条件、质量标准和 Support / Responsibility Boundary。因此 Evaluation v1.1 需要进一步回答：同一个 Task Family 在不同条件和责任边界下，一次表现到底能证明什么；当前 Learner Belief 是否足以支持某个 Target；以及“证据已支持未达标”和“系统还不知道是否达标”为什么必须保持不同。
+Domain Space v1.0 提供问题模板、方法与 KC；Learning Space v1.0 提供 LearningTarget、范围和支持责任。Evaluation 需要判断具体表现支持哪个条件性命题，区分未达目标与证据不足，并保证模型映射变化不会被误当成真实学习变化。
 
 Evaluation 仍然是 DeerMind 的**学习者认识层**。它维护的是系统对学习者的可修正认识，而不是学习者真实状态本身，也不是 Learning Target 的规范要求。
 
@@ -71,7 +71,7 @@ Target Assessment 则建立在正式 Target Definition 与当前 Learner Beliefs
 - UNKNOWN、不确定性、Epistemic Status 和 Evidence Basis 的语义；
 - Target Assessment、Target Gap 与 Epistemic Gap 的派生关系；
 - Equal Epistemic Standing、Population Prior 与 Authority Override 对 Evaluation 的约束；
-- Evaluation 与 Learning、Interaction、Global Event Model 和 Evolution 的边界；
+- Evaluation 与 Domain、Learning Space、Interaction、Global Event Model 和 Evolution 的边界；
 - Evaluation 如何被现实挑战、版本化和重新解释。
 
 ### 1.2 本文档不解决什么
@@ -89,11 +89,11 @@ Evaluation Space 不负责：
 - 规定最终使用 Bayesian、IRT、neural estimator、规则系统还是其他具体算法；
 - 规定 Belief、Evidence 或 Target Assessment 的数据库 schema、服务边界或 API。
 
-这些内容分别属于 Learning Space、Interaction Space、Product Context、Evolution、Governance 或后续 System Design。
+这些内容分别属于 Domain Space、Interaction Space、Product Context、Evolution、Governance 或后续 System Design。
 
 ### 1.3 上位边界
 
-根据 Concept Architecture v1.1，Learning 提供 Target 与领域规范语义；Evaluation 形成对学习者的可修正认识；Interaction 使用这些认识、当前 Context 与现实约束做行动决策。必须长期保持：
+根据 Concept Architecture v1.2，Domain 提供领域定义，Learning Space 提供材料与目标规范；Evaluation 形成对学习者的可修正认识；Interaction 使用这些认识、当前 Context 与现实约束做行动决策。必须长期保持：
 
 \[
 Requirement
@@ -304,7 +304,7 @@ KCBeliefs
 
 Task Proficiency Claim 表达的不是“这个学习者抽象地会不会 Task F”，而是：
 
-> **学习者当前是否具备足够的自身能力，能够在明确 Conditions、Support / Responsibility Boundary 与 Quality Requirement 下，相对稳定地承担某个规范 Task Family 所要求的认知或行动责任。**
+> **学习者当前是否具备足够的自身能力，能够在明确 Conditions、Support / Responsibility Boundary 与 Quality Requirement 下，相对稳定地承担某个明确的问题范围所要求的认知或行动责任。**
 
 概念上可以写成：
 
@@ -312,14 +312,16 @@ Task Proficiency Claim 表达的不是“这个学习者抽象地会不会 Task 
 CapabilityClaim
 =
 (
-TaskFamily,
+ProblemScope,
 Conditions,
 SupportBoundary,
 QualityRequirement
 )
 \]
 
-这里的四个元素不要求最终都成为独立数据库字段，但语义上必须能够被区分。Task Family 提供领域责任；Conditions 描述能力成立的环境与变化范围；Support Boundary 描述哪些责任必须由 learner 自己承担、哪些可以外部化；Quality Requirement 描述当前 Claim 所要求的表现质量与稳健性。
+这里的四个元素不要求最终都成为独立数据库字段，但语义上必须能够区分。ProblemScope 引用一个或多个明确版本的 ProblemTemplate，并限定参数、表示、情境及责任覆盖；Conditions 描述成立环境；SupportBoundary 区分自身承担与允许外部化的工作；QualityRequirement 定义所判断的质量和稳健性。保持 TaskProficiencyClaim / Belief 名称，是为了延续条件性任务表现命题，不表示 Domain 继续存在旧 TaskFamily 对象。
+
+同模板的两道题可能承担不同责任，引用相同模板本身不允许无条件汇总证据。仅完成计算不能自动覆盖解释、选法、检验或迁移；只有 Claim 相容且 Evidence 依赖、实际帮助与情境差异得到处理后，才可合并判断。
 
 Task Proficiency Claim 仍然不是单次 Task Success，也不是所有相关 KC Belief 的机械聚合。一次成功可能来自环境、他人、工具或偶然因素；一个学习者也可能掌握大部分相关 KC，却仍无法组织完成复杂 Task。
 
@@ -347,7 +349,7 @@ KC Claim 表达：
 
 > 学习者当前是否具备并能够在该 KC 的 Application Conditions 下，自身调用这个可复用认知结构或功能，并产生预期 Cognitive Effect。
 
-KC Claim 引用 Learning Space 的规范 KC 语义，但不拥有修改 KC 定义的权力。
+KC Claim 引用 Domain Space 的规范 KC 语义，但不拥有修改 KC 定义的权力。
 
 观察到某个行为“看起来使用了 KC”也不能直接推出掌握，因为行为可能受到提示、答案暴露、模仿或 Observation 不确定性影响：
 
@@ -361,7 +363,7 @@ KCBelief(K)=Known
 
 Evidence Model 不负责形成最终 Belief。它只回答一个局部问题：
 
-> **某个 Observation，在当前 epistemic context 和 Learning Space 语义下，对一个明确 Claim 有什么认识论意义？**
+> **某个 Observation，在当前 epistemic context 和 Domain Space 语义下，对一个明确 Claim 有什么认识论意义？**
 
 \[
 \boxed{
@@ -371,7 +373,7 @@ Interpret(
 Observation,
 Claim,
 EpistemicContext,
-LearningSpace
+DomainSemantics
 )
 }
 \]
@@ -762,7 +764,7 @@ UncertainDueToConflictingEvidence
 
 - 当前 Claim remains conflicted；
 - 形成类似 `RepresentationDependentPattern` 的临时推断假设；
-- 检查 Task Family、KC Application Conditions、Observation 和 Evidence 语义是否过粗。
+- 检查 ProblemTemplate、KC Application Conditions、Observation 和 Evidence 语义是否过粗。
 
 这保留了进一步解释空间，同时避免学习者画像变成吸收所有异常的垃圾桶。
 
@@ -852,7 +854,7 @@ Stop
 
 ### 5.16 Task Outcome、Learner Performance 与 Capability 必须分离
 
-Learning Space v1.1 已经明确：
+问题结果、个人表现与潜在能力需要分别解释：
 
 \[
 TaskOutcome
@@ -1109,34 +1111,15 @@ ResponsibilityBoundary
 
 Evaluation 必须保持自己的认识职责，同时依赖其他 Space 提供规范坐标、当前 Observation、事实溯源信息和系统级演化机制。
 
-### 7.1 Learning Space → Evaluation：提供规范坐标，不提供学习者结论
+### 7.1 Domain 与 Learning Space：规范输入分开
 
-Learning Space v1.1 向 Evaluation 提供：
+Domain 提供 ProblemTemplate 的身份、版本、参数与责任范围，SolutionTemplate 的适用条件、子问题依赖及方法相关 grounding，以及 KC 的定义和适用条件。Learning Space 提供 LearningTarget 的版本、材料映射、范围、期望标准与支持责任。两组输入必须分别记录依赖，不能由一个含混的“学习空间版本”替代。
 
-- Learning Target / Target Version；
-- Required Task Capabilities；
-- Task Family / Task Instance 语义；
-- Task Objective 与 Task Success Semantics；
-- Target Conditions 与 Support / Responsibility Boundary；
-- Target Required Standard / Quality dimensions；
-- Solution Strategy / Solution Task Topology；
-- KC definitions 与 Application Conditions；
-- Knowledge Grounding；
-- 规范身份、版本与 Validity Scope。
+Interaction 提供实际问题的版本引用、参数、呈现条件、已发生的帮助和表现 Observation。实际采用何种方法需要行为依据，不能从参考 SolutionTemplate 反向推定。上传问题未映射、方法覆盖不完整或证据不足时，可保留未知，不伪造完备模型后再给出精确能力结论。
 
-Evaluation 可以基于这些坐标形成面向具体学习者的 Task Proficiency Claim、KC Claim、Evidence、Learner Belief，以及派生 Target Assessment。
+Evaluation 在明确的问题范围上维护 TaskProficiencyClaim，在 KC 上维护 KCClaim，并形成 Evidence、Belief 与派生 TargetAssessment。材料章节只提供产品汇总入口，不是新的能力本体；产品空间隔离与授权限制同样作用于 Evidence 的可用范围。
 
-但必须保持：
-
-\[
-Requirement
-\neq
-Evidence
-\neq
-Belief
-\]
-
-Learning Target 不直接生成 Learner Belief；单个 learner 的表现也不能反向修改 Learning Space canonical semantics。
+LearningTarget 不能直接生成 LearnerBelief，个体表现不能直接修改 Domain 或目标定义。要求、证据与信念保持分层。
 
 ### 7.2 Interaction Space → Evaluation：提供 Observation 和暴露事实
 
@@ -1281,7 +1264,7 @@ TargetRevision
 LearnerBeliefRevision
 \]
 
-相反，如果 Task Family、Learner Claim semantics、Evidence 解释规则或 Inference 语义发生变化，旧 Belief 可能不再能静默继承。正确路径是重新解释历史事实、重新形成 Evidence 并重新推断，或者使用经过验证、显式记录 provenance 的 migration rule。
+相反，如果 ProblemTemplate、Learner Claim semantics、Evidence 解释规则或 Inference 语义发生变化，旧 Belief 可能不再能静默继承。正确路径是重新解释历史事实、重新形成 Evidence 并重新推断，或者使用经过验证、显式记录 provenance 的 migration rule。
 
 \[
 NoSilentCrossVersionInterpretation
@@ -1312,7 +1295,7 @@ SystemAdaptation
 ### 8.1 关键架构决策
 
 **D1 — 三个 Core Model 保持不变。**  
-v1.1 不新增 Target Evaluation Model、Capability Model、Dependency Model 或 Fairness Model。Target 对齐通过现有 Learner State / Evidence / Inference 责任与跨 Space 派生语义完成。
+本版不新增 Target Evaluation Model、Capability Model、Dependency Model 或 Fairness Model。Target 对齐通过现有 Learner State / Evidence / Inference 责任与跨 Space 派生语义完成。
 
 **D2 — Learner State Core 继续只保留 Task Proficiency 与 KC Belief。**  
 TargetBelief、TargetMasteryBelief、CapabilityBelief、AssistanceDependencyTrait 都不进入 Core。目标要求、派生 assessment 与 dependency diagnostic 都保持各自 owner。
@@ -1368,11 +1351,11 @@ Evidence 支持未达标与证据不足是不同认识状态，不能用一个�
 | 实现性 | 多维 Claim、Evidence 与 Assessment 的存储/查询协议 | 交给 System Design |
 | 实现性 | LLM 参与 Evidence / Inference 时如何保证依据可追踪 | 交给 AI Runtime / System Design |
 
-### 8.4 冻结后的下游传导
+### 8.4 本版下游传导
 
-Evaluation Space v1.1 已完成 Interaction / Evolution v1.1 对齐与跨文档审计。后续 AI-Native Architecture Principles 与 System Design 需要落实 AI 参与 Evidence / Inference 的 candidate / commit authority、Claim identity、Evidence provenance、TargetAssessment dependency graph、version pinning、typed invalidation、replay 与 calibration。
+Evaluation v1.2 的领域与目标输入已同步进入 AI-Native Principles v0.3 和 System Design v1.1。Claim identity、Evidence provenance、TargetAssessment dependency、版本解析、typed invalidation 与重放分别按其运行合同实现；本轮文档对齐不表示校准质量或实现迁移已验证。
 
-这些实现与执行原则不得引入第二 Learner Belief writer、TargetBelief 或自动 Gap→Action 路径；出现强反例时必须正式 Reopen，而不是在 runtime 静默扩张认识 authority。
+实现不得引入第二 LearnerBelief writer、TargetBelief 或自动 Gap→Action 路径。旧 TaskProficiency 标识可以继续使用，但必须检查所引用的新问题范围及历史证据兼容性。出现重要无法表达的反例再重新审查模型，不能在 Runtime 静默扩张认识权限。
 
 ## 附录 A — Evaluation Space Semantic Invariant Registry
 
@@ -1523,41 +1506,8 @@ IndividualLearnerBelief
 - Assistance Dependency diagnostic 是否保持 Target-relative，而没有变成 learner trait？
 - Target Gap、Epistemic Gap 是否都保持 action-neutral？
 
-## 附录 D — v1.0 → v1.1 语义修订说明
+## 附录 D — 本版调整与历史边界
 
-v1.1 不是 Evaluation Core Model 重构，而是对 Concept Architecture v1.1 与 Learning Space v1.1 的语义对齐。
+v1.2 保留本 Space 的核心模型、事实与认识分层、权限、未知、历史和受治理变更等合同，调整其规范输入与引用路径。Domain Space v1.0 提供问题模板、方法和 KC；Learning Space v1.0 提供材料、映射和目标。两组规范分别拥有版本和提交责任，不能由旧 Learning Space 的单一输入包代替。
 
-保留不变的核心包括：
-
-- `LearnerStateModel + EvidenceModel + InferenceModel` 三模型；
-- `TaskProficiencyBeliefs + KCBeliefs` 的 Learner State Core；
-- UNKNOWN、Epistemic Uncertainty、Epistemic Status、Evidence Basis；
-- Evidence claim-relative、Assistance / Contamination、Delayed、Transfer、Missing Evidence；
-- Evidence Dependency、Freshness、Conflict、Competing Inference Hypotheses、Disconfirmation；
-- Evaluation single-writer、Action-neutral Belief 与 Teaching Action 非学习证据；
-- Observation invalidation、Evolution Contract、跨版本重新解释与历史不可重写。
-
-v1.1 的主要 semantic diff 包括：
-
-1. Task Proficiency Claim 增加 Conditions、Support / Responsibility Boundary 与 Quality Requirement 语义；
-2. Assistance 从“是否用了帮助”升级为 Responsibility-Boundary-relative Evidence interpretation；
-3. 正式引入 Target Assessment / Target Gap，但不新增 TargetBelief、CapabilityBelief 或第四个 Evaluation Model；
-4. 正式区分 Target Gap 与 Epistemic Gap；
-5. 增加 Task Outcome / Learner Performance / Capability 分层；
-6. 增加 Population Prior / Equal Epistemic Standing 与 Authority Override 边界；
-7. 把旧 `TargetStability` 命名修正为 `ClaimStabilityAssumption`；
-8. 区分 Target revision 与 Claim / Evidence semantic revision 的两类失效路径；
-9. 增加 Target-relative Assistance / Support Dependency derived diagnostic；
-10. 更新上位基线到 Concept Architecture v1.1 与 Learning Space Design v1.1。
-
-本次修订没有新增第四个 Evaluation Model，也没有把 Target、dependency、fairness、motivation、fatigue 或 strategy competence 提升为新的 Learner State Core。
-
-## 结语
-
-Evaluation Space 的价值不在于让 DeerMind 拥有一个更复杂的学习者画像，而在于让系统对自己的判断保持纪律。
-
-v1.1 进一步明确：能力判断必须知道自己在断言什么条件、什么支持边界和什么质量要求；一次 AI-assisted 表现到底能证明什么，取决于它是否替代了当前 Claim 要求 learner 自己承担的责任；Target 规定“应该会什么”，Evaluation 只能根据 Evidence 回答“我们现在有理由相信 learner 会什么”。
-
-因此 DeerMind 必须同时能够区分：已知未达标与尚不知道，Task Outcome 与 learner Performance，工具使用与责任替代，群体 prior 与个体 Evidence，以及制度限制与认识事实。
-
-Evaluation 最终维护的仍然是一套可追溯、可质疑、可修正的学习者认识论模型，而不是一张漂亮但不可反证的 mastery profile。
+原 v1.1 的完整文本及 Freeze Gate 叙述由 Git 保存。本轮没有重跑旧实验，也没有将当时评审改写为新模型通过；实现代码与领域包仍须按实际工程交付迁移。当前修订依赖的规范和运行合同见[概念设计入口](README.md)。

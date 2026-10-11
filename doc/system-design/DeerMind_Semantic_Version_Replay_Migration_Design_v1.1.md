@@ -1,22 +1,22 @@
-# DeerMind Semantic Versioning, Replay & Migration Architecture v1.0
+# DeerMind Semantic Versioning, Replay & Migration Architecture v1.1
 
 > **中文名称**：DeerMind 语义版本、重放与迁移架构<br>
-> **版本**：v1.0<br>
+> **版本**：v1.1<br>
 > **文档性质**：System Design Baseline<br>
-> **状态**：Gate E/F 评审通过后的实现合同基线<br>
-> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v1.0.md`<br>
+> **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
+> **上位基线**：[Concept Architecture v1.2](../concept-design/DeerMind_Concept_Architecture_v1.2.md)、[Domain Space v1.0](../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution v1.2、[AI-Native Principles v0.3](../top/DeerMind_AI_Native_Architecture_Principles_v0.3.md)；总体合同为 [System Design v1.1](DeerMind_System_Design_v1.1.md)<br>
 > **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-08
+> **更新时间**：2026-10-11
 
-本版本在 [DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md 历史副本](../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/6-DeerMind_Semantic_Version_Replay_Migration_Design_v0.1.md.txt) 的合同基础上吸收 Phase 6 证据处置，统一当前验证状态和跨专项引用。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录 A2 否定、E1/X5 未决的正式后果、Gate E/F 依据和后续能力分期。v1.0 冻结的是实现合同，不是模型质量或生产可靠率。原实验与旧设计输入按其原始版本保留，见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。
+本版本在原 System Design v1.0 合同上承接 Domain 与 Learning Space 的对象和 owner 修订。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计命题
 
 ### 1.1 为什么需要独立 Version / Replay / Migration Architecture
 
-DeerMind 不是一个“部署一次、语义长期不变”的软件系统。Learning Target、Task、Solution、Knowledge、Observation semantics、Claim / Evidence semantics、Inference semantics、Interaction Policy、Action semantics、Reasoning Protocol 都可能在长期运行中发生修订。
+DeerMind 不是一个“部署一次、语义长期不变”的软件系统。LearningTarget、ProblemTemplate、SolutionTemplate、KnowledgeComponent、Observation semantics、Claim / Evidence semantics、Inference semantics、Interaction Policy、Action semantics、Reasoning Protocol 都可能在长期运行中发生修订。
 
 如果版本只被理解为代码发布号，系统会很快遇到四类无法接受的问题。
 
@@ -91,7 +91,7 @@ NewUnderstanding \neq NewPast
 
 ### 1.4 与总体 System Design 的关系
 
-当前总体 `DeerMind_System_Design_v1.0` 继续保持三个系统级合同：
+当前总体 `DeerMind_System_Design_v1.1` 继续保持三个系统级合同：
 
 1. DeerMind 不使用一个全局 `SystemSemanticVersion`；
 2. runtime boundary 需要 coherent Version Context；
@@ -293,7 +293,8 @@ PerBoundaryCoherentVersionContext
 ```text
 RuntimeVersionContext
 ├── SemanticVersionBindings
-│   ├── Learning semantics
+│   ├── Domain definitions: ProblemTemplate / SolutionTemplate / KC
+│   ├── Product learning definitions: material / mapping / target
 │   ├── Evaluation semantics
 │   ├── Interaction semantics
 │   └── ReasoningProtocol
@@ -311,6 +312,10 @@ RuntimeVersionContext
 它回答的不是“系统现在是什么版本”，而是：
 
 > **这一次正式判断或 effect 在什么语义版本组合下成立。**
+
+Learning Space ID 表示使用上下文，不是 Domain 版本；LearningTarget、材料映射及各 Domain 对象分别解析版本。多个产品空间可以引用同一 Domain 定义，但其个人数据使用 scope 仍由产品合同和 authority 限定。统一发布清单只绑定经过校验的版本组合，不创造全局单一语义版本。
+
+原 TaskFamily 与新 ProblemTemplate 不能按名称推定兼容。迁移必须核对问题责任、参数范围、工具条件及旧 Evidence 可支持的 Claim；允许拆分、合并、重新映射或保留历史而不迁移。旧 Solution Strategy 的步骤树也不能在丢失分支与适用条件后当成完备 SolutionTemplate。必要信息缺失时，保留可定位历史并将新语义解释标为不足，不把映射重算描述为学习者真实能力发生变化。
 
 ### 3.2 ContextManifest、VersionContext 与 DependencySet 不可合并
 
@@ -1804,13 +1809,13 @@ SUPPORTED within declared Spike scope; production migration and scale remain unv
 
 ### 11.6 Focused Design Closure 判断
 
-本专项合同纳入 System Design v1.0 基线，与总体及其余五项专项完成一致性评审。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.1 在此基础上更新领域与产品输入合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 AA-C01/AA-C02 的支持限于已有受控版本、重建和保留场景；不代表模型可确定性重现，亦不代表生产迁移平台已验证。
 
 ### 11.7 下一 Work Package
 
-当前系统设计内部 Phase 6 已完成，Gate E/F 通过；总体 Development Phase 2 准入。下一工作是 Architecture Validation Build 的组件与验证方案，随后实现真实窄范围闭环，见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md) §5。Spike 原否定/未决保持；后续证据可触发新版本修订，不能在实现中静默改变本合同。
+系统设计内部 Phase 6、Gate E/F 与后续 Build 已按原基线收口。本轮领域复核已传导至当前合同，现恢复 MVP Phase 3 的范围与验证条件评审，随后按 Roadmap 准备 Phase 4 资产并进入 Phase 5 工程。旧实验的否定与未决保持；新模型的具体资产、实现迁移与质量需按实际交付验证，见[当前系统设计入口](README.md)。
 
 ## Appendix A — Version / Replay Invariant Registry
 

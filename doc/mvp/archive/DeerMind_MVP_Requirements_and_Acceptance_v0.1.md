@@ -103,7 +103,7 @@ R23 保存所有完整生成候选，包括未选用和核验失败的候选；�
 | R23 新题保存、变式描述与复用 | 对应 N01、N03、N11。统一保存变式、原生题和大纲范围内上传的新题，支持追溯、分析与合格题复用；稳定编号与语义描述分离，题目来源、版本及每次实际使用分别保留 | 可还原当时题面、作答和帮助，查明来源、关联模型、校验状态与缺口；上传题不冒称系统生成或教材原题。缺少映射不丢弃题目，不伪造正式关系；入库不等于已核验可复用或模型已完善，修订不覆盖历史，继续按空间隔离 | D02–D04、D07、D09：Phase 4 定义题目档案、变式描述及 Evolution 关联，Phase 5 实现保存、去重与状态管理；按 A77、A78 验收 |
 | R24 学习资料保留与界面删除 | 已提交材料及学习记录随档案保留，不按固定天数清除；学生可删除自己界面的学习资料，家长按整段会话删除自己的咨询，不支持删除单条消息；无需管理员审核，不提供恢复入口，家长不能修改或删除孩子资料 | 上传错题按一道独立题删除，同题关联原图及原作答一并从学生界面移除。删除对象不再从相应用户的列表、搜索、详情等入口取得，刷新或重装不恢复；内部事实、帮助与评价保留，获准的有效依据继续参与判断；家长相关依据查看权不因学生端删除取消，后台读取按 R17；不宣称物理销毁 | D04、D05、D07、D08：上传资料及家长咨询粒度已定，其他学生资料对象、关联展示、事项访问、失败恢复与临时文件清理继续由 Phase 4 细化，Phase 5 实现 |
 
-原始材料、模型解释与能力判断分开，实际帮助按展示事实解释；Evaluation 是能力判断的 sole writer，Policy 依据认识和目标决定行动。语义判断遵循语义规则与 LLM，确定性工程负责标识、格式、版本、空间、权限、事务及数量；不用关键词裁决含义，也不把 LLM PASS 当作真值。同会话严格串行，主动中断与异常按既有合同处理，后台批量任务不绕过该顺序。责任来源见[产品宪法](../../top/DeerMind_Product_Constitution_v1.0.md)、[Evaluation Space Design](../../concept-design/DeerMind_Evaluation_Space_Design_v1.1.md)与[Build 退出报告](../../system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md) §9。
+原始材料、模型解释与能力判断分开，实际帮助按展示事实解释；Evaluation 是能力判断的 sole writer，Policy 依据认识和目标决定行动。语义判断遵循语义规则与 LLM，确定性工程负责标识、格式、版本、空间、权限、事务及数量；不用关键词裁决含义，也不把 LLM PASS 当作真值。同会话严格串行，主动中断与异常按既有合同处理，后台批量任务不绕过该顺序。责任来源见[产品宪法](../../top/DeerMind_Product_Constitution_v1.0.md)、[Evaluation Space Design](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/concept-design/DeerMind_Evaluation_Space_Design_v1.1.md)与[Build 退出报告](../../system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md) §9。
 
 日常异议先复核，不因孩子或家长说有误就改写事实，也不凭第二个模型同意宣称解决。现有规则与权限内可确认的记录错误，由相应 owner 自动更正并处理实际依赖；未决、冲突、正式模型修改及学生端已删资料维护交唯一管理员。已知失效依据停止当前使用，局部更正不重置无关记录，修复待完成或失败如实表达，历史展示与帮助保留。
 
@@ -175,11 +175,11 @@ MVP 不提供学习数据使用授权撤回功能，家长端入口、管理员�
 | 当次作答反馈 | 当题要求、有效解法及判定规则明确，实际作答与帮助情况可用于相应判断 | 可对有依据的部分给出当次反馈；材料或标准不足保留未决，不将一次对错直接升级为能力结论 |
 | 任务或知识点掌握判断 | 对应正式领域对象、适用 Claim 及评价规则有效，作答与帮助记录能够形成相应证据 | 仅更新有足够依据的命题；Task 判断和 KC 判断分别处理，未建立的关系不被编造成结论，模型缺口不计作能力不足 |
 
-Task 与 KC 判断各受相应 Claim 约束，未决 KC 关系不妨碍其他有充分依据的 Claim。[Learning Space Design](../../concept-design/DeerMind_Learning_Space_Design_v1.1.md) §5–§7 的任务与策略关系可以多对多：同题多解不一定检验同一组 KC，正文概念可关联知识和适用任务而不必强制建题。UNKNOWN、部分理解和未确认映射须保留，不以凑图谱完整度替代正确性。
+Task 与 KC 判断各受相应 Claim 约束，未决 KC 关系不妨碍其他有充分依据的 Claim。[Learning Space Design](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/concept-design/DeerMind_Learning_Space_Design_v1.1.md) §5–§7 的任务与策略关系可以多对多：同题多解不一定检验同一组 KC，正文概念可关联知识和适用任务而不必强制建题。UNKNOWN、部分理解和未确认映射须保留，不以凑图谱完整度替代正确性。
 
-教材建模按章节由 AI 起草候选、来源、验证材料与未决，管理员可查看、修改全部候选，核查疑点及代表性未标疑样例后批准明确范围。抽查不等于全部正确，未确认关系不能随整章批准生效。流程遵循候选与验证 → 人工治理授权 → 对应 owner 提交 → 限定启用 → 影响检查，见[Governance Runtime](../../system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.0.md) §6–§7；一个人兼任不合并这些责任。不把手工逐题建模或逐关系审批设为默认工作量。
+教材建模按章节由 AI 起草候选、来源、验证材料与未决，管理员可查看、修改全部候选，核查疑点及代表性未标疑样例后批准明确范围。抽查不等于全部正确，未确认关系不能随整章批准生效。流程遵循候选与验证 → 人工治理授权 → 对应 owner 提交 → 限定启用 → 影响检查，见[Governance Runtime](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.0.md) §6–§7；一个人兼任不合并这些责任。不把手工逐题建模或逐关系审批设为默认工作量。
 
-发布前可查差异、基础版本、作用空间、验证依据、未决风险及依赖影响。知识和判断依据变化按实际语义检查，版面修正不自动全量重算，任务归类或解释变化可能影响 Evidence/Belief，仅 Target 标准变化通常检查 Target Assessment，见[Evaluation Space Design](../../concept-design/DeerMind_Evaluation_Space_Design_v1.1.md) §7.3、§7.9。已知失效停止当前使用，未完成及失败可见；校内改版不静默影响校外。
+发布前可查差异、基础版本、作用空间、验证依据、未决风险及依赖影响。知识和判断依据变化按实际语义检查，版面修正不自动全量重算，任务归类或解释变化可能影响 Evidence/Belief，仅 Target 标准变化通常检查 Target Assessment，见[Evaluation Space Design](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/concept-design/DeerMind_Evaluation_Space_Design_v1.1.md) §7.3、§7.9。已知失效停止当前使用，未完成及失败可见；校内改版不静默影响校外。
 
 回退仅在授权范围恢复未来使用版本，旧执行与题目版本保留，既有错误结果仍需维护，不重放旧教学。合成例：题目“原价 200 元，八折后付多少”若错归“求优惠金额”，参考 40 可能使正确答案 160 被误判；应核对原件、任务和解法，修订映射并处理其依赖判断，而非直接把学习者掌握标记改好。该例不构成教材范围承诺。
 
@@ -205,7 +205,7 @@ R20 承担人工主导、AI 辅助的真实领域演化。首版对 KC、Task Fa
 | 审核与生效 | 管理员检查完整候选差异、验证、未决和影响，批准明确版本及范围；相应 owner 校验后提交，再在授权范围启用 | 修改、审核和发布可由同一人完成，但批准、提交和启用结果分别留痕；未经批准、基础已变、检查或发布失败均不得冒充生效 |
 | 生效后检查与维护 | 在后续实际运行中核查适用对象、引用版本及预期结果；检查受影响的既有判断，必要时触发既有更正、恢复或获授权回退 | 记录改动是否实际被采用以及效果、失败或仍需观察之处；生效不自动关闭全部问题，回退不删除历史或代替依赖修复，不重放旧教学 |
 
-初次教材建模仍从领域建设入口起草对象与参考材料，共用候选、检查、审核和发布能力；不为新章节或每个新对象虚构旧模型缺陷。问题驱动与建设/理论来源的目的、依据和适用检查须明确，符合既有[Evolution 合法入口](../../concept-design/DeerMind_Evolution_Space_Design_v1.1.md#32-两类合法入口)及治理合同。不存在的 Issue、原因证据或运行效果不得为补齐流程而伪造，具体记录映射在详细设计中落实。
+初次教材建模仍从领域建设入口起草对象与参考材料，共用候选、检查、审核和发布能力；不为新章节或每个新对象虚构旧模型缺陷。问题驱动与建设/理论来源的目的、依据和适用检查须明确，符合既有[Evolution 合法入口](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/concept-design/DeerMind_Evolution_Space_Design_v1.1.md#32-两类合法入口)及治理合同。不存在的 Issue、原因证据或运行效果不得为补齐流程而伪造，具体记录映射在详细设计中落实。
 
 学生当下求助与后台维护分别推进。当前能够核验的纲内帮助仍须提供，题目与实际使用保存；后台排队、未决或验证失败不成为常规拒绝理由，也不授权使用候选关系形成正式掌握结论。已批准自动处置条件内的普通记录更正沿用 R12，不将每次识别纠正都升级为领域演化。
 

@@ -1,15 +1,15 @@
-# DeerMind Evolution & Governance Runtime Design v1.0
+# DeerMind Evolution & Governance Runtime Design v1.1
 
 > **中文名称**：DeerMind 演化与治理运行设计<br>
-> **版本**：v1.0<br>
+> **版本**：v1.1<br>
 > **文档性质**：System Design Baseline<br>
-> **状态**：Gate E/F 评审通过后的实现合同基线<br>
-> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v1.0.md`<br>
+> **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
+> **上位基线**：[Concept Architecture v1.2](../concept-design/DeerMind_Concept_Architecture_v1.2.md)、[Domain Space v1.0](../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution v1.2、[AI-Native Principles v0.3](../top/DeerMind_AI_Native_Architecture_Principles_v0.3.md)；总体合同为 [System Design v1.1](DeerMind_System_Design_v1.1.md)<br>
 > **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-08
+> **更新时间**：2026-10-11
 
-本版本在 [DeerMind_Evolution_Governance_Runtime_Design_v0.1.md 历史副本](../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/3-DeerMind_Evolution_Governance_Runtime_Design_v0.1.md.txt) 的合同基础上吸收 Phase 6 证据处置，统一当前验证状态和跨专项引用。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录 A2 否定、E1/X5 未决的正式后果、Gate E/F 依据和后续能力分期。v1.0 冻结的是实现合同，不是模型质量或生产可靠率。原实验与旧设计输入按其原始版本保留，见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。
+本版本在原 System Design v1.0 合同上承接 Domain 与 Learning Space 的对象和 owner 修订。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计命题
@@ -1244,12 +1244,17 @@ Activation
 
 例如：
 
-- Learning semantics revision → Learning owner commit；
+- ProblemTemplate / SolutionTemplate / KC revision → Domain owner commit；
+- LearningMaterial mapping / LearningTarget revision → Learning Space owner commit；
 - Evidence / Inference semantics → Evaluation owner commit；
 - Policy / Action semantics → Interaction owner commit；
 - Reasoning Protocol canonical revision → Protocol semantic owner commit。
 
 Governance 不因为“批准了”就成为所有 domain semantics 的 writer。
+
+材料、映射与 Domain 修订可以在同一后台操作中协调，但 GovernanceDecision 与提交必须明确各对象的 owner、exact base、兼容关系和激活 scope。产品目标标准变化不能借领域发布顺带修改，Domain 修订也不能自动扩大产品支持范围。
+
+日常目标选择、参数实例化和提交具体题目在既定权限与语义内执行，不等同结构演化。未知模板、未覆盖的有效解法或反复出现的模型解释失败可形成扩展候选；运行时不以候选填补正式库，也不因单次目标未达而自动降低目标。
 
 ### 7.3 GovernanceDecision 必须绑定 exact base
 
@@ -2035,13 +2040,13 @@ Evolution / Governance 不单独新增 G。
 
 ### 13.5 Focused Design Closure 判断
 
-本专项合同纳入 System Design v1.0 基线，与总体及其余五项专项完成一致性评审。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.1 在此基础上更新领域与产品输入合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 本专项按原 S0/S2/S3 分期承载 System Assessment、Validation、Governance、Canonical Commit、Activation 和 Post-Deployment 合同，不新增 Dimension G，也不把版本/权限机制证据写成自动演化平台已经验证。
 
 ### 13.6 下一步
 
-当前系统设计内部 Phase 6 已完成，Gate E/F 通过；总体 Development Phase 2 准入。下一工作是 Architecture Validation Build 的组件与验证方案，随后实现真实窄范围闭环，见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md) §5。Spike 原否定/未决保持；后续证据可触发新版本修订，不能在实现中静默改变本合同。
+系统设计内部 Phase 6、Gate E/F 与后续 Build 已按原基线收口。本轮领域复核已传导至当前合同，现恢复 MVP Phase 3 的范围与验证条件评审，随后按 Roadmap 准备 Phase 4 资产并进入 Phase 5 工程。旧实验的否定与未决保持；新模型的具体资产、实现迁移与质量需按实际交付验证，见[当前系统设计入口](README.md)。
 
 Build 允许最小人工 Governance 流程，仍必须记录 exact proposal / base / authorization 和 activation。自动发现问题、实验平台、审批 UI 与生产 rollout 按原能力分期展开。
 

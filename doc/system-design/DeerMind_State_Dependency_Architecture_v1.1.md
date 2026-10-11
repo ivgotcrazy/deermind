@@ -1,15 +1,15 @@
-# DeerMind State, Dependency & Invalidation Architecture v1.0
+# DeerMind State, Dependency & Invalidation Architecture v1.1
 
 > **中文名称**：DeerMind 状态、依赖与失效架构<br>
-> **版本**：v1.0<br>
+> **版本**：v1.1<br>
 > **文档性质**：System Design Baseline<br>
-> **状态**：Gate E/F 评审通过后的实现合同基线<br>
-> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v1.0.md`<br>
+> **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
+> **上位基线**：[Concept Architecture v1.2](../concept-design/DeerMind_Concept_Architecture_v1.2.md)、[Domain Space v1.0](../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution v1.2、[AI-Native Principles v0.3](../top/DeerMind_AI_Native_Architecture_Principles_v0.3.md)；总体合同为 [System Design v1.1](DeerMind_System_Design_v1.1.md)<br>
 > **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-08
+> **更新时间**：2026-10-11
 
-本版本在 [DeerMind_State_Dependency_Architecture_v0.1.md 历史副本](../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/8-DeerMind_State_Dependency_Architecture_v0.1.md.txt) 的合同基础上吸收 Phase 6 证据处置，统一当前验证状态和跨专项引用。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录 A2 否定、E1/X5 未决的正式后果、Gate E/F 依据和后续能力分期。v1.0 冻结的是实现合同，不是模型质量或生产可靠率。原实验与旧设计输入按其原始版本保留，见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。
+本版本在原 System Design v1.0 合同上承接 Domain 与 Learning Space 的对象和 owner 修订。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计命题
@@ -614,7 +614,11 @@ TargetRevision \not\Rightarrow LearnerBeliefRevision
 
 新的 TargetAssessment 应重新组合新 TargetDefinition 与现有 current-compatible Beliefs。
 
-### 3.13 Task / Claim / Evidence / Inference semantics revision
+目标定义的 owner 是 Learning Space。DependencySet 分别记录产品目标、材料映射与 Domain 引用；不能把目标变更统一记作 Domain 全量变更。仅改变材料位置或显示标题时，只更新实际受影响投影；若修正材料识别或领域映射改变了 Observation / Evidence 含义，才沿相应依赖传播。
+
+同一规范 KC 可被不同学习空间引用，但个人 Evidence / Belief 的可用 scope 不能因 identity 相同而合并。当前 MVP 的空间隔离约束必须进入 resolution 与查询边界，不能只靠 UI 过滤。
+
+### 3.13 Domain / Claim / Evidence / Inference semantics revision
 
 这一类变化会改变“旧事实在当前意义体系下能够说明什么”。
 
@@ -630,6 +634,8 @@ Semantic revision
 ```
 
 这类变化可能触发更深的 epistemic invalidation，但仍不能改写 Historical Event。
+
+ProblemTemplate 拆分、参数范围改变、SolutionTemplate 的适用性或 KC grounding 修订时，先判断哪些已用关系影响了结论。新增一个尚未被消费的方法，不必自动否定所有既有 Belief；改变已用问题责任或 Claim 含义，则不得静默继承。未知兼容关系采用明确 non-resolution，保留旧版本历史可读性。
 
 ### 3.14 Target Binding / External Obligation / Context Authority change
 
@@ -1312,7 +1318,7 @@ AA-B01、AA-B02 在原声明的内存 Harness 和受控 fan-out 范围为 SUPPOR
 
 ### 7.11 Focused Design Closure 判断
 
-本专项合同纳入 System Design v1.0 基线，与总体及其余五项专项完成一致性评审。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.1 在此基础上更新领域与产品输入合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 ## 8. 下位设计与后续阶段交接
 
@@ -1334,7 +1340,7 @@ AA-B01、AA-B02 在原声明的内存 Harness 和受控 fan-out 范围为 SUPPOR
 
 ### 8.2 对总体 System Design 的影响
 
-本专项与总体 System Design v1.0 的 current、dependency、owner 和历史合同一致。
+本专项与总体 System Design v1.1 的 current、dependency、owner 和历史合同一致。
 
 它把总体设计已有的：
 
@@ -1352,7 +1358,7 @@ Optimistic Formal Commit
 
 ### 8.3 Roadmap Handoff
 
-当前系统设计内部 Phase 6 已完成，Gate E/F 通过；总体 Development Phase 2 准入。下一工作是 Architecture Validation Build 的组件与验证方案，随后实现真实窄范围闭环，见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md) §5。Spike 原否定/未决保持；后续证据可触发新版本修订，不能在实现中静默改变本合同。
+系统设计内部 Phase 6、Gate E/F 与后续 Build 已按原基线收口。本轮领域复核已传导至当前合同，现恢复 MVP Phase 3 的范围与验证条件评审，随后按 Roadmap 准备 Phase 4 资产并进入 Phase 5 工程。旧实验的否定与未决保持；新模型的具体资产、实现迁移与质量需按实际交付验证，见[当前系统设计入口](README.md)。
 
 ## Appendix A — State / Dependency Invariant Registry
 
@@ -1419,7 +1425,8 @@ Optimistic Formal Commit
 | Object / Family | Standing | Semantic Owner | Identity / Version | 主要依赖 | Current Resolution | Replacement / Recompute |
 |---|---|---|---|---|---|---|
 | Event | Factual | Factual authority / Event Runtime | EventId + OccurrenceKey | source / authority / correction | factual eligibility / correction view | 不 recompute；通过 correction |
-| Canonical Target / Task / KC | Canonical | Learning / corresponding owner | identity + version | Governance / activation | active version + scope | new canonical version |
+| Canonical ProblemTemplate / SolutionTemplate / KC | Canonical | Domain | identity + version | Governance / activation | active version + scope | new canonical version |
+| LearningTarget / 材料映射 | Canonical product definition | Learning Space | product space + identity + version | 产品授权 / 对应 Governance | active version + scope | new definition version |
 | ReasoningProtocol | Canonical | corresponding semantic owner / governance | identity + protocol version | canonical semantics | active compatible protocol | new version |
 | Observation | Derived Formal | Interaction | identity + revision | Event / Artifact / canonical semantics | dependency + version + lifecycle | Interaction reinterpretation |
 | Evidence | Derived Formal | Evaluation | identity + revision | Observation / Claim / exposure / semantics | dependency + compatibility | Evaluation reinterpretation |

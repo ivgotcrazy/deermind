@@ -60,11 +60,11 @@
 
 ### 2.3 讲解不必依赖完整的掌握判断
 
-既有 [Interaction Runtime §3.3](../../../system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md#33-decision-context)规定，Policy 的输入随目的确定，不是每次读取全部 Learner Belief。由此，本流程要求为“回应明确的单题讲解请求”准备经批准的输入与行动合同，而不是把完整能力诊断设为所有帮助的共同前置。
+既有 [Interaction Runtime §3.3](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md#33-decision-context)规定，Policy 的输入随目的确定，不是每次读取全部 Learner Belief。由此，本流程要求为“回应明确的单题讲解请求”准备经批准的输入与行动合同，而不是把完整能力诊断设为所有帮助的共同前置。
 
 该合同必须取得有效请求、当前活动与帮助约束、范围依据、必要原材料、内容校验结果及当前授权。涉及纠正具体作答时，还必须取得该作答；不声称个性化能力诊断的讲解无需虚构一个掌握结论。若行动声称“你在某能力上薄弱”，或依赖某个 Belief 才能作出相应决策，则必须取得那个 current-valid 判断。
 
-因此，本轮仍先完成合法理解及适用评价，再进行 Policy；Evaluation 没有适用命题、证据不足和处理故障分别表达。不能将这些情况统一伪装成评价成功。某个输入合同确实必需的评价结果无效时，该合同不能继续，也不能偷读旧结果；只可在已批准且自身前提成立的其他能力范围内处理。具体协议须在 Phase 5 固化并验证，遵守 [Runtime 的未决与故障合同](../../../system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md#71-policy-non-resolution-与-runtime-failure-分离)。
+因此，本轮仍先完成合法理解及适用评价，再进行 Policy；Evaluation 没有适用命题、证据不足和处理故障分别表达。不能将这些情况统一伪装成评价成功。某个输入合同确实必需的评价结果无效时，该合同不能继续，也不能偷读旧结果；只可在已批准且自身前提成立的其他能力范围内处理。具体协议须在 Phase 5 固化并验证，遵守 [Runtime 的未决与故障合同](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md#71-policy-non-resolution-与-runtime-failure-分离)。
 
 本次讲解采用的经检查推导属于具体内容及运行依据，不自动成为正式 Solution Strategy。尚未归类的题目以题目档案保存，不冒充已经实例化的正式 Task Instance；确认适用关系或新模型获批后，再由相应 owner 建立正式关联。不能为了让链路跑通，临时创造一个包揽所有数学题的 Task Family、通用 KC 或新的掌握命题。
 
@@ -95,7 +95,7 @@
 | 课程范围与来源 | 教材版本、适用课程、已确认知识边界、可用材料与缺口；范围内外及未决参考 | 结构已明确；等待实际教材与范围确认。已确认不以学习进度判超纲，见 §2.2 |
 | 教材内容与映射 | 章节、原页和内容身份，对应题目档案、任务实例、解法、知识及目标的已确认和未决关系 | 尚无首批实际内容；识别完成与正式模型审核须分开 |
 | Target 与 Task | 学习目标的成功标准、支持和责任条件；任务族的要求、边界、实例与反例 | 需基于真实任务共同设计，不能机械由目录或每道题生成一个族 |
-| Solution 与 KC | 可用策略、必要任务分解、不同策略的知识支撑与适用条件；必要 KC 的定义、区别与来源 | 按 [Learning Space Design](../../../concept-design/DeerMind_Learning_Space_Design_v1.1.md)组织，未建关系允许 UNKNOWN；候选与正式对象分别管理 |
+| Solution 与 KC | 可用策略、必要任务分解、不同策略的知识支撑与适用条件；必要 KC 的定义、区别与来源 | 按 [Learning Space Design](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/concept-design/DeerMind_Learning_Space_Design_v1.1.md)组织，未建关系允许 UNKNOWN；候选与正式对象分别管理 |
 | Claim 与评价依据 | 哪个正式对象在何种任务、帮助、质量和观察条件下可被支持或反驳，何时必须未决 | 与 Evaluation 合同对齐；一题做对不自动支持广泛掌握，模型新增不等于学生新增能力 |
 | 验证材料与发布说明 | 可复核解法、区分性正反例、相关旧案例、参考判断、版本、审查结果、适用限制及批准范围 | 实际样本与独立参考尚待建立，不以本文件的说明例充当正式评测集 |
 
@@ -130,7 +130,7 @@
 
 ## 5. 生效、历史与用户可见结果
 
-新版本仅按授权和一致性边界影响后续解析与判断，不要求打断孩子等待发布。正在处理的请求不得混合不相容版本；具体固定、失效和重取输入规则按 [版本架构](../../../system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md)及 [Governance Runtime](../../../system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.0.md)落实。
+新版本仅按授权和一致性边界影响后续解析与判断，不要求打断孩子等待发布。正在处理的请求不得混合不相容版本；具体固定、失效和重取输入规则按 [版本架构](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md)及 [Governance Runtime](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.0.md)落实。
 
 发布后分开检查两类工作。第一，后续实际请求是否正确使用新关系并取得预期结果；第二，旧结果中哪些依赖确实受到改变影响。仅排版更正不自动全量重算；语义修订可能需要停止使用受影响判断并由 owner 重算。新增模型没有把历史未知自动改成掌握的权限。若以新模型解释旧材料，必须保留原来作答、帮助条件和版本，形成明确的新解释，不能改写旧事实。
 
@@ -617,7 +617,7 @@ R02 已停用，本节原整卷流程不再适用。学生从外部录入的对�
 | 已有质量验证资料 | 可查对应模型、规则、范围与样本的实际验证结果及限制 | 不把其他模型或旧配置的通过结论挪用为本配置保证 |
 | 限定启用与恢复 | 哪个配置在什么用途和范围已实际生效，或恢复到了哪个适用配置 | 不表示自动重算全部历史，也不允许未检查的备用服务静默接管 |
 
-连接与能力检查使用明确的合成检查材料，保存检查结果、配置和用量，不默认发送真实儿童学习资料试接口。更换外部模型服务也是改变数据处理目的地，仍受既有用途、数据类别和授权约束，见 [AI Runtime §7.9](../../../system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.0.md#79-外部模型-provider-是-data-processing-destination)；管理身份及连接成功不产生额外数据披露权限。
+连接与能力检查使用明确的合成检查材料，保存检查结果、配置和用量，不默认发送真实儿童学习资料试接口。更换外部模型服务也是改变数据处理目的地，仍受既有用途、数据类别和授权约束，见 [AI Runtime §7.9](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.0.md#79-外部模型-provider-是-data-processing-destination)；管理身份及连接成功不产生额外数据披露权限。
 
 管理员能区分测试配置与实际使用配置，保存改动不静默替换正在执行请求的依赖。启用或恢复遵守适用合同和一致性边界；不能为保证调用成功而降低原协议要求，或暗中换用另一模型承担原语义任务。具体配置版本、请求绑定、适配器和检查接口在 Phase 5 设计，本节不预先锁定供应商、框架或数据库。
 
@@ -721,7 +721,7 @@ R02 已停用，本节原整卷流程不再适用。学生从外部录入的对�
 
 ### 12.5 Product Context 的权限来源
 
-按 [Interaction Space §4.5](../../../concept-design/DeerMind_Interaction_Space_Design_v1.1.md#45-外部输入requestconstraintobligation-与-authority-directive)，以下把首版已定行为映射为 Request、Constraint、Obligation 与 Authority Directive 的来源和范围。表格只说明当前产品授予的能力，不创建一个通用权限编辑器；首批数据授权主体按 §12.4 单独确定，不从一般家长查看关系自动推导。
+按 [Interaction Space §4.5](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/concept-design/DeerMind_Interaction_Space_Design_v1.1.md#45-外部输入requestconstraintobligation-与-authority-directive)，以下把首版已定行为映射为 Request、Constraint、Obligation 与 Authority Directive 的来源和范围。表格只说明当前产品授予的能力，不创建一个通用权限编辑器；首批数据授权主体按 §12.4 单独确定，不从一般家长查看关系自动推导。
 
 | 来源与输入 | 当前允许的作用 | 范围、终止与责任边界 |
 | --- | --- | --- |

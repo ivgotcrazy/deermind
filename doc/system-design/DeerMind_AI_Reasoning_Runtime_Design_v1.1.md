@@ -1,15 +1,15 @@
-# DeerMind AI Reasoning Runtime Design v1.0
+# DeerMind AI Reasoning Runtime Design v1.1
 
 > **中文名称**：DeerMind AI 推理运行时设计<br>
-> **版本**：v1.0<br>
+> **版本**：v1.1<br>
 > **文档性质**：System Design Baseline<br>
-> **状态**：Gate E/F 评审通过后的实现合同基线<br>
-> **上位基线**：`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.1.md`、四份 Space Design v1.1、`DeerMind_AI_Native_Architecture_Principles_v0.2.md`、`DeerMind_System_Design_v1.0.md`<br>
+> **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
+> **上位基线**：[Concept Architecture v1.2](../concept-design/DeerMind_Concept_Architecture_v1.2.md)、[Domain Space v1.0](../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution v1.2、[AI-Native Principles v0.3](../top/DeerMind_AI_Native_Architecture_Principles_v0.3.md)；总体合同为 [System Design v1.1](DeerMind_System_Design_v1.1.md)<br>
 > **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-08
+> **更新时间**：2026-10-11
 
-本版本在 [DeerMind_AI_Reasoning_Runtime_Design_v0.2.md 历史副本](../../src/spike/reports/source-baseline-doc-version-cleanup-20261008/2-DeerMind_AI_Reasoning_Runtime_Design_v0.2.md.txt) 的合同基础上吸收 Phase 6 证据处置，统一当前验证状态和跨专项引用。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录 A2 否定、E1/X5 未决的正式后果、Gate E/F 依据和后续能力分期。v1.0 冻结的是实现合同，不是模型质量或生产可靠率。原实验与旧设计输入按其原始版本保留，见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。
+本版本在原 System Design v1.0 合同上承接 Domain 与 Learning Space 的对象和 owner 修订。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计命题
@@ -96,7 +96,7 @@ AI Runtime 的责任是**执行受版本化 Protocol、受控 Context 与显式 
 
 ### 1.4 与总体 System Design 和相邻专项的关系
 
-总体 `DeerMind_System_Design_v1.0` 定义 AI Reasoning Runtime 在全系统中的位置：Context 由正式状态解析而来，AI 产生 Candidate，Candidate 通过 Validation / Commit 取得 standing，所有 formal effect 在 commit / execution 前重新验证 current authority、dependency、version 与 data authority。
+总体 `DeerMind_System_Design_v1.1` 定义 AI Reasoning Runtime 在全系统中的位置：Context 由正式状态解析而来，AI 产生 Candidate，Candidate 通过 Validation / Commit 取得 standing，所有 formal effect 在 commit / execution 前重新验证 current authority、dependency、version 与 data authority。
 
 本文档把该责任深化为 Focused Design Closure，但不接管其他专项：
 
@@ -162,7 +162,7 @@ AI Runtime 拥有以下运行责任：
 
 AI Runtime 不拥有：
 
-- Learning Target、Task、Solution、Knowledge 的 canonical authority；
+- LearningTarget、ProblemTemplate、SolutionTemplate、KnowledgeComponent 的 canonical authority；
 - Observation / PolicyOutcome 的 Interaction semantic ownership；
 - Evidence / Learner Belief 的 Evaluation ownership；
 - SystemIssue / RevisionCandidate 的 Evolution ownership；
@@ -416,6 +416,12 @@ ContextItem
 ```
 
 同一自然语言内容既可能是 learner request、task content、external evidence source 或 authority directive 的载体；系统不能让模型根据文字语气自己判断 authority class。
+
+对领域相关 reasoning，ContextItem 必须区分产品材料及目标、Domain 定义、具体问题输入、参考方法与实际行为来源。ProblemTemplate 中用于生成或验证的隐藏参数，只有当前 Protocol 的用途和 authority 允许时才能纳入；不得因系统知道答案就把答案写入面向学习者的提示上下文。
+
+方法、题目与 KC 映射是语义判断，使用明确语义规则与 LLM 形成候选，结构与引用校验只能检查其形式和受控边界，不能替代语义有效性检查。模板未映射、方法适用性不明或知识依据不足应按 Protocol 返回部分结果、澄清或 non-success，不可补造一个正式模板使输出通过。
+
+Runtime 可以实例化已授权模板、生成具体问题或提出新模型候选；前者仍需检查参数约束与用途，后者必须经过相应 owner 的 canonical path。生成 Solution 不意味着 learner 实际执行过它，Validation PASS 也不构成普遍语义正确保证。
 
 ### 4.4 Context Requirement 状态
 
@@ -1228,22 +1234,22 @@ ActionSemantic 检查可以作为显式复合 Policy 验证 Profile 中的必需
 
 ### 8.6 Focused Design Closure 判断
 
-本专项合同纳入 System Design v1.0 基线，与总体及其余五项专项完成一致性评审。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.1 在此基础上更新领域与产品输入合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 A2 的普遍语义隔离保证已撤回，required checks、exact-candidate 绑定、owner authority 和失败路径不撤回；E1/X5 的质量与完成率限制按 ADR 002 处理。
 
 ### 8.7 与后续专项的 Handoff
 
-当前系统设计内部 Phase 6 已完成，Gate E/F 通过；总体 Development Phase 2 准入。下一工作是 Architecture Validation Build 的组件与验证方案，随后实现真实窄范围闭环，见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md) §5。Spike 原否定/未决保持；后续证据可触发新版本修订，不能在实现中静默改变本合同。
+系统设计内部 Phase 6、Gate E/F 与后续 Build 已按原基线收口。本轮领域复核已传导至当前合同，现恢复 MVP Phase 3 的范围与验证条件评审，随后按 Roadmap 准备 Phase 4 资产并进入 Phase 5 工程。旧实验的否定与未决保持；新模型的具体资产、实现迁移与质量需按实际交付验证，见[当前系统设计入口](README.md)。
 
-State / Dependency v1.0 已承接 exact dependency、current resolver、typed invalidation 和 recompute。Context Package 不成为 Source of Truth；ContextManifest、VersionContext、DependencySet 保持分离；ExecutionRecord 与 Checkpoint 不取得 epistemic standing。
+State / Dependency v1.1 承接 exact dependency、current resolver、typed invalidation 和 recompute。Context Package 不成为 Source of Truth；ContextManifest、VersionContext、DependencySet 保持分离；ExecutionRecord 与 Checkpoint 不取得 epistemic standing。
 
 ## Appendix A — AI Reasoning Runtime Invariant Registry
 
 | ID | Invariant |
 |---|---|
 | **AR-01 Controlled Cognition** | 每次正式 AI cognition 必须绑定明确 Purpose、active Reasoning Protocol、受控 Context 与 Authority Envelope。 |
-| **AR-02 Runtime Is Not Owner** | AI Reasoning Runtime 只执行 cognition，不拥有 Learning / Evaluation / Interaction / Evolution semantic authority。 |
+| **AR-02 Runtime Is Not Owner** | AI Reasoning Runtime 只执行 cognition，不拥有 Domain / Evaluation / Interaction / Evolution semantic authority。 |
 | **AR-03 Request ≠ Authority** | ReasoningRequest、learner request、external actor request 或自然语言命令均不能自行创造 execution / commit authority。 |
 | **AR-04 Protocol ≠ Prompt** | Reasoning Protocol 是版本化认知程序；Prompt / Adapter 是实现表达。 |
 | **AR-05 Purpose Before Context** | Context Assembly 必须先确定 Purpose / Protocol / Authority，再处理 relevance。 |

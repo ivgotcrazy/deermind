@@ -3,7 +3,7 @@
 | 元信息 | 当前记录 |
 | --- | --- |
 | 状态与版本 | 记录框架草案；G3/G4/G5 均未形成本轮评审记录 |
-| 更新日期 | 2026-10-10 |
+| 更新日期 | 2026-10-11 |
 | 维护责任 | 阶段评审记录维护角色，具体承担者待指定 |
 | 评审人及记录 | 各次实际评审时登记；当前未指定 |
 | 依据的上游基线 | [Development Roadmap §7.1](../top/DeerMind_Development_Roadmap_v0.3.md#71-项目级-gate-总览)；评审前登记准确提交及所审交付版本 |
@@ -21,7 +21,9 @@
 
 ## 2. G3 — MVP Definition
 
-**本轮状态：未评审，待正文交付。** 条件依据为 [Development Roadmap §4.1](../top/DeerMind_Development_Roadmap_v0.3.md#41-phase-3--mvp-definition)，通过后允许进入 Product & Domain Foundation，不表示产品已经实现或可开展真实用户试用。
+**本轮状态：未评审；产品定义和关键约束已有首轮内容草案，范围、行为规格与验证方案尚未收口。** 条件依据为 [Development Roadmap §4.1](../top/DeerMind_Development_Roadmap_v0.3.md#41-phase-3--mvp-definition)，通过后允许进入 Product & Domain Foundation，不表示产品已经实现或可开展真实用户试用。
+
+2026-10-11 补充：OPEN-006 的领域语义复核已由 DEC-007 收口并获授权更新正式设计。Domain 与 Learning Space 分开，问题模板、方法模板和 KC 提供领域参照，Evaluation 仍维护个人认识。早期显式 CapabilityDefinition 候选未被采用；当前依据见[概念设计入口](../concept-design/README.md)。本次只解除该概念归属的讨论前置，不改变已有产品范围、历史实验或本轮 G3/G4/G5 的未通过状态。
 
 评审输入为[产品定义](phase-3-definition/MVP_Definition.md)、[需求与验收规格](phase-3-definition/MVP_Requirements_and_Acceptance.md)、[验证方案](phase-3-definition/MVP_Validation_Plan.md)，以及相关来源证据、已确认决定和待决事项。
 

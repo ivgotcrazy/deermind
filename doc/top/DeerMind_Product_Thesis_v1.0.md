@@ -24,7 +24,7 @@ DeerMind 不是从“如何用 AI 做一个更好的教育产品”出发，也�
 
 这份文档只回答 WHY 层问题：DeerMind 为什么存在，它认为什么是学习与能力，AI 与人的责任应如何划分，DeerMind 拥有什么专业责任，以及它与学校、教师、课程、认证和其他社会制度之间的边界。
 
-本文档有意不定义软件模块、数据库、Agent、提示词、接口、具体教学流程，也不冻结 Learning Space、Evaluation Space、Interaction Space、Evolution Space 的内部模型结构。下位设计必须受到本文件约束，但不能用局部实现需要反向改写这里的基础命题。
+本文档有意不定义软件模块、数据库、Agent、提示词、接口、具体教学流程，也不冻结 Domain Space、Evaluation Space、Interaction Space、Evolution Space 的内部模型结构。下位设计必须受到本文件约束，但不能用局部实现需要反向改写这里的基础命题。
 
 ---
 

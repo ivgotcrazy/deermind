@@ -142,7 +142,7 @@ Evolution 在此阶段承接有来源的质量、校验和权限信号，保存�
 
 ### 4.4 评价未决、失败与 Policy 准入
 
-“系统成功判断证据不足”和“系统没能完成评价”具有不同含义。前者可以成为 Policy 的有效输入，后者没有提供所需评价结果。这里采用 [Interaction Runtime §7.1–7.3](../DeerMind_Interaction_Decision_Runtime_Design_v1.0.md) 的既有合同：RuntimeFailure、NoCurrentValidState 与正式 PolicyOutcome 分开记录。
+“系统成功判断证据不足”和“系统没能完成评价”具有不同含义。前者可以成为 Policy 的有效输入，后者没有提供所需评价结果。这里采用 [Interaction Runtime §7.1–7.3](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md) 的既有合同：RuntimeFailure、NoCurrentValidState 与正式 PolicyOutcome 分开记录。
 
 | 情况 | 评价记录与 Policy 行为 |
 | --- | --- |
@@ -308,7 +308,7 @@ G2 的机制条件是 24 条预定机制路径全部实际执行并通过必要�
 
 首次 B1–B5 已收口；R1 安排见 §7.1，合同边界检查与人工启动入口见§7.2，实现修复见§7.3，当前完整验收见§7.4，首次预算与结果保持历史身份。
 
-本文采用的正式合同入口为：[System Design](../DeerMind_System_Design_v1.0.md)、[Runtime and Event](../DeerMind_Runtime_Event_Architecture_v1.0.md)、[AI Reasoning Runtime](../DeerMind_AI_Reasoning_Runtime_Design_v1.0.md)、[State Dependency](../DeerMind_State_Dependency_Architecture_v1.0.md)、[Interaction and Decision](../DeerMind_Interaction_Decision_Runtime_Design_v1.0.md)、[Version and Replay](../DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md)、[Evolution and Governance](../DeerMind_Evolution_Governance_Runtime_Design_v1.0.md)，以及 [Evaluation Space](../../concept-design/DeerMind_Evaluation_Space_Design_v1.1.md)。本轮继承的实验边界见 [Spike Validation Report](../spike/DeerMind_Architecture_Validation_Report_v0.1.md)。
+本文采用的正式合同入口为：[System Design](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_System_Design_v1.0.md)、[Runtime and Event](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Runtime_Event_Architecture_v1.0.md)、[AI Reasoning Runtime](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.0.md)、[State Dependency](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_State_Dependency_Architecture_v1.0.md)、[Interaction and Decision](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md)、[Version and Replay](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md)、[Evolution and Governance](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.0.md)，以及 [Evaluation Space](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/concept-design/DeerMind_Evaluation_Space_Design_v1.1.md)。本轮继承的实验边界见 [Spike Validation Report](../spike/DeerMind_Architecture_Validation_Report_v0.1.md)。
 
 ### 7.1 G2 HOLD 后的有界修复与复验 R1
 

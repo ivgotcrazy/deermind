@@ -452,7 +452,7 @@ ImplementationCapability
 
 以下情况保留英文通常更合适：
 
-- 正式架构名：Learning Space、Evaluation Space；
+- 正式架构名：Domain Space、Evaluation Space；
 - 正式模型名：Observation Model、Evidence Model；
 - 稳定枚举值：NoIntervention、NotIdentifiable；
 - 难以准确翻译且业内高度稳定的术语；
@@ -937,7 +937,7 @@ NotIdentifiable
 
 一旦正式采用：
 
-- Learning Space；
+- Domain Space（领域）；Learning Space（课程材料与目标）；
 - Learner Belief；
 - Interaction Policy；
 

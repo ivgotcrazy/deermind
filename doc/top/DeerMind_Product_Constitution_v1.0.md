@@ -67,7 +67,7 @@ Policy
 
 ### 1.3 本文档不解决什么
 
-Product Constitution 有意停止在最高产品价值与权限边界这一层。它不定义 Learning Space、Evaluation Space、Interaction Space 或 Evolution Space 的内部模型，不规定具体教学策略、证据算法、数据结构、界面流程与产品功能，也不替代具体司法辖区的法律合规要求。
+Product Constitution 有意停止在最高产品价值与权限边界这一层。它不定义 Domain Space、Evaluation Space、Interaction Space 或 Evolution Space 的内部模型，不规定具体教学策略、证据算法、数据结构、界面流程与产品功能，也不替代具体司法辖区的法律合规要求。
 
 它同样不负责给出各领域的安全风险阈值、公平性审计方法、监护人权限细节或治理组织流程。这些问题必须由 Concept Architecture、Product Context、System Design、Safety / Privacy / Governance 设计继续落实，但任何下位设计都不能因此削弱本文定义的核心边界。
 

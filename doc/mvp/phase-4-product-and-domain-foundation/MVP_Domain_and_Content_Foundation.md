@@ -18,6 +18,8 @@
 
 下游交付：[MVP 评测资产规格与清单](MVP_Evaluation_Assets_Specification.md)、[MVP 工程设计](../phase-5-engineering/MVP_Engineering_Design.md)。
 
+概念输入采用 [Domain Space v1.0](../../concept-design/DeerMind_Domain_Space_Design_v1.0.md) 与[Learning Space v1.0](../../concept-design/DeerMind_Learning_Space_Design_v1.0.md)。领域包、材料映射和目标定义分别归属；旧实现与实验按原基线保留，不能只把 TaskFamily 改名后宣称完成迁移。本条更新依赖，不表示本文正文、资产或工程已完成。
+
 共同规则、术语编号和待决事项统一见[文档共同管理规则](../MVP_Governance.md)。
 
 ## 1. 领域范围与覆盖要求
