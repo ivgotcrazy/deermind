@@ -7,7 +7,7 @@
 > **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.2.md`、Domain Space v1.0、Learning Space v1.0 与 Evaluation / Interaction / Evolution v1.2、`DeerMind_AI_Native_Architecture_Principles_v0.3.md`<br>
 > **专项路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
 > **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-11（概念与系统设计引用对齐；阶段顺序、历史 Gate 与结果不变）<br>
+> **更新时间**：2026-10-15（G3 阶段性审阅通过，当前进入 Phase 4；阶段顺序及历史结果不变）<br>
 > **版本说明**：v0.3 保留 v0.2 的全生命周期阶段、G0–G9 Evidence Gate、Reopen 机制以及“通用学习架构 + 小学首个 Product Context”的项目定位，不改变 Architecture Validation Build、MVP Definition、Product & Domain Foundation、MVP Engineering、Internal Alpha、Controlled Pilot、Production Candidate 与 Productionization 的总体顺序。本版本初次修订对齐当时 System Design Roadmap v0.5 的阶段执行语义；现行阶段路线图为 v0.6，执行顺序保持：System Design 内部采用 **MVCL → P0 / 横切机制语义闭合 → Integrated Pre-Validation Candidate → §3.2–§3.7 Focused Design Closure → §3.8 Cross-Cutting Coverage → Consolidated Architecture Spike → Evidence Review / Design Revision → Gate E / Gate F → System Design Baseline v1.0**；六个 Focused Design 是必须完成的设计责任，是否独立成文由复杂度决定。同时再次明确 Core System Design 只冻结 Product Context / Context Constitution 的通用接入与 enforcement contract，首个小学 Product Context 的 guardian authority、consent、儿童数据、家长可见性、学校现实与具体 retention 规则仍由后续 MVP Definition / Product & Domain Foundation 阶段实例化。
 
 ---
@@ -510,7 +510,7 @@ Production Readiness Failure
 
 ### 8.2 当前项目位置
 
-**2026-10-10，当前先重建 MVP 三个阶段的交付框架与大纲，待评审后再讨论和填充新正文。** 文件与阶段对应见 [MVP 文档入口](../mvp/README.md)。此前四份 MVP 文档归档参考，新的目录对应 Phase 3 Definition、Phase 4 Product & Domain Foundation 和 Phase 5 Engineering；整理文件不产生新的 G3、G4 或 G5 通过结论。
+**2026-10-15，用户阶段性审阅通过本轮 Phase 3，已进入 Phase 4 Product & Domain Foundation。** 批准基线和准确输入见 [G3-20261015-01](../mvp/MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)，当前交付及缺口见 [MVP 文档入口](../mvp/README.md)。Phase 4 开展三端交互、实际内容、权限和评测准备；G4/G5 尚未通过。实际模型适用性依 DEC-017 在具体材料及运行中检验，不重开无界限的抽象模型讨论。
 
 历史上，2026-10-09 的 G3 PASS 记录见[归档产品定义 §11](../mvp/archive/DeerMind_MVP_Definition_v0.1.md#11-g3-评审与阶段完成条件)，当时的[需求规格](../mvp/archive/DeerMind_MVP_Requirements_and_Acceptance_v0.1.md)和[验证方案](../mvp/archive/DeerMind_MVP_Validation_Plan_v0.1.md)共同构成交付。该记录保留；本轮新范围及其依赖需重新核对，不能把旧版冻结状态直接赋给新文档。历史 G3 不表示 MVP 已实现、质量达标或获准 Pilot。
 
@@ -518,7 +518,7 @@ Phase 0 Architecture Baseline、System Design 内部 Phase 6 和项目 G1 保持
 
 现行系统设计为总体及六项专项 v1.0。A2 原否定、E1/X5 原未决和旧 9/17 保留；当时G1准入依据撤回错误保证、明确能力分期和完整合同，详见[Phase 6 证据评审](../system-design/DeerMind_System_Design_Evidence_Review_v1.0.md)。该文件同时给出下一阶段工作和停止条件；[统一 Spike Validation Report](../system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md)继续保存原实验结果。
 
-下一步先确认新文档框架与大纲，再复核需求、范围和验收设计，之后落实 Phase 4 的角色流程、领域包、初始评测、质量审查、数据与授权。实际领域内容及参考材料不能以文档骨架代替。G4 后进入 MVP Engineering，之后完成 Internal Alpha 与 G6 Pilot Readiness；阶段顺序和质量 Gate 不变。Build 的 R5 未启动，仍为后续工程候选输入；STG-01–04 的历史质量与维护责任保留，新文档填充时须逐项承接，不保证后续必定达标。
+当前先落实 Phase 4 的角色流程、领域包、评测参考、内容质量审查、数据与权限。原型与合成样例不代替真实教材和正式领域资产；G4 后进入 MVP Engineering，之后完成 Internal Alpha 与 G6 Pilot Readiness。阶段顺序和质量 Gate 保持。Build 的 R5 未启动，STG-01–04 的历史质量与维护责任继续承接，不保证后续必定达标。
 
 归档基线的 D09 已记录基础领域演化能力的选择，[归档产品与领域基础草案](../mvp/archive/foundation/DeerMind_MVP_Product_and_Domain_Foundation_v0.1.md)保存相关流程、三端设计与未决问题。这些决定不因归档自动撤销，但原草案不直接充当本轮完整且已确认的交付。此前 G4 尚未通过；本轮先评审框架，后核对既有决定与新范围，不回到已关闭的 Spike 或 Build 追加实验。
 

@@ -1,0 +1,155 @@
+{
+  "asset_id": "EVAL-UX-PARENT-INPUT-001",
+  "version": "1",
+  "baseline": "G3-20261015-01",
+  "purpose": "development_interaction_walkthrough",
+  "provenance": "Codex authored from approved requirements on 2026-10-16",
+  "held_out": false,
+  "independent_review": "pending",
+  "limitations": [
+    "Local browser with synthetic identities, no real authentication or model inference.",
+    "One learner, multiple spaces and two parent identities; no complete multi-child workflow."
+  ],
+  "cases": [
+    {
+      "id": "CASE-042",
+      "acceptance_refs": [
+        "AC-009",
+        "AC-012"
+      ],
+      "title": "家长跨空间只读",
+      "precondition": "合成原型；按步骤建立实际本地输入，不采用真实儿童资料。",
+      "actions": [
+        "学生创建课程并提交题目，再删除学生端原资料",
+        "家长选择该空间查看，再切回另一空间"
+      ],
+      "expected": [
+        "只展示该空间同源记录，已删资料仍按约定只读",
+        "不改变学生当前空间，不提供编辑或代交入口"
+      ],
+      "unacceptable": "跨主体泄漏、替孩子作答、重复表现，或把输入核对声明冒充语义判断。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见状态与原输入前后记录；没有真实语义判断。"
+    },
+    {
+      "id": "CASE-043",
+      "acceptance_refs": [
+        "AC-012"
+      ],
+      "title": "私人咨询归属与草稿",
+      "precondition": "合成原型；按步骤建立实际本地输入，不采用真实儿童资料。",
+      "actions": [
+        "家长一发送并留草稿，切换空间后返回、刷新",
+        "切换家长二及学生视角"
+      ],
+      "expected": [
+        "发送不自动展开历史，草稿按主体和空间保留",
+        "私人咨询不出现在另一主体，未生成学生表现"
+      ],
+      "unacceptable": "跨主体泄漏、替孩子作答、重复表现，或把输入核对声明冒充语义判断。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见状态与原输入前后记录；没有真实语义判断。"
+    },
+    {
+      "id": "CASE-044",
+      "acceptance_refs": [
+        "AC-012",
+        "AC-017"
+      ],
+      "title": "整段删除咨询",
+      "precondition": "合成原型；按步骤建立实际本地输入，不采用真实儿童资料。",
+      "actions": [
+        "两名家长分别建立咨询",
+        "家长一删除整段并刷新"
+      ],
+      "expected": [
+        "家长一端不再显示该段",
+        "孩子原记录与家长二咨询保留，删除不冒充物理销毁"
+      ],
+      "unacceptable": "跨主体泄漏、替孩子作答、重复表现，或把输入核对声明冒充语义判断。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见状态与原输入前后记录；没有真实语义判断。"
+    },
+    {
+      "id": "CASE-045",
+      "acceptance_refs": [
+        "AC-005",
+        "AC-010",
+        "AC-018"
+      ],
+      "title": "检测内核对后提交",
+      "precondition": "合成原型；按步骤建立实际本地输入，不采用真实儿童资料。",
+      "actions": [
+        "范围检测中打开文本核对并修改，刷新后确认",
+        "返回原题提交一次并结束检测"
+      ],
+      "expected": [
+        "确认前不能提交，确认不结束检测或提供教学",
+        "最终一次作答关联原输入与确认内容，不自动认证独立性"
+      ],
+      "unacceptable": "跨主体泄漏、替孩子作答、重复表现，或把输入核对声明冒充语义判断。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见状态与原输入前后记录；没有真实语义判断。"
+    },
+    {
+      "id": "CASE-046",
+      "acceptance_refs": [
+        "AC-005",
+        "AC-010"
+      ],
+      "title": "核对取消与转帮助",
+      "precondition": "合成原型；按步骤建立实际本地输入，不采用真实儿童资料。",
+      "actions": [
+        "取消未确认核对后查看原草稿",
+        "再打开核对但转为求助"
+      ],
+      "expected": [
+        "取消保留原草稿，不保存未确认更改",
+        "求助先结束检测，未提交更改不成为表现"
+      ],
+      "unacceptable": "跨主体泄漏、替孩子作答、重复表现，或把输入核对声明冒充语义判断。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见状态与原输入前后记录；没有真实语义判断。"
+    },
+    {
+      "id": "CASE-047",
+      "acceptance_refs": [
+        "AC-005",
+        "AC-006",
+        "AC-012",
+        "AC-021"
+      ],
+      "title": "章节核对与三端追溯",
+      "precondition": "合成原型；按步骤建立实际本地输入，不采用真实儿童资料。",
+      "actions": [
+        "在章节后的检测中核对输入并提交",
+        "家长只读查看，后台按用途打开原记录"
+      ],
+      "expected": [
+        "同样保留一次作答与前后输入",
+        "保留用户说明而不是语义认证，家长与后台不冒充原作答者"
+      ],
+      "unacceptable": "跨主体泄漏、替孩子作答、重复表现，或把输入核对声明冒充语义判断。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见状态与原输入前后记录；没有真实语义判断。"
+    },
+    {
+      "id": "CASE-048",
+      "acceptance_refs": [
+        "AC-010",
+        "AC-012"
+      ],
+      "title": "家长与核对面板布局",
+      "precondition": "合成原型；按步骤建立实际本地输入，不采用真实儿童资料。",
+      "actions": [
+        "以手机和平板宽度操作家长状态和检测核对"
+      ],
+      "expected": [
+        "输入区不遮挡正文，局部操作可找到，整页无横向溢出"
+      ],
+      "unacceptable": "跨主体泄漏、替孩子作答、重复表现，或把输入核对声明冒充语义判断。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见状态与原输入前后记录；没有真实语义判断。"
+    }
+  ]
+}

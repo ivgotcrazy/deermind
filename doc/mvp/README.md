@@ -1,17 +1,19 @@
 # MVP 文档框架与交付入口
 
 > **文档性质**：MVP 文档导航与阶段交付入口<br>
-> **状态**：Phase 3 根据用户审阅意见完善图文表达与正文组织；G3 暂不通过，Phase 4 暂不启动；Phase 4/5 仍为大纲<br>
+> **状态**：2026-10-15 G3 阶段性通过；Phase 4 设计、原型与内容准备进行中，G4 未通过；Phase 5 仍为大纲<br>
 > **维护责任**：Codex 负责本轮整理与一致性检查<br>
 > **写作规范**：[设计文档规范 v1.0（维护修订）](../top/DeerMind_Design_Document_Standard_v1.0.md)；[MVP 共同规则](MVP_Governance.md)<br>
 > **版本与评审**：工作修订由 Git 追溯；准确基线与结论见 [Gate 记录](MVP_Gate_Reviews.md)<br>
-> **更新日期**：2026-10-11
+> **更新日期**：2026-10-17
 
 ---
 
-Phase 3 三份正文供用户审阅：产品定义说明价值、范围及可行性前提，需求规格展开三端业务，验证方案规定质量与后续证据责任。正文按主题组织，并列规则逐项列出，关联说明与业务规则分开；相应业务图帮助理解整体关系，文字完整维护逻辑、条件与边界。作者审查、表达检查及准确输入见 [G3 记录](MVP_Gate_Reviews.md#2-g3--mvp-definition)。用户已明确先审阅、暂不通过 G3；当前不启动 Phase 4，不将表达改进或作者检查冒充范围批准。
+用户已于 2026-10-15 确认 Phase 3 阶段性审阅通过，批准基线为 [G3-20261015-01](MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)。Phase 4 依据该范围开展产品交互、实际内容、数据权限和评测准备；模型适用性疑问按 DEC-017、RISK-008 在实际工作中检验。
 
-现有四份 MVP 文档保存在 [archive](archive/README.md)，供历史核对。明确确认的约束不因归档失效；具体承接仍须逐项核对，不能自动沿用旧版的“已冻结”状态。现有[原型](../../src/mvp_prototype/README.md)保留作参考，本轮不修改产品交互或实现。
+当前四份 Phase 4 文档已有工作稿。**本轮审阅[三端任务与信息架构](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#2-角色旅程与整体结构)及[连续学习对话入口](http://127.0.0.1:5178/structure.html?role=student#/chapter?chapter=fractions)**：用户基本认可整体方向，要求继续打磨内容与交互。首页已补齐学习摘要与直接输入；学习活动采用连续对话，图示、练习、检测和结果内嵌。预写情境保留对照，新增独立的真实 DeepSeek 模式供成人体验文字追问、动态出题及本次反馈，不更新章节状态。首条跨角色过程与合成目录仍可操作，完整功能迁移待继续。[原局部工具](http://127.0.0.1:5178/phase4.html)保留参考，启动和限制见[原型说明](../../src/mvp_prototype/README.md)。校内实际教材的领域与参考候选已准备，正式审核、校外材料和完整交接仍待完成；G4 尚未通过。
+
+[归档](archive/README.md)和旧原型保留作历史参考，不自动成为本轮设计答案。旧原型中的整卷、旧统计和仅错题口径不属于当前范围，新入口与旧入口分开，避免混用。
 
 ## 1. 阶段对应
 
@@ -50,7 +52,18 @@ Phase 3 承担产品范围、业务行为和验收承诺，Phase 4 承担具体�
 
 ## 3. 使用与后续工作
 
-本次重点阅读[产品定义 §5–§7](phase-3-definition/MVP_Definition.md#5-完整-mvp-范围与能力边界)和[需求规格 §3](phase-3-definition/MVP_Requirements_and_Acceptance.md#3-三端功能与业务流程)，分别检查完整范围及三端如何工作；[验证方案](phase-3-definition/MVP_Validation_Plan.md)规定怎样分阶段取得质量和价值证据。Phase 4/5 仍为大纲，实际活动组织、页面与技术方案尚未交付，不把旧原型或章节提示当作新方案。
+Phase 3 已批准的产品承诺由三份正文维护；Phase 4 的具体方案见[产品与交互设计](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md)，其余三份文档分别负责内容、权限与实际案例。交互工作已将任务与信息架构落实到首轮三端低保真稿；接下来审阅实际过程，按同一结构承接其余关键任务并补齐大量记录场景，不继续在旧导航中堆加演示页面。既有完整 MVP 范围保持，不缩减为单一活动。
+
+本阶段按以下工作次序推进，存在依赖的部分先满足输入，能够独立准备的内容同时进行：
+
+| 工作项 | 具体交付 | 当前状态与下一步 |
+| --- | --- | --- |
+| P4-01 产品结构与典型活动 | 三端任务与结构、ACT/FLOW/UI 合同及可运行走查 | 整体方向获用户基本认可；学生首页与连续学习对话完成本轮优化，等待细节审阅；首条跨角色过程和目录可操作，其余关键任务迁移与真实任务走查待完成 |
+| P4-02 数据与权限 | AUTH-001、生命周期、关系失效和外部处理路径 | 首稿已形成；具体服务与适用条件仍待 OPEN-004 核实 |
+| P4-03 实际内容与领域准备 | 两套材料的首批章节、对象与映射、目标、判断参考及维护记录 | 校内“分数的应用”的定义、映射、目标、51 条逐题参考与 8 幅关系图可在后台查看；审核与使用条件待核，校外材料后补 |
+| P4-04 评测材料与联合交接 | CASE、参考、版本、资产审查和 G4 输入 | 四十八个交互案例、十二个语义参考及十二组权限允许／拒绝材料已编制；合同与内容复核、正式留出材料及完整维护影响仍待完成 |
+
+这些是 Phase 4 内部工作项，不是新 Roadmap 阶段。只在出现新的产品取舍或需要材料、授权时请用户介入；已经明确的要求直接承接。
 
 可以先按下列图示建立整体认识，再阅读所在章节的规范描述和验收条件。图是正文的对应视图，不是另一套精简需求或正式界面方案。
 
@@ -65,10 +78,11 @@ Phase 3 承担产品范围、业务行为和验收承诺，Phase 4 承担具体�
 | 后台如何从案例查到模型与运行依据 | [Requirements §3.5](phase-3-definition/MVP_Requirements_and_Acceptance.md#35-管理员查看模型与实际运行)，图 REQ-04 |
 | 章节状态与近期作答为何分开统计 | [Requirements §3.9](phase-3-definition/MVP_Requirements_and_Acceptance.md#39-章节学习情况与统计口径)，图 REQ-05 |
 | 三端如何衔接教材发布、个人采用、学习及修订 | [Requirements §3.10](phase-3-definition/MVP_Requirements_and_Acceptance.md#310-三端贯通业务示例)，图 REQ-06 |
+| 三端页面怎样组织，长期记录如何查找 | [Product §2](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#2-角色旅程与整体结构)，图 UX-10／11／12；§2.6 为关键路径，§2.7 为数据组织 |
 | 定义、资产、工程、质量与使用价值怎样分阶段验证 | [Validation §1](phase-3-definition/MVP_Validation_Plan.md#1-验证问题与阶段责任)，图 VAL-01 |
 
 现行模型依据为 [正式概念与系统设计入口](../concept-design/README.md)，DEC-007 替代早期独立能力本体候选。DEC-011–016 已明确目标权限、已有空间更新、章节统计、必要基础回补及按需产品内介入；OPEN-002–004 保留实际教材、投入和服务条件核验，责任与不阻塞定义的理由见 Definition §7。模型有效性、内容质量和实际投入继续凭后续资产及测量判断。
 
-[文档架构评审](MVP_Document_Architecture_Review.md) 保留调整依据，不作为第十一份主体交付物或新 Gate。G3 确认后进入 Phase 4，先用典型章节讲解贯通活动和共性能力设计，再展开其他学习活动及家长、管理员衔接，同步准备实际领域、权限和评测材料；不是只实现章节讲解，也不重新增加一轮无界限的准确率试验。
+[文档架构评审](MVP_Document_Architecture_Review.md) 保留调整依据，不作为第十一份主体交付物或新 Gate。G3 已确认，Phase 4 按上述工作项推进；不重开已关闭的 Spike/Build。
 
 [学习模型复核稿](../concept-design/DeerMind_Learning_Model_Reassessment.md) 保留探索过程，当前结论与替代关系见其 §8。正式模型以 Domain Space v1.0、Learning Space v1.0、Concept / Evaluation / Interaction / Evolution v1.2 和 System Design v1.1 为准；实现与历史实验尚未按新模型迁移。

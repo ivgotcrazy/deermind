@@ -1,0 +1,175 @@
+{
+  "asset_id": "EVAL-UX-CHAPTER-001",
+  "version": "1",
+  "baseline": "G3-20261015-01",
+  "purpose": "development_interaction_walkthrough",
+  "provenance": "Codex authored from approved requirements on 2026-10-15",
+  "held_out": false,
+  "independent_review": "pending",
+  "material": "src/mvp_foundation/examples/chapter-lesson.json",
+  "limitations": [
+    "Not an actual textbook or child learning trial",
+    "No model accuracy measurement",
+    "Does not validate server-side authorization"
+  ],
+  "cases": [
+    {
+      "id": "CASE-001",
+      "acceptance_refs": [
+        "AC-002",
+        "AC-010"
+      ],
+      "title": "分段推进与就地追问",
+      "precondition": "打开学生章节讲解，第 1 段",
+      "actions": [
+        "阅读当前段，不点击继续",
+        "用走查工具载入当前段追问示例",
+        "展开再收起历史",
+        "继续下一段"
+      ],
+      "expected": [
+        "阅读和追问不自动推进",
+        "追问附在当前段下，原推导保留",
+        "历史开关不丢失当前段草稿",
+        "只有继续操作推进段落"
+      ],
+      "reference_status": "author_reference"
+    },
+    {
+      "id": "CASE-002",
+      "acceptance_refs": [
+        "AC-002",
+        "AC-010"
+      ],
+      "title": "暂离、刷新和恢复",
+      "precondition": "学生在第 2 段，有未发送草稿",
+      "actions": [
+        "输入草稿",
+        "返回学习",
+        "刷新页面",
+        "继续本次讲解"
+      ],
+      "expected": [
+        "恢复同一段落及草稿",
+        "没有新增作答或掌握结论"
+      ],
+      "reference_status": "author_reference"
+    },
+    {
+      "id": "CASE-003",
+      "acceptance_refs": [
+        "AC-003",
+        "AC-009"
+      ],
+      "title": "未作答与受助表现分开",
+      "precondition": "已看讲解但未练习",
+      "actions": [
+        "切换家长只读视图",
+        "回到学生，载入明确标注的预写练习作答并提交"
+      ],
+      "expected": [
+        "未作答时没有虚构达标项数",
+        "预写练习可解释受助表现，但不宣布独立或持久掌握",
+        "自由作答在未接模型时保持未判定"
+      ],
+      "reference_status": "author_reference"
+    },
+    {
+      "id": "CASE-004",
+      "acceptance_refs": [
+        "AC-004",
+        "AC-005"
+      ],
+      "title": "检测提交后不提前反馈",
+      "precondition": "第 3 段结束，准备检查",
+      "actions": [
+        "查看范围与题量后开测",
+        "提交第 1 题",
+        "暂离、刷新并返回",
+        "提交第 2 题"
+      ],
+      "expected": [
+        "进行中不显示对错或参考",
+        "刷新恢复未结束检测及进度",
+        "两题提交后统一显示记录与可展开参考",
+        "不把参考展示当成自动评分"
+      ],
+      "reference_status": "author_reference"
+    },
+    {
+      "id": "CASE-005",
+      "acceptance_refs": [
+        "AC-005"
+      ],
+      "title": "第 2 题求助结束检测",
+      "precondition": "检测第 1 题已提交",
+      "actions": [
+        "在第 2 题请求讲解",
+        "查看结果",
+        "返回讲解"
+      ],
+      "expected": [
+        "先结束检测，已提交1题，未检测1题",
+        "帮助对应第2题，不能误展示第1题参考",
+        "原检测保持结束，再开检查是新一次"
+      ],
+      "reference_status": "author_reference"
+    },
+    {
+      "id": "CASE-006",
+      "acceptance_refs": [
+        "AC-010"
+      ],
+      "title": "自由输入不冒充语义理解",
+      "precondition": "学生讲解输入框可直接编辑",
+      "actions": [
+        "输入任意问题并发送"
+      ],
+      "expected": [
+        "不自动打开历史",
+        "输入留存并明确尚未理解或执行",
+        "不按关键词生成评价、开测或切换活动"
+      ],
+      "reference_status": "author_reference"
+    },
+    {
+      "id": "CASE-007",
+      "acceptance_refs": [
+        "AC-012",
+        "AC-021"
+      ],
+      "title": "三端查看同一案例",
+      "precondition": "发生讲解、追问或作答操作",
+      "actions": [
+        "查看家长视图",
+        "查看管理视图"
+      ],
+      "expected": [
+        "家长只读同一活动，不出现学生资料编辑按钮",
+        "管理员时间线可见实际演示操作",
+        "未执行的Observation/Evidence/Belief明确标注，不能伪装成真实模型结果"
+      ],
+      "reference_status": "author_reference"
+    },
+    {
+      "id": "CASE-008",
+      "acceptance_refs": [
+        "AC-002",
+        "AC-010"
+      ],
+      "title": "结束后只能回看",
+      "precondition": "学生结束本次讲解",
+      "actions": [
+        "返回学习",
+        "回看讲解",
+        "尝试继续或发送"
+      ],
+      "expected": [
+        "保留旧讲解与记录",
+        "不能向已结束活动提交作答或继续段落",
+        "无阅读完成即掌握的结论"
+      ],
+      "reference_status": "author_reference"
+    }
+  ]
+}

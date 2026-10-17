@@ -1,0 +1,171 @@
+{
+  "id": "DEMO-PRODUCT-FLOW-001",
+  "version": "1",
+  "status": "synthetic_author_draft_not_canonical",
+  "provenance": "Codex authored 2026-10-15; no actual textbook or learner data",
+  "as_of": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "chapter": "三角形与组合图形面积",
+  "target": "合成目标 AREA-TARGET v1",
+  "requirements": [
+    {
+      "id": "R-CALC",
+      "label": "根据底与对应高计算三角形面积",
+      "status": "met",
+      "reason": "假定现有有效评价支持当前范围内独立计算；不代表所有图形都能处理。",
+      "records": [
+        "A01",
+        "A02"
+      ]
+    },
+    {
+      "id": "R-REASON",
+      "label": "解释面积公式为什么要除以 2",
+      "status": "strengthen",
+      "reason": "示例作答能代入公式，但未说明两个全等三角形与平行四边形的关系；假定评价认为尚未达到解释要求。",
+      "records": [
+        "A03"
+      ]
+    },
+    {
+      "id": "R-COMPOSE",
+      "label": "拆分组合图形并说明面积关系",
+      "status": "unknown",
+      "reason": "当前只有讲解后完成的记录，尚不足以支持这里要求的独立表现。",
+      "records": [
+        "A04"
+      ]
+    }
+  ],
+  "attempts": [
+    {
+      "id": "A01",
+      "date": "2026-10-14",
+      "source": "范围检测",
+      "help": "independent",
+      "judgment": "correct",
+      "ended": true,
+      "prompt": "底为 8 厘米、对应高为 5 厘米，求三角形面积。",
+      "answer": "8 × 5 ÷ 2 = 20 平方厘米",
+      "context": "合成参考假定已核对帮助与接触背景，独立性不是由是否点击求助决定。"
+    },
+    {
+      "id": "A02",
+      "date": "2026-10-12",
+      "source": "范围检测",
+      "help": "independent",
+      "judgment": "correct",
+      "ended": true,
+      "prompt": "底为 12 厘米、对应高为 5 厘米，求三角形面积。",
+      "answer": "12 × 5 ÷ 2 = 30 平方厘米",
+      "context": "已结束检测中的一次作答；不是技术重传。"
+    },
+    {
+      "id": "A03",
+      "date": "2026-10-11",
+      "source": "范围检测",
+      "help": "independent",
+      "judgment": "incorrect",
+      "ended": true,
+      "prompt": "解释三角形面积公式中为什么要除以 2。",
+      "answer": "因为公式这样写。",
+      "context": "题目要求解释理由，不能只凭会背公式判整题正确。"
+    },
+    {
+      "id": "A04",
+      "date": "2026-10-13",
+      "source": "讲解练习",
+      "help": "assisted",
+      "judgment": "correct",
+      "ended": true,
+      "prompt": "将两个相邻三角形组成的图形分块计算面积。",
+      "answer": "按刚才给出的分割线分别求面积，再相加。",
+      "context": "已经展示分割线与分步方法，属于受助表现。"
+    },
+    {
+      "id": "A05",
+      "date": "2026-10-10",
+      "source": "外部录入",
+      "help": "unknown",
+      "judgment": "pending",
+      "ended": true,
+      "prompt": "图中的高度数字识别不清。",
+      "answer": "原作答等待确认",
+      "context": "识别与帮助条件未明，不能计入正确或错误分母。"
+    },
+    {
+      "id": "A06",
+      "date": "2026-09-25",
+      "source": "范围检测",
+      "help": "independent",
+      "judgment": "correct",
+      "ended": true,
+      "prompt": "底 6 厘米、对应高 4 厘米，求面积。",
+      "answer": "12 平方厘米",
+      "context": "较早的独立作答；日期筛选不重算当前学习状态。"
+    },
+    {
+      "id": "A07",
+      "date": null,
+      "source": "外部录入",
+      "help": "independent",
+      "judgment": "incorrect",
+      "ended": true,
+      "prompt": "底 6 厘米、对应高 4 厘米，求面积。",
+      "answer": "24 平方厘米",
+      "context": "原作答日期未知；合成参考假定独立性已有依据。仅在全部统计中纳入，不以上传日替代。"
+    },
+    {
+      "id": "A08",
+      "date": "2026-10-15",
+      "source": "范围检测",
+      "help": "independent",
+      "judgment": "pending",
+      "ended": false,
+      "prompt": "尚在进行的检测中的已提交题。",
+      "answer": "提交内容等待检测结束",
+      "context": "未正式结束，不进入当前已判定作答分母。"
+    }
+  ],
+  "problem": {
+    "prompt": "一块三角形花坛，底是 6 米，对应的高是 4 米，面积是多少平方米？",
+    "hint": "先想想：两个完全一样的三角形，可以拼成什么熟悉的图形？",
+    "explanation": [
+      "两个完全一样的三角形可以拼成一个同底同高的平行四边形。",
+      "平行四边形面积是 6 × 4 = 24 平方米，原三角形占其中一半。",
+      "所以花坛的面积是 6 × 4 ÷ 2 = 12 平方米。"
+    ],
+    "limitation": "本题是合成求助材料，不对应北师大版的正式章节。没有作答不表示做错。"
+  },
+  "definition": {
+    "id": "PT-DEMO-AREA",
+    "version": 1,
+    "name": "已知底与对应高，求三角形面积",
+    "responsibility": "学习者根据已给定的一组底与对应高，选择并应用三角形面积关系。",
+    "conditions": "底和高均为正数，单位一致；给出的高必须与所选底对应。",
+    "solution_ref": "ST-DEMO-AREA@1",
+    "knowledge_ref": "KC-DEMO-AREA@1"
+  },
+  "limitations": [
+    "All status judgments and formal-layer examples are prewritten assumptions, not outputs of this prototype.",
+    "Current browser lesson actions and free responses do not update these assumed judgments.",
+    "Not a published Domain package, actual textbook mapping or semantic evaluation set."
+  ],
+  "supporting_objects": [
+    {
+      "id": "ST-DEMO-AREA",
+      "version": 1,
+      "type": "SolutionTemplate",
+      "name": "用底和对应高求三角形面积",
+      "definition": "已知底 b 和其对应高 h，单位一致且均为正数。先计算 b × h，再取其一半；结果使用相应面积单位。",
+      "knowledge_ref": "KC-DEMO-AREA@1"
+    },
+    {
+      "id": "KC-DEMO-AREA",
+      "version": 1,
+      "type": "KnowledgeComponent",
+      "name": "三角形与同底同高平行四边形的面积关系",
+      "definition": "两个全等三角形可拼成同底同高的平行四边形；每个三角形的面积是该平行四边形面积的一半。"
+    }
+  ]
+}

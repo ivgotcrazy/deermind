@@ -1,0 +1,11 @@
+{
+  "id": "DEMO-OPERATIONS-001",
+  "version": 1,
+  "provenance": "人工编写的任务状态与用量示例，不是真实服务监控或本次调用记录",
+  "tasks": [
+    {"id":"TASK-DEMO-UNKNOWN","label":"求助请求传输中断","state":"unknown","latency_ms":null,"input_tokens":null,"cost_cny":null},
+    {"id":"TASK-DEMO-FAILED","label":"评价请求明确未提交","state":"failed","latency_ms":1500,"input_tokens":0,"cost_cny":0},
+    {"id":"TASK-DEMO-UNRESOLVED","label":"解释条件不足，语义未决","state":"unresolved","latency_ms":4200,"input_tokens":1200,"cost_cny":0.03},
+    {"id":"TASK-DEMO-PENDING","label":"材料处理尚未完成","state":"processing","latency_ms":null,"input_tokens":null,"cost_cny":null}
+  ]
+}

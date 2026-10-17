@@ -1,0 +1,61 @@
+{
+  "id": "DEMO-LESSON-AREA-001",
+  "version": "1",
+  "kind": "synthetic_interaction_fixture",
+  "status": "author_draft_not_canonical",
+  "provenance": "Codex authored on 2026-10-15; no textbook or learner data",
+  "topic": "三角形面积",
+  "purpose": "弄清为什么要除以 2，并找对底和高",
+  "limitations": [
+    "Not an actual textbook mapping",
+    "Not a published Domain package",
+    "No LLM understanding, Evidence or Belief execution",
+    "All examples are for interaction review"
+  ],
+  "segments": [
+    {
+      "id": "SEG-1",
+      "title": "为什么要除以 2？",
+      "lead": "一块三角形纸片，可以变成我们熟悉的图形。",
+      "body": "取两个完全一样的三角形，拼成一个平行四边形。拼成的图形与原三角形有相同的底和高，面积是底 × 高。每个三角形占它的一半，所以要再除以 2。",
+      "formula": "6 × 4 ÷ 2 = 12 平方厘米",
+      "followup_question": "为什么这两个三角形的面积相等？",
+      "followup_answer": "这里用的是两个完全一样的三角形：一个可以通过移动、旋转与另一个重合。它们形状、大小相同，因此面积相等；不是任意两个三角形拼在一起都能各占一半。"
+    },
+    {
+      "id": "SEG-2",
+      "title": "底和高，要配成一对",
+      "lead": "高是顶点到所选底边所在直线的垂直距离。",
+      "body": "选定一条边作为底后，要找对应的高。斜边的长度不能直接当作高。三角形倾斜或旋转，底和对应的高仍按垂直关系确定。",
+      "formula": "底 10 厘米，对应高 3 厘米：面积 15 平方厘米",
+      "followup_question": "高一定画在三角形里面吗？",
+      "followup_answer": "不一定。钝角三角形的一些高会落在底边的延长线上。关键仍是从对面顶点向底边所在直线作垂线。"
+    },
+    {
+      "id": "SEG-3",
+      "title": "把理由用到计算中",
+      "lead": "先确认底和对应的高，再计算，并写上面积单位。",
+      "body": "如果底是 8 厘米、对应的高是 5 厘米，可以先求同底同高平行四边形的面积 40 平方厘米，再取一半，得到 20 平方厘米。也可以直接写底 × 高 ÷ 2。",
+      "formula": "8 × 5 ÷ 2 = 20 平方厘米",
+      "followup_question": "先除以 2，再乘可以吗？",
+      "followup_answer": "可以。例如 (8 ÷ 2) × 5 与 8 × 5 ÷ 2 都得到 20。改变计算顺序不改变三角形面积是同底同高平行四边形一半的理由。"
+    }
+  ],
+  "practice": {
+    "prompt": "底为 10 厘米、对应高为 3 厘米的三角形，面积是多少？说明为什么。",
+    "example_answer": "10 × 3 ÷ 2 = 15 平方厘米，因为三角形是同底同高平行四边形面积的一半。",
+    "feedback": "这份预写示例同时给出了计算和除以 2 的理由。刚刚的讲解已提供方法，因此它不能单独证明离开帮助后仍会。"
+  },
+  "check": {
+    "estimated_minutes": 3,
+    "questions": [
+      "三角形底为 12 厘米、对应高为 5 厘米，求面积，并说明理由。",
+      "有人说“底 6 厘米、高 4 厘米的三角形面积是 24 平方厘米”。你同意吗？说明理由。"
+    ],
+    "reference": [
+      "30 平方厘米；同底同高平行四边形面积的一半。",
+      "不同意；6 × 4 是对应平行四边形面积，三角形面积为 12 平方厘米。"
+    ],
+    "reference_visibility": "Only after finish or help-ending; not proof of independent mastery after recent teaching"
+  }
+}

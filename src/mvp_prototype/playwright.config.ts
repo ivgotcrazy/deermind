@@ -4,6 +4,8 @@ import { existsSync } from 'node:fs';
 const edge = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 export default defineConfig({
   testDir: './tests',
+  // Node service tests run explicitly with node --test, outside the browser runner.
+  testIgnore: '**/*.test.mjs',
   fullyParallel: true,
   workers: 3,
   retries: 0,

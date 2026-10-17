@@ -1,0 +1,51 @@
+<script setup lang="ts">
+import CheckInputReview from './CheckInputReview.vue';
+import { checkInputs, closeInputCheck } from '../checkInputState';
+import { computed, ref } from 'vue';
+import { catalog, currentCourse, currentMaterialVersion, demoConfirmed, endExam, examBusy, journey, newPlan, prepareExam } from '../journeyState';
+const emit=defineEmits<{accounts:[]}>();
+const name=ref('我的面积学习');const selectedBook=ref('demo');const scope=ref(['u-calc','u-reason']);const message=ref('');const newSpaceOpen=ref(false);
+const active=computed(()=>journey.exam);
+const checkInputKey=computed(()=>`range-${active.value.id}-${active.value.answers.length}`);
+const questions=computed(()=>active.value.questions.map(id=>catalog.questions.find(q=>q.id===id)!));
+const question=computed(()=>questions.value[active.value.answers.length]);
+const uncovered=computed(()=>catalog.units.filter(u=>active.value.units.includes(u.id)&&!u.ready));
+const estimate=computed(()=>questions.value.reduce((n,q)=>n+q.minutes,0));
+const validSuggestion=computed(()=>!active.value.suggestionBasis||(journey.suggestion.validity==='valid'&&active.value.suggestionBasis===String(journey.suggestion.revision)));
+const canStart=computed(()=>active.value.status==='ready'&&questions.value.length>0&&demoConfirmed.value&&validSuggestion.value&&currentCourse.value?.id===active.value.courseId&&currentCourse.value.version===active.value.version);
+function create(){if(!demoConfirmed.value||selectedBook.value!=='demo'||!scope.value.length||!name.value.trim())return;const c={id:crypto.randomUUID(),name:name.value.trim(),version:currentMaterialVersion.value,units:[...scope.value]};journey.courses.push(c);journey.selectedCourse=c.id;journey.selectedUnits=[...c.units];newPlan();newSpaceOpen.value=false;message.value='已创建演示空间，采用关系保留在当前浏览器；未改变教材源内容。';}
+function preview(suggested=false){if(suggested&&journey.suggestion.validity!=='valid'){message.value='建议依据已变化，不能按旧理由准备检测。';return;}if(prepareExam(suggested?[catalog.suggestion.unit]:journey.selectedUnits,suggested)){if(suggested)journey.suggestion.response='accepted';message.value='';}}
+function start(){if(!canStart.value)return;active.value.status='running';message.value='';}
+function submit(){if(active.value.status!=='running'||!active.value.draft.trim()||checkInputs.panels[checkInputKey.value]?.open)return;active.value.answers.push(active.value.draft.trim());active.value.draft='';if(active.value.answers.length===active.value.questions.length)endExam('completed');else message.value='已收到作答，结束后统一查看记录。';}
+function changeCourse(){newPlan();journey.selectedUnits=[...(currentCourse.value?.units||[])];message.value='';}
+function invalidate(){journey.suggestion.revision++;message.value='';}
+function finish(reason:'manual'|'help'){closeInputCheck(checkInputKey.value);endExam(reason);}
+function switchPlan(){newPlan();message.value='';}
+</script>
+<template>
+<main class="f-flow-page">
+  <div class="f-content-heading"><div><span class="f-eyebrow">学生 · 教材范围与检测</span><h1>{{ examBusy?'完成这次检查':'选择这次想学和想了解的内容' }}</h1></div><button v-if="!examBusy&&currentCourse" class="f-secondary" @click="newSpaceOpen=!newSpaceOpen">创建另一个空间</button></div>
+  <details class="f-provenance"><summary>合成课程走查 · 不是真实教材或评价</summary><p>题单来自预设的范围与要求，展示准备、选择和退出过程，不代表通用选题算法。原作答与近期帮助须在正式评价时核对，本页不会按答案关键词评分。</p></details>
+  <section v-if="!demoConfirmed" class="f-notice"><p>演示关联或首次确认尚未齐备，暂不能创建空间或开始新的检测。真实外部服务及授权条件仍待核实。</p><button @click="emit('accounts')">查看账号与首次说明</button></section>
+  <section v-if="!examBusy&&(!currentCourse||newSpaceOpen)" class="f-card">
+    <h2>创建自己的学习空间</h2><label class="f-field">空间名称<input v-model="name" aria-label="空间名称"/></label>
+    <label class="f-field">选用管理员发布的教材<select v-model="selectedBook" aria-label="选用教材"><option value="demo">{{ catalog.material_title }} · v{{ currentMaterialVersion }}</option><option value="school">北师大版数学六年级上册 · 尚未准备</option><option value="external">校外内部教材 · 尚未提供</option></select></label>
+    <template v-if="selectedBook==='demo'"><p>采用目标：{{ catalog.target_title }} · 与教材包同版</p><p>{{ currentMaterialVersion===2?journey.material.standard:catalog.target_standard }}</p><fieldset class="f-selection"><legend>选择课程范围</legend><label v-for="u in catalog.units" :key="u.id"><input type="checkbox" v-model="scope" :value="u.id"/> {{ u.title }} <span class="f-muted">{{ u.ready?'本轮有检测示例，讲解仅在独立演示空间':'仅有章节点；讲解及评价未准备' }}</span></label></fieldset></template>
+    <p v-else>书目信息不等于内容已发布。这里不能创建一个假装已可学习的正式课程；请使用合成教材走查。</p>
+    <button class="f-primary" :disabled="!demoConfirmed||selectedBook!=='demo'||!scope.length||!name.trim()" @click="create">创建演示空间</button>
+  </section>
+  <template v-if="currentCourse">
+    <section v-if="!examBusy" class="f-card"><label class="f-field">当前空间<select v-model="journey.selectedCourse" aria-label="当前演示空间" @change="changeCourse"><option v-for="c in journey.courses" :key="c.id" :value="c.id">{{ c.name }} · 教材与目标 v{{ c.version }}</option></select></label><p class="f-muted">学生选用已发布教材与目标，不改写达标标准。现有空间不会因目录发布新版而自动升级。</p></section>
+    <section v-if="active.status==='idle'" class="f-card">
+      <h2>按章、节选择检测范围</h2><fieldset class="f-selection"><legend>已选课程内的章节点，可多选</legend><label v-for="u in catalog.units.filter(u=>currentCourse?.units.includes(u.id))" :key="u.id"><input type="checkbox" v-model="journey.selectedUnits" :value="u.id"/> {{ u.chapter }} / {{ u.title }}</label></fieldset><button class="f-primary" :disabled="!journey.selectedUnits.length" @click="preview()">查看本次检测安排</button>
+    </section>
+    <section v-if="active.status==='ready'" class="f-card"><h2>开始前，确认范围和投入</h2><p class="f-stat-result">{{ questions.length }} 题 · 参考 {{ estimate }} 分钟</p><ul><li v-for="u in catalog.units.filter(u=>active.units.includes(u.id))" :key="u.id">{{ u.title }}：{{ u.requirements.join('；') }} {{ u.ready?'':'（本次未检测，依据未准备）' }}</li></ul><p>本次题单开始后固定，提交只确认收到；完成或主动结束后统一反馈。中途求助先结束检测。参考用时不是倒计时。</p><p v-if="uncovered.length" class="f-notice">你选择的范围有 {{ uncovered.length }} 节尚不能正式检测。本次仅检查已准备部分，结果不能概括全部所选范围。</p><p v-if="currentCourse.version!==active.version" class="f-notice">采用版本已变化，请返回重新准备安排；原检测记录不被覆盖。</p><p v-if="!validSuggestion" class="f-notice">建议依据已变化，当前安排不能按旧理由开始。返回后等待有效的新建议，或自行选择范围。</p><div class="f-actions"><button class="f-primary" :disabled="!canStart" @click="start">{{ uncovered.length?'开始检测已准备部分':'开始本次检测' }}</button><button @click="switchPlan">返回调整范围</button></div></section>
+    <section v-if="active.status==='running'" class="f-card"><div class="f-content-heading"><span>第 {{ active.answers.length+1 }} / {{ questions.length }} 题</span><button @click="active.status='paused'">暂离本次检测</button></div><h2>{{ question?.prompt }}</h2><textarea v-model="active.draft" :disabled="!!checkInputs.panels[checkInputKey]?.open" aria-label="范围检测作答" placeholder="写下计算或解释，提交前不会分析。"/><CheckInputReview :key="checkInputKey" :context="checkInputKey" :draft="active.draft" @apply="text=>active.draft=text"/><div class="f-actions"><button class="f-primary" :disabled="!active.draft.trim()||!!checkInputs.panels[checkInputKey]?.open" @click="submit">提交这一题</button><button @click="finish('help')">需要帮助，结束本次检测</button><button @click="finish('manual')">结束并保留已完成部分</button></div></section>
+    <section v-if="active.status==='paused'" class="f-card"><h2>这次检测还没有结束</h2><p>已提交 {{ active.answers.length }} / {{ questions.length }} 题，草稿保留。不会因暂离、刷新而新建检测。</p><button class="f-primary" @click="active.status='running'">返回本次检测</button><button @click="finish('manual')">结束并保留已完成部分</button></section>
+    <section v-if="active.status==='ended'" class="f-card"><h2>本次检测已结束</h2><p>已提交 {{ active.answers.length }} / {{ questions.length }} 题；题单中 {{ questions.length-active.answers.length }} 题未检测。{{ uncovered.length?`另有 ${uncovered.length} 节未准备，未纳入题单。`:'' }}</p><p class="f-muted">结束原因：{{ {completed:'完成题单',manual:'主动结束',help:'请求帮助','':'未记录'}[active.endReason] }}。自由作答尚未判定，不显示分数或掌握结论。</p><article v-for="(answer,i) in active.answers" :key="i" class="f-answer"><b>第 {{ i+1 }} 题提交</b><p>{{ answer }}</p><details><summary>查看预写参考，不是自动评分</summary><p>{{ questions[i]?.reference }}</p></details></article><div v-if="active.helpId" class="f-followup"><h3>检测结束后的帮助示例</h3><p>{{ catalog.questions.find(q=>q.id===active.helpId)?.help }}</p></div><button class="f-secondary f-spaced" @click="switchPlan">另选范围，准备新的检测</button><p class="f-muted">已结束的检测和作答保留在当前浏览器，另开检测不会覆盖；正式跨设备记录由后续工程实现。</p></section>
+    <section v-if="!examBusy" class="f-card"><span class="f-eyebrow">有依据的产品内建议 · 合成示例</span><h2>{{ catalog.suggestion.title }}</h2><p v-if="journey.suggestion.validity==='valid'">{{ catalog.suggestion.reason }}</p><p v-else>相关依据{{ journey.suggestion.validity==='stale'?'已改变':'正在修复' }}，当前不据此安排学习。</p><p class="f-muted">来自预设判断：{{ catalog.suggestion.basis }}。不是因为你点击了某个按钮才认定需要检测；预计 {{ catalog.suggestion.minutes }} 分钟。</p><div v-if="!journey.suggestion.response" class="f-actions"><button class="f-secondary" :disabled="journey.suggestion.validity!=='valid'||!currentCourse.units.includes(catalog.suggestion.unit)||!demoConfirmed" @click="preview(true)">先看看建议的检测安排</button><button @click="journey.suggestion.response='later'">暂时不参加</button><button @click="journey.suggestion.response='declined'">不接受这条建议</button></div><p v-else>已记录选择：{{ {later:'暂缓，不预约提醒',declined:'不接受，不改变能力判断',accepted:'已接受并查看安排，实际进度以上方检测记录为准'}[journey.suggestion.response] }}。</p><details class="f-demo-controls"><summary>走查建议依据变化</summary><select v-model="journey.suggestion.validity" aria-label="建议依据状态" @change="invalidate"><option value="valid">依据仍有效</option><option value="stale">依据已变化</option><option value="repair">判断正在修复</option></select><button @click="journey.suggestion.response=''">仅重置本条演示选择</button></details></section>
+    <details v-if="!examBusy&&journey.examHistory.some(e=>e.courseId===currentCourse?.id)" class="f-card"><summary>查看本空间之前的检测</summary><article v-for="(e,i) in journey.examHistory.filter(e=>e.courseId===currentCourse?.id)" :key="i"><h3>第 {{ i+1 }} 次记录 · 采用 v{{ e.version }}</h3><p>已提交 {{ e.answers.length }} / {{ e.questions.length }} 题，结束原因：{{ {completed:'完成题单',manual:'主动结束',help:'请求帮助','':'未记录'}[e.endReason] }}。</p><ol><li v-for="(a,j) in e.answers" :key="j">{{ a }}</li></ol></article></details>
+  </template>
+  <p v-if="message" role="status" class="f-notice">{{ message }}</p>
+</main>
+</template>

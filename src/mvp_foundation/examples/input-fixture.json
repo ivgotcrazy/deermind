@@ -1,0 +1,28 @@
+{
+  "asset_id": "DEMO-INPUT-001",
+  "version": "1",
+  "provenance": "Codex authored 2026-10-15; no real learner data",
+  "status": "synthetic_author_draft_not_canonical",
+  "pages": [
+    {
+      "page": 1,
+      "kind": "question_with_geometry",
+      "text": "三角形底为6厘米，对应的高为4厘米，求面积。"
+    },
+    {
+      "page": 2,
+      "kind": "same_question_attempt",
+      "text": "我的原作答：6 × 4 = 24 平方厘米。"
+    }
+  ],
+  "recognition": "三角形底为6厘米，对应的高为1厘米，求面积。",
+  "recognized_answer": "6 × 4 = 24 平方厘米。",
+  "voice_original": "为什么三角形的面积要除以二？",
+  "voice_transcript": "为什么三角形的面积要除以一？",
+  "limitations": [
+    "The two pages are self-authored text and SVG, not uploaded photos or an actual PDF.",
+    "The voice source is a text script; no microphone, recording, speech recognition or playback.",
+    "Browser ink strokes are captured locally; no handwriting recognition or Android stylus validation.",
+    "No response judging, formal observation, belief update or real learner consent."
+  ]
+}

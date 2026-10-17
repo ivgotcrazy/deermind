@@ -1,0 +1,185 @@
+{
+  "id": "MATERIAL-INTAKE-20261015-01",
+  "version": "3",
+  "kind": "material_intake_record",
+  "status": "school_chapter_read_candidate_content_prepared_review_pending",
+  "updated_on": "2026-10-17",
+  "source": "SRC-024",
+  "user_statement": "校内教材是：北师大版六年级上册，校外的教材是内部教材，后下才能够提供",
+  "normalization_note": "数学来自已确认学科背景；校外材料按后续提供理解，未推定交付日期。",
+  "materials": [
+    {
+      "id": "INTAKE-SCHOOL-001",
+      "course": "school_math",
+      "reported_title": "北师大版数学六年级上册",
+      "identity_basis": "user_confirmed_title_and_existing_subject_context",
+      "edition": {
+        "series_revision": "第五版",
+        "basis": "电子页序 123 的后记对本套新世纪数学（1～6 年级）教科书的说明",
+        "curriculum_basis": "义务教育课程方案和数学课程标准（2022 年版）",
+        "publication_year": null,
+        "printing": null,
+        "isbn": null,
+        "limitation": "尚未核到版权页；课程标准年份不是本册出版年份，未核对孩子纸质用书。"
+      },
+      "source_files": [],
+      "chapter_structure": {
+        "status": "publisher_navigation_and_printed_contents_checked",
+        "entries": [
+          {
+            "title": "第一单元 分数除法",
+            "publisher_catalog_id": "120170718181616016000"
+          },
+          {
+            "title": "第二单元 圆",
+            "publisher_catalog_id": "120170718181616016060"
+          },
+          {
+            "title": "第三单元 用字母表示（二）",
+            "publisher_catalog_id": "120170718181616016300"
+          },
+          {
+            "title": "综合实践 制订节水方案",
+            "publisher_catalog_id": "120170718181616016600"
+          },
+          {
+            "title": "第四单元 分数的应用",
+            "publisher_catalog_id": "120170718181616017047"
+          },
+          {
+            "title": "第五单元 比的认识",
+            "publisher_catalog_id": "120170718181617001087"
+          },
+          {
+            "title": "第六单元 确定位置",
+            "publisher_catalog_id": "120170718181617001300"
+          },
+          {
+            "title": "数学好玩 五子棋",
+            "publisher_catalog_id": "120170718181617001600"
+          },
+          {
+            "title": "第七单元 百分数的认识与应用（一）",
+            "publisher_catalog_id": "120170718181617002022"
+          },
+          {
+            "title": "第八单元 观察物体（二）",
+            "publisher_catalog_id": "120170718181617003014"
+          },
+          {
+            "title": "第九单元 数据的表示和分析（三）",
+            "publisher_catalog_id": "120170718181617004024"
+          },
+          {
+            "title": "综合实践 制订营养食谱",
+            "publisher_catalog_id": "120170718181617008068"
+          },
+          {
+            "title": "总复习",
+            "publisher_catalog_id": "120170718181618001088"
+          }
+        ],
+        "note": "旧资源导航分支不纳入现行正文目录；节级结构及全部内容尚待逐页整理。"
+      },
+      "first_batch_chapters": [
+        {
+          "title": "分数的应用",
+          "unit_number": 4,
+          "selection_source": "SRC-025",
+          "publisher_catalog_id": "120170718181616017047",
+          "printed_pages": {
+            "start": 49,
+            "end": 56
+          },
+          "ebook_image_indices": {
+            "start": 52,
+            "end": 59
+          },
+          "verification": "目录列出本单元从 49 页开始、下一单元从 57 页开始；实际检查了 49、56、57 页。",
+          "content_review_status": "all_eight_pages_read_by_author_independent_review_pending",
+          "domain_mapping_status": "candidate_package_prepared_not_approved",
+          "candidate_package": "src/mvp_foundation/content/fractions-application/package.json",
+          "publication_status": "not_published"
+        }
+      ],
+      "answers_included": null,
+      "processing_conditions": "source_read_for_preparation_product_reuse_and_external_processing_conditions_pending",
+      "source_urls": [
+        {
+          "url": "https://www.100875.com.cn/show/eBookAndTeacher.html?resId=7965194976af40f5b9abc4b3f89522fe&bookId=120170718181616017047&firstNum=120170718181616017047&contributeId=9276",
+          "kind": "publisher_public_ebook",
+          "checked_on": "2026-10-16",
+          "status": "browser_catalog_and_book_images_accessible"
+        }
+      ],
+      "source_verification": {
+        "checked_on": "2026-10-16",
+        "method": "公开网页及其正常读取接口；Edge 无登录浏览器加载并查看书页",
+        "page_http_status": 200,
+        "page_heading": "数学|六年级上册",
+        "publisher": "北京师范大学出版社",
+        "total_images_reported_by_viewer": 124,
+        "inspected_image_indices": [
+          1,
+          2,
+          3,
+          4,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          123
+        ],
+        "observations": [
+          "书名页为义务教育教科书数学六年级上册，北京师范大学组织编写。",
+          "目录与所选单元起止边界一致；所给链接直接进入第四单元首页。",
+          "后记说明本套教材为第五版、依据 2022 年版课程方案和课标。"
+        ],
+        "limits": [
+          "通用网页工具未能读取该 URL；本机 HTTP 及浏览器读取成功。间歇连接关闭经有限重试恢复，不据此判定教材缺失。",
+          "电子页序 124 图像等待超时，未从该页取得信息；未核实版权页、出版年份或印次。",
+          "八页已逐页读取并形成作者候选，未核到独立答案册；全量原题逐小问参考、OCR 测量、正式映射审核或发布未完成。",
+          "只登记页面定位与核查结果，不保存会过期的 CDN 签名参数，也不据公开可读推定产品分发或外部处理许可。"
+        ]
+      }
+    },
+    {
+      "id": "INTAKE-EXTERNAL-001",
+      "course": "extracurricular_math",
+      "reported_title": null,
+      "material_type": "internal_course_material",
+      "identity_basis": "user_will_provide_later",
+      "edition": null,
+      "source_files": [],
+      "chapter_structure": null,
+      "first_batch_chapters": null,
+      "answers_included": null,
+      "processing_conditions": "to_check_with_actual_material"
+    }
+  ],
+  "public_reference_lookup": {
+    "url": "https://jiaoshi.bnupg.com/",
+    "checked_on": "2026-10-15",
+    "result": "Publisher teacher portal resource entry found; exact edition and contents not verified against user book."
+  },
+  "limitations": [
+    "This intake record is not a published LearningMaterial or Domain package.",
+    "DEMO-LESSON-AREA-001 is not mapped to either actual course.",
+    "G3-20261015-01 snapshot is unchanged.",
+    "Online chapter selection and boundary verification do not establish full content readiness or G4 approval."
+  ],
+  "supplements": [
+    {
+      "source": "SRC-025",
+      "date": "2026-10-16",
+      "url": "https://www.100875.com.cn/show/eBookAndTeacher.html?resId=7965194976af40f5b9abc4b3f89522fe&bookId=120170718181616017047&firstNum=120170718181616017047&contributeId=9276",
+      "user_statement": "你看这个链接是否可以打开，优先试用分数的应用章节",
+      "interpretation": "校内首批准备第四单元分数的应用；不改变完整 MVP 两空间范围。"
+    }
+  ]
+}

@@ -1,0 +1,217 @@
+{
+  "baseline_id": "G3-20261015-01",
+  "date": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "decision": "PASS",
+  "decision_source": "User: phase3 阶段性审阅通过，继续后面的工作",
+  "approved_scope": [
+    "doc/mvp/phase-3-definition/MVP_Definition.md",
+    "doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+    "doc/mvp/phase-3-definition/MVP_Validation_Plan.md"
+  ],
+  "other_files_role": "Dependencies and historical context, not additional approvals",
+  "source_git_head": "3d5e5fabe656207974f382e6598d079f232a5dfd",
+  "source_worktree_changes": [
+    " M doc/mvp/MVP_Gate_Reviews.md",
+    " M doc/mvp/MVP_Governance.md",
+    " M doc/mvp/README.md",
+    " M doc/mvp/phase-3-definition/MVP_Definition.md",
+    " M doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+    " M doc/mvp/phase-3-definition/MVP_Validation_Plan.md",
+    "?? src/mvp_foundation/"
+  ],
+  "snapshot_timing": "Before recording approval metadata and before Phase 4 changes",
+  "zip_sha256": "471044d6586d603af1871e30c22e84538ac06db8f33fa37ba5cccf6eb71b92bb",
+  "files": [
+    {
+      "path": "doc/concept-design/DeerMind_Concept_Architecture_v1.2.md",
+      "sha256": "8e58ab675f1986b883571eec2bbcbf02ab153d7f87b8924870b07dbe9aabb784",
+      "bytes": 63400
+    },
+    {
+      "path": "doc/concept-design/DeerMind_Domain_Space_Design_v1.0.md",
+      "sha256": "3311c9efff33bb0c86f1c60d3c29aa1306bbb76645e3457bf9d7c0e3f84ef558",
+      "bytes": 21301
+    },
+    {
+      "path": "doc/concept-design/DeerMind_Evaluation_Space_Design_v1.2.md",
+      "sha256": "f73c669a993982d1e63de1ddc2f241b4355225eb2bd3332dea178e8c6c258797",
+      "bytes": 58942
+    },
+    {
+      "path": "doc/concept-design/DeerMind_Evolution_Space_Design_v1.2.md",
+      "sha256": "d7552f4f83a36abaedc12ebb8ac981ab64234a0c73cb6bbb6580640ca333b89d",
+      "bytes": 69393
+    },
+    {
+      "path": "doc/concept-design/DeerMind_Interaction_Space_Design_v1.2.md",
+      "sha256": "c154998815bbe8d20c866c9b8af2eacfe6a19c06987606f7193555e64514c529",
+      "bytes": 73716
+    },
+    {
+      "path": "doc/concept-design/DeerMind_Learning_Space_Design_v1.0.md",
+      "sha256": "bcc7234035f148454d17f5cd84c3e0d2d50c2803f2bc2c6006d1fcd508c33962",
+      "bytes": 12152
+    },
+    {
+      "path": "doc/concept-design/README.md",
+      "sha256": "e138aa8d86a080328009f9234eb29c8321ae8a6aebdb4638026ff3e402b60c7e",
+      "bytes": 2937
+    },
+    {
+      "path": "doc/mvp/archive/DeerMind_MVP_Definition_v0.1.md",
+      "sha256": "522e0e8b56291647856c6093b9535948dca604e52fcfdb5c7e3ed6a6a7750cde",
+      "bytes": 39037
+    },
+    {
+      "path": "doc/mvp/archive/DeerMind_MVP_Requirements_and_Acceptance_v0.1.md",
+      "sha256": "a72da024925f295f75c4af8fb3bfd5f07b20defa0b8d18571192f031391f1c67",
+      "bytes": 92390
+    },
+    {
+      "path": "doc/mvp/archive/DeerMind_MVP_Validation_Plan_v0.1.md",
+      "sha256": "664c35ab42bf2393d8d4f6b04e8eea76139f36a893a008a329097fee9978769c",
+      "bytes": 31240
+    },
+    {
+      "path": "doc/mvp/archive/foundation/DeerMind_MVP_Product_and_Domain_Foundation_v0.1.md",
+      "sha256": "195c8b1d87fb4ebcb95d8bf77493b469ad0639db211011d3db95e8d20e6118fc",
+      "bytes": 143295
+    },
+    {
+      "path": "doc/mvp/archive/README.md",
+      "sha256": "0d587570a5c67116e63b7dda8ba568360af6b5cd0ccc4cac9ff992ed8ec129ae",
+      "bytes": 1891
+    },
+    {
+      "path": "doc/mvp/MVP_Document_Architecture_Review.md",
+      "sha256": "98fd7cfd66e1b811d1f070bc9d8fd2a5b7a5bdd6877706f44fc7e4c5d179ca11",
+      "bytes": 31105
+    },
+    {
+      "path": "doc/mvp/MVP_Gate_Reviews.md",
+      "sha256": "06331e4619c36bdc80a82a820fe9888a8f6daf5a81c55f0c11e5d8d5a3f7260a",
+      "bytes": 22361
+    },
+    {
+      "path": "doc/mvp/MVP_Governance.md",
+      "sha256": "4ec34278679735e01b37528599faee1d2edfd7639859a010b43d20d2ffefebba",
+      "bytes": 36781
+    },
+    {
+      "path": "doc/mvp/phase-3-definition/MVP_Definition.md",
+      "sha256": "b4c90a23009594a906f381d3f5a50fd0b3cdbe2bb96cb0323d80b3768ced6841",
+      "bytes": 50526
+    },
+    {
+      "path": "doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+      "sha256": "83ae162b6f9786b96b092c6a712ce22d44ac3bf8e96274f027c21f231020f5a7",
+      "bytes": 96677
+    },
+    {
+      "path": "doc/mvp/phase-3-definition/MVP_Validation_Plan.md",
+      "sha256": "200a86423ca8a38c3b6576f43d5a82c49039281943772fd7a91f400ceb09d44e",
+      "bytes": 27002
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "sha256": "0490ca54319acfb10cc767a8ec19aa6357477f5610972761c93d8b5d39fccfce",
+      "bytes": 9652
+    },
+    {
+      "path": "doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md",
+      "sha256": "19ebb37cb8f881bfc0452561cb26327f7af867696623b13fa6b31f66fcb3500e",
+      "bytes": 40272
+    },
+    {
+      "path": "doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.1.md",
+      "sha256": "bd492b9a7141837622c414e714346de47aa18fc3844cc59593a193d6afe3afcb",
+      "bytes": 61100
+    },
+    {
+      "path": "doc/system-design/DeerMind_Cross_Cutting_Coverage_Review_v0.1.md",
+      "sha256": "9e5dbee06cec34a8b1626edf73c583ae5f1f3026327021b122f96e380d870409",
+      "bytes": 23210
+    },
+    {
+      "path": "doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.1.md",
+      "sha256": "8eb797a9035c102218a37f56d3e7ebb7f9a17e156bb2f2f92f2836b5375c4c27",
+      "bytes": 54871
+    },
+    {
+      "path": "doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.1.md",
+      "sha256": "0a7506f0b57db6bf3bd8426b2b4de730d58bd693ab3c8dcb6aadff171b58e17b",
+      "bytes": 69214
+    },
+    {
+      "path": "doc/system-design/DeerMind_Runtime_Event_Architecture_v1.1.md",
+      "sha256": "e0f8435d53249f92221912a710ed9d3e521e9649f481c2a884891a7d236c9a42",
+      "bytes": 39654
+    },
+    {
+      "path": "doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.1.md",
+      "sha256": "2d4a753fca85ac897245315afd15af54a2a63bc660088cd9bc1f7130ffa07fa1",
+      "bytes": 54826
+    },
+    {
+      "path": "doc/system-design/DeerMind_State_Dependency_Architecture_v1.1.md",
+      "sha256": "b0704138b2920e42c377035737a9f5b5d5f5eacdf268bf8c22e0eccf1056242d",
+      "bytes": 56550
+    },
+    {
+      "path": "doc/system-design/DeerMind_System_Design_Evidence_Review_v1.0.md",
+      "sha256": "21626de567a0a2a535a08878f6b95620fa5533934b10e0167497ede75c6aa7c5",
+      "bytes": 19066
+    },
+    {
+      "path": "doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md",
+      "sha256": "da0712c75c40ca4b3177654d53a89d7a4a4bcfa2a271b9b43d85ae41c3f572d1",
+      "bytes": 55132
+    },
+    {
+      "path": "doc/system-design/DeerMind_System_Design_v1.1.md",
+      "sha256": "92e8648fefe97789768087fe687ce66392317ed141538a95d75a77803ea82dad",
+      "bytes": 93270
+    },
+    {
+      "path": "doc/system-design/README.md",
+      "sha256": "6e1d8090d3f19169714093265ea18e8788dddd323dd360e1ae1c81777a66c77f",
+      "bytes": 3496
+    },
+    {
+      "path": "doc/top/DeerMind_AI_Native_Architecture_Principles_v0.3.md",
+      "sha256": "9d6951ff6f41f14759632370029f3f28b215d55dbf04c6f03ef33f00e3a83737",
+      "bytes": 48015
+    },
+    {
+      "path": "doc/top/DeerMind_Design_Document_Standard_v1.0.md",
+      "sha256": "dd6fc5d9ddd4355ded8dba4457978ee5a321b485117646d10f97130cf0681b42",
+      "bytes": 28287
+    },
+    {
+      "path": "doc/top/DeerMind_Development_Roadmap_v0.3.md",
+      "sha256": "8d6b02d18bee295fc404b432fb25c5402600f8749511526859ad44fafc5289a0",
+      "bytes": 43289
+    },
+    {
+      "path": "doc/top/DeerMind_Product_Constitution_v1.0.md",
+      "sha256": "a8c74ca7f21084fd77a36c2e9037007a9e44d75bc15e8ae135edcb3abd9c2daa",
+      "bytes": 34103
+    },
+    {
+      "path": "doc/top/DeerMind_Product_Thesis_Critical_Issues_Analysis_v0.8.md",
+      "sha256": "16cac48b76cf9e41f17d945946d0756f8d3f447564374c64f6693c59e0356d7a",
+      "bytes": 67530
+    },
+    {
+      "path": "doc/top/DeerMind_Product_Thesis_v1.0.md",
+      "sha256": "2bd405c32a9137f2ca2270dd1e377d90f101e2a6f435cac00e739a4c6f8e8b84",
+      "bytes": 27524
+    }
+  ],
+  "limitations": [
+    "G4 and G5 not passed",
+    "No model quality or learning effectiveness conclusion",
+    "OPEN-002, OPEN-003, OPEN-004 and RISK-008 remain open"
+  ]
+}

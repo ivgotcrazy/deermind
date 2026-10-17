@@ -1,9 +1,11 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [Parameter(Position=0)][ValidateSet('start','stop','status','setup')][string]$Action = 'start',
     [ValidateSet('student','parent','admin')][string]$Role = 'student',
     [ValidateRange(1024,65535)][int]$Port = 5178,
     [switch]$Lan,
+    [switch]$Foundation,
+    [switch]$Structure,
     [switch]$NoBrowser
 )
 $ErrorActionPreference = 'Stop'
@@ -15,7 +17,8 @@ $statePath = Join-Path $stateDir "mvp-prototype-$Port.json"
 $logPath = Join-Path $stateDir "mvp-prototype-$Port.log"
 $errorPath = Join-Path $stateDir "mvp-prototype-$Port-error.log"
 $homePage = @{ student = 'home'; parent = 'overview'; admin = 'dashboard' }[$Role]
-$url = "http://127.0.0.1:$Port/#/$Role/$homePage"
+$landingPath = if ($Structure) { "/structure.html?role=$Role" } elseif ($Foundation) { "/phase4.html?role=$Role" } else { "/#/$Role/$homePage" }
+$url = "http://127.0.0.1:$Port$landingPath"
 
 function Get-OwnedServer {
     if (-not (Test-Path -LiteralPath $statePath)) { return $null }
@@ -30,6 +33,7 @@ function Get-OwnedServer {
 }
 
 try {
+    if ($Foundation -and $Structure) { throw 'Choose either -Foundation or -Structure, not both.' }
     $running = Get-OwnedServer
     if ($Action -eq 'stop') {
         if ($running) { Stop-Process -Id $running.Id -ErrorAction Stop; Write-Host "Prototype stopped (PID $($running.Id))." }
@@ -95,8 +99,8 @@ try {
     Write-Host "Prototype ready: $url"
     Write-Host "Stop with: prototype.cmd stop -Port $Port"
     if ($Lan) {
-        Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object { $_.IPAddress -notmatch '^(127\.|169\.254\.)' } | ForEach-Object { Write-Host "LAN preview: http://$($_.IPAddress):$Port/#/$Role/$homePage" }
-        Write-Host 'LAN mode exposes only synthetic prototype data. Use your trusted local network.'
+        Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object { $_.IPAddress -notmatch '^(127\.|169\.254\.)' } | ForEach-Object { Write-Host "LAN preview: http://$($_.IPAddress):$Port$landingPath" }
+        Write-Host 'LAN preview is for synthetic screens. The live model API remains localhost-only.'
     }
     if (-not $NoBrowser) { Start-Process $url }
 } catch {

@@ -1,0 +1,147 @@
+{
+  "asset_id": "EVAL-CONTENT-FA-001",
+  "version": "1",
+  "updated_on": "2026-10-17",
+  "baseline": "G3-20261015-01",
+  "purpose": "development_semantic_reference_preparation",
+  "material": "src/mvp_foundation/content/fractions-application/package.json",
+  "material_ref": "CONTENT-BNU-6A-U4-001@1",
+  "held_out": false,
+  "independent_review": "pending",
+  "execution_status": "not_run_against_runtime_or_llm",
+  "provenance": "Codex 依据实际单元和现行语义合同编制的原创案例；不是教材标准答案或真实学生记录。",
+  "cases": [
+    {
+      "id": "CASE-049", "title": "逐级份额：两条合法解法",
+      "acceptance_refs": ["AC-002", "AC-003"], "metric_refs": ["MET-001", "MET-003"],
+      "item_refs": ["ITEM-FA-01@1"], "claim_refs": ["CL-FA-CHAIN@1"],
+      "precondition": "无本题或近重复题的解法暴露；输入可靠。",
+      "input": ["学生甲：先得到科学组 24 个，再算出 6 个。", "学生乙：观察小队占全部的 3/20，40×3/20=6。"],
+      "expected": ["两条路径都可成立，分别核对实际解释。", "只依据实际展示的方法解释所用知识，不能要求乙必须先写 24。"],
+      "forbidden": ["只接受参考库的第一种方法", "据同一题推断所有题型或全部 KC 已掌握"],
+      "reference_basis": "b=a*r、c=b*s 与乘法结合律；package 中两种 SolutionTemplate。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-050", "title": "仅给正确结果，解释责任尚未观察",
+      "acceptance_refs": ["AC-003", "AC-009"], "metric_refs": ["MET-003", "MET-004"],
+      "item_refs": ["ITEM-FA-01@1"], "claim_refs": ["CL-FA-BASE@1", "CL-FA-CHAIN@1"],
+      "precondition": "明确要求说明每个分数的基准；尚无其他可用表现。",
+      "input": ["学生只提交：6 个。"],
+      "expected": ["结果正确；本次所要求的说明尚未提供。", "基准理解和关系组织证据不足，可按交互合同邀请补充。"],
+      "forbidden": ["自动写已掌握", "把没有解释直接写成不理解基准"],
+      "reference_basis": "正确结果与解释证据分离；缺少证据不等于反证。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-051", "title": "定位基准的提示替代了部分责任",
+      "acceptance_refs": ["AC-003", "AC-010"], "metric_refs": ["MET-004"],
+      "item_refs": ["ITEM-FA-02@1"], "claim_refs": ["CL-FA-BASE@1", "CL-FA-COMPARE@1", "CL-FA-EXPR@1"],
+      "precondition": "系统已展示提示：第一问以甲的 24 分钟为基准；未给商。",
+      "input": ["学生随后提交：(30-24)÷24=1/4。"],
+      "expected": ["保留基准选择受到帮助的事实；余下计算可按实际责任提供局部证据。", "不能声称本轮独立选择了基准。"],
+      "forbidden": ["提示未给最终答案，因此完全没有替代工作", "有帮助，所以本次任何表现都没有价值"],
+      "reference_basis": "SupportBoundary 与 Claim 相对解释，不能将帮助二元化。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-052", "title": "比较换向，基准必须跟着改变",
+      "acceptance_refs": ["AC-002", "AC-003"], "metric_refs": ["MET-001", "MET-003", "MET-004"],
+      "item_refs": ["ITEM-FA-02@1"], "claim_refs": ["CL-FA-COMPARE@1", "CL-FA-KC-BASE@1"],
+      "precondition": "两个问法输入均已确认。",
+      "input": ["学生：都是差 6 分钟，所以多和少都是 1/4。"],
+      "expected": ["确认第一问结果正确，第二问应是 1/5。", "指出两问分母对应的基准不同；这次局部错误不自动成为永久知识缺失标签。"],
+      "forbidden": ["两问差额相等所以分数相等", "把一道换向题算成两次独立长期证据"],
+      "reference_basis": "6/24=1/4，6/30=1/5。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-053", "title": "明确的图示条件与不清晰输入",
+      "acceptance_refs": ["AC-003", "AC-010"], "metric_refs": ["MET-002", "MET-003"],
+      "item_refs": [], "claim_refs": ["CL-FA-BASE@1"],
+      "precondition": "文字合成输入模拟图示识别缺失，尚无真实照片；所需比例仅存在于未能辨认的图中。",
+      "input": ["识别文本只有两个对象和总量，括线范围、等分标记未取得。"],
+      "expected": ["保持关键图示条件未决，请求核对对应内容。", "本案例只能审阅未决语义；真实图文识别质量需独立图片材料。"],
+      "forbidden": ["根据大概长度或经验猜一个精确分数", "把无法读图计成学生答错", "把本案例计入真实 OCR 成功率"],
+      "reference_basis": "KC-FA-REP 的适用边界；SRC-51-A 的精确图示尚待独立复核。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-054", "title": "同基准可合并，不同基准不可直接合并",
+      "acceptance_refs": ["AC-002", "AC-003"], "metric_refs": ["MET-001", "MET-003"],
+      "item_refs": ["ITEM-FA-04@1", "ITEM-FA-01@1"], "claim_refs": ["CL-FA-COMBINE@1", "CL-FA-CHAIN@1"],
+      "precondition": "两个题的实际关系清楚。",
+      "input": ["路线题中用 60×(1/2-1/3)。", "名额题中用 40×(3/5+1/4)。"],
+      "expected": ["前者两份额共用总长基准，可以求差。", "后者第二份额的基准是科学组，不能直接与第一份额相加。"],
+      "forbidden": ["都出现两个分数，因此归为相同结构和相同证据"],
+      "reference_basis": "PT-FA-CHAIN 与 PT-FA-COMBINE 的 contrast 关系。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-055", "title": "相同答案不表示运算理由成立",
+      "acceptance_refs": ["AC-003", "AC-004"], "metric_refs": ["MET-003", "MET-004"],
+      "item_refs": ["ITEM-FA-05@1", "ITEM-FA-06@1"], "claim_refs": ["CL-FA-EXPR@1"],
+      "precondition": "检测明确包含运算理由的解释。",
+      "input": ["学生声称除法也能随便加括号；当前简单题恰巧算对。"],
+      "expected": ["当前数值和所述一般规则分别判断。", "用 ITEM-FA-05 的两个值 4 与 9/16 核查反例；对合法分配律给予承认。"],
+      "forbidden": ["只因当前数值正确就把规则解释判为正确"],
+      "reference_basis": "除法反例及分配律的适用条件。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-056", "title": "最少运次有整数约束",
+      "acceptance_refs": ["AC-003", "AC-019"], "metric_refs": ["MET-003", "MET-005"],
+      "item_refs": ["ITEM-FA-07@1"], "claim_refs": ["CL-FA-CHECK@1"],
+      "precondition": "DEC-019 已确认非整除变化仅用于可选练习或迁移探针，不作为首批章节必测；以下是开发参考情境，实际使用仍须完成内容审核。",
+      "input": ["学生算出 7.5 次并作为最终答案。"],
+      "expected": ["商正确，最终最少次数应为 8；说明 7 次不足。", "记录变化维度为非整除，不能将新例与教材整除例视为完全相同的测量。", "保留并按实际条件解释表现；未参加或未通过本探针不能单独判本章未达标。"],
+      "forbidden": ["只按算式结果判全对", "将该变式加入首批必测或要求通过才能达标", "因非必测而丢弃真实作答或一律忽略有效证据", "无审核把变化范围扩大成任意复杂优化题"],
+      "reference_basis": "7×12/5<18，8×12/5>=18。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-057", "title": "生成参数必须保留实际对象约束",
+      "acceptance_refs": ["AC-004", "AC-019"], "metric_refs": ["MET-005"],
+      "item_refs": ["ITEM-FA-01@1"], "claim_refs": [],
+      "precondition": "生成的是名额或人数的逐级分组题，各实际组人数必须为整数。",
+      "input": ["候选绑定 a=10、r=1/3、s=1/2。"],
+      "expected": ["拒绝这一绑定，因为实际中间人数不是整数；可以重新取参。", "不把有理数可算误当成人数情境合法。"],
+      "forbidden": ["把 5/3 个人作为合法完整分组答案并交付"],
+      "reference_basis": "PT-FA-CHAIN 中间量和结果的离散约束。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-058", "title": "题目重复、近期帮助与延迟表现",
+      "acceptance_refs": ["AC-006", "AC-008", "AC-009"], "metric_refs": ["MET-004", "MET-010"],
+      "item_refs": ["ITEM-FA-03@1"], "claim_refs": ["CL-FA-COMBINE@1"],
+      "precondition": "已讲解 ITEM-FA-03，再次展示同题或只替换物品名称。",
+      "input": ["学生立即答对；之后系统没有取得任何延迟作答。"],
+      "expected": ["记录重复和帮助背景；实际作答可以保留但不能计为全新的独立覆盖。", "持久性仍待后续适当时间的表现，时间变化不自动生成负证据。"],
+      "forbidden": ["重复做对若干次就宣布迁移或持久掌握", "历史题一律禁止重测"],
+      "reference_basis": "Domain 结构关系提供重复判断依据；选题仍由 Interaction 基于有效认识决定。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-059", "title": "未列入方法库的合法解释",
+      "acceptance_refs": ["AC-003", "AC-015", "AC-019"], "metric_refs": ["MET-003"],
+      "item_refs": ["ITEM-FA-01@1"], "claim_refs": ["CL-FA-CHAIN@1"],
+      "precondition": "当前库只列分步与合并比例两种方法。",
+      "input": ["学生画 40 个点，先分成 5 组取 3 组，再把这部分分成 4 组取 1 组，得到 6 个，并清楚标注。"],
+      "expected": ["核实图示及说明后可接受，未列成独立方法对象不构成错误。", "需要复用时形成候选方法或映射，不直接改写已发布模型。"],
+      "forbidden": ["强制学生改成预设算式才算正确", "绕过受控发布直接新增正式模板"],
+      "reference_basis": "等分取份定义及现行 Domain 的库外有效方法边界。",
+      "reference_status": "author_reference_pending_review"
+    },
+    {
+      "id": "CASE-060", "title": "候选教材、目标与评价的版本边界",
+      "acceptance_refs": ["AC-013", "AC-015", "AC-022", "AC-023"], "metric_refs": ["MET-004"],
+      "item_refs": [], "claim_refs": ["CL-FA-COMPARE@1"],
+      "precondition": "内容候选尚未审核；后续管理员修订 LearningTarget 要求，Domain 和 Claim 含义保持。",
+      "input": ["尝试直接把候选六项要求用作学生界面的正式统计分母；或目标更严格后把旧 Belief 直接降低。"],
+      "expected": ["候选不得直接激活或进入正式分母，须按对应 owner 的审核发布及采用路径处理。", "只有目标要求变化时重新派生 TargetAssessment；领域或 Claim 实义改变才检查证据重新解释。"],
+      "forbidden": ["内容文件存在就自动发布", "目标提高等同于孩子能力下降", "共享 KC 自动读取另一学习空间的个人证据"],
+      "reference_basis": "Learning、Domain、Evaluation 的 owner、版本与隔离合同。",
+      "reference_status": "author_reference_pending_review"
+    }
+  ]
+}

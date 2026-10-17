@@ -1,0 +1,26 @@
+{
+  "id":"DEMO-COURSE-SETUP-001",
+  "version":"1",
+  "status":"synthetic_author_draft_not_canonical",
+  "provenance":"Codex authored 2026-10-15; no actual textbook, account, or child data",
+  "material_title":"面积学习册（合成教材）",
+  "target_title":"面积计算与理由说明（合成目标）",
+  "target_standard":"在题面给出对应底和高时独立计算，并能解释除以2的理由。组合图形的完整正式评价依据尚未准备。",
+  "units":[
+    {"id":"u-calc","chapter":"第一章 三角形面积","title":"1.1 根据底和高计算","requirements":["根据底与对应高独立计算面积"],"question_ids":["q-calc1","q-calc2"],"ready":true},
+    {"id":"u-reason","chapter":"第一章 三角形面积","title":"1.2 解释公式的理由","requirements":["解释面积关系和除以2的理由"],"question_ids":["q-reason"],"ready":true},
+    {"id":"u-composite","chapter":"第二章 组合图形","title":"2.1 分割与面积关系","requirements":["选择分割方法并解释组合关系"],"question_ids":[],"ready":false}
+  ],
+  "questions":[
+    {"id":"q-calc1","unit":"u-calc","minutes":2,"prompt":"三角形底为8厘米，对应高为5厘米，面积是多少？写出算式。","reference":"8 × 5 ÷ 2 = 20 平方厘米。","help":"先想三角形与同底同高平行四边形的面积关系，再写出算式。"},
+    {"id":"q-calc2","unit":"u-calc","minutes":3,"prompt":"一块旋转摆放的三角形纸片，选定底为12厘米，对应的垂直高为3厘米，面积是多少？说明为什么旋转不改变结果。","reference":"12 × 3 ÷ 2 = 18 平方厘米；旋转不改变面积及所选底、高的对应关系。","help":"旋转只改变摆放方向。先找题目给定的一组底和对应的垂直高。"},
+    {"id":"q-reason","unit":"u-reason","minutes":3,"prompt":"为什么三角形面积等于底乘对应高再除以2？可以用图形拼合来解释。","reference":"两个全等三角形可拼成同底同高的平行四边形，单个三角形占该平行四边形面积的一半。","help":"想象再拿来一个完全相同的三角形，把两个图形拼成平行四边形。"}
+  ],
+  "suggestion":{"id":"SUG-DEMO-001","unit":"u-reason","title":"试着把“为什么除以2”说清楚","reason":"合成依据假定你已有计算表现，但解释理由仍不充分；这次希望了解你自己如何解释。","basis":"DEMO-PRODUCT-FLOW-001 / R-REASON","minutes":3},
+  "source_pages":[
+    {"id":"p1","page":1,"title":"三角形面积","original":"两个全等三角形拼成平行四边形。三角形底为6厘米，对应高为4厘米。请计算面积。","ocr":"两个全等三角形拼成平行四边形。三角形底为6厘米，对应高为1厘米。请计算面积。","flagged":true},
+    {"id":"p2","page":2,"title":"说明理由","original":"旋转三角形会改变面积吗？请借助底与对应高、图形拼合说明理由。","ocr":"旋转三角形会改变面积吗？请借助底与对应高、图形拼合说明理由。","flagged":false}
+  ],
+  "reference_origin":"原材料未附答案；参考由作者为合成示例编写，需单独核对，不能标为原书答案。",
+  "limitations":["Seeded v1 assumes a previously published synthetic package, not a reviewed real textbook.","Preassigned questions demonstrate plan preview; this is not a general sampling or semantic matching algorithm.","No OCR, model inference, real accounts, authentication or server-side authorization is executed.","No real external processing service has been selected or authorized."]
+}

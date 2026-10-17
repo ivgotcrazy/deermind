@@ -1,0 +1,1771 @@
+{
+  "asset_id": "REFERENCE-BNU-6A-U4-001",
+  "version": "1",
+  "updated_on": "2026-10-17",
+  "status": "author_checked_pending_independent_review",
+  "package_ref": "CONTENT-BNU-6A-U4-001@1",
+  "author": "Codex",
+  "reviewer": null,
+  "source_ref": "SRC-025",
+  "source_checked_on": "2026-10-17",
+  "purpose": "逐小题的作者解答与语义图示参考，供内容审核；不是出版社答案册、OCR 结果、学生表现或独立留出集。",
+  "source_policy": "保留页内位置、必要数值与数学结构，不复制整章图片或完整题干。原文和绘图条件需与出版社页图对照；历史统计仅作题内条件。",
+  "source_images": [
+    {
+      "printed_page": 49,
+      "image_index": 52,
+      "sha256": "fbbe663820ecff1e459b7f982463c94fd8919c86b2b968e1bae27e8a79eca151"
+    },
+    {
+      "printed_page": 50,
+      "image_index": 53,
+      "sha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243"
+    },
+    {
+      "printed_page": 51,
+      "image_index": 54,
+      "sha256": "00fbaef4cec011d6be193a98bd7393fe35e9827cad65831dc58a633e00455f15"
+    },
+    {
+      "printed_page": 52,
+      "image_index": 55,
+      "sha256": "8c7615f3a122b6087517a99074e7236f41f369f6d87560e526e92951ab62ddbc"
+    },
+    {
+      "printed_page": 53,
+      "image_index": 56,
+      "sha256": "c6db1697758ee1207e0e4a5c1a7cfdba9dc1bed7759a69d964149a0277a1346b"
+    },
+    {
+      "printed_page": 54,
+      "image_index": 57,
+      "sha256": "bf4d1f3b5ad25784d7a844adce6c4ff86429fb99ce36abd912cdb9899a01a79b"
+    },
+    {
+      "printed_page": 55,
+      "image_index": 58,
+      "sha256": "24db2670cd28421e4f5b5c08eb73ff935f0c605da376e969b6abdd78fc347aab"
+    },
+    {
+      "printed_page": 56,
+      "image_index": 59,
+      "sha256": "c4fdcd2c2670c6fd56b9742d0fa3c3b6da9ba838a872333253a7e75aa9efb12b"
+    }
+  ],
+  "coverage_policy": "51 条定位记录；一道含多项要求的原题可以共用一条参考。它不是独立题数、能力项数或测量样本数。",
+  "verification": {
+    "numeric": "exact_fraction_checks_in_verify_py",
+    "visual": "author_viewed_source_and_redrew_relations",
+    "independent_review": "pending",
+    "model_run": "not_run",
+    "held_out": false
+  },
+  "diagram_policy": "所有重绘都是解答参考，可能加入原图没有的推导数字和刻度；只供后台查看，不可直接充当无提示检测输入。",
+  "rows": [
+    {
+      "id": "REF-FA-49-01",
+      "page": 49,
+      "source_key": "SRC-49-A",
+      "location": "主例：解释、画图与列式",
+      "template_refs": [
+        "PT-FA-CHAIN@1"
+      ],
+      "givens": "基准人数 12；中间人数是其 1/3；末级人数是中间的 3/4。",
+      "required": [
+        "说明两个分数各自的基准",
+        "图示三者关系",
+        "列式计算，并理解合并份额的方法"
+      ],
+      "reference_answer": "末级 3 人；占初始人数 1/4。",
+      "reasoning": [
+        "先得中间量 4，再取其 3/4 得 3。",
+        "也可先算总份额 1/3×3/4=1/4，再乘 12。",
+        "画图可用集合或线段，不要求照抄某种画法。"
+      ],
+      "checks": [
+        {
+          "expression": "12*(1/3)*(3/4)",
+          "expected": "3"
+        },
+        {
+          "expression": "(1/3)*(3/4)",
+          "expected": "1/4"
+        }
+      ],
+      "diagram_ref": "FIG-FA-01",
+      "reference_basis": "worked_in_source_and_author_checked",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-50-01",
+      "page": 50,
+      "source_key": "SRC-50-A",
+      "location": "试一试 · 上排左",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "12/(4/5)/(3/8)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "40",
+      "reasoning": [
+        "连续除法从左向右，也可乘两个除数的倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "12/(4/5)/(3/8)",
+          "expected": "40"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-50-02",
+      "page": 50,
+      "source_key": "SRC-50-A",
+      "location": "试一试 · 上排中",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(3/8)/(1/10)*(5/7)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "75/28",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "(3/8)/(1/10)*(5/7)",
+          "expected": "75/28"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-50-03",
+      "page": 50,
+      "source_key": "SRC-50-A",
+      "location": "试一试 · 上排右",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(4/7)*((5/8)/(5/14))",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "1",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "(4/7)*((5/8)/(5/14))",
+          "expected": "1"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-50-04",
+      "page": 50,
+      "source_key": "SRC-50-B",
+      "location": "黑板辨析 · 左",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "待检算式 (1/8)×(3/4)÷(1/3)，原示例把最后一步改成乘 1/3。",
+      "required": [
+        "指出错误转换",
+        "给出合法改写与正确值"
+      ],
+      "reference_answer": "错误；正确结果 9/32。",
+      "reasoning": [
+        "除以 1/3 应乘 3，不能保留为乘 1/3。",
+        "原展示的 1/32 是待辨析错误结果，不是参考答案或学生事实。"
+      ],
+      "checks": [
+        {
+          "expression": "(1/8)*(3/4)/(1/3)",
+          "expected": "9/32"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-50-05",
+      "page": 50,
+      "source_key": "SRC-50-B",
+      "location": "黑板辨析 · 中",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "待检算式 (2/3)÷(2/3)÷(3/8)，原示例最后改乘 3/8。",
+      "required": [
+        "核对每个除数的倒数",
+        "给出正确值"
+      ],
+      "reference_answer": "错误；正确结果 8/3。",
+      "reasoning": [
+        "前一除法得 1，之后除以 3/8 应得 8/3。",
+        "原示例的 3/8 不保值。"
+      ],
+      "checks": [
+        {
+          "expression": "(2/3)/(2/3)/(3/8)",
+          "expected": "8/3"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-50-06",
+      "page": 50,
+      "source_key": "SRC-50-B",
+      "location": "黑板辨析 · 右",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "待检算式 (5/6)×(1/6)÷(3/4)，原示例将乘数 1/6 也取了倒数。",
+      "required": [
+        "辨别乘数和除数",
+        "给出合法转换及正确值"
+      ],
+      "reference_answer": "错误；正确结果 5/27。",
+      "reasoning": [
+        "只把除以 3/4 改成乘 4/3；乘以 1/6 保持不变。",
+        "原示例的 20/3 不是正确参考。"
+      ],
+      "checks": [
+        {
+          "expression": "(5/6)*(1/6)/(3/4)",
+          "expected": "5/27"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-01",
+      "page": 51,
+      "source_key": "SRC-51-A",
+      "location": "练一练 1（1）· 水果图",
+      "template_refs": [
+        "PT-FA-CHAIN@1"
+      ],
+      "givens": "苹果为 10 t；香蕉是苹果的 4/5；西瓜是香蕉的 5/8。",
+      "required": [
+        "从括线与等分关系读取两级基准",
+        "列式求西瓜数量"
+      ],
+      "reference_answer": "5 t。",
+      "reasoning": [
+        "香蕉为 10×4/5=8 t，西瓜为 8×5/8=5 t。",
+        "4/5 对应苹果整量；5/8 对应香蕉整量，不能都以苹果为基准。"
+      ],
+      "checks": [
+        {
+          "expression": "10*(4/5)*(5/8)",
+          "expected": "5"
+        }
+      ],
+      "diagram_ref": "FIG-FA-02",
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-02",
+      "page": 51,
+      "source_key": "SRC-51-A",
+      "location": "练一练 1（2）· 球类图",
+      "template_refs": [
+        "PT-FA-CHAIN@1"
+      ],
+      "givens": "排球整量 36；足球终点对齐排球三等份中的第二个刻度；篮球为足球的 3/4。",
+      "required": [
+        "从等分刻度和对齐线得到足球与排球的关系",
+        "列式求篮球数量"
+      ],
+      "reference_answer": "18 个。",
+      "reasoning": [
+        "由原图的三等份与对齐线读出足球是排球的 2/3，不凭像素长度猜比例。",
+        "足球为 24，篮球为 24×3/4=18。",
+        "若输入缺失这些刻度或对齐线，不能借此参考补造题目条件。"
+      ],
+      "checks": [
+        {
+          "expression": "36*(2/3)",
+          "expected": "24"
+        },
+        {
+          "expression": "36*(2/3)*(3/4)",
+          "expected": "18"
+        }
+      ],
+      "diagram_ref": "FIG-FA-03",
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-03",
+      "page": 51,
+      "source_key": "SRC-51-B",
+      "location": "练一练 2 · 上排左",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(9/10)*(5/6)/(1/2)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "3/2",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "(9/10)*(5/6)/(1/2)",
+          "expected": "3/2"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-04",
+      "page": 51,
+      "source_key": "SRC-51-B",
+      "location": "练一练 2 · 上排中",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(5/9)*(3/5)*(9/2)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "3/2",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "(5/9)*(3/5)*(9/2)",
+          "expected": "3/2"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-05",
+      "page": 51,
+      "source_key": "SRC-51-B",
+      "location": "练一练 2 · 上排右",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "2/((2/5)*(1/4))",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "20",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "2/((2/5)*(1/4))",
+          "expected": "20"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-06",
+      "page": 51,
+      "source_key": "SRC-51-B",
+      "location": "练一练 2 · 下排左",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(4/7)*(1/(1/14))",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "8",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "(4/7)*(1/(1/14))",
+          "expected": "8"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-07",
+      "page": 51,
+      "source_key": "SRC-51-B",
+      "location": "练一练 2 · 下排中",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "12/((3/4)/(1/5))",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "16/5",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "12/((3/4)/(1/5))",
+          "expected": "16/5"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-08",
+      "page": 51,
+      "source_key": "SRC-51-B",
+      "location": "练一练 2 · 下排右",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(5/8)*6*(1/10)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "3/8",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "(5/8)*6*(1/10)",
+          "expected": "3/8"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-09",
+      "page": 51,
+      "source_key": "SRC-51-C",
+      "location": "练一练 3",
+      "template_refs": [
+        "PT-FA-CHAIN@1"
+      ],
+      "givens": "原题历史总数 672；约 2/3 属第一类，其中约 1/4 属第二类。",
+      "required": [
+        "区分两个占比的基准",
+        "保留约数语义"
+      ],
+      "reference_answer": "约 112 个。",
+      "reasoning": [
+        "672×2/3=448，再取 1/4 得 112。",
+        "历史数据仅为题内条件，不据此描述当前城市状况；两个占比为约数。"
+      ],
+      "checks": [
+        {
+          "expression": "672*(2/3)*(1/4)",
+          "expected": "112"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-10",
+      "page": 51,
+      "source_key": "SRC-51-C",
+      "location": "练一练 4 · 孵化期表",
+      "template_refs": [
+        "PT-FA-CHAIN@1"
+      ],
+      "givens": "鸵鸟 42 天；鹦鹉是鸵鸟的 3/7；燕子是鹦鹉的 5/6。",
+      "required": [
+        "从表格按顺序绑定基准",
+        "求末级时长"
+      ],
+      "reference_answer": "15 天。",
+      "reasoning": [
+        "中间时长为 42×3/7=18 天；末级为 18×5/6=15 天。",
+        "5/6 的基准是 18 天，不是 42 天。"
+      ],
+      "checks": [
+        {
+          "expression": "42*(3/7)*(5/6)",
+          "expected": "15"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-51-11",
+      "page": 51,
+      "source_key": "SRC-51-D",
+      "location": "练一练 5",
+      "template_refs": [
+        "PT-FA-TRIPS@1"
+      ],
+      "givens": "大船每次 5 t，满载 6 次；小船单次容量为大船的 2/5。",
+      "required": [
+        "组织总量与单次容量",
+        "求最少整数次数"
+      ],
+      "reference_answer": "15 次。",
+      "reasoning": [
+        "总量 30 t，小船容量 2 t，恰好需 15 次。",
+        "14 次只能运 28 t，因此 15 次最少。原题不需要向上取整。"
+      ],
+      "checks": [
+        {
+          "expression": "5*6/(5*(2/5))",
+          "expected": "15"
+        },
+        {
+          "expression": "14*5*(2/5)",
+          "expected": "28"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-52-01",
+      "page": 52,
+      "source_key": "SRC-52-A",
+      "location": "主例 · 画图及增加比例",
+      "template_refs": [
+        "PT-FA-COMPARE@1"
+      ],
+      "givens": "原水体积 45 cm³；结冰后约 50 cm³。",
+      "required": [
+        "图示同一差额与原量",
+        "求相对水体积的增加比例"
+      ],
+      "reference_answer": "约增加 1/9。",
+      "reasoning": [
+        "差额为 5 cm³，以原水 45 cm³ 为基准，5÷45=1/9。",
+        "也可算 50÷45−1；只回答 5 cm³ 未回答比例。"
+      ],
+      "checks": [
+        {
+          "expression": "(50-45)/45",
+          "expected": "1/9"
+        },
+        {
+          "expression": "50/45-1",
+          "expected": "1/9"
+        }
+      ],
+      "diagram_ref": "FIG-FA-04",
+      "reference_basis": "worked_in_source_and_author_checked",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-53-01",
+      "page": 53,
+      "source_key": "SRC-52-A",
+      "location": "主例反向追问",
+      "template_refs": [
+        "PT-FA-COMPARE@1"
+      ],
+      "givens": "沿用 45 cm³ 水和约 50 cm³ 冰，反问水比冰少几分之几。",
+      "required": [
+        "重选比较基准",
+        "解释为什么不再是 1/9"
+      ],
+      "reference_answer": "约少 1/10。",
+      "reasoning": [
+        "差额仍为 5，但以冰 50 为基准，5÷50=1/10。",
+        "同一幅图不能替代对问题方向的理解。"
+      ],
+      "checks": [
+        {
+          "expression": "(50-45)/50",
+          "expected": "1/10"
+        }
+      ],
+      "diagram_ref": "FIG-FA-04",
+      "reference_basis": "worked_in_source_and_author_checked",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-53-02",
+      "page": 53,
+      "source_key": "SRC-53-A",
+      "location": "试一试 · 增长后体积",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "水 18 dm³，结冰体积增加原量的 1/9。",
+      "required": [
+        "区分增加量和新量",
+        "理解先求部分与合并系数两种路径"
+      ],
+      "reference_answer": "20 dm³。",
+      "reasoning": [
+        "增加量为 2 dm³，总量为 18+2=20 dm³。",
+        "也可直接算 18×(1+1/9)。"
+      ],
+      "checks": [
+        {
+          "expression": "18+18*(1/9)",
+          "expected": "20"
+        },
+        {
+          "expression": "18*(1+1/9)",
+          "expected": "20"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "worked_in_source_and_author_checked",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-53-03",
+      "page": 53,
+      "source_key": "SRC-53-B",
+      "location": "算一算，说一说（1）",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(1/7)×(5/8)×(2/5) 与 (1/7)×((5/8)×(2/5))。",
+      "required": [
+        "算值",
+        "说明乘法结合律，而非只说两边一样"
+      ],
+      "reference_answer": "均为 1/28。",
+      "reasoning": [
+        "只改变乘法分组；三个因子及次序不变。",
+        "数值相等的这一个例子不是一般规律的证明，解释应指明结合律。"
+      ],
+      "checks": [
+        {
+          "expression": "(1/7)*(5/8)*(2/5)",
+          "expected": "1/28"
+        },
+        {
+          "expression": "(1/7)*((5/8)*(2/5))",
+          "expected": "1/28"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-53-04",
+      "page": 53,
+      "source_key": "SRC-53-B",
+      "location": "算一算，说一说（2）",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(5/6)×17+(1/6)×17 与 (5/6+1/6)×17。",
+      "required": [
+        "算值",
+        "说明分配律中的共同因子"
+      ],
+      "reference_answer": "均为 17。",
+      "reasoning": [
+        "共同因子为 17，两份系数合为 1。",
+        "不能把任意不同基准的应用题机械改为分数相加。"
+      ],
+      "checks": [
+        {
+          "expression": "(5/6)*17+(1/6)*17",
+          "expected": "17"
+        },
+        {
+          "expression": "(5/6+1/6)*17",
+          "expected": "17"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-01",
+      "page": 54,
+      "source_key": "SRC-54-A",
+      "location": "练一练 1",
+      "template_refs": [
+        "PT-FA-COMPARE@1"
+      ],
+      "givens": "进价每套 80，售价每套 110。",
+      "required": [
+        "确定相对进价比较",
+        "求提高的分数"
+      ],
+      "reference_answer": "3/8。",
+      "reasoning": [
+        "差额 30，以进价 80 为基准；30÷80=3/8。",
+        "不是除以售价 110，也不是以 110÷80 作为提高量。"
+      ],
+      "checks": [
+        {
+          "expression": "(110-80)/80",
+          "expected": "3/8"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-02",
+      "page": 54,
+      "source_key": "SRC-54-B",
+      "location": "练一练 2 · 左图",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "桃树 48；梨树比桃树多桃树的 1/4。",
+      "required": [
+        "读取增加部分的基准",
+        "求梨树总量"
+      ],
+      "reference_answer": "60 棵。",
+      "reasoning": [
+        "增加 12 棵，再与 48 合计。",
+        "也可算 48×(1+1/4)。"
+      ],
+      "checks": [
+        {
+          "expression": "48*(1+1/4)",
+          "expected": "60"
+        }
+      ],
+      "diagram_ref": "FIG-FA-05",
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-03",
+      "page": 54,
+      "source_key": "SRC-54-B",
+      "location": "练一练 2 · 右图",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "第一班捐书 150；第二班为第一班的 5/6；问合计。",
+      "required": [
+        "区分第二班数量与两班总量",
+        "从括线读取所求"
+      ],
+      "reference_answer": "275 本。",
+      "reasoning": [
+        "第二班为 125 本，两班共 150+125=275 本。",
+        "只得 125 解决了一个子问题，未回答总量。"
+      ],
+      "checks": [
+        {
+          "expression": "150*(5/6)",
+          "expected": "125"
+        },
+        {
+          "expression": "150*(1+5/6)",
+          "expected": "275"
+        }
+      ],
+      "diagram_ref": "FIG-FA-06",
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-04",
+      "page": 54,
+      "source_key": "SRC-54-C",
+      "location": "练一练 3 · 上排左",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(6/7+8/21)*21",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "26",
+      "reasoning": [
+        "先说明括号与四则顺序，再计算；可用合法运算律简算，保留理由。"
+      ],
+      "checks": [
+        {
+          "expression": "(6/7+8/21)*21",
+          "expected": "26"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-05",
+      "page": 54,
+      "source_key": "SRC-54-C",
+      "location": "练一练 3 · 上排中",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(5/9)*5*18",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "50",
+      "reasoning": [
+        "先说明括号与四则顺序，再计算；可用合法运算律简算，保留理由。"
+      ],
+      "checks": [
+        {
+          "expression": "(5/9)*5*18",
+          "expected": "50"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-06",
+      "page": 54,
+      "source_key": "SRC-54-C",
+      "location": "练一练 3 · 上排右",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(3/5)*4*(3/4)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "9/5",
+      "reasoning": [
+        "先说明括号与四则顺序，再计算；可用合法运算律简算，保留理由。"
+      ],
+      "checks": [
+        {
+          "expression": "(3/5)*4*(3/4)",
+          "expected": "9/5"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-07",
+      "page": 54,
+      "source_key": "SRC-54-C",
+      "location": "练一练 3 · 下排左",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(5/7)*(8/9)-(1/9)*(5/7)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "5/9",
+      "reasoning": [
+        "先说明括号与四则顺序，再计算；可用合法运算律简算，保留理由。"
+      ],
+      "checks": [
+        {
+          "expression": "(5/7)*(8/9)-(1/9)*(5/7)",
+          "expected": "5/9"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-08",
+      "page": 54,
+      "source_key": "SRC-54-C",
+      "location": "练一练 3 · 下排中",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(3/4)*(5/2)+(1/4)*(5/2)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "5/2",
+      "reasoning": [
+        "先说明括号与四则顺序，再计算；可用合法运算律简算，保留理由。"
+      ],
+      "checks": [
+        {
+          "expression": "(3/4)*(5/2)+(1/4)*(5/2)",
+          "expected": "5/2"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-09",
+      "page": 54,
+      "source_key": "SRC-54-C",
+      "location": "练一练 3 · 下排右",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(70+28)*(4/7)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "56",
+      "reasoning": [
+        "先说明括号与四则顺序，再计算；可用合法运算律简算，保留理由。"
+      ],
+      "checks": [
+        {
+          "expression": "(70+28)*(4/7)",
+          "expected": "56"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-10",
+      "page": 54,
+      "source_key": "SRC-54-D",
+      "location": "练一练 4 · 左侧问法",
+      "template_refs": [
+        "PT-FA-COMPARE@1"
+      ],
+      "givens": "笑笑 40 kg，淘气 45 kg；问淘气比笑笑重几分之几。",
+      "required": [
+        "按问法选择基准",
+        "求相对差额"
+      ],
+      "reference_answer": "1/8。",
+      "reasoning": [
+        "相差 5 kg，以笑笑的 40 kg 为基准，5÷40=1/8。"
+      ],
+      "checks": [
+        {
+          "expression": "(45-40)/40",
+          "expected": "1/8"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-11",
+      "page": 54,
+      "source_key": "SRC-54-D",
+      "location": "练一练 4 · 右侧问法",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "淘气 45 kg；笑笑比淘气轻淘气体重的 1/9。",
+      "required": [
+        "按减少份额求实际体重"
+      ],
+      "reference_answer": "40 kg。",
+      "reasoning": [
+        "减少量为 45×1/9=5 kg；笑笑为 45−5=40 kg。",
+        "与左侧同一组体重对应不同基准及输出，不能把轻 1/9 改写成重 1/9。"
+      ],
+      "checks": [
+        {
+          "expression": "45*(1-1/9)",
+          "expected": "40"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-12",
+      "page": 54,
+      "source_key": "SRC-54-E",
+      "location": "练一练 5",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "原题历史总数约 1800，约 3/4 在指定地区内；求地区外数量。",
+      "required": [
+        "补足剩余份额",
+        "保留约数含义"
+      ],
+      "reference_answer": "约 450 只。",
+      "reasoning": [
+        "剩余份额 1/4，1800×1/4=450。",
+        "这些是题内历史条件，不是当前动物数量事实。"
+      ],
+      "checks": [
+        {
+          "expression": "1800*(1-3/4)",
+          "expected": "450"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-13",
+      "page": 54,
+      "source_key": "SRC-54-E",
+      "location": "练一练 6（1）",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "全程 12 km；环山路占 1/3，海滨路占 1/6。",
+      "required": [
+        "确认同一全程基准",
+        "求两部分长度差"
+      ],
+      "reference_answer": "2 km。",
+      "reasoning": [
+        "两段分别为 4 km 和 2 km，相差 2 km。",
+        "也可算 12×(1/3−1/6)，不是求全程剩余。"
+      ],
+      "checks": [
+        {
+          "expression": "12*(1/3-1/6)",
+          "expected": "2"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-54-14",
+      "page": 54,
+      "source_key": "SRC-54-E",
+      "location": "练一练 6（2）",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "全程 12 km，次年比原全程延长 5/12。",
+      "required": [
+        "识别新增量与新全程"
+      ],
+      "reference_answer": "17 km。",
+      "reasoning": [
+        "延长 5 km，新全程 12+5=17 km。"
+      ],
+      "checks": [
+        {
+          "expression": "12*(1+5/12)",
+          "expected": "17"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-55-01",
+      "page": 55,
+      "source_key": "SRC-55-A",
+      "location": "我的收获",
+      "template_refs": [],
+      "givens": "本单元知识与解题方法的回顾。",
+      "required": [
+        "整理内容及方法之间的关系",
+        "可交流个人仍不清楚的地方"
+      ],
+      "reference_answer": "开放回答，不设唯一数值答案。",
+      "reasoning": [
+        "可包含运算顺序、运算律、数量关系、图示与检查结果。",
+        "说自己懂了仅是自述，不能独立支持掌握；遗漏某一关键词也不能直接判错。"
+      ],
+      "checks": [],
+      "diagram_ref": null,
+      "reference_basis": "author_rubric_non_scored",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-55-02",
+      "page": 55,
+      "source_key": "SRC-55-B",
+      "location": "我的问题 · 百分数探索",
+      "template_refs": [],
+      "givens": "以原书的 5.38% 为例询问其含义及与分数的联系。",
+      "required": [
+        "回应探索性问题",
+        "保留当前目标映射缺口"
+      ],
+      "reference_answer": "5.38%=5.38/100=269/5000；表示相对基准的比例。",
+      "reasoning": [
+        "可解释百分数是以百分之一为单位的比例；这里比较的是增长量与旧总量。",
+        "本包没有百分数目标要求，不能据此记为该目标已覆盖或直接判为超纲。",
+        "原书人口数据仅作题内背景，不复述为当前统计。"
+      ],
+      "checks": [
+        {
+          "expression": "538/10000",
+          "expected": "269/5000"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_exploration_not_scored",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-55-03",
+      "page": 55,
+      "source_key": "SRC-55-C",
+      "location": "巩固与应用 1",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "故事书 200 本；科技书比故事书多其 1/4。",
+      "required": [
+        "解释图示基准与增加量",
+        "求科技书数量"
+      ],
+      "reference_answer": "250 本。",
+      "reasoning": [
+        "增加 50 本，科技书为 200+50=250 本。"
+      ],
+      "checks": [
+        {
+          "expression": "200*(1+1/4)",
+          "expected": "250"
+        }
+      ],
+      "diagram_ref": "FIG-FA-07",
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-55-04",
+      "page": 55,
+      "source_key": "SRC-55-C",
+      "location": "巩固与应用 2",
+      "template_refs": [
+        "PT-FA-COMPARE@1"
+      ],
+      "givens": "去年耗时 24 h，现在 18 h。",
+      "required": [
+        "求相对去年耗时的减少比例"
+      ],
+      "reference_answer": "1/4。",
+      "reasoning": [
+        "减少 6 h，以去年 24 h 为基准，6÷24=1/4。",
+        "不能把时间减少比例直接当作速度增加比例。"
+      ],
+      "checks": [
+        {
+          "expression": "(24-18)/24",
+          "expected": "1/4"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-56-01",
+      "page": 56,
+      "source_key": "SRC-56-A",
+      "location": "巩固与应用 3（1）（2）",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "冰 20 dm³；融水体积比原冰约减少 1/10。",
+      "required": [
+        "画图表示以冰为基准的减少关系",
+        "计算融水体积"
+      ],
+      "reference_answer": "约 18 dm³。",
+      "reasoning": [
+        "以冰为 10 份，减少 1 份，水为 9 份。",
+        "20×(1−1/10)=18；可先求减少量 2 再相减。",
+        "画图和计算是同题两个要求，分别留证；不要求图形像素完全相同。"
+      ],
+      "checks": [
+        {
+          "expression": "20*(1-1/10)",
+          "expected": "18"
+        }
+      ],
+      "diagram_ref": "FIG-FA-08",
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-56-02",
+      "page": 56,
+      "source_key": "SRC-56-A",
+      "location": "巩固与应用 4",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "全班 45 人，3/5 参加比赛，其余组成啦啦队。",
+      "required": [
+        "理解互补关系",
+        "求剩余人数"
+      ],
+      "reference_answer": "18 人。",
+      "reasoning": [
+        "未参赛占 2/5，45×2/5=18。",
+        "也可先算参赛 27，再从 45 中减去。"
+      ],
+      "checks": [
+        {
+          "expression": "45*(1-3/5)",
+          "expected": "18"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-56-03",
+      "page": 56,
+      "source_key": "SRC-56-B",
+      "location": "巩固与应用 5 · 上排左",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(2/7)*(5/12)*(14/15)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "1/9",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "(2/7)*(5/12)*(14/15)",
+          "expected": "1/9"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-56-04",
+      "page": 56,
+      "source_key": "SRC-56-B",
+      "location": "巩固与应用 5 · 上排中",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(5/9)*(6/15)/(4/9)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "1/2",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "(5/9)*(6/15)/(4/9)",
+          "expected": "1/2"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-56-05",
+      "page": 56,
+      "source_key": "SRC-56-B",
+      "location": "巩固与应用 5 · 上排右",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "(1+1/15)*10",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "32/3",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "(1+1/15)*10",
+          "expected": "32/3"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-56-06",
+      "page": 56,
+      "source_key": "SRC-56-B",
+      "location": "巩固与应用 5 · 下排左",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "36*(5/8)+36*(3/8)",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "36",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "36*(5/8)+36*(3/8)",
+          "expected": "36"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-56-07",
+      "page": 56,
+      "source_key": "SRC-56-B",
+      "location": "巩固与应用 5 · 下排中",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "4/(8/3)-3/5",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "9/10",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "4/(8/3)-3/5",
+          "expected": "9/10"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-56-08",
+      "page": 56,
+      "source_key": "SRC-56-B",
+      "location": "巩固与应用 5 · 下排右",
+      "template_refs": [
+        "PT-FA-EXPR@1"
+      ],
+      "givens": "98/((1/15)/(2/7))",
+      "required": [
+        "计算；若原题另要求说明顺序或规则，须分别核对。"
+      ],
+      "reference_answer": "420",
+      "reasoning": [
+        "按括号及四则顺序处理；除以非零数改乘其倒数。"
+      ],
+      "checks": [
+        {
+          "expression": "98/((1/15)/(2/7))",
+          "expected": "420"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-56-09",
+      "page": 56,
+      "source_key": "SRC-56-C",
+      "location": "巩固与应用 6",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "原题历史世界人均量 8400 m³；我国为其 1/4；问少多少。",
+      "required": [
+        "区别绝对差额和减少分数",
+        "保留正确单位"
+      ],
+      "reference_answer": "6300 m³。",
+      "reasoning": [
+        "我国题内量为 2100 m³，绝对差额 8400−2100=6300 m³。",
+        "3/4 是减少比例，尚未回答少多少立方米。"
+      ],
+      "checks": [
+        {
+          "expression": "8400*(1-1/4)",
+          "expected": "6300"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    },
+    {
+      "id": "REF-FA-56-10",
+      "page": 56,
+      "source_key": "SRC-56-C",
+      "location": "巩固与应用 7",
+      "template_refs": [
+        "PT-FA-COMBINE@1"
+      ],
+      "givens": "总字数 4500；已录入 4/9。",
+      "required": [
+        "求尚未完成的数量"
+      ],
+      "reference_answer": "2500 字。",
+      "reasoning": [
+        "剩余份额为 5/9，4500×5/9=2500。"
+      ],
+      "checks": [
+        {
+          "expression": "4500*(1-4/9)",
+          "expected": "2500"
+        }
+      ],
+      "diagram_ref": null,
+      "reference_basis": "author_derived",
+      "review_status": "author_checked_pending_independent_review"
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "FIG-FA-01",
+      "title": "三组人数的逐级关系",
+      "unit": "人",
+      "role": "answer_reference_only",
+      "rows": [
+        {
+          "label": "气象组",
+          "value": "12",
+          "parts": 3,
+          "origin": "given"
+        },
+        {
+          "label": "摄影组",
+          "value": "4",
+          "parts": 4,
+          "origin": "derived"
+        },
+        {
+          "label": "航模组",
+          "value": "3",
+          "parts": 3,
+          "origin": "result"
+        }
+      ],
+      "relations": [
+        {
+          "from": 0,
+          "to": 1,
+          "ratio": "1/3",
+          "origin": "原题明确给定"
+        },
+        {
+          "from": 1,
+          "to": 2,
+          "ratio": "3/4",
+          "origin": "原题明确给定"
+        }
+      ],
+      "notes": [
+        "各行采用相同人数尺度；中间量与末级量由作者解出。",
+        "末级是中间的 3/4，同时是初始量的 1/4；两个基准不能混用。"
+      ]
+    },
+    {
+      "id": "FIG-FA-02",
+      "title": "水果数量的两级份额",
+      "unit": "t",
+      "role": "answer_reference_only",
+      "rows": [
+        {
+          "label": "苹果",
+          "value": "10",
+          "parts": 5,
+          "origin": "given"
+        },
+        {
+          "label": "香蕉",
+          "value": "8",
+          "parts": 8,
+          "origin": "derived"
+        },
+        {
+          "label": "西瓜",
+          "value": "5",
+          "parts": 5,
+          "origin": "result"
+        }
+      ],
+      "relations": [
+        {
+          "from": 0,
+          "to": 1,
+          "ratio": "4/5",
+          "origin": "原图括线标明"
+        },
+        {
+          "from": 1,
+          "to": 2,
+          "ratio": "5/8",
+          "origin": "原图括线标明"
+        }
+      ],
+      "notes": [
+        "等分只在各自一行内定义，不要求每行都使用同一份额分母。",
+        "香蕉和西瓜的数值是答案参考；原题所求是西瓜数量。"
+      ]
+    },
+    {
+      "id": "FIG-FA-03",
+      "title": "球类图中的隐含比例",
+      "unit": "个",
+      "role": "answer_reference_only",
+      "rows": [
+        {
+          "label": "排球",
+          "value": "36",
+          "parts": 3,
+          "origin": "given"
+        },
+        {
+          "label": "足球",
+          "value": "24",
+          "parts": 4,
+          "origin": "derived"
+        },
+        {
+          "label": "篮球",
+          "value": "18",
+          "parts": 3,
+          "origin": "result"
+        }
+      ],
+      "relations": [
+        {
+          "from": 0,
+          "to": 1,
+          "ratio": "2/3",
+          "origin": "由排球三等分和足球终点对齐线读出"
+        },
+        {
+          "from": 1,
+          "to": 2,
+          "ratio": "3/4",
+          "origin": "原图括线标明"
+        }
+      ],
+      "notes": [
+        "原题没有直接写出足球占排球 2/3，不能说这是原文数字。",
+        "此图补入 24、18 便于审阅，不能当成未给帮助的检测输入。"
+      ]
+    },
+    {
+      "id": "FIG-FA-04",
+      "title": "同一差额，两个比较基准",
+      "unit": "cm³",
+      "role": "answer_reference_only",
+      "rows": [
+        {
+          "label": "水",
+          "value": "45",
+          "parts": 9,
+          "origin": "given"
+        },
+        {
+          "label": "冰（约）",
+          "value": "50",
+          "parts": 10,
+          "origin": "given"
+        }
+      ],
+      "relations": [
+        {
+          "from": 1,
+          "to": 0,
+          "ratio": "9/10",
+          "origin": "由两体积相除得到"
+        }
+      ],
+      "notes": [
+        "差额约 5 cm³：相对水为 5/45=1/9；相对冰为 5/50=1/10。",
+        "为了比较，本图将每份统一为 5 cm³；这是作者参考图的等分，不冒充原图已有刻度。"
+      ]
+    },
+    {
+      "id": "FIG-FA-05",
+      "title": "比基准量多四分之一",
+      "unit": "棵",
+      "role": "answer_reference_only",
+      "rows": [
+        {
+          "label": "桃树",
+          "value": "48",
+          "parts": 4,
+          "origin": "given"
+        },
+        {
+          "label": "梨树",
+          "value": "60",
+          "parts": 5,
+          "origin": "result"
+        }
+      ],
+      "relations": [
+        {
+          "from": 0,
+          "to": 1,
+          "ratio": "5/4",
+          "origin": "由多 1/4 得到总量系数"
+        }
+      ],
+      "notes": [
+        "原图的增加部分对应桃树的一份，即 12 棵。",
+        "原题问梨树总量；60 是参考答案。"
+      ]
+    },
+    {
+      "id": "FIG-FA-06",
+      "title": "两班捐书数量与总和",
+      "unit": "本",
+      "role": "answer_reference_only",
+      "rows": [
+        {
+          "label": "六（1）班",
+          "value": "150",
+          "parts": 6,
+          "origin": "given"
+        },
+        {
+          "label": "六（2）班",
+          "value": "125",
+          "parts": 5,
+          "origin": "derived"
+        }
+      ],
+      "relations": [
+        {
+          "from": 0,
+          "to": 1,
+          "ratio": "5/6",
+          "origin": "原图括线标明"
+        }
+      ],
+      "notes": [
+        "每份 25 本，第二班为 125 本；所求是两班总和 275 本。",
+        "两条分开画的线段表示不同班的数量，不是一个集合包含另一个集合。"
+      ]
+    },
+    {
+      "id": "FIG-FA-07",
+      "title": "两类图书的增加关系",
+      "unit": "本",
+      "role": "answer_reference_only",
+      "rows": [
+        {
+          "label": "故事书",
+          "value": "200",
+          "parts": 4,
+          "origin": "given"
+        },
+        {
+          "label": "科技书",
+          "value": "250",
+          "parts": 5,
+          "origin": "result"
+        }
+      ],
+      "relations": [
+        {
+          "from": 0,
+          "to": 1,
+          "ratio": "5/4",
+          "origin": "由多 1/4 得到总量系数"
+        }
+      ],
+      "notes": [
+        "增加的一份是 50 本；科技书总量为 250 本。"
+      ]
+    },
+    {
+      "id": "FIG-FA-08",
+      "title": "融水相对冰减少一成",
+      "unit": "dm³",
+      "role": "answer_reference_only",
+      "rows": [
+        {
+          "label": "冰",
+          "value": "20",
+          "parts": 10,
+          "origin": "given"
+        },
+        {
+          "label": "水（约）",
+          "value": "18",
+          "parts": 9,
+          "origin": "result"
+        }
+      ],
+      "relations": [
+        {
+          "from": 0,
+          "to": 1,
+          "ratio": "9/10",
+          "origin": "由减少 1/10 得到剩余系数"
+        }
+      ],
+      "notes": [
+        "以原冰 20 dm³ 为基准，每份 2 dm³，减少一份。",
+        "画图只需正确表达基准、减少量和剩余量；不要求照抄此图外观。"
+      ]
+    }
+  ],
+  "limitations": [
+    "作者阅读与推导仍可能有误，正式接收须由管理员核对；未取得独立答案册。",
+    "数值检查只证实记录的表达式与答案一致，不证明原图识别或教学评价准确。",
+    "百分数探索有解释参考但无本包目标映射；开放反思不设唯一正确答案。",
+    "原始页图的长期存储、裁切和实际服务使用条件继续在教材接收中处理。"
+  ]
+}

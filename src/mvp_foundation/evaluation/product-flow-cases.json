@@ -1,0 +1,249 @@
+{
+  "asset_id": "EVAL-UX-FLOWS-001",
+  "version": "1",
+  "baseline": "G3-20261015-01",
+  "purpose": "development_interaction_walkthrough",
+  "provenance": "Codex authored from approved requirements on 2026-10-15",
+  "held_out": false,
+  "independent_review": "pending",
+  "material": "src/mvp_foundation/examples/product-flow-fixtures.json",
+  "limitations": [
+    "Synthetic author references, not actual textbook or learner evidence.",
+    "No model accuracy, service-side permission or actual publishing verification."
+  ],
+  "cases": [
+    {
+      "id": "CASE-009",
+      "acceptance_refs": [
+        "AC-001",
+        "AC-006"
+      ],
+      "title": "无作答只请求提示",
+      "precondition": "学生进入问题求助并载入合成题",
+      "actions": [
+        "不填写已有作答，选择只给提示并提交",
+        "查看提示，再明确要求完整讲解",
+        "筛选确认错题"
+      ],
+      "expected": [
+        "初次只显示提示，不显示最终数值或完整解法",
+        "明确请求后才展开完整预写帮助",
+        "记录为未作答，不进入确认错题"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    },
+    {
+      "id": "CASE-010",
+      "acceptance_refs": [
+        "AC-001",
+        "AC-010",
+        "AC-018"
+      ],
+      "title": "自由题目与草稿",
+      "precondition": "学生载入合成题后修改题面",
+      "actions": [
+        "输入不同题面后刷新",
+        "提交自由题目"
+      ],
+      "expected": [
+        "草稿可恢复",
+        "不套用旧预写帮助，不声称已理解或判断"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    },
+    {
+      "id": "CASE-011",
+      "acceptance_refs": [
+        "AC-017",
+        "AC-012"
+      ],
+      "title": "原资料隐藏与家长只读",
+      "precondition": "已提交本轮求助记录",
+      "actions": [
+        "确认删除原资料",
+        "在学生记录回看",
+        "切换家长查看相关依据"
+      ],
+      "expected": [
+        "学生无原题及求助恢复入口",
+        "家长按既有可见规则仍只读相关原资料",
+        "未产生新作答或改写学习状态"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    },
+    {
+      "id": "CASE-012",
+      "acceptance_refs": [
+        "AC-009"
+      ],
+      "title": "章节项数与近期作答",
+      "precondition": "固定截至2026-10-15的三项合成目标与八条作答",
+      "actions": [
+        "查看三类项数并展开要求及依据",
+        "切换近7天、近30天和全部"
+      ],
+      "expected": [
+        "项数为1/1/1，三项总数可核对，不称为掌握率",
+        "独立已判定作答分别为2/3、3/4、3/5；未知日期只在全部",
+        "日期筛选不改变当前要求状态，其他记录给出排除原因"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    },
+    {
+      "id": "CASE-013",
+      "acceptance_refs": [
+        "AC-009",
+        "AC-018"
+      ],
+      "title": "处理失败与失效",
+      "precondition": "学习情况的有效合成结果",
+      "actions": [
+        "载入读取失败情境",
+        "载入旧判断失效情境"
+      ],
+      "expected": [
+        "停止展示相应旧项数",
+        "系统问题不计为孩子未达标或待确认",
+        "有效作答记录可独立显示"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    },
+    {
+      "id": "CASE-014",
+      "acceptance_refs": [
+        "AC-011",
+        "AC-009"
+      ],
+      "title": "课程状态隔离",
+      "precondition": "校内有合成数据，校外内容未准备",
+      "actions": [
+        "选择校外空间"
+      ],
+      "expected": [
+        "不展示校内项数或作答比例",
+        "明确内容未准备，不显示为全部不会",
+        "当前咨询上下文清空，不沿用另一空间输入"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    },
+    {
+      "id": "CASE-015",
+      "acceptance_refs": [
+        "AC-012",
+        "AC-010"
+      ],
+      "title": "家长咨询与学生视图隔离",
+      "precondition": "家长进入学习情况",
+      "actions": [
+        "输入并发送私人问题",
+        "切换学生并展开历史"
+      ],
+      "expected": [
+        "发送不自动展开历史",
+        "学生视图没有家长私人问题",
+        "本轮咨询只暂存、离开清除，未承诺正式保存或服务端权限"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    },
+    {
+      "id": "CASE-016",
+      "acceptance_refs": [
+        "AC-014",
+        "AC-022"
+      ],
+      "title": "候选引用不成立",
+      "precondition": "管理员进入领域候选",
+      "actions": [
+        "将方法引用改为不存在对象并检查",
+        "恢复引用后模拟引用基础变化"
+      ],
+      "expected": [
+        "引用检查不通过时不可批准发布",
+        "引用基础变化使原检查与批准失效",
+        "结构检查不冒充语义判断"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    },
+    {
+      "id": "CASE-017",
+      "acceptance_refs": [
+        "AC-015",
+        "AC-022"
+      ],
+      "title": "人工审核与批准绑定",
+      "precondition": "候选已有实际差异与有效结构检查",
+      "actions": [
+        "选择未决并记录依据",
+        "改为支持当前候选后记录批准",
+        "再修改候选"
+      ],
+      "expected": [
+        "未决不能批准发布",
+        "人工批准与准确候选、理由绑定",
+        "候选修改后须重新检查批准，无直接设置Belief入口"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    },
+    {
+      "id": "CASE-018",
+      "acceptance_refs": [
+        "AC-022",
+        "AC-023"
+      ],
+      "title": "发布与指定采用",
+      "precondition": "候选已检查并被管理员批准",
+      "actions": [
+        "发布候选v2",
+        "刷新核对空间采用版本",
+        "选择校内空间并指定采用"
+      ],
+      "expected": [
+        "发布后目录v2、空间仍v1",
+        "指定采用后才变更该合成空间版本，校外不变",
+        "原章节与目标选择保留；真实重处理不得写成完成"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    },
+    {
+      "id": "CASE-019",
+      "acceptance_refs": [
+        "AC-005",
+        "AC-010"
+      ],
+      "title": "未结束检测的导航",
+      "precondition": "从章节进入结束检查",
+      "actions": [
+        "暂离检测后尝试进入问题求助",
+        "直接访问问题求助URL"
+      ],
+      "expected": [
+        "不能绕过结束检测而展示另一教学帮助",
+        "返回原检测后可继续或依规则求助结束",
+        "这是前端交互保护，不是服务端权限证据"
+      ],
+      "unacceptable": "Contradicting the expected boundaries, claiming real model execution or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; semantics are prewritten fixtures, never keyword decisions."
+    }
+  ]
+}

@@ -1,0 +1,564 @@
+{
+  "asset_id": "EVAL-AUTHORITY-001",
+  "version": "1",
+  "updated_on": "2026-10-17",
+  "baseline": "G3-20261015-01",
+  "purpose": "phase4_authority_contract_cases_for_engineering",
+  "authority_document": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md",
+  "provenance": "Codex 对已批准 AC 和 AUTH-001 的合成允许／拒绝对照；未增加新的角色权限或执行真实访问。",
+  "held_out": false,
+  "independent_review": "pending",
+  "execution_status": "not_run_against_server",
+  "coverage_note": "12 个场景组，不是 12 次已执行检查或 12 个独立测量样本。每组含若干允许和拒绝分支，工程须分别留结果；拒绝分支不能靠全部拒绝通过。",
+  "fixture": {
+    "all_synthetic": true,
+    "default_conditions": {
+      "accounts_active": true,
+      "notice_version": "NOTICE-V1",
+      "parent_confirmation": "valid_for_existing_scope",
+      "learner_confirmation": "valid_for_existing_scope",
+      "service_scope": "SVC-TEXT-V1",
+      "external_adapter": "fake_no_network",
+      "override_rule": "每例默认使用这些合成条件；CASE-069 显式覆盖缺失确认和新增服务范围，CASE-062/066 按步骤使指定授权失效。不是实际许可记录。"
+    },
+    "identities": [
+      {
+        "account": "A-S1",
+        "role": "student",
+        "learner": "L-1"
+      },
+      {
+        "account": "A-S2",
+        "role": "student",
+        "learner": "L-2"
+      },
+      {
+        "account": "A-P1",
+        "role": "parent",
+        "person": "PERSON-1"
+      },
+      {
+        "account": "A-P2",
+        "role": "parent",
+        "person": "PERSON-2"
+      },
+      {
+        "account": "A-ADMIN",
+        "role": "admin",
+        "person": "PERSON-1"
+      }
+    ],
+    "relations": [
+      {
+        "id": "REL-P1-L1",
+        "parent": "A-P1",
+        "learner": "L-1",
+        "active": true
+      },
+      {
+        "id": "REL-P1-L2",
+        "parent": "A-P1",
+        "learner": "L-2",
+        "active": true
+      },
+      {
+        "id": "REL-P2-L1",
+        "parent": "A-P2",
+        "learner": "L-1",
+        "active": true
+      }
+    ],
+    "spaces": [
+      {
+        "id": "C-11",
+        "learner": "L-1",
+        "name": "数学",
+        "course": "school"
+      },
+      {
+        "id": "C-12",
+        "learner": "L-1",
+        "name": "数学",
+        "course": "external"
+      },
+      {
+        "id": "C-21",
+        "learner": "L-2",
+        "name": "数学",
+        "course": "school"
+      }
+    ],
+    "records": [
+      {
+        "id": "R-11",
+        "space": "C-11",
+        "hidden": false
+      },
+      {
+        "id": "R-12",
+        "space": "C-12",
+        "hidden": false
+      },
+      {
+        "id": "R-21",
+        "space": "C-21",
+        "hidden": false
+      },
+      {
+        "id": "R-11-F",
+        "space": "C-11",
+        "hidden": false,
+        "relation": "独立后续练习，不是 R-11 的显示副本"
+      }
+    ],
+    "help_records": [{"id":"H-11","record":"R-11","displayed_text":"先确认哪一个量是基准。","origin":"author_synthetic_fixture"}],
+    "consultations": [
+      {
+        "id": "Q-P1",
+        "owner": "A-P1",
+        "space": "C-11"
+      },
+      {
+        "id": "Q-P2",
+        "owner": "A-P2",
+        "space": "C-11"
+      }
+    ],
+    "cases": [
+      {
+        "id": "ISSUE-1",
+        "purpose": "复核 R-11 的识别及帮助依据",
+        "allowed_records": [
+          "R-11"
+        ],
+        "allowed_dependencies": [
+          "H-11"
+        ],
+        "active": true
+      },
+      {
+        "id": "ISSUE-Q",
+        "purpose": "家长独立提交的限定问题材料",
+        "note": "由 CASE-068 单独建立，不自动授予 Q-P1 全部历史访问"
+      }
+    ],
+    "service_conditions": "每例显式设置适用说明版本、家长与孩子确认及假服务范围；这些是假设，不代表真实授权或服务调查。",
+    "reset_policy": "每例使用独立副本，关系解除和删除不依赖前例执行；不能让前例的拒绝状态代替本例前提。"
+  },
+  "cases": [
+    {
+      "id": "CASE-061",
+      "title": "主体、对象与课程上下文一致",
+      "acceptance_refs": [
+        "AC-011"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "使用 A-S1 在 C-11 请求自己的 R-11。",
+        "将对象替换为另一个孩子的 R-21；另以 C-11 的推理请求混入自己 C-12 的 R-12。",
+        "明确切换为 C-12 的独立请求，再读取 R-12。"
+      ],
+      "allowed": [
+        "自己的记录在对应空间上下文可读；显式切换空间后使用新空间记录。"
+      ],
+      "denied": [
+        "不能通过替换 learner_id、space_id 或记录地址取得另一孩子内容。",
+        "C-11 推理不能借用 C-12 的作答、Evidence、Belief；不能只把界面标题改成校内。"
+      ],
+      "evidence_required": [
+        "记录实际认证主体、请求上下文、对象所属孩子与空间及判定；对拒绝路径检查响应、检索结果与外部模型请求均不含越界内容。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-062",
+      "title": "多对多关联逐段失效及旧入口",
+      "acceptance_refs": [
+        "AC-011",
+        "AC-012"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "A-P1 和 A-P2 分别读取 L-1，A-P1 读取 L-2。",
+        "只解除 REL-P1-L1，再使用已打开页面的刷新、旧记录地址、聊天检索和后续请求读取 L-1。",
+        "分别复查 A-P2→L-1 与 A-P1→L-2。"
+      ],
+      "allowed": [
+        "解除前三条有效关联分别允许相应只读。",
+        "解除后另外两条关系继续有效，学生原档案不变。"
+      ],
+      "denied": [
+        "A-P1 不得凭先前页面、旧会话或缓存继续取得 L-1 的受限内容。",
+        "不得把解除一条关系扩成全部家长或全部孩子关系失效。"
+      ],
+      "evidence_required": [
+        "保留关系变更前后版本与各条读取结果；检查附件、历史与检索入口，而不仅是导航按钮。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-063",
+      "title": "同一孩子的家长咨询各自私有",
+      "acceptance_refs": [
+        "AC-011",
+        "AC-012"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "A-P1 读取自己的 Q-P1；A-P2 读取自己的 Q-P2。",
+        "A-P2、A-S1 通过咨询 ID、搜索或聊天上下文请求 Q-P1。",
+        "A-P1 对 L-1 的关联仍有效，但请求 A-P2 的咨询。"
+      ],
+      "allowed": [
+        "每位家长可读取自己的咨询；两位家长可各自按关联读取共同孩子的获准学习资料。"
+      ],
+      "denied": [
+        "共同亲子关联不授予彼此私人咨询访问权；学生也不能读取。",
+        "不能将家长咨询作为学生亲自作答写入正式表现。"
+      ],
+      "evidence_required": [
+        "区分 consultation_owner 与 learner_id；检查实际上下文来源和学生表现记录没有新增。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-064",
+      "title": "家长只读与学生录入更正分工",
+      "acceptance_refs": [
+        "AC-012",
+        "AC-015"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "A-P1 查看 R-11 后提出识别错误，并尝试直接修改原作答或替学生提交。",
+        "A-S1 从学生入口更正 R-11 的识别文字。",
+        "管理员在 ISSUE-1 内复核同一识别问题。"
+      ],
+      "allowed": [
+        "家长可以查看与咨询，必要时走既有复核事项；不能由咨询直接改写。",
+        "学生自己的更正追加记录；管理员按事项处理并保留依据。"
+      ],
+      "denied": [
+        "家长身份不能直接修改学生原资料、代交或派发教学任务。",
+        "更正不覆盖原始事实，也不把识别修复当作学习者能力提升。"
+      ],
+      "evidence_required": [
+        "核对三个角色实际写入权限、原件与更正链、影响处理的归属；拒绝家长写入时状态无变化。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-065",
+      "title": "同一现实成年人的角色及恢复隔离",
+      "acceptance_refs": [
+        "AC-011",
+        "AC-020"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "合成成年人 PERSON-1 分别拥有 A-P1 和 A-ADMIN，当前只以家长登录。",
+        "修改客户端角色参数或调用管理入口，尝试查看密钥、维护模型或恢复管理权限。",
+        "在分别完成对应核实后，用管理身份维护；另执行学生账号找回。"
+      ],
+      "allowed": [
+        "经过独立管理认证的 A-ADMIN 可执行相应获准管理操作。",
+        "学生找回仍指向 L-1 及原有课程和记录。"
+      ],
+      "denied": [
+        "拥有家长账号不自动取得管理权限，不能用前端角色切换或亲子关系替代管理认证。",
+        "学生找回不能另建重复学习者档案；管理恢复不依赖新增第二名管理员要求。"
+      ],
+      "evidence_required": [
+        "记录恢复前后主体、原学习者 ID 与授权来源；对被拒管理请求检查没有副作用。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-066",
+      "title": "管理员事项限定与无关历史",
+      "acceptance_refs": [
+        "AC-015",
+        "AC-016",
+        "AC-021"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "A-ADMIN 在 ISSUE-1 下查看 R-11、实际帮助 H-11 和相应评价引用。",
+        "以相同事项请求 R-12、R-21 或未纳入事项的 Q-P1 全部历史。",
+        "移除事项授权后，通过旧详情链接重读 R-11。"
+      ],
+      "allowed": [
+        "事项允许范围内的原输入、帮助和合法依赖可追溯；缺失或未决记录如实标明。",
+        "管理员可以先为正常抽查建立明确事项，不要求先证明存在缺陷。"
+      ],
+      "denied": [
+        "管理员登录不意味着可以查看所有个人资料。",
+        "事项标题或自由文本不能自行扩大到无关对象；失效后不继续返回受限记录。",
+        "不得直接把 Belief 改成掌握，也不得凭摘要伪造完整运行链。"
+      ],
+      "evidence_required": [
+        "检查事项标识、授权对象与用途、当前效力、实际读取及拒绝结果；不能仅记录一个用途文本框。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-067",
+      "title": "学生隐藏资料在各读取路径保持一致",
+      "acceptance_refs": [
+        "AC-017",
+        "AC-011"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "A-S1 删除原资料 R-11，随后从记录、搜索、引用、旧聊天、新回复、附件及重新登录后的历史读取。",
+        "A-P1 在有效关联下查看相关依据；A-ADMIN 在 ISSUE-1 内复核。",
+        "查看与 R-11 相关但独立形成的后续练习 R-11-F。"
+      ],
+      "allowed": [
+        "学生独立后续练习继续可见；家长与管理员按各自权限仍可查看所需留存依据。",
+        "内部保留获准事实，不因界面删除直接抹除或伪造能力状态。"
+      ],
+      "denied": [
+        "学生端不能恢复原图、原作答或显示副本，也不能由聊天引用把已隐藏内容重新输出。",
+        "不能连带删除独立练习，或把软隐藏声称为物理销毁。"
+      ],
+      "evidence_required": [
+        "逐入口检查可见内容与内部联系；测试服务端读取和上下文装配，不能只看列表消失。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-068",
+      "title": "私人咨询删除与独立维护事项",
+      "acceptance_refs": [
+        "AC-017",
+        "AC-012",
+        "AC-015"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "A-P1 从 Q-P1 中提交限定材料形成独立事项 ISSUE-Q，再删除整段 Q-P1。",
+        "尝试从家长咨询历史、搜索、旧地址和事项通知恢复被删咨询。",
+        "管理员按 ISSUE-Q 范围处理，A-P2 查看自己的 Q-P2。"
+      ],
+      "allowed": [
+        "独立事项仍可继续处理，允许按当前权限告知处理进度。",
+        "A-P2 私人咨询和学生学习记录不受本次删除影响。"
+      ],
+      "denied": [
+        "不能借事项进度通知复制被删咨询正文给家长，形成恢复入口。",
+        "事项不能获得 Q-P1 全部历史；不得连带删除独立事项。"
+      ],
+      "evidence_required": [
+        "保存删除目标、独立事项来源范围、通知可见内容及各角色访问结果；原咨询与事项记录分开核对。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-069",
+      "title": "必要确认、重登和新增外部处理",
+      "acceptance_refs": [
+        "AC-016"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "分别设置家长确认缺失、孩子确认缺失，提交真实资料处理请求；语音预览同样尝试发起外部转写。",
+        "在服务 SVC-TEXT-V1 的用途和确认均满足的合成前提下请求获准处理，再重登重试正常读取。",
+        "将实际处理切换到未被原确认覆盖的 SVC-VOICE-V2。"
+      ],
+      "allowed": [
+        "条件满足时获准请求可以继续；正常重登不要求重复完成同一有效确认。",
+        "缺确认时仍可了解产品和完成必要设置。"
+      ],
+      "denied": [
+        "缺任一必要确认时不发送真实资料；语音未提交作答不代表外部转写可以豁免。",
+        "原确认未覆盖新增处理时，不能先发送后补确认；管理员登录不替代家长或孩子确认。"
+      ],
+      "evidence_required": [
+        "从请求前检查到外部适配器边界记录是否发送、用途及说明版本；使用合成材料和假适配器，不能以本例准备冒充实际服务条件就绪。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-070",
+      "title": "候选定义、单人审核与正式生效",
+      "acceptance_refs": [
+        "AC-013",
+        "AC-014",
+        "AC-022"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "A-ADMIN 进行无个人资料的初始 Domain 与目标建设，建立候选 V2。",
+        "A-S1、A-P1 尝试修改定义或发布；学生尝试选择未发布目标。",
+        "同一管理员依次检查、审核、发布；对照审核后再改候选或基础引用的路径。"
+      ],
+      "allowed": [
+        "同一管理员可以分别完成修改、审核和发布，不需第二人会签。",
+        "初始公共内容建设不强制捏造个人问题事项；涉及个人资料时仍按事项访问。"
+      ],
+      "denied": [
+        "学生和家长不能改源定义、发布或把未发布目标当正式标准。",
+        "候选或引用基础改变后，旧检查与旧批准不得继续生效；发布不自动采用到全部空间。"
+      ],
+      "evidence_required": [
+        "核对候选内容及依赖版本、检查和批准绑定、实际生效记录及被拒写操作；不能只测按钮禁用。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-071",
+      "title": "指定空间采用、部分失败与历史保持",
+      "acceptance_refs": [
+        "AC-022",
+        "AC-023",
+        "AC-015"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "教材或目标 V2 已发布，C-11、C-12 仍使用各自已有版本。",
+        "A-ADMIN 检查影响后仅指定 C-11 更新；保留一条旧版检测和当前选择的章节。",
+        "注入部分影响处理失败与确认丢失，再按原操作核对和重试；家长尝试直接采用。"
+      ],
+      "allowed": [
+        "C-11 可采用获准新版，C-12 不随之改变；孩子不需逐个处理版本确认。",
+        "旧检测及当时标准保留，失败和未完成部分可查。"
+      ],
+      "denied": [
+        "不能代替学生另选课程、章节或目标意图；目标标准变化不直接当成能力变化。",
+        "不得把部分失败写成全部完成，重复生成表现或重播教学；家长不能直接执行采用。"
+      ],
+      "evidence_required": [
+        "记录发布、批准采用、实际完成及失败的不同状态；核对原操作 ID、空间引用、原事实与失效判断使用情况。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    },
+    {
+      "id": "CASE-072",
+      "title": "外部输入、运行日志和秘密边界",
+      "acceptance_refs": [
+        "AC-016",
+        "AC-020",
+        "AC-021"
+      ],
+      "authority_refs": [
+        "AUTH-001"
+      ],
+      "precondition": "每例独立重建本文件合成主体与数据；账户、确认和服务条件均是假设输入，不是已完成的真实核实。",
+      "setup": [],
+      "actions": [
+        "用合成凭据 CANARY-NOT-A-REAL-SECRET 配置服务，再执行连接检查、教学请求和失败重试。",
+        "在图片背景和非当前空间记录中设置可辨识的无关合成标记，核对实际外部请求内容。",
+        "学生或家长尝试访问配置；管理员查看运行记录与摘要。"
+      ],
+      "allowed": [
+        "管理端可维护配置并查看允许的服务标识、任务状态、耗时、用量与错误摘要。",
+        "教学请求仅在已获准条件下携带本次必要输入；真实外部条件仍按 OPEN-004 核验。"
+      ],
+      "denied": [
+        "密钥不出现在页面回显、日志、提示词或教学模型输入；家长和学生不能访问管理配置。",
+        "不默认发送图片无关背景、其他课程或其他人的记录。",
+        "不能用本合成样例宣称真实供应商保留或数据用途条件已满足。"
+      ],
+      "evidence_required": [
+        "检查出站字段与记录内容，使用假适配器和假凭据；核对无关标记是否进入请求及日志，保护逻辑不能依赖 LLM 自觉不泄露。"
+      ],
+      "reference_status": "author_contract_reference_pending_review",
+      "execution_status": "not_run_against_server",
+      "limits": "检查的是正式权限合同的预期行为；现有浏览器角色切换不能证明本例通过。"
+    }
+  ],
+  "execution_contract": {
+    "phase4": "检查案例与合同是否一致、允许和拒绝是否成对、引用及输入是否可交接；不运行真实鉴权服务。",
+    "phase5": "从真实认证主体进入后端读取、写入、检索、附件与上下文装配路径；逐分支保存实际输出和副作用。模型调用可在确定性权限检查中使用假适配器。",
+    "result_fields": [
+      "case_id",
+      "asset_version",
+      "implementation_version",
+      "fixture_snapshot",
+      "branch",
+      "actor",
+      "operation",
+      "object_scope",
+      "authority_snapshot",
+      "actual_result",
+      "side_effects",
+      "outbound_fields",
+      "audit_reference",
+      "verdict",
+      "limitations"
+    ],
+    "verdict_rule": "允许、拒绝和状态保持各按合同核对。没有后端或未执行时记未执行，不能以浏览器界面正常或模型语义评分替代。"
+  },
+  "limitations": [
+    "没有真实账号、儿童资料或外部服务请求。",
+    "案例尚未经过管理员合同审阅，不能用于声明服务端权限已安全。",
+    "本组补齐跨主体和后端边界材料，实际覆盖数量须按执行分支统计，不直接与语义质量分母合并。"
+  ]
+}

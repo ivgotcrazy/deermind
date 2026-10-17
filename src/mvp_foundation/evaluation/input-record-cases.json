@@ -1,0 +1,182 @@
+{
+  "asset_id": "EVAL-UX-RECORDS-001",
+  "version": "1",
+  "baseline": "G3-20261015-01",
+  "purpose": "development_interaction_walkthrough",
+  "provenance": "Codex authored from approved requirements on 2026-10-15",
+  "held_out": false,
+  "independent_review": "pending",
+  "material": "src/mvp_foundation/examples/input-fixture.json",
+  "limitations": [
+    "Author-defined synthetic inputs and actual local UI operations only.",
+    "No actual OCR, audio, authentication, semantic inference or reprocessing."
+  ],
+  "cases": [
+    {
+      "id": "CASE-028",
+      "acceptance_refs": [
+        "AC-010"
+      ],
+      "title": "同题跨页核对与提交",
+      "precondition": "从可重置的合成原型开始，按步骤准备实际页面记录；不使用真实儿童资料。",
+      "actions": [
+        "载入同题图片或PDF页示例",
+        "修正预写识别、确认同题归属与内容",
+        "转入草稿，再明确提交"
+      ],
+      "expected": [
+        "未确认不能使用，转入草稿不等于提交",
+        "原材料、识别和最终文字分别保留，无正式判分"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real semantic, security, media or canonical publication verification.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI state, preserved inputs and local traces; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-029",
+      "acceptance_refs": [
+        "AC-010",
+        "AC-018"
+      ],
+      "title": "实际浏览器笔迹",
+      "precondition": "从可重置的合成原型开始，按步骤准备实际页面记录；不使用真实儿童资料。",
+      "actions": [
+        "书写、撤销、刷新",
+        "补充题意后提交"
+      ],
+      "expected": [
+        "草稿与已提交笔迹可回看",
+        "没有运行手写识别，不把书写中状态记为表现"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real semantic, security, media or canonical publication verification.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI state, preserved inputs and local traces; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-030",
+      "acceptance_refs": [
+        "AC-010"
+      ],
+      "title": "语音取消与转写修改",
+      "precondition": "从可重置的合成原型开始，按步骤准备实际页面记录；不使用真实儿童资料。",
+      "actions": [
+        "开始并取消录音演示",
+        "重新预览转写，修改并提交"
+      ],
+      "expected": [
+        "取消不形成记录",
+        "原话脚本、原转写和发送文本分开；无实际收音播放"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real semantic, security, media or canonical publication verification.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI state, preserved inputs and local traces; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-031",
+      "acceptance_refs": [
+        "AC-006",
+        "AC-011"
+      ],
+      "title": "跨来源与空间回看",
+      "precondition": "从可重置的合成原型开始，按步骤准备实际页面记录；不使用真实儿童资料。",
+      "actions": [
+        "提交外部求助、章节练习及已结束检测",
+        "按空间、来源及确认错题筛选",
+        "切换独立的预写参考入口"
+      ],
+      "expected": [
+        "各来源保留性质和帮助背景，打开不新增表现",
+        "未判定不算错题；参考判断不冒充本轮结果"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real semantic, security, media or canonical publication verification.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI state, preserved inputs and local traces; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-032",
+      "acceptance_refs": [
+        "AC-006",
+        "AC-015"
+      ],
+      "title": "资料更正与新订正",
+      "precondition": "从可重置的合成原型开始，按步骤准备实际页面记录；不使用真实儿童资料。",
+      "actions": [
+        "对外部提交追加资料更正",
+        "另保存一次订正及帮助说明",
+        "刷新回看"
+      ],
+      "expected": [
+        "更正不计新作答，新订正另留记录",
+        "原表现保留，无自动掌握判断或正式重算"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real semantic, security, media or canonical publication verification.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI state, preserved inputs and local traces; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-033",
+      "acceptance_refs": [
+        "AC-017",
+        "AC-021"
+      ],
+      "title": "隐藏副本及按用途追溯",
+      "precondition": "从可重置的合成原型开始，按步骤准备实际页面记录；不使用真实儿童资料。",
+      "actions": [
+        "学生隐藏同题原资料",
+        "重新打开记录入口",
+        "管理员填写用途打开相关原件及变化"
+      ],
+      "expected": [
+        "学生看不到原件及关联副本",
+        "内部事实保留，未执行模型环节明确标识；不声明服务端权限通过"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real semantic, security, media or canonical publication verification.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI state, preserved inputs and local traces; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-034",
+      "acceptance_refs": [
+        "AC-015",
+        "AC-021",
+        "AC-022"
+      ],
+      "title": "案例到候选与发布",
+      "precondition": "从可重置的合成原型开始，按步骤准备实际页面记录；不使用真实儿童资料。",
+      "actions": [
+        "从具体记录建立未决线索",
+        "另立领域方向事项并转候选维护",
+        "检查、批准、发布后回看事项"
+      ],
+      "expected": [
+        "非领域方向不能直接转领域编辑器",
+        "候选绑定来源事项，发布追加版本；不自动解决实际影响"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real semantic, security, media or canonical publication verification.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI state, preserved inputs and local traces; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-035",
+      "acceptance_refs": [
+        "AC-022",
+        "AC-023",
+        "AC-004"
+      ],
+      "title": "教材指定采用与旧题单",
+      "precondition": "从可重置的合成原型开始，按步骤准备实际页面记录；不使用真实儿童资料。",
+      "actions": [
+        "先以v1完成一次检测并准备另一次",
+        "管理员发布教材v2、核对影响、指定该课程采用",
+        "返回旧准备与历史记录"
+      ],
+      "expected": [
+        "缺少影响核对不能采用",
+        "旧准备需重新预览，旧检测版本和原章节不变"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real semantic, security, media or canonical publication verification.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI state, preserved inputs and local traces; no keyword semantic judgement."
+    }
+  ]
+}

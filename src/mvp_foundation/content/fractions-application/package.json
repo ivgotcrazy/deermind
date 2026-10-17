@@ -1,0 +1,172 @@
+{
+  "asset_id": "CONTENT-BNU-6A-U4-001",
+  "version": "1",
+  "format_version": "candidate-content-1",
+  "updated_on": "2026-10-17",
+  "baseline": "G3-20261015-01",
+  "status": "author_draft_pending_administrator_review",
+  "activation": "not_published_not_adopted",
+  "purpose": "Phase 4 实际章节的内容、映射、目标和评价参考候选；不是运行时通用 Schema。",
+  "author": "Codex",
+  "review": {"content": "pending", "target": "pending", "evaluation_reference": "pending", "reviewer": null},
+  "source": {
+    "source_ref": "SRC-025",
+    "intake_ref": "INTAKE-SCHOOL-001",
+    "url": "https://www.100875.com.cn/show/eBookAndTeacher.html?resId=7965194976af40f5b9abc4b3f89522fe&bookId=120170718181616017047&firstNum=120170718181616017047&contributeId=9276",
+    "title": "北师大版数学六年级上册",
+    "unit": "第四单元 分数的应用",
+    "printed_pages": [49, 56],
+    "image_indices": [52, 59],
+    "edition_basis": "后记称本套教材为第五版，依据 2022 年版课标；具体出版年和印次待核。",
+    "read_on": "2026-10-16",
+    "method": "Codex 逐页阅读并整理；不等于独立人工审核。2026-10-17 再次核对八页的题目与图示。",
+    "content_note": "只保存内容定位、结构摘要与原创候选，不复制整章图片或整套原题文本。教材的历史数据仅作为原题条件，不作为当前现实统计。",
+    "answers": "部分例题含推导；未取得独立答案册。原创题与逐小题参考均为作者候选，source-references.json 区分原书已展示推导与作者解答。"
+  },
+  "ownership": {
+    "problem_templates": "Domain Space",
+    "solution_templates": "Domain Space",
+    "knowledge_components": "Domain Space",
+    "material_and_mappings": "Learning Space",
+    "target": "Learning Space",
+    "claims_and_evidence_reference": "Evaluation Space",
+    "lesson_outline": "Interaction 的内容输入；不预先决定实际 Policy",
+    "learner_state": "本资产不包含任何真实学习者状态或当前 Belief"
+  },
+  "reference_convention": "本包对象均为 v1 候选；每个跨对象引用写成 id@1。章节和定位是 LearningMaterial 内部结构，具体题目是内容资产，不增加 Domain 核心对象类型。",
+  "source_reference_asset": {"id":"REFERENCE-BNU-6A-U4-001","version":"1","path":"source-references.json","purpose":"51 条教材定位参考与 8 幅解答关系图，尚待独立复核；不是正式未见检测输入。"},
+  "scope_decisions": [{"decision_ref":"DEC-019","source_ref":"SRC-026","confirmed_on":"2026-10-17","scope":"non_integral_trip_count","allowed_uses":["optional_practice","transfer_probe"],"first_batch_required_assessment":false,"note":"首批不把非整除运次列为章节达标必测；领域仍可表达该变化，实际表现按适用条件保留与解释。用途确认不等于内容审核或发布。"}],
+  "material": {
+    "id": "LM-BNU-6A-U4", "version": "1",
+    "scope": "仅本单元；不代表全册已准备",
+    "sections": [
+      {"key": "u4-a", "title": "分数的应用（一）", "pages": [49, 51]},
+      {"key": "u4-b", "title": "分数的应用（二）", "pages": [52, 54]},
+      {"key": "u4-review", "title": "整理与复习", "pages": [55, 56]}
+    ],
+    "inventory": [
+      {"key":"SRC-49-A","section":"u4-a","pages":[49,50],"location":"本节主例","summary":"逐级份额关系，要求说理、画图及计算；给出分步和合并份额两种路径。","template_refs":["PT-FA-CHAIN@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-CHAIN@1","KC-FA-REP@1"],"status":"candidate_mapped"},
+      {"key":"SRC-50-A","section":"u4-a","pages":[50],"location":"试一试：三道混合运算","summary":"连续除法、乘除混合及带括号运算。","template_refs":["PT-FA-EXPR@1"],"knowledge_refs":["KC-FA-CALC@1","KC-FA-LAWS@1"],"status":"candidate_mapped"},
+      {"key":"SRC-50-B","section":"u4-a","pages":[50],"location":"黑板上的三种计算供辨析","summary":"核对倒数转换和运算结果，说明错误位置与理由。","template_refs":["PT-FA-EXPR@1"],"knowledge_refs":["KC-FA-CALC@1","KC-FA-CHECK@1"],"status":"candidate_mapped"},
+      {"key":"SRC-51-A","section":"u4-a","pages":[51],"location":"练一练 1，两幅线段图","summary":"从等分、括线及对齐关系提取逐级份额；第二图部分比例通过图形给出。","template_refs":["PT-FA-CHAIN@1"],"knowledge_refs":["KC-FA-REP@1","KC-FA-BASE@1"],"status":"candidate_mapped_visual_reference_authored_independent_review_pending"},
+      {"key":"SRC-51-B","section":"u4-a","pages":[51],"location":"练一练 2，六道算式","summary":"分数乘除及括号运算。","template_refs":["PT-FA-EXPR@1"],"knowledge_refs":["KC-FA-CALC@1"],"status":"candidate_mapped"},
+      {"key":"SRC-51-C","section":"u4-a","pages":[51],"location":"练一练 3、4","summary":"文字与图文表格两种呈现的逐级份额关系。","template_refs":["PT-FA-CHAIN@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-CHAIN@1","KC-FA-REP@1"],"status":"candidate_mapped"},
+      {"key":"SRC-51-D","section":"u4-a","pages":[51],"location":"练一练 5","summary":"两种运力及已运总量，求最少次数；原题恰好整除，非整除是候选变化维度。","template_refs":["PT-FA-TRIPS@1"],"knowledge_refs":["KC-FA-SCALE@1","KC-FA-CHECK@1"],"status":"candidate_mapped"},
+      {"key":"SRC-52-A","section":"u4-b","pages":[52,53],"location":"本节主例及反向追问","summary":"同一差额，相对不同基准的分数不同；画图与两种求差率的方法。","template_refs":["PT-FA-COMPARE@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-COMPARE@1","KC-FA-REP@1"],"status":"candidate_mapped"},
+      {"key":"SRC-53-A","section":"u4-b","pages":[53],"location":"试一试：给定增长分数求新量","summary":"先求增加量与直接乘新量系数两种方法。","template_refs":["PT-FA-COMBINE@1"],"knowledge_refs":["KC-FA-COMBINE@1","KC-FA-LAWS@1"],"status":"candidate_mapped"},
+      {"key":"SRC-53-B","section":"u4-b","pages":[53],"location":"算一算，说一说：两组等式","summary":"分数中的乘法结合律和分配律。","template_refs":["PT-FA-EXPR@1"],"knowledge_refs":["KC-FA-LAWS@1"],"status":"candidate_mapped"},
+      {"key":"SRC-54-A","section":"u4-b","pages":[54],"location":"练一练 1","summary":"给出原价、新价，求相对原价的增加分数。","template_refs":["PT-FA-COMPARE@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-COMPARE@1"],"status":"candidate_mapped"},
+      {"key":"SRC-54-B","section":"u4-b","pages":[54],"location":"练一练 2，两幅图","summary":"增加一个份额后的数量；原量与其一个份额的总和。","template_refs":["PT-FA-COMBINE@1"],"knowledge_refs":["KC-FA-COMBINE@1","KC-FA-REP@1"],"status":"candidate_mapped"},
+      {"key":"SRC-54-C","section":"u4-b","pages":[54],"location":"练一练 3，六道算式","summary":"先说明顺序，再完成含加减乘法及括号的分数运算。","template_refs":["PT-FA-EXPR@1"],"knowledge_refs":["KC-FA-CALC@1","KC-FA-LAWS@1"],"status":"candidate_mapped"},
+      {"key":"SRC-54-D","section":"u4-b","pages":[54],"location":"练一练 4，两个问法","summary":"给定两量求相差分数；给定基准和减少分数求比较量。","template_refs":["PT-FA-COMPARE@1","PT-FA-COMBINE@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-COMPARE@1","KC-FA-COMBINE@1"],"status":"candidate_mapped"},
+      {"key":"SRC-54-E","section":"u4-b","pages":[54],"location":"练一练 5、6","summary":"补足剩余份额、比较同一总量的两个部分、给定增长求新总量。","template_refs":["PT-FA-COMBINE@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-COMBINE@1"],"status":"candidate_mapped"},
+      {"key":"SRC-55-A","section":"u4-review","pages":[55],"location":"我的收获","summary":"学生组织本单元内容和方法；只作为总结活动，不单设掌握要求。","template_refs":[],"knowledge_refs":[],"status":"non_scored_reflection"},
+      {"key":"SRC-55-B","section":"u4-review","pages":[55],"location":"我的问题","summary":"出现百分数的探索性问题；本包只登记为后续内容关联，不据此扩大本单元检测。","template_refs":[],"knowledge_refs":[],"status":"scope_boundary_pending_content_extension"},
+      {"key":"SRC-55-C","section":"u4-review","pages":[55],"location":"巩固与应用 1、2","summary":"从图求增加后的量；比较两次耗时的相对减少。","template_refs":["PT-FA-COMBINE@1","PT-FA-COMPARE@1"],"knowledge_refs":["KC-FA-REP@1","KC-FA-BASE@1","KC-FA-COMPARE@1"],"status":"candidate_mapped"},
+      {"key":"SRC-56-A","section":"u4-review","pages":[56],"location":"巩固与应用 3、4","summary":"图示减少关系及计算；已知一部分占比求其余。","template_refs":["PT-FA-COMBINE@1"],"knowledge_refs":["KC-FA-COMBINE@1","KC-FA-REP@1"],"status":"candidate_mapped"},
+      {"key":"SRC-56-B","section":"u4-review","pages":[56],"location":"巩固与应用 5，六道算式","summary":"分数四则混合、嵌套括号及可简算结构。","template_refs":["PT-FA-EXPR@1"],"knowledge_refs":["KC-FA-CALC@1","KC-FA-LAWS@1"],"status":"candidate_mapped"},
+      {"key":"SRC-56-C","section":"u4-review","pages":[56],"location":"巩固与应用 6、7","summary":"相对基准少多少的绝对量及剩余工作量；与求相差几分之几区分。","template_refs":["PT-FA-COMBINE@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-COMBINE@1"],"status":"candidate_mapped"}
+    ]
+  },
+  "knowledge_components": [
+    {"id":"KC-FA-BASE","version":"1","name":"确定分数关系的基准量","definition":"解释 r 表示哪一个量的份额或相对差额，能在换向比较及逐级关系中重新确定基准。","boundary":"不把识别基准等同于计算正确；同一题不同关系可有不同基准。","observable":"指出每个分数所对应的整量并解释分母选择。","counterexample":"两向比较始终除同一个量。"},
+    {"id":"KC-FA-SCALE","version":"1","name":"用分数表示倍乘关系","definition":"由基准 a 及份额 r 表示和求出 a*r，说明等分取份与结果单位。","boundary":"包含 r>1 的倍量解释；本章基础例以正有理数为主，不含任意比例方程。","observable":"说明乘法各因子的实际含义。","counterexample":"机械看到分数就相乘，不能说明被分的量。"},
+    {"id":"KC-FA-CHAIN","version":"1","name":"组织逐级份额关系","definition":"由 b=a*r、c=b*s 建立 c=a*r*s，并区分 s 相对 b 与 s 相对 a。","boundary":"逐级关系不能当成相同基准下两份额之和；不等于所有复合应用题都会。","observable":"解释中间量或合并份额的含义。","counterexample":"误把第二个份额直接作用于初始总量。"},
+    {"id":"KC-FA-COMPARE","version":"1","name":"相对差额与整体倍数","definition":"相对基准 a 比较 b，差额比例为 (b-a)/a；题意为减少时可用 (a-b)/a 表示减少的正分数。","boundary":"相差多少是有单位的量，相差几分之几是无量纲比；换基准会变。","observable":"能解释分子与分母，并区分 b/a 与 b/a-1。","counterexample":"将 b/a 当增加比例，或认为反向减少比例相同。"},
+    {"id":"KC-FA-COMBINE","version":"1","name":"同基准份额的组合","definition":"同一基准 a 的若干份额，可在题意许可时加减；增加为 a*(1+r)，剩余为 a*(1-r)。","boundary":"必须先确认相同基准与部分是否可相加，不允许把不同基准分数直接相加。","observable":"解释 1 的含义、每个份额的来源及求的是总量还是变化量。","counterexample":"问增加后的量只返回增加量。"},
+    {"id":"KC-FA-CALC","version":"1","name":"分数四则及运算顺序","definition":"对有定义的分数表达式按括号和四则优先级求值，除以非零数转为乘倒数，同级从左到右。","boundary":"本候选将程序组合为一项；出现可区分错误时保留局部观察，不自动诊断所有分数知识。","observable":"写出保值步骤和化简结果；能定位某个不保值转换。","counterexample":"连续除法擅自改成除以两个除数之商。"},
+    {"id":"KC-FA-LAWS","version":"1","name":"分数中的运算律","definition":"在合法表达式中使用乘法结合律、交换律及乘法对加减的分配律，解释变形为何保值。","boundary":"不能把结合律直接用于减法或除法；数值巧合不证明一般规则。","observable":"说明结构关系，而非只报告两式同值。","counterexample":"把 a/(b/c) 等同于 (a/b)/c。"},
+    {"id":"KC-FA-REP","version":"1","name":"数量关系的表征转换","definition":"在文字、等分线段图、表格和式子间保持量的身份、基准、比例及所求一致。","boundary":"图中比例必须由明确标注或可核实的等分关系取得，不能凭任意视觉长度猜测。","observable":"给图或式子标注对应量，并解释关键连线或括线。","counterexample":"只凭图长估出一个未给定的精确分数。"},
+    {"id":"KC-FA-CHECK","version":"1","name":"检验结果与情境约束","definition":"将结果代回数量关系，核查单位、大小关系以及人数或次数的整数约束；最少次数需保证运量足够且少一次不足。","boundary":"结果看起来合理不是正确性证明；教材原题恰好整除不代表变化题可以忽略余量。","observable":"解释为何需要向上取整并比较 n 与 n-1 的容量。","counterexample":"将 7.5 次作为实际最少次数，或一律四舍五入。"}
+  ],
+  "problem_templates": [
+    {"id":"PT-FA-EXPR","version":"1","name":"分数表达式的计算、解释与辨析","parameters":{"expression":"由有理数和 + - * /、括号形成的表达式","mode":["calculate","explain_law","diagnose_steps"],"proposed_steps":"仅辨析任务提供"},"constraints":["所有除数非零；题目在目标规定的数值与步骤范围内。","明确要求的 mode 与学生可见步骤；不以参考步骤冒充学生推导。"],"responsibility":"根据本次请求计算、说明保值依据或辨析所给步骤；三种表现分别记录。","variation_axes":["运算组合","括号位置","数值","是否有可简算结构","所给错误步骤"],"solution_refs":["ST-FA-ORDER@1","ST-FA-REWRITE@1"],"knowledge_refs":["KC-FA-CALC@1","KC-FA-LAWS@1"],"limits":"同模板内 mode 不同不构成等价证据；不含代数方程求解。"},
+    {"id":"PT-FA-CHAIN","version":"1","name":"逐级份额求末级数量","parameters":{"a":"初始数量","r":"中间量相对 a 的份额","s":"末级量相对中间量的份额","representation":"文字、明确图示或表格"},"constraints":["a>0，r>0，s>0；离散对象的各实际数量须为整数。","已知与所求明确；量纲一致，第二个比例的基准不能遗漏。"],"responsibility":"建立 b=a*r、c=b*s，求 c；解释或图示责任按题目明确提出。","variation_axes":["表面情境","参数","呈现方式","是否要求解释中间量或合并比例"],"solution_refs":["ST-FA-CHAIN-STEPS@1","ST-FA-CHAIN-RATIO@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-CHAIN@1","KC-FA-REP@1"],"limits":"只覆盖两级已知份额；反求初量、不同基准叠加或更深结构须重新核对映射。"},
+    {"id":"PT-FA-COMPARE","version":"1","name":"相对指定基准求增加或减少的分数","parameters":{"a":"正基准量","b":"正比较量","direction":"increase 或 decrease"},"constraints":["a、b 同量纲；increase 要求 b>=a，decrease 要求 b<=a。","换向问题须重新绑定 a、b；等量允许差额为零。"],"responsibility":"确定基准、构造相对差额并解释为什么以该量为分母。","variation_axes":["比较方向","基准的语言位置","数值","文字或图示"],"solution_refs":["ST-FA-DIFFERENCE@1","ST-FA-RATIO-DIFFERENCE@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-COMPARE@1"],"limits":"求相差多少的绝对量、求新数量不直接作为本题输出；不自动扩展百分数。"},
+    {"id":"PT-FA-COMBINE","version":"1","name":"同基准数量与份额的加减组合","parameters":{"a":"正基准数量","coefficients":"同基准下带正负号的有理系数，完整基准用 1 表示","quantity_kind":"continuous 或 discrete"},"constraints":["明确每一系数对应的实际部分及求和含义，结果非负。","同基准且允许加减；互相重叠的集合不能直接作为互斥份额相加。","discrete 结果须为整数；本包仅准备两到三个有解释的项。"],"responsibility":"把所求表示为各部分和差，区分变化量与最终量，并求出结果。","variation_axes":["增加或减少","求剩余、总和或两部分差","数值","表征"],"solution_refs":["ST-FA-PARTS@1","ST-FA-FACTOR@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-COMBINE@1"],"limits":"系数相同不表示任务相同，必须保留实际角色；不同基准、交叠及连续变化不能强行套用。"},
+    {"id":"PT-FA-TRIPS","version":"1","name":"根据两种运力求最少运输次数","parameters":{"capacity":"大运力每次容量","ratio":"小运力相对大运力的比例","large_trips":"大运力满载次数"},"constraints":["capacity>0，0<ratio<1，large_trips 为正整数。","总量固定、无损耗、小运力每次不超载且最后一次允许不满载。"],"responsibility":"组织总量、单次容量和次数关系，给出可执行的最少整数次数并检查。","variation_axes":["运力单位","比例","次数","是否整除"],"solution_refs":["ST-FA-TRIPS@1"],"knowledge_refs":["KC-FA-SCALE@1","KC-FA-CHECK@1"],"limits":"仅为本章运输题的具体组合；不可据此宣称覆盖任意最优化或分配题。"}
+  ],
+  "solution_templates": [
+    {"id":"ST-FA-ORDER","version":"1","name":"按运算顺序逐步计算","applies_to":["PT-FA-EXPR@1"],"condition":"表达式有定义；各步骤可追踪。","inputs":["expression"],"output":"值及必要的局部保值说明","steps":["先处理括号，再乘除、后加减，同级从左到右。","除法转乘倒数时只对相应除数求倒数，完成约分与计算。","辨析任务逐步比较原式与所给步骤，指出最早不等价处；只要是合法路径都可接受。"],"subproblem_refs":[],"knowledge_refs":["KC-FA-CALC@1"]},
+    {"id":"ST-FA-REWRITE","version":"1","name":"利用合法运算律改写","applies_to":["PT-FA-EXPR@1"],"condition":"结构满足所用运算律；除法改写先说明非零与倒数条件。","inputs":["expression"],"output":"保值改写及计算或解释","steps":["辨认可合并因子或共同因子。","标明结合律或分配律对应的结构，再计算；反例检查错误推广。"],"subproblem_refs":[],"knowledge_refs":["KC-FA-LAWS@1","KC-FA-CALC@1"]},
+    {"id":"ST-FA-CHAIN-STEPS","version":"1","name":"先求中间量再求末级量","applies_to":["PT-FA-CHAIN@1"],"condition":"第二份额以中间量为基准。","inputs":["a","r","s"],"output":"c 及两个份额的量义","steps":["求 b=a*r，说明 b 的实际对象。","绑定 b 后求 c=b*s，核对各量单位和整数限制。"],"subproblem_refs":[{"ref":"PT-FA-EXPR@1","binding":"第一次 expression=a*r；取得 b 后第二次 expression=b*s，mode=calculate"}],"knowledge_refs":["KC-FA-SCALE@1","KC-FA-CHAIN@1","KC-FA-CALC@1"]},
+    {"id":"ST-FA-CHAIN-RATIO","version":"1","name":"先合并逐级份额","applies_to":["PT-FA-CHAIN@1"],"condition":"理解 s 是中间份额中的份额。","inputs":["a","r","s"],"output":"c 与 c/a=r*s 的解释","steps":["由嵌套等分或关系推导 q=r*s。","求 c=a*q，解释与分步路径为何一致。"],"subproblem_refs":[{"ref":"PT-FA-EXPR@1","binding":"expression=r*s；取得 q 后 expression=a*q，mode=calculate"}],"knowledge_refs":["KC-FA-CHAIN@1","KC-FA-LAWS@1","KC-FA-CALC@1"]},
+    {"id":"ST-FA-DIFFERENCE","version":"1","name":"差额除以指定基准","applies_to":["PT-FA-COMPARE@1"],"condition":"已根据问法确定基准及增减方向。","inputs":["a","b","direction"],"output":"非负相对差额","steps":["增加时 d=b-a，减少时 d=a-b。","求 d/a，解释差额占基准的份额。"],"subproblem_refs":[{"ref":"PT-FA-EXPR@1","binding":"expression=(b-a)/a 或 (a-b)/a；mode=calculate"}],"knowledge_refs":["KC-FA-BASE@1","KC-FA-COMPARE@1","KC-FA-CALC@1"]},
+    {"id":"ST-FA-RATIO-DIFFERENCE","version":"1","name":"整体倍数与 1 比较","applies_to":["PT-FA-COMPARE@1"],"condition":"b/a 的基准是 a；1 代表完整 a。","inputs":["a","b","direction"],"output":"非负相对差额","steps":["求 q=b/a。","增加时 q-1，减少时 1-q，并解释 1 的含义。"],"subproblem_refs":[{"ref":"PT-FA-EXPR@1","binding":"expression=b/a-1 或 1-b/a；mode=calculate"}],"knowledge_refs":["KC-FA-BASE@1","KC-FA-COMPARE@1","KC-FA-CALC@1"]},
+    {"id":"ST-FA-PARTS","version":"1","name":"分别求各部分再合并","applies_to":["PT-FA-COMBINE@1"],"condition":"各部分共有同一基准且加减有题意依据。","inputs":["a","coefficients"],"output":"带单位的结果及各部分含义","steps":["逐项计算基准乘份额，保留加减方向。","按所求关系相加或相减，核对求的是变化量还是最终量。"],"subproblem_refs":[{"ref":"PT-FA-EXPR@1","binding":"expression 为各 a*coefficient 的和；mode=calculate"}],"knowledge_refs":["KC-FA-SCALE@1","KC-FA-COMBINE@1","KC-FA-CALC@1"]},
+    {"id":"ST-FA-FACTOR","version":"1","name":"先合并同基准系数","applies_to":["PT-FA-COMBINE@1"],"condition":"已确认同基准；完整量系数为 1。","inputs":["a","coefficients"],"output":"a 乘合并系数及理由","steps":["计算合并系数 q，逐项说明其含义。","求 a*q，以分配律解释与分步方法等价。"],"subproblem_refs":[{"ref":"PT-FA-EXPR@1","binding":"expression 为 coefficients 的和；再绑定 q 求 a*q，mode=calculate"}],"knowledge_refs":["KC-FA-COMBINE@1","KC-FA-LAWS@1","KC-FA-CALC@1"]},
+    {"id":"ST-FA-TRIPS","version":"1","name":"总量除单次容量并检验次数","applies_to":["PT-FA-TRIPS@1"],"condition":"最后一次允许不满载；每次不超额。","inputs":["capacity","ratio","large_trips"],"output":"最小整数 n","steps":["总量 M=capacity*large_trips，小运力 c=capacity*ratio。","计算 q=M/c；n 为不小于 q 的最小整数。","检查 n*c>=M 且 (n-1)*c<M。允许直接由 large_trips/ratio 求 q，但须解释容量约去的依据。"],"subproblem_refs":[{"ref":"PT-FA-EXPR@1","binding":"expression=(capacity*large_trips)/(capacity*ratio)，mode=calculate"}],"knowledge_refs":["KC-FA-SCALE@1","KC-FA-CALC@1","KC-FA-CHECK@1"]}
+  ],
+  "template_relations": [
+    {"from":"PT-FA-CHAIN@1","to":"PT-FA-COMBINE@1","relation":"contrast","meaning":"逐级不同基准与同基准份额组合必须区分，不能因都出现两个分数就视为同题。"},
+    {"from":"PT-FA-COMPARE@1","to":"PT-FA-COMBINE@1","relation":"shared_structure_different_unknown","meaning":"同一 a、b、r 关系可问相差分数或新量；未知量和需要承担的建模责任不同。"},
+    {"from":"PT-FA-TRIPS@1","to":"PT-FA-EXPR@1","relation":"uses_arithmetic_but_not_equivalent","meaning":"算商之外还需要解释最少整数次数，算式正确不能覆盖情境责任。"}
+  ],
+  "target": {
+    "id":"LT-BNU-6A-U4", "version":"1", "status":"candidate_not_approved",
+    "material_ref":"LM-BNU-6A-U4@1",
+    "name":"理解并解决本单元范围内的分数应用问题",
+    "conditions":"文字或明确图示，数据完整且无单位换算；允许草稿、手写或口述；初始候选不使用计算器代算所测运算。",
+    "support_boundary":"独立要求由学生承担基准选择、关系建立及所要求的解释与计算；无关界面操作帮助不代替解题责任，实际帮助必须记录。",
+    "requirements":[
+      {"id":"LR-FA-01","label":"看懂谁是谁的几分之几，并表达数量关系","template_refs":["PT-FA-CHAIN@1","PT-FA-COMPARE@1","PT-FA-COMBINE@1"],"knowledge_refs":["KC-FA-BASE@1","KC-FA-REP@1"],"claim_ref":"CL-FA-BASE@1","quality":"说明基准、比较量和所求；能将一段明确文字转成带量义的式子或图。","source_keys":["SRC-49-A","SRC-51-A","SRC-52-A"]},
+      {"id":"LR-FA-02","label":"解决逐级份额问题并解释方法","template_refs":["PT-FA-CHAIN@1"],"knowledge_refs":["KC-FA-CHAIN@1"],"claim_ref":"CL-FA-CHAIN@1","quality":"独立建立两级关系并求值，解释中间量或合并份额；不要求同时会两种方法。","source_keys":["SRC-49-A","SRC-51-C"]},
+      {"id":"LR-FA-03","label":"区分两种比较方向的相差分数","template_refs":["PT-FA-COMPARE@1"],"knowledge_refs":["KC-FA-COMPARE@1"],"claim_ref":"CL-FA-COMPARE@1","quality":"能在问法换向时重新确定基准，区分倍数与增加分数。","source_keys":["SRC-52-A","SRC-54-A","SRC-55-C"]},
+      {"id":"LR-FA-04","label":"求变化后的量、剩余量或同基准部分的和差","template_refs":["PT-FA-COMBINE@1"],"knowledge_refs":["KC-FA-COMBINE@1"],"claim_ref":"CL-FA-COMBINE@1","quality":"解释各项对应的量，区分变化量与最终量；覆盖增加、减少及部分组合。","source_keys":["SRC-53-A","SRC-54-B","SRC-54-E","SRC-56-A","SRC-56-C"]},
+      {"id":"LR-FA-05","label":"正确计算，并解释运算顺序和必要的变形","template_refs":["PT-FA-EXPR@1"],"knowledge_refs":["KC-FA-CALC@1","KC-FA-LAWS@1"],"claim_ref":"CL-FA-EXPR@1","quality":"能算、能说明所用规则，并能辨析典型错误；某一种表现不自动覆盖其余表现。","source_keys":["SRC-50-A","SRC-50-B","SRC-53-B","SRC-54-C","SRC-56-B"]},
+      {"id":"LR-FA-06","label":"把计算结果放回情境检查","template_refs":["PT-FA-TRIPS@1","PT-FA-COMBINE@1","PT-FA-COMPARE@1"],"knowledge_refs":["KC-FA-CHECK@1"],"claim_ref":"CL-FA-CHECK@1","quality":"核查单位、大小和求解目标；运次题说明最少整数次数的依据。按 DEC-019，非整除变化只作可选练习或迁移探针，不作为首批章节达标必测。","source_keys":["SRC-51-D","SRC-50-B","SRC-55-A"]}
+    ],
+    "assessment_boundary":"六项是待管理员审核的学习要求粒度，不是已发布统计分母。没有个人数据时全部保持未评价；不设做对一道就达标、固定每项题数或新通过率。持久性需后续时间条件下的实际表现。",
+    "assessment_exclusions":[{"scope":"non_integral_trip_count","decision_ref":"DEC-019","rule":"首批达标不以通过该变化为必要条件；未参加或未通过该探针不能单独判本章未达标。实际作答仍按其范围、责任和帮助条件解释，不删除或伪造证据。"}],
+    "calibration_pending":"具体抽样、稳定性与达标判定依据在 G4 资产审核及正式测量前校准；沿用 Validation 的指标责任，不修改 MET。"
+  },
+  "claims": [
+    {"id":"CL-FA-BASE","version":"1","type":"TaskProficiencyClaim","problem_refs":["PT-FA-CHAIN@1","PT-FA-COMPARE@1","PT-FA-COMBINE@1"],"responsibility":"独立识别基准并表达关系","supporting":"说明分数的基准，并在明确表示变化中保持量义。","counterevidence":"在输入已核对且明确要求解释时，反复把不同基准混用。","insufficient":"只有结果；未要求说明；图像关键标注不清。"},
+    {"id":"CL-FA-CHAIN","version":"1","type":"TaskProficiencyClaim","problem_refs":["PT-FA-CHAIN@1"],"responsibility":"独立组织并解决两级份额问题","supporting":"自行建立两级关系、正确求解并给出符合路径的理由。","counterevidence":"把第二比例施加给错误的量且未能修正。","insufficient":"系统已给关系式后只完成计算；不能据此判定独立建模。"},
+    {"id":"CL-FA-COMPARE","version":"1","type":"TaskProficiencyClaim","problem_refs":["PT-FA-COMPARE@1"],"responsibility":"独立解释并求指定方向的相对差额","supporting":"方向改变后自行重选基准并解释两个分数的差异。","counterevidence":"将整体倍数当相差分数，或换向仍沿用原分母。","insufficient":"系统已指出基准，或只正确回答一个方向。"},
+    {"id":"CL-FA-COMBINE","version":"1","type":"TaskProficiencyClaim","problem_refs":["PT-FA-COMBINE@1"],"responsibility":"独立构造同基准份额组合并求量","supporting":"分别说明完整量和各部分，按所求选择合适组合。","counterevidence":"只求变化量却作为最终量，或把不同基准直接相加。","insufficient":"只见一道增加题的结果，未覆盖减少或部分组合。"},
+    {"id":"CL-FA-EXPR","version":"1","type":"TaskProficiencyClaim","problem_refs":["PT-FA-EXPR@1"],"responsibility":"在已声明模式下计算、解释或辨析","supporting":"按实际模式提供正确结果及相应规则依据。","counterevidence":"明确展示不保值的倒数转换、顺序或非法运算律。","insufficient":"一次算对不足以推断会解释或辨析；仅数值错误不能直接诊断概念缺失。"},
+    {"id":"CL-FA-CHECK","version":"1","type":"TaskProficiencyClaim","problem_refs":["PT-FA-TRIPS@1","PT-FA-COMBINE@1","PT-FA-COMPARE@1"],"responsibility":"在明确情境中独立检验结果","supporting":"使用题目约束核验；最少次数比较 n 与 n-1。","counterevidence":"在清楚的运次约束下接受小数次数或向下舍入。","insufficient":"题目未要求检查且过程未观察到；不能直接断言没有检查能力。"},
+    {"id":"CL-FA-KC-BASE","version":"1","type":"KCClaim","knowledge_ref":"KC-FA-BASE@1","responsibility":"理解基准决定分数含义","supporting":"在不同任务中解释分母与基准，并区分换向结果。","counterevidence":"输入可靠时反复把相对份额当绝对数量。","insufficient":"复合题失败不能归因给所有所关联 KC；参考解法使用了某 KC 也不是学生使用的证据。"}
+  ],
+  "evidence_reference": {
+    "shared_conditions":"Claim 沿用 target 的规定范围、支持边界及对应 requirement 质量；记录题目版本、实际作答、帮助暴露、重复关系、时间和空间。它们是解释上下文，不按每种提示组合生成新的 Claim。",
+    "rules":[
+      "结果正确、过程合理、理解解释及检查责任分别观察；未要求的内容不能因缺席而作负证据。",
+      "本题或近期同结构例子的帮助必须保留，学生后续独自作答也不自动等于无相关提示。",
+      "仅提示基准可能替代基准选择责任，但不必替代余下计算；逐 Claim 解释，不作整题全有或全无处理。",
+      "有效的库外方法可支持已观察责任；先核实方法，不因缺少 SolutionTemplate 而判错。",
+      "同一作答可以关联多个 Claim，但不得把相关解释当成多次独立表现。",
+      "展示讲解、会后说懂了、家长评价及没有作答均不能直接生成掌握结论。",
+      "日期变化影响证据当前相关性；仅时间流逝不是能力下降事实。"
+    ],
+    "not_specified":"本包不定义数值 Belief 更新算法、后验阈值、固定题量或自动发布规则。"
+  },
+  "original_problems": [
+    {"id":"ITEM-FA-01","version":"1","origin":"author_original","template_ref":"PT-FA-CHAIN@1","binding":{"a":"40","r":"3/5","s":"1/4"},"prompt":"活动室有 40 个名额，其中 3/5 分给科学组；科学组的名额中，1/4 分给观察小队。观察小队有几个名额？说明每个分数对应哪个量。","reference":{"answer":"6","unit":"个","methods":["40*3/5=24；24*1/4=6","40*(3/5*1/4)=6"],"meaning":"第二个分数以科学组的 24 个名额为基准。"},"requirement_ids":["LR-FA-01","LR-FA-02"],"use":"讲解或开发参考；接触后不得标为未见检测题"},
+    {"id":"ITEM-FA-02","version":"1","origin":"author_original","template_ref":"PT-FA-COMPARE@1","binding":{"a":"24","b":"30","direction":"increase"},"prompt":"甲方案用 24 分钟，乙方案用 30 分钟。乙用时比甲多几分之几？再说明甲用时比乙少几分之几，为什么两次结果不同？","reference":{"answer":"1/4","reverse_answer":"1/5","methods":["(30-24)/24=1/4；(30-24)/30=1/5","30/24-1=1/4；1-24/30=1/5"],"meaning":"同为 6 分钟差额，基准分别是 24 与 30。"},"requirement_ids":["LR-FA-01","LR-FA-03"],"use":"讲解或开发参考；两个问法属于相关表现"},
+    {"id":"ITEM-FA-03","version":"1","origin":"author_original","template_ref":"PT-FA-COMBINE@1","binding":{"a":"48","coefficients":["1","-3/8"],"quantity_kind":"discrete"},"prompt":"一箱有 48 个零件，取走其中的 3/8，还剩多少个？说明算式中的 1 表示什么。","reference":{"answer":"30","unit":"个","methods":["48-48*3/8=30","48*(1-3/8)=30"],"meaning":"1 表示这一箱的全部，3/8 以这箱原有数量为基准。"},"requirement_ids":["LR-FA-01","LR-FA-04"],"use":"剩余量开发参考"},
+    {"id":"ITEM-FA-04","version":"1","origin":"author_original","template_ref":"PT-FA-COMBINE@1","binding":{"a":"60","coefficients":["1/2","-1/3"],"quantity_kind":"continuous"},"prompt":"一条路线全长 60 千米，林间路占全长的 1/2，河边路占全长的 1/3。林间路比河边路长多少千米？说明为什么可以把两个分数相减。","reference":{"answer":"10","unit":"千米","methods":["60*1/2-60*1/3=10","60*(1/2-1/3)=10"],"meaning":"两个分数都以全长为基准。"},"requirement_ids":["LR-FA-04"],"use":"同基准部分差开发参考"},
+    {"id":"ITEM-FA-05","version":"1","origin":"author_original","template_ref":"PT-FA-EXPR@1","binding":{"expression":"3/4 / (1/2) / (3/8)","mode":"diagnose_steps"},"prompt":"有人把连续运算 (3/4 ÷ 1/2) ÷ 3/8 改成 3/4 ÷ (1/2 ÷ 3/8)，说这样也一样。判断这个改法，计算两式并说明原因。","reference":{"answer":"4","changed_expression_answer":"9/16","methods":["原式按同级从左到右计算，得 4","改式先算括号得 4/3，再除得 9/16"],"meaning":"除法不满足这种结合律；不能擅自改变括号。"},"requirement_ids":["LR-FA-05"],"use":"错误方法开发反例"},
+    {"id":"ITEM-FA-06","version":"1","origin":"author_original","template_ref":"PT-FA-EXPR@1","binding":{"expression":"5/12*18 + 7/12*18","mode":"explain_law"},"prompt":"不逐项做长计算，说明 5/12×18＋7/12×18 可以怎样简算，为什么成立？","reference":{"answer":"18","methods":["(5/12+7/12)*18=18","两部分对应相同的 18，合计一整个 18"],"meaning":"共同因子相同，依据分配律；不能只说因为答案一样。"},"requirement_ids":["LR-FA-05"],"use":"规则解释开发参考"},
+    {"id":"ITEM-FA-07","version":"1","origin":"author_original_transfer_probe","template_ref":"PT-FA-TRIPS@1","binding":{"capacity":"6","ratio":"2/5","large_trips":"3"},"prompt":"大车每次最多装 6 吨，小车每次最多装大车的 2/5。大车满载 3 次运完的货改用小车运，每次不超载，最后一次可以不装满，至少要几次？说明为什么再少一次不行。","reference":{"answer":"8","unit":"次","quotient":"15/2","methods":["18÷(12/5)=15/2，至少 8 次","3÷(2/5)=15/2，至少 8 次"],"meaning":"7 次最多 84/5 吨不足 18 吨，8 次可运 96/5 吨；最后一次无需满载。"},"requirement_ids":["LR-FA-06"],"use":"DEC-019 已确认：可选练习或迁移探针，不作为首批章节达标必测。题目内容仍待审核，尚未发布。","use_policy":{"decision_ref":"DEC-019","allowed_uses":["optional_practice","transfer_probe"],"first_batch_required_assessment":false}},
+    {"id":"ITEM-FA-08","version":"1","origin":"author_original","template_ref":"PT-FA-COMBINE@1","binding":{"a":"36","coefficients":["1","1/3"],"quantity_kind":"discrete"},"prompt":"阅读角原有 36 本书，后来增加了原有数量的 1/3。现在有多少本？请区分增加的数量与现在的数量。","reference":{"answer":"48","unit":"本","methods":["36+36*1/3=48","36*(1+1/3)=48"],"meaning":"增加量为 12，本次所求是原量与增加量之和。"},"requirement_ids":["LR-FA-04"],"use":"增加量与最终量对照开发参考"}
+  ],
+  "lesson_outline": [
+    {"key":"LESSON-FA-A","section":"u4-a","focus":"逐级份额与运算组织","segments":["借 ITEM-FA-01 明确两个基准，画相应嵌套关系。","分步求解；孩子愿意比较方法时再展示合并份额。","用 ITEM-FA-05 的结构辨析顺序问题；先保留实际回答再反馈。"],"exit":"孩子可继续、追问、暂停或结束；阶段检查需新编未展示题，不能把讲过的 ITEM-FA-01 直接当独立检测。","requirement_ids":["LR-FA-01","LR-FA-02","LR-FA-05"]},
+    {"key":"LESSON-FA-B","section":"u4-b","focus":"比较基准与求新量","segments":["借 ITEM-FA-02 对比同一差额相对两个基准的含义。","分别讨论 ITEM-FA-03、08 的剩余与增加，解释完整量 1。","结合 ITEM-FA-04、06 解释同基准组合与分配律。"],"exit":"每段由孩子选择继续；最终检测的题单、帮助背景与反馈时机由检测活动合同处理。","requirement_ids":["LR-FA-01","LR-FA-03","LR-FA-04","LR-FA-05"]},
+    {"key":"LESSON-FA-C","section":"u4-review","focus":"整合与情境检查","segments":["按已观察缺口选择问题，不把原书所有练习逐一推送。","内容审核后可选 ITEM-FA-07 作练习或迁移探针，不作为首批必测；是否选用仍依据活动目标与实际情况。","总结仍待确认的要求，不从完成讲解推出达标。"],"exit":"遵守当天总使用 30 分钟约束；持久性需后续适当时点的表现，本次不宣称验证。","requirement_ids":["LR-FA-06"]}
+  ],
+  "open_items": [
+    {"id":"CONTENT-OPEN-01","owner":"管理员","item":"复核候选定义、21 个教材定位单元及六项学习要求；非整除运次的用途已由 DEC-019 确认为可选练习或迁移探针，其内容审核仍待完成。","blocks":"正式内容发布和目标采用"},
+    {"id":"CONTENT-OPEN-02","owner":"Codex 准备，管理员核对","item":"51 条逐题参考及 8 幅关系重绘已交付，需对照原图复核；正式图像输入仍需原图区域、显示条件及授权使用核验，不能拿含答案重绘替代。","blocks":"对应内容正式接收与图文识别质量测量"},
+    {"id":"CONTENT-OPEN-03","owner":"内容与评测负责人","item":"独立复核原创题与评价参考，另行形成未参与开发的语义留出集。","blocks":"正式语义测量与 G4 联合交接"},
+    {"id":"CONTENT-OPEN-04","owner":"用户与管理员","item":"确认具体印次及实际材料使用条件，补充校外教材。","blocks":"相应材料实际发布；不阻塞本包候选整理"}
+  ],
+  "limitations": [
+    "这是实际章节驱动的候选资产，模型粒度与教学有效性仍是假设。",
+    "已读八页并逐块定位，未声称每个原题、每个解法和图像均已完成独立复核。",
+    "原创题与案例均对开发者可见，不是 held-out 数据；没有调用真实模型或进行儿童试用。",
+    "JSON 字段支持当前审阅与静态检查，不冻结整个系统的数据结构。"
+  ]
+}

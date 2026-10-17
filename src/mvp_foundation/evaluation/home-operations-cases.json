@@ -1,0 +1,135 @@
+{
+  "asset_id": "EVAL-UX-HOME-001",
+  "version": "1",
+  "baseline": "G3-20261015-01",
+  "purpose": "development_interaction_walkthrough",
+  "provenance": "Codex authored from approved requirements on 2026-10-16",
+  "held_out": false,
+  "independent_review": "pending",
+  "material": "src/mvp_foundation/examples/operations-fixture.json",
+  "limitations": [
+    "Synthetic local operations, no actual model service or retry mechanism.",
+    "Author walkthrough, not semantic or security evaluation."
+  ],
+  "cases": [
+    {
+      "id": "CASE-036",
+      "acceptance_refs": [
+        "AC-002",
+        "AC-010"
+      ],
+      "title": "首页进入与继续",
+      "precondition": "合成原型，空本地状态；按步骤建立当前浏览器记录。",
+      "actions": [
+        "打开学生默认入口",
+        "发送自由输入，再进入章节并暂离恢复"
+      ],
+      "expected": [
+        "首页不新增展示事件，发送不自动展开历史",
+        "恢复原段和未发送草稿，自由输入不冒充执行"
+      ],
+      "unacceptable": "混用空间、伪造判断或把本地状态演示当成实际服务与权限验证。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见界面、原输入和本地事件；不用关键词作语义评分。"
+    },
+    {
+      "id": "CASE-037",
+      "acceptance_refs": [
+        "AC-006",
+        "AC-009",
+        "AC-011"
+      ],
+      "title": "同名空间隔离",
+      "precondition": "合成原型，空本地状态；按步骤建立当前浏览器记录。",
+      "actions": [
+        "创建两个同名课程，在第一个提交求助并留下草稿",
+        "切到另一个查看记录与学习情况，再切回"
+      ],
+      "expected": [
+        "按稳定标识隔离，不按名称合并",
+        "空空间不借用其他判断，切回恢复自身草稿"
+      ],
+      "unacceptable": "混用空间、伪造判断或把本地状态演示当成实际服务与权限验证。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见界面、原输入和本地事件；不用关键词作语义评分。"
+    },
+    {
+      "id": "CASE-038",
+      "acceptance_refs": [
+        "AC-010"
+      ],
+      "title": "材料草稿随空间保存",
+      "precondition": "合成原型，空本地状态；按步骤建立当前浏览器记录。",
+      "actions": [
+        "在演示空间载入原材料但不发送",
+        "切换空间，再返回原空间"
+      ],
+      "expected": [
+        "新空间不显示前一空间的材料",
+        "原空间材料草稿仍可继续，不新增作答"
+      ],
+      "unacceptable": "混用空间、伪造判断或把本地状态演示当成实际服务与权限验证。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见界面、原输入和本地事件；不用关键词作语义评分。"
+    },
+    {
+      "id": "CASE-039",
+      "acceptance_refs": [
+        "AC-020"
+      ],
+      "title": "配置检查与原任务重试",
+      "precondition": "合成原型，空本地状态；按步骤建立当前浏览器记录。",
+      "actions": [
+        "保存配置、检查，再修改配置",
+        "重新检查可用后重试明确未提交的原任务"
+      ],
+      "expected": [
+        "保存不等于可用，改动使原检查不适用",
+        "任务标识不变，尝试增加，不新增学习表现"
+      ],
+      "unacceptable": "混用空间、伪造判断或把本地状态演示当成实际服务与权限验证。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见界面、原输入和本地事件；不用关键词作语义评分。"
+    },
+    {
+      "id": "CASE-040",
+      "acceptance_refs": [
+        "AC-018",
+        "AC-020"
+      ],
+      "title": "未知核对与语义未决",
+      "precondition": "合成原型，空本地状态；按步骤建立当前浏览器记录。",
+      "actions": [
+        "查询未知任务的原结果，分别查看未知、已存在和未提交分支",
+        "查看语义未决任务"
+      ],
+      "expected": [
+        "未查清不允许直接重试，结果已存在只恢复状态",
+        "语义未决不提供传输重试冒充语义修复"
+      ],
+      "unacceptable": "混用空间、伪造判断或把本地状态演示当成实际服务与权限验证。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见界面、原输入和本地事件；不用关键词作语义评分。"
+    },
+    {
+      "id": "CASE-041",
+      "acceptance_refs": [
+        "AC-010",
+        "AC-020"
+      ],
+      "title": "首页与后台布局",
+      "precondition": "合成原型，空本地状态；按步骤建立当前浏览器记录。",
+      "actions": [
+        "在1280、834、390像素宽度走查",
+        "输入不展开历史，查看后台任务表"
+      ],
+      "expected": [
+        "首页输入保留布局空间，不遮挡正文",
+        "后台宽表在局部滚动，整页无横向溢出"
+      ],
+      "unacceptable": "混用空间、伪造判断或把本地状态演示当成实际服务与权限验证。",
+      "reference_status": "author_draft_pending_review",
+      "judge": "可见界面、原输入和本地事件；不用关键词作语义评分。"
+    }
+  ]
+}

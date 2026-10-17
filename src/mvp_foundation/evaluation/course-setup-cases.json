@@ -1,0 +1,187 @@
+{
+  "asset_id": "EVAL-UX-JOURNEYS-001",
+  "version": "1",
+  "baseline": "G3-20261015-01",
+  "purpose": "development_interaction_walkthrough",
+  "provenance": "Codex authored from approved requirements on 2026-10-15",
+  "held_out": false,
+  "independent_review": "pending",
+  "material": "src/mvp_foundation/examples/course-setup-fixture.json",
+  "limitations": [
+    "No actual textbook, OCR, authentication, service authorization or semantic inference.",
+    "Fixed synthetic subject and local browser state; no cross-device or multi-tab synchronization."
+  ],
+  "cases": [
+    {
+      "id": "CASE-020",
+      "acceptance_refs": [
+        "AC-023",
+        "AC-013"
+      ],
+      "title": "学生选用已发布合成教材创建空间",
+      "precondition": "在清空的合成原型状态下，按动作准备所需课程、材料或关系。",
+      "actions": [
+        "选择待准备的北师大版条目",
+        "改选合成教材，选择目标范围并创建"
+      ],
+      "expected": [
+        "待准备条目不伪装已发布",
+        "创建保留采用版本，不修改源教材或目标"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real model, authorization or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-021",
+      "acceptance_refs": [
+        "AC-004"
+      ],
+      "title": "范围和准备程度决定题单",
+      "precondition": "在清空的合成原型状态下，按动作准备所需课程、材料或关系。",
+      "actions": [
+        "选择不同章节点并预览",
+        "将未准备的组合图形纳入范围"
+      ],
+      "expected": [
+        "可见1、2、3题的预写范围差别及参考用时",
+        "缺口单列，明确仅检测已准备部分，未自动开始"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real model, authorization or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-022",
+      "acceptance_refs": [
+        "AC-005",
+        "AC-018",
+        "AC-006"
+      ],
+      "title": "检测恢复、求助和历史",
+      "precondition": "在清空的合成原型状态下，按动作准备所需课程、材料或关系。",
+      "actions": [
+        "提交一题后在第二题保留草稿并暂离",
+        "刷新或访问求助旧链接",
+        "返回后请求帮助并另开检测"
+      ],
+      "expected": [
+        "仍回到同一未结束检测，不能绕入教学",
+        "求助先结束再显示当前题帮助，未答题未检测",
+        "前次已提交记录和采用版本保留，按空间查看"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real model, authorization or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-023",
+      "acceptance_refs": [
+        "AC-008",
+        "AC-004"
+      ],
+      "title": "主动建议的选择与失效",
+      "precondition": "在清空的合成原型状态下，按动作准备所需课程、材料或关系。",
+      "actions": [
+        "接受建议，查看安排但未开始",
+        "模拟依据变化",
+        "返回并拒绝或暂缓"
+      ],
+      "expected": [
+        "接受只到准备页",
+        "依据失效禁止沿旧理由开测",
+        "拒绝不更新能力判断，暂缓不预约，不抹去已发生记录"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real model, authorization or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-024",
+      "acceptance_refs": [
+        "AC-013"
+      ],
+      "title": "教材任务核对与审核",
+      "precondition": "在清空的合成原型状态下，按动作准备所需课程、材料或关系。",
+      "actions": [
+        "接收合成材料任务后刷新",
+        "核对标疑页及未标疑页，确认参考及映射",
+        "批准后改变目标标准"
+      ],
+      "expected": [
+        "沿用同一任务标识",
+        "不核对代表性未标疑页不能批准",
+        "后补参考保持非原书答案来源，编辑使相关核对和批准失效"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real model, authorization or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-025",
+      "acceptance_refs": [
+        "AC-013",
+        "AC-022",
+        "AC-023"
+      ],
+      "title": "发布目录不自动升级个人空间",
+      "precondition": "在清空的合成原型状态下，按动作准备所需课程、材料或关系。",
+      "actions": [
+        "以合成v1创建空间",
+        "完成教材审核发布v2",
+        "再创建一个空间"
+      ],
+      "expected": [
+        "第一个空间仍引用v1",
+        "新空间引用v2；不得宣称真实教材或实际Domain已发布"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real model, authorization or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-026",
+      "acceptance_refs": [
+        "AC-011"
+      ],
+      "title": "身份核实、找回与单条关联",
+      "precondition": "在清空的合成原型状态下，按动作准备所需课程、材料或关系。",
+      "actions": [
+        "未核实时尝试创建或找回",
+        "核实后找回原档案",
+        "只解除家长一关联，再打开其学习情况旧链接",
+        "核实后恢复所选关联"
+      ],
+      "expected": [
+        "缺少核实依据不执行操作",
+        "原档案与课程保留，不另建学习者",
+        "家长一不能读取，家长二关联不受影响",
+        "恢复关系后才可查看；本轮不是服务端权限证明"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real model, authorization or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; no keyword semantic judgement."
+    },
+    {
+      "id": "CASE-027",
+      "acceptance_refs": [
+        "AC-016"
+      ],
+      "title": "首次说明分角色确认",
+      "precondition": "在清空的合成原型状态下，按动作准备所需课程、材料或关系。",
+      "actions": [
+        "走查工具重置双方演示确认",
+        "仅家长确认后学生尝试学习",
+        "孩子另行确认"
+      ],
+      "expected": [
+        "不能代替孩子完成参与确认",
+        "必要确认未齐备时不进入新学习",
+        "确认仅限合成说明，不冒充真实授权或新增撤回入口"
+      ],
+      "unacceptable": "Contradicting expected boundaries or claiming real model, authorization or canonical publication.",
+      "reference_status": "author_draft_pending_review",
+      "judge": "Explicit UI actions and stored demo state; no keyword semantic judgement."
+    }
+  ]
+}
