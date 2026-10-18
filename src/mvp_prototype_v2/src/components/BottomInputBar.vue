@@ -26,7 +26,6 @@ function handleKeydown(e: KeyboardEvent) {
 
 function handleFocus() {
   isExpanded.value = true;
-  emit('expand');
 }
 </script>
 

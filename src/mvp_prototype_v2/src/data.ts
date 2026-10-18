@@ -297,6 +297,9 @@ export function getContextActions(mode: string, phase?: string): string[] {
       default: return ['继续讲解', '出道题', '结束讲解'];
     }
   }
+  if (mode === 'problem') return ['再讲一遍', '出类似题', '我懂了'];
+  if (mode === 'error-check') return ['重做此题', '出迁移题', '查看解析'];
+  if (mode === 'review') return ['继续复习', '做个检测', '结束复习'];
   if (mode === 'qa') return ['我懂了', '再问一个', '给我出道题'];
   return ['再讲一遍', '出道题', '测一下掌握'];
 }

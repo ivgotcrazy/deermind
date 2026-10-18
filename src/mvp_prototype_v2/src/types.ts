@@ -15,7 +15,7 @@ export interface PhaseMarkerBlock { type: 'phase-marker'; phase: LecturePhase; l
 
 export type ContentBlock = TextBlock | FormulaBlock | BarsBlock | QuestionBlock | ProgressBlock | SummaryBlock | PhaseMarkerBlock;
 
-export type TeachingMode = 'lecture' | 'qa' | 'idle';
+export type TeachingMode = 'lecture' | 'problem' | 'error-check' | 'review' | 'qa' | 'idle';
 export type LecturePhase = 'concept' | 'example' | 'practice' | 'summary';
 export type MessageRole = 'user' | 'assistant';
 
@@ -28,6 +28,7 @@ export interface LearningState {
   currentChapter: string; chapterTitle: string; masteryPercent: number;
   classroomProgress: string; mode: TeachingMode;
   lecturePhase?: LecturePhase; lectureTopic?: string;
+  sessionTitle?: string;
 }
 
 // 学习总览数据
