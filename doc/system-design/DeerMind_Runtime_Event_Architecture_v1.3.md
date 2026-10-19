@@ -1,19 +1,23 @@
-# DeerMind Runtime & Event Architecture v1.2
+# DeerMind Runtime & Event Architecture v1.3
 
-> **版本**：v1.2<br>
+> **版本**：v1.3<br>
 > **中文名称**：DeerMind 运行时与事件架构<br>
 > **文档性质**：System Design Baseline<br>
 > **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
-> **上位基线**：[Concept Architecture v1.3](../concept-design/DeerMind_Concept_Architecture_v1.3.md)、[Domain Space v1.1](../concept-design/DeerMind_Domain_Space_Design_v1.1.md)、[Learning Space v1.1](../concept-design/DeerMind_Learning_Space_Design_v1.1.md)、Evaluation / Interaction / Evolution v1.3、[AI-Native Principles v0.4](../top/DeerMind_AI_Native_Architecture_Principles_v0.4.md)；总体合同为 [System Design v1.2](DeerMind_System_Design_v1.2.md)<br>
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.7.md`<br>
+> **上位基线**：[Concept Architecture v1.4](../concept-design/DeerMind_Concept_Architecture_v1.4.md)、[Domain Space v1.2](../concept-design/DeerMind_Domain_Space_Design_v1.2.md)、[Learning Space v1.2](../concept-design/DeerMind_Learning_Space_Design_v1.2.md)、Evaluation / Interaction / Evolution v1.4、[AI-Native Principles v0.5](../top/DeerMind_AI_Native_Architecture_Principles_v0.5.md)；总体合同为 [System Design v1.3](DeerMind_System_Design_v1.3.md)<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.8.md`<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
 > **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-10-19<br>
-> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
+> **修订说明**：更新本版合同说明，保留原实验边界；说明四维所需事实与不可观测条件的边界；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](../concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
 
-本版本在原 System Design v1.2 的领域／课程分离基础上，采用 TaskTemplate 并将个人能力状态统一为 Task Claim。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
+
+本版在 Task Claim 单一能力状态合同基础上，承接默认四维评价、有依据的裁剪／扩展及相应依赖；事实、认知、权限、严格会话串行和 typed invalidation 机制保持。文档修订不表示内容资产或旧实现已迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
+---
+
+四维评价使用本架构记录的实际输入、展示、帮助、工具使用、任务引用与时间事实；迁移是否成立、延迟表现支持何种保持命题由 Evaluation 解释。发生了七天间隔不等于发生了“已保持能力”的事实。无法观测的系统外练习须明确未知，不能因没有 Event 就推断没有练习或帮助。
 
 ## 1. 文档定位与设计命题
 

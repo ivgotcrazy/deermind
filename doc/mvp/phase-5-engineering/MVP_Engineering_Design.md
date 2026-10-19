@@ -1,6 +1,6 @@
 # MVP 工程设计
 
-> **版本**：v0.1<br>
+> **版本**：v0.2<br>
 > **文档性质**：工程设计；Phase 5 — MVP Engineering<br>
 > **状态**：交付大纲；交接要求已细化，设计正文与实际资产待所属阶段交付，非 Gate 通过<br>
 > **上游依据与基线**：Phase 3 已批准 [G3-20261015-01](../MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)；Phase 4 尚未形成 G4 批准基线，本文仍为待该阶段开展的大纲。<br>
@@ -9,7 +9,7 @@
 > **创建日期**：2026-10-10<br>
 > **写作规范**：[设计文档规范 v1.1](../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-10-19<br>
-> **修订说明**：传导 Task Claim 单一状态合同；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
+> **修订说明**：增加四维工程接收合同；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](../../concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
 
 ---
 
@@ -23,7 +23,7 @@
 
 下游交付：[MVP 分步实施与验证计划](MVP_Incremental_Delivery_Plan.md)、[MVP 交付与运行交接](MVP_Delivery_and_Handover.md)。
 
-概念输入采用 [Domain Space v1.1](../../concept-design/DeerMind_Domain_Space_Design_v1.1.md) 与[Learning Space v1.1](../../concept-design/DeerMind_Learning_Space_Design_v1.1.md)。领域包、材料映射和目标定义分别归属；旧实现与实验按原基线保留，不能只把 TaskFamily 改名后宣称完成迁移。本条更新依赖，不表示本文正文、资产或工程已完成。
+概念输入采用 [Domain Space v1.2](../../concept-design/DeerMind_Domain_Space_Design_v1.2.md) 与[Learning Space v1.2](../../concept-design/DeerMind_Learning_Space_Design_v1.2.md)。领域包、材料映射和目标定义分别归属；旧实现与实验按原基线保留，不能只把 TaskFamily 改名后宣称完成迁移。本条更新依赖，不表示本文正文、资产或工程已完成。
 
 目录与阶段关系见 [MVP 文档入口](../README.md)；共同规则、术语编号和待决事项见[文档共同管理规则](../MVP_Governance.md)。
 
@@ -46,6 +46,8 @@
 设计数据结构、历史、版本、依赖、事务与状态转移，说明并发、中断、重试、重复处理和恢复下的不变量及检查方式。
 
 Task Claim 模型变更的实现接收条件：只接受 TaskProficiencyClaim / Belief 的当前状态写入；对 TaskScope、责任、方法与实际支持做版本化校验；Domain KC 定义、关系与讲解用途继续可用。历史读取与当前解析分开，禁止旧 KC 缓存 fallback。迁移内容包、参考、目标投影与状态读写须有端到端证据，不能凭文档升版或旧 verify.py 通过宣称完成。具体接口和存储仍由本阶段设计。
+
+四维接入还须保留目标采用／裁剪记录与 Claim 对应、语义版本、表现来源、实际帮助、变化和时间条件；支持分项查询且不自动生成每模板四态。确定性检查验证引用、权限、版本及未知分类，语义评测验证 Evidence 是否适用。新增迁移／保持命题不得复制求解状态，同源证据不得重复计权，目标裁剪只重算必要派生判断。案例和运行证据按 Evaluation Assets 交付。
 
 ## 4. AI 与外部能力实现
 

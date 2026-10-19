@@ -1,15 +1,15 @@
-# DeerMind AI-Native Architecture Principles v0.4
+# DeerMind AI-Native Architecture Principles v0.5
 
-> **版本**：v0.4<br>
+> **版本**：v0.5<br>
 > **中文名称**：DeerMind AI 原生架构原则<br>
 > **文档性质**：Concept Architecture 与 System Design 之间的横切架构原则 / AI-Native Execution Doctrine<br>
 > **状态**：与本轮领域及产品目标合同对齐；执行原则保持<br>
-> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.3.md` 及Domain Space v1.1、Learning Space v1.1 与 Evaluation / Interaction / Evolution v1.3<br>
+> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.4.md` 及Domain Space v1.2、Learning Space v1.2 与 Evaluation / Interaction / Evolution v1.4<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
 > **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-10-19<br>
-> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；语义正文与例子同步；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
+> **修订说明**：传导四维语义判断原则。逐文件变更见[修订记录 §10](../concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
 
 ---
 
@@ -242,6 +242,8 @@ Deterministic gate 应验证的是：Action Type 是否当前版本合法、已�
 ---
 
 当前能力状态采用 Task Claim 单一类型。KC 作为可复用知识结构继续参与领域定义、表现解释和教学；LLM 不得因分析某个 KC 而生成另一套个人知识掌握状态。正式判断的任务范围、责任、方法、支持条件与版本必须可追溯；语义质量仍是待验证工程问题。
+
+默认四维（独立完成、理解与解释、迁移应用、延迟保持）通过条件明确的 Task Claims 参与判断，允许受治理且有依据的裁剪与扩展。LLM 必须区分没有证据、尚未到观察时点与经批准不适用，不从正确答案自动生成全部维度的结论。框架完整不等于每轮全测，跨维度同源证据也不等于多个独立样本。
 
 ## 4. Reasoning Protocol 驱动 AI 认知执行
 

@@ -1,14 +1,14 @@
 # MVP 文档共同管理规则
 
-> **版本**：v0.1<br>
+> **版本**：v0.2<br>
 > **文档性质**：MVP 文档共同管理规则与登记册；跨 Phase 3–5<br>
 > **状态**：G3 阶段性通过，Phase 4 进行中；决定、风险和变更持续维护<br>
-> **上游依据与基线**：[Development Roadmap](../top/DeerMind_Development_Roadmap_v0.4.md) 为阶段依据；正式引用的提交与资产版本在评审前登记<br>
+> **上游依据与基线**：[Development Roadmap](../top/DeerMind_Development_Roadmap_v0.5.md) 为阶段依据；正式引用的提交与资产版本在评审前登记<br>
 > **维护责任**：Codex 负责整理与一致性核对；用户参与新的范围或关键约束决定<br>
 > **评审记录**：2026-10-15 用户确认 G3；准确输入与交接见 [Gate §2.7](MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-10-19<br>
-> **修订说明**：登记 DEC-022、DEC-023 与 OPEN-010，统一版本规则并保留既有批准历史。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
+> **修订说明**：登记 DEC-024，并将既有 DEC-022／023 归回决定表；扩展既有迁移项，不伪造资产完成；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](../concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
 
 ---
 
@@ -90,12 +90,13 @@ G3/G4/G5 的评审记录分别列出实际审查的基线。通过后可以用�
 | CON-014 约束 | SRC-013；用户章节展示与量化讨论 | 按教材章节展示可解释的量化学习情况；常驻意图输入，历史按需展开 | 信息与交互 | 章节统计与查询口径已由 DEC-013、014 明确；实际内容和布局按 Phase 4 交付 | NEED-007、008 | 不直接展示内部 KC 或把一项总分当全部掌握 |
 | CON-015 约束 | SRC-005、009；整卷移出及针对性帮助选择 | 整卷导入、整套课程自动排课与进度推动不在当前 MVP | 范围排除 | 已确认 | Definition §3、§5 | 不借问题求助扩大为整卷批量处理 |
 | CON-016 约束 | SRC-001–004、既有语义处理讨论 | 事实、解释与能力判断分开；有效帮助、权限和 owner 责任保持，同会话串行，语义判断以明确规则与 LLM 执行 | 产品与工程 | 既有合同；非产品便利可绕过的细节 | HYP-002；NEED-011 | Build 准入不表示语义质量已达标 |
+| DEC-022 Task Claim 单一能力状态 | 2026-10-19 用户确认“KC 不纳入能力模型，但继续帮助解释和教学”，授权同步文档 | TaskTemplate / TaskScope 替代 ProblemTemplate / ProblemScope；只维护 TaskProficiencyClaim / Belief；KC 保留定义、关系、局部诊断与教学，不持久维护个人 KC 状态；方法允许范围与 ANY／指定／ALL 要求分开 | 概念、系统、MVP 领域与评价交接 | 设计决定已确认；模型效果与资产迁移尚未验证 | Evaluation §3.1、§6.8；Domain §2–6；[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录) | 替代 DEC-007 中旧模板名称及双类能力状态；不撤销知识层，不改旧实验或 Gate |
+| DEC-023 文档逐文件升版 | 同次用户要求“修改过的文档，不论修改大小，一律自增版本号，跟踪所有的修改过程” | 一批修订中每个改动文件递增一次；稳定文件名在头部升版，版本化文件同步改名及引用；以原提交、逐文件清单和检查记录追溯 | 所有本轮及后续变更文档 | 已确认并传导文档规范 | Design Document Standard §2、§7；复核 §9 | 取代原工作稿小改不升版规则；升版不等于批准 |
+| DEC-024 默认四维评价 | 2026-10-19 用户批准“四个维度作为默认评价框架，保留有依据的裁剪和扩展”并授权同步升版 | 默认独立完成、理解与解释、迁移应用、延迟保持；按有意义的 TaskScope 与目标定义 Claim 对应；裁剪／扩展有依据、影响、责任及版本，未测不等于不适用，不强制每轮全检 | Evaluation、Learning Space、系统及 MVP 内容与评价交接 | 设计决定已确认；实际包和测量未完成 | Evaluation §3.1、§5.4、§6.8；Requirements §3.9；Domain Foundation §6–7；复核 §10 | 补充 DEC-022，不恢复 KC 状态；DEC-006 的“不要求每轮全检”继续有效；不改 G3 历史、不表示 G4/G5 通过 |
 
 决定与约束使用不同类型，状态区分待核对、已确认有效、已被替代和已撤销。用户明确确认的内容不因尚未录入新表而失效；“待核对”表示尚未核实其最新适用范围与承接位置，不是可以忽略原决定。废弃或变更须保留理由、实际决定者及替代关系，不删除旧记录来消除矛盾。
 
 历史承接以 [archive](archive/README.md)、可取得的原始讨论及上位文档为来源，逐项核对后再登记；遇到相互冲突或来源不足的情况进入 §4。归档中的“已冻结”不能直接用作新正文已完成的依据。
-| DEC-022 Task Claim 单一能力状态 | 2026-10-19 用户确认“KC 不纳入能力模型，但继续帮助解释和教学”，授权同步文档 | TaskTemplate / TaskScope 替代 ProblemTemplate / ProblemScope；只维护 TaskProficiencyClaim / Belief；KC 保留定义、关系、局部诊断与教学，不持久维护个人 KC 状态；方法允许范围与 ANY／指定／ALL 要求分开 | 概念、系统、MVP 领域与评价交接 | 设计决定已确认；模型效果与资产迁移尚未验证 | Evaluation §3.1、§6.8；Domain §2–6；[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录) | 替代 DEC-007 中旧模板名称及双类能力状态；不撤销知识层，不改旧实验或 Gate |
-| DEC-023 文档逐文件升版 | 同次用户要求“修改过的文档，不论修改大小，一律自增版本号，跟踪所有的修改过程” | 一批修订中每个改动文件递增一次；稳定文件名在头部升版，版本化文件同步改名及引用；以原提交、逐文件清单和检查记录追溯 | 所有本轮及后续变更文档 | 已确认并传导文档规范 | Design Document Standard §2、§7；复核 §9 | 取代原工作稿小改不升版规则；升版不等于批准 |
 
 ## 4. 待决事项与风险登记
 
@@ -112,7 +113,7 @@ G3/G4/G5 的评审记录分别列出实际审查的基线。通过后可以用�
 | OPEN-007 | 教材或目标新版发布后，已有空间如何采用 | SRC-017；DEC-012；受控版本与历史依赖合同 | REQ-013、022、023；内容维护与空间采用 | Phase 3 产品决定已完成，Phase 4/5 细化操作与实现 | 产品分工已收口，后续按 G4/G5 交付 | 不再因该选择阻塞 G3；实际流程与实现尚未完成 | 用户选择管理员检查后指定空间更新，保留版本与记录且不改变学生选定章节；不要求逐个确认 |
 | OPEN-008 | 章节统计的单位、状态、近期作答计数及查询范围 | SRC-018、019；DEC-013、014；既有目标、评价和事实合同 | 学生与家长章节统计、REQ-009、AC-009 | Phase 3 产品口径已完成；Phase 4 准备具体要求与呈现，Phase 5 实现 | 产品口径已收口，实际教材及验证按 G4/G5 交付 | 不再因统计方向或默认查询选择阻塞 G3；不代表实际目标粒度、实现或质量已验证 | 已关闭：[Requirements §3.9](phase-3-definition/MVP_Requirements_and_Acceptance.md#39-章节学习情况与统计口径) 定义要求计数、三类状态、样本分母、零样本、重复、范围和版本；用户确认默认 7 天、可选 30 天及全部和原作答日期规则，AC-009 已补查询对照 |
 | OPEN-009 | 旧“定时测验”是否要求固定日程、预约或外部提醒 | SRC-021；DEC-016；归档 Foundation §9 的原待定项 | NEED-006；REQ-008；AC-008 | Phase 3 产品范围已决定；Phase 4/5 设计和实现 | G3 前已收口 | 不再因介入渠道和定时含义阻塞交接；判断算法不在本阶段预选 | 已关闭：按需的产品内建议，保留学生选择；Requirements §3.2 和 AC-008 已同步，不提供固定周期测验、预约提醒和产品外推送 |
-| OPEN-010 | Task Claim 单一状态的内容包、评测和实现迁移 | DEC-022；现有 CONTENT-BNU-6A-U4-001 v1 仍有 KCClaim，校验与示例仍用旧结构 | 领域内容、评价、运行及历史兼容 | Codex 在 Phase 4 准备新包和案例，Phase 5 完成实现；管理员审核内容与发布 | G4 前新合同资产可交付；相关工程增量启用前完成读写与历史边界检查 | 不阻塞本轮文档修改；禁止将旧包声明为符合新模型或直接激活 | 当前未迁移；见 Domain Foundation §6–7、Evaluation Assets §3；本轮保留所有旧资产与实验字节 |
+| OPEN-010 | Task Claim 单一状态及默认四维的内容包、评测和实现迁移 | DEC-022、024；现有 CONTENT-BNU-6A-U4-001 v1 仍有 KCClaim，尚未完成四维覆盖与 Claim 合同审核 | 领域内容、评价、运行及历史兼容 | Codex 在 Phase 4 准备新包和案例，Phase 5 完成实现；管理员审核内容与发布 | G4 前提供有依据的维度采用／裁剪、Claim 及证据参考；相关工程增量启用前核对读写与历史边界 | 不阻塞本轮文档修改；旧包不得声明符合新合同或直接激活 | 当前未迁移；见 Domain Foundation §6–7、Evaluation Assets §3；不得为通过迁移把未测维度裁掉；旧资产与实验字节保留 |
 
 | 风险编号 | 条件与可能后果 | 依据与不确定性 | 关联范围 | 责任与应对 | 触发及复核节点 | 状态与处置依据 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -153,11 +154,11 @@ Phase 3 的原始依据索引由[产品定义 §1](phase-3-definition/MVP_Defini
 | --- | --- | --- | --- |
 | 问题求助 | 对不会、卡住、存疑或错误的具体题目请求帮助，不预设已经产生错误作答 | 产品定义 NEED-001 | 与错题记录区分 |
 | 主动介入 | 系统依据有效判断和目标提出适当后续行动，可服务保持、迁移或补充证据；保留学生控制 | 产品定义 NEED-006；既有 Interaction 责任 | 不等于固定提醒或强制测验 |
-| Learning Space / 课程空间 | 管理 LearningMaterial、范围与 LearningTarget，引用个人历史的授权视图 | [学习空间设计](../concept-design/DeerMind_Learning_Space_Design_v1.1.md)；CON-002 | 不等同 Domain Space，不是第五个核心 Space |
-| Domain Space / 领域空间 | 共享的 TaskTemplate、SolutionTemplate、KnowledgeComponent 及其关系 | [Domain 设计](../concept-design/DeerMind_Domain_Space_Design_v1.1.md) | 不拥有个人目标或 LearnerBelief |
+| Learning Space / 课程空间 | 管理 LearningMaterial、范围与 LearningTarget，引用个人历史的授权视图 | [学习空间设计](../concept-design/DeerMind_Learning_Space_Design_v1.2.md)；CON-002 | 不等同 Domain Space，不是第五个核心 Space |
+| Domain Space / 领域空间 | 共享的 TaskTemplate、SolutionTemplate、KnowledgeComponent 及其关系 | [Domain 设计](../concept-design/DeerMind_Domain_Space_Design_v1.2.md) | 不拥有个人目标或 LearnerBelief |
 | 错题记录 | 带来源、实际作答及确认状态的学习记录；没有作答或有争议时保留相应状态 | 产品定义 NEED-005 | 不等于已证实知识薄弱，也不是唯一 Evidence 来源 |
-| Task Claim | 正式类型 TaskProficiencyClaim；对明确 TaskScope、责任、方法、条件与质量的个人能力命题 | [Evaluation §3.1](../concept-design/DeerMind_Evaluation_Space_Design_v1.3.md#31-learner-state-model定义-deermind-可以相信什么) | 不等于一个模板一个状态，不生成独立 KC Claim |
-| KC | KnowledgeComponent；领域知识定义及关系，用于任务与方法解释、局部诊断和教学 | [Domain 设计](../concept-design/DeerMind_Domain_Space_Design_v1.1.md) | 不表示当前个人知识掌握状态 |
+| Task Claim | 正式类型 TaskProficiencyClaim；对明确 TaskScope、责任、方法、条件与质量的个人能力命题 | [Evaluation §3.1](../concept-design/DeerMind_Evaluation_Space_Design_v1.4.md#31-learner-state-model定义-deermind-可以相信什么) | 不等于一个模板一个状态，不生成独立 KC Claim |
+| KC | KnowledgeComponent；领域知识定义及关系，用于任务与方法解释、局部诊断和教学 | [Domain 设计](../concept-design/DeerMind_Domain_Space_Design_v1.2.md) | 不表示当前个人知识掌握状态 |
 
 对象编号以类型区分，在同一类型内唯一、稳定且不重复使用。需求候选与正式行为需求分别使用 NEED、REQ；来源使用 SRC，价值假设使用 HYP，验收场景使用 AC，指标使用 MET，实际案例使用 CASE，结果使用 RES；决定、约束、待决事项和风险分别使用 DEC、CON、OPEN、RISK。活动、流程和界面可使用 ACT、FLOW、UI。采用“类型-序号”，填充时才分配实际编号；编号本身不表示已批准。
 

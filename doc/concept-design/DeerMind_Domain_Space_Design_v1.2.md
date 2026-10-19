@@ -1,16 +1,18 @@
-# DeerMind Domain Space Design v1.1
+# DeerMind Domain Space Design v1.2
 
-> **版本**：v1.1<br>
+> **版本**：v1.2<br>
 > **中文名称**：DeerMind 领域空间设计<br>
 > **文档性质**：Conceptual Space Design<br>
 > **状态**：阶段性语义结论正式纳入设计；领域有效性与实现迁移仍待验证<br>
-> **上位基线**：[Concept Architecture v1.3](DeerMind_Concept_Architecture_v1.3.md)、[Product Constitution v1.0](../top/DeerMind_Product_Constitution_v1.0.md)<br>
-> **关联设计**：[Learning Space](DeerMind_Learning_Space_Design_v1.1.md)、[Evaluation](DeerMind_Evaluation_Space_Design_v1.3.md)、[Interaction](DeerMind_Interaction_Space_Design_v1.3.md)、[Evolution](DeerMind_Evolution_Space_Design_v1.3.md)<br>
+> **上位基线**：[Concept Architecture v1.4](DeerMind_Concept_Architecture_v1.4.md)、[Product Constitution v1.0](../top/DeerMind_Product_Constitution_v1.0.md)<br>
+> **关联设计**：[Learning Space](DeerMind_Learning_Space_Design_v1.2.md)、[Evaluation](DeerMind_Evaluation_Space_Design_v1.4.md)、[Interaction](DeerMind_Interaction_Space_Design_v1.4.md)、[Evolution](DeerMind_Evolution_Space_Design_v1.4.md)<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
 > **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-10-19<br>
-> **修订说明**：统一 TaskTemplate 及递归方法关系；KC 保留知识、诊断与教学职责，个人状态只由 Task Claim 表达。逐文件变更见[修订记录 §9](DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
+> **修订说明**：区分 Domain 支持四维取证与个人评价责任；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+
+---
 
 本设计以 TaskTemplate、SolutionTemplate、KnowledgeComponent 定义任务、完成方法和知识依据。Learning Space 持有材料、课程范围与目标；Evaluation 只对条件明确的 Task Claim 维护个人 Belief。KC 保留领域解释与教学作用，不再对应独立个人掌握状态。此次确认对象与责任合同，不表示模板粒度、知识划分或教学效果已经实证成立；既有 Spike、Build 只支持原基线。
 
@@ -19,6 +21,8 @@
 DeerMind 要判断学习者能处理什么问题、为什么遇到困难、下一步如何帮助，首先需要一套可以被重复引用的领域坐标。只有题库，系统容易把题目数量误当覆盖；只有知识点目录，系统难以表达选择方法、组织多个步骤、检查结果和解释理由等综合责任；只有自然语言能力标签，评价又缺少可观察、可反驳的依据。
 
 Domain Space 因此定义三类互补对象：TaskTemplate 描述可以要求学习者完成的哪类任务；SolutionTemplate 描述在何种条件下可如何完成；KnowledgeComponent 描述处理问题与组织方法所需的可复用认知结构或功能。三者共同提供知识与能力的领域参照，个人是否已经具备这些能力则由 Evaluation 根据表现推断。任务不是人的能力本身；Task Claim 对明确任务范围、完成责任、方法要求与条件作出可评价的能力命题。Task 也不等于一次教学活动、软件作业或动作步骤。
+
+Evaluation 的默认四维框架以这些规范对象为参照：TaskTemplate 提供任务及有意义的变化范围，SolutionTemplate 和 KC 提供解释、方法与教学依据。Domain 不因此为每个模板生成四套状态或固定目标，也不把结构相同认定为迁移证据等价。独立、理解、迁移与保持是否成立，须由明确 Task Claims 和实际表现判断；采用与裁剪的规范边界见 [Evaluation §3.1](DeerMind_Evaluation_Space_Design_v1.4.md#31-learner-state-model定义-deermind-可以相信什么)。
 
 Domain Space 不拥有课程容器、个人学习目标、学习者信念、当前教学决策和实际执行历史。Learning Space 定义材料、范围与目标；Interaction 选择活动并解释当前表现；Evaluation 形成 Evidence 与 Belief；Evolution 分析模型失配并提出受治理修订。域模型可以被多个目标复用，不随某一孩子的进度裁剪其定义。
 

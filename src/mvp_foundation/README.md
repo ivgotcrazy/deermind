@@ -1,15 +1,17 @@
 # MVP 内容与评测准备资产
 
-> **版本**：v0.1<br>
+> **版本**：v0.2<br>
 > **文档性质**：Phase 4 资产入口与使用说明<br>
 > **状态**：已有 G3 批准快照、合成交互材料、开发案例及校内实际单元候选；正式内容审核与领域发布待完成<br>
 > **维护责任**：Codex 维护本轮资产；管理员复核实际内容<br>
 > **版本与评审**：各资产分别记录修订、来源与用途；[阶段记录](../../doc/mvp/MVP_Gate_Reviews.md)<br>
 > **写作规范**：[设计文档规范 v1.1](../../doc/top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-10-19<br>
-> **修订说明**：入口提示资产尚待迁移；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../../doc/concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
+> **修订说明**：同步资产与原型的未迁移状态。逐文件变更见[修订记录 §10](../../doc/concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
 
-当前设计已采用 TaskTemplate 与 Task Claim 单一能力状态；本目录既有内容包、演示与校验仍按各自原版本解释，本轮未迁移运行资产。新模型接入范围见 [OPEN-010](../../doc/mvp/MVP_Governance.md#4-待决事项与风险登记)。
+---
+
+当前设计采用 TaskTemplate、Task Claim 单一能力状态及默认四维评价（独立完成、理解与解释、迁移应用、延迟保持），裁剪／扩展须有依据。本目录既有内容包、演示与校验仍按原版本解释，尚未完成 Task-only 和四维覆盖／Claim 合同迁移；页面或旧校验可运行不代表新合同已接入。后续范围见 [OPEN-010](../../doc/mvp/MVP_Governance.md#4-待决事项与风险登记)。
 
 ---
 

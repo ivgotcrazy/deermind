@@ -1,15 +1,15 @@
-# DeerMind System Design Roadmap v0.7
+# DeerMind System Design Roadmap v0.8
 
-> **版本**：v0.7<br>
+> **版本**：v0.8<br>
 > **中文名称**：DeerMind 系统设计路线图<br>
 > **文档性质**：System Design 阶段执行计划 / Design Roadmap<br>
 > **状态**：System Design Phase 6 与 Build 历史收口保持；当前模型修订已纳入设计，MVP Phase 4 进行中，G3-20261015-01 原批准输入保持，G4 未通过<br>
-> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.3.md`、Domain Space v1.1、Learning Space v1.1 与 Evaluation / Interaction / Evolution v1.3、`DeerMind_AI_Native_Architecture_Principles_v0.4.md`<br>
+> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.4.md`、Domain Space v1.2、Learning Space v1.2 与 Evaluation / Interaction / Evolution v1.4、`DeerMind_AI_Native_Architecture_Principles_v0.5.md`<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
 > **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-10-19<br>
-> **修订说明**：语义正文与例子同步；同步现行设计引用与 Phase 4 状态，保留路线及历史 Gate；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
+> **修订说明**：更新当前模型修订状态。逐文件变更见[修订记录 §10](../concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
 
 ---
 
@@ -133,7 +133,7 @@ Work Package 是必须完成的设计责任；Document 是承载这些设计结�
 
 ### 3.1 总体 System Design
 
-**目标文档：`DeerMind_System_Design_v1.2.md`**
+**目标文档：`DeerMind_System_Design_v1.3.md`**
 
 它负责建立全系统 mental model，至少包含：
 
@@ -650,7 +650,7 @@ System Design 的正式文档体系由“总体设计 + 必要的专项设计 + 
 总体设计固定形成：
 
 1. `DeerMind_System_Design_v0.x.md` — Integrated Pre-Validation Candidate / evidence-driven revision series；
-2. `DeerMind_System_Design_v1.2.md` — Gate F 通过后的正式 Integrated System Design Baseline。
+2. `DeerMind_System_Design_v1.3.md` — Gate F 通过后的正式 Integrated System Design Baseline。
 
 六个核心专项若经 Phase 4 Coverage Review 判定为 `SEPARATE`，使用以下候选文档族：
 
@@ -906,7 +906,7 @@ System Design 阶段采用以下执行纪律：
 
 2026-10-08 内部 Phase 6 证据评审、设计修订和整套一致性核对完成。Gate E/F 通过，总体及六项专项 v1.0 构成当时的 System Design Baseline Set。具体决策和逐项 Gate 依据见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)。
 
-2026-10-09 的 G3 PASS 和进入 Development Phase 4 的历史依据见[归档 MVP Definition §11](../mvp/archive/DeerMind_MVP_Definition_v0.1.md#11-g3-评审与阶段完成条件)。2026-10-10 按用户要求归档四份 MVP 文档，当前工作改为先评审三个阶段的交付框架与大纲，确认后复核需求并填充新正文，见 [MVP 文档入口](../mvp/README.md)。旧 G3 记录不自动构成新范围的通过结论。Development Phase 与本路线图内部 System Design 阶段分别计数；历史系统设计与验证结论保持原版本范围。2026-10-11 已按用户授权将模型结论传导至 Concept v1.2、Domain / Learning Space v1.0 与 System Design v1.1；当时恢复 Phase 3 评审。随后 Phase 3 于 2026-10-15 按 G3-20261015-01 阶段性通过；当前在 Phase 4。2026-10-19 的 Task Claim 单一状态修订传导文档合同，资产迁移待完成，G4/G5 未通过。
+2026-10-09 的 G3 PASS 和进入 Development Phase 4 的历史依据见[归档 MVP Definition §11](../mvp/archive/DeerMind_MVP_Definition_v0.1.md#11-g3-评审与阶段完成条件)。2026-10-10 按用户要求归档四份 MVP 文档，当前工作改为先评审三个阶段的交付框架与大纲，确认后复核需求并填充新正文，见 [MVP 文档入口](../mvp/README.md)。旧 G3 记录不自动构成新范围的通过结论。Development Phase 与本路线图内部 System Design 阶段分别计数；历史系统设计与验证结论保持原版本范围。2026-10-11 已按用户授权将模型结论传导至 Concept v1.2、Domain / Learning Space v1.0 与 System Design v1.1；当时恢复 Phase 3 评审。随后 Phase 3 于 2026-10-15 按 G3-20261015-01 阶段性通过；当前在 Phase 4。2026-10-19 的 Task Claim 单一状态与默认四维修订更新文档合同，资产迁移待完成，G4/G5 未通过。
 
 项目 G1 与此前 Build 退出的 G2 保持原结论，依据与能力分期见[Build 退出评审](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。原 R2 为 14/24、EVAL-02/04 未满足及原条件 HOLD，R3/R4 失败保留。Spike 原结果为 10 SUPPORTED、A2 DENIED、E1 INCONCLUSIVE，以及 X1–X4 PASS、X5 INCONCLUSIVE；历史 9/17 和失败批次不改写。
 

@@ -1,16 +1,16 @@
-# DeerMind Concept Architecture v1.3
+# DeerMind Concept Architecture v1.4
 
-> **版本**：v1.3<br>
+> **版本**：v1.4<br>
 > **中文名称**：DeerMind 概念架构<br>
 > **文档性质**：顶层概念架构 / Architecture Baseline<br>
 > **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论<br>
 > **上位文档**：DeerMind Product Thesis v1.0、DeerMind Product Constitution v1.0<br>
-> **下位文档**：[Domain Space v1.1](DeerMind_Domain_Space_Design_v1.1.md)、[Learning Space v1.1](DeerMind_Learning_Space_Design_v1.1.md)、Evaluation / Interaction / Evolution Space v1.3、AI-Native Architecture Principles v0.4、System Design v1.2<br>
+> **下位文档**：[Domain Space v1.2](DeerMind_Domain_Space_Design_v1.2.md)、[Learning Space v1.2](DeerMind_Learning_Space_Design_v1.2.md)、Evaluation / Interaction / Evolution Space v1.4、AI-Native Architecture Principles v0.5、System Design v1.3<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
 > **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-10-19<br>
-> **修订说明**：采用 TaskTemplate；能力状态仅保留 Task Claim；同步知识层角色、方法范围及历史迁移。逐文件变更见[修订记录 §9](DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
+> **修订说明**：在总体架构定位四维默认框架与各空间责任；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
 
 ---
 
@@ -198,11 +198,13 @@ Domain Space 的核心对象为 TaskTemplate、SolutionTemplate、KnowledgeCompo
 
 域模型提供模板间结构对应与差异，支持判断表面不同的问题是否有共同结构。相同模板不代表同难度、等价证据或无需再练；复习和检测策略仍由 Interaction 依据评价与目标决定。KC grounding 以所用方法为条件，参考解法不能当作实际学习者轨迹。
 
-具体题目和解法在运行时实例化并保留版本与参数，但不在规范对象图中另建一套核心模型。Domain 不持有个人能力状态，也不持有 LearningTarget；详见 [Domain Space Design](DeerMind_Domain_Space_Design_v1.1.md)。
+具体题目和解法在运行时实例化并保留版本与参数，但不在规范对象图中另建一套核心模型。Domain 不持有个人能力状态，也不持有 LearningTarget；详见 [Domain Space Design](DeerMind_Domain_Space_Design_v1.2.md)。
 
-Learning Space 拥有 LearningMaterial 与 LearningTarget。章节是材料内部结构；目标引用领域范围，定义质量、支持与认知责任，保持与 GoalIntent、外部制度要求、目标绑定和教学计划的区别。目标不是 KC 清单，其定义与发布责任见[学习空间设计](DeerMind_Learning_Space_Design_v1.1.md)。
+Learning Space 拥有 LearningMaterial 与 LearningTarget。章节是材料内部结构；目标引用领域范围，定义质量、支持与认知责任，保持与 GoalIntent、外部制度要求、目标绑定和教学计划的区别。目标不是 KC 清单，其定义与发布责任见[学习空间设计](DeerMind_Learning_Space_Design_v1.2.md)。
 
-Learning Space 选择共享 Domain 中的任务范围与方法，不改变 Domain 定义。纳入方法 A、B 可以得到知识覆盖并集，但目标须另行规定任选一种、指定方法或多方法分别覆盖；一次采用 A 的成功不能证明会用 B，更不能推成全部 KC 已掌握。理解、迁移、保持和独立性由 Task Claim 的责任、范围、条件及其证据表达，不由任务标签自动保证。
+Learning Space 选择引用 Domain 中的任务范围与方法，不改变 Domain 定义。纳入方法 A、B 可得到知识覆盖并集，但目标须另行规定任选一种、指定方法或多方法分别覆盖；一次使用 A 的成功不证明会用 B，更不能推出全部 KC 已掌握。
+
+Evaluation 以独立完成、理解与解释、迁移应用、延迟保持作为任务范围的默认评价框架；按有依据、可追溯的裁剪与扩展确定目标要求，通过条件明确的 Task Claims 维护个人 Belief。四维不是四种状态类型，不为每个模板机械建四个状态，也不强制每轮全测。定义、例子与证据边界以 [Evaluation §3.1、§6.8](DeerMind_Evaluation_Space_Design_v1.4.md#31-learner-state-model定义-deermind-可以相信什么) 为准。
 
 ### 4.2 评估空间：形成对学习者的可修正认识
 
@@ -667,7 +669,7 @@ Domain Space 定义问题、方法和 KC；Learning Space 定义材料、范围�
 
 | 类别 | 问题 | 当前状态 |
 |---|---|---|
-| 概念性 | Learning Target 在开放领域需要多强的组合表达能力 | Target 责任已确认；不提前冻结 DSL，由 Learning Space v1.1 定义最小充分语义 |
+| 概念性 | Learning Target 在开放领域需要多强的组合表达能力 | Target 责任已确认；不提前冻结 DSL，由 Learning Space v1.2 定义最小充分语义 |
 | 概念性 | Canonical Target 与具体 Target Binding 是否需要不同正式类型 | Definition / Binding 与 owner chain 已冻结；是否增加独立正式类型或 Model 继续保持开放 |
 | 实证性 | “反证机会”在不同学习领域如何被可靠观察与验证 | Constitution 与 Concept 已冻结防自我封闭边界，具体判据需要真实场景验证 |
 | 实证性 | Target Assessment 是否能跨长期、高噪声任务保持有意义 | 语义归属已明确，可靠性需通过校准、迁移和长期预测验证 |
@@ -688,7 +690,7 @@ Domain Space 定义问题、方法和 KC；Learning Space 定义材料、范围�
 
 ### 8.4 下游传导与后续工作
 
-Domain Space v1.1、Learning Space v1.1、Evaluation / Interaction / Evolution v1.3、AI-Native Principles v0.4 与 System Design v1.2 共同承接新合同。旧实现中的 TaskFamily、策略包和版本来源需在工程交付中逐项映射；不能只更名后宣称数据迁移和验证完成。
+Domain Space v1.2、Learning Space v1.2、Evaluation / Interaction / Evolution v1.4、AI-Native Principles v0.5 与 System Design v1.3 共同承接单一 Task Claim 和默认四维评价合同。旧实现中的 TaskFamily、策略包和版本来源需在工程交付中逐项映射；不能只更名后宣称数据迁移和验证完成。
 
 Development Roadmap 的阶段顺序保持。当前回到 Phase 3 的需求与成功标准复核；Phase 4 用实际领域和评测资产检验粒度与映射；Phase 5 实现和验证新的运行合同。重大概念反例需要重新讨论，统计校准与实现优化不要求在概念阶段全部完成。
 
@@ -799,7 +801,7 @@ DeerMind 吸收成熟理论中的职责分离和验证思想，但不复制任�
 
 ## 附录 D — 设计历史与资产迁移
 
-v1.1 曾将 Target 与 Task / Solution / Knowledge 一并放在架构 Learning Space。本轮复核发现这与产品课程空间混名，也不利于领域跨目标复用。v1.2 完成领域与课程空间分离；本版继续保留四 Space 与运行不变量，采用 TaskTemplate 并将个人能力状态统一为 Task Claim。下表表达当前归属和历史迁移要求。旧基线由 Git 历史保存；当前目录只维护最新正式版本。
+v1.1 曾将 Target 与 Task / Solution / Knowledge 一并放在架构 Learning Space。本轮复核发现这与产品课程空间混名，也不利于领域跨目标复用。v1.2 完成领域与课程空间分离，v1.3 采用 TaskTemplate 与 Task Claim 单一状态；本版继续保留四 Space 与运行不变量，明确默认四维评价及有依据的裁剪／扩展。下表表达当前归属和历史迁移要求。旧基线由 Git 历史保存；当前目录只维护最新正式版本。
 
 | 历史资产或名称 | 当前归属与迁移要求 |
 | --- | --- |

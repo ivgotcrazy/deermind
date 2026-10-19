@@ -1,13 +1,13 @@
 # MVP 文档框架与交付入口
 
-> **版本**：v0.1<br>
+> **版本**：v0.2<br>
 > **文档性质**：MVP 文档导航与阶段交付入口<br>
 > **状态**：2026-10-15 G3 阶段性通过；Phase 4 设计、原型与内容准备进行中，G4 未通过；Phase 5 仍为大纲<br>
 > **维护责任**：Codex 负责本轮整理与一致性检查<br>
 > **版本与评审**：工作修订由 Git 追溯；准确基线与结论见 [Gate 记录](MVP_Gate_Reviews.md)<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-10-19<br>
-> **修订说明**：更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
+> **修订说明**：同步 MVP 当前模型与交接状态；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](../concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
 
 ---
 
@@ -17,9 +17,11 @@
 
 [归档](archive/README.md)和旧原型保留作历史参考，不自动成为本轮设计答案。旧原型中的整卷、旧统计和仅错题口径不属于当前范围，新入口与旧入口分开，避免混用。
 
+当前设计已承接 DEC-022 的 Task Claim 单一状态及 DEC-024 的默认四维评价，允许有依据的裁剪与扩展。四维规则见 [Evaluation §3.1](../concept-design/DeerMind_Evaluation_Space_Design_v1.4.md#31-learner-state-model定义-deermind-可以相信什么)，内容／案例及实现迁移由 OPEN-010 承接；当前原型和旧内容包未因文档更新完成接入。
+
 ## 1. 阶段对应
 
-目录编号对应 [Development Roadmap](../top/DeerMind_Development_Roadmap_v0.4.md) 的项目阶段，不对应 System Design Roadmap 内部阶段。阶段目标与 Gate 含义保持。
+目录编号对应 [Development Roadmap](../top/DeerMind_Development_Roadmap_v0.5.md) 的项目阶段，不对应 System Design Roadmap 内部阶段。阶段目标与 Gate 含义保持。
 
 | 目录与阶段 | 要回答的问题 | 阶段交接 |
 | --- | --- | --- |
