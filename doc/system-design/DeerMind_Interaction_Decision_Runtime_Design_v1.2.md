@@ -1,15 +1,18 @@
-# DeerMind Interaction & Decision Runtime Design v1.1
+# DeerMind Interaction & Decision Runtime Design v1.2
 
+> **版本**：v1.2<br>
 > **中文名称**：DeerMind 交互与决策运行时设计<br>
-> **版本**：v1.1<br>
 > **文档性质**：System Design Baseline<br>
 > **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
-> **上位基线**：[Concept Architecture v1.2](../concept-design/DeerMind_Concept_Architecture_v1.2.md)、[Domain Space v1.0](../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution v1.2、[AI-Native Principles v0.3](../top/DeerMind_AI_Native_Architecture_Principles_v0.3.md)；总体合同为 [System Design v1.1](DeerMind_System_Design_v1.1.md)<br>
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-11
+> **上位基线**：[Concept Architecture v1.3](../concept-design/DeerMind_Concept_Architecture_v1.3.md)、[Domain Space v1.1](../concept-design/DeerMind_Domain_Space_Design_v1.1.md)、[Learning Space v1.1](../concept-design/DeerMind_Learning_Space_Design_v1.1.md)、Evaluation / Interaction / Evolution v1.3、[AI-Native Principles v0.4](../top/DeerMind_AI_Native_Architecture_Principles_v0.4.md)；总体合同为 [System Design v1.2](DeerMind_System_Design_v1.2.md)<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.7.md`<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
-本版本在原 System Design v1.0 合同上承接 Domain 与 Learning Space 的对象和 owner 修订。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
+本版本在原 System Design v1.2 的领域／课程分离基础上，采用 TaskTemplate 并将个人能力状态统一为 Task Claim。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计命题
@@ -119,7 +122,7 @@ Interaction Runtime 的职责不是“让 AI 尽可能多地参与”，而是�
 
 ### 1.4 与总体 System Design 和 Interaction Space 的关系
 
-`Interaction Space Design v1.2` 定义 Interaction 的稳定语义责任；总体 `DeerMind_System_Design_v1.1` 把 Interaction 放入全系统 MVCL、Current Resolution、AI Runtime、State / Dependency、Event History 和 Evaluation 闭环中；本文档把其中的 Decision 与 Action 部分深化到 Focused Design Closure。
+`Interaction Space Design v1.2` 定义 Interaction 的稳定语义责任；总体 `DeerMind_System_Design_v1.2` 把 Interaction 放入全系统 MVCL、Current Resolution、AI Runtime、State / Dependency、Event History 和 Evaluation 闭环中；本文档把其中的 Decision 与 Action 部分深化到 Focused Design Closure。
 
 ```text
 Interaction Space
@@ -729,6 +732,8 @@ OccurredToolUse
 AI Runtime 内部 Reasoning Tool 使用也不能被误记成 learner Task tool use。
 
 ---
+
+Policy 的正式个人能力输入限于当前有效的 Task Claim Belief 及其派生目标差距。局部表现与 KC 解释可以支持当下讲解选择，但不能作为另一套持久 KC 掌握状态。检查方法要求时，区分允许任选、指定与分别覆盖；缺少某条方法的证据不能等同于已证实不会，也不能由其他方法成功自动补齐。
 
 ## 4. Policy Judgment 与行动选择
 
@@ -1535,7 +1540,7 @@ Interaction 负责定义“哪些变化在 Interaction 语义上意味着什么�
 
 ### 8.4 Domain 与 Learning Space
 
-Domain 提供 ProblemTemplate、SolutionTemplate、KC、知识 grounding、问题工具条件与结构对应关系；Learning Space 提供材料及映射、LearningTarget、范围和支持责任。两者各自的身份、版本、适用 scope 与当前 binding 必须可分辨，Interaction 不拥有其规范写入权。
+Domain 提供 TaskTemplate、SolutionTemplate、KC、知识 grounding、问题工具条件与结构对应关系；Learning Space 提供材料及映射、LearningTarget、范围和支持责任。两者各自的身份、版本、适用 scope 与当前 binding 必须可分辨，Interaction 不拥有其规范写入权。
 
 DecisionContext 按当前用途装配具体问题的实际来源、绑定参数、呈现条件与实际帮助，不从参考方法合成学习者轨迹。模板结构对应可以影响选题，但不能直接产生重复题禁令、强制复习或能力结论。是否再次检测、换表示、讲解或等待，由 Policy 结合有效 Evidence / Belief、目标和当前负担决定。
 
@@ -1590,7 +1595,7 @@ Interaction 使用这些横切 resolver 的结果，但不吸收其 ownership。
 
 ### 8.9 Focused Design Closure 判断
 
-本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.1 在此基础上更新领域与产品输入合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.2 在此基础上更新任务与单类能力状态合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 ### 8.10 当前保留的 Architecture Assumption
 

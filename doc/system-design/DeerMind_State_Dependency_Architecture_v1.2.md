@@ -1,15 +1,18 @@
-# DeerMind State, Dependency & Invalidation Architecture v1.1
+# DeerMind State, Dependency & Invalidation Architecture v1.2
 
+> **版本**：v1.2<br>
 > **中文名称**：DeerMind 状态、依赖与失效架构<br>
-> **版本**：v1.1<br>
 > **文档性质**：System Design Baseline<br>
 > **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
-> **上位基线**：[Concept Architecture v1.2](../concept-design/DeerMind_Concept_Architecture_v1.2.md)、[Domain Space v1.0](../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution v1.2、[AI-Native Principles v0.3](../top/DeerMind_AI_Native_Architecture_Principles_v0.3.md)；总体合同为 [System Design v1.1](DeerMind_System_Design_v1.1.md)<br>
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-11
+> **上位基线**：[Concept Architecture v1.3](../concept-design/DeerMind_Concept_Architecture_v1.3.md)、[Domain Space v1.1](../concept-design/DeerMind_Domain_Space_Design_v1.1.md)、[Learning Space v1.1](../concept-design/DeerMind_Learning_Space_Design_v1.1.md)、Evaluation / Interaction / Evolution v1.3、[AI-Native Principles v0.4](../top/DeerMind_AI_Native_Architecture_Principles_v0.4.md)；总体合同为 [System Design v1.2](DeerMind_System_Design_v1.2.md)<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.7.md`<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；传导 Task Claim 单一状态合同；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
-本版本在原 System Design v1.0 合同上承接 Domain 与 Learning Space 的对象和 owner 修订。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
+本版本在原 System Design v1.2 的领域／课程分离基础上，采用 TaskTemplate 并将个人能力状态统一为 Task Claim。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计命题
@@ -616,7 +619,7 @@ TargetRevision \not\Rightarrow LearnerBeliefRevision
 
 目标定义的 owner 是 Learning Space。DependencySet 分别记录产品目标、材料映射与 Domain 引用；不能把目标变更统一记作 Domain 全量变更。仅改变材料位置或显示标题时，只更新实际受影响投影；若修正材料识别或领域映射改变了 Observation / Evidence 含义，才沿相应依赖传播。
 
-同一规范 KC 可被不同学习空间引用，但个人 Evidence / Belief 的可用 scope 不能因 identity 相同而合并。当前 MVP 的空间隔离约束必须进入 resolution 与查询边界，不能只靠 UI 过滤。
+同一 TaskTemplate、SolutionTemplate 或 KC 可被不同学习空间引用，但个人 Task Claim Evidence / Belief 的可用 scope 不能因领域 identity 相同而合并。KC 引用不产生独立个人状态。当前 MVP 的空间隔离约束必须进入 resolution 与查询边界，不能只靠 UI 过滤。
 
 ### 3.13 Domain / Claim / Evidence / Inference semantics revision
 
@@ -635,7 +638,7 @@ Semantic revision
 
 这类变化可能触发更深的 epistemic invalidation，但仍不能改写 Historical Event。
 
-ProblemTemplate 拆分、参数范围改变、SolutionTemplate 的适用性或 KC grounding 修订时，先判断哪些已用关系影响了结论。新增一个尚未被消费的方法，不必自动否定所有既有 Belief；改变已用问题责任或 Claim 含义，则不得静默继承。未知兼容关系采用明确 non-resolution，保留旧版本历史可读性。
+TaskTemplate 拆分、参数范围改变、SolutionTemplate 的适用性或 KC grounding 修订时，先判断哪些已用关系影响了结论。新增一个尚未被消费的方法，不必自动否定所有既有 Belief；改变已用问题责任或 Claim 含义，则不得静默继承。未知兼容关系采用明确 non-resolution，保留旧版本历史可读性。
 
 ### 3.14 Target Binding / External Obligation / Context Authority change
 
@@ -721,6 +724,8 @@ Runtime Tool Availability 属于当前 operational dependency。它可以使：
 它不改变 Task Canonical Tool Semantics，也不自动修改 Evidence / Belief。
 
 ---
+
+Task Claim 的责任、TaskScope、方法覆盖或支持边界发生改变时，必须核对语义兼容与依赖，不能将 ANY 的历史结果直接当作 ALL 的覆盖。未检测方法保留缺少依据，不判失败。旧 KCClaim / KCBelief 仅可按历史版本查询；当前状态解析不得 fallback 到它们。新命题依据不足返回相应 non-resolution 或 UNKNOWN，不能因为旧缓存存在而伪造 current-valid。
 
 ## 4. Consistency、Concurrency、Recompute 与 Recovery
 
@@ -1318,7 +1323,7 @@ AA-B01、AA-B02 在原声明的内存 Harness 和受控 fan-out 范围为 SUPPOR
 
 ### 7.11 Focused Design Closure 判断
 
-本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.1 在此基础上更新领域与产品输入合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.2 在此基础上更新任务与单类能力状态合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 ## 8. 下位设计与后续阶段交接
 
@@ -1340,7 +1345,7 @@ AA-B01、AA-B02 在原声明的内存 Harness 和受控 fan-out 范围为 SUPPOR
 
 ### 8.2 对总体 System Design 的影响
 
-本专项与总体 System Design v1.1 的 current、dependency、owner 和历史合同一致。
+本专项与总体 System Design v1.2 的 current、dependency、owner 和历史合同一致。
 
 它把总体设计已有的：
 
@@ -1425,7 +1430,7 @@ Optimistic Formal Commit
 | Object / Family | Standing | Semantic Owner | Identity / Version | 主要依赖 | Current Resolution | Replacement / Recompute |
 |---|---|---|---|---|---|---|
 | Event | Factual | Factual authority / Event Runtime | EventId + OccurrenceKey | source / authority / correction | factual eligibility / correction view | 不 recompute；通过 correction |
-| Canonical ProblemTemplate / SolutionTemplate / KC | Canonical | Domain | identity + version | Governance / activation | active version + scope | new canonical version |
+| Canonical TaskTemplate / SolutionTemplate / KC | Canonical | Domain | identity + version | Governance / activation | active version + scope | new canonical version |
 | LearningTarget / 材料映射 | Canonical product definition | Learning Space | product space + identity + version | 产品授权 / 对应 Governance | active version + scope | new definition version |
 | ReasoningProtocol | Canonical | corresponding semantic owner / governance | identity + protocol version | canonical semantics | active compatible protocol | new version |
 | Observation | Derived Formal | Interaction | identity + revision | Event / Artifact / canonical semantics | dependency + version + lifecycle | Interaction reinterpretation |

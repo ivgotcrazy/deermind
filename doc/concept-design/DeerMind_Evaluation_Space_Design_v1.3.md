@@ -1,18 +1,17 @@
-# DeerMind Evaluation Space Design v1.2
+# DeerMind Evaluation Space Design v1.3
 
-> **中文名称**：DeerMind 评估空间设计  
-> **版本**：v1.2  
-> **文档性质**：Space Design / Architecture Baseline  
-> **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论  
-> **上位基线**：DeerMind Concept Architecture v1.2  
-> **上位领域基线**：[DeerMind Domain Space Design v1.0](DeerMind_Domain_Space_Design_v1.0.md)；[Learning Space v1.0](DeerMind_Learning_Space_Design_v1.0.md)  
-> **上位价值约束**：DeerMind Product Thesis v1.0、DeerMind Product Constitution v1.0  
-> **写作规范**：DeerMind Design Document Standard v1.0  
-> **更新时间**：2026-10-11  
->
-> **修订说明**：补充诊断转入教学时的证据解释，区分讲解请求与实际暴露，并保留既有表现的证据价值；不改变 Claim Space 或 Evaluation ownership。
->
-> **版本说明**：v1.2 承接 Domain Space 与 Learning Space 的职责分离，更新领域模板、目标来源与版本依赖；保留本 Space 既有模型、单写与治理边界。旧 v1.1 Freeze Gate 及 Spike / Build 为原始版本下的历史证据，本轮未重新执行或改写其结果。
+> **版本**：v1.3<br>
+> **中文名称**：DeerMind 评估空间设计<br>
+> **文档性质**：Space Design / Architecture Baseline<br>
+> **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论<br>
+> **上位基线**：DeerMind Concept Architecture v1.3<br>
+> **上位领域基线**：[DeerMind Domain Space Design v1.1](DeerMind_Domain_Space_Design_v1.1.md)；[Learning Space v1.1](DeerMind_Learning_Space_Design_v1.1.md)<br>
+> **上位价值约束**：DeerMind Product Thesis v1.0、DeerMind Product Constitution v1.0<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：重写单类 Learner State Core、Evidence 与诊断边界；补充分数案例、方法覆盖和旧 KC 状态迁移。逐文件变更见[修订记录 §9](DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
 ---
 
@@ -20,7 +19,7 @@
 
 Evaluation Space 解决的不是“给学习者打一个分数”，也不是维护一个越来越复杂的学习者画像。它面对的是一个更基本的问题：**DeerMind 永远无法直接读取学习者真实的认知状态，却必须根据有限、受条件影响、可能互相冲突的行为证据，形成长期、可修正的能力认识。**
 
-Domain Space v1.0 提供问题模板、方法与 KC；Learning Space v1.0 提供 LearningTarget、范围和支持责任。Evaluation 需要判断具体表现支持哪个条件性命题，区分未达目标与证据不足，并保证模型映射变化不会被误当成真实学习变化。
+Domain Space v1.1 提供任务模板、方法与 KC；Learning Space v1.1 提供 LearningTarget、范围和支持责任。Evaluation 需要判断具体表现支持哪个条件性命题，区分未达目标与证据不足，并保证模型映射变化不会被误当成真实学习变化。
 
 Evaluation 仍然是 DeerMind 的**学习者认识层**。它维护的是系统对学习者的可修正认识，而不是学习者真实状态本身，也不是 Learning Target 的规范要求。
 
@@ -63,7 +62,7 @@ Target Assessment 则建立在正式 Target Definition 与当前 Learner Beliefs
 本文档定义 Evaluation Space 的稳定语义责任，包括：
 
 - 学习者命题与 Learner Belief 的最小规范结构；
-- Task Proficiency 与 KC 两类核心学习者命题；
+- Task Claim 作为唯一核心学习者命题类型，KC 保留领域解释与教学作用；
 - Conditions、Support / Responsibility Boundary 与 Quality Requirement 如何进入能力 Claim 或 Evidence Context；
 - Observation 如何在明确 Claim 下形成 Evidence；
 - Assistance、Delayed、Transfer、Missing Evidence 等条件如何改变一次表现的认识意义；
@@ -93,7 +92,7 @@ Evaluation Space 不负责：
 
 ### 1.3 上位边界
 
-根据 Concept Architecture v1.2，Domain 提供领域定义，Learning Space 提供材料与目标规范；Evaluation 形成对学习者的可修正认识；Interaction 使用这些认识、当前 Context 与现实约束做行动决策。必须长期保持：
+根据 Concept Architecture v1.3，Domain 提供领域定义，Learning Space 提供材料与目标规范；Evaluation 形成对学习者的可修正认识；Interaction 使用这些认识、当前 Context 与现实约束做行动决策。必须长期保持：
 
 \[
 Requirement
@@ -272,92 +271,32 @@ flowchart LR
 
 ### 3.1 Learner State Model：定义 DeerMind 可以相信什么
 
-Learner State Model 的职责不是存放所有“关于学习者的信息”，而是定义什么类型的学习者命题具有足够稳定的语义，值得被 DeerMind 长期维护。
-
-当前 Learner State Core 只保留两类规范 Claim：
+Learner State Model 定义值得持续维护的个人能力命题。当前只保留 **Task Claim**，规范标识沿用 `TaskProficiencyClaim`；其个人状态为 `TaskProficiencyBelief`。这不是旧 TaskFamily 本体的恢复，也不是把一次任务结果当作能力。
 
 \[
-\boxed{
-LearnerClaimSpace
-=
-TaskProficiencyClaims
-\cup
-KCClaims
-}
+LearnerClaimSpace=\{TaskProficiencyClaim\},\qquad
+LearnerStateCore=\{Belief(Learner,LearningSpace,ClaimVersion)\}
 \]
 
-因此：
+一个 Task Claim 表达：学习者在明确任务范围、条件、方法要求和支持边界下，能否相对稳定地承担指定认知或行动责任，并满足相应质量要求。其语义至少包含下表；不要求提前固定为数据库字段。
 
-\[
-\boxed{
-LearnerStateCore
-=
-TaskProficiencyBeliefs
-+
-KCBeliefs
-}
-\]
+| 语义部分 | 必须说明的内容 |
+| --- | --- |
+| TaskScope | 一个或多个明确版本的 TaskTemplate，参数、情境、表征及排除范围 |
+| Responsibility | 求解、解释、选法、构造或检查等实际评价责任；未要求的责任不能随意加入 |
+| MethodRequirement | 允许的方法范围，以及任选、指定或多个方法分别覆盖的含义 |
+| Conditions / SupportBoundary | 环境、工具及哪些工作必须由学习者自行承担；实际帮助另记 Evidence Context |
+| QualityRequirement | 正确性、说明质量和所声明的稳定、迁移或保持范围；证据充分性与阈值须有版本和依据 |
 
-这是一种有意的收敛。DeerMind 不因为 motivation、疲劳、metacognition、帮助依赖等概念“教育上重要”，就自动把它们变成长期学习者特征。只有当某个 construct 拥有独立语义、可观察证据、稳定预测价值和独立 action 价值时，才值得重新考虑进入 Claim Space。
+TaskTemplate 与 Claim 不必一一对应。同一模板可以支持求解和解释两个不同命题，一个命题也可以覆盖有依据的一组模板。只有差异具有独立证据和教学决策价值时才持续维护；不为每道题、每个子任务、每种方法或每个 KC 自动建立状态。
 
-#### Task Proficiency Claim
+**方法覆盖。** 纳入方法 A、B 可得到两者所关联 KC 的课程覆盖范围，但不自动规定每次表现必须经过两条路径。允许任选时，实际采用 A 可以支持任务完成，不支持“会用 B”；指定 B 时必须有 B 的适用表现；要求 A、B 均掌握时，证据须分别覆盖，不要求每题重复两遍。比较与选择方法是另一个责任，不能由分别会执行自动推出。覆盖记录由 Evidence 派生，不增加一套 Solution 掌握状态。
 
-Task Proficiency Claim 表达的不是“这个学习者抽象地会不会 Task F”，而是：
+**知识层的保留与降层。** KC 的定义、关系和方法 grounding 仍由 Domain 维护；Observation / Evidence 可关联 KC，用于解释具体表现、设计讲解和取证。Evaluation 不再创建、更新或作为 current-valid 能力输入返回 KCClaim / KCBelief，也不能把带 KC 标签的临时分析累计成隐藏的知识掌握库。理解知识的目标通过有范围、可观察责任的 Task Claim 表达，不给全部 KC 机械改名。
 
-> **学习者当前是否具备足够的自身能力，能够在明确 Conditions、Support / Responsibility Boundary 与 Quality Requirement 下，相对稳定地承担某个明确的问题范围所要求的认知或行动责任。**
+**证据与状态的区别。** 一次成功可能受到提示、工具、模仿或偶然因素影响。正确结果支持哪项责任，必须看实际表现；未要求解释不能当作不会解释，Task 成功也不自动表示全部方法或知识已掌握。重复题、刚接受相关讲解和不同表征等条件先进入 Evidence Context；只有真正改变能力命题才另立 Claim。
 
-概念上可以写成：
-
-\[
-CapabilityClaim
-=
-(
-ProblemScope,
-Conditions,
-SupportBoundary,
-QualityRequirement
-)
-\]
-
-这里的四个元素不要求最终都成为独立数据库字段，但语义上必须能够区分。ProblemScope 引用一个或多个明确版本的 ProblemTemplate，并限定参数、表示、情境及责任覆盖；Conditions 描述成立环境；SupportBoundary 区分自身承担与允许外部化的工作；QualityRequirement 定义所判断的质量和稳健性。保持 TaskProficiencyClaim / Belief 名称，是为了延续条件性任务表现命题，不表示 Domain 继续存在旧 TaskFamily 对象。
-
-同模板的两道题可能承担不同责任，引用相同模板本身不允许无条件汇总证据。仅完成计算不能自动覆盖解释、选法、检验或迁移；只有 Claim 相容且 Evidence 依赖、实际帮助与情境差异得到处理后，才可合并判断。
-
-Task Proficiency Claim 仍然不是单次 Task Success，也不是所有相关 KC Belief 的机械聚合。一次成功可能来自环境、他人、工具或偶然因素；一个学习者也可能掌握大部分相关 KC，却仍无法组织完成复杂 Task。
-
-因此：
-
-\[
-TaskSuccess
-\not\Rightarrow
-TaskProficiencyBelief
-\]
-
-以及：
-
-\[
-\{KCBeliefs\}
-\not\Rightarrow
-TaskProficiencyBelief
-\]
-
-Support Boundary 只有在改变 capability claim 本身时才进入 Claim semantics；否则实际 assistance、tool use、prompting 与 exposure 保持为 Evidence Context。这样既避免 `TaskProficiency(T|Condition_1|Condition_2|...)` 的状态爆炸，又允许 Target-defined responsibility 真正约束能力判断。
-
-#### KC Claim
-
-KC Claim 表达：
-
-> 学习者当前是否具备并能够在该 KC 的 Application Conditions 下，自身调用这个可复用认知结构或功能，并产生预期 Cognitive Effect。
-
-KC Claim 引用 Domain Space 的规范 KC 语义，但不拥有修改 KC 定义的权力。
-
-观察到某个行为“看起来使用了 KC”也不能直接推出掌握，因为行为可能受到提示、答案暴露、模仿或 Observation 不确定性影响：
-
-\[
-ObservedUse(K)
-\not\Rightarrow
-KCBelief(K)=Known
-\]
+**简化的代价。** 当前不维护独立跨任务 KC 掌握状态；诊断和教学仍可使用具体表现及知识依据。若 Task Claim 无法表达重要决策差异，或新增知识层状态确有独立证据、预测与行动价值，再通过受治理模型修订调整。动机、疲劳、帮助依赖等也不因可能有用就自动进入稳定状态。
 
 ### 3.2 Evidence Model：定义 Observation 对 Claim 意味着什么
 
@@ -382,9 +321,9 @@ Evidence 是一种相对于命题的关系，而不是脱离 Claim 独立存在�
 
 同一个 Observation 可以针对不同 Claim 形成不同 Evidence。例如学习者在比例题中选择了正确的 Unit Rate 策略，却把 `42÷6` 算错：
 
-- 对 Task Proficiency Claim，可能形成矛盾性证据；
-- 对 Proportional Relation KC，可能形成 supportive 证据；
-- 对 Division KC，可能形成矛盾性证据。
+- 对“独立组织并正确完成本范围比例任务”的 Task Claim，形成反向证据；
+- 若已有“独立建立单位量关系”的 Task Claim，实际列式可形成正向证据；
+- 除法位置的错误保留为局部表现及知识关联；只有存在已定义、适用的计算 Task Claim 时才另作评价，不临时建立 Division KC 掌握状态。
 
 因此：
 
@@ -429,7 +368,7 @@ Inference 的核心职责不是“算一个 mastery score”，而是保留 Evid
 
 ## 4. Learner Belief：可修正认识，而不是分数
 
-Task Proficiency Belief 与 KC Belief 共用同一套 Belief 语义。一个合法 Learner Belief 是：
+当前所有正式 Learner Belief 都针对 Task Claim。一个合法 Learner Belief 是：
 
 > **DeerMind 在某一时刻，基于当前可用 Evidence，对一个明确 Learner Claim 所持有的、可追溯、带不确定性、可被未来 Evidence 修正的认识论立场。**
 
@@ -623,7 +562,7 @@ InterventionHistory
 )
 \]
 
-同一个提示可能严重污染 Strategy Selection Claim，却仍允许 learner 独立执行某个 KC；同一次 AI 帮助对“独立形成诊断”Claim 构成强污染，对“验证 AI 候选诊断”Claim 却可能完全兼容。
+同一个提示可能替代选法 Task Claim 的责任，却仍保留某个计算 Task Claim 要求的独立执行责任；同一次 AI 帮助对“独立形成诊断”Claim 构成强污染，对“验证 AI 候选诊断”Claim 却可能完全兼容。
 
 Evaluation 不能只知道“发生过帮助”，还必须能够追溯暴露链：帮助在什么时间发生、暴露了什么、替代了哪部分责任，以及这种替代与当前 Claim 的关系。
 
@@ -764,7 +703,7 @@ UncertainDueToConflictingEvidence
 
 - 当前 Claim remains conflicted；
 - 形成类似 `RepresentationDependentPattern` 的临时推断假设；
-- 检查 ProblemTemplate、KC Application Conditions、Observation 和 Evidence 语义是否过粗。
+- 检查 TaskTemplate、KC Application Conditions、Observation 和 Evidence 语义是否过粗。
 
 这保留了进一步解释空间，同时避免学习者画像变成吸收所有异常的垃圾桶。
 
@@ -773,11 +712,11 @@ UncertainDueToConflictingEvidence
 Inference 可以维护学习者层竞争性假设，例如：
 
 \[
-H_1=DivisionKCWeak
+H_1=DivisionStepDifficultyInCurrentScope
 \]
 
 \[
-H_2=ProportionalReasoningWeak
+H_2=RelationConstructionDifficultyInCurrentScope
 \]
 
 \[
@@ -788,7 +727,7 @@ H_3=ObservationError
 H_4=OneTimeSlip
 \]
 
-这些 hypothesis 是 Evaluation 内部的推断 workspace，用于解释当前学习者的 Evidence 冲突，并指导未来证据 acquisition。它们不是 Learner State，也不形成独立 Hypothesis Model。
+这些 hypothesis 是 Evaluation 内部受证据范围限制的推断 workspace，用于解释本次任务表现或 Evidence 冲突，并支持下一步取证。它们不是 Learner State，不形成独立 Hypothesis Model，也不得以 KC 为索引持续累计为个人掌握状态。跨活动复用须重新核对原始依据、范围、时间和帮助，不能把假设当 current-valid Belief。
 
 必须与 Evolution Space 的 SystemHypothesis 分开：
 
@@ -997,13 +936,13 @@ Evaluation 不会直接得到“不会比例”。
 
 Evidence Model 可以分别形成：
 
-- 对 Task Proficiency Claim：矛盾性证据；
-- 对 Proportional Relation KC：possible supportive 证据；
-- 对 Division KC：矛盾性证据。
+- 对独立完成本范围比例任务的 Task Claim：反向证据；
+- 对已定义的单位量关系建立 Task Claim：列式可以提供正向证据；
+- 除法错误作为局部诊断依据；若有适用计算 Task Claim 可解释其证据，否则保留观察，不增设 KC 状态。
 
-如果 DeerMind 随后提示“再检查一下 42÷6”，学习者修正为 7 并得到 105，那么这次成功的 Evidence 需要按 Claim 与发生顺序解释。提示前已经呈现的 Unit Rate 策略保留原有证据价值，不能因后来的算术提示追溯性地判为受助选择；提示后的步骤也不能被重复计为一次新的独立策略选择。Division KC 仍可能获得一定 positive 证据，但须保留提示指出计算位置这一条件，完整 Task success 则不能被当作独立完成。
+如果 DeerMind 随后提示“再检查一下 42÷6”，学习者修正为 7 并得到 105，那么这次成功的 Evidence 需要按 Claim 与发生顺序解释。提示前已经呈现的 Unit Rate 策略保留原有证据价值，不能因后来的算术提示追溯性地判为受助选择；提示后的步骤也不能被重复计为一次新的独立策略选择。若评价计算责任，相应 Task Claim 的 Evidence 必须保留提示定位了错误这一步的条件；完整任务成功不能当作独立完成。
 
-一周后学习者在新的 surface 情境中独立完成同构比例题，这条 delayed / 迁移 Evidence 对 retention 和 generalization 的解释价值更高。
+一周后学习者在新的表面情境中独立完成同构比例题，可补充该间隔与变化范围的证据；不能仅凭“延迟”或“新题”标签赋予固定更高权重，也不能据此宣称普遍迁移或长期保持。
 
 如果之后学习者在 table 表示中持续失败，Inference 应保留 structured 冲突，而不是创建永久 `TableAbilityState`。必要时产生 System Signal，交给 Evolution 判断是否是 Task / KC / Observation / Evidence 模型失配。
 
@@ -1024,12 +963,12 @@ Belief
 \[
 WrongAnswer
 \rightarrow
-WeakKC
+PersistentKnowledgeDeficit
 \]
 
 ### 6.4 Progressive Evaluation Resolution
 
-Evaluation 不默认对所有行为进行最细粒度诊断。合理流程仍然从 Task-level Observation / Evidence 开始；只有当进一步分析可能改变重要 Learner Belief、Target Assessment、Epistemic Gap 或 Interaction 决策时，才继续进入 Solution Trace、KC、Subtask 或 Step-level Evidence。
+Evaluation 不默认对所有行为进行最细粒度诊断。合理流程仍然从 Task-level Observation / Evidence 开始；只有当进一步分析可能改变重要 Learner Belief、Target Assessment、Epistemic Gap 或 Interaction 决策时，才继续查看 Solution Trace、关联 KC、Subtask 和 Step-level Observation。细化分析服务同一套 Task Claim Evidence 与教学判断，不创建第二类能力状态。
 
 \[
 ProgressiveEvaluationResolution
@@ -1107,17 +1046,44 @@ ResponsibilityBoundary
 
 它不是新的 Learner Trait，也不进入 Learner State Core。同一个 learner 对 Target A 可能存在不必要依赖，对 Target B 则完全不存在，因为 Target B 本身允许外部化相同责任。
 
+### 6.8 分数应用：Task Claim 与 Belief 更新实例
+
+以下是用于说明语义的自编案例，不是已执行测量、正式教材包或经校准的达标规则。模板 T1：已知原量 \(a>0\)，增加或减少原量的 \(r\)，求最终量；\(0<r<1\)，计数情境须满足整数量约束。范围包括单次变化、明确原量作基准；连续变化、不同基准和逆求原量暂不包含。
+
+方法 S1 先求 \(ar\)，再求 \(a\pm ar\)；S2 先构造最终量占原量的 \(1\pm r\)，再求 \((1\pm r)a\)。两者的 KC 依据包括基准量、分数表示的数量关系、同基准合并、算术及等价变形。Learning Space 在这组任务中允许任选 S1、S2；并不因此要求每题使用两种方法。
+
+| Task Claim | 任务责任与判断边界 |
+| --- | --- |
+| C1：独立建模并求解 | 在 T1 范围内自行辨认原量、变化方向和最终量，选用获准方法得到合理结果；独立指未获定位、关系式或答案帮助。只对实际证据覆盖的变化和条件作判断 |
+| C2：独立说明关系 | 在 T1 范围内用语言、图示或等价表达说明基准、变化量与最终量；不要求特定措辞，不把背诵参考解析当成理解。未要求解释时不产生反向证据 |
+
+C2 仍是带范围和完成责任的 Task Claim，不是“基准 KC 已掌握”的替代标签。两项命题可以关联同一段作答，但不能把同源材料当成多份独立样本；也不把六年级全部分数能力塞进这两个命题。
+
+| 事件与实际表现 | Evidence 解释 | Belief 可据此怎样变化 |
+| --- | --- | --- |
+| 原有 40 本书，增加原量的 1/4；学生算 10 并回答最终有 10 本 | C1 反向；本次混淆变化量与最终量。没有要求解释，C2 尚无信息 | C1 增加未满足求解责任的依据；不能推断全部 KC 不会 |
+| 系统提示“10 本是增加的，还是现在全部的？”；学生改为 50 | 记录定位帮助与订正；可说明受助后完成，不满足 C1 的独立边界 | 不把订正覆盖原始表现，也不把它作为独立通过；C2 仍须看实际表达和帮助 |
+| 随后新题原量 60、减少 1/5；独立写出 60−60×1/5=48 | C1 正向，覆盖 S1 与减少情境；保留刚接受同类讲解的背景 | 支持即时应用，但证据单薄，尚不能推出稳定、迁移或保持 |
+| 之后原量 80、增加 3/8；独立列 80×(1+3/8)=110，并解释 1 和 3/8 均以 80 为基准 | C1、C2 正向，覆盖 S2 与增加情境；说明实际前后间隔和同源关系 | 增加两项责任的支持及方法覆盖；不自动推广到排除范围 |
+| 七天后用表格给出原量 72、减少 5/12；独立答 42 并说明关系 | C1、C2 在该延迟及表格变化下的正向证据 | 补充有限保持与表征变化的依据；不等于长期不忘或任意迁移 |
+
+Inference 按 Evidence 的相关性、帮助、时间和重复依赖，更新 Assessment、EpistemicUncertainty、EpistemicStatus 与 EvidenceBasis。早期错误与教学后成功可能反映状态变化，不应无视时间统一标成矛盾；发生教学本身也不能直接上调能力。这里不指定正确率阈值、贝叶斯先验、衰减公式或“掌握 92%”，它们须在工程和质量验证中校准。
+
+如果目标改为 S1、S2 均须覆盖，只做过 S1 的证据说明覆盖不足，不说明 S2 做错；新要求须显式版本化。比较两法优劣的责任若进入目标，需要相应可观察任务和 Evidence，不能从分别执行过两法自动推断。
+
+运行链为：Interaction 保留题目、实际输入与实际帮助，形成 Observation；Evaluation 按既定 Claim 形成 Evidence，再由 Inference 更新 Belief；Interaction 按当前有效认识选择后续讲解或取证。KC 支持各环节解释与教学，不增加一条 KC 状态更新链。
+
 ## 7. Cross-Space Contracts、版本与 Evolution
 
 Evaluation 必须保持自己的认识职责，同时依赖其他 Space 提供规范坐标、当前 Observation、事实溯源信息和系统级演化机制。
 
 ### 7.1 Domain 与 Learning Space：规范输入分开
 
-Domain 提供 ProblemTemplate 的身份、版本、参数与责任范围，SolutionTemplate 的适用条件、子问题依赖及方法相关 grounding，以及 KC 的定义和适用条件。Learning Space 提供 LearningTarget 的版本、材料映射、范围、期望标准与支持责任。两组输入必须分别记录依赖，不能由一个含混的“学习空间版本”替代。
+Domain 提供 TaskTemplate 的身份、版本、参数与责任范围，SolutionTemplate 的适用条件、子任务依赖及方法相关 grounding，以及 KC 的定义和适用条件。Learning Space 提供 LearningTarget 的版本、材料映射、范围、期望标准与支持责任。两组输入必须分别记录依赖，不能由一个含混的“学习空间版本”替代。
 
 Interaction 提供实际问题的版本引用、参数、呈现条件、已发生的帮助和表现 Observation。实际采用何种方法需要行为依据，不能从参考 SolutionTemplate 反向推定。上传问题未映射、方法覆盖不完整或证据不足时，可保留未知，不伪造完备模型后再给出精确能力结论。
 
-Evaluation 在明确的问题范围上维护 TaskProficiencyClaim，在 KC 上维护 KCClaim，并形成 Evidence、Belief 与派生 TargetAssessment。材料章节只提供产品汇总入口，不是新的能力本体；产品空间隔离与授权限制同样作用于 Evidence 的可用范围。
+Evaluation 仅在明确任务范围、责任及方法要求上维护 TaskProficiencyClaim，并形成 Evidence、Belief 与派生 TargetAssessment；KC 只作为领域解释和教学依据。材料章节只提供产品汇总入口，不是新的能力本体；产品空间隔离与授权限制同样作用于 Evidence 的可用范围。
 
 LearningTarget 不能直接生成 LearnerBelief，个体表现不能直接修改 Domain 或目标定义。要求、证据与信念保持分层。
 
@@ -1164,7 +1130,7 @@ Evaluation 可以查询 Event History 获取：
 Evaluation 向 Interaction 提供：
 
 - Task Proficiency Beliefs；
-- KC Beliefs；
+- Task Claim 的方法覆盖、适用范围与证据限制（由正式 Evidence 派生）；
 - 不确定性 / Epistemic Status；
 - Epistemic Gaps；
 - Target Assessment；
@@ -1264,7 +1230,7 @@ TargetRevision
 LearnerBeliefRevision
 \]
 
-相反，如果 ProblemTemplate、Learner Claim semantics、Evidence 解释规则或 Inference 语义发生变化，旧 Belief 可能不再能静默继承。正确路径是重新解释历史事实、重新形成 Evidence 并重新推断，或者使用经过验证、显式记录 provenance 的 migration rule。
+相反，如果 TaskTemplate、Learner Claim semantics、Evidence 解释规则或 Inference 语义发生变化，旧 Belief 可能不再能静默继承。正确路径是重新解释历史事实、重新形成 Evidence 并重新推断，或者使用经过验证、显式记录 provenance 的 migration rule。
 
 \[
 NoSilentCrossVersionInterpretation
@@ -1276,7 +1242,7 @@ NoSilentCrossVersionInterpretation
 
 三个 Model 都必须有独立失败信号。
 
-**Learner State Model** 应在以下情况被重新打开：Task Proficiency + KC Belief 无法解释重要决策差异；Condition / Support-aware Claim 仍无法表达重要能力边界；存在第三类稳定 learner construct，拥有独立 Evidence、预测价值和行动价值。
+**Learner State Model** 应在以下情况被重新打开：Task Claim 无法解释重要决策差异；范围、方法与支持条件仍无法表达重要能力边界；包括知识层判断在内的新状态具有独立 Evidence、预测价值和行动价值。重开不等于自动恢复旧 KC Claim。
 
 **Evidence Model** 应在相对于命题的映射持续失真、Responsibility Boundary 无法解释 assistance 污染、Outcome 与 learner contribution 经常被错误归因、群体 prior 系统性替代个体 Evidence 时接受修订。
 
@@ -1297,10 +1263,10 @@ SystemAdaptation
 **D1 — 三个 Core Model 保持不变。**  
 本版不新增 Target Evaluation Model、Capability Model、Dependency Model 或 Fairness Model。Target 对齐通过现有 Learner State / Evidence / Inference 责任与跨 Space 派生语义完成。
 
-**D2 — Learner State Core 继续只保留 Task Proficiency 与 KC Belief。**  
-TargetBelief、TargetMasteryBelief、CapabilityBelief、AssistanceDependencyTrait 都不进入 Core。目标要求、派生 assessment 与 dependency diagnostic 都保持各自 owner。
+**D2 — Learner State Core 只保留 Task Claim 的 Belief。**  
+KCClaim / KCBelief、TargetBelief、TargetMasteryBelief、CapabilityBelief、AssistanceDependencyTrait 都不进入当前 Core。目标要求、派生 assessment 与 dependency diagnostic 都保持各自 owner。
 
-**D3 — Task Proficiency Claim 必须能够表达 Conditions、Support Boundary 与 Quality Requirement。**  
+**D3 — Task Claim 必须表达任务范围、责任、方法要求、条件、支持边界与质量要求。**  
 “会不会某类 Task”如果脱离能力成立条件和责任边界，无法在 AI-native 学习环境中保持稳定语义。代价是 Claim 解释更复杂，但避免把不同认知责任误认为同一种能力。
 
 **D4 — Evidence Condition 与 Claim Condition 默认分离。**  
@@ -1340,8 +1306,8 @@ Evidence 支持未达标与证据不足是不同认识状态，不能用一个�
 |---|---|---|
 | 概念性 | Task Proficiency Claim 中哪些 Conditions 必须进入 Claim semantics | 冻结原则，不冻结统一字段集 |
 | 概念性 | 多维 Quality Requirement 如何与 Belief 表示对齐 | 保持开放，不提前压成标量 |
-| 概念性 | Strategy Competence 是否具有独立 learner claim 价值 | 暂不进入 Core |
-| 实证性 | Task Proficiency + KC Belief 是否跨数学、系统工程、写作等领域仍最小充分 | 需跨域验证 |
+| 概念性 | 是否需要对特定任务范围的选法责任单独维护 Task Claim | 按独立证据与教学价值判断，不新增 Strategy 状态类型 |
+| 实证性 | 仅 Task Claim 是否跨数学、系统工程、写作等领域仍具有足够预测与教学价值 | 需跨域验证 |
 | 实证性 | Responsibility-boundary-relative contamination 是否能预测后续表现 | 需真实 assistance / AI 使用数据 |
 | 实证性 | Target Assessment 在高噪声开放任务中的校准质量 | 需长期数据 |
 | 实证性 | Assistance / Support Dependency diagnostic 是否具有稳定预测与干预价值 | 暂保持 derived |
@@ -1353,9 +1319,9 @@ Evidence 支持未达标与证据不足是不同认识状态，不能用一个�
 
 ### 8.4 本版下游传导
 
-Evaluation v1.2 的领域与目标输入已同步进入 AI-Native Principles v0.3 和 System Design v1.1。Claim identity、Evidence provenance、TargetAssessment dependency、版本解析、typed invalidation 与重放分别按其运行合同实现；本轮文档对齐不表示校准质量或实现迁移已验证。
+Evaluation v1.3 的领域与目标输入已同步进入 AI-Native Principles v0.4 和 System Design v1.2。Claim identity、Evidence provenance、TargetAssessment dependency、版本解析、typed invalidation 与重放分别按其运行合同实现；本轮文档对齐不表示校准质量或实现迁移已验证。
 
-实现不得引入第二 LearnerBelief writer、TargetBelief 或自动 Gap→Action 路径。旧 TaskProficiency 标识可以继续使用，但必须检查所引用的新问题范围及历史证据兼容性。出现重要无法表达的反例再重新审查模型，不能在 Runtime 静默扩张认识权限。
+实现不得引入第二 LearnerBelief writer、TargetBelief 或自动 Gap→Action 路径。TaskProficiencyClaim 标识继续使用，但必须检查 TaskScope、方法要求和历史证据兼容性；旧 KC 状态仅保留历史读取，不转换成新 Task 状态或经兼容回退进入当前决策。出现重要无法表达的反例再重新审查模型，不能在 Runtime 静默扩张认识权限。
 
 ## 附录 A — Evaluation Space Semantic Invariant Registry
 
@@ -1373,7 +1339,7 @@ Evaluation v1.2 的领域与目标输入已同步进入 AI-Native Principles v0.
 | E8 | Support Compatibility Is Claim-Relative | Assistance 的证据影响取决于 Claim / Responsibility Boundary |
 | E9 | No Assistance Classification Without Exposure Lineage | 独立/受助判断必须有真实暴露链 |
 | E10 | TaskOutcome != TaskPerformance != Capability | 现实结果、可归因表现与稳定能力必须分层 |
-| E11 | Knowledge Mastery != Task Proficiency | KC Belief 不自动推出 Task proficiency |
+| E11 | 知识依据不等于个人能力状态 | KC 用于解释与教学；只维护 Task Claim Belief，不从任务成功扩写 KC 掌握 |
 | E12 | Belief Must Remain Revisable | 任何 Belief 都必须允许未来 Evidence 推翻 |
 | E13 | Teaching Action != Learning Evidence | DeerMind 自己教过不能成为学习者已学会的证据 |
 | E14 | Time Passage != Negative Evidence | 时间流逝本身不降低 competence assessment |
@@ -1471,8 +1437,8 @@ IndividualLearnerBelief
 
 ### Learner State Model
 
-- Task Proficiency 与 KC Belief 是否足以解释重要决策差异？
-- Task Proficiency Claim 是否能表达必要的 Conditions、Support Boundary 与 Quality Requirement？
+- 只维护 Task Claim 是否足以解释重要决策差异，且没有隐性 KC 状态？
+- Task Claim 是否表达必要范围、责任、方法覆盖、条件、支持边界与质量要求？
 - 是否把一次性 Evidence Condition 错误升级成长期 Claim dimension？
 - 是否出现具有独立证据和行动价值的稳定第三类 construct？
 - 是否存在不可证伪的学习者特征膨胀？
@@ -1508,6 +1474,8 @@ IndividualLearnerBelief
 
 ## 附录 D — 本版调整与历史边界
 
-v1.2 保留本 Space 的核心模型、事实与认识分层、权限、未知、历史和受治理变更等合同，调整其规范输入与引用路径。Domain Space v1.0 提供问题模板、方法和 KC；Learning Space v1.0 提供材料、映射和目标。两组规范分别拥有版本和提交责任，不能由旧 Learning Space 的单一输入包代替。
+本版采用 TaskTemplate / TaskScope，Learner State Core 只保留 TaskProficiencyClaim 及其 Belief；KC 保留领域、解释与教学作用。此项改变是用户批准的模型语义修订，不是旧两类状态的无损改名。Evidence 和 Inference 模型、事实与认识分层、Evaluation 单写、未知、历史与受治理变更合同保持。
 
-原 v1.1 的完整文本及 Freeze Gate 叙述由 Git 保存。本轮没有重跑旧实验，也没有将当时评审改写为新模型通过；实现代码与领域包仍须按实际工程交付迁移。当前修订依赖的规范和运行合同见[概念设计入口](README.md)。
+旧 KCClaim / KCBelief 按原版本留在历史中，不删除、不作为当前能力输入、不直接改成 Task Claim。若原始表现足以支持新的明确任务命题，可经新版本 Evidence 解释与推断形成新 Belief，并保留原始来源及证据依赖；依据不足则 UNKNOWN。已有 Task Claim 也须核对责任、范围、方法和支持条件，不只改字段名。
+
+旧 Freeze Gate、Spike、Build 和 G3 结果继续属于原基线。本轮只传导文档合同，不声称代码、领域包、评测参考或参数已迁移和通过验证。逐文件修订及未完成迁移见[模型复核 §9](DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。

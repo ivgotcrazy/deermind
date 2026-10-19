@@ -1,15 +1,18 @@
-# DeerMind System Design v1.1
+# DeerMind System Design v1.2
 
+> **版本**：v1.2<br>
 > **中文名称**：DeerMind 系统设计<br>
-> **版本**：v1.1<br>
 > **文档性质**：System Design Baseline<br>
 > **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
-> **上位基线**：[Concept Architecture v1.2](../concept-design/DeerMind_Concept_Architecture_v1.2.md)、[Domain Space v1.0](../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution v1.2、[AI-Native Principles v0.3](../top/DeerMind_AI_Native_Architecture_Principles_v0.3.md)；总体合同为 [System Design v1.1](DeerMind_System_Design_v1.1.md)<br>
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-11
+> **上位基线**：[Concept Architecture v1.3](../concept-design/DeerMind_Concept_Architecture_v1.3.md)、[Domain Space v1.1](../concept-design/DeerMind_Domain_Space_Design_v1.1.md)、[Learning Space v1.1](../concept-design/DeerMind_Learning_Space_Design_v1.1.md)、Evaluation / Interaction / Evolution v1.3、[AI-Native Principles v0.4](../top/DeerMind_AI_Native_Architecture_Principles_v0.4.md)；总体合同为 [System Design v1.2](DeerMind_System_Design_v1.2.md)<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.7.md`<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
-本版本在原 System Design v1.0 合同上承接 Domain 与 Learning Space 的对象和 owner 修订。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
+本版本在原 System Design v1.2 的领域／课程分离基础上，采用 TaskTemplate 并将个人能力状态统一为 Task Claim。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计边界
@@ -72,12 +75,12 @@ Concept Architecture 与四份 Space Design 定义 **semantic ownership**；AI-N
 
 | Work Package | Focused Design Baseline | 与总体设计的关系 |
 |---|---|---|
-| §3.2 Runtime & Event | `DeerMind_Runtime_Event_Architecture_v1.1.md` | 深化 factual authority、Event identity / ordering / correction / replay contract |
-| §3.3 AI Reasoning Runtime | `DeerMind_AI_Reasoning_Runtime_Design_v1.1.md` | 深化 Reasoning Protocol、Context、Tool、Candidate、Validation / Commit 与 execution history |
-| §3.4 State / Dependency / Invalidation | `DeerMind_State_Dependency_Architecture_v1.1.md` | 深化 dependency、typed invalidation、Current Resolution、recompute 与 consistency |
-| §3.5 Interaction / Decision | `DeerMind_Interaction_Decision_Runtime_Design_v1.1.md` | 深化 DecisionCycle、PolicyOutcome、Plan、ActionIntent / Executor / Occurrence 与 exposure lineage |
-| §3.6 Version / Replay / Migration | `DeerMind_Semantic_Version_Replay_Migration_Design_v1.1.md` | 深化 VersionContext、compatibility、activation、migration、replay / reinterpretation |
-| §3.7 Evolution / Governance | `DeerMind_Evolution_Governance_Runtime_Design_v1.1.md` | 深化 Signal / Issue / Hypothesis / Validation / Governance / Activation / post-deployment loop |
+| §3.2 Runtime & Event | `DeerMind_Runtime_Event_Architecture_v1.2.md` | 深化 factual authority、Event identity / ordering / correction / replay contract |
+| §3.3 AI Reasoning Runtime | `DeerMind_AI_Reasoning_Runtime_Design_v1.2.md` | 深化 Reasoning Protocol、Context、Tool、Candidate、Validation / Commit 与 execution history |
+| §3.4 State / Dependency / Invalidation | `DeerMind_State_Dependency_Architecture_v1.2.md` | 深化 dependency、typed invalidation、Current Resolution、recompute 与 consistency |
+| §3.5 Interaction / Decision | `DeerMind_Interaction_Decision_Runtime_Design_v1.2.md` | 深化 DecisionCycle、PolicyOutcome、Plan、ActionIntent / Executor / Occurrence 与 exposure lineage |
+| §3.6 Version / Replay / Migration | `DeerMind_Semantic_Version_Replay_Migration_Design_v1.2.md` | 深化 VersionContext、compatibility、activation、migration、replay / reinterpretation |
+| §3.7 Evolution / Governance | `DeerMind_Evolution_Governance_Runtime_Design_v1.2.md` | 深化 Signal / Issue / Hypothesis / Validation / Governance / Activation / post-deployment loop |
 
 这些文档与本文档不是六套平行架构，而是同一 System Design Baseline 的不同精度层级：
 
@@ -167,7 +170,7 @@ GovernedEvolution
 
 Conceptual Space 是 semantic ownership boundary，不是进程、服务或部署边界。Domain、Evaluation、Interaction、Evolution 决定“谁对某类语义负责”，而 Runtime Capability 决定“系统通过什么共享机制运行这些责任”。同一个进程可以承载多个 Space 的实现，一个 Space 也可以跨多个进程；只要 semantic authority 不被混淆，部署形态可以后续演进。
 
-四个核心 Space 的责任为：Domain 定义 ProblemTemplate、SolutionTemplate、KnowledgeComponent 及其规范关系；Evaluation 解释 Evidence 并作为 LearnerBelief 唯一 writer；Interaction 形成 Observation、运行投影、PolicyOutcome、Plan 和行动决策；Evolution 形成系统问题、候选与验证认识。Learning Space 位于 Product Context 层，拥有 LearningMaterial、映射与 LearningTarget 的规范定义。Governance 授权正式变更，各 semantic owner 分别提交，不因共享 Registry 而合并写入权。
+四个核心 Space 的责任为：Domain 定义 TaskTemplate、SolutionTemplate、KnowledgeComponent 及其规范关系；Evaluation 解释 Evidence 并作为 LearnerBelief 唯一 writer；Interaction 形成 Observation、运行投影、PolicyOutcome、Plan 和行动决策；Evolution 形成系统问题、候选与验证认识。Learning Space 位于 Product Context 层，拥有 LearningMaterial、映射与 LearningTarget 的规范定义。Governance 授权正式变更，各 semantic owner 分别提交，不因共享 Registry 而合并写入权。
 
 ### 3.2 Runtime Capability Map
 
@@ -259,7 +262,7 @@ SharedSemanticAuthority
 
 | 对象 / 责任 | Semantic Owner | 取得正式 standing 的 authority | 主要消费方 |
 |---|---|---|---|
-| ProblemTemplate / SolutionTemplate / KnowledgeComponent | Domain | Domain canonical authority + Governance when canonical change | Learning Space / Evaluation / Interaction / Evolution |
+| TaskTemplate / SolutionTemplate / KnowledgeComponent | Domain | Domain canonical authority + Governance when canonical change | Learning Space / Evaluation / Interaction / Evolution |
 | LearningMaterial / 映射 / LearningTarget | Learning Space | 产品定义 owner 的授权写入；正式语义修订遵循对应 Governance | Domain 引用校验 / Evaluation / Interaction / Evolution |
 | Event / ActionOccurrence | Authorized factual producer / factual admission | factual authority | Interaction / Evaluation / Evolution |
 | Observation | Interaction | Interaction derived-semantic commit | Evaluation / Interaction |
@@ -276,9 +279,9 @@ SharedSemanticAuthority
 
 运行时必须分别解析学习空间身份与授权、材料及映射版本、LearningTarget 版本、Domain 对象版本以及 Claim / Evidence / Policy 版本。物理上可以共用存储或发布包，逻辑上不能退化成一个没有 owner 区分的 learning package。
 
-具体问题不是新增规范定义：它保留实际呈现、来源、ProblemTemplate 版本与参数绑定；具体方法应用引用 SolutionTemplate 及已知输入和中间输出；学习者轨迹来自实际 occurrence。外部问题未完成映射或方法尚未覆盖时允许保留未决，其可用范围由用途合同决定。此类记录不赋予 Runtime 创建正式模板或 KC 的权限。
+具体问题不是新增规范定义：它保留实际呈现、来源、TaskTemplate 版本与参数绑定；具体方法应用引用 SolutionTemplate 及已知输入和中间输出；学习者轨迹来自实际 occurrence。外部问题未完成映射或方法尚未覆盖时允许保留未决，其可用范围由用途合同决定。此类记录不赋予 Runtime 创建正式模板或 KC 的权限。
 
-TaskProficiencyClaim / Belief 继续表示条件性任务表现判断，但其领域坐标改为明确版本的问题范围。一个模板不对应一个无条件掌握标志；模板结构相同、题面变化、重复呈现以及解释要求都需进入 Evidence 的条件与依赖解释。具体迁移不能仅靠旧 TaskFamily ID 的字符串改名。
+Task Claim（规范类型 TaskProficiencyClaim / TaskProficiencyBelief）是当前唯一个人能力状态类型，其领域坐标是明确版本的 TaskScope、责任、方法要求、条件、支持边界与质量要求。模板和 Claim 不必一一对应；任选、指定和多方法分别覆盖须区分。实际方法、帮助、题目重复、时间及表征进入 Evidence 的条件与依赖解释。Domain KC 可用于诊断与教学，但不创建 KCClaim / KCBelief，也不在缓存或临时分析中持续维护隐性 KC 掌握状态。
 
 ### 3.6 Integrated Design 与 Focused Design 的责任分层
 
@@ -644,7 +647,7 @@ LearningSemantics
 )
 \]
 
-同一个 Observation 对不同 Claim 可以 Supports、Contradicts、Discriminates 或 NonInformative。Task Outcome、Task Performance、Capability 不可互换；TaskSuccess 不自动证明 Task Proficiency，更不能证明更一般的 KC mastery。
+同一个 Observation 对不同 Claim 可以 Supports、Contradicts、Discriminates 或 NonInformative。Task Outcome、Task Performance、Capability 不可互换；TaskSuccess 不自动证明 Task Proficiency，也不触发 KC 掌握状态写入。
 
 Assistance 是 Evidence interpretation 的关键上下文。系统必须沿真实发生链记录：
 
@@ -795,7 +798,7 @@ DeerMind 不采用一个全局 `SystemSemanticVersion`。每个 consistency boun
 ```text
 RuntimeVersionContext
 ├── SemanticVersionBindings
-│   ├── Domain: ProblemTemplate / SolutionTemplate / KC
+│   ├── Domain: TaskTemplate / SolutionTemplate / KC
 │   ├── Product learning: LearningMaterial / mapping / LearningTarget
 │   ├── Claim / Evidence / Inference semantics
 │   ├── Observation / Policy / Action semantics
@@ -1145,12 +1148,12 @@ A1已取得三类输入各五次的真实形成证据，E2/F2/X1/X2原缺口已�
 本文件是 **Integrated System Design / System Map**，负责完整 mental model、跨机制运行闭环和 system-level contract。六个 Focused Design 已不再是“未来可能需要的文档”，而是本修订候选采用的 Focused Design 文档集：
 
 ```text
-DeerMind_Runtime_Event_Architecture_v1.1.md
-DeerMind_AI_Reasoning_Runtime_Design_v1.1.md
-DeerMind_State_Dependency_Architecture_v1.1.md
-DeerMind_Interaction_Decision_Runtime_Design_v1.1.md
-DeerMind_Semantic_Version_Replay_Migration_Design_v1.1.md
-DeerMind_Evolution_Governance_Runtime_Design_v1.1.md
+DeerMind_Runtime_Event_Architecture_v1.2.md
+DeerMind_AI_Reasoning_Runtime_Design_v1.2.md
+DeerMind_State_Dependency_Architecture_v1.2.md
+DeerMind_Interaction_Decision_Runtime_Design_v1.2.md
+DeerMind_Semantic_Version_Replay_Migration_Design_v1.2.md
+DeerMind_Evolution_Governance_Runtime_Design_v1.2.md
 ```
 
 它们分别深化 Event / Factual Contract、AI Reasoning、State / Dependency、Interaction / Action、Version / Replay 与 Evolution / Governance；本文档不复制其字段、完整状态机、完整 invariant registry 或算法细节。
@@ -1161,7 +1164,7 @@ DeerMind_Evolution_Governance_Runtime_Design_v1.1.md
 §3.2–§3.7 = SEPARATE / BASELINE v1.0
 ```
 
-这只是文档封装，不创造新的 architecture hierarchy。总体及六项专项 v1.1 构成同一现行合同集合；实现不得只选择其中一份而忽略另一份。旧版作为历史 Spike 和评审输入保留。
+这只是文档封装，不创造新的 architecture hierarchy。总体及六项专项 v1.2 构成同一现行合同集合；实现不得只选择其中一份而忽略另一份。旧版作为历史 Spike 和评审输入保留。
 
 §3.8 继续采用 `MERGED / CROSS-CUTTING`：Privacy、Data Authority、Security、Audit、Observability、Lifecycle / Recovery 不建立一个拥有独立 semantic authority 的第七 Runtime，而通过本文档的统一 contract 和各专项 enforcement point 落地。
 
@@ -1214,7 +1217,7 @@ Phase 0 Architecture Baseline 只有在以下证据出现时才应重新打开�
 
 ### 8.5 当前阶段与后续顺序
 
-系统设计内部 Phase 6、Gate E/F 和 Architecture Validation Build 已按旧基线收口。当前在 MVP Phase 3 前完成领域语义复核，并把结论传导到本版合同；下一步恢复 Phase 3 的范围与验证条件评审，再按 Roadmap 完成 Phase 4 资产与 Phase 5 工程。
+系统设计内部 Phase 6、Gate E/F 和 Architecture Validation Build 已按旧基线收口。Phase 3 已按 G3-20261015-01 阶段性通过，当前处于 Phase 4。本版传导 TaskTemplate 与 Task Claim 单一能力状态合同；下一步按 OPEN-010 迁移领域与评测资产，再由 Phase 5 完成实现及验证，不能把本次文档修订当作 G4/G5 通过。
 
 本轮不重新启动 Spike 或 Build，也不复写历史失败。新模型的实际领域包、具体问题溯源与旧类型迁移必须在后续工程交付中取得证据，不能仅凭文档更名视为完成。历史阶段结论和现行合同的区别见[系统设计入口](README.md)。
 
@@ -1278,7 +1281,7 @@ Phase 0 Architecture Baseline 只有在以下证据出现时才应重新打开�
 |---|---|---|---|---|---|---|---|
 | Event | Factual | authorized factual producer / factual admission | Factual History | event identity + occurrence identity | source / artifact / causal refs | immutable historical fact record | 不可重建为“再次发生”；可 historical read |
 | ActionOccurrence | Factual | Interaction executor as authorized factual producer | Factual History | occurrence identity | ActionIntent / execution refs | immutable occurrence | 不可由 Intent 重建 |
-| ProblemTemplate / SolutionTemplate / KC | Canonical | Domain | Canonical Registry | identity + canonical version | normative source / governance refs | committed / active / retired | 版本保留；可 historical resolve |
+| TaskTemplate / SolutionTemplate / KC | Canonical | Domain | Canonical Registry | identity + canonical version | normative source / governance refs | committed / active / retired | 版本保留；可 historical resolve |
 | LearningMaterial / 映射 / LearningTarget | Product definition | Learning Space | Product Definition Registry | product space + identity + version | source / mapping / authority refs | draft / committed / active / retired | 分别检查定义、绑定与用途 |
 | Claim / Evidence / Inference semantics | Canonical | Evaluation | Canonical Registry | identity + version | canonical deps | active resolution | 支持 reinterpretation |
 | Observation / Policy / Action semantics | Canonical | Interaction | Canonical Registry | identity + version | canonical deps | active resolution | 支持 historical pinning |

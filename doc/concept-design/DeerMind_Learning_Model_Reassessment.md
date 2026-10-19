@@ -1,23 +1,15 @@
 # DeerMind 学习模型目的需求与候选结构复核
 
-> **当前使用说明（2026-10-11）**：§1–7 保留早期探索，含已被后续讨论替代的显式能力、ProblemFamily、ProblemRequirementInstance 等候选；不得按其中的“建议”“结论”直接实施。当前结论见 §8，正式权威入口见 [概念设计 README](README.md)。旧案例是当时方案的桌面推演，不是新模型的实验验证。
+> **版本**：v0.1<br>
+> **文档性质**：设计复核与变更记录<br>
+> **状态**：当前设计与工作入口；历史验证按原基线解释<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：登记 2026-10-19 已批准模型修订，统一记录逐文件旧新版本、变更依据、验证和未完成迁移。逐文件变更见[修订记录 §9](DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
-| 元信息 | 当前记录 |
-| --- | --- |
-| 性质与状态 | 概念 reassessment 与修改调整方案已完成；本报告推荐显式能力方案，尚未获准替换正式架构基线；完成范围与保留问题见 §7 |
-| 更新日期 | 2026-10-11 |
-| 本轮编辑边界 | 只在本复核文档中整理候选结构、运行链条与跨 Space 合同；未经用户另行允许，不修改当前正式设计文档，也不将候选自动视为已批准基线 |
-| 责任 | Codex 负责分析与草案；用户参与关键模型取舍；未进行独立领域专家评审 |
-| 工作依据 | 用户要求在深入 MVP Phase 3 前重新梳理 Learning Space，选择优先细化显式能力定义，并授权自主完成本次 reassessment 和调整方案；知识与能力独立可区分、支持多方面评价与教学的约束延续；既有登记见 [DEC-004–006 与 OPEN-006](../mvp/MVP_Governance.md)，本轮不修改登记册 |
-| 仓库输入 | `eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94` 中的概念基线，以及当前工作区的 MVP 草案和较新对话；后两者不冒充该提交中的已批准内容 |
-
-DeerMind 需要明确描述知识与能力，依据学习者表现形成有边界的认识，并用这些认识支持教学与检测。当前复核的核心问题，是领域定义、具体题目、解法与个人判断能否清楚衔接。直接把 Task 改名为 Capability，或把更多对象加入图谱，都不能独立解决这个问题。
-
-本次复核结论是：采用显式能力定义具有足够的概念依据，可以形成具体调整方案；不需要推翻四 Space 架构。建议将 Learning 组织为知识、能力、问题要求、解法、目标五类规范模型，并通过教材与题目映射接入现实材料；将原 Task Proficiency 和广义 KC 判断按语义迁移为能力表现与知识理解两类命题。主要改动是规范参照和职责关系，不能靠批量改名完成。
-
-用户已确认的要求与本报告推荐的设计结论分开：知识与能力必须独立可区分是既定要求；五类模型组织、命题规范化与旧合同替代条款是本次分析形成的修改方案，未因完成报告而自动获得正式发布授权。分数除法与长方形面积案例用于检查语义、迁移和决策衔接，不代表模型准确率、实际学习效果或真实教材覆盖已验证。
-
-快速阅读可先看 [§7 结论与修改调整方案](#7-复核结论与修改调整方案)，了解改什么及为什么；再看 [§3.4 候选结构](#34-重构后的-learning-space-候选结构)、[§3.6 跨空间合同](#36-与其他-space-的读写合同) 和 [§4.6 一次实际交互](#46-从章节求助到后续作答的运行过程)。§5 是有限反例与要求覆盖检查，§6 说明选择理由和必要合同；正式设计目前仍按原文件解释。
+本文保留设计讨论的演进。**当前结论与本轮逐文件修订见 §9**；§1–7 是已被替代的早期显式能力候选，§8 是 2026-10-11 的领域／课程分离结论，均按当时语境阅读，不作为现行状态类型合同。旧内容与引用按修改前 Git 基线追溯，不反写历史方案。
 
 ## 1 目的与证据边界
 
@@ -25,9 +17,9 @@ DeerMind 需要明确描述知识与能力，依据学习者表现形成有边�
 
 系统可以观察和影响学习条件，不能直接读取人的真实认知状态。个人掌握状态是基于证据的可修正认识；状态更新也不天然等于实际学习进步。正式模型应让未知、相互矛盾的证据和暂时无法区分的解释有位置，而不是用一个精确外观的分数遮盖这些限制。
 
-用户最初希望 Task 作为描述能力空间的载体。早期 [Knowledge Model §3.1](../archive/DeerMind_Knowledge_Model_v0.2.md#31-task-family-与-task-instance) 已将具体题目解释为 Task Instance；当前 [Learning Space §3.2](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/concept-design/DeerMind_Learning_Space_Design_v1.1.md#32-当前不建立独立-capability-model) 则通过 Task proficiency 表达能力，暂不设独立 Capability Model。与此同时，当前 §4.4 允许能力要求包含解释、验证、稳健性和迁移维度。因此，现有设计不是完全不能表达多维能力；需要审查的是这些定义是否过度分散、是否让具体作答形式反向决定能力边界。
+用户最初希望 Task 作为描述能力空间的载体。早期 [Knowledge Model §3.1](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/archive/DeerMind_Knowledge_Model_v0.2.md#31-task-family-与-task-instance) 已将具体题目解释为 Task Instance；当前 [Learning Space §3.2](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/concept-design/DeerMind_Learning_Space_Design_v1.1.md#32-当前不建立独立-capability-model) 则通过 Task proficiency 表达能力，暂不设独立 Capability Model。与此同时，当前 §4.4 允许能力要求包含解释、验证、稳健性和迁移维度。因此，现有设计不是完全不能表达多维能力；需要审查的是这些定义是否过度分散、是否让具体作答形式反向决定能力边界。
 
-已有 [Spike 报告 §2](../system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md#2-依据方法与结果边界) 明确部分 Evidence/Belief 使用脚本 fixture；[Build 报告 §3、§9](../system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定) 记录了预设任务及 Claim 下的真实评价与局限。它们提供机制与局部语义证据，不足以证明能力单元划分、题目映射和教学价值已经合理。原始结果保留，不因本次复核自动重跑或作废。
+已有 [Spike 报告 §2](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md#2-依据方法与结果边界) 明确部分 Evidence/Belief 使用脚本 fixture；[Build 报告 §3、§9](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定) 记录了预设任务及 Claim 下的真实评价与局限。它们提供机制与局部语义证据，不足以证明能力单元划分、题目映射和教学价值已经合理。原始结果保留，不因本次复核自动重跑或作废。
 
 研究提供方法参照而不指定 DeerMind 的本体。[ETS 的证据中心设计研究](https://www.ets.org/research/policy_research_reports/publications/report/2018/jzuw.html) 区分希望推断的学习者特征、形成推断的证据以及用于取得表现的任务设计；本次据此要求三者关系显式。[Adding It Up 第4章](https://www.nationalacademies.org/read/9822/chapter/6) 将数学熟练性描述为相互联系的多个方面，并指出理解可能先于清楚的口头表达；本次据此避免仅凭算对、说不出或一种表达形式判定全部掌握。上述参照不证明本项目应采用固定五维、某种评分公式或特定对象数量。
 
@@ -623,9 +615,9 @@ A 并未被证明逻辑不成立。如果把能力定义完整放回某一类 Ta
 | [AI Reasoning Runtime](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.0.md) 与 [Interaction Decision Runtime](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.0.md) | 检查模型输入、输出合同、类型注册与语义校验是否正确引用新定义；更新有关取证、帮助和必要评价的例子 | 语义规则加 LLM、候选校验、提交权限、严格串行、失败不冒充 UNKNOWN |
 | [Semantic Version / Replay / Migration](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.0.md) 与 [Evolution Governance Runtime](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.0.md) | 增补本次拆分、重分类与命题改义的迁移实例，核对 exact-base 授权、owner 和激活范围 | 既有多版本、重解释、回滚和历史不可重写原则；不新增全局语义版本 |
 | [Runtime Event Architecture](https://github.com/ivgotcrazy/deermind/blob/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc/system-design/DeerMind_Runtime_Event_Architecture_v1.0.md) | 交叉检查引用；本次未发现需要改变发生事实模型的理由，只在旧类型名称成为排他限制时对齐 | 题面、作答、展示、中断等已经发生的事实不因新本体改写 |
-| [System Design Evidence Review](../system-design/DeerMind_System_Design_Evidence_Review_v1.0.md)、[Cross-Cutting Review](../system-design/DeerMind_Cross_Cutting_Coverage_Review_v0.1.md)、[System Design Roadmap](../system-design/DeerMind_System_Design_Roadmap_v0.6.md) | 记录新基线的适用范围及尚未完成的验证，核对旧冻结表述是否继续适用于已改合同 | 原 Spike/Build 的原始结果、被否定保证和质量边界；不能把旧证据直接升级为新方案通过 |
-| [Development Roadmap](../top/DeerMind_Development_Roadmap_v0.3.md) 与 [MVP 文档入口](../mvp/README.md) 所辖当前文档 | 授权后对齐受影响模型名称、需求追溯与领域准备责任，登记重开和关闭范围；Phase 3/4/5 的顺序与 Gate 含义保持 | 历史 Gate 记录、已确认用户范围、两课程隔离以及当前 MVP 框架 |
-| [Product Thesis](../top/DeerMind_Product_Thesis_v1.0.md)、Product Constitution、AI Native Principles | 本次没有提出改动上位价值和权限原则的理由；正式对齐时核查引用即可，不为改模型批量改上位文档 | 能力形成、认知责任、学习自主及权限与认识分离等原有承诺 |
+| [System Design Evidence Review](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/system-design/DeerMind_System_Design_Evidence_Review_v1.0.md)、[Cross-Cutting Review](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/system-design/DeerMind_Cross_Cutting_Coverage_Review_v0.1.md)、[System Design Roadmap](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md) | 记录新基线的适用范围及尚未完成的验证，核对旧冻结表述是否继续适用于已改合同 | 原 Spike/Build 的原始结果、被否定保证和质量边界；不能把旧证据直接升级为新方案通过 |
+| [Development Roadmap](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/top/DeerMind_Development_Roadmap_v0.3.md) 与 [MVP 文档入口](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/mvp/README.md) 所辖当前文档 | 授权后对齐受影响模型名称、需求追溯与领域准备责任，登记重开和关闭范围；Phase 3/4/5 的顺序与 Gate 含义保持 | 历史 Gate 记录、已确认用户范围、两课程隔离以及当前 MVP 框架 |
+| [Product Thesis](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/top/DeerMind_Product_Thesis_v1.0.md)、Product Constitution、AI Native Principles | 本次没有提出改动上位价值和权限原则的理由；正式对齐时核查引用即可，不为改模型批量改上位文档 | 能力形成、认知责任、学习自主及权限与认识分离等原有承诺 |
 | 原 Spike/Build 报告、历史快照、实验 fixture 与原型 | 保留为原版本条件下的资产。可作为新领域包和实现的参考，不批量改其 Claim 名称或重写历史通过状态 | 实验可复现性；界面演示不自动证明新模型已经实现 |
 
 本次读取了 Build 的 [contracts.py](../../src/architecture_validation/contracts.py) 与 [domain.py](../../src/architecture_validation/domain.py)：前者将 Claim 类型限定为 TaskProficiency/KC，后者的除法 KC 含有执行与自查要求。这证实影响已经进入实例 schema 和规范包，而不只是文档措辞。它们属于已有验证实现，本轮及正式概念改稿均不应顺手改写；新 MVP 实现应明确承接新合同，复用旧机制时用新版本适配和相应测试保证隔离。
@@ -653,7 +645,7 @@ Build 的单位量示例可检验这套迁移分类。旧 unit-relation KC 及�
 
 ### 7.5 调整顺序与阶段交接
 
-本复核对应 [Development Roadmap](../top/DeerMind_Development_Roadmap_v0.3.md) 中允许的设计重开；它解决 Phase 3 深入定义前的模型前提，不增设一轮无期限 Spike，也不提前跳入 MVP Engineering。以下工作按依赖推进，授权边界与完成依据分别列出。
+本复核对应 [Development Roadmap](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/top/DeerMind_Development_Roadmap_v0.3.md) 中允许的设计重开；它解决 Phase 3 深入定义前的模型前提，不增设一轮无期限 Spike，也不提前跳入 MVP Engineering。以下工作按依赖推进，授权边界与完成依据分别列出。
 
 | 顺序 | 所在阶段与工作 | 完成依据及停止边界 |
 | --- | --- | --- |
@@ -712,3 +704,90 @@ ProblemTemplate 参数化问题关系、约束与所求责任，不规定唯一�
 用户已授权把这些阶段结论更新到正式设计。当前权威是 Concept Architecture v1.2、Domain Space v1.0、Learning Space v1.0、Evaluation / Interaction / Evolution v1.2、AI-Native Principles v0.3、System Design 总体与六项专项 v1.1；对象与运行关系分别进入各自正文。旧正式文档由 Git 历史追溯，当前目录不再维护两套并行基线。
 
 本稿 §1–7 中“正式文档未修改”“只在 reassessment 分析”等描述只适用于先前授权边界，现已被本轮明确授权替代。早期候选和案例不能用来宣称现模型有效；具体粒度、映射质量、教学价值和实现迁移留待实际资产及后续工程验证。MVP 阶段顺序、既有范围、旧 Spike/Build 结果和未决产品问题不因本次文档传导自动改变。
+
+## 9 Task Claim 单一能力状态的正式修订记录
+
+### 9.1 依据、范围与当前结论
+
+用户于 2026-10-19 明确批准 KC 不纳入能力状态、继续承担解释和教学职责，并要求所有变更文档递增版本、保持整体一致。此前已选择 Task 名称和仅 Task Claim 方向。本次据此修订正式概念、系统合同及 MVP 交接；不修改产品原型、源码、JSON 内容包、运行数据或旧实验结果。
+
+- Domain：TaskTemplate 定义参数化任务；SolutionTemplate 定义适用方法、递归子任务与结果组合；KnowledgeComponent 定义知识及关系，保留解释、局部诊断与教学用途。
+- Learning Space：引用共享领域的任务与方法范围，维护课程目标；允许任选、指定方法、多方法分别覆盖必须明确，不能把知识覆盖并集当作已掌握并集。
+- Evaluation：Task Claim 是唯一核心个人能力命题类型，正式标识 TaskProficiencyClaim / TaskProficiencyBelief；任务范围、责任、方法、条件、支持和质量有版本。模板、方法、题目与 KC 均不自动一一生成状态。
+- Runtime：按实际表现和帮助形成 Observation / Evidence，由 Evaluation 单写 Belief；知识诊断不成为隐藏的 KC 掌握状态。历史 KC 状态不可直接转换或用于当前 fallback。
+- 简化代价：没有独立跨任务 KC 掌握判断；模型是否足够支持诊断、预测与教学仍待真实场景验证。未来新增状态须有证据、价值和受治理迁移。
+
+正式定义见 [Domain](DeerMind_Domain_Space_Design_v1.1.md)、[Learning Space](DeerMind_Learning_Space_Design_v1.1.md)、[Evaluation §3.1 与 §6.8](DeerMind_Evaluation_Space_Design_v1.3.md)。MVP 决定见 DEC-022、DEC-023，资产缺口见 OPEN-010。
+
+### 9.2 原始基线与逐文件清单
+
+修改前工作区干净，输入提交为 [`206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd`](https://github.com/ivgotcrazy/deermind/tree/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd)。旧文档均可按此提交和旧路径恢复；版本化文件同步改名，当前目录只保留最新版本。原无编号稿首次设 v0.1，不冒充已有批准版本。本表包括仅修改引用的文件。
+
+| 文档 | 旧版本 → 新版本 | 修改内容 |
+| --- | --- | --- |
+| [DeerMind_Concept_Architecture_v1.3.md](DeerMind_Concept_Architecture_v1.3.md) | v1.2 → v1.3 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [DeerMind_Domain_Space_Design_v1.1.md](DeerMind_Domain_Space_Design_v1.1.md) | v1.0 → v1.1 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；调整对象图方向，避免横向压缩；补全 KC 关系；缩短图中空间标题，避免标题遮挡节点；更新现行文档引用及导航 |
+| [DeerMind_Evaluation_Space_Design_v1.3.md](DeerMind_Evaluation_Space_Design_v1.3.md) | v1.2 → v1.3 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；重写模型定义与职责；增加 Task-only 分数例子与有边界的状态更新过程；更新现行文档引用及导航 |
+| [DeerMind_Evolution_Space_Design_v1.3.md](DeerMind_Evolution_Space_Design_v1.3.md) | v1.2 → v1.3 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；语义正文与例子同步；更新现行文档引用及导航 |
+| [DeerMind_Interaction_Space_Design_v1.3.md](DeerMind_Interaction_Space_Design_v1.3.md) | v1.2 → v1.3 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；更新现行文档引用及导航 |
+| [DeerMind_Learning_Model_Reassessment.md](DeerMind_Learning_Model_Reassessment.md) | 未编号工作稿 → v0.1 | 保留历史探索，新增已批准 Task-only 结论、逐文件版本与检查记录 |
+| [DeerMind_Learning_Space_Design_v1.1.md](DeerMind_Learning_Space_Design_v1.1.md) | v1.0 → v1.1 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；更新现行文档引用及导航 |
+| [README.md](README.md) | 未编号工作稿 → v0.1 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；更新现行文档引用及导航 |
+| [MVP_Document_Architecture_Review.md](../mvp/MVP_Document_Architecture_Review.md) | 未编号工作稿 → v0.1 | 更新现行文档引用及导航 |
+| [MVP_Gate_Reviews.md](../mvp/MVP_Gate_Reviews.md) | 未编号工作稿 → v0.1 | 记录批准后模型变更而不重写 Gate 结论；语义正文与例子同步；更新现行文档引用及导航 |
+| [MVP_Governance.md](../mvp/MVP_Governance.md) | 未编号工作稿 → v0.1 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；登记用户批准的模型与版本规则；登记已知资产与工程迁移缺口；传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [README.md](../mvp/README.md) | 未编号工作稿 → v0.1 | 更新现行文档引用及导航 |
+| [MVP_Definition.md](../mvp/phase-3-definition/MVP_Definition.md) | 未编号工作稿 → v0.1 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；更新现行文档引用及导航 |
+| [MVP_Requirements_and_Acceptance.md](../mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md) | 未编号工作稿 → v0.1 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；将单类状态落实为产品后台与学习统计规则；更新现行文档引用及导航 |
+| [MVP_Validation_Plan.md](../mvp/phase-3-definition/MVP_Validation_Plan.md) | 未编号工作稿 → v0.1 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；更新现行文档引用及导航 |
+| [MVP_Data_and_Authority_Design.md](../mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md) | 未编号工作稿 → v0.1 | 传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [MVP_Domain_and_Content_Foundation.md](../mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md) | 未编号工作稿 → v0.1 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；传导 Task Claim 单一状态合同；明确旧资产事实及新合同接收条件；更新现行文档引用及导航 |
+| [MVP_Evaluation_Assets_Specification.md](../mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md) | 未编号工作稿 → v0.1 | 补充待制作的单类状态评测参考，区分文档与实际资产；更新现行文档引用及导航 |
+| [MVP_Product_and_Interaction_Design.md](../mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md) | 未编号工作稿 → v0.1 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [MVP_Delivery_and_Handover.md](../mvp/phase-5-engineering/MVP_Delivery_and_Handover.md) | 未编号工作稿 → v0.1 | 传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [MVP_Engineering_Design.md](../mvp/phase-5-engineering/MVP_Engineering_Design.md) | 未编号工作稿 → v0.1 | 传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [MVP_Incremental_Delivery_Plan.md](../mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md) | 未编号工作稿 → v0.1 | 传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [DeerMind_AI_Reasoning_Runtime_Design_v1.2.md](../system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.2.md) | v1.1 → v1.2 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [DeerMind_Evolution_Governance_Runtime_Design_v1.2.md](../system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.2.md) | v1.1 → v1.2 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [DeerMind_Interaction_Decision_Runtime_Design_v1.2.md](../system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.2.md) | v1.1 → v1.2 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [DeerMind_Runtime_Event_Architecture_v1.2.md](../system-design/DeerMind_Runtime_Event_Architecture_v1.2.md) | v1.1 → v1.2 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；更新现行文档引用及导航 |
+| [DeerMind_Semantic_Version_Replay_Migration_Design_v1.2.md](../system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.2.md) | v1.1 → v1.2 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [DeerMind_State_Dependency_Architecture_v1.2.md](../system-design/DeerMind_State_Dependency_Architecture_v1.2.md) | v1.1 → v1.2 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；传导 Task Claim 单一状态合同；更新现行文档引用及导航 |
+| [DeerMind_System_Design_Roadmap_v0.7.md](../system-design/DeerMind_System_Design_Roadmap_v0.7.md) | v0.6 → v0.7 | 语义正文与例子同步；同步现行设计引用与 Phase 4 状态，保留路线及历史 Gate；更新现行文档引用及导航 |
+| [DeerMind_System_Design_v1.2.md](../system-design/DeerMind_System_Design_v1.2.md) | v1.1 → v1.2 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；更新现行文档引用及导航 |
+| [README.md](../system-design/README.md) | 未编号工作稿 → v0.1 | 语义正文与例子同步；更新现行文档引用及导航 |
+| [DeerMind_AI_Native_Architecture_Principles_v0.4.md](../top/DeerMind_AI_Native_Architecture_Principles_v0.4.md) | v0.3 → v0.4 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；语义正文与例子同步；更新现行文档引用及导航 |
+| [DeerMind_Design_Document_Standard_v1.1.md](../top/DeerMind_Design_Document_Standard_v1.1.md) | v1.0 → v1.1 | 统一每份改动文档必升版及历史追溯规则；语义正文与例子同步 |
+| [DeerMind_Development_Roadmap_v0.4.md](../top/DeerMind_Development_Roadmap_v0.4.md) | v0.3 → v0.4 | ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；更新现行文档引用及导航 |
+| [README.md](../../src/mvp_foundation/README.md) | 未编号工作稿 → v0.1 | 入口提示资产尚待迁移；更新现行文档引用及导航 |
+| [README.md](../../src/mvp_prototype/README.md) | 未编号工作稿 → v0.1 | 入口提示资产尚待迁移；更新现行文档引用及导航 |
+
+### 9.3 执行与检查记录
+
+本批按“修改前快照 → 文档规范 → 概念对象与状态合同 → 系统读写及版本迁移 → MVP 接收条件 → 引用与逐文件升版 → 一致性检查”的依赖顺序处理。中间检查发现的问题在同一批次修正，不制造多个并行正式版本；最终差异由上述提交与当前工作区对照恢复。
+
+2026-10-19 作者检查结果：
+
+| 检查 | 实际结果与边界 |
+| --- | --- |
+| 模型语义 | 复核概念总览、Domain、Learning、Evaluation 的定义、例子和附录；Task Claim 单类状态与 KC 知识／教学职责一致，方法覆盖与受助证据限制已传导运行合同 |
+| 文档版本与元信息 | 36 份变更文档均显式升版，17 份版本化文件同步改名；旧无编号稿建立 v0.1。标题、文档头、当前引用与逐文件清单一致 |
+| 现行链接 | 对变更文档的 704 处本地文件链接及章节锚点执行检查，最终无未解析目标 |
+| 图示 | 三张新增变化的 Mermaid 图已在浏览器实际渲染并查看；修复旧换行字面量、横向压缩和标题遮挡，检查对象与箭头含义 |
+| 历史与改动范围 | 其余 47 份 Markdown 原文保持；Git 状态检查无清单外源码、JSON、冻结输入或报告变更；本轮没有模型调用或新 Gate 通过 |
+| 遗留历史路径 | 冻结历史文档中有 13 处仍引用旧路线图路径，当前目录不再保留该旧文件；已核对这些目标全部存在于修改前 Git 基线，须通过下列历史入口阅读，不能称作现行工作区链接检查通过 |
+
+历史完整阅读入口：[修改前文档树](https://github.com/ivgotcrazy/deermind/tree/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc)、[Development Roadmap v0.3](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/top/DeerMind_Development_Roadmap_v0.3.md)、[System Design Roadmap v0.6](https://github.com/ivgotcrazy/deermind/blob/206b9c7bd6b0b3e53a09a18e4a3fdeea2ce729fd/doc/system-design/DeerMind_System_Design_Roadmap_v0.6.md)。冻结报告不为修复导航重写原始字节；其相对引用在该 Git 基线内成立。
+
+检查修复包含：旧 KC 更新例子与 Policy 输入残留、当前版本与阶段表述、历史决策被误改成新术语、锚点失效，以及图示中的文字截断。它们均在本批次交付前修正，没有将旧验证结论改为新模型验证。
+
+### 9.4 未完成迁移与下一接收节点
+
+| 对象 | 当前事实 | 下一步接收要求 |
+| --- | --- | --- |
+| CONTENT-BNU-6A-U4-001 v1 | 仍是旧 ProblemTemplate 结构，含六个 Task Claim 和一个 KCClaim；本轮保持原字节 | Phase 4 准备新结构、方法要求、Task Claim 与关联 Evidence 参考；内容审核后才能发布 |
+| 评测资产和 verify.py | 原案例和检查仍服务各自旧合同，本轮未执行新模型测量 | 制作并审核 ANY／指定／ALL、受助、未知、同源重复、延迟及历史隔离案例；新检查不能只改名称 |
+| 原型、Build 与未来 MVP Runtime | 本轮没有代码修改或新模型上线 | Phase 5 实现单类状态写入、当前查询和历史边界，保存 KC 教学用途并形成真实验证证据 |
+| Spike / Build / G3 | 原输入、报告与批准结论保持 | 按原版本阅读，不把旧结果当新 Task-only 模型通过；不重开已关闭实验 |
+
+文档一致性通过仅表示合同与交接表述一致；不等于推断算法、领域粒度或学习收益已验证。G4/G5 不因本轮修改取得通过。

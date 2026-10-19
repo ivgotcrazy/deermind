@@ -1,18 +1,20 @@
 # MVP 阶段 Gate 评审记录
 
+> **版本**：v0.1<br>
 > **文档性质**：阶段评审记录；G3、G4、G5<br>
-> **版本**：G3 已批准 G3-20261015-01；G4/G5 的工作与评审记录持续维护<br>
 > **状态**：2026-10-15 G3 PASS；Phase 4 已启动，G4/G5 尚未通过<br>
-> **上游依据与基线**：[Development Roadmap §7.1](../top/DeerMind_Development_Roadmap_v0.3.md#71-项目级-gate-总览)；评审前登记准确提交及所审交付版本<br>
-> **写作规范**：[设计文档规范 v1.0（维护修订）](../top/DeerMind_Design_Document_Standard_v1.0.md)；[MVP 共同规则](MVP_Governance.md)<br>
+> **上游依据与基线**：[Development Roadmap §7.1](../top/DeerMind_Development_Roadmap_v0.4.md#71-项目级-gate-总览)；评审前登记准确提交及所审交付版本<br>
 > **维护责任**：Codex 负责本次记录与作者检查；后续评审据实际分工登记<br>
 > **评审记录**：历史记录见 §2.1–§2.6；用户通过决定及准确输入见 §2.7；Phase 4 进展、结构稿及连续学习对话见 §3.1–§3.14<br>
-> **更新日期**：2026-10-17<br>
-> **修订说明**：补记连续学习对话、内嵌练习与检测及作者检查；用户认可交互方向不等于细节审阅完成，未改变 G3 基线，G4 未批准。
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：记录批准后模型变更而不重写 Gate 结论；语义正文与例子同步；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
 ---
 
 本文独立汇总阶段判断，各主体文档只提供自身完成情况与证据。文档导航见 [README](README.md)，版本、变更和登记规则见[共同管理规则](MVP_Governance.md)。历史 G3 记录仍保存在[归档产品定义](archive/DeerMind_MVP_Definition_v0.1.md#11-g3-评审与阶段完成条件)，不转写为本轮新范围已经通过。
+
+本文件的历史 G3 结果及冻结输入保持原义。2026-10-19 的 DEC-022 模型修订和 DEC-023 逐文件版本规则属于后续工作修订：文档合同已更新，内容与评测资产迁移登记为 OPEN-010，G4/G5 状态不因此改变。正文中的历史日期、版本与实验数量不按新模型重写。
 
 ## 1. 统一记录结构与判断规则
 
@@ -25,7 +27,7 @@
 
 ## 2. G3 — MVP Definition
 
-**本轮状态：2026-10-15 用户阶段性审阅通过，G3 PASS；已进入 Phase 4，依据及遗留见 §2.7。** 条件依据为 [Development Roadmap §4.1](../top/DeerMind_Development_Roadmap_v0.3.md#41-phase-3--mvp-definition)，通过后允许进入 Product & Domain Foundation，不表示产品已经实现或可开展真实用户试用。
+**本轮状态：2026-10-15 用户阶段性审阅通过，G3 PASS；已进入 Phase 4，依据及遗留见 §2.7。** 条件依据为 [Development Roadmap §4.1](../top/DeerMind_Development_Roadmap_v0.4.md#41-phase-3--mvp-definition)，通过后允许进入 Product & Domain Foundation，不表示产品已经实现或可开展真实用户试用。
 
 2026-10-11 补充：OPEN-006 的领域语义复核已由 DEC-007 收口并获授权更新正式设计。Domain 与 Learning Space 分开，问题模板、方法模板和 KC 提供领域参照，Evaluation 仍维护个人认识。早期显式 CapabilityDefinition 候选未被采用；当前依据见[概念设计入口](../concept-design/README.md)。本次只解除该概念归属的讨论前置，不改变已有产品范围、历史实验或本轮 G3/G4/G5 的未通过状态。
 
@@ -73,7 +75,7 @@ OPEN-002 带入实际教材、可用章节和参考取得；OPEN-003 带入首�
 
 ### 2.4 图文表达修订与作者检查
 
-记录标识为 `G3-DEF-20261011-02`，日期为 2026-10-11，执行和作者检查者为 Codex。此前审查覆盖了需求及追溯，但没有充分检查读者能否快速理解整体业务；不能因内容表已齐全而认为表达已经充分。本次依据用户审阅意见，先更新[文档规范 §5、§8](../top/DeerMind_Design_Document_Standard_v1.0.md#5-语言层级与图表)，再补充 Phase 3 的九张 Mermaid 图：Definition 两张，Requirements 六张，Validation 一张。[阅读入口](README.md#3-使用与后续工作)按阅读问题索引这些图。
+记录标识为 `G3-DEF-20261011-02`，日期为 2026-10-11，执行和作者检查者为 Codex。此前审查覆盖了需求及追溯，但没有充分检查读者能否快速理解整体业务；不能因内容表已齐全而认为表达已经充分。本次依据用户审阅意见，先更新[文档规范 §5、§8](../top/DeerMind_Design_Document_Standard_v1.1.md#5-语言层级与图表)，再补充 Phase 3 的九张 Mermaid 图：Definition 两张，Requirements 六张，Validation 一张。[阅读入口](README.md#3-使用与后续工作)按阅读问题索引这些图。
 
 该次修订保留原有规范性正文与表格，新增图及说明表达同一套业务；三个文档头同步用户审阅状态。图明确讲解与独立检测的不同退出路径、发布与采用的分别记录、实际帮助与请求的区别、当前学习状态与近期作答的不同口径。图 REQ-06 是合成业务时序，图 VAL-01 是证据责任图，均不充当实际实现或通过记录。最初快照只代表 §2.1 的输入；[图示修订快照](../../.tmp/g3-definition-review-20261011-02/inputs.zip)及[清单](../../.tmp/g3-definition-review-20261011-02/manifest.json)固定该次输入和图形检查产物，尚非批准基线；后续正文重组的输入见 §2.5。
 
@@ -87,7 +89,7 @@ OPEN-002 带入实际教材、可用章节和参考取得；OPEN-003 带入首�
 
 ### 2.5 正文组织修订与作者检查
 
-记录标识为 `G3-DEF-20261011-03`，日期为 2026-10-11，执行和作者检查者为 Codex。用户进一步指出，正文将多个并行规则堆入长段落，并混入决定编号与关闭记录，妨碍快速查阅。此次先完善[文档规范 §5.1–§5.2](../top/DeerMind_Design_Document_Standard_v1.0.md#51-正文组织与快速查阅)，再整理三份 Phase 3 正文。
+记录标识为 `G3-DEF-20261011-03`，日期为 2026-10-11，执行和作者检查者为 Codex。用户进一步指出，正文将多个并行规则堆入长段落，并混入决定编号与关闭记录，妨碍快速查阅。此次先完善[文档规范 §5.1–§5.2](../top/DeerMind_Design_Document_Standard_v1.1.md#51-正文组织与快速查阅)，再整理三份 Phase 3 正文。
 
 本次调整包括：
 
@@ -141,7 +143,7 @@ OPEN-002 带入实际教材、可用章节和参考取得；OPEN-003 带入首�
 
 ## 3. G4 — Product & Domain Foundation
 
-**本轮状态：Phase 4 已启动，G4 尚未评审通过；设计、原型与实际资产分别记录进度。** 条件依据为 [Development Roadmap §4.2](../top/DeerMind_Development_Roadmap_v0.3.md#42-phase-4--product--domain-foundation)，通过后允许进入 MVP Engineering。
+**本轮状态：Phase 4 已启动，G4 尚未评审通过；设计、原型与实际资产分别记录进度。** 条件依据为 [Development Roadmap §4.2](../top/DeerMind_Development_Roadmap_v0.4.md#42-phase-4--product--domain-foundation)，通过后允许进入 MVP Engineering。
 
 评审输入为[产品与交互设计](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md)、[领域与内容基础](phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md)、[数据与权限设计](phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md)、[评测资产规格](phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md)，以及相符的实际原型、首批领域内容、参考案例和审查记录。
 
@@ -292,7 +294,7 @@ OPEN-002 带入实际教材、可用章节和参考取得；OPEN-003 带入首�
 
 ### 3.13 学生首页内容与状态优化
 
-2026-10-17，用户基本认可整体方向，并授权先优化学生首页、再继续反馈。本轮在既有结构内调整内容、状态和操作，依据见 [Product §2.3](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#23-学生端结构)，可操作入口及复验说明见[原型 README](../../src/mvp_prototype/README.md#当前入口三端结构低保真稿)。
+2026-10-17，用户基本认可整体方向，并授权先优化学生首页、再继续反馈。本轮在既有结构内调整内容、状态和操作，依据见 [Product §2.3](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#23-学生端首页学习情况与连续活动)，可操作入口及复验说明见[原型 README](../../src/mvp_prototype/README.md#当前入口三端结构低保真稿)。
 
 - 首页按实际最近活动提供继续或结束结果，没有当前活动时才展示一项可查依据的预写建议；可以暂不安排，仍可自主选章节。
 - 学习情况摘要与完整状态页共用口径，无评价时保持未知。预写 HOME-REF-01 明确作答、帮助与推断限制，本轮新输入不产生评价。
@@ -319,7 +321,7 @@ OPEN-002 带入实际教材、可用章节和参考取得；OPEN-003 带入首�
 
 ## 4. G5 — MVP Feature Complete
 
-**本轮状态：未评审，待真实实现与工程证据。** 条件依据为 [Development Roadmap §5.1](../top/DeerMind_Development_Roadmap_v0.3.md#51-phase-5--mvp-engineering)，通过后允许进入 Internal Alpha，不替代 G6 Pilot Readiness 或 G7 的真实使用验证。
+**本轮状态：未评审，待真实实现与工程证据。** 条件依据为 [Development Roadmap §5.1](../top/DeerMind_Development_Roadmap_v0.4.md#51-phase-5--mvp-engineering)，通过后允许进入 Internal Alpha，不替代 G6 Pilot Readiness 或 G7 的真实使用验证。
 
 评审输入为[工程设计](phase-5-engineering/MVP_Engineering_Design.md)、[分步实施与验证计划](phase-5-engineering/MVP_Incremental_Delivery_Plan.md)、[交付与运行交接](phase-5-engineering/MVP_Delivery_and_Handover.md)，以及准确版本的软件、领域与评测资产、可复现操作和实际检查结果。
 

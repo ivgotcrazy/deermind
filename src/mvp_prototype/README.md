@@ -1,11 +1,16 @@
 # DeerMind 三端交互原型
 
+> **版本**：v0.1<br>
 > **文档性质**：交互走查工具与运行说明<br>
 > **状态**：2026-10-17 学生端已接真实 DeepSeek 对话，供成人体验并打磨交互；不是正式 APK 或完整教学运行时<br>
 > **维护责任**：Codex 维护本轮原型与定向检查<br>
-> **写作规范**：[设计文档规范](../../doc/top/DeerMind_Design_Document_Standard_v1.0.md)<br>
 > **依据与评审**：[G3-20261015-01](../../doc/mvp/MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)；[当前交互方案](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md)<br>
-> **更新日期**：2026-10-17
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../../doc/top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：入口提示资产尚待迁移；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../../doc/concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
+
+当前设计已采用 TaskTemplate 与 Task Claim 单一能力状态；本目录既有内容包、演示与校验仍按各自原版本解释，本轮未迁移运行资产。新模型接入范围见 [OPEN-010](../../doc/mvp/MVP_Governance.md#4-待决事项与风险登记)。
 
 ---
 

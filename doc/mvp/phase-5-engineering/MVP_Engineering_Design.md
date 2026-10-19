@@ -1,15 +1,15 @@
 # MVP 工程设计
 
+> **版本**：v0.1<br>
 > **文档性质**：工程设计；Phase 5 — MVP Engineering<br>
-> **版本**：工作稿；修订由 Git 追溯，尚无本轮批准基线<br>
 > **状态**：交付大纲；交接要求已细化，设计正文与实际资产待所属阶段交付，非 Gate 通过<br>
 > **上游依据与基线**：Phase 3 已批准 [G3-20261015-01](../MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)；Phase 4 尚未形成 G4 批准基线，本文仍为待该阶段开展的大纲。<br>
-> **写作规范**：[设计文档规范 v1.0（维护修订）](../../top/DeerMind_Design_Document_Standard_v1.0.md)；[MVP 共同规则](../MVP_Governance.md)<br>
 > **维护责任**：工程设计维护角色，具体承担者待指定<br>
 > **评审记录**：待指定；按 §8 记录文档检查，阶段判断见 [Gate 记录](../MVP_Gate_Reviews.md)<br>
-> **更新日期**：2026-10-15<br>
 > **创建日期**：2026-10-10<br>
-> **修订说明**：更新阶段依赖至已批准 G3 和进行中的 Phase 4；未开始 MVP 工程设计或实现。
+> **写作规范**：[设计文档规范 v1.1](../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：传导 Task Claim 单一状态合同；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
 ---
 
@@ -23,7 +23,7 @@
 
 下游交付：[MVP 分步实施与验证计划](MVP_Incremental_Delivery_Plan.md)、[MVP 交付与运行交接](MVP_Delivery_and_Handover.md)。
 
-概念输入采用 [Domain Space v1.0](../../concept-design/DeerMind_Domain_Space_Design_v1.0.md) 与[Learning Space v1.0](../../concept-design/DeerMind_Learning_Space_Design_v1.0.md)。领域包、材料映射和目标定义分别归属；旧实现与实验按原基线保留，不能只把 TaskFamily 改名后宣称完成迁移。本条更新依赖，不表示本文正文、资产或工程已完成。
+概念输入采用 [Domain Space v1.1](../../concept-design/DeerMind_Domain_Space_Design_v1.1.md) 与[Learning Space v1.1](../../concept-design/DeerMind_Learning_Space_Design_v1.1.md)。领域包、材料映射和目标定义分别归属；旧实现与实验按原基线保留，不能只把 TaskFamily 改名后宣称完成迁移。本条更新依赖，不表示本文正文、资产或工程已完成。
 
 目录与阶段关系见 [MVP 文档入口](../README.md)；共同规则、术语编号和待决事项见[文档共同管理规则](../MVP_Governance.md)。
 
@@ -44,6 +44,8 @@
 ## 3. 数据、状态与一致性
 
 设计数据结构、历史、版本、依赖、事务与状态转移，说明并发、中断、重试、重复处理和恢复下的不变量及检查方式。
+
+Task Claim 模型变更的实现接收条件：只接受 TaskProficiencyClaim / Belief 的当前状态写入；对 TaskScope、责任、方法与实际支持做版本化校验；Domain KC 定义、关系与讲解用途继续可用。历史读取与当前解析分开，禁止旧 KC 缓存 fallback。迁移内容包、参考、目标投影与状态读写须有端到端证据，不能凭文档升版或旧 verify.py 通过宣称完成。具体接口和存储仍由本阶段设计。
 
 ## 4. AI 与外部能力实现
 

@@ -1,16 +1,15 @@
-# DeerMind AI-Native Architecture Principles v0.3
+# DeerMind AI-Native Architecture Principles v0.4
 
-> **中文名称**：DeerMind AI 原生架构原则  
-> **版本**：v0.3  
-> **文档性质**：Concept Architecture 与 System Design 之间的横切架构原则 / AI-Native Execution Doctrine  
-> **状态**：与本轮领域及产品目标合同对齐；执行原则保持  
-> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.2.md` 及Domain Space v1.0、Learning Space v1.0 与 Evaluation / Interaction / Evolution v1.2  
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`  
-> **更新时间**：2026-10-11  
->
-> **修订说明**：明确开放语义解释与校验采用语义规则约束下的 LLM reasoning，区分语义判断与确定性结构、权限、提交执行；保留既有 Space ownership 与 authority 边界，并传导至 AI Runtime、Observation 与 Spike 验证合同。
->
-> **版本说明**：v0.3 承接 Concept Architecture v1.2、Domain Space v1.0 与 Learning Space v1.0，区分领域定义、产品目标与材料映射的 authority。Open Cognition / Controlled Authority、Candidate / Validation / Commit、Protocol、历史与 typed invalidation 原则保持；不新增实验通过结论。
+> **版本**：v0.4<br>
+> **中文名称**：DeerMind AI 原生架构原则<br>
+> **文档性质**：Concept Architecture 与 System Design 之间的横切架构原则 / AI-Native Execution Doctrine<br>
+> **状态**：与本轮领域及产品目标合同对齐；执行原则保持<br>
+> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.3.md` 及Domain Space v1.1、Learning Space v1.1 与 Evaluation / Interaction / Evolution v1.3<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；语义正文与例子同步；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
 ---
 
@@ -32,7 +31,7 @@ DeerMind 的 Concept Architecture 已经回答了系统必须维护哪些不可�
 Input \rightarrow PredefinedLogic \rightarrow Output
 \]
 
-DeerMind 面对的不是这种封闭世界。真实学习过程中会不断出现无法提前列举的表达、错误、解题策略、上下文关系、认知现象和系统异常；LearningTarget 等产品规范与 ProblemTemplate、SolutionTemplate、KC 等领域定义本身也可能随着长期证据被重新理解。若要求工程师提前把所有对象和判断规则写成静态流程，系统最终只能覆盖被预见的部分现实，无法承担 Concept Architecture 所要求的长期认识责任。
+DeerMind 面对的不是这种封闭世界。真实学习过程中会不断出现无法提前列举的表达、错误、解题策略、上下文关系、认知现象和系统异常；LearningTarget 等产品规范与 TaskTemplate、SolutionTemplate、KC 等领域定义本身也可能随着长期证据被重新理解。若要求工程师提前把所有对象和判断规则写成静态流程，系统最终只能覆盖被预见的部分现实，无法承担 Concept Architecture 所要求的长期认识责任。
 
 因此 DeerMind 的设计重点不是提前冻结“每种现实应该得到什么答案”，而是提前冻结：
 
@@ -125,7 +124,7 @@ AI Cognition 承担传统静态程序难以穷举的认知计算，例如：
 
 - 理解自然语言和多模态输入；
 - 解释 learner work 与学习行为；
-- 解释或生成 LearningTarget 候选、材料映射候选，以及 ProblemTemplate / SolutionTemplate / KC 候选，保持产品与 Domain 的分别提交权限；
+- 解释或生成 LearningTarget 候选、材料映射候选，以及 TaskTemplate / SolutionTemplate / KC 候选，保持产品与 Domain 的分别提交权限；
 - 解释 Observation 对具体 Claim 的证据意义；
 - 生成 competing hypotheses；
 - 在当前 Context 下规划并选择 Action；
@@ -242,6 +241,8 @@ Deterministic gate 应验证的是：Action Type 是否当前版本合法、已�
 
 ---
 
+当前能力状态采用 Task Claim 单一类型。KC 作为可复用知识结构继续参与领域定义、表现解释和教学；LLM 不得因分析某个 KC 而生成另一套个人知识掌握状态。正式判断的任务范围、责任、方法、支持条件与版本必须可追溯；语义质量仍是待验证工程问题。
+
 ## 4. Reasoning Protocol 驱动 AI 认知执行
 
 DeerMind 不把“Agent”或“一次 LLM call”作为基本认知抽象。更稳定的一级对象是 **Reasoning Protocol**：它定义一次 AI reasoning 正在承担什么 semantic role、可以基于什么 Context、可以产生什么结果，以及失败时如何表达不确定性。
@@ -277,7 +278,7 @@ ReasoningProtocol
 - ProtocolVersion
 ```
 
-例如 `ObservationInterpretationProtocol` 的目标是解释“当前发生了什么”，而不是判断 learner 会不会某个 KC；`InteractionDecisionProtocol` 可以读取相关 Learner Belief 并进行行动决策，但不能修改 canonical KC；`DomainStructureDiscoveryProtocol` 可以提出系统中不存在的 KC Candidate，但不能直接使其成为 Canonical KC。
+例如 `ObservationInterpretationProtocol` 的目标是解释“当前发生了什么”，而不是直接判断 learner 是否具备某项 Task Claim 所定义的能力；`InteractionDecisionProtocol` 可以读取相关 Learner Belief 并进行行动决策，但不能修改 canonical KC；`DomainStructureDiscoveryProtocol` 可以提出系统中不存在的 KC Candidate，但不能直接使其成为 Canonical KC。
 
 因此，教育理论和系统认识规则不应被埋在“万能 Prompt”里，而应成为可以独立版本化、验证和演化的 Reasoning Protocol。
 
@@ -489,7 +490,7 @@ DurableMemory \Rightarrow ExplicitSystemState
 DeerMind 至少区分四类常被统称为“memory”的对象：
 
 - **Working Memory**：一次 reasoning execution 内的临时工作状态，不具有长期 authority；
-- **System State**：Event、Learning Target、Learner Belief、Interaction State、ProblemTemplate / KC、System Issue 等正式持久状态；
+- **System State**：Event、Learning Target、Learner Belief、Interaction State、TaskTemplate / KC、System Issue 等正式持久状态；
 - **Derived Recall View**：针对当前 purpose 从历史和正式状态投影出的相关回忆，不构成新事实源；
 - **Workflow Checkpoint**：长时间 Agent / workflow 为恢复执行而保存的进度状态，不自动获得 epistemic authority。
 
@@ -515,7 +516,7 @@ Context 不是一串被压平的文本。一个 Context Item 至少在语义上�
 
 因此同一个信息可以“可读取、可引用”，但并不“可服从”。制度性 authority conflict 也不能让 LLM 临场自由裁决，而应由 canonical rule 决定优先级。
 
-Target 与 Binding 也必须保持同样的权威分层。AI 可以提出 `TargetCandidate` 或 `TargetBindingCandidate`，但二者不是同一种 commit：Target Definition 的正式语义属于 Learning Space 并通过其受控定义与发布路径生效；ProblemTemplate / SolutionTemplate / KC 的 canonical commit 属于 Domain owner；Binding occurrence 的事实进入 Event History，外部 Binding 的合法 authority / scope 来自 Product Context / Context Constitution，当前有效 Binding projection 由 Interaction 形成。任何自然语言表达都不能同时取得这三类 authority。
+Target 与 Binding 也必须保持同样的权威分层。AI 可以提出 `TargetCandidate` 或 `TargetBindingCandidate`，但二者不是同一种 commit：Target Definition 的正式语义属于 Learning Space 并通过其受控定义与发布路径生效；TaskTemplate / SolutionTemplate / KC 的 canonical commit 属于 Domain owner；Binding occurrence 的事实进入 Event History，外部 Binding 的合法 authority / scope 来自 Product Context / Context Constitution，当前有效 Binding projection 由 Interaction 形成。任何自然语言表达都不能同时取得这三类 authority。
 
 
 ### 6.5 Tool Access 是 Authority 的延伸

@@ -1,15 +1,18 @@
-# DeerMind AI Reasoning Runtime Design v1.1
+# DeerMind AI Reasoning Runtime Design v1.2
 
+> **版本**：v1.2<br>
 > **中文名称**：DeerMind AI 推理运行时设计<br>
-> **版本**：v1.1<br>
 > **文档性质**：System Design Baseline<br>
 > **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
-> **上位基线**：[Concept Architecture v1.2](../concept-design/DeerMind_Concept_Architecture_v1.2.md)、[Domain Space v1.0](../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution v1.2、[AI-Native Principles v0.3](../top/DeerMind_AI_Native_Architecture_Principles_v0.3.md)；总体合同为 [System Design v1.1](DeerMind_System_Design_v1.1.md)<br>
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-11
+> **上位基线**：[Concept Architecture v1.3](../concept-design/DeerMind_Concept_Architecture_v1.3.md)、[Domain Space v1.1](../concept-design/DeerMind_Domain_Space_Design_v1.1.md)、[Learning Space v1.1](../concept-design/DeerMind_Learning_Space_Design_v1.1.md)、Evaluation / Interaction / Evolution v1.3、[AI-Native Principles v0.4](../top/DeerMind_AI_Native_Architecture_Principles_v0.4.md)；总体合同为 [System Design v1.2](DeerMind_System_Design_v1.2.md)<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.7.md`<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
-本版本在原 System Design v1.0 合同上承接 Domain 与 Learning Space 的对象和 owner 修订。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
+本版本在原 System Design v1.2 的领域／课程分离基础上，采用 TaskTemplate 并将个人能力状态统一为 Task Claim。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计命题
@@ -96,7 +99,7 @@ AI Runtime 的责任是**执行受版本化 Protocol、受控 Context 与显式 
 
 ### 1.4 与总体 System Design 和相邻专项的关系
 
-总体 `DeerMind_System_Design_v1.1` 定义 AI Reasoning Runtime 在全系统中的位置：Context 由正式状态解析而来，AI 产生 Candidate，Candidate 通过 Validation / Commit 取得 standing，所有 formal effect 在 commit / execution 前重新验证 current authority、dependency、version 与 data authority。
+总体 `DeerMind_System_Design_v1.2` 定义 AI Reasoning Runtime 在全系统中的位置：Context 由正式状态解析而来，AI 产生 Candidate，Candidate 通过 Validation / Commit 取得 standing，所有 formal effect 在 commit / execution 前重新验证 current authority、dependency、version 与 data authority。
 
 本文档把该责任深化为 Focused Design Closure，但不接管其他专项：
 
@@ -162,7 +165,7 @@ AI Runtime 拥有以下运行责任：
 
 AI Runtime 不拥有：
 
-- LearningTarget、ProblemTemplate、SolutionTemplate、KnowledgeComponent 的 canonical authority；
+- LearningTarget、TaskTemplate、SolutionTemplate、KnowledgeComponent 的 canonical authority；
 - Observation / PolicyOutcome 的 Interaction semantic ownership；
 - Evidence / Learner Belief 的 Evaluation ownership；
 - SystemIssue / RevisionCandidate 的 Evolution ownership；
@@ -417,7 +420,7 @@ ContextItem
 
 同一自然语言内容既可能是 learner request、task content、external evidence source 或 authority directive 的载体；系统不能让模型根据文字语气自己判断 authority class。
 
-对领域相关 reasoning，ContextItem 必须区分产品材料及目标、Domain 定义、具体问题输入、参考方法与实际行为来源。ProblemTemplate 中用于生成或验证的隐藏参数，只有当前 Protocol 的用途和 authority 允许时才能纳入；不得因系统知道答案就把答案写入面向学习者的提示上下文。
+对领域相关 reasoning，ContextItem 必须区分产品材料及目标、Domain 定义、具体问题输入、参考方法与实际行为来源。TaskTemplate 中用于生成或验证的隐藏参数，只有当前 Protocol 的用途和 authority 允许时才能纳入；不得因系统知道答案就把答案写入面向学习者的提示上下文。
 
 方法、题目与 KC 映射是语义判断，使用明确语义规则与 LLM 形成候选，结构与引用校验只能检查其形式和受控边界，不能替代语义有效性检查。模板未映射、方法适用性不明或知识依据不足应按 Protocol 返回部分结果、澄清或 non-success，不可补造一个正式模板使输出通过。
 
@@ -715,6 +718,8 @@ WorkflowCheckpoint
 禁止把 checkpoint 中旧的 permission / current view 当作可继续使用的未来授权。
 
 ---
+
+能力推理候选只能引用本次授权、版本明确的 Task Claim。校验须检查任务范围、责任、方法要求及实际帮助；不得把正确答案扩写为全部方法或 KC 已掌握。KC 仍可随 Domain 定义进入解释与教学上下文，局部诊断须引用表现依据；请求输出 KCClaim / KCBelief 或隐性 KC 掌握评分不符合当前正式输出合同。类型和版本检查是确定性约束，证据是否充分的语义判断仍须按版本化规则执行，不能声称由字段检查保证准确。
 
 ## 6. Candidate、Validation、Commit 与失败语义
 
@@ -1234,7 +1239,7 @@ ActionSemantic 检查可以作为显式复合 Policy 验证 Profile 中的必需
 
 ### 8.6 Focused Design Closure 判断
 
-本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.1 在此基础上更新领域与产品输入合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.2 在此基础上更新任务与单类能力状态合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 A2 的普遍语义隔离保证已撤回，required checks、exact-candidate 绑定、owner authority 和失败路径不撤回；E1/X5 的质量与完成率限制按 ADR 002 处理。
 

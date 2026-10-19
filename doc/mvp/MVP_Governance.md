@@ -1,14 +1,14 @@
 # MVP 文档共同管理规则
 
+> **版本**：v0.1<br>
 > **文档性质**：MVP 文档共同管理规则与登记册；跨 Phase 3–5<br>
-> **版本**：共同规则工作修订；Phase 3 已形成 G3-20261015-01 基线，后续阶段尚未批准<br>
 > **状态**：G3 阶段性通过，Phase 4 进行中；决定、风险和变更持续维护<br>
-> **上游依据与基线**：[Development Roadmap](../top/DeerMind_Development_Roadmap_v0.3.md) 为阶段依据；正式引用的提交与资产版本在评审前登记<br>
-> **写作规范**：[设计文档规范 v1.0（维护修订）](../top/DeerMind_Design_Document_Standard_v1.0.md)<br>
+> **上游依据与基线**：[Development Roadmap](../top/DeerMind_Development_Roadmap_v0.4.md) 为阶段依据；正式引用的提交与资产版本在评审前登记<br>
 > **维护责任**：Codex 负责整理与一致性核对；用户参与新的范围或关键约束决定<br>
 > **评审记录**：2026-10-15 用户确认 G3；准确输入与交接见 [Gate §2.7](MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)<br>
-> **更新日期**：2026-10-17<br>
-> **修订说明**：登记 DEC-021 授权补充的课堂进度需求，以及 DEC-020 的首页与学习情况分工；保留 DEC-019 的非整除运次用途决定。后续决定不改写历史 G3 批准记录或当前 Gate 状态；内容审核、使用条件和校外材料缺口继续保留。
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：登记 DEC-022、DEC-023 与 OPEN-010，统一版本规则并保留既有批准历史。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
 ---
 
@@ -41,9 +41,9 @@
 
 ## 2. 元信息、基线与引用
 
-文档头、分类写作及检查方法遵守[设计文档规范](../top/DeerMind_Design_Document_Standard_v1.0.md#2-文档头与状态表达)，使用标题后的统一引用块；README 采用精简文档头。本文只补充 MVP 的责任与基线管理，不维护第二套通用写作规范。未确定人员或版本时明确标为待指定，不填入虚构名称、提交或评审结果。责任可以由同一人承担，不新增必须两人审核的要求；实际提出者、判断者及依据须可查。
+文档头、分类写作及检查方法遵守[设计文档规范](../top/DeerMind_Design_Document_Standard_v1.1.md#2-文档头与状态表达)，使用标题后的统一引用块；README 采用精简文档头。本文只补充 MVP 的责任与基线管理，不维护第二套通用写作规范。未确定人员或版本时明确标为待指定，不填入虚构名称、提交或评审结果。责任可以由同一人承担，不新增必须两人审核的要求；实际提出者、判断者及依据须可查。
 
-工作草案由 Git 保存修订，不要求每次改字都手动升级文档版本号。正式评审引用的内容须可准确恢复：登记基线标识、文档与源码的准确提交，以及未纳入 Git 的资产版本、位置和校验信息。尚未提交的内容不得只用 HEAD 代表；应先形成可恢复的评审快照。正文链接方便导航，不能代替版本依据。
+每份变更文档均按设计文档规范递增版本，包括仅修复链接的文件。无显式版本工作稿首次编号 v0.1，原文通过修改前提交恢复；一个交付批次内的中间检查和修复纳入该批次记录。正式评审引用的内容须可准确恢复：登记基线标识、文档与源码的准确提交，以及未纳入 Git 的资产版本、位置和校验信息。尚未提交的内容不得只用 HEAD 代表；应先形成可恢复的评审快照。正文链接方便导航，不能代替版本依据。
 
 G3/G4/G5 的评审记录分别列出实际审查的基线。通过后可以用唯一的 Git tag 标记对应提交，仍需保留准确提交号及外部资产清单；不移动旧标签来改写已评审内容。新修订形成新记录，并说明旧基线与结论是否仍适用。本轮 G3 使用可恢复的内容快照和清单固定批准输入，尚未创建 Git tag；后续不能以 HEAD 或当前文件代替该准确基线。
 
@@ -59,7 +59,7 @@ G3/G4/G5 的评审记录分别列出实际审查的基线。通过后可以用�
 | DEC-004 工作顺序 | 2026-10-11 对话；先解决模型再深入 Phase 3 | 先审查领域定义、现实映射及 Evaluation 个人状态；模型明确后恢复 Phase 3 | 概念模型与 MVP 定义 | 模型语义阶段结论已由 DEC-007 承接，文档已对齐 | OPEN-006；README | 不撤销既有产品要求，不代表 G3 通过 |
 | DEC-005 候选方向 | 2026-10-11 对话；优先细化显式能力定义 | 曾优先分析独立能力定义，与旧结构比较 | OPEN-006 的历史候选 B | 候选方向已由后续讨论替代，不作为正式对象方案 | 复核稿历史 §1–7；当前 DEC-007 | 当前不新增 CapabilityDefinition / ProblemFamily 等核心对象 |
 | DEC-006 模型设计要求 | 2026-10-11 对话；知识与能力可区分，多方面评价指导教学 | KC 定义可复用认知结构；问题责任提供能力参照，Evaluation 维护个人状态；计算、理解、选法与检验证据不能互相冒充 | 领域与教学评价 | 原要求持续有效，表达方式由 DEC-007 承接 | Domain §2–6；Evaluation §3 | 不要求统一五维或每轮全检，不把程序性知识逐出 KC |
-| DEC-007 模型结论与正式传导 | 用户关于 ProblemTemplate / SolutionTemplate / KC、Domain 与 Learning Space 的连续确认，以及本轮正式文档更新授权 | Domain 拥有问题模板、方法模板与 KC；Learning Space 拥有材料和目标；方法可递归组织子问题；个人认识仍由 Evaluation 单写 | 概念及系统设计、MVP 后续交付 | 阶段性语义结论已纳入正式设计；领域有效性仍待实证 | [概念入口](../concept-design/README.md)、Domain v1.0、Learning Space v1.0、System Design v1.1 | 替代 DEC-005 的对象候选；不迁移旧实验数据，不产生新 G3/G4/G5 通过 |
+| DEC-007 模型结论与正式传导 | 用户关于 ProblemTemplate / SolutionTemplate / KC、Domain 与 Learning Space 的连续确认，以及本轮正式文档更新授权 | Domain 拥有问题模板、方法模板与 KC；Learning Space 拥有材料和目标；方法可递归组织子问题；个人认识仍由 Evaluation 单写 | 概念及系统设计、MVP 后续交付 | 阶段性语义结论已纳入正式设计；领域有效性仍待实证 | [概念入口](../concept-design/README.md)、Domain v1.0、Learning Space v1.0、System Design v1.1 | 替代 DEC-005 的对象候选；不迁移旧实验数据，不产生新 G3/G4/G5 通过；术语与状态类型后由 DEC-022 修订 |
 | DEC-008 后台能力分期 | SRC-014；“先解决能看到和能修改，自动化分析诊断能力后续再补充” | MVP 提供模型与运行依据查看、人工复核及受控修改、验证发布和影响处理；后台自动分析诊断及自主优化后置 | 管理员需求及基础演化 | 用户已确认；具体流程仍待 Phase 4 设计 | Definition §3.3；NEED-010–016；REQ-013–015、020–022 | 替代旧草案中以自动确认、自动诊断为前提的后台修复要求；不取消教学推理、语义校验或权限、版本与事务检查 |
 | DEC-009 空间与教材创建分工 | SRC-014；用户更正后明确选择“学生端创建，家长端查看” | 管理员创建并准备教材，学生端创建 Learning Space 并选用已有可用教材，家长端按权限查看 | 内容供给与学习空间建立 | 用户明确确认 | NEED-010、017；REQ-013、023 | 不将教材准备等同管理员代建个人空间，也不扩大为学生自行上传整本教材；正式目标设置权限不由创建入口自动推定 |
 | DEC-010 文档架构与交接 | SRC-015；用户接受整体评审后授权继续 | 保留三阶段与十份主体文档，明确各文档输入输出和接收条件；Phase 3 展开具体产品逻辑，Phase 4 交付可实施方案与实际资产，Phase 5 实现并验证 | MVP 文档与工作组织 | 用户已接受调整方向；不等于逐项正文或 Gate 通过 | 本文 §1；各文档开头与完成条件；[评审依据](MVP_Document_Architecture_Review.md) | 不合并全部产品设计到 Phase 3，不将 Phase 4 降为绘图，不重开已关闭 Spike/Build |
@@ -94,6 +94,8 @@ G3/G4/G5 的评审记录分别列出实际审查的基线。通过后可以用�
 决定与约束使用不同类型，状态区分待核对、已确认有效、已被替代和已撤销。用户明确确认的内容不因尚未录入新表而失效；“待核对”表示尚未核实其最新适用范围与承接位置，不是可以忽略原决定。废弃或变更须保留理由、实际决定者及替代关系，不删除旧记录来消除矛盾。
 
 历史承接以 [archive](archive/README.md)、可取得的原始讨论及上位文档为来源，逐项核对后再登记；遇到相互冲突或来源不足的情况进入 §4。归档中的“已冻结”不能直接用作新正文已完成的依据。
+| DEC-022 Task Claim 单一能力状态 | 2026-10-19 用户确认“KC 不纳入能力模型，但继续帮助解释和教学”，授权同步文档 | TaskTemplate / TaskScope 替代 ProblemTemplate / ProblemScope；只维护 TaskProficiencyClaim / Belief；KC 保留定义、关系、局部诊断与教学，不持久维护个人 KC 状态；方法允许范围与 ANY／指定／ALL 要求分开 | 概念、系统、MVP 领域与评价交接 | 设计决定已确认；模型效果与资产迁移尚未验证 | Evaluation §3.1、§6.8；Domain §2–6；[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录) | 替代 DEC-007 中旧模板名称及双类能力状态；不撤销知识层，不改旧实验或 Gate |
+| DEC-023 文档逐文件升版 | 同次用户要求“修改过的文档，不论修改大小，一律自增版本号，跟踪所有的修改过程” | 一批修订中每个改动文件递增一次；稳定文件名在头部升版，版本化文件同步改名及引用；以原提交、逐文件清单和检查记录追溯 | 所有本轮及后续变更文档 | 已确认并传导文档规范 | Design Document Standard §2、§7；复核 §9 | 取代原工作稿小改不升版规则；升版不等于批准 |
 
 ## 4. 待决事项与风险登记
 
@@ -110,6 +112,7 @@ G3/G4/G5 的评审记录分别列出实际审查的基线。通过后可以用�
 | OPEN-007 | 教材或目标新版发布后，已有空间如何采用 | SRC-017；DEC-012；受控版本与历史依赖合同 | REQ-013、022、023；内容维护与空间采用 | Phase 3 产品决定已完成，Phase 4/5 细化操作与实现 | 产品分工已收口，后续按 G4/G5 交付 | 不再因该选择阻塞 G3；实际流程与实现尚未完成 | 用户选择管理员检查后指定空间更新，保留版本与记录且不改变学生选定章节；不要求逐个确认 |
 | OPEN-008 | 章节统计的单位、状态、近期作答计数及查询范围 | SRC-018、019；DEC-013、014；既有目标、评价和事实合同 | 学生与家长章节统计、REQ-009、AC-009 | Phase 3 产品口径已完成；Phase 4 准备具体要求与呈现，Phase 5 实现 | 产品口径已收口，实际教材及验证按 G4/G5 交付 | 不再因统计方向或默认查询选择阻塞 G3；不代表实际目标粒度、实现或质量已验证 | 已关闭：[Requirements §3.9](phase-3-definition/MVP_Requirements_and_Acceptance.md#39-章节学习情况与统计口径) 定义要求计数、三类状态、样本分母、零样本、重复、范围和版本；用户确认默认 7 天、可选 30 天及全部和原作答日期规则，AC-009 已补查询对照 |
 | OPEN-009 | 旧“定时测验”是否要求固定日程、预约或外部提醒 | SRC-021；DEC-016；归档 Foundation §9 的原待定项 | NEED-006；REQ-008；AC-008 | Phase 3 产品范围已决定；Phase 4/5 设计和实现 | G3 前已收口 | 不再因介入渠道和定时含义阻塞交接；判断算法不在本阶段预选 | 已关闭：按需的产品内建议，保留学生选择；Requirements §3.2 和 AC-008 已同步，不提供固定周期测验、预约提醒和产品外推送 |
+| OPEN-010 | Task Claim 单一状态的内容包、评测和实现迁移 | DEC-022；现有 CONTENT-BNU-6A-U4-001 v1 仍有 KCClaim，校验与示例仍用旧结构 | 领域内容、评价、运行及历史兼容 | Codex 在 Phase 4 准备新包和案例，Phase 5 完成实现；管理员审核内容与发布 | G4 前新合同资产可交付；相关工程增量启用前完成读写与历史边界检查 | 不阻塞本轮文档修改；禁止将旧包声明为符合新模型或直接激活 | 当前未迁移；见 Domain Foundation §6–7、Evaluation Assets §3；本轮保留所有旧资产与实验字节 |
 
 | 风险编号 | 条件与可能后果 | 依据与不确定性 | 关联范围 | 责任与应对 | 触发及复核节点 | 状态与处置依据 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -150,9 +153,11 @@ Phase 3 的原始依据索引由[产品定义 §1](phase-3-definition/MVP_Defini
 | --- | --- | --- | --- |
 | 问题求助 | 对不会、卡住、存疑或错误的具体题目请求帮助，不预设已经产生错误作答 | 产品定义 NEED-001 | 与错题记录区分 |
 | 主动介入 | 系统依据有效判断和目标提出适当后续行动，可服务保持、迁移或补充证据；保留学生控制 | 产品定义 NEED-006；既有 Interaction 责任 | 不等于固定提醒或强制测验 |
-| Learning Space / 课程空间 | 管理 LearningMaterial、范围与 LearningTarget，引用个人历史的授权视图 | [学习空间设计](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)；CON-002 | 不等同 Domain Space，不是第五个核心 Space |
-| Domain Space / 领域空间 | 共享的 ProblemTemplate、SolutionTemplate、KnowledgeComponent 及其关系 | [Domain 设计](../concept-design/DeerMind_Domain_Space_Design_v1.0.md) | 不拥有个人目标或 LearnerBelief |
+| Learning Space / 课程空间 | 管理 LearningMaterial、范围与 LearningTarget，引用个人历史的授权视图 | [学习空间设计](../concept-design/DeerMind_Learning_Space_Design_v1.1.md)；CON-002 | 不等同 Domain Space，不是第五个核心 Space |
+| Domain Space / 领域空间 | 共享的 TaskTemplate、SolutionTemplate、KnowledgeComponent 及其关系 | [Domain 设计](../concept-design/DeerMind_Domain_Space_Design_v1.1.md) | 不拥有个人目标或 LearnerBelief |
 | 错题记录 | 带来源、实际作答及确认状态的学习记录；没有作答或有争议时保留相应状态 | 产品定义 NEED-005 | 不等于已证实知识薄弱，也不是唯一 Evidence 来源 |
+| Task Claim | 正式类型 TaskProficiencyClaim；对明确 TaskScope、责任、方法、条件与质量的个人能力命题 | [Evaluation §3.1](../concept-design/DeerMind_Evaluation_Space_Design_v1.3.md#31-learner-state-model定义-deermind-可以相信什么) | 不等于一个模板一个状态，不生成独立 KC Claim |
+| KC | KnowledgeComponent；领域知识定义及关系，用于任务与方法解释、局部诊断和教学 | [Domain 设计](../concept-design/DeerMind_Domain_Space_Design_v1.1.md) | 不表示当前个人知识掌握状态 |
 
 对象编号以类型区分，在同一类型内唯一、稳定且不重复使用。需求候选与正式行为需求分别使用 NEED、REQ；来源使用 SRC，价值假设使用 HYP，验收场景使用 AC，指标使用 MET，实际案例使用 CASE，结果使用 RES；决定、约束、待决事项和风险分别使用 DEC、CON、OPEN、RISK。活动、流程和界面可使用 ACT、FLOW、UI。采用“类型-序号”，填充时才分配实际编号；编号本身不表示已批准。
 

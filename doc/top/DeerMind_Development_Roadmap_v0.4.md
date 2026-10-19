@@ -1,14 +1,16 @@
-# DeerMind Development Roadmap v0.3
+# DeerMind Development Roadmap v0.4
 
+> **版本**：v0.4<br>
 > **中文名称**：DeerMind 开发总路线图<br>
-> **版本**：v0.3<br>
 > **文档性质**：项目级全生命周期开发路线图 / Development Roadmap<br>
 > **状态**：阶段基线<br>
-> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.2.md`、Domain Space v1.0、Learning Space v1.0 与 Evaluation / Interaction / Evolution v1.2、`DeerMind_AI_Native_Architecture_Principles_v0.3.md`<br>
-> **专项路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-15（G3 阶段性审阅通过，当前进入 Phase 4；阶段顺序及历史结果不变）<br>
-> **版本说明**：v0.3 保留 v0.2 的全生命周期阶段、G0–G9 Evidence Gate、Reopen 机制以及“通用学习架构 + 小学首个 Product Context”的项目定位，不改变 Architecture Validation Build、MVP Definition、Product & Domain Foundation、MVP Engineering、Internal Alpha、Controlled Pilot、Production Candidate 与 Productionization 的总体顺序。本版本初次修订对齐当时 System Design Roadmap v0.5 的阶段执行语义；现行阶段路线图为 v0.6，执行顺序保持：System Design 内部采用 **MVCL → P0 / 横切机制语义闭合 → Integrated Pre-Validation Candidate → §3.2–§3.7 Focused Design Closure → §3.8 Cross-Cutting Coverage → Consolidated Architecture Spike → Evidence Review / Design Revision → Gate E / Gate F → System Design Baseline v1.0**；六个 Focused Design 是必须完成的设计责任，是否独立成文由复杂度决定。同时再次明确 Core System Design 只冻结 Product Context / Context Constitution 的通用接入与 enforcement contract，首个小学 Product Context 的 guardian authority、consent、儿童数据、家长可见性、学校现实与具体 retention 规则仍由后续 MVP Definition / Product & Domain Foundation 阶段实例化。
+> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.3.md`、Domain Space v1.1、Learning Space v1.1 与 Evaluation / Interaction / Evolution v1.3、`DeerMind_AI_Native_Architecture_Principles_v0.4.md`<br>
+> **专项路线图**：`DeerMind_System_Design_Roadmap_v0.7.md`<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
 ---
 
@@ -26,7 +28,7 @@ DeerMind 已经完成 Concept Architecture、Domain / Evaluation / Interaction /
 
 ### 1.1 Development Roadmap 与 System Design Roadmap 的关系
 
-`DeerMind_System_Design_Roadmap_v0.6.md` 只负责项目生命周期中的 **System Design 阶段**。它回答如何把已经冻结的 Architecture Semantics 转化为 Architecture-Executable Specification，并进一步规定 System Design 内部的 Work Package、Phase、Focused Design Closure、横切覆盖、Consolidated Architecture Spike、Evidence Review 与 Gate E / Gate F。
+`DeerMind_System_Design_Roadmap_v0.7.md` 只负责项目生命周期中的 **System Design 阶段**。它回答如何把已经冻结的 Architecture Semantics 转化为 Architecture-Executable Specification，并进一步规定 System Design 内部的 Work Package、Phase、Focused Design Closure、横切覆盖、Consolidated Architecture Spike、Evidence Review 与 Gate E / Gate F。
 
 本文档位于更高一层，覆盖：
 
@@ -137,14 +139,14 @@ Reopen 必须发生在对应责任层级。产品问题不应通过偷偷修改 
 
 当前主要产物包括：
 
-- `DeerMind_Concept_Architecture_v1.2.md`；
-- `DeerMind_Domain_Space_Design_v1.0.md`；
-- `DeerMind_Learning_Space_Design_v1.0.md`；
-- `DeerMind_Evaluation_Space_Design_v1.2.md`；
-- `DeerMind_Interaction_Space_Design_v1.2.md`；
-- `DeerMind_Evolution_Space_Design_v1.2.md`；
-- `DeerMind_AI_Native_Architecture_Principles_v0.3.md`；
-- `DeerMind_Design_Document_Standard_v1.0.md`。
+- `DeerMind_Concept_Architecture_v1.3.md`；
+- `DeerMind_Domain_Space_Design_v1.1.md`；
+- `DeerMind_Learning_Space_Design_v1.1.md`；
+- `DeerMind_Evaluation_Space_Design_v1.3.md`；
+- `DeerMind_Interaction_Space_Design_v1.3.md`；
+- `DeerMind_Evolution_Space_Design_v1.3.md`；
+- `DeerMind_AI_Native_Architecture_Principles_v0.4.md`；
+- `DeerMind_Design_Document_Standard_v1.1.md`。
 
 **Architecture Baseline Gate**：四个 Space 的 semantic ownership、全局 Event contract、Product Constitution、Governance、Evolution Contract 和 AI-native Invariants 之间不存在已知一级矛盾；后续问题已经可以进入 System Design 而不需要重新发明顶层语义责任。 Target Definition / Binding / Assessment、Context Authority、Authority Directive 与 typed invalidation 已完成跨文档 Freeze Gate，不再留给实现阶段重新决定 owner。
 
@@ -156,7 +158,7 @@ Reopen 必须发生在对应责任层级。产品问题不应通过偷偷修改 
 
 **目标**：把 Architecture Semantics 转化为 Architecture-Executable Specification，使工程实现者不需要在编码阶段重新决定 Event、Observation、Evidence、Belief、Policy、Candidate、Commit、Version、Replay、Authority 等核心语义如何工作。
 
-该阶段由 `DeerMind_System_Design_Roadmap_v0.6.md` 专门规划。它不是“一份 System Design 文档写完就结束”，而是一个包含总体设计、六个核心 Focused Work Package、横切覆盖与统一架构验证的阶段。当前正式执行顺序为：
+该阶段由 `DeerMind_System_Design_Roadmap_v0.7.md` 专门规划。它不是“一份 System Design 文档写完就结束”，而是一个包含总体设计、六个核心 Focused Work Package、横切覆盖与统一架构验证的阶段。当前正式执行顺序为：
 
 ```text
 MVCL Design
@@ -188,7 +190,7 @@ System Design Baseline v1.0
 
 核心产物包括：
 
-- `DeerMind_System_Design_v0.x.md` → `DeerMind_System_Design_v1.1.md`；
+- `DeerMind_System_Design_v0.x.md` → `DeerMind_System_Design_v1.2.md`；
 - 必要的 Focused System Design `v0.x` → `v1.0`；
 - Architecture Assumption / System Invariant Registry；
 - ADR；
@@ -285,9 +287,9 @@ DeerMind 与普通 SaaS 的显著区别是：软件开发完成并不意味着�
 
 **产品基础**负责：learner journey、parent journey、onboarding、Solve interaction、输入方式、AI intervention presentation、Hint / AskForExplanation UX、uncertainty 与 correction 表达、report / trust interface、关键 failure recovery。
 
-**领域基础**负责：首版范围对应的 ProblemTemplate、SolutionTemplate、KC 及其 grounding，产品 LearningMaterial 的章节映射与 LearningTarget，带来源的具体问题和参考解法，以及实际评测资产与受控发布流程。规范定义与运行实例、产品目标与 Domain 版本分别管理。
+**领域基础**负责：首版范围对应的 TaskTemplate、SolutionTemplate、KC 及其 grounding，产品 LearningMaterial 的章节映射与 LearningTarget，带来源的具体问题和参考解法，以及实际评测资产与受控发布流程。规范定义与运行实例、产品目标与 Domain 版本分别管理。
 
-归档 MVP 基线已将基础领域演化纳入必要能力；以下保留此前能力分期，后续按 §8.2 的新文档工作核对承接。Phase 4 在领域与产品基础中共同明确管理员发起或选择处理、AI 辅助评估与候选、有限验证、单人审核发布和生效后检查，聚焦 KC、ProblemTemplate、SolutionTemplate 与教材映射的必要新增和局部修正。初始建模保留建设入口，复用检查与发布；其他既定维护需求不因演化聚焦而删除。范围与责任见[MVP Definition §7](../mvp/archive/DeerMind_MVP_Definition_v0.1.md#7-模型管理与运行可观察性)，具体行为和后续详细设计责任见[需求规格 §7.1](../mvp/archive/DeerMind_MVP_Requirements_and_Acceptance_v0.1.md#71-基础领域演化的最小行为合同)。
+归档 MVP 基线已将基础领域演化纳入必要能力；以下保留此前能力分期，后续按 §8.2 的新文档工作核对承接。Phase 4 在领域与产品基础中共同明确管理员发起或选择处理、AI 辅助评估与候选、有限验证、单人审核发布和生效后检查，聚焦 KC、TaskTemplate、SolutionTemplate 与教材映射的必要新增和局部修正。初始建模保留建设入口，复用检查与发布；其他既定维护需求不因演化聚焦而删除。范围与责任见[MVP Definition §7](../mvp/archive/DeerMind_MVP_Definition_v0.1.md#7-模型管理与运行可观察性)，具体行为和后续详细设计责任见[需求规格 §7.1](../mvp/archive/DeerMind_MVP_Requirements_and_Acceptance_v0.1.md#71-基础领域演化的最小行为合同)。
 
 AI 可以大量辅助 Task / Solution / KC 的拆分、评估和候选生成，但首版 canonical domain model 仍必须受 Domain owner 与 Governance 约束；材料映射和目标由产品 owner 受控维护，不能把“模型能生成内容”误当成“领域模型已经可靠”。
 
@@ -394,7 +396,7 @@ Pilot Evidence
 → Release Candidate
 ```
 
-如果 Pilot 触发 System Design v1.1、Protocol 新版本、KC / Task model 更新或重要 UX 变化，应完成相应版本化、migration / reinterpretation 与 regression，而不是在 Productionization 阶段继续改变核心产品行为。
+如果 Pilot 触发 System Design 后续版本、Protocol 新版本、KC / Task model 更新或重要 UX 变化，应完成相应版本化、migration / reinterpretation 与 regression，而不是在 Productionization 阶段继续改变核心产品行为。
 
 **Release Candidate Gate**：目标产品 scope 已基本稳定；Pilot 阻断问题已关闭或明确不进入首版；核心 architecture / AI / product regression 全部通过；domain 与 protocol 版本已确定；Productionization 不再需要大范围修改产品语义和用户价值闭环。
 
@@ -516,7 +518,7 @@ Production Readiness Failure
 
 Phase 0 Architecture Baseline、System Design 内部 Phase 6 和项目 G1 保持原结论。2026-10-08 Build 退出的 G2 PASS 是此前进入 Definition 的依据：真实机制组合与最低纠错路径已有局部证据，语义质量和完整维护仍待工程验收。原 R2 的 14/24、EVAL-02/04 未满足及原条件 HOLD，R3/R4 失败全部保留。依据与限制见[Build Validation Report §9](../system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。
 
-现行系统设计为总体及六项专项 v1.0。A2 原否定、E1/X5 原未决和旧 9/17 保留；当时G1准入依据撤回错误保证、明确能力分期和完整合同，详见[Phase 6 证据评审](../system-design/DeerMind_System_Design_Evidence_Review_v1.0.md)。该文件同时给出下一阶段工作和停止条件；[统一 Spike Validation Report](../system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md)继续保存原实验结果。
+历史准入采用总体及六项专项 v1.0；当前设计合同为 v1.2，包含 TaskTemplate 与 Task Claim 单一状态修订，尚未完成相关资产和运行实现迁移。A2 原否定、E1/X5 原未决和旧 9/17 保留；当时G1准入依据撤回错误保证、明确能力分期和完整合同，详见[Phase 6 证据评审](../system-design/DeerMind_System_Design_Evidence_Review_v1.0.md)。该文件同时给出下一阶段工作和停止条件；[统一 Spike Validation Report](../system-design/spike/DeerMind_Architecture_Validation_Report_v0.1.md)继续保存原实验结果。
 
 当前先落实 Phase 4 的角色流程、领域包、评测参考、内容质量审查、数据与权限。原型与合成样例不代替真实教材和正式领域资产；G4 后进入 MVP Engineering，之后完成 Internal Alpha 与 G6 Pilot Readiness。阶段顺序和质量 Gate 保持。Build 的 R5 未启动，STG-01–04 的历史质量与维护责任继续承接，不保证后续必定达标。
 
@@ -545,9 +547,9 @@ Phase 0 Architecture Baseline、System Design 内部 Phase 6 和项目 G1 保持
 
 ```text
 Phase 0  Architecture Baseline
-    Concept Architecture v1.2
-    + Domain v1.0 + Evaluation / Interaction / Evolution v1.2
-    + Learning Space v1.0
+    Concept Architecture v1.3
+    + Domain v1.1 + Evaluation / Interaction / Evolution v1.3
+    + Learning Space v1.1
     + AI-Native Principles v0.2
         │
         ▼ G0

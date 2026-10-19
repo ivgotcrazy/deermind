@@ -1,22 +1,25 @@
-# DeerMind Semantic Versioning, Replay & Migration Architecture v1.1
+# DeerMind Semantic Versioning, Replay & Migration Architecture v1.2
 
+> **版本**：v1.2<br>
 > **中文名称**：DeerMind 语义版本、重放与迁移架构<br>
-> **版本**：v1.1<br>
 > **文档性质**：System Design Baseline<br>
 > **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
-> **上位基线**：[Concept Architecture v1.2](../concept-design/DeerMind_Concept_Architecture_v1.2.md)、[Domain Space v1.0](../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space v1.0](../concept-design/DeerMind_Learning_Space_Design_v1.0.md)、Evaluation / Interaction / Evolution v1.2、[AI-Native Principles v0.3](../top/DeerMind_AI_Native_Architecture_Principles_v0.3.md)；总体合同为 [System Design v1.1](DeerMind_System_Design_v1.1.md)<br>
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.6.md`<br>
-> **写作规范**：`DeerMind_Design_Document_Standard_v1.0.md`<br>
-> **更新时间**：2026-10-11
+> **上位基线**：[Concept Architecture v1.3](../concept-design/DeerMind_Concept_Architecture_v1.3.md)、[Domain Space v1.1](../concept-design/DeerMind_Domain_Space_Design_v1.1.md)、[Learning Space v1.1](../concept-design/DeerMind_Learning_Space_Design_v1.1.md)、Evaluation / Interaction / Evolution v1.3、[AI-Native Principles v0.4](../top/DeerMind_AI_Native_Architecture_Principles_v0.4.md)；总体合同为 [System Design v1.2](DeerMind_System_Design_v1.2.md)<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.7.md`<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；更新现行文档引用及导航。逐文件变更见[修订记录 §9](../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
-本版本在原 System Design v1.0 合同上承接 Domain 与 Learning Space 的对象和 owner 修订。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
+本版本在原 System Design v1.2 的领域／课程分离基础上，采用 TaskTemplate 并将个人能力状态统一为 Task Claim。事实、认知、权限、严格会话串行和 typed invalidation 机制保持；本轮调整规范输入、版本依赖与变更路由，不声称旧实现已经迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计命题
 
 ### 1.1 为什么需要独立 Version / Replay / Migration Architecture
 
-DeerMind 不是一个“部署一次、语义长期不变”的软件系统。LearningTarget、ProblemTemplate、SolutionTemplate、KnowledgeComponent、Observation semantics、Claim / Evidence semantics、Inference semantics、Interaction Policy、Action semantics、Reasoning Protocol 都可能在长期运行中发生修订。
+DeerMind 不是一个“部署一次、语义长期不变”的软件系统。LearningTarget、TaskTemplate、SolutionTemplate、KnowledgeComponent、Observation semantics、Claim / Evidence semantics、Inference semantics、Interaction Policy、Action semantics、Reasoning Protocol 都可能在长期运行中发生修订。
 
 如果版本只被理解为代码发布号，系统会很快遇到四类无法接受的问题。
 
@@ -91,7 +94,7 @@ NewUnderstanding \neq NewPast
 
 ### 1.4 与总体 System Design 的关系
 
-当前总体 `DeerMind_System_Design_v1.1` 继续保持三个系统级合同：
+当前总体 `DeerMind_System_Design_v1.2` 继续保持三个系统级合同：
 
 1. DeerMind 不使用一个全局 `SystemSemanticVersion`；
 2. runtime boundary 需要 coherent Version Context；
@@ -293,7 +296,7 @@ PerBoundaryCoherentVersionContext
 ```text
 RuntimeVersionContext
 ├── SemanticVersionBindings
-│   ├── Domain definitions: ProblemTemplate / SolutionTemplate / KC
+│   ├── Domain definitions: TaskTemplate / SolutionTemplate / KC
 │   ├── Product learning definitions: material / mapping / target
 │   ├── Evaluation semantics
 │   ├── Interaction semantics
@@ -315,7 +318,7 @@ RuntimeVersionContext
 
 Learning Space ID 表示使用上下文，不是 Domain 版本；LearningTarget、材料映射及各 Domain 对象分别解析版本。多个产品空间可以引用同一 Domain 定义，但其个人数据使用 scope 仍由产品合同和 authority 限定。统一发布清单只绑定经过校验的版本组合，不创造全局单一语义版本。
 
-原 TaskFamily 与新 ProblemTemplate 不能按名称推定兼容。迁移必须核对问题责任、参数范围、工具条件及旧 Evidence 可支持的 Claim；允许拆分、合并、重新映射或保留历史而不迁移。旧 Solution Strategy 的步骤树也不能在丢失分支与适用条件后当成完备 SolutionTemplate。必要信息缺失时，保留可定位历史并将新语义解释标为不足，不把映射重算描述为学习者真实能力发生变化。
+原 TaskFamily 与新 TaskTemplate 不能按名称推定兼容。迁移必须核对问题责任、参数范围、工具条件及旧 Evidence 可支持的 Claim；允许拆分、合并、重新映射或保留历史而不迁移。旧 Solution Strategy 的步骤树也不能在丢失分支与适用条件后当成完备 SolutionTemplate。必要信息缺失时，保留可定位历史并将新语义解释标为不足，不把映射重算描述为学习者真实能力发生变化。
 
 ### 3.2 ContextManifest、VersionContext 与 DependencySet 不可合并
 
@@ -527,6 +530,12 @@ PermanentEligibility
 \]
 
 ---
+
+ProblemTemplate → TaskTemplate 的名称映射与双类状态 → 单类状态的语义迁移分别处理。前者逐项核对任务定义、责任、参数与方法后登记身份关系，不意味着恢复早期 TaskFamily；后者不具备 KC Belief 到 Task Belief 的通用转换函数。
+
+旧 KCClaim / KCBelief 按原版本保留历史审计，但不得继续作为当前决策输入。只有在原始表现、实际帮助与上下文足够支持新 Task Claim 时，才能重新解释 Evidence 并推断新 Belief；无法支持时保持 UNKNOWN。现有 Task Claim 同样核对范围与方法合同。回放结果关联原始事实与新语义版本，保留同源依赖，不把重复解释计为新表现。
+
+迁移完成须同时检查写入类型、当前读取、旧缓存、目标达成投影、评测参考和历史查询；只改 Schema 标签不足以完成迁移。冻结实验和 G3 输入不改写。
 
 ## 4. Commit、Activation、Multi-Version 与 Rollback
 
@@ -1809,7 +1818,7 @@ SUPPORTED within declared Spike scope; production migration and scale remain unv
 
 ### 11.6 Focused Design Closure 判断
 
-本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.1 在此基础上更新领域与产品输入合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.2 在此基础上更新任务与单类能力状态合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 AA-C01/AA-C02 的支持限于已有受控版本、重建和保留场景；不代表模型可确定性重现，亦不代表生产迁移平台已验证。
 

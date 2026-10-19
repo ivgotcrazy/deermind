@@ -1,12 +1,16 @@
-# DeerMind Learning Space Design v1.0
+# DeerMind Learning Space Design v1.1
 
-> **中文名称**：DeerMind 学习空间设计  
-> **文档性质**：Product Context Semantic Contract；不新增核心架构 Space  
-> **状态**：目标与材料的语义归属已确认；具体产品实现和领域资产待后续阶段交付  
-> **上位基线**：[Concept Architecture v1.2](DeerMind_Concept_Architecture_v1.2.md)、[Product Constitution v1.0](../top/DeerMind_Product_Constitution_v1.0.md)  
-> **关联设计**：[Domain Space v1.0](DeerMind_Domain_Space_Design_v1.0.md)、[Evaluation v1.2](DeerMind_Evaluation_Space_Design_v1.2.md)、[Interaction v1.2](DeerMind_Interaction_Space_Design_v1.2.md)  
-> **写作规范**：[Design Document Standard v1.0](../top/DeerMind_Design_Document_Standard_v1.0.md)  
-> **修订日期**：2026-10-11
+> **版本**：v1.1<br>
+> **中文名称**：DeerMind 学习空间设计<br>
+> **文档性质**：Product Context Semantic Contract；不新增核心架构 Space<br>
+> **状态**：目标与材料的语义归属已确认；具体产品实现和领域资产待后续阶段交付<br>
+> **上位基线**：[Concept Architecture v1.3](DeerMind_Concept_Architecture_v1.3.md)、[Product Constitution v1.0](../top/DeerMind_Product_Constitution_v1.0.md)<br>
+> **关联设计**：[Domain Space v1.1](DeerMind_Domain_Space_Design_v1.1.md)、[Evaluation v1.3](DeerMind_Evaluation_Space_Design_v1.3.md)、[Interaction v1.3](DeerMind_Interaction_Space_Design_v1.3.md)<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：明确任务与方法范围、任选／指定／分别覆盖要求，区分目标更新与个人能力变化。逐文件变更见[修订记录 §9](DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
 ## 1. 目的与架构位置
 
@@ -51,20 +55,25 @@ GoalIntent、ExternalStandard／Obligation 与正式 LearningTarget 必须保持
 
 | 目标组成 | 必须说明的问题 |
 | --- | --- |
-| 范围与引用 | 覆盖哪些问题模板、参数与情境变化、相关 KC；依据哪个材料与 Domain 版本 |
+| 范围与引用 | 引用哪些 TaskTemplate、参数与情境变化；关联哪些教学与解释 KC；依据哪个材料与 Domain 版本 |
+| 方法要求 | 哪些 SolutionTemplate 可用；允许任选一种、指定方法，还是多个方法分别覆盖；适用性与子任务约束如何继承 |
 | 期望责任 | 要求计算、理解、选法、组织、解释、验证等哪些实际表现；哪些尚未要求 |
 | 质量与成功语义 | 达到怎样的正确性、解释质量、稳定性或迁移范围才有理由说目标成立 |
 | 条件 | 判断成立的环境、工具、变化范围、时间或风险限制 |
 | 支持与责任边界 | 哪些工作由学习者自己承担，哪些可以交给工具、AI 或他人 |
 | 来源与可评估性 | 要求的来源与权限、版本、适用范围，以及原则上可支持或反驳它的证据 |
 
+Learning Space 对共享 Domain 作有范围的引用，不复制或裁剪全局 TaskTemplate。方法选择须沿实际递归分解检查适用范围；被排除的方法若仍数学上正确，不能被判成数学错误，但不能冒充已满足指定方法的目标。新增未审核方法先保留映射未决，不能靠选择规则把它当成正式已覆盖方法。
+
+同一目标纳入方法 A、B 时，知识覆盖可包含两者的 KC 并集；“纳入”不自动等于“全部必须掌握”。方法要求与解释、选法等责任必须明确，才可由 Evaluation 定义相应 Task Claim。选定 ANY 与要求 ALL 的目标不能共享一个被静默改义的 Claim；已有 Belief 只在原 Claim 条件内有效。
+
 这些组成是语义要求，不强制最终成为同名字段。目标不退化成 KC 清单或单一分数；尚不能明确的部分应保留未决和使用限制。测得了什么只能支持相应范围的判断，不能为了便于测量把真实学习目的悄悄改成“完成几道题”。
 
-例如，目标 A 要求在分数分组问题中独立建立数量关系并求解；目标 B 允许给出关系式，只要求正确计算。两者可引用同一 ProblemTemplate，却具有不同支持与责任条件。Domain 中的方法保持相同，Evaluation 对两种条件下的表现分别解释，Interaction 据此选择合适帮助。
+例如，目标 A 要求在分数分组问题中独立建立数量关系并求解；目标 B 允许给出关系式，只要求正确计算。两者可引用同一 TaskTemplate，却具有不同支持与责任条件。Domain 中的方法保持相同，Evaluation 对两种条件下的表现分别解释，Interaction 据此选择合适帮助。
 
 ### 4.3 目标、问题与工具边界
 
-ProblemTemplate 的完成要求规定一道问题需要解决什么，LearningTarget 则规定在一组问题上期望形成什么水平的能力。目标的分解可以辅助检查覆盖，不等同教学顺序，也不自动证明先修关系。
+TaskTemplate 的完成要求规定一道问题需要解决什么，LearningTarget 则规定在一组问题上期望形成什么水平的能力。目标的分解可以辅助检查覆盖，不等同教学顺序，也不自动证明先修关系。
 
 工具语义保持三个来源：Domain 定义某类问题在什么工具条件下仍是同一类责任；LearningTarget 定义目标允许外部化哪些责任；Interaction 与 Event 表达当时工具是否可用、实际上用了什么。允许使用某工具不等于已经使用，实际使用也不必然越界，必须按目标及 Claim 条件判断。
 
@@ -80,7 +89,7 @@ TargetBinding 的发生事实进入全局 Event；关系是否具有合法来源
 
 ## 6. 权限、版本与失效传播
 
-材料、映射、目标、Domain、Claim 和 Policy 应有可分辨的身份及版本依赖。可以统一打包发布相容的组合，但不能用一个含混的“最新课程版本”覆盖各自来源。跨空间关系需能追溯到所用具体版本；定义记录、发布状态与当前绑定也不能互相替代。
+材料、映射、目标、Domain、Claim 和 Policy 应有可分辨的身份及版本依赖。可以统一打包发布相容的组合，但不能用一个含混的“最新课程版本”覆盖各自来源。Task Claim 的任务范围、方法覆盖或完成责任发生变化时，应建立明确的新语义版本或新命题，并按依据重新解释；旧命题不能仅因目标更新被判为能力下降。跨空间关系需能追溯到所用具体版本；定义记录、发布状态与当前绑定也不能互相替代。
 
 目标要求改变时，默认重新计算 TargetAssessment，并使依赖它的 PolicyContext、Plan 与后续行动前提接受复核，不直接降低或提高 LearnerBelief。只有同时改变问题含义、Claim 条件或证据解释规则时，才按相应依赖重解释 Evidence 并重新推断。材料排版或章节位置更改，也不应自动重算所有能力判断。
 

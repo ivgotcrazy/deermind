@@ -1,18 +1,17 @@
-# DeerMind Interaction Space Design v1.2
+# DeerMind Interaction Space Design v1.3
 
-> **中文名称**：DeerMind 交互空间设计  
-> **版本**：v1.2  
-> **文档性质**：Space Design / Architecture Baseline  
-> **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论  
-> **上位基线**：DeerMind Concept Architecture v1.2  
-> **关联基线**：[DeerMind Domain Space Design v1.0](DeerMind_Domain_Space_Design_v1.0.md)；[Learning Space v1.0](DeerMind_Learning_Space_Design_v1.0.md)；[Evaluation Space v1.2](DeerMind_Evaluation_Space_Design_v1.2.md)  
-> **上位价值约束**：DeerMind Product Thesis v1.0；DeerMind Product Constitution v1.0  
-> **写作规范**：DeerMind Design Document Standard v1.0  
-> **更新时间**：2026-10-11  
->
-> **修订说明**：细化既有“目标责任边界不禁止临时支架”原则，补充当前活动的帮助约束与诊断转入教学的语义；明确 Observation 的局部解释、自述归属和自由文本校验边界。保留既有模型、ownership 与 authority 边界，同步 AI Runtime、Evaluation 与 Spike 合同。
->
-> **版本说明**：v1.2 承接 Domain Space 与 Learning Space 的职责分离，更新领域模板、目标来源与版本依赖；保留本 Space 既有模型、单写与治理边界。旧 v1.1 Freeze Gate 及 Spike / Build 为原始版本下的历史证据，本轮未重新执行或改写其结果。
+> **版本**：v1.3<br>
+> **中文名称**：DeerMind 交互空间设计<br>
+> **文档性质**：Space Design / Architecture Baseline<br>
+> **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论<br>
+> **上位基线**：DeerMind Concept Architecture v1.3<br>
+> **关联基线**：[DeerMind Domain Space Design v1.1](DeerMind_Domain_Space_Design_v1.1.md)；[Learning Space v1.1](DeerMind_Learning_Space_Design_v1.1.md)；[Evaluation Space v1.3](DeerMind_Evaluation_Space_Design_v1.3.md)<br>
+> **上位价值约束**：DeerMind Product Thesis v1.0；DeerMind Product Constitution v1.0<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；语义正文与例子同步；更新现行文档引用及导航。逐文件变更见[修订记录 §9](DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
 ---
 
@@ -88,7 +87,7 @@ Interaction Space 不负责：
 
 ### 1.3 Interaction Space 的基本责任边界
 
-根据 Concept Architecture v1.2，Interaction Space 是 Object-Level Learning System 中唯一拥有**当前行动决策**的 Space。Domain 提供问题与方法定义，Learning Space 提供 LearningTarget 与目标责任，Evaluation 提供 Learner Belief、Target Assessment、Target Gap 与 Epistemic Gap 等可修正认识，Product Context / Context Constitution 提供当前合法外部权限与约束，而 Interaction 负责把这些来源保持分层并与当前现实组合起来，决定此刻应该发生什么。
+根据 Concept Architecture v1.3，Interaction Space 是 Object-Level Learning System 中唯一拥有**当前行动决策**的 Space。Domain 提供问题与方法定义，Learning Space 提供 LearningTarget 与目标责任，Evaluation 提供 Learner Belief、Target Assessment、Target Gap 与 Epistemic Gap 等可修正认识，Product Context / Context Constitution 提供当前合法外部权限与约束，而 Interaction 负责把这些来源保持分层并与当前现实组合起来，决定此刻应该发生什么。
 
 因此：
 
@@ -655,7 +654,7 @@ Policy 必须保留不同输入的 authority source，而不能为了实现方�
 | 决策输入 | 规范来源 |
 |---|---|
 | LearningTarget、Required Capability、ResponsibilityBoundary | Learning Space |
-| ProblemTemplate、SolutionTemplate、KC、结构对应与差异 | Domain Space |
+| TaskTemplate、SolutionTemplate、KC、结构对应与差异 | Domain Space |
 | Learner Belief、Target Assessment、Target Gap、Epistemic Gap | Evaluation Space |
 | Observation、Interaction State、Assistance Context | Interaction Space |
 | Goal Intent | Runtime / learner-originating Event |
@@ -819,7 +818,7 @@ InteractionPolicy
 
 #### 当前活动的帮助范围与目的转换
 
-Target 规定最终能力达成的标准，当前活动则需要明确正在学习、诊断还是承担其他目的，以及适用的帮助限制。Interaction 通过已有 Interaction State 与 DecisionContext 表达当前活动的目的、约束及其来源；问题完成要求来自 Domain 的 ProblemTemplate 和适用的 Product Context / Context Authority，活动中的选择与转换由 Policy 在这些约束内决定。这不新增 Activity Model，也不赋予 Policy 修改 Target 或外部权限的权力。
+Target 规定最终能力达成的标准，当前活动则需要明确正在学习、诊断还是承担其他目的，以及适用的帮助限制。Interaction 通过已有 Interaction State 与 DecisionContext 表达当前活动的目的、约束及其来源；问题完成要求来自 Domain 的 TaskTemplate 和适用的 Product Context / Context Authority，活动中的选择与转换由 Policy 在这些约束内决定。这不新增 Activity Model，也不赋予 Policy 修改 Target 或外部权限的权力。
 
 普通学习活动可以允许暂时替代部分目标认知责任的提示、演示乃至完整讲解，是否值得采用仍由 Policy 根据学习价值、认知替代和注意成本判断。明确要求独立完成的诊断活动可以限制此类帮助，但该限制属于当前活动的要求，不能由 Target 的最终独立能力要求直接推广到整个学习过程。
 
@@ -984,7 +983,7 @@ Safety Emergency 也不构成系统临时自我扩权的理由。若某类紧急
 1. Work Product 更新形成 Event。
 2. Observation Model 识别当前 step 存在 arithmetic 失配，但不判断学习者长期是否会除法。
 3. Interaction State 仍记录当前 Task focus、已有帮助信息暴露、剩余时间和 learner 尚未请求帮助；当前 Target 要求 learner 自己承担算术检查责任。
-4. Evaluation 可能已有 `DivisionKCBelief=uncertain`，也可能没有足够长期结论。
+4. Evaluation 可能已有适用计算 Task Claim 的 Belief，且仍有不确定性；也可能没有相应命题或足够证据。当前观察可支持局部检查，但不能补造 KC 掌握状态。
 5. Interaction Policy 判断当前错误具有局部可修复性，并结合 Target Responsibility Boundary 认为最小检查请求不会替代关键责任，因此选择 `Elicit(CheckCurrentStep)`。
 6. Action 实际展示成功，形成已发生的 Action Event。
 7. Assistance Context 更新为“已暴露检查方向”，但这条 State 不是信息暴露的事实源；真实溯源信息仍来自 Action Event。
@@ -1094,7 +1093,7 @@ Interaction Space 是 Object-Level 中连接现实与决策的枢纽，因此它
 
 ### 6.1 Domain 与 Learning Space → Interaction：分别提供领域和目标
 
-Interaction 从 Domain 读取 ProblemTemplate、SolutionTemplate、KC、方法 grounding、适用工具条件、模板间结构对应与差异；从 Learning Space 读取材料范围、映射、LearningTarget 及支持与责任要求。每项输入都有明确身份、版本和适用范围，不允许用当前页面章节名称替代规范引用。
+Interaction 从 Domain 读取 TaskTemplate、SolutionTemplate、KC、方法 grounding、适用工具条件、模板间结构对应与差异；从 Learning Space 读取材料范围、映射、LearningTarget 及支持与责任要求。每项输入都有明确身份、版本和适用范围，不允许用当前页面章节名称替代规范引用。
 
 Interaction 根据目标、有效评价与现实约束选择具体问题或讲解活动。问题形成时保留模板版本、参数、来源与实际呈现；方法应用保留适用条件与执行过程。只有真实提交、工具使用与帮助展示才能进入 occurrence 历史。参考解法不是学习者轨迹，生成题目也不直接改变 Domain 模型。
 
@@ -1119,7 +1118,7 @@ Action 的 `CognitiveWorkSubstitution` 描述 DeerMind 实际替代了什么；�
 Evaluation v1.1 向 Interaction 提供：
 
 - Task Proficiency Beliefs；
-- KC Beliefs；
+- Task Claim 的方法覆盖、适用范围与证据限制；
 - Target Assessment；
 - Target Gap；
 - Epistemic Gap；
@@ -1368,7 +1367,7 @@ NewApprovedVersion
 
 ## 8. 关键架构决策、风险与下一阶段
 
-Interaction Space v1.2 不把当前结构视为不可挑战的终局，而是明确当前选择背后的理由、代价和重新打开条件。
+Interaction Space v1.3 不把当前结构视为不可挑战的终局，而是明确当前选择背后的理由、代价和重新打开条件。
 
 ### 8.1 关键架构决策
 
@@ -1437,7 +1436,7 @@ Learning Space 定义 Target；Interaction 从 Event 与 Context Authority 输�
 
 ### 8.4 System Design Handoff
 
-Interaction Space v1.2 定义当前语义合同，System Design v1.1 对应落实下列运行责任；具体实现按 MVP 工程阶段交付：
+Interaction Space v1.3 定义当前语义合同，System Design v1.2 对应落实下列运行责任；具体实现按 MVP 工程阶段交付：
 
 - Event → Observation 的 semantic projection protocol；
 - LLM Observation 输出的 schema 验证、依据、不确定性和 unmapped path；
@@ -1649,6 +1648,6 @@ Target、Binding、Belief 或 Authority 已变化，旧 Plan 仍排队自动执�
 
 ## 附录 D — 本版调整与历史边界
 
-v1.2 保留本 Space 的核心模型、事实与认识分层、权限、未知、历史和受治理变更等合同，调整其规范输入与引用路径。Domain Space v1.0 提供问题模板、方法和 KC；Learning Space v1.0 提供材料、映射和目标。两组规范分别拥有版本和提交责任，不能由旧 Learning Space 的单一输入包代替。
+v1.2 保留本 Space 的核心模型、事实与认识分层、权限、未知、历史和受治理变更等合同，调整其规范输入与引用路径。Domain Space v1.1 提供任务模板、方法和 KC；Learning Space v1.1 提供材料、映射和目标。两组规范分别拥有版本和提交责任，不能由旧 Learning Space 的单一输入包代替。
 
 原 v1.1 的完整文本及 Freeze Gate 叙述由 Git 保存。本轮没有重跑旧实验，也没有将当时评审改写为新模型通过；实现代码与领域包仍须按实际工程交付迁移。当前修订依赖的规范和运行合同见[概念设计入口](README.md)。

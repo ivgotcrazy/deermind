@@ -1,14 +1,14 @@
 # MVP 领域与内容基础
 
+> **版本**：v0.1<br>
 > **文档性质**：领域与内容交付规格；Phase 4 — Product & Domain Foundation<br>
-> **版本**：2026-10-17 工作稿；修订由 Git 追溯<br>
 > **状态**：已有首批实际章节的结构化候选及开发参考；正式内容审核、发布和完整联合交付未完成，G4 未通过<br>
 > **上游依据与基线**：[G3-20261015-01](../MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)；现行 Domain、Learning、Evaluation 设计<br>
-> **写作规范**：[设计文档规范](../../top/DeerMind_Design_Document_Standard_v1.0.md)；[共同规则](../MVP_Governance.md)<br>
 > **维护责任**：用户提供实际材料；Codex 辅助准备，管理员核对内容、范围和发布<br>
 > **评审记录**：已逐页阅读校内所选单元并完成候选引用与数值检查；尚未完成管理员内容审核和独立参考复核<br>
-> **更新日期**：2026-10-17<br>
-> **修订说明**：按 DEC-019 将非整除运次限定为可选练习或迁移探针；同步目标、题目用途与评价边界，保留逐题参考及其待审状态，不改变上位模型。
+> **写作规范**：[设计文档规范 v1.1](../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：区分 Task Claim 新合同与含 KCClaim 的旧 v1 内容资产，明确后续迁移及接收条件。逐文件变更见[修订记录 §9](../../concept-design/DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
 ---
 
@@ -28,17 +28,19 @@
 
 ## 2. 核心概念与领域规则
 
-沿用 [Domain Space](../../concept-design/DeerMind_Domain_Space_Design_v1.0.md)、[Learning Space](../../concept-design/DeerMind_Learning_Space_Design_v1.0.md) 与 [Evaluation](../../concept-design/DeerMind_Evaluation_Space_Design_v1.2.md)，当前不新增能力本体。
+沿用 [Domain Space](../../concept-design/DeerMind_Domain_Space_Design_v1.1.md)、[Learning Space](../../concept-design/DeerMind_Learning_Space_Design_v1.1.md) 与 [Evaluation](../../concept-design/DeerMind_Evaluation_Space_Design_v1.3.md)，当前不新增能力本体。
 
 实际准备时，每个对象必须有足够内容支撑业务：
 
-- ProblemTemplate 写清要求完成什么、已知与未知、参数及限制、必须由学习者承担的工作，以及哪些表面或条件变化仍适用。
-- SolutionTemplate 写清适用条件、输入输出、处理与子问题关系、所需知识；同题可有多种方法，不能把所有方法的 KC 合成每次必需条件。
+- TaskTemplate 写清要求完成什么、已知与未知、参数及限制、必须由学习者承担的工作，以及哪些表面或条件变化仍适用。
+- SolutionTemplate 写清适用条件、输入输出、处理与子任务关系、所需知识；同题可有多种方法，不能把所有方法的 KC 合成每次必需条件。
 - KnowledgeComponent 写清认知内容、适用边界和相关支持关系，不仅给一个名称。
 - LearningTarget 的要求说明范围、期望表现、帮助条件及质量标准，关联已发布内容；章、节统计使用明确维护的要求项，不由运行模型临时凑数。
 - 评价依据说明哪些实际表现可支持、反对或无法判定相关结论，保留近期帮助、重复题和覆盖限制；不得由参考解法冒充学生实际执行。
 
 具体粒度与映射由首批实际材料检验。符合现有对象含义的补充作为内容维护；无法表达关键区别时按 RISK-008 携具体反例讨论，不在这里提前展开所有未来题型。
+
+Task Claim 的唯一类型与必要语义由 Evaluation §3.1 规定，分数案例见其 §6.8。课程明确任务参数范围、可用方法及任选／指定／分别覆盖规则；解释、求解和选法的责任分开。KC 提供方法依据与教学关联，不生成个人 KC 掌握状态。章节统计继续按 LearningTarget 的要求项计数，不用模板、Claim 或 KC 数量替换分母。
 
 ## 3. 内容来源与组织映射
 
@@ -101,7 +103,7 @@ flowchart TB
 | 合成多模态输入 DEMO-INPUT-001 v1 | [input-fixture.json](../../../src/mvp_foundation/examples/input-fixture.json)；同题两页自编文字、几何 SVG 所用数据及语音原话脚本 | 页面可对照识别差异，不含真实图片、PDF、录音、表格复杂材料；不足以验证实际识别质量 |
 | 校内教材及首批章节 | SRC-025 的北师大版数学六年级上册电子教材；用户指定第四单元“分数的应用”；见 material-intake.json v3 | 八页已读，逐题作者参考已形成；管理员审核和发布尚未完成，具体出版年／印次待核 |
 | 校外教材及首批章节 | 用户确认是内部教材，后续提供 | 具体书目、版次、原材料、答案与首批章节待提供；与校内个人历史隔离 |
-| 实际单元候选 CONTENT-BNU-6A-U4-001 v1 | [package.json](../../../src/mvp_foundation/content/fractions-application/package.json) | 五个 ProblemTemplate、九个 SolutionTemplate、九个 KC，六项候选要求、七个 Claim、八道原创题及讲解提纲；尚未审核或激活 |
+| 实际单元候选 CONTENT-BNU-6A-U4-001 v1 | [package.json](../../../src/mvp_foundation/content/fractions-application/package.json) | 旧结构的五个 ProblemTemplate、九个 SolutionTemplate、九个 KC，六项候选要求、七个 Claim（含一个 KCClaim）、八道原创题及讲解提纲；尚未审核或激活，未符合 DEC-022 的新合同 |
 | 教材解答参考 REFERENCE-BNU-6A-U4-001 v1 | [source-references.json](../../../src/mvp_foundation/content/fractions-application/source-references.json) | 51 条定位参考覆盖已登记的 21 组内容，含 8 幅关系图数据；逐页核对及数值自检完成，未独立复核，不是出版社答案册 |
 | 语义开发参考 CASE-049–060 | [fractions-content-cases.json](../../../src/mvp_foundation/evaluation/fractions-content-cases.json) | 十二例，开发可见，未独立审核、未运行真实模型，不是正式留出集 |
 | 内容静态检查 | [verify.py](../../../src/mvp_foundation/content/fractions-application/verify.py) | 检查引用、来源页覆盖、数值及参数约束，不检查自然语言全部语义或教学效果 |
@@ -118,7 +120,7 @@ flowchart TB
 | 同基准份额的和差、新量或余量 | PT-FA-COMBINE | 分别求各部分再合并，或先合并系数；不同基准不能直接相加 | 53–56 页 |
 | 两种运力求最少次数 | PT-FA-TRIPS | 总量除单次容量后检查整数约束；有情境责任，不能只有算商 | 51 页第 5 题 |
 
-每个模板维护参数、限制、责任、变化维度和适用方法；每个方法维护条件、结果、子问题绑定及知识依据。材料中的直接引述、作者归纳和原创题分别标识。21 个定位组覆盖八页的教学、练习和总结块，不等于 21 道独立测量题，也不表示各组内部所有小问已经完成独立审核。
+每个模板维护参数、限制、责任、变化维度和适用方法；每个方法维护条件、结果、子任务绑定及知识依据。材料中的直接引述、作者归纳和原创题分别标识。21 个定位组覆盖八页的教学、练习和总结块，不等于 21 道独立测量题，也不表示各组内部所有小问已经完成独立审核。
 
 **图 CONTENT-02　逐级份额内容的候选关联**
 
@@ -153,7 +155,9 @@ flowchart TB
 
 ### 6.2 学习要求与教学、检测参考
 
-候选目标把本单元分为六项可读要求：表达基准与关系、组织两级份额、判断比较方向、求同基准组合、计算并说明规则、回到情境检查。它们属于 LearningTarget 的要求清单；七个评价命题中，六个为相应问题责任的 TaskProficiencyClaim，一个为基准知识的 KCClaim。不能由这一对应关系自动得到六项已达标，也不机械汇总 KC 形成整体问题能力。
+现有 v1 候选目标包含六项可读要求：表达基准与关系、组织两级份额、判断比较方向、求同基准组合、计算并说明规则、回到情境检查。它们是 LearningTarget 要求，不是六个 KC 状态。资产的七个旧命题中，六个为 TaskProficiencyClaim，一个为基准知识的 KCClaim；这是尚未迁移的旧资产事实，不是本版允许的状态结构。
+
+按 DEC-022，新包只能提供条件明确的 Task Claim。基准理解应由本类任务中的关系说明、判断与反例表现支持；核对现有 CL-FA-BASE 的责任后，迁移或重建相关 Evidence 参考，停用 CL-FA-KC-BASE，不把旧 KC Claim 换个名字保留。六项用户要求不等于必须保留六个 Claim，拆合须依据责任、证据和教学用途审查；当前不虚构新的已审核数量。
 
 本轮交付的参考分为四类：
 
@@ -196,9 +200,18 @@ DEC-019 已确认非整除运次变化先作可选练习或迁移探针，不列
 | 目标与判断依据 | 语义所属层、目标/要求或 Claim 引用、表现与支持边界、正反例、不能作出的结论、版本 |
 | 问题与参考 | 原题、参数或来源、要求、图示、合法解法与判据、实际审核结果；候选生成及使用历史分别保留 |
 
-当前候选用 UTF-8 JSON 承载交换样例。`asset_id/version/status/activation` 表达交付身份和效力；`source/material.inventory` 表达来源与位置；三个领域数组分别承载问题、方法和 KC；`target/claims/evidence_reference` 保留不同 owner；`original_problems/lesson_outline` 承载题目参考和讲解输入。全部内部正式引用带 `@版本`，本包均为 v1；定位 key、目标内部 requirement ID 不冒充新的 Domain 对象。
+当前 v1 候选仍是旧结构的 UTF-8 JSON 交换样例；以下字段和数量只说明已有资产，不表示新合同已接入。`asset_id/version/status/activation` 表达交付身份和效力；`source/material.inventory` 表达来源与位置；三个领域数组分别承载问题、方法和 KC；`target/claims/evidence_reference` 保留不同 owner；`original_problems/lesson_outline` 承载题目参考和讲解输入。全部内部正式引用带 `@版本`，本包均为 v1；定位 key、目标内部 requirement ID 不冒充新的 Domain 对象。
 
 `verify.py` 检查 ID 唯一性、引用类型、版本存在、问题与方法双向适用、目标与 Claim 范围、来源页覆盖及案例引用，并用精确分数计算检查原创题、两路径等价和运次约束。逐题参考另检查 58 项数值、11 项图示比例关系、51 条定位对 21 组材料的覆盖及本地原页哈希；没有本地页图时报告未执行哈希对照，不声称重新读取了原图。字段存在与数值成立不证明语义分类正确，须结合 §6.3 的内容复核。G4 前据实际接收完善格式约束，Phase 5 再实现导入与运行，保留来源、版本与未知状态；本 JSON 不提前冻结数据库或 LLM 输出 Schema。
+
+下一版资产交付须完成四项检查：
+
+- 模板类型、范围、方法适用关系及映射按 TaskTemplate 合同逐项迁移；保留旧身份关系，不假定字符串替换即兼容。
+- 每个 Claim 明确责任、方法要求、支持和质量边界；移除独立 KC Claim，保留 KC 定义、关系、解释和教学引用。
+- 重写受影响的 Evidence 参考、目标关联及验收案例；新包在版本、审核和授权完成前不得激活。旧包与 G3 快照继续按原版本保留。
+- 校验脚本与工程接入识别新状态类型及历史边界；现有 verify.py 的通过仅针对旧资产合同，不能用来宣布 Task-only 迁移通过。
+
+这些是 OPEN-010 的待办接收条件，本轮未修改资产 JSON、脚本或发布状态。
 
 ## 8. 文档完成条件
 

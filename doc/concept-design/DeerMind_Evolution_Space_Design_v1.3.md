@@ -1,15 +1,17 @@
-# DeerMind Evolution Space Design v1.2
+# DeerMind Evolution Space Design v1.3
 
-> **中文名称**：DeerMind 演化空间设计  
-> **版本**：v1.2  
-> **文档性质**：Space Design / Architecture Baseline  
-> **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论  
-> **上位基线**：DeerMind Concept Architecture v1.2  
-> **关联基线**：[DeerMind Domain Space Design v1.0](DeerMind_Domain_Space_Design_v1.0.md)；[Learning Space v1.0](DeerMind_Learning_Space_Design_v1.0.md)；[Evaluation Space v1.2](DeerMind_Evaluation_Space_Design_v1.2.md)；[Interaction Space v1.2](DeerMind_Interaction_Space_Design_v1.2.md)  
-> **上位价值约束**：DeerMind Product Thesis v1.0；DeerMind Product Constitution v1.0  
-> **写作规范**：DeerMind Design Document Standard v1.0  
-> **更新时间**：2026-10-11  
-> **版本说明**：v1.2 承接 Domain Space 与 Learning Space 的职责分离，更新领域模板、目标来源与版本依赖；保留本 Space 既有模型、单写与治理边界。旧 v1.1 Freeze Gate 及 Spike / Build 为原始版本下的历史证据，本轮未重新执行或改写其结果。
+> **版本**：v1.3<br>
+> **中文名称**：DeerMind 演化空间设计<br>
+> **文档性质**：Space Design / Architecture Baseline<br>
+> **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论<br>
+> **上位基线**：DeerMind Concept Architecture v1.3<br>
+> **关联基线**：[DeerMind Domain Space Design v1.1](DeerMind_Domain_Space_Design_v1.1.md)；[Learning Space v1.1](DeerMind_Learning_Space_Design_v1.1.md)；[Evaluation Space v1.3](DeerMind_Evaluation_Space_Design_v1.3.md)；[Interaction Space v1.3](DeerMind_Interaction_Space_Design_v1.3.md)<br>
+> **上位价值约束**：DeerMind Product Thesis v1.0；DeerMind Product Constitution v1.0<br>
+> **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
+> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
+> **更新日期**：2026-10-19<br>
+> **修订说明**：ProblemTemplate / ProblemScope 改为 TaskTemplate / TaskScope，统一任务术语；传导 Task Claim 单一状态合同；语义正文与例子同步；更新现行文档引用及导航。逐文件变更见[修订记录 §9](DeerMind_Learning_Model_Reassessment.md#9-task-claim-单一能力状态的正式修订记录)。
 
 ---
 
@@ -17,7 +19,7 @@
 
 DeerMind 的对象层在一套经授权采用的系统语义下运行：Domain Space 定义问题、方法与 KC，Learning Space 定义材料与目标，Evaluation Space 形成对学习者的认识，Interaction Space 理解当前交互并决定是否行动。即使这三个 Space 的职责边界完全正确，它们内部的模型仍然可能错。
 
-Learning Target 可能把错误的能力要求写成正式标准，ProblemTemplate 的粒度可能过粗，某个 KC 可能没有稳定复用价值；Observation Model 可能系统性误读某类行为；Evidence / Inference 可能把受助表现高估为 learner-owned capability；Interaction Policy 也可能在短期任务完成率上表现良好，却长期增加认知替代、减少反证机会或错误扩大外部 authority 的运行影响。对于一个长期运行的 AI Learning Expert，这些都不能被当成偶发“bug”而只靠人工事后修补。
+Learning Target 可能把错误的能力要求写成正式标准，TaskTemplate 的粒度可能过粗，某个 KC 可能没有稳定复用价值；Observation Model 可能系统性误读某类行为；Evidence / Inference 可能把受助表现高估为 learner-owned capability；Interaction Policy 也可能在短期任务完成率上表现良好，却长期增加认知替代、减少反证机会或错误扩大外部 authority 的运行影响。对于一个长期运行的 AI Learning Expert，这些都不能被当成偶发“bug”而只靠人工事后修补。
 
 Evolution Space 因此处理一个 Meta-Level 问题：
 
@@ -62,7 +64,7 @@ Governance\ authorizes
 本文档定义 Evolution Space 的稳定语义责任，包括：
 
 - 运行信号如何被评估为 System Issue；
-- Learning Target、ProblemTemplate / SolutionTemplate / KnowledgeComponent、Learner Claim、Evidence、Observation、Action / Policy 等正式语义如何进入可演化体系；
+- Learning Target、TaskTemplate / SolutionTemplate / KnowledgeComponent、Learner Claim、Evidence、Observation、Action / Policy 等正式语义如何进入可演化体系；
 - System Issue 如何保持证据、范围、不确定性与生命周期；
 - 问题、解释、候选修改和验证证据为什么必须分离；
 - Hypothesis 如何保持可证伪并支持竞争解释；
@@ -112,6 +114,8 @@ Evolution 不是产品成熟后才补上的“自动调优系统”。如果早�
 因此可演化性首先是一种**从第一天开始保存验证条件的架构能力**，而不是后期才添加的模型功能。
 
 ---
+
+个人能力状态当前只采用 Task Claim。KC 定义与关系的修订仍属于 Domain 的演化范围；因某次错误提出的局部知识诊断不是个人 KC 状态。若希望重新引入 KC Claim，须提出独立证据、决策收益及复杂度代价，经正式语义变更授权；不能借诊断功能或候选试运行绕过状态类型合同。
 
 ## 2. 设计问题与第一性约束
 
@@ -1058,7 +1062,7 @@ ReplaySupport
 
 ### 6.1 Stable Identity：变化不能抹掉历史对象
 
-Learning Target Definition、ProblemTemplate、SolutionTemplate、KC、Learner Claim、Evidence / Inference semantics、Observation semantics、State Type、Action semantics、Interaction Policy 等对象，即使未来被拆分、merge、retire，也必须保留可追踪的历史身份。
+Learning Target Definition、TaskTemplate、SolutionTemplate、KC、Learner Claim、Evidence / Inference semantics、Observation semantics、State Type、Action semantics、Interaction Policy 等对象，即使未来被拆分、merge、retire，也必须保留可追踪的历史身份。
 
 Target 尤其不能因为标准升级就覆盖旧定义。旧 Target Version 下的 Target Assessment、Plan、Interaction context 和 learner history 必须能够继续解释“当时依据什么要求做出了什么判断”。
 
@@ -1215,11 +1219,11 @@ Validation 与 rollout 需要允许正式与候选版本并存，以支持：
 
 ### 6.9 各 Space 与上位 Context 对 Evolution 的最小责任
 
-Domain Space v1.0、Learning Space v1.0 与三个核心 Space v1.2 分别定义自身 Evolution Contract。这里不重复内部字段，只冻结横向责任：
+Domain Space v1.1、Learning Space v1.1 与三个核心 Space v1.2 分别定义自身 Evolution Contract。这里不重复内部字段，只冻结横向责任：
 
 | 来源 | 至少需要可演化 / 可审计的信息 |
 |---|---|
-| Domain | ProblemTemplate / SolutionTemplate / KC 的 identity、version、适用责任、结构关系、grounding 与迁移历史 |
+| Domain | TaskTemplate / SolutionTemplate / KC 的 identity、version、适用责任、结构关系、grounding 与迁移历史 |
 | Learning Space | LearningMaterial、映射和 LearningTarget 的来源、版本、责任边界、范围与修订依据 |
 | Evaluation | Claim / Evidence / Inference version、Evidence Basis、Belief revision、Target Assessment dependencies、calibration、replay support |
 | Interaction | Observation / State / Action / Policy version、Target / Authority projection、decision context、opportunity allocation、exposure lineage、selected vs occurred action、rationale 与 result |
@@ -1556,7 +1560,7 @@ Evolution 本身需要持续回答：
 
 ### 8.5 System Design Handoff
 
-Evolution Space v1.2 定义系统认识、验证与授权分离的当前合同，System Design v1.1 对应承接下列责任；其具体实现按后续工程范围逐步交付：
+Evolution Space v1.3 定义系统认识、验证与授权分离的当前合同，System Design v1.2 对应承接下列责任；其具体实现按后续工程范围逐步交付：
 
 - System Signal ingestion、classification 与 empirical / normative / authority-change 类型识别；
 - System Issue store、身份、merge / 拆分 / 生命周期；
@@ -1780,6 +1784,6 @@ Target Responsibility Boundary 改变后，历史 replay 只能重新解释已�
 
 ## 附录 D — 本版调整与历史边界
 
-v1.2 保留本 Space 的核心模型、事实与认识分层、权限、未知、历史和受治理变更等合同，调整其规范输入与引用路径。Domain Space v1.0 提供问题模板、方法和 KC；Learning Space v1.0 提供材料、映射和目标。两组规范分别拥有版本和提交责任，不能由旧 Learning Space 的单一输入包代替。
+v1.2 保留本 Space 的核心模型、事实与认识分层、权限、未知、历史和受治理变更等合同，调整其规范输入与引用路径。Domain Space v1.1 提供任务模板、方法和 KC；Learning Space v1.1 提供材料、映射和目标。两组规范分别拥有版本和提交责任，不能由旧 Learning Space 的单一输入包代替。
 
 原 v1.1 的完整文本及 Freeze Gate 叙述由 Git 保存。本轮没有重跑旧实验，也没有将当时评审改写为新模型通过；实现代码与领域包仍须按实际工程交付迁移。当前修订依赖的规范和运行合同见[概念设计入口](README.md)。
