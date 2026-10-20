@@ -38,8 +38,42 @@ export interface WeakPoint { name: string; mastery: number; reason: string; sugg
 export interface LearningRhythm { weekMinutes: number; exercisesDone: number; correctRate: number; streak: number; }
 export interface NextSuggestion { priority: 'high' | 'medium'; action: string; reason: string; }
 
+// ===== Evaluation Space v1.4 能力模型类型 =====
+// 四维评价维度
+export type EvaluationDimension = 'independent' | 'understanding' | 'transfer' | 'retention';
+
+// Claim 评估状态：已达标 / 发展中 / 证据不足 / 证据冲突
+export type ClaimStatus = 'mastered' | 'developing' | 'insufficient' | 'conflict';
+
+// 单个维度的评估
+export interface DimensionAssessment {
+  dimension: EvaluationDimension;
+  label: string;
+  status: ClaimStatus;
+  evidenceCount: number; // 该维度已积累的证据数量
+}
+
+// 证据基础摘要
+export interface EvidenceSummary {
+  positive: number;    // 正向证据数
+  negative: number;    // 反向证据数
+  pending: number;     // 待取证项数
+  conflict?: boolean;  // 是否存在证据冲突
+}
+
+// 当前学习目标评估状态（替代单一"综合掌握率"）
+export interface TargetAssessment {
+  targetName: string;         // 目标名称，如"比例的应用"
+  overallStatus: ClaimStatus; // 总体状态
+  claimCount: number;         // 涉及的 Task Claim 数量
+  evidence: EvidenceSummary;  // 证据基础
+  dimensions: DimensionAssessment[]; // 四维概览
+  lastUpdated: string;        // 最近更新时间
+}
+
 export interface LearningOverview {
-  chapter: string; mastery: number;
+  chapter: string;
+  targetAssessment: TargetAssessment; // 替代原 mastery 字段
   abilities: AbilityDimension[];
   trend: MasteryTrendPoint[];
   weakPoints: WeakPoint[];

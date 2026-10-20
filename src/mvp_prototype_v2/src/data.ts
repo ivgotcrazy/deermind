@@ -4,8 +4,25 @@ import type {
 
 // ========== 学习总览数据 ==========
 export const learningOverview: LearningOverview = {
-  chapter: '分数的应用',
-  mastery: 65,
+  chapter: '比例的应用',
+  targetAssessment: {
+    targetName: '比例的应用',
+    overallStatus: 'developing',
+    claimCount: 4,
+    evidence: {
+      positive: 12,
+      negative: 3,
+      pending: 2,
+      conflict: false,
+    },
+    dimensions: [
+      { dimension: 'independent', label: '独立完成', status: 'mastered', evidenceCount: 5 },
+      { dimension: 'understanding', label: '理解解释', status: 'developing', evidenceCount: 4 },
+      { dimension: 'transfer', label: '迁移应用', status: 'insufficient', evidenceCount: 1 },
+      { dimension: 'retention', label: '延迟保持', status: 'insufficient', evidenceCount: 0 },
+    ],
+    lastUpdated: '今天 14:30',
+  },
   abilities: [
     { name: '计算能力', score: 82 },
     { name: '应用能力', score: 58 },

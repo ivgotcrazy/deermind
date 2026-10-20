@@ -54,17 +54,24 @@ const masteredCount = computed(() => wrongQuestions.filter(q => q.mastered).leng
     <div class="panel-content">
       <!-- ========== 学习总览 ========== -->
       <div v-if="activeTab === 'overview'" class="tab-content">
-        <!-- 总体掌握度 -->
+        <!-- 当前目标评估 -->
         <div class="card mastery-card">
           <div class="card-header">
-            <h3>总体掌握度</h3>
-            <span class="chapter-tag">{{ learningOverview.chapter }}</span>
+            <h3>当前目标评估</h3>
+            <span class="chapter-tag">{{ learningOverview.targetAssessment.targetName }}</span>
           </div>
           <div class="mastery-display">
-            <span class="mastery-number" :style="{ color: statusColor(learningOverview.mastery) }">{{ learningOverview.mastery }}%</span>
+            <span class="mastery-number" :style="{ color: statusColor(70) }">{{ learningOverview.targetAssessment.overallStatus === 'mastered' ? '已达标' : learningOverview.targetAssessment.overallStatus === 'developing' ? '发展中' : learningOverview.targetAssessment.overallStatus === 'conflict' ? '冲突' : '证据不足' }}</span>
+          </div>
+          <div class="ta-evidence-mini">
+            <span>{{ learningOverview.targetAssessment.evidence.positive }} 正向</span>
+            <span>·</span>
+            <span>{{ learningOverview.targetAssessment.evidence.negative }} 反向</span>
+            <span>·</span>
+            <span>{{ learningOverview.targetAssessment.evidence.pending }} 待取证</span>
           </div>
           <TrendChart :data="learningOverview.trend" :width="300" :height="100" />
-          <p class="trend-caption">最近 7 天掌握度变化趋势</p>
+          <p class="trend-caption">最近 7 天学习活动趋势</p>
         </div>
 
         <!-- 能力雷达图 -->
@@ -265,7 +272,8 @@ const masteredCount = computed(() => wrongQuestions.filter(q => q.mastered).leng
 
 /* 掌握度卡片 */
 .mastery-display { text-align: center; margin-bottom: 8px; }
-.mastery-number { font-size: 48px; font-weight: 700; line-height: 1.1; }
+.mastery-number { font-size: 32px; font-weight: 700; line-height: 1.2; }
+.ta-evidence-mini { text-align: center; font-size: 11px; color: #6a7a8a; margin-bottom: 10px; display: flex; justify-content: center; gap: 6px; }
 .trend-caption { text-align: center; font-size: 11px; color: #8a99a8; margin: 4px 0 0 0; }
 
 /* 薄弱点 */

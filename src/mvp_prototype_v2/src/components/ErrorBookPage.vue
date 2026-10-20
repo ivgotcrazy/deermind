@@ -107,21 +107,28 @@ function toggleExpand(id: number) {
 
     <!-- 筛选栏 -->
     <div class="filter-bar">
-      <div class="filter-group">
-        <span class="fg-label">错误类型</span>
-        <button class="fg-btn" :class="{active: filterType === 'all'}" @click="filterType = 'all'">全部</button>
-        <button v-for="t in errorTypes" :key="t" class="fg-btn" :class="{active: filterType === t}" @click="filterType = t">{{ t }}</button>
+      <div class="filter-select-group">
+        <label class="fs-label">错误类型</label>
+        <select class="fs-select" v-model="filterType">
+          <option value="all">全部</option>
+          <option v-for="t in errorTypes" :key="t" :value="t">{{ t }}</option>
+        </select>
       </div>
-      <div class="filter-group">
-        <span class="fg-label">来源</span>
-        <button class="fg-btn" :class="{active: filterSource === 'all'}" @click="filterSource = 'all'">全部</button>
-        <button v-for="(label, key) in sourceLabels" :key="key" class="fg-btn" :class="{active: filterSource === key}" @click="filterSource = key">{{ label }}</button>
+      <div class="filter-select-group">
+        <label class="fs-label">来源</label>
+        <select class="fs-select" v-model="filterSource">
+          <option value="all">全部</option>
+          <option v-for="(label, key) in sourceLabels" :key="key" :value="key">{{ label }}</option>
+        </select>
       </div>
-      <div class="filter-group">
-        <span class="fg-label">状态</span>
-        <button class="fg-btn" :class="{active: filterStatus === 'all'}" @click="filterStatus = 'all'">全部</button>
-        <button v-for="(label, key) in statusLabels" :key="key" class="fg-btn" :class="{active: filterStatus === key}" @click="filterStatus = key">{{ label }}</button>
+      <div class="filter-select-group">
+        <label class="fs-label">状态</label>
+        <select class="fs-select" v-model="filterStatus">
+          <option value="all">全部</option>
+          <option v-for="(label, key) in statusLabels" :key="key" :value="key">{{ label }}</option>
+        </select>
       </div>
+      <span class="filter-result">共 {{ filteredErrors.length }} 道</span>
     </div>
 
     <!-- 错题列表 -->
@@ -185,14 +192,20 @@ function toggleExpand(id: number) {
 .hs-value { display: block; font-size: 16px; font-weight: 700; }
 .hs-label { font-size: 10px; color: #8a99a8; }
 
-.filter-bar { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-.filter-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.fg-label { font-size: 12px; color: #8a99a8; width: 60px; flex-shrink: 0; }
-.fg-btn {
-  padding: 4px 10px; border: 1px solid #d0d7de; background: white;
-  border-radius: 4px; font-size: 12px; cursor: pointer; font-family: inherit; color: #5a6b7a;
+.filter-bar {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 16px; padding: 10px 14px;
+  background: white; border: 1px solid #e1e8ed; border-radius: 8px;
 }
-.fg-btn.active { background: #2d6a4f; color: white; border-color: #2d6a4f; }
+.filter-select-group { display: flex; align-items: center; gap: 6px; }
+.fs-label { font-size: 12px; color: #5a6b7a; font-weight: 500; }
+.fs-select {
+  padding: 5px 10px; border: 1px solid #d0d7de; background: white;
+  border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit;
+  color: #2c3e50; min-width: 90px;
+}
+.fs-select:focus { outline: none; border-color: #2d6a4f; }
+.filter-result { margin-left: auto; font-size: 12px; color: #8a99a8; }
 
 .error-list { display: flex; flex-direction: column; gap: 10px; }
 .error-card {
