@@ -1,17 +1,17 @@
-# DeerMind Interaction Space Design v1.4
+# DeerMind Interaction Space Design v1.5
 
-> **版本**：v1.4<br>
+> **版本**：v1.5<br>
 > **中文名称**：DeerMind 交互空间设计<br>
 > **文档性质**：Space Design / Architecture Baseline<br>
 > **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论<br>
-> **上位基线**：DeerMind Concept Architecture v1.4<br>
-> **关联基线**：[DeerMind Domain Space Design v1.2](DeerMind_Domain_Space_Design_v1.2.md)；[Learning Space v1.2](DeerMind_Learning_Space_Design_v1.2.md)；[Evaluation Space v1.4](DeerMind_Evaluation_Space_Design_v1.4.md)<br>
+> **上位基线**：DeerMind Concept Architecture v1.5<br>
+> **关联基线**：[DeerMind Domain Space Design v1.3](DeerMind_Domain_Space_Design_v1.3.md)；[Learning Space v1.3](DeerMind_Learning_Space_Design_v1.3.md)；[Evaluation Space v1.5](DeerMind_Evaluation_Space_Design_v1.5.md)<br>
 > **上位价值约束**：DeerMind Product Thesis v1.0；DeerMind Product Constitution v1.0<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：补全默认四维的决策输入；明确按需取证而非每轮四测；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：将决策输入与取证落到具体方面；同步相关合同与现行引用。逐文件变更见[修订记录 §11](DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
@@ -87,7 +87,7 @@ Interaction Space 不负责：
 
 ### 1.3 Interaction Space 的基本责任边界
 
-根据 Concept Architecture v1.4，Interaction Space 是 Object-Level Learning System 中唯一拥有**当前行动决策**的 Space。Domain 提供问题与方法定义，Learning Space 提供 LearningTarget 与目标责任，Evaluation 提供 Learner Belief、Target Assessment、Target Gap 与 Epistemic Gap 等可修正认识，Product Context / Context Constitution 提供当前合法外部权限与约束，而 Interaction 负责把这些来源保持分层并与当前现实组合起来，决定此刻应该发生什么。
+根据 Concept Architecture v1.5，Interaction Space 是 Object-Level Learning System 中唯一拥有**当前行动决策**的 Space。Domain 提供问题与方法定义，Learning Space 提供 LearningTarget 与目标责任，Evaluation 提供 Learner Belief、Target Assessment、Target Gap 与 Epistemic Gap 等可修正认识，Product Context / Context Constitution 提供当前合法外部权限与约束，而 Interaction 负责把这些来源保持分层并与当前现实组合起来，决定此刻应该发生什么。
 
 因此：
 
@@ -1115,18 +1115,18 @@ Action 的 `CognitiveWorkSubstitution` 描述 DeerMind 实际替代了什么；�
 
 ### 6.3 Evaluation → Interaction：提供认识，不提供命令
 
-Evaluation v1.4 向 Interaction 提供：
+Evaluation v1.5 向 Interaction 提供：
 
 - Task Proficiency Beliefs；
 - Task Claim 的方法覆盖、适用范围与证据限制；
-- 已采用的独立完成、理解与解释、迁移应用、延迟保持要求及各自认识不足，不把缺少检测等同能力失败；
+- 同一 Task Claim 内已采用的独立、理解、迁移、保持方面及其各自有效性、认识不足和证据，不把缺少检测等同能力失败；
 - Target Assessment；
 - Target Gap；
 - Epistemic Gap；
 - epistemic uncertainty / conflict；
 - Assistance / Support Dependency 等 justified derived diagnostic views。
 
-默认四维是评价覆盖要求，不是固定教学动作序列。Policy 根据当前目标、有效 Belief、证据缺口、活动阶段和学习负担选择是否取证；保持时点未到不应立即重复出题。系统可提出维度修订候选，但不能在活动中删除正式要求或发布新 Claim；Evidence Gap 不自动转成强制检测。
+Interaction 读取所选任务 Claim 的多维 Belief，并按活动所需方面核对当前有效性、未知与依据，不用根对象存在代替全部方面可用。默认四维不是固定教学顺序；系统按价值、时机与负担取证，不自动每轮全测。独立完成有支持而解释不足时可针对理由互动；保持时点未到可等待。Policy 不写能力状态，不在运行中发布方面或降低正式标准，Evidence Gap 不自动成为强制行动。
 
 Interaction 可以读取这些认识，但 Evaluation 不指定面向 learner 的 Action。
 
@@ -1370,7 +1370,7 @@ NewApprovedVersion
 
 ## 8. 关键架构决策、风险与下一阶段
 
-Interaction Space v1.4 不把当前结构视为不可挑战的终局，而是明确当前选择背后的理由、代价和重新打开条件。
+Interaction Space v1.5 不把当前结构视为不可挑战的终局，而是明确当前选择背后的理由、代价和重新打开条件。
 
 ### 8.1 关键架构决策
 
@@ -1439,7 +1439,7 @@ Learning Space 定义 Target；Interaction 从 Event 与 Context Authority 输�
 
 ### 8.4 System Design Handoff
 
-Interaction Space v1.4 定义当前语义合同，System Design v1.3 对应落实下列运行责任；具体实现按 MVP 工程阶段交付：
+Interaction Space v1.5 定义当前语义合同，System Design v1.4 对应落实下列运行责任；具体实现按 MVP 工程阶段交付：
 
 - Event → Observation 的 semantic projection protocol；
 - LLM Observation 输出的 schema 验证、依据、不确定性和 unmapped path；
@@ -1651,6 +1651,6 @@ Target、Binding、Belief 或 Authority 已变化，旧 Plan 仍排队自动执�
 
 ## 附录 D — 本版调整与历史边界
 
-v1.2 完成领域／课程输入分离，v1.3 承接 Task Claim 单一能力状态；本版补充默认四维评价及有依据的裁剪／扩展，保持核心模型、事实与认识分层、权限、未知和受治理变更合同。当前 Domain Space v1.2 提供任务、方法和 KC，Learning Space v1.2 提供材料、映射与目标采用规则；两组规范分别拥有版本和提交责任。
+v1.2 完成领域／课程输入分离，v1.3 承接 Task Claim 单一能力状态，v1.4 引入默认四维评价。本版将四维作为单模板 Claim 内部方面，按方面承接判断、依赖和变更责任，保持核心模型、事实与认识分层、权限、未知和受治理变更合同。当前 Domain Space v1.3 提供任务、方法和 KC，Learning Space v1.3 提供材料、映射与目标采用规则；两组规范分别拥有版本和提交责任。
 
 原 v1.1 的完整文本及 Freeze Gate 叙述由 Git 保存。本轮没有重跑旧实验，也没有将当时评审改写为新模型通过；实现代码与领域包仍须按实际工程交付迁移。当前修订依赖的规范和运行合同见[概念设计入口](README.md)。

@@ -1,14 +1,14 @@
 # MVP 产品定义
 
-> **版本**：v0.2<br>
+> **版本**：v0.3<br>
 > **文档性质**：产品定义；Phase 3 — MVP Definition<br>
 > **状态**：2026-10-15 用户阶段性审阅通过；G3 PASS，进入 Phase 4；不表示实现、模型质量或学习效果通过<br>
 > **上游依据与基线**：本轮批准内容及依赖已固定于 [G3-20261015-01](../MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)；快照包含批准前的实际工作区内容，不以旧 HEAD 代替。相关依据见正文。<br>
 > **维护责任**：Codex 负责分析、起草与一致性核对；用户参与新的产品取舍与必要澄清<br>
 > **评审记录**：用户原话“phase3 阶段性审阅通过，继续后面的工作”；批准边界与遗留责任见 [G3-20261015-01](../MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)<br>
 > **写作规范**：[设计文档规范 v1.1](../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：明确默认框架与既有产品价值、范围的关系；将框架说明归入产品目标而非外部服务约束；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](../../concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：同步产品能力组织方式；同步相关合同与现行引用。逐文件变更见[修订记录 §11](../../concept-design/DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
@@ -26,7 +26,7 @@ DeerMind 首个产品服务六年级数学学习，预期同时承接校内课�
 | --- | --- | --- | --- |
 | SRC-001 | 上位产品原则：[Product Thesis v1.0](../../top/DeerMind_Product_Thesis_v1.0.md) §3–§4 | 能力与一次表现不同；外部帮助条件影响判断；关注自主学习与长期价值 | 属于项目立场，不是产品效果实验 |
 | SRC-002 | 上位约束：[Product Constitution v1.0](../../top/DeerMind_Product_Constitution_v1.0.md) C1–C7 | 学习自主、认识诚实、有界权限、数据节制及安全边界 | 不代替首个场景的具体规则和适用条件核实 |
-| SRC-003 | 阶段依据：[Development Roadmap](../../top/DeerMind_Development_Roadmap_v0.5.md) §4–§7 | G3 定义产品，G4 准备设计与实际领域资产，G5 交付真实软件，之后 Alpha 与 Pilot | 定义通过不代表功能或质量已通过 |
+| SRC-003 | 阶段依据：[Development Roadmap](../../top/DeerMind_Development_Roadmap_v0.6.md) §4–§7 | G3 定义产品，G4 准备设计与实际领域资产，G5 交付真实软件，之后 Alpha 与 Pilot | 定义通过不代表功能或质量已通过 |
 | SRC-004 | 已执行工程证据：[Build Report §9](../../system-design/build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定) | 机制组合存在局部可行证据；评价误判、维护和成本仍需后续工程验证 | 原完整 R2 为 14/24 内容可用；G2 准入没有将失败改写为质量达标 |
 | SRC-005 | 历史决定记录：[归档 Definition](../archive/DeerMind_MVP_Definition_v0.1.md) §2–§10、[归档需求规格](../archive/DeerMind_MVP_Requirements_and_Acceptance_v0.1.md) | 角色、课程空间、输入、内容管理、评价边界及历史指标 | 是历史承接来源；与较新对话冲突的表述不能继续生效，模糊确认不能补造原话 |
 | SRC-006 | 当前对话，用户原话定位：“为我女儿开发一个学习软件”“今年上小学6年级”“加深学习知识的理解、提高学习效率” | 首个使用者、家长观察和价值方向 | 观察由家长提供，无已验证原因或普遍性结论 |
@@ -55,7 +55,7 @@ DeerMind 首个产品服务六年级数学学习，预期同时承接校内课�
 
 本轮没有开展儿童访谈、竞品实测或新的 LLM 实验。原始对话按上述引文定位，消息的精确日期未另行推定；仓库文档按输入提交核对。后续取得的新观察进入本索引，不回填为本轮已知事实。
 
-当前概念输入已更新为 [Domain Space](../../concept-design/DeerMind_Domain_Space_Design_v1.2.md) 与[Learning Space](../../concept-design/DeerMind_Learning_Space_Design_v1.2.md)：领域提供问题、方法和 KC，课程空间定义材料、范围与目标。此修订不增加产品功能、不改变已确认质量目标；具体教材与领域资产仍待后续交付，历史研究与 Build 证据的适用范围不扩大。
+当前概念输入已更新为 [Domain Space](../../concept-design/DeerMind_Domain_Space_Design_v1.3.md) 与[Learning Space](../../concept-design/DeerMind_Learning_Space_Design_v1.3.md)：领域提供问题、方法和 KC，课程空间定义材料、范围与目标。此修订不增加产品功能、不改变已确认质量目标；具体教材与领域资产仍待后续交付，历史研究与 Build 证据的适用范围不扩大。
 
 ## 2. 用户、角色与使用情境
 
@@ -103,7 +103,7 @@ flowchart TB
 
 已有使用约束是孩子每天全部 DeerMind 活动合计不超过 30 分钟。管理员时间和项目预算按实际情况调整，并无本轮新增固定上限；仍需记录真实投入，不能把无限人工协助作为产品自动有效的证据。学生与家长设备实机能力、内容审核成本和运行时延均未测得。
 
-学习能力的规范参照采用 [Evaluation 的默认四维框架](../../concept-design/DeerMind_Evaluation_Space_Design_v1.4.md#31-learner-state-model定义-deermind-可以相信什么)：独立完成、理解与解释、迁移应用、延迟保持；按任务与目标有依据地裁剪或扩展。它细化已有“理解、独立应用与持久能力”的目标，不增加四套活动或改变每日使用负担约束。产品行为及统计见 Requirements §3.9，具体 Claim 和内容覆盖由 Phase 4 准备，质量及真实效果仍须后续验证。
+学习能力按单模板多维 Task Claim 组织：一个任务的独立完成、理解与解释、迁移应用、延迟保持分别有判断与依据，允许有依据裁剪和扩展；具体定义见 [Evaluation §3.1](../../concept-design/DeerMind_Evaluation_Space_Design_v1.5.md#31-learner-state-model定义-deermind-可以相信什么)。课程要求可跨任务汇总，学生仍按章节与具体要求理解结果。这细化已有价值目标，不增加四套活动或改变每日使用负担；实际内容及状态实现仍须交付验证。
 
 ## 3. 需求分析与决策表
 

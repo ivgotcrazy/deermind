@@ -1,17 +1,17 @@
-# DeerMind Evaluation Space Design v1.4
+# DeerMind Evaluation Space Design v1.5
 
-> **版本**：v1.4<br>
+> **版本**：v1.5<br>
 > **中文名称**：DeerMind 评估空间设计<br>
 > **文档性质**：Space Design / Architecture Baseline<br>
 > **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论<br>
-> **上位基线**：DeerMind Concept Architecture v1.4<br>
-> **上位领域基线**：[DeerMind Domain Space Design v1.2](DeerMind_Domain_Space_Design_v1.2.md)；[Learning Space v1.2](DeerMind_Learning_Space_Design_v1.2.md)<br>
+> **上位基线**：DeerMind Concept Architecture v1.5<br>
+> **上位领域基线**：[DeerMind Domain Space Design v1.3](DeerMind_Domain_Space_Design_v1.3.md)；[Learning Space v1.3](DeerMind_Learning_Space_Design_v1.3.md)<br>
 > **上位价值约束**：DeerMind Product Thesis v1.0、DeerMind Product Constitution v1.0<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：定义默认四维、Claim 映射、裁剪扩展及未知边界，增加运行关系图；修正原先默认不拆迁移命题的含混说明，区分实际条件与所评能力；用分数应用 C1–C4 明确四维命题和逐步证据更新，补充联合探针归因限制；明确跨空间四维规范归属；同步架构决策；区分已决定框架与待验证问题；同步检查清单；同步证据检查；补充语义不变量；更新本版变更说明；更新当前下游传导说明；更新本版修订记录引用；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：重构单模板多维 Claim，明确绑定、条件、裁剪和跨任务边界；同步相关合同与现行引用。逐文件变更见[修订记录 §11](DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
@@ -19,7 +19,7 @@
 
 Evaluation Space 解决的不是“给学习者打一个分数”，也不是维护一个越来越复杂的学习者画像。它面对的是一个更基本的问题：**DeerMind 永远无法直接读取学习者真实的认知状态，却必须根据有限、受条件影响、可能互相冲突的行为证据，形成长期、可修正的能力认识。**
 
-Domain Space v1.2 提供任务模板、方法与 KC；Learning Space v1.2 提供 LearningTarget、范围和支持责任。Evaluation 需要判断具体表现支持哪个条件性命题，区分未达目标与证据不足，并保证模型映射变化不会被误当成真实学习变化。
+Domain Space v1.3 提供任务模板、方法与 KC；Learning Space v1.3 提供 LearningTarget、范围和支持责任。Evaluation 需要判断具体表现支持哪个条件性命题，区分未达目标与证据不足，并保证模型映射变化不会被误当成真实学习变化。
 
 Evaluation 仍然是 DeerMind 的**学习者认识层**。它维护的是系统对学习者的可修正认识，而不是学习者真实状态本身，也不是 Learning Target 的规范要求。
 
@@ -48,7 +48,7 @@ InferenceModel
 \[
 Observation
 \rightarrow
-ClaimSpecificEvidence
+ClaimAspectSpecificEvidence
 \rightarrow
 Inference
 \rightarrow
@@ -92,7 +92,7 @@ Evaluation Space 不负责：
 
 ### 1.3 上位边界
 
-根据 Concept Architecture v1.4，Domain 提供领域定义，Learning Space 提供材料与目标规范；Evaluation 形成对学习者的可修正认识；Interaction 使用这些认识、当前 Context 与现实约束做行动决策。必须长期保持：
+根据 Concept Architecture v1.5，Domain 提供领域定义，Learning Space 提供材料与目标规范；Evaluation 形成对学习者的可修正认识；Interaction 使用这些认识、当前 Context 与现实约束做行动决策。必须长期保持：
 
 \[
 Requirement
@@ -271,121 +271,98 @@ flowchart LR
 
 ### 3.1 Learner State Model：定义 DeerMind 可以相信什么
 
-Learner State Model 定义值得持续维护的个人能力命题。当前只保留 **Task Claim**，规范标识沿用 `TaskProficiencyClaim`；其个人状态为 `TaskProficiencyBelief`。这不是旧 TaskFamily 本体的恢复，也不是把一次任务结果当作能力。
+Learner State Model 只保留 **Task Claim**，规范类型沿用 `TaskProficiencyClaim`，其个人状态为 `TaskProficiencyBelief`。Task Claim 是针对一类任务的结构化能力声明，内部包含多个评价方面；它定义需要判断什么，不保存某个人的判断结果，也不要求整项声明只能得到一个真假值或掌握概率。
 
-\[
-LearnerClaimSpace=\{TaskProficiencyClaim\},\qquad
-LearnerStateCore=\{Belief(Learner,LearningSpace,ClaimVersion)\}
-\]
+**绑定与身份。** 每个 Claim 精确引用一个 TaskTemplate 版本。TaskScope 是该模板内采用的参数、情境、表征、完成责任及排除范围，不再是一组模板的集合。Claim 不绑定一道具体题；由同一模板生成或受控映射到它的不同题目，可以提供相应能力证据。
 
-一个 Task Claim 表达：学习者在明确任务范围、条件、方法要求和支持边界下，能否相对稳定地承担指定认知或行动责任，并满足相应质量要求。其语义至少包含下表；不要求提前固定为数据库字段。
+- 同一模板、同一套评价条件组织一个多维 Claim，不再为独立、解释、迁移、保持分别创建顶层 Claim。同一 Learning Space 对同一评价条件采用一个明确的有效 Claim 版本。
+- 不要求全系统每个模板永远只有一个 Claim：同一模板若存在不可混用的方法、责任或支持条件，可以采用不同的受控定义／版本。例如允许任选算术或方程，与指定算术法，是不同的评价条件；不能把旧判断直接改义。
+- 不因不同学习者、题目、活动、单次帮助或目标分数门槛而复制 Claim。规范定义可以复用，个人 Belief 仍按学习者、Learning Space 和 Claim 版本隔离。
+- 跨任务的课程要求由 LearningTarget 组织，达成情况由 TargetAssessment 派生；不再用一个 Claim 同时代表多个 TaskTemplate，也不从任务 A 成功自动推出任务 B 已掌握。需要整体完成的复合任务可以有自己的真实任务模板与递归方法，但不能为汇总分数虚造模板。
 
-| 语义部分 | 必须说明的内容 |
+| Claim 的语义组成 | 必须说明的内容 |
 | --- | --- |
-| TaskScope | 一个或多个明确版本的 TaskTemplate，参数、情境、表征及排除范围 |
-| Responsibility | 求解、解释、选法、构造或检查等实际评价责任；未要求的责任不能随意加入 |
-| MethodRequirement | 允许的方法范围，以及任选、指定或多个方法分别覆盖的含义 |
-| Conditions / SupportBoundary | 环境、工具及哪些工作必须由学习者自行承担；实际帮助另记 Evidence Context |
-| QualityRequirement | 正确性、说明质量和所声明的稳定、迁移或保持范围；证据充分性与阈值须有版本和依据 |
+| TaskTemplateRef / TaskScope | 唯一模板及版本；其内部采用的参数、情境、表征、任务责任和排除范围 |
+| 评价条件 | 可用方法、任选／指定／分别覆盖的含义、工具和支持边界；各方面可进一步限定，但不得无声明地放宽 |
+| 评价方面（Aspect） | Claim 内的稳定方面键、含义、责任、质量判据、适用条件及证据要求；默认采用下述四维 |
+| 采用与裁剪／扩展 | 每方面是否适用、依据、目标影响、决定及审核责任和版本；不得用暂无证据代替裁剪依据 |
 
-TaskTemplate 与 Claim 不必一一对应。同一模板可以支持求解和解释两个不同命题，一个命题也可以覆盖有依据的一组模板。只有差异具有独立证据和教学决策价值时才持续维护；不为每道题、每个子任务、每种方法或每个 KC 自动建立状态。
+Aspect 是 Claim 的内部结构，可以用 `ClaimVersion + AspectKey` 精确引用，不是新 Space、核心 Model、独立 Claim 或拥有独立发布生命周期的能力对象。责任、方法、条件及方面定义随 Claim 版本发布；跨版本复用方面键不表示语义自动兼容。
 
-**方法覆盖。** 纳入方法 A、B 可得到两者所关联 KC 的课程覆盖范围，但不自动规定每次表现必须经过两条路径。允许任选时，实际采用 A 可以支持任务完成，不支持“会用 B”；指定 B 时必须有 B 的适用表现；要求 A、B 均掌握时，证据须分别覆盖，不要求每题重复两遍。比较与选择方法是另一个责任，不能由分别会执行自动推出。覆盖记录由 Evidence 派生，不增加一套 Solution 掌握状态。
+**默认四维。** 每个采用的任务能力声明默认从下列四个方面组织评价，保留有依据的裁剪和扩展。不为每个题目或子步骤自动生成四份状态，也不要求每轮全部检测。
 
-**知识层的保留与降层。** KC 的定义、关系和方法 grounding 仍由 Domain 维护；Observation / Evidence 可关联 KC，用于解释具体表现、设计讲解和取证。Evaluation 不再创建、更新或作为 current-valid 能力输入返回 KCClaim / KCBelief，也不能把带 KC 标签的临时分析累计成隐藏的知识掌握库。理解知识的目标通过有范围、可观察责任的 Task Claim 表达，不给全部 KC 机械改名。
-
-**证据与状态的区别。** 一次成功可能受到提示、工具、模仿或偶然因素影响。正确结果支持哪项责任，必须看实际表现；未要求解释不能当作不会解释，Task 成功也不自动表示全部方法或知识已掌握。重复题、刚接受相关讲解和不同表征等条件先进入 Evidence Context；只有真正改变能力命题才另立 Claim。
-
-**简化的代价。** 当前不维护独立跨任务 KC 掌握状态；诊断和教学仍可使用具体表现及知识依据。若 Task Claim 无法表达重要决策差异，或新增知识层状态确有独立证据、预测与行动价值，再通过受治理模型修订调整。动机、疲劳、帮助依赖等也不因可能有用就自动进入稳定状态。
-
-**默认四维评价框架。** 对一组有教学意义的 TaskScope，默认从独立完成、理解与解释、迁移应用、延迟保持四个维度定义需要认识的能力。默认覆盖作用于任务范围及其目标要求，不要求每个模板、每个子任务或每道题各建四个状态，也不要求每轮互动检测全部维度。
-
-| 默认维度 | Task Claim 必须表达的责任与条件 | 不能据此自动推出的结论 |
+| 方面 | 要定义的能力责任与条件 | 不能自动推出的结论 |
 | --- | --- | --- |
-| 独立完成 | 在明确允许的工具和支持边界内，自行承担关键判断、操作或求解责任，并达到质量要求；独立不等于禁止一切工具 | 一次答案正确不证明独立；独立完成熟悉任务不证明理解、迁移或保持 |
-| 理解与解释 | 解释关系、理由或适用边界，或通过图示、辨析、操作与反例等表现显示理解；明确所需内容及帮助边界 | 复述解析、语言流利或只给正确结果不等于理解；未要求表达不能判为不会解释 |
-| 迁移应用 | 明确参照任务及学习经历、变化了哪些情境／表征／条件，以及变化后仍须承担的责任和质量 | 仅换数字、做过同类题不自动证明迁移；一次指定变化的成功不证明任意泛化 |
-| 延迟保持 | 明确要保持的责任、先前表现依据、观察间隔和可比条件；记录期间练习、帮助及资料可得性 | 当场完成或时间流逝不证明保持；期间强化后的成功不证明无强化保持，也不等于永久掌握 |
+| 独立完成 | 在明确允许的工具和支持边界内，自行承担关键判断、操作或求解责任，并达到质量要求 | 一次答案正确不证明独立；独立不等于禁止所有工具 |
+| 理解与解释 | 用语言、图示、辨析、操作或反例等表现说明关系、理由或适用边界；写清有效表现及帮助边界 | 流畅复述不等于理解；没有要求解释不表示不会解释 |
+| 迁移应用 | 写清参照学习经历、变化了什么，以及变化后仍须完成的责任；评价对象仍为本 Claim 绑定的任务 | 换数字不自动构成有效迁移；一种变化成功不证明任意泛化 |
+| 延迟保持 | 写清保持的是哪项责任、先前表现依据、间隔、可比条件及期间练习／帮助背景 | 时间流逝不证明保持；强化后成功不证明无强化保持或永不遗忘 |
 
-这些维度是 DeerMind 当前采用的通用设计框架，不是已验证相互独立、穷尽所有领域的四个心理测量因子。独立性同时约束其他维度的表现：例如迁移 Claim 可以明确要求独立迁移；保持 Claim 必须说明保持的是求解、解释还是其他责任，不能笼统写“能力持久”。正确性和适用质量同样贯穿各维度。
+四方面是当前设计框架，不是已证实相互独立或穷尽所有领域的心理因子。独立性可同时约束解释、迁移和保持；保持必须指明保持求解还是解释等责任。一个方面可有必要的质量与覆盖条款，判断须保留未覆盖部分，不把四维及所有条件机械展开为笛卡尔积。扩展效率、精度、协作等时，先判断能否用现有方面的责任或质量条款表达，再决定是否增加内部方面。
 
-**维度与 Claim 的对应。** 维度不新增 Learner State 类型。每项采用的维度必须能追溯到一个或多个条件明确的 Task Claim；一个 Claim 也可承载有关联的维度。若需要分别回答“能独立完成，但尚不知道能否迁移”，应有可分别推断的 Claim，不能从一个合取命题的总判断虚构分项 Belief。复合 Claim 只支持其整体命题；需要分项认识时，定义有独立判断价值的相应命题。不机械枚举四维的全部组合，也不为每个间隔、表征或 KC 自动拆出状态。
+**方法与知识。** 纳入方法 A、B 可以得到相关 KC 的覆盖并集，但任选 A 成功不能证明会用 B。指定 B 或要求两法分别覆盖时，按实际方法证据核对；方法覆盖是各方面依据的派生视图，不另建 Solution Belief。比较、选法等责任可以纳入适用方面或有依据扩展，不能因分别执行过两法就自动推断。KC 保留领域定义、关系、局部解释及教学作用；不创建 KCClaim / KCBelief，也不为全部 KC 换名生成 Task Claim。
 
-**采用、裁剪与扩展。** Evaluation 定义通用框架与 Claim 语义；Learning Space 的目标定义说明在所选 TaskScope 中采用哪些要求。规范内容须保存以下覆盖记录，作为 Claim 与目标定义的版本化组成，而非新增核心模型：
+**目标与个人判断分开。** Evaluation 定义 Claim、方面及 Belief 语义；Learning Space 的已发布目标选择任务范围、符合条件的 Claim 版本及所需方面／标准。只改变目标选择或门槛时重算 TargetAssessment，不直接改变个人能力判断；改变方面责任、方法要求、迁移范围或保持条件时，则须核对 Claim 语义版本与证据兼容。解释活动本身、一次正确或目标改版都不能直接上调 Belief。
 
-- 每个默认维度的采用情况、适用任务范围、对应 Claim 和目标要求；解释形式、迁移变化及保持责任／间隔须具体化。
-- 裁剪的理由、适用边界、对可宣称能力及目标达成的影响、决定者和审核／发布版本。单一表现机会不适合检测某维度，不代表整个目标可以裁剪该维度。
-- 扩展维度的定义、可区分的证据及教学决策价值；效率、精度、协作等先判断能否由现有 Claim 的责任和质量要求表达，再决定是否需要额外命题。
+**裁剪、未知与准备缺口。** 裁剪须有领域或目标依据，记录适用边界、对能力宣称的影响、责任人和版本；不能因为学生表现差、难取证、时点未到或实现未完成就声明不适用。运行中的 LLM 可提候选，不能自行发布定义或降低标准。首版管理员可兼任编辑、审核与发布者，仍保留各项依据。
 
-裁剪必须有领域或目标依据，不能因为学习者表现差、证据难收集、观察时间未到或实现尚未完成而改成“不适用”。运行中的 LLM 可以提出修订候选，不能自行修改正式覆盖记录。首版管理员可兼任编辑、审核和发布者，但各项依据和版本仍须保留；重要范围改变遵循既有产品决策权限。
+采用的方面尚未定义完整是内容准备缺口；已有方面定义但无足够表现是认识不足；经批准不适用属于规范状态，不占一个“失败”或“零分”的个人方面。独立完成已有支持，解释仍未知、保持尚待观察，可以同时存在于一个 Belief 中。所有方面都有证据并不表示必须把它们平均成总掌握率。
 
-**定义与认识状态分开。** 已采用但尚未定义清楚对应 Claim 是内容准备缺口；Claim 已定义但尚未取得足够证据是认识不足。两者均不能被静默裁掉。经批准不适用属于规范适用性；未测、证据不足和保持观察时点未到属于认识或取证条件，不是能力失败。多个维度的判断不得简单平均为掌握率；同一表现支持多个 Claim 时必须保留共同来源，不能当成多份独立证据来增强置信度。
+**图 EVAL-01：单模板能力声明与多维判断。** 本图表达对象引用和证据去向，不规定数据库结构。
 
 ```mermaid
 flowchart TB
-    F["默认四维评价<br/>独立完成 · 理解与解释<br/>迁移应用 · 延迟保持"]
-    G["按任务范围与目标确定采用<br/>有依据的裁剪与扩展，保留版本"]
-    C["条件明确的 Task Claim<br/>统一类型，按判断需要定义命题"]
-    O["实际表现与帮助<br/>变化条件、时间及历史来源"]
-    E["相对于 Claim 解释 Evidence"]
-    B["Evaluation 更新各 Claim 的 Belief"]
-    T["与目标要求比较"]
-    F --> G --> C --> E
-    O --> E --> B --> T
-    G -. "目标要求" .-> T
+    TT["Domain：TaskTemplate<br/>任务定义及版本"]
+    C["Evaluation：Task Claim<br/>只绑定一个模板版本"]
+    A["Claim 内部评价方面<br/>独立 · 理解 · 迁移 · 保持"]
+    O["实际表现及上下文<br/>方法、帮助、变化与时间"]
+    E["Evidence<br/>指向 Claim 版本与方面"]
+    B["一个学习者的多维 Belief<br/>各方面的判断、不确定性与依据"]
+    G["LearningTarget<br/>选择任务、方面与标准"]
+    TA["派生 TargetAssessment"]
+    C -->|"引用唯一模板"| TT
+    C -->|"包含"| A
+    A -->|"定义解释条件"| E
+    O -->|"提供表现来源"| E
+    E -->|"经推断按适用方面更新"| B
+    G -->|"引用已发布声明及方面"| C
+    G -->|"提供目标要求"| TA
+    B -->|"提供分方面认识"| TA
 ```
 
-图中覆盖记录和 Claim 的定义／发布发生在受治理规范路径；实际表现不会自动发布新的 Claim。四维框架与 §4 的 Belief 四个组成部分处于不同层次：前者规定评什么，后者描述对每个命题相信什么、存在何种不确定性及依据。
+矩形表示规范定义、来源或判断对象；箭头含义由标签说明。Aspect 包含于 Claim，多维判断包含于一个 Belief；两者不各自增加发布者或个人状态写入者。目标可以汇总多个任务的相应方面，图中仅画一个任务；同一 Claim 可用于不同学习者，其个人记录不混用。
 
-### 3.2 Evidence Model：定义 Observation 对 Claim 意味着什么
+本次简化减少顶层命题及引用关系，不消除分方面的证据与校准工作。若内部方面无法保留重要教学差异，先审查模板粒度、责任和方面定义；恢复多模板 Claim 或新增核心状态类型须另有实际证据和受治理决定。
 
-Evidence Model 不负责形成最终 Belief。它只回答一个局部问题：
+### 3.2 Evidence Model：定义 Observation 对 Claim 的哪个方面意味着什么
 
-> **某个 Observation，在当前 epistemic context 和 Domain Space 语义下，对一个明确 Claim 有什么认识论意义？**
-
-\[
-\boxed{
-Evidence
-=
-Interpret(
-Observation,
-Claim,
-EpistemicContext,
-DomainSemantics
-)
-}
-\]
-
-Evidence 是一种相对于命题的关系，而不是脱离 Claim 独立存在的“证据分数”。
-
-同一个 Observation 可以针对不同 Claim 形成不同 Evidence。例如学习者在比例题中选择了正确的 Unit Rate 策略，却把 `42÷6` 算错：
-
-- 对“独立组织并正确完成本范围比例任务”的 Task Claim，形成反向证据；
-- 若已有“独立建立单位量关系”的 Task Claim，实际列式可形成正向证据；
-- 除法位置的错误保留为局部表现及知识关联；只有存在已定义、适用的计算 Task Claim 时才另作评价，不临时建立 Division KC 掌握状态。
-
-因此：
+Evidence Model 解释一次表现对某个已定义评价方面的意义，不直接形成最终 Belief。
 
 \[
-OneObservation
-\rightarrow
-MultipleClaimSpecificEvidenceRelations
+Evidence=Interpret(Observation,ClaimVersion,AspectKey,EpistemicContext,DomainSemantics)
 \]
 
-Evidence Relation 至少需要区分：
+每条能力 Evidence 必须能定位 Claim 版本及方面，并保留实际任务／参数、方法、帮助、变化、时间和来源依赖。可以在一次解释中给出多个方面的关系，但不能只给一个笼统的“支持 Claim”就更新全部方面；方面不存在、未采用或定义不完整时保留相应准备／解析缺口，不临时创建规范定义。
 
-| Relation | 语义 |
-|---|---|
-| Supports | Observation 支持 Claim |
-| Contradicts | Observation 反驳 Claim |
-| Discriminates | 主要用于区分 competing hypotheses |
-| NonInformative | 对该 Claim 没有足够信息价值 |
+同一次表现对不同方面可以有不同意义。例如比例题中正确列出单位量关系，却将 `42÷6` 算为 8：
 
-这套结构不要求 System Design 最终必须用离散枚举实现，但概念上必须保留这些不同认识作用。
+- 独立完成方面：建模有局部支持，但最终求解不满足本次质量要求，保留正确部分与错误位置。
+- 理解与解释方面：若未要求说明且没有足够过程依据，不能从列式正确直接断言理解，也不能把没有解释判为不会。
+- 迁移、保持方面：只有实际变化和时间条件满足定义时才解释相应 Evidence；普通即时题不自动覆盖它们。
+- 若过程中的除法子任务另有已发布模板及 Claim，且实际子任务表现足够清楚，可按该任务独立核对其方面；不能从母任务结果反推所有子任务或 KC 状态。
+
+| Relation | 相对于明确方面的语义 |
+| --- | --- |
+| Supports | 该表现支持方面所定义的责任及条件 |
+| Contradicts | 该表现对方面提供反向依据，须说明违背什么要求 |
+| Discriminates | 帮助区分某方面的竞争解释或失配原因 |
+| NonInformative | 对该方面没有足够信息价值，不等于失败 |
+
+一条 Observation 可以形成多项方面关系，甚至在明确子任务映射下关联不同 Claim；必须保留同源标识，不增加虚假的独立样本。迁移来自任务 A 的学习经历、在任务 B 上表现时，正式评价指向 B 的 Claim 方面，A 是背景来源；B 方面须明示这种变化及依据。任务间结构相似或先修关系本身不授权复制 Belief。
 
 ### 3.3 Inference Model：决定当前应该相信什么
 
-Inference Model 综合先验信念、历史与当前 Evidence、Evidence 依赖、时间结构以及模型假设，形成新的 Learner Belief。
+Inference Model 综合各方面先前判断、适用 Evidence、方面之间的实际依赖、时间与模型假设，更新一个 Task Claim 的多维 Belief。分方面记录不要求独立推断；共同推断须保留依赖依据，不能将一次表现当多份独立证据，也不能从已支持方面自动填满未检测方面。
 
 \[
 B_{t+1}
@@ -405,34 +382,25 @@ Inference 的核心职责不是“算一个 mastery score”，而是保留 Evid
 
 ---
 
-## 4. Learner Belief：可修正认识，而不是分数
+## 4. Learner Belief：可修正的多维认识
 
-当前所有正式 Learner Belief 都针对 Task Claim。一个合法 Learner Belief 是：
-
-> **DeerMind 在某一时刻，基于当前可用 Evidence，对一个明确 Learner Claim 所持有的、可追溯、带不确定性、可被未来 Evidence 修正的认识论立场。**
-
-概念上：
+一个 TaskProficiencyBelief 表达：DeerMind 对某位学习者在某个 Learning Space 中、某个明确版本 Task Claim 各方面能力的当前认识。Claim 定义评什么，Belief 保存各方面相信什么及为什么。
 
 \[
-\boxed{
-Belief_t(C)
-=
-(
-Assessment_t,
-EpistemicUncertainty_t,
-EpistemicStatus_t,
-EvidenceBasis_t
-)
-}
+Belief_t(L,S,C@v)=\{a\mapsto(Assessment_{t,a},EpistemicUncertainty_{t,a},EpistemicStatus_{t,a},EvidenceBasis_{t,a})\mid a\in ActiveAspects(C@v)\}
 \]
 
-这是一项语义定义，不是数据库 schema，也不要求某一种概率表示。
+这是一个 Belief 内部的方面映射，不新增四种 Belief 类型或四个顶层 Claim。方面是评价维度；Assessment、不确定性、认识状态和证据依据是每个方面都需要的认识组成，两组概念不可混用。每项还需可追溯的证据时间与更新依赖，具体存储协议由工程阶段实现。
+
+一次 Evaluation 提交形成新的 Belief 修订。未受本次证据影响的方面保留原判断、依据及时间，不因其他方面更新而冒充已刷新。请求只需要某些方面时，按这些方面检查当前有效性；根对象存在或部分方面有效，不代表所有方面都已知、有效或达标。缺少所需定义／有效输入时按合同返回 non-resolution，允许认识不足的情况下明确返回 UNKNOWN，不用旧值冒充当前结果。
+
+可以派生任务摘要，但摘要必须保留所用方面、范围与未知；不另存一个会与方面判断竞争的总掌握状态。目标是否达成由 TargetAssessment 比较实际采用的方面和标准。下文 Assessment、UNKNOWN、不确定性、Evidence Basis 与时间语义均落实到所讨论的具体方面。
 
 ### 4.1 Assessment：方向性判断
 
 Assessment 回答：
 
-> 综合当前 Evidence，DeerMind 对 Claim 的方向性判断倾向是什么？
+> 综合适用 Evidence，DeerMind 对该 Claim 某个明确方面的方向性判断倾向是什么？
 
 当前架构只冻结 Assessment 的语义，不冻结数值表示。System Design 可以比较 ordinal、probability、interval、分布或其他 calibrated 表示，只要它们保留这里定义的认识论含义。
 
@@ -446,7 +414,7 @@ Representation\ deferred
 UNKNOWN 表示当前 Evidence 不足以支撑有根据的方向性判断。
 
 \[
-UNKNOWN(C)\neq \neg C
+UNKNOWN(C,a)\neq Failure(C,a)
 \]
 
 同时：
@@ -488,7 +456,7 @@ Epistemic Status 用于表达这种结构。多个原因可以同时存在，因
 任何重要 Learner Belief 都必须能够追溯到形成它的 Evidence：
 
 \[
-Belief
+Belief[ClaimVersion,AspectKey]
 \rightarrow
 EvidenceBasis
 \rightarrow
@@ -560,7 +528,7 @@ System Design 可以为具体推断 algorithm 设计数值表示，但不能因�
 
 ### 5.2 Assistance：关键不是“用了工具”，而是是否替代 Claim 要求的责任
 
-Independent / Assisted 不属于 Learner State，也不是天然高低排序的两套 Belief。一次帮助是否削弱 Evidence，取决于它是否替代了当前 Claim 要求由 learner 自己承担的认知或行动责任。
+一次表现的 Independent / Assisted 标记属于 Evidence Context，不是两套个人状态。Claim 的独立完成方面评价的是跨适用表现的能力；其他方面也可以要求特定独立责任。一次帮助对哪个方面有影响，取决于它替代了该方面要求学习者承担的哪项责任，不能把整份 Belief 一概标为受助或低能力。
 
 因此真正关键的是：
 
@@ -595,13 +563,14 @@ Contamination
 =
 f(
 Observation,
-Claim,
+ClaimVersion,
+AspectKey,
 ResponsibilityBoundary,
 InterventionHistory
 )
 \]
 
-同一个提示可能替代选法 Task Claim 的责任，却仍保留某个计算 Task Claim 要求的独立执行责任；同一次 AI 帮助对“独立形成诊断”Claim 构成强污染，对“验证 AI 候选诊断”Claim 却可能完全兼容。
+同一个提示可能替代本 Claim 独立完成方面的选法责任，却未提供理解方面所要求的理由；也可能保留一个已明确定义的计算子任务责任。是否有支持要逐方面检查实际表现，不能仅凭提示没给答案就认定所有责任独立。对“独立形成诊断”与“验证 AI 候选诊断”这类不同评价条件，同一帮助可能有不同适用性，不能混用状态。
 
 Evaluation 不能只知道“发生过帮助”，还必须能够追溯暴露链：帮助在什么时间发生、暴露了什么、替代了哪部分责任，以及这种替代与当前 Claim 的关系。
 
@@ -611,13 +580,13 @@ NoAssistanceClassificationWithoutExposureLineage
 
 如果暴露链不完整，正确结果是降低 Evidence 可解释性或标记 support state unknown，而不是默认 Independent。
 
-### 5.4 迁移与延迟：实际条件和能力命题分开
+### 5.4 迁移与延迟：方面定义与实际条件分开
 
-实际发生的时间间隔、期间练习与帮助，以及相对既有学习经历的情境／表征变化，先记录为 Evidence Context。它们不会仅凭标签自动创造个人状态，也不存在“延迟证据总比即时证据强”或“换题就是迁移”的全局排序。
+迁移和保持是同一 Task Claim 的内部方面，不再各建顶层 Claim。迁移方面规定参照经历、变化及仍须完成的责任；保持方面规定所保持责任、先前依据、间隔和期间支持条件。实际表征、间隔、练习和帮助进入 Evidence Context，是否满足这些定义仍须解释，不能只贴上“迁移”或“延迟”标签。
 
-默认四维框架同时要求明确迁移和保持的能力命题。例如，“能独立求解熟悉表述的任务”与“能在规定表征变化下独立建模求解”具有不同的概括范围；“在已说明间隔与条件下保持求解责任”又增加了时间条件。需要分别判断时，定义相应 Task Claims；不能只给原求解 Claim 的 Evidence 加上标签，就声称已有可分别查询的迁移与保持 Belief。
+迁移范围仍以所绑定任务为评价对象。同模板内的表征变化可按已声明范围解释；从另一个模板的学习迁移到本任务时，来源模板只作为背景，正式方面仍属于目标任务 Claim。不把两个模板装进同一个 Claim，也不根据结构对应自动传播掌握结论。
 
-Claim 规定希望推断的范围，Evidence 记录这一次实际发生的条件。实际变化或间隔不满足 Claim 时，只能在适用命题内解释，或保留取证缺口；不能为适配每次表现临时更改命题。也不为每个具体变化和间隔机械增加 Claim。§3.1 的有依据裁剪、扩展和版本规则同样适用。
+保持可针对独立求解、解释或其他明确责任；一个方面的质量／覆盖条款须保留这些边界，不能把求解保持推广到所有能力。尚未到观察时点、期间背景未知或只覆盖一部分变化时，保留相应不足。不为每个间隔和表征新增顶层 Claim，也不在观察后修改定义来适配结果。
 
 ### 5.5 Missing Evidence 不是 Negative Evidence
 
@@ -969,9 +938,9 @@ Evaluation 不会直接得到“不会比例”。
 
 Evidence Model 可以分别形成：
 
-- 对独立完成本范围比例任务的 Task Claim：反向证据；
-- 对已定义的单位量关系建立 Task Claim：列式可以提供正向证据；
-- 除法错误作为局部诊断依据；若有适用计算 Task Claim 可解释其证据，否则保留观察，不增设 KC 状态。
+- 同一比例任务 Claim 的独立完成方面：本次最终求解未满足要求，单位量关系的正确列式保留为局部支持；
+- 理解与解释方面：只有实际表达或过程足以支持规定责任时才形成相关 Evidence，未要求解释不记失败；
+- 除法错误作为局部诊断依据；有明确子任务映射及适用计算 Claim 时才另行评价，否则保留观察，不增设 KC 状态。
 
 如果 DeerMind 随后提示“再检查一下 42÷6”，学习者修正为 7 并得到 105，那么这次成功的 Evidence 需要按 Claim 与发生顺序解释。提示前已经呈现的 Unit Rate 策略保留原有证据价值，不能因后来的算术提示追溯性地判为受助选择；提示后的步骤也不能被重复计为一次新的独立策略选择。若评价计算责任，相应 Task Claim 的 Evidence 必须保留提示定位了错误这一步的条件；完整任务成功不能当作独立完成。
 
@@ -984,7 +953,7 @@ Evidence Model 可以分别形成：
 \[
 Observation
 \rightarrow
-ClaimSpecificEvidence
+ClaimAspectSpecificEvidence
 \rightarrow
 EvidenceIntegration
 \rightarrow
@@ -1022,7 +991,7 @@ LearnerBeliefs
 )
 \]
 
-Learning Space 拥有 Target Requirement；Evaluation Space 拥有 Learner Belief 与比较所需的认识论语义；Target Assessment 自身不成为新的 Learner State primitive。
+Learning Space 拥有 Target Requirement；Evaluation 拥有多维 Belief 与比较语义。一个目标可以引用多个任务 Claim 的指定方面及标准，TargetAssessment 逐项比较后组织目标结果；不由总分掩盖要求中的未知，不生成跨模板总能力 Claim，也不成为新的 Learner State。
 
 一个 Target Assessment 至少需要能够区分：
 
@@ -1079,38 +1048,38 @@ ResponsibilityBoundary
 
 它不是新的 Learner Trait，也不进入 Learner State Core。同一个 learner 对 Target A 可能存在不必要依赖，对 Target B 则完全不存在，因为 Target B 本身允许外部化相同责任。
 
-### 6.8 分数应用：Task Claim 与 Belief 更新实例
+### 6.8 分数应用：一个 Claim 的多维 Belief 更新实例
 
-以下是说明语义的自编案例，不是已执行测量、正式教材包或经校准的达标规则。模板 T1：已知原量 \(a>0\)，增加或减少原量的 \(r\)，求最终量；\(0<r<1\)，计数情境须满足整数量约束。范围包括单次变化、明确原量作基准；连续变化、不同基准和逆求原量暂不包含。
+以下自编案例用于说明模型，不是正式教材包、已执行测量或经校准规则。TaskTemplate T1：已知原量 \(a>0\)，增加或减少原量的 \(r\)，求最终量；\(0<r<1\)，计数情境须有整数量。范围限于单次变化、原量作基准；不含连续变化、不同基准和逆求原量。
 
-方法 S1 先求 \(ar\)，再求 \(a\pm ar\)；S2 先构造最终量占原量的 \(1\pm r\)，再求 \((1\pm r)a\)。两者的 KC 依据包括基准量、分数表示的数量关系、同基准合并、算术及等价变形。Learning Space 允许任选 S1、S2，不要求每题使用两种方法。
+S1 先求 \(ar\)，再求 \(a\pm ar\)；S2 先求最终量比例 \(1\pm r\)，再求 \((1\pm r)a\)。KC 提供基准量、分数关系、同基准合并及计算等依据。当前评价条件允许任选 S1、S2。
 
-本例为分别判断四方面表现，定义四个 Task Claims。它们共享 T1 的数学关系和方法参照，但完成责任或概括条件不同。
+定义一个 Claim **C-FA**，绑定 T1 的明确版本。下表 I、U、T、R 是该 Claim 内的方面键，不是四个 Claim 或四个独立状态类型。
 
-| Task Claim | 所承载维度及责任边界 |
+| 内部方面 | C-FA 的方面定义 |
 | --- | --- |
-| C1：独立建模并求解 | 独立完成：在熟悉文字表述的 T1 范围内，自行辨认原量、变化方向和最终量，选用获准方法得到合理结果；不接受定位、关系式或答案帮助 |
-| C2：说明数量关系 | 理解与解释：在 T1 范围内独立用语言、图示或等价表达说明基准、变化量与最终量；不要求固定措辞，不把背诵解析当理解 |
-| C3：在规定表征变化下建模求解 | 迁移应用：已有文字表述的学习经历后，面对未练过的表格表述，自行识别原量和变化关系并求解；数学范围仍为 T1，不含逆求原量和任意新题型 |
-| C4：延迟后保持求解责任 | 延迟保持：已有独立求解的表现依据，在预定间隔和可比条件下仍能独立建模求解；本例暂用七天展示合同含义，并记录期间练习与帮助。七天不是通用标准，不据此同时宣称解释或迁移能力的保持 |
+| I：独立完成 | 对熟悉文字表述，自行辨认原量、变化方向和最终量，选用获准方法正确求解；不接受定位、关系式或答案帮助 |
+| U：理解与解释 | 独立用语言、图示或等价表达说明基准、变化量与最终量，不要求固定措辞，不把复述解析当理解 |
+| T：迁移应用 | 已学习文字表述后，面对未练过的表格表述，仍能自行识别关系并求解；只对 T1 内这一规定变化作判断 |
+| R：延迟保持 | 有先前独立求解依据，在预定间隔和可比条件下仍能独立求解；本例用七天说明时间合同，期间练习与帮助须记录。不是通用七天标准，也不宣称同时保持 U 或 T |
 
-C2 不是“基准 KC 已掌握”的替代标签。C3 的变化范围和 C4 的时间、期间支持条件必须在取证前具体化；未练过表格或期间是否练习尚不清楚时，要保留条件不确定性。C4 未限定无强化时，只能给出实际练习背景下的保持判断；不得把它解释为无练习仍能保持。四项命题也不穷尽六年级全部分数能力。
-
-| 事件与实际表现 | Evidence 解释 | Belief 可据此怎样变化 |
+| 事件与表现 | 指向 C-FA 的 Evidence | 一个多维 Belief 的更新 |
 | --- | --- | --- |
-| 原有 40 本书，增加原量的 1/4；学生算 10 并回答最终有 10 本 | C1 反向；混淆变化量与最终量。未要求解释，无新的 C2 证据 | C1 增加未满足求解责任的依据；C2–C4 不据此自动下降，更不推断全部 KC 不会 |
-| 系统提示“10 本是增加的，还是现在全部的？”；学生改为 50 | 保留定位帮助和订正，不满足 C1 的独立边界 | 不覆盖原始错误，也不作为独立通过；C2 须另看实际表达及帮助 |
-| 随后文字新题原量 60、减少 1/5；独立写出 60−60×1/5=48 | C1 正向，覆盖 S1 与减少情境；保留刚接受同类讲解的背景 | 增加即时应用依据；未解释、未发生约定表征变化、未到保持观察时点，C2–C4 不自动取得正向证据 |
-| 后续文字新题原量 80、增加 3/8；独立列 80×(1+3/8)=110，说明 1 和 3/8 都以 80 为基准 | C1、C2 正向，记录实际帮助与时间，覆盖 S2 与增加情境 | 可分别支持独立求解和理解；C3 尚待指定变化的证据，C4 尚待延迟表现；不平均成“掌握一半” |
-| 七天后表格给出原量 72、减少 5/12；独立答 42 并说明关系 | 若表征对该学习者确属规定变化、期间练习记录及可比条件满足合同，可分别解释 C3、C4 的正向 Evidence；表达也可能支持 C2 | 只支持规定表征变化和该间隔／背景下的求解保持。若表格已被反复练过，不能据此支持本例 C3；缺少先前表现或期间条件，不足以确认 C4 的保持结论 |
+| 原有 40 本书，增加 1/4；答最终 10 本 | I 反向：混淆变化量与最终量；本次未要求解释，也未满足迁移／延迟条件 | I 增加未满足责任的依据；U、T、R 保留原判断或未知 |
+| 提示“10 本是增加的，还是现在全部的？”后改为 50 | 记录定位帮助和订正；不满足 I 的独立条件 | 不用订正覆盖原错，也不将 I 改为独立通过；其余方面只按实际表现解释 |
+| 新文字题：60 减少 1/5；独立写 60−60×1/5=48 | I 正向；保留刚接受同类教学背景 | 增加 I 的即时应用依据；U 未测，T 未发生规定变化，R 未到时点 |
+| 后续文字题：80 增加 3/8；独立写 80×(1+3/8)=110，并说明共同基准 | I、U 正向，两个方面共用本次来源 | I、U 分别增加适用支持；不能把 T、R 填为通过，也不能将两个方面当成两份独立样本 |
+| 七天后表格给出 72 减少 5/12；独立答 42 并解释 | 若表格确属规定变化、先前依据与期间条件满足定义，T、R 可获得正向 Evidence，表达也可能支持 U | 在同一 Belief 中更新适用方面，保留背景与来源。表格已反复练过则不支持本例 T；期间条件不明则限制 R 的结论 |
 
-同一次表格作答可以同时检验变化与延迟，但共享同一个 Observation 和背景，不能当成多份独立样本。若失败，不能仅据此断言是迁移困难还是未保持，需要保留归因不确定性，必要时用熟悉表述或即时变化的适用任务补充区分。诊断是否继续由 Interaction 按价值和负担决定。
+更新单位是 C-FA 的 Belief 修订，证据作用范围是具体方面。每个方面保留自己的 Assessment、不确定性、认识状态和依据；未更新方面不刷新证据时间。T 与 R 的联合探针失败时，不能直接判定是迁移困难还是未保持，可保留归因不确定，必要时安排可区分的后续观察；是否继续取证由 Interaction 按价值和负担决定。
 
-Inference 按 Evidence 的相关性、帮助、时间和重复依赖，分别更新每个 Claim 的 Assessment、EpistemicUncertainty、EpistemicStatus 与 EvidenceBasis。早期错误与教学后成功可能反映状态变化，不应无视时间统一标为矛盾；教学发生本身不直接上调能力。本例不指定统一正确率、先验、衰减公式或精确掌握百分比，相关规则须经工程与质量验证校准。
+**方法条件对照。** 若目标只提高正确性门槛，重新比较相同方面的判断，不改变 Belief。若要求从“任选 S1、S2”变为“两法分别覆盖”，改变的是评价责任，须绑定适用的新定义／版本；只有 S1 证据表示 S2 覆盖未知，不表示 S2 失败。不得直接复制旧 ANY 条件下的判断。
 
-若目标改为 S1、S2 均须覆盖，只有 S1 证据表示方法覆盖不足，不表示 S2 已失败；若目标还要判断比较选法或解释的延迟保持，必须补充相应责任与证据合同，不能从现有四个名称自动推出。合理扩展与裁剪均按 §3.1 的依据和版本规则进行。
+**任务绑定对照。** 逆求原量属于另一个模板 T2；本例 C-FA 不评价 T2。学生独立完成 T2 后，证据进入其已发布 Claim 的适用方面；两种任务的课程目标可一起汇总，彼此不自动推定掌握。T2 的迁移方面若将 T1 学习列为参照，仍只评价 T2 的迁移表现。
 
-运行链为：Interaction 保留题目、实际输入、实际帮助与时间条件，形成 Observation；Evaluation 按已发布 Claim 形成 Evidence，由 Inference 更新各 Belief；TargetAssessment 与已采用要求比较；Interaction 据当前有效认识决定讲解或取证。KC 支持解释与教学，不增加 KC 状态更新链。
+**历史迁移对照。** 前版 C1–C4 是已退出的组织方式。迁移时将旧责任逐项对应到新 Claim 的方面，核对模板、支持、变化和时间语义，并去除同源重复计权；不能仅把四个旧分数拼成向量。无法恢复适用依据的方面保持未知；没有领域或证据依据，不机械恢复 KC Claim 或跨模板 Claim。
+
+运行链为：Interaction 保留具体题目、表现和帮助，形成 Observation；Evaluation 对 `C-FA@版本 + 方面键` 解释 Evidence，提交新的多维 Belief；TargetAssessment 比较目标选定方面；Interaction 据具体缺口选择下一步。没有统一题量、精确掌握率、先验或衰减公式被本例提前验证。
 
 ## 7. Cross-Space Contracts、版本与 Evolution
 
@@ -1124,7 +1093,7 @@ Interaction 提供实际问题的版本引用、参数、呈现条件、已发�
 
 Evaluation 仅在明确任务范围、责任及方法要求上维护 TaskProficiencyClaim，并形成 Evidence、Belief 与派生 TargetAssessment；KC 只作为领域解释和教学依据。材料章节只提供产品汇总入口，不是新的能力本体；产品空间隔离与授权限制同样作用于 Evidence 的可用范围。
 
-LearningTarget 按 §3.1 的默认框架记录维度采用、裁剪／扩展及 Claim 对应关系；Evaluation 负责命题语义和个人判断。缺少对应定义是内容缺口，不能由 Runtime 临时捏造正式 Claim。LearningTarget 不能直接生成 LearnerBelief，个体表现不能直接修改 Domain 或目标定义。要求、证据与信念保持分层。
+LearningTarget 按 §3.1 记录所选任务 Claim 版本、方面及标准；Evaluation 负责单模板声明、内部方面和多维判断。定义缺口由规范内容路径补齐，Runtime 不临时发布 Claim 或方面。目标可以跨任务汇总，但单个 Claim 不跨模板；目标本身不能生成 Evidence 或 Belief。
 
 ### 7.2 Interaction Space → Evaluation：提供 Observation 和暴露事实
 
@@ -1235,7 +1204,7 @@ ReplaySupport
 
 至少包括：
 
-- Learner Claim 语义身份 / 版本；
+- Learner Claim 语义身份／版本、唯一 TaskTemplate 引用及内部方面键；
 - Evidence 映射身份 / 版本；
 - Inference 语义 / 模型身份 / 版本；
 - Evidence Basis 与 Event / Observation / 信息暴露链路；
@@ -1305,8 +1274,9 @@ SystemAdaptation
 **D2 — Learner State Core 只保留 Task Claim 的 Belief。**  
 KCClaim / KCBelief、TargetBelief、TargetMasteryBelief、CapabilityBelief、AssistanceDependencyTrait 都不进入当前 Core。目标要求、派生 assessment 与 dependency diagnostic 都保持各自 owner。
 
-**D3 — Task Claim 必须表达任务范围、责任、方法要求、条件、支持边界与质量要求。**  
-默认以独立完成、理解与解释、迁移应用、延迟保持检查任务范围的评价覆盖，允许按 §3.1 有依据地裁剪与扩展。所需认识由明确 Task Claims 表达，不能用一个熟悉题求解判断替代其余维度；四维也不增加四种状态类型或每题四项检测。
+**D3 — 一个 Task Claim 绑定一个模板，并包含多个评价方面。**
+
+同一评价条件下以一个 Claim 组织默认四维；方面有独立判断、未知及证据，不必各建顶层命题。TaskScope 限于所绑定模板；不同任务的目标汇总是派生比较，不能复制其 Belief。
 
 **D4 — Evidence Condition 与 Claim Condition 默认分离。**  
 只有真正改变能力命题语义的条件才进入 Claim；疲劳、一次性环境、普通提示等默认保持为 Evidence Context。这避免状态空间按条件组合爆炸。
@@ -1345,7 +1315,7 @@ Evidence 支持未达标与证据不足是不同认识状态，不能用一个�
 |---|---|---|
 | 概念性 | Task Proficiency Claim 中哪些 Conditions 必须进入 Claim semantics | 冻结原则，不冻结统一字段集 |
 | 实证性 | 默认四维及其裁剪／扩展能否覆盖实际领域中的重要教学差异 | 框架及 Task Claim 对应原则已定；各领域粒度、证据充分性和数值校准待验证，不压成总分 |
-| 概念性 | 是否需要对特定任务范围的选法责任单独维护 Task Claim | 按独立证据与教学价值判断，不新增 Strategy 状态类型 |
+| 实证性 | 选法等责任适合现有方面、扩展方面还是独立真实任务 | 按责任、证据与行动价值验证；不按每项责任机械另立 Claim 或 Strategy 状态 |
 | 实证性 | 仅 Task Claim 是否跨数学、系统工程、写作等领域仍具有足够预测与教学价值 | 需跨域验证 |
 | 实证性 | Responsibility-boundary-relative contamination 是否能预测后续表现 | 需真实 assistance / AI 使用数据 |
 | 实证性 | Target Assessment 在高噪声开放任务中的校准质量 | 需长期数据 |
@@ -1353,14 +1323,16 @@ Evidence 支持未达标与证据不足是不同认识状态，不能用一个�
 | 治理性 | 哪些 Population Prior 允许进入 Inference，如何审计公平风险 | 需 Product Constitution / Governance 细化 |
 | 治理性 | 高风险 Target 的 Evidence threshold 与 Safety authority 如何交互 | 需 Context Constitution |
 | 实现性 | Belief 与 Target Assessment 的 version pinning / invalidation 索引 | 交给 System Design |
-| 实现性 | 多维 Claim、Evidence 与 Assessment 的存储/查询协议 | 交给 System Design |
+| 实现性 | 单模板多维 Claim、方面 Evidence 与 Belief 的存储及局部有效性协议 | 语义与输入输出合同已定，字段及实现由 System Design／Phase 5 承接 |
 | 实现性 | LLM 参与 Evidence / Inference 时如何保证依据可追踪 | 交给 AI Runtime / System Design |
 
 ### 8.4 本版下游传导
 
-本版的默认四维、命题与证据边界同步传导至概念、系统及 MVP 合同。Claim identity、Evidence provenance、TargetAssessment dependency、版本解析、typed invalidation 与重放按各自运行合同实现；正文对齐不表示内容包、工程实现或校准质量已经符合新合同。
+本版将 Claim 收敛为单模板、多方面的声明；Evidence 指向 Claim 版本与方面，Belief 保留分方面判断及有效性。概念、系统和 MVP 同步承接绑定、查询、失效与迁移条件；这不表示内容包或工程实现已经迁移。
 
 实现不得引入第二 LearnerBelief writer、TargetBelief 或自动 Gap→Action 路径。TaskProficiencyClaim 标识继续使用，但必须检查 TaskScope、方法要求和历史证据兼容性；旧 KC 状态仅保留历史读取，不转换成新 Task 状态或经兼容回退进入当前决策。出现重要无法表达的反例再重新审查模型，不能在 Runtime 静默扩张认识权限。
+
+多方面语义变更须核对旧 Claim 到新声明及方面的对应。跨多个模板的旧 Claim 需按任务拆解并重新核对证据；同模板的旧 C1–C4 可按语义对应合入方面，但不能按字段拼接判断。只在语义等价且来源完整、依赖去重的情况下显式保留既有方面判断；改变含义或缺乏来源时重解释，依据不足保持未知。定义版本变化不能自动刷新其余方面的证据时间。
 
 ## 附录 A — Evaluation Space Semantic Invariant Registry
 
@@ -1368,9 +1340,9 @@ Evidence 支持未达标与证据不足是不同认识状态，不能用一个�
 
 | ID | Invariant | 含义 |
 |---|---|---|
-| E1 | No Belief Without Claim | 任何 Learner Belief 必须对应明确 Claim |
+| E1 | No Belief Without Claim | 多维 Belief 对应明确单模板 Claim，方面判断有已发布的内部定义 |
 | E2 | Observation != Evidence != Belief | 行为解释、证据关系与最终认识不可合并 |
-| E3 | No Evidence Without Claim | Evidence 必须是 claim-relative |
+| E3 | No Evidence Without Claim | 能力 Evidence 必须指向明确 Claim 版本与方面，不能无范围地更新全部判断 |
 | E4 | Only Evaluation Writes Learner Belief | Learner Belief 只有 Evaluation 能修改 |
 | E5 | Requirement != Evidence != Belief | Target requirement 不能直接生成 learner evidence / belief |
 | E6 | Missing Evidence != Negative Evidence | 未观察到不能自动解释成不会 |
@@ -1379,8 +1351,6 @@ Evidence 支持未达标与证据不足是不同认识状态，不能用一个�
 | E9 | No Assistance Classification Without Exposure Lineage | 独立/受助判断必须有真实暴露链 |
 | E10 | TaskOutcome != TaskPerformance != Capability | 现实结果、可归因表现与稳定能力必须分层 |
 | E11 | 知识依据不等于个人能力状态 | KC 用于解释与教学；只维护 Task Claim Belief，不从任务成功扩写 KC 掌握 |
-| E12 | Default Dimensions != Mandatory Tests Each Turn | 默认四维覆盖有版本，可有依据裁剪／扩展；未测与不适用分开，不强制每题四测 |
-| E13 | Shared Observation != Independent Evidence | 多 Claim 共享表现须保留共同来源；不得平均为总掌握率或重复增强置信度 |
 | E12 | Belief Must Remain Revisable | 任何 Belief 都必须允许未来 Evidence 推翻 |
 | E13 | Teaching Action != Learning Evidence | DeerMind 自己教过不能成为学习者已学会的证据 |
 | E14 | Time Passage != Negative Evidence | 时间流逝本身不降低 competence assessment |
@@ -1397,6 +1367,10 @@ Evidence 支持未达标与证据不足是不同认识状态，不能用一个�
 | E25 | Target Revision Invalidates Assessment, Not Automatically Belief | Target 改版默认重算 assessment，而非能力 belief |
 | E26 | No Silent Cross-Version Interpretation | canonical semantics 变化后旧 Belief 不得静默继承 |
 | E27 | Historical Replay Creates New Interpretation, Not New History | replay 产生新解释，不改写 Event truth |
+| E28 | Default Dimensions != Mandatory Tests Each Turn | 默认四维覆盖有版本，可有依据裁剪／扩展；未测与不适用分开，不强制每题四测 |
+| E29 | Shared Observation != Independent Evidence | 多方面或已核对的多任务证据共享表现须保留共同来源，不重复计权 |
+| E30 | One Claim References One TaskTemplate | 同一声明不跨模板；其方面是内部结构，不能独立漂移或发布 |
+| E31 | Aspect Validity Is Explicit | 根 Belief 存在或一次更新不使所有方面自动有效、已知或达标 |
 
 ## 附录 B — 典型反模式
 
@@ -1481,7 +1455,9 @@ IndividualLearnerBelief
 - 只维护 Task Claim 是否足以解释重要决策差异，且没有隐性 KC 状态？
 - Task Claim 是否表达必要范围、责任、方法覆盖、条件、支持边界与质量要求？
 - 是否把一次性 Evidence Condition 错误升级成长期 Claim dimension？
-- 四个默认维度是否有明确 Claim 对应，裁剪与扩展是否有依据、权限和版本？
+- 每个 Claim 是否只绑定一个模板，同一评价条件下四维是否组织为内部方面？
+- 方面的范围、方法、帮助、变化与时间是否明确，裁剪与扩展是否有依据和版本？
+- 是否把某方面的更新、当前有效或成功不当地扩展到全部方面／另一任务？
 - 是否把未测、条件未知或保持时点未到误记为不适用或失败？
 - 是否出现有独立证据和行动价值、需受治理讨论的新增状态类型？
 - 是否存在不可证伪的学习者特征膨胀？
@@ -1517,8 +1493,8 @@ IndividualLearnerBelief
 
 ## 附录 D — 本版调整与历史边界
 
-本版在 Task Claim 单一能力状态基础上，确立默认四维评价及有依据的裁剪／扩展，修订 §3.1、§5.4 与 §6.8，区分条件事实、能力命题、证据缺口和规范适用性。四维不新增状态类型，也不改变 Evaluation 单写、事实与认识分层及受治理变更合同。前版的 KC 降层决定继续有效。
+本版将单一 Task Claim 类型进一步收敛为单模板绑定、多方面定义；Belief 由单命题判断改为同一声明下的方面判断集合。默认四维及有依据裁剪／扩展继续有效。原多模板 Claim 和按四维拆分 C1–C4 的组织方式不再作为当前合同。Evidence、查询、有效性、版本迁移及例子已同步；不恢复个人 KC 状态。
 
 旧 KCClaim / KCBelief 按原版本留在历史中，不删除、不作为当前能力输入、不直接改成 Task Claim。若原始表现足以支持新的明确任务命题，可经新版本 Evidence 解释与推断形成新 Belief，并保留原始来源及证据依赖；依据不足则 UNKNOWN。已有 Task Claim 也须核对责任、范围、方法和支持条件，不只改字段名。
 
-旧 Freeze Gate、Spike、Build 和 G3 结果继续属于原基线。本轮只传导文档合同，不声称代码、领域包、评测参考或参数已迁移和通过验证。逐文件修订及未完成迁移见[模型复核 §10](DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+旧 Freeze Gate、Spike、Build 和 G3 结果继续属于原基线。本轮只传导文档合同，不声称代码、领域包、评测参考或参数已迁移和通过验证。逐文件修订及未完成迁移见[模型复核 §11](DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。

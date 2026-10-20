@@ -1,17 +1,17 @@
-# DeerMind Evolution Space Design v1.4
+# DeerMind Evolution Space Design v1.5
 
-> **版本**：v1.4<br>
+> **版本**：v1.5<br>
 > **中文名称**：DeerMind 演化空间设计<br>
 > **文档性质**：Space Design / Architecture Baseline<br>
 > **状态**：阶段性语义结论已纳入正式设计；本轮未新增实证或阶段 Gate 结论<br>
-> **上位基线**：DeerMind Concept Architecture v1.4<br>
-> **关联基线**：[DeerMind Domain Space Design v1.2](DeerMind_Domain_Space_Design_v1.2.md)；[Learning Space v1.2](DeerMind_Learning_Space_Design_v1.2.md)；[Evaluation Space v1.4](DeerMind_Evaluation_Space_Design_v1.4.md)；[Interaction Space v1.4](DeerMind_Interaction_Space_Design_v1.4.md)<br>
+> **上位基线**：DeerMind Concept Architecture v1.5<br>
+> **关联基线**：[DeerMind Domain Space Design v1.3](DeerMind_Domain_Space_Design_v1.3.md)；[Learning Space v1.3](DeerMind_Learning_Space_Design_v1.3.md)；[Evaluation Space v1.5](DeerMind_Evaluation_Space_Design_v1.5.md)；[Interaction Space v1.5](DeerMind_Interaction_Space_Design_v1.5.md)<br>
 > **上位价值约束**：DeerMind Product Thesis v1.0；DeerMind Product Constitution v1.0<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：纳入四维规范的受治理变更；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：收敛模型演化对象与方面影响分析；同步相关合同与现行引用。逐文件变更见[修订记录 §11](DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
@@ -117,7 +117,7 @@ Evolution 不是产品成熟后才补上的“自动调优系统”。如果早�
 
 个人能力状态当前只采用 Task Claim。KC 定义与关系的修订仍属于 Domain 的演化范围；因某次错误提出的局部知识诊断不是个人 KC 状态。若希望重新引入 KC Claim，须提出独立证据、决策收益及复杂度代价，经正式语义变更授权；不能借诊断功能或候选试运行绕过状态类型合同。
 
-默认四维的采用、裁剪与扩展也属于可追溯的规范变更。提案须说明任务与目标范围、所改变的责任或条件、可解释证据、教学价值、决定／审核权限和版本影响。不能以表现不佳或取证尚未完成为由删除迁移、保持等要求。只改目标采用与真正改变 Claim 语义须分别传导失效；未取得证据的新命题保留未知，不从其他维度复制 Belief。
+Claim 内部方面的定义、裁剪与扩展遵循受控变更，提案说明唯一模板、评价条件、方面键、证据要求与目标影响。同一条件下不按四维增加顶层 Claim，不以困难或未测删减要求；只有实质责任条件不同才考虑另一个定义／版本。目标选择改变与方面语义改变分别处理，按实际依赖复核相关状态，旧方面判断不能随新方面加入而自动刷新。
 
 ## 2. 设计问题与第一性约束
 
@@ -1221,7 +1221,7 @@ Validation 与 rollout 需要允许正式与候选版本并存，以支持：
 
 ### 6.9 各 Space 与上位 Context 对 Evolution 的最小责任
 
-Domain Space v1.2、Learning Space v1.2 与 Evaluation / Interaction / Evolution v1.4 分别定义自身 Evolution Contract。这里不重复内部字段，只冻结横向责任：
+Domain Space v1.3、Learning Space v1.3 与 Evaluation / Interaction / Evolution v1.5 分别定义自身 Evolution Contract。这里不重复内部字段，只冻结横向责任：
 
 | 来源 | 至少需要可演化 / 可审计的信息 |
 |---|---|
@@ -1562,7 +1562,7 @@ Evolution 本身需要持续回答：
 
 ### 8.5 System Design Handoff
 
-Evolution Space v1.4 定义系统认识、验证与授权分离的当前合同，System Design v1.3 对应承接下列责任；其具体实现按后续工程范围逐步交付：
+Evolution Space v1.5 定义系统认识、验证与授权分离的当前合同，System Design v1.4 对应承接下列责任；其具体实现按后续工程范围逐步交付：
 
 - System Signal ingestion、classification 与 empirical / normative / authority-change 类型识别；
 - System Issue store、身份、merge / 拆分 / 生命周期；
@@ -1786,6 +1786,6 @@ Target Responsibility Boundary 改变后，历史 replay 只能重新解释已�
 
 ## 附录 D — 本版调整与历史边界
 
-v1.2 完成领域／课程输入分离，v1.3 承接 Task Claim 单一能力状态；本版补充默认四维评价及有依据的裁剪／扩展，保持核心模型、事实与认识分层、权限、未知和受治理变更合同。当前 Domain Space v1.2 提供任务、方法和 KC，Learning Space v1.2 提供材料、映射与目标采用规则；两组规范分别拥有版本和提交责任。
+v1.2 完成领域／课程输入分离，v1.3 承接 Task Claim 单一能力状态，v1.4 引入默认四维评价。本版将四维作为单模板 Claim 内部方面，按方面承接判断、依赖和变更责任，保持核心模型、事实与认识分层、权限、未知和受治理变更合同。当前 Domain Space v1.3 提供任务、方法和 KC，Learning Space v1.3 提供材料、映射与目标采用规则；两组规范分别拥有版本和提交责任。
 
 原 v1.1 的完整文本及 Freeze Gate 叙述由 Git 保存。本轮没有重跑旧实验，也没有将当时评审改写为新模型通过；实现代码与领域包仍须按实际工程交付迁移。当前修订依赖的规范和运行合同见[概念设计入口](README.md)。

@@ -1,20 +1,20 @@
-# DeerMind AI Reasoning Runtime Design v1.3
+# DeerMind AI Reasoning Runtime Design v1.4
 
-> **版本**：v1.3<br>
+> **版本**：v1.4<br>
 > **中文名称**：DeerMind AI 推理运行时设计<br>
 > **文档性质**：System Design Baseline<br>
 > **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
-> **上位基线**：[Concept Architecture v1.4](../concept-design/DeerMind_Concept_Architecture_v1.4.md)、[Domain Space v1.2](../concept-design/DeerMind_Domain_Space_Design_v1.2.md)、[Learning Space v1.2](../concept-design/DeerMind_Learning_Space_Design_v1.2.md)、Evaluation / Interaction / Evolution v1.4、[AI-Native Principles v0.5](../top/DeerMind_AI_Native_Architecture_Principles_v0.5.md)；总体合同为 [System Design v1.3](DeerMind_System_Design_v1.3.md)<br>
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.8.md`<br>
+> **上位基线**：[Concept Architecture v1.5](../concept-design/DeerMind_Concept_Architecture_v1.5.md)、[Domain Space v1.3](../concept-design/DeerMind_Domain_Space_Design_v1.3.md)、[Learning Space v1.3](../concept-design/DeerMind_Learning_Space_Design_v1.3.md)、Evaluation / Interaction / Evolution v1.5、[AI-Native Principles v0.6](../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md)；总体合同为 [System Design v1.4](DeerMind_System_Design_v1.4.md)<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.9.md`<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：更新本版合同说明，保留原实验边界；明确四维推理输入及候选校验边界；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](../concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：更新单模板多维输入合同及历史边界；同步相关合同与现行引用。逐文件变更见[修订记录 §11](../concept-design/DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
-本版在 Task Claim 单一能力状态合同基础上，承接默认四维评价、有依据的裁剪／扩展及相应依赖；事实、认知、权限、严格会话串行和 typed invalidation 机制保持。文档修订不表示内容资产或旧实现已迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
+本版承接单模板多维 Claim：Evidence 指向内部方面，Belief 分方面保留判断、依据及有效性；规范定义和个人更新仍经各自 owner 提交。事实、权限、严格会话串行及 typed invalidation 机制保持；文档修订不表示资产或实现已迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计命题
@@ -101,7 +101,7 @@ AI Runtime 的责任是**执行受版本化 Protocol、受控 Context 与显式 
 
 ### 1.4 与总体 System Design 和相邻专项的关系
 
-总体 `DeerMind_System_Design_v1.2` 定义 AI Reasoning Runtime 在全系统中的位置：Context 由正式状态解析而来，AI 产生 Candidate，Candidate 通过 Validation / Commit 取得 standing，所有 formal effect 在 commit / execution 前重新验证 current authority、dependency、version 与 data authority。
+总体 `DeerMind_System_Design_v1.4` 定义 AI Reasoning Runtime 在全系统中的位置：Context 由正式状态解析而来，AI 产生 Candidate，Candidate 通过 Validation / Commit 取得 standing，所有 formal effect 在 commit / execution 前重新验证 current authority、dependency、version 与 data authority。
 
 本文档把该责任深化为 Focused Design Closure，但不接管其他专项：
 
@@ -723,7 +723,7 @@ WorkflowCheckpoint
 
 能力推理候选只能引用本次授权、版本明确的 Task Claim。校验须检查任务范围、责任、方法要求及实际帮助；不得把正确答案扩写为全部方法或 KC 已掌握。KC 仍可随 Domain 定义进入解释与教学上下文，局部诊断须引用表现依据；请求输出 KCClaim / KCBelief 或隐性 KC 掌握评分不符合当前正式输出合同。类型和版本检查是确定性约束，证据是否充分的语义判断仍须按版本化规则执行，不能声称由字段检查保证准确。
 
-模型任务须接收具体 Claim、所承载维度的责任／变化／时间条件、实际支持及来源版本，不仅给出四个维度名称再请求评分。结构检查核对引用、类型和版本；语义解释检查表现是否真正支持对应责任。输出须允许无足够证据，不得临时声明维度不适用、发布新 Claim、把独立求解复制成迁移／保持，或把同源表现计为多份独立证据。四维是否可判与既有候选校验／正式提交权限分开。
+模型任务接收唯一任务模板及 Claim 版本、需解释的方面键与责任条件、实际方法／帮助／变化／时间及来源。候选 Evidence 指向明确方面；候选更新列明受影响方面、判断与依据，未影响方面不冒充已重测。结构校验核对方面属于当前 Claim、引用／版本／权限完整；语义校验判断实际表现是否适用。方面定义缺失返回准备／解析缺口，无充分表现可为 UNKNOWN。禁止输出另一个任务的掌握、临时发布方面、复制求解判断到迁移／保持或重复计权同源表现。
 
 ## 6. Candidate、Validation、Commit 与失败语义
 
@@ -1243,7 +1243,7 @@ ActionSemantic 检查可以作为显式复合 Policy 验证 Profile 中的必需
 
 ### 8.6 Focused Design Closure 判断
 
-本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.2 在此基础上更新任务与单类能力状态合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.4 在此基础上承接单模板多维 Claim、方面证据与状态合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 A2 的普遍语义隔离保证已撤回，required checks、exact-candidate 绑定、owner authority 和失败路径不撤回；E1/X5 的质量与完成率限制按 ADR 002 处理。
 

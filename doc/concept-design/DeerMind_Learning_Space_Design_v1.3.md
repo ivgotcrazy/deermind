@@ -1,16 +1,16 @@
-# DeerMind Learning Space Design v1.2
+# DeerMind Learning Space Design v1.3
 
-> **版本**：v1.2<br>
+> **版本**：v1.3<br>
 > **中文名称**：DeerMind 学习空间设计<br>
 > **文档性质**：Product Context Semantic Contract；不新增核心架构 Space<br>
 > **状态**：目标与材料的语义归属已确认；具体产品实现和领域资产待后续阶段交付<br>
-> **上位基线**：[Concept Architecture v1.4](DeerMind_Concept_Architecture_v1.4.md)、[Product Constitution v1.0](../top/DeerMind_Product_Constitution_v1.0.md)<br>
-> **关联设计**：[Domain Space v1.2](DeerMind_Domain_Space_Design_v1.2.md)、[Evaluation v1.4](DeerMind_Evaluation_Space_Design_v1.4.md)、[Interaction v1.4](DeerMind_Interaction_Space_Design_v1.4.md)<br>
+> **上位基线**：[Concept Architecture v1.5](DeerMind_Concept_Architecture_v1.5.md)、[Product Constitution v1.0](../top/DeerMind_Product_Constitution_v1.0.md)<br>
+> **关联设计**：[Domain Space v1.3](DeerMind_Domain_Space_Design_v1.3.md)、[Evaluation v1.5](DeerMind_Evaluation_Space_Design_v1.5.md)、[Interaction v1.5](DeerMind_Interaction_Space_Design_v1.5.md)<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：纳入默认四维与有依据裁剪的目标语义；明确目标采用、准备缺口、发布权限与章节统计边界；明确维度调整与 Claim 迁移的不同影响；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：目标引用精确到任务 Claim 及内部方面；同步相关合同与现行引用。逐文件变更见[修订记录 §11](DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
@@ -61,22 +61,22 @@ GoalIntent、ExternalStandard／Obligation 与正式 LearningTarget 必须保持
 | 方法要求 | 哪些 SolutionTemplate 可用；允许任选一种、指定方法，还是多个方法分别覆盖；适用性与子任务约束如何继承 |
 | 期望责任 | 要求计算、理解、选法、组织、解释、验证等哪些实际表现；哪些尚未要求 |
 | 质量与成功语义 | 达到怎样的正确性、解释质量、稳定性或迁移范围才有理由说目标成立 |
-| 默认评价覆盖 | 依 Evaluation §3.1 默认考虑独立完成、理解与解释、迁移应用、延迟保持；记录每项采用及对应 Claim，裁剪／扩展须有依据、影响、责任人与版本 |
+| 默认评价覆盖 | 每个选定任务引用单模板 Claim 版本及其内部方面；默认独立、理解、迁移、保持。目标记录采用方面、标准及有依据裁剪／扩展，跨任务要求通过目标组织 |
 | 条件 | 判断成立的环境、工具、变化范围、时间或风险限制 |
 | 支持与责任边界 | 哪些工作由学习者自己承担，哪些可以交给工具、AI 或他人 |
 | 来源与可评估性 | 要求的来源与权限、版本、适用范围，以及原则上可支持或反驳它的证据 |
 
 Learning Space 对共享 Domain 作有范围的引用，不复制或裁剪全局 TaskTemplate。方法选择须沿实际递归分解检查适用范围；被排除的方法若仍数学上正确，不能被判成数学错误，但不能冒充已满足指定方法的目标。新增未审核方法先保留映射未决，不能靠选择规则把它当成正式已覆盖方法。
 
-同一目标纳入方法 A、B 时，知识覆盖可包含两者的 KC 并集；“纳入”不自动等于“全部必须掌握”。方法要求与解释、选法等责任必须明确，才可由 Evaluation 定义相应 Task Claim。选定 ANY 与要求 ALL 的目标不能共享一个被静默改义的 Claim；已有 Belief 只在原 Claim 条件内有效。
+同一目标纳入方法 A、B 时，知识覆盖可包含两者 KC 的并集；“纳入”不自动意味着两法均须掌握。同一模板、同一评价条件以一个多维 Claim 组织责任，不按四个维度分建声明。方法 ANY、指定或 ALL 等含义不同的评价条件须绑定明确的适用定义／版本；仅提高目标门槛或改变所需方面不必复制 Claim，也不直接改变 Belief。
 
 这些组成是语义要求，不强制最终成为同名字段。目标不退化成 KC 清单或单一分数；尚不能明确的部分应保留未决和使用限制。测得了什么只能支持相应范围的判断，不能为了便于测量把真实学习目的悄悄改成“完成几道题”。
 
 例如，目标 A 要求在分数分组问题中独立建立数量关系并求解；目标 B 允许给出关系式，只要求正确计算。两者可引用同一 TaskTemplate，却具有不同支持与责任条件。Domain 中的方法保持相同，Evaluation 对两种条件下的表现分别解释，Interaction 据此选择合适帮助。
 
-默认四维作用于有教学意义的任务范围，不把目标机械拆成每个模板四项要求。若目标采用某维度但相应 Claim 尚未准备完成，应登记内容缺口；已定义但尚无表现，则由 Evaluation 表达认识不足。延迟保持须明确保持什么、间隔和期间支持条件；迁移须明确变化范围。不得因暂无证据把它们改为不适用。
+四维在单模板 Claim 内定义，目标可以选择多个任务及各自方面，不把整个课程绑定为一个跨模板 Claim。一个目标要求可以综合多个方面，但每项判断须能追溯具体依据；章节统计仍按已发布学习要求计数，不按模板数乘四。目标采用的方面尚未定义完整是准备缺口，已定义但无证据是认识不足，不能改成不适用。
 
-四维通用定义及 Task Claim 语义以 [Evaluation §3.1](DeerMind_Evaluation_Space_Design_v1.4.md#31-learner-state-model定义-deermind-可以相信什么) 为准；目标发布记录采用、裁剪与扩展的理由及影响。首版由管理员维护并审核规范内容，学生选择已发布目标及范围；不能通过聊天删掉表现较弱的维度。章节统计仍按已发布学习要求计数，不按四维乘以模板数量。
+四维通用定义及 Task Claim 语义以 [Evaluation §3.1](DeerMind_Evaluation_Space_Design_v1.5.md#31-learner-state-model定义-deermind-可以相信什么) 为准；目标发布记录采用、裁剪与扩展的理由及影响。首版由管理员维护并审核规范内容，学生选择已发布目标及范围；不能通过聊天删掉表现较弱的维度。
 
 ### 4.3 目标、问题与工具边界
 
@@ -98,7 +98,7 @@ TargetBinding 的发生事实进入全局 Event；关系是否具有合法来源
 
 材料、映射、目标、Domain、Claim 和 Policy 应有可分辨的身份及版本依赖。可以统一打包发布相容的组合，但不能用一个含混的“最新课程版本”覆盖各自来源。Task Claim 的任务范围、方法覆盖或完成责任发生变化时，应建立明确的新语义版本或新命题，并按依据重新解释；旧命题不能仅因目标更新被判为能力下降。跨空间关系需能追溯到所用具体版本；定义记录、发布状态与当前绑定也不能互相替代。
 
-单纯修改维度采用或目标门槛时，重新计算 TargetAssessment 并复核其下游依赖，不直接改变原 Claim 的 LearnerBelief；裁剪要求不能显示成能力提升。若同时改变任务范围、责任、迁移变化或保持条件等 Claim 含义，则另行版本化并按相应依赖重解释 Evidence、重新推断。新增迁移或保持命题不能直接复制独立求解的 Belief。材料排版或章节位置变化也不应自动重算全部能力判断。
+仅改变目标选择的方面或门槛时，重算 TargetAssessment 及受影响的决策输入，不直接改变多维 Belief。若改变 Claim 内部方面定义、方法责任、迁移变化或保持条件，则发布明确新版本，逐方面核对兼容和实际依赖；新方面不复制其他方面判断，不因一方面重算刷新全部证据时间。裁剪目标要求不能显示成能力提升；教材排版或章节位置改变也不自动重算全部能力。
 
 材料或映射错误可影响题目解读、范围覆盖与统计，需要定位实际依赖并重新解释相关结论。纠正历史解释不改变当时原始上传、实际展示与作答。用户可见删除、内部保存用途和彻底删除的产品规则按已确认需求和数据权限合同执行，本文不另开一套删除政策。
 

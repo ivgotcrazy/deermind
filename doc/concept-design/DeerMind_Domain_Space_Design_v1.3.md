@@ -1,16 +1,16 @@
-# DeerMind Domain Space Design v1.2
+# DeerMind Domain Space Design v1.3
 
-> **版本**：v1.2<br>
+> **版本**：v1.3<br>
 > **中文名称**：DeerMind 领域空间设计<br>
 > **文档性质**：Conceptual Space Design<br>
 > **状态**：阶段性语义结论正式纳入设计；领域有效性与实现迁移仍待验证<br>
-> **上位基线**：[Concept Architecture v1.4](DeerMind_Concept_Architecture_v1.4.md)、[Product Constitution v1.0](../top/DeerMind_Product_Constitution_v1.0.md)<br>
-> **关联设计**：[Learning Space](DeerMind_Learning_Space_Design_v1.2.md)、[Evaluation](DeerMind_Evaluation_Space_Design_v1.4.md)、[Interaction](DeerMind_Interaction_Space_Design_v1.4.md)、[Evolution](DeerMind_Evolution_Space_Design_v1.4.md)<br>
+> **上位基线**：[Concept Architecture v1.5](DeerMind_Concept_Architecture_v1.5.md)、[Product Constitution v1.0](../top/DeerMind_Product_Constitution_v1.0.md)<br>
+> **关联设计**：[Learning Space](DeerMind_Learning_Space_Design_v1.3.md)、[Evaluation](DeerMind_Evaluation_Space_Design_v1.5.md)、[Interaction](DeerMind_Interaction_Space_Design_v1.5.md)、[Evolution](DeerMind_Evolution_Space_Design_v1.5.md)<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：区分 Domain 支持四维取证与个人评价责任；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：明确单模板能力参照与子任务证据边界；同步相关合同与现行引用。逐文件变更见[修订记录 §11](DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
@@ -22,7 +22,7 @@ DeerMind 要判断学习者能处理什么问题、为什么遇到困难、下�
 
 Domain Space 因此定义三类互补对象：TaskTemplate 描述可以要求学习者完成的哪类任务；SolutionTemplate 描述在何种条件下可如何完成；KnowledgeComponent 描述处理问题与组织方法所需的可复用认知结构或功能。三者共同提供知识与能力的领域参照，个人是否已经具备这些能力则由 Evaluation 根据表现推断。任务不是人的能力本身；Task Claim 对明确任务范围、完成责任、方法要求与条件作出可评价的能力命题。Task 也不等于一次教学活动、软件作业或动作步骤。
 
-Evaluation 的默认四维框架以这些规范对象为参照：TaskTemplate 提供任务及有意义的变化范围，SolutionTemplate 和 KC 提供解释、方法与教学依据。Domain 不因此为每个模板生成四套状态或固定目标，也不把结构相同认定为迁移证据等价。独立、理解、迁移与保持是否成立，须由明确 Task Claims 和实际表现判断；采用与裁剪的规范边界见 [Evaluation §3.1](DeerMind_Evaluation_Space_Design_v1.4.md#31-learner-state-model定义-deermind-可以相信什么)。
+Evaluation 的 Task Claim 绑定一个明确版本的 TaskTemplate，默认在声明内组织独立完成、理解与解释、迁移应用、延迟保持方面；个人判断保存在多维 Belief。Domain 提供任务变化、方法、知识与适用条件，不提供跨任务掌握传播规则。具体题目及真实子任务须有适用映射才可提供对应方面的证据；参考 Solution 分解树不证明学生实际执行过所有节点。规范关系见 [Evaluation §3.1](DeerMind_Evaluation_Space_Design_v1.5.md#31-learner-state-model定义-deermind-可以相信什么)。
 
 Domain Space 不拥有课程容器、个人学习目标、学习者信念、当前教学决策和实际执行历史。Learning Space 定义材料、范围与目标；Interaction 选择活动并解释当前表现；Evaluation 形成 Evidence 与 Belief；Evolution 分析模型失配并提出受治理修订。域模型可以被多个目标复用，不随某一孩子的进度裁剪其定义。
 
@@ -122,7 +122,7 @@ KnowledgeComponent 沿用知识成分的研究传统，表示可学习、可复�
 
 Domain Space 维护 KC 定义、适用条件与知识关系；Evaluation 当前不创建 KCClaim / KCBelief。KC 用于解释任务与方法、定位当前错误、组织讲解及设计后续取证，相关分析保留实际表现、方法、帮助和范围依据。一次分析可以指出“本次把变化量当作最终量”，不能由此在旁路维护跨任务的“基准 KC 未掌握”状态。
 
-求解、解释、选法和检查等需要持续评价的责任，均由有明确任务范围的 Task Claim 表达；不把每个 KC 自动改名成一个 Task Claim，也不因参考方法列出了知识依赖而自动生成个人掌握判断。解释未被要求或未被观察到时，保留证据不足。
+求解、解释、选法和检查等需要持续评价的责任，落实到单模板 Task Claim 的内部方面及质量条款；不因责任不同就另建顶层 Claim，不把每个 KC 自动改名成一个 Task Claim，也不因参考方法列出了知识依赖而自动生成个人掌握判断。解释未被要求或未被观察到时，保留证据不足。
 
 知识依据必须以适用方法和情境为条件。分数除法可以采用乘倒数方法，也可以用统一单位解释份数；掌握一种有效方法不证明已经理解另一种方法，其有效表现也不能因没有展示另一方法而被否定。
 
@@ -140,7 +140,7 @@ KC 划分属于可修订的领域假设。理论支持采用这一类概念，�
 
 材料中的一节可以映射到该模板、两种方法和相关 KC；产品目标可要求“无需定位与解法提示，在规定变化范围内独立建模并求解”，也可只要求“在已给出关系式后正确计算”。相同问题与方法服务不同目标，无需复制两套领域对象。
 
-运行时 Interaction 展示具体题目，记录实际提示与提交，并形成 Observation。Evaluation 对计算、选法、解释等所需 Claim 分别解释证据。只提交“三人”可以支持结果正确，但不足以证明所有推导或迁移责任均由学习者承担。目标达成是目标定义与当前有效 Belief 的派生比较；是否再追问、讲解或换题由 Interaction 决定。
+运行时 Interaction 展示具体题目，记录实际提示与提交，并形成 Observation。Evaluation 依据该任务 Claim 的内部方面，解释求解、选法、说明理由等实际表现，再更新同一多维 Belief。若实际过程还提供了可识别的计算子任务表现，须核对其独立的任务映射与 Claim，不能从参考分解树自动补出子任务掌握。只提交“三人”可以支持结果正确，但不足以证明所有推导或迁移责任均由学习者承担。目标达成是目标定义与当前有效 Belief 的派生比较；是否再追问、讲解或换题由 Interaction 决定。
 
 ### 6.2 Kubernetes 示例与适用限制
 

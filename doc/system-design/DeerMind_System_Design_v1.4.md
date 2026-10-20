@@ -1,20 +1,20 @@
-# DeerMind System Design v1.3
+# DeerMind System Design v1.4
 
-> **版本**：v1.3<br>
+> **版本**：v1.4<br>
 > **中文名称**：DeerMind 系统设计<br>
 > **文档性质**：System Design Baseline<br>
 > **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
-> **上位基线**：[Concept Architecture v1.4](../concept-design/DeerMind_Concept_Architecture_v1.4.md)、[Domain Space v1.2](../concept-design/DeerMind_Domain_Space_Design_v1.2.md)、[Learning Space v1.2](../concept-design/DeerMind_Learning_Space_Design_v1.2.md)、Evaluation / Interaction / Evolution v1.4、[AI-Native Principles v0.5](../top/DeerMind_AI_Native_Architecture_Principles_v0.5.md)；总体合同为 [System Design v1.3](DeerMind_System_Design_v1.3.md)<br>
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.8.md`<br>
+> **上位基线**：[Concept Architecture v1.5](../concept-design/DeerMind_Concept_Architecture_v1.5.md)、[Domain Space v1.3](../concept-design/DeerMind_Domain_Space_Design_v1.3.md)、[Learning Space v1.3](../concept-design/DeerMind_Learning_Space_Design_v1.3.md)、Evaluation / Interaction / Evolution v1.5、[AI-Native Principles v0.6](../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md)；总体合同为 [System Design v1.4](DeerMind_System_Design_v1.4.md)<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.9.md`<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：更新本版合同说明，保留原实验边界；补充系统总体四维输入输出合同；同步当前阶段交接说明；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](../concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：更新单模板多维输入合同及历史边界；同步相关合同与现行引用。逐文件变更见[修订记录 §11](../concept-design/DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
-本版在 Task Claim 单一能力状态合同基础上，承接默认四维评价、有依据的裁剪／扩展及相应依赖；事实、认知、权限、严格会话串行和 typed invalidation 机制保持。文档修订不表示内容资产或旧实现已迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
+本版承接单模板多维 Claim：Evidence 指向内部方面，Belief 分方面保留判断、依据及有效性；规范定义和个人更新仍经各自 owner 提交。事实、权限、严格会话串行及 typed invalidation 机制保持；文档修订不表示资产或实现已迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
 ## 1. 文档定位与设计边界
@@ -77,12 +77,12 @@ Concept Architecture 与四份 Space Design 定义 **semantic ownership**；AI-N
 
 | Work Package | Focused Design Baseline | 与总体设计的关系 |
 |---|---|---|
-| §3.2 Runtime & Event | `DeerMind_Runtime_Event_Architecture_v1.3.md` | 深化 factual authority、Event identity / ordering / correction / replay contract |
-| §3.3 AI Reasoning Runtime | `DeerMind_AI_Reasoning_Runtime_Design_v1.3.md` | 深化 Reasoning Protocol、Context、Tool、Candidate、Validation / Commit 与 execution history |
-| §3.4 State / Dependency / Invalidation | `DeerMind_State_Dependency_Architecture_v1.3.md` | 深化 dependency、typed invalidation、Current Resolution、recompute 与 consistency |
-| §3.5 Interaction / Decision | `DeerMind_Interaction_Decision_Runtime_Design_v1.3.md` | 深化 DecisionCycle、PolicyOutcome、Plan、ActionIntent / Executor / Occurrence 与 exposure lineage |
-| §3.6 Version / Replay / Migration | `DeerMind_Semantic_Version_Replay_Migration_Design_v1.3.md` | 深化 VersionContext、compatibility、activation、migration、replay / reinterpretation |
-| §3.7 Evolution / Governance | `DeerMind_Evolution_Governance_Runtime_Design_v1.3.md` | 深化 Signal / Issue / Hypothesis / Validation / Governance / Activation / post-deployment loop |
+| §3.2 Runtime & Event | `DeerMind_Runtime_Event_Architecture_v1.4.md` | 深化 factual authority、Event identity / ordering / correction / replay contract |
+| §3.3 AI Reasoning Runtime | `DeerMind_AI_Reasoning_Runtime_Design_v1.4.md` | 深化 Reasoning Protocol、Context、Tool、Candidate、Validation / Commit 与 execution history |
+| §3.4 State / Dependency / Invalidation | `DeerMind_State_Dependency_Architecture_v1.4.md` | 深化 dependency、typed invalidation、Current Resolution、recompute 与 consistency |
+| §3.5 Interaction / Decision | `DeerMind_Interaction_Decision_Runtime_Design_v1.4.md` | 深化 DecisionCycle、PolicyOutcome、Plan、ActionIntent / Executor / Occurrence 与 exposure lineage |
+| §3.6 Version / Replay / Migration | `DeerMind_Semantic_Version_Replay_Migration_Design_v1.4.md` | 深化 VersionContext、compatibility、activation、migration、replay / reinterpretation |
+| §3.7 Evolution / Governance | `DeerMind_Evolution_Governance_Runtime_Design_v1.4.md` | 深化 Signal / Issue / Hypothesis / Validation / Governance / Activation / post-deployment loop |
 
 这些文档与本文档不是六套平行架构，而是同一 System Design Baseline 的不同精度层级：
 
@@ -283,9 +283,9 @@ SharedSemanticAuthority
 
 具体问题不是新增规范定义：它保留实际呈现、来源、TaskTemplate 版本与参数绑定；具体方法应用引用 SolutionTemplate 及已知输入和中间输出；学习者轨迹来自实际 occurrence。外部问题未完成映射或方法尚未覆盖时允许保留未决，其可用范围由用途合同决定。此类记录不赋予 Runtime 创建正式模板或 KC 的权限。
 
-Task Claim（规范类型 TaskProficiencyClaim / TaskProficiencyBelief）是当前唯一个人能力状态类型，其领域坐标是明确版本的 TaskScope、责任、方法要求、条件、支持边界与质量要求。模板和 Claim 不必一一对应；任选、指定和多方法分别覆盖须区分。实际方法、帮助、题目重复、时间及表征进入 Evidence 的条件与依赖解释。Domain KC 可用于诊断与教学，但不创建 KCClaim / KCBelief，也不在缓存或临时分析中持续维护隐性 KC 掌握状态。
+Task Claim（规范类型 TaskProficiencyClaim）精确绑定一个 TaskTemplate 版本，TaskScope 只限定该模板内部范围；同一评价条件下四维组织为内部方面，不分建顶层命题。个人 TaskProficiencyBelief 仍按 learner、Learning Space、ClaimVersion 定位，内部保存各方面的判断、不确定性、状态、依据及时间。KC 用于领域解释与教学，不创建 KCClaim / KCBelief 或隐性个人知识状态。
 
-默认四维的语义权威为 Evaluation §3.1：独立完成、理解与解释、迁移应用、延迟保持。Learning Space 的版本化目标记录采用、裁剪／扩展依据和 Claim 对应关系；运行时读取已生效定义，不按每个 TaskTemplate 自动生成四个状态。Inference 对各命题分别解释实际条件与证据，保留共同来源；未测、条件未知、保持时点未到与不适用分别表达，不汇总成无依据的总掌握率。
+方面语义以 Evaluation §3.1、§4 为准。能力 Evidence 带 ClaimVersion 与 AspectKey；推断候选必须说明改变哪些方面、所据表现和依赖，不能把“支持 Claim”无范围地应用到全部方面。一次 owner commit 形成一份多维 Belief 修订，未变化方面保留原依据及时间。读取方声明所需方面并检查各自有效性；目标汇总可以跨任务，但不创造跨模板总能力 Claim 或总掌握状态。
 
 ### 3.6 Integrated Design 与 Focused Design 的责任分层
 
@@ -1152,12 +1152,12 @@ A1已取得三类输入各五次的真实形成证据，E2/F2/X1/X2原缺口已�
 本文件是 **Integrated System Design / System Map**，负责完整 mental model、跨机制运行闭环和 system-level contract。六个 Focused Design 已不再是“未来可能需要的文档”，而是本修订候选采用的 Focused Design 文档集：
 
 ```text
-DeerMind_Runtime_Event_Architecture_v1.3.md
-DeerMind_AI_Reasoning_Runtime_Design_v1.3.md
-DeerMind_State_Dependency_Architecture_v1.3.md
-DeerMind_Interaction_Decision_Runtime_Design_v1.3.md
-DeerMind_Semantic_Version_Replay_Migration_Design_v1.3.md
-DeerMind_Evolution_Governance_Runtime_Design_v1.3.md
+DeerMind_Runtime_Event_Architecture_v1.4.md
+DeerMind_AI_Reasoning_Runtime_Design_v1.4.md
+DeerMind_State_Dependency_Architecture_v1.4.md
+DeerMind_Interaction_Decision_Runtime_Design_v1.4.md
+DeerMind_Semantic_Version_Replay_Migration_Design_v1.4.md
+DeerMind_Evolution_Governance_Runtime_Design_v1.4.md
 ```
 
 它们分别深化 Event / Factual Contract、AI Reasoning、State / Dependency、Interaction / Action、Version / Replay 与 Evolution / Governance；本文档不复制其字段、完整状态机、完整 invariant registry 或算法细节。
@@ -1168,7 +1168,7 @@ DeerMind_Evolution_Governance_Runtime_Design_v1.3.md
 §3.2–§3.7 = SEPARATE / BASELINE v1.0
 ```
 
-这只是文档封装，不创造新的 architecture hierarchy。总体及六项专项 v1.3 构成同一现行合同集合；实现不得只选择其中一份而忽略另一份。旧版作为历史 Spike 和评审输入保留。
+这只是文档封装，不创造新的 architecture hierarchy。总体及六项专项 v1.4 构成同一现行合同集合；实现不得只选择其中一份而忽略另一份。旧版作为历史 Spike 和评审输入保留。
 
 §3.8 继续采用 `MERGED / CROSS-CUTTING`：Privacy、Data Authority、Security、Audit、Observability、Lifecycle / Recovery 不建立一个拥有独立 semantic authority 的第七 Runtime，而通过本文档的统一 contract 和各专项 enforcement point 落地。
 
@@ -1221,7 +1221,7 @@ Phase 0 Architecture Baseline 只有在以下证据出现时才应重新打开�
 
 ### 8.5 当前阶段与后续顺序
 
-系统设计内部 Phase 6、Gate E/F 和 Architecture Validation Build 已按旧基线收口。Phase 3 已按 G3-20261015-01 阶段性通过，当前处于 Phase 4。本版传导 Task Claim 单一状态及默认四维评价合同；下一步按 OPEN-010 迁移领域与评测资产，再由 Phase 5 完成实现及验证，不能把本次文档修订当作 G4/G5 通过。
+系统设计内部 Phase 6、Gate E/F 和 Architecture Validation Build 已按旧基线收口。Phase 3 已按 G3-20261015-01 阶段性通过，当前处于 Phase 4。本版传导单模板多维 Claim、方面 Evidence 与多维 Belief 合同；下一步按 OPEN-010 迁移领域与评测资产，再由 Phase 5 完成实现及验证，不能把本次文档修订当作 G4/G5 通过。
 
 本轮不重新启动 Spike 或 Build，也不复写历史失败。新模型的实际领域包、具体问题溯源与旧类型迁移必须在后续工程交付中取得证据，不能仅凭文档更名视为完成。历史阶段结论和现行合同的区别见[系统设计入口](README.md)。
 

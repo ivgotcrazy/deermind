@@ -1,23 +1,23 @@
-# DeerMind Runtime & Event Architecture v1.3
+# DeerMind Runtime & Event Architecture v1.4
 
-> **版本**：v1.3<br>
+> **版本**：v1.4<br>
 > **中文名称**：DeerMind 运行时与事件架构<br>
 > **文档性质**：System Design Baseline<br>
 > **状态**：领域模型修订后的实现合同；本轮未新增运行验证或 Gate 结论<br>
-> **上位基线**：[Concept Architecture v1.4](../concept-design/DeerMind_Concept_Architecture_v1.4.md)、[Domain Space v1.2](../concept-design/DeerMind_Domain_Space_Design_v1.2.md)、[Learning Space v1.2](../concept-design/DeerMind_Learning_Space_Design_v1.2.md)、Evaluation / Interaction / Evolution v1.4、[AI-Native Principles v0.5](../top/DeerMind_AI_Native_Architecture_Principles_v0.5.md)；总体合同为 [System Design v1.3](DeerMind_System_Design_v1.3.md)<br>
-> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.8.md`<br>
+> **上位基线**：[Concept Architecture v1.5](../concept-design/DeerMind_Concept_Architecture_v1.5.md)、[Domain Space v1.3](../concept-design/DeerMind_Domain_Space_Design_v1.3.md)、[Learning Space v1.3](../concept-design/DeerMind_Learning_Space_Design_v1.3.md)、Evaluation / Interaction / Evolution v1.5、[AI-Native Principles v0.6](../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md)；总体合同为 [System Design v1.4](DeerMind_System_Design_v1.4.md)<br>
+> **阶段路线图**：`DeerMind_System_Design_Roadmap_v0.9.md`<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：更新本版合同说明，保留原实验边界；说明四维所需事实与不可观测条件的边界；同步现行交叉引用和导航。逐文件变更见[修订记录 §10](../concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：更新单模板多维输入合同及历史边界；同步相关合同与现行引用。逐文件变更见[修订记录 §11](../concept-design/DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
-本版在 Task Claim 单一能力状态合同基础上，承接默认四维评价、有依据的裁剪／扩展及相应依赖；事实、认知、权限、严格会话串行和 typed invalidation 机制保持。文档修订不表示内容资产或旧实现已迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
+本版承接单模板多维 Claim：Evidence 指向内部方面，Belief 分方面保留判断、依据及有效性；规范定义和个人更新仍经各自 owner 提交。事实、权限、严格会话串行及 typed invalidation 机制保持；文档修订不表示资产或实现已迁移。[历史证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)、[Spike 报告](spike/DeerMind_Architecture_Validation_Report_v0.1.md)与 [Build 报告](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md)继续按各自原始版本解释，原失败及未决结论不变。
 ---
 
-四维评价使用本架构记录的实际输入、展示、帮助、工具使用、任务引用与时间事实；迁移是否成立、延迟表现支持何种保持命题由 Evaluation 解释。发生了七天间隔不等于发生了“已保持能力”的事实。无法观测的系统外练习须明确未知，不能因没有 Event 就推断没有练习或帮助。
+评价方面使用本架构记录的实际输入、任务／子任务引用、展示、方法与帮助、变化和时间。证据对哪个 Claim 方面有意义由 Evaluation 解释；同一 Event 可被多个方面引用，但不是多次新表现。重新解释或合并旧 Claim 不产生新的学习事实。外部练习不可观测时明确未知，不能把无 Event 解释为无帮助或无练习。
 
 ## 1. 文档定位与设计命题
 
@@ -71,7 +71,7 @@ Event 不是“世界绝对真相”，而是 DeerMind 对一个授权来源所�
 
 ### 1.4 与总体 System Design 的关系
 
-总体 `DeerMind_System_Design_v1.2` 规定 Factual Runtime 在系统中的位置、Source of Truth 与上层闭环；本文档负责把该系统级责任深化到 Focused Design Closure。本文档不新建新的 semantic owner，也不把 Factual Runtime 提升成一个独立 Conceptual Space。
+总体 `DeerMind_System_Design_v1.4` 规定 Factual Runtime 在系统中的位置、Source of Truth 与上层闭环；本文档负责把该系统级责任深化到 Focused Design Closure。本文档不新建新的 semantic owner，也不把 Factual Runtime 提升成一个独立 Conceptual Space。
 
 可以概括为：
 
@@ -921,7 +921,7 @@ SEPARATE
 
 ### 8.6 Focused Design Closure 判断
 
-本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.2 在此基础上更新任务与单类能力状态合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
+本专项的历史 v1.0 合同曾与总体及其余五项专项完成一致性评审；当前 v1.4 在此基础上承接单模板多维 Claim、方面证据与状态合同，未重办旧 Gate。Gate E/F 的逐项依据及能力分期见[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)，实验范围见[统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)。该关闭指可实施设计完成，不证明生产质量、可靠率或规模能力。
 
 Event identity、factual authority、admission、幂等、correction、ordering、ActionOccurrence、retention/replay 与相邻接口均已有合同；现有 evidence 为内存和 mock executor 范围，物理持久化及真实恢复属于 Build。
 

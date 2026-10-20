@@ -1,17 +1,17 @@
 # MVP 内容与评测准备资产
 
-> **版本**：v0.2<br>
+> **版本**：v0.3<br>
 > **文档性质**：Phase 4 资产入口与使用说明<br>
 > **状态**：已有 G3 批准快照、合成交互材料、开发案例及校内实际单元候选；正式内容审核与领域发布待完成<br>
 > **维护责任**：Codex 维护本轮资产；管理员复核实际内容<br>
 > **版本与评审**：各资产分别记录修订、来源与用途；[阶段记录](../../doc/mvp/MVP_Gate_Reviews.md)<br>
 > **写作规范**：[设计文档规范 v1.1](../../doc/top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：同步资产与原型的未迁移状态。逐文件变更见[修订记录 §10](../../doc/concept-design/DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：同步运行资产未迁移状态。逐文件变更见[修订记录 §11](../../doc/concept-design/DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
-当前设计采用 TaskTemplate、Task Claim 单一能力状态及默认四维评价（独立完成、理解与解释、迁移应用、延迟保持），裁剪／扩展须有依据。本目录既有内容包、演示与校验仍按原版本解释，尚未完成 Task-only 和四维覆盖／Claim 合同迁移；页面或旧校验可运行不代表新合同已接入。后续范围见 [OPEN-010](../../doc/mvp/MVP_Governance.md#4-待决事项与风险登记)。
+当前设计采用单模板多维 Task Claim：四维是 Claim 内部方面，Evidence 指向方面，一个 Belief 保存分方面判断。本目录内容包、原型与校验仍按原版本解释，尚未完成绑定、方面合同及多维状态接入；原型或旧校验可运行不证明新模型已实现。迁移及下一接收节点见 [OPEN-010](../../doc/mvp/MVP_Governance.md#4-待决事项与风险登记)。
 
 ---
 

@@ -1,17 +1,17 @@
 # DeerMind 学习模型目的需求与候选结构复核
 
-> **版本**：v0.2<br>
+> **版本**：v0.3<br>
 > **文档性质**：设计复核与变更记录<br>
 > **状态**：当前设计与工作入口；历史验证按原基线解释<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：本轮模型及修改范围由用户确认；文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-19<br>
-> **修订说明**：保留 §1–9 历史并固定原始引用，新增默认四维修订记录。逐文件变更见[修订记录 §10](DeerMind_Learning_Model_Reassessment.md#10-默认四维评价框架的正式修订记录)。
+> **更新日期**：2026-10-20<br>
+> **修订说明**：保留历史 §1–10，新建单模板多维修订及检查记录。逐文件变更见[修订记录 §11](DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
 
 ---
 
-本文保留设计讨论的演进。**当前默认四维结论与本轮逐文件修订见 §10**；§1–7 为早期候选，§8 为领域／课程分离结论，§9 为前次 Task-only 修订。历史叙述按当时语境阅读，旧链接固定到可恢复的 Git 基线。旧内容与引用按修改前 Git 基线追溯，不反写历史方案。
+本文保留设计讨论的演进。**当前单模板多维 Claim 结论与逐文件变更见 §11**；§1–10 为早期探索和先前修订，按当时语境及对应 Git 基线阅读。历史 C1–C4 和多模板 Claim 不作为现行合同，历史验证不反写。
 
 ## 1 目的与证据边界
 
@@ -815,41 +815,41 @@ ProblemTemplate 参数化问题关系、约束与所求责任，不规定唯一�
 
 | 文档 | 旧版本 → 新版本 | 本轮修改 |
 | --- | --- | --- |
-| [doc/concept-design/DeerMind_Concept_Architecture_v1.4.md](DeerMind_Concept_Architecture_v1.4.md) | v1.3 → v1.4 | 在总体架构定位四维默认框架与各空间责任；同步现行交叉引用和导航 |
-| [doc/concept-design/DeerMind_Domain_Space_Design_v1.2.md](DeerMind_Domain_Space_Design_v1.2.md) | v1.1 → v1.2 | 区分 Domain 支持四维取证与个人评价责任；同步现行交叉引用和导航 |
-| [doc/concept-design/DeerMind_Evaluation_Space_Design_v1.4.md](DeerMind_Evaluation_Space_Design_v1.4.md) | v1.3 → v1.4 | 定义默认四维、Claim 映射、裁剪扩展及未知边界，增加运行关系图；修正原先默认不拆迁移命题的含混说明，区分实际条件与所评能力；用分数应用 C1–C4 明确四维命题和逐步证据更新，补充联合探针归因限制；明确跨空间四维规范归属；同步架构决策；区分已决定框架与待验证问题；同步检查清单；同步证据检查；补充语义不变量；更新本版变更说明；更新当前下游传导说明；更新本版修订记录引用；同步现行交叉引用和导航 |
-| [doc/concept-design/DeerMind_Evolution_Space_Design_v1.4.md](DeerMind_Evolution_Space_Design_v1.4.md) | v1.3 → v1.4 | 纳入四维规范的受治理变更；同步现行交叉引用和导航 |
-| [doc/concept-design/DeerMind_Interaction_Space_Design_v1.4.md](DeerMind_Interaction_Space_Design_v1.4.md) | v1.3 → v1.4 | 补全默认四维的决策输入；明确按需取证而非每轮四测；同步现行交叉引用和导航 |
-| [doc/concept-design/DeerMind_Learning_Model_Reassessment.md](DeerMind_Learning_Model_Reassessment.md) | v0.1 → v0.2 | 保留 §1–9 历史并固定原始引用，新增默认四维修订记录 |
-| [doc/concept-design/DeerMind_Learning_Space_Design_v1.2.md](DeerMind_Learning_Space_Design_v1.2.md) | v1.1 → v1.2 | 纳入默认四维与有依据裁剪的目标语义；明确目标采用、准备缺口、发布权限与章节统计边界；明确维度调整与 Claim 迁移的不同影响；同步现行交叉引用和导航 |
-| [doc/concept-design/README.md](README.md) | v0.1 → v0.2 | 更新现行概念导航摘要；更新修订记录入口；避免导航手写版本与实际文件漂移；同步现行交叉引用和导航 |
-| [doc/mvp/MVP_Document_Architecture_Review.md](../mvp/MVP_Document_Architecture_Review.md) | v0.1 → v0.2 | 同步现行交叉引用和导航 |
-| [doc/mvp/MVP_Gate_Reviews.md](../mvp/MVP_Gate_Reviews.md) | v0.1 → v0.2 | 记录新增批准变更而不重写历史 Gate；同步现行交叉引用和导航 |
-| [doc/mvp/MVP_Governance.md](../mvp/MVP_Governance.md) | v0.1 → v0.2 | 登记 DEC-024，并将既有 DEC-022／023 归回决定表；扩展既有迁移项，不伪造资产完成；同步现行交叉引用和导航 |
-| [doc/mvp/README.md](../mvp/README.md) | v0.1 → v0.2 | 同步 MVP 当前模型与交接状态；同步现行交叉引用和导航 |
-| [doc/mvp/phase-3-definition/MVP_Definition.md](../mvp/phase-3-definition/MVP_Definition.md) | v0.1 → v0.2 | 明确默认框架与既有产品价值、范围的关系；将框架说明归入产品目标而非外部服务约束；同步现行交叉引用和导航 |
-| [doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md](../mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md) | v0.1 → v0.2 | 明确默认框架的产品可见行为与后台查询要求；把四维含义落实到学习情况要求；补充 AC-009 的四维未知与分母对照；补充管理员维度覆盖检查验收 |
-| [doc/mvp/phase-3-definition/MVP_Validation_Plan.md](../mvp/phase-3-definition/MVP_Validation_Plan.md) | v0.1 → v0.2 | 同步验证责任与四维反例；防止将框架变成未经校准的新指标或事后裁剪 |
-| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md](../mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md) | v0.1 → v0.2 | 明确四维规范修改与证据访问权限 |
-| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md](../mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md) | v0.1 → v0.2 | 将四维覆盖纳入内容迁移；补充四维内容交换记录并保留已批准可选探针边界；更新交付检查数量表述；补齐四维资产接收条件；同步现行交叉引用和导航 |
-| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md](../mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md) | v0.1 → v0.2 | 同步评测交接范围；补充四维定义、语义边界、同源证据与裁剪扩展的必需案例；同步现行交叉引用和导航 |
-| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md](../mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md) | v0.1 → v0.2 | 传导四维信息组织与交互边界 |
-| [doc/mvp/phase-5-engineering/MVP_Delivery_and_Handover.md](../mvp/phase-5-engineering/MVP_Delivery_and_Handover.md) | v0.1 → v0.2 | 补充四维交付证据 |
-| [doc/mvp/phase-5-engineering/MVP_Engineering_Design.md](../mvp/phase-5-engineering/MVP_Engineering_Design.md) | v0.1 → v0.2 | 增加四维工程接收合同；同步现行交叉引用和导航 |
-| [doc/mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md](../mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md) | v0.1 → v0.2 | 纳入四维增量的开工与交付依赖 |
-| [doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.3.md](../system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；明确四维推理输入及候选校验边界；同步现行交叉引用和导航 |
-| [doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.3.md](../system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；纳入四维裁剪扩展的受控发布合同；同步现行交叉引用和导航 |
-| [doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.3.md](../system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；约束四维缺口到交互行动的转换；同步现行交叉引用和导航 |
-| [doc/system-design/DeerMind_Runtime_Event_Architecture_v1.3.md](../system-design/DeerMind_Runtime_Event_Architecture_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；说明四维所需事实与不可观测条件的边界；同步现行交叉引用和导航 |
-| [doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.3.md](../system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；明确旧命题到四维框架的迁移条件；同步现行交叉引用和导航 |
-| [doc/system-design/DeerMind_State_Dependency_Architecture_v1.3.md](../system-design/DeerMind_State_Dependency_Architecture_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；明确四维变更的依赖失效与同源引用；同步现行交叉引用和导航 |
-| [doc/system-design/DeerMind_System_Design_Roadmap_v0.8.md](../system-design/DeerMind_System_Design_Roadmap_v0.8.md) | v0.7 → v0.8 | 更新当前模型修订状态 |
-| [doc/system-design/DeerMind_System_Design_v1.3.md](../system-design/DeerMind_System_Design_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；补充系统总体四维输入输出合同；同步当前阶段交接说明；同步现行交叉引用和导航 |
-| [doc/system-design/README.md](../system-design/README.md) | v0.1 → v0.2 | 更新系统入口的合同状态；同步现行交叉引用和导航 |
-| [doc/top/DeerMind_AI_Native_Architecture_Principles_v0.5.md](../top/DeerMind_AI_Native_Architecture_Principles_v0.5.md) | v0.4 → v0.5 | 传导四维语义判断原则 |
-| [doc/top/DeerMind_Development_Roadmap_v0.5.md](../top/DeerMind_Development_Roadmap_v0.5.md) | v0.4 → v0.5 | 更新现行系统合同引用，不改历史准入 |
-| [src/mvp_foundation/README.md](../../src/mvp_foundation/README.md) | v0.1 → v0.2 | 同步资产与原型的未迁移状态 |
-| [src/mvp_prototype/README.md](../../src/mvp_prototype/README.md) | v0.1 → v0.2 | 同步资产与原型的未迁移状态 |
+| [doc/concept-design/DeerMind_Concept_Architecture_v1.4.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/concept-design/DeerMind_Concept_Architecture_v1.4.md) | v1.3 → v1.4 | 在总体架构定位四维默认框架与各空间责任；同步现行交叉引用和导航 |
+| [doc/concept-design/DeerMind_Domain_Space_Design_v1.2.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/concept-design/DeerMind_Domain_Space_Design_v1.2.md) | v1.1 → v1.2 | 区分 Domain 支持四维取证与个人评价责任；同步现行交叉引用和导航 |
+| [doc/concept-design/DeerMind_Evaluation_Space_Design_v1.4.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/concept-design/DeerMind_Evaluation_Space_Design_v1.4.md) | v1.3 → v1.4 | 定义默认四维、Claim 映射、裁剪扩展及未知边界，增加运行关系图；修正原先默认不拆迁移命题的含混说明，区分实际条件与所评能力；用分数应用 C1–C4 明确四维命题和逐步证据更新，补充联合探针归因限制；明确跨空间四维规范归属；同步架构决策；区分已决定框架与待验证问题；同步检查清单；同步证据检查；补充语义不变量；更新本版变更说明；更新当前下游传导说明；更新本版修订记录引用；同步现行交叉引用和导航 |
+| [doc/concept-design/DeerMind_Evolution_Space_Design_v1.4.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/concept-design/DeerMind_Evolution_Space_Design_v1.4.md) | v1.3 → v1.4 | 纳入四维规范的受治理变更；同步现行交叉引用和导航 |
+| [doc/concept-design/DeerMind_Interaction_Space_Design_v1.4.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/concept-design/DeerMind_Interaction_Space_Design_v1.4.md) | v1.3 → v1.4 | 补全默认四维的决策输入；明确按需取证而非每轮四测；同步现行交叉引用和导航 |
+| [doc/concept-design/DeerMind_Learning_Model_Reassessment.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/concept-design/DeerMind_Learning_Model_Reassessment.md) | v0.1 → v0.2 | 保留 §1–9 历史并固定原始引用，新增默认四维修订记录 |
+| [doc/concept-design/DeerMind_Learning_Space_Design_v1.2.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/concept-design/DeerMind_Learning_Space_Design_v1.2.md) | v1.1 → v1.2 | 纳入默认四维与有依据裁剪的目标语义；明确目标采用、准备缺口、发布权限与章节统计边界；明确维度调整与 Claim 迁移的不同影响；同步现行交叉引用和导航 |
+| [doc/concept-design/README.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/concept-design/README.md) | v0.1 → v0.2 | 更新现行概念导航摘要；更新修订记录入口；避免导航手写版本与实际文件漂移；同步现行交叉引用和导航 |
+| [doc/mvp/MVP_Document_Architecture_Review.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/MVP_Document_Architecture_Review.md) | v0.1 → v0.2 | 同步现行交叉引用和导航 |
+| [doc/mvp/MVP_Gate_Reviews.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/MVP_Gate_Reviews.md) | v0.1 → v0.2 | 记录新增批准变更而不重写历史 Gate；同步现行交叉引用和导航 |
+| [doc/mvp/MVP_Governance.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/MVP_Governance.md) | v0.1 → v0.2 | 登记 DEC-024，并将既有 DEC-022／023 归回决定表；扩展既有迁移项，不伪造资产完成；同步现行交叉引用和导航 |
+| [doc/mvp/README.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/README.md) | v0.1 → v0.2 | 同步 MVP 当前模型与交接状态；同步现行交叉引用和导航 |
+| [doc/mvp/phase-3-definition/MVP_Definition.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/phase-3-definition/MVP_Definition.md) | v0.1 → v0.2 | 明确默认框架与既有产品价值、范围的关系；将框架说明归入产品目标而非外部服务约束；同步现行交叉引用和导航 |
+| [doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md) | v0.1 → v0.2 | 明确默认框架的产品可见行为与后台查询要求；把四维含义落实到学习情况要求；补充 AC-009 的四维未知与分母对照；补充管理员维度覆盖检查验收 |
+| [doc/mvp/phase-3-definition/MVP_Validation_Plan.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/phase-3-definition/MVP_Validation_Plan.md) | v0.1 → v0.2 | 同步验证责任与四维反例；防止将框架变成未经校准的新指标或事后裁剪 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md) | v0.1 → v0.2 | 明确四维规范修改与证据访问权限 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md) | v0.1 → v0.2 | 将四维覆盖纳入内容迁移；补充四维内容交换记录并保留已批准可选探针边界；更新交付检查数量表述；补齐四维资产接收条件；同步现行交叉引用和导航 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md) | v0.1 → v0.2 | 同步评测交接范围；补充四维定义、语义边界、同源证据与裁剪扩展的必需案例；同步现行交叉引用和导航 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md) | v0.1 → v0.2 | 传导四维信息组织与交互边界 |
+| [doc/mvp/phase-5-engineering/MVP_Delivery_and_Handover.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/phase-5-engineering/MVP_Delivery_and_Handover.md) | v0.1 → v0.2 | 补充四维交付证据 |
+| [doc/mvp/phase-5-engineering/MVP_Engineering_Design.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/phase-5-engineering/MVP_Engineering_Design.md) | v0.1 → v0.2 | 增加四维工程接收合同；同步现行交叉引用和导航 |
+| [doc/mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md) | v0.1 → v0.2 | 纳入四维增量的开工与交付依赖 |
+| [doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.3.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；明确四维推理输入及候选校验边界；同步现行交叉引用和导航 |
+| [doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.3.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；纳入四维裁剪扩展的受控发布合同；同步现行交叉引用和导航 |
+| [doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.3.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；约束四维缺口到交互行动的转换；同步现行交叉引用和导航 |
+| [doc/system-design/DeerMind_Runtime_Event_Architecture_v1.3.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/system-design/DeerMind_Runtime_Event_Architecture_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；说明四维所需事实与不可观测条件的边界；同步现行交叉引用和导航 |
+| [doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.3.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；明确旧命题到四维框架的迁移条件；同步现行交叉引用和导航 |
+| [doc/system-design/DeerMind_State_Dependency_Architecture_v1.3.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/system-design/DeerMind_State_Dependency_Architecture_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；明确四维变更的依赖失效与同源引用；同步现行交叉引用和导航 |
+| [doc/system-design/DeerMind_System_Design_Roadmap_v0.8.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/system-design/DeerMind_System_Design_Roadmap_v0.8.md) | v0.7 → v0.8 | 更新当前模型修订状态 |
+| [doc/system-design/DeerMind_System_Design_v1.3.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/system-design/DeerMind_System_Design_v1.3.md) | v1.2 → v1.3 | 更新本版合同说明，保留原实验边界；补充系统总体四维输入输出合同；同步当前阶段交接说明；同步现行交叉引用和导航 |
+| [doc/system-design/README.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/system-design/README.md) | v0.1 → v0.2 | 更新系统入口的合同状态；同步现行交叉引用和导航 |
+| [doc/top/DeerMind_AI_Native_Architecture_Principles_v0.5.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/top/DeerMind_AI_Native_Architecture_Principles_v0.5.md) | v0.4 → v0.5 | 传导四维语义判断原则 |
+| [doc/top/DeerMind_Development_Roadmap_v0.5.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/doc/top/DeerMind_Development_Roadmap_v0.5.md) | v0.4 → v0.5 | 更新现行系统合同引用，不改历史准入 |
+| [src/mvp_foundation/README.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/src/mvp_foundation/README.md) | v0.1 → v0.2 | 同步资产与原型的未迁移状态 |
+| [src/mvp_prototype/README.md](https://github.com/ivgotcrazy/deermind/blob/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e/src/mvp_prototype/README.md) | v0.1 → v0.2 | 同步资产与原型的未迁移状态 |
 
 ### 10.3 一致性检查与交付边界
 
@@ -862,3 +862,94 @@ ProblemTemplate 参数化问题关系、约束与所求责任，不规定唯一�
 | 历史与资产保护 | 48 份未列入本轮的 Markdown 文件保持原内容；工作区变更只涉及清单中的 Markdown。历史方案仅固定引用以保留可恢复性，旧实验、批准快照和运行资产未迁移或重测 |
 
 本轮只修改上述 Markdown 设计、规范输入与入口说明。源码、原型、JSON 内容与案例资产、G3 冻结快照、Spike／Build 报告及历史结果保持原样。OPEN-010 未关闭：旧内容包含 KCClaim，且未完成新四维覆盖／证据合同审核；需由 Phase 4 准备并审核实际新包与案例，再由 Phase 5 接入并验证。本次不新增模型调用、准确率结论、软件接入声明或 G4/G5 通过判断。
+
+
+## 11 单模板多维 Claim 的正式修订记录
+
+### 11.1 决定、理由与模型边界
+
+用户于 2026-10-20 提出四个维度应作为同一任务能力的方面，并授权“自己搞清楚后就可以修改”。本轮据此完成定义、条件、状态与运行链推演，采用 DEC-025。默认四维、Task-only、KC 解释教学作用和产品阶段范围保持；替代前版一个 Claim 跨多个模板以及 C1–C4 顶层拆分的组织方式。
+
+- 一个 Task Claim 精确绑定一个 TaskTemplate 版本；TaskScope 限定其内部范围。同一评价条件以一个多维声明组织，不因每道题、维度、学习者或普通目标门槛重复创建声明。
+- 四个默认方面是 Claim 内部结构，有稳定方面键和明确责任／条件，随 Claim 版本发布；一个多维 Belief 分方面保存判断、不确定性、认识状态及依据。
+- Evidence 精确指向 ClaimVersion 与 AspectKey。一次提交形成新的 Belief 修订，未更新方面不刷新证据时间；读取方按实际所需方面检查有效性。
+- 不同方法或支持责任不得混用；若只是目标选项或门槛改变，重算派生目标结果；若改变方面含义，核对版本兼容并重解释／重推断。
+- 跨任务的课程要求由 LearningTarget 及派生 TargetAssessment 组织；跨任务迁移的来源任务是背景，正式判断仍属于实际表现所对应任务的 Claim。参考分解树不能直接推出全部子任务掌握。
+
+原方案以多个命题保持分项可判断性，逻辑上可以工作，但把分方面判断过早等同于顶层对象拆分；多模板 Claim 又引入额外的覆盖及归属规则。本方案将这些认识保留在同一任务声明及 Belief 内，减少顶层对象与引用关系。它并不减少实际需收集的证据，也不证明推断准确率或教学收益已提高；方面依赖、粒度与校准仍由后续工程和真实场景验证。
+
+### 11.2 作者语义走查与旧结构迁移
+
+以下为合同逻辑走查，不是模型调用、软件测试或儿童学习效果测量。
+
+| 对照 | 当前合同的处理 |
+| --- | --- |
+| 会独立完成但没要求解释 | 同一 Belief 中独立方面可有支持，理解方面保留未知，不强制顶层拆分 |
+| 同一延迟表格题用于迁移和保持 | 两方面共享来源，保留条件与归因不确定性，不重复计权 |
+| 某方面更新，其余方面旧证据仍在 | 未影响方面保留自己的依据与时间，不冒充全部刷新；查询按所需方面检查有效性 |
+| ANY 改为指定方法或 ALL | 责任语义需核对并版本化，不把旧成功复制成新要求已满足 |
+| 仅提高目标门槛或调整选用方面 | 重算目标达成，不直接改变个人能力判断 |
+| 任务 A 成功、任务 B 尚未观察 | A 的状态不能自动复制给 B；目标汇总不得掩盖 B 未知 |
+| 旧四个 Claim 合并／多模板 Claim 拆分 | 逐项核对来源、条件及语义，去除同源重复；不能拼接分数或复制综合状态 |
+| 定义缺失、没有表现、定义不适用 | 分别为内容准备缺口、认识不足、规范适用性，不统一记为失败 |
+
+规范与运行合同分别进入 Evaluation §3.1–4、§5.4、§6.8、Learning Space、各专项系统设计以及 MVP 接收要求。旧 JSON、脚本、原型与历史测量未作迁移，OPEN-010 保持开放；Phase 4 交付新包及参考，Phase 5 验证读写、方面有效性、权限和历史边界。
+
+### 11.3 基线与逐文件版本
+
+修改前工作区干净，准确输入为 [`8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e`](https://github.com/ivgotcrazy/deermind/tree/8f6be87b112ad93663cfc0e9004e8a5fda3e9a7e)。本批每个修改文件递增一次版本，包括仅调整引用的文档；文件名有版本的同步改名，当前目录只保留新版。§1–10 的原修订和检查结果保留历史含义，引用固定到相应 Git 输入。
+
+| 文档 | 旧版本 → 新版本 | 变更内容 |
+| --- | --- | --- |
+| [doc/concept-design/DeerMind_Concept_Architecture_v1.5.md](DeerMind_Concept_Architecture_v1.5.md) | v1.4 → v1.5 | 统一单模板声明、多维状态与跨任务目标归属；重写核心模型之间的输入输出关系；同步现行文档引用 |
+| [doc/concept-design/DeerMind_Domain_Space_Design_v1.3.md](DeerMind_Domain_Space_Design_v1.3.md) | v1.2 → v1.3 | 明确单模板能力参照与子任务证据边界；同步现行文档引用 |
+| [doc/concept-design/DeerMind_Evaluation_Space_Design_v1.5.md](DeerMind_Evaluation_Space_Design_v1.5.md) | v1.4 → v1.5 | 重写 Claim、Evidence、Belief 主体；四维改为内部方面；补齐方法／任务／目标边界、局部有效性与旧结构迁移；分数例子改为单 Claim；修正不变量重复编号，更新图与检查清单 |
+| [doc/concept-design/DeerMind_Evolution_Space_Design_v1.5.md](DeerMind_Evolution_Space_Design_v1.5.md) | v1.4 → v1.5 | 收敛模型演化对象与方面影响分析；同步现行文档引用 |
+| [doc/concept-design/DeerMind_Interaction_Space_Design_v1.5.md](DeerMind_Interaction_Space_Design_v1.5.md) | v1.4 → v1.5 | 将决策输入与取证落到具体方面；同步跨空间输入清单；同步现行文档引用 |
+| [doc/concept-design/DeerMind_Learning_Model_Reassessment.md](DeerMind_Learning_Model_Reassessment.md) | v0.2 → v0.3 | 保留历史 §1–10，新建单模板多维修订及检查记录 |
+| [doc/concept-design/DeerMind_Learning_Space_Design_v1.3.md](DeerMind_Learning_Space_Design_v1.3.md) | v1.2 → v1.3 | 目标引用精确到任务 Claim 及内部方面；明确同模板评价条件与目标变化的区别；收敛目标覆盖与章节统计；明确方面级语义变化与失效传播；同步现行文档引用 |
+| [doc/concept-design/README.md](README.md) | v0.2 → v0.3 | 更新现行模型导航；更新历史与当前结论入口；同步现行文档引用 |
+| [doc/mvp/MVP_Document_Architecture_Review.md](../mvp/MVP_Document_Architecture_Review.md) | v0.2 → v0.3 | 同步现行文档引用 |
+| [doc/mvp/MVP_Gate_Reviews.md](../mvp/MVP_Gate_Reviews.md) | v0.2 → v0.3 | 记录新增结构变更，不改变 Gate 历史；同步现行文档引用 |
+| [doc/mvp/MVP_Governance.md](../mvp/MVP_Governance.md) | v0.2 → v0.3 | 登记单模板多维结构及授权边界；统一保留迁移项与接收要求；更新统一术语；同步现行文档引用 |
+| [doc/mvp/README.md](../mvp/README.md) | v0.2 → v0.3 | 更新 MVP 工作入口；同步现行文档引用 |
+| [doc/mvp/phase-3-definition/MVP_Definition.md](../mvp/phase-3-definition/MVP_Definition.md) | v0.2 → v0.3 | 同步产品能力组织方式；同步现行文档引用 |
+| [doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md](../mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md) | v0.2 → v0.3 | 明确后台多维任务组织；明确多维结果的展示和汇总边界；将准备缺口定位到方面；同步批准依据；补充 AC-009 方面局部更新对照；补充 AC-014 绑定与发布验收 |
+| [doc/mvp/phase-3-definition/MVP_Validation_Plan.md](../mvp/phase-3-definition/MVP_Validation_Plan.md) | v0.2 → v0.3 | 同步多维验证覆盖 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md](../mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md) | v0.2 → v0.3 | 同步内部方面的权限与数据边界 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md](../mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md) | v0.2 → v0.3 | 明确新领域包的单模板多维结构；细化内容交换合同；定义局部方面引用；同步新包迁移要求；同步方面级 Evidence 与目标关联；同步现行文档引用 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md](../mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md) | v0.2 → v0.3 | 更新默认四维案例的组织方式；补齐单模板、局部有效性、跨任务与历史迁移对照；同步现行文档引用 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md](../mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md) | v0.2 → v0.3 | 调整后台和用户结果的信息组织 |
+| [doc/mvp/phase-5-engineering/MVP_Delivery_and_Handover.md](../mvp/phase-5-engineering/MVP_Delivery_and_Handover.md) | v0.2 → v0.3 | 同步多维能力交付证据 |
+| [doc/mvp/phase-5-engineering/MVP_Engineering_Design.md](../mvp/phase-5-engineering/MVP_Engineering_Design.md) | v0.2 → v0.3 | 增加多维存储、提交、查询和迁移接收合同；同步现行文档引用 |
+| [doc/mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md](../mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md) | v0.2 → v0.3 | 同步增量准备与完成边界 |
+| [doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.4.md](../system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；补齐多维推理候选输入输出及校验；同步现行文档引用 |
+| [doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.4.md](../system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；同步方面发布与重组治理；同步现行文档引用 |
+| [doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.4.md](../system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；明确 Policy 对方面状态的读取与失败边界；同步现行文档引用 |
+| [doc/system-design/DeerMind_Runtime_Event_Architecture_v1.4.md](../system-design/DeerMind_Runtime_Event_Architecture_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；保留多方面共同事实来源与重解释边界；同步现行文档引用 |
+| [doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.4.md](../system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；重写分维及多模板旧 Claim 的迁移合同；同步现行文档引用 |
+| [doc/system-design/DeerMind_State_Dependency_Architecture_v1.4.md](../system-design/DeerMind_State_Dependency_Architecture_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；落实根修订与方面级依赖、有效性；明确方面语义与目标调整的不同失效路径；同步现行文档引用 |
+| [doc/system-design/DeerMind_System_Design_Roadmap_v0.9.md](../system-design/DeerMind_System_Design_Roadmap_v0.9.md) | v0.8 → v0.9 | 记录模型修订，不重写历史阶段 |
+| [doc/system-design/DeerMind_System_Design_v1.4.md](../system-design/DeerMind_System_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；明确状态身份、唯一任务绑定和内部方面结构；补齐 Evidence、提交与读取合同；同步当前交付边界；同步现行文档引用 |
+| [doc/system-design/README.md](../system-design/README.md) | v0.2 → v0.3 | 更新系统当前合同及阶段；同步现行文档引用 |
+| [doc/top/DeerMind_AI_Native_Architecture_Principles_v0.6.md](../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md) | v0.5 → v0.6 | 同步单模板多维的语义推理原则 |
+| [doc/top/DeerMind_Development_Roadmap_v0.6.md](../top/DeerMind_Development_Roadmap_v0.6.md) | v0.5 → v0.6 | 更新现行系统交接，不改旧准入 |
+| [src/mvp_foundation/README.md](../../src/mvp_foundation/README.md) | v0.2 → v0.3 | 同步运行资产未迁移状态 |
+| [src/mvp_prototype/README.md](../../src/mvp_prototype/README.md) | v0.2 → v0.3 | 同步运行资产未迁移状态 |
+
+### 11.4 检查与交付结果
+
+检查日期为 2026-10-20，由作者执行；结果只说明本批文档的结构与合同一致性，不代表工程实现或教学效果通过。
+
+| 检查范围 | 结果与边界 |
+| --- | --- |
+| 文件、版本与变更范围 | 35 份修改文档均递增一个次版本，文档头、日期和修订说明已核对；其中 16 份带版本文件名同步更名，工作区变更与 §11.3 清单一致 |
+| 文档内外的语义一致性 | 走查 Claim 的单模板绑定、内部方面、Evidence 归属、多维 Belief、目标汇总、方法条件、跨任务迁移、子任务依据、查询与失效合同；清除仍把四维分别建成顶层 Claim 的现行示例，历史描述保留原义 |
+| 解析与认识不足 | 明确当前有效的 UNKNOWN 可作为允许认识不足的活动输入；定义缺失或依赖失效按合同返回 non-resolution，不把两者混用，也不读取旧判断冒充当前结果 |
+| 引用与导航 | 701 个本地链接及目标章节锚点检查通过；未修改文档中没有因本批更名新增的断链；现行正文中的版本引用和阶段位置已同步 |
+| 图表与格式 | 修改的 1 张 Mermaid 图使用 Mermaid 11.12.0 实际渲染并目视检查，文字与连线可读；标题与代码围栏检查通过，31 项 Evaluation 不变量编号唯一且有序，差异及新版本文件的新增行格式检查通过 |
+| 历史与资产保护 | 输入快照中另外 48 份 Markdown 保持原内容；代码、JSON 内容包、案例资产、原型实现和历史测量未修改。旧修订章节引用固定到 Git 输入，不把本批设计追认为旧实验的验证对象 |
+
+作者按 §11.2 的八组对照及 Evaluation §6.8 的分数例子核对结果归属：一次表现可以影响多个方面，但共享来源；没有解释证据不能补成理解已掌握；更新一个方面不刷新其余方面；不同任务不能复制状态；旧命题合并／拆分必须核对原依据。上述是设计逻辑检查，尚未执行相应软件或模型测量。
+
+本轮仅交付文档语义修订及迁移合同。旧 Spike／Build、G3 冻结快照、实际源码和内容／案例资产保持原样；没有新模型实验或 G4/G5 通过结论。允许作者推进不等于实证已通过，实际迁移仍须按 OPEN-010 取得相应产物与证据。
