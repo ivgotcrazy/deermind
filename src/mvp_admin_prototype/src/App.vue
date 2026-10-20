@@ -8,7 +8,11 @@ import ObjectBrowser from './components/ObjectBrowser.vue';
 import ObjectDetail from './components/ObjectDetail.vue';
 import StudentList from './components/StudentList.vue';
 import UserManagement from './components/UserManagement.vue';
-import ResourceManagement from './components/ResourceManagement.vue';
+import DomainManagement from './components/DomainManagement.vue';
+import EvaluationManagement from './components/EvaluationManagement.vue';
+import TextbookManagement from './components/TextbookManagement.vue';
+import TargetManagement from './components/TargetManagement.vue';
+import LearningSpaceManagement from './components/LearningSpaceManagement.vue';
 
 const currentPage = ref<PageType>('dashboard');
 const selectedTraceId = ref('');
@@ -28,7 +32,11 @@ const navGroups = [
     label: '管理',
     items: [
       { id: 'users' as PageType, label: '用户管理', icon: '👥' },
-      { id: 'resources' as PageType, label: '资源管理', icon: '📚' },
+      { id: 'domain' as PageType, label: '领域管理', icon: '🏛️' },
+      { id: 'evaluation' as PageType, label: '评估模型管理', icon: '🎯' },
+      { id: 'textbooks' as PageType, label: '教材管理', icon: '📚' },
+      { id: 'targets' as PageType, label: '目标管理', icon: '🎯' },
+      { id: 'learning-spaces' as PageType, label: '学习空间管理', icon: '🌐' },
       { id: 'config' as PageType, label: '系统配置', icon: '⚙️' },
     ],
   },
@@ -41,7 +49,11 @@ function goObjects() { currentPage.value = 'objects'; }
 function goObjectDetail(objectId: string) { selectedObjectId.value = objectId; currentPage.value = 'object-detail'; }
 function goStudents() { currentPage.value = 'students'; }
 function goUsers() { currentPage.value = 'users'; }
-function goResources() { currentPage.value = 'resources'; }
+function goDomain() { currentPage.value = 'domain'; }
+function goEvaluation() { currentPage.value = 'evaluation'; }
+function goTextbooks() { currentPage.value = 'textbooks'; }
+function goTargets() { currentPage.value = 'targets'; }
+function goLearningSpaces() { currentPage.value = 'learning-spaces'; }
 
 function navigate(pageId: PageType) {
   if (pageId === 'dashboard') goDashboard();
@@ -49,7 +61,11 @@ function navigate(pageId: PageType) {
   else if (pageId === 'objects') goObjects();
   else if (pageId === 'students') goStudents();
   else if (pageId === 'users') goUsers();
-  else if (pageId === 'resources') goResources();
+  else if (pageId === 'domain') goDomain();
+  else if (pageId === 'evaluation') goEvaluation();
+  else if (pageId === 'textbooks') goTextbooks();
+  else if (pageId === 'targets') goTargets();
+  else if (pageId === 'learning-spaces') goLearningSpaces();
 }
 </script>
 
@@ -97,7 +113,11 @@ function navigate(pageId: PageType) {
       <ObjectDetail v-else-if="currentPage === 'object-detail'" :object-id="selectedObjectId" @back="goObjects" @go-trace="goTraceDetail" />
       <StudentList v-else-if="currentPage === 'students'" @go-trace="goTraceDetail" />
       <UserManagement v-else-if="currentPage === 'users'" />
-      <ResourceManagement v-else-if="currentPage === 'resources'" />
+      <DomainManagement v-else-if="currentPage === 'domain'" />
+      <EvaluationManagement v-else-if="currentPage === 'evaluation'" />
+      <TextbookManagement v-else-if="currentPage === 'textbooks'" />
+      <TargetManagement v-else-if="currentPage === 'targets'" />
+      <LearningSpaceManagement v-else-if="currentPage === 'learning-spaces'" />
       <div v-else class="placeholder">
         <h3>系统配置</h3>
         <p>模型参数、账号权限等配置功能（MVP 简化版）</p>

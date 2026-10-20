@@ -220,7 +220,7 @@ export interface Student {
   lastActive: string;
 }
 
-export type PageType = 'dashboard' | 'trace-list' | 'trace-detail' | 'objects' | 'object-detail' | 'students' | 'student-detail' | 'users' | 'resources';
+export type PageType = 'dashboard' | 'trace-list' | 'trace-detail' | 'objects' | 'object-detail' | 'students' | 'student-detail' | 'users' | 'domain' | 'evaluation' | 'textbooks' | 'targets' | 'learning-spaces' | 'config';
 
 // ========== Space Observability ==========
 export type SpaceId = 'domain' | 'learning' | 'evaluation' | 'interaction' | 'reasoning' | 'evolution';
@@ -330,4 +330,161 @@ export interface Domain {
   textbookCount: number;
   studentCount: number;
   status: 'active' | 'draft';
+}
+
+// ========== Domain Space Management ==========
+export interface DomainKC {
+  id: string;
+  name: string;
+  description: string;
+  prerequisites: string[]; // 前置 KC id
+  relatedKCs: string[];
+  taskCount: number;
+  status: 'active' | 'draft';
+}
+
+export interface DomainTask {
+  id: string;
+  name: string;
+  description: string;
+  taskType: 'problem-solving' | 'explanation' | 'modeling' | 'proof';
+  kcRefs: string[];
+  solutionRefs: string[];
+  parameterRange: string;
+  context: string;
+  representation: string;
+  exclusionScope: string;
+  status: 'active' | 'draft';
+  createdAt: string;
+}
+
+export interface DomainSolution {
+  id: string;
+  name: string;
+  description: string;
+  method: string;
+  applicableConditions: string;
+  subtaskDependencies: string[];
+  taskRefs: string[];
+  status: 'active' | 'draft';
+}
+
+export interface DomainDetail extends Domain {
+  description: string;
+  gradeRange: string;
+  kcs: DomainKC[];
+  tasks: DomainTask[];
+  solutions: DomainSolution[];
+}
+
+// ========== Evaluation Space Management ==========
+export type EvaluationDimension = 'independent' | 'understanding' | 'transfer' | 'retention';
+
+export interface ClaimDimensionConfig {
+  dimension: EvaluationDimension;
+  label: string;
+  enabled: boolean;
+  criteria: string; // 评价细则
+  evidenceRequirement: string; // 证据要求
+}
+
+export interface EvidenceRule {
+  id: string;
+  dimension: EvaluationDimension;
+  observationType: string;
+  polarity: 'positive' | 'negative' | 'non-informative';
+  condition: string;
+  description: string;
+}
+
+export interface TaskClaim {
+  id: string;
+  name: string;
+  description: string;
+  domainId: string;
+  domainName: string;
+  taskId: string; // 一对一映射
+  taskName: string;
+  taskScope: string;
+  responsibility: string;
+  methodRequirement: string;
+  conditions: string;
+  supportBoundary: string;
+  qualityRequirement: string;
+  dimensions: ClaimDimensionConfig[];
+  evidenceRules: EvidenceRule[];
+  status: 'active' | 'draft' | 'archived';
+  version: number;
+  updatedAt: string;
+}
+
+// ========== Learning Target Management ==========
+export interface TargetTaskSelection {
+  taskId: string;
+  taskName: string;
+  chapterRef: string; // 所属章节
+  selected: boolean;
+}
+
+export interface TargetClaimConfig {
+  claimId: string;
+  claimName: string;
+  taskId: string;
+  dimensions: { dimension: EvaluationDimension; label: string; enabled: boolean }[];
+  trimReason?: string;
+}
+
+export interface LearningTarget {
+  id: string;
+  name: string;
+  description: string;
+  textbookId: string;
+  textbookName: string;
+  domainId: string;
+  domainName: string;
+  status: 'draft' | 'published' | 'archived';
+  version: number;
+  taskCount: number; // 遴选的 Task 数
+  claimCount: number; // 激活的 Claim 数
+  chapterCoverage: number; // 覆盖章节数
+  selectedTasks: TargetTaskSelection[];
+  claimConfigs: TargetClaimConfig[];
+  createdAt: string;
+  publishedAt?: string;
+}
+
+// ========== Learning Space Instance Management ==========
+export interface ActivatedDomainSubset {
+  taskCount: number;
+  solutionCount: number;
+  kcCount: number;
+  tasks: { id: string; name: string; chapter: string }[];
+}
+
+export interface ActivatedEvaluationSubset {
+  claimCount: number;
+  dimensionCount: number;
+  claims: { id: string; name: string; dimensions: string[] }[];
+}
+
+export interface LSInstance {
+  id: string;
+  name: string;
+  studentId: string;
+  studentName: string;
+  grade: string;
+  textbookId: string;
+  textbookName: string;
+  targetId: string;
+  targetName: string;
+  domainId: string;
+  domainName: string;
+  status: 'active' | 'paused' | 'archived';
+  totalInteractions: number;
+  totalEvidence: number;
+  claimStatusDist: { status: string; count: number }[];
+  activatedDomain: ActivatedDomainSubset;
+  activatedEvaluation: ActivatedEvaluationSubset;
+  createdAt: string;
+  lastActive: string;
 }

@@ -1,6 +1,8 @@
 import type {
   Trace, Span, MetricCard, TrendPoint, RejectionReason,
   AlertItem, SemanticObject, Student, SpaceOverview, LearningSpace,
+  AdminUser, Textbook, Domain, DomainDetail, DomainTask, DomainSolution, DomainKC,
+  TaskClaim, LearningTarget, LSInstance, EvaluationDimension,
 } from './types';
 
 // ========== Dashboard 数据 ==========
@@ -1076,7 +1078,6 @@ export const spaceOverviews: SpaceOverview[] = [
 ];
 
 // ========== 用户管理数据 ==========
-import type { AdminUser, Textbook, Domain } from './types';
 
 export const adminUsers: AdminUser[] = [
   { id: 'U001', name: '学生A', role: 'student', email: 'student_a@school.edu', status: 'active', createdAt: '2026-09-01', lastActive: '10-18 14:35', grade: '六年级', textbook: '北师大版六下数学', totalInteractions: 156, avgMastery: 68 },
