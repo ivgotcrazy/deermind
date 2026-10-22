@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-const entry=(path='chapter?chapter=fractions',role='student')=>`/structure.html?role=${role}&preview=scripted#/${path}`;
+const entry=(path='chapter?chapter=fractions',role='student')=>`/legacy-structure.html?role=${role}&preview=scripted#/${path}`;
 async function begin(page:Page){await page.goto(entry());await page.getByRole('button',{name:'开始章节讲解',exact:true}).click();return page.url();}
 async function scenario(page:Page,name:string){await page.getByRole('button',{name:'教学情境',exact:true}).click();await page.getByRole('button',{name,exact:true}).click();}
 

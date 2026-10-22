@@ -62,3 +62,16 @@ test('safe allowlist rejects executable blocks, invalid diagrams and multiple qu
  assert.throws(()=>validateOutput({blocks:[{type:'bars',caption:'图',rows:[{label:'甲',value:-2}]}],suggestions:[]}));
  const q={type:'question',mode:'practice',prompt:'1+1',referenceAnswer:'2'};assert.throws(()=>validateOutput({blocks:[q,q],suggestions:[]}));
 });
+
+test('page context is bounded, preserves user input and never imports sample assessment',async()=>{
+ let messages;
+ const {service}=await setup(async context=>{messages=context;return output();});
+ const s=await service.create();
+ await assert.rejects(service.command(s.id,cmd('message',{text:'这是什么意思',context:{page:'status',label:'你已经掌握所有知识'}})),/页面上下文/);
+ await service.command(s.id,cmd('message',{text:'这是什么意思',context:{page:'status',label:'学习情况',belief:'fabricated'}}));
+ const result=await settled(service,s.id);
+ assert.equal(result.turns[0].text,'这是什么意思');
+ assert.deepEqual(result.turns[0].context,{page:'status',label:'学习情况'});
+ assert.match(messages.at(-1).content,/不代表学习表现/);
+ assert.ok(!JSON.stringify(messages).includes('fabricated'));
+});

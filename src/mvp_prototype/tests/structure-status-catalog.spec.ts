@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-const entry='/structure.html?role=student#/home';
+const entry='/legacy-structure.html?role=student#/home';
 async function scale(page:Page,n='300'){
  await page.getByRole('button',{name:'首页情境',exact:true}).click();
  await page.getByLabel('章节目录规模',{exact:true}).selectOption(n);
@@ -78,7 +78,7 @@ test('search with no result, invalid chapter and absent evaluation offer a clear
  await expect(page.getByRole('navigation',{name:'章节分页'})).toHaveCount(0);
  await page.getByRole('button',{name:'查看全部章节',exact:true}).click();
  await expect(page.locator('.catalog-row')).toHaveCount(12);
- await page.goto('/structure.html?role=student#/status?chapter=missing');
+ await page.goto('/legacy-structure.html?role=student#/status?chapter=missing');
  await expect(page.locator('h1')).toHaveText('找不到这个章节');
  await page.getByRole('button',{name:'返回章节目录',exact:true}).click();
  await page.getByRole('button',{name:'首页情境',exact:true}).click();

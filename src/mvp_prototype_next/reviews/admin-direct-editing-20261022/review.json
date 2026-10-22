@@ -1,0 +1,298 @@
+{
+  "date": "2026-10-22",
+  "scope": "DEC-026: direct editing in owner pages; no independent approval or publish workflow",
+  "status": "author-reviewed; pending user review",
+  "checks": {
+    "adminTypecheckAndBuild": "passed",
+    "browserScenarios": {
+      "passed": 10,
+      "failed": 0,
+      "script": "src/mvp_prototype_next/tests/admin-workbench.test.mjs",
+      "latestBuildErrorVisibilityChecked": true
+    },
+    "serviceAndReadOnlyRegression": {
+      "passed": 13,
+      "failed": 0
+    },
+    "nodeCombinedReportedTests": 24,
+    "renderAndSmoke": {
+      "diagrams": [
+        {
+          "file": "doc/mvp/phase-3-definition/MVP_Definition.md",
+          "index": 0
+        },
+        {
+          "file": "doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+          "index": 3
+        },
+        {
+          "file": "doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+          "index": 5
+        },
+        {
+          "file": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+          "index": 3
+        },
+        {
+          "file": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+          "index": 4
+        },
+        {
+          "file": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+          "index": 6
+        },
+        {
+          "file": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md",
+          "index": 0
+        }
+      ],
+      "errors": [],
+      "preview": 200,
+      "domainMetadataEdit": "passed",
+      "originalSourceHashes": 50
+    },
+    "gitDiffCheck": "passed"
+  },
+  "reviewFindingsResolved": [
+    "Content edits reset source-check status while preserving the previous note.",
+    "New chapter mapping and target readiness follow the actual child ownership relationships.",
+    "Relationship selectors have explicit accessible labels.",
+    "Save errors scroll into view and retain entered content.",
+    "Legacy unfinished candidates and matching session drafts remain editable; archived work items remain unchanged."
+  ],
+  "limits": [
+    "Browser-local model directory; real model service, OCR and production authorization not implemented.",
+    "No real LLM or learner-effect validation in this batch.",
+    "Existing Learning Space adoption remains unchanged; simplified adoption operation tracked by OPEN-011.",
+    "Historical Gate and evaluation assets are not rewritten."
+  ],
+  "documentRevisions": [
+    {
+      "path": "doc/mvp/MVP_Governance.md",
+      "before": "v0.3",
+      "after": "v0.4"
+    },
+    {
+      "path": "doc/mvp/phase-3-definition/MVP_Definition.md",
+      "before": "v0.3",
+      "after": "v0.4"
+    },
+    {
+      "path": "doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+      "before": "v0.3",
+      "after": "v0.4"
+    },
+    {
+      "path": "doc/mvp/phase-3-definition/MVP_Validation_Plan.md",
+      "before": "v0.3",
+      "after": "v0.4"
+    },
+    {
+      "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+      "before": "v0.5",
+      "after": "v0.6"
+    },
+    {
+      "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md",
+      "before": "v0.3",
+      "after": "v0.4"
+    },
+    {
+      "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md",
+      "before": "v0.3",
+      "after": "v0.4"
+    },
+    {
+      "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md",
+      "before": "v0.3",
+      "after": "v0.4"
+    },
+    {
+      "path": "doc/mvp/phase-5-engineering/MVP_Engineering_Design.md",
+      "before": "v0.3",
+      "after": "v0.4"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "before": "v0.3",
+      "after": "v0.4"
+    },
+    {
+      "path": "src/mvp_prototype_next/README.md",
+      "before": "v0.8",
+      "after": "v0.9"
+    }
+  ],
+  "files": [
+    {
+      "path": "doc/mvp/MVP_Governance.md",
+      "change": "modified",
+      "beforeSha256": "a8c973124b979dff64b220662457d89d50a750e1240cac487c438b4edd25d944",
+      "afterSha256": "53b5bc16cb07922a815df31e3090f4f4af729caf31ab629a94e1821287b55504"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "change": "modified",
+      "beforeSha256": "7b52b6380c2e0a81509d7981b4d8f0b7fa8deb5580bf502dbadaaab65b845fc7",
+      "afterSha256": "5152e266531c639e6e6b96357d91e40ffb3d01ed5aea950ea34b1f45b7081f03"
+    },
+    {
+      "path": "doc/mvp/phase-3-definition/MVP_Definition.md",
+      "change": "modified",
+      "beforeSha256": "42b57dd91dc603ecb6c80277b86107478ad623008b014a04f8a3ff5cf06cb193",
+      "afterSha256": "02889459a0771c7f9274df5279da602f9d19d046749a45d10dd59251cc0359d1"
+    },
+    {
+      "path": "doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+      "change": "modified",
+      "beforeSha256": "ab38570d067691fcf9326ba5d6c39c157ab60faf8d79177dc384c5b62cfa5eb7",
+      "afterSha256": "65272064da9c499731782764162bf005ab4beebe79220d4452565346f259995c"
+    },
+    {
+      "path": "doc/mvp/phase-3-definition/MVP_Validation_Plan.md",
+      "change": "modified",
+      "beforeSha256": "098b574db6f4a8c62ede1ce5dc4d560fc4eb261672c37c85677f786f121ce413",
+      "afterSha256": "caf4a07f0f0cb7c4d0bee909d167fe10c82e7b2932c4f484b8ee8c0adc15e1d1"
+    },
+    {
+      "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md",
+      "change": "modified",
+      "beforeSha256": "a2431360dac562b5019e7f2d7aad6653bdc715cb93e8309c3d3101029b0a6bbb",
+      "afterSha256": "58126a69134584dd86f067162545bb2bfe789631c9f85663e01abcb02c15bfdb"
+    },
+    {
+      "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md",
+      "change": "modified",
+      "beforeSha256": "c312ab8d87e38f57784cf5b9848c502262aecfab9917b1fbc51b64d84bba9985",
+      "afterSha256": "0840e9b3a8f486818c796a87af3ba2292a2d911880e29c2c2ffbaad3704650a3"
+    },
+    {
+      "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md",
+      "change": "modified",
+      "beforeSha256": "3869b5a155723a949134e80b731873d75b8688f17637ec7c6a9767f657ba4452",
+      "afterSha256": "f3760f1fb9b9c31b0f1d3e00f34ce5022b9ee8d9ea936149adbf715a5fa38159"
+    },
+    {
+      "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+      "change": "modified",
+      "beforeSha256": "82d1a42f98eadc2cd508595ceabf117db06c2f7ce3c851c9a99baa4f70eb7326",
+      "afterSha256": "7669d88a29ffb279499de32786648cd6fb9b6f007a647a8636547b0ed89e7360"
+    },
+    {
+      "path": "doc/mvp/phase-5-engineering/MVP_Engineering_Design.md",
+      "change": "modified",
+      "beforeSha256": "8d77a9e495ae1a048ae63c9501fda98d793b62e5285dcd4be874ba1b568b2299",
+      "afterSha256": "b4be344c4dbe0b963542fcf3fdc9e35f9f54e25e358c97bd1d98acbc7c1a72f8"
+    },
+    {
+      "path": "src/mvp_prototype_next/README.md",
+      "change": "modified",
+      "beforeSha256": "e6c860b85aecb3588034b195aa26e74a280d2901577db6c68dbc7b829a8faa29",
+      "afterSha256": "eded4e3a5f0307786ad0cfe754ede22fd28b96e2dbe39403463fc60a4574d7a3"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/App.vue",
+      "change": "modified",
+      "beforeSha256": "eb6f7cb8f4d075b6ba979a79ac37cde1995a364fd6ff16a04a23088f26e4999f",
+      "afterSha256": "42fb7ee59c7773c96ee33233cbd45e0bf5d06cfa685c7980619e627d52b54013"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/CourseWorkspace.vue",
+      "change": "modified",
+      "beforeSha256": "fe9478eb3914ff6bd749b78d11c67f8eca8465119fc0818371828564b707085d",
+      "afterSha256": "9ddb6e2d450bd3d3cd561ad2e6ec8be94244f2149fc57029829c8f65825a73c3"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/DomainWorkspace.vue",
+      "change": "modified",
+      "beforeSha256": "15456262b0b86047c108f07d3e086d6413bdcabae3c18528efe12f6e558ec50d",
+      "afterSha256": "12fd7e84d2169dff194c86de7c73f1e226379bbbcc31c22495dac00eebc2cb87"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/LearnerWorkspace.vue",
+      "change": "modified",
+      "beforeSha256": "4fed304f58c8414cded024ab43a3b3528e58647655a0526280f04eeefb80ef88",
+      "afterSha256": "eac6dab800b539e8a968059022e2f85518760b96a9315379c9b0916380586ff2"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/LiveConversation.vue",
+      "change": "modified",
+      "beforeSha256": "5069491a7a7d3b7d0e676948addfa88b734e61fa03ad9cd916ae30fd53aee2f6",
+      "afterSha256": "9a390dc6ddfb6f2b9bdf8ea148c7b90af90b2519e637b8f075e8c239d7e91de2"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/MaintenanceWorkspace.vue",
+      "change": "deleted",
+      "beforeSha256": "e81c2168297cbdf8c970258c6b8e8aba63dd706c47f8fbe45c30a5ca3284aa35"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/ModelCatalog.vue",
+      "change": "modified",
+      "beforeSha256": "0b4f36d6724c9a7c131698949e4839f9b30581156da5510ec8128d78b4072f39",
+      "afterSha256": "139957effd857f109bd0332b1243936c2ab5fc6ceae3971f77ad2430fa390ef4"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/ModelObjectContent.vue",
+      "change": "modified",
+      "beforeSha256": "8de23307439498095e775f0502d598197d318cb8fe06de627e5d673c9cde090d",
+      "afterSha256": "cc917e3030d5e087b014f577a1de2b06293894d25842f5405de5be69ab8928d9"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/WorkbenchOverview.vue",
+      "change": "modified",
+      "beforeSha256": "194ec9fc7f0c2bfe4bf0af2559a38a6f74963190d3cfd57742907b7aea88a624",
+      "afterSha256": "c235472252f0c9d5a73200cfc1b727208503b6b64d98532e8dfec255aa2fbd5a"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/workbench/migration.ts",
+      "change": "modified",
+      "beforeSha256": "491bbd74a7b631085de043f5b092f7c029f0ba9bde31e68ff03bca466c914991",
+      "afterSha256": "50a717b83be4ba5c9c2dde1afa394748bd21963d6724ecaf6d919c28b09e1d54"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/workbench/model.ts",
+      "change": "modified",
+      "beforeSha256": "aaec5b6379f62051957ffb2c7543cb062db32be6f061a1387e65c82e77651dbf",
+      "afterSha256": "ee72133c4b79c0e5a0ecc8f721d9a02aa81bdb849901b501b39bf6594002cc40"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/workbench/seed.ts",
+      "change": "modified",
+      "beforeSha256": "ac8349d5e6c5d2439555f1f4d2398e37eba2f826c0ff917608396cd847eb2146",
+      "afterSha256": "62aee89b9c9e6bf74ca6ee0a0be2d9defdf273bf8a1f54c1abfcdd767d2ebc5f"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/workbench/store.ts",
+      "change": "modified",
+      "beforeSha256": "c214de3fa385b09d8a8dc732375741181bc811ad630cf61def581c20418d77c5",
+      "afterSha256": "ecd7050dae73d44fb41b6fc29e7268cc1600d0d8de1966798ed55de2dd4663cb"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/workbench/ui.ts",
+      "change": "modified",
+      "beforeSha256": "ef3164ffa5a778470117d7abd584e23ff261869c6d7d05f4536896e7be33a608",
+      "afterSha256": "02fa2ea5691058d4fd82f5222c9b6ef5db0c7a3c8d7902a98468a60e3a38dbc3"
+    },
+    {
+      "path": "src/mvp_prototype_next/tests/admin-workbench.test.mjs",
+      "change": "modified",
+      "beforeSha256": "8269a56e0c4a33659de9cb756472bbe11c6434e4fe9fed63734637a05d2f005d",
+      "afterSha256": "22c372f22f9425c2c5d932c3374a0cc619767c6293e28e68cfe1f2139ac45c55"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/DefinitionEditor.vue",
+      "change": "added",
+      "afterSha256": "092fc2db6d53034bc21705c885034c689470b6ac8dc7a360d943cf4f38f8b17c"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/ObjectDrafts.vue",
+      "change": "added",
+      "afterSha256": "6264c43d98ce3513d6d4e94e75234bae725028ed4347f7860d7da57060a3b97e"
+    },
+    {
+      "path": "src/mvp_prototype_next/admin/src/components/RecordNotes.vue",
+      "change": "added",
+      "afterSha256": "1a5f662583bc10bd27998b0c3b81ab67bd332ed2dc1109bc3fcbb36f1befaac5"
+    }
+  ]
+}

@@ -1,0 +1,373 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-20T23:26:43.949287+00:00",
+  "repository_head": "632179e5fab5c979792ce2dca6943b48b7a6d2bf",
+  "authority": "Source working-tree bytes at copy time; not the previously integrated UI and not an approval of migration items.",
+  "excluded": [
+    ".git",
+    ".tmp",
+    ".vite",
+    "build",
+    "coverage",
+    "dist",
+    "node_modules",
+    "playwright-report",
+    "test-results",
+    ".env*",
+    "*.log",
+    "*.tsbuildinfo"
+  ],
+  "file_count": 50,
+  "files": [
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/index.html",
+      "destination": "student/index.html",
+      "bytes": 365,
+      "sha256": "17f16c967d32c77f5711087e380f8046b11316d124bf9b0086fb2f2e4c513176"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/package-lock.json",
+      "destination": "student/package-lock.json",
+      "bytes": 47993,
+      "sha256": "357e9de074f6b0914906fd45b8a81b598ce056580a4c8ad5b9fd82d6c1179268"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/package.json",
+      "destination": "student/package.json",
+      "bytes": 496,
+      "sha256": "7c0f30da76c8e6d87f974aa091bfb07cb6dc75fa2f6437d19c095a8fa06f3bcc"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/App.vue",
+      "destination": "student/src/App.vue",
+      "bytes": 12564,
+      "sha256": "90506337b8173c1d60b629f9dcd8fa63a714127db9639cccef259285de5597b6"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/BottomInputBar.vue",
+      "destination": "student/src/components/BottomInputBar.vue",
+      "bytes": 3090,
+      "sha256": "59394975d59494d61ca9d6b06da3750783d4389ed0248fd27204f63d11fcad66"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/ChatMessage.vue",
+      "destination": "student/src/components/ChatMessage.vue",
+      "bytes": 7408,
+      "sha256": "fd26e007ab7da6403ac58d332d6cc7e1b62f7932c00858b17cf5664b4163caa0"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/ChatWorkspace.vue",
+      "destination": "student/src/components/ChatWorkspace.vue",
+      "bytes": 7623,
+      "sha256": "57df0f7afc98cd9fe9b65ad8407ca7bf4264521191bc72d893037e28b85b2f78"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/ErrorBookPage.vue",
+      "destination": "student/src/components/ErrorBookPage.vue",
+      "bytes": 11013,
+      "sha256": "cdedd0d752c024df72c2b515433a05d55e7294485eb4af8850efcd6a9e544b43"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/HomePage.vue",
+      "destination": "student/src/components/HomePage.vue",
+      "bytes": 13893,
+      "sha256": "81145b82ba1f709ee38331a069ae6fa0d70e81823fc5926aafbd54f75ccfb5a0"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/InputComposer.vue",
+      "destination": "student/src/components/InputComposer.vue",
+      "bytes": 3411,
+      "sha256": "804d6b01f34e75327cd2b98d75ba40639542a36d39ebcfaddcfffcfa4c529fdb"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/LearningStatusPage.vue",
+      "destination": "student/src/components/LearningStatusPage.vue",
+      "bytes": 9053,
+      "sha256": "bb57800a744e493ee5f26a2e855bd3020b991dc09ee8684dca8936dad0ec2515"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/RadarChart.vue",
+      "destination": "student/src/components/RadarChart.vue",
+      "bytes": 2711,
+      "sha256": "5c0b9debef0c6a45741e143bd3549d311fc3df6d119c40c49bdf4594e8ed16c7"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/SidePanel.vue",
+      "destination": "student/src/components/SidePanel.vue",
+      "bytes": 21503,
+      "sha256": "4c09528c0aca8fb7773a5a366ad334fe46c4cc394654623f9ce313b1db77a405"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/StatusBar.vue",
+      "destination": "student/src/components/StatusBar.vue",
+      "bytes": 4253,
+      "sha256": "009dc3c447780fc275f6ea043499a97e288cd4eafff65a276ff69d11b53b23e3"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/SuggestionChips.vue",
+      "destination": "student/src/components/SuggestionChips.vue",
+      "bytes": 1046,
+      "sha256": "3748361aba18b9e4dd319b1c659374630d5fc50c8b2d230eba55d96aa0291929"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/TextbookPage.vue",
+      "destination": "student/src/components/TextbookPage.vue",
+      "bytes": 10863,
+      "sha256": "a14ec3375591229f7503f18d7a77b1f5b581b50f40be1d43f729ec1ce972b6d4"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/components/TrendChart.vue",
+      "destination": "student/src/components/TrendChart.vue",
+      "bytes": 2495,
+      "sha256": "a41d0298b1f09bb0964ab3a4f6f8fbcee511b47a03b3e2d50906c75f884009aa"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/data.ts",
+      "destination": "student/src/data.ts",
+      "bytes": 20067,
+      "sha256": "d7e9764b3f83f24318e38899623f80526ebbb1d24e1e4f12549d7172f31115b9"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/main.ts",
+      "destination": "student/src/main.ts",
+      "bytes": 115,
+      "sha256": "5d2f4c0f5d289c2624f3569aea0b5a48e48cb0d22ef5f57a5ba47d64a0ec7969"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/style.css",
+      "destination": "student/src/style.css",
+      "bytes": 688,
+      "sha256": "5ebdb5a84d0d25a479e11a0ce1dae5d2405928c57a9cb10234d46115df76bb55"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/src/types.ts",
+      "destination": "student/src/types.ts",
+      "bytes": 4339,
+      "sha256": "6e23733e43615609cc716de6cac1cc5c0e809256da83250646e7e83c7a2d0322"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/tsconfig.json",
+      "destination": "student/tsconfig.json",
+      "bytes": 566,
+      "sha256": "7209a078f00a9d53046fcae19e8cf2b312aa06d7674efa0beb1a6fb9767792ad"
+    },
+    {
+      "role": "student",
+      "source": "src/mvp_prototype_v2/vite.config.ts",
+      "destination": "student/vite.config.ts",
+      "bytes": 267,
+      "sha256": "0d29e8b2ca1dab6462e2ef63c934a1dff88965f39f5c337d420bcb35f4e1181f"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/index.html",
+      "destination": "admin/index.html",
+      "bytes": 306,
+      "sha256": "c548e5b821a8cc6f039da384c2702fc4295dfc99d37557e99e1644fe4d252148"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/package-lock.json",
+      "destination": "admin/package-lock.json",
+      "bytes": 47490,
+      "sha256": "21a1a3761dd6a0054afe1b5ed18e6f153d391e4afb7232c7a99001678ba0411d"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/package.json",
+      "destination": "admin/package.json",
+      "bytes": 397,
+      "sha256": "440b13d040c6ac23358f1ae153eaf6470b4d9498f029e8aaa83d25153254c5fa"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/admin-data.ts",
+      "destination": "admin/src/admin-data.ts",
+      "bytes": 31495,
+      "sha256": "8192e52a47caaa2e7f8a3c86179d654b15f793e482ccc6c418114e57bd7e51c8"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/App.vue",
+      "destination": "admin/src/App.vue",
+      "bytes": 7993,
+      "sha256": "557779c835409fbf17379516d105dd1e8b729053708e72751ad8825768ea005a"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/Dashboard.vue",
+      "destination": "admin/src/components/Dashboard.vue",
+      "bytes": 7679,
+      "sha256": "2f111475ff2d2b47b02223f3c738a7a0b1e322d0a6b1872edb06ae22af5f8f61"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/DomainManagement.vue",
+      "destination": "admin/src/components/DomainManagement.vue",
+      "bytes": 15917,
+      "sha256": "0648e60d07114a1eecf99b3e5d62b55d8a9658eb9207f0cf4932df6817692a07"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/EvaluationManagement.vue",
+      "destination": "admin/src/components/EvaluationManagement.vue",
+      "bytes": 15913,
+      "sha256": "0045300368c91a0899ac440da4b47a21b90917201caf5b6586f76689e4ee98b5"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/LearningSpaceManagement.vue",
+      "destination": "admin/src/components/LearningSpaceManagement.vue",
+      "bytes": 13781,
+      "sha256": "ef631589c920c7ff99abe3ce7a590410758e37b1725e1e51c80a701182dd4894"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/ObjectBrowser.vue",
+      "destination": "admin/src/components/ObjectBrowser.vue",
+      "bytes": 16628,
+      "sha256": "87d9ad42ce2ba10d2599b40f642149759f07642558ba53ede272f61eac6c1a51"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/ObjectDetail.vue",
+      "destination": "admin/src/components/ObjectDetail.vue",
+      "bytes": 6121,
+      "sha256": "f6d09759c69a48b7ca43c4c03771966f64d3becf772046ef6ca0bfeeb82119d1"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/ResourceManagement.vue",
+      "destination": "admin/src/components/ResourceManagement.vue",
+      "bytes": 16173,
+      "sha256": "e5ffb5fa8cb0713ceff7bdc3199e74a41785f87f8b96147874035d01aa128409"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/SemanticTimeline.vue",
+      "destination": "admin/src/components/SemanticTimeline.vue",
+      "bytes": 3200,
+      "sha256": "0da488987823c0b50a4fd4e76ddffe8b0cd8d039a3f1e3027b6c9f5a9ed480e6"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/SpanDetail.vue",
+      "destination": "admin/src/components/SpanDetail.vue",
+      "bytes": 12786,
+      "sha256": "f738df3d225bd7ce283b4dc5e410eba2f41480d1f7b375ef0d97d47830994169"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/StudentList.vue",
+      "destination": "admin/src/components/StudentList.vue",
+      "bytes": 31466,
+      "sha256": "e00e5320fcdd1495bcf40bf5fa37c77dcb71f5ab8e07023af777dc8c271c098e"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/TargetManagement.vue",
+      "destination": "admin/src/components/TargetManagement.vue",
+      "bytes": 21214,
+      "sha256": "3157a6115a1d5549e2989caf23381cdc0c4cad516eba2b02a48d980188dbebe3"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/TextbookManagement.vue",
+      "destination": "admin/src/components/TextbookManagement.vue",
+      "bytes": 16873,
+      "sha256": "b5a5722576f53bc4e8497bcb0f117db1f27c54c40dccbd37dd8f42506883f8c0"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/TraceDetail.vue",
+      "destination": "admin/src/components/TraceDetail.vue",
+      "bytes": 5809,
+      "sha256": "62fe6ea2097d5145941c7ae36993c121da7a9dfd1f87c8550d78aa7d42309498"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/TraceList.vue",
+      "destination": "admin/src/components/TraceList.vue",
+      "bytes": 11102,
+      "sha256": "ba2e5fa67a46497d124cf05ac25ae1f1bab0bafc9596f4180bffa5a643dafd53"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/UserManagement.vue",
+      "destination": "admin/src/components/UserManagement.vue",
+      "bytes": 8437,
+      "sha256": "7d353d29ff0ba951c023b6050f9b7ea89da9a8df35764ea629119f724500944b"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/components/WaterfallChart.vue",
+      "destination": "admin/src/components/WaterfallChart.vue",
+      "bytes": 4497,
+      "sha256": "dbec454aeaeb4adfd014e8e438f3698851a235e9a8384e42586472f03c53259a"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/data.ts",
+      "destination": "admin/src/data.ts",
+      "bytes": 60404,
+      "sha256": "5893b7d998c4c91c1281ce37a14b29538e4d912c685ff07684ab73d33489ce4a"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/main.ts",
+      "destination": "admin/src/main.ts",
+      "bytes": 115,
+      "sha256": "5d2f4c0f5d289c2624f3569aea0b5a48e48cb0d22ef5f57a5ba47d64a0ec7969"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/style.css",
+      "destination": "admin/src/style.css",
+      "bytes": 562,
+      "sha256": "8731a284ef8a3982bce3bc152dcd1f1338fa2821e1202511fad7aff8caeca8eb"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/src/types.ts",
+      "destination": "admin/src/types.ts",
+      "bytes": 11141,
+      "sha256": "c284f963f7f499320c6c3e08609576899e97da369b0c95ce3a4505c1b33c4f45"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/tsconfig.json",
+      "destination": "admin/tsconfig.json",
+      "bytes": 550,
+      "sha256": "9931478be667143a729cc02c307ddfe911dd0a6587a294aed4a34a692f29c1ce"
+    },
+    {
+      "role": "admin",
+      "source": "src/mvp_admin_prototype/vite.config.ts",
+      "destination": "admin/vite.config.ts",
+      "bytes": 198,
+      "sha256": "9bffa5d1b0c65f0a311bf70435c676f7cffe8084ce0ca97dd01db5dddc2eed63"
+    }
+  ]
+}

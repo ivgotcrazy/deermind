@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import type { LiveSession, LiveCommand } from '../src/structure/live';
-const entry='/structure.html?role=student#/chapter?chapter=fractions';
+const entry='/legacy-structure.html?role=student#/chapter?chapter=fractions';
 async function mock(page:Page){
  const session:LiveSession={id:'REAL-test-session-001',model:'offline-test',chapter:'fractions',phase:'learning',check:null,turns:[],pending:null,error:null,updatedAt:new Date().toISOString()};
  let calls=0;

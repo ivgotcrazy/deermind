@@ -17,7 +17,7 @@ $statePath = Join-Path $stateDir "mvp-prototype-$Port.json"
 $logPath = Join-Path $stateDir "mvp-prototype-$Port.log"
 $errorPath = Join-Path $stateDir "mvp-prototype-$Port-error.log"
 $homePage = @{ student = 'home'; parent = 'overview'; admin = 'dashboard' }[$Role]
-$landingPath = if ($Structure) { "/structure.html?role=$Role" } elseif ($Foundation) { "/phase4.html?role=$Role" } else { "/#/$Role/$homePage" }
+$landingPath = if ($Foundation) { "/phase4.html?role=$Role" } else { "/structure.html?role=$Role" }
 $url = "http://127.0.0.1:$Port$landingPath"
 
 function Get-OwnedServer {

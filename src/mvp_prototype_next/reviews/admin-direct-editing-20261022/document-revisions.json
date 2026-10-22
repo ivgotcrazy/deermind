@@ -1,0 +1,57 @@
+[
+  {
+    "path": "doc/mvp/MVP_Governance.md",
+    "before": "v0.3",
+    "after": "v0.4"
+  },
+  {
+    "path": "doc/mvp/phase-3-definition/MVP_Definition.md",
+    "before": "v0.3",
+    "after": "v0.4"
+  },
+  {
+    "path": "doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+    "before": "v0.3",
+    "after": "v0.4"
+  },
+  {
+    "path": "doc/mvp/phase-3-definition/MVP_Validation_Plan.md",
+    "before": "v0.3",
+    "after": "v0.4"
+  },
+  {
+    "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+    "before": "v0.5",
+    "after": "v0.6"
+  },
+  {
+    "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md",
+    "before": "v0.3",
+    "after": "v0.4"
+  },
+  {
+    "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md",
+    "before": "v0.3",
+    "after": "v0.4"
+  },
+  {
+    "path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md",
+    "before": "v0.3",
+    "after": "v0.4"
+  },
+  {
+    "path": "doc/mvp/phase-5-engineering/MVP_Engineering_Design.md",
+    "before": "v0.3",
+    "after": "v0.4"
+  },
+  {
+    "path": "doc/mvp/README.md",
+    "before": "v0.3",
+    "after": "v0.4"
+  },
+  {
+    "path": "src/mvp_prototype_next/README.md",
+    "before": "v0.8",
+    "after": "v0.9"
+  }
+]

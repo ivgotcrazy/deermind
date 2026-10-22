@@ -1,9 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
-const entry='/structure.html?role=student&preview=scripted#/status';
+const entry='/legacy-structure.html?role=student&preview=scripted#/status';
 const dialog=(page:Page)=>page.getByRole('dialog',{name:'更新课堂进度',exact:true});
 const progress=(page:Page)=>page.getByRole('region',{name:'课堂进度',exact:true});
 const stored=(page:Page)=>page.evaluate(()=>JSON.parse(localStorage.getItem('deermind-structure-v1')!));
-const homeEntry='/structure.html?role=student&preview=scripted#/home';
+const homeEntry='/legacy-structure.html?role=student&preview=scripted#/home';
 async function saveFractions(page:Page){
  await progress(page).getByRole('button',{name:'设置课堂进度',exact:true}).click();
  await dialog(page).getByRole('checkbox',{name:/分数的应用$/}).check();
@@ -59,7 +59,7 @@ test('parents only inspect the matching learner; other spaces and learners never
  await page.goto(entry);await saveFractions(page);
  await page.getByLabel('当前学习空间',{exact:true}).selectOption('external');await expect(progress(page)).toHaveCount(0);
  await page.getByLabel('当前学习空间',{exact:true}).selectOption('school');await expect(progress(page)).toContainText('分数的应用');
- await page.goto('/structure.html?role=parent#/overview');await expect(progress(page)).toContainText('分数的应用');
+ await page.goto('/legacy-structure.html?role=parent#/overview');await expect(progress(page)).toContainText('分数的应用');
  await progress(page).getByRole('button',{name:'查看课堂进度',exact:true}).click();
  const viewer=page.getByRole('dialog',{name:'课堂进度',exact:true});await expect(viewer).toBeVisible();
  await expect(viewer.getByRole('checkbox')).toHaveCount(0);await expect(viewer.getByRole('button',{name:'保存课堂进度'})).toHaveCount(0);

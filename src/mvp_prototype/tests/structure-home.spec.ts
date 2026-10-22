@@ -1,10 +1,10 @@
 import { test, expect, type Page } from '@playwright/test';
-const entry=(path='home',role='student')=>`/structure.html?role=${role}&preview=scripted#/${path}`;
+const entry=(path='home',role='student')=>`/legacy-structure.html?role=${role}&preview=scripted#/${path}`;
 async function tools(page:Page){await page.getByRole('button',{name:'首页情境',exact:true}).click();}
 
 test('student entry, chapter detail, and space isolation remain consistent',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/structure.html?role=student');
+ await page.goto('/legacy-structure.html?role=student');
  await expect(page).toHaveURL(/#\/home$/);
  await expect(page.getByRole('heading',{name:'首页',exact:true})).toBeVisible();
  await expect(page.getByRole('navigation',{name:'主导航'}).getByRole('button')).toHaveText(['首页','学习情况','教材','学习记录']);

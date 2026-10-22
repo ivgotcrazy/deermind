@@ -1,7 +1,7 @@
 export type LiveBlock = { type: 'text' | 'formula'; text: string } | { type: 'bars'; caption: string; rows: {label:string;value:number}[] } | { type: 'question'; id: string; mode: 'practice'|'check'; prompt: string; state: 'offered'|'active'|'answered'|'helped'|'skipped'; answer?: string };
 export type LiveTurn = { id: string; role: 'user'|'assistant'; text?: string; displayText?: string; action?: string; blocks?: LiveBlock[]; suggestions?: string[]; at: string; metrics?: {ms:number;calls:{usage?:{total_tokens:number}}[]} };
 export type LiveSession = { id:string;model:string;chapter:string;phase:'learning'|'check'|'ended';check:string|null;turns:LiveTurn[];pending:{id:string;startedAt:string}|null;error:{message:string;retryable:boolean}|null;updatedAt:string };
-export type LiveCommand = { requestId:string; kind:string; text?:string;questionId?:string };
+export type LiveCommand = { requestId:string; kind:string; text?:string;questionId?:string; context?: {page:'home'|'status'|'textbook'|'errorbook';label:string} };
 export class LiveRequestError extends Error {constructor(message:string,public status:number){super(message);}}
 export async function liveRequest<T>(path:string, body?:unknown):Promise<T> {
   const controller = new AbortController(), timer = setTimeout(()=>controller.abort(), 15000);

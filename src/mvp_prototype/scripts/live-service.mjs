@@ -39,7 +39,7 @@ export function createLiveService({ directory, provider, model, reference = '', 
   }
   const question = (s, id) => s.turns.flatMap(t => t.blocks || []).find(b => b.type === 'question' && b.id === id);
   function messages(s) {
-    const history = s.turns.map(t => ({ role: t.role, content: t.role === 'assistant' ? JSON.stringify({ blocks: t.blocks.map(({ id, state, answer, ...b }) => b), suggestions: t.suggestions }) : t.text }));
+    const history = s.turns.map(t => ({ role: t.role, content: t.role === 'assistant' ? JSON.stringify({ blocks: t.blocks.map(({ id, state, answer, ...b }) => b), suggestions: t.suggestions }) : (t.context ? `[界面上下文：来自${t.context.label}页面。仅表示当前页面位置，不代表学习表现；页面评价未接入，不可推断或捏造。]\n${t.text}` : t.text) }));
     return [{ role: 'system', content: systemPrompt(reference) }, ...history];
   }
   async function run(s, token, controller) {
@@ -81,6 +81,8 @@ export function createLiveService({ directory, provider, model, reference = '', 
     return exclusive(id, async () => {
       const s = structuredClone(await load(id));
       if (!idPattern.test(command.requestId || '')) throw new LiveError('请求编号无效。');
+      const pageLabels = { home: '首页', status: '学习情况', textbook: '教材', errorbook: '错题本' };
+      if (command.context && (!Object.hasOwn(pageLabels, command.context.page) || command.context.label !== pageLabels[command.context.page])) throw new LiveError('页面上下文无效。');
       const fingerprint = JSON.stringify(command);
       if (s.requests[command.requestId]) {
         if (s.requests[command.requestId] !== fingerprint) throw new LiveError('同一请求编号不能提交不同内容。', 409);
@@ -130,7 +132,7 @@ export function createLiveService({ directory, provider, model, reference = '', 
             // Only genuine inputs and deterministic activity events enter history.
             if (command.kind !== 'answer') for (const q of s.turns.flatMap(t => t.blocks || [])) if (q.type === 'question' && q.state === 'offered' && ['practice_request', 'check_request'].includes(command.kind)) q.state = 'skipped';
             const label = { practice_request: '出一道练习，先让我试试。', check_request: '检查一下这次是否理解了。', help: '请帮我讲讲这道题。' }[command.kind];
-            s.turns.push({ id: randomUUID(), role: 'user', text, displayText: command.text?.trim() || label || text, action: command.kind, at: now() });
+            s.turns.push({ id: randomUUID(), role: 'user', text, displayText: command.text?.trim() || label || text, action: command.kind, ...(command.context ? {context:{page:command.context.page,label:pageLabels[command.context.page]}} : {}), at: now() });
             s.lastCommand = { kind: command.kind };
           }
           if (JSON.stringify(messages(s)).length > 180000) throw new LiveError('本次交流较长，请另开对话；已有内容保留。');

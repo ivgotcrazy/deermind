@@ -4,7 +4,7 @@ import { state, touchSession } from './state';
 import type { Session } from './state';
 import { liveRequest, LiveRequestError } from './live';
 import type { LiveSession, LiveCommand } from './live';
-const props=defineProps<{session:Session}>();
+const props=defineProps<{session:Session;integrated?:boolean}>();
 const emit=defineEmits<{home:[]}>();
 const data=ref<LiveSession>(),error=ref(''),sending=ref(false),scroll=ref<HTMLElement>(),newContent=ref(false);
 const draftKey=`real:${props.session.id}`;
@@ -48,7 +48,7 @@ async function perform(command:LiveCommand){
 async function act(kind:string,text?:string,questionId?:string){if(sending.value)return;await perform({requestId:crypto.randomUUID(),kind,...(text?{text}:{}),...(questionId?{questionId}:{})});}
 async function send(){if(!draft.value.trim()||busy.value||uncertainRequest.value)return;await act(checking.value?'answer':'message',draft.value,data.value?.check||undefined);}
 function keydown(e:KeyboardEvent){if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();void send();}}
-onMounted(()=>{void refresh();clock=setInterval(()=>{elapsed.value=data.value?.pending?Math.max(0,Math.floor((Date.now()-Date.parse(data.value.pending.startedAt))/1000)):0;},1000);});
+onMounted(()=>{void (async()=>{await refresh();if(props.integrated&&uncertain&&!disposed)await perform(uncertain);})();clock=setInterval(()=>{elapsed.value=data.value?.pending?Math.max(0,Math.floor((Date.now()-Date.parse(data.value.pending.startedAt))/1000)):0;},1000);});
 onUnmounted(()=>{disposed=true;clearTimeout(timer);clearInterval(clock);});
 </script>
 

@@ -1,0 +1,122 @@
+// Browser regression with a fixed provider. Uses the existing local Playwright installation.
+import assert from 'node:assert/strict';
+import { mkdtemp, rm, mkdir, readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { once } from 'node:events';
+import { chromium } from '../../mvp_prototype/node_modules/playwright/index.mjs';
+import { createPrototypeServer } from '../scripts/serve.mjs';
+
+const directory = await mkdtemp(path.join(tmpdir(),'deermind-next-browser-'));
+const output = fileURLToPath(new URL('../../../.tmp/mvp-prototype-next/',import.meta.url));
+await mkdir(output,{recursive:true});
+let calls = 0;
+const contexts = [];
+const server = createPrototypeServer({directory,config:{key:'fixture',model:'fixed'},provider:async messages => {
+  calls++; contexts.push(messages);
+  await new Promise(r=>setTimeout(r,700));
+  return {raw:JSON.stringify({activity:{mode:'lecture',phase:'concept',title:'比例的应用'},blocks:[
+    {type:'text',text:'**固定响应检查**：比例表示两个比相等。<img src=x onerror="window.injected=true">'},
+    {type:'formula',text:'2 : 3 = 4 : 6'}],suggestions:['换一种讲法']})};
+}});
+server.listen(0,'127.0.0.1'); await once(server,'listening');
+const base = `http://127.0.0.1:${server.address().port}`;
+const browser = await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+const page = await browser.newPage({viewport:{width:1360,height:900}});
+const errors = [];
+page.on('pageerror',e=>errors.push(e.message));
+const nav = name => page.locator('.top-nav .nav-item').filter({hasText:name});
+const stored = () => page.evaluate(()=>JSON.parse(localStorage.getItem('deermind-next-workspace-v1')));
+const settled = () => page.waitForFunction(()=>document.querySelectorAll('.message-row').length>=3 && !document.querySelector('.typing-indicator'));
+try {
+  await page.goto(base+'/student/');
+  await nav('首页').waitFor();
+  await page.screenshot({path:path.join(output,'live-home.png')});
+  const originalStats = await page.locator('.target-assessment-card').innerText();
+  await page.locator('.cp-update').click();
+  const dialog = await page.locator('.progress-dialog').boundingBox();
+  assert.ok(dialog.x > 400 && dialog.y > 0, 'The dialog must be centered despite the V2 global CSS reset');
+  await page.getByLabel('正比例和反比例',{exact:true}).check();
+  await page.getByLabel('比例的应用',{exact:true}).check();
+  await page.getByRole('button',{name:'确认',exact:true}).click();
+  assert.equal(await page.locator('.cp-chapter').innerText(),'正比例和反比例、比例的应用');
+  assert.equal(await page.locator('.target-assessment-card').innerText(),originalStats);
+  assert.equal((await stored()).classroom['math-6b'].length,1);
+  await page.reload(); await page.locator('.cp-update').click();
+  assert.equal(await page.getByLabel('比例的应用',{exact:true}).isChecked(),true);
+  await page.getByLabel('暂不确定',{exact:true}).check();
+  await page.getByRole('button',{name:'取消',exact:true}).click();
+  assert.equal(await page.locator('.cp-chapter').innerText(),'正比例和反比例、比例的应用');
+  await page.locator('.cp-update').click();
+  await page.getByLabel('暂不确定',{exact:true}).check();
+  await page.getByRole('button',{name:'确认',exact:true}).click();
+  assert.equal(await page.locator('.cp-chapter').innerText(),'暂不确定');
+  assert.equal((await stored()).classroom['math-6b'].length,2);
+
+  await nav('学习情况').click();
+  const originalStatus = await page.locator('.static-pane').innerText();
+  await page.locator('.bottom-input-bar input').fill('讲解比例的应用');
+  await page.locator('.bottom-input-bar input').press('Enter');
+  await settled();
+  assert.equal(await page.locator('.static-pane').innerText(),originalStatus);
+  assert.equal(await page.locator('.input-area').inputValue(),'');
+  assert.equal(await page.locator('.message-content img').count(),0);
+  assert.equal(await page.locator('.message-content strong').last().innerText(),'固定响应检查');
+  assert.equal(await page.evaluate(()=>window.injected),undefined);
+  assert.ok(!JSON.stringify(contexts).includes('"mastery"'));
+  assert.ok(!JSON.stringify(contexts).includes('65%'));
+  await page.locator('.input-area').fill('尚未发送的追问');
+  await page.getByTitle('收起聊天').click();
+  await page.reload();
+  await page.locator('.main-content.collapsed-view').waitFor();
+  assert.equal(await page.locator('.input-area').inputValue(),'尚未发送的追问');
+  await page.getByTitle('展开聊天').click(); await settled();
+  assert.equal(await page.locator('.static-pane').innerText(),originalStatus);
+  assert.equal(calls,1);
+  assert.equal(await page.getByRole('button',{name:'历史',exact:true}).count(),0);
+  await page.screenshot({path:path.join(output,'live-status-chat.png')});
+  await nav('教材').click();
+  assert.equal(await page.locator('.chat-workspace').count(),1);
+  // A lost POST response is recovered with the same request ID, not another model call.
+  let dropped = false;
+  await page.route('**/commands',async route => {
+    if (!dropped && route.request().postDataJSON()?.kind === 'message') {
+      dropped = true; await route.fetch(); await route.abort('failed');
+    } else await route.continue();
+  });
+  await page.locator('.input-area').fill('请换一种讲法');
+  await page.locator('.input-composer .send-btn').click();
+  await page.getByRole('alert').waitFor();
+  assert.equal(await page.locator('.input-area').inputValue(),'请换一种讲法');
+  await page.unroute('**/commands');
+  await page.reload();
+  await page.waitForFunction(()=>document.querySelectorAll('.message-row').length===5 && !document.querySelector('.typing-indicator'));
+  assert.equal(calls,2); assert.equal(await page.locator('.input-area').inputValue(),'');
+  assert.equal((await stored()).operation,null);
+  assert.ok((await page.locator('.static-pane').innerText()).includes('六年级下册'));
+  await page.locator('.input-area').fill('另一份草稿');
+  await page.locator('.ai-close').click();
+  await page.locator('.bottom-input-bar').waitFor();
+  assert.equal(await page.locator('.bottom-input-bar input').inputValue(),'另一份草稿');
+  await page.locator('.expand-btn').click();
+  await page.locator('.input-area').fill('继续解释');
+  await page.locator('.input-composer .send-btn').click(); await settled();
+  await page.waitForFunction(()=>document.querySelectorAll('.message-row').length>=9);
+  assert.equal(calls,3);
+  const record = JSON.parse(await readFile(path.join(directory,`${(await stored()).sessionId}.json`),'utf8'));
+  assert.equal(record.turns.filter(t=>t.action==='resume').length,1);
+  await page.locator('.space-trigger').click();
+  await page.locator('.space-option').filter({hasText:'语文·六下'}).click();
+  await page.locator('.bottom-input-bar input').fill('你好');
+  await page.locator('.bottom-input-bar .send-btn').click();
+  await page.waitForTimeout(1500);
+  assert.equal(calls,3);
+  await page.locator('.space-trigger').click();
+  await page.locator('.space-option').filter({hasText:'数学·六下'}).click();
+  await page.locator('.expand-btn').click();
+  await page.waitForFunction(()=>document.querySelectorAll('.message-row').length>=9);
+  assert.equal(calls,3);
+  assert.deepEqual(errors,[]);
+  console.log(JSON.stringify({passed:true,calls,checks:['source page','curriculum isolation','no fake learner state','safe rendering','draft and collapse restore','lost response idempotency','resume','classroom update/cancel/unknown/history'],screenshots:output}));
+} finally { await browser.close(); await new Promise(r=>server.close(r)); await rm(directory,{recursive:true,force:true}); }

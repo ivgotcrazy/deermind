@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-21",
+  "authority": "M07 original parent surface and transitive dependencies; source files remain unchanged. App entry is parent-only; storage key adaptation is recorded in root README.",
+  "files": [
+    {
+      "source": "src/mvp_prototype/package-lock.json",
+      "destination": "src/mvp_prototype_next/parent/package-lock.json",
+      "sha256": "340d3c9f970c0ff69d9bb9d3b3e6600ac1bcc9f3beba8ec448d55f77b086fe8c"
+    },
+    {
+      "source": "src/mvp_prototype/package.json",
+      "destination": "src/mvp_prototype_next/parent/package.json",
+      "sha256": "cec7b4fa31ba8e05d4fa836930149f8213b84747daeeea54a1f7d344b6704905"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/CardGroups.vue",
+      "destination": "src/mvp_prototype_next/parent/src/structure/CardGroups.vue",
+      "sha256": "b87005fcb605297b1a6b5e5b352a634f60648ac16ab73b94cf7709affbb8e85d"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/classroom-progress.css",
+      "destination": "src/mvp_prototype_next/parent/src/structure/classroom-progress.css",
+      "sha256": "10283a330224e44f3d4fe23bb6d0dec3343da8fb26dbfbea398e2c60134e22ab"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/ClassroomProgress.vue",
+      "destination": "src/mvp_prototype_next/parent/src/structure/ClassroomProgress.vue",
+      "sha256": "86702266127502beb471a27ccd7254c5959f8d5a0a408aa09b5754a60bc63522"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/Composer.vue",
+      "destination": "src/mvp_prototype_next/parent/src/structure/Composer.vue",
+      "sha256": "6e4795aef85736f8d9cbc3341e3928ee681b1a80b1e9a0299eb485e6156a5ba4"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/ConversationLesson.vue",
+      "destination": "src/mvp_prototype_next/parent/src/structure/ConversationLesson.vue",
+      "sha256": "93999fd81da795a5fba94cb54632d4cd098cc18adcb593139b9ef2fb761688f1"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/data.ts",
+      "destination": "src/mvp_prototype_next/parent/src/structure/data.ts",
+      "sha256": "13d28aac8f880e08ef3a4f78d415a70a2e1673800eb1f8d5df29599991f50c12"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/home.ts",
+      "destination": "src/mvp_prototype_next/parent/src/structure/home.ts",
+      "sha256": "38b444d58d86bc2116b5c2f8333e1f2e2ca37d066afda42dc5c406c5c5157228"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/homeStatistics.ts",
+      "destination": "src/mvp_prototype_next/parent/src/structure/homeStatistics.ts",
+      "sha256": "e78d5b8f21edcf60995a4d3326174bc880e0aa1f84def509bbfb8e06217df23a"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/HomeStatistics.vue",
+      "destination": "src/mvp_prototype_next/parent/src/structure/HomeStatistics.vue",
+      "sha256": "c5bee40a19400838ef8a0a17908710d87ba300d94e0c078d0d6f111e6a0693c9"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/Learner.vue",
+      "destination": "src/mvp_prototype_next/parent/src/structure/Learner.vue",
+      "sha256": "59c80eca69bd1fc42e48e42faaf3496dabc37697bcda6c28b7be8372a135bdc4"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/learning-status.css",
+      "destination": "src/mvp_prototype_next/parent/src/structure/learning-status.css",
+      "sha256": "778484b262c7df43a2eb49ade22672e3df8690d0fbd36c82d52a39af88983c7a"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/LearningStatus.vue",
+      "destination": "src/mvp_prototype_next/parent/src/structure/LearningStatus.vue",
+      "sha256": "3cdbb6aa8f355388646f43a59e552eae350f218b1b8b3e24df3faea5ef1e664e"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/live.ts",
+      "destination": "src/mvp_prototype_next/parent/src/structure/live.ts",
+      "sha256": "a4d260ad2ab414a4e4aa07b6b785e3dbf973b83addb49e75cf9c8bdc599bddbb"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/LiveLesson.vue",
+      "destination": "src/mvp_prototype_next/parent/src/structure/LiveLesson.vue",
+      "sha256": "fc7812f27c3a89a52e3b8de7541058888debb3a7eaf3275473316c1f94fe1efb"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/SavedRequest.vue",
+      "destination": "src/mvp_prototype_next/parent/src/structure/SavedRequest.vue",
+      "sha256": "ebe339009c65e056bbcd20b8e548d738390d42c0eb51b738c5df3a443d947380"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/state.ts",
+      "destination": "src/mvp_prototype_next/parent/src/structure/state.ts",
+      "sha256": "6ef5312f716967864e5a8d439dcaa52e102568095a0dfb049c9f0ff0609710c5"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/statusCatalog.ts",
+      "destination": "src/mvp_prototype_next/parent/src/structure/statusCatalog.ts",
+      "sha256": "52d277b7259a3ef1027b17b54caebba7ba06130c83ecc39eaad69d81ad7bcf2d"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/student-home.css",
+      "destination": "src/mvp_prototype_next/parent/src/structure/student-home.css",
+      "sha256": "d8ec7060ce245f9fe298284b358b165ddca2acabc26e5235c996c7dcacceb67a"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/StudentHome.vue",
+      "destination": "src/mvp_prototype_next/parent/src/structure/StudentHome.vue",
+      "sha256": "d7888086aeacea19e986dd4900ec7aa627a70e7f652cfe712ad02e1eda71a118"
+    },
+    {
+      "source": "src/mvp_prototype/src/structure/style.css",
+      "destination": "src/mvp_prototype_next/parent/src/structure/style.css",
+      "sha256": "1ca28f7d82376c30e0ef5c3ff51ba4cf6727d0ff7d639e3a3d8ca31d2e8c590f"
+    }
+  ]
+}

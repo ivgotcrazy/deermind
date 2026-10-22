@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-22",
+  "status": "author_review_complete_pending_user_review",
+  "scope": "Restore original space observation hierarchy with current model ownership; separate read-only provenance from definition management.",
+  "baseline": "before.zip contains selected pre-change working-tree inputs (7 files), including both revised documents; it is not a full repository snapshot.",
+  "document_revisions": {
+    "src/mvp_prototype_next/README.md": [
+      "v0.9",
+      "v0.10"
+    ],
+    "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md": [
+      "v0.6",
+      "v0.7"
+    ]
+  },
+  "checks": {
+    "admin_typecheck_and_build": "PASS",
+    "observation_browser_scenarios": {
+      "passed": 8,
+      "final_output": "test-output.txt"
+    },
+    "existing_admin_browser_scenarios": {
+      "passed": 10,
+      "command": "node --test src/mvp_prototype_next/tests/admin-workbench.test.mjs"
+    },
+    "read_only_inspection_api": "PASS: src/mvp_prototype_next/tests/admin-inspection.test.mjs",
+    "original_source_files": {
+      "checked": 50,
+      "unchanged": true
+    },
+    "live_preview": "http://127.0.0.1:5181/admin/#/objects",
+    "visual_review": [
+      "domain.png",
+      "evaluation-scope.png",
+      "reasoning.png",
+      "narrow.png",
+      "live-interaction.png"
+    ],
+    "documents": "UTF-8, incremented headers, local links and fence pairs checked"
+  },
+  "review_findings_resolved": [
+    "The original space hierarchy, scope selector, metrics and record types are restored separately from editing.",
+    "Empty scoped charts keep personal-record semantics instead of switching to definition charts.",
+    "Historical and invalidated result versions remain queryable; activity and adoption references resolve exact versions.",
+    "Missing activity results are exposed, not classified as legitimately absent, and provenance inspection no longer throws on unresolved references.",
+    "Management navigation and observed record previews preserve the source return route."
+  ],
+  "limits": [
+    "Prototype statistics use current browser example records only.",
+    "Candidate, Validation and Commit logs are not available; runtime metrics remain explicitly unknown.",
+    "No formal model, production authorization or learning-effect claim; no G4 approval.",
+    "Student/parent UI, source prototypes, local storage schema and user working data were not changed."
+  ],
+  "files": {
+    "src/mvp_prototype_next/admin/src/App.vue": "b6846a31e22928c8da6a55f3c3ca80aa6d8f0d94e6dcf77280265e1ee934c6a5",
+    "src/mvp_prototype_next/admin/src/components/ModelCatalog.vue": "87aa25615a19392b2bb3f448462cb2f88231b16502ad7d46a023b66ee0408093",
+    "src/mvp_prototype_next/admin/src/components/ModelObjectContent.vue": "e1c4c00c93d35c04354d8b53a421c84a692ae593b0ccef76edd00fe8c9873284",
+    "src/mvp_prototype_next/admin/src/components/PagingBar.vue": "838cd610b3b3a09cc98cd43994ef94fc2b59e288c556ae0db848a3e83b6a701e",
+    "src/mvp_prototype_next/admin/src/components/LearnerWorkspace.vue": "02e506d2aea64657084ff23d90d8361e354647ad5220c6602247ce5c87234396",
+    "src/mvp_prototype_next/admin/src/components/SpaceObservation.vue": "e9f4106bffbfb6fef2f4174946d09fffe75c56976b8d1e0dc6f2c15db8dc19a4",
+    "src/mvp_prototype_next/admin/src/components/ObservationDetail.vue": "db2aebb56a8c185e8b9c7fae79da409445a816739e158dc381233ac0001ce5c4",
+    "src/mvp_prototype_next/admin/src/workbench/navigation.ts": "60c976269627deea76817b6706cf8cc51e6ae31d6b6b575b9f9c2ca84b961b88",
+    "src/mvp_prototype_next/admin/src/workbench/ui.ts": "c7e0188e2f01126d0ac8682a30960ae9524167604eecea3acde38a0863285430",
+    "src/mvp_prototype_next/admin/src/workbench/observation.ts": "1d143549e34f2182a27074322aeedb393d2ac23568ff62e09fcf756ce52d1a3c",
+    "src/mvp_prototype_next/tests/space-observation.test.mjs": "5ec3de37efaf7cc2d8460566128491e2b2c87800748d888c44b800721b553ff3",
+    "src/mvp_prototype_next/README.md": "6221f285694b4441523e8fe1ca6d77e5042c8689a5f1ac9ebd4d50e34b3bb1ec",
+    "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md": "f383f36dfa9838694f678fa5b3953d8b585d30e2fd4f1621a0ca801947afad57"
+  }
+}

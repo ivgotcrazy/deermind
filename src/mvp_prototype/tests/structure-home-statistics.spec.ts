@@ -43,7 +43,7 @@ test('wrong inventory counts problem identities, retains corrected history, and 
 });
 
 test('homepage statistics reconcile to their own details; assessment page contains no activity dashboard',async({page})=>{
- await page.goto('/structure.html?role=student#/home');
+ await page.goto('/legacy-structure.html?role=student#/home');
  const stats=page.getByRole('region',{name:'学习活动统计'});
  await expect(stats).toContainText('统计示例');
  await expect(stats.locator('.statistic strong')).toHaveText(['4天','3次','2次','6题']);
@@ -66,7 +66,7 @@ test('homepage statistics reconcile to their own details; assessment page contai
 });
 
 test('home chapter link returns to home and local activity never changes the statistical fixture',async({page})=>{
- await page.goto('/structure.html?role=student&preview=scripted#/home');
+ await page.goto('/legacy-structure.html?role=student&preview=scripted#/home');
  await page.getByRole('button',{name:'查看本章学习情况 →',exact:true}).click();
  await expect(page.getByRole('heading',{name:'分数的应用',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'← 返回首页',exact:true}).click();
@@ -80,7 +80,7 @@ test('home chapter link returns to home and local activity never changes the sta
 for(const viewport of [{width:834,height:1112},{width:390,height:844},{width:1024,height:600}]){
  test(`homepage primary action is visible without scrolling at ${viewport.width}x${viewport.height}`,async({page})=>{
   await page.setViewportSize(viewport);
-  await page.goto('/structure.html?role=student&preview=scripted#/home');
+  await page.goto('/legacy-structure.html?role=student&preview=scripted#/home');
   const main=await page.locator('main').boundingBox();
   const action=await page.getByRole('button',{name:'从这里开始讲解 →',exact:true}).boundingBox();
   expect(action!.y).toBeGreaterThanOrEqual(main!.y);

@@ -1,0 +1,9 @@
+import { reactive } from 'vue';
+export const route=reactive({page:'dashboard',id:'',tab:'',q:'',filter:'',p:1,scope:'',domain:'',returnTo:'',student:'',status:'',range:'',since:'',until:'',span:''});
+function read(){const [page,query]=location.hash.slice(2).split('?');const p=new URLSearchParams(query);Object.assign(route,{page:page||'dashboard',id:p.get('id')||'',tab:p.get('tab')||'',q:p.get('q')||'',filter:p.get('filter')||'',p:Math.max(1,Number(p.get('p'))||1),scope:p.get('scope')||'',domain:p.get('domain')||'',returnTo:p.get('returnTo')||'',student:p.get('student')||'',status:p.get('status')||'',range:p.get('range')||'',since:p.get('since')||'',until:p.get('until')||'',span:p.get('span')||''});}
+read();window.addEventListener('hashchange',read);
+export function link(page:string,values:Record<string,string|number|undefined>={}) {const p=new URLSearchParams();for(const [k,v]of Object.entries(values))if(v!==undefined&&v!=='')p.set(k,String(v));return '#/'+page+(p.size?'?'+p:'');}
+export function go(page:string,values:Record<string,string|number|undefined>={},replace=false){const url=link(page,values);if(replace){history.replaceState(null,'',url);read();}else{location.hash=url;read();}}
+export function setQuery(values:Record<string,string|number>){go(route.page,{...route,...values},true);}
+export function openObject(ref:string,scope=route.scope){const observing=route.page==='objects'||route.page.startsWith('observed-')||!!scope;go(observing?'observed-object':'object',{id:ref,scope,returnTo:location.hash});}
+export function back(fallback='dashboard'){if(route.returnTo.startsWith('#/')){location.hash=route.returnTo;read();}else go(fallback);}

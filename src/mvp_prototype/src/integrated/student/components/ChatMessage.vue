@@ -1,0 +1,65 @@
+<script setup lang="ts">
+import type { LiveTurn } from '../../../structure/live';
+defineProps<{message:LiveTurn;disabled?:boolean;ended?:boolean;answer:(id:string)=>string}>();
+const emit=defineEmits<{act:[kind:string,text?:string,id?:string];draft:[id:string,text:string]}>();
+const maxVal=(rows:{value:number}[])=>Math.max(...rows.map(r=>r.value),1);
+</script>
+<template><div class="message-row" :class="{user:message.role==='user'}"><div class="avatar">{{ message.role==='user'?'你':'🦌' }}</div><div class="message-body"><div class="message-meta"><span class="sender">{{ message.role==='user'?'你':'DeerMind' }}</span></div><div class="message-content"><div v-if="message.role==='user'" class="block text">{{ message.displayText||message.text }}</div><template v-for="(block,i) in message.blocks" :key="i">
+ <div v-if="block.type==='text'" class="block text">{{ block.text }}</div><div v-else-if="block.type==='formula'" class="block formula"><pre>{{ block.text }}</pre></div>
+ <figure v-else-if="block.type==='bars'" class="block bars"><figcaption>{{ block.caption }}</figcaption><div v-for="row in block.rows" :key="row.label" class="bar-row"><span class="bar-label">{{ row.label }}</span><div class="bar-track"><div class="bar-fill" :style="{width:(row.value/maxVal(block.rows)*100)+'%'}"/></div><span class="bar-value">{{ row.value }}</span></div></figure>
+ <div v-else-if="block.type==='question'" class="block question"><span class="question-tag">{{ block.mode==='check'?'即时检查':'随堂练习' }}</span><p class="question-prompt">{{ block.prompt }}</p><div v-if="block.state==='offered'&&!ended" class="question-actions"><template v-if="block.mode==='practice'"><textarea :value="answer(block.id)" @input="emit('draft',block.id,($event.target as HTMLTextAreaElement).value)" aria-label="练习答案" placeholder="写下你的答案和思路…" rows="2"/><button class="btn-primary" :disabled="disabled||!answer(block.id).trim()" @click="emit('act','answer',answer(block.id),block.id)">提交这道练习</button></template><template v-else><p class="question-note">开始后暂时收起讲解和右侧参考内容，提交或求助后恢复。</p><button class="btn-primary" :disabled="disabled" @click="emit('act','start_check',undefined,block.id)">开始这道检查</button></template></div><p v-else class="question-note">{{ block.state==='answered'?'已提交，原作答保留在对话中':block.state==='helped'?'已结束检查并求助，未记为错误':block.state==='skipped'?'已跳过，未作答':ended?'对话已暂停，可继续后作答':'' }}</p></div>
+ </template></div></div></div></template>
+
+<style scoped>
+.message-row { display: flex; gap: 12px; margin-bottom: 24px; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.message-row.user { flex-direction: row-reverse; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: #2d5a4a; color: #e8f0ec; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.message-row.user .avatar { background: #4a6fa5; }
+.message-body { max-width: 78%; min-width: 0; }
+.message-row.user .message-body { text-align: right; }
+.message-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11px; color: #8a99a8; }
+.message-row.user .message-meta { justify-content: flex-end; }
+.sender { font-weight: 600; color: #5a6b7a; }
+.phase-tag { background: #e0f0e8; color: #2d6a4f; padding: 1px 8px; border-radius: 10px; font-size: 10px; font-weight: 500; }
+.message-content { text-align: left; }
+.block { margin-bottom: 10px; }
+.block:last-child { margin-bottom: 0; }
+.phase-marker { display: flex; align-items: center; gap: 8px; background: linear-gradient(90deg, #e8f5ee 0%, transparent 100%); padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; color: #2d6a4f; border-left: 3px solid #40916c; }
+.text { font-size: 14px; line-height: 1.8; color: #2c3e50; }
+.text :deep(strong) { color: #1a3a2e; background: #fff3cd; padding: 1px 4px; border-radius: 3px; }
+.formula { background: #f5f7fa; border-left: 3px solid #7b9acc; padding: 12px 16px; border-radius: 0 8px 8px 0; overflow-x: auto; }
+.formula pre { margin: 0; font-family: Consolas, Monaco, monospace; font-size: 14px; line-height: 1.7; color: #2c3e50; white-space: pre-wrap; }
+.bars { background: #fafbfc; border: 1px solid #e1e8ed; border-radius: 10px; padding: 14px 16px; margin: 0; }
+.bars figcaption { font-size: 12px; color: #6b7c8d; margin-bottom: 12px; font-weight: 500; }
+.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.bar-row:last-child { margin-bottom: 0; }
+.bar-label { width: 40px; font-size: 12px; color: #5a6b7a; flex-shrink: 0; }
+.bar-track { flex: 1; height: 18px; background: #eef2f5; border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, #52b788, #40916c); border-radius: 4px; transition: width 0.5s; }
+.bar-value { width: 30px; font-size: 12px; font-weight: 600; color: #2c3e50; text-align: right; }
+.question { background: #fff; border: 1px solid #d4e4dc; border-radius: 10px; padding: 14px 16px; }
+.question-tag { display: inline-block; background: #d4edda; color: #155724; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
+.question-prompt { font-size: 14px; line-height: 1.7; color: #2c3e50; margin: 0 0 12px 0; }
+.question-actions textarea { width: 100%; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 10px; font-size: 13px; resize: vertical; margin-bottom: 8px; box-sizing: border-box; font-family: inherit; }
+.question-actions textarea:focus { outline: none; border-color: #40916c; box-shadow: 0 0 0 2px rgba(64,145,108,0.15); }
+.btn-primary { background: #2d6a4f; color: white; border: none; padding: 7px 18px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 500; font-family: inherit; }
+.btn-primary:hover { background: #245440; }
+.progress { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+.progress-label { font-size: 12px; color: #5a6b7a; width: 80px; }
+.progress-track { flex: 1; height: 8px; background: #eef2f5; border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: #40916c; border-radius: 4px; }
+.progress-value { font-size: 12px; font-weight: 600; color: #2c3e50; }
+.summary { background: #f0f7f3; border-radius: 10px; padding: 12px 16px; }
+.summary h4 { margin: 0 0 8px 0; font-size: 14px; color: #1b4332; }
+.summary ul { margin: 0; padding-left: 18px; }
+.summary li { font-size: 13px; line-height: 1.7; color: #2c3e50; margin-bottom: 4px; }
+@media (max-width: 700px) {
+  .message-body { max-width: 85%; }
+  .text { font-size: 13px; }
+  .avatar { width: 30px; height: 30px; font-size: 11px; }
+}
+
+.text{white-space:pre-wrap;overflow-wrap:anywhere}.question-note{font-size:11px;color:#7a8b80;line-height:1.7;margin:8px 0}.message-body{max-width:88%}.bar-label{width:auto;min-width:36px;max-width:100px;overflow-wrap:anywhere}.bar-value{width:auto;min-width:25px}.question-prompt{overflow-wrap:anywhere}.btn-primary:disabled{opacity:.45;cursor:default}
+
+</style>
