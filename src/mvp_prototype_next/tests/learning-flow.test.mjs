@@ -1,0 +1,137 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { chromium } from '../../mvp_prototype/node_modules/playwright/index.mjs';
+import { expect } from '../../mvp_prototype/node_modules/@playwright/test/index.mjs';
+import { createPrototypeServer } from '../scripts/serve.mjs';
+
+const output=fileURLToPath(new URL('../../../.tmp/mvp-prototype-next/learning-flow-review/',import.meta.url));
+await mkdir(output,{recursive:true});
+test('admin content to student learning, feedback and immutable question history',async t=>{
+  let modelCalls=0;
+  const server=createPrototypeServer({directory:output,config:{key:'test',model:'fixture'},provider:async()=>{modelCalls++;throw Error('Mock must not call a model');}});
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));
+  const base=`http://127.0.0.1:${server.address().port}`;
+  const browser=await chromium.launch({headless:true,channel:'msedge'});
+  const ctx=await browser.newContext({viewport:{width:1440,height:1050},locale:'zh-CN'});
+  const admin=await ctx.newPage(),student=await ctx.newPage(),errors=[];
+  for(const p of [admin,student]){p.setDefaultTimeout(8000);p.on('pageerror',e=>errors.push(e.message));}
+  const btn=(p,name)=>p.getByRole('button',{name,exact:true}),tab=(p,name)=>p.getByRole('tab',{name,exact:true});
+  const data=()=>admin.evaluate(()=>JSON.parse(localStorage.getItem('deermind-next-learning-flow-v1')));
+  const taskPath='/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction';
+  const checks=[];let failed=false;
+  async function check(name,fn){if(failed)return;await t.test(name,async()=>{try{await fn();checks.push({name,passed:true});}catch(e){failed=true;await admin.screenshot({path:output+'/admin-failure.png',fullPage:true});await student.screenshot({path:output+'/student-failure.png',fullPage:true});throw e;}});}
+  t.after(async()=>{await writeFile(output+'/review.json',JSON.stringify({checks,errors,modelCalls},null,2));await browser.close();await new Promise(r=>server.close(r));});
+  await check('administrator prepares and applies a chapter and generates a reusable item',async()=>{
+    await admin.goto(base+'/admin/#/textbooks?id=BOOK-MATH&chapter=CH-INCREASE&tab=content');
+    await btn(admin,'记录核对结果').click();
+    await admin.getByRole('dialog').getByLabel('核对结果').selectOption('true');
+    await admin.getByRole('dialog').getByLabel('核对依据与疑点').fill('本轮自编例题和方法核对完成。');
+    await btn(admin,'保存').click();await btn(admin,'应用更新').click();
+    await expect(admin.locator('.course-application')).toContainText('已应用');
+    await admin.goto(base+taskPath);await tab(admin,'实例').click();
+    await btn(admin,'生成题目').click();await btn(admin,'生成候选题').click();
+    await expect(admin.getByRole('dialog').getByLabel('题目内容')).toHaveValue(/120/);
+    await btn(admin,'检查并保存').click();await expect(admin.locator('.instance-table')).toContainText('120');
+    await admin.screenshot({path:output+'/admin-items.png',fullPage:true});
+  });
+  await check('student chooses the admin course without permanent chapter selection',async()=>{
+    await student.goto(base+'/student/');await student.locator('.space-trigger').click();await btn(student,'＋ 新建学习空间').click();
+    await expect(student.getByRole('dialog').getByLabel('教材',{exact:true})).toHaveValue('BOOK-MATH');
+    await btn(student,'创建学习空间').click();
+    await expect(student.locator('.course-page')).toContainText('小学数学·教材管理示例');
+    await expect(student.locator('.course-page')).not.toContainText('选择长期');
+    const row=student.locator('.chapter-row').filter({has:student.getByRole('heading',{name:'按比例增加后的数量',exact:true})});
+    await row.getByRole('button',{name:'讲解',exact:true}).click();
+    await expect(student.locator('.static-pane h2')).toHaveText('教材');
+    await expect(student.locator('.flow-lesson')).toContainText('80 × 1/4 = 20');
+    await student.screenshot({path:output+'/student-lesson.png',fullPage:true});
+  });
+  await check('practice keeps an error and its help; test preview hides questions',async()=>{
+    await btn(student,'做一道练习').click();await student.getByLabel('答案和思路').fill('15，本来有 60，60 的四分之一是 15。');
+    await student.getByText('Mock 作答判定',{exact:true}).click();await student.getByLabel('本次模拟结果').selectOption('错误');
+    await btn(student,'提交答案').click();await expect(student.locator('.flow-lesson')).toContainText('总量：60 + 15 = 75');
+    await btn(student,'准备检测').click();await expect(student.locator('.flow-lesson')).toContainText('共 2 题');
+    await expect(student.locator('.flow-lesson')).not.toContainText('原来有 120 本书');
+    assert.equal((await data()).uses.filter(u=>u.purpose==='检测').length,0);
+  });
+  await check('a test reuses an existing item, generates and saves another, resumes without duplication',async()=>{
+    const before=await data(),existing=before.questions.find(q=>q.quantity===120);
+    await btn(student,'开始检测').click();await expect(student.locator('.question-title')).toContainText('第 1/2 题');
+    let state=await data();assert.equal(state.uses.filter(u=>u.purpose==='检测')[0].question.id,existing.id);
+    assert.ok(state.questions.some(q=>q.figure==='length'&&q.source==='学习中生成'));
+    await student.getByLabel('答案和思路').fill('120 + 120 × 1/4 = 150 本');
+    await student.reload();await expect(student.getByLabel('答案和思路')).toHaveValue('120 + 120 × 1/4 = 150 本');
+    assert.equal((await data()).uses.filter(u=>u.purpose==='检测').length,1);
+    const pending=(await data()).questions.find(q=>q.figure==='length');
+    await admin.getByRole('button',{name:'编辑实例 '+pending.id,exact:true}).click();
+    await admin.getByRole('dialog').getByLabel('题目内容').fill(pending.question+'（当前题库补充说明）');
+    await btn(admin,'检查并保存').click();
+    await btn(student,'提交答案').click();await expect(student.locator('.question-title')).toContainText('第 2/2 题');
+    await expect(student.locator('.flow-lesson')).toContainText('原来有 120 本书');
+    await expect(student.locator('.flow-lesson')).not.toContainText('当前题库补充说明');
+    assert.equal((await data()).uses.filter(u=>u.purpose==='检测')[1].question.version,1);
+    await expect(student.locator('.flow-lesson')).not.toContainText('本次 1 题正确');
+    await student.screenshot({path:output+'/student-test.png',fullPage:true});
+    await student.getByLabel('答案和思路').fill('48 × 5/4 = 60 米，原来整段也要保留。');await btn(student,'提交答案').click();
+    await expect(student.locator('.result-card')).toContainText('2 题判为正确');
+    await expect(student.locator('.result-card')).toContainText('没有足够依据');
+    await expect(student.getByRole('img',{name:'原长 48 米，增加原长的四分之一',exact:true})).toBeVisible();
+    await btn(student,'查看学习情况').click();await student.locator('.chapter-toggle').filter({hasText:'按比例增加后的数量'}).click();
+    await expect(student.locator('.course-page')).toContainText('待确认');
+    await student.screenshot({path:output+'/student-feedback.png',fullPage:true});
+  });
+  await check('admin traces the generated item back to the exact activity and old versions',async()=>{
+    await admin.reload();await tab(admin,'实例').click();await admin.getByLabel('来源',{exact:true}).selectOption('学习中生成');
+    const row=admin.locator('.instance-table tbody tr').filter({hasText:'48 米'});await row.getByRole('button',{name:'1 次展示',exact:true}).click();
+    await expect(admin.getByRole('dialog').locator('.use-table')).toContainText('60 米');await btn(admin,'查看过程 →').click();
+    await expect(admin.locator('.flow-review')).toContainText('Mock 联动记录');await tab(admin,'评价结果').click();await expect(admin.locator('.flow-review')).toContainText('延迟保持');
+    await admin.screenshot({path:output+'/admin-review.png',fullPage:true});
+    const state=await data(),q=state.questions.find(q=>q.quantity===120),activity=state.lessons[0];
+    await admin.goto(base+taskPath);await tab(admin,'实例').click();await admin.getByRole('button',{name:'编辑实例 '+q.id,exact:true}).click();
+    await admin.getByRole('dialog').getByLabel('题目内容').fill('修改后的当前题面：原有120本，增加四分之一，求总数。');
+    await btn(admin,'检查并保存').click();assert.equal((await data()).questions.find(x=>x.id===q.id).version,2);
+    await admin.goto(base+'/admin/#/activity?id='+activity.id);await admin.getByRole('button',{name:'3 · 检测',exact:true}).click();
+    await expect(admin.locator('.flow-review')).toContainText('当时展示的题目 · v1');
+    await expect(admin.locator('.flow-review')).not.toContainText('修改后的当前题面');
+  });
+  await check('invalid classification cannot enter the usable bank; course updates need no student edits',async()=>{
+    await admin.goto(base+taskPath);await tab(admin,'实例').click();const count=(await data()).questions.length;
+    await btn(admin,'新建题目').click();const d=admin.getByRole('dialog');await d.getByLabel('题目内容').fill('反向问题，已知最终量求原量');await d.getByLabel('参考答案').fill('80');await d.getByLabel('解题过程').fill('此题不属于当前模板。');
+    await d.getByText('Mock 检查场景',{exact:true}).click();await d.getByLabel('模拟检查结果').selectOption('mismatch');await btn(admin,'检查并保存').click();await expect(d.getByRole('alert')).toContainText('模板归类未通过');assert.equal((await data()).questions.length,count);await btn(admin,'取消').click();
+    await admin.goto(base+'/admin/#/targets?id=TARGET-MATH');await btn(admin,'编辑目标信息').click();await admin.getByRole('dialog').getByLabel('目标名称').fill('已调整的学习目标');await btn(admin,'保存').click();await btn(admin,'应用更新').click();
+    await student.getByRole('button',{name:'📖 教材',exact:true}).click();await expect(student.locator('.course-definition')).toContainText('已调整的学习目标');
+    const saved=await data();assert.notEqual(saved.courses[0].snapshot.target.name,saved.lessons[0].snapshot.target.name);
+  });
+  await check('help ends the whole test; unanswered items are not errors; tablet layout is usable',async()=>{
+    await student.locator('.chapter-row').filter({hasText:'按比例增加后的数量'}).getByRole('button',{name:'检测',exact:true}).click();
+    await btn(student,'开始检测').click();await expect(student.locator('.question-title')).toContainText('第 1/2 题');await btn(student,'结束并求助').click();
+    await expect(student.locator('.result-card')).toContainText('0/2');
+    const state=await data();assert.equal(state.uses.filter(u=>u.result==='错误').length,1);
+    await student.setViewportSize({width:1024,height:768});await student.screenshot({path:output+'/student-tablet.png',fullPage:true});
+    assert.ok(await student.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
+    await admin.goto(base+'/admin/#/learning-spaces?id='+state.spaces[0].id);await expect(admin.locator('.learning-space-workspace')).toContainText('课程内容范围');
+    await btn(admin,'查看课程范围 →').click();await expect(admin.locator('.learning-space-workspace')).toContainText('教材章节');
+    assert.deepEqual(errors,[]);assert.equal(modelCalls,0);
+  });
+  await check('practice help continues learning; batch preview and text import create bank items',async()=>{
+    await student.setViewportSize({width:1440,height:1050});
+    await student.locator('.chapter-row').filter({hasText:'按比例增加后的数量'}).getByRole('button',{name:'讲解',exact:true}).click();
+    await btn(student,'做一道练习').click();await btn(student,'求助').click();
+    await expect(student.locator('.flow-lesson')).toContainText('这次没有提交答案，不判错');
+    await expect(btn(student,'准备检测')).toBeVisible();
+    assert.equal((await data()).uses.filter(u=>u.result==='错误').length,1);
+    await admin.goto(base+taskPath);await tab(admin,'实例').click();
+    const before=(await data()).questions.length;
+    await btn(admin,'生成题目').click();await admin.getByRole('dialog').getByLabel('生成数量').fill('3');await btn(admin,'生成候选题').click();
+    await expect(admin.locator('.batch-preview')).toContainText('140');await expect(admin.locator('.batch-preview')).toContainText('160');
+    await btn(admin,'检查并保存').click();assert.equal((await data()).questions.length,before+3);
+    await btn(admin,'导入题目').click();const d=admin.getByRole('dialog');
+    await d.getByLabel('文本文件').setInputFiles({name:'import-question.txt',mimeType:'text/plain',buffer:Buffer.from('原来有 200 本书，增加原来的四分之一，现在有多少本？')});
+    await expect(d.getByLabel('题目内容')).toHaveValue(/200/);
+    await d.getByLabel('参考答案').fill('250');await d.getByLabel('解题过程').fill('200 + 200 × 1/4 = 250。');
+    await btn(admin,'检查并保存').click();assert.equal((await data()).questions.length,before+4);
+    assert.deepEqual(errors,[]);assert.equal(modelCalls,0);
+  });
+});

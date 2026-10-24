@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-23",
+  "status": "author_review_complete_pending_user_review",
+  "scope": "Restore original interaction list and side-by-side process inspection, preserve current model meaning and existing workflows.",
+  "baseline": "before.zip contains five selected working-tree inputs, not a complete repository snapshot. Baseline hashes also cover 88 protected source files.",
+  "documents": {
+    "src/mvp_prototype_next/README.md": [
+      "v0.10",
+      "v0.11"
+    ],
+    "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md": [
+      "v0.7",
+      "v0.8"
+    ]
+  },
+  "checks": {
+    "build": "PASS: vue-tsc and Vite; three-end build also passed via official startup script",
+    "browser_scenarios": {
+      "interaction_review": 8,
+      "space_observation": 8,
+      "existing_admin_workflows": 10
+    },
+    "read_only_inspection_api": 1,
+    "node_total_including_parent_suites": 30,
+    "final_targeted_reruns": [
+      "final-regression.txt",
+      "final-interaction-review.txt"
+    ],
+    "protected_files": {
+      "checked": 88,
+      "unchanged": true
+    },
+    "student_state_body": "unchanged compared with before.zip (normalized newlines)",
+    "visual_review": [
+      "live-list.png",
+      "live-detail.png",
+      "live-model-call.png",
+      "live-belief.png",
+      "narrow.png",
+      "real.png"
+    ],
+    "screenshots": ".tmp/mvp-prototype-next/interaction-review",
+    "live_preview": {
+      "script": "./assets/index-UvX3ArpK.js",
+      "ready": true,
+      "at": "2026-10-23T10:50:45.469Z"
+    },
+    "clipboard": "ACT-001 copied; model example response copied; switching steps clears old copy feedback",
+    "documents": "Version headers incremented; UTF-8, fences and local links checked"
+  },
+  "review_findings_resolved": [
+    "Independent trace list and detail replace the generic activity browsing surface.",
+    "Each sample activity has its own explicit authored script or absent-log state; no shared fixed trace for arbitrary IDs.",
+    "Date filters and pagination work; filtered export excludes other scopes.",
+    "Candidate rejection and retry can be inspected; committed results do not imply semantic correctness.",
+    "Task Belief shows four aspect changes with exact evidence references; no personal KC state or scalar average.",
+    "Evidence invalidation, history, purpose recording, owner editing, source return and real read-only views remain operational.",
+    "Stage selection persists across refresh and reference navigation; copy feedback resets on step change.",
+    "Original space-observation test now expands the approved full-facts disclosure and verifies the same actual-help content."
+  ],
+  "limits": [
+    "Authored scripts, prompts, timings and tokens are examples, not engine instrumentation; they are not counted by space-observation runtime metrics.",
+    "Real session mode only shows stored inputs, outputs, per-turn metrics and status; formal Trace/Span, Evaluation and display receipts are not available.",
+    "Original parameter replay placeholder is not restored as a working feature.",
+    "No production authorization, capacity or model-quality claim follows from prototype tests."
+  ],
+  "modified_files": {
+    "src/mvp_prototype_next/admin/src/App.vue": "1b3ca1ac65e08d55c678b99ba275c36327008d52e3d3555f37bca22c0a08dc21",
+    "src/mvp_prototype_next/admin/src/components/LearnerWorkspace.vue": "8eab5815eeccb2652db5c5d414708cb6b5b4cf632af22c5f9bd5b5ad1f5db5a3",
+    "src/mvp_prototype_next/admin/src/components/TraceList.vue": "bbafcbe979007d8a149cbe3033b6b7cb15d1c2a6bfe70c516928e4fa05c2808c",
+    "src/mvp_prototype_next/admin/src/components/TraceDetail.vue": "0475664f56b3ad3f71b164ec61f50878ec936b5defbfd9f05be691fc9aa111f2",
+    "src/mvp_prototype_next/admin/src/components/SpanDetail.vue": "d81a25e1b18b0238eaed0bb1c047346bd08d6b2412de8ab9f0bcbfa4495f523f",
+    "src/mvp_prototype_next/admin/src/components/WaterfallChart.vue": "65d559023a6faf7ef997fd6aa278aedea707f6c670b6a9a0e65e67114bdb90dc",
+    "src/mvp_prototype_next/admin/src/components/SemanticTimeline.vue": "3613d7c131ebf029594ccf9eb65510af569c2d2a52744bd9de7ff0a3b8144e36",
+    "src/mvp_prototype_next/admin/src/types.ts": "d936e4303fb57fada241337d51e7af04733d5aa38c6682d43ea823360b11b2fd",
+    "src/mvp_prototype_next/admin/src/workbench/navigation.ts": "acfb10fa1ee38c5356f71dd1520c6339a41fe0f6198b1d7ce786a5145c1c98e0",
+    "src/mvp_prototype_next/admin/src/workbench/traces.ts": "833197bff89e3d89f2b80d08f3846f3985284d3699439bd7793b3ffddbaf1bd8",
+    "src/mvp_prototype_next/tests/interaction-review.test.mjs": "d46e290d599bdee59a31fbcc393319f46841a885d62114c569b20cbac94352a2",
+    "src/mvp_prototype_next/tests/space-observation.test.mjs": "4981c6cbd52978cd57fcd20b5cba5a6c84065cd634283775ad8b4a79506c8585",
+    "src/mvp_prototype_next/README.md": "76a18cb579c82d1c2cc4d2b5e44cf428c04b596bf519259d60e50b4067b8faa1",
+    "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md": "06ee766aa778c1d7b5f2bfda7181d7620f22276f67c34324c79e1768299efff0"
+  }
+}

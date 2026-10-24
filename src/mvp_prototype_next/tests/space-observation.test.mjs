@@ -19,15 +19,15 @@ test('space observation preserves scope, provenance and management boundaries',a
   const base=`http://127.0.0.1:${server.address().port}/admin/`;
   const browser=await chromium.launch({headless:true,channel:'msedge'});
   t.after(async()=>{await browser.close();await new Promise(r=>server.close(r));await rm(directory,{recursive:true,force:true});});
-  async function context(hash='objects') {const ctx=await browser.newContext({viewport:{width:1440,height:1000},locale:'zh-CN'});const p=await ctx.newPage();p.setDefaultTimeout(5000);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(base+'#/'+hash);return {ctx,p,errors};}
+  async function context(hash='objects') {if(hash.startsWith('objects'))hash+=(hash.includes('?')?'&':'?')+'source=legacy';const ctx=await browser.newContext({viewport:{width:1440,height:1000},locale:'zh-CN'});const p=await ctx.newPage();p.setDefaultTimeout(5000);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(base+'#/'+hash);return {ctx,p,errors};}
   async function grant(p){const gate=p.locator('.access-gate');if(await gate.count()){await gate.getByLabel('用途',{exact:true}).fill('核对当前活动和所采用的历史定义');await gate.getByRole('button',{name:'记录用途并查看'}).click();await expect(gate).toHaveCount(0);}}
   function metric(p,label){return p.locator('[data-testid="observation-metrics"] .metric-card').filter({hasText:label}).locator('strong');}
   async function fixture(p,fn){const pending=p.waitForEvent('download');await p.getByRole('button',{name:'导出工作记录',exact:true}).click();const snapshot=await readFile(await (await pending).path(),'utf8');await p.evaluate(({key,code,snapshot})=>{const s=JSON.parse(localStorage.getItem(key)||snapshot);new Function('s',code)(s);localStorage.setItem(key,JSON.stringify(s));},{key,code:fn,snapshot});await p.reload();}
 
   await t.test('restores observation hierarchy instead of editable catalog',async()=>{
     const {ctx,p,errors}=await context();
-    await expect(p.getByRole('navigation',{name:'观测空间'})).toBeVisible();
-    await expect(p.getByRole('button',{name:'AI Reasoning',exact:true})).toBeVisible();
+    await expect(p.locator('.sidebar').getByRole('group',{name:'空间观测',exact:true})).toBeVisible();await expect(p.locator('.space-nav')).toHaveCount(0);
+    await expect(p.getByRole('button',{name:'智能推理',exact:true})).toBeVisible();
     await expect(p.locator('[data-testid="observation-metrics"]')).toBeVisible();
     await expect(p.getByRole('button',{name:'编辑',exact:true})).toHaveCount(0);
     await p.screenshot({path:path.join(output,'domain.png'),fullPage:true});
@@ -69,12 +69,13 @@ test('space observation preserves scope, provenance and management boundaries',a
     await expect(p.locator('.observation-detail')).toContainText('CL-001@1');
     await expect(p.locator('input[type=file]')).toHaveCount(0);
     await p.getByRole('button',{name:'前往评估模型管理 →',exact:true}).click();
-    await expect(p.getByLabel('导入模型定义包')).toBeVisible();
-    await expect(p.locator('.sidebar .nav-item.active')).toContainText('评估模型管理');
-    await p.getByRole('button',{name:'← 返回观测详情',exact:true}).click();await expect(p).toHaveURL(/observed-object.*CL-001/);
+    await expect(p.getByRole('button',{name:'新建 Claim',exact:true})).toBeVisible();
+    await expect(p.locator('.sidebar .nav-item.active')).toContainText('评估空间');
+    await p.getByRole('button',{name:'← 返回观测来源',exact:true}).click();await expect(p).toHaveURL(/observed-object.*CL-001/);
     await p.getByRole('button',{name:'← 返回观测来源',exact:true}).click();
     await p.getByRole('button',{name:/提示后完成原量增减题 · ACT-001/}).click();
-    await expect(p.getByRole('heading',{name:'原始输入与实际帮助',exact:true})).toBeVisible();
+    await p.getByText('完整事实与实际帮助记录',{exact:true}).click();
+    await expect(p.locator('.fact').filter({hasText:'已展示的提示'})).toContainText('先算 80 × 1/4');
     assert.deepEqual(errors,[]);await ctx.close();
   });
   await t.test('learning observes actual adoption and exposes missing references',async()=>{
@@ -121,8 +122,8 @@ test('space observation preserves scope, provenance and management boundaries',a
     await p.getByLabel('筛选观测记录',{exact:true}).fill('额外任务');await p.getByRole('button',{name:'下一页',exact:true}).click();
     const url=p.url();await p.getByRole('button',{name:'查看记录',exact:true}).first().click();
     await p.getByRole('button',{name:'前往领域管理 →',exact:true}).click();
-    await expect(p.locator('.sidebar .nav-item.active')).toContainText('领域管理');
-    await p.getByRole('button',{name:'编辑',exact:true}).first().click();
+    await expect(p.locator('.sidebar .nav-item.active')).toContainText('领域空间');
+    await p.getByRole('button',{name:'编辑领域',exact:true}).click();
     await p.getByRole('button',{name:'取消',exact:true}).click();
     await p.getByRole('button',{name:'← 返回观测详情',exact:true}).click();
     await p.getByRole('button',{name:'← 返回观测来源',exact:true}).click();

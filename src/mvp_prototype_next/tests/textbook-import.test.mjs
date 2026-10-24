@@ -1,0 +1,111 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { chromium } from '../../mvp_prototype/node_modules/playwright/index.mjs';
+import { expect } from '../../mvp_prototype/node_modules/@playwright/test/index.mjs';
+import { createPrototypeServer } from '../scripts/serve.mjs';
+
+const output=fileURLToPath(new URL('../../../.tmp/mvp-prototype-next/import-review/',import.meta.url));
+await mkdir(output,{recursive:true});
+test('new scanned textbook to corrected content, model mapping, adoption and student learning',async t=>{
+  let modelCalls=0;
+  const server=createPrototypeServer({directory:output,config:{key:'fixture',model:'fixed'},provider:async()=>{modelCalls++;throw Error('No model call expected');}});
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));
+  const base='http://127.0.0.1:'+server.address().port;
+  const browser=await chromium.launch({headless:true,channel:'msedge'});
+  const ctx=await browser.newContext({viewport:{width:1600,height:1050},locale:'zh-CN'});
+  const admin=await ctx.newPage(),student=await ctx.newPage(),errors=[],posts=[],checks=[];
+  for(const p of [admin,student]){p.setDefaultTimeout(8000);p.on('pageerror',e=>errors.push(e.message));p.on('request',r=>{if(r.method()==='POST')posts.push(r.url());});}
+  const btn=(p,name)=>p.getByRole('button',{name,exact:true});
+  const imports=()=>admin.evaluate(()=>JSON.parse(localStorage.getItem('deermind-next-textbook-import-v1')));
+  const flow=()=>admin.evaluate(()=>JSON.parse(localStorage.getItem('deermind-next-learning-flow-v1')||'{"courses":[]}'));
+  let failed=false,importUrl='',bookId='',chapterId='';
+  async function check(name,fn){if(failed)return;await t.test(name,async()=>{try{await fn();checks.push({name,passed:true});}catch(e){failed=true;await admin.screenshot({path:output+'/admin-failure.png',fullPage:true});await student.screenshot({path:output+'/student-failure.png',fullPage:true});throw e;}});}
+  t.after(async()=>{await writeFile(output+'/review.json',JSON.stringify({checks,errors,posts,modelCalls},null,2));await browser.close();await new Promise(r=>server.close(r));});
+  await check('upload validates file types and required fields; file ordering and draft resume work',async()=>{
+    await admin.goto(base+'/admin/#/textbooks');await btn(admin,'导入教材').click();
+    await btn(admin,'上传并开始整理').click();await expect(admin.getByRole('alert')).toContainText('先选择扫描件');
+    await admin.getByLabel('选择 PDF 或扫描图片').setInputFiles({name:'notes.txt',mimeType:'text/plain',buffer:Buffer.from('bad')});
+    await expect(admin.getByRole('alert')).toContainText('PDF 或扫描图片');
+    await admin.getByLabel('选择 PDF 或扫描图片').setInputFiles({name:'用户选择的扫描件.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4 mock')});
+    await expect(admin.locator('.upload-files')).toContainText('用户选择的扫描件.pdf');
+    await btn(admin,'移除 用户选择的扫描件.pdf').click();await admin.getByText('使用其他演示数据',{exact:true}).click();await btn(admin,'使用示例扫描件').click();
+    await btn(admin,'下移 分数与面积-扫描页1.png').click();await expect(admin.locator('.upload-files tbody tr').first()).toContainText('扫描页2');
+    await btn(admin,'上移 分数与面积-扫描页1.png').click();
+    await admin.getByLabel('教材名称',{exact:true}).fill('导入走查教材');
+    importUrl=admin.url();await btn(admin,'← 返回教材列表').click();await btn(admin,'继续导入 导入走查教材').click();
+    await expect(admin.getByLabel('教材名称',{exact:true})).toHaveValue('导入走查教材');
+    await admin.reload();await expect(admin.locator('.upload-files tbody tr')).toHaveCount(3);
+    await admin.screenshot({path:output+'/01-upload.png',fullPage:true});
+  });
+  await check('recognition shows progress and recovers from a mock interruption without duplicate books',async()=>{
+    await admin.getByText('Mock 处理场景',{exact:true}).click();await admin.getByLabel('模拟一次识别中断').check();
+    await btn(admin,'上传并开始整理').click();await expect(admin.getByRole('progressbar')).toBeVisible();
+    await expect(admin.getByRole('alert')).toContainText('模拟识别中断');
+    await admin.reload();await btn(admin,'继续整理').click();
+    await expect(admin.locator('.page-compare')).toBeVisible();
+    const state=await imports();assert.equal(state.books.length,1);assert.equal(state.imports[0].pages.length,3);
+    bookId=state.books[0].id;chapterId=state.books[0].units[0].chapters[0].id;
+    await expect(admin.locator('.scan-page')).toContainText('80 × 1/4');
+    await expect(admin.getByLabel('识别整理内容')).toHaveValue(/1\/9/);
+    await expect(btn(admin,'下一步：关联模型')).toBeDisabled();
+  });
+  await check('corrections retain original pages, chapter context and unresolved work across reload',async()=>{
+    await admin.getByLabel('识别整理内容').fill('原来有 80 本书，又增加原来数量的四分之一。现在有多少本？\n80 × 1/4 = 20（本）\n80 + 20 = 100（本）');
+    await admin.locator('.page-choice').nth(1).click();await expect(admin.getByRole('alert')).toContainText('未保存');
+    await btn(admin,'保存并确认本页').click();await expect(admin.locator('.page-choice').first()).toContainText('已核对');
+    await admin.locator('.page-choice').nth(1).click();await expect(admin.locator('.scan-page')).toContainText('48 米');
+    await expect(admin.getByLabel('识别整理内容')).toHaveValue(/厘米/);
+    await admin.getByLabel('识别整理内容').fill('一根绳子原长 48 米，延长部分是原长的四分之一。现在总长是多少米？\n请结合示意图说明理由。');
+    await admin.getByLabel('印刷书页码').fill('27');await btn(admin,'保存并确认本页').click();
+    await expect(btn(admin,'下一步：关联模型')).toBeEnabled();
+    await admin.reload();await expect(admin.getByLabel('识别整理内容')).toHaveValue(/48 米/);await expect(admin.getByLabel('印刷书页码')).toHaveValue('27');
+    const state=await imports();assert.equal(state.books[0].units[0].chapters[0].checked,true);assert.equal(state.books[0].units[1].chapters[0].checked,false);
+    await admin.screenshot({path:output+'/02-corrections.png',fullPage:true});
+    await admin.setViewportSize({width:1024,height:768});assert.ok(await admin.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+    assert.ok(await admin.locator('.page-container').evaluate(el=>el.scrollWidth<=el.clientWidth));
+    await admin.screenshot({path:output+'/02-narrow.png',fullPage:true});await admin.setViewportSize({width:1600,height:1050});
+  });
+  await check('mapping suggestions are explicit; selected solutions determine KC and links return to the draft',async()=>{
+    await btn(admin,'下一步：关联模型').click();await expect(admin.locator('.mapping-table tbody tr')).toHaveCount(0);
+    await expect(btn(admin,'下一步：目标与应用')).toBeDisabled();
+    await btn(admin,'采用此关联建议').click();await expect(admin.locator('.mapping-table tbody tr')).toHaveCount(1);await expect(admin.locator('.knowledge-table tbody tr')).toHaveCount(2);
+    await btn(admin,'编辑映射 fraction').click();await admin.getByRole('dialog').getByRole('checkbox',{name:/先求最终量对应的倍数/}).check();await btn(admin,'保存映射').click();
+    await expect(admin.locator('.knowledge-table tbody tr')).toHaveCount(3);
+    await admin.locator('.mapping-table').getByRole('button',{name:'先求最终量对应的倍数 ↗',exact:true}).click();await expect(admin.locator('.domain-detail')).toBeVisible();
+    await btn(admin,'← 返回教材章节').click();await expect(admin.locator('.knowledge-table tbody tr')).toHaveCount(3);await expect(admin.getByLabel('当前章节',{exact:true})).toHaveValue(chapterId);
+    await admin.screenshot({path:output+'/03-mapping.png',fullPage:true});
+  });
+  await check('target requirements can be edited; only ready chapters are offered after explicit application',async()=>{
+    await btn(admin,'下一步：目标与应用').click();await expect(btn(admin,'应用并供学生选用')).toBeDisabled();
+    await btn(admin,'生成目标建议').click();await expect(admin.locator('.import-requirements tbody tr')).toHaveCount(4);
+    const standard=admin.locator('.import-requirements textarea').first(),original=await standard.inputValue();
+    await standard.fill('');await expect(btn(admin,'应用并供学生选用')).toBeDisabled();await standard.fill(original+' 保留学生自己的列式。');
+    await student.goto(base+'/student/');await student.locator('.space-trigger').click();await btn(student,'＋ 新建学习空间').click();
+    await expect(student.getByRole('dialog')).toContainText('尚未应用可用课程');await btn(student,'取消').click();
+    assert.equal((await flow()).courses.length,0);
+    await btn(admin,'应用并供学生选用').click();await expect(admin.locator('.import-success')).toContainText('教材已可供学生选用');await expect(admin.locator('.import-success')).toBeInViewport();
+    await expect(admin.locator('.availability-table tbody tr').filter({hasText:'三角形'})).toContainText('待准备');
+    await admin.screenshot({path:output+'/04-applied.png',fullPage:true});
+    await admin.reload();await expect(admin.locator('.import-success')).toBeVisible();assert.equal((await flow()).courses.length,1);
+  });
+  await check('student chooses the newly imported course and completes the existing lesson and check flow',async()=>{
+    await student.locator('.space-trigger').click();await btn(student,'＋ 新建学习空间').click();
+    await expect(student.getByRole('dialog').getByLabel('教材',{exact:true})).toHaveValue(bookId);
+    await btn(student,'创建学习空间').click();await expect(student.locator('.course-page')).toContainText('导入走查教材');
+    await student.locator('.chapter-row').filter({hasText:'按比例增加后的数量'}).getByRole('button',{name:'讲解',exact:true}).click();
+    await expect(student.locator('.flow-lesson')).toContainText('80 × 1/4 = 20');
+    await expect(student.locator('.static-pane h2')).toHaveText('教材');
+    await btn(student,'准备检测').click();await btn(student,'开始检测').click();
+    await student.getByLabel('答案和思路').fill('150 本，原量加上原量的四分之一。');await btn(student,'提交答案').click();
+    await student.getByLabel('答案和思路').fill('60 米，同样要保留原来的整段。');await btn(student,'提交答案').click();
+    await expect(student.locator('.result-card')).toContainText('2 题判为正确');
+    await btn(student,'查看学习情况').click();await expect(student.locator('.course-page')).toContainText('4 项要求待确认');
+    await student.screenshot({path:output+'/05-student.png',fullPage:true});
+    const state=await flow();assert.equal(state.lessons[0].snapshot.book.id,bookId);assert.equal(state.lessons[0].chapterId,chapterId);
+    await admin.goto(base+'/admin/#/activity?id='+state.lessons[0].id);await expect(admin.locator('.flow-review')).toContainText('导入走查教材');
+    await admin.screenshot({path:output+'/06-activity.png',fullPage:true});
+    assert.equal(modelCalls,0);assert.deepEqual(posts,[]);assert.deepEqual(errors,[]);
+  });
+});

@@ -19,7 +19,7 @@ test('interaction review restores the original process inspection workflow',asyn
   const base=`http://127.0.0.1:${server.address().port}/admin/`;
   const browser=await chromium.launch({headless:true,channel:'msedge'});
   t.after(async()=>{await browser.close();await new Promise(r=>server.close(r));assert.ok(directory.startsWith(path.join(tmpdir(),'deermind-trace-review-')));await rm(directory,{recursive:true,force:true});});
-  async function context(hash='trace-list'){const ctx=await browser.newContext({viewport:{width:1440,height:1000},locale:'zh-CN',timezoneId:'Asia/Shanghai'});const p=await ctx.newPage();p.setDefaultTimeout(5000);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(base+'#/'+hash);return {ctx,p,errors};}
+  async function context(hash='trace-list'){if(hash.startsWith('trace-list'))hash+=(hash.includes('?')?'&':'?')+'source=legacy';const ctx=await browser.newContext({viewport:{width:1440,height:1000},locale:'zh-CN',timezoneId:'Asia/Shanghai'});const p=await ctx.newPage();p.setDefaultTimeout(5000);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(base+'#/'+hash);return {ctx,p,errors};}
   async function grant(p){const gate=p.locator('.access-gate');if(await gate.count()){await gate.getByLabel('用途',{exact:true}).fill('对照原版审查处理过程');await gate.getByRole('button',{name:'记录用途并查看'}).click();await expect(gate).toHaveCount(0);}}
   async function snapshot(p){const pending=p.waitForEvent('download');await p.getByRole('button',{name:'导出工作记录',exact:true}).click();return JSON.parse(await readFile(await (await pending).path(),'utf8'));}
   await t.test('list restores scope statistics, student, space, status and functional dates',async()=>{
@@ -35,7 +35,7 @@ test('interaction review restores the original process inspection workflow',asyn
   await t.test('detail restores side by side stages, rejection, retry and recorded outputs',async()=>{
     const {ctx,p,errors}=await context('activity?id=ACT-001&scope=ACT-001&returnTo=%23%2Ftrace-list');await grant(p);
     await expect(p.locator('.trace-main .waterfall')).toBeVisible();await expect(p.locator('.trace-main .span-detail')).toBeVisible();
-    await p.locator('.waterfall-row').filter({hasText:'校验候选：拒绝'}).click();await expect(p.locator('.span-detail')).toContainText('实际已提供列式提示');
+    await p.locator('.waterfall-row').filter({hasText:'校验候选：拒绝'}).focus();await p.keyboard.press('Enter');await expect(p.locator('.span-detail')).toContainText('实际已提供列式提示');
     await p.locator('.waterfall-row').filter({hasText:'LLM 调用：修正观察'}).click();await expect(p.locator('.span-detail')).toContainText('输入 tokens');await expect(p.locator('.span-detail')).toContainText('受助');
     await p.locator('.waterfall-row').filter({hasText:'推断 Task Belief'}).click();await expect(p.locator('.span-detail')).toContainText('延迟保持');await expect(p.locator('.span-detail')).toContainText('证据不足');
     const left=await p.locator('.waterfall-section').boundingBox(),right=await p.locator('.detail-section').boundingBox();assert.ok(right.x>=left.x+left.width-1);
@@ -60,12 +60,21 @@ test('interaction review restores the original process inspection workflow',asyn
     await p.goto(base+'#/activity?id=ACT-001');await grant(p);await expect(p.getByRole('heading',{name:'结果记录缺失',exact:true})).toBeVisible();assert.deepEqual(errors,[]);await ctx.close();
   });
   await t.test('real sessions remain read only and never receive synthetic traces or formal beliefs',async()=>{
-    const sample={version:2,revision:1,id:'NEXT-trace-real-fixture',scope:{space:'math-6b',label:'六年级下册数学'},model:'fixture',phase:'learning',pending:null,error:null,createdAt:'2026-10-21T09:00:00+08:00',updatedAt:'2026-10-21T09:00:03+08:00',turns:[{id:'u1',role:'user',text:'解释圆柱体积',at:'2026-10-21T09:00:00+08:00'},{id:'a1',role:'assistant',blocks:[{type:'explanation',text:'底面积乘高。'}],at:'2026-10-21T09:00:03+08:00',metrics:{ms:2100,calls:[{ms:1900,usage:{prompt_tokens:60,completion_tokens:30},finish:'stop'}]}}],requests:{}};
+    const sample={version:2,revision:1,id:'NEXT-trace-real-fixture',scope:{space:'math-6b',label:'六年级下册数学'},model:'fixture',phase:'learning',pending:null,error:null,createdAt:'2026-10-21T09:00:00+08:00',updatedAt:'2026-10-21T09:00:03+08:00',turns:[{id:'u1',role:'user',action:'message',displayText:'解释圆柱体积',text:'解释圆柱体积',at:'2026-10-21T09:00:00+08:00'},{id:'a1',role:'assistant',blocks:[{type:'explanation',text:'底面积乘高。'}],at:'2026-10-21T09:00:03+08:00',metrics:{ms:2100,calls:[{ms:1900,usage:{prompt_tokens:60,completion_tokens:30},finish:'stop'}]}}],requests:{}};
     const file=path.join(directory,sample.id+'.json'),raw=JSON.stringify(sample);await writeFile(file,raw);
     const {ctx,p,errors}=await context();await p.getByLabel('数据来源',{exact:true}).selectOption('real');await expect(p.getByLabel('学生',{exact:true})).toBeDisabled();await p.getByRole('button',{name:'解释圆柱体积',exact:true}).click();await grant(p);
     await expect(p.locator('.page-container')).toContainText('2.10 秒');await expect(p.locator('.page-container')).toContainText('没有逐条展示回执');await expect(p.locator('.waterfall')).toHaveCount(0);await expect(p.locator('.page-container')).not.toContainText('BL-001');await p.screenshot({path:path.join(output,'real.png'),fullPage:true});assert.equal(await readFile(file,'utf8'),raw);assert.deepEqual(errors,[]);await ctx.close();
   });
   await t.test('desktop narrow layout stays usable without document overflow',async()=>{
     const {ctx,p,errors}=await context('activity?id=ACT-001');await grant(p);await p.setViewportSize({width:1024,height:768});await expect(p.locator('.span-detail')).toBeVisible();assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await p.screenshot({path:path.join(output,'narrow.png'),fullPage:true});assert.deepEqual(errors,[]);await ctx.close();
+  });
+  await t.test('exports contain only the selected scope and every example event opens an actual step',async()=>{
+    const {ctx,p,errors}=await context('trace-list?filter=LS-003');let pending=p.waitForEvent('download');await p.getByRole('button',{name:'导出筛选结果 JSON',exact:true}).click();const index=JSON.parse(await readFile(await (await pending).path(),'utf8'));assert.deepEqual(index.items.map(x=>x.id),['ACT-003']);assert.equal(index.source,'demo');
+    await p.goto(base+'#/activity?id=ACT-001');await grant(p);pending=p.waitForEvent('download');await p.getByRole('button',{name:'导出本次示例 JSON',exact:true}).click();const record=JSON.parse(await readFile(await (await pending).path(),'utf8'));assert.equal(record.source,'authored-example');assert.equal(record.activity.id,'ACT-001');assert.ok(record.processNotice.includes('不是采集日志'));
+    const steps=new Map();function walk(list){for(const s of list){assert.ok(!steps.has(s.spanId));steps.set(s.spanId,s);assert.ok(s.startTime+s.duration<=record.process.duration);for(const child of s.children||[])assert.ok(child.startTime>=s.startTime&&child.startTime+child.duration<=s.startTime+s.duration);walk(s.children||[]);}}walk(record.process.spans);
+    await p.getByRole('button',{name:'LLM 调用：修正观察',exact:true}).click();await p.getByRole('button',{name:'复制模型原始输出',exact:true}).click();await expect(p.locator('.span-detail [role=status]')).toHaveCount(1);await p.getByRole('button',{name:'提交 Observation',exact:true}).click();await expect(p.locator('.span-detail [role=status]')).toHaveCount(0);
+    for(const event of record.process.events){assert.ok(steps.has(event.spanId));await p.locator('.timeline-item').filter({hasText:event.label}).click();await expect(p.locator('.span-detail h3')).toHaveText(steps.get(event.spanId).label);}
+    for(const label of ['生成观察候选','LLM 调用：理解作答','校验候选：拒绝','重新生成观察候选','LLM 调用：修正观察','校验修正候选：通过','提交 Observation','决定如何响应求助','执行并展示提示','解释 Evidence','推断 Task Belief','派生目标评价']){await p.getByRole('button',{name:label,exact:true}).click();await expect(p.locator('.span-detail h3')).toHaveText(label);}
+    assert.deepEqual(errors,[]);await ctx.close();
   });
 });

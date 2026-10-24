@@ -2,7 +2,7 @@
 import {computed,ref,watch} from 'vue';
 import {state,catalog,resolve,readiness,transact,act} from '../workbench/store';
 import {objectKey,kinds,aspectNames as aspectNamesSource} from '../workbench/model';
-import {route,go,setQuery,openObject} from '../workbench/navigation';
+import {route,go,setQuery,openObject,back} from '../workbench/navigation';
 import {newObject,editObject} from '../workbench/ui';
 import ModelLink from './ModelLink.vue';
 import ModelObjectContent from './ModelObjectContent.vue';
@@ -22,7 +22,7 @@ const targets=computed(()=>catalog().filter(o=>o.kind==='target'&&o.relations.so
 function confirmSource(){if(!note.value.trim())throw Error('请记录核对结果及剩余疑点。');transact(s=>{const ch=selected.value?.id;if(!ch)throw Error('未选择章节');let p=s.preparations.find(p=>p.chapter===ch);if(!p){p={chapter:ch,reviewed:false,note:''};s.preparations.push(p);}p.reviewed=true;p.note=note.value.trim();p.at=new Date().toISOString();});}
 </script>
 <template><div class="wb-page">
-<header class="page-header"><div><h2>{{title}}</h2><p class="page-desc">在当前页面编辑并保存，自动保留对象版本和修改记录。</p></div><button v-if="route.page==='textbooks'&&!route.id" class="btn primary" @click="newObject('material')">新增教材</button><button v-if="route.page==='targets'&&!route.id" class="btn primary" @click="newObject('target')">新增目标</button></header>
+<header class="page-header"><div><button v-if="route.returnTo.startsWith('#/textbooks?')" class="text-link" @click="back('textbooks')">← 返回教材章节</button><h2>{{title}}</h2><p class="page-desc">{{route.page==='learning-spaces'?'历史空间示例 · 保留原采用版本与学习记录；新版课程示例请从空间列表进入。':'在当前页面编辑并保存，自动保留对象版本和修改记录。'}}</p></div><button v-if="route.page==='textbooks'&&!route.id" class="btn primary" @click="newObject('material')">新增教材</button><button v-if="route.page==='targets'&&!route.id" class="btn primary" @click="newObject('target')">新增目标</button></header>
 <template v-if="route.page==='learning-spaces'">
  <template v-if="selectedSpace"><button class="text-link" @click="go('learning-spaces')">← 返回空间列表</button><section class="panel"><h3>{{selectedSpace.name}}</h3><p>{{selectedSpace.studentName}} · {{selectedSpace.id}}</p><dl class="field-list"><dt>采用教材</dt><dd><ModelLink :to="selectedSpace.material" :scope="selectedSpace.id"/></dd><dt>学生选择的章节</dt><dd><ModelLink v-for="ch in selectedSpace.chapters" :key="ch" :to="ch" :scope="selectedSpace.id"/></dd><dt>采用目标</dt><dd><ModelLink :to="selectedSpace.target" :scope="selectedSpace.id"/></dd></dl><p class="callout">保存定义不会自动更新此空间。新版采用的简化操作仍待确定，当前保留原采用清单、所选章节及历史记录。</p><button class="btn" @click="go('students',{id:selectedSpace.studentId,scope:selectedSpace.id})">查看本空间学习状态</button></section>
  <section class="table-card"><h3>准确采用清单</h3><table class="data-table"><thead><tr><th>对象</th><th>采用版本</th><th>目录最新版本</th><th>类型</th></tr></thead><tbody><tr v-for="(version,id) in selectedSpace.adopted" :key="id"><td><ModelLink :to="`${id}@${version}`" :scope="selectedSpace.id"/></td><td>v{{version}}</td><td>v{{resolve(id)?.version}} <span v-if="resolve(id)?.version!==version" class="badge amber">存在新版，未自动采用</span></td><td>{{resolve(id)?kinds[resolve(id)!.kind]:'引用缺失'}}</td></tr></tbody></table></section>

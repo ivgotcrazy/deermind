@@ -1,13 +1,13 @@
 # MVP 文档框架与交付入口
 
-> **版本**：v0.4<br>
+> **版本**：v0.5<br>
 > **文档性质**：MVP 文档导航与阶段交付入口<br>
 > **状态**：2026-10-15 G3 阶段性通过；Phase 4 设计、原型与内容准备进行中，G4 未通过；Phase 5 仍为大纲<br>
 > **维护责任**：Codex 负责本轮整理与一致性检查<br>
 > **版本与评审**：工作修订由 Git 追溯；准确基线与结论见 [Gate 记录](MVP_Gate_Reviews.md)<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-22<br>
-> **修订说明**：按 DEC-026 同步 MVP 对象直接新增、修改和保存；取消独立审核发布流程，保留版本、必要检查及历史，已有空间采用见 OPEN-011。逐文件记录见 MVP Governance §5.1。
+> **更新日期**：2026-10-24<br>
+> **修订说明**：增加本轮后台结论阅读入口，注明当前 mock、系统配置暂缓及模型／资产待同步边界。逐文件变更见 Governance §5.2。
 
 ---
 
@@ -18,6 +18,14 @@
 [归档](archive/README.md)和旧原型保留作历史参考，不自动成为本轮设计答案。旧原型中的整卷、旧统计和仅错题口径不属于当前范围，新入口与旧入口分开，避免混用。
 
 当前设计承接 DEC-022 的 Task-only、DEC-024 的默认四维及 DEC-025 的单模板多维组织：四维是同一任务 Claim 内部方面，Belief 分方面维护。规范见 [Evaluation §3.1–4](../concept-design/DeerMind_Evaluation_Space_Design_v1.5.md#31-learner-state-model定义-deermind-可以相信什么)；实际领域、案例及实现迁移仍由 OPEN-010 承接，当前原型不冒充已完成新状态接入。
+
+本轮后台讨论已归并到以下入口，无需逐段翻找历史对话：
+
+- [后台页面与导航](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#25-管理端编辑定义与观测运行分别组织)：领域、评估、课程、观测、学生状态和账号管理。
+- [模型与内容关系](phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md#2-核心概念与领域规则)：Task 经 Solution 汇总 KC，模板字段、实例保存、Task Claim 与课程采用。
+- [本轮决定及版本记录](MVP_Governance.md#52-后台逐页讨论结论归并2026-10-24)：DEC-027–030、修改范围及待完成事项。
+
+系统配置保留现状，内容待定。当前后台主要使用内存 mock；真实教材包、正式评价与权限服务尚未同步完成，不能据页面走查通过 G4。
 
 ## 1. 阶段对应
 
@@ -62,7 +70,7 @@ Phase 3 已批准的产品承诺由三份正文维护；Phase 4 的具体方案�
 
 | 工作项 | 具体交付 | 当前状态与下一步 |
 | --- | --- | --- |
-| P4-01 产品结构与典型活动 | 三端任务与结构、ACT/FLOW/UI 合同及可运行走查 | 整体方向获用户基本认可；学生首页与连续学习对话完成本轮优化，等待细节审阅；首条跨角色过程和目录可操作，其余关键任务迁移与真实任务走查待完成 |
+| P4-01 产品结构与典型活动 | 三端任务与结构、ACT/FLOW/UI 合同及可运行走查 | 本轮后台已逐页调整并归并结论；学生／家长保留此前范围，后台采用 mock；真实任务、服务与数据迁移仍待完成 |
 | P4-02 数据与权限 | AUTH-001、生命周期、关系失效和外部处理路径 | 首稿已形成；具体服务与适用条件仍待 OPEN-004 核实 |
 | P4-03 实际内容与领域准备 | 两套材料的首批章节、对象与映射、目标、判断参考及维护记录 | 校内“分数的应用”的定义、映射、目标、51 条逐题参考与 8 幅关系图可在后台查看；审核与使用条件待核，校外材料后补 |
 | P4-04 评测材料与联合交接 | CASE、参考、版本、资产审查和 G4 输入 | 四十八个交互案例、十二个语义参考及十二组权限允许／拒绝材料已编制；合同与内容复核、正式留出材料及完整维护影响仍待完成 |
@@ -89,4 +97,4 @@ Phase 3 已批准的产品承诺由三份正文维护；Phase 4 的具体方案�
 
 [文档架构评审](MVP_Document_Architecture_Review.md) 保留调整依据，不作为第十一份主体交付物或新 Gate。G3 已确认，Phase 4 按上述工作项推进；不重开已关闭的 Spike/Build。
 
-[学习模型复核稿](../concept-design/DeerMind_Learning_Model_Reassessment.md) 保留探索过程，当前单模板多维结论与逐文件变更见其 §11。MVP 管理操作按 DEC-026 收缩为直接维护；独立 Evolution 审核发布工作流后置，不改变下述模型语义所有权。正式模型以 Domain / Learning Space v1.3、Concept / Evaluation / Interaction / Evolution v1.5 和 System Design v1.4 为准；实际资产与实现的迁移仍由 OPEN-010 跟踪，历史实验结论保留原范围。
+[学习模型复核稿](../concept-design/DeerMind_Learning_Model_Reassessment.md) 保留探索过程，当前单模板多维结论与逐文件变更见其 §11。MVP 管理操作按 DEC-026 收缩为直接维护；独立 Evolution 审核发布工作流后置，不改变下述模型语义所有权。既有模型基线为 Domain / Learning Space v1.3、Concept / Evaluation / Interaction / Evolution v1.5 和 System Design v1.4。本轮 MVP 的 Task–Solution–KC 关系以领域与内容基础 §2 为准；概念图仍含直接 Task–KC 关系，后续同步见 OPEN-012。实际资产与实现的迁移由 OPEN-010 跟踪，历史实验结论保留原范围。

@@ -1,14 +1,14 @@
 # DeerMind 原型迁入评审清单
 
-> **版本**：v0.10<br>
+> **版本**：v0.12<br>
 > **文档性质**：V2 原样基线、旧版能力盘点与迁入审批清单<br>
-> **状态**：M01–M07 和管理端直接保存保持；本批恢复独立空间观测及只读追溯，作者检查后交用户审阅。模型服务与旧空间采用边界见 §7.2；观测数据边界见 §7.3；原始目录未替换或删除<br>
+> **状态**：M01–M07 保留；当前后台已逐页形成获准的 mock 交互，结论归并见 §7.5。系统配置保留现状；正式模型、权限与内容迁移未完成，原始目录保留<br>
 > **上游依据与基线**：2026-10-21 用户要求保留原始 V2，先后授权完成 M01、开始 M02–M06，再确认 M07 旧家长端原样迁入，随后确认新版后台统一模型与三任务方案并授权实施；授权沿用此前“具体页面改动先确认”的边界。学生端来源为 [mvp_prototype_v2](../mvp_prototype_v2/)，管理员端来源为 [mvp_admin_prototype](../mvp_admin_prototype/)，逐文件基线见 [BASELINE_MANIFEST.json](BASELINE_MANIFEST.json)；家长来源另见 [家长基线](parent/BASELINE_MANIFEST.json)<br>
 > **维护责任**：Codex 负责盘点、方案和确认后的实施；用户决定各项迁入及涉及的界面变化<br>
 > **评审记录**：用户确认统一模型表达与三个管理员任务方案并授权实施；作者先做模型和操作复审，再交用户审阅。既有 M07 原样迁入结论保留；本轮不修改学生／家长界面，不调用真实模型，正式 Domain/Evaluation 和学习效果未因此得到验证<br>
 > **写作规范**：[设计文档规范 v1.1](../../doc/top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-22<br>
-> **修订说明**：以原版恢复空间观测结构、范围筛选、统计与来源追溯；从模型管理页中分离，只读查看历史及准确版本。本批输入基线、逐文件升版与检查记录见 §7.3。
+> **更新日期**：2026-10-24<br>
+> **修订说明**：归并当前后台各页与中文菜单、更新迁入状态和实现索引，区分内存 mock、旧示例持久化及真实会话；系统配置暂缓。见 §7.5。
 
 ---
 
@@ -31,6 +31,7 @@ src/mvp_prototype_next/
 - **M07 家长基线：** 另外复制 22 个家长共享组件、依赖、样式及包配置文件，来源与校验值见 [家长基线](parent/BASELINE_MANIFEST.json)。新增独立入口和构建配置；复制文件中仅 `state.ts` 调整本地存储键，其他 21 个文件与旧版一致，原来源文件未改动。
 - **未复制：** 依赖安装目录、构建产物、缓存、日志、环境密钥和运行数据。这些不是原始页面定义。
 - **当前可用程度：** 六下数学对话接入真实模型，讲解内容、教学模式和阶段由实际输入及模型回复决定；原有上下文页面不被替换。其余学科学习空间仍保留原 V2 演示逻辑，不调用真实模型。首页“更新”可维护课堂进度。聊天中的检测题可开始、提交或求助；随堂练习可直接提交。停止与重试在相应状态出现，检测后的反馈继续显示在原对话中。
+- **当前后台数据：** 本轮模型、课程、运行与用户页面使用内存 mock，刷新会重置；真实会话仍单独只读查看。旧示例本地持久化能力不自动等同于新页面持久化，具体来源见 §7.5。
 - **既有环境：** 三个原目录全部保留。5178 旧服务和旧启动脚本未改动；新服务在 5181，未导入、覆盖或清理旧浏览器记录和服务端会话文件。
 
 原样保留并不表示原始演示数据已经符合正式能力模型或当前试用课程。发现的差异在 §4 登记，不能借迁移之名自行修订。
@@ -59,9 +60,9 @@ src/mvp_prototype_next/
 
 ## 2. 融合原则与确认方式
 
-学生端保留 V2 的生成式交互：从哪个页面进入活动，右侧就承载该页面；对话、页面切换和收起方式均以 V2 为准。管理员端保留其导航、页面组织及详情结构。旧版家长端单独保留，不套用学生端交互。
+学生端保留 V2 的生成式交互：从哪个页面进入活动，右侧就承载该页面；对话、页面切换和收起方式均以 V2 为准。管理员端以原新版为起点，按逐项确认调整导航、页面和模型关系，现行方案见 §7.5。旧版家长端单独保留，不套用学生端交互。
 
-迁入的是服务能力、数据保存和必要的业务流程，不是把旧学生界面或旧后台整页塞进 V2。当前 **M01–M07 已按确认范围完成；后台增量按本轮方案实施，见 §7**。课程范围、课堂进度弹窗、题目操作及异常控制的局部按钮均已取得明确确认并接通。M07 按用户要求保留旧家长界面；用户后续已授权新版后台统一模型表达及三个任务；授权覆盖 M08 与 M09/M10/M12 的相关部分，M11 和其他迁入项未据此整体放行。
+迁入的是服务能力、数据保存和必要的业务流程，不是把旧学生界面或旧后台整页塞进 V2。当前 **M01–M07 已按确认范围完成；后台增量按本轮方案实施，见 §7**。课程范围、课堂进度弹窗、题目操作及异常控制的局部按钮均已取得明确确认并接通。M07 按用户要求保留旧家长界面；用户后续已授权新版后台统一模型表达及三个任务；授权覆盖 M08 与 M09/M10/M12 的相关部分；后续又明确批准 M11 的 mock 账号操作，本轮现状见 §7.5。其他迁入项不据此整体放行。
 
 确认按实际范围生效：例如同意接入会话保存，不意味着同意增加历史面板、改首页卡片或重写章节数据。需要新增或改变可见元素而本清单尚未明确具体形式时，先提供局部变更方案，确认后再实施。即使是原型已有缺陷，也不利用本次迁入授权顺带修改页面。
 
@@ -107,9 +108,9 @@ M02 已迁入结构校验和参考答案不直接下发的约束。V2 文字块�
 | --- | --- | --- | --- |
 | M07 | 家长端的孩子／空间选择、概览、学习记录只读查看及复核入口；咨询输入有本地保存，未接真实家长咨询模型 | 旧家长端及必要依赖已迁入独立 `parent` 模块；原界面与只读／咨询分工保持不变，不把学生真实对话接口用于家长咨询。 | 已确认并完成；三端统一启动，新旧页面及本地流程检查通过 |
 | M08 | 真实会话索引、输入输出、时间、模型及已有调用指标 | 以新版交互审查承载；新增本地只读接口，不调用模型、不恢复 pending、不写会话；真实／示例隔离，没有的正式链路明确缺失 | 本轮已实现，待用户审阅 |
-| M09 | Domain 定义、引用检查与版本记录 | 按 DEC-026 在所属领域新增、修改和直接保存，撤销原候选审核发布链 | 本地流程已实现；正式模型服务未接入 |
-| M10 | 教材、章节、映射及目标维护 | 所属页面直接保存，来源核对和行为准备条件分开；已有空间采用暂保留原绑定 | 本地流程已实现；真实扫描导入和 OPEN-011 采用待补 |
-| M11 | 学生／家长建档、亲子关系、找回账号及首次告知确认；本地合成流程 | 对接 V2“用户管理”及必要的首次使用流程。保留人工核实依据和操作记录，但不宣称具有真实登录、密码重置或服务端权限控制。 | 待确认 |
+| M09 | Domain 定义、引用检查与版本记录 | 领域内三类对象；Task 分区编辑，方法／知识／实例分开，KC 经方法递归汇总 | 当前内存 mock 可走查；版本持久化、正式模型服务和语义分类未实现 |
+| M10 | 教材、章节、映射及目标维护 | 章节上下文关联当前 Task／Solution、来源和 Claim；目标配置要求及标准，空间保留采用快照 | 当前内存 mock 可走查；真实扫描、内容迁移和 OPEN-011 采用操作待补 |
+| M11 | 学生／家长建档、亲子关系、找回账号及首次告知确认；本地合成流程 | 基于 V2 列表完成当前账号与关系 mock，接通当前空间和学生状态；确认记录只读，不能代替家长和孩子操作。 | 用户已逐项授权；mock 开户、关联维护、原账号找回可走查，未实现真实账号服务或旧家长端联动 |
 | M12 | 活动核对与处理意见 | 在活动内记录意见，已知无效依据退出当前使用；不创建强制审批事项，不手填 Belief | 新后台本地记录已实现；旧家长事项回传待处理 |
 
 M09–M12 有复用价值，但不能仅靠复制组件就宣称后台完成。这些页面需要保留 V2 的组织方式，并补上明确的数据和动作合同；真实服务化属于另一个工作量层次。
@@ -131,7 +132,7 @@ M09–M12 有复用价值，但不能仅靠复制组件就宣称后台完成。�
 | M13 | 图片选择／预览、手写笔迹已有局部实现；识别、PDF 与语音流程主要是预写走查 | 单独确认多模态输入方案，再决定哪些操作放到 V2 输入框中。图片附件不能冒充已被文本模型理解，不能直接照搬“已识别”的演示结果。 | 待确认，建议单独安排 |
 | M14 | 跨来源题目记录、更正、再次作答、隐藏资料及错题筛选；本地流程，真实作答尚无正式评价 | 以后用数据适配接入 V2 错题本。保留 V2 现有条目、筛选和详情设计；新增真实记录及更正／删除操作的呈现逐项审阅，不用旧记录页替换。 | 待确认，建议单独安排 |
 | M15 | 学生创建空间、选教材与目标范围、多题检测及建议有效性检查；合成流程 | 对接 V2 现有空间选择、教材和任务入口时单独设计。旧合成课程和预设题单不能直接替换 V2 教材内容，也不代表已有自适应选题或主动介入模型。 | 待确认，建议单独安排 |
-| M16 | 演示配置、故障查询、重试与用量样例；以预写数据驱动 | 不迁入假装可用的“真实运维控制”。若需要保留，作为明确的流程走查；真实配置管理和全平台运行监控另行确定范围。 | 待确认，建议暂缓 |
+| M16 | 演示配置、故障查询、重试与用量样例；以预写数据驱动 | 运行总览已按当前 mock 调整；系统配置保留现状，页面内容后续再定，不把讨论过的配置项列为已获准改动 | 用户明确暂缓系统配置设计；未取消正式运行需要 |
 
 ### 3.4 实现位置索引
 
@@ -146,7 +147,7 @@ M09–M12 有复用价值，但不能仅靠复制组件就宣称后台完成。�
 | M08 | [此前整合中的真实会话查看](../mvp_prototype/src/integrated/admin/ActualSessions.vue)；参考只读服务含义，本轮不继承其界面 |
 | M09 | [领域维护流程](../mvp_prototype/src/components/MaintenanceReview.vue)、[领域状态](../mvp_prototype/src/foundationState.ts)；作为历史流程参考；现行直接保存按 DEC-026 |
 | M10 | [教材维护](../mvp_prototype/src/components/MaterialSetupReview.vue)、[来源核对](../mvp_prototype/src/components/SourceReferenceReview.vue)、[采用及课程状态](../mvp_prototype/src/journeyState.ts) |
-| M11 | [账号与关系流程](../mvp_prototype/src/components/AccountReview.vue)；本轮未迁入操作 |
+| M11 | 旧参考：[账号与关系流程](../mvp_prototype/src/components/AccountReview.vue)；当前：[UserManagement.vue](admin/src/components/UserManagement.vue)、[user-management-mock.ts](admin/src/workbench/user-management-mock.ts) |
 | M12 | [案例复核](../mvp_prototype/src/components/CaseTraceReview.vue)、[记录与事项](../mvp_prototype/src/recordState.ts)、[此前整合中的家长事项衔接](../mvp_prototype/src/integrated/admin/Workflows.vue)；旧事项与家长回传仍待显式映射 |
 | M13 | [附件输入](../mvp_prototype/src/structure/Composer.vue)、[手写组件](../mvp_prototype/src/components/WritingPad.vue)、[输入核对流程](../mvp_prototype/src/components/InputCaptureReview.vue) |
 | M14 | [记录维护](../mvp_prototype/src/components/RecordsReview.vue)、[问题录入与求助](../mvp_prototype/src/components/ProblemHelpReview.vue) |
@@ -169,7 +170,7 @@ M09–M12 有复用价值，但不能仅靠复制组件就宣称后台完成。�
 后续只执行已明确确认的项目，依赖尚未决定时不越过该节点：
 
 1. **运行环境与首批能力。** M01–M06 已按 §2.1 确认结果完成，新目录独立运行，既有服务继续可用；真实对话、恢复及题内操作沿用 V2 交互。
-2. **接入其余确认项。** M07 家长端已迁入；后台观测与维护等剩余项待确认。每项记录确认范围、改动文件、检查结果及剩余限制；未确认页面仍与基线一致。
+2. **接入其余确认项。** M07 家长端已迁入；后台已按逐页确认形成当前 mock，见 §7.5；真实服务和其余迁入项分别推进，未确认的页面改动不自行实施。
 3. **逐项验收。** 对无需改变的页面进行基线对比；对已确认改动检查实际行为。验证至少覆盖来源页面保持、切页／收起／恢复、输入保存、重复提交、中断与重试，以及获准迁入的维护流程。复用有对应价值的旧测试，不为了通过旧测试把界面改回旧版。
 4. **完成替换。** 所有盘点项都有明确处置，获准迁入项均完成并通过核对后，新目录成为正式 `src/mvp_prototype`。切换前备份服务端与浏览器运行数据，检查引用和启动入口，不依赖被删除目录中的代码、样式或资产。
 5. **删除旧版。** 替换与数据恢复检查成功后，再清理被替换的原 `mvp_prototype`、原 `mvp_prototype_v2` 和原 `mvp_admin_prototype`。这些是本次旧版清理的边界；`mvp_foundation`、Spike、Build、设计文档及密钥／会话数据不属于删除范围。旧版源码通过 Git 历史或切换前备份保留追溯，未提交内容也须先留存。
@@ -188,6 +189,7 @@ M09–M12 有复用价值，但不能仅靠复制组件就宣称后台完成。�
 | v0.6 | 2026-10-21 | M07 获准迁入；新增独立家长模块、来源哈希清单、三端启动和兼容入口；家长孩子／空间切换、草稿／咨询恢复、只读查看、复核及隔离检查通过；5 页 × 2 尺寸截图与旧服务完全一致；既有 12 项服务检查通过 | M08–M16；真实家长 LLM、正式账号／评价、复核后台衔接、跨端口历史导入；不修改学生／管理员界面、不替换或删除旧版 |
 | v0.7 | 2026-10-21 | 用户批准新版后台方案；统一模型表示、稳定对象详情与来源隔离，贯通章节准备／判断复核／修订发布及指定采用；只读真实会话接入，检查与复审见 §7 | 正式模型／权限／OCR／重推断未接入；M11、旧事项迁移与家长回传仍待处理；原始目录、学生和家长界面保留 |
 | v0.8 | 2026-10-21 | 获准补齐领域列表、新建领域和域内对象管理；保留旧记录并增加归属，构建及 11 条浏览器情境通过，见 §7.1 | 正式共享模型服务、批量迁移领域归属、学生／家长页面变更和旧目录删除未实施 |
+| v0.12 | 2026-10-24 | 归并后台逐页调整及中文菜单；更新当前源码、mock 边界与文档索引，见 §7.5。v0.9–v0.11 的各批记录见 §7.2–7.4 | 本轮未改页面、未重跑软件测试、未接入正式模型／权限或迁移旧教材包；系统配置保留现状 |
 
 服务层检查可执行 `node --test src/mvp_prototype_next/tests/live-service.test.mjs src/mvp_prototype_next/tests/live-api.test.mjs`。测试使用临时目录与固定响应，不写入现有会话，不消耗真实模型调用；其通过不等于真实模型质量或完整用户流程通过。
 
@@ -207,7 +209,9 @@ M07 可执行 `node src/mvp_prototype_next/tests/browser-parent.mjs`；加 `--co
 
 M07 交付时，三端类型检查与生产构建通过，5181 已重启；学生、家长、管理员入口均可打开，无页面异常或资源加载失败。`start -Role parent -NoBrowser` 复用现有进程，`status` 返回三端地址；5178 旧服务保持可访问。
 
-## 7. 新版后台：本轮交付与审阅路径
+## 7. 新版后台：交付与审阅记录
+
+本节开头及 §7.1–7.4 记录此前三任务工作台的实现与检查；当前页面以 §7.5 及 Product §2.5 为准。下述定义包、浏览器持久化和 M11 未完成描述只适用于当时版本，不能覆盖本轮 mock 与直接编辑的决定。
 
 本轮基于新版绿色侧栏、观测／管理分区、列表详情及瀑布图组件调整，不沿用旧后台整页。学生、家长以及两个原始来源目录未修改。活动事实、分方面判断、定义版本和空间采用共用一个明确的示例数据源；原副本中相互矛盾的旧示例和未接通页面不再作为第二套实现保留，原始基线仍在来源目录及清单中。
 
@@ -287,3 +291,63 @@ v0.7 的 2026-10-21 作者检查结果：后台类型检查与生产构建通过
 | --- | --- | --- |
 | 本说明 | v0.9 → v0.10 | 观测审阅入口、统计与数据边界、修复及检查记录 |
 | [MVP 产品与交互设计](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md) | v0.6 → v0.7 | §2.5 分离观测与管理，明确对象归属和计算口径；§7.8 记录作者复审，不改变 G4 状态 |
+
+### 7.4 恢复交互审查（v0.11）
+
+用户授权按原版恢复交互审查，保留当前模型和已有管理功能。本轮从 `LearnerWorkspace` 拆出独立 `TraceList` 与 `TraceDetail`，使用原版瀑布图及语义时间线组件，恢复步骤详情；学生状态继续留在原组件。既有活动、事实、对象及存储 schema 不改写。
+
+- **审阅入口：** [交互审查列表](http://127.0.0.1:5181/admin/#/trace-list)；[提示后作答的示例详情](http://127.0.0.1:5181/admin/#/activity?id=ACT-001&scope=ACT-001&returnTo=%23%2Ftrace-list)。选择“示例走查”，登记本次查看用途后进入。
+- **数据边界：** `admin/src/workbench/traces.ts` 是本轮新写的人工处理脚本，按既有三条活动分别关联；时长、tokens、候选及校验步骤不是采集日志，也不回填空间观测统计。真实模式沿用本机只读接口，已有逐轮指标可查，未记录的正式 Trace／Span、Evidence／Belief 和展示回执不补造。
+- **模型边界：** Evidence 解释与 Task Belief 分开，四方面状态和准确来源可查；没有 KC 个人能力状态，不算四维平均值。被拒绝候选不等于已提交 Observation，模型生成不等于实际展示。示例中错误 Evidence 仍保留供核对，停止使用依据的已有操作继续有效。
+- **保护范围：** 不修改学生端、家长端、会话服务或两份原始来源目录；不恢复审核发布流程。浏览器验证使用隔离上下文及临时会话目录，不调用真实 LLM，不操作用户现有浏览器数据。
+
+作者检查结果：类型检查与构建通过；26 条浏览器场景（交互审查 8、空间观测 8、既有管理流程 10）和 1 项只读接口检查通过。最后两次局部修正后分别复测交互审查和管理流程，结果通过。88 个受保护源码文件的 SHA-256 未变，学生状态正文与修复前一致；5181 已启动并读取最新构建。逐项检查未发现本轮修改造成的既有流程回归，正式运行日志和生产权限仍未接入。
+
+**逐项对照原版。** 对照来源为 `mvp_admin_prototype/src/components/TraceList.vue`、`TraceDetail.vue`、`SpanDetail.vue`；以下区别有明确理由，不能将原版占位按钮当作已实现能力。
+
+| 原版项目 | 恢复及修正 | 检查方式 |
+| --- | --- | --- |
+| 筛选、范围统计、列表 | 恢复学生、空间、状态、日期与摘要；增加文本搜索，统计随筛选更新 | 切换学生与空空间、状态、自定义日期，核对行数及分母 |
+| 时间筛选与分页 | 原版时间条件未执行、分页为占位；现按本机自然日执行，长列表分页 | 2026-10-20／21 边界与 25 条列表 |
+| 输入、瀑布图、右侧步骤详情 | 恢复并列布局、嵌套模型调用和选中步骤；窄屏上下排列 | 1440／1024 像素截图；逐步骤选择、键盘和刷新 |
+| 模型输入输出与候选 | 查看示例模型参数、tokens、调用输入输出、候选完整内容 | 首次生成及修正生成分别核对 |
+| Validation 与 Commit | 逐项规则、拒绝原因、修正重试、提交权限及状态 | 拒绝不生成 Observation，修正后关联准确对象 |
+| Policy 与 Action | 候选行动、选择原因、实际展示及时间依据 | 对照 F-002 早于 F-003；不补造候选行动评分 |
+| Evidence 与 Belief | 保留解释依据、关联 Observation／Claim／规则；用四方面变化替换旧单一概率显示 | 复核错误依据、查看局部支持及未观察方面，保留失效处理 |
+| 语义时间线与结果 | 事件可选中对应步骤，已记录系统内容与完整事实可查看 | 所有事件目标存在，逐个点击匹配步骤 |
+| 按 ID 查实际记录 | 原版每个 ID 显示同一固定 Trace；现三个活动各有脚本或明确缺口 | ACT-001／002／003、未知活动、缺失引用 |
+| 导出、复制与重跑 | 索引和本次示例导出可用，复制 ID 保留；参数重跑未实现，不显示虚假按钮 | 下载内容包含来源标签，筛选和活动范围准确 |
+| 当前已有能力 | 保留用途登记、准确版本、核对意见、失效传播、来源返回和真实会话 | 既有空间观测、直接编辑和只读接口回归 |
+
+本轮输入快照见 [before.zip](reviews/interaction-review-20261022/before.zip)，包含实际修改前的五份主要页面／文档／导航文件，并非全仓快照；[baseline.json](reviews/interaction-review-20261022/baseline.json) 另记录受保护源码的哈希。工作始于 2026-10-22、交付复审于 2026-10-23，因此审查目录保留开始日期。构建、浏览器执行结果与文件变更清单见 [review.json](reviews/interaction-review-20261022/review.json)；完整测试输出见 [test-output.txt](reviews/interaction-review-20261022/test-output.txt)。
+
+| 修改文档 | 版本变化 | 本批内容 |
+| --- | --- | --- |
+| 本说明 | v0.10 → v0.11 | 恢复入口、逐项原版对照、来源边界与复核记录 |
+| [MVP 产品与交互设计](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md) | v0.7 → v0.8 | §2.5 交互审查行为及统计口径，§7.9 作者复审；不改变 G4 状态 |
+
+### 7.5 后台逐页调整与本轮结论归并（v0.12）
+
+用户逐页确认并要求继续使用 mock，本轮再授权将讨论结论写入文档。正式页面方案见 [Product §2.5](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#25-管理端编辑定义与观测运行分别组织)，对象定义见 [Domain Foundation §2](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md#2-核心概念与领域规则)。本节记录实际代码位置与边界，不把原型当作真实运行服务。
+
+| 页面 | 当前实现 | 本轮确认的重点 |
+| --- | --- | --- |
+| 领域与任务 | [DomainWorkspace.vue](admin/src/components/DomainWorkspace.vue)、[TaskWorkspace.vue](admin/src/components/TaskWorkspace.vue)、[TaskInstances.vue](admin/src/components/TaskInstances.vue)、[domain-mock.ts](admin/src/workbench/domain-mock.ts) | 领域内 Task／Solution／KC；Task 分区编辑，方法、知识、实例分开，知识只经选定方法递归汇总 |
+| 评估空间 | [EvaluationWorkspace.vue](admin/src/components/EvaluationWorkspace.vue)、[evaluation-mock.ts](admin/src/workbench/evaluation-mock.ts) | Task Claim 直接编辑，四方面属于同一声明，证据和推断字段随声明维护 |
+| 教材 | [TextbookWorkspace.vue](admin/src/components/TextbookWorkspace.vue)、[ChapterMappingPanel.vue](admin/src/components/ChapterMappingPanel.vue) | 教材目录和章节上下文、方法选择、汇总 KC、来源定位 |
+| 目标 | [TargetWorkspace.vue](admin/src/components/TargetWorkspace.vue)、[TargetClaimPanel.vue](admin/src/components/TargetClaimPanel.vue) | 章节与 Claim、每项要求和达标标准、方法条件及缺口 |
+| 学习空间 | [LearningSpaceWorkspace.vue](admin/src/components/LearningSpaceWorkspace.vue) | 课程范围、要求和个人状态、采用快照与历史 |
+| 交互审查 | [ActivityReviewList.vue](admin/src/components/ActivityReviewList.vue)、[ActivityReviewDetail.vue](admin/src/components/ActivityReviewDetail.vue)、[ActivityStepDetail.vue](admin/src/components/ActivityStepDetail.vue) | 活动／轮次／步骤，瀑布图及详情，三类结果分开 |
+| 空间观测 | [RuntimeObservation.vue](admin/src/components/RuntimeObservation.vue)、[runtime-observation.ts](admin/src/workbench/runtime-observation.ts) | 当前运行、期间变化与待核对情况；详情和活动追溯，不承担编辑 |
+| 学生状态 | [StudentStateWorkspace.vue](admin/src/components/StudentStateWorkspace.vue)、[student-state.ts](admin/src/workbench/student-state.ts) | 学生／空间／Claim 三级；个人 Belief 与目标结果分开，保留变化和证据 |
+| 运行总览 | [RuntimeOverview.vue](admin/src/components/RuntimeOverview.vue)、[runtime-overview.ts](admin/src/workbench/runtime-overview.ts) | 当前各空间与活动，说明范围和去重口径；执行、审查、评价分开 |
+| 用户管理 | [UserManagement.vue](admin/src/components/UserManagement.vue)、[user-management-mock.ts](admin/src/workbench/user-management-mock.ts) | 独立账号、逐条亲子关系、核实后开户与找回、当前空间及状态跳转 |
+| 导航 | [App.vue](admin/src/App.vue) | 模型管理、课程管理分组；空间观测六项移至侧栏并用中文；系统配置保持现状 |
+
+**实现边界。** 这些新页面主要共用内存 mock，刷新重置。实例生成是固定样例，导入是文本，反向归类及答案检查由 mock 结果控制；没有真实语义分类。新账号操作不产生真实凭据或撤销旧家长端权限。保存定义不自动改变已有空间采用与个人 Belief，真实版本、服务端授权和状态失效传播仍待工程实现。
+
+真实对话仍走 M02–M05 的独立服务，后台只读显示其已保留信息；缺少的正式 Evidence、Belief、Task 版本、Trace 及展示回执不由 mock 补齐。原六上教材候选包、原型六下示例与当前后台合成数据不是同一份正式课程资产。
+
+**检查与记录。** 各页当前检查脚本索引统一见 [Evaluation Assets §6.1](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md#61-当前后台的交互检查资产)。既有走查材料位于仓库 `.tmp/mvp-prototype-next/` 的 `task-editor-mock-review`、`domain-ui-review`、`domain-refinement-20261024`、`runtime-observation-review-20261024`、`user-management-review-20261024`、`navigation-review-20261024` 等目录；其中任务编辑和三类领域列表的较早记录只覆盖当时设计；Task 禁止直接关联 KC 等后续调整以 `domain-refinement-20261024` 及当前源码为准。这些是各次实现时的记录，不是本轮重新执行的结果。较早 §7.1–7.4 和旧脚本保留当时适用范围。
+
+本次只改文档，对照当前源文件与用户决定复核关系、入口、数据来源、配置暂缓和未完成事项；文档版本、修改前快照及本次检查见 [Governance §5.2](../../doc/mvp/MVP_Governance.md#52-后台逐页讨论结论归并2026-10-24)。未调整任何页面、未运行真实模型、未删除三个原始目录，也未将这次整理作为 G4 通过。

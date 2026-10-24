@@ -18,7 +18,7 @@ const access=computed(()=>personal.value?(sources.value.find(a=>a.id===route.sco
 const tabs={definition:'记录内容',relations:'关联与来源',versions:'版本记录',impact:'引用与采用'};
 const currentTab=computed(()=>Object.keys(tabs).includes(route.tab)?route.tab:'definition');
 const location=window.location;
-function manage(){if(!object.value)return;const target=ownerLocation(object.value);go(target.page,{...target.values,returnTo:location.hash});}
+function manage(){if(!object.value)return;const target=ownerLocation(object.value);go(target.page,{...(['textbooks','targets'].includes(target.page)?{}:target.values),returnTo:location.hash});}
 function activity(id:string){go('activity',{id,scope:id,returnTo:location.hash});}
 </script>
 

@@ -1,0 +1,16 @@
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue';
+import { visibleMaterialBlocks, materialPageUrl, type MaterialItem } from './material-content';
+import MaterialBlockView from './MaterialBlockView.vue';
+const props=defineProps<{items:MaterialItem[];relatedItems?:MaterialItem[]}>();
+const selected=ref(props.items[0]?.id||''),mode=ref<'all'|'question'>('all'),page=ref(0),reference=ref('');
+watch(()=>props.items,items=>{if(!items.some(i=>i.id===selected.value))selected.value=items[0]?.id||'';});
+const item=computed(()=>props.items.find(i=>i.id===selected.value)||props.items[0]);
+const visible=computed(()=>item.value?visibleMaterialBlocks(item.value,mode.value):[]);
+const related=computed(()=>(props.relatedItems||props.items).flatMap(i=>i.blocks));
+const referenceBlock=computed(()=>related.value.find(b=>b.id===reference.value));
+</script>
+<template><section v-if="item" class="material-reader"><label>本课内容<select v-model="selected" @change="page=0"><option value="" disabled>请选择内容</option><option v-for="i in items" :key="i.id" :value="i.id">{{i.title}}</option></select></label><h3>{{item.title}}</h3><div class="reader-switch"><button :aria-pressed="mode==='all'" @click="mode='all'">读教材</button><button :aria-pressed="mode==='question'" @click="mode='question'">只看题目</button></div><p class="reader-note">真实教材内容 · 整理结果为 mock。本页面用于阅读；尚未开始检测，不据此更新学习状态。</p><article v-for="b in visible" :key="b.id" :data-block="b.id"><h4>{{b.title}}</h4><span v-if="b.role==='error'" class="reader-note">供判断的算式，未作为正确解法</span><span v-if="b.role==='blank'" class="reader-note">留给你完成的区域</span><MaterialBlockView :block="b"/><div v-if="b.references.length" class="reader-note">关联：<button v-for="id in b.references" :key="id" @click="reference=reference===id?'':id">{{related.find(x=>x.id===id)?.title||'本章前面的数据'}} ↗</button></div><button class="reader-source" @click="page=page===b.page?0:b.page">原书 {{b.page}} 页</button></article><p v-if="!visible.length">这一项只有讲解材料。</p><section v-if="referenceBlock" class="reader-reference"><h4>{{referenceBlock.title}} · {{referenceBlock.page}}页</h4><MaterialBlockView :block="referenceBlock"/><button @click="reference=''">收起关联材料</button></section><section v-if="page" class="reader-original"><button @click="page=0">收起原页</button><img :src="materialPageUrl(page)" :alt="'原书第'+page+'页'"/></section></section></template>
+<style scoped>
+.material-reader{margin-top:18px;min-width:0;color:#2c3e50}.material-reader label{font-size:13px;display:block}.material-reader select{padding:8px;border:1px solid #d4dfd6;border-radius:5px;width:100%;margin:8px 0 16px;font:inherit}.material-reader h3{font-size:18px;margin:12px 0}.material-reader h4{font-size:14px;margin:0 0 12px}.reader-switch{display:flex;gap:8px}.material-reader button{border:1px solid #d4dfd6;border-radius:5px;padding:6px 12px;font:inherit;font-size:12px;background:white;color:#2d6a4f;cursor:pointer}.reader-switch button[aria-pressed=true]{background:#2d6a4f;color:white}.reader-note{font-size:12px;color:#798b80;line-height:1.8}.material-reader article{border-top:1px solid #e2e9e3;margin-top:18px;padding-top:18px}.material-reader .reader-source{margin-top:10px;padding:2px 0;border:0}.reader-original img{width:100%;display:block;margin-top:10px}
+</style>

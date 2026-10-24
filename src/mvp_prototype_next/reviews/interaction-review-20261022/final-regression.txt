@@ -1,0 +1,77 @@
+TAP version 13
+# Subtest: direct editing, isolation, invalidation and scalable navigation
+    # Subtest: objects save within domains, without review items or personal access gate
+    ok 1 - objects save within domains, without review items or personal access gate
+      ---
+      duration_ms: 3147.8498
+      type: 'test'
+      ...
+    # Subtest: new material, chapter, mapping and target work in owner pages; changed source requires recheck
+    ok 2 - new material, chapter, mapping and target work in owner pages; changed source requires recheck
+      ---
+      duration_ms: 2608.3085
+      type: 'test'
+      ...
+    # Subtest: semantic package saves directly while preserving all historical versions and space bindings
+    ok 3 - semantic package saves directly while preserving all historical versions and space bindings
+      ---
+      duration_ms: 1599.1266
+      type: 'test'
+      ...
+    # Subtest: legacy draft, unsubmitted session input and archived issue survive old maintenance URL
+    ok 4 - legacy draft, unsubmitted session input and archived issue survive old maintenance URL
+      ---
+      duration_ms: 1237.8461
+      type: 'test'
+      ...
+    # Subtest: local evidence withdrawal preserves facts and leaves dependent results pending
+    ok 5 - local evidence withdrawal preserves facts and leaves dependent results pending
+      ---
+      duration_ms: 1496.7883
+      type: 'test'
+      ...
+    # Subtest: real sessions remain distinct, unavailable evaluation is explicit, list is read-only
+    ok 6 - real sessions remain distinct, unavailable evaluation is explicit, list is read-only
+      ---
+      duration_ms: 1412.2811
+      type: 'test'
+      ...
+    # Subtest: large catalogs paginate; source query and exact object survive back and refresh
+    ok 7 - large catalogs paginate; source query and exact object survive back and refresh
+      ---
+      duration_ms: 1798.8817
+      type: 'test'
+      ...
+    # Subtest: concurrent editing refuses stale writes instead of overwriting another window
+    ok 8 - concurrent editing refuses stale writes instead of overwriting another window
+      ---
+      duration_ms: 1423.0275
+      type: 'test'
+      ...
+    # Subtest: domain directory is bounded and searchable with durable return context and explicit missing domains
+    ok 9 - domain directory is bounded and searchable with durable return context and explicit missing domains
+      ---
+      duration_ms: 1277.4912
+      type: 'test'
+      ...
+    # Subtest: domain creation rejects stale-window writes without losing the created domain
+    ok 10 - domain creation rejects stale-window writes without losing the created domain
+      ---
+      duration_ms: 2461.1661
+      type: 'test'
+      ...
+    1..10
+ok 1 - direct editing, isolation, invalidation and scalable navigation
+  ---
+  duration_ms: 19657.6759
+  type: 'test'
+  ...
+1..1
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20457.3221

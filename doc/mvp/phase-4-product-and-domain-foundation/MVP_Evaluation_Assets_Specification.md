@@ -1,14 +1,14 @@
 # MVP 评测资产规格与清单
 
-> **版本**：v0.4<br>
+> **版本**：v0.5<br>
 > **文档性质**：评测资产规格与清单；Phase 4 — Product & Domain Foundation<br>
 > **状态**：交互、实际单元语义和首批权限合同案例已编制；独立参考、正式留出材料及联合审查尚缺，G4 未通过<br>
 > **上游依据与基线**：[G3-20261015-01](../MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)<br>
 > **维护责任**：Codex 编制与检查，内容和评分参考由实际承担者复核；未发生的复核不得填成通过<br>
 > **评审记录**：当前案例为作者编制的开发走查材料，不是独立质量评测或学习效果结果<br>
 > **写作规范**：[设计文档规范 v1.1](../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-22<br>
-> **修订说明**：按 DEC-026 同步 MVP 对象直接新增、修改和保存；取消独立审核发布流程，保留版本、必要检查及历史，已有空间采用见 OPEN-011。逐文件记录见 MVP Governance §5.1。
+> **更新日期**：2026-10-24<br>
+> **修订说明**：补齐当前后台十类页面的交互检查资产及来源，区分旧脚本、当前 mock 和正式质量验证；不新增虚构 CASE 或测试通过记录。见 Governance §5.2。
 
 ---
 
@@ -116,9 +116,30 @@ DEC-019 已明确 CASE-056 的非整除运次变化仅作可选练习或迁移�
 
 当前共有七十二个 CASE 编号：前四十八例是交互开发材料，CASE-049–060 为语义开发参考，CASE-061–072 为权限合同场景组；不能把合计数当成独立测量样本数。自动化检查可合并相关案例的操作；覆盖到哪条规则和未覆盖什么须如实说明。CASE-053 只模拟关键图示缺失，不含真实照片，不能计入 MET-002 的识别质量测量。
 
-**后台直接维护的当前检查资产。** [admin-workbench.test.mjs](../../../src/mvp_prototype_next/tests/admin-workbench.test.mjs) 对应 AC-014、015、022，覆盖直接编辑、结构拒绝、旧草稿迁移、历史保护、个人依据处理及真实来源隔离。案例为开发可见的合成数据，结果索引见[原型说明 §7.2](../../../src/mvp_prototype_next/README.md#72-取消审核发布并直接保存v09)。不调用真实模型，不算学习效果或服务端权限验证。
+**较早后台直接维护的检查资产。** [admin-workbench.test.mjs](../../../src/mvp_prototype_next/tests/admin-workbench.test.mjs) 对应 AC-014、015、022，覆盖直接编辑、结构拒绝、旧草稿迁移、历史保护、个人依据处理及真实来源隔离。案例为开发可见的合成数据，结果索引见[原型说明 §7.2](../../../src/mvp_prototype_next/README.md#72-取消审核发布并直接保存v09)。不调用真实模型，不算学习效果或服务端权限验证。
 
 上述 CASE-016–018、024–025、061–072 中包含的候选审批发布步骤保留历史内容，但不再作为 DEC-026 之后的强制验收。其身份、版本、范围和历史保护责任仍有效；既有空间采用的替代案例待 OPEN-011 收口，不改写旧通过结果冒充新流程已验证。
+
+### 6.1 当前后台的交互检查资产
+
+本轮各页使用当前 mock 模型。以下脚本和走查材料可用于核对界面行为，不能代替实际教材、真实语义分类、Belief 推断或服务端权限验证，也不加入前述 CASE 的独立样本数。
+
+| 页面与合同 | 当前资产 | 主要检查内容 |
+| --- | --- | --- |
+| 领域与任务 | [domain-mock.ts](../../../src/mvp_prototype_next/admin/src/workbench/domain-mock.ts)、[TaskWorkspace.vue](../../../src/mvp_prototype_next/admin/src/components/TaskWorkspace.vue)、[TaskInstances.vue](../../../src/mvp_prototype_next/admin/src/components/TaskInstances.vue)；原型说明 §7.5 的走查目录 | 三类对象、分区编辑、直接方法、递归 KC、实例保存拒绝；归类结果为 mock，不能测准确率 |
+| Task Claim | [evaluation-management.test.mjs](../../../src/mvp_prototype_next/tests/evaluation-management.test.mjs) | 唯一 Task、方法条件、内部方面、解释及推断说明、直接保存 |
+| 教材与章节 | [textbook-management.test.mjs](../../../src/mvp_prototype_next/tests/textbook-management.test.mjs) | 章节上下文、当前任务与方法选择、KC 汇总及来源定位 |
+| 学习目标 | [target-management.test.mjs](../../../src/mvp_prototype_next/tests/target-management.test.mjs) | 章节与 Claim 引用、要求项、标准、方法条件和缺口 |
+| 学习空间 | [learning-space-management.test.mjs](../../../src/mvp_prototype_next/tests/learning-space-management.test.mjs) | 课程范围、要求、采用快照、个人状态及版本区别 |
+| 交互审查 | [activity-review.test.mjs](../../../src/mvp_prototype_next/tests/activity-review.test.mjs) | 活动／轮次／步骤、瀑布图、执行／审查／评价分别显示及追溯 |
+| 空间观测 | [runtime-observation.test.mjs](../../../src/mvp_prototype_next/tests/runtime-observation.test.mjs) | 范围、期间变化、当前快照、对象与活动追溯、侧栏空间切换 |
+| 学生状态 | [student-state.test.mjs](../../../src/mvp_prototype_next/tests/student-state.test.mjs) | 学生／空间／Claim 三级、个人 Belief 与目标结果、证据变化 |
+| 运行总览 | [runtime-overview.test.mjs](../../../src/mvp_prototype_next/tests/runtime-overview.test.mjs) | 统计对象、去重、日期范围、执行问题与评价结果分开、下钻 |
+| 用户管理 | [user-management.test.mjs](../../../src/mvp_prototype_next/tests/user-management.test.mjs) | 独立账号、无空间学生、逐条亲子关系、找回原账号及关联跳转 |
+
+原始 V2、较早统一工作台和本轮页面的脚本保留各自适用范围。历史 `space-observation.test.mjs`、`interaction-review.test.mjs` 或 `admin-workbench.test.mjs` 通过，不等于上表当前页面已执行全套检查。实际执行结果须注明脚本和当时版本；本轮是文档更新，没有重新运行这些软件测试。文档检查记录见 Governance §5.2。
+
+配置页面未新增检查场景：用户尚未决定配置内容，旧 CASE-039 等只说明当时样例，不构成新配置设计获准或服务已接通。新实例表格的生成和归类也是固定 mock，不得混入真实模型质量测量。
 
 ## 7. 工程接入与后续报告
 

@@ -1,0 +1,193 @@
+TAP version 13
+# Subtest: admin inspection is read-only, scope-bound and exposes unreadable files without private answer fields
+ok 1 - admin inspection is read-only, scope-bound and exposes unreadable files without private answer fields
+  ---
+  duration_ms: 188.7292
+  type: 'test'
+  ...
+# Subtest: direct editing, isolation, invalidation and scalable navigation
+    # Subtest: objects save within domains, without review items or personal access gate
+    ok 1 - objects save within domains, without review items or personal access gate
+      ---
+      duration_ms: 5715.2152
+      type: 'test'
+      ...
+    # Subtest: new material, chapter, mapping and target work in owner pages; changed source requires recheck
+    ok 2 - new material, chapter, mapping and target work in owner pages; changed source requires recheck
+      ---
+      duration_ms: 6310.6994
+      type: 'test'
+      ...
+    # Subtest: semantic package saves directly while preserving all historical versions and space bindings
+    ok 3 - semantic package saves directly while preserving all historical versions and space bindings
+      ---
+      duration_ms: 5383.3334
+      type: 'test'
+      ...
+    # Subtest: legacy draft, unsubmitted session input and archived issue survive old maintenance URL
+    ok 4 - legacy draft, unsubmitted session input and archived issue survive old maintenance URL
+      ---
+      duration_ms: 2728.0996
+      type: 'test'
+      ...
+    # Subtest: local evidence withdrawal preserves facts and leaves dependent results pending
+    ok 5 - local evidence withdrawal preserves facts and leaves dependent results pending
+      ---
+      duration_ms: 2900.2063
+      type: 'test'
+      ...
+    # Subtest: real sessions remain distinct, unavailable evaluation is explicit, list is read-only
+    ok 6 - real sessions remain distinct, unavailable evaluation is explicit, list is read-only
+      ---
+      duration_ms: 3302.64
+      type: 'test'
+      ...
+    # Subtest: large catalogs paginate; source query and exact object survive back and refresh
+    ok 7 - large catalogs paginate; source query and exact object survive back and refresh
+      ---
+      duration_ms: 3946.275
+      type: 'test'
+      ...
+    # Subtest: concurrent editing refuses stale writes instead of overwriting another window
+    ok 8 - concurrent editing refuses stale writes instead of overwriting another window
+      ---
+      duration_ms: 3962.3542
+      type: 'test'
+      ...
+    # Subtest: domain directory is bounded and searchable with durable return context and explicit missing domains
+    ok 9 - domain directory is bounded and searchable with durable return context and explicit missing domains
+      ---
+      duration_ms: 2949.1049
+      type: 'test'
+      ...
+    # Subtest: domain creation rejects stale-window writes without losing the created domain
+    ok 10 - domain creation rejects stale-window writes without losing the created domain
+      ---
+      duration_ms: 3588.1121
+      type: 'test'
+      ...
+    1..10
+ok 2 - direct editing, isolation, invalidation and scalable navigation
+  ---
+  duration_ms: 43171.1489
+  type: 'test'
+  ...
+# Subtest: interaction review restores the original process inspection workflow
+    # Subtest: list restores scope statistics, student, space, status and functional dates
+    ok 1 - list restores scope statistics, student, space, status and functional dates
+      ---
+      duration_ms: 2581.4465
+      type: 'test'
+      ...
+    # Subtest: detail restores side by side stages, rejection, retry and recorded outputs
+    ok 2 - detail restores side by side stages, rejection, retry and recorded outputs
+      ---
+      duration_ms: 3422.2879
+      type: 'test'
+      ...
+    # Subtest: each activity has its own trace and unknown records never reuse another trace
+    ok 3 - each activity has its own trace and unknown records never reuse another trace
+      ---
+      duration_ms: 3515.3909
+      type: 'test'
+      ...
+    # Subtest: scope and step selection survive navigation, refresh and historical reference lookup
+    ok 4 - scope and step selection survive navigation, refresh and historical reference lookup
+      ---
+      duration_ms: 3835.3947
+      type: 'test'
+      ...
+    # Subtest: missing references and absent process data stay explicit; long lists paginate
+    ok 5 - missing references and absent process data stay explicit; long lists paginate
+      ---
+      duration_ms: 5225.0359
+      type: 'test'
+      ...
+    # Subtest: real sessions remain read only and never receive synthetic traces or formal beliefs
+    ok 6 - real sessions remain read only and never receive synthetic traces or formal beliefs
+      ---
+      duration_ms: 2413.4068
+      type: 'test'
+      ...
+    # Subtest: desktop narrow layout stays usable without document overflow
+    ok 7 - desktop narrow layout stays usable without document overflow
+      ---
+      duration_ms: 2757.6836
+      type: 'test'
+      ...
+    # Subtest: exports contain only the selected scope and every example event opens an actual step
+    ok 8 - exports contain only the selected scope and every example event opens an actual step
+      ---
+      duration_ms: 7627.085
+      type: 'test'
+      ...
+    1..8
+ok 3 - interaction review restores the original process inspection workflow
+  ---
+  duration_ms: 39724.4409
+  type: 'test'
+  ...
+# Subtest: space observation preserves scope, provenance and management boundaries
+    # Subtest: restores observation hierarchy instead of editable catalog
+    ok 1 - restores observation hierarchy instead of editable catalog
+      ---
+      duration_ms: 3605.4293
+      type: 'test'
+      ...
+    # Subtest: scope updates metrics, distributions and records without borrowing another space
+    ok 2 - scope updates metrics, distributions and records without borrowing another space
+      ---
+      duration_ms: 2645.5245
+      type: 'test'
+      ...
+    # Subtest: historical versions and invalidated records remain traceable and read only
+    ok 3 - historical versions and invalidated records remain traceable and read only
+      ---
+      duration_ms: 8531.3274
+      type: 'test'
+      ...
+    # Subtest: learning observes actual adoption and exposes missing references
+    ok 4 - learning observes actual adoption and exposes missing references
+      ---
+      duration_ms: 4384.3088
+      type: 'test'
+      ...
+    # Subtest: runtime gaps remain unknown; existing activities can be traced
+    ok 5 - runtime gaps remain unknown; existing activities can be traced
+      ---
+      duration_ms: 2559.6528
+      type: 'test'
+      ...
+    # Subtest: missing activity results are exposed and do not crash provenance inspection
+    ok 6 - missing activity results are exposed and do not crash provenance inspection
+      ---
+      duration_ms: 4466.0974
+      type: 'test'
+      ...
+    # Subtest: pagination and owner editing preserve the observation return route
+    ok 7 - pagination and owner editing preserve the observation return route
+      ---
+      duration_ms: 5849.0495
+      type: 'test'
+      ...
+    # Subtest: legacy evolution is read only and real data never gets synthetic observations
+    ok 8 - legacy evolution is read only and real data never gets synthetic observations
+      ---
+      duration_ms: 3226.9466
+      type: 'test'
+      ...
+    1..8
+ok 4 - space observation preserves scope, provenance and management boundaries
+  ---
+  duration_ms: 40494.3941
+  type: 'test'
+  ...
+1..4
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 44729.7438

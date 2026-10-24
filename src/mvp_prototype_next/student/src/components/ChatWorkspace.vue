@@ -2,6 +2,8 @@
 import { ref, nextTick, watch, computed } from 'vue';
 import type { ChatMessage, LearningState } from '../types';
 import type { LiveWorkspace } from '../live';
+import FlowLesson from './FlowLesson.vue';
+import { courseFlow } from '../course-flow';
 import ChatMessageComp from './ChatMessage.vue';
 import SuggestionChips from './SuggestionChips.vue';
 import InputComposer from './InputComposer.vue';
@@ -11,12 +13,16 @@ const props = defineProps<{
   state: LearningState;
   live?: LiveWorkspace;
   collapsed?: boolean;
+  mockActivityId?: string;
 }>();
 const emit = defineEmits<{
   updateState: [partial: Partial<LearningState>];
   toggleCollapse: [];
+  showStatus: [];
 }>();
 
+const mockLesson = ref<InstanceType<typeof FlowLesson> | null>(null);
+const mockTesting = computed(() => courseFlow.lessons.find(a => a.id === props.mockActivityId)?.stage === 'testing');
 const demoMessages = ref<ChatMessage[]>([welcomeMessage]);
 const demoTyping = ref(false);
 const realWelcome: ChatMessage = {...welcomeMessage,blocks:welcomeMessage.blocks.filter((_,i) => i !== 1)};
@@ -39,7 +45,11 @@ const modeConfig: Record<string, { icon: string; label: string; className: strin
   'idle': { icon: '🦌', label: 'DeerMind', className: 'idle' },
 };
 
-const currentMode = computed(() => modeConfig[props.state.mode] || modeConfig['idle']);
+const currentMode = computed(() => {
+  const lesson = courseFlow.lessons.find(a => a.id === props.mockActivityId);
+  if (lesson) return { icon: lesson.stage === 'testing' ? '📝' : '📖', label: lesson.stage === 'testing' ? '检测中' : lesson.stage === 'finished' ? '学习已结束' : lesson.stage === 'offer' ? '准备检测' : '章节讲解', className: lesson.stage === 'testing' ? 'error-check' : 'lecture' };
+  return modeConfig[props.state.mode] || modeConfig['idle'];
+});
 const displayTitle = computed(() => {
   const title = props.state.sessionTitle || props.state.lectureTopic;
   if (props.state.mode === 'qa' || props.state.mode === 'idle') return currentMode.value.label;
@@ -53,7 +63,8 @@ async function scrollToBottom() {
 watch(messages, () => scrollToBottom(), { deep: true });
 
 async function handleSend(text: string) {
-  if (activeCheck.value || isTyping.value) return;
+  if (mockTesting.value || activeCheck.value || isTyping.value) return;
+  if (props.mockActivityId) { mockLesson.value?.send(text); return; }
   if (props.live) { await props.live.command('message',text); return; }
   if (demoTyping.value) return;
   demoMessages.value.push({ id: 'u' + Date.now(), role: 'user', blocks: [{ type: 'text', text }], timestamp: Date.now() });
@@ -97,7 +108,7 @@ defineExpose({ loadLectureDemo, loadQADemo, resetToWelcome, injectMessage });
       <div class="mode-indicator" :class="currentMode.className">
         <span class="mode-icon">{{ currentMode.icon }}</span>
         <span class="mode-text">{{ displayTitle }}</span>
-        <div v-if="state.mode === 'lecture'" class="mode-steps">
+        <div v-if="state.mode === 'lecture' && !mockActivityId" class="mode-steps">
           <span :class="{ active: state.lecturePhase === 'concept' }">概念</span>
           <span class="sep">→</span><span :class="{ active: state.lecturePhase === 'example' }">例题</span>
           <span class="sep">→</span><span :class="{ active: state.lecturePhase === 'practice' }">练习</span>
@@ -109,11 +120,12 @@ defineExpose({ loadLectureDemo, loadQADemo, resetToWelcome, injectMessage });
     <!-- 消息区域（收起时隐藏） -->
     <div v-if="!collapsed" class="messages-container" ref="scrollContainer">
       <div class="messages-inner">
-        <template v-for="msg in messages" :key="msg.id">
+        <FlowLesson v-if="mockActivityId" ref="mockLesson" :activity-id="mockActivityId" @show-status="emit('showStatus')"/>
+        <template v-for="msg in (mockActivityId ? [] : messages)" :key="msg.id">
           <ChatMessageComp :message="msg" :live="!!live" :busy="isTyping" :active-check="activeCheck"
             :answer-drafts="live?.workspace.answers" @answer-draft="saveAnswer" @question-action="handleQuestion" />
           <SuggestionChips v-if="msg.role === 'assistant' && msg.suggestions?.length" :suggestions="msg.suggestions"
-            :disabled="isTyping || !!activeCheck" @select="handleSuggestion" />
+            :disabled="isTyping || !!activeCheck || mockTesting" @select="handleSuggestion" />
         </template>
         <div v-if="isTyping" class="typing-indicator">
           <div class="avatar">🦌</div>
@@ -136,8 +148,8 @@ defineExpose({ loadLectureDemo, loadQADemo, resetToWelcome, injectMessage });
       <InputComposer
         :model-value="live?.workspace.draft"
         @update:model-value="value => { if (live) live.workspace.draft = value; }"
-        :context-actions="contextActions"
-        :disabled="isTyping || !!activeCheck"
+        :context-actions="mockActivityId ? [] : contextActions"
+        :disabled="isTyping || !!activeCheck || mockTesting"
         :collapsed="collapsed"
         @send="handleSend"
         @toggle-collapse="emit('toggleCollapse')"

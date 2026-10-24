@@ -1,0 +1,24 @@
+<script setup lang="ts">
+const location=window.location;
+import { computed, ref } from 'vue';
+import { flow } from '../workbench/learning-flow';
+import { route, go, back } from '../workbench/navigation';
+import { lessonUses, lessonFeedback } from '../../../shared/learning-flow';
+const activity=computed(()=>flow.lessons.find(a=>a.id===route.id));
+const space=computed(()=>flow.spaces.find(s=>s.id===activity.value?.spaceId));
+const uses=computed(()=>activity.value?lessonUses(flow,activity.value):[]);
+const feedback=computed(()=>activity.value?lessonFeedback(flow,activity.value):null);
+const tab=ref('process'),selected=ref('');
+const current=computed(()=>uses.value.find(u=>u.id===selected.value)||uses.value[0]);
+const claims=computed(()=>activity.value?.snapshot.claims.filter(c=>uses.value.some(u=>u.question.taskId===c.taskId))||[]);
+function question(){if(current.value)go('domain',{domain:current.value.question.domainId,filter:'task',id:current.value.question.taskId,source:current.value.question.id,returnTo:location.hash});}
+</script>
+<template><div v-if="activity&&feedback" class="wb-page flow-review"><header class="page-header"><div><button class="text-link" @click="back('trace-list')">← 返回来源</button><h2>学习活动 · {{activity.snapshot.book.units.flatMap(u=>u.chapters).find(c=>c.id===activity?.chapterId)?.name}}</h2><p class="page-desc">学生 A · {{space?.name}} · {{activity.at}}</p><p class="muted">{{activity.id}} · Mock 联动记录；操作与输入来自本次走查，判定为模拟结果，没有真实 LLM 推理日志。</p></div><button class="btn" @click="go('learning-spaces',{id:activity.spaceId,tab:'records',returnTo:location.hash})">查看学习空间</button></header>
+<div class="metric-grid"><div class="metric-card"><span>活动状态</span><strong>{{activity.stage==='finished'?activity.endReason:'进行中'}}</strong></div><div class="metric-card"><span>题目实际展示</span><strong>{{uses.length}} 次</strong></div><div class="metric-card"><span>检测作答</span><strong>{{feedback.answered}} / {{feedback.total}}</strong></div></div>
+<div class="tabs" role="tablist"><button v-for="(label,key) in {process:'交互过程',evaluation:'评价结果',definitions:'采用定义'}" :key="key" role="tab" :aria-selected="tab===key" :class="{active:tab===key}" @click="tab=key">{{label}}</button></div>
+<template v-if="tab==='process'"><div class="rounds"><button v-for="(u,i) in uses" :key="u.id" class="btn" :class="{primary:current?.id===u.id}" @click="selected=u.id">{{i+1}} · {{u.purpose}}</button></div><section v-if="current" class="panel"><div class="section-heading"><h3>当时展示的题目 · v{{current.question.version}}</h3><button class="text-link" @click="question">查看题库当前版本 →</button></div><p>{{current.question.question}}</p><p class="muted">{{current.question.id}} · {{current.question.source}} · 展示于 {{current.at}}</p><dl class="field-list"><dt>准备</dt><dd>{{current.question.source==='学习中生成'?'按需生成，mock 检查通过后保存，再展示。':'从已有可用题目中选取。'}} {{current.question.variation}}</dd><dt>实际帮助</dt><dd>{{current.help}}</dd><dt>学生提交</dt><dd>{{current.answer||'没有提交，不计为错误'}}</dd><dt>本次判定</dt><dd>{{current.result?current.result+'（mock 选择）':'未判定'}}；不直接等于 Claim 达标。</dd><dt>当时参考解答</dt><dd>{{current.question.explanation}}</dd></dl></section>
+<section class="panel"><h3>完整对话</h3><article v-for="m in activity.messages" :key="m.id" class="message"><strong>{{m.actor}}</strong><small>{{m.at}}</small><p>{{m.text}}</p></article></section></template>
+<template v-else-if="tab==='evaluation'"><section class="panel"><h3>题目结果</h3><p>{{feedback.summary}}</p><p>逐题正确与否来自 mock 场景，不是实际语义判分。</p></section><section class="panel"><h3>Task Claim 与个人 Belief 示例</h3><p v-for="c in claims" :key="c.id"><button class="text-link" @click="go('evaluation',{id:c.id,returnTo:location.hash})">{{c.name}} · v{{c.version}} ↗</button></p><table class="data-table"><thead><tr><th>方面</th><th>当前判断及依据</th></tr></thead><tbody><tr v-for="a in feedback.aspects" :key="a[0]"><td>{{a[0]}}</td><td>{{a[1]}}</td></tr></tbody></table></section><section class="panel"><h3>目标达成结果</h3><p>{{activity.snapshot.target.name}} · v{{activity.snapshot.target.revision}}</p><p>相关要求保持待确认。已有当堂记录不自动成为整项达标，不平均成掌握率。</p></section></template>
+<section v-else class="panel"><h3>本次活动采用内容</h3><p>教材：{{activity.snapshot.book.name}} · v{{activity.snapshot.book.revision}}</p><p>目标：{{activity.snapshot.target.name}} · v{{activity.snapshot.target.revision}}</p><p v-for="c in claims" :key="c.id">Claim：{{c.name}} · v{{c.version}}；Task：{{c.taskId}}；方法：{{c.methods.join('、')}}</p><p class="muted">管理员应用新版后，本次活动和题目快照仍然保留。</p></section>
+</div><div v-else class="wb-page"><p>未找到本轮活动记录。</p><button class="btn" @click="back('trace-list')">返回交互审查</button></div></template>
+<style scoped>.flow-review{max-width:1300px}.rounds{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.message{padding:14px 0;border-bottom:1px solid #e2e9e4}.message small{margin-left:14px}.message p{white-space:pre-wrap;line-height:1.8}.metric-card strong{font-size:20px}</style>
