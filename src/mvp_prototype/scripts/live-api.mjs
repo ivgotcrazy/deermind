@@ -1,29 +1,59 @@
 import { fileURLToPath } from 'node:url';
-import { loadConfig, loadReference, createProvider } from './live-model.mjs';
 import { createLiveService, LiveError } from './live-service.mjs';
+import { createProvider } from './live-model.mjs';
 
-const root = new URL('../../../', import.meta.url);
-const config = await loadConfig(root);
-const service = createLiveService({ directory: fileURLToPath(new URL('.tmp/mvp-live/', root)), provider: createProvider(config), model: config.model, configured: !!config.key, reference: await loadReference(root) });
-export async function handleLive(req, res, port) {
-  const url = new URL(req.url || '/', 'http://localhost');
-  if (!url.pathname.startsWith('/api/live/')) return false;
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  const send = (status, value) => { res.writeHead(status); res.end(JSON.stringify(value)); };
-  try {
-    const hosts = [`127.0.0.1:${port}`, `localhost:${port}`];
-    if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress) || !hosts.includes(req.headers.host) || (req.headers.origin && !hosts.some(h => req.headers.origin === `http://${h}`))) throw new LiveError('真实模型对话仅开放给本机同源页面。', 403);
-    if (req.method === 'GET' && url.pathname === '/api/live/status') { send(200, { configured: !!config.key, model: config.model, scope: '分数的应用' }); return true; }
-    const match = url.pathname.match(/^\/api\/live\/sessions\/([a-zA-Z0-9-]{8,80})(\/commands)?$/);
-    if (req.method === 'GET' && match && !match[2]) { send(200, await service.get(match[1])); return true; }
-    if (req.method !== 'POST' || req.headers['x-deermind-live'] !== '1' || !req.headers['content-type']?.startsWith('application/json')) throw new LiveError('请求方式不受支持。', 405);
-    const chunks = []; let size = 0;
-    for await (const part of req) { size += part.length; if (size > 128000) throw new LiveError('请求内容过长。', 413); chunks.push(part); }
-    const raw = Buffer.concat(chunks).toString('utf8');
-    let body; try { body = JSON.parse(raw); } catch { throw new LiveError('请求不是有效 JSON。'); }
-    if (url.pathname === '/api/live/sessions') send(201, await service.create());
-    else if (match?.[2]) send(200, await service.command(match[1], body));
-    else throw new LiveError('没有此接口。', 404);
-  } catch (e) { send(e instanceof LiveError ? e.status : 500, { error: e instanceof LiveError ? e.message : '本地服务暂时无法保存或读取，请查看服务状态后重试。' }); }
-  return true;
+// Curriculum context only. This is the V2 preview scope, not a published Domain package.
+export const previewScope = Object.freeze({ space: 'math-6b', label: '六年级下册数学',
+  topics: ['负数', '百分数（二）', '圆柱与圆锥', '比例', '鸽巢问题', '整理和复习'],
+  source: 'V2 原型课程目录；未接入正式教材映射或个人能力评价',
+  checkConditions: '上文和右侧页面始终可见，不据此认定独立作答' });
+
+export function createLiveApi({ config, directory = fileURLToPath(new URL('../../../.tmp/mvp-prototype-next/sessions/', import.meta.url)), provider, timeoutMs }) {
+  const service = createLiveService({ directory, provider: provider || createProvider(config),
+    model: config.model, configured: !!config.key, timeoutMs });
+  async function body(req) {
+    if (!req.headers['content-type']?.startsWith('application/json')) throw new LiveError('需要 JSON 请求。', 415);
+    let size = 0; const chunks = [];
+    for await (const chunk of req) {
+      size += chunk.length;
+      if (size > 100000) throw new LiveError('请求过大。', 413);
+      chunks.push(chunk);
+    }
+    try { const value = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+      if (!value || Array.isArray(value) || typeof value !== 'object') throw Error();
+      return value;
+    } catch { throw new LiveError('请求不是有效 JSON。'); }
+  }
+  return async (req, url, reply) => {
+    if (!url.pathname.startsWith('/api/live/')) return false;
+    const json = (status, value) => reply(status, JSON.stringify(value), 'application/json; charset=utf-8');
+    try {
+      if (url.pathname === '/api/live/admin/sessions' && req.method === 'GET') {
+        json(200, await service.inspectIndex(previewScope.space));
+      } else if (url.pathname.startsWith('/api/live/admin/sessions/') && req.method === 'GET') {
+        const match=url.pathname.match(/^\/api\/live\/admin\/sessions\/(NEXT-[a-zA-Z0-9-]+)$/);
+        if(!match) throw new LiveError('会话编号无效。');
+        const current=await service.inspect(match[1]);
+        if(current.scope.space !== previewScope.space) throw new LiveError('会话不属于当前课程。',409);
+        json(200,current);
+      } else if (url.pathname === '/api/live/status' && req.method === 'GET') {
+        json(200, { configured: !!config.key, model: config.model, connected: true, space: previewScope.space });
+      } else if (url.pathname === '/api/live/sessions' && req.method === 'POST') {
+        const data = await body(req);
+        if (data.space !== previewScope.space) throw new LiveError('当前仅接入六年级下册数学。');
+        if (typeof data.creationId !== 'string') throw new LiveError('缺少创建请求编号。');
+        json(200, await service.create(previewScope, data.creationId));
+      } else {
+        const match = url.pathname.match(/^\/api\/live\/sessions\/(NEXT-[a-zA-Z0-9-]+)(\/commands)?$/);
+        if (!match) { json(404, {error:'接口不存在。'}); return true; }
+        const current = await service.get(match[1]);
+        if (current.scope.space !== previewScope.space) throw new LiveError('会话不属于当前课程。', 409);
+        if (!match[2] && req.method === 'GET') json(200, current);
+        else if (match[2] && req.method === 'POST') json(200, await service.command(match[1], await body(req)));
+        else json(405, {error:'不支持此请求方法。'});
+      }
+    } catch (e) { json(e instanceof LiveError ? e.status : 500,
+      {error: e instanceof LiveError ? e.message : '会话读写失败，输入应保留。请检查服务后重试。'}); }
+    return true;
+  };
 }

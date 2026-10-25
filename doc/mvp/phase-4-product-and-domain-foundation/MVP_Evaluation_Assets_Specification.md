@@ -1,14 +1,14 @@
 # MVP 评测资产规格与清单
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **文档性质**：评测资产规格与清单；Phase 4 — Product & Domain Foundation<br>
 > **状态**：交互、实际单元语义和首批权限合同案例已编制；独立参考、正式留出材料及联合审查尚缺，G4 未通过<br>
 > **上游依据与基线**：[G3-20261015-01](../MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)<br>
 > **维护责任**：Codex 编制与检查，内容和评分参考由实际承担者复核；未发生的复核不得填成通过<br>
 > **评审记录**：当前案例为作者编制的开发走查材料，不是独立质量评测或学习效果结果<br>
 > **写作规范**：[设计文档规范 v1.1](../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-24<br>
-> **修订说明**：补齐当前后台十类页面的交互检查资产及来源，区分旧脚本、当前 mock 和正式质量验证；不新增虚构 CASE 或测试通过记录。见 Governance §5.2。
+> **更新日期**：2026-10-25<br>
+> **修订说明**：统一现行原型目录引用；旧版实现与既有原型评审章节固定到 Git 历史，避免替换后引用含义改变。逐文件记录见 MVP_Governance §5.3；本次不改变产品规则或 Gate 结论。
 
 ---
 
@@ -99,15 +99,15 @@ DEC-019 已明确 CASE-056 的非整除运次变化仅作可选练习或迁移�
 | --- | --- | --- |
 | 合成章节内容 v1 | [chapter-lesson.json](../../../src/mvp_foundation/examples/chapter-lesson.json) | 分段、追问、练习及检测反馈的交互；不证明教材覆盖或语义质量 |
 | CASE-001–008 | [chapter-interaction-cases.json](../../../src/mvp_foundation/evaluation/chapter-interaction-cases.json) | 正常推进、恢复、受助边界、检测求助、自由输入、三端查看及结束回看 |
-| 可运行章节交互与检查 | [原型说明](../../../src/mvp_prototype/README.md)、[定向检查](../../../src/mvp_prototype/tests/foundation.spec.ts) | 实际执行与结果单独记录；网页交互不代表 APK、后端权限或模型有效性 |
+| 可运行章节交互与检查 | [原型说明](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md)、[定向检查](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/tests/foundation.spec.ts) | 实际执行与结果单独记录；网页交互不代表 APK、后端权限或模型有效性 |
 | CASE-009–019 与合成展示输入 | [product-flow-cases.json](../../../src/mvp_foundation/evaluation/product-flow-cases.json)、[product-flow-fixtures.json](../../../src/mvp_foundation/examples/product-flow-fixtures.json) | 提示边界、未判题、删除可见性、状态统计、空间与家长输入隔离、候选检查和版本采用 |
-| 新增流程定向检查 | [foundation-flows.spec.ts](../../../src/mvp_prototype/tests/foundation-flows.spec.ts) | 允许及拒绝分支、恢复与响应布局；不是后端或正式语义测量 |
+| 新增流程定向检查 | [foundation-flows.spec.ts](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/tests/foundation-flows.spec.ts) | 允许及拒绝分支、恢复与响应布局；不是后端或正式语义测量 |
 | CASE-020–027 与课程准备样例 | [course-setup-cases.json](../../../src/mvp_foundation/evaluation/course-setup-cases.json)、[course-setup-fixture.json](../../../src/mvp_foundation/examples/course-setup-fixture.json) | 教材采用、范围与题量、检测历史、建议失效、核对审核、身份关系及首次说明 |
-| 新增跨端走查脚本 | [foundation-journeys.spec.ts](../../../src/mvp_prototype/tests/foundation-journeys.spec.ts) | 七项浏览器检查组织八个案例及三种宽度；不证明真实权限或语义质量 |
+| 新增跨端走查脚本 | [foundation-journeys.spec.ts](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/tests/foundation-journeys.spec.ts) | 七项浏览器检查组织八个案例及三种宽度；不证明真实权限或语义质量 |
 | CASE-028–035 与输入样例 | [input-record-cases.json](../../../src/mvp_foundation/evaluation/input-record-cases.json)、[input-fixture.json](../../../src/mvp_foundation/examples/input-fixture.json) | 多模态输入核对、更正与订正、隐藏副本、事项追溯和课程指定采用 |
-| 输入及记录检查脚本 | [foundation-records.spec.ts](../../../src/mvp_prototype/tests/foundation-records.spec.ts) | 八项浏览器检查；不代表实际识别、录音、播放、语义或权限测量 |
-| CASE-036–041 与后台状态样例 | [home-operations-cases.json](../../../src/mvp_foundation/evaluation/home-operations-cases.json)、[operations-fixture.json](../../../src/mvp_foundation/examples/operations-fixture.json)、[foundation-home.spec.ts](../../../src/mvp_prototype/tests/foundation-home.spec.ts) | 首页进入、空间隔离、配置核对和原任务处理；不代表真实模型执行与去重 |
-| CASE-042–048 | [parent-input-cases.json](../../../src/mvp_foundation/evaluation/parent-input-cases.json)、[foundation-parent-input.spec.ts](../../../src/mvp_prototype/tests/foundation-parent-input.spec.ts) | 家长只读、私人咨询与整段删除，检测核对、取消、求助和三端追溯 |
+| 输入及记录检查脚本 | [foundation-records.spec.ts](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/tests/foundation-records.spec.ts) | 八项浏览器检查；不代表实际识别、录音、播放、语义或权限测量 |
+| CASE-036–041 与后台状态样例 | [home-operations-cases.json](../../../src/mvp_foundation/evaluation/home-operations-cases.json)、[operations-fixture.json](../../../src/mvp_foundation/examples/operations-fixture.json)、[foundation-home.spec.ts](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/tests/foundation-home.spec.ts) | 首页进入、空间隔离、配置核对和原任务处理；不代表真实模型执行与去重 |
+| CASE-042–048 | [parent-input-cases.json](../../../src/mvp_foundation/evaluation/parent-input-cases.json)、[foundation-parent-input.spec.ts](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/tests/foundation-parent-input.spec.ts) | 家长只读、私人咨询与整段删除，检测核对、取消、求助和三端追溯 |
 | CASE-049–060 | [fractions-content-cases.json](../../../src/mvp_foundation/evaluation/fractions-content-cases.json)、[内容候选](../../../src/mvp_foundation/content/fractions-application/package.json) | 合法多解、结果与理解、提示责任、换向基准、图示缺失、份额结构、规则反例、整数约束、生成参数、重复、库外方法与版本效力；未运行真实模型 |
 | 教材逐题与图示参考 | [source-references.json](../../../src/mvp_foundation/content/fractions-application/source-references.json) | 51 条定位记录、58 项数值与 8 幅关系重绘，供复核题意、答案与表现要求；开发可见，不追加到独立 CASE 或测量分母 |
 | CASE-061–072 | [authority-cases.json](../../../src/mvp_foundation/evaluation/authority-cases.json) | 主体与空间、逐段关联失效、私人咨询、更正分工、身份恢复、事项访问、两种删除、必要确认、候选发布、指定采用与秘密边界；未执行真实服务端检查 |
@@ -116,7 +116,7 @@ DEC-019 已明确 CASE-056 的非整除运次变化仅作可选练习或迁移�
 
 当前共有七十二个 CASE 编号：前四十八例是交互开发材料，CASE-049–060 为语义开发参考，CASE-061–072 为权限合同场景组；不能把合计数当成独立测量样本数。自动化检查可合并相关案例的操作；覆盖到哪条规则和未覆盖什么须如实说明。CASE-053 只模拟关键图示缺失，不含真实照片，不能计入 MET-002 的识别质量测量。
 
-**较早后台直接维护的检查资产。** [admin-workbench.test.mjs](../../../src/mvp_prototype_next/tests/admin-workbench.test.mjs) 对应 AC-014、015、022，覆盖直接编辑、结构拒绝、旧草稿迁移、历史保护、个人依据处理及真实来源隔离。案例为开发可见的合成数据，结果索引见[原型说明 §7.2](../../../src/mvp_prototype_next/README.md#72-取消审核发布并直接保存v09)。不调用真实模型，不算学习效果或服务端权限验证。
+**较早后台直接维护的检查资产。** [admin-workbench.test.mjs](../../../src/mvp_prototype/tests/admin-workbench.test.mjs) 对应 AC-014、015、022，覆盖直接编辑、结构拒绝、旧草稿迁移、历史保护、个人依据处理及真实来源隔离。案例为开发可见的合成数据，结果索引见[原型说明 §7.2](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype_next/README.md#72-取消审核发布并直接保存v09)。不调用真实模型，不算学习效果或服务端权限验证。
 
 上述 CASE-016–018、024–025、061–072 中包含的候选审批发布步骤保留历史内容，但不再作为 DEC-026 之后的强制验收。其身份、版本、范围和历史保护责任仍有效；既有空间采用的替代案例待 OPEN-011 收口，不改写旧通过结果冒充新流程已验证。
 
@@ -126,16 +126,16 @@ DEC-019 已明确 CASE-056 的非整除运次变化仅作可选练习或迁移�
 
 | 页面与合同 | 当前资产 | 主要检查内容 |
 | --- | --- | --- |
-| 领域与任务 | [domain-mock.ts](../../../src/mvp_prototype_next/admin/src/workbench/domain-mock.ts)、[TaskWorkspace.vue](../../../src/mvp_prototype_next/admin/src/components/TaskWorkspace.vue)、[TaskInstances.vue](../../../src/mvp_prototype_next/admin/src/components/TaskInstances.vue)；原型说明 §7.5 的走查目录 | 三类对象、分区编辑、直接方法、递归 KC、实例保存拒绝；归类结果为 mock，不能测准确率 |
-| Task Claim | [evaluation-management.test.mjs](../../../src/mvp_prototype_next/tests/evaluation-management.test.mjs) | 唯一 Task、方法条件、内部方面、解释及推断说明、直接保存 |
-| 教材与章节 | [textbook-management.test.mjs](../../../src/mvp_prototype_next/tests/textbook-management.test.mjs) | 章节上下文、当前任务与方法选择、KC 汇总及来源定位 |
-| 学习目标 | [target-management.test.mjs](../../../src/mvp_prototype_next/tests/target-management.test.mjs) | 章节与 Claim 引用、要求项、标准、方法条件和缺口 |
-| 学习空间 | [learning-space-management.test.mjs](../../../src/mvp_prototype_next/tests/learning-space-management.test.mjs) | 课程范围、要求、采用快照、个人状态及版本区别 |
-| 交互审查 | [activity-review.test.mjs](../../../src/mvp_prototype_next/tests/activity-review.test.mjs) | 活动／轮次／步骤、瀑布图、执行／审查／评价分别显示及追溯 |
-| 空间观测 | [runtime-observation.test.mjs](../../../src/mvp_prototype_next/tests/runtime-observation.test.mjs) | 范围、期间变化、当前快照、对象与活动追溯、侧栏空间切换 |
-| 学生状态 | [student-state.test.mjs](../../../src/mvp_prototype_next/tests/student-state.test.mjs) | 学生／空间／Claim 三级、个人 Belief 与目标结果、证据变化 |
-| 运行总览 | [runtime-overview.test.mjs](../../../src/mvp_prototype_next/tests/runtime-overview.test.mjs) | 统计对象、去重、日期范围、执行问题与评价结果分开、下钻 |
-| 用户管理 | [user-management.test.mjs](../../../src/mvp_prototype_next/tests/user-management.test.mjs) | 独立账号、无空间学生、逐条亲子关系、找回原账号及关联跳转 |
+| 领域与任务 | [domain-mock.ts](../../../src/mvp_prototype/admin/src/workbench/domain-mock.ts)、[TaskWorkspace.vue](../../../src/mvp_prototype/admin/src/components/TaskWorkspace.vue)、[TaskInstances.vue](../../../src/mvp_prototype/admin/src/components/TaskInstances.vue)；原型说明 §7.5 的走查目录 | 三类对象、分区编辑、直接方法、递归 KC、实例保存拒绝；归类结果为 mock，不能测准确率 |
+| Task Claim | [evaluation-management.test.mjs](../../../src/mvp_prototype/tests/evaluation-management.test.mjs) | 唯一 Task、方法条件、内部方面、解释及推断说明、直接保存 |
+| 教材与章节 | [textbook-management.test.mjs](../../../src/mvp_prototype/tests/textbook-management.test.mjs) | 章节上下文、当前任务与方法选择、KC 汇总及来源定位 |
+| 学习目标 | [target-management.test.mjs](../../../src/mvp_prototype/tests/target-management.test.mjs) | 章节与 Claim 引用、要求项、标准、方法条件和缺口 |
+| 学习空间 | [learning-space-management.test.mjs](../../../src/mvp_prototype/tests/learning-space-management.test.mjs) | 课程范围、要求、采用快照、个人状态及版本区别 |
+| 交互审查 | [activity-review.test.mjs](../../../src/mvp_prototype/tests/activity-review.test.mjs) | 活动／轮次／步骤、瀑布图、执行／审查／评价分别显示及追溯 |
+| 空间观测 | [runtime-observation.test.mjs](../../../src/mvp_prototype/tests/runtime-observation.test.mjs) | 范围、期间变化、当前快照、对象与活动追溯、侧栏空间切换 |
+| 学生状态 | [student-state.test.mjs](../../../src/mvp_prototype/tests/student-state.test.mjs) | 学生／空间／Claim 三级、个人 Belief 与目标结果、证据变化 |
+| 运行总览 | [runtime-overview.test.mjs](../../../src/mvp_prototype/tests/runtime-overview.test.mjs) | 统计对象、去重、日期范围、执行问题与评价结果分开、下钻 |
+| 用户管理 | [user-management.test.mjs](../../../src/mvp_prototype/tests/user-management.test.mjs) | 独立账号、无空间学生、逐条亲子关系、找回原账号及关联跳转 |
 
 原始 V2、较早统一工作台和本轮页面的脚本保留各自适用范围。历史 `space-observation.test.mjs`、`interaction-review.test.mjs` 或 `admin-workbench.test.mjs` 通过，不等于上表当前页面已执行全套检查。实际执行结果须注明脚本和当时版本；本轮是文档更新，没有重新运行这些软件测试。文档检查记录见 Governance §5.2。
 

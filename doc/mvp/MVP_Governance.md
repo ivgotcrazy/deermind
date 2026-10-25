@@ -1,14 +1,14 @@
 # MVP 文档共同管理规则
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **文档性质**：MVP 文档共同管理规则与登记册；跨 Phase 3–5<br>
 > **状态**：G3 阶段性通过，Phase 4 进行中；决定、风险和变更持续维护<br>
 > **上游依据与基线**：[Development Roadmap](../top/DeerMind_Development_Roadmap_v0.6.md) 为阶段依据；正式引用的提交与资产版本在评审前登记<br>
 > **维护责任**：Codex 负责整理与一致性核对；用户参与新的范围或关键约束决定<br>
 > **评审记录**：2026-10-15 用户确认 G3；准确输入与交接见 [Gate §2.7](MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-24<br>
-> **修订说明**：登记本轮后台逐页结论 DEC-027–030，记录当前 mock、上位模型与旧资产的差异、逐文件升版和检查范围；系统配置暂缓。见 §5.2。
+> **更新日期**：2026-10-25<br>
+> **修订说明**：统一现行原型目录引用；旧版实现与既有原型评审章节固定到 Git 历史，避免替换后引用含义改变。逐文件记录见 MVP_Governance §5.3；本次不改变产品规则或 Gate 结论。
 
 ---
 
@@ -164,9 +164,9 @@ G3/G4/G5 的评审记录分别列出实际审查的基线。通过后可以用�
 | [MVP_Evaluation_Assets_Specification.md](phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md) | v0.3 → v0.4 | 当前检查资产与旧审批案例的适用边界 |
 | [MVP_Engineering_Design.md](phase-5-engineering/MVP_Engineering_Design.md) | v0.3 → v0.4 | 工程 owner、版本与真实持久化要求 |
 | [README.md](README.md) | v0.3 → v0.4 | 当前阶段及原型入口 |
-| [README.md](../../src/mvp_prototype_next/README.md) | v0.8 → v0.9 | 实际实现、迁移与检查结果 |
+| [README.md](../../src/mvp_prototype/README.md) | v0.8 → v0.9 | 实际实现、迁移与检查结果 |
 
-输入为修改前实际工作区，不仅是 Git HEAD。可恢复快照、原始哈希及检查结果见[原型说明 §7.2](../../src/mvp_prototype_next/README.md#72-取消审核发布并直接保存v09)。本批修改每份文档递增一次；作者检查和版本递增不授予 G4/G5 通过。
+输入为修改前实际工作区，不仅是 Git HEAD。可恢复快照、原始哈希及检查结果见[原型说明 §7.2](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype_next/README.md#72-取消审核发布并直接保存v09)。本批修改每份文档递增一次；作者检查和版本递增不授予 G4/G5 通过。
 
 ### 5.2 后台逐页讨论结论归并（2026-10-24）
 
@@ -182,13 +182,35 @@ G3/G4/G5 的评审记录分别列出实际审查的基线。通过后可以用�
 | [Data and Authority](phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md) | v0.4 → v0.5 | 账号、逐条关系、找回和必要确认；当前 mock 不具备真实撤权 |
 | [Evaluation Assets](phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md) | v0.4 → v0.5 | 当前十类后台检查资产与旧脚本适用边界，未新增虚构测试结果 |
 | [MVP README](README.md) | v0.4 → v0.5 | 结论阅读入口、当前阶段及待办 |
-| [原型 README](../../src/mvp_prototype_next/README.md) | v0.11 → v0.12 | 更新 M09–M11／M16 状态、当前源码入口、mock 和真实服务边界 |
+| [原型 README](../../src/mvp_prototype/README.md) | v0.11 → v0.12 | 更新 M09–M11／M16 状态、当前源码入口、mock 和真实服务边界 |
 
 修改前实际工作区快照位于仓库 `.tmp/mvp-prototype-next/admin-docs-20261024/before/`；`before-manifest.json` 逐文件保存 SHA-256，Git HEAD 为 `7c7be6d724ad3a376fac26b4fcd8332478687772`。快照包括此前未提交的 Product 与原型 README，不能用 HEAD 替代。本次检查记录存于同目录 `document-check.json`，新图实际渲染结果单列。
 
 本轮检查结果：9 份文档均递增一个小版本，370 处本地链接及章节定位检查通过；新增 CONTENT-03 已实际渲染并目视检查，文字、关系和箭头可辨，无遮挡。作者还对照当前实现核对章节内容，清理 Claim 仅导入、M11 待确认等过时的当前描述，并明确历史段落的适用范围。没有重跑软件测试、调用真实模型或改动页面。原有 Gate、冻结资产、历史 CASE、旧原型及原始 V2 目录不改写，G4 保持未通过。
 
 接下来的已知缺口是：OPEN-010 的实际资产与评价迁移、OPEN-011 的已有空间采用、OPEN-012 的上位关系同步，以及实际教材／外部服务条件。系统配置页内容待后续确定；这些事项不能因为后台 mock 能保存就标成完成。
+
+
+### 5.3 原型目录统一（2026-10-25）
+
+用户授权将 `mvp_prototype_next` 统一为 `mvp_prototype`，清理原 `mvp_prototype`、`mvp_prototype_v2`、`mvp_admin_prototype` 的旧工作目录。旧源码固定在提交 `e0895562acb4757e9f80af888643ab1e27d48506`，不新增长期归档目录。旧目录没有未提交源码；新版原有三处删除导入改动随目录保留。
+
+目录和启动切换已完成，删除清理尚未完成：自动审批审查拒绝递归删除，原旧版暂存在 `.tmp/prototype-consolidation-20261025/old-mvp-prototype/`，另两份 V2 旧目录仍在 `src/`。三处均不属于现行运行入口；此处记录阻塞事实，不将暂存目录定义为长期归档。
+
+切换范围仅为目录、测试依赖、启动及引用，不更改产品规则、存储键或会话目录。5181 保持；根启动脚本转到统一入口，家长端只移除已退役的旧流程链接。保留原始基线清单；旧参考链接改为 Git 固定版本，归档文件与既有 Gate 证据不重写。
+
+| 修改文档 | 升版 | 变化 |
+| --- | --- | --- |
+| `doc/concept-design/DeerMind_Learning_Model_Reassessment.md` | v0.3 → v0.4 | 统一当前入口、固定历史引用；原型 README 更新运行与切换说明 |
+| `doc/mvp/MVP_Gate_Reviews.md` | v0.3 → v0.4 | 统一当前入口、固定历史引用；原型 README 更新运行与切换说明 |
+| `doc/mvp/MVP_Governance.md` | v0.5 → v0.6 | 统一当前入口、固定历史引用；原型 README 更新运行与切换说明 |
+| `doc/mvp/README.md` | v0.5 → v0.6 | 统一当前入口、固定历史引用；原型 README 更新运行与切换说明 |
+| `doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md` | v0.5 → v0.6 | 统一当前入口、固定历史引用；原型 README 更新运行与切换说明 |
+| `doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md` | v0.5 → v0.6 | 统一当前入口、固定历史引用；原型 README 更新运行与切换说明 |
+| `doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md` | v0.9 → v0.10 | 统一当前入口、固定历史引用；原型 README 更新运行与切换说明 |
+| `src/mvp_prototype/README.md` | v0.12 → v0.13 | 统一当前入口、固定历史引用；原型 README 更新运行与切换说明 |
+
+检查范围为独立依赖、三端构建、服务与关键浏览器流程、路径及会话保存核对。实际执行结果保存在 `.tmp/prototype-consolidation-20261025/`。这些检查不代表语义质量、正式 MVP 功能或 G4/G5 通过。
 
 ## 6. 统一追溯与证据索引
 

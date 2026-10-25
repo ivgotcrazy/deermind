@@ -1,14 +1,14 @@
 # MVP 产品与交互设计
 
-> **版本**：v0.9<br>
+> **版本**：v0.10<br>
 > **文档性质**：产品与交互设计；Phase 4 — Product & Domain Foundation<br>
 > **状态**：本轮后台页面已按确认方向形成 mock；文档归并并经作者核对。正式模型、权限及教材资产迁移未完成；G4 未通过<br>
 > **上游依据与基线**：[G3-20261015-01](../MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)；具体产品规则引用 Phase 3<br>
 > **维护责任**：Codex 提出并维护设计，用户参与重要产品取舍及原型审阅<br>
 > **评审记录**：用户基本认可结构方向，确认以对话为学习主线、交互内容嵌入同一工作区，授权继续原型；具体实现仍待复审，见 §7–§8<br>
 > **写作规范**：[设计文档规范 v1.1](../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-24<br>
-> **修订说明**：归并本轮后台逐页讨论：Task 经方法汇总 KC、Claim 直接编辑、课程关系、运行观测及账号流程；重写当前页面说明，系统配置暂缓。逐文件变更见 Governance §5.2。
+> **更新日期**：2026-10-25<br>
+> **修订说明**：统一现行原型目录引用；旧版实现与既有原型评审章节固定到 Git 历史，避免替换后引用含义改变。逐文件记录见 MVP_Governance §5.3；本次不改变产品规则或 Gate 结论。
 
 ---
 
@@ -300,7 +300,7 @@ flowchart LR
 
 图表示查阅和维护的关系，不是教学调用顺序。当前工作是确认业务与交互：新管理页的数据主要为内存 mock，刷新会重置；保留的旧示例持久化与真实会话属于不同来源。自动版本、权限、并发和依赖失效是正式系统要求，不能用这些页面的本地保存宣称已经实现。
 
-> **决定与实现索引：** DEC-026–030；[原型说明 §7.5](../../../src/mvp_prototype_next/README.md#75-后台逐页调整与本轮结论归并v012)。本轮未改学生和家长页面，未通过 G4。
+> **决定与实现索引：** DEC-026–030；[原型说明 §7.5](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype_next/README.md#75-后台逐页调整与本轮结论归并v012)。本轮未改学生和家长页面，未通过 G4。
 
 ### 2.6 典型操作路径与三端交接
 
@@ -708,11 +708,11 @@ flowchart TB
 
 ## 6. 关键页面、原型与走查
 
-当前审阅入口为 [mvp_prototype_next](../../../src/mvp_prototype_next/README.md#75-后台逐页调整与本轮结论归并v012)，后台按 §2.5 组织，最新归并记录见 §7.10。
+当前审阅入口为 [mvp_prototype_next](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype_next/README.md#75-后台逐页调整与本轮结论归并v012)，后台按 §2.5 组织，最新归并记录见 §7.10。
 
 以下保留早期原型及其当时的检查记录。旧候选审核、批准和发布已由 DEC-026 取代，后续各页又按 DEC-027–029 调整；这些历史过程不作为当前全部页面已完成或已验收的结论。
 
-**历史结构低保真稿（2026-10-17）。** 当时入口为 [structure.html](../../../src/mvp_prototype/structure.html)，源码为 [structure](../../../src/mvp_prototype/src/structure/)，启动和检查见[原型说明](../../../src/mvp_prototype/README.md#保留入口旧版三端结构稿)。学生、家长、后台使用 §2 的稳定导航；角色切换只放在独立走查栏。用不同章节、孩子和账号替换内容，不按案例生成新的顶层入口。
+**历史结构低保真稿（2026-10-17）。** 当时入口为 [structure.html](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/structure.html)，源码为 [structure](https://github.com/ivgotcrazy/deermind/tree/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/structure)，启动和检查见[原型说明](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md#保留入口旧版三端结构稿)。学生、家长、后台使用 §2 的稳定导航；角色切换只放在独立走查栏。用不同章节、孩子和账号替换内容，不按案例生成新的顶层入口。
 
 本轮已经可以操作的过程包括：
 
@@ -728,7 +728,7 @@ flowchart TB
 
 同日学生首页优化另通过类型检查、生产构建及受影响的浏览器检查：已有结构 9 项通过，首页最终 7 项通过。截图覆盖 10 个状态与屏幕条件，未发现浏览器异常、横向溢出或正文与输入区重叠；实际查看首次、继续、结束、依据展开、临近时限及窄屏等页面。来源、复验过程与限制集中见原型说明；本轮不新增模型或真实学生效果证据。
 
-同日连续对话增量使用 [ConversationLesson.vue](../../../src/mvp_prototype/src/structure/ConversationLesson.vue) 与 [CardGroups.vue](../../../src/mvp_prototype/src/structure/CardGroups.vue)。分数示例包含理解较快与基础回补两条明确标注的预写路径；当前对话直接显示实际输入，练习、检测安排、题目和小结均内嵌，刷新保留旧进度。真实练习与检查分别保存，跨端只读；预写学生表达不作为真实表现。自由输入尚无模型回应，手写／语音、长对话分段折叠和正式动态教学待后续落实。
+同日连续对话增量使用 [ConversationLesson.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/structure/ConversationLesson.vue) 与 [CardGroups.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/structure/CardGroups.vue)。分数示例包含理解较快与基础回补两条明确标注的预写路径；当前对话直接显示实际输入，练习、检测安排、题目和小结均内嵌，刷新保留旧进度。真实练习与检查分别保存，跨端只读；预写学生表达不作为真实表现。自由输入尚无模型回应，手写／语音、长对话分段折叠和正式动态教学待后续落实。
 
 类型检查和生产构建通过。22 项定向浏览器检查初轮通过 21 项，另一项因检测题在顶部与作答区重复出现而定位不唯一；删除重复呈现后，相关 7 项复验全部通过。最终 10 个截图状态没有页面异常、横向溢出或正文与输入区重叠，已实际查看讲解、两条路径、练习、检测、结果及窄屏。脚本与详细记录见原型说明；这些是交互检查，不是模型或教学效果验证。
 
@@ -736,27 +736,27 @@ flowchart TB
 
 原型已贯通章节讲解、阶段练习、结束检测、问题文本求助与记录，增加学生和家长同源章节状态，以及领域候选至指定采用的局部维护链。学生增加教材与检测、账号入口；家长增加账号与首次说明；管理员增加教材准备、账号与关系。本轮增加学习首页，整合活动入口、当前空间与记录；家长独立选择空间及私人咨询已补入；完整意图执行、多孩子切换及跨设备行为仍待完善。
 
-新增源码为 [ProblemHelpReview.vue](../../../src/mvp_prototype/src/components/ProblemHelpReview.vue)、[LearningStatusReview.vue](../../../src/mvp_prototype/src/components/LearningStatusReview.vue)、[MaintenanceReview.vue](../../../src/mvp_prototype/src/components/MaintenanceReview.vue)，共同使用 [product-flow-fixtures.json](../../../src/mvp_foundation/examples/product-flow-fixtures.json)。当前只覆盖三端规则的一部分；范围选测、主动建议、教材核对发布及身份关系已有局部走查；输入核对、跨来源记录与订正、按案例追溯已有本轮局部实现；真实多模态处理、完整模型目录与运行追溯、真实维护影响仍待落实。
+新增源码为 [ProblemHelpReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/ProblemHelpReview.vue)、[LearningStatusReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/LearningStatusReview.vue)、[MaintenanceReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/MaintenanceReview.vue)，共同使用 [product-flow-fixtures.json](../../../src/mvp_foundation/examples/product-flow-fixtures.json)。当前只覆盖三端规则的一部分；范围选测、主动建议、教材核对发布及身份关系已有局部走查；输入核对、跨来源记录与订正、按案例追溯已有本轮局部实现；真实多模态处理、完整模型目录与运行追溯、真实维护影响仍待落实。
 
-资产使用 [现有 Vue 原型工程](../../../src/mvp_prototype/README.md)。旧页面保留历史参考，新 Phase 4 入口与其区分；固定示例不能模拟成自由意图理解。合成章节必须明确标注，不代表已经取得真实教材、建立正式 Domain 包或通过判断质量检查。实际入口为 [phase4.html](../../../src/mvp_prototype/phase4.html)，交互源码为 [FoundationReview.vue](../../../src/mvp_prototype/src/components/FoundationReview.vue)，使用 [chapter-lesson.json](../../../src/mvp_foundation/examples/chapter-lesson.json) 合成材料；具体启动与限制见原型说明。
+资产使用 [现有 Vue 原型工程](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md)。旧页面保留历史参考，新 Phase 4 入口与其区分；固定示例不能模拟成自由意图理解。合成章节必须明确标注，不代表已经取得真实教材、建立正式 Domain 包或通过判断质量检查。实际入口为 [phase4.html](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/phase4.html)，交互源码为 [FoundationReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/FoundationReview.vue)，使用 [chapter-lesson.json](../../../src/mvp_foundation/examples/chapter-lesson.json) 合成材料；具体启动与限制见原型说明。
 
 走查重点是：无需先选功能能否发起求助；追问后是否仍找得到原推导；未作答和受助作答是否被误解为掌握；暂离后能否继续；家长与管理员能否沿同一案例看到不同权限下的依据。原型操作、作者走查、用户反馈和真实系统测量分别记录。
 
 2026-10-15 作者检查：类型检查、生产构建及新旧章节相关的 13 项检查通过。视觉检查发现常驻输入遮挡正文后，调整为正文独立滚动、输入区保留布局空间，再运行新原型 6 项检查全部通过。1280、834、390 像素宽度检查没有横向溢出；查看了 1280 与 390 的截图。该记录不包含用户走查、真实语义模型、原生 APK 或完整权限验证。
 
-同日第二增量检查：构建与类型检查通过，章节 6 项及新增流程 8 项共 14 项通过。检查了求助边界、隐藏可见性、状态统计及故障、空间及家长输入隔离、候选检查与批准、发布与采用，以及检测暂停后的导航。手机初版说明占据过多首屏后，折叠详细来源并精简标题；复验 1280／834／390 像素布局，项数与常驻输入可同时出现在首屏。CASE-009–019 与脚本、具体操作入口见[原型说明](../../../src/mvp_prototype/README.md)。
+同日第二增量检查：构建与类型检查通过，章节 6 项及新增流程 8 项共 14 项通过。检查了求助边界、隐藏可见性、状态统计及故障、空间及家长输入隔离、候选检查与批准、发布与采用，以及检测暂停后的导航。手机初版说明占据过多首屏后，折叠详细来源并精简标题；复验 1280／834／390 像素布局，项数与常驻输入可同时出现在首屏。CASE-009–019 与脚本、具体操作入口见[原型说明](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md)。
 
-第三增量新增 [CourseReview.vue](../../../src/mvp_prototype/src/components/CourseReview.vue)、[MaterialSetupReview.vue](../../../src/mvp_prototype/src/components/MaterialSetupReview.vue)、[AccountReview.vue](../../../src/mvp_prototype/src/components/AccountReview.vue)，共用 [course-setup-fixture.json](../../../src/mvp_foundation/examples/course-setup-fixture.json)。构建、类型检查与 21 项定向浏览器检查通过，新增检查覆盖范围变化、未覆盖部分、建议失效、教材批准失效、版本采用、身份关联及分别确认。具体复验与限制见[原型说明](../../../src/mvp_prototype/README.md#本轮检查)。
+第三增量新增 [CourseReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/CourseReview.vue)、[MaterialSetupReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/MaterialSetupReview.vue)、[AccountReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/AccountReview.vue)，共用 [course-setup-fixture.json](../../../src/mvp_foundation/examples/course-setup-fixture.json)。构建、类型检查与 21 项定向浏览器检查通过，新增检查覆盖范围变化、未覆盖部分、建议失效、教材批准失效、版本采用、身份关联及分别确认。具体复验与限制见[原型说明](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md#本轮检查)。
 
-第四增量新增 [InputCaptureReview.vue](../../../src/mvp_prototype/src/components/InputCaptureReview.vue)、[RecordsReview.vue](../../../src/mvp_prototype/src/components/RecordsReview.vue) 与 [CaseTraceReview.vue](../../../src/mvp_prototype/src/components/CaseTraceReview.vue)，采用 [input-fixture.json](../../../src/mvp_foundation/examples/input-fixture.json) 及本轮实际页面提交。教材 v2 可指定给已创建课程，准备中的旧版本题单需重新预览；历史检测采用版本和原章节保留。构建、类型检查及四个脚本共 29 项浏览器检查通过，具体复验记录见原型说明；没有真实模型、OCR 或音频测量。
+第四增量新增 [InputCaptureReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/InputCaptureReview.vue)、[RecordsReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/RecordsReview.vue) 与 [CaseTraceReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/CaseTraceReview.vue)，采用 [input-fixture.json](../../../src/mvp_foundation/examples/input-fixture.json) 及本轮实际页面提交。教材 v2 可指定给已创建课程，准备中的旧版本题单需重新预览；历史检测采用版本和原章节保留。构建、类型检查及四个脚本共 29 项浏览器检查通过，具体复验记录见原型说明；没有真实模型、OCR 或音频测量。
 
-第五增量增加 [LearningHomeReview.vue](../../../src/mvp_prototype/src/components/LearningHomeReview.vue) 与 [OperationsReview.vue](../../../src/mvp_prototype/src/components/OperationsReview.vue)。首页与求助草稿按稳定空间标识保存，学习情况不把预写判断赋给新课程；后台以独立合成任务走查配置保存、检查、未知核对及同任务重试。检查脚本与实际结果见[原型说明](../../../src/mvp_prototype/README.md#本轮检查)。本轮仍是作者流程检查，不是正式运行或用户体验通过。
+第五增量增加 [LearningHomeReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/LearningHomeReview.vue) 与 [OperationsReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/OperationsReview.vue)。首页与求助草稿按稳定空间标识保存，学习情况不把预写判断赋给新课程；后台以独立合成任务走查配置保存、检查、未知核对及同任务重试。检查脚本与实际结果见[原型说明](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md#本轮检查)。本轮仍是作者流程检查，不是正式运行或用户体验通过。
 
-第六增量以 [ParentConsultationReview.vue](../../../src/mvp_prototype/src/components/ParentConsultationReview.vue) 和 [CheckInputReview.vue](../../../src/mvp_prototype/src/components/CheckInputReview.vue) 补齐家长私人咨询、跨空间实际记录与检测内核对。学生记录、家长只读依据和后台事项均可追溯已确认的输入前后内容。检查与限制见[原型说明](../../../src/mvp_prototype/README.md#本轮检查)。
+第六增量以 [ParentConsultationReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/ParentConsultationReview.vue) 和 [CheckInputReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/CheckInputReview.vue) 补齐家长私人咨询、跨空间实际记录与检测内核对。学生记录、家长只读依据和后台事项均可追溯已确认的输入前后内容。检查与限制见[原型说明](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md#本轮检查)。
 
-2026-10-17 增加 [ContentPackageReview.vue](../../../src/mvp_prototype/src/components/ContentPackageReview.vue)。从管理员“内容与维护”展开“分数的应用”草案，先看章节覆盖与缺口，再按学习要求、问题与解法、知识定义、原创题及评价案例查询；选择任务模板后连同方法、知识依据和原材料位置一起展示。所有数据直接读取同一份候选资产，不另维护页面副本。该区域只读，无批准、发布或采用操作，也不写入浏览器学习状态。既有三角形维护例仍明确标为合成，不能将其发布动作作用到实际内容候选。作者构建与相关九项浏览器检查通过，实际内容审核和用户交互审阅仍未完成。
+2026-10-17 增加 [ContentPackageReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/ContentPackageReview.vue)。从管理员“内容与维护”展开“分数的应用”草案，先看章节覆盖与缺口，再按学习要求、问题与解法、知识定义、原创题及评价案例查询；选择任务模板后连同方法、知识依据和原材料位置一起展示。所有数据直接读取同一份候选资产，不另维护页面副本。该区域只读，无批准、发布或采用操作，也不写入浏览器学习状态。既有三角形维护例仍明确标为合成，不能将其发布动作作用到实际内容候选。作者构建与相关九项浏览器检查通过，实际内容审核和用户交互审阅仍未完成。
 
-同日补充 [SourceReferenceReview.vue](../../../src/mvp_prototype/src/components/SourceReferenceReview.vue)：在“教材题与图示”按页码和小题定位，先读条件与需核对的表现，再展开作者解答及适用的关系图。换题收起答案；图中给定量、推导量和所求量带文字标识，不只靠颜色区分。小屏图形可在自身区域横向查看，解释文字正常换行。所有图都是含答案的审核参考，未作为学生检测输入；正式原图识别、内容批准和跨端权限不由此证明。
+同日补充 [SourceReferenceReview.vue](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/components/SourceReferenceReview.vue)：在“教材题与图示”按页码和小题定位，先读条件与需核对的表现，再展开作者解答及适用的关系图。换题收起答案；图中给定量、推导量和所求量带文字标识，不只靠颜色区分。小屏图形可在自身区域横向查看，解释文字正常换行。所有图都是含答案的审核参考，未作为学生检测输入；正式原图识别、内容批准和跨端权限不由此证明。
 
 **真实模型交互试用（2026-10-17）。** 用户授权先接通真实模型，通过实际对话打磨教学界面。本增量服务于 Phase 4 的交互判断：选择“分数的应用”及必要基础回补，以文字为输入，模型生成解释、公式、简单条形图和题目，前端用限定组件呈现。原预写路径保持独立，不把其个人状态、参考作答或反馈混入真实会话。
 
@@ -765,7 +765,7 @@ flowchart TB
 - 随堂练习提交后反馈。即时检查先展示一题安排，点击开始后收起前文；题目仍在对话中，答案和理由使用同一底部输入区。提交即结束该题，求助也先结束再讲解。结束后的检查不重新开启；继续交流可另开新题。
 - 当前仅为成人本机试用。模型反馈不进入正式 Evidence／Belief 或章节状态。语义质量、独立验证、真实多模态、完整活动评价及跨端运行追溯仍待工程实现与验证。
 
-实际入口、配置、保存方式、作者检查及已发现的输出限制统一见[原型说明的真实模式](../../../src/mvp_prototype/README.md#真实模型对话现在可以使用)。本增量不冻结正式技术方案，不将其他活动从 MVP 范围移除。
+实际入口、配置、保存方式、作者检查及已发现的输出限制统一见[原型说明的真实模式](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md#真实模型对话现在可以使用)。本增量不冻结正式技术方案，不将其他活动从 MVP 范围移除。
 
 ## 7. 交互评审与工程交接
 
@@ -781,7 +781,7 @@ flowchart TB
 
 ### 7.2 结构检查与大量记录走查
 
-下表保留合成数据规格，并区分已落实部分与未完成工作。数量用于暴露长列表、同名对象和历史定位问题，不是首批用户目标、后端容量承诺或新的质量阈值。实际生成见 [data.ts](../../../src/mvp_prototype/src/structure/data.ts)。
+下表保留合成数据规格，并区分已落实部分与未完成工作。数量用于暴露长列表、同名对象和历史定位问题，不是首批用户目标、后端容量承诺或新的质量阈值。实际生成见 [data.ts](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/src/structure/data.ts)。
 
 | 情境 | 数据规格与本轮落实 | 已查与待查 |
 | --- | --- | --- |
@@ -811,7 +811,7 @@ flowchart TB
 | 是否只检查桌面和短标题 | 长名称正常换行，窄屏行内信息纵向排列；截图发现页头与说明挤占目录首屏后，压缩学生端窄屏页头，将重复说明移到列表后，删除面包屑对长标题的重复 | 1280×900、834×1112、390×844、1024×600；正文与输入区分别占位 |
 | 是否能找到解释和下一步 | 单章详情统一提供已有表现、需加强、未知、变化、作答与下一步；学习要求折叠可查 | 分数章节、要求项数、依据缺口、继续旧活动与原草稿 |
 
-作者走查及脚本结果记录在[原型说明](../../../src/mvp_prototype/README.md)和[本地截图与检查目录](../../../.tmp/status-ia-review/)。本次属于作者自审和确定性浏览器检查，不是独立专家审计或学生可用性实测。实际课程更多层级、屏幕键盘、Android 手写、真实评价可理解性及教学效果仍须后续验证。三个参考章的完整评价依据尚缺，不能因目录改进而宣称这部分已完成。
+作者走查及脚本结果记录在[原型说明](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md)和[本地截图与检查目录](../../../.tmp/status-ia-review/)。本次属于作者自审和确定性浏览器检查，不是独立专家审计或学生可用性实测。实际课程更多层级、屏幕键盘、Android 手写、真实评价可理解性及教学效果仍须后续验证。三个参考章的完整评价依据尚缺，不能因目录改进而宣称这部分已完成。
 
 ### 7.4 首页与学习情况分工的作者复审（2026-10-17）
 
@@ -825,11 +825,11 @@ flowchart TB
 | 是否可核对并返回 | 统计数字展开对应明细，收起后焦点回到触发按钮；首页进入的章节可直接返回首页，目录进入的章节返回原查询位置 | 明细条数匹配数字；恢复焦点、旧章节链接、目录页码／筛选／滚动、原活动和草稿检查通过 |
 | 数据多和数据少是否都成立 | 首页只保留一个相关主题，较早活动最多先列三项；目录仍支持 3／30／300 章；无可靠数据不用 0，校外不挪用校内记录 | 20 项未结束活动、合成目录、无评价、首次使用、校外材料未就绪情境可操作；原有家长和后台回归通过 |
 
-类型检查与生产构建通过；初轮 41 项跨角色与学生路径检查通过，压缩首页并补焦点处理后 22 项受影响检查通过，最终首屏调整后 16 项首页检查通过（含新增 3 项首屏断言）。测试使用隔离浏览器和模型替身，没有额外真实模型调用，也没有清理用户原有活动。四种窗口尺寸均留存截图和布局检查；最终查看平板、窄屏、无参考及错题明细等实际截图，未观察到页面异常或横向溢出。资产见[本地复审目录](../../../.tmp/home-status-separation-review/)，操作与测试入口见[原型说明](../../../src/mvp_prototype/README.md)。
+类型检查与生产构建通过；初轮 41 项跨角色与学生路径检查通过，压缩首页并补焦点处理后 22 项受影响检查通过，最终首屏调整后 16 项首页检查通过（含新增 3 项首屏断言）。测试使用隔离浏览器和模型替身，没有额外真实模型调用，也没有清理用户原有活动。四种窗口尺寸均留存截图和布局检查；最终查看平板、窄屏、无参考及错题明细等实际截图，未观察到页面异常或横向溢出。资产见[本地复审目录](../../../.tmp/home-status-separation-review/)，操作与测试入口见[原型说明](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md)。
 
 **复审结论与限制。** 当前分工足以进入下一轮内容和操作讨论：学生能区分“近期做了什么”与“按章节学得怎样”，计数可以核对，原有连续对话和记录恢复保留。统计、判断与建议仍明确区分示例和真实结果；实际统计事件、正式 Evaluation、目标依据和真实计时尚未接入。本次属于作者自审及确定性检查，不是独立专家审计、真实学生可用性研究、Android 设备验证或 G4 通过。用户尚未审阅本轮细节。
 
-**课堂进度增量复审（2026-10-17）。** 初版只在学习情况中提供轻量入口，用户审阅指出发现性不足；调整为首页显著呈现并直接更新，学习情况保留轻量上下文和章名标记。首页显示确认日期，详细时间、说明及历史在弹窗查看；标记不借用掌握状态的颜色或达标图标。 首页增量检查发现横向短屏的主要学习按钮被挤出首屏，改为宽屏下课堂进度与学习操作并排、窄屏下依次排列；四种尺寸的截图复查及相关回归检查通过。按未知、明确确认、改为未知、取消、刷新、多个章节及家长查看复查，另用 300 章确认查找有界。作者检查发现无教学内容的章节详情会遗漏课堂标记，已使标记独立于教学内容和评价是否就绪。脚本、截图及运行结果见[原型说明的课堂进度部分](../../../src/mvp_prototype/README.md#课堂进度学生确认家长只读)；真实模型、跨设备保存和正式权限仍未在此实现。
+**课堂进度增量复审（2026-10-17）。** 初版只在学习情况中提供轻量入口，用户审阅指出发现性不足；调整为首页显著呈现并直接更新，学习情况保留轻量上下文和章名标记。首页显示确认日期，详细时间、说明及历史在弹窗查看；标记不借用掌握状态的颜色或达标图标。 首页增量检查发现横向短屏的主要学习按钮被挤出首屏，改为宽屏下课堂进度与学习操作并排、窄屏下依次排列；四种尺寸的截图复查及相关回归检查通过。按未知、明确确认、改为未知、取消、刷新、多个章节及家长查看复查，另用 300 章确认查找有界。作者检查发现无教学内容的章节详情会遗漏课堂标记，已使标记独立于教学内容和评价是否就绪。脚本、截图及运行结果见[原型说明的课堂进度部分](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md#课堂进度学生确认家长只读)；真实模型、跨设备保存和正式权限仍未在此实现。
 
 ### 7.5 后续工作与接收条件
 
@@ -850,7 +850,7 @@ flowchart TB
 
 本节记录 v0.4／v0.5 的实际实现及检查，保留原义；审核发布链不再属于当前 MVP，现行变更见 §7.7。
 
-用户先确认调整方案，再授权实施。工作目录是 [mvp_prototype_next/admin](../../../src/mvp_prototype_next/admin/)，原始 `mvp_admin_prototype` 与 `mvp_prototype_v2` 保留。统一目录和三个任务共用一份浏览器持久化状态；更改的是新版后台副本，不导入旧后台整页。
+用户先确认调整方案，再授权实施。工作目录是 [mvp_prototype_next/admin](../../../src/mvp_prototype/admin/)，原始 `mvp_admin_prototype` 与 `mvp_prototype_v2` 保留。统一目录和三个任务共用一份浏览器持久化状态；更改的是新版后台副本，不导入旧后台整页。
 
 | 任务 | 本轮可操作结果 | 实现与证据边界 |
 | --- | --- | --- |
@@ -860,29 +860,29 @@ flowchart TB
 
 真实会话审查通过本地只读接口取得会话索引、输入输出、时间与已有调用指标。它不恢复待处理请求、不触发调用、不修改会话。不可解析文件显式列出。没有正式身份、展示回执、Observation、Evidence 或 Belief 的部分明确表示未接入，不用合成记录补齐。
 
-作者复审覆盖模型含义、上下文和异常分支：排除 KC 个人评分；子任务引用类型正确；错误引用或依赖循环阻止发布；保存候选使旧检查和批准失效；发布与采用分离；只更新指定空间；已知无效结果退出当前使用而不改写历史；真实数据与示例数据隔离。测试使用独立浏览器上下文、固定响应及临时会话目录。具体执行结果与命令记在[原型说明](../../../src/mvp_prototype_next/README.md)，截图保存在仓库 `.tmp/mvp-prototype-next/admin-workbench-review/`，不计作真实用户可用性证据。
+作者复审覆盖模型含义、上下文和异常分支：排除 KC 个人评分；子任务引用类型正确；错误引用或依赖循环阻止发布；保存候选使旧检查和批准失效；发布与采用分离；只更新指定空间；已知无效结果退出当前使用而不改写历史；真实数据与示例数据隔离。测试使用独立浏览器上下文、固定响应及临时会话目录。具体执行结果与命令记在[原型说明](../../../src/mvp_prototype/README.md)，截图保存在仓库 `.tmp/mvp-prototype-next/admin-workbench-review/`，不计作真实用户可用性证据。
 
 v0.4 的修改范围是本节、§2.5 导航与统一模型表达，以及本轮状态和文档头。未修改 Phase 3 的已定权限或模型语义，未放行 G4，也未将本次局部交付视为 M11 账号流程或全部迁入项完成。
 
-**领域目录增量复审（v0.5）。** 用户确认补齐原先遗漏的目录层和创建入口。本批复查领域创建、类型切换、候选保存与发布后的归属、旧记录兼容、长列表返回和多窗口冲突；新增领域及维护仍保存于当前浏览器，不声明正式后台模型服务已经完成。未知归属的旧新增对象独立保留，不从语义文本猜测领域，不改写历史事实或个人判断。原型说明 v0.7 → v0.8、本文 v0.4 → v0.5；逐文件修订、输入快照和实际检查结果见[本批交付记录](../../../src/mvp_prototype_next/README.md#71-领域目录与创建v08)。
+**领域目录增量复审（v0.5）。** 用户确认补齐原先遗漏的目录层和创建入口。本批复查领域创建、类型切换、候选保存与发布后的归属、旧记录兼容、长列表返回和多窗口冲突；新增领域及维护仍保存于当前浏览器，不声明正式后台模型服务已经完成。未知归属的旧新增对象独立保留，不从语义文本猜测领域，不改写历史事实或个人判断。原型说明 v0.7 → v0.8、本文 v0.4 → v0.5；逐文件修订、输入快照和实际检查结果见[本批交付记录](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype_next/README.md#71-领域目录与创建v08)。
 
 ### 7.7 管理端直接保存的作者复审（2026-10-22）
 
 按 DEC-026 去掉维护中心及审核发布链，统一领域、教材、映射和目标的直接编辑；模型定义包检查后在所属页面保存。旧事项只读保留，未完成候选迁为草稿，旧链接回到对象或活动。已有空间采用清单和个人历史未改变，简化采用操作保持 OPEN-011。
 
-作者检查覆盖十个浏览器情境：直接新增修改、关系循环阻断、内容与目标的就地维护、导入包、旧草稿及未保存输入兼容、失效依据、真实会话只读、长列表和并发保护。源代码和记录见[原型说明 §7.2](../../../src/mvp_prototype_next/README.md#72-取消审核发布并直接保存v09)。这些检查不证明内容语义正确、真实教学有效或正式模型服务已经实现。
+作者检查覆盖十个浏览器情境：直接新增修改、关系循环阻断、内容与目标的就地维护、导入包、旧草稿及未保存输入兼容、失效依据、真实会话只读、长列表和并发保护。源代码和记录见[原型说明 §7.2](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype_next/README.md#72-取消审核发布并直接保存v09)。这些检查不证明内容语义正确、真实教学有效或正式模型服务已经实现。
 
 ### 7.8 空间观测恢复与作者复审（2026-10-22）
 
 用户指出统一目录替代了原版空间观测，确认以原版为基础修复。按 §2.5 分离观测页面与模型管理，恢复范围选择、概览分布、分类记录及只读版本追溯；保留直接保存的管理流程，不改学生和家长界面。原始后台仍保留，未将旧版 KC 掌握率、跨空间平均状态或预写运行通过率迁回。
 
-检查覆盖原始观测结构、空范围及不存在范围、不同 Learning Space 的统计联动、历史与失效记录、准确版本追溯、转到管理后的返回、缺失引用、AI Reasoning 日志缺口、历史演化只读和真实／示例隔离。既有直接编辑回归继续检查。实际执行结果、截图及本批版本记录见[原型说明 §7.3](../../../src/mvp_prototype_next/README.md#73-恢复空间观测v010)。原型走查不证明正式运行日志已接入，也不授予 G4 通过。
+检查覆盖原始观测结构、空范围及不存在范围、不同 Learning Space 的统计联动、历史与失效记录、准确版本追溯、转到管理后的返回、缺失引用、AI Reasoning 日志缺口、历史演化只读和真实／示例隔离。既有直接编辑回归继续检查。实际执行结果、截图及本批版本记录见[原型说明 §7.3](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype_next/README.md#73-恢复空间观测v010)。原型走查不证明正式运行日志已接入，也不授予 G4 通过。
 
 ### 7.9 交互审查恢复与作者复审（2026-10-23）
 
 用户确认以原版 TraceList、TraceDetail、SpanDetail 为基础恢复处理过程审查。本轮将交互审查从学生／活动通用工作台分离，保留原版并列处理链与步骤详情，按当前模型修正候选、Observation、Evidence、Task Belief 和目标评价的归属及含义。既有学生状态、空间观测、模型直接保存和只读真实会话保持。
 
-逐项 review 覆盖筛选统计与日期、不同活动的独立脚本、嵌套步骤、拒绝重试、事件选择、输入输出、四方面判断、历史版本、缺失引用、实际帮助、核对意见、分页返回、导出及真实／示例隔离；另外回归空间观测和直接编辑。原版的时间筛选、分页和导出占位被接通，未实现的参数重跑不显示。完整对照表、实际执行结果、输入快照与逐文件变更见[原型说明 §7.4](../../../src/mvp_prototype_next/README.md#74-恢复交互审查v011)。作者自检不代替用户审阅，不改变 G4 状态。
+逐项 review 覆盖筛选统计与日期、不同活动的独立脚本、嵌套步骤、拒绝重试、事件选择、输入输出、四方面判断、历史版本、缺失引用、实际帮助、核对意见、分页返回、导出及真实／示例隔离；另外回归空间观测和直接编辑。原版的时间筛选、分页和导出占位被接通，未实现的参数重跑不显示。完整对照表、实际执行结果、输入快照与逐文件变更见[原型说明 §7.4](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype_next/README.md#74-恢复交互审查v011)。作者自检不代替用户审阅，不改变 G4 状态。
 
 ### 7.10 后台逐页调整的结论归并（2026-10-24）
 

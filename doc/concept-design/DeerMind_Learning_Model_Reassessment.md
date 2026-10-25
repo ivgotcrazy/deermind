@@ -1,13 +1,13 @@
 # DeerMind 学习模型目的需求与候选结构复核
 
-> **版本**：v0.3<br>
+> **版本**：v0.4<br>
 > **文档性质**：设计复核与变更记录<br>
 > **状态**：当前设计与工作入口；历史验证按原基线解释<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
 > **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-20<br>
-> **修订说明**：保留历史 §1–10，新建单模板多维修订及检查记录。逐文件变更见[修订记录 §11](DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
+> **更新日期**：2026-10-25<br>
+> **修订说明**：统一现行原型目录引用；旧版实现与既有原型评审章节固定到 Git 历史，避免替换后引用含义改变。逐文件记录见 MVP_Governance §5.3；本次不改变产品规则或 Gate 结论。
 
 ---
 
@@ -935,7 +935,7 @@ ProblemTemplate 参数化问题关系、约束与所求责任，不规定唯一�
 | [doc/top/DeerMind_AI_Native_Architecture_Principles_v0.6.md](../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md) | v0.5 → v0.6 | 同步单模板多维的语义推理原则 |
 | [doc/top/DeerMind_Development_Roadmap_v0.6.md](../top/DeerMind_Development_Roadmap_v0.6.md) | v0.5 → v0.6 | 更新现行系统交接，不改旧准入 |
 | [src/mvp_foundation/README.md](../../src/mvp_foundation/README.md) | v0.2 → v0.3 | 同步运行资产未迁移状态 |
-| [src/mvp_prototype/README.md](../../src/mvp_prototype/README.md) | v0.2 → v0.3 | 同步运行资产未迁移状态 |
+| [src/mvp_prototype/README.md](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md) | v0.2 → v0.3 | 同步运行资产未迁移状态 |
 
 ### 11.4 检查与交付结果
 

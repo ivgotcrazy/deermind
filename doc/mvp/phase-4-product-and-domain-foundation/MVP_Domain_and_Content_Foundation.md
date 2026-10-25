@@ -1,14 +1,14 @@
 # MVP 领域与内容基础
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **文档性质**：领域与内容交付规格；Phase 4 — Product & Domain Foundation<br>
 > **状态**：已有首批实际章节的结构化候选及开发参考；内容质量核对、正式使用和完整联合交付未完成，G4 未通过<br>
 > **上游依据与基线**：[G3-20261015-01](../MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)；现行 Domain、Learning、Evaluation 设计<br>
 > **维护责任**：用户提供实际材料；Codex 辅助准备，管理员核对内容及适用范围并保存<br>
 > **评审记录**：已逐页阅读校内所选单元并完成候选引用与数值检查；尚未完成管理员内容核对和独立参考复核<br>
 > **写作规范**：[设计文档规范 v1.1](../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-24<br>
-> **修订说明**：补齐 MVP Task／Solution／KC 关系、模板字段、实例保存检查及 Claim／教材／目标关联；明确 mock、旧教材包和上位关系待同步的区别。见 Governance §5.2。
+> **更新日期**：2026-10-25<br>
+> **修订说明**：统一现行原型目录引用；旧版实现与既有原型评审章节固定到 Git 历史，避免替换后引用含义改变。逐文件记录见 MVP_Governance §5.3；本次不改变产品规则或 Gate 结论。
 
 ---
 
@@ -155,7 +155,7 @@ flowchart TB
 
 | 资产 | 位置及来源 | 当前状态与适用边界 |
 | --- | --- | --- |
-| 当前后台关系 mock | [domain-mock.ts](../../../src/mvp_prototype_next/admin/src/workbench/domain-mock.ts)、[task-editor-mock.ts](../../../src/mvp_prototype_next/admin/src/workbench/task-editor-mock.ts)、[evaluation-mock.ts](../../../src/mvp_prototype_next/admin/src/workbench/evaluation-mock.ts)、[教材](../../../src/mvp_prototype_next/admin/src/workbench/textbook-mock.ts)、[目标](../../../src/mvp_prototype_next/admin/src/workbench/target-mock.ts)、[学习空间](../../../src/mvp_prototype_next/admin/src/workbench/learning-space-mock.ts) | 支持本轮 UI 关系走查，内存数据，不是实际教材包的新版本，也未验证真实分类或推断 |
+| 当前后台关系 mock | [domain-mock.ts](../../../src/mvp_prototype/admin/src/workbench/domain-mock.ts)、[task-editor-mock.ts](../../../src/mvp_prototype/admin/src/workbench/task-editor-mock.ts)、[evaluation-mock.ts](../../../src/mvp_prototype/admin/src/workbench/evaluation-mock.ts)、[教材](../../../src/mvp_prototype/admin/src/workbench/textbook-mock.ts)、[目标](../../../src/mvp_prototype/admin/src/workbench/target-mock.ts)、[学习空间](../../../src/mvp_prototype/admin/src/workbench/learning-space-mock.ts) | 支持本轮 UI 关系走查，内存数据，不是实际教材包的新版本，也未验证真实分类或推断 |
 | G3 批准内容与依赖 | [基线清单](../../../src/mvp_foundation/baselines/G3-20261015-01/manifest.json) | 已固定，作为输入，不是领域包 |
 | 章节交互合成材料 DEMO-LESSON-AREA-001 v1 | [chapter-lesson.json](../../../src/mvp_foundation/examples/chapter-lesson.json)；Codex 自编三角形面积示例 | 有实际文字、图示说明和参考；仅用于交互，未映射真实教材、未发布为 Domain 内容 |
 | 产品流程合成输入 DEMO-PRODUCT-FLOW-001 v1 | [product-flow-fixtures.json](../../../src/mvp_foundation/examples/product-flow-fixtures.json)；自编求助题、状态、作答与模板引用样例 | 只用于展示统计与维护流程，不是正式目标、Domain 定义、教材映射或质量参考 |

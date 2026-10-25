@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile, rename } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, rename, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { systemPrompt, validateOutput } from './live-model.mjs';
@@ -10,6 +10,7 @@ export function createLiveService({ directory, provider, model, reference = '', 
   const cache = new Map(), loading = new Map(), queues = new Map(), controllers = new Map();
   async function save(s) {
     await mkdir(directory, { recursive: true });
+    s.revision = (s.revision || 0) + 1;
     const file = path.join(directory, `${s.id}.json`), temp = `${file}.tmp`;
     await writeFile(temp, JSON.stringify(s, null, 2), 'utf8'); await rename(temp, file);
   }
@@ -19,7 +20,11 @@ export function createLiveService({ directory, provider, model, reference = '', 
     if (!loading.has(id)) loading.set(id, (async () => {
       let s;
       try { s = JSON.parse(await readFile(path.join(directory, `${id}.json`), 'utf8')); }
-      catch { throw new LiveError('未找到这次真实对话。请检查是否在原电脑、原项目中启动服务。', 404); }
+      catch (error) {
+        if (error.code === 'ENOENT') throw new LiveError('未找到这次真实对话。请检查是否在原电脑、原项目中启动服务。', 404);
+        throw new LiveError('会话文件无法读取，原文件已保留，请检查存储后恢复。', 409);
+      }
+      if (s.version !== 2 || s.id !== id || !s.scope || !Array.isArray(s.turns)) throw new LiveError('此记录不属于新版会话；不能直接改写旧会话。', 409);
       if (s.pending) { s.error = { message: '服务曾中断，上一轮没有取得可用回复，可重试。', retryable: true }; s.pending = null; await save(s); }
       cache.set(id, s); return s;
     })().finally(() => loading.delete(id)));
@@ -31,16 +36,16 @@ export function createLiveService({ directory, provider, model, reference = '', 
   }
   function publicView(s) {
     const { lastCommand, requests, ...view } = s;
-    return { ...view, turns: s.turns.map(t => {
+    return structuredClone({ ...view, turns: s.turns.map(t => {
       if (t.role !== 'assistant') return t;
       const { raw, ...turn } = t;
       return { ...turn, blocks: t.blocks.map(({ referenceAnswer, ...b }) => b) };
-    }) };
+    }) });
   }
   const question = (s, id) => s.turns.flatMap(t => t.blocks || []).find(b => b.type === 'question' && b.id === id);
   function messages(s) {
     const history = s.turns.map(t => ({ role: t.role, content: t.role === 'assistant' ? JSON.stringify({ blocks: t.blocks.map(({ id, state, answer, ...b }) => b), suggestions: t.suggestions }) : (t.context ? `[界面上下文：来自${t.context.label}页面。仅表示当前页面位置，不代表学习表现；页面评价未接入，不可推断或捏造。]\n${t.text}` : t.text) }));
-    return [{ role: 'system', content: systemPrompt(reference) }, ...history];
+    return [{ role: 'system', content: systemPrompt(reference, s.scope) }, ...history];
   }
   async function run(s, token, controller) {
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -65,15 +70,20 @@ export function createLiveService({ directory, provider, model, reference = '', 
       }
       await exclusive(s.id, async () => {
         if (controllers.get(s.id) !== controller || s.pending?.id !== token) return;
-        for (const b of output.blocks) if (b.type === 'question') { b.id = randomUUID(); b.state = 'offered'; }
-        s.turns.push({ id: randomUUID(), role: 'assistant', ...output, at: now(), metrics: { ms: Date.now() - started, calls } });
-        s.pending = null; s.error = null; s.updatedAt = now(); await save(s);
+        const completed = structuredClone(s);
+        for (const b of output.blocks) if (b.type === 'question') {
+          for (const old of completed.turns.flatMap(t => t.blocks || [])) if (old.type === 'question' && old.state === 'offered') old.state = 'skipped'; b.id = randomUUID(); b.state = 'offered'; }
+        completed.turns.push({ id: randomUUID(), role: 'assistant', ...output, at: now(), metrics: { ms: Date.now() - started, calls } });
+        completed.pending = null; completed.error = null; completed.updatedAt = now();
+        await save(completed); cache.set(s.id, completed); controllers.delete(s.id);
       });
     } catch (e) {
       await exclusive(s.id, async () => {
         if (controllers.get(s.id) !== controller || s.pending?.id !== token) return;
+        const failed = structuredClone(s);
         const message = controller.signal.aborted ? '模型等待超时，输入已保留。可稍后重试。' : e instanceof LiveError || /API Key|模型账户|模型服务/.test(e.message) ? e.message : '未能连接模型服务，输入已保留。请检查网络后重试。';
-        s.error = { message, retryable: true, calls, ms: Date.now() - started }; s.pending = null; s.updatedAt = now(); await save(s);
+        failed.error = { message, retryable: true, calls, ms: Date.now() - started }; failed.pending = null; failed.updatedAt = now();
+        await save(failed); cache.set(s.id, failed); controllers.delete(s.id);
       });
     } finally { clearTimeout(timeout); if (controllers.get(s.id) === controller) controllers.delete(s.id); }
   }
@@ -88,15 +98,17 @@ export function createLiveService({ directory, provider, model, reference = '', 
         if (s.requests[command.requestId] !== fingerprint) throw new LiveError('同一请求编号不能提交不同内容。', 409);
         return publicView(s);
       }
-      if (command.kind === 'cancel') {
+      if (command.kind === 'cancel' || command.kind === 'end') {
         controllers.get(id)?.abort(); controllers.delete(id);
         if (s.pending) { s.pending = null; s.error = { message: '已停止生成。输入保留，可重试或直接提出新的问题。', retryable: true }; }
-      } else {
-        if (s.pending) throw new LiveError('上一轮仍在处理，请等待或停止生成。', 409);
         if (command.kind === 'end') {
           if (s.check) { question(s, s.check).state = 'skipped'; s.check = null; }
-          s.phase = 'ended'; s.error = null; s.turns.push({ id: randomUUID(), role: 'user', text: '这次先到这里。', at: now(), action: 'end' });
-        } else if (command.kind === 'resume') {
+          s.phase = 'ended'; s.error = null;
+          s.turns.push({id:randomUUID(),role:'user',text:'这次先到这里。',displayText:'这次先到这里。',at:now(),action:'end'});
+        }
+      } else {
+        if (s.pending) throw new LiveError('上一轮仍在处理，请等待或停止生成。', 409);
+        if (command.kind === 'resume') {
           s.phase = 'learning'; s.error = null; s.turns.push({ id: randomUUID(), role: 'user', text: '继续上次的交流。', at: now(), action: 'resume' });
         } else if (command.kind === 'start_check') {
           if (s.phase === 'ended' || s.check) throw new LiveError('当前不能开始另一道检查。');
@@ -126,6 +138,7 @@ export function createLiveService({ directory, provider, model, reference = '', 
             }
             if (command.kind === 'help') {
               if (!s.check) throw new LiveError('当前没有正在进行的检查。');
+              if (command.questionId && command.questionId !== s.check) throw new LiveError('求助题目与当前检测不一致，请刷新后重试。', 409);
               const q = question(s, s.check); q.state = 'helped'; s.check = null; s.phase = 'learning';
               text = `我请求帮助，结束这道检查，尚未提交答案。题目：${q.prompt}\n${text || '请讲讲我应该怎样理解这道题。'}`;
             }
@@ -148,10 +161,58 @@ export function createLiveService({ directory, provider, model, reference = '', 
     });
   }
   return {
-    async create() {
-      const s = { version: 1, id: `REAL-${randomUUID()}`, model, chapter: 'fractions', phase: 'learning', check: null, turns: [], pending: null, error: null, lastCommand: null, requests: {}, createdAt: now(), updatedAt: now() };
+    async inspect(id) {
+      if (!/^NEXT-[a-zA-Z0-9-]+$/.test(id) || !idPattern.test(id)) throw new LiveError('对话编号无效。');
+      let s;
+      try { s = cache.has(id) ? cache.get(id) : JSON.parse(await readFile(path.join(directory, `${id}.json`), 'utf8')); }
+      catch (e) { throw new LiveError(e.code === 'ENOENT' ? '会话不存在。' : '会话文件无法读取，原文件未修改。', e.code === 'ENOENT' ? 404 : 409); }
+      if (s.version !== 2 || s.id !== id || !s.scope || !Array.isArray(s.turns)) throw new LiveError('会话格式不受支持，原文件未修改。', 409);
+      // Inspection never recovers a pending request, invokes a model or writes a session.
+      return publicView(s);
+    },
+    async inspectIndex(space) {
+      let files; try { files = await readdir(directory); } catch (e) { if(e.code === 'ENOENT') return {items:[],unreadable:[]}; throw e; }
+      const items = [], unreadable = [];
+      for(const file of files) {
+        if(!/^NEXT-[a-zA-Z0-9-]+\.json$/.test(file)) continue;
+        try {
+          const id=file.slice(0,-5);
+          const s=cache.has(id)?cache.get(id):JSON.parse(await readFile(path.join(directory,file),'utf8'));
+          if(s.version !== 2 || s.id !== id || !Array.isArray(s.turns) || !s.scope) throw Error();
+          if(s.scope.space !== space) continue;
+          const first=s.turns.find(t=>t.role==='user' && t.action==='message');
+          items.push({id,scope:s.scope,model:s.model,phase:s.phase,pending:!!s.pending,error:!!s.error,updatedAt:s.updatedAt,createdAt:s.createdAt,
+            title:(first?.displayText || first?.text || s.scope.label).slice(0,160),turns:s.turns.length});
+        } catch { unreadable.push({id:file.slice(0,-5),reason:'文件格式不受支持或无法读取；未修改原文件。'}); }
+      }
+      return {items:items.sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt))),unreadable};
+    },
+    async create(scope, creationId = randomUUID()) {
+      if (!scope || typeof scope.space !== 'string' || !scope.space || !idPattern.test(`NEXT-${creationId}`)) throw new LiveError('缺少明确的学习空间或有效的创建请求编号。');
+      const id = `NEXT-${creationId}`;
+      return exclusive(id, async () => {
+      try { const previous = await load(id); if (JSON.stringify(previous.scope) !== JSON.stringify(scope)) throw new LiveError('同一创建请求不能改用另一学习空间。', 409); return publicView(previous); }
+      catch (error) { if (error.status !== 404) throw error; }
+      const s = { version: 2, revision: 0, id, scope: structuredClone(scope), model, chapter: scope.chapter || '', phase: 'learning', check: null, turns: [], pending: null, error: null, lastCommand: null, requests: {}, createdAt: now(), updatedAt: now() };
       await save(s); cache.set(s.id, s); return publicView(s);
+      });
     },
     async get(id) { return publicView(await load(id)); }, command,
+    async list(space) {
+      let files;
+      try { files = await readdir(directory); } catch (error) { if (error.code === 'ENOENT') return []; throw error; }
+      const items = [];
+      for (const file of files) {
+        if (!/^NEXT-[a-zA-Z0-9-]+\.json$/.test(file)) continue;
+        try {
+          const s = await load(file.slice(0,-5));
+          if (s.scope.space !== space) continue;
+          items.push({id:s.id,scope:s.scope,phase:s.phase,updatedAt:s.updatedAt,createdAt:s.createdAt,
+            title:s.turns.find(t => t.role==='user' && t.action==='message')?.displayText || s.scope.label,
+            turns:s.turns.length});
+        } catch { /* Keep unreadable files untouched; they are never coerced into another course. */ }
+      }
+      return structuredClone(items.sort((a,b) => b.updatedAt.localeCompare(a.updatedAt)));
+    },
   };
 }
