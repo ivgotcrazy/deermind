@@ -93,15 +93,16 @@ test('new scanned textbook to corrected content, model mapping, adoption and stu
   await check('student chooses the newly imported course and completes the existing lesson and check flow',async()=>{
     await student.locator('.space-trigger').click();await btn(student,'＋ 新建学习空间').click();
     await expect(student.getByRole('dialog').getByLabel('教材',{exact:true})).toHaveValue(bookId);
-    await btn(student,'创建学习空间').click();await expect(student.locator('.course-page')).toContainText('导入走查教材');
+    await btn(student,'创建学习空间').click();await expect(student.locator('.student-page:visible')).toContainText('导入走查教材');
     await student.locator('.chapter-row').filter({hasText:'按比例增加后的数量'}).getByRole('button',{name:'讲解',exact:true}).click();
     await expect(student.locator('.flow-lesson')).toContainText('80 × 1/4 = 20');
-    await expect(student.locator('.static-pane h2')).toHaveText('教材');
+    await expect(student.locator('.static-pane h2:visible')).toHaveText('教材');
     await btn(student,'准备检测').click();await btn(student,'开始检测').click();
     await student.getByLabel('答案和思路').fill('150 本，原量加上原量的四分之一。');await btn(student,'提交答案').click();
     await student.getByLabel('答案和思路').fill('60 米，同样要保留原来的整段。');await btn(student,'提交答案').click();
-    await expect(student.locator('.result-card')).toContainText('2 题判为正确');
-    await btn(student,'查看学习情况').click();await expect(student.locator('.course-page')).toContainText('4 项要求待确认');
+    await expect(student.locator('.result-card')).toContainText('0 题判为正确');
+    await expect(student.locator('.result-card')).toContainText('部分尚待判定');
+    await btn(student,'查看学习情况').click();await expect(student.locator('.student-page:visible')).toContainText('待确认 4');
     await student.screenshot({path:output+'/05-student.png',fullPage:true});
     const state=await flow();assert.equal(state.lessons[0].snapshot.book.id,bookId);assert.equal(state.lessons[0].chapterId,chapterId);
     await admin.goto(base+'/admin/#/activity?id='+state.lessons[0].id);await expect(admin.locator('.flow-review')).toContainText('导入走查教材');

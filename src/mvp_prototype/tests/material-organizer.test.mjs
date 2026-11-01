@@ -63,10 +63,11 @@ test('real textbook pages retain teaching structure from organization to student
     await btn('下一步：关联模型').click();await btn('采用此关联建议').click();await expect(admin.locator('.mapping-table')).toContainText('连续求一个量的几分之几');await expect(admin.locator('.knowledge-table tbody tr')).toHaveCount(3);
     await btn('下一步：目标与应用').click();await btn('生成目标建议').click();await expect(admin.locator('.import-requirements tbody tr')).toHaveCount(4);await btn('应用并供学生选用').click();await expect(admin.locator('.import-success')).toBeInViewport();
     await student.goto(base+'/student/');await student.locator('.space-trigger').click();await student.getByRole('button',{name:'＋ 新建学习空间',exact:true}).click();await student.getByRole('button',{name:'创建学习空间',exact:true}).click();
-    await student.locator('.chapter-row').filter({hasText:'分数的应用（一）'}).getByRole('button',{name:'查看本课材料',exact:true}).click();await expect(student.locator('.material-reader [data-block="B-METHOD-A"]')).toBeVisible();
+    await student.locator('.chapter-row').filter({hasText:'分数的应用（一）'}).getByRole('button',{name:'阅读材料',exact:true}).click();await expect(student.locator('.material-reader [data-block="B-METHOD-A"]')).toBeVisible();
     await student.getByRole('button',{name:'只看题目',exact:true}).click();await expect(student.locator('.material-reader [data-block="B-METHOD-A"]')).toHaveCount(0);await expect(student.locator('.material-reader [data-block="B-CONDITIONS"] svg image')).toHaveAttribute('href',/page-49/);
     await student.screenshot({path:output+'/06-student.png',fullPage:true});
-    await student.getByRole('button',{name:/第九单元 数据的表示和分析/}).click();await student.locator('.chapter-row').filter({hasText:'建设适老社会（二）'}).getByRole('button',{name:'查看本课材料',exact:true}).click();
+    await student.getByRole('button',{name:'← 返回教材目录',exact:true}).click();
+    await student.getByRole('button',{name:/第九单元 数据的表示和分析/}).click();await student.locator('.chapter-row').filter({hasText:'建设适老社会（二）'}).getByRole('button',{name:'阅读材料',exact:true}).click();
     await student.locator('.material-reader [data-block="B-PIE"]').getByRole('button',{name:'三次人口普查的年龄段占比 ↗',exact:true}).click();await expect(student.locator('.reader-reference table')).toContainText('17.95');await expect(student.locator('.reader-reference')).toContainText('91页');
     await student.locator('.reader-reference').screenshot({path:output+'/07-student-reference.png'});
     assert.equal(modelCalls,0);assert.deepEqual(posts,[]);assert.deepEqual(errors,[]);const data=await state();assert.ok(data.books[0].units[0].chapters[0].items.some(i=>i.blocks.some(b=>b.id==='B-METHOD-B')));

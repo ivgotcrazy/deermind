@@ -1,0 +1,306 @@
+{
+  "completed": true,
+  "sourceCommit": "6fe50d825523749dd9a1391bc6e1d1ff3bac77d0",
+  "sourceHashes": {
+    "admin/src/App.vue": "1f3cea52a69ad29e5876bc267cf53e4dd3e721b2d532d87ade0aa71f476ef7ce",
+    "admin/src/components/TeachingWorkspace.vue": "133f17b0a33ce970689a2d7084d2cc1f6094e975f065be7fed91aa6fd7ace75a",
+    "admin/src/components/TeachingBlueprint.vue": "88ad6a86b6c71a5809270301994c643e27f5c6bb4a015e4ea9f07683c36747f5",
+    "admin/src/workbench/teaching-mock.ts": "c26091bf8e6b9f3e67f631bd1aa0e0b04878b748ea6ef2c2cf58124df7a8023c",
+    "tests/capture-teaching-spec.mjs": "24033be79c94ecd4614a5099580847ca7b35e6db4f083a48a15e93f15ec6ef39"
+  },
+  "buildHashes": {
+    "admin": "c822e80f5dc9aebdd468a7b3332afb314b98f97e5ce1e9914fe61db76f217413"
+  },
+  "modelCalls": 0,
+  "errors": [],
+  "captures": [
+    {
+      "id": "T01",
+      "title": "教学蓝图与阶段详情",
+      "route": "/admin/#/interaction",
+      "file": "T01.png",
+      "sha256": "57b0b8f83268e1f3f0a16729ba25c0ccc50d528ac451bb6a04558622914d88d3",
+      "viewport": {
+        "width": 1440,
+        "height": 1355
+      },
+      "capturedAt": "2026-10-28T22:45:40.006Z"
+    },
+    {
+      "id": "T02",
+      "title": "编辑阶段职责及策略引用",
+      "route": "/admin/#/interaction",
+      "file": "T02.png",
+      "sha256": "bc11a40bcf7fc3d1d37bf907bc9080641f02abaf13569d0b190137796ab12f7a",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-28T22:45:40.254Z"
+    },
+    {
+      "id": "T03",
+      "title": "添加阶段并指定插入连接",
+      "route": "/admin/#/interaction",
+      "file": "T03.png",
+      "sha256": "47c65b1d3471c920ecac3f1f7f67dbeb426db1525fdd65cfca0d786b3852e2bf",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-28T22:45:40.591Z"
+    },
+    {
+      "id": "T04",
+      "title": "编辑连接条件与判断依据",
+      "route": "/admin/#/interaction",
+      "file": "T04.png",
+      "sha256": "8c95c4c6ee1bcc6eaf7a17dae0ee35cfb72cdc4fdeb51568ea9047690e0ef97c",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-28T22:45:40.844Z"
+    },
+    {
+      "id": "T05",
+      "title": "添加分支连接",
+      "route": "/admin/#/interaction",
+      "file": "T05.png",
+      "sha256": "e0bdec927caae514be687be7cca985547700e79bf7305067a65035a258643035",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-28T22:45:41.045Z"
+    },
+    {
+      "id": "T06",
+      "title": "缺少阶段目的时保留输入并提示",
+      "route": "/admin/#/interaction",
+      "file": "T06.png",
+      "sha256": "f08ff6c49c23cb06f0b10f71f6ba5a89b19d0e40d8feefe2fd2b352d57f2f144",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-28T22:45:41.388Z"
+    },
+    {
+      "id": "T07",
+      "title": "阶段修改进入蓝图草稿",
+      "route": "/admin/#/interaction",
+      "file": "T07.png",
+      "sha256": "ce0fd1c8f567611e4d1b5d08f3c6d0db95def147f62503142b4667138be2beb5",
+      "viewport": {
+        "width": 1440,
+        "height": 1409
+      },
+      "capturedAt": "2026-10-28T22:45:41.637Z"
+    },
+    {
+      "id": "T08",
+      "title": "保存后的模型版本与修改记录",
+      "route": "/admin/#/interaction",
+      "file": "T08.png",
+      "sha256": "7c03c685714cc25d753b9d9127d8b6809ef005ff3f555d1e8a9954782adf07c2",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-28T22:45:41.843Z"
+    },
+    {
+      "id": "T09",
+      "title": "模型修改后旧情境明确待核对",
+      "route": "/admin/#/interaction?tab=scenes&scope=foundation&round=entry",
+      "file": "T09.png",
+      "sha256": "929b1b299baad40ef411386c01d15362484fb85144da3561a9744304ef20d66b",
+      "viewport": {
+        "width": 1440,
+        "height": 1160
+      },
+      "capturedAt": "2026-10-28T22:45:42.115Z"
+    },
+    {
+      "id": "T10",
+      "title": "策略列表及阶段引用",
+      "route": "/admin/#/interaction?tab=strategies",
+      "file": "T10.png",
+      "sha256": "7641594fb50fc097ad0a29bb3fd0c52ba87f998782b7748893d5513ed3f330c5",
+      "viewport": {
+        "width": 1440,
+        "height": 1032
+      },
+      "capturedAt": "2026-10-28T22:45:42.400Z"
+    },
+    {
+      "id": "T11",
+      "title": "完整对比辨析策略",
+      "route": "/admin/#/interaction?tab=strategies&id=contrast&returnTo=%23%2Finteraction%3Ftab%3Dstrategies",
+      "file": "T11.png",
+      "sha256": "b3e864abb2f5af686a377a88bb60e2a26b062d603ee1bffd2c0d943839f9e760",
+      "viewport": {
+        "width": 1440,
+        "height": 1457
+      },
+      "capturedAt": "2026-10-28T22:45:42.684Z"
+    },
+    {
+      "id": "T12",
+      "title": "分区编辑策略",
+      "route": "/admin/#/interaction?tab=strategies&id=contrast&returnTo=%23%2Finteraction%3Ftab%3Dstrategies",
+      "file": "T12.png",
+      "sha256": "867b5caa7726ce5a5c8598f310f28713c5264b09737629f7c8013d0df50b6b61",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-28T22:45:42.871Z"
+    },
+    {
+      "id": "T13",
+      "title": "停用策略后保留引用并说明限制",
+      "route": "/admin/#/interaction?tab=strategies&id=contrast&returnTo=%23%2Finteraction%3Ftab%3Dstrategies",
+      "file": "T13.png",
+      "sha256": "7a9d4321c141d4523decf7445591f81b0248a34c0f09585a48b1a9132d43746a",
+      "viewport": {
+        "width": 1440,
+        "height": 1511
+      },
+      "capturedAt": "2026-10-28T22:45:43.149Z"
+    },
+    {
+      "id": "T14",
+      "title": "通用规则与只读系统约束",
+      "route": "/admin/#/interaction?tab=rules",
+      "file": "T14.png",
+      "sha256": "973526d871220b40c6c4fe0b3e8f69e2b6e5c40fe45572246fec743d7e1c570f",
+      "viewport": {
+        "width": 1440,
+        "height": 1032
+      },
+      "capturedAt": "2026-10-28T22:45:43.429Z"
+    },
+    {
+      "id": "T15",
+      "title": "编辑通用规则的要求及依据",
+      "route": "/admin/#/interaction?tab=rules",
+      "file": "T15.png",
+      "sha256": "418d948a6f2908879a6cbdb72aa17ce24b1539f7d4db5189f2276bf2e1606bd7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-28T22:45:43.632Z"
+    },
+    {
+      "id": "T16",
+      "title": "基础含义不清楚时选择回补",
+      "route": "/admin/#/interaction?tab=scenes&scope=foundation&round=teach",
+      "file": "T16.png",
+      "sha256": "047b1ceb28a8f5e84b28b4a0b0bfc65157b6e428242cb89cf2a493d631d08408",
+      "viewport": {
+        "width": 1440,
+        "height": 1289
+      },
+      "capturedAt": "2026-10-28T22:45:45.079Z"
+    },
+    {
+      "id": "T17",
+      "title": "回补后根据表现选择下一步",
+      "route": "/admin/#/interaction?tab=scenes&scope=foundation&round=practice",
+      "file": "T17.png",
+      "sha256": "9e5df005dcf9956101144ad7eb844718b3623e82920d4ac3529c487cc8d49c51",
+      "viewport": {
+        "width": 1440,
+        "height": 1317
+      },
+      "capturedAt": "2026-10-28T22:45:45.408Z"
+    },
+    {
+      "id": "T18",
+      "title": "会算但理由不足时选择对比辨析",
+      "route": "/admin/#/interaction?tab=scenes&scope=explanation&round=contrast",
+      "file": "T18.png",
+      "sha256": "166db48f1fcadbb89dc21061058435a9c31a2c2ee4ce8b73f719f38381b21c9a",
+      "viewport": {
+        "width": 1440,
+        "height": 1344
+      },
+      "capturedAt": "2026-10-28T22:45:45.784Z"
+    },
+    {
+      "id": "T19",
+      "title": "同一阶段内切换为概念回补",
+      "route": "/admin/#/interaction?tab=scenes&scope=explanation&round=foundation",
+      "file": "T19.png",
+      "sha256": "e83fd6ae8763807b3e795bab864178c55a1e60d26e51824f94fdf73a6b5e349f",
+      "viewport": {
+        "width": 1440,
+        "height": 1289
+      },
+      "capturedAt": "2026-10-28T22:45:46.165Z"
+    },
+    {
+      "id": "T20",
+      "title": "实际所选路径与原版本转移规则",
+      "route": "/admin/#/interaction?tab=scenes&scope=explanation&round=foundation",
+      "file": "T20.png",
+      "sha256": "25701590389fde96a85ae993b9ec2e390b6051668d48aab945fd37291f04f649",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-28T22:45:46.513Z"
+    },
+    {
+      "id": "T21",
+      "title": "跳过重复讲解并进入图示检测",
+      "route": "/admin/#/interaction?tab=scenes&scope=transfer&round=check",
+      "file": "T21.png",
+      "sha256": "277fb4bd5a22eb90bf61fe0b757ae1cd98657afe13845a1870dd6bc96ffe374f",
+      "viewport": {
+        "width": 1440,
+        "height": 1648
+      },
+      "capturedAt": "2026-10-28T22:45:47.015Z"
+    },
+    {
+      "id": "T22",
+      "title": "求助结束检测后转入讲解",
+      "route": "/admin/#/interaction?tab=scenes&scope=transfer&round=help",
+      "file": "T22.png",
+      "sha256": "e9fa1c66f752d29cd8b6587832ef925043c0cdce3b3f729e4234bff23b516be8",
+      "viewport": {
+        "width": 1440,
+        "height": 1374
+      },
+      "capturedAt": "2026-10-28T22:45:47.409Z"
+    },
+    {
+      "id": "T23",
+      "title": "材料歧义保留未决而不归因于学生",
+      "route": "/admin/#/interaction?tab=scenes&scope=transfer&round=material",
+      "file": "T23.png",
+      "sha256": "4f7e3c7616ddcfddef3cd62b38c41ece830dce7e458aa6c8af02ab03faa1a971",
+      "viewport": {
+        "width": 1440,
+        "height": 1122
+      },
+      "capturedAt": "2026-10-28T22:45:47.827Z"
+    },
+    {
+      "id": "T24",
+      "title": "检测成功后的有限结论与收束",
+      "route": "/admin/#/interaction?tab=scenes&scope=transfer&round=success",
+      "file": "T24.png",
+      "sha256": "405fb52af5cd273c4737b64e1eeb76f26cbd974ad4fc4d974c351506c51e08e4",
+      "viewport": {
+        "width": 1440,
+        "height": 1374
+      },
+      "capturedAt": "2026-10-28T22:45:48.240Z"
+    }
+  ]
+}

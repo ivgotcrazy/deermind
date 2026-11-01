@@ -54,7 +54,7 @@ try {
   assert.equal(await page.locator('.cp-chapter').innerText(),'暂不确定');
   assert.equal((await stored()).classroom['math-6b'].length,2);
 
-  await nav('学习情况').click();
+  await nav('学习').click();
   const originalStatus = await page.locator('.static-pane').innerText();
   await page.locator('.bottom-input-bar input').fill('讲解比例的应用');
   await page.locator('.bottom-input-bar input').press('Enter');

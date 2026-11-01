@@ -1,0 +1,151 @@
+import assert from 'node:assert/strict';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { chromium, expect as baseExpect } from '@playwright/test';
+import { createPrototypeServer } from '../scripts/serve.mjs';
+
+const expect = baseExpect.configure({ timeout: 15000 });
+
+// Capture actual UI states in isolated contexts. No real model or user storage is used.
+const output = fileURLToPath(new URL('../../../doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/', import.meta.url));
+await mkdir(output, { recursive: true });
+const captures = [], errors = [];
+let calls = 0;
+const server = createPrototypeServer({ directory: output, config: { key: 'fixture', model: 'fixed' }, provider: async () => { calls++; throw Error('This walkthrough must not call a model'); } });
+await new Promise(r => server.listen(0, '127.0.0.1', r));
+const base = 'http://127.0.0.1:' + server.address().port;
+const browser = await chromium.launch({ headless: true });
+const btn = (p, name) => p.getByRole('button', { name, exact: true });
+const tab = (p, name) => p.getByRole('tab', { name, exact: true });
+async function context() {
+  const c = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: 'zh-CN', timezoneId: 'Asia/Shanghai' });
+  const a = await c.newPage(), s = await c.newPage();
+  for (const p of [a,s]) { p.setDefaultTimeout(15000); p.on('pageerror', e => errors.push(e.message)); }
+  return { c, a, s };
+}
+async function shot(p, id, title, locator) {
+  await p.evaluate(() => document.fonts.ready);
+  const target = locator || p;
+  const bytes = await target.screenshot({ path: output + '/' + id + '.png', animations: 'disabled' });
+  captures.push({ id, title, route: new URL(p.url()).pathname + new URL(p.url()).hash, file: id + '.png', sha256: createHash('sha256').update(bytes).digest('hex'), viewport: p.viewportSize(), capturedAt: new Date().toISOString() });
+  console.log(id + ' ' + title);
+}
+try {
+  const { c, a, s } = await context();
+  await a.goto(base + '/admin/#/textbooks'); await expect(btn(a,'导入教材')).toBeVisible();
+  await shot(a,'I01','教材列表与导入入口');
+  await btn(a,'导入教材').click(); await btn(a,'上传并开始整理').click();
+  await expect(a.getByRole('alert')).toContainText('先选择扫描件');
+  await shot(a,'I02','未选择文件时阻止整理');
+  await btn(a,'载入真实教材书页').click();
+  await expect(a.locator('.upload-files tbody tr')).toHaveCount(5);
+  await shot(a,'I03','多页批量输入与教材信息');
+  await btn(a,'上传并开始整理').click(); await expect(a.getByRole('progressbar')).toBeVisible();
+  await shot(a,'I04','识别整理进行中');
+  await expect(a.locator('.material-organizer')).toBeVisible();
+  await expect(a.locator('.source-paper img')).toHaveAttribute('src',/page-49/);
+  await a.locator('.source-paper img').evaluate(i => i.decode());
+  await shot(a,'I05','原页与图文内容对照');
+  await btn(a,'确认本课整理结果').click(); await expect(a.getByRole('alert')).toContainText('合并');
+  await shot(a,'I06','有未解决疑点时不能确认');
+  await btn(a,'合并内容').click(); await a.getByLabel('要并入的内容').selectOption('MAT-METHODS');
+  await shot(a,'I07','选择跨页合并对象',a.getByRole('dialog'));
+  await btn(a,'确认合并').click(); await expect(a.locator('[data-block="B-METHOD-A"]')).toBeVisible();
+  await shot(a,'I08','合并后保留两种解法和原页来源');
+  await tab(a,'仅题目与条件').click(); await expect(a.locator('[data-block="B-METHOD-A"]')).toHaveCount(0);
+  await shot(a,'I09','题目视图排除提示与解法'); await tab(a,'完整讲解材料').click();
+  await a.locator('[data-block="B-QUESTION"]').getByRole('button',{name:'编辑',exact:true}).click();
+  await shot(a,'I10','内容块编辑与确认',a.getByRole('dialog')); await btn(a,'取消').click();
+  const tree = name => a.locator('.material-tree-item').filter({has:a.locator('span',{hasText:name})});
+  await tree('判断并解释计算错误').click(); await btn(a,'确认本课整理结果').click();
+  await expect(a.getByRole('status')).toContainText('本课内容已核对'); await shot(a,'I11','课题核对完成');
+  await tree('整理与比较人口数据').click();
+  await a.locator('[data-block="B-COUNTS"]').getByRole('button',{name:'编辑',exact:true}).click();
+  await a.getByLabel('表头 3',{exact:true}).fill('65岁及以上人数'); await a.getByRole('dialog').getByRole('checkbox').check();
+  await shot(a,'I12','表格按表头与单元格修正',a.getByRole('dialog')); await btn(a,'保存内容').click();
+  await btn(a,'确认本课整理结果').click(); await shot(a,'I13','表格修正后保留数据和来源');
+  await tree('同一组数据的三种统计图').click(); await a.locator('[data-block="B-PIE"]').getByRole('button',{name:'编辑',exact:true}).click();
+  await a.getByLabel('关联内容',{exact:true}).selectOption(['B-AGE']); await a.getByRole('dialog').getByRole('checkbox').check();
+  await shot(a,'I14','统计图与跨页数据建立关联',a.getByRole('dialog')); await btn(a,'保存内容').click();
+  await btn(a,'确认本课整理结果').click(); await shot(a,'I15','图表及其关联来源');
+  await btn(a,'下一步：关联模型').click(); await shot(a,'I16','模型关联建议尚未采用');
+  await btn(a,'采用此关联建议').click(); await expect(a.locator('.mapping-table')).toContainText('连续求一个量的几分之几');
+  await shot(a,'I17','已选任务与方法及汇总知识');
+  await btn(a,'下一步：目标与应用').click(); await btn(a,'生成目标建议').click();
+  await expect(a.locator('.import-requirements tbody tr')).toHaveCount(4); await shot(a,'I18','目标要求和可用条件');
+  await shot(a,'I18B','四方面学习要求与达标标准',a.locator('.import-requirements'));
+  await btn(a,'应用并供学生选用').click(); await expect(a.locator('.import-success')).toBeInViewport();
+  await shot(a,'I19','教材应用成功');
+  await s.goto(base + '/student/'); await s.locator('.space-trigger').click(); await btn(s,'＋ 新建学习空间').click();
+  await shot(s,'I20','学生选择管理员准备的教材与目标',s.getByRole('dialog'));
+  await btn(s,'创建学习空间').click(); await expect(s.locator('.student-page:visible')).toBeVisible();
+  await shot(s,'I21','学生教材目录与按次选择章节');
+  await s.locator('.chapter-row').filter({hasText:'分数的应用（一）'}).getByRole('button',{name:'阅读材料',exact:true}).click();
+  await expect(s.locator('.material-reader [data-block="B-METHOD-A"]')).toBeVisible(); await shot(s,'I22','学生阅读整理后的真实教材内容');
+  await btn(s,'只看题目').click(); await expect(s.locator('.material-reader [data-block="B-METHOD-A"]')).toHaveCount(0); await shot(s,'I23','学生仅看题目');
+  await btn(s,'← 返回教材目录').click();
+  const chapter=()=>s.locator('.chapter-row').filter({hasText:'分数的应用（一）'});
+  const state=()=>a.evaluate(()=>JSON.parse(localStorage.getItem('deermind-next-learning-flow-v1')));
+  const chainPath='/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction-chain';
+  await a.goto(base+chainPath); await tab(a,'实例').click(); await shot(a,'Q01','连续比例任务的实例入口');
+  await btn(a,'生成题目').click(); await btn(a,'生成候选题').click();
+  await expect(a.getByRole('dialog').getByLabel('题目内容')).toHaveValue(/30 本书/);
+  await shot(a,'Q02','连续比例候选题及参考解答',a.getByRole('dialog')); await btn(a,'检查并保存').click();
+  await shot(a,'Q03','保存后的连续比例题目');
+  await btn(a,'新建题目').click(); const invalid=a.getByRole('dialog');
+  await invalid.getByLabel('题目内容').fill('原有80本书，增加四分之一，求总数。'); await invalid.getByLabel('参考答案').fill('100本'); await invalid.getByLabel('解题过程').fill('80 + 80 × 1/4 = 100。此题不是连续求部分量。');
+  await invalid.getByText('Mock 检查场景',{exact:true}).click(); await invalid.getByLabel('模拟检查结果').selectOption('mismatch'); await btn(a,'检查并保存').click();
+  await expect(invalid.getByRole('alert')).toContainText('模板归类未通过'); await shot(a,'Q04','增加量题不能存入连续部分量模板',invalid); await btn(a,'取消').click();
+  await chapter().getByRole('button',{name:'讲解',exact:true}).click();
+  await expect(s.locator('.flow-lesson')).toContainText('摄影有 12 × 1/3 = 4 人'); await shot(s,'C01','从教材进入同一章节讲解');
+  await btn(s,'为什么第二次用 4，不用 12？').click(); await expect(s.locator('.flow-lesson')).toContainText('参照量换错了');
+  await btn(s,'能不能先算两个分数？').click(); await expect(s.locator('.flow-lesson')).toContainText('先合并比例，再求部分量'); await shot(s,'C02','就地追问与另一种解法');
+  await btn(s,'做一道练习').click(); await s.getByText('Mock 作答判定',{exact:true}).click(); await btn(s,'填入本场景示例作答').click(); await shot(s,'C03','参照量误用的练习作答');
+  await btn(s,'提交答案').click(); await expect(s.locator('.flow-lesson')).toContainText('24 × 1/3 = 8'); await shot(s,'C04','练习后解释错误并保留原作答');
+  await btn(s,'准备检测').click(); await s.getByText('Mock 场景选择',{exact:true}).click(); await shot(s,'C05','检测安排与评审用情形选择');
+  await s.getByLabel('题目准备样例').selectOption('failed'); await btn(s,'开始检测').click();
+  await expect(s.getByRole('alert')).toContainText('检测还没有开始'); assert.equal((await state()).uses.filter(u=>u.purpose==='检测').length,0); await shot(s,'C06','检查失败时没有启动检测');
+  await btn(s,'重新准备').click(); await expect(s.locator('.question-title')).toContainText('第 1/2 题');
+  const fill=async()=>{if(!await btn(s,'填入本场景示例作答').isVisible())await s.getByText('Mock 作答判定',{exact:true}).click();await btn(s,'填入本场景示例作答').click();};
+  await fill(); await s.reload(); await expect(s.getByLabel('答案和思路')).toHaveValue(/30 × 2\/5 = 12/); await shot(s,'C07','文字题作答与草稿恢复');
+  await btn(s,'提交答案').click(); await expect(s.locator('.question-title')).toContainText('第 2/2 题'); await expect(s.locator('.result-card')).toHaveCount(0);
+  await fill(); await shot(s,'C08','区域图题与参照量错误示例'); await btn(s,'提交答案').click();
+  await expect(s.locator('.result-card .chain-assessment .counts')).toContainText('已达标 1 项'); await expect(s.locator('.result-card .chain-assessment .counts')).toContainText('需加强 1 项');
+  await shot(s,'C09','反馈同时呈现已达标需加强待确认',s.locator('.result-card'));
+  await s.locator('.result-card [data-aspect="understanding"] button').click(); await shot(s,'C10','文字解释要求的标准与原作答',s.locator('.result-card .chain-assessment'));
+  await s.locator('.result-card [data-aspect="transfer"] button').click(); await shot(s,'C11','图示迁移的困难与下一步',s.locator('.result-card .chain-assessment'));
+  await btn(s,'讲讲图中的参照量').click(); await expect(s.locator('.flow-lesson')).toContainText('不改写你刚才的原作答或评价'); await expect(s.locator('.flow-lesson .message-row').last()).toBeInViewport(); await shot(s,'C12','检测后按需补讲且保留原结果');
+  await btn(s,'查看学习情况').click(); await s.locator('.learning-status-page:visible .chapter-toggle').filter({hasText:'分数的应用（一）'}).click();
+  await expect(s.locator('.learning-status-page:visible')).toContainText('待确认 2 项'); await shot(s,'C13','章节要求与同次活动评价对应');
+  await s.locator('.student-page:visible').getByRole('button',{name:'讲讲这里',exact:true}).click();await expect(s.locator('.flow-lesson .message-row').last()).toBeInViewport();
+  const mixed=(await state()).lessons[0];
+  await a.goto(base+'/admin/#/activity?id='+mixed.id); await tab(a,'评价结果').click();
+  await expect(a.locator('.flow-review .counts')).toContainText('已达标 1 项'); await a.locator('[data-aspect="transfer"] button').click(); await shot(a,'C14','管理员查看同一表现及评价依据',a.locator('.chain-assessment'));
+  await tab(a,'采用定义').click(); await expect(a.locator('.flow-review')).toContainText('fraction-chain'); await shot(a,'C15','本次采用的教材目标任务与方法');
+  await a.goto(base+'/admin/#/learning-spaces?id='+mixed.spaceId); await expect(a.locator('.wb-page')).toContainText('学生 A'); await shot(a,'C16','管理员查看学习空间及采用内容');
+  const newLesson=async()=>{await s.locator('.space-trigger').click();await btn(s,'＋ 新建学习空间').click();await btn(s,'创建学习空间').click();await chapter().getByRole('button',{name:'讲解',exact:true}).click();await btn(s,'准备检测').click();};
+  for(const [key,id] of [['supported','C17'],['unclear','C18']]){
+    await newLesson();await s.getByText('Mock 场景选择',{exact:true}).click();await s.getByLabel('表现样例').selectOption(key);await btn(s,'开始检测').click();
+    for(let i=0;i<2;i++){await fill();await btn(s,'提交答案').click();}
+    await expect(s.locator('.result-card .counts')).toContainText(key==='supported'?'已达标 2 项':'待确认 4 项');await shot(s,id,key==='supported'?'两种表征均有支持仍不宣称持久掌握':'信息不足时四方面保留待确认',s.locator('.result-card'));
+  }
+  await newLesson();await btn(s,'开始检测').click();await s.getByLabel('答案和思路').fill('任意输入不会被当成预设的正确解释');await btn(s,'提交答案').click();await s.getByLabel('答案和思路').fill('这里仍是自由输入');await btn(s,'提交答案').click();
+  await expect(s.locator('.result-card .notice')).toContainText('没有完整匹配');await expect(s.locator('.result-card .counts')).toContainText('已达标 0 项');
+  await newLesson();await btn(s,'开始检测').click();await btn(s,'结束并求助').click();await expect(s.locator('.result-card')).toContainText('0/2');await expect(s.locator('.result-card .counts')).toContainText('待确认 4 项');await shot(s,'C19','求助结束检测未作答不判错');
+  await s.setViewportSize({width:1024,height:768}); await shot(s,'C20','平板尺寸下保留对话和教材');
+  assert.ok(await s.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));assert.ok(await s.locator('.chapter-row h4').first().evaluate(el=>el.getBoundingClientRect().height<80)); await s.setViewportSize({width:1440,height:1000});
+  const before=await state(),course=before.courses[0];
+  await a.goto(base+'/admin/#/targets?id='+course.snapshot.target.id);await btn(a,'编辑目标信息').click();await a.getByRole('dialog').getByLabel('目标名称').fill('连续比例关系·已修订目标');await btn(a,'保存').click();await shot(a,'U01','连续比例目标已保存待应用');await btn(a,'应用更新').click();
+  await s.getByRole('button',{name:'📖 教材',exact:true}).click();await expect(s.locator('.course-definition')).toContainText('已修订目标');await s.locator('.course-definition summary').click();await shot(s,'U02','学生当前采用更新历史保持原目标');
+  const after=await state();assert.notEqual(after.courses[0].snapshot.target.name,after.lessons[0].snapshot.target.name);
+  await a.goto(base+'/admin/#/textbooks');await btn(a,'导入教材').click();await a.getByLabel('教材名称',{exact:true}).fill('待取消的导入');await btn(a,'← 返回教材列表').click();await btn(a,'删除导入 待取消的导入').click();await shot(a,'I24','删除未完成导入的确认',a.getByRole('dialog'));await btn(a,'取消').click();await expect(btn(a,'继续导入 待取消的导入')).toBeVisible();await btn(a,'删除导入 待取消的导入').click();await btn(a,'确认删除').click();await shot(a,'I25','删除草稿后保留已应用教材');
+  await c.close();assert.deepEqual(errors,[]);assert.equal(calls,0);
+} finally {
+  await browser.close(); await new Promise(r=>server.close(r));
+  const sourceCommit=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),buildHashes={},sourceHashes={};
+  for(const app of ['admin','student'])buildHashes[app]=createHash('sha256').update(await readFile(new URL('../'+app+'/dist/index.html',import.meta.url))).digest('hex');
+  for(const file of ['admin/src/App.vue','shared/fraction-chain.ts','shared/learning-flow.ts','shared/ChainAssessment.vue','student/src/components/FlowLesson.vue','student/src/components/FlowCoursePage.vue','tests/capture-product-spec.mjs'])sourceHashes[file]=createHash('sha256').update(await readFile(new URL('../'+file,import.meta.url))).digest('hex');
+  await writeFile(output+'/capture-manifest.json',JSON.stringify({sourceCommit,sourceHashes,buildHashes,browser:browser.version(),modelCalls:calls,errors,captures},null,2));
+}

@@ -15,7 +15,7 @@ interface Workspace {
   classroom: Record<string, ClassroomReport[]>;
 }
 const key = 'deermind-next-workspace-v1';
-const labels: Record<PageId,string> = {home:'首页',status:'学习情况',textbook:'教材',errorbook:'错题本'};
+const labels: Record<PageId,string> = {home:'首页',status:'学习情况',textbook:'教材',errorbook:'题目记录'};
 class ApiError extends Error { constructor(message: string, public status = 0) { super(message); } }
 async function api<T>(path: string, value?: unknown): Promise<T> {
   try {
@@ -29,11 +29,11 @@ async function api<T>(path: string, value?: unknown): Promise<T> {
     throw new ApiError('连接中断，输入已保留。请恢复连接后再发送。'); }
 }
 
-export function useLiveWorkspace() {
+export function useLiveWorkspace(enabled = true) {
   const defaults: Workspace = {version:1,creationId:crypto.randomUUID(),sessionId:'',draft:'',answers:{},
     page:'home',space:'math-6b',visible:false,collapsed:false,operation:null,classroom:{}};
   let saved: Partial<Workspace> = {};
-  try { const value = JSON.parse(localStorage.getItem(key) || 'null');
+  try { const value = JSON.parse(enabled ? localStorage.getItem(key) || 'null' : 'null');
     if (value?.version === 1) saved = value;
   } catch { /* Keep the corrupt source untouched until an actual workspace change is saved. */ }
   const workspace = reactive<Workspace>({...defaults,...saved});
@@ -43,7 +43,7 @@ export function useLiveWorkspace() {
     try { localStorage.setItem(key, JSON.stringify(workspace)); view.storageError = ''; return true; }
     catch { view.storageError = '浏览器无法保存草稿，请先保留输入并检查存储空间。'; return false; }
   }
-  watch(workspace, persist, {deep:true,flush:'sync'});
+  if (enabled) watch(workspace, persist, {deep:true,flush:'sync'});
   const busy = computed(() => view.loading || view.sending || !!view.session?.pending);
   const messages = computed<ChatMessage[]>(() => (view.session?.turns || []).map(t => ({id:t.id,role:t.role,
     timestamp:Date.parse(t.at),blocks:t.role === 'assistant' ? t.blocks || [] : [{type:'text',text:t.displayText || t.text || ''}],
@@ -135,7 +135,7 @@ export function useLiveWorkspace() {
     }
     if (!disposed) void poll();
   }
-  void restore();
+  if (enabled) void restore();
   onBeforeUnmount(() => { disposed = true; clearTimeout(timer); });
   return {workspace,view,busy,messages,activity,command,refresh,retry};
 }

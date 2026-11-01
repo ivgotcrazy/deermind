@@ -1,0 +1,131 @@
+{
+  "documents": [
+    {
+      "file": "phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+      "from": "v0.13",
+      "to": "v0.14",
+      "change": "v0.13 → v0.14：教学蓝图、策略、规则及三种情境形成逐步操作规格和24张截图；同步既有简化决定，区分预设教学与真实动态接入",
+      "sha256": "bd0eda521f4c3393a708382b14425fa86d77d22ba1a77597e8fa124f395b8270"
+    },
+    {
+      "file": "phase-3-definition/MVP_Requirements_and_Acceptance.md",
+      "from": "v0.5",
+      "to": "v0.6",
+      "change": "新增 REQ-025／AC-025 教学模型合同；同步长期选章取消、教材目标应用、试用可选、待映射题不追算和自动出题检查；修正 MVP 图中 Task 直接 KC 边",
+      "sha256": "b097921b66c2d6f7959e5715ace8b02cb1c7e0329434122c7a7efd0b8e63769d"
+    },
+    {
+      "file": "phase-3-definition/MVP_Definition.md",
+      "from": "v0.5",
+      "to": "v0.6",
+      "change": "纳入可管理教学方法的价值与范围；承接 DEC-031–036 的已确认简化，历史来源和 G3 批准不改写",
+      "sha256": "128fa7295c529364ca461f4af6be9cdafec3538be7352cfaa4252c5553bf5590"
+    },
+    {
+      "file": "phase-3-definition/MVP_Validation_Plan.md",
+      "from": "v0.4",
+      "to": "v0.5",
+      "change": "补充教学模型的界面、机制、真实语义与效果验证分层；沿用现有 MET 及 Gate，不新增通过阈值",
+      "sha256": "ba992d1505a4571e4549c5576886ffe06f46138e1fcf49ce4f627068f9f4215d"
+    },
+    {
+      "file": "phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md",
+      "from": "v0.6",
+      "to": "v0.7",
+      "change": "补充教学方法的研究参考、适用限制和领域材料边界；同步教材应用、待映射题不追算及自动生成题保存后使用",
+      "sha256": "f7d8f7d0de7e4a763661fdea01b42291c094188fa8dfb463e38e9110067e0b60"
+    },
+    {
+      "file": "phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md",
+      "from": "v0.5",
+      "to": "v0.6",
+      "change": "补齐教学定义与运行记录的权限及归属；对齐全部试用可选、按次选章、管理员应用更新和待映射历史边界",
+      "sha256": "f42b8f56de6cfa485c9cd8673d002bd5ac179a9ae5a64bd159b4c814de2f5453"
+    },
+    {
+      "file": "phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md",
+      "from": "v0.6",
+      "to": "v0.7",
+      "change": "新增教学定义、三种情境、10项交互检查和24张实际截图的资产索引；区分开发走查、真实策略测量与历史案例",
+      "sha256": "7ebd09336c9dac0cf809451d65a65f996825b70376e37cb3bffe7a55a81bf0c9"
+    },
+    {
+      "file": "phase-5-engineering/MVP_Engineering_Design.md",
+      "from": "v0.4",
+      "to": "v0.5",
+      "change": "增加教学模型的工程接收项与 OPEN-013；同步按次选章和管理员应用的产品边界，仍保持工程大纲状态",
+      "sha256": "81b2d708166f0492e36a66085142ab32a360814f6f41686d3a128f8a096b0e9b"
+    },
+    {
+      "file": "MVP_Governance.md",
+      "from": "v0.6",
+      "to": "v0.7",
+      "change": "登记 DEC-031–036、关闭已有空间采用的产品选择并保留工程责任；新增 OPEN-013 和本批逐文件变更记录",
+      "sha256": "1ea5fe0c12a654702272a62c3816d1f1ea71f87a817c4843811d50a29360315b"
+    },
+    {
+      "file": "README.md",
+      "from": "v0.6",
+      "to": "v0.7",
+      "change": "增加教学模型的需求、操作截图与内容依据导航；保持当前阶段和 Gate 状态",
+      "sha256": "4dc8349d1aa37c447234462fee11b1ee7e10400438b05feb5ef2022612e8dc60"
+    }
+  ],
+  "localLinksChecked": 371,
+  "linkErrors": [],
+  "changedDiagrams": [
+    {
+      "id": "REQ-01",
+      "title": "课程范围、领域定义与个人学习记录的关系",
+      "file": "phase-3-definition/MVP_Requirements_and_Acceptance.md",
+      "sha256": "bdea6fec5a2ff59af8e50dc3fd6d14f4b4c7a1582288ff4189179045d630b2f3",
+      "rendered": true,
+      "visuallyReviewed": true,
+      "svgSha256": "ac226ac72c136e7c26074b999643da738e588e9c616e5a0a464aab34c3672fcb",
+      "pngSha256": "81cc64e25b2baadde8ca4feb1210875348e64d4603abb2e1aa3f7aa9f5a660d4"
+    },
+    {
+      "id": "REQ-06",
+      "title": "三端如何衔接准备、学习和维护",
+      "file": "phase-3-definition/MVP_Requirements_and_Acceptance.md",
+      "sha256": "169d4f7cb1f9cecdcc0a03bce22f50d6e4fe4baff8e3ece0950a816524f008d0",
+      "rendered": true,
+      "visuallyReviewed": true,
+      "svgSha256": "3497c840c7b252a67e611961dedeb11f934392341101a2a70514daaf63e93e64",
+      "pngSha256": "9b7c3cb7543e9bf916a127e2058702b6820f555fe12eff7d68a8af9b460d0de6"
+    },
+    {
+      "id": "CONTENT-01",
+      "title": "从原材料到可用内容",
+      "file": "phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md",
+      "sha256": "9dd03660de5146594faef8e7a9b114276f85c4c34fc5ba5e6030666c365cf503",
+      "rendered": true,
+      "visuallyReviewed": true,
+      "svgSha256": "c9372ab622bb67b64e0432b7e03ade15c3786657d276e5617f7be9424a70e7c7",
+      "pngSha256": "58ba6653cf1c3586c1447c0ab826d55555a2c5c80f6c3b9a4d4c694efd1c9d6d"
+    }
+  ],
+  "reviewDate": "2026-10-27",
+  "scope": "Teaching model documentation and previously confirmed MVP main-flow simplifications; no Gate pass or real teaching validation.",
+  "screenshots": {
+    "total": 76,
+    "teaching": 24,
+    "mainFlow": 52,
+    "modelCalls": 0,
+    "pageErrors": []
+  },
+  "visualSamplesReviewed": [
+    "T01",
+    "T11",
+    "T14",
+    "T19",
+    "T20",
+    "T21",
+    "Q04"
+  ],
+  "openItems": [
+    "OPEN-010: formal content assets migration",
+    "OPEN-012: upstream Domain direct-KC relation alignment",
+    "OPEN-013: teaching definition adoption and real execution"
+  ]
+}

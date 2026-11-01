@@ -1,0 +1,309 @@
+{
+  "completed": true,
+  "modelCalls": 0,
+  "errors": [],
+  "checks": [
+    "A：回补、回原题、自愿检测、提交反馈、草稿刷新与有限评价",
+    "基础仍困惑可结束，不虚构完整任务检测",
+    "原题第二层混淆转入对比，同一对话继续",
+    "B：对比→回补→练习，受助表现不当独立掌握",
+    "直接解释及练习后新题，未复用已讲过题当新题",
+    "C：检测自愿开始、无泄答、图示有限支持及既有认识保留",
+    "错误反馈与后续讲解分开，原作答不改写",
+    "只写正确数值不判解释充分",
+    "求助先结束，草稿保留，未提交不计错",
+    "主观看不清与确认材料缺陷分开",
+    "准备失败可重试，未知回答保留未决",
+    "1024×768、收起展开、右侧保留、无横向溢出与提前结束",
+    "重置和结束后刷新，无意外重新开测"
+  ],
+  "sourceHashes": {
+    "student/src/App.vue": "8a2dd676d5d887f11e597167f72b857528b0c25e58a669a13cb30c71135ced7c",
+    "student/src/live.ts": "7810070562c77c579192b6013c606764035f40b7e0e0eaa28586d53e27698d38",
+    "student/src/components/ChatWorkspace.vue": "5f27b2e1ec26bd22befe4a45574713c7118be8a29153cd10d8d6daea6acfb607",
+    "student/src/components/InputComposer.vue": "505a9df9bb6f9a6965e09aa390af2a7dff47fdaf3a9315b226fa7be05710015e",
+    "student/src/components/TeachingLesson.vue": "9167abbf8780899782d13a550506944a8024adbc4daf93a4c62a278cb33837df",
+    "student/src/components/TeachingCoursePage.vue": "6a70464e979645a20d739a6d49c3fd97489401f31ec8fa20f02098a04856f40b",
+    "student/src/teaching-session.ts": "cf590294aafb489c4919a0320384f59f4453df42e955e844129ac098c4d1fb09",
+    "student/public/teaching.html": "d6de5962ffcf48ec5c236795f8834b06bb5cf2845c660edf72cf8e676dba468f",
+    "shared/ChainDiagram.vue": "d640627f51c804cba0b96906fee90f6e51d5cf50731fdebbb8cf75b616a4016f",
+    "tests/capture-student-teaching.mjs": "e586ef616c46f9c072751ac7fd1faff222afd6264ad0aa16e727655e4b0d8a3a"
+  },
+  "captures": [
+    {
+      "id": "S01",
+      "title": "基础含义疑问先回补，保留教材上下文",
+      "file": "S01.png",
+      "route": "/student/?teaching=foundation&context=textbook",
+      "sha256": "306ad54a52ab0a4185e80d4dfc42a091f4c32ccfd19ebbd83d814050de5c0eaa",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S02",
+      "title": "局部练习后回到原问题",
+      "file": "S02.png",
+      "route": "/student/?teaching=foundation&context=textbook",
+      "sha256": "34d60a5cd1dc95aca3a5aaaa9555c4cc1232dab5b8148e097b73b484ea4671ef",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S03",
+      "title": "原题理解后选择下一步",
+      "file": "S03.png",
+      "route": "/student/?teaching=foundation&context=textbook",
+      "sha256": "526b96befa1f2fbc8fb4e84369c312f8ce9d748103c561089e627421814c7446",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S04",
+      "title": "检测说明与学生同意",
+      "file": "S04.png",
+      "route": "/student/?teaching=foundation&context=textbook",
+      "sha256": "f2e0a12e54de863074f109454c87e3cb0ef56e29b24cd4db14dae86257b339b5",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S05",
+      "title": "未展示解法的新文字题与统一作答框",
+      "file": "S05.png",
+      "route": "/student/?teaching=foundation&context=textbook",
+      "sha256": "4e5247caeb1846ede78705c2036e78187562c5cb5bb353da3ea616afe8a3c914",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S06",
+      "title": "提交后结束检测并反馈",
+      "file": "S06.png",
+      "route": "/student/?teaching=foundation&context=textbook",
+      "sha256": "cd00e9fe6bfa8176b3f4914a601da5c10d6cacd632c38e5b124cf38b0a43475e",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S07",
+      "title": "按实际经历小结，四方面展开查看",
+      "file": "S07.png",
+      "route": "/student/?teaching=foundation&context=textbook",
+      "sha256": "b0ef841d4794ada1cbc6ad61ddfee4d441d12aa5644ddaca2c2342dd791b84b0",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S08",
+      "title": "基础仍不清楚时更换表示而不无限刷题",
+      "file": "S08.png",
+      "route": "/student/?teaching=foundation&context=textbook",
+      "sha256": "e855325558be7c63cae163f2cc5b34859c22a8e1f202066125cd735387f57ec2",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S09",
+      "title": "正确答案但理由不足，先对比参照量",
+      "file": "S09.png",
+      "route": "/student/?teaching=explanation&context=status",
+      "sha256": "817ee46b587d3dbaf8862e68953c7d923884568522968fdaf2725425d048ae81",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S10",
+      "title": "同一对话切回基础回补",
+      "file": "S10.png",
+      "route": "/student/?teaching=explanation&context=status",
+      "sha256": "426bbb531d93e801f0e8bff51c07223f88c9f06ea52f4f9c4ba3e4df441e553d",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S11",
+      "title": "新文字练习即时反馈",
+      "file": "S11.png",
+      "route": "/student/?teaching=explanation&context=status",
+      "sha256": "3f9c2c29c7aa1e839d680c7fcb07312ae6ce26059f1c77ec0c744eda0dfb2c58",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S12",
+      "title": "学生直接求助时立即解释",
+      "file": "S12.png",
+      "route": "/student/?teaching=explanation&context=textbook",
+      "sha256": "8d30d2dc24af00aeca35d4aa2975da62b6f30a9dd83affcdae61cd3167b0d048",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S13",
+      "title": "已有文字理解，跳过重复讲解",
+      "file": "S13.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "6dd7f88d5288125b85f9fef4b1f1fb61912d383b387be670df90e0bebf63add8",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S14",
+      "title": "图示检测不泄露中间量和答案",
+      "file": "S14.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "498d2922a52a7576b46802ed33e926489540e6be6b69c8f358d0f37b3b31a30f",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S15",
+      "title": "放大原图保持内容不变",
+      "file": "S15.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "4f6aadc1b9c9c16a54af11189e314b484afa1baf29ff2ba92498e2aa6eef7766",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S16",
+      "title": "图示成功只增加本类图示支持，保留既有文字判断",
+      "file": "S16.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "cfce9a115c2211203040b403fbf86e9ce1f89233876a041573959a27553c4baa",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S17",
+      "title": "图示错误在检测结束后反馈",
+      "file": "S17.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "50088d84a5ee1eb0de2bd3aad8c4a7a1e699dd69352101accddc6c28ff9d8f6f",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S18",
+      "title": "检测后讲解不覆盖原作答",
+      "file": "S18.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "01a0a9533c3d6e14d34b181441af64e317876ae468dbcb6cfc0d54845cc38160",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S19",
+      "title": "只有数值时理解仍待确认",
+      "file": "S19.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "e9f081070ad38f958a09c3b741c744ed31ff7ef12e411163892769b282bef952",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S20",
+      "title": "求助先结束检测，未提交不计错",
+      "file": "S20.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "03d1501d7cbae4fe67bf10da344ef0846db7a89c2aa6c6f461f2dd1b7dcfbe8b",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S21",
+      "title": "看不清先查看材料，不自动推断能力不足",
+      "file": "S21.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "0119b66fa9f1f468c7668b8cc1694a1a2182450c9d806d82e66d22a42c714dec",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S22",
+      "title": "确有材料缺陷时停止判定",
+      "file": "S22.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "0855a435f055ede4c612c234791ef4d9bd196c2b6db9976f803addd4d2003b6c",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S23",
+      "title": "题目准备失败时不开始检测",
+      "file": "S23.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "a57594caf7c8e542bcd814282fd37ab20c5fe4b36e77f8b8194e439675ea023f",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S24",
+      "title": "未覆盖自由输入不套用预写评价",
+      "file": "S24.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "e92575093ab3ab4fb6dc95c9ddd3376db68099f5b77f1142d1b4b90a07f66e7d",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "S25",
+      "title": "平板尺寸仍保留右侧教材及唯一输入框",
+      "file": "S25.png",
+      "route": "/student/?teaching=transfer&context=textbook",
+      "sha256": "d69512dfab1d186b77c36ba883ac0c86b6adc2627476b1715faebf7c48b08adb",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      }
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 import { reactive } from 'vue';
 import { readFlow, subscribeFlow, lessonFeedback, type FlowState } from '../../../shared/learning-flow';
+import { isChainLesson, chainAssessment } from '../../../shared/fraction-chain';
+import { isFractionLesson, fractionAssessment } from '../../../shared/fraction-assessment';
 import { domainMock } from './domain-mock';
 import { evaluationMock } from './evaluation-mock';
 import { textbookMock } from './textbook-mock';
@@ -118,9 +120,31 @@ function syncCourseJourneys(state:FlowState){
   for(const source of state.spaces){
     const course=state.courses.find(c=>c.id===source.courseId);if(!course)continue;
     const lessons=state.lessons.filter(a=>a.spaceId===source.id);
-    const activities:SpaceActivity[]=lessons.map(a=>({id:a.id,name:'增加四分之一 · '+(a.stage==='finished'?'学习反馈':'学习中'),chapterId:a.chapterId,at:a.at,kind:'Mock 学习流程',help:'保留刚才讲解及逐题帮助；不直接认定独立完成。',messages:a.messages.map(m=>({actor:m.actor,text:m.text})),evidence:state.uses.filter(u=>u.activityId===a.id&&u.answer).map(u=>({id:'FLOW-EV-'+u.id,claimId:a.snapshot.claims.find(c=>c.taskId===u.question.taskId)?.id||'',aspectId:'independent',meaning:`Mock 表现记录：${u.result}。${u.help}；仅提供本次作答依据，不判为稳定掌握。`}))}));
-    const latest=lessons.slice(-1)[0],lastClaim=latest?.snapshot.claims.find(c=>c.taskId==='fraction');
+    const activities:SpaceActivity[]=lessons.map(a=>({id:a.id,name:(a.snapshot.book.units.flatMap(u=>u.chapters).find(ch=>ch.id===a.chapterId)?.name||'学习')+' · '+(a.stage==='finished'?'学习反馈':'学习中'),chapterId:a.chapterId,at:a.at,kind:'Mock 学习流程',help:'保留刚才讲解及逐题帮助；不直接认定独立完成。',messages:a.messages.map(m=>({actor:m.actor,text:m.text})),evidence:state.uses.filter(u=>u.activityId===a.id&&u.answer).map(u=>({id:'FLOW-EV-'+u.id,claimId:a.snapshot.claims.find(c=>c.taskId===u.question.taskId)?.id||'',aspectId:'independent',meaning:`Mock 表现记录：${u.result}。${u.help}；仅提供本次作答依据，不判为稳定掌握。`}))}));
+    const latest=lessons.slice(-1)[0],lastClaim=latest?.snapshot.claims.find(c=>c.taskId===(isChainLesson(latest)?'fraction-chain':'fraction'));
     const row:MockLearningSpace={id:source.id,name:source.name,studentId:'LEARNER-A',studentName:'学生 A',createdAt:source.createdAt,chapterIds:course.snapshot.book.units.flatMap(u=>u.chapters.map(ch=>ch.id)),classroom:null,adopted:copy(course.snapshot),activities,assessments:[],history:source.history.map(h=>({...h,actor:'本轮 mock 操作'})),judgments:latest&&lastClaim?lessonFeedback(state,latest).aspects.map((a,i)=>({claimId:lastClaim.id,aspectId:['independent','understanding','transfer','retention'][i]!,judgment:a[1]!,uncertainty:'交互走查结果，未运行真实 Evaluation。',evidenceIds:i===0?activities.flatMap(a=>a.evidence.map(e=>e.id)):[]})):[]};
+    if(latest&&lastClaim&&isChainLesson(latest)){
+      const rows=chainAssessment(state,latest).rows;
+      for(const activity of activities){
+        const lesson=lessons.find(a=>a.id===activity.id)!;
+        if(!isChainLesson(lesson))continue;
+        const claim=lesson.snapshot.claims.find(c=>c.taskId==='fraction-chain');if(!claim)continue;
+        const uses=state.uses.filter(u=>u.activityId===lesson.id&&u.purpose==='检测');
+        activity.evidence=chainAssessment(state,lesson).rows.flatMap(r=>r.evidence.map(i=>({id:'FLOW-EV-'+uses[i]!.id+'-'+r.id,claimId:claim.id,aspectId:r.id,meaning:'Mock 解释：'+r.belief+' '+r.reason})));
+      }
+      row.judgments=rows.map(r=>({claimId:lastClaim.id,aspectId:r.id,judgment:r.belief,uncertainty:r.reason,evidenceIds:activities.filter(a=>a.id===latest.id).flatMap(a=>a.evidence.filter(e=>e.aspectId===r.id).map(e=>e.id))}));
+      row.assessments=latest.snapshot.target.claims.filter(c=>c.claimId===lastClaim.id).flatMap(c=>c.requirements.map(r=>{const result=rows.find(x=>r.aspectIds.includes(x.id));return {requirementId:r.id,status:result?.status||'待确认',reason:result?.reason||'尚无匹配的评价样例。'};}));
+    }
+    if(latest&&lastClaim&&isFractionLesson(latest)){
+      const results=fractionAssessment(state,latest);
+      for(const activity of activities){
+        const lesson=lessons.find(a=>a.id===activity.id)!;if(!isFractionLesson(lesson))continue;
+        const claim=lesson.snapshot.claims.find(c=>c.taskId==='fraction');if(!claim)continue;
+        activity.evidence=fractionAssessment(state,lesson).flatMap(r=>r.uses.map(u=>({id:'FLOW-EV-'+u.id+'-'+r.id,claimId:claim.id,aspectId:r.id,meaning:'Mock 解释：'+r.belief+' '+r.reason})));
+      }
+      row.judgments=results.map(r=>({claimId:lastClaim.id,aspectId:r.id,judgment:r.belief,uncertainty:r.reason,evidenceIds:activities.filter(a=>a.id===latest.id).flatMap(a=>a.evidence.filter(e=>e.aspectId===r.id).map(e=>e.id))}));
+      row.assessments=latest.snapshot.target.claims.filter(c=>c.claimId===lastClaim.id).flatMap(c=>c.requirements.map(r=>{const result=results.find(x=>r.aspectIds.includes(x.id));return {requirementId:r.id,status:result?.status||'待确认',reason:result?.reason||'尚无匹配的评价样例。'};}));
+    }
     const index=learningSpaces.findIndex(s=>s.id===row.id);if(index<0)learningSpaces.push(row);else learningSpaces[index]=row;
   }
 }

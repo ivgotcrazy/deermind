@@ -6,6 +6,7 @@ import { evaluationMock } from './evaluation-mock';
 import { prepareRealBook, realBookPages } from './textbook-material-fixture';
 import { ensureTextbookModel } from './textbook-model-fixture';
 import { readFlow } from '../../../shared/learning-flow';
+import { chainRequirements } from '../../../shared/fraction-chain';
 
 // Finite interaction fixtures. File contents are never uploaded or recognized.
 export interface ImportFile { id:string; name:string; kind:string; size:number }
@@ -128,7 +129,7 @@ export function suggestTarget(d:TextbookImport){
   Object.assign(target,{name:book.name+'·学习目标',description:'依据本次已准备章节生成的目标建议，请核对学习要求和达标标准后应用。',bookId:book.id,chapterIds:chapters.map(c=>c.id)});
   for(const claim of evaluationMock.claims.filter(c=>c.domainId===book.domainId&&chapters.some(ch=>ch.mappings.some(m=>m.taskId===c.taskId)))){
     const applicable=chapters.filter(ch=>ch.mappings.some(m=>m.taskId===claim.taskId));
-    target.claims.push({claimId:claim.id,omissionReason:'',requirements:claim.aspects.filter(a=>a.applicable).map(a=>({id:mockId('REQ'),name:claim.name+'：'+a.name,chapterIds:applicable.map(ch=>ch.id),aspectIds:[a.id],standard:a.criterion}))});
+    target.claims.push({claimId:claim.id,omissionReason:'',requirements:claim.aspects.filter(a=>a.applicable).map(a=>({id:mockId('REQ'),name:claim.taskId==='fraction-chain'?chainRequirements[a.id]?.name||a.name:claim.name+'：'+a.name,chapterIds:applicable.map(ch=>ch.id),aspectIds:[a.id],standard:claim.taskId==='fraction-chain'?chainRequirements[a.id]?.standard||a.criterion:a.criterion}))});
   }
   if(!target.claims.length)throw Error('关联的任务还没有 Task Claim，请先补充评价定义。');
   target.history=[{at:new Date().toLocaleString('sv-SE'),change:'从已核对章节生成目标建议（mock），待管理员确认'}];

@@ -14,6 +14,7 @@ $statePath = Join-Path $stateDir "$Port.json"
 $logPath = Join-Path $stateDir "$Port.log"
 $errorPath = Join-Path $stateDir "$Port-error.log"
 $url = "http://127.0.0.1:$Port/$Role/"
+if ($Role -eq 'student') { $url += '?preview=pages' }
 $started = $null
 
 function Get-OwnedServer {
@@ -87,7 +88,7 @@ try {
     if ($Action -eq 'status') {
         if ($running -and (Test-Ready $running)) {
             Write-Host "Running MVP prototype (PID $($running.Id))."
-            Write-Host "Student: http://127.0.0.1:$Port/student/"
+            Write-Host "Student: http://127.0.0.1:$Port/student/?preview=pages"
             Write-Host "Parent: http://127.0.0.1:$Port/parent/"
             Write-Host "Admin: http://127.0.0.1:$Port/admin/"
         } elseif ($running) { throw 'The owned process is running but health verification failed.' }
@@ -116,7 +117,7 @@ try {
     }
     if (-not $ready) { throw "Preview did not become ready. See $errorPath." }
     @{processId=$started.Id; startedTicks=$ticks; port=$Port; project=$projectRoot} | ConvertTo-Json | Set-Content -LiteralPath $statePath -Encoding ASCII
-    Write-Host "Student: http://127.0.0.1:$Port/student/"
+    Write-Host "Student: http://127.0.0.1:$Port/student/?preview=pages"
     Write-Host "Parent: http://127.0.0.1:$Port/parent/"
     Write-Host "Admin: http://127.0.0.1:$Port/admin/"
     Write-Host 'Math-6b live chat is connected. Page statistics remain V2 demonstration data.'

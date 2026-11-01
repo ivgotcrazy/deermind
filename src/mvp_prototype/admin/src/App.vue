@@ -14,6 +14,7 @@ import UserManagement from './components/UserManagement.vue';
 import ObservationDetail from './components/ObservationDetail.vue';
 import DomainWorkspace from './components/DomainWorkspace.vue';
 import EvaluationWorkspace from './components/EvaluationWorkspace.vue';
+import TeachingWorkspace from './components/TeachingWorkspace.vue';
 import TextbookWorkspace from './components/TextbookWorkspace.vue';
 import TargetWorkspace from './components/TargetWorkspace.vue';
 import CourseWorkspace from './components/CourseWorkspace.vue';
@@ -37,7 +38,7 @@ interface NavItem {id:string;label:string;icon:string;children?:NavChild[]}
 const observationLabels={Domain:'领域空间',Learning:'学习空间',Evaluation:'评估空间',Interaction:'交互空间',Reasoning:'智能推理',Evolution:'模型变更'};
 const navGroups:{label:string;items:NavItem[]}[]=[
   {label:'观测',items:[{id:'dashboard',label:'运行总览',icon:'📊'},{id:'trace-list',label:'交互审查',icon:'🔍'},{id:'objects',label:'空间观测',icon:'🧩',children:observationSections.map(s=>({id:s.id,label:observationLabels[s.id],page:'objects',tab:s.id}))},{id:'students',label:'学生状态',icon:'👤'}]},
-  {label:'管理',items:[{id:'models',label:'模型管理',icon:'🏛️',children:[{id:'domain',label:'领域空间',page:'domain'},{id:'evaluation',label:'评估空间',page:'evaluation'}]},{id:'courses',label:'课程管理',icon:'📚',children:[{id:'textbooks',label:'教材管理',page:'textbooks'},{id:'targets',label:'学习目标',page:'targets'},{id:'learning-spaces',label:'学习空间',page:'learning-spaces'}]},{id:'users',label:'用户管理',icon:'👥'},{id:'config',label:'系统配置',icon:'⚙️'}]},
+  {label:'管理',items:[{id:'models',label:'模型管理',icon:'🏛️',children:[{id:'domain',label:'领域空间',page:'domain'},{id:'evaluation',label:'评估空间',page:'evaluation'},{id:'interaction',label:'交互空间',page:'interaction'}]},{id:'courses',label:'课程管理',icon:'📚',children:[{id:'textbooks',label:'教材管理',page:'textbooks'},{id:'targets',label:'学习目标',page:'targets'},{id:'learning-spaces',label:'学习空间',page:'learning-spaces'}]},{id:'users',label:'用户管理',icon:'👥'},{id:'config',label:'系统配置',icon:'⚙️'}]},
 ];
 const active=computed(()=>route.page.startsWith('observed-')?'objects':route.page==='task-editor'?'domain':route.page==='object'?(resolve(route.id)?ownerLocation(resolve(route.id)!).page:'objects'):route.page==='activity'?'trace-list':route.page);
 const expanded=ref<Record<string,boolean>>({});
@@ -64,8 +65,8 @@ const legacyReview=computed(()=>route.source==='legacy'||route.filter.startsWith
 const currentReview=computed(()=>mode.value==='demo'&&((route.page==='trace-list'&&!legacyReview.value)||(route.page==='activity'&&route.id.startsWith('SPACE-ACT-'))));
 const legacyObservation=computed(()=>route.source==='legacy'||route.scope.startsWith('LS-'));
 const legacyStudent=computed(()=>route.source==='legacy'||route.id.startsWith('ST-'));
-const transientMock=computed(()=>(route.page==='dashboard'&&mode.value==='demo')||currentReview.value||(route.page==='students'&&!legacyStudent.value)||(route.page==='objects'&&!legacyObservation.value)||['users','domain','evaluation','textbooks','targets'].includes(route.page)||(route.page==='learning-spaces'&&!state.spaces.some(s=>s.id===route.id)));
-const demoOnly=computed(()=>mode.value==='real'&&(['objects','object','domain','task-editor','evaluation','textbooks','targets','learning-spaces','users'].includes(route.page)||route.page.startsWith('observed-')));
+const transientMock=computed(()=>(route.page==='dashboard'&&mode.value==='demo')||currentReview.value||(route.page==='students'&&!legacyStudent.value)||(route.page==='objects'&&!legacyObservation.value)||['users','domain','evaluation','interaction','textbooks','targets'].includes(route.page)||(route.page==='learning-spaces'&&!state.spaces.some(s=>s.id===route.id)));
+const demoOnly=computed(()=>mode.value==='real'&&(['objects','object','domain','task-editor','evaluation','interaction','textbooks','targets','learning-spaces','users'].includes(route.page)||route.page.startsWith('observed-')));
 const previewObj=computed(()=>preview.value?resolve(preview.value.ref):undefined);
 const personalPreview=computed(()=>previewObj.value&&personalKinds.includes(previewObj.value.kind));
 const previewAccess=computed(()=>previewObj.value?objectActivity(objectKey(previewObj.value))?.id||objectKey(previewObj.value):'');
@@ -85,10 +86,11 @@ function exportWork(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'
   <button class="nav-item" :aria-label="item.label" :class="{active:!item.children&&itemActive(item),'has-active':item.children&&itemActive(item)}" :aria-current="!item.children&&itemActive(item)?'page':undefined" :aria-expanded="item.children?!!expanded[item.id]:undefined" :aria-controls="item.children?'nav-'+item.id:undefined" @click="item.children?expanded[item.id]=!expanded[item.id]:go(item.id)"><span class="nav-icon">{{item.icon}}</span><span class="nav-label">{{item.label}}</span><span v-if="item.children" class="nav-chevron" aria-hidden="true">{{expanded[item.id]?'⌄':'›'}}</span></button>
   <div v-if="item.children" v-show="expanded[item.id]" :id="'nav-'+item.id" class="nav-children" role="group" :aria-label="item.label"><button v-for="child in item.children" :key="child.id" class="nav-item nav-child" :class="{active:childActive(child)}" :aria-current="childActive(child)?'page':undefined" @click="openChild(child)">{{child.label}}</button></div>
 </div></div></nav><div class="sidebar-footer"><div class="user-info"><span class="user-avatar">A</span><div class="user-detail"><span class="user-name">管理员</span><span class="user-role">Local Prototype</span></div></div></div></aside>
-<main class="main-content"><div class="workbench-context"><label>数据来源<select aria-label="数据来源" :value="mode" @change="changeMode(($event.target as HTMLSelectElement).value)"><option value="demo">示例走查</option><option value="real">真实会话</option></select></label><span>{{mode==='demo'?(transientMock?'Mock 交互预览 · 已应用课程、题目和本轮学习记录保存在本浏览器':'模型与学生数据为合成示例；修改保存在本浏览器'):'只读本机真实会话；未运行正式评价'}}</span><button v-if="!transientMock" class="text-link" @click="exportWork">导出工作记录</button></div><div v-if="storageError" class="global-error" role="alert">{{storageError}}</div><div v-if="notice" class="global-error" role="alert">{{notice}}<button class="text-link" @click="notice=''">收起</button></div>
+<main class="main-content"><div class="workbench-context"><label>数据来源<select aria-label="数据来源" :value="mode" @change="changeMode(($event.target as HTMLSelectElement).value)"><option value="demo">示例走查</option><option value="real">真实会话</option></select></label><span>{{mode==='demo'?(route.page==='interaction'?'教学模型 Mock · 修改在本次页面会话内保留，刷新恢复示例':transientMock?'Mock 交互预览 · 已应用课程、题目和本轮学习记录保存在本浏览器':'模型与学生数据为合成示例；修改保存在本浏览器'):'只读本机真实会话；未运行正式评价'}}</span><button v-if="!transientMock" class="text-link" @click="exportWork">导出工作记录</button></div><div v-if="storageError" class="global-error" role="alert">{{storageError}}</div><div v-if="notice" class="global-error" role="alert">{{notice}}<button class="text-link" @click="notice=''">收起</button></div>
 <div class="page-container" :key="route.page+':'+mode"><div v-if="demoOnly" class="wb-page"><h2>尚未接入真实模型数据</h2><p class="callout">当前真实能力只包括会话保存与查阅。本页面的模型目录、能力判断和定义编辑请在“示例走查”中审阅；不会将示例数据混入真实记录。</p><button class="btn primary" @click="changeMode('demo')">切换到示例走查</button></div>
 <DomainWorkspace v-else-if="route.page==='domain'"/>
 <EvaluationWorkspace v-else-if="route.page==='evaluation'"/>
+<TeachingWorkspace v-else-if="route.page==='interaction'"/>
 <TextbookWorkspace v-else-if="route.page==='textbooks'"/>
 <TargetWorkspace v-else-if="route.page==='targets'"/>
 <RuntimeObservation v-else-if="route.page==='objects'&&!legacyObservation"/>

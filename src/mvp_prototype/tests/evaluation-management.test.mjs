@@ -74,7 +74,7 @@ test('Claim management uses current Domain tasks and editable mock definitions',
   });
   await journey('new Claim can use a newly created Domain task without inheriting evaluation',async p=>{
     await p.goto(base+'#/domain?domain=DOM-MATH&filter=task');await btn(p,'新建任务模板').click();await dialog(p).getByLabel('任务名称',{exact:true}).fill('领域中新建的任务');await btn(p,'创建任务模板').click();
-    await btn(p,'评估模型管理').click();await btn(p,'新建 Claim').click();await btn(p,'创建 Claim').click();await expect(dialog(p).getByRole('alert')).toBeVisible();
+    await btn(p.locator('#nav-models'),'评估空间').click();await btn(p,'新建 Claim').click();await btn(p,'创建 Claim').click();await expect(dialog(p).getByRole('alert')).toBeVisible();
     const taskOption=await dialog(p).getByLabel('关联 Task').locator('option').filter({hasText:'领域中新建的任务'}).getAttribute('value');await dialog(p).getByLabel('关联 Task').selectOption(taskOption);await btn(p,'创建 Claim').click();
     await expect(p.locator('.claim-header h2')).toHaveText('领域中新建的任务的能力评价');await tab(p,'评价方面').click();await expect(p.locator('.aspect-table tbody tr')).toHaveCount(4);await expect(p.locator('.aspect-table tbody tr').first()).toContainText('待补充');
     await tab(p,'证据解释').click();await expect(p.locator('.rule-table tbody tr')).toHaveCount(0);await tab(p,'状态推断').click();await expect(p.getByRole('tabpanel')).toContainText('待补充');
@@ -89,6 +89,6 @@ test('Claim management uses current Domain tasks and editable mock definitions',
   });
   await journey('observation history stays read only and real mode does not expose mock editing',async p=>{
     await p.goto(base+'#/observed-object?id=CL-001%401');await expect(p.locator('.observation-detail')).toContainText('CL-001@1');await btn(p,'前往评估模型管理 →').click();await expect(btn(p,'新建 Claim')).toBeVisible();await btn(p,'← 返回观测来源').click();await expect(p).toHaveURL(/observed-object/);
-    await btn(p,'评估模型管理').click();await p.getByLabel('数据来源',{exact:true}).selectOption('real');await expect(p.getByRole('heading',{name:'尚未接入真实模型数据'})).toBeVisible();await expect(btn(p,'新建 Claim')).toHaveCount(0);
+    await btn(p.locator('#nav-models'),'评估空间').click();await p.getByLabel('数据来源',{exact:true}).selectOption('real');await expect(p.getByRole('heading',{name:'尚未接入真实模型数据'})).toBeVisible();await expect(btn(p,'新建 Claim')).toHaveCount(0);
   });
 });

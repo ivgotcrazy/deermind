@@ -96,7 +96,7 @@ test('space observation follows shared runtime records and retains scope and pro
     await expect(p.getByLabel('开始日期')).toHaveValue('2026-10-22');await expect(p.getByLabel('结束日期')).toHaveValue('2026-10-23');
     const switched=new URL(p.url().split('#')[1],'http://local');assert.equal(switched.searchParams.get('filter'),null);assert.equal(switched.searchParams.get('q'),null);assert.equal(switched.searchParams.get('review'),null);assert.equal(switched.searchParams.get('id'),null);
     await p.goBack();await expect(btn(observation,'评估空间')).toHaveAttribute('aria-current','page');await p.goForward();await p.reload();await expect(btn(observation,'交互空间')).toHaveAttribute('aria-current','page');
-    await btn(sidebar,'模型管理').click();const models=sidebar.getByRole('group',{name:'模型管理',exact:true});await expect(models.getByRole('button')).toHaveText(['领域空间','评估空间']);
+    await btn(sidebar,'模型管理').click();const models=sidebar.getByRole('group',{name:'模型管理',exact:true});await expect(models.getByRole('button')).toHaveText(['领域空间','评估空间','交互空间']);
     await btn(models,'领域空间').click();await expect(p).toHaveURL(/#\/domain$/);await expect(btn(models,'领域空间')).toHaveAttribute('aria-current','page');
     await btn(models,'评估空间').click();await expect(p).toHaveURL(/#\/evaluation$/);await expect(btn(models,'评估空间')).toHaveAttribute('aria-current','page');
     await btn(sidebar,'课程管理').click();const courses=sidebar.getByRole('group',{name:'课程管理',exact:true});await expect(courses.getByRole('button')).toHaveText(['教材管理','学习目标','学习空间']);

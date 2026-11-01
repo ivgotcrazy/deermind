@@ -1,19 +1,19 @@
 # MVP 文档框架与交付入口
 
-> **版本**：v0.6<br>
+> **版本**：v0.8<br>
 > **文档性质**：MVP 文档导航与阶段交付入口<br>
 > **状态**：2026-10-15 G3 阶段性通过；Phase 4 设计、原型与内容准备进行中，G4 未通过；Phase 5 仍为大纲<br>
 > **维护责任**：Codex 负责本轮整理与一致性检查<br>
 > **版本与评审**：工作修订由 Git 追溯；准确基线与结论见 [Gate 记录](MVP_Gate_Reviews.md)<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-25<br>
-> **修订说明**：统一现行原型目录引用；旧版实现与既有原型评审章节固定到 Git 历史，避免替换后引用含义改变。逐文件记录见 MVP_Governance §5.3；本次不改变产品规则或 Gate 结论。
+> **更新日期**：2026-10-28<br>
+> **修订说明**：v0.7 → v0.8：增加三种学生教学情境及当前规格入口，保留真实动态执行与 G4 的未完成边界；逐文件记录见 MVP_Governance §5.5。
 
 ---
 
 用户已于 2026-10-15 确认 Phase 3 阶段性审阅通过，批准基线为 [G3-20261015-01](MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)。Phase 4 依据该范围开展产品交互、实际内容、数据权限和评测准备；模型适用性疑问按 DEC-017、RISK-008 在实际工作中检验。
 
-当前四份 Phase 4 文档已有工作稿。[新原型](http://127.0.0.1:5181/admin/#/domain)以原始 V2 学生端和新版后台为基线，家长端保留旧版；迁入范围、启动和限制见[原型说明](../../src/mvp_prototype/README.md)。本批按 DEC-026 撤销维护中心及审核发布流程，在对象所属页面直接编辑保存。学生和家长界面未改，模型的正式运行、实际内容质量、校外材料及完整交接仍待完成；G4 未通过。旧 5178 服务已退役；旧版源码从 Git 历史查看，现行原型统一为 `src/mvp_prototype`，服务继续使用 5181。
+当前四份 Phase 4 文档已有工作稿。[新原型](http://127.0.0.1:5181/admin/#/domain)以原始 V2 学生端和新版后台为基线，家长端保留旧版；迁入范围、启动和限制见[原型说明](../../src/mvp_prototype/README.md)。本批按 DEC-026 撤销维护中心及审核发布流程，在对象所属页面直接编辑保存。本轮另补学生教学交互，家长界面保持原状；模型的正式运行、实际内容质量、校外材料及完整交接仍待完成；G4 未通过。旧 5178 服务已退役；旧版源码从 Git 历史查看，现行原型统一为 `src/mvp_prototype`，服务继续使用 5181。
 
 [归档](archive/README.md)和 Git 中的旧原型作历史参考，不自动成为本轮设计答案。旧原型中的整卷、旧统计和仅错题口径不属于当前范围。目录切换已完成，旧目录删除受自动审批审查阻塞，具体位置见[清理记录](MVP_Governance.md#53-原型目录统一2026-10-25)。
 
@@ -61,6 +61,8 @@ Phase 6 Internal Alpha & Evaluation、Phase 7 Controlled Pilot 是后续独立�
 文档之外，Phase 4 须有实际原型、领域内容、评测材料和审查记录；Phase 5 须有软件、配置与操作工具、执行证据。资产由对应文档索引，不以空清单代替完成。
 
 Phase 3 承担产品范围、业务行为和验收承诺，Phase 4 承担具体产品方案及基础资产，Phase 5 承担工程实现。各文档的输入、输出、直接接收者和接收条件在文档开头与完成条件中明确；共同边界见 [Governance §1](MVP_Governance.md#1-信息归属与冲突处理)。Phase 4 的可检查材料不依赖 Phase 5 正式导入器才能成立，Phase 5 必须验证实际导入和执行。
+
+**本轮教学模型入口。** [Product §3.9](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#teaching-model)给出蓝图、策略、规则、三种情境及逐步截图；上游合同为 [Requirements §3.13](phase-3-definition/MVP_Requirements_and_Acceptance.md#313-管理员维护教学方法系统按实际情况教学)，理论与内容参考见 [Domain §6.4](phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md#64-教学策略的依据与内容准备)。定义编辑和预写推演已可审阅，学生端动态采用及真实效果尚未验证；学生侧固定情境的逐步操作、25张截图见 [Product §3.10](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#student-teaching)，可从[教学走查入口](http://127.0.0.1:5181/student/teaching.html)体验。完整版本和未决见 Governance §5.4–5.5、OPEN-013。
 
 ## 3. 使用与后续工作
 

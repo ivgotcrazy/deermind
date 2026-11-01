@@ -1,0 +1,645 @@
+{
+  "sourceCommit": "6fe50d825523749dd9a1391bc6e1d1ff3bac77d0",
+  "sourceHashes": {
+    "admin/src/App.vue": "1f3cea52a69ad29e5876bc267cf53e4dd3e721b2d532d87ade0aa71f476ef7ce",
+    "shared/fraction-chain.ts": "e67cbb27abb0a86666f40e5612fae9818f492d807e69fdda991f062ca0b29ef4",
+    "shared/learning-flow.ts": "a760fc6b18cdf495eaced52a077916d6a2dcfa32a4a7f64cf2928775af526b6a",
+    "shared/ChainAssessment.vue": "e877d7028c35130108b84d36e3bfdf724aa3aeb0e8b5b3d198ffaa410a031321",
+    "student/src/components/FlowLesson.vue": "a8d14907dbe771784c7b8e1c2bdf5e9385f4bc7976c71ff19d4e9c13924087d6",
+    "student/src/components/FlowCoursePage.vue": "5d9e6434e9a22daf9ce19db57cac9d614fc15c8814e0926fdd6c1e9d3b2b83fa",
+    "tests/capture-product-spec.mjs": "fb06cf7799102ab50e7c7d2a33081fd966ce348f525cc3b43edcda48645eb6b1"
+  },
+  "buildHashes": {
+    "admin": "9da000386306a66550bd3241e6d5295e34f43e687724cfce71646f7156bed20c",
+    "student": "883cd1909829b0f489bc18f3c1b3593d9ac34518f4a91be83173276ba33820c6"
+  },
+  "browser": "156.0.8078.4",
+  "modelCalls": 0,
+  "errors": [],
+  "captures": [
+    {
+      "id": "I01",
+      "title": "教材列表与导入入口",
+      "route": "/admin/#/textbooks",
+      "file": "I01.png",
+      "sha256": "411619d8a2a03525d30d91dcc2872363e1683cc30f9fa9a2f9963867068ab387",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:24.328Z"
+    },
+    {
+      "id": "I02",
+      "title": "未选择文件时阻止整理",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I02.png",
+      "sha256": "045ff86344eb64e9523ae5e2ba3fd40f44667027668ab5005df8203e75f2c4ae",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:25.327Z"
+    },
+    {
+      "id": "I03",
+      "title": "多页批量输入与教材信息",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I03.png",
+      "sha256": "14de797c022c42c19064a1eeadfb01f11aef146720843e6c5317d8cf3b59a2d4",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:26.161Z"
+    },
+    {
+      "id": "I04",
+      "title": "识别整理进行中",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I04.png",
+      "sha256": "929edd79ee9e7038709691284f9338de87c7af681ceebf1f6bb0acf3796f04a3",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:26.577Z"
+    },
+    {
+      "id": "I05",
+      "title": "原页与图文内容对照",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I05.png",
+      "sha256": "04f86fec4b29dbed689c47a3aa242b5af557ef5a1597e9048146b637df308376",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:29.360Z"
+    },
+    {
+      "id": "I06",
+      "title": "有未解决疑点时不能确认",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I06.png",
+      "sha256": "d253c95308a435fe5eb55e13f926972fbe6ffe7c0e61574de3a9958fbc271ce6",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:30.092Z"
+    },
+    {
+      "id": "I07",
+      "title": "选择跨页合并对象",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I07.png",
+      "sha256": "50f5f49e72131136e3b17cfb6cdc6cd0776371a7704c468a16be19009b5d2afb",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:30.695Z"
+    },
+    {
+      "id": "I08",
+      "title": "合并后保留两种解法和原页来源",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I08.png",
+      "sha256": "675a542440b8d24a62df4e797986b5ec6ad1a960f7f5d056342857017c29682c",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:31.493Z"
+    },
+    {
+      "id": "I09",
+      "title": "题目视图排除提示与解法",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I09.png",
+      "sha256": "2277cf417c698fd17e93d87250cecf5f183482343b654c828ea926309422e1f8",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:32.155Z"
+    },
+    {
+      "id": "I10",
+      "title": "内容块编辑与确认",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I10.png",
+      "sha256": "0ab2a99dacfc7e5d750c5b0cbcd9227f5eb7b5593cf6e4e88631579f1a5778b3",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:32.807Z"
+    },
+    {
+      "id": "I11",
+      "title": "课题核对完成",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I11.png",
+      "sha256": "f2fef94de958607eb4c2926a0522c4a1d9f2efb77b76f9af4567ac2940e6c45a",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:33.709Z"
+    },
+    {
+      "id": "I12",
+      "title": "表格按表头与单元格修正",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I12.png",
+      "sha256": "1d7f2712cebc72d62860e697de651b34fa3f615041ab8356a6595b293dc21ff9",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:34.877Z"
+    },
+    {
+      "id": "I13",
+      "title": "表格修正后保留数据和来源",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I13.png",
+      "sha256": "0dfa20f73623d3e8767591971b893eb8b4395e71f9828f10a073223fb0265cb3",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:35.581Z"
+    },
+    {
+      "id": "I14",
+      "title": "统计图与跨页数据建立关联",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I14.png",
+      "sha256": "196f6385b780bcf56057c9015486e0027e858f5bf8b435fbb8c3afebe3629bec",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:36.323Z"
+    },
+    {
+      "id": "I15",
+      "title": "图表及其关联来源",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I15.png",
+      "sha256": "09f3cd92845a765cc07d8752ff3e9210e388fca62c68bbb424147dd33f7fb16a",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:36.944Z"
+    },
+    {
+      "id": "I16",
+      "title": "模型关联建议尚未采用",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I16.png",
+      "sha256": "137ebac55a0baf6c22a5e214be9fdd624198c41e7b229227e1b72690a93d1272",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:37.418Z"
+    },
+    {
+      "id": "I17",
+      "title": "已选任务与方法及汇总知识",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I17.png",
+      "sha256": "35a45924473578216e455c7efc1b8f7aa6246034a288f648955f89db698821c5",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:37.855Z"
+    },
+    {
+      "id": "I18",
+      "title": "目标要求和可用条件",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I18.png",
+      "sha256": "678ac012aadd846534e95e59e6bc4cd117d3c815a9a38732811806b42d733759",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:38.452Z"
+    },
+    {
+      "id": "I18B",
+      "title": "四方面学习要求与达标标准",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I18B.png",
+      "sha256": "42695a077c37ddfcc14553b2d75bc5308062e1dd2143eba7a31585a59ab0f64b",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:38.718Z"
+    },
+    {
+      "id": "I19",
+      "title": "教材应用成功",
+      "route": "/admin/#/textbooks?tab=import&source=IMPORT-1878AD10",
+      "file": "I19.png",
+      "sha256": "15915f2094ae2db91c16fabc860c8b596eb4efe1a291a4af308960a5e2f5db8f",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:39.072Z"
+    },
+    {
+      "id": "I20",
+      "title": "学生选择管理员准备的教材与目标",
+      "route": "/student/",
+      "file": "I20.png",
+      "sha256": "9d5717faa52c3c235dc23b47f4114f393239d28bbc0fc965eb156e9fc0d1ed09",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:40.656Z"
+    },
+    {
+      "id": "I21",
+      "title": "学生教材目录与按次选择章节",
+      "route": "/student/",
+      "file": "I21.png",
+      "sha256": "4278e59a052b917db8669d1e15b07a9c184d979fc82c3a520916f16b9468cb3f",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:41.372Z"
+    },
+    {
+      "id": "I22",
+      "title": "学生阅读整理后的真实教材内容",
+      "route": "/student/",
+      "file": "I22.png",
+      "sha256": "5b9d056d026bfcdaeb4854c6264d57f35494edf1b8fd1a9b307aa3d7283f092f",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:42.071Z"
+    },
+    {
+      "id": "I23",
+      "title": "学生仅看题目",
+      "route": "/student/",
+      "file": "I23.png",
+      "sha256": "6d87c5b9757b1056a06f3a8816e3ff95a7d946621f285ca56a5d233de31671fd",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:42.597Z"
+    },
+    {
+      "id": "Q01",
+      "title": "连续比例任务的实例入口",
+      "route": "/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction-chain",
+      "file": "Q01.png",
+      "sha256": "601a0b11870ed2fe5a47b07b6d4fd20762f71bcebda2520b6de693b92acf4c64",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:43.170Z"
+    },
+    {
+      "id": "Q02",
+      "title": "连续比例候选题及参考解答",
+      "route": "/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction-chain",
+      "file": "Q02.png",
+      "sha256": "95675ef367a0e905630e3f7617207a99cad8273e26a9ed5cceb6abff94278b35",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:43.607Z"
+    },
+    {
+      "id": "Q03",
+      "title": "保存后的连续比例题目",
+      "route": "/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction-chain",
+      "file": "Q03.png",
+      "sha256": "bed5a0e2d6baa0a49ea588c11394e232ddd679bc4398cbc823b68f91998a5320",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:43.941Z"
+    },
+    {
+      "id": "Q04",
+      "title": "增加量题不能存入连续部分量模板",
+      "route": "/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction-chain",
+      "file": "Q04.png",
+      "sha256": "9844467f72170c03ceca991aba745e9a8449b0259523759b652503799baa0cc5",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:44.517Z"
+    },
+    {
+      "id": "C01",
+      "title": "从教材进入同一章节讲解",
+      "route": "/student/",
+      "file": "C01.png",
+      "sha256": "66246c16e8f30fd9b9f8c9b3dc139297e5d598598edde1515107ccd9b09b6d4f",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:44.985Z"
+    },
+    {
+      "id": "C02",
+      "title": "就地追问与另一种解法",
+      "route": "/student/",
+      "file": "C02.png",
+      "sha256": "50a5bfb3bc5a520c9f3e886042070cbfd1b2a41ad971a789e8b42fc85d939ce0",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:45.454Z"
+    },
+    {
+      "id": "C03",
+      "title": "参照量误用的练习作答",
+      "route": "/student/",
+      "file": "C03.png",
+      "sha256": "2d372c5e0ef217d7f37b6107790d85f741ffc3cd28f47c5e78660173666cbe05",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:46.286Z"
+    },
+    {
+      "id": "C04",
+      "title": "练习后解释错误并保留原作答",
+      "route": "/student/",
+      "file": "C04.png",
+      "sha256": "973245b798f0f15c7951a1754ff5e1271737f02583997aaf402cba88b92c027b",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:46.602Z"
+    },
+    {
+      "id": "C05",
+      "title": "检测安排与评审用情形选择",
+      "route": "/student/",
+      "file": "C05.png",
+      "sha256": "f282fc55007fbd65ffe5a26ba308c4ca7a30935157d0f20e6e9eea20966cdaf8",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:47.253Z"
+    },
+    {
+      "id": "C06",
+      "title": "检查失败时没有启动检测",
+      "route": "/student/",
+      "file": "C06.png",
+      "sha256": "8c0956f7d0a78a3f5e6851eb854c1672d3380d6dc2435daef0785f3956debf6d",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:48.204Z"
+    },
+    {
+      "id": "C07",
+      "title": "文字题作答与草稿恢复",
+      "route": "/student/",
+      "file": "C07.png",
+      "sha256": "2bebcf22eca1a26324c3cc3ea50b915ab1daf69281df17d32a44039fb98b4ba4",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:49.510Z"
+    },
+    {
+      "id": "C08",
+      "title": "区域图题与参照量错误示例",
+      "route": "/student/",
+      "file": "C08.png",
+      "sha256": "02c8720b45adac76904090cf2d09b02a5959de687dbd414b07e807929cadc1d1",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:50.493Z"
+    },
+    {
+      "id": "C09",
+      "title": "反馈同时呈现已达标需加强待确认",
+      "route": "/student/",
+      "file": "C09.png",
+      "sha256": "2ab33d7dabcfa210a1ba2f661d4d6056eb6093113e9965fd55ad58c623a9a628",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:51.245Z"
+    },
+    {
+      "id": "C10",
+      "title": "文字解释要求的标准与原作答",
+      "route": "/student/",
+      "file": "C10.png",
+      "sha256": "b666846e64c0b28813c142a72649284d822834e2e98dd83fd2756b18b6f10b02",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:51.588Z"
+    },
+    {
+      "id": "C11",
+      "title": "图示迁移的困难与下一步",
+      "route": "/student/",
+      "file": "C11.png",
+      "sha256": "354dc84a7db5dc868ee7f2a937a2200b83c5f51643df38528a84d955dd3df20a",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:51.917Z"
+    },
+    {
+      "id": "C12",
+      "title": "检测后按需补讲且保留原结果",
+      "route": "/student/",
+      "file": "C12.png",
+      "sha256": "a81ddfb284dcd8767d16b877261984f1f5b433da1b8575267399e4377e60a63d",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:52.385Z"
+    },
+    {
+      "id": "C13",
+      "title": "章节要求与同次活动评价对应",
+      "route": "/student/",
+      "file": "C13.png",
+      "sha256": "d4593e16e25cf896346848902f7548fc232343eec760610bad8246c56cfd8b72",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:53.120Z"
+    },
+    {
+      "id": "C14",
+      "title": "管理员查看同一表现及评价依据",
+      "route": "/admin/#/activity?id=FLOW-ACT-47C5D345",
+      "file": "C14.png",
+      "sha256": "c18dc281260738e7ac1c1185e661f182717330b021949e93e9968b6da72387b3",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:54.963Z"
+    },
+    {
+      "id": "C15",
+      "title": "本次采用的教材目标任务与方法",
+      "route": "/admin/#/activity?id=FLOW-ACT-47C5D345",
+      "file": "C15.png",
+      "sha256": "1a52b4f6198f9c3d6ed12760d2a128df949ef87cf2ccf2a841472c5f15560739",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:55.225Z"
+    },
+    {
+      "id": "C16",
+      "title": "管理员查看学习空间及采用内容",
+      "route": "/admin/#/learning-spaces?id=FLOW-SPACE-048BA6B6",
+      "file": "C16.png",
+      "sha256": "48a7482fd4e0600010cf51b54854842c746e4c08870942c39fcefd6c66e440a3",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:55.515Z"
+    },
+    {
+      "id": "C17",
+      "title": "两种表征均有支持仍不宣称持久掌握",
+      "route": "/student/",
+      "file": "C17.png",
+      "sha256": "a4f48706fec9ce44c5889c86f0d027c5bb982d8a9b82dc43b8aa9ff3f30b149e",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:26:59.277Z"
+    },
+    {
+      "id": "C18",
+      "title": "信息不足时四方面保留待确认",
+      "route": "/student/",
+      "file": "C18.png",
+      "sha256": "968560ca160e12dcf29fdb61cbbc636259c2362b9a79b4d7be3853337b728464",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:27:02.978Z"
+    },
+    {
+      "id": "C19",
+      "title": "求助结束检测未作答不判错",
+      "route": "/student/",
+      "file": "C19.png",
+      "sha256": "7366ef62e8be185a90b3f66303a8e0a63d14e04a0545b70ab423260042b4a53c",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:27:07.892Z"
+    },
+    {
+      "id": "C20",
+      "title": "平板尺寸下保留对话和教材",
+      "route": "/student/",
+      "file": "C20.png",
+      "sha256": "ff573d97d3d0a442023ff0cb35b8ca417440b4ed50f7692fed3f5e77bd1c4b4d",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "capturedAt": "2026-10-29T10:27:08.091Z"
+    },
+    {
+      "id": "U01",
+      "title": "连续比例目标已保存待应用",
+      "route": "/admin/#/targets?id=TARGET-B7AC0E3C",
+      "file": "U01.png",
+      "sha256": "830eb23565feb35c1621efce15c1ba3b562b7835c5939b3f7024379a6b1484bc",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:27:10.054Z"
+    },
+    {
+      "id": "U02",
+      "title": "学生当前采用更新历史保持原目标",
+      "route": "/student/",
+      "file": "U02.png",
+      "sha256": "27c55c005b7e18f40b8e133d126906f998515be4fb0c22821958490dfd727027",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:27:10.880Z"
+    },
+    {
+      "id": "I24",
+      "title": "删除未完成导入的确认",
+      "route": "/admin/#/textbooks",
+      "file": "I24.png",
+      "sha256": "3eedc6120c90f260c839e3866d72a50e2491f04b0e355a44c6f19f0228348343",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:27:12.476Z"
+    },
+    {
+      "id": "I25",
+      "title": "删除草稿后保留已应用教材",
+      "route": "/admin/#/textbooks",
+      "file": "I25.png",
+      "sha256": "5d0b734ff41a750f41bfc4ae3a96bdb7a92e31ba4c1965aae56eaba9218b2ef8",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "capturedAt": "2026-10-29T10:27:13.237Z"
+    }
+  ]
+}

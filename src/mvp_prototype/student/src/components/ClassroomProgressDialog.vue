@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { textbookData } from '../data';
 import type { ClassroomReport } from '../live';
-const props = defineProps<{ report?: ClassroomReport; available: boolean }>();
+const props = defineProps<{ report?: ClassroomReport; available: boolean; units?:{id:string;name:string;chapters:{id:string;name:string}[]}[] }>();
 const emit = defineEmits<{ close: []; save: [report: ClassroomReport] }>();
 const dialog = ref<HTMLDialogElement | null>(null);
 const selected = ref([...(props.report?.chapters || [])]);
@@ -22,7 +22,7 @@ function save() {
         <p v-if="report" class="confirmed-date">上次确认：{{ new Date(report.confirmedAt).toLocaleString('zh-CN') }}</p>
         <label class="unknown"><input type="checkbox" v-model="unknown"> 暂不确定</label>
         <div class="chapter-list">
-          <fieldset v-for="unit in textbookData.units" :key="unit.id" :disabled="unknown">
+          <fieldset v-for="unit in (units || textbookData.units)" :key="unit.id" :disabled="unknown">
             <legend>{{ unit.name }}</legend>
             <label v-for="chapter in unit.chapters" :key="chapter.id">
               <input type="checkbox" :value="chapter.id" v-model="selected"> {{ chapter.name }}

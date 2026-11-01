@@ -1,0 +1,9 @@
+<!doctype html><html lang="zh-CN"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeerMind · 教学交互走查</title>
+<style>body{font:16px/1.8 system-ui,sans-serif;color:#294b3d;background:#f7f9fa;margin:0}main{max-width:800px;margin:60px auto;padding:28px}h1{font-size:26px}article{background:white;border:1px solid #dce5df;border-radius:12px;padding:24px;margin:18px 0}h2{font-size:19px;margin:0}a{color:#286c4c}label{display:block}select{font:inherit;padding:8px;margin-left:12px;border:1px solid #cad8ce;border-radius:6px}small{color:#75857c}</style>
+<main><h1>教学交互走查</h1><p>三种独立的学生情境，使用同一课题和教学模型 v1。保留 V2 左侧对话、右侧原页面的布局。全部内容为 mock，不调用真实 LLM，也不写入正式学习状态。</p>
+<label>从哪个页面进入学习<select id="context"><option value="textbook">教材</option><option value="status">学习情况</option><option value="home">首页</option></select></label>
+<article><h2>A · 基础含义不清楚</h2><p>“三分之一是3个人吗？”先解释分数含义，通过局部练习后回到原问题。</p><a data-case="foundation" href="/student/?teaching=foundation&context=textbook">进入情境 A →</a></article>
+<article><h2>B · 会算但解释不清</h2><p>答案正确，却只说“看到分数就乘”。先比较两种参照量，再根据回应切换策略。</p><a data-case="explanation" href="/student/?teaching=explanation&context=textbook">进入情境 B →</a></article>
+<article><h2>C · 已理解，检验图示迁移</h2><p>已有适用的文字题记录。直接准备图示检测，分别走查正确、错误、缺少理由和求助分支。</p><a data-case="transfer" href="/student/?teaching=transfer&context=textbook">进入情境 C →</a></article>
+<p>进入后点击对话上方“演示工具”，可将预设回答填入底部，再按“提交作答”。自由输入若没有预写响应，会明确保留未决。</p><small>同一浏览器标签页刷新保留进度；重新走查可在演示工具中重置本情境。更改入口页需重置当前情境。题目准备失败及材料缺陷也在工具内模拟。</small><p><a href="/admin/#/interaction">查看管理员教学模型</a> · <a href="/student/">普通学生入口</a></p></main>
+<script>document.getElementById('context').onchange=e=>document.querySelectorAll('[data-case]').forEach(a=>a.href='/student/?teaching='+a.dataset.case+'&context='+e.target.value);</script></html>

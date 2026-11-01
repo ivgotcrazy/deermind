@@ -2,30 +2,36 @@
 import { ref, reactive, computed, watch, nextTick } from 'vue';
 import { useLiveWorkspace, type ClassroomReport } from './live';
 import ClassroomProgressDialog from './components/ClassroomProgressDialog.vue';
-import { textbookData } from './data';
-const live = useLiveWorkspace();
+import {createTeachingSession,scenarios,type Scenario} from './teaching-session';
+import StudentPages from './components/StudentPages.vue';
+import { demoCourse } from './student-pages';
+import { flowCourse, teachingCourse } from './course-page-data';
+import ConversationPane from './components/ConversationPane.vue';
+import { conversationStorageKey, seedConversation, courseWithConversation, currentActivity, requestActivity, sendConversation, finishActivity, type Conversation, type ConversationRequest } from './conversation';
+const params=new URLSearchParams(location.search);
+const scenario=params.get('teaching') as Scenario;
+const teaching=scenario&&Object.prototype.hasOwnProperty.call(scenarios,scenario)?createTeachingSession(scenario,params.get('context')||'textbook'):undefined;
+const pageOnlyPreview=params.get('preview')==='pages';
+const live = useLiveWorkspace(!teaching && !pageOnlyPreview);
+const pagePreview=ref<{text:string;reply:string}|undefined>();
+const conversationRef=ref<InstanceType<typeof ConversationPane>|null>(null);
+const conversations=reactive<Record<string,Conversation>>({});
+const conversationError=ref(''),pendingSpace=ref<LearningSpace|null>(null);
+try { Object.assign(conversations,JSON.parse(localStorage.getItem(conversationStorageKey)||'{}')); } catch { conversationError.value='历史记录读取失败，当前使用示例内容；原存储不会被自动覆盖。'; }
+watch(conversations,value=>{if(conversationError.value)return;try{localStorage.setItem(conversationStorageKey,JSON.stringify(value));}catch{conversationError.value='本机保存失败，请暂时保留此页，刷新后可能无法恢复本次输入。';}},{deep:true});
+if(teaching){live.workspace.page=teaching.state.page as PageId;live.workspace.visible=teaching.state.visible;live.workspace.collapsed=teaching.state.collapsed;}
 const progressOpen = ref(false);
 const report = computed(() => live.workspace.classroom[live.workspace.space]?.slice(-1)[0]);
-const classroomLabel = computed(() => {
-  if (!report.value) return undefined;
-  if (report.value.unknown) return '暂不确定';
-  return textbookData.units.flatMap(u => u.chapters).filter(c => report.value!.chapters.includes(c.id)).map(c => c.name).join('、');
-});
 function saveProgress(value: ClassroomReport) {
   live.workspace.classroom[live.workspace.space] = [...(live.workspace.classroom[live.workspace.space] || []), value];
   progressOpen.value = false;
 }
 import { courseFlow } from './course-flow';
-import { beginLesson, endLesson, chapterReady } from '../../shared/learning-flow';
+import { beginLesson, endLesson, chapterReady, sendLessonMessage } from '../../shared/learning-flow';
 import CreateSpaceDialog from './components/CreateSpaceDialog.vue';
-import FlowCoursePage from './components/FlowCoursePage.vue';
 import type { LearningState } from './types';
 import ChatWorkspace from './components/ChatWorkspace.vue';
 import BottomInputBar from './components/BottomInputBar.vue';
-import HomePage from './components/HomePage.vue';
-import LearningStatusPage from './components/LearningStatusPage.vue';
-import TextbookPage from './components/TextbookPage.vue';
-import ErrorBookPage from './components/ErrorBookPage.vue';
 
 const state = reactive<LearningState>({
   currentChapter: 'c4-3',
@@ -45,7 +51,7 @@ const modeLabelMap: Record<string, string> = {
   'qa': '问答中',
   'idle': '学习中',
 };
-const activityLabel = computed(() => isCourseFlow.value && activeFlow.value ? activeFlow.value.stage === 'testing' ? '检测中' : activeFlow.value.stage === 'finished' ? '本次已结束' : '学习中' : modeLabelMap[state.mode] || '学习中');
+const activityLabel = computed(() => teaching ? teaching.label.value : isCourseFlow.value && activeFlow.value ? activeFlow.value.stage === 'testing' ? '检测中' : activeFlow.value.stage === 'finished' ? '本次已结束' : '学习中' : modeLabelMap[state.mode] || '学习中');
 
 type PageId = 'home' | 'status' | 'textbook' | 'errorbook';
 const currentPage = computed<PageId>({get:() => live.workspace.page,set:v => live.workspace.page = v});
@@ -70,6 +76,8 @@ const demoSpaces: LearningSpace[] = [
 const learningSpaces = computed<LearningSpace[]>(()=>[...demoSpaces,...courseFlow.spaces.map(s=>({id:s.id,subject:'数学',grade:'已选课程',label:s.name,icon:'📖'}))]);
 const selectedSpaceId = ref(live.workspace.space);
 const currentSpace = computed(()=>learningSpaces.value.find(s=>s.id===selectedSpaceId.value)||demoSpaces[0]!);
+if(teaching){state.mode='lecture';state.sessionTitle='分清两层分数各对应谁';}
+watch([currentPage,inActivity,chatCollapsed],()=>{if(teaching){teaching.state.page=currentPage.value;teaching.state.visible=inActivity.value;teaching.state.collapsed=chatCollapsed.value;}});
 const createSpaceOpen = ref(false),flowError=ref('');
 const flowActivityId=ref(courseFlow.lessons.filter(a=>a.spaceId===selectedSpaceId.value).slice(-1)[0]?.id||'');
 const isCourseFlow=computed(()=>courseFlow.spaces.some(s=>s.id===currentSpace.value.id));
@@ -77,11 +85,59 @@ const activeFlow=computed(()=>courseFlow.lessons.find(a=>a.id===flowActivityId.v
 watch(activeFlow,a=>{if(isCourseFlow.value&&a){state.mode=a.stage==='testing'?'error-check':'lecture';state.sessionTitle=a.snapshot.book.units.flatMap(u=>u.chapters).find(ch=>ch.id===a.chapterId)?.name||'学习';}},{immediate:true});
 function createdSpace(id:string){createSpaceOpen.value=false;selectSpace(learningSpaces.value.find(s=>s.id===id)!);currentPage.value='textbook';}
 function startCourse(chapterId:string,mode:'lesson'|'test'){
-  try{flowActivityId.value=beginLesson(currentSpace.value.id,chapterId,mode);flowError.value='';state.mode=mode==='test'?'error-check':'lecture';state.sessionTitle='增加四分之一后的数量';enterActivity();}catch(e){flowError.value=(e as Error).message;}
+  try{flowActivityId.value=beginLesson(currentSpace.value.id,chapterId,mode);flowError.value='';state.mode=mode==='test'?'error-check':'lecture';state.sessionTitle=activeFlow.value?.snapshot.book.units.flatMap(u=>u.chapters).find(ch=>ch.id===activeFlow.value?.chapterId)?.name||'学习';enterActivity();}catch(e){flowError.value=(e as Error).message;}
 }
-function resumeCourse(id:string){flowActivityId.value=id;state.mode='lecture';state.sessionTitle='增加四分之一后的数量';enterActivity();}
+function resumeCourse(id:string){flowActivityId.value=id;state.mode='lecture';state.sessionTitle=activeFlow.value?.snapshot.book.units.flatMap(u=>u.chapters).find(ch=>ch.id===activeFlow.value?.chapterId)?.name||'学习';enterActivity();}
 
-const isLive = computed(() => currentSpace.value.id === 'math-6b');
+const isLive = computed(() => !teaching && !pageOnlyPreview && !pagePreview.value && currentSpace.value.id === 'math-6b');
+const baseCourse=computed(()=>teaching?teachingCourse(teaching):isCourseFlow.value?flowCourse(courseFlow,currentSpace.value.id):demoCourse(currentSpace.value.id,currentSpace.value.label));
+const conversation=computed(()=>conversations[currentSpace.value.id]!);
+watch(baseCourse,course=>{if(pageOnlyPreview&&!conversations[course.id])conversations[course.id]=seedConversation(course);},{immediate:true});
+const studentCourse=computed(()=>pageOnlyPreview?courseWithConversation(baseCourse.value,conversation.value):baseCourse.value);
+function conversationRequest(request:ConversationRequest){enterActivity();requestActivity(conversation.value,request);void nextTick(()=>conversationRef.value?.latest());}
+const progressUnits=computed(()=>[...new Set(studentCourse.value.chapters.map(c=>c.unit))].map(name=>({id:name,name,chapters:studentCourse.value.chapters.filter(c=>c.unit===name)})));
+function previewPageAction(text:string,reply='我们先把这个问题讲清楚。可以从题目中找出已知条件，再说明你想求的量。你也可以直接追问。'){
+  pagePreview.value={text,reply};state.mode='lecture';state.sessionTitle='当前内容';enterActivity();
+}
+function pageAction(text:string){
+  if(pageOnlyPreview){
+    const question=studentCourse.value.questions.find(q=>text.includes(q.text));
+    const chapter=studentCourse.value.chapters.find(ch=>text.includes(ch.name));
+    conversationRequest({kind:'答疑',title:question?'题目答疑':chapter?.name||'学习要求答疑',chapters:question?[question.chapterId]:chapter?[chapter.id]:[],text});return;
+  }
+  if(teaching){handleStartAction(text);return;}
+  if(isCourseFlow.value){
+    const chapter=studentCourse.value.chapters.find(c=>text.includes(c.name));
+    const question=studentCourse.value.questions.find(q=>text.includes(q.text));
+    const a=courseFlow.lessons.filter(a=>a.spaceId===currentSpace.value.id&&a.chapterId===(chapter?.id||question?.chapterId)).slice(-1)[0];
+    if(a){pagePreview.value=undefined;sendLessonMessage(a.id,text);resumeCourse(a.id);return;}
+  }
+  previewPageAction(text);
+}
+function pageStart(ids:string[],mode:'lesson'|'test'){
+  if(pageOnlyPreview){
+    const title=studentCourse.value.chapters.filter(ch=>ids.includes(ch.id)).map(ch=>ch.name).join('、');
+    if(mode==='test'&&(ids.length!==1||ids[0]!=='c4-3')){conversationRequest({kind:'答疑',title:'准备检测：'+title,chapters:ids,text:'准备检测：'+title});return;}
+    conversationRequest({kind:mode==='test'?'检测':'讲解',title:mode==='test'?title+'检测':title,chapters:ids,text:(mode==='test'?'我想检测：':'请讲解：')+title});return;
+  }
+  pagePreview.value=undefined;
+  if(teaching){enterActivity();if(mode==='test')teaching.offer();return;}
+  if(isCourseFlow.value&&ids.length===1&&chapterReady(courseFlow.courses.find(c=>c.id===courseFlow.spaces.find(s=>s.id===currentSpace.value.id)?.courseId)!.snapshot,ids[0]!).scripted){startCourse(ids[0]!,mode);return;}
+  const names=studentCourse.value.chapters.filter(c=>ids.includes(c.id)).map(c=>c.name).join('、');
+  previewPageAction((mode==='test'?'准备检测：':'请讲解：')+names,mode==='test'?'本次选择的范围是：'+names+'。接下来会根据这些章节的学习要求准备题目，并在开始前说明题量和预计用时。':'我们围绕“'+names+'”展开。先明确当前想解决的一个问题，再分段解释；你可以随时追问或结束。');
+}
+function pageResume(id:string){
+  if(pageOnlyPreview){
+    const a=conversation.value.activities.find(a=>a.id===id);if(!a)return;
+    if(a.status==='已结束'){pageHistory(id);return;}
+    conversationRequest({kind:a.kind,title:a.title,chapters:a.chapters,text:'继续上次的'+a.title,resumeId:a.id,reference:conversation.value.messages.find(m=>m.activityId===a.id&&m.role==='assistant')?.id});return;
+  }
+  pagePreview.value=undefined;
+  if(teaching){enterActivity();return;}
+  if(isCourseFlow.value){resumeCourse(id.replace(/:test$/,''));return;}
+  const a=studentCourse.value.activities.find(a=>a.id===id);
+  previewPageAction('回到学习：'+(a?.title||'上次学习'),id==='DEMO-L2'?'上次我们看到图中有原长80米和新增的一段。80 × 1/4 得到20米，只是新增的部分。题目要求现在的总长，需要把原长加回来。你想先看图，还是说说两段分别表示什么？':a?.detail||'回看当时的学习内容。');
+}
 watch([live.activity, isLive], () => {
   const a = live.activity.value;
   if (isLive.value && a) Object.assign(state, {mode:a.mode,lecturePhase:a.phase || undefined,sessionTitle:a.title});
@@ -89,7 +145,9 @@ watch([live.activity, isLive], () => {
 const spaceDropdownOpen = ref(false);
 
 function selectSpace(space: LearningSpace) {
+  if(pageOnlyPreview && currentActivity(conversation.value)?.kind==='检测'){pendingSpace.value=space;spaceDropdownOpen.value=false;return;}
   if(activeFlow.value?.stage==='testing'){flowError.value='请先完成或结束当前检测，再切换学习空间。';return;}
+  pagePreview.value=undefined;
   selectedSpaceId.value = space.id;
   flowActivityId.value=courseFlow.lessons.filter(a=>a.spaceId===space.id).slice(-1)[0]?.id||'';
   live.workspace.space = space.id;
@@ -102,12 +160,18 @@ function selectSpace(space: LearningSpace) {
   inActivity.value = false;
   chatCollapsed.value = false;
 }
+function confirmSpace(){const next=pendingSpace.value;if(!next)return;finishActivity(conversation.value,'切换学习空间，结束检测');pendingSpace.value=null;selectSpace(next);}
+function pageHistory(id:string){
+  if(!pageOnlyPreview){pageResume(id);return;}
+  const m=conversation.value.messages.find(m=>m.activityId===id&&m.role!=='event');
+  enterActivity();void nextTick(()=>m?conversationRef.value?.locate(m.id):conversationRef.value?.latest());
+}
 
 const navItems = [
   { id: 'home' as PageId, label: '首页', icon: '🏠' },
-  { id: 'status' as PageId, label: '学习情况', icon: '📊' },
+  { id: 'status' as PageId, label: '学习', icon: '📊' },
   { id: 'textbook' as PageId, label: '教材', icon: '📖' },
-  { id: 'errorbook' as PageId, label: '错题本', icon: '📝' },
+  { id: 'errorbook' as PageId, label: '题目', icon: '📝' },
 ];
 
 function updateState(partial: Partial<LearningState>) {
@@ -121,6 +185,8 @@ function enterActivity() {
 }
 
 async function exitActivity() {
+  if(pagePreview.value){inActivity.value=false;pagePreview.value=undefined;return;}
+  if(teaching){teaching.finish();return;}
   if(isCourseFlow.value && activeFlow.value) endLesson(activeFlow.value.id);
   if (isLive.value && (live.workspace.sessionId || live.workspace.operation)) {
     if (!await live.command('end')) return;
@@ -134,6 +200,8 @@ function toggleChatCollapse() {
 }
 
 async function handleBottomSend(text: string) {
+  if(pageOnlyPreview){enterActivity();sendConversation(conversation.value,text,baseCourse.value);return;}
+  if(teaching){enterActivity();teaching.submit(text);return;}
   enterActivity();
   await nextTick();
   if (isCourseFlow.value) {
@@ -165,19 +233,8 @@ async function handleBottomSend(text: string) {
   setTimeout(() => chatRef.value?.injectMessage(text), 50);
 }
 
-function handleContinueLearning() {
-  enterActivity();
-  if (isLive.value) {
-    void live.command('message', live.workspace.sessionId ? '继续刚才的学习。' : '给我讲讲比例的应用。');
-    return;
-  }
-  state.mode = 'lecture';
-  state.lecturePhase = 'concept';
-  state.sessionTitle = state.chapterTitle;
-  setTimeout(() => chatRef.value?.injectMessage('继续学习比例的应用'), 50);
-}
-
 function handleStartAction(text: string) {
+  if(teaching){enterActivity();teaching.submit(text);return;}
   enterActivity();
   if (isLive.value) { void live.command('message', text); return; }
   // 根据动作文本推断模式
@@ -217,13 +274,14 @@ function switchPage(page: PageId) {
         </nav>
       </div>
       <div class="nav-right">
-        <span v-if="inActivity" class="activity-indicator">
+        <span v-if="inActivity && !pageOnlyPreview" class="activity-indicator">
           <span class="ai-dot"></span>
           {{ activityLabel }}
           <button class="ai-close" @click="exitActivity">结束 ×</button>
         </span>
         <!-- 学习空间选择 -->
-        <div class="space-selector" :class="{ open: spaceDropdownOpen }">
+        <span v-if="teaching" class="teaching-space">数学 · 六上 · 情境演示</span>
+        <div v-else class="space-selector" :class="{ open: spaceDropdownOpen }">
           <button class="space-trigger" @click="spaceDropdownOpen = !spaceDropdownOpen">
             <span>{{ currentSpace.icon }}</span>
             <span>{{ currentSpace.label }}</span>
@@ -252,13 +310,16 @@ function switchPage(page: PageId) {
     <main class="main-content" :class="{ 'split-view': inActivity && !chatCollapsed, 'collapsed-view': inActivity && chatCollapsed }">
       <!-- 聊天区（展开时左侧，收起时底部） -->
       <div v-if="inActivity" class="chat-pane" :class="{ collapsed: chatCollapsed }">
-        <ChatWorkspace
+        <ConversationPane v-if="pageOnlyPreview" ref="conversationRef" :key="currentSpace.id" :conversation="conversation" :course="studentCourse" :collapsed="chatCollapsed" @toggle-collapse="toggleChatCollapse"/>
+        <ChatWorkspace v-else
           ref="chatRef"
           :state="state"
+          :teaching="pagePreview ? undefined : teaching"
+          :page-preview="pagePreview"
           :key="currentSpace.id"
           :live="isLive ? live : undefined"
           :collapsed="chatCollapsed"
-          :mock-activity-id="isCourseFlow ? flowActivityId : undefined"
+          :mock-activity-id="isCourseFlow && !pagePreview ? flowActivityId : undefined"
           @show-status="currentPage='status'"
           @update-state="updateState"
           @toggle-collapse="toggleChatCollapse"
@@ -268,29 +329,28 @@ function switchPage(page: PageId) {
       <!-- 静态页面区 -->
       <div class="static-pane" :class="{ narrowed: inActivity && !chatCollapsed }">
         <p v-if="flowError" role="alert" class="flow-error">{{flowError}}</p>
-        <FlowCoursePage v-if="isCourseFlow" :space-id="currentSpace.id" :page="currentPage" @start="startCourse" @resume="resumeCourse"/>
-        <HomePage v-else-if="currentPage === 'home'"
-          :classroom-label="classroomLabel" @update-progress="progressOpen = true"
-          @continue-learning="handleContinueLearning"
-          @start-action="handleStartAction" />
-        <LearningStatusPage v-else-if="currentPage === 'status'" />
-        <TextbookPage v-else-if="currentPage === 'textbook'" @start-action="handleStartAction" />
-        <ErrorBookPage v-else-if="currentPage === 'errorbook'" @start-action="handleStartAction" />
+        <p v-if="pageOnlyPreview && conversationError" role="alert" class="flow-error">{{conversationError}}</p>
+        <StudentPages :key="studentCourse.id" :course="studentCourse" :page="currentPage" :report="report"
+          @navigate="currentPage=$event" @update-progress="progressOpen=true" @start-action="pageAction"
+          @start="pageStart" @resume="pageResume" @history="pageHistory"/>
       </div>
     </main>
 
     <!-- 底部常驻输入条（非活动时显示） -->
     <transition name="fade">
-      <BottomInputBar v-if="!inActivity" :model-value="isLive ? live.workspace.draft : undefined"
-        :disabled="isLive && live.busy.value" @update:model-value="live.workspace.draft = $event" @expand="enterActivity" @send="handleBottomSend" />
+      <BottomInputBar v-if="!inActivity" :model-value="pageOnlyPreview ? conversation.draft : isLive ? live.workspace.draft : undefined"
+        :disabled="isLive && live.busy.value" @update:model-value="pageOnlyPreview ? conversation.draft=$event : live.workspace.draft = $event" @expand="enterActivity" @send="handleBottomSend" />
     </transition>
     <CreateSpaceDialog v-if="createSpaceOpen" @close="createSpaceOpen=false" @created="createdSpace"/>
-    <ClassroomProgressDialog v-if="progressOpen" :available="isLive" :report="report"
+    <ClassroomProgressDialog v-if="progressOpen" :available="progressUnits.length>0" :units="progressUnits" :report="report"
       @close="progressOpen = false" @save="saveProgress" />
+    <div v-if="pendingSpace" class="space-switch-shade"><section role="dialog" aria-modal="true" aria-label="切换学习空间"><h3>结束当前检测，再切换空间？</h3><p>保留已提交的作答，未提交不计错。旧空间的聊天和草稿仍会保留。</p><button @click="confirmSpace">结束检测并切换空间</button><button @click="pendingSpace=null">继续检测</button></section></div>
   </div>
 </template>
 
 <style scoped>
+.space-switch-shade{position:fixed;inset:0;z-index:80;background:#17392e55;display:grid;place-items:center}.space-switch-shade section{max-width:460px;background:white;padding:24px;border-radius:12px;color:#234b42}.space-switch-shade button{padding:9px;margin:8px 8px 0 0;border:1px solid #b9cec2;border-radius:6px;background:#edf5f0;color:#28664f;cursor:pointer}
+.teaching-space{font-size:12px;color:#75857c}
 .flow-error{margin:12px 24px;padding:12px;background:#fff4e5;color:#8c5b25;border-radius:6px}
 .app {
   display: flex;
@@ -504,7 +564,12 @@ function switchPage(page: PageId) {
 }
 
 @media (max-width: 900px) {
-  .chat-pane { flex: 0 0 100%; position: absolute; z-index: 5; }
-  .static-pane.narrowed { flex: 1; }
+  .top-nav { padding:0 12px; height:auto; min-height:52px; flex-wrap:wrap; gap:6px; }
+  .nav-left { gap:8px; }
+  .nav-item { padding:6px 8px; }
+  .logo { font-size:14px; }
+  .nav-right { gap:6px; }
+  .chat-pane { flex:0 0 55%; }
+  .static-pane.narrowed { flex:0 0 45%; }
 }
 </style>

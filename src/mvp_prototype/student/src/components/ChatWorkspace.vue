@@ -3,7 +3,10 @@ import { ref, nextTick, watch, computed } from 'vue';
 import type { ChatMessage, LearningState } from '../types';
 import type { LiveWorkspace } from '../live';
 import FlowLesson from './FlowLesson.vue';
+import TeachingLesson from './TeachingLesson.vue';
+import type { TeachingSession } from '../teaching-session';
 import { courseFlow } from '../course-flow';
+import { isFractionLesson } from '../../../shared/fraction-assessment';
 import ChatMessageComp from './ChatMessage.vue';
 import SuggestionChips from './SuggestionChips.vue';
 import InputComposer from './InputComposer.vue';
@@ -14,6 +17,8 @@ const props = defineProps<{
   live?: LiveWorkspace;
   collapsed?: boolean;
   mockActivityId?: string;
+  teaching?: TeachingSession;
+  pagePreview?: {text:string;reply:string};
 }>();
 const emit = defineEmits<{
   updateState: [partial: Partial<LearningState>];
@@ -23,8 +28,11 @@ const emit = defineEmits<{
 
 const mockLesson = ref<InstanceType<typeof FlowLesson> | null>(null);
 const mockTesting = computed(() => courseFlow.lessons.find(a => a.id === props.mockActivityId)?.stage === 'testing');
+const mockFraction=computed(()=>{const a=courseFlow.lessons.find(a=>a.id===props.mockActivityId);return a&&isFractionLesson(a)?a:null;});
+const mockAnswering=computed(()=>!!mockFraction.value&&['practice','testing'].includes(mockFraction.value.stage));
 const demoMessages = ref<ChatMessage[]>([welcomeMessage]);
 const demoTyping = ref(false);
+watch(()=>props.pagePreview,value=>{if(value)demoMessages.value=[{id:'page-request',role:'user',blocks:[{type:'text',text:value.text}],timestamp:Date.now()},{id:'page-reply',role:'assistant',blocks:[{type:'text',text:value.reply}],timestamp:Date.now()}];},{immediate:true});
 const realWelcome: ChatMessage = {...welcomeMessage,blocks:welcomeMessage.blocks.filter((_,i) => i !== 1)};
 const messages = computed(() => props.live ? [realWelcome,...props.live.messages.value] : demoMessages.value);
 const isTyping = computed(() => props.live ? props.live.busy.value : demoTyping.value);
@@ -46,6 +54,7 @@ const modeConfig: Record<string, { icon: string; label: string; className: strin
 };
 
 const currentMode = computed(() => {
+  if(props.teaching) return {icon:'📖',label:props.teaching.label.value,className:props.teaching.state.step==='testing'?'error-check':'lecture'};
   const lesson = courseFlow.lessons.find(a => a.id === props.mockActivityId);
   if (lesson) return { icon: lesson.stage === 'testing' ? '📝' : '📖', label: lesson.stage === 'testing' ? '检测中' : lesson.stage === 'finished' ? '学习已结束' : lesson.stage === 'offer' ? '准备检测' : '章节讲解', className: lesson.stage === 'testing' ? 'error-check' : 'lecture' };
   return modeConfig[props.state.mode] || modeConfig['idle'];
@@ -63,6 +72,9 @@ async function scrollToBottom() {
 watch(messages, () => scrollToBottom(), { deep: true });
 
 async function handleSend(text: string) {
+  if (props.pagePreview) { demoMessages.value.push({id:'page-'+Date.now(),role:'user',blocks:[{type:'text',text}],timestamp:Date.now()});await scrollToBottom();return; }
+  if (props.teaching) { props.teaching.submit(text); return; }
+  if (mockFraction.value) { mockLesson.value?.submitText(text); return; }
   if (mockTesting.value || activeCheck.value || isTyping.value) return;
   if (props.mockActivityId) { mockLesson.value?.send(text); return; }
   if (props.live) { await props.live.command('message',text); return; }
@@ -103,12 +115,13 @@ defineExpose({ loadLectureDemo, loadQADemo, resetToWelcome, injectMessage });
 
 <template>
   <div class="chat-workspace" :class="{ collapsed }">
+<p v-if="pagePreview" class="page-preview-note">Mock 页面流程 · 当前回复为预写内容，后续输入仅保留</p>
     <!-- 模式指示栏（收起时隐藏） -->
     <div v-if="!collapsed" class="chat-header">
       <div class="mode-indicator" :class="currentMode.className">
         <span class="mode-icon">{{ currentMode.icon }}</span>
         <span class="mode-text">{{ displayTitle }}</span>
-        <div v-if="state.mode === 'lecture' && !mockActivityId" class="mode-steps">
+        <div v-if="state.mode === 'lecture' && !mockActivityId && !teaching && !pagePreview" class="mode-steps">
           <span :class="{ active: state.lecturePhase === 'concept' }">概念</span>
           <span class="sep">→</span><span :class="{ active: state.lecturePhase === 'example' }">例题</span>
           <span class="sep">→</span><span :class="{ active: state.lecturePhase === 'practice' }">练习</span>
@@ -120,8 +133,9 @@ defineExpose({ loadLectureDemo, loadQADemo, resetToWelcome, injectMessage });
     <!-- 消息区域（收起时隐藏） -->
     <div v-if="!collapsed" class="messages-container" ref="scrollContainer">
       <div class="messages-inner">
-        <FlowLesson v-if="mockActivityId" ref="mockLesson" :activity-id="mockActivityId" @show-status="emit('showStatus')"/>
-        <template v-for="msg in (mockActivityId ? [] : messages)" :key="msg.id">
+        <TeachingLesson v-if="teaching" :session="teaching"/>
+        <FlowLesson v-else-if="mockActivityId" ref="mockLesson" :activity-id="mockActivityId" @show-status="emit('showStatus')"/>
+        <template v-for="msg in (mockActivityId || teaching ? [] : messages)" :key="msg.id">
           <ChatMessageComp :message="msg" :live="!!live" :busy="isTyping" :active-check="activeCheck"
             :answer-drafts="live?.workspace.answers" @answer-draft="saveAnswer" @question-action="handleQuestion" />
           <SuggestionChips v-if="msg.role === 'assistant' && msg.suggestions?.length" :suggestions="msg.suggestions"
@@ -146,10 +160,13 @@ defineExpose({ loadLectureDemo, loadQADemo, resetToWelcome, injectMessage });
           @click="live.retry()">重试</button>
       </div>
       <InputComposer
-        :model-value="live?.workspace.draft"
-        @update:model-value="value => { if (live) live.workspace.draft = value; }"
-        :context-actions="mockActivityId ? [] : contextActions"
-        :disabled="isTyping || !!activeCheck || mockTesting"
+        :model-value="teaching ? teaching.state.draft : mockFraction ? mockLesson?.answer : live?.workspace.draft"
+        :send-label="teaching?.waiting.value ? '提交作答' : mockAnswering ? '提交答案' : undefined"
+        :input-context="teaching?.inputContext.value || (mockAnswering ? '答案和思路' : undefined)"
+        :placeholder="teaching?.waiting.value || mockAnswering ? '写下答案和理由…' : teaching?.state.step==='summary' ? '本次已结束' : undefined"
+        @update:model-value="value => { if(teaching) teaching.state.draft=value; else if(mockFraction) mockLesson?.setDraft(value); else if (live) live.workspace.draft = value; }"
+        :context-actions="mockActivityId || teaching ? [] : contextActions"
+        :disabled="teaching ? teaching.state.step==='summary' : mockFraction ? mockFraction.stage==='offer' : isTyping || !!activeCheck || mockTesting"
         :collapsed="collapsed"
         @send="handleSend"
         @toggle-collapse="emit('toggleCollapse')"
@@ -159,6 +176,7 @@ defineExpose({ loadLectureDemo, loadQADemo, resetToWelcome, injectMessage });
 </template>
 
 <style scoped>
+.page-preview-note{font-size:12px;color:#6e8075;padding:8px 16px;margin:0;background:#edf3ef}
 .live-controls { display: flex; align-items: center; gap: 12px; padding: 8px 20px; font-size: 12px; line-height: 1.6; color: #5a6b7a; background: #f7f9fa; }
 .live-controls span { flex: 1; }
 .live-controls button { border: 1px solid #c8d6e0; border-radius: 6px; background: white; color: #2d6a4f; font: inherit; padding: 4px 12px; cursor: pointer; flex-shrink: 0; }

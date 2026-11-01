@@ -6,6 +6,9 @@ const props = defineProps<{
   disabled?: boolean;
   collapsed?: boolean;
   modelValue?: string;
+  sendLabel?: string;
+  placeholder?: string;
+  inputContext?: string;
 }>();
 const emit = defineEmits<{
   send: [text: string];
@@ -41,16 +44,18 @@ function handleKeydown(e: KeyboardEvent) {
       <span class="context-label">快捷：</span>
       <button v-for="(a, i) in contextActions" :key="i" class="context-btn" :disabled="disabled" @click="emit('send', a)">{{ a }}</button>
     </div>
+    <p v-if="inputContext" class="input-context">{{ inputContext }}</p>
     <div class="input-row">
       <textarea v-model="input" @keydown="handleKeydown"
-        placeholder="直接说你想做什么，比如：今天学的没听懂，再讲一遍..."
-        rows="1" class="input-area"></textarea>
-      <button class="send-btn" :disabled="!canSend" @click="handleSend">发送</button>
+        :placeholder="placeholder || '直接说你想做什么，比如：今天学的没听懂，再讲一遍...'"
+        :aria-label="inputContext || '对话输入'" :disabled="disabled" rows="1" class="input-area"></textarea>
+      <button class="send-btn" :disabled="!canSend" @click="handleSend">{{ sendLabel || '发送' }}</button>
     </div>
   </div>
 </template>
 
 <style scoped>
+.input-context { margin: 0 65px 8px 0; font-size: 12px; color: #5a6b7a; line-height: 1.5; }
 .input-composer {
   background: #fff;
   border-top: 1px solid #e1e8ed;

@@ -1,0 +1,230 @@
+{
+  "completed": true,
+  "sourceCommit": "6fe50d825523749dd9a1391bc6e1d1ff3bac77d0",
+  "sourceHashes": {
+    "shared/learning-flow.ts": "a760fc6b18cdf495eaced52a077916d6a2dcfa32a4a7f64cf2928775af526b6a",
+    "shared/fraction-assessment.ts": "fae127e7ca9a91db0bda4eea917bf7f04b24db620f3fd0a6f7d6526008722c83",
+    "shared/FractionAssessment.vue": "4ed869644569dd71c81c6684953a93dfedf4c3ab862337903ad024255e13e9c7",
+    "student/src/components/FlowLesson.vue": "a8d14907dbe771784c7b8e1c2bdf5e9385f4bc7976c71ff19d4e9c13924087d6",
+    "student/src/components/ChatWorkspace.vue": "5f27b2e1ec26bd22befe4a45574713c7118be8a29153cd10d8d6daea6acfb607",
+    "student/src/components/FlowCoursePage.vue": "5d9e6434e9a22daf9ce19db57cac9d614fc15c8814e0926fdd6c1e9d3b2b83fa",
+    "admin/src/components/FlowActivityReview.vue": "6504e4f42c12421d9c6724ea8c2039ddf563432ea350d81216e7ac4cb34cf86f",
+    "admin/src/components/TaskInstances.vue": "dc167071111d267767a41dc6c3e2ce5a2920c2347d636ba49b244947634bbe19",
+    "admin/src/workbench/textbook-mock.ts": "f50293ca377ee3ba6d2ee3a8747d1308ef37862891d4c35ea0e1e7b7e716d611",
+    "admin/src/workbench/evaluation-mock.ts": "b89e8d08f44ff3e0c30ebd269b9cc2ff0c9c14d040b842ff49fd36a085485ee9",
+    "admin/src/workbench/learning-space-mock.ts": "fbd65463abe0dc9859c11873da5cd4819b6da09c33db76ac9f6c706858d83e86",
+    "tests/capture-fraction-flow.mjs": "12457ffc6175b6e6a9d46c1f4b2e9d05b4feb5585ff8b8a6872718bf7a8d3260"
+  },
+  "modelCalls": 0,
+  "errors": [],
+  "checks": [
+    "题目先检查保存、快照采用、同源作答按方面解释、上文保留不冒充独立",
+    "纠错不改原作答、不污染其他证据、不计入当前负面评价",
+    "修订题目产生新版且原展示快照保持v1",
+    "仅答案正确不推断理解",
+    "自由输入不冒充语义判定",
+    "方法B合法且全对仍不证明保持，直接检测不捏造已获讲解",
+    "刷新恢复草稿，求助结束整场检测且未作答不判错",
+    "平板尺寸保留V2左右布局"
+  ],
+  "captures": [
+    {
+      "id": "F01",
+      "title": "任务关联两种方法",
+      "file": "F01.png",
+      "route": "/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction",
+      "sha256": "4454abd0f4d51b7bac5577379ebd275acb32467a8330425c3643d112c3408d50",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F02",
+      "title": "知识按方法递归汇总",
+      "file": "F02.png",
+      "route": "/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction",
+      "sha256": "86fadf171261171f592160425f0e44e8dfb499c98273a41218c537dd40c7e015",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F03",
+      "title": "同一Task Claim的四方面",
+      "file": "F03.png",
+      "route": "/admin/#/evaluation?id=CLAIM-FRACTION&tab=aspects",
+      "sha256": "ee178d50b7181f2997293b7bcd83ec5d56a948e318f528931bdd470886fb831b",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F04",
+      "title": "目标选择Claim并规定要求",
+      "file": "F04.png",
+      "route": "/admin/#/targets?id=TARGET-MATH",
+      "sha256": "cfb5c101bdd8642579d0e76ee89fd4b8051b7b622f2a948e7b7245c4a05ab5da",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F05",
+      "title": "核对内容并应用课程",
+      "file": "F05.png",
+      "route": "/admin/#/textbooks?id=BOOK-MATH&chapter=CH-INCREASE&tab=content",
+      "sha256": "e39766643be6714235b8362c07f7e5a0e0d8b31f911ae9d4a1cf5825b2d95997",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F06",
+      "title": "题面参数答案先检查再保存",
+      "file": "F06.png",
+      "route": "/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction",
+      "sha256": "41bb3733aa2e6f365562d3c7e9ec344479e988d7414523001e440a9e6e2b0b72",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F07",
+      "title": "学生选用管理员准备的教材目标",
+      "file": "F07.png",
+      "route": "/student/",
+      "sha256": "d7f70a7b633abace410991d60ba6bc5ddcbcb7aea1ac8e541ba8a72c7cacaa26",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F08",
+      "title": "同一对话内讲解原量增加量与总量",
+      "file": "F08.png",
+      "route": "/student/",
+      "sha256": "2dde52f52b89b515cc69dc1fdaf8191d969b275653aa46a5ba25121a9fb4393e",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F09",
+      "title": "追问另一种解法就地补充",
+      "file": "F09.png",
+      "route": "/student/",
+      "sha256": "40892cf4fdbce375423a2d2abe686cda452d2e22d3f85e67dbcba5af8c3fdc25",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F10",
+      "title": "准备失败保留学习且未开始检测",
+      "file": "F10.png",
+      "route": "/student/",
+      "sha256": "df15028ea3735209e855876a95a0b227d1e037f72ab09ea493d4035cc98f08d7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F11",
+      "title": "保存题目后展示并在底部作答",
+      "file": "F11.png",
+      "route": "/student/",
+      "sha256": "9d5b9bd2a0b9d9b1ac17138c12bd8f44e944df969c16306cc1ba283c5a016082",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F12",
+      "title": "图示检测保留页面与对话",
+      "file": "F12.png",
+      "route": "/student/",
+      "sha256": "d92444a886f41df383987e9d6c3c65f2a7236714043c872ed7586bf3a234d82d",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F13",
+      "title": "作答证据与能力判断及目标结果",
+      "file": "F13.png",
+      "route": "/student/",
+      "sha256": "96a5360de82de202c74faae71d13ac1c630a2b9a0aa36bb83b686d5c91697a9f",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F14",
+      "title": "学习情况与本次评价使用相同依据",
+      "file": "F14.png",
+      "route": "/student/",
+      "sha256": "271b0349b3f95f4efccd92b49a718553f0d13ff886837adc47f5635eea75c7dd",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F15",
+      "title": "管理员查看同一Claim与作答依据",
+      "file": "F15.png",
+      "route": "/admin/#/activity?id=FLOW-ACT-EB8B6755",
+      "sha256": "f80c9f9a785c18e9aa5a26bf94a8ec603a353eb08271631cdec185f87cff455d",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F16",
+      "title": "作废前说明精确题目版本及影响",
+      "file": "F16.png",
+      "route": "/admin/#/activity?id=FLOW-ACT-EB8B6755",
+      "sha256": "07bbef2afec17d0731edc5fb144270685a1c0502c5f58e47c716e6440560dd69",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F17",
+      "title": "撤回错误依据保留其他表现",
+      "file": "F17.png",
+      "route": "/student/",
+      "sha256": "79fd90b759bfef08e29213d29250429aee9be9424db6db83be7a362e0f17d5e1",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "F18",
+      "title": "题库保留停用版本与使用记录",
+      "file": "F18.png",
+      "route": "/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction",
+      "sha256": "3ce9c50606ff5de0856d9e5be61d1d40f51bbb88b8e51532c436279301e60a69",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    }
+  ]
+}

@@ -1,0 +1,249 @@
+{
+  "completed": true,
+  "sourceCommit": "6fe50d825523749dd9a1391bc6e1d1ff3bac77d0",
+  "sourceHashes": {
+    "student/src/App.vue": "8a2dd676d5d887f11e597167f72b857528b0c25e58a669a13cb30c71135ced7c",
+    "student/src/conversation.ts": "fcb82bcc6e1573ed4ba50c86a0c5b7f132ce273703f1d1d87ce1f888076f9c95",
+    "student/src/components/ConversationPane.vue": "4b90aaf9c7448d1d3f2c7f7d9e079479cb9698ed9e648ba75aa82309e08565ed",
+    "student/src/student-pages.ts": "aef1d1c88a80c4fe8d7952bb74a23d5e11e4ccec12048aaf0c5d75bfbaa7afe6",
+    "student/src/course-page-data.ts": "aab65bce7b17330974ecba613592f86b95e4981d5722cf928c8b7a73f0b5ecb3",
+    "student/src/student-pages.css": "6ccd62aa8b7a1e8a9f29a82618fe28470988a4dabf29203cdda8ef3a9aa11b75",
+    "student/src/components/StudentPages.vue": "9599a984d882907c20485f2b04d824aa5c1db6f6b275c62f9cb33815cee4d64f",
+    "student/src/components/HomePage.vue": "7f555b68ec538f7cef2794835166c9a49736242fae60889f51757a1043650fe0",
+    "student/src/components/LearningStatusPage.vue": "3b6bb064caf17acd232c4a4182604d8cdfa25e6c15262c1e60b9387446e71e3f",
+    "student/src/components/TextbookPage.vue": "26ec0758e7b05763bc96a5900e891775097bfa943537fb06c9030e52afed8a8c",
+    "student/src/components/ErrorBookPage.vue": "eae29529646d6cc71b12a66f3c4122c2afa5d05fe0e87a43651c70ab7d724435",
+    "student/src/components/ClassroomProgressDialog.vue": "5b278a92d08c0a47a820fe926409942ecd747484f7d662bf887950df345c63db",
+    "student/src/components/ChatWorkspace.vue": "5f27b2e1ec26bd22befe4a45574713c7118be8a29153cd10d8d6daea6acfb607",
+    "tests/capture-student-pages.mjs": "3c8cc7e18c09931e11b83f079df47795589b884431004869555bd974de062f73"
+  },
+  "modelCalls": 0,
+  "errors": [],
+  "checks": [
+    "6个学习日、3次讲解、2次结束检测由同一组记录计数",
+    "要求→原题→所属活动→返回要求，原筛选与展开状态保留",
+    "近期统计排除受助与未决；未知日期只在全部；切换日期不改当前要求状态",
+    "按次范围传入对话，V2展开收起和右侧来源页面保留",
+    "2道错题按题目去重；订正正确不删历史错误，也不标已掌握",
+    "未作答和待判定都有入口，均不算错题",
+    "切换空间隔离学习记录与判断；未知状态不显示0%"
+  ],
+  "captures": [
+    {
+      "id": "P01",
+      "title": "首页未填写课堂进度",
+      "file": "P01.png",
+      "route": "/student/?preview=pages",
+      "page": "首页",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "6c2cfff2a272d46a90ee9aa6f36d81354ce6d4aff211891f4899ee3ab8e8e222"
+    },
+    {
+      "id": "P02",
+      "title": "首页课堂进度与继续学习",
+      "file": "P02.png",
+      "route": "/student/?preview=pages",
+      "page": "首页",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "099bf3f3c8957b5a7c8af9e3789b524e6c23640adbf2cc216b321edeb424d67b"
+    },
+    {
+      "id": "P03",
+      "title": "从首页进入完整活动记录",
+      "file": "P03.png",
+      "route": "/student/?preview=pages",
+      "page": "学习记录",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "739d0f21e70f10cb54954a8f6b4881a748c5c6baf262f45b8ddafb78e95ac431"
+    },
+    {
+      "id": "P04",
+      "title": "按教材单元查找章节状态",
+      "file": "P04.png",
+      "route": "/student/?preview=pages",
+      "page": "学习情况",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "cff5c1ed53a775e6b41c8d5992b8e47aad73206ea541248eebb6f2a7be99c1e6"
+    },
+    {
+      "id": "P05",
+      "title": "具体要求与三类判断",
+      "file": "P05.png",
+      "route": "/student/?preview=pages",
+      "page": "学习情况",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "326bc7bcfea81d5e4d760d22b06a2360f28155d6b6e9fa61ba3abbc649eac23d"
+    },
+    {
+      "id": "P06",
+      "title": "筛选需加强并展开判断依据",
+      "file": "P06.png",
+      "route": "/student/?preview=pages",
+      "page": "学习情况",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "9d9079e81f3b89dd6f8991e8db44d729f2a88e69bf01c7f98746f41ef48a1895"
+    },
+    {
+      "id": "P07",
+      "title": "从判断定位原题和作答",
+      "file": "P07.png",
+      "route": "/student/?preview=pages",
+      "page": "题目记录",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "be17c9f9568900f6883305d695f6e898411d8f32ee24dabd03164e00581232b3"
+    },
+    {
+      "id": "P08",
+      "title": "查看题目所属检测活动",
+      "file": "P08.png",
+      "route": "/student/?preview=pages",
+      "page": "题目记录",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "eec83546d2b7cbbcc7d8cfa2415c1ac216e8a094e0cd29bc13376aaa2452ccb0"
+    },
+    {
+      "id": "P09",
+      "title": "独立作答统计与排除明细",
+      "file": "P09.png",
+      "route": "/student/?preview=pages",
+      "page": "学习情况",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "9c7399ffeea2cbb39650d9b1b37708a3d36bbd42318b65d04d21a07b391d75ba"
+    },
+    {
+      "id": "P10",
+      "title": "教材定位与学习范围选择",
+      "file": "P10.png",
+      "route": "/student/?preview=pages",
+      "page": "教材",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "276ae14128b71189f0173c6e0566a5cc83cd29b81d0ee50b27059b4dd1e0255d"
+    },
+    {
+      "id": "P11",
+      "title": "材料正文与图示",
+      "file": "P11.png",
+      "route": "/student/?preview=pages",
+      "page": "教材",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "cdefcee78ae8c9e147fbcb5eaa41989df2b3fce065ecf266f4b7ab03b8382905"
+    },
+    {
+      "id": "P12",
+      "title": "确认只对本次生效的检测范围",
+      "file": "P12.png",
+      "route": "/student/?preview=pages",
+      "page": "教材",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "c0a1d312f1cd10092ecfcb5e2f4840229ee9093bc73dcdabdd87e5bd78da9174"
+    },
+    {
+      "id": "P13",
+      "title": "从教材进入对话并保留右侧页面",
+      "file": "P13.png",
+      "route": "/student/?preview=pages",
+      "page": "教材",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "fd195b5c35e71d6a6b610108ea29838653f08f2c45492eb88801e517e5832be5"
+    },
+    {
+      "id": "P14",
+      "title": "全量题目按来源与最近作答组织",
+      "file": "P14.png",
+      "route": "/student/?preview=pages",
+      "page": "题目记录",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "f873689874b6411ddc671226438dba3e38a9f3911e0a7c0b3fe7ec23de38f3a1"
+    },
+    {
+      "id": "P15",
+      "title": "订正后保留原错误与受助条件",
+      "file": "P15.png",
+      "route": "/student/?preview=pages",
+      "page": "题目记录",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "1dd78d755c12ab4240cf51d2eecfe6c14b1566aec5b7c3358797cff39bb8697a"
+    },
+    {
+      "id": "P16",
+      "title": "待判定记录与原日期未知",
+      "file": "P16.png",
+      "route": "/student/?preview=pages",
+      "page": "题目记录",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "59bb9604f48653d9cdab0ddef5e87b87708c3c853e1274762001d5e66a3ed3af"
+    },
+    {
+      "id": "P17",
+      "title": "平板保留左右对话与首页",
+      "file": "P17.png",
+      "route": "/student/?preview=pages",
+      "page": "首页",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "sha256": "0c28cfd5e0ad70c5ce525214b5651517d01275867371f51b3e612479af1c1bc0"
+    },
+    {
+      "id": "P18",
+      "title": "其他空间空状态不借用数学判断",
+      "file": "P18.png",
+      "route": "/student/?preview=pages",
+      "page": "学习情况",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "e19e551b1703035b0cbc26924e9386fdd0ed730385adad2bf9777208f865ce38"
+    }
+  ]
+}

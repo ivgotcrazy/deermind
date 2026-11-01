@@ -1,14 +1,14 @@
 # MVP 评测资产规格与清单
 
-> **版本**：v0.6<br>
+> **版本**：v0.12<br>
 > **文档性质**：评测资产规格与清单；Phase 4 — Product & Domain Foundation<br>
 > **状态**：交互、实际单元语义和首批权限合同案例已编制；独立参考、正式留出材料及联合审查尚缺，G4 未通过<br>
 > **上游依据与基线**：[G3-20261015-01](../MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)<br>
 > **维护责任**：Codex 编制与检查，内容和评分参考由实际承担者复核；未发生的复核不得填成通过<br>
 > **评审记录**：当前案例为作者编制的开发走查材料，不是独立质量评测或学习效果结果<br>
 > **写作规范**：[设计文档规范 v1.1](../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-25<br>
-> **修订说明**：统一现行原型目录引用；旧版实现与既有原型评审章节固定到 Git 历史，避免替换后引用含义改变。逐文件记录见 MVP_Governance §5.3；本次不改变产品规则或 Gate 结论。
+> **更新日期**：2026-10-29<br>
+> **修订说明**：v0.11 → v0.12：落实每个学习空间的持续对话、活动切换与历史引用；同步行为边界、原型截图及检查记录，逐文件变更见 MVP_Governance §5.9。
 
 ---
 
@@ -21,7 +21,7 @@
 | 产品流程与确定性行为 | 输入、反馈时机、活动结束、恢复、只读及版本展示的正反路径 | 六批共四十八例，涵盖局部学习、维护与运行流程 |
 | 数据与权限机制 | 允许、拒绝、关系失效、隐藏、事项范围及重试对照 | CASE-061–072 已编制，含多孩子、多家长与按事项访问的合成输入；合同审阅及服务端验证未完成 |
 | 教学与评价语义 | 真实教材、题意、合法方法、帮助条件、评价及生成题参考 | 校内八道原创题、51 条教材定位参考、8 幅关系图及十二个案例已编制；独立复核与留出集待准备 |
-| 对象维护与实际使用 | 所属页面新增、修改、保存，引用及版本检查、历史保留、实际读取与失败 | 新后台十项浏览器情境覆盖本地行为；真实使用和 OPEN-011 采用处理尚未验证 |
+| 对象维护与实际使用 | 所属页面新增、修改、保存，引用及版本检查、历史保留、实际读取与失败 | 新后台十项浏览器情境覆盖本地行为；真实使用和 DEC-032 的应用更新尚未验证 |
 | 设备、时间及成本 | APK、多模态、真实请求起止、未知和重试、人工投入 | Phase 5/6 按既定责任准备与执行 |
 | 真实使用价值 | 获准的个体实际表现、延迟检查及负担 | G6 以后方可开展相应 Pilot，不由原型代替 |
 
@@ -71,6 +71,15 @@ Task Claim 及默认四维修订要求下列参考情景，尚待形成并审核
 
 Task-only 例子的语义参考见 [Evaluation §6.8](../../concept-design/DeerMind_Evaluation_Space_Design_v1.5.md#68-分数应用一个-claim-的多维-belief-更新实例)。旧 `EVAL-CONTENT-FA-001 v1` 与内容包中的 KCClaim 参考须在新资产中迁移，不能仅由本文升版认定案例已完成。
 
+**KC 对应关系的新增参考要求。** 按 [Domain Foundation §2.5](MVP_Domain_and_Content_Foundation.md#25-kc-的任务与方法对应关系) 和 AC-014，后续资产须分别覆盖：
+
+- 同一 KC 对应多个任务和方法，反查不丢失来源；方法裁剪后只保留适用路径。
+- KC 已有知识使用路径，但课程缺少针对性理解任务；须报告覆盖不足，不从“被引用”推断“已检测”。
+- 基础知识理解任务可以取得表现依据；复杂任务的成功不自动支持全部关联知识，系统提供的图示解释不计为学生独立完成。
+- 无对应路径的候选保留关系待补；准备缺口不被写成学生能力不足。
+
+上述为待编制与执行的参考要求，本批未新增案例文件、运行语义测量或补记任何通过结果。现有 CASE 数量及历史记录保持。
+
 ## 4. 资产形成与质量审查
 
 1. 从实际业务和材料选取候选，登记来源、适用行为和版本。
@@ -118,7 +127,7 @@ DEC-019 已明确 CASE-056 的非整除运次变化仅作可选练习或迁移�
 
 **较早后台直接维护的检查资产。** [admin-workbench.test.mjs](../../../src/mvp_prototype/tests/admin-workbench.test.mjs) 对应 AC-014、015、022，覆盖直接编辑、结构拒绝、旧草稿迁移、历史保护、个人依据处理及真实来源隔离。案例为开发可见的合成数据，结果索引见[原型说明 §7.2](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype_next/README.md#72-取消审核发布并直接保存v09)。不调用真实模型，不算学习效果或服务端权限验证。
 
-上述 CASE-016–018、024–025、061–072 中包含的候选审批发布步骤保留历史内容，但不再作为 DEC-026 之后的强制验收。其身份、版本、范围和历史保护责任仍有效；既有空间采用的替代案例待 OPEN-011 收口，不改写旧通过结果冒充新流程已验证。
+上述 CASE-016–018、024–025、061–072 中包含的候选审批发布步骤保留历史内容，但不再作为 DEC-026 之后的强制验收。其身份、版本、范围和历史保护责任仍有效；既有空间采用的产品选择按 DEC-032 已收口，正式机制案例仍待交付，不改写旧通过结果冒充新流程已验证。
 
 ### 6.1 当前后台的交互检查资产
 
@@ -137,9 +146,50 @@ DEC-019 已明确 CASE-056 的非整除运次变化仅作可选练习或迁移�
 | 运行总览 | [runtime-overview.test.mjs](../../../src/mvp_prototype/tests/runtime-overview.test.mjs) | 统计对象、去重、日期范围、执行问题与评价结果分开、下钻 |
 | 用户管理 | [user-management.test.mjs](../../../src/mvp_prototype/tests/user-management.test.mjs) | 独立账号、无空间学生、逐条亲子关系、找回原账号及关联跳转 |
 
-原始 V2、较早统一工作台和本轮页面的脚本保留各自适用范围。历史 `space-observation.test.mjs`、`interaction-review.test.mjs` 或 `admin-workbench.test.mjs` 通过，不等于上表当前页面已执行全套检查。实际执行结果须注明脚本和当时版本；本轮是文档更新，没有重新运行这些软件测试。文档检查记录见 Governance §5.2。
+原始 V2、较早统一工作台和本轮页面的脚本保留各自适用范围。历史 `space-observation.test.mjs`、`interaction-review.test.mjs` 或 `admin-workbench.test.mjs` 通过，不等于上表当前页面已执行全套检查。实际执行结果须注明脚本和当时版本；该段记录 2026-10-24 的文档批次；2026-10-27 教学页及相邻页的复核另见 §6.2 和 Product §7.1，不将历史通过自动延续。文档检查记录见 Governance §5.2。
 
 配置页面未新增检查场景：用户尚未决定配置内容，旧 CASE-039 等只说明当时样例，不构成新配置设计获准或服务已接通。新实例表格的生成和归类也是固定 mock，不得混入真实模型质量测量。
+
+### 6.2 教学模型管理与三种情境的开发资产
+
+| 资产 | 位置与内容 | 用途及限制 |
+| --- | --- | --- |
+| 教学定义和预写情境 | [teaching-mock.ts](../../../src/mvp_prototype/admin/src/workbench/teaching-mock.ts)：六阶段、十三条初始连接、六类策略、四条通用规则及三种情境 | 开发可见；保存修改为内存 mock，情境固定依据初始 v1；不是执行引擎或正式教学规范包 |
+| 管理页面 | [TeachingWorkspace.vue](../../../src/mvp_prototype/admin/src/components/TeachingWorkspace.vue)、[TeachingBlueprint.vue](../../../src/mvp_prototype/admin/src/components/TeachingBlueprint.vue) | 核对编辑、引用、停止和切换的产品逻辑；不证明真实 Policy、Evaluation 或后端权限 |
+| 操作检查 | [teaching-management.test.mjs](../../../src/mvp_prototype/tests/teaching-management.test.mjs)：10 项子检查 | 覆盖蓝图、策略、规则、历史、mock 隔离、三种情境和较窄视口；该批通过，无模型调用，不计入独立语义样本数 |
+| 截图及可复现操作 | [capture-teaching-spec.mjs](../../../src/mvp_prototype/tests/capture-teaching-spec.mjs)、[T01–T24 采集清单](assets/product-interaction/teaching-model/capture-manifest.json) | 实际页面截图逐项对应 Product §3.9；清单保留源码哈希及采集时的状态，不以 HEAD 冒充未提交文件 |
+
+三种情境分别检查基础含义不足、正确结果但理由不足、已有熟悉条件理解后的迁移检验；后续分支包含同阶段换策略、直接解释、检测求助、材料歧义及提前收束。相同输入允许多个有依据的合理教法，不能把必须复现脚本当成真实语义准确率判据。
+
+AC-025 的正式接收还需补实际定义包、目标和内容版本、允许策略与禁止行为参考、实际动作及帮助记录。真实测量须用未参与调整的材料，区分选择适切性、数学正确性、状态转换与 Evaluation 的结论范围；指标和校准仍由 Validation 维护。管理员情境已有对应的学生 mock 交互，见 §6.3；尚未接通真实动态教学，因此本节不授予 G4 或实际能力通过。
+
+旧 CASE 涉及逐空间手动采用、长期选章或审批发布的部分，仅按原基线解释；当前验收以 DEC-031–035、Requirements AC-022／023 和 Product 的 I／Q／C／U 系列操作为准。不得拿旧脚本通过替代新版采用或真实生成检查。
+
+### 6.3 三种学生情境与必要分支
+
+[Product §3.10](MVP_Product_and_Interaction_Design.md#student-teaching)是当前学生教学交互规格。旧固定两题路径继续用于教材及后台联动检查，不以其结果选择器或题内输入框作为新版教学设计。
+
+| 资产 | 内容与限制 |
+| --- | --- |
+| [teaching-session.ts](../../../src/mvp_prototype/student/src/teaching-session.ts) | 基础回补、对比辨析、图示检测的独立情境及明确响应；精确匹配预设输入，不是语义分类器 |
+| [TeachingLesson.vue](../../../src/mvp_prototype/student/src/components/TeachingLesson.vue) | V2 对话内材料、作答、检测、反馈和小结；底部统一输入；演示工具与学生操作分开 |
+| [走查与采图脚本](../../../src/mvp_prototype/tests/capture-student-teaching.mjs) | 13组行为检查、25张图；包含求助先结束、未提交不计错、材料未决、未覆盖自由输入、刷新草稿、1024×768；不调用模型 |
+| [S01–S25 清单](assets/product-interaction/student-teaching/capture-manifest.json) | 当前完成状态、检查项、源码及图片哈希；与 Product 的每步说明对应 |
+
+三个情境不构成前后连续的同一学习者历史。图示成功只支持本例图示条件；受助练习不冒充独立掌握，未检测方面不抹去已有认识。真实语言变体、真实策略选择、正式题库检查和持久效果留待后续测量，不增加 CASE/MET 的独立样本数量。
+
+### 6.4 按比例增加：内容到评价的完整走查
+
+[采集脚本](../../../src/mvp_prototype/tests/capture-fraction-flow.mjs)通过隔离浏览器存储执行管理员准备、学生选用、讲解、两题检测、反馈及纠错。数据定义见 Domain Foundation §2.6，界面规格见 [Product §3.11](MVP_Product_and_Interaction_Design.md#fraction-walkthrough)；[采集清单](assets/product-interaction/fraction-flow/capture-manifest.json)记录实际结果、源码哈希和 F01–F18。
+
+- 内容：两种合法方法、递归汇总 KC、单 Task Claim 四方面、课程目标采用。
+- 题目：先保存后展示、题面和参考采用快照、题目新版不改历史作答。
+- 评价：只有答案不等于解释，紧邻教学的全对不等于稳定独立或保持，自由输入不套预写结论。
+- 退出与失败：准备失败未开测，求助结束整场检测，未提交不计错，刷新后草稿保留。
+- 纠错：精确作废题目版本、保留原记录、排除错误依据、其他方面仍保留有效来源。
+- 交互：底部单一输入，平板下对话与右侧页面保留，无真实模型调用。
+
+这些是开发走查用例与作者参考，不是留出评测，不测模型语义准确率、普遍教学效果或真实多维推断。代码中的预设匹配只防止任意输入获得虚假评价，不是后续正式评分方案。正式包迁移和独立参考仍由 OPEN-010 承接。
 
 ## 7. 工程接入与后续报告
 
@@ -148,6 +198,10 @@ DEC-019 已明确 CASE-056 的非整除运次变化仅作可选练习或迁移�
 权限案例在 Phase 5 从正式认证主体进入实际后端路径，覆盖读取、写入、检索、附件和上下文装配。逐分支保留主体、对象与空间、当前授权依据、实际返回、写入副作用及审计引用；外部调用可用不出网的假适配器检查发送边界。只检查拒绝会掩盖功能不可用，因此每组还须验证其合法路径。当前没有对应后端，全部保持未执行；浏览器原型不替代这些结果。
 
 结果分别说明资产是否具备、参考是否审核、工具是否可运行、实际执行是否满足规则及能够支持的结论。Phase 4 的作者走查不冒充 Phase 6 质量评估或 Phase 7 真实使用结果。
+
+**学生四页检查资产。** [P01–P18 采集清单](assets/product-interaction/student-pages/capture-manifest.json)对应 [Product §3.12](MVP_Product_and_Interaction_Design.md#student-pages)。[采集脚本](../../../src/mvp_prototype/tests/capture-student-pages.mjs)检查课堂进度、要求到原题及所属活动的追溯、返回保留筛选、日期过滤不改学习判断、订正后错误历史保留、教材按次选择、对话来源页面和空间隔离。[统计边界检查](../../../src/mvp_prototype/tests/student-page-metrics.test.mjs)核对自然日窗口、未知日期、合格分母、重复题和失效依据。固定记录的算术一致性不是评价模型准确率或学习效果证据；既有教学及教材导入截图按新页面重采。
+
+**持续对话检查资产。** [H01–H18采集清单](assets/product-interaction/conversation/capture-manifest.json)对应 [Product §3.13](MVP_Product_and_Interaction_Design.md#continuous-conversation)。[浏览器走查](../../../src/mvp_prototype/tests/capture-conversation.mjs)检查自然输入、右侧浏览与显式切换的区别、日期章节类型查询、引用及取消、已结束检测不复活、求助收束、空间隔离、草稿恢复与平板唯一输入。[状态边界检查](../../../src/mvp_prototype/tests/conversation.test.mjs)补充活动身份及追加记录、准备不等于开始、引用旧检测、自由回答不套结论等情形。mock 固定分支不验证语义分类准确率或检索召回率，不增加正式评测样本数。
 
 ## 8. 文档完成条件
 

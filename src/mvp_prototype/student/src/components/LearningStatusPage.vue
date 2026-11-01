@@ -1,186 +1,31 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { textbookData, learningOverview } from '../data';
-import type { Chapter } from '../types';
-
-const recordFilter = ref('all');
-
-// 按章节组织的掌握概览
-const chapterMastery = computed(() => {
-  const list: { chapter: Chapter; unit: string }[] = [];
-  for (const unit of textbookData.units) {
-    for (const ch of unit.chapters) {
-      if (ch.mastery > 0) list.push({ chapter: ch, unit: unit.name });
-    }
-  }
-  return list.sort((a, b) => a.chapter.mastery - b.chapter.mastery);
-});
-
-const masteredCount = computed(() => chapterMastery.value.filter(c => c.chapter.mastery >= 80).length);
-const developingCount = computed(() => chapterMastery.value.filter(c => c.chapter.mastery >= 60 && c.chapter.mastery < 80).length);
-const weakCount = computed(() => chapterMastery.value.filter(c => c.chapter.mastery < 60).length);
-
-// 学习记录
-interface LearningRecord {
-  date: string; type: 'lecture' | 'practice' | 'test' | 'error';
-  title: string; detail: string; masteryChange?: string;
-}
-const allRecords: LearningRecord[] = [
-  { date: '10-18 14:30', type: 'lecture', title: '讲解：比例的应用', detail: '比较标准量 · 第2段', masteryChange: '62→65%' },
-  { date: '10-18 14:15', type: 'practice', title: '练习：分数加法', detail: '3/5 正确', masteryChange: '60→62%' },
-  { date: '10-17 19:20', type: 'test', title: '自测：第三单元 圆柱与圆锥', detail: '完成度 80% · 5题', masteryChange: '68→70%' },
-  { date: '10-17 19:00', type: 'lecture', title: '讲解：圆锥的体积', detail: '体积公式推导', masteryChange: '65→68%' },
-  { date: '10-16 20:10', type: 'error', title: '错题：比较标准量', detail: '甲比乙多1/3，乙比甲少几分之几', masteryChange: '—' },
-  { date: '10-16 20:00', type: 'practice', title: '练习：连续变化问题', detail: '2/4 正确', masteryChange: '58→60%' },
-  { date: '10-15 18:30', type: 'lecture', title: '讲解：分数乘法', detail: '连续变化问题', masteryChange: '55→58%' },
-  { date: '10-15 18:15', type: 'error', title: '错题：连续变化问题', detail: '先涨1/10再降1/10', masteryChange: '—' },
-];
-
-const filteredRecords = computed(() => {
-  if (recordFilter.value === 'all') return allRecords;
-  return allRecords.filter(r => r.type === recordFilter.value);
-});
-
-const typeLabels: Record<string, string> = {
-  lecture: '讲解', practice: '练习', test: '自测', error: '错题',
-};
-const typeColors: Record<string, string> = {
-  lecture: '#2d6a4f', practice: '#4a6fa5', test: '#c9942a', error: '#b85c3c',
-};
-
-function masteryColor(v: number): string {
-  if (v >= 80) return '#2d8a5e';
-  if (v >= 60) return '#c9942a';
-  return '#b85c3c';
-}
+import { computed, ref, watch } from 'vue';
+import { answerStats, counts, states, stateClass, periodLabel, type StudentCourse } from '../student-pages';
+const props=defineProps<{course:StudentCourse;focusChapter?:string;classroomIds:string[]}>();
+const emit=defineEmits<{openQuestion:[id:string];startAction:[text:string];updateProgress:[]}>();
+const query=ref(''),unit=ref(''),filter=ref(''),chapterId=ref(''),requirementFilter=ref(''),pageNumber=ref(1),days=ref(7),showAnswers=ref(false);
+watch(()=>props.focusChapter,id=>{if(id){chapterId.value=id;requirementFilter.value='';}},{immediate:true});
+watch(()=>props.course.id,()=>{unit.value=props.course.chapters.find(c=>c.id===props.course.activities[0]?.chapterId)?.unit||'';},{immediate:true});
+const units=computed(()=>[...new Set(props.course.chapters.map(c=>c.unit))]);
+const filtered=computed(()=>props.course.chapters.filter(c=>(c.name+' '+c.unit).includes(query.value)&&(!unit.value||c.unit===unit.value)&&(!filter.value||c.requirements.some(r=>r.status===filter.value))));
+watch([query,unit,filter],()=>pageNumber.value=1);
+const chapters=computed(()=>filtered.value.slice((pageNumber.value-1)*12,pageNumber.value*12));
+const chapter=computed(()=>props.course.chapters.find(c=>c.id===chapterId.value));
+const answers=computed(()=>answerStats(props.course,chapter.value?.id||'',days.value));
+function openChapter(id:string,state=''){chapterId.value=id;requirementFilter.value=state;showAnswers.value=false;}
+defineExpose({openChapter});
 </script>
-
-<template>
-  <div class="learning-status-page">
-    <!-- 顶部统计 -->
-    <div class="page-header">
-      <h2>学习情况</h2>
-      <div class="header-stats">
-        <span class="hs-item"><span class="hs-dot" style="background:#2d8a5e"></span>已掌握 {{ masteredCount }}</span>
-        <span class="hs-item"><span class="hs-dot" style="background:#c9942a"></span>发展中 {{ developingCount }}</span>
-        <span class="hs-item"><span class="hs-dot" style="background:#b85c3c"></span>需加强 {{ weakCount }}</span>
-      </div>
-    </div>
-
-    <!-- 章节掌握概览 -->
-    <div class="section">
-      <h3>章节掌握概览</h3>
-      <div class="chapter-grid">
-        <div v-for="item in chapterMastery" :key="item.chapter.id" class="chapter-card">
-          <div class="cc-header">
-            <span class="cc-name">{{ item.chapter.name }}</span>
-            <span class="cc-mastery" :style="{color: masteryColor(item.chapter.mastery)}">{{ item.chapter.mastery }}%</span>
-          </div>
-          <div class="cc-bar"><div class="cc-fill" :style="{width: item.chapter.mastery + '%', background: masteryColor(item.chapter.mastery)}"></div></div>
-          <span class="cc-unit">{{ item.unit }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 薄弱知识点 -->
-    <div class="section">
-      <h3>薄弱知识点</h3>
-      <div class="weak-list">
-        <div v-for="w in learningOverview.weakPoints" :key="w.name" class="weak-item">
-          <div class="weak-info">
-            <span class="weak-name">{{ w.name }}</span>
-            <span class="weak-reason">{{ w.reason }}</span>
-            <span class="weak-suggestion">💡 {{ w.suggestion }}</span>
-          </div>
-          <span class="weak-mastery">{{ w.mastery }}%</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 学习记录 -->
-    <div class="section">
-      <div class="section-header">
-        <h3>学习记录</h3>
-        <div class="filter-tabs">
-          <button v-for="f in ['all','lecture','practice','test','error']" :key="f"
-            class="filter-tab" :class="{active: recordFilter === f}"
-            @click="recordFilter = f">
-            {{ f === 'all' ? '全部' : typeLabels[f] }}
-          </button>
-        </div>
-      </div>
-      <div class="timeline">
-        <div v-for="(r, i) in filteredRecords" :key="i" class="timeline-item">
-          <div class="tl-dot" :style="{background: typeColors[r.type]}"></div>
-          <div v-if="i < filteredRecords.length - 1" class="tl-line"></div>
-          <div class="tl-content">
-            <div class="tl-header">
-              <span class="tl-date">{{ r.date }}</span>
-              <span class="tl-type" :style="{background: typeColors[r.type] + '22', color: typeColors[r.type]}">{{ typeLabels[r.type] }}</span>
-              <span v-if="r.masteryChange" class="tl-mastery">{{ r.masteryChange }}</span>
-            </div>
-            <span class="tl-title">{{ r.title }}</span>
-            <span class="tl-detail">{{ r.detail }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<style scoped>
-.learning-status-page { padding: 20px 24px; height: 100%; overflow-y: auto; }
-
-.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.page-header h2 { margin: 0; font-size: 18px; color: #1a3a2e; }
-.header-stats { display: flex; gap: 16px; }
-.hs-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5a6b7a; }
-.hs-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-.section { margin-bottom: 24px; }
-.section h3 { margin: 0 0 12px 0; font-size: 14px; color: #1a3a2e; }
-.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.section-header h3 { margin: 0; }
-
-.chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
-.chapter-card {
-  background: white; border: 1px solid #e1e8ed; border-radius: 8px; padding: 12px;
-}
-.cc-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-.cc-name { font-size: 13px; font-weight: 600; color: #2c3e50; }
-.cc-mastery { font-size: 14px; font-weight: 700; }
-.cc-bar { height: 6px; background: #f0f4f7; border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
-.cc-fill { height: 100%; border-radius: 3px; }
-.cc-unit { font-size: 10px; color: #8a99a8; }
-
-.weak-list { display: flex; flex-direction: column; gap: 10px; }
-.weak-item {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  background: #fef5f0; border: 1px solid #f0d0c0; border-radius: 8px; padding: 12px 14px;
-}
-.weak-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-.weak-name { font-size: 13px; font-weight: 600; color: #8a3a1a; }
-.weak-reason { font-size: 11px; color: #a06a5a; }
-.weak-suggestion { font-size: 11px; color: #5a7a6a; margin-top: 2px; }
-.weak-mastery { font-size: 18px; font-weight: 700; color: #b85c3c; margin-left: 12px; }
-
-.filter-tabs { display: flex; gap: 4px; }
-.filter-tab {
-  padding: 4px 12px; border: 1px solid #d0d7de; background: white;
-  border-radius: 4px; font-size: 12px; cursor: pointer; font-family: inherit; color: #5a6b7a;
-}
-.filter-tab.active { background: #2d6a4f; color: white; border-color: #2d6a4f; }
-
-.timeline { position: relative; padding-left: 8px; }
-.timeline-item { position: relative; padding-bottom: 16px; padding-left: 24px; }
-.timeline-item:last-child { padding-bottom: 0; }
-.tl-dot { position: absolute; left: 0; top: 4px; width: 10px; height: 10px; border-radius: 50%; z-index: 1; }
-.tl-line { position: absolute; left: 4px; top: 18px; width: 2px; height: calc(100% - 10px); background: #e1e8ed; }
-.tl-content { background: white; border: 1px solid #e1e8ed; border-radius: 8px; padding: 10px 14px; }
-.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-.tl-date { font-size: 11px; color: #8a99a8; }
-.tl-type { font-size: 10px; padding: 2px 8px; border-radius: 8px; font-weight: 600; }
-.tl-mastery { font-size: 11px; color: #2d8a5e; font-weight: 600; margin-left: auto; }
-.tl-title { font-size: 13px; font-weight: 600; color: #2c3e50; display: block; margin-bottom: 2px; }
-.tl-detail { font-size: 11px; color: #8a99a8; }
-</style>
+<template><div class="student-page learning-status-page">
+  <header class="page-header"><div><h2>学习情况</h2><p class="muted">{{course.title}}</p></div><button class="link" @click="emit('updateProgress')">更新课堂进度</button></header>
+  <template v-if="!chapter">
+    <p class="muted">按章节看看自己会什么、哪里还需要帮助。待确认不代表不会。</p>
+    <div class="controls"><label>查找章节<input v-model="query" type="search" placeholder="章节名称或单元"/></label><label>单元<select aria-label="单元" v-model="unit"><option value="">全部单元</option><option v-for="name in units" :key="name">{{name}}</option></select></label><label>关注内容<select aria-label="关注内容" v-model="filter"><option value="">全部章节</option><option v-for="s in states" :key="s">{{s}}</option></select></label></div>
+    <section class="panel"><article v-for="c in chapters" :key="c.id" class="list-row"><p class="tiny">{{c.unit}}</p><button class="chapter-toggle" @click="openChapter(c.id)"><strong>{{c.name}}</strong><span v-if="classroomIds.includes(c.id)" class="badge school">学校正在学</span><span>查看 →</span></button><p class="muted">{{c.conclusion}}</p><div v-if="c.requirements.length" class="tags"><button v-for="count in counts(c.requirements)" :key="count.status" :class="['badge',stateClass(count.status)]" @click="openChapter(c.id,count.status)">{{count.status}} {{count.count}} 项</button></div><p v-else class="tiny">本章暂不可评价</p></article><p v-if="!chapters.length" class="empty">没有符合条件的章节。可以更换筛选条件或先选择教材。</p></section>
+    <div v-if="filtered.length>12" class="pagination"><button :disabled="pageNumber===1" @click="pageNumber--">上一页</button><span>第 {{pageNumber}} / {{Math.ceil(filtered.length/12)}} 页</span><button :disabled="pageNumber*12>=filtered.length" @click="pageNumber++">下一页</button></div>
+  </template>
+  <template v-else><button class="back" @click="chapterId='';requirementFilter=''">← 返回章节列表</button><section class="panel"><div class="tags"><h3>{{chapter.name}}</h3><span v-if="classroomIds.includes(chapter.id)" class="badge school">学校正在学</span></div><p>{{chapter.conclusion}}</p><div v-if="chapter.requirements.length" class="tags"><button :aria-pressed="!requirementFilter" @click="requirementFilter=''">全部 {{chapter.requirements.length}} 项</button><button v-for="count in counts(chapter.requirements)" :key="count.status" :class="['badge',stateClass(count.status)]" :aria-pressed="requirementFilter===count.status" @click="requirementFilter=count.status">{{count.status}} {{count.count}} 项</button></div><p v-else class="muted">本章评价要求尚未准备，不把内容缺口算成你的待确认项。</p><p class="tiny">按所选学习目标的要求计数；参考适用的有效记录，不是掌握百分比。</p>
+      <ul class="requirements"><li v-for="r in chapter.requirements.filter(r=>!requirementFilter||r.status===requirementFilter)" :key="r.id" class="requirement" :data-requirement="r.id"><div class="row"><h4>{{r.name}}</h4><span :class="['badge',stateClass(r.status)]">{{r.status}}</span></div><p class="muted">{{r.reason}}</p><details><summary>查看要求与判断依据</summary><p>{{r.standard}}</p><div v-if="r.questionIds.length" class="evidence"><p>相关作答与当时的帮助：</p><button v-for="id in r.questionIds" :key="id" class="link" @click="emit('openQuestion',id)">{{course.questions.find(q=>q.id===id)?.text||'查看原题'}} →</button></div><p v-else class="muted">目前没有可查看的对应表现。</p></details><div class="actions"><button v-if="r.status==='需加强'" @click="emit('startAction','请针对“'+chapter.name+'”讲解：'+r.name)">讲讲这里</button><button v-if="r.status==='待确认'&&chapter.test" @click="emit('startAction','我想检测“'+chapter.name+'”中的要求：'+r.name)">检测一下</button></div></li></ul><p v-if="requirementFilter&&!chapter.requirements.some(r=>r.status===requirementFilter)" class="empty">本章没有{{requirementFilter}}的要求。</p>
+    </section></template>
+  <section class="panel answer-statistics"><div class="row"><h3>近期作答{{chapter?' · '+chapter.name:''}}</h3><label>作答日期<select aria-label="作答日期" v-model.number="days"><option :value="7">近 7 天</option><option :value="30">近 30 天</option><option :value="0">全部</option></select></label></div><p class="tiny">{{periodLabel(days,course.asOf)}}</p><p v-if="answers.eligible.length"><strong>{{answers.correct.length}} / {{answers.eligible.length}} 次正确</strong> · 独立作答正确率 {{Math.round(answers.correct.length/answers.eligible.length*100)}}%</p><p v-else>暂无可统计作答</p><p class="muted">{{answers.excluded.length}} 次受助、未决或不满足统计条件的作答另列。日期筛选不改变上方的当前学习判断。</p><button class="link" @click="showAnswers=!showAnswers">{{showAnswers?'收起':'查看'}}作答明细与统计口径</button><template v-if="showAnswers"><p class="notice">只统计独立条件明确、作答所属活动已结束且整份作答判定有效的次数。订正、看过提示后的正确答案不算独立正确。外部作答使用原日期，日期未知的只列入“全部”。</p><article v-for="a in answers.attempts" :key="a.id" class="list-row"><button class="link" @click="emit('openQuestion',a.questionId)">{{a.text}}</button><p class="tiny">{{a.at||'原作答日期未知'}} · {{a.result}} · {{a.help}} · {{answers.eligible.some(e=>e.id===a.id)?'计入统计':'未计入独立作答统计'}}</p></article></template></section>
+  <p class="tiny">{{course.note}}</p>
+</div></template>

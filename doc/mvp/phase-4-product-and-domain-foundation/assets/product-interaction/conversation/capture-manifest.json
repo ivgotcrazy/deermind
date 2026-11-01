@@ -1,0 +1,220 @@
+{
+  "completed": true,
+  "sourceCommit": "6fe50d825523749dd9a1391bc6e1d1ff3bac77d0",
+  "sourceHashes": {
+    "student/src/App.vue": "8a2dd676d5d887f11e597167f72b857528b0c25e58a669a13cb30c71135ced7c",
+    "student/src/conversation.ts": "fcb82bcc6e1573ed4ba50c86a0c5b7f132ce273703f1d1d87ce1f888076f9c95",
+    "student/src/components/ConversationPane.vue": "4b90aaf9c7448d1d3f2c7f7d9e079479cb9698ed9e648ba75aa82309e08565ed",
+    "student/src/components/StudentPages.vue": "9599a984d882907c20485f2b04d824aa5c1db6f6b275c62f9cb33815cee4d64f",
+    "student/src/components/HomePage.vue": "7f555b68ec538f7cef2794835166c9a49736242fae60889f51757a1043650fe0",
+    "tests/capture-conversation.mjs": "f682734bb838c5269fcf6591fbf0fafd75b84ee22b278c62771ad1db3f49da03"
+  },
+  "studentBuildHash": "883cd1909829b0f489bc18f3c1b3593d9ac34518f4a91be83173276ba33820c6",
+  "checks": [
+    "自然输入与页面按钮追加同一时间线；浏览不切换；明确切换保留进度；草稿和跨日活动身份保留",
+    "已结束检测不复活；准备与开始分开；切换可取消；求助先结束；草稿不算作答；反馈后输入仍可用",
+    "日期章节类型搜索及空结果；按空间隔离消息和草稿；刷新恢复；平板唯一输入；切换空间先收束检测"
+  ],
+  "captures": [
+    {
+      "id": "H01",
+      "title": "从首页直接交流，旧记录保留",
+      "file": "H01.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "0844f4ddb3ef16d18e299061a6141cc5c4f9921e125139d47199383b184391de"
+    },
+    {
+      "id": "H02",
+      "title": "浏览其他章节不切换当前活动",
+      "file": "H02.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "eb960386440c1b95dc2b066212ece482f7a7d81b2e7567146fddd54acc2efa5e"
+    },
+    {
+      "id": "H03",
+      "title": "明确请求后切换讲解，保留旧进度和草稿",
+      "file": "H03.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "42ffd3bd4bbba62a348d3c16eed7aea6ccd75c43c62e1f3994a827669042c0fa"
+    },
+    {
+      "id": "H04",
+      "title": "按内容查找历史",
+      "file": "H04.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "6c94400ef5b364e4092f0de164a8912713a8c85fcd110baa836ca2e77f50e3a4"
+    },
+    {
+      "id": "H05",
+      "title": "定位原消息，当前活动不变",
+      "file": "H05.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "60f7466621b0951877925878e77377e8fb0aa17318cf0d3e589ace781085fd51"
+    },
+    {
+      "id": "H06",
+      "title": "引用旧内容回到最新位置，保留草稿",
+      "file": "H06.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "b9ee4b40f2b439dbd6c2260495764e6d1c33bcfedeb9f1bfcaf54cb7fdb3ad63"
+    },
+    {
+      "id": "H07",
+      "title": "跨日续学追加到末尾，不复制活动",
+      "file": "H07.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "00065aa2e834a87ed9276cc6358daf550a30dcfcf86bbc78e88c61c8d414b201"
+    },
+    {
+      "id": "H08",
+      "title": "追问已结束检测，原检测不重新开放",
+      "file": "H08.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "7b3d8ae04ec12f63bb4444a1edfc1a4e886278337016f39c45d6b7bf081b7870"
+    },
+    {
+      "id": "H09",
+      "title": "先说明检测安排，再由学生开始",
+      "file": "H09.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "35fde1ac371ea98a16eee27432509d7f9d0652d2bca01131eb247cae906e8045"
+    },
+    {
+      "id": "H10",
+      "title": "检测题内嵌，底部统一作答",
+      "file": "H10.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "4ca99d32a3915c680bd9e57050c73f056a3381069cf19adbd67fc9a837276a0d"
+    },
+    {
+      "id": "H11",
+      "title": "检测中切换内容先说明后果",
+      "file": "H11.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "ec2887c162ea08439c28a37fdd5c909750591ddd2fd11bd63befdc24d38887c4"
+    },
+    {
+      "id": "H12",
+      "title": "结束检测后切换，未提交不计错",
+      "file": "H12.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "d1856c10b5c1bb25a964f4461568f9d62526f5b4f6afd021b25e604aaf93a4bd"
+    },
+    {
+      "id": "H13",
+      "title": "求助先结束检测，草稿不变成正式答案",
+      "file": "H13.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "0708e46a83ec0ab25fbdc91ea91831e1291abdaf8702470846386fd61e270c9b"
+    },
+    {
+      "id": "H14",
+      "title": "检测结束后仍可交流，反馈不等于持久掌握",
+      "file": "H14.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "76028542993fe2ac1aac6b4223fe5848c691ad788873e22cc8a2154b37b29038"
+    },
+    {
+      "id": "H15",
+      "title": "日期章节类型组合查找",
+      "file": "H15.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "156162ab8f33138ab70c3425219bacb7f6487373cb7a2baf456984b760f5eef7"
+    },
+    {
+      "id": "H16",
+      "title": "另一空间独立交流，不借用数学历史",
+      "file": "H16.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "c5a44f5aeac834e4fe7f1e476f3936422526ab6d33660f5ef96955156d48d136"
+    },
+    {
+      "id": "H17",
+      "title": "刷新后恢复本空间记录与未发送草稿",
+      "file": "H17.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "sha256": "9323d4c4ca9fc16af150c03ec421c7ef11514a52a165a02cd3315c0427de0a58"
+    },
+    {
+      "id": "H18",
+      "title": "平板仍保留左侧对话和右侧页面",
+      "file": "H18.png",
+      "route": "/student/?preview=pages",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "sha256": "497d29f15fbc11e1d8059a0d66c5ed51ccca3219c7e4793691b1c6535f0a0725"
+    }
+  ],
+  "errors": [],
+  "modelCalls": 0
+}

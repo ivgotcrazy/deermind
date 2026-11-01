@@ -19,6 +19,7 @@ test('admin content to student learning, feedback and immutable question history
   for(const p of [admin,student]){p.setDefaultTimeout(8000);p.on('pageerror',e=>errors.push(e.message));}
   const btn=(p,name)=>p.getByRole('button',{name,exact:true}),tab=(p,name)=>p.getByRole('tab',{name,exact:true});
   const data=()=>admin.evaluate(()=>JSON.parse(localStorage.getItem('deermind-next-learning-flow-v1')));
+  async function fillSample(){const details=student.locator('.question-card details');if(await details.getAttribute('open')===null)await details.locator('summary').click();await btn(student,'填入本场景示例作答').click();}
   const taskPath='/admin/#/domain?domain=DOM-MATH&filter=task&id=fraction';
   const checks=[];let failed=false;
   async function check(name,fn){if(failed)return;await t.test(name,async()=>{try{await fn();checks.push({name,passed:true});}catch(e){failed=true;await admin.screenshot({path:output+'/admin-failure.png',fullPage:true});await student.screenshot({path:output+'/student-failure.png',fullPage:true});throw e;}});}
@@ -40,29 +41,29 @@ test('admin content to student learning, feedback and immutable question history
     await student.goto(base+'/student/');await student.locator('.space-trigger').click();await btn(student,'＋ 新建学习空间').click();
     await expect(student.getByRole('dialog').getByLabel('教材',{exact:true})).toHaveValue('BOOK-MATH');
     await btn(student,'创建学习空间').click();
-    await expect(student.locator('.course-page')).toContainText('小学数学·教材管理示例');
-    await expect(student.locator('.course-page')).not.toContainText('选择长期');
+    await expect(student.locator('.student-page:visible')).toContainText('小学数学·教材管理示例');
+    await expect(student.locator('.student-page:visible')).not.toContainText('选择长期');
     const row=student.locator('.chapter-row').filter({has:student.getByRole('heading',{name:'按比例增加后的数量',exact:true})});
     await row.getByRole('button',{name:'讲解',exact:true}).click();
-    await expect(student.locator('.static-pane h2')).toHaveText('教材');
+    await expect(student.locator('.static-pane h2:visible')).toHaveText('教材');
     await expect(student.locator('.flow-lesson')).toContainText('80 × 1/4 = 20');
     await student.screenshot({path:output+'/student-lesson.png',fullPage:true});
   });
   await check('practice keeps an error and its help; test preview hides questions',async()=>{
-    await btn(student,'做一道练习').click();await student.getByLabel('答案和思路').fill('15，本来有 60，60 的四分之一是 15。');
-    await student.getByText('Mock 作答判定',{exact:true}).click();await student.getByLabel('本次模拟结果').selectOption('错误');
+    await btn(student,'做一道练习').click();await fillSample();
     await btn(student,'提交答案').click();await expect(student.locator('.flow-lesson')).toContainText('总量：60 + 15 = 75');
     await btn(student,'准备检测').click();await expect(student.locator('.flow-lesson')).toContainText('共 2 题');
     await expect(student.locator('.flow-lesson')).not.toContainText('原来有 120 本书');
     assert.equal((await data()).uses.filter(u=>u.purpose==='检测').length,0);
+    await student.getByText('Mock 场景选择',{exact:true}).click();await student.getByLabel('表现样例',{exact:true}).selectOption('supported');
   });
   await check('a test reuses an existing item, generates and saves another, resumes without duplication',async()=>{
     const before=await data(),existing=before.questions.find(q=>q.quantity===120);
     await btn(student,'开始检测').click();await expect(student.locator('.question-title')).toContainText('第 1/2 题');
     let state=await data();assert.equal(state.uses.filter(u=>u.purpose==='检测')[0].question.id,existing.id);
     assert.ok(state.questions.some(q=>q.figure==='length'&&q.source==='学习中生成'));
-    await student.getByLabel('答案和思路').fill('120 + 120 × 1/4 = 150 本');
-    await student.reload();await expect(student.getByLabel('答案和思路')).toHaveValue('120 + 120 × 1/4 = 150 本');
+    await fillSample();const answer=await student.getByLabel('答案和思路').inputValue();
+    await student.reload();await expect(student.getByLabel('答案和思路')).toHaveValue(answer);
     assert.equal((await data()).uses.filter(u=>u.purpose==='检测').length,1);
     const pending=(await data()).questions.find(q=>q.figure==='length');
     await admin.getByRole('button',{name:'编辑实例 '+pending.id,exact:true}).click();
@@ -74,12 +75,12 @@ test('admin content to student learning, feedback and immutable question history
     assert.equal((await data()).uses.filter(u=>u.purpose==='检测')[1].question.version,1);
     await expect(student.locator('.flow-lesson')).not.toContainText('本次 1 题正确');
     await student.screenshot({path:output+'/student-test.png',fullPage:true});
-    await student.getByLabel('答案和思路').fill('48 × 5/4 = 60 米，原来整段也要保留。');await btn(student,'提交答案').click();
+    await fillSample();await btn(student,'提交答案').click();
     await expect(student.locator('.result-card')).toContainText('2 题判为正确');
-    await expect(student.locator('.result-card')).toContainText('没有足够依据');
+    await expect(student.locator('.result-card')).toContainText('尚不能确认稳定独立完成');
     await expect(student.getByRole('img',{name:'原长 48 米，增加原长的四分之一',exact:true})).toBeVisible();
-    await btn(student,'查看学习情况').click();await student.locator('.chapter-toggle').filter({hasText:'按比例增加后的数量'}).click();
-    await expect(student.locator('.course-page')).toContainText('待确认');
+    await btn(student,'查看学习情况').click();await student.locator('.chapter-toggle:visible').filter({hasText:'按比例增加后的数量'}).click();
+    await expect(student.locator('.student-page:visible')).toContainText('待确认');
     await student.screenshot({path:output+'/student-feedback.png',fullPage:true});
   });
   await check('admin traces the generated item back to the exact activity and old versions',async()=>{
@@ -106,6 +107,7 @@ test('admin content to student learning, feedback and immutable question history
   });
   await check('help ends the whole test; unanswered items are not errors; tablet layout is usable',async()=>{
     await student.locator('.chapter-row').filter({hasText:'按比例增加后的数量'}).getByRole('button',{name:'检测',exact:true}).click();
+    await btn(student,'准备本次检测').click();
     await btn(student,'开始检测').click();await expect(student.locator('.question-title')).toContainText('第 1/2 题');await btn(student,'结束并求助').click();
     await expect(student.locator('.result-card')).toContainText('0/2');
     const state=await data();assert.equal(state.uses.filter(u=>u.result==='错误').length,1);
