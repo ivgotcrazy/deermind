@@ -10,7 +10,7 @@
     "dev": "vite --host 127.0.0.1 --port 5182 --strictPort",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "node scripts/serve.mjs",
-    "test": "node --test --test-concurrency=1 tests/import-lifecycle.test.mjs tests/material-flow.test.mjs tests/intake-dialog.test.mjs tests/domain.test.mjs tests/task-template.test.mjs tests/solution-template.test.mjs",
+    "test": "node --test --test-concurrency=1 tests/import-lifecycle.test.mjs tests/material-flow.test.mjs tests/intake-dialog.test.mjs tests/domain.test.mjs tests/task-template.test.mjs tests/solution-template.test.mjs tests/evaluation-target.test.mjs",
     "test:previous-import-ui": "node --test --test-concurrency=1 tests/import.test.mjs tests/textbook-fusion.test.mjs tests/extracted-instances.test.mjs tests/visual-ownership.test.mjs tests/content-review.test.mjs"
   },
   "dependencies": {
