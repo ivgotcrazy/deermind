@@ -1,0 +1,55 @@
+{
+  "purpose": "Selected D01 reuse only; no runtime dependency on old prototype",
+  "files": [
+    {
+      "source": "src/mvp_prototype/admin/src/components/MaterialOrganizeWorkspace.vue",
+      "destination": "src/components/MaterialOrganizeWorkspace.vue",
+      "source_sha256": "0d9738d51576c8ba4aadfe7d8d771e0387db4d79a22b84e6b896a02ac1ab9822"
+    },
+    {
+      "source": "src/mvp_prototype/admin/src/components/WorkbenchDialog.vue",
+      "destination": "src/components/WorkbenchDialog.vue",
+      "source_sha256": "059e06ed901ab5360332182765360d9645de135b116a134497e5ab77c5fbfac1"
+    },
+    {
+      "source": "src/mvp_prototype/shared/MaterialBlockView.vue",
+      "destination": "src/components/MaterialBlockView.vue",
+      "source_sha256": "bf45d9d0ae71dd435cda05bf63875befa0f3187c52482ac08c689483b8dd622f"
+    },
+    {
+      "source": "src/mvp_prototype/shared/material-content.ts",
+      "destination": "src/model/material-content.ts",
+      "source_sha256": "71a6141a56c6b6db395c228cc9627810a263301fc007316b55d754e70994b468"
+    },
+    {
+      "source": "src/mvp_prototype/admin/src/workbench/textbook-material-fixture.ts",
+      "destination": "src/model/material-fixture.ts",
+      "source_sha256": "e7f17bae50cfc3d9073b8b34ec7f27ca74a4cd9e6b6e7a6d38db78c8baa7e03f"
+    },
+    {
+      "source": "src/mvp_prototype/admin/public/materials/bnu6a/page-49.png",
+      "destination": "public/materials/bnu6a/page-49.png",
+      "source_sha256": "fbbe663820ecff1e459b7f982463c94fd8919c86b2b968e1bae27e8a79eca151"
+    },
+    {
+      "source": "src/mvp_prototype/admin/public/materials/bnu6a/page-50.png",
+      "destination": "public/materials/bnu6a/page-50.png",
+      "source_sha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243"
+    },
+    {
+      "source": "src/mvp_prototype/admin/public/materials/bnu6a/page-91.png",
+      "destination": "public/materials/bnu6a/page-91.png",
+      "source_sha256": "cf9f847c38dbe9f14a40f74208a5aae1e2fd1cb71ceea4fc4ffb4e4bbd89f4aa"
+    },
+    {
+      "source": "src/mvp_prototype/admin/public/materials/bnu6a/page-92.png",
+      "destination": "public/materials/bnu6a/page-92.png",
+      "source_sha256": "e782df6ec8db120e893d930d5051b0e407990233c16b681ffdfd1101a9e40af7"
+    },
+    {
+      "source": "src/mvp_prototype/admin/public/materials/bnu6a/page-93.png",
+      "destination": "public/materials/bnu6a/page-93.png",
+      "source_sha256": "ee511b5b0d901122872f3df9863e5878f83f61aa13738cfe6c8ba8baa37331c7"
+    }
+  ]
+}

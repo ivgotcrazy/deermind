@@ -1,0 +1,58 @@
+{
+  "model": "deepseek-flash",
+  "baseUrl": "https://api.deepseek.com",
+  "plan": {
+    "version": "0.1",
+    "date": "2026-11-05",
+    "purpose": "Bounded feasibility check of image-to-structured-content extraction; not full-book acceptance or accuracy estimation",
+    "cases": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "C08"
+    ],
+    "provider": "existing DEERMIND_LLM_BASE_URL and DEERMIND_LLM_MODEL",
+    "maxCalls": 8,
+    "maxParallel": 2,
+    "timeoutSeconds": 90,
+    "maxOutputTokensPerCall": 6000,
+    "maxPlannedInputTokens": 120000,
+    "automaticRetries": 0,
+    "temperature": 0,
+    "thinking": "disabled",
+    "structuredMode": "json_object plus local JSON Schema validation; not provider-enforced full schema",
+    "inputs": "Original full page images, selected region/scope, generic extraction rules, schema and existing candidate definition catalog. No reference instances, element values, answers, expected checks or screenshots are supplied.",
+    "decisions": [
+      "API/transport failures are not semantic failures",
+      "Malformed or truncated output is retained without silent repair",
+      "An authorization or image-capability error stops dispatching remaining calls",
+      "No prompt tuning or automatic repair within this batch",
+      "Equivalent mathematical expressions and object IDs are reviewed semantically, not rejected by string inequality",
+      "Source and reconstruction review is performed by the author, not an independent human reviewer",
+      "Keep extracted output separate from the manually curated reference"
+    ],
+    "criteria": [
+      "All selected source requirements and values are accounted for",
+      "Question, source solution and generated explanation remain separate",
+      "Typed contents render without substituting missing data from the reference",
+      "Existing Task/Solution/KC associations are valid or uncertain status is explicit",
+      "Changes needed from the reference are recorded per case; no universal pass-rate target"
+    ]
+  },
+  "cases": [
+    "C05",
+    "C06"
+  ],
+  "inputHashes": {
+    "schema.json": "4bb82314f0e82624921965b736fccc37f49d3525e44a111c4dfa2d2e42c9f698",
+    "extraction-schema.json": "bbaf231cf13bfb86a14674441cb25a100b7aa15c3bc6d112cb9b17ae1f079747",
+    "reference.json": "b58faf85304d038ac517e77a108b93479e4984e565dd0041ce6f08dea9a0e012",
+    "extraction-rules.txt": "ba680de3f8c9607e4dca1597d5b2b8cc0e11540640cc14685ebbc89490f902dc",
+    "trial-plan.json": "944eb786988a5bc83897dd9db5a89d6d2b9545a9ef11dda07f6b8f788aabfb5b"
+  },
+  "referenceDataSent": false
+}

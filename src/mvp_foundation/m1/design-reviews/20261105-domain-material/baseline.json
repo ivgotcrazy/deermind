@@ -1,0 +1,39 @@
+{
+  "note": "Working documents include uncommitted and untracked content. before/ is the actual input baseline, not Git HEAD.",
+  "gitHead": "c953f98da007846325d49f648245f43853b0f440",
+  "files": [
+    {
+      "path": "doc/mvp/README.md",
+      "sha256": "40CDAA957414C67F370E7D105EDC1CD5D48F32688241E59EB6E934C014A92A2B"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "sha256": "5691E75CD77F9ABE80F709F1582BD671A5073248067A605637FE8AE71CFD81A8"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "sha256": "D6E1F266DBA7E314448D2482C6F9B618A288FBCB95B6FF729EBED04033697423"
+    },
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "sha256": "062A27BE1B11CDCB26AF85AD590C2D52D7C898D02444C008D9FB742C1BBD60D8"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "sha256": "615D30123B777810FBC90F9241DEF08C7CC2B458C54DECD5F467612EBFB37F20"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "sha256": "D1F23677F0A6FFF7F6A126FF7EBC8B889B410FC36EC9FEAE05F3D61A97C5332A"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "sha256": "F2F79823777B120756613F22BE0ECE06FB641C63FA5322082BBDBB9E581CB480"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/README.md",
+      "sha256": "B902030991D85536874ECBC210216996B23C714B910013E3007FC2545E46E291"
+    }
+  ],
+  "capturedAt": "2026-11-05T23:47:17.1083467+08:00"
+}

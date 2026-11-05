@@ -1,0 +1,153 @@
+{
+  "status": "executed_not_yet_semantically_reviewed",
+  "records": [
+    {
+      "caseId": "C01",
+      "status": "relation_or_value_error",
+      "httpStatus": 200,
+      "usage": {
+        "prompt_tokens": 5743,
+        "completion_tokens": 820,
+        "total_tokens": 6563,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 5743
+      },
+      "returnedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "issues": [
+        "C01: unknown task"
+      ],
+      "elapsedSeconds": 11.45
+    },
+    {
+      "caseId": "C02",
+      "status": "schema_error",
+      "httpStatus": 200,
+      "usage": {
+        "prompt_tokens": 6765,
+        "completion_tokens": 2794,
+        "total_tokens": 9559,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 6381
+      },
+      "returnedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "issues": [
+        "['elements', 10, 'content', 2]: {'type': 'worked_example', 'expressions': [{'op': 'divide', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '5'}, {'op': 'number', 'value': '6'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '6'}]}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}, {'op': 'multiply', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '5'}, {'op': 'number', 'value': '6'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '6'}]}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '4'}, {'op': 'number', 'value': '3'}]}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '20'}, {'op': '3'}]}], 'assertedCorrect': False} is not valid under any of the given schemas"
+      ],
+      "elapsedSeconds": 18.92
+    },
+    {
+      "caseId": "C03",
+      "status": "schema_error",
+      "httpStatus": 200,
+      "usage": {
+        "prompt_tokens": 5747,
+        "completion_tokens": 597,
+        "total_tokens": 6344,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 5363
+      },
+      "returnedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "issues": [
+        "['elements', 0, 'content', 1]: {'type': 'worked_example', 'expressions': [{'op': 'equal', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '8'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}]}, {'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '8'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}]}]}, {'op': 'equal', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '8'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '32'}]}]}], 'assertedCorrect': False} is not valid under any of the given schemas"
+      ],
+      "elapsedSeconds": 11.92
+    },
+    {
+      "caseId": "C04",
+      "status": "relation_or_value_error",
+      "httpStatus": 200,
+      "usage": {
+        "prompt_tokens": 5746,
+        "completion_tokens": 847,
+        "total_tokens": 6593,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 5362
+      },
+      "returnedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "issues": [
+        "C04-TI1: answer/help exposed in question",
+        "C04: unknown task"
+      ],
+      "elapsedSeconds": 7.66
+    },
+    {
+      "caseId": "C05",
+      "status": "transport_error",
+      "error": "ConnectError",
+      "elapsedSeconds": 9.24
+    },
+    {
+      "caseId": "C06",
+      "status": "transport_error",
+      "error": "ConnectError",
+      "elapsedSeconds": 9.65
+    },
+    {
+      "caseId": "C07",
+      "status": "relation_or_value_error",
+      "httpStatus": 200,
+      "usage": {
+        "prompt_tokens": 5740,
+        "completion_tokens": 1445,
+        "total_tokens": 7185,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 5356
+      },
+      "returnedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "issues": [
+        "TI-C07-01: wrong content owner",
+        "TI-C07-01: wrong content owner",
+        "E-C07-HEAD: missing owner",
+        "E-C07-STORY: missing owner",
+        "E-C07-MAP: missing owner",
+        "E-C07-Q1: missing owner",
+        "E-C07-CARDS: missing owner",
+        "E-C07-Q2: missing owner",
+        "E-C07-DIAGRAMS: missing owner",
+        "E-C07-DIALOG: missing owner",
+        "C07: unknown task"
+      ],
+      "elapsedSeconds": 12.68
+    },
+    {
+      "caseId": "C08",
+      "status": "invalid_json",
+      "httpStatus": 200,
+      "usage": {
+        "prompt_tokens": 5744,
+        "completion_tokens": 780,
+        "total_tokens": 6524,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 5360
+      },
+      "returnedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "error": "Expecting ':' delimiter: line 1 column 1716 (char 1715)",
+      "elapsedSeconds": 9.47
+    }
+  ],
+  "notRun": []
+}

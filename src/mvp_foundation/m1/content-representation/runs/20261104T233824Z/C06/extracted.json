@@ -1,0 +1,492 @@
+{
+  "schemaVersion": "0.1",
+  "caseId": "C06",
+  "taskId": "C06-P11-SHAPE",
+  "solutionIds": [],
+  "newDefinitions": [],
+  "instances": [
+    {
+      "id": "TI-C06-P11-SHAPE",
+      "kind": "TaskInstance",
+      "templateId": "TT-SHAPE",
+      "contentRefs": [
+        "E-C06-P11-Q1",
+        "E-C06-P11-Q2"
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "id": "E-C06-P11-HEAD",
+      "owner": "C06-P11-SHAPE",
+      "role": "teaching_aid",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "第二单元 圆"
+        },
+        {
+          "type": "text",
+          "text": "车轮为什么是圆的"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P11",
+          "rect": [
+            0.08,
+            0.05,
+            0.84,
+            0.18
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C06-P11-INTRO",
+      "owner": "C06-P11-SHAPE",
+      "role": "teaching_aid",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "古代人们运送大的石料时会在石料下面放几根圆木。随着时代的发展，人们发明了各种各样的车，它们的车轮都是圆的。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P11",
+          "rect": [
+            0.08,
+            0.27,
+            0.84,
+            0.08
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C06-P11-Q1",
+      "owner": "C06-P11-SHAPE",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "车轮为什么是圆的？想一想，说一说。"
+        },
+        {
+          "type": "text",
+          "text": "圆的轮子没有棱角，容易滚动。"
+        },
+        {
+          "type": "text",
+          "text": "这个图形也没有棱角呀。"
+        },
+        {
+          "type": "text",
+          "text": "看来要再找一找圆和其他图形的不同。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P11",
+          "rect": [
+            0.08,
+            0.44,
+            0.84,
+            0.16
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C06-P11-Q2",
+      "owner": "C06-P11-SHAPE",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "从附页1中的图1剪出下面的图形，想办法说明圆和其他图形的不同。"
+        },
+        {
+          "type": "scene",
+          "coordinates": "layout_only",
+          "viewBox": [
+            0,
+            0,
+            100,
+            30
+          ],
+          "objects": [
+            {
+              "kind": "circle",
+              "id": "c1",
+              "cx": 12,
+              "cy": 15,
+              "r": 9
+            },
+            {
+              "kind": "ellipse",
+              "id": "e1",
+              "cx": 32,
+              "cy": 15,
+              "rx": 11,
+              "ry": 7
+            },
+            {
+              "kind": "polygon",
+              "id": "tri",
+              "points": [
+                [
+                  48,
+                  6
+                ],
+                [
+                  58,
+                  24
+                ],
+                [
+                  38,
+                  24
+                ]
+              ]
+            },
+            {
+              "kind": "polygon",
+              "id": "sq",
+              "points": [
+                [
+                  66,
+                  6
+                ],
+                [
+                  78,
+                  6
+                ],
+                [
+                  78,
+                  24
+                ],
+                [
+                  66,
+                  24
+                ]
+              ]
+            },
+            {
+              "kind": "polygon",
+              "id": "pent",
+              "points": [
+                [
+                  88,
+                  6
+                ],
+                [
+                  96,
+                  12
+                ],
+                [
+                  93,
+                  24
+                ],
+                [
+                  83,
+                  24
+                ],
+                [
+                  80,
+                  12
+                ]
+              ]
+            },
+            {
+              "kind": "polygon",
+              "id": "hex",
+              "points": [
+                [
+                  100,
+                  10
+                ],
+                [
+                  106,
+                  6
+                ],
+                [
+                  112,
+                  10
+                ],
+                [
+                  112,
+                  20
+                ],
+                [
+                  106,
+                  24
+                ],
+                [
+                  100,
+                  20
+                ]
+              ]
+            }
+          ],
+          "meaning": "六个待比较的平面图形：圆、椭圆、三角形、正方形、五边形、六边形，各图形中央标有一点。",
+          "relations": []
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P11",
+          "rect": [
+            0.08,
+            0.6,
+            0.84,
+            0.12
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C06-P11-OBS1",
+      "owner": "C06-P11-SHAPE",
+      "role": "teaching_aid",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "我发现圆形车轮滚动时，车轴到地面的距离是一样的，而其他形状的车轮，比如……"
+        },
+        {
+          "type": "scene",
+          "coordinates": "layout_only",
+          "viewBox": [
+            0,
+            0,
+            100,
+            40
+          ],
+          "objects": [
+            {
+              "kind": "circle",
+              "id": "wheel1",
+              "cx": 25,
+              "cy": 20,
+              "r": 15
+            },
+            {
+              "kind": "point",
+              "id": "p1",
+              "x": 25,
+              "y": 20,
+              "label": "2cm"
+            },
+            {
+              "kind": "point",
+              "id": "p2",
+              "x": 25,
+              "y": 35,
+              "label": "2cm"
+            },
+            {
+              "kind": "ellipse",
+              "id": "wheel2",
+              "cx": 70,
+              "cy": 22,
+              "rx": 18,
+              "ry": 12
+            },
+            {
+              "kind": "point",
+              "id": "p3",
+              "x": 70,
+              "y": 22,
+              "label": "2cm"
+            },
+            {
+              "kind": "point",
+              "id": "p4",
+              "x": 70,
+              "y": 34,
+              "label": "1.5cm"
+            }
+          ],
+          "meaning": "左图为圆，中心到地面距离标为2cm；右图为椭圆，中心到地面距离标为1.5cm。",
+          "relations": [
+            {
+              "subject": "wheel1",
+              "predicate": "中心到地面距离",
+              "object": "2cm",
+              "basis": "explicit_text"
+            },
+            {
+              "subject": "wheel2",
+              "predicate": "中心到地面距离",
+              "object": "1.5cm",
+              "basis": "explicit_text"
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P11",
+          "rect": [
+            0.08,
+            0.73,
+            0.42,
+            0.2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C06-P11-OBS2",
+      "owner": "C06-P11-SHAPE",
+      "role": "teaching_aid",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "圆无论怎样对折都能重合……"
+        },
+        {
+          "type": "scene",
+          "coordinates": "layout_only",
+          "viewBox": [
+            0,
+            0,
+            100,
+            30
+          ],
+          "objects": [
+            {
+              "kind": "polygon",
+              "id": "tri2",
+              "points": [
+                [
+                  10,
+                  6
+                ],
+                [
+                  20,
+                  24
+                ],
+                [
+                  0,
+                  24
+                ]
+              ]
+            },
+            {
+              "kind": "polygon",
+              "id": "pent2",
+              "points": [
+                [
+                  35,
+                  6
+                ],
+                [
+                  43,
+                  12
+                ],
+                [
+                  40,
+                  24
+                ],
+                [
+                  30,
+                  24
+                ],
+                [
+                  27,
+                  12
+                ]
+              ]
+            },
+            {
+              "kind": "polygon",
+              "id": "hex2",
+              "points": [
+                [
+                  55,
+                  10
+                ],
+                [
+                  61,
+                  6
+                ],
+                [
+                  67,
+                  10
+                ],
+                [
+                  67,
+                  20
+                ],
+                [
+                  61,
+                  24
+                ],
+                [
+                  55,
+                  20
+                ]
+              ]
+            },
+            {
+              "kind": "circle",
+              "id": "c2",
+              "cx": 85,
+              "cy": 15,
+              "r": 10
+            }
+          ],
+          "meaning": "三角形、五边形、六边形与圆并排，各图形中央标有一点，用于说明对折重合。",
+          "relations": []
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P11",
+          "rect": [
+            0.52,
+            0.73,
+            0.4,
+            0.2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C06-P11-KC",
+      "owner": "KC-CIRCLE",
+      "role": "knowledge",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "圆与其他平面图形的区别：圆周到圆心距离相等；此知识定义是作者据教材活动抽象，不能冒充逐字提取。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P11",
+          "rect": [
+            0.08,
+            0.6,
+            0.84,
+            0.33
+          ]
+        }
+      ]
+    }
+  ],
+  "uncertainties": [
+    "教材未给出六个图形的具体尺寸，scene 中坐标仅为布局，不是已知长度。",
+    "椭圆图中标注“2cm”与“1.5cm”的对应线段位置为近似定位，未给出完整测量关系。",
+    "教材未提供本题的标准解答，故未建立 SolutionInstance。"
+  ]
+}

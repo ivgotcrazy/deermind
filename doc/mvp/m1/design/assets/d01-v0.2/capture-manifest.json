@@ -1,0 +1,215 @@
+{
+  "date": "2026-11-03",
+  "prototype": "doc/mvp/m1/prototype",
+  "scope": "D01 isolated mock; not OCR or full M1 acceptance",
+  "base": "http://127.0.0.1:50063",
+  "captures": [
+    {
+      "id": "D01-S01",
+      "title": "M1教材入口与空白状态",
+      "file": "D01-S01.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks",
+      "sha256": "e18675bd241401dab30bde726a849cd1c9c5c92700324c5fc4321b5a4d77a963",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S02",
+      "title": "内置五页与教材信息",
+      "file": "D01-S02.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "dc025b3f001651e15a552fd74a8f439b7de33eacca5223c50b1fd13d9a435e7d",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S02-B",
+      "title": "文件与开始整理",
+      "file": "D01-S02-B.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "a527de4d65daf9e1600ed51f36d9531974f327b1fb5144568a915b38cf21a3dd",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S03",
+      "title": "M1模拟整理进度",
+      "file": "D01-S03.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "bed918cd4740e9d730c21774c7bd35a6af85976f0e35cab50f69614f5b73b6bb",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S03-F",
+      "title": "中断后继续同一导入",
+      "file": "D01-S03-F.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "96ac2aa416baf30028f10fde55b5fb8d1ae97a185f1101465da634d957770f4e",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S04",
+      "title": "目录、原页与图文工作区",
+      "file": "D01-S04.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "c84dea11eda5c6344037c679c0e8ea28ef8ce4f2f0677378836f30870d028112",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S05",
+      "title": "未处理跨页疑点不能确认",
+      "file": "D01-S05.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "26ce8f29e17946b793d166522c5a1a1d0c7353ac640d4adea08863fafc91ddf5",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S06",
+      "title": "选择跨页两种解法",
+      "file": "D01-S06.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "d730a46ab152c7007a3a181e2bb31054ce3baec3e8ef79788d92f90f2938948e",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S06-R",
+      "title": "合并后保留各自来源",
+      "file": "D01-S06-R.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "fc88734596b98908a9f0850ee9d21117778d99fa764bae47d26a8c298c008357",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S07",
+      "title": "题目与条件预览",
+      "file": "D01-S07.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "cc8f6eb81d4ceb0e863f1df0e0f075fa1055a2d47511b9c1cf40db24200f9427",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S08",
+      "title": "内容、用途与来源编辑",
+      "file": "D01-S08.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "ca52dea7d486774ae84c7f74cf39a5310a5041b69561c7020ee08f8d0c52fd8e",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S09",
+      "title": "课题核对结果",
+      "file": "D01-S09.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "cdeab275c636b255dcecf246744b677553b7961cdedf88870fcf0b9bf049e2b7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S10",
+      "title": "修正表头并保留行列数据",
+      "file": "D01-S10.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "df071a292f8cdb5984926cc4d749dc21953359bc7dbbad1edc226b04e2ef9227",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S11",
+      "title": "图与跨页数据表关联",
+      "file": "D01-S11.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "de7c6a57c6b4e7d6d40216813609d2fe19b2f7aaa043b179a1a53c997235bb56",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S11-R",
+      "title": "图例和数据引用保留",
+      "file": "D01-S11-R.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "d58d09b741b5812b0fda178585bd0ef080c30687bbf68caae21d27286393ada9",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S12",
+      "title": "M1草稿列表与继续入口",
+      "file": "D01-S12.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks",
+      "sha256": "ce8272fd0dc33dbdf1be0a2ec1a1c5d22bab4e73d34f1274f2a4fae36df6799e",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S13",
+      "title": "D01整理输出与D02边界",
+      "file": "D01-S13.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks?tab=import&source=IMPORT-AD76B28A",
+      "sha256": "2376e6ee1550e926a1fb737bd0f59de610e7f0e874edc80ab3686be15e59412f",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "id": "D01-S14",
+      "title": "删除仅限本次M1草稿",
+      "file": "D01-S14.png",
+      "url": "http://127.0.0.1:50063/admin/#/textbooks",
+      "sha256": "d45ab2c3b280ee7dceb63ffc2e90b471523ed9814387f1846c6c2d7f58b8bd18",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    }
+  ],
+  "checks": [
+    "D01-only navigation; invalid inputs and unconnected OCR do not fabricate recognized content",
+    "Interrupted mock processing resumes the same batch; actual bundled source image loads",
+    "Cross-page methods remain separate blocks; question mode excludes assistance; cancellation and deliberately incorrect material remain intact",
+    "Table correction and cross-page chart references survive reload; handoff does not pretend D02 exists; desktop has no horizontal overflow",
+    "Delete affects only selected draft; absent pages are not generated; processing reload can resume; no old data or model API is used"
+  ],
+  "errors": [],
+  "apiAttempts": []
+}

@@ -8,6 +8,34 @@ import { createPrototypeServer } from '../scripts/serve.mjs';
 
 const output=fileURLToPath(new URL('../../../.tmp/mvp-prototype-next/import-review/',import.meta.url));
 await mkdir(output,{recursive:true});
+
+test('real-page import respects removed sources and clears resolved input errors',async t=>{
+  const server=createPrototypeServer({directory:output,config:{key:'fixture',model:'fixed'},provider:async()=>{throw Error('No model call expected');}});
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));
+  const browser=await chromium.launch({headless:true});
+  const ctx=await browser.newContext({viewport:{width:1440,height:1000},locale:'zh-CN'});
+  const page=await ctx.newPage();page.setDefaultTimeout(8000);
+  t.after(async()=>{await browser.close();await new Promise(r=>server.close(r));});
+  const btn=name=>page.getByRole('button',{name,exact:true});
+  const imports=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('deermind-next-textbook-import-v1')));
+  await page.goto('http://127.0.0.1:'+server.address().port+'/admin/#/textbooks');
+  await btn('导入教材').click();await btn('上传并开始整理').click();
+  await expect(page.getByRole('alert')).toContainText('先选择扫描件');
+  await btn('载入真实教材书页').click();
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await btn('移除 北师大六上-书页49.png').click();
+  await btn('上传并开始整理').click();await expect(page.locator('.material-organizer')).toBeVisible();
+  const first=await imports(),draft=first.imports[0],book=first.books.find(b=>b.id===draft.book.id);
+  assert.equal(draft.files.length,4);
+  assert.ok(draft.pages.every(p=>p.fileId!=='BNU-PAGE-49'));
+  assert.ok(book.units.flatMap(u=>u.chapters).flatMap(c=>c.items).flatMap(i=>i.blocks).every(b=>b.page!==49));
+  await btn('确认本课整理结果').click();await expect(page.getByRole('alert')).toContainText('缺页');
+  await btn('← 返回教材列表').click();await btn('导入教材').click();await btn('载入真实教材书页').click();
+  await btn('移除 北师大六上-书页91.png').click();await btn('上传并开始整理').click();
+  await expect(page.locator('.material-organizer')).toBeVisible();
+  await page.locator('.material-tree-item').filter({has:page.locator('span',{hasText:'同一组数据的三种统计图'})}).click();
+  await btn('确认本课整理结果').click();await expect(page.getByRole('alert')).toContainText('缺少关联');
+});
 test('new scanned textbook to corrected content, model mapping, adoption and student learning',async t=>{
   let modelCalls=0;
   const server=createPrototypeServer({directory:output,config:{key:'fixture',model:'fixed'},provider:async()=>{modelCalls++;throw Error('No model call expected');}});

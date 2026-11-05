@@ -1,0 +1,156 @@
+[
+  {
+    "id": "C02",
+    "title": "跨页题目与两种原有解法",
+    "scope": "第49页原题条件及首问；第50页两列解法、答句空白及旁边提示。不要自行补全答句。约分笔迹无法表达时列出遗漏。",
+    "types": [
+      "text",
+      "formula",
+      "worked_example",
+      "table"
+    ],
+    "regions": [
+      {
+        "index": 0,
+        "page": 49,
+        "original": "../source/page-49.png",
+        "originalSha256": "fbbe663820ecff1e459b7f982463c94fd8919c86b2b968e1bae27e8a79eca151",
+        "pixelBox": [
+          76,
+          338,
+          1044,
+          822
+        ],
+        "originalSize": [
+          1087,
+          1536
+        ],
+        "file": "inputs/C02-0.png",
+        "sha256": "b45b4a0ef4e27cba31486d3a2008180bf6972b3469cbd0946c3bbe7e2ebb3ac5"
+      },
+      {
+        "index": 1,
+        "page": 50,
+        "original": "../source/page-50.png",
+        "originalSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+        "pixelBox": [
+          71,
+          154,
+          962,
+          545
+        ],
+        "originalSize": [
+          1087,
+          1536
+        ],
+        "file": "inputs/C02-1.png",
+        "sha256": "ffd8dd53a0dfbdbfa8f89ba21b40cd6a903df0ee31de6faf74c7443c72a40438"
+      }
+    ]
+  },
+  {
+    "id": "C03",
+    "title": "保留原题中的错误演算",
+    "scope": "提取提问和所给一列演算；这是要学生检查的原始内容，不要改正或重新求解。",
+    "types": [
+      "text",
+      "worked_example"
+    ],
+    "regions": [
+      {
+        "index": 0,
+        "page": 50,
+        "original": "../source/page-50.png",
+        "originalSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+        "pixelBox": [
+          82,
+          998,
+          810,
+          1037
+        ],
+        "originalSize": [
+          1087,
+          1536
+        ],
+        "file": "inputs/C03-0.png",
+        "sha256": "1768604e58b298f0298a688dee61537a4cc9f1984cc8fe762f38c56000e5c7d3"
+      },
+      {
+        "index": 1,
+        "page": 50,
+        "original": "../source/page-50.png",
+        "originalSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+        "pixelBox": [
+          234,
+          1075,
+          418,
+          1232
+        ],
+        "originalSize": [
+          1087,
+          1536
+        ],
+        "file": "inputs/C03-1.png",
+        "sha256": "b67ba7d703c48947b1bed071f82fbcdbd65d22c4df85d7ec838f2a4d5d6205ed"
+      }
+    ]
+  },
+  {
+    "id": "C05",
+    "title": "三种统计图与教学提示",
+    "scope": "提取三种统计图、原题提问和下方提示；提示必须单独保存。",
+    "types": [
+      "text",
+      "chart"
+    ],
+    "regions": [
+      {
+        "index": 0,
+        "page": 93,
+        "original": "../source/page-93.png",
+        "originalSha256": "ee511b5b0d901122872f3df9863e5878f83f61aa13738cfe6c8ba8baa37331c7",
+        "pixelBox": [
+          82,
+          246,
+          1016,
+          1459
+        ],
+        "originalSize": [
+          1087,
+          1536
+        ],
+        "file": "inputs/C05-0.png",
+        "sha256": "734c5ec4055874156d8fc642374c7092ea392742a66c7c35f19e64446aeac303"
+      }
+    ]
+  },
+  {
+    "id": "C06",
+    "title": "六种平面图形和原图标记",
+    "scope": "提取剪图比较要求、图形序列和图内可见标记，不包含该区域之外的滚动、对折说明。",
+    "types": [
+      "text",
+      "shape_row"
+    ],
+    "regions": [
+      {
+        "index": 0,
+        "page": 11,
+        "original": "../source/page-11.jpg",
+        "originalSha256": "d93ae657a606782ea53a162c4b7c2ec638631aee0f9ea3c747c39183628217f1",
+        "pixelBox": [
+          114,
+          926,
+          946,
+          1094
+        ],
+        "originalSize": [
+          1087,
+          1536
+        ],
+        "file": "inputs/C06-0.png",
+        "sha256": "0d89df98de5d25933aea9ce6e608ac2a20475eaf3a262963fdf201b42c1f9732"
+      }
+    ]
+  }
+]

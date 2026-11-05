@@ -1,0 +1,29 @@
+{
+  "caseId": "C06",
+  "status": "relation_or_value_error",
+  "httpStatus": 200,
+  "usage": {
+    "prompt_tokens": 5744,
+    "completion_tokens": 1495,
+    "total_tokens": 7239,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "prompt_cache_hit_tokens": 384,
+    "prompt_cache_miss_tokens": 5360
+  },
+  "returnedModel": "deepseek-flash",
+  "finishReason": "stop",
+  "issues": [
+    "TI-C06-P11-SHAPE: wrong content owner",
+    "TI-C06-P11-SHAPE: wrong content owner",
+    "E-C06-P11-HEAD: missing owner",
+    "E-C06-P11-INTRO: missing owner",
+    "E-C06-P11-Q1: missing owner",
+    "E-C06-P11-Q2: missing owner",
+    "E-C06-P11-OBS1: missing owner",
+    "E-C06-P11-OBS2: missing owner",
+    "C06: unknown task"
+  ],
+  "elapsedSeconds": 12.0
+}

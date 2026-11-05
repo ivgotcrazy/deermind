@@ -1,0 +1,357 @@
+{
+  "caseId": "C06",
+  "status": "linked_pending_semantic_review",
+  "contentHash": "71eec66bd418db48a21bada5f7121dbaa0300da91d234c1916ddc5faae2a81cf",
+  "instances": [
+    {
+      "id": "R2-C06-T0",
+      "kind": "TaskInstance",
+      "templateId": "TT-SHAPE",
+      "contentRefs": [
+        "R2-C06-T0/question/0"
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "id": "R2-C06-T0/question/0",
+      "owner": "R2-C06-T0",
+      "role": "question",
+      "origin": "reviewed_source_extraction",
+      "source": {
+        "page": 11,
+        "pixelBox": [
+          114,
+          926,
+          946,
+          1094
+        ],
+        "sourceSha256": "d93ae657a606782ea53a162c4b7c2ec638631aee0f9ea3c747c39183628217f1",
+        "cropSha256": "0d89df98de5d25933aea9ce6e608ac2a20475eaf3a262963fdf201b42c1f9732"
+      },
+      "blocks": [
+        {
+          "type": "text",
+          "text": "从附页1中的图1剪出下面的图形，想办法说明圆和其他图形的不同。"
+        },
+        {
+          "type": "shape_row",
+          "items": [
+            {
+              "shape": "circle",
+              "classificationBasis": "visual_recognition",
+              "dot": "center_like",
+              "label": ""
+            },
+            {
+              "shape": "ellipse",
+              "classificationBasis": "visual_recognition",
+              "dot": "center_like",
+              "label": ""
+            },
+            {
+              "shape": "triangle",
+              "classificationBasis": "visual_recognition",
+              "dot": "center_like",
+              "label": ""
+            },
+            {
+              "shape": "square",
+              "classificationBasis": "visual_recognition",
+              "dot": "center_like",
+              "label": ""
+            },
+            {
+              "shape": "pentagon",
+              "classificationBasis": "visual_recognition",
+              "dot": "center_like",
+              "label": ""
+            },
+            {
+              "shape": "hexagon",
+              "classificationBasis": "visual_recognition",
+              "dot": "center_like",
+              "label": ""
+            }
+          ],
+          "dimensionsRole": "layout_only"
+        }
+      ]
+    }
+  ],
+  "knowledgeBindings": [],
+  "pending": [],
+  "definitions": [
+    {
+      "id": "KC-ORDER",
+      "kind": "KnowledgeComponent",
+      "title": "分数混合运算顺序",
+      "definition": "分数混合运算遵循括号及同级运算顺序。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-ORDER",
+      "kind": "SolutionTemplate",
+      "title": "按运算顺序化简",
+      "definition": "保持运算树，除以非零数改为乘其倒数，再计算。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-ORDER"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-EXPR",
+      "kind": "TaskTemplate",
+      "title": "计算含括号的分数混合运算",
+      "definition": "给定合法有理数表达式，按规定顺序计算结果；除数不能为零。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-ORDER"
+      ]
+    },
+    {
+      "id": "KC-FRACTION",
+      "kind": "KnowledgeComponent",
+      "title": "一个量的几分之几",
+      "definition": "确定作为整体的量，再按比例求其部分；多层关系需要辨明每层整体。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "KC-ASSOC",
+      "kind": "KnowledgeComponent",
+      "title": "乘法结合律",
+      "definition": "连乘可以改变结合次序而不改变乘积。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-TWO",
+      "kind": "SolutionTemplate",
+      "title": "逐层求部分量",
+      "definition": "先求中间量，再求最终量。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-FRACTION"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "ST-COMBINE",
+      "kind": "SolutionTemplate",
+      "title": "合并两层比例",
+      "definition": "先相乘得到相对原量的比例，再乘原量。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-FRACTION",
+        "KC-ASSOC"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-CHAIN",
+      "kind": "TaskTemplate",
+      "title": "已知两层比例求最终量",
+      "definition": "给定原量及连续两层比例，求最后一层数量；人数任务须满足整数条件。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-TWO",
+        "ST-COMBINE"
+      ]
+    },
+    {
+      "id": "KC-RECIP",
+      "kind": "KnowledgeComponent",
+      "title": "除以非零数等于乘其倒数",
+      "definition": "除数必须非零；改乘法时需要取倒数。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-ERROR",
+      "kind": "SolutionTemplate",
+      "title": "逐步核查运算变换",
+      "definition": "逐步比对表达式，定位首个不等价的变换并解释。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-RECIP"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-ERROR",
+      "kind": "TaskTemplate",
+      "title": "辨析分数除法的错误演算",
+      "definition": "给出他人演算，判断是否等价并说明理由。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-ERROR"
+      ]
+    },
+    {
+      "id": "KC-DATA",
+      "kind": "KnowledgeComponent",
+      "title": "数据的类别与单位",
+      "definition": "读数须结合列标题、统计范围、单位与来源；重叠类别不可直接相加。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-TABLE",
+      "kind": "SolutionTemplate",
+      "title": "按标题和单位读表",
+      "definition": "对应行列查找数据，保留单位并区分类别范围。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-DATA"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-TABLE",
+      "kind": "TaskTemplate",
+      "title": "整理并解读人口统计资料",
+      "definition": "区分调查方案、观测数据和结论，按年龄及普查批次整理。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-TABLE"
+      ]
+    },
+    {
+      "id": "KC-CHART",
+      "kind": "KnowledgeComponent",
+      "title": "统计图的表达",
+      "definition": "条形图比较数量，折线图呈现变化，扇形图表达互斥部分在整体中的占比。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-READ-CHART",
+      "kind": "SolutionTemplate",
+      "title": "结合图例与坐标读图",
+      "definition": "先确定系列、范围及单位，再读数和比较，不将包含关系当作互斥部分。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-CHART",
+        "KC-DATA"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-CHART",
+      "kind": "TaskTemplate",
+      "title": "解读同一资料的不同统计图",
+      "definition": "根据图形及图例说明数量、变化或构成；解释不能超出数据范围。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-READ-CHART"
+      ]
+    },
+    {
+      "id": "KC-CIRCLE",
+      "kind": "KnowledgeComponent",
+      "title": "圆与其他平面图形的区别",
+      "definition": "圆周到圆心距离相等；此知识定义是作者据教材活动抽象，不能冒充逐字提取。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-SHAPE",
+      "kind": "SolutionTemplate",
+      "title": "比较形状与中心距离",
+      "definition": "观察或操作图形，检验中心到边界的距离是否一致。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-CIRCLE"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-SHAPE",
+      "kind": "TaskTemplate",
+      "title": "比较圆与其他图形",
+      "definition": "比较指定圆、椭圆及多边形，提出区分依据；未给长度不得编造测量值。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-SHAPE"
+      ]
+    },
+    {
+      "id": "KC-POS",
+      "kind": "KnowledgeComponent",
+      "title": "方向与距离确定位置",
+      "definition": "给定参照点后，方向角与距离共同限定平面中的位置。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-POS",
+      "kind": "SolutionTemplate",
+      "title": "比较位置描述的约束范围",
+      "definition": "分别考察仅方向、仅距离、方向和距离齐全时的可能位置。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-POS"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-POS",
+      "kind": "TaskTemplate",
+      "title": "判断位置描述是否充分",
+      "definition": "判断相对同一参照点的描述能否唯一定位，说明缺少的信息。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-POS"
+      ]
+    },
+    {
+      "id": "KC-VIEW",
+      "kind": "KnowledgeComponent",
+      "title": "观察方向与物体视图",
+      "definition": "物体与观察方向共同决定看到的轮廓；这里限定直立圆柱和圆锥。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-VIEW",
+      "kind": "SolutionTemplate",
+      "title": "固定物体姿态比较视图",
+      "definition": "分别从上方、正面和侧面观察，区分三维物体与二维轮廓。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-VIEW"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-VIEW",
+      "kind": "TaskTemplate",
+      "title": "观察直立圆柱与圆锥",
+      "definition": "描述从不同方向看到的形状；不从一幅轮廓反推出唯一三维物体。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-VIEW"
+      ]
+    }
+  ]
+}

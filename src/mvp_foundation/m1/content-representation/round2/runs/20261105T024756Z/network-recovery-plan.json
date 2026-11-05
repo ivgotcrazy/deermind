@@ -1,0 +1,9 @@
+{
+  "cases": [
+    "C02",
+    "C03"
+  ],
+  "reason": "Two mapping jobs had only transport errors. One extra attempt each after network recovery; no content or prompt changes.",
+  "maxCalls": 2,
+  "recordedAt": "2026-11-05T02:52:25.765007+00:00"
+}

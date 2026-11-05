@@ -1,0 +1,9 @@
+{
+  "endpoint": "https://api.deepseek.com/models",
+  "authorizationHeaderSent": false,
+  "environmentProxy": "127.0.0.1:7890",
+  "probeWithProxy": {"error":"ConnectError", "message":"SSL UNEXPECTED_EOF_WHILE_READING", "elapsedSeconds":8.3},
+  "probeWithoutProxy": {"httpStatus":401, "elapsedSeconds":4.3},
+  "decision":"Retry only C02/C03 mapping with the identical logical request directly to the same official endpoint. TLS verification remains enabled. No global proxy change.",
+  "countsAsModelInference":false
+}

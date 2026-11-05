@@ -1,0 +1,208 @@
+{
+  "schemaVersion": "0.1",
+  "caseId": "C03",
+  "taskId": "T-C03-BOARD1",
+  "solutionIds": [],
+  "newDefinitions": [],
+  "instances": [
+    {
+      "id": "TI-C03-BOARD1",
+      "kind": "TaskInstance",
+      "templateId": "TT-ERROR",
+      "contentRefs": [
+        "E-C03-BOARD1-Q"
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "id": "E-C03-BOARD1-Q",
+      "owner": "TI-C03-BOARD1",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "下面几道题算得对吗？计算时有什么好办法可以减少错误？"
+        },
+        {
+          "type": "worked_example",
+          "expressions": [
+            {
+              "op": "equal",
+              "args": [
+                {
+                  "op": "multiply",
+                  "args": [
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "7"
+                        },
+                        {
+                          "op": "number",
+                          "value": "8"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "3"
+                        },
+                        {
+                          "op": "number",
+                          "value": "4"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "1"
+                        },
+                        {
+                          "op": "number",
+                          "value": "3"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "multiply",
+                  "args": [
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "7"
+                        },
+                        {
+                          "op": "number",
+                          "value": "8"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "3"
+                        },
+                        {
+                          "op": "number",
+                          "value": "4"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "1"
+                        },
+                        {
+                          "op": "number",
+                          "value": "3"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "op": "equal",
+              "args": [
+                {
+                  "op": "multiply",
+                  "args": [
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "7"
+                        },
+                        {
+                          "op": "number",
+                          "value": "8"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "3"
+                        },
+                        {
+                          "op": "number",
+                          "value": "4"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "1"
+                        },
+                        {
+                          "op": "number",
+                          "value": "3"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "fraction",
+                  "args": [
+                    {
+                      "op": "number",
+                      "value": "7"
+                    },
+                    {
+                      "op": "number",
+                      "value": "32"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "assertedCorrect": false
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.2,
+            0.68,
+            0.2,
+            0.2
+          ]
+        }
+      ]
+    }
+  ],
+  "uncertainties": [
+    "绿色板书第一列中的约分笔迹未逐笔复刻，仅保留各行算式。",
+    "板书第一列第一行原式中的除号与乘号显示为“÷”，第二行改写为乘倒数，但笔迹中倒数位置有涂改，按可辨识内容提取。",
+    "板书第一列第二行等号右侧的分数“7/32”为最终结果，中间约分过程未单独建块。"
+  ]
+}

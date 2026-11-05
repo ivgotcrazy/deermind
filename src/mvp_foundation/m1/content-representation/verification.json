@@ -1,0 +1,52 @@
+{
+  "checkedAt": "2026-11-04T23:37:14.046216+00:00",
+  "status": "structure_checks_passed",
+  "referenceSha256": "b58faf85304d038ac517e77a108b93479e4984e565dd0041ce6f08dea9a0e012",
+  "schemaSha256": "4bb82314f0e82624921965b736fccc37f49d3525e44a111c4dfa2d2e42c9f698",
+  "caseCount": 8,
+  "elementCount": 17,
+  "mutations": [
+    {
+      "name": "题面引用解法内容",
+      "rejected": true
+    },
+    {
+      "name": "TaskTemplate直接关联KC",
+      "rejected": true
+    },
+    {
+      "name": "互相包含的人群画成堆叠柱",
+      "rejected": true
+    },
+    {
+      "name": "待填空格被补入答案",
+      "rejected": true
+    },
+    {
+      "name": "表格行列错位",
+      "rejected": true
+    },
+    {
+      "name": "图例系列长度错误",
+      "rejected": true
+    },
+    {
+      "name": "错误模板归属",
+      "rejected": true
+    },
+    {
+      "name": "来源区域越界",
+      "rejected": true
+    }
+  ],
+  "numericChecks": [
+    "C01: 40, 75/28, 1",
+    "C03: original error preserved; correct value 63/32 is not inserted into task",
+    "C05: persons to rounded hundred-million counts; pie sums to 100"
+  ],
+  "limitations": [
+    "No LLM calls made by this verifier",
+    "No claim of extraction accuracy or full-book coverage",
+    "Schema validity does not establish semantic correctness"
+  ]
+}

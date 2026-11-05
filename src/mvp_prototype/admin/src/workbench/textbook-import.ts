@@ -62,7 +62,21 @@ export function finishRecognition(d:TextbookImport){
   if(d.pages.length){d.state='review';d.step=2;return;}
   const b=copy(d.book);b.sources=d.files.map(f=>({id:f.id,name:f.name,kind:f.kind}));
   if(d.sample==='bnu6a'){
-    prepareRealBook(b);d.pages=b.units.flatMap(u=>u.chapters).flatMap(ch=>ch.locations.map(loc=>({id:loc.id,fileId:loc.fileId,filePage:loc.filePage,fixture:0,chapterId:ch.id,issue:'',resolved:false})));
+    prepareRealBook(b);
+    const supplied=new Set(d.files.map(f=>f.id));
+    for(const ch of b.units.flatMap(u=>u.chapters)){
+      const missing=ch.locations.filter(l=>!supplied.has(l.fileId)).map(l=>l.printedPage);
+      ch.locations=ch.locations.filter(l=>supplied.has(l.fileId));
+      ch.items=(ch.items||[]).map(i=>({...i,blocks:i.blocks.filter(block=>supplied.has('BNU-PAGE-'+block.page))})).filter(i=>i.blocks.length);
+      if(missing.length&&ch.items[0])ch.items[0].issue=[ch.items[0].issue,'原件缺页：本课还需要第 '+missing.join('、')+' 页，请补齐后核对。'].filter(Boolean).join(' ');
+      ch.content=ch.items.map(i=>i.title).join('\n');
+    }
+    b.units=b.units.map(u=>({...u,chapters:u.chapters.filter(ch=>ch.items?.length)})).filter(u=>u.chapters.length);
+    const blocks=b.units.flatMap(u=>u.chapters).flatMap(ch=>ch.items||[]).flatMap(i=>i.blocks),available=new Set(blocks.map(block=>block.id));
+    for(const block of blocks)if(block.references.some(id=>!available.has(id))){block.issue=[block.issue,'缺少关联的来源内容，请补齐原页后核对。'].filter(Boolean).join(' ');block.resolved=false;}
+    d.pages=b.units.flatMap(u=>u.chapters).flatMap(ch=>ch.locations.map(loc=>({id:loc.id,fileId:loc.fileId,filePage:loc.filePage,fixture:0,chapterId:ch.id,issue:'',resolved:false})));
+    d.pages.sort((a,b)=>d.files.findIndex(f=>f.id===a.fileId)-d.files.findIndex(f=>f.id===b.fileId));
+    if(!d.pages.length){d.state='failed';d.error='当前没有可整理的内置书页，请返回教材列表重新建立导入。';return;}
     b.history=[{at:new Date().toLocaleString('sv-SE'),change:'真实书页整理初稿（mock），等待按内容核对'}];
     textbookMock.books.unshift(b);d.book=copy(b);d.selectedPage=d.pages[0]!.id;d.state='review';d.progress=100;d.step=2;return;
   }

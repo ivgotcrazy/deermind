@@ -1,0 +1,1509 @@
+{
+  "version": "1",
+  "date": "2026-11-02",
+  "purpose": "MVP archive and M1 PRD structure reset",
+  "old_root": "doc/mvp",
+  "archive_root": "doc/mvp/archive/2026-11-02-before-m1-prd",
+  "old_file_count": 186,
+  "original_markdown_snapshot": "original-markdown.zip",
+  "files": [
+    {
+      "original_path": "doc/mvp/MVP_Document_Architecture_Review.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Document_Architecture_Review.md",
+      "original_sha256": "d9fd55f153dcf3f744d8c416a178a15218a54e7f7348af41909bade5171173c4",
+      "bytes": 31438,
+      "archive_sha256": "c3bce0c7f69784e98501cb6e880c9f077ba0ecb12b49bbb0d683805b6145e36a"
+    },
+    {
+      "original_path": "doc/mvp/MVP_Gate_Reviews.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Gate_Reviews.md",
+      "original_sha256": "c775fb7467e54690ea1e2d0f664e27b84c369fa89d1d25225a5fb6a8309235ac",
+      "bytes": 51343,
+      "archive_sha256": "e75aac49638a9d273769afba038d44e436d544fe58e4860dbc0f71b855cc5548"
+    },
+    {
+      "original_path": "doc/mvp/MVP_Governance.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Governance.md",
+      "original_sha256": "f30afbf820a83d8fdb1f382734ee72422ac7ee763aabb7b6647564980f6e6efc",
+      "bytes": 91777,
+      "archive_sha256": "cfd206f5e6dd02cad4e6a35ca8584f948935af626cd94261cb75801f2557377d"
+    },
+    {
+      "original_path": "doc/mvp/README.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/README.md",
+      "original_sha256": "73ba74fcf1c98073779580a1be3af9d0ca7b4dbd9d8a76d6e54731a31cd06927",
+      "bytes": 11749,
+      "archive_sha256": "6164d7328a5d10671f6aeb02eacfa110857090ab5eba6a101ff409a78b32349e"
+    },
+    {
+      "original_path": "doc/mvp/archive/DeerMind_MVP_Definition_v0.1.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Definition_v0.2.md",
+      "original_sha256": "522e0e8b56291647856c6093b9535948dca604e52fcfdb5c7e3ed6a6a7750cde",
+      "bytes": 39037,
+      "archive_sha256": "7f2fdad695fcadf4958132da9b213c271f55125cd2786c36a39fac79d236d39b"
+    },
+    {
+      "original_path": "doc/mvp/archive/DeerMind_MVP_Requirements_and_Acceptance_v0.1.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Requirements_and_Acceptance_v0.2.md",
+      "original_sha256": "a72da024925f295f75c4af8fb3bfd5f07b20defa0b8d18571192f031391f1c67",
+      "bytes": 92390,
+      "archive_sha256": "9ea57ca712dd4e6a508f3825c626fac4ad02d3b7dbc75b2a41f83d73e31bafd5"
+    },
+    {
+      "original_path": "doc/mvp/archive/DeerMind_MVP_Validation_Plan_v0.1.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Validation_Plan_v0.2.md",
+      "original_sha256": "664c35ab42bf2393d8d4f6b04e8eea76139f36a893a008a329097fee9978769c",
+      "bytes": 31240,
+      "archive_sha256": "4b0b5bdd8c7004fe605acc2a099da0114d0090a591340a5515c9ee93395d8fc3"
+    },
+    {
+      "original_path": "doc/mvp/archive/README.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/README.md",
+      "original_sha256": "0d587570a5c67116e63b7dda8ba568360af6b5cd0ccc4cac9ff992ed8ec129ae",
+      "bytes": 1891,
+      "archive_sha256": "c6c950e7016ba75846ef3709cb4c034f90a3a0c06598748456940acb292f0852"
+    },
+    {
+      "original_path": "doc/mvp/phase-3-definition/MVP_Definition.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Definition.md",
+      "original_sha256": "9249dca717d19f9f084b4c858eb663ac924f3f3dec7796f501782bca2183c636",
+      "bytes": 67610,
+      "archive_sha256": "64c51fc94a0278f3b529389bf712863c98f4dd65e8f7e3506f0351b59198e967"
+    },
+    {
+      "original_path": "doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+      "original_sha256": "a4b0ee842fdf1e77794b51b62b4ffddac9c90ee1be92e2f8a612117f6cc3e018",
+      "bytes": 137719,
+      "archive_sha256": "7df0c90c7c94993d057c545a6a8cdea5b51825fad77333bf1e074393412ae578"
+    },
+    {
+      "original_path": "doc/mvp/phase-3-definition/MVP_Validation_Plan.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Validation_Plan.md",
+      "original_sha256": "835ebaab5dd4cf8ccee1926ee2e875a6be446befdd0f92d544d21efca6fdb002",
+      "bytes": 32622,
+      "archive_sha256": "41f9a203a92d0bea97307d04a5c61ed74f984e4cc9a7eeb6426ae6262499027e"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md",
+      "original_sha256": "598d721388321b9fd20ff04fac3b7aba7cd4779a9fdf8707e019fae199b7b2f5",
+      "bytes": 22639,
+      "archive_sha256": "0b9a3917dfe1d825b684821e38a92798d8a04989e8fd0ecd7a07fbde40cf11ac"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md",
+      "original_sha256": "0855e1a37938e9b03873aae2fbe4f5d97fa75d2d7438bff6a61e37f7667724df",
+      "bytes": 75617,
+      "archive_sha256": "778e756497b3aaf16ec11cf4c8599e021b03c2c5d34dacdf297e3854a2da6314"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md",
+      "original_sha256": "b6ad3c0bd24efb209edb64b42ef166b4713a59bd4da49c9caef6d3fe848478ad",
+      "bytes": 34655,
+      "archive_sha256": "11ccb4c008b11f3c3bf7eae2cc0aee9caa8b495cdab99d5d02e33ea900af9393"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+      "original_sha256": "8b0fe2a108032762f363618994b44246f1a6f46ee406bb3f5846f99777c1ddb8",
+      "bytes": 198597,
+      "archive_sha256": "83f64668769f404986bdb35eb509ac4cf8165ae83aa7d7537245a9a2a830da7e"
+    },
+    {
+      "original_path": "doc/mvp/phase-5-engineering/MVP_Delivery_and_Handover.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-5-engineering/MVP_Delivery_and_Handover.md",
+      "original_sha256": "33c8447f86ab15473a29e9c7f3da515c2ed9597a1e3ff8408ae5974cab785e4c",
+      "bytes": 7832,
+      "archive_sha256": "29f351973b09c89a23f628713edd1403ad9bed503bd6a5d82077193de4ef69d0"
+    },
+    {
+      "original_path": "doc/mvp/phase-5-engineering/MVP_Engineering_Design.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-5-engineering/MVP_Engineering_Design.md",
+      "original_sha256": "5e95e10a590aa5962c81f2e91f0d69b9f361707b2831fcadbe023431bb852736",
+      "bytes": 13316,
+      "archive_sha256": "946eb95d701620ffb0176e7ffee67be1c57b82120c4da0738fec2ea6d0687a11"
+    },
+    {
+      "original_path": "doc/mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-5-engineering/MVP_Incremental_Delivery_Plan.md",
+      "original_sha256": "db1e998661d8232853c73aac9298728ee17780863e0f83a22ecf755ef701d7c2",
+      "bytes": 10558,
+      "archive_sha256": "e8710cafe9c0e848002a6e5ed2a77e6f03a78a39c8a3532a460e06c6ed115fdf"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C01.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C01.png",
+      "original_sha256": "66246c16e8f30fd9b9f8c9b3dc139297e5d598598edde1515107ccd9b09b6d4f",
+      "bytes": 91183,
+      "archive_sha256": "66246c16e8f30fd9b9f8c9b3dc139297e5d598598edde1515107ccd9b09b6d4f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C02.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C02.png",
+      "original_sha256": "50a5bfb3bc5a520c9f3e886042070cbfd1b2a41ad971a789e8b42fc85d939ce0",
+      "bytes": 119717,
+      "archive_sha256": "50a5bfb3bc5a520c9f3e886042070cbfd1b2a41ad971a789e8b42fc85d939ce0"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C03.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C03.png",
+      "original_sha256": "2d372c5e0ef217d7f37b6107790d85f741ffc3cd28f47c5e78660173666cbe05",
+      "bytes": 113032,
+      "archive_sha256": "2d372c5e0ef217d7f37b6107790d85f741ffc3cd28f47c5e78660173666cbe05"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C04.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C04.png",
+      "original_sha256": "973245b798f0f15c7951a1754ff5e1271737f02583997aaf402cba88b92c027b",
+      "bytes": 125062,
+      "archive_sha256": "973245b798f0f15c7951a1754ff5e1271737f02583997aaf402cba88b92c027b"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C05.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C05.png",
+      "original_sha256": "f282fc55007fbd65ffe5a26ba308c4ca7a30935157d0f20e6e9eea20966cdaf8",
+      "bytes": 126539,
+      "archive_sha256": "f282fc55007fbd65ffe5a26ba308c4ca7a30935157d0f20e6e9eea20966cdaf8"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C06.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C06.png",
+      "original_sha256": "8c0956f7d0a78a3f5e6851eb854c1672d3380d6dc2435daef0785f3956debf6d",
+      "bytes": 128509,
+      "archive_sha256": "8c0956f7d0a78a3f5e6851eb854c1672d3380d6dc2435daef0785f3956debf6d"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C07.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C07.png",
+      "original_sha256": "2bebcf22eca1a26324c3cc3ea50b915ab1daf69281df17d32a44039fb98b4ba4",
+      "bytes": 124456,
+      "archive_sha256": "2bebcf22eca1a26324c3cc3ea50b915ab1daf69281df17d32a44039fb98b4ba4"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C08.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C08.png",
+      "original_sha256": "02c8720b45adac76904090cf2d09b02a5959de687dbd414b07e807929cadc1d1",
+      "bytes": 102414,
+      "archive_sha256": "02c8720b45adac76904090cf2d09b02a5959de687dbd414b07e807929cadc1d1"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C09.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C09.png",
+      "original_sha256": "2ab33d7dabcfa210a1ba2f661d4d6056eb6093113e9965fd55ad58c623a9a628",
+      "bytes": 61446,
+      "archive_sha256": "2ab33d7dabcfa210a1ba2f661d4d6056eb6093113e9965fd55ad58c623a9a628"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C10.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C10.png",
+      "original_sha256": "b666846e64c0b28813c142a72649284d822834e2e98dd83fd2756b18b6f10b02",
+      "bytes": 77587,
+      "archive_sha256": "b666846e64c0b28813c142a72649284d822834e2e98dd83fd2756b18b6f10b02"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C11.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C11.png",
+      "original_sha256": "354dc84a7db5dc868ee7f2a937a2200b83c5f51643df38528a84d955dd3df20a",
+      "bytes": 77535,
+      "archive_sha256": "354dc84a7db5dc868ee7f2a937a2200b83c5f51643df38528a84d955dd3df20a"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C12.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C12.png",
+      "original_sha256": "a81ddfb284dcd8767d16b877261984f1f5b433da1b8575267399e4377e60a63d",
+      "bytes": 128337,
+      "archive_sha256": "a81ddfb284dcd8767d16b877261984f1f5b433da1b8575267399e4377e60a63d"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C13.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C13.png",
+      "original_sha256": "d4593e16e25cf896346848902f7548fc232343eec760610bad8246c56cfd8b72",
+      "bytes": 163494,
+      "archive_sha256": "d4593e16e25cf896346848902f7548fc232343eec760610bad8246c56cfd8b72"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C14.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C14.png",
+      "original_sha256": "c18dc281260738e7ac1c1185e661f182717330b021949e93e9968b6da72387b3",
+      "bytes": 84795,
+      "archive_sha256": "c18dc281260738e7ac1c1185e661f182717330b021949e93e9968b6da72387b3"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C15.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C15.png",
+      "original_sha256": "1a52b4f6198f9c3d6ed12760d2a128df949ef87cf2ccf2a841472c5f15560739",
+      "bytes": 91842,
+      "archive_sha256": "1a52b4f6198f9c3d6ed12760d2a128df949ef87cf2ccf2a841472c5f15560739"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C16.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C16.png",
+      "original_sha256": "48a7482fd4e0600010cf51b54854842c746e4c08870942c39fcefd6c66e440a3",
+      "bytes": 116081,
+      "archive_sha256": "48a7482fd4e0600010cf51b54854842c746e4c08870942c39fcefd6c66e440a3"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C17.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C17.png",
+      "original_sha256": "a4f48706fec9ce44c5889c86f0d027c5bb982d8a9b82dc43b8aa9ff3f30b149e",
+      "bytes": 59592,
+      "archive_sha256": "a4f48706fec9ce44c5889c86f0d027c5bb982d8a9b82dc43b8aa9ff3f30b149e"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C18.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C18.png",
+      "original_sha256": "968560ca160e12dcf29fdb61cbbc636259c2362b9a79b4d7be3853337b728464",
+      "bytes": 58659,
+      "archive_sha256": "968560ca160e12dcf29fdb61cbbc636259c2362b9a79b4d7be3853337b728464"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C19.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C19.png",
+      "original_sha256": "7366ef62e8be185a90b3f66303a8e0a63d14e04a0545b70ab423260042b4a53c",
+      "bytes": 123224,
+      "archive_sha256": "7366ef62e8be185a90b3f66303a8e0a63d14e04a0545b70ab423260042b4a53c"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/C20.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/C20.png",
+      "original_sha256": "ff573d97d3d0a442023ff0cb35b8ca417440b4ed50f7692fed3f5e77bd1c4b4d",
+      "bytes": 97505,
+      "archive_sha256": "ff573d97d3d0a442023ff0cb35b8ca417440b4ed50f7692fed3f5e77bd1c4b4d"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/capture-manifest.json",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/capture-manifest.json",
+      "original_sha256": "e2ab620c0826ca7d8e7bf0cfe6fb976d3696fb0375c3dc0a8488468c227d61b2",
+      "bytes": 20154,
+      "archive_sha256": "e2ab620c0826ca7d8e7bf0cfe6fb976d3696fb0375c3dc0a8488468c227d61b2"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I01.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I01.png",
+      "original_sha256": "411619d8a2a03525d30d91dcc2872363e1683cc30f9fa9a2f9963867068ab387",
+      "bytes": 70026,
+      "archive_sha256": "411619d8a2a03525d30d91dcc2872363e1683cc30f9fa9a2f9963867068ab387"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I02.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I02.png",
+      "original_sha256": "045ff86344eb64e9523ae5e2ba3fd40f44667027668ab5005df8203e75f2c4ae",
+      "bytes": 106130,
+      "archive_sha256": "045ff86344eb64e9523ae5e2ba3fd40f44667027668ab5005df8203e75f2c4ae"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I03.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I03.png",
+      "original_sha256": "14de797c022c42c19064a1eeadfb01f11aef146720843e6c5317d8cf3b59a2d4",
+      "bytes": 131534,
+      "archive_sha256": "14de797c022c42c19064a1eeadfb01f11aef146720843e6c5317d8cf3b59a2d4"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I04.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I04.png",
+      "original_sha256": "929edd79ee9e7038709691284f9338de87c7af681ceebf1f6bb0acf3796f04a3",
+      "bytes": 80365,
+      "archive_sha256": "929edd79ee9e7038709691284f9338de87c7af681ceebf1f6bb0acf3796f04a3"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I05.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I05.png",
+      "original_sha256": "04f86fec4b29dbed689c47a3aa242b5af557ef5a1597e9048146b637df308376",
+      "bytes": 477244,
+      "archive_sha256": "04f86fec4b29dbed689c47a3aa242b5af557ef5a1597e9048146b637df308376"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I06.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I06.png",
+      "original_sha256": "d253c95308a435fe5eb55e13f926972fbe6ffe7c0e61574de3a9958fbc271ce6",
+      "bytes": 473614,
+      "archive_sha256": "d253c95308a435fe5eb55e13f926972fbe6ffe7c0e61574de3a9958fbc271ce6"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I07.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I07.png",
+      "original_sha256": "50f5f49e72131136e3b17cfb6cdc6cd0776371a7704c468a16be19009b5d2afb",
+      "bytes": 17175,
+      "archive_sha256": "50f5f49e72131136e3b17cfb6cdc6cd0776371a7704c468a16be19009b5d2afb"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I08.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I08.png",
+      "original_sha256": "675a542440b8d24a62df4e797986b5ec6ad1a960f7f5d056342857017c29682c",
+      "bytes": 497263,
+      "archive_sha256": "675a542440b8d24a62df4e797986b5ec6ad1a960f7f5d056342857017c29682c"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I09.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I09.png",
+      "original_sha256": "2277cf417c698fd17e93d87250cecf5f183482343b654c828ea926309422e1f8",
+      "bytes": 500007,
+      "archive_sha256": "2277cf417c698fd17e93d87250cecf5f183482343b654c828ea926309422e1f8"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I10.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I10.png",
+      "original_sha256": "0ab2a99dacfc7e5d750c5b0cbcd9227f5eb7b5593cf6e4e88631579f1a5778b3",
+      "bytes": 35261,
+      "archive_sha256": "0ab2a99dacfc7e5d750c5b0cbcd9227f5eb7b5593cf6e4e88631579f1a5778b3"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I11.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I11.png",
+      "original_sha256": "f2fef94de958607eb4c2926a0522c4a1d9f2efb77b76f9af4567ac2940e6c45a",
+      "bytes": 331299,
+      "archive_sha256": "f2fef94de958607eb4c2926a0522c4a1d9f2efb77b76f9af4567ac2940e6c45a"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I12.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I12.png",
+      "original_sha256": "1d7f2712cebc72d62860e697de651b34fa3f615041ab8356a6595b293dc21ff9",
+      "bytes": 45574,
+      "archive_sha256": "1d7f2712cebc72d62860e697de651b34fa3f615041ab8356a6595b293dc21ff9"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I13.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I13.png",
+      "original_sha256": "0dfa20f73623d3e8767591971b893eb8b4395e71f9828f10a073223fb0265cb3",
+      "bytes": 373398,
+      "archive_sha256": "0dfa20f73623d3e8767591971b893eb8b4395e71f9828f10a073223fb0265cb3"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I14.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I14.png",
+      "original_sha256": "196f6385b780bcf56057c9015486e0027e858f5bf8b435fbb8c3afebe3629bec",
+      "bytes": 43645,
+      "archive_sha256": "196f6385b780bcf56057c9015486e0027e858f5bf8b435fbb8c3afebe3629bec"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I15.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I15.png",
+      "original_sha256": "09f3cd92845a765cc07d8752ff3e9210e388fca62c68bbb424147dd33f7fb16a",
+      "bytes": 403599,
+      "archive_sha256": "09f3cd92845a765cc07d8752ff3e9210e388fca62c68bbb424147dd33f7fb16a"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I16.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I16.png",
+      "original_sha256": "137ebac55a0baf6c22a5e214be9fdd624198c41e7b229227e1b72690a93d1272",
+      "bytes": 113101,
+      "archive_sha256": "137ebac55a0baf6c22a5e214be9fdd624198c41e7b229227e1b72690a93d1272"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I17.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I17.png",
+      "original_sha256": "35a45924473578216e455c7efc1b8f7aa6246034a288f648955f89db698821c5",
+      "bytes": 116551,
+      "archive_sha256": "35a45924473578216e455c7efc1b8f7aa6246034a288f648955f89db698821c5"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I18.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I18.png",
+      "original_sha256": "678ac012aadd846534e95e59e6bc4cd117d3c815a9a38732811806b42d733759",
+      "bytes": 121282,
+      "archive_sha256": "678ac012aadd846534e95e59e6bc4cd117d3c815a9a38732811806b42d733759"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I18B.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I18B.png",
+      "original_sha256": "42695a077c37ddfcc14553b2d75bc5308062e1dd2143eba7a31585a59ab0f64b",
+      "bytes": 43712,
+      "archive_sha256": "42695a077c37ddfcc14553b2d75bc5308062e1dd2143eba7a31585a59ab0f64b"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I19.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I19.png",
+      "original_sha256": "15915f2094ae2db91c16fabc860c8b596eb4efe1a291a4af308960a5e2f5db8f",
+      "bytes": 108664,
+      "archive_sha256": "15915f2094ae2db91c16fabc860c8b596eb4efe1a291a4af308960a5e2f5db8f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I20.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I20.png",
+      "original_sha256": "9d5717faa52c3c235dc23b47f4114f393239d28bbc0fc965eb156e9fc0d1ed09",
+      "bytes": 25232,
+      "archive_sha256": "9d5717faa52c3c235dc23b47f4114f393239d28bbc0fc965eb156e9fc0d1ed09"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I21.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I21.png",
+      "original_sha256": "4278e59a052b917db8669d1e15b07a9c184d979fc82c3a520916f16b9468cb3f",
+      "bytes": 67156,
+      "archive_sha256": "4278e59a052b917db8669d1e15b07a9c184d979fc82c3a520916f16b9468cb3f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I22.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I22.png",
+      "original_sha256": "5b9d056d026bfcdaeb4854c6264d57f35494edf1b8fd1a9b307aa3d7283f092f",
+      "bytes": 582994,
+      "archive_sha256": "5b9d056d026bfcdaeb4854c6264d57f35494edf1b8fd1a9b307aa3d7283f092f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I23.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I23.png",
+      "original_sha256": "6d87c5b9757b1056a06f3a8816e3ff95a7d946621f285ca56a5d233de31671fd",
+      "bytes": 583004,
+      "archive_sha256": "6d87c5b9757b1056a06f3a8816e3ff95a7d946621f285ca56a5d233de31671fd"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I24.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I24.png",
+      "original_sha256": "3eedc6120c90f260c839e3866d72a50e2491f04b0e355a44c6f19f0228348343",
+      "bytes": 16483,
+      "archive_sha256": "3eedc6120c90f260c839e3866d72a50e2491f04b0e355a44c6f19f0228348343"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/I25.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I25.png",
+      "original_sha256": "5d0b734ff41a750f41bfc4ae3a96bdb7a92e31ba4c1965aae56eaba9218b2ef8",
+      "bytes": 84379,
+      "archive_sha256": "5d0b734ff41a750f41bfc4ae3a96bdb7a92e31ba4c1965aae56eaba9218b2ef8"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/Q01.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/Q01.png",
+      "original_sha256": "601a0b11870ed2fe5a47b07b6d4fd20762f71bcebda2520b6de693b92acf4c64",
+      "bytes": 89498,
+      "archive_sha256": "601a0b11870ed2fe5a47b07b6d4fd20762f71bcebda2520b6de693b92acf4c64"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/Q02.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/Q02.png",
+      "original_sha256": "95675ef367a0e905630e3f7617207a99cad8273e26a9ed5cceb6abff94278b35",
+      "bytes": 40127,
+      "archive_sha256": "95675ef367a0e905630e3f7617207a99cad8273e26a9ed5cceb6abff94278b35"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/Q03.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/Q03.png",
+      "original_sha256": "bed5a0e2d6baa0a49ea588c11394e232ddd679bc4398cbc823b68f91998a5320",
+      "bytes": 100871,
+      "archive_sha256": "bed5a0e2d6baa0a49ea588c11394e232ddd679bc4398cbc823b68f91998a5320"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/Q04.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/Q04.png",
+      "original_sha256": "9844467f72170c03ceca991aba745e9a8449b0259523759b652503799baa0cc5",
+      "bytes": 33079,
+      "archive_sha256": "9844467f72170c03ceca991aba745e9a8449b0259523759b652503799baa0cc5"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/U01.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/U01.png",
+      "original_sha256": "830eb23565feb35c1621efce15c1ba3b562b7835c5939b3f7024379a6b1484bc",
+      "bytes": 117689,
+      "archive_sha256": "830eb23565feb35c1621efce15c1ba3b562b7835c5939b3f7024379a6b1484bc"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/U02.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/U02.png",
+      "original_sha256": "27c55c005b7e18f40b8e133d126906f998515be4fb0c22821958490dfd727027",
+      "bytes": 126429,
+      "archive_sha256": "27c55c005b7e18f40b8e133d126906f998515be4fb0c22821958490dfd727027"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/verification.json",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/verification.json",
+      "original_sha256": "c03d99803969ee937e906a3e613204c8a368e824237ce0ddcaf9d9bd51778de7",
+      "bytes": 288,
+      "archive_sha256": "c03d99803969ee937e906a3e613204c8a368e824237ce0ddcaf9d9bd51778de7"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/capture-manifest.json",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/capture-manifest.json",
+      "original_sha256": "a6b3a9413468dd175e7e83f37aef3e973ba39ccf7d443f772089832f1c2cd658",
+      "bytes": 7071,
+      "archive_sha256": "a6b3a9413468dd175e7e83f37aef3e973ba39ccf7d443f772089832f1c2cd658"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H01.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H01.png",
+      "original_sha256": "0844f4ddb3ef16d18e299061a6141cc5c4f9921e125139d47199383b184391de",
+      "bytes": 102369,
+      "archive_sha256": "0844f4ddb3ef16d18e299061a6141cc5c4f9921e125139d47199383b184391de"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H02.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H02.png",
+      "original_sha256": "eb960386440c1b95dc2b066212ece482f7a7d81b2e7567146fddd54acc2efa5e",
+      "bytes": 83856,
+      "archive_sha256": "eb960386440c1b95dc2b066212ece482f7a7d81b2e7567146fddd54acc2efa5e"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H03.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H03.png",
+      "original_sha256": "42ffd3bd4bbba62a348d3c16eed7aea6ccd75c43c62e1f3994a827669042c0fa",
+      "bytes": 82777,
+      "archive_sha256": "42ffd3bd4bbba62a348d3c16eed7aea6ccd75c43c62e1f3994a827669042c0fa"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H04.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H04.png",
+      "original_sha256": "6c94400ef5b364e4092f0de164a8912713a8c85fcd110baa836ca2e77f50e3a4",
+      "bytes": 71325,
+      "archive_sha256": "6c94400ef5b364e4092f0de164a8912713a8c85fcd110baa836ca2e77f50e3a4"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H05.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H05.png",
+      "original_sha256": "60f7466621b0951877925878e77377e8fb0aa17318cf0d3e589ace781085fd51",
+      "bytes": 87074,
+      "archive_sha256": "60f7466621b0951877925878e77377e8fb0aa17318cf0d3e589ace781085fd51"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H06.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H06.png",
+      "original_sha256": "b9ee4b40f2b439dbd6c2260495764e6d1c33bcfedeb9f1bfcaf54cb7fdb3ad63",
+      "bytes": 89434,
+      "archive_sha256": "b9ee4b40f2b439dbd6c2260495764e6d1c33bcfedeb9f1bfcaf54cb7fdb3ad63"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H07.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H07.png",
+      "original_sha256": "00065aa2e834a87ed9276cc6358daf550a30dcfcf86bbc78e88c61c8d414b201",
+      "bytes": 88611,
+      "archive_sha256": "00065aa2e834a87ed9276cc6358daf550a30dcfcf86bbc78e88c61c8d414b201"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H08.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H08.png",
+      "original_sha256": "7b3d8ae04ec12f63bb4444a1edfc1a4e886278337016f39c45d6b7bf081b7870",
+      "bytes": 94850,
+      "archive_sha256": "7b3d8ae04ec12f63bb4444a1edfc1a4e886278337016f39c45d6b7bf081b7870"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H09.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H09.png",
+      "original_sha256": "35fde1ac371ea98a16eee27432509d7f9d0652d2bca01131eb247cae906e8045",
+      "bytes": 90590,
+      "archive_sha256": "35fde1ac371ea98a16eee27432509d7f9d0652d2bca01131eb247cae906e8045"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H10.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H10.png",
+      "original_sha256": "4ca99d32a3915c680bd9e57050c73f056a3381069cf19adbd67fc9a837276a0d",
+      "bytes": 90832,
+      "archive_sha256": "4ca99d32a3915c680bd9e57050c73f056a3381069cf19adbd67fc9a837276a0d"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H11.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H11.png",
+      "original_sha256": "ec2887c162ea08439c28a37fdd5c909750591ddd2fd11bd63befdc24d38887c4",
+      "bytes": 89153,
+      "archive_sha256": "ec2887c162ea08439c28a37fdd5c909750591ddd2fd11bd63befdc24d38887c4"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H12.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H12.png",
+      "original_sha256": "d1856c10b5c1bb25a964f4461568f9d62526f5b4f6afd021b25e604aaf93a4bd",
+      "bytes": 85267,
+      "archive_sha256": "d1856c10b5c1bb25a964f4461568f9d62526f5b4f6afd021b25e604aaf93a4bd"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H13.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H13.png",
+      "original_sha256": "0708e46a83ec0ab25fbdc91ea91831e1291abdaf8702470846386fd61e270c9b",
+      "bytes": 87473,
+      "archive_sha256": "0708e46a83ec0ab25fbdc91ea91831e1291abdaf8702470846386fd61e270c9b"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H14.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H14.png",
+      "original_sha256": "76028542993fe2ac1aac6b4223fe5848c691ad788873e22cc8a2154b37b29038",
+      "bytes": 96564,
+      "archive_sha256": "76028542993fe2ac1aac6b4223fe5848c691ad788873e22cc8a2154b37b29038"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H15.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H15.png",
+      "original_sha256": "156162ab8f33138ab70c3425219bacb7f6487373cb7a2baf456984b760f5eef7",
+      "bytes": 97758,
+      "archive_sha256": "156162ab8f33138ab70c3425219bacb7f6487373cb7a2baf456984b760f5eef7"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H16.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H16.png",
+      "original_sha256": "c5a44f5aeac834e4fe7f1e476f3936422526ab6d33660f5ef96955156d48d136",
+      "bytes": 45058,
+      "archive_sha256": "c5a44f5aeac834e4fe7f1e476f3936422526ab6d33660f5ef96955156d48d136"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H17.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H17.png",
+      "original_sha256": "9323d4c4ca9fc16af150c03ec421c7ef11514a52a165a02cd3315c0427de0a58",
+      "bytes": 114748,
+      "archive_sha256": "9323d4c4ca9fc16af150c03ec421c7ef11514a52a165a02cd3315c0427de0a58"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H18.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/conversation/H18.png",
+      "original_sha256": "497d29f15fbc11e1d8059a0d66c5ed51ccca3219c7e4793691b1c6535f0a0725",
+      "bytes": 85213,
+      "archive_sha256": "497d29f15fbc11e1d8059a0d66c5ed51ccca3219c7e4793691b1c6535f0a0725"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/capture-manifest.json",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/capture-manifest.json",
+      "original_sha256": "3ecd802217966e3137de0f689b02bde094a586a8bc4405c40053ef26c7287857",
+      "bytes": 7771,
+      "archive_sha256": "3ecd802217966e3137de0f689b02bde094a586a8bc4405c40053ef26c7287857"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F01.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F01.png",
+      "original_sha256": "4454abd0f4d51b7bac5577379ebd275acb32467a8330425c3643d112c3408d50",
+      "bytes": 96825,
+      "archive_sha256": "4454abd0f4d51b7bac5577379ebd275acb32467a8330425c3643d112c3408d50"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F02.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F02.png",
+      "original_sha256": "86fadf171261171f592160425f0e44e8dfb499c98273a41218c537dd40c7e015",
+      "bytes": 103693,
+      "archive_sha256": "86fadf171261171f592160425f0e44e8dfb499c98273a41218c537dd40c7e015"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F03.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F03.png",
+      "original_sha256": "ee178d50b7181f2997293b7bcd83ec5d56a948e318f528931bdd470886fb831b",
+      "bytes": 108103,
+      "archive_sha256": "ee178d50b7181f2997293b7bcd83ec5d56a948e318f528931bdd470886fb831b"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F04.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F04.png",
+      "original_sha256": "cfb5c101bdd8642579d0e76ee89fd4b8051b7b622f2a948e7b7245c4a05ab5da",
+      "bytes": 126262,
+      "archive_sha256": "cfb5c101bdd8642579d0e76ee89fd4b8051b7b622f2a948e7b7245c4a05ab5da"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F05.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F05.png",
+      "original_sha256": "e39766643be6714235b8362c07f7e5a0e0d8b31f911ae9d4a1cf5825b2d95997",
+      "bytes": 136685,
+      "archive_sha256": "e39766643be6714235b8362c07f7e5a0e0d8b31f911ae9d4a1cf5825b2d95997"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F06.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F06.png",
+      "original_sha256": "41bb3733aa2e6f365562d3c7e9ec344479e988d7414523001e440a9e6e2b0b72",
+      "bytes": 39160,
+      "archive_sha256": "41bb3733aa2e6f365562d3c7e9ec344479e988d7414523001e440a9e6e2b0b72"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F07.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F07.png",
+      "original_sha256": "d7f70a7b633abace410991d60ba6bc5ddcbcb7aea1ac8e541ba8a72c7cacaa26",
+      "bytes": 26428,
+      "archive_sha256": "d7f70a7b633abace410991d60ba6bc5ddcbcb7aea1ac8e541ba8a72c7cacaa26"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F08.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F08.png",
+      "original_sha256": "2dde52f52b89b515cc69dc1fdaf8191d969b275653aa46a5ba25121a9fb4393e",
+      "bytes": 98127,
+      "archive_sha256": "2dde52f52b89b515cc69dc1fdaf8191d969b275653aa46a5ba25121a9fb4393e"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F09.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F09.png",
+      "original_sha256": "40892cf4fdbce375423a2d2abe686cda452d2e22d3f85e67dbcba5af8c3fdc25",
+      "bytes": 109897,
+      "archive_sha256": "40892cf4fdbce375423a2d2abe686cda452d2e22d3f85e67dbcba5af8c3fdc25"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F10.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F10.png",
+      "original_sha256": "df15028ea3735209e855876a95a0b227d1e037f72ab09ea493d4035cc98f08d7",
+      "bytes": 133856,
+      "archive_sha256": "df15028ea3735209e855876a95a0b227d1e037f72ab09ea493d4035cc98f08d7"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F11.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F11.png",
+      "original_sha256": "9d5b9bd2a0b9d9b1ac17138c12bd8f44e944df969c16306cc1ba283c5a016082",
+      "bytes": 119970,
+      "archive_sha256": "9d5b9bd2a0b9d9b1ac17138c12bd8f44e944df969c16306cc1ba283c5a016082"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F12.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F12.png",
+      "original_sha256": "d92444a886f41df383987e9d6c3c65f2a7236714043c872ed7586bf3a234d82d",
+      "bytes": 124600,
+      "archive_sha256": "d92444a886f41df383987e9d6c3c65f2a7236714043c872ed7586bf3a234d82d"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F13.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F13.png",
+      "original_sha256": "96a5360de82de202c74faae71d13ac1c630a2b9a0aa36bb83b686d5c91697a9f",
+      "bytes": 156040,
+      "archive_sha256": "96a5360de82de202c74faae71d13ac1c630a2b9a0aa36bb83b686d5c91697a9f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F14.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F14.png",
+      "original_sha256": "271b0349b3f95f4efccd92b49a718553f0d13ff886837adc47f5635eea75c7dd",
+      "bytes": 170587,
+      "archive_sha256": "271b0349b3f95f4efccd92b49a718553f0d13ff886837adc47f5635eea75c7dd"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F15.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F15.png",
+      "original_sha256": "f80c9f9a785c18e9aa5a26bf94a8ec603a353eb08271631cdec185f87cff455d",
+      "bytes": 103639,
+      "archive_sha256": "f80c9f9a785c18e9aa5a26bf94a8ec603a353eb08271631cdec185f87cff455d"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F16.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F16.png",
+      "original_sha256": "07bbef2afec17d0731edc5fb144270685a1c0502c5f58e47c716e6440560dd69",
+      "bytes": 26715,
+      "archive_sha256": "07bbef2afec17d0731edc5fb144270685a1c0502c5f58e47c716e6440560dd69"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F17.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F17.png",
+      "original_sha256": "79fd90b759bfef08e29213d29250429aee9be9424db6db83be7a362e0f17d5e1",
+      "bytes": 169141,
+      "archive_sha256": "79fd90b759bfef08e29213d29250429aee9be9424db6db83be7a362e0f17d5e1"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F18.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F18.png",
+      "original_sha256": "3ce9c50606ff5de0856d9e5be61d1d40f51bbb88b8e51532c436279301e60a69",
+      "bytes": 105042,
+      "archive_sha256": "3ce9c50606ff5de0856d9e5be61d1d40f51bbb88b8e51532c436279301e60a69"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/capture-manifest.json",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/capture-manifest.json",
+      "original_sha256": "8eb7f9f28a46a6e410ddb913bee940c907733dc3926fdbf97b9f6b7f5e8c859b",
+      "bytes": 8379,
+      "archive_sha256": "8eb7f9f28a46a6e410ddb913bee940c907733dc3926fdbf97b9f6b7f5e8c859b"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/diagram-review.json",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/diagram-review.json",
+      "original_sha256": "188564fcf5ad3961eb31457370ef73132bd0d48c433239d80b74a9c0ff950912",
+      "bytes": 224,
+      "archive_sha256": "188564fcf5ad3961eb31457370ef73132bd0d48c433239d80b74a9c0ff950912"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P01.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P01.png",
+      "original_sha256": "6c2cfff2a272d46a90ee9aa6f36d81354ce6d4aff211891f4899ee3ab8e8e222",
+      "bytes": 78168,
+      "archive_sha256": "6c2cfff2a272d46a90ee9aa6f36d81354ce6d4aff211891f4899ee3ab8e8e222"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P02.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P02.png",
+      "original_sha256": "099bf3f3c8957b5a7c8af9e3789b524e6c23640adbf2cc216b321edeb424d67b",
+      "bytes": 77747,
+      "archive_sha256": "099bf3f3c8957b5a7c8af9e3789b524e6c23640adbf2cc216b321edeb424d67b"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P03.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P03.png",
+      "original_sha256": "739d0f21e70f10cb54954a8f6b4881a748c5c6baf262f45b8ddafb78e95ac431",
+      "bytes": 72511,
+      "archive_sha256": "739d0f21e70f10cb54954a8f6b4881a748c5c6baf262f45b8ddafb78e95ac431"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P04.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P04.png",
+      "original_sha256": "cff5c1ed53a775e6b41c8d5992b8e47aad73206ea541248eebb6f2a7be99c1e6",
+      "bytes": 74949,
+      "archive_sha256": "cff5c1ed53a775e6b41c8d5992b8e47aad73206ea541248eebb6f2a7be99c1e6"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P05.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P05.png",
+      "original_sha256": "326bc7bcfea81d5e4d760d22b06a2360f28155d6b6e9fa61ba3abbc649eac23d",
+      "bytes": 87055,
+      "archive_sha256": "326bc7bcfea81d5e4d760d22b06a2360f28155d6b6e9fa61ba3abbc649eac23d"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P06.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P06.png",
+      "original_sha256": "9d9079e81f3b89dd6f8991e8db44d729f2a88e69bf01c7f98746f41ef48a1895",
+      "bytes": 88817,
+      "archive_sha256": "9d9079e81f3b89dd6f8991e8db44d729f2a88e69bf01c7f98746f41ef48a1895"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P07.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P07.png",
+      "original_sha256": "be17c9f9568900f6883305d695f6e898411d8f32ee24dabd03164e00581232b3",
+      "bytes": 68384,
+      "archive_sha256": "be17c9f9568900f6883305d695f6e898411d8f32ee24dabd03164e00581232b3"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P08.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P08.png",
+      "original_sha256": "eec83546d2b7cbbcc7d8cfa2415c1ac216e8a094e0cd29bc13376aaa2452ccb0",
+      "bytes": 95769,
+      "archive_sha256": "eec83546d2b7cbbcc7d8cfa2415c1ac216e8a094e0cd29bc13376aaa2452ccb0"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P09.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P09.png",
+      "original_sha256": "9c7399ffeea2cbb39650d9b1b37708a3d36bbd42318b65d04d21a07b391d75ba",
+      "bytes": 90598,
+      "archive_sha256": "9c7399ffeea2cbb39650d9b1b37708a3d36bbd42318b65d04d21a07b391d75ba"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P10.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P10.png",
+      "original_sha256": "276ae14128b71189f0173c6e0566a5cc83cd29b81d0ee50b27059b4dd1e0255d",
+      "bytes": 53847,
+      "archive_sha256": "276ae14128b71189f0173c6e0566a5cc83cd29b81d0ee50b27059b4dd1e0255d"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P11.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P11.png",
+      "original_sha256": "cdefcee78ae8c9e147fbcb5eaa41989df2b3fce065ecf266f4b7ab03b8382905",
+      "bytes": 57039,
+      "archive_sha256": "cdefcee78ae8c9e147fbcb5eaa41989df2b3fce065ecf266f4b7ab03b8382905"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P12.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P12.png",
+      "original_sha256": "c0a1d312f1cd10092ecfcb5e2f4840229ee9093bc73dcdabdd87e5bd78da9174",
+      "bytes": 87161,
+      "archive_sha256": "c0a1d312f1cd10092ecfcb5e2f4840229ee9093bc73dcdabdd87e5bd78da9174"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P13.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P13.png",
+      "original_sha256": "fd195b5c35e71d6a6b610108ea29838653f08f2c45492eb88801e517e5832be5",
+      "bytes": 77467,
+      "archive_sha256": "fd195b5c35e71d6a6b610108ea29838653f08f2c45492eb88801e517e5832be5"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P14.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P14.png",
+      "original_sha256": "f873689874b6411ddc671226438dba3e38a9f3911e0a7c0b3fe7ec23de38f3a1",
+      "bytes": 77853,
+      "archive_sha256": "f873689874b6411ddc671226438dba3e38a9f3911e0a7c0b3fe7ec23de38f3a1"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P15.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P15.png",
+      "original_sha256": "1dd78d755c12ab4240cf51d2eecfe6c14b1566aec5b7c3358797cff39bb8697a",
+      "bytes": 57844,
+      "archive_sha256": "1dd78d755c12ab4240cf51d2eecfe6c14b1566aec5b7c3358797cff39bb8697a"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P16.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P16.png",
+      "original_sha256": "59bb9604f48653d9cdab0ddef5e87b87708c3c853e1274762001d5e66a3ed3af",
+      "bytes": 48969,
+      "archive_sha256": "59bb9604f48653d9cdab0ddef5e87b87708c3c853e1274762001d5e66a3ed3af"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P17.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P17.png",
+      "original_sha256": "0c28cfd5e0ad70c5ce525214b5651517d01275867371f51b3e612479af1c1bc0",
+      "bytes": 94136,
+      "archive_sha256": "0c28cfd5e0ad70c5ce525214b5651517d01275867371f51b3e612479af1c1bc0"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P18.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/P18.png",
+      "original_sha256": "e19e551b1703035b0cbc26924e9386fdd0ed730385adad2bf9777208f865ce38",
+      "bytes": 62606,
+      "archive_sha256": "e19e551b1703035b0cbc26924e9386fdd0ed730385adad2bf9777208f865ce38"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/UX-10.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/UX-10.png",
+      "original_sha256": "e1c2dc159b448ba2fdd697d9262fa58b59502d3bf296362117400505eebcaa00",
+      "bytes": 57345,
+      "archive_sha256": "e1c2dc159b448ba2fdd697d9262fa58b59502d3bf296362117400505eebcaa00"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/UX-10.svg",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-pages/UX-10.svg",
+      "original_sha256": "4c2eb591b17b4ac077c5c6ff86d12afa0f6ebfdcb4271a4fdf6c1d168057fe8a",
+      "bytes": 32298,
+      "archive_sha256": "4c2eb591b17b4ac077c5c6ff86d12afa0f6ebfdcb4271a4fdf6c1d168057fe8a"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/capture-manifest.json",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/capture-manifest.json",
+      "original_sha256": "f0520c88562b132f71c8ca52f3a3542fc17433ed7ba103c1d49826bedf051fe2",
+      "bytes": 10476,
+      "archive_sha256": "f0520c88562b132f71c8ca52f3a3542fc17433ed7ba103c1d49826bedf051fe2"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/document-review.json",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/document-review.json",
+      "original_sha256": "587335d02d0b13448724eac6fa0f783c1da2deaf17d9c0c4bc1daa176ffdfc74",
+      "bytes": 398,
+      "archive_sha256": "587335d02d0b13448724eac6fa0f783c1da2deaf17d9c0c4bc1daa176ffdfc74"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S01.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S01.png",
+      "original_sha256": "306ad54a52ab0a4185e80d4dfc42a091f4c32ccfd19ebbd83d814050de5c0eaa",
+      "bytes": 79556,
+      "archive_sha256": "306ad54a52ab0a4185e80d4dfc42a091f4c32ccfd19ebbd83d814050de5c0eaa"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S02.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S02.png",
+      "original_sha256": "34d60a5cd1dc95aca3a5aaaa9555c4cc1232dab5b8148e097b73b484ea4671ef",
+      "bytes": 90481,
+      "archive_sha256": "34d60a5cd1dc95aca3a5aaaa9555c4cc1232dab5b8148e097b73b484ea4671ef"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S03.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S03.png",
+      "original_sha256": "526b96befa1f2fbc8fb4e84369c312f8ce9d748103c561089e627421814c7446",
+      "bytes": 93724,
+      "archive_sha256": "526b96befa1f2fbc8fb4e84369c312f8ce9d748103c561089e627421814c7446"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S04.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S04.png",
+      "original_sha256": "f2e0a12e54de863074f109454c87e3cb0ef56e29b24cd4db14dae86257b339b5",
+      "bytes": 98438,
+      "archive_sha256": "f2e0a12e54de863074f109454c87e3cb0ef56e29b24cd4db14dae86257b339b5"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S05.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S05.png",
+      "original_sha256": "4e5247caeb1846ede78705c2036e78187562c5cb5bb353da3ea616afe8a3c914",
+      "bytes": 95072,
+      "archive_sha256": "4e5247caeb1846ede78705c2036e78187562c5cb5bb353da3ea616afe8a3c914"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S06.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S06.png",
+      "original_sha256": "cd00e9fe6bfa8176b3f4914a601da5c10d6cacd632c38e5b124cf38b0a43475e",
+      "bytes": 103503,
+      "archive_sha256": "cd00e9fe6bfa8176b3f4914a601da5c10d6cacd632c38e5b124cf38b0a43475e"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S07.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S07.png",
+      "original_sha256": "b0ef841d4794ada1cbc6ad61ddfee4d441d12aa5644ddaca2c2342dd791b84b0",
+      "bytes": 93893,
+      "archive_sha256": "b0ef841d4794ada1cbc6ad61ddfee4d441d12aa5644ddaca2c2342dd791b84b0"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S08.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S08.png",
+      "original_sha256": "e855325558be7c63cae163f2cc5b34859c22a8e1f202066125cd735387f57ec2",
+      "bytes": 91206,
+      "archive_sha256": "e855325558be7c63cae163f2cc5b34859c22a8e1f202066125cd735387f57ec2"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S09.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S09.png",
+      "original_sha256": "817ee46b587d3dbaf8862e68953c7d923884568522968fdaf2725425d048ae81",
+      "bytes": 102370,
+      "archive_sha256": "817ee46b587d3dbaf8862e68953c7d923884568522968fdaf2725425d048ae81"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S10.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S10.png",
+      "original_sha256": "426bbb531d93e801f0e8bff51c07223f88c9f06ea52f4f9c4ba3e4df441e553d",
+      "bytes": 112517,
+      "archive_sha256": "426bbb531d93e801f0e8bff51c07223f88c9f06ea52f4f9c4ba3e4df441e553d"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S11.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S11.png",
+      "original_sha256": "3f9c2c29c7aa1e839d680c7fcb07312ae6ce26059f1c77ec0c744eda0dfb2c58",
+      "bytes": 115961,
+      "archive_sha256": "3f9c2c29c7aa1e839d680c7fcb07312ae6ce26059f1c77ec0c744eda0dfb2c58"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S12.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S12.png",
+      "original_sha256": "8d30d2dc24af00aeca35d4aa2975da62b6f30a9dd83affcdae61cd3167b0d048",
+      "bytes": 94313,
+      "archive_sha256": "8d30d2dc24af00aeca35d4aa2975da62b6f30a9dd83affcdae61cd3167b0d048"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S13.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S13.png",
+      "original_sha256": "6dd7f88d5288125b85f9fef4b1f1fb61912d383b387be670df90e0bebf63add8",
+      "bytes": 87120,
+      "archive_sha256": "6dd7f88d5288125b85f9fef4b1f1fb61912d383b387be670df90e0bebf63add8"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S14.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S14.png",
+      "original_sha256": "498d2922a52a7576b46802ed33e926489540e6be6b69c8f358d0f37b3b31a30f",
+      "bytes": 89104,
+      "archive_sha256": "498d2922a52a7576b46802ed33e926489540e6be6b69c8f358d0f37b3b31a30f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S15.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S15.png",
+      "original_sha256": "4f6aadc1b9c9c16a54af11189e314b484afa1baf29ff2ba92498e2aa6eef7766",
+      "bytes": 88326,
+      "archive_sha256": "4f6aadc1b9c9c16a54af11189e314b484afa1baf29ff2ba92498e2aa6eef7766"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S16.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S16.png",
+      "original_sha256": "cfce9a115c2211203040b403fbf86e9ce1f89233876a041573959a27553c4baa",
+      "bytes": 95787,
+      "archive_sha256": "cfce9a115c2211203040b403fbf86e9ce1f89233876a041573959a27553c4baa"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S17.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S17.png",
+      "original_sha256": "50088d84a5ee1eb0de2bd3aad8c4a7a1e699dd69352101accddc6c28ff9d8f6f",
+      "bytes": 88873,
+      "archive_sha256": "50088d84a5ee1eb0de2bd3aad8c4a7a1e699dd69352101accddc6c28ff9d8f6f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S18.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S18.png",
+      "original_sha256": "01a0a9533c3d6e14d34b181441af64e317876ae468dbcb6cfc0d54845cc38160",
+      "bytes": 87277,
+      "archive_sha256": "01a0a9533c3d6e14d34b181441af64e317876ae468dbcb6cfc0d54845cc38160"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S19.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S19.png",
+      "original_sha256": "e9f081070ad38f958a09c3b741c744ed31ff7ef12e411163892769b282bef952",
+      "bytes": 87621,
+      "archive_sha256": "e9f081070ad38f958a09c3b741c744ed31ff7ef12e411163892769b282bef952"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S20.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S20.png",
+      "original_sha256": "03d1501d7cbae4fe67bf10da344ef0846db7a89c2aa6c6f461f2dd1b7dcfbe8b",
+      "bytes": 87931,
+      "archive_sha256": "03d1501d7cbae4fe67bf10da344ef0846db7a89c2aa6c6f461f2dd1b7dcfbe8b"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S21.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S21.png",
+      "original_sha256": "0119b66fa9f1f468c7668b8cc1694a1a2182450c9d806d82e66d22a42c714dec",
+      "bytes": 89555,
+      "archive_sha256": "0119b66fa9f1f468c7668b8cc1694a1a2182450c9d806d82e66d22a42c714dec"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S22.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S22.png",
+      "original_sha256": "0855a435f055ede4c612c234791ef4d9bd196c2b6db9976f803addd4d2003b6c",
+      "bytes": 91308,
+      "archive_sha256": "0855a435f055ede4c612c234791ef4d9bd196c2b6db9976f803addd4d2003b6c"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S23.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S23.png",
+      "original_sha256": "a57594caf7c8e542bcd814282fd37ab20c5fe4b36e77f8b8194e439675ea023f",
+      "bytes": 90754,
+      "archive_sha256": "a57594caf7c8e542bcd814282fd37ab20c5fe4b36e77f8b8194e439675ea023f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S24.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S24.png",
+      "original_sha256": "e92575093ab3ab4fb6dc95c9ddd3376db68099f5b77f1142d1b4b90a07f66e7d",
+      "bytes": 88834,
+      "archive_sha256": "e92575093ab3ab4fb6dc95c9ddd3376db68099f5b77f1142d1b4b90a07f66e7d"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S25.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/student-teaching/S25.png",
+      "original_sha256": "d69512dfab1d186b77c36ba883ac0c86b6adc2627476b1715faebf7c48b08adb",
+      "bytes": 65382,
+      "archive_sha256": "d69512dfab1d186b77c36ba883ac0c86b6adc2627476b1715faebf7c48b08adb"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/capture-manifest.json",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/capture-manifest.json",
+      "original_sha256": "e06035ce84b89bf4e4685b653db4b71bc6277a890e66f30a23476b296f6070c9",
+      "bytes": 10012,
+      "archive_sha256": "e06035ce84b89bf4e4685b653db4b71bc6277a890e66f30a23476b296f6070c9"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/document-review.json",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/document-review.json",
+      "original_sha256": "03aafe254c473560568083d40d6dc94be0171e98a36be41456a7b6eadb2fc5fc",
+      "bytes": 5957,
+      "archive_sha256": "03aafe254c473560568083d40d6dc94be0171e98a36be41456a7b6eadb2fc5fc"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T01.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T01.png",
+      "original_sha256": "57b0b8f83268e1f3f0a16729ba25c0ccc50d528ac451bb6a04558622914d88d3",
+      "bytes": 159493,
+      "archive_sha256": "57b0b8f83268e1f3f0a16729ba25c0ccc50d528ac451bb6a04558622914d88d3"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T02.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T02.png",
+      "original_sha256": "bc11a40bcf7fc3d1d37bf907bc9080641f02abaf13569d0b190137796ab12f7a",
+      "bytes": 43952,
+      "archive_sha256": "bc11a40bcf7fc3d1d37bf907bc9080641f02abaf13569d0b190137796ab12f7a"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T03.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T03.png",
+      "original_sha256": "47c65b1d3471c920ecac3f1f7f67dbeb426db1525fdd65cfca0d786b3852e2bf",
+      "bytes": 42928,
+      "archive_sha256": "47c65b1d3471c920ecac3f1f7f67dbeb426db1525fdd65cfca0d786b3852e2bf"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T04.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T04.png",
+      "original_sha256": "8c95c4c6ee1bcc6eaf7a17dae0ee35cfb72cdc4fdeb51568ea9047690e0ef97c",
+      "bytes": 29640,
+      "archive_sha256": "8c95c4c6ee1bcc6eaf7a17dae0ee35cfb72cdc4fdeb51568ea9047690e0ef97c"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T05.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T05.png",
+      "original_sha256": "e0bdec927caae514be687be7cca985547700e79bf7305067a65035a258643035",
+      "bytes": 21954,
+      "archive_sha256": "e0bdec927caae514be687be7cca985547700e79bf7305067a65035a258643035"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T06.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T06.png",
+      "original_sha256": "f08ff6c49c23cb06f0b10f71f6ba5a89b19d0e40d8feefe2fd2b352d57f2f144",
+      "bytes": 44101,
+      "archive_sha256": "f08ff6c49c23cb06f0b10f71f6ba5a89b19d0e40d8feefe2fd2b352d57f2f144"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T07.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T07.png",
+      "original_sha256": "ce0fd1c8f567611e4d1b5d08f3c6d0db95def147f62503142b4667138be2beb5",
+      "bytes": 162081,
+      "archive_sha256": "ce0fd1c8f567611e4d1b5d08f3c6d0db95def147f62503142b4667138be2beb5"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T08.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T08.png",
+      "original_sha256": "7c03c685714cc25d753b9d9127d8b6809ef005ff3f555d1e8a9954782adf07c2",
+      "bytes": 19799,
+      "archive_sha256": "7c03c685714cc25d753b9d9127d8b6809ef005ff3f555d1e8a9954782adf07c2"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T09.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T09.png",
+      "original_sha256": "929b1b299baad40ef411386c01d15362484fb85144da3561a9744304ef20d66b",
+      "bytes": 133431,
+      "archive_sha256": "929b1b299baad40ef411386c01d15362484fb85144da3561a9744304ef20d66b"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T10.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T10.png",
+      "original_sha256": "7641594fb50fc097ad0a29bb3fd0c52ba87f998782b7748893d5513ed3f330c5",
+      "bytes": 121276,
+      "archive_sha256": "7641594fb50fc097ad0a29bb3fd0c52ba87f998782b7748893d5513ed3f330c5"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T11.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T11.png",
+      "original_sha256": "b3e864abb2f5af686a377a88bb60e2a26b062d603ee1bffd2c0d943839f9e760",
+      "bytes": 166128,
+      "archive_sha256": "b3e864abb2f5af686a377a88bb60e2a26b062d603ee1bffd2c0d943839f9e760"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T12.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T12.png",
+      "original_sha256": "867b5caa7726ce5a5c8598f310f28713c5264b09737629f7c8013d0df50b6b61",
+      "bytes": 27775,
+      "archive_sha256": "867b5caa7726ce5a5c8598f310f28713c5264b09737629f7c8013d0df50b6b61"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T13.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T13.png",
+      "original_sha256": "7a9d4321c141d4523decf7445591f81b0248a34c0f09585a48b1a9132d43746a",
+      "bytes": 169848,
+      "archive_sha256": "7a9d4321c141d4523decf7445591f81b0248a34c0f09585a48b1a9132d43746a"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T14.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T14.png",
+      "original_sha256": "973526d871220b40c6c4fe0b3e8f69e2b6e5c40fe45572246fec743d7e1c570f",
+      "bytes": 133694,
+      "archive_sha256": "973526d871220b40c6c4fe0b3e8f69e2b6e5c40fe45572246fec743d7e1c570f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T15.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T15.png",
+      "original_sha256": "418d948a6f2908879a6cbdb72aa17ce24b1539f7d4db5189f2276bf2e1606bd7",
+      "bytes": 30361,
+      "archive_sha256": "418d948a6f2908879a6cbdb72aa17ce24b1539f7d4db5189f2276bf2e1606bd7"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T16.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T16.png",
+      "original_sha256": "047b1ceb28a8f5e84b28b4a0b0bfc65157b6e428242cb89cf2a493d631d08408",
+      "bytes": 145839,
+      "archive_sha256": "047b1ceb28a8f5e84b28b4a0b0bfc65157b6e428242cb89cf2a493d631d08408"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T17.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T17.png",
+      "original_sha256": "9e5df005dcf9956101144ad7eb844718b3623e82920d4ac3529c487cc8d49c51",
+      "bytes": 147788,
+      "archive_sha256": "9e5df005dcf9956101144ad7eb844718b3623e82920d4ac3529c487cc8d49c51"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T18.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T18.png",
+      "original_sha256": "166db48f1fcadbb89dc21061058435a9c31a2c2ee4ce8b73f719f38381b21c9a",
+      "bytes": 147265,
+      "archive_sha256": "166db48f1fcadbb89dc21061058435a9c31a2c2ee4ce8b73f719f38381b21c9a"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T19.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T19.png",
+      "original_sha256": "e83fd6ae8763807b3e795bab864178c55a1e60d26e51824f94fdf73a6b5e349f",
+      "bytes": 147066,
+      "archive_sha256": "e83fd6ae8763807b3e795bab864178c55a1e60d26e51824f94fdf73a6b5e349f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T20.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T20.png",
+      "original_sha256": "25701590389fde96a85ae993b9ec2e390b6051668d48aab945fd37291f04f649",
+      "bytes": 51613,
+      "archive_sha256": "25701590389fde96a85ae993b9ec2e390b6051668d48aab945fd37291f04f649"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T21.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T21.png",
+      "original_sha256": "277fb4bd5a22eb90bf61fe0b757ae1cd98657afe13845a1870dd6bc96ffe374f",
+      "bytes": 161973,
+      "archive_sha256": "277fb4bd5a22eb90bf61fe0b757ae1cd98657afe13845a1870dd6bc96ffe374f"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T22.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T22.png",
+      "original_sha256": "e9fa1c66f752d29cd8b6587832ef925043c0cdce3b3f729e4234bff23b516be8",
+      "bytes": 149502,
+      "archive_sha256": "e9fa1c66f752d29cd8b6587832ef925043c0cdce3b3f729e4234bff23b516be8"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T23.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T23.png",
+      "original_sha256": "4f7e3c7616ddcfddef3cd62b38c41ece830dce7e458aa6c8af02ab03faa1a971",
+      "bytes": 133815,
+      "archive_sha256": "4f7e3c7616ddcfddef3cd62b38c41ece830dce7e458aa6c8af02ab03faa1a971"
+    },
+    {
+      "original_path": "doc/mvp/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T24.png",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/teaching-model/T24.png",
+      "original_sha256": "405fb52af5cd273c4737b64e1eeb76f26cbd974ad4fc4d974c351506c51e08e4",
+      "bytes": 150935,
+      "archive_sha256": "405fb52af5cd273c4737b64e1eeb76f26cbd974ad4fc4d974c351506c51e08e4"
+    },
+    {
+      "original_path": "doc/mvp/archive/foundation/DeerMind_MVP_Product_and_Domain_Foundation_v0.1.md",
+      "archive_path": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/foundation/DeerMind_MVP_Product_and_Domain_Foundation_v0.2.md",
+      "original_sha256": "195c8b1d87fb4ebcb95d8bf77493b469ad0639db211011d3db95e8d20e6118fc",
+      "bytes": 143295,
+      "archive_sha256": "86ebe183ae0a09b889c9925a8bb94ad5330a4de854ab92c0df4c7cae841a258c"
+    }
+  ],
+  "document_revisions": [
+    {
+      "old": "doc/concept-design/DeerMind_Learning_Model_Reassessment.md",
+      "new": "doc/concept-design/DeerMind_Learning_Model_Reassessment.md",
+      "from_version": "v0.5",
+      "to_version": "v0.6"
+    },
+    {
+      "old": "doc/concept-design/README.md",
+      "new": "doc/concept-design/README.md",
+      "from_version": "v0.5",
+      "to_version": "v0.6"
+    },
+    {
+      "old": "doc/mvp/archive/DeerMind_MVP_Definition_v0.1.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Definition_v0.2.md",
+      "from_version": "v0.1",
+      "to_version": "v0.2"
+    },
+    {
+      "old": "doc/mvp/archive/DeerMind_MVP_Requirements_and_Acceptance_v0.1.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Requirements_and_Acceptance_v0.2.md",
+      "from_version": "v0.1",
+      "to_version": "v0.2"
+    },
+    {
+      "old": "doc/mvp/archive/DeerMind_MVP_Validation_Plan_v0.1.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Validation_Plan_v0.2.md",
+      "from_version": "v0.1",
+      "to_version": "v0.2"
+    },
+    {
+      "old": "doc/mvp/archive/foundation/DeerMind_MVP_Product_and_Domain_Foundation_v0.1.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/foundation/DeerMind_MVP_Product_and_Domain_Foundation_v0.2.md",
+      "from_version": "v0.1",
+      "to_version": "v0.2"
+    },
+    {
+      "old": "doc/mvp/archive/README.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/README.md",
+      "from_version": null,
+      "to_version": "v0.1"
+    },
+    {
+      "old": "doc/mvp/MVP_Document_Architecture_Review.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Document_Architecture_Review.md",
+      "from_version": "v0.4",
+      "to_version": "v0.5"
+    },
+    {
+      "old": "doc/mvp/MVP_Gate_Reviews.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Gate_Reviews.md",
+      "from_version": "v0.6",
+      "to_version": "v0.7"
+    },
+    {
+      "old": "doc/mvp/MVP_Governance.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Governance.md",
+      "from_version": "v0.17",
+      "to_version": "v0.18"
+    },
+    {
+      "old": "doc/mvp/phase-3-definition/MVP_Definition.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Definition.md",
+      "from_version": "v0.10",
+      "to_version": "v0.11"
+    },
+    {
+      "old": "doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Requirements_and_Acceptance.md",
+      "from_version": "v0.12",
+      "to_version": "v0.13"
+    },
+    {
+      "old": "doc/mvp/phase-3-definition/MVP_Validation_Plan.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Validation_Plan.md",
+      "from_version": "v0.7",
+      "to_version": "v0.8"
+    },
+    {
+      "old": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md",
+      "from_version": "v0.8",
+      "to_version": "v0.9"
+    },
+    {
+      "old": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md",
+      "from_version": "v0.13",
+      "to_version": "v0.14"
+    },
+    {
+      "old": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md",
+      "from_version": "v0.15",
+      "to_version": "v0.16"
+    },
+    {
+      "old": "doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md",
+      "from_version": "v0.22",
+      "to_version": "v0.23"
+    },
+    {
+      "old": "doc/mvp/phase-5-engineering/MVP_Delivery_and_Handover.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-5-engineering/MVP_Delivery_and_Handover.md",
+      "from_version": "v0.5",
+      "to_version": "v0.6"
+    },
+    {
+      "old": "doc/mvp/phase-5-engineering/MVP_Engineering_Design.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-5-engineering/MVP_Engineering_Design.md",
+      "from_version": "v0.6",
+      "to_version": "v0.7"
+    },
+    {
+      "old": "doc/mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-5-engineering/MVP_Incremental_Delivery_Plan.md",
+      "from_version": "v0.6",
+      "to_version": "v0.7"
+    },
+    {
+      "old": "doc/mvp/README.md",
+      "new": "doc/mvp/archive/2026-11-02-before-m1-prd/README.md",
+      "from_version": "v0.12",
+      "to_version": "v0.13"
+    },
+    {
+      "old": "doc/system-design/DeerMind_System_Design_Roadmap_v0.9.md",
+      "new": "doc/system-design/DeerMind_System_Design_Roadmap_v0.10.md",
+      "from_version": "v0.9",
+      "to_version": "v0.10"
+    },
+    {
+      "old": "doc/system-design/README.md",
+      "new": "doc/system-design/README.md",
+      "from_version": "v0.3",
+      "to_version": "v0.4"
+    },
+    {
+      "old": "doc/top/DeerMind_Development_Roadmap_v0.8.md",
+      "new": "doc/top/DeerMind_Development_Roadmap_v0.9.md",
+      "from_version": "v0.8",
+      "to_version": "v0.9"
+    },
+    {
+      "old": "src/mvp_foundation/README.md",
+      "new": "src/mvp_foundation/README.md",
+      "from_version": "v0.5",
+      "to_version": "v0.6"
+    },
+    {
+      "old": "src/mvp_prototype/README.md",
+      "new": "src/mvp_prototype/README.md",
+      "from_version": "v0.19",
+      "to_version": "v0.20"
+    }
+  ],
+  "new_documents": [
+    "doc/mvp/DECISIONS.md",
+    "doc/mvp/README.md",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/ARCHIVE.md",
+    "doc/mvp/archive/README.md",
+    "doc/mvp/m1/PRD.md",
+    "doc/mvp/m1/README.md",
+    "doc/mvp/m1/design/README.md",
+    "doc/mvp/m1/engineering/README.md",
+    "doc/mvp/m1/validation/README.md",
+    "doc/mvp/m2/README.md",
+    "doc/mvp/m3/README.md"
+  ],
+  "limitations": [
+    "Legacy document validation and screenshot capture scripts still reference old Phase paths. They were not executed or retargeted; decide their reuse against the new PRD and never write new results into the archive."
+  ],
+  "checks": {
+    "archived_files": 186,
+    "unchanged_assets": 167,
+    "original_markdown_bytes_verified": 19,
+    "revised_documents": 26,
+    "new_documents": 11,
+    "links_checked": 945,
+    "introduced_link_errors": [],
+    "inherited_link_issues": [
+      {
+        "file": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Definition_v0.2.md",
+        "link": "../../../../top/DeerMind_Development_Roadmap_v0.3.md",
+        "kind": "missing_file"
+      },
+      {
+        "file": "doc/mvp/archive/2026-11-02-before-m1-prd/archive/foundation/DeerMind_MVP_Product_and_Domain_Foundation_v0.2.md",
+        "link": "../../../../../top/DeerMind_Development_Roadmap_v0.3.md#42-phase-4--product--domain-foundation",
+        "kind": "missing_file"
+      }
+    ],
+    "status": "passed_with_inherited_historical_link_issues"
+  }
+}

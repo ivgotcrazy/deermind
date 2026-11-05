@@ -1,0 +1,21 @@
+{
+  "caseId": "C02",
+  "status": "schema_error",
+  "httpStatus": 200,
+  "usage": {
+    "prompt_tokens": 6765,
+    "completion_tokens": 2794,
+    "total_tokens": 9559,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "prompt_cache_hit_tokens": 384,
+    "prompt_cache_miss_tokens": 6381
+  },
+  "returnedModel": "deepseek-flash",
+  "finishReason": "stop",
+  "issues": [
+    "['elements', 10, 'content', 2]: {'type': 'worked_example', 'expressions': [{'op': 'divide', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '5'}, {'op': 'number', 'value': '6'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '6'}]}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}, {'op': 'multiply', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '5'}, {'op': 'number', 'value': '6'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '6'}]}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '4'}, {'op': 'number', 'value': '3'}]}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '20'}, {'op': '3'}]}], 'assertedCorrect': False} is not valid under any of the given schemas"
+  ],
+  "elapsedSeconds": 18.92
+}

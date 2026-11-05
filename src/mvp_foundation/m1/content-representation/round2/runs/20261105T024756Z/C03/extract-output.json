@@ -1,0 +1,146 @@
+{
+  "tasks": [
+    {
+      "question": [
+        {
+          "regionIndex": 0,
+          "blocks": [
+            {
+              "type": "text",
+              "text": "下面几道题算得对吗？计算时有什么好办法可以减少错误？"
+            }
+          ]
+        },
+        {
+          "regionIndex": 1,
+          "blocks": [
+            {
+              "type": "worked_example",
+              "expressions": [
+                {
+                  "op": "multiply",
+                  "args": [
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "7"
+                        },
+                        {
+                          "op": "number",
+                          "value": "8"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "divide",
+                      "args": [
+                        {
+                          "op": "fraction",
+                          "args": [
+                            {
+                              "op": "number",
+                              "value": "3"
+                            },
+                            {
+                              "op": "number",
+                              "value": "4"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "fraction",
+                          "args": [
+                            {
+                              "op": "number",
+                              "value": "1"
+                            },
+                            {
+                              "op": "number",
+                              "value": "3"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "multiply",
+                  "args": [
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "7"
+                        },
+                        {
+                          "op": "number",
+                          "value": "8"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "multiply",
+                      "args": [
+                        {
+                          "op": "fraction",
+                          "args": [
+                            {
+                              "op": "number",
+                              "value": "3"
+                            },
+                            {
+                              "op": "number",
+                              "value": "4"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "fraction",
+                          "args": [
+                            {
+                              "op": "number",
+                              "value": "1"
+                            },
+                            {
+                              "op": "number",
+                              "value": "3"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "fraction",
+                  "args": [
+                    {
+                      "op": "number",
+                      "value": "7"
+                    },
+                    {
+                      "op": "number",
+                      "value": "32"
+                    }
+                  ]
+                }
+              ],
+              "assertedCorrect": false
+            }
+          ]
+        }
+      ],
+      "solutions": [],
+      "knowledge": [],
+      "teachingAids": []
+    }
+  ],
+  "uncertainties": [
+    "第二行中3/4的分子3和1/3的分母3上有约分笔迹，无法用给定表达式结构表达，未纳入表达式。",
+    "原题未明确标注该演算是否正确，assertedCorrect按待检查题面标为false。"
+  ]
+}

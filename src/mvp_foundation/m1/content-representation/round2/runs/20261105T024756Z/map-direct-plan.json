@@ -1,0 +1,11 @@
+{
+  "cases": [
+    "C02",
+    "C03"
+  ],
+  "reason": "Two mapping jobs had only transport errors. One extra attempt each; no content or prompt changes.",
+  "useEnvironmentProxy": false,
+  "tlsVerification": true,
+  "maxCalls": 2,
+  "recordedAt": "2026-11-05T02:54:09.883500+00:00"
+}

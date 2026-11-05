@@ -1,0 +1,57 @@
+{
+  "document": "doc/mvp/m1/PRD.md",
+  "version": "v0.2",
+  "mermaid_version": "11.12.0",
+  "viewport_width": 1000,
+  "diagrams": [
+    {
+      "id": "M1-01",
+      "source_sha256": "72d13380b8fbf962dfdbb69fd7ae6613f5ecb543ae7147b4e351bcb28883d8f3",
+      "svg": "M1-01.svg",
+      "png": "M1-01.png",
+      "rendered_size": {
+        "x": 24,
+        "y": 12,
+        "width": 712,
+        "height": 1088
+      }
+    },
+    {
+      "id": "M1-02A",
+      "source_sha256": "a5629d8c6435e0817401bd6d4e1d665095d6db1321a82efda1922a694af8f0ef",
+      "svg": "M1-02A.svg",
+      "png": "M1-02A.png",
+      "rendered_size": {
+        "x": 24,
+        "y": 24,
+        "width": 457.140625,
+        "height": 735.984375
+      }
+    },
+    {
+      "id": "M1-02B",
+      "source_sha256": "f4210b88226e1e5bf85627fa0e4e4310d1518cd3cb9df7402e2887f0cc3c1b1a",
+      "svg": "M1-02B.svg",
+      "png": "M1-02B.png",
+      "rendered_size": {
+        "x": 24,
+        "y": 24,
+        "width": 741.046875,
+        "height": 735.984375
+      }
+    },
+    {
+      "id": "M1-03",
+      "source_sha256": "b2ae39c9c9ce0bce641277bc7fb0157421a1934d941add34245c3494a53f47c8",
+      "svg": "M1-03.svg",
+      "png": "M1-03.png",
+      "rendered_size": {
+        "x": 24,
+        "y": 24,
+        "width": 820,
+        "height": 678
+      }
+    }
+  ],
+  "errors": []
+}

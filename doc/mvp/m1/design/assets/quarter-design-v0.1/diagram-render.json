@@ -1,0 +1,15 @@
+{
+  "document": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+  "version": "v0.4",
+  "mermaid_version": "11.12.0",
+  "id": "M1-Q01",
+  "source_sha256": "570933335755b3483cd4c4e157478ec9e2430413be4ec80415bafb9b7a2cfee8",
+  "svg": "M1-Q01.svg",
+  "png": "M1-Q01.png",
+  "rendered_size": {
+    "x": 24,
+    "y": 24,
+    "width": 720,
+    "height": 1018
+  }
+}

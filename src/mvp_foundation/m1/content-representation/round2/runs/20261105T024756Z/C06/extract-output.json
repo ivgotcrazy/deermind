@@ -1,0 +1,66 @@
+{
+  "tasks": [
+    {
+      "question": [
+        {
+          "regionIndex": 0,
+          "blocks": [
+            {
+              "type": "text",
+              "text": "从附页1中的图1剪出下面的图形，想办法说明圆和其他图形的不同。"
+            },
+            {
+              "type": "shape_row",
+              "items": [
+                {
+                  "shape": "circle",
+                  "classificationBasis": "visual_recognition",
+                  "dot": "center_like",
+                  "label": ""
+                },
+                {
+                  "shape": "ellipse",
+                  "classificationBasis": "visual_recognition",
+                  "dot": "center_like",
+                  "label": ""
+                },
+                {
+                  "shape": "triangle",
+                  "classificationBasis": "visual_recognition",
+                  "dot": "center_like",
+                  "label": ""
+                },
+                {
+                  "shape": "square",
+                  "classificationBasis": "visual_recognition",
+                  "dot": "center_like",
+                  "label": ""
+                },
+                {
+                  "shape": "pentagon",
+                  "classificationBasis": "visual_recognition",
+                  "dot": "center_like",
+                  "label": ""
+                },
+                {
+                  "shape": "hexagon",
+                  "classificationBasis": "visual_recognition",
+                  "dot": "center_like",
+                  "label": ""
+                }
+              ],
+              "dimensionsRole": "layout_only"
+            }
+          ]
+        }
+      ],
+      "solutions": [],
+      "knowledge": [],
+      "teachingAids": []
+    }
+  ],
+  "uncertainties": [
+    "图形中的点仅按视觉判断为靠近中心，未由文字明确说明其数学含义。",
+    "未提供附页1图1的内容，无法核对剪出的图形是否与附页一致。"
+  ]
+}

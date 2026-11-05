@@ -1,21 +1,21 @@
 # DeerMind 系统设计文档入口
 
-> **版本**：v0.3<br>
+> **版本**：v0.5<br>
 > **文档性质**：文档导航与使用说明<br>
 > **状态**：当前设计与工作入口；历史验证按原基线解释<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
 > **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-20<br>
-> **修订说明**：更新系统当前合同及阶段；同步相关合同与现行引用。逐文件变更见[修订记录 §11](../concept-design/DeerMind_Learning_Model_Reassessment.md#11-单模板多维-claim-的正式修订记录)。
+> **更新日期**：2026-11-03<br>
+> **修订说明**：v0.4 → v0.5：更新路线图导航与M1同步设计的当前工作说明，模型及历史结论不变；见[本轮记录](../mvp/DECISIONS.md#11-产品设计同步推进与分包计划)。<br>
 
 ---
 
-当前设计合同为以下七份 v1.4，承接[概念设计与新模型](../concept-design/README.md)。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.9.md)的阶段规划保持。
+当前设计合同为以下七份 v1.4，承接[概念设计与新模型](../concept-design/README.md)。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
 
-**当前工作（2026-10-20）：Phase 4 进行中；单模板多维 Claim、方面 Evidence 与多维 Belief 合同已传导，内容、案例和实现仍待迁移，G4 未通过。** 当前入口见 [MVP 文档](../mvp/README.md)。本轮 Phase 3 已按 G3-20261015-01 阶段性通过，批准输入保持原样；这次模型修订不改写该历史记录。
+**当前工作（2026-11-03）：按M1–M3组织产品迭代，M1的PRD、详细规格和原型按业务包同步推进。** 旧MVP文档及Phase 4资产已归档；单模板多维Claim等已确认规则需逐项承接。当前入口见[MVP文档](../mvp/README.md)。历史G3不等于新M1已通过设计或工程接收。
 
-归档 MVP 基线中的[基础领域演化选择](../mvp/archive/DeerMind_MVP_Definition_v0.1.md#7-模型管理与运行可观察性)及其后续质量责任保留供新文档核对承接；明确确认的决定不因归档自动撤销。此次已同步修订领域/产品 owner、具体问题溯源、Claim 参照、版本依赖与发布路由；历史实验输入与结论保持，也不另开 Evolution Spike。
+归档 MVP 基线中的[基础领域演化选择](../mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Definition_v0.2.md#7-模型管理与运行可观察性)及其后续质量责任保留供新文档核对承接；明确确认的决定不因归档自动撤销。此次已同步修订领域/产品 owner、具体问题溯源、Claim 参照、版本依赖与发布路由；历史实验输入与结论保持，也不另开 Evolution Spike。
 
 Architecture Validation Build 已收口，此前 G2 准入与能力分期见[统一 Validation Report §9](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。原 R2 仍为 6/6 段完成路径、14/24 轮内容可用、EVAL-02/04 未满足及原条件 HOLD；R3/R4 失败不改写。Build 退出时 9 项定向机制及回归检查通过，未新增模型调用。R5 未启动，仍是后续工程候选输入，不再作为 Build 退出前置要求。
 

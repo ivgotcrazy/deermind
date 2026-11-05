@@ -1,0 +1,56 @@
+{
+  "checkedAt": "2026-11-05T16:09:54.506632+00:00",
+  "documents": [
+    {
+      "path": "doc/mvp/README.md",
+      "before": "0.18",
+      "after": "0.19",
+      "sha256": "c26ff7513914e9dffc5bb1322cf93122ef33d3afcecce613f746c4be84c375ac"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "before": "0.9",
+      "after": "0.10",
+      "sha256": "917605c4518f3534d7fab58e24ea5c5732305d0bbcc9eb982d08d57221302d6e"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "before": "0.8",
+      "after": "0.9",
+      "sha256": "5f9b83ba45ba13b1b22c3d4e84a16126471e11adabc90c679a7b1fa5c2fcb55c"
+    },
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "before": "0.8",
+      "after": "0.9",
+      "sha256": "a7b81a16560af6def4f7e80733b352cc0b37711c6b52929831dd3b248f7ddeac"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "before": "0.8",
+      "after": "0.9",
+      "sha256": "55716f3e3e492652e25ef8c2b3803c079ddca65f0436713ac05f8fed6b408e61"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "before": "0.6",
+      "after": "0.7",
+      "sha256": "cc031a6f0c4775e37604c819818d8c825a13f94ea1825f93cc06dbbf76a54d22"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "before": "0.7",
+      "after": "0.8",
+      "sha256": "c5fa4a3aaa7ef678442309888a2cd711dd13d491b28f046a4d7ef49fab592d9a"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/README.md",
+      "before": "0.1",
+      "after": "0.2",
+      "sha256": "1ac34949d9e732d831a99d7123bfb8130d6f109ad920916122e731c9164a7ab7"
+    }
+  ],
+  "localLinksChecked": 179,
+  "screenshotsChecked": 34,
+  "errors": []
+}

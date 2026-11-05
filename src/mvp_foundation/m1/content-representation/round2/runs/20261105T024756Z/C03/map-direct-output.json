@@ -1,0 +1,14 @@
+{
+  "tasks": [
+    {
+      "taskIndex": 0,
+      "taskMatch": {
+        "catalogId": "TT-ERROR",
+        "reason": "题目给出他人分数混合运算演算，要求判断算得对不对并找减少错误的办法，属于辨析错误演算。",
+        "unmatchedProposal": null
+      },
+      "solutions": [],
+      "knowledge": []
+    }
+  ]
+}

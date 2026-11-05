@@ -1,0 +1,51 @@
+
+> deermind-m1-prototype@0.1.0 test
+> node --test tests/import.test.mjs
+
+TAP version 13
+# Subtest: standalone M1 import and organization retain sources, corrections and isolated drafts
+    # Subtest: only D01 is exposed; invalid input and real-file limitations are explicit
+    ok 1 - only D01 is exposed; invalid input and real-file limitations are explicit
+      ---
+      duration_ms: 831.3732
+      type: 'test'
+      ...
+    # Subtest: mock interruption and retry keep one import and real source images
+    ok 2 - mock interruption and retry keep one import and real source images
+      ---
+      duration_ms: 3170.7191
+      type: 'test'
+      ...
+    # Subtest: cross-page merge and question preview preserve teaching roles
+    ok 3 - cross-page merge and question preview preserve teaching roles
+      ---
+      duration_ms: 1280.4776
+      type: 'test'
+      ...
+    # Subtest: tables, chart references, draft reload and D02 handoff remain explicit
+    ok 4 - tables, chart references, draft reload and D02 handoff remain explicit
+      ---
+      duration_ms: 1722.0791
+      type: 'test'
+      ...
+    # Subtest: delete is scoped; removed input and old-prototype storage stay isolated
+    ok 5 - delete is scoped; removed input and old-prototype storage stay isolated
+      ---
+      duration_ms: 6051.8912
+      type: 'test'
+      ...
+    1..5
+ok 1 - standalone M1 import and organization retain sources, corrections and isolated drafts
+  ---
+  duration_ms: 13934.1323
+  type: 'test'
+  ...
+1..1
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14588.8011

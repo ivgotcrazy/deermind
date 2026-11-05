@@ -1,0 +1,7 @@
+{
+  "status": "local_setup_error",
+  "apiRequestSent": false,
+  "reason": "httpx client construction failed before HTTP dispatch: socksio missing for configured SOCKS proxy",
+  "resolution": "Installed socksio 1.0.0 in existing project virtual environment; subsequent calls use a separate run directory",
+  "note": "C01/result.json not_started was saved by finally before the uncaught ImportError; it is not a model result"
+}

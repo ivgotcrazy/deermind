@@ -1,102 +1,66 @@
-# MVP 文档框架与交付入口
+# MVP 产品迭代与文档入口
 
-> **版本**：v0.8<br>
-> **文档性质**：MVP 文档导航与阶段交付入口<br>
-> **状态**：2026-10-15 G3 阶段性通过；Phase 4 设计、原型与内容准备进行中，G4 未通过；Phase 5 仍为大纲<br>
-> **维护责任**：Codex 负责本轮整理与一致性检查<br>
-> **版本与评审**：工作修订由 Git 追溯；准确基线与结论见 [Gate 记录](MVP_Gate_Reviews.md)<br>
+> **版本**：v0.19<br>
+> **文档性质**：当前MVP目录、阅读顺序与维护约定<br>
+> **状态**：M1领域及教材原型已阶段收束并同步文档；其余设计继续，尚未完整工程接收<br>
+> **上游依据与基线**：用户本次目录重建要求及已确认的M1–M3范围；当前为工作稿，未通过新阶段评审<br>
+> **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
+> **评审记录**：用户认可领域与教材交互大致逻辑并授权同步；M1全量细审与正式接收仍未完成<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-28<br>
-> **修订说明**：v0.7 → v0.8：增加三种学生教学情境及当前规格入口，保留真实动态执行与 G4 的未完成边界；逐文件记录见 MVP_Governance §5.5。
+> **更新日期**：2026-11-06<br>
+> **修订说明**：v0.18 → v0.19：更新当前领域与教材交付入口、有限验证报告及后续工作状态。本批依据与检查见决定登记第14节<br>
 
 ---
 
-用户已于 2026-10-15 确认 Phase 3 阶段性审阅通过，批准基线为 [G3-20261015-01](MVP_Gate_Reviews.md#27-g3-阶段性审阅通过与-phase-4-交接)。Phase 4 依据该范围开展产品交互、实际内容、数据权限和评测准备；模型适用性疑问按 DEC-017、RISK-008 在实际工作中检验。
+当前围绕**M1的共同产品设计**推进：PRD主文档、design专题详规与交互原型交替核对、互相补充，可以返回修正。工作按[M1六个业务包](m1/README.md#2-六个产品设计工作包)展开，既明确管理员到学生的完整主流程，也形成操作、内容和验收的对应；各包成熟度分别记录，不按文件写完的先后安排设计。
 
-当前四份 Phase 4 文档已有工作稿。[新原型](http://127.0.0.1:5181/admin/#/domain)以原始 V2 学生端和新版后台为基线，家长端保留旧版；迁入范围、启动和限制见[原型说明](../../src/mvp_prototype/README.md)。本批按 DEC-026 撤销维护中心及审核发布流程，在对象所属页面直接编辑保存。本轮另补学生教学交互，家长界面保持原状；模型的正式运行、实际内容质量、校外材料及完整交接仍待完成；G4 未通过。旧 5178 服务已退役；旧版源码从 Git 历史查看，现行原型统一为 `src/mvp_prototype`，服务继续使用 5181。
+## 1. 目录与当前阅读顺序
 
-[归档](archive/README.md)和 Git 中的旧原型作历史参考，不自动成为本轮设计答案。旧原型中的整卷、旧统计和仅错题口径不属于当前范围。目录切换已完成，旧目录删除受自动审批审查阻塞，具体位置见[清理记录](MVP_Governance.md#53-原型目录统一2026-10-25)。
+```text
+doc/mvp/
+├── README.md
+├── DECISIONS.md                  已确认边界、待决事项及变更记录
+├── m1/
+│   ├── README.md                 第一版的工作顺序
+│   ├── PRD.md                    产品规格主文档，与详规和原型共同完成
+│   ├── design/                  同步推进的交互、内容与模型详细规格
+│   ├── prototype/               M1独立交互代码，按工作包逐步迁入
+│   ├── engineering/README.md     工程设计与实现的接收条件；暂不展开
+│   └── validation/README.md      验证计划与有限真实内容提取试验
+├── m2/README.md                  第二版方向，尚不细化
+├── m3/README.md                  第三版方向，尚不细化
+└── archive/
+    ├── README.md
+    └── 2026-11-02-before-m1-prd/  原MVP文档、截图及更早归档
+```
 
-当前设计承接 DEC-022 的 Task-only、DEC-024 的默认四维及 DEC-025 的单模板多维组织：四维是同一任务 Claim 内部方面，Belief 分方面维护。规范见 [Evaluation §3.1–4](../concept-design/DeerMind_Evaluation_Space_Design_v1.5.md#31-learner-state-model定义-deermind-可以相信什么)；实际领域、案例及实现迁移仍由 OPEN-010 承接，当前原型不冒充已完成新状态接入。
+当前先读[已确认边界](DECISIONS.md)，再读[M1入口](m1/README.md)、[M1 PRD草案](m1/PRD.md)、[教材准备参考](m1/design/Content_and_Model_Reference.md)及[主流程交互设计](m1/design/Interaction_Design.md)。当前可先审阅PRD§3.2–3.4、内容规格§3及交互规格§1；领域与教材收束范围见[决定登记第14节](DECISIONS.md#14-领域与教材原型收束及文档同步)。其余产品设计和正式工程接收仍未完成。
 
-本轮后台讨论已归并到以下入口，无需逐段翻找历史对话：
+## 2. 三个产品阶段
 
-- [后台页面与导航](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#25-管理端编辑定义与观测运行分别组织)：领域、评估、课程、观测、学生状态和账号管理。
-- [模型与内容关系](phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md#2-核心概念与领域规则)：Task 经 Solution 汇总 KC，模板字段、实例保存、Task Claim 与课程采用。
-- [本轮决定及版本记录](MVP_Governance.md#52-后台逐页讨论结论归并2026-10-24)：DEC-027–030、修改范围及待完成事项。
-
-系统配置保留现状，内容待定。当前后台主要使用内存 mock；真实教材包、正式评价与权限服务尚未同步完成，不能据页面走查通过 G4。
-
-## 1. 阶段对应
-
-目录编号对应 [Development Roadmap](../top/DeerMind_Development_Roadmap_v0.6.md) 的项目阶段，不对应 System Design Roadmap 内部阶段。阶段目标与 Gate 含义保持。
-
-| 目录与阶段 | 要回答的问题 | 阶段交接 |
+| 阶段 | 要回答的问题 | 当前投入 |
 | --- | --- | --- |
-| `phase-3-definition/` · Phase 3 MVP Definition | 为谁解决什么问题，具体功能、业务对象和规则是什么，如何验收？ | G3：无需原型即可理解三端核心业务，足以支撑产品方案与领域准备 |
-| `phase-4-product-and-domain-foundation/` · Phase 4 Product & Domain Foundation | 如何组织操作与反馈，依靠哪些实际领域内容、授权规则和评测参考？ | G4：流程可走查，实际资产及交换合同可交接，工程无需补定核心产品或领域含义 |
-| `phase-5-engineering/` · Phase 5 MVP Engineering | 如何分步实现、验证、运行并交付完整 MVP？ | G5：真实核心价值链可用，软件、运行工具与证据可复现，可进入 Internal Alpha |
+| [M1 教材与教学核心闭环](m1/README.md) | 管理员能否完成指定教材整册导入建模，学生能否学习、提问、测验，系统能否依据评价安排后续任务？ | 领域与教材本轮文图收束；接续Task Claim与目标，其他设计仍未完成 |
+| [M2 日常学习与多角色完善](m2/README.md) | 如何在M1基础上补齐日常学习、资料、家长和第二课程？ | 保留方向，待M1结果后确定具体范围 |
+| [M3 持续学习与效果验证](m3/README.md) | 如何改善持续学习并用真实证据检验价值？ | 保留方向，不提前展开实现 |
 
-Phase 6 Internal Alpha & Evaluation、Phase 7 Controlled Pilot 是后续独立阶段。Phase 5 可分增量实施，局部增量不代替完整 MVP，也不新增 Roadmap 阶段。已关闭的架构 Spike、Build 和系统设计基线不因本次文档整理重开。
+M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工程、内部质量、真实使用等责任仍需履行，但不再用它们作为当前文档的一级目录。路线及Gate含义见[Development Roadmap](../top/DeerMind_Development_Roadmap_v0.10.md)；历史G3不自动成为新M1批准。
 
-## 2. 交付物导航
+## 3. 每类输出只维护一份
 
-保留十份主体文档，增加两份跨阶段共同文件；各阶段协同完善，按输入依赖交接，不为每轮讨论或实施步骤另建文档。
-
-| 阶段 | 文档 | 主要职责 |
+| 输出 | 位置与职责 | 创建／完善时机 |
 | --- | --- | --- |
-| 共同 | [文档共同管理规则](MVP_Governance.md) | 信息归属、决定与约束、待决与风险、基线变更、公共术语及编号 |
-| 共同 | [Gate 评审记录](MVP_Gate_Reviews.md) | 独立记录 G3/G4/G5 的对象版本、证据、遗留责任和结论 |
-| Phase 3 | [产品定义](phase-3-definition/MVP_Definition.md) | 证据索引、需求决策表、价值、范围和可行性前提 |
-| Phase 3 | [需求与验收规格](phase-3-definition/MVP_Requirements_and_Acceptance.md) | 产品对象、三端功能与业务规则、AI 边界、验收场景及唯一追溯主索引 |
-| Phase 3 | [验证方案](phase-3-definition/MVP_Validation_Plan.md) | 验证责任地图、指标与校准、样本、有限执行和结论解释 |
-| Phase 4 | [产品与交互设计](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md) | 活动、用户和运营流程、页面状态及原型 |
-| Phase 4 | [领域与内容基础](phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md) | 实际领域与内容包、教学评价依据、来源映射、质量规则及交换合同 |
-| Phase 4 | [数据与权限设计](phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md) | 授权模型、数据用途与生命周期，细化已定范围 |
-| Phase 4 | [评测资产规格与清单](phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md) | 确定性、语义及组合验证的实际案例、参考和版本 |
-| Phase 5 | [工程设计](phase-5-engineering/MVP_Engineering_Design.md) | 技术取舍、运行与接口合同、AI 实现及维护 |
-| Phase 5 | [分步实施与验证计划](phase-5-engineering/MVP_Incremental_Delivery_Plan.md) | 增量目标、依赖、工作项、资源与验证节点 |
-| Phase 5 | [交付与运行交接](phase-5-engineering/MVP_Delivery_and_Handover.md) | 可运行产物、操作说明、工程结果与 G5 评审输入 |
+| 产品规格主文档 | `m1/PRD.md`：目标、范围、用户场景、全流程、功能规则、模型与数据含义、权限、AI责任及验收 | 按业务包与详细规格、原型同步迭代，保留完整产品图景 |
+| 产品详细规格与原型 | `m1/design/`：分步操作、状态、截图、教材与模型对应、题目及评价标准；原型代码在`m1/prototype/`，旧代码按需复用 | 有范围草稿即交叉展开；具体操作和内容可以返回修改PRD，按包共同评审 |
+| 工程设计与交付 | `m1/engineering/`：接口、存储、真实服务、运行恢复、实现计划与交付记录 | 产品含义及必要设计可接收后；不由工程补定核心需求 |
+| 验证计划与报告 | `m1/validation/`：测量方法、样本、配置、停止条件；实际结果另成报告 | 计划在运行前形成；有真实执行后才建立结果报告 |
+| 决定与待决 | `DECISIONS.md`：承接、变更、未决、阶段评审及版本记录 | 随需求推进维护；不另复制PRD正文 |
 
-文档之外，Phase 4 须有实际原型、领域内容、评测材料和审查记录；Phase 5 须有软件、配置与操作工具、执行证据。资产由对应文档索引，不以空清单代替完成。
+文件不必一开始全部创建。design已对齐本轮领域与教材产品规则、字段及当前截图；engineering尚未展开完整实现方案，validation已有有限真实内容提取试验，实际结果按原报告保留。PRD主文档、详细规格和原型共同表达产品设计；工程定义技术机制；验证说明怎样获得和解释证据。模型定义的权威来源仍是概念／系统设计，PRD须说明它们在产品中的具体作用。
 
-Phase 3 承担产品范围、业务行为和验收承诺，Phase 4 承担具体产品方案及基础资产，Phase 5 承担工程实现。各文档的输入、输出、直接接收者和接收条件在文档开头与完成条件中明确；共同边界见 [Governance §1](MVP_Governance.md#1-信息归属与冲突处理)。Phase 4 的可检查材料不依赖 Phase 5 正式导入器才能成立，Phase 5 必须验证实际导入和执行。
+## 4. 历史与资产的使用规则
 
-**本轮教学模型入口。** [Product §3.9](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#teaching-model)给出蓝图、策略、规则、三种情境及逐步截图；上游合同为 [Requirements §3.13](phase-3-definition/MVP_Requirements_and_Acceptance.md#313-管理员维护教学方法系统按实际情况教学)，理论与内容参考见 [Domain §6.4](phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md#64-教学策略的依据与内容准备)。定义编辑和预写推演已可审阅，学生端动态采用及真实效果尚未验证；学生侧固定情境的逐步操作、25张截图见 [Product §3.10](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#student-teaching)，可从[教学走查入口](http://127.0.0.1:5181/student/teaching.html)体验。完整版本和未决见 Governance §5.4–5.5、OPEN-013。
-
-## 3. 使用与后续工作
-
-Phase 3 已批准的产品承诺由三份正文维护；Phase 4 的具体方案见[产品与交互设计](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md)，其余三份文档分别负责内容、权限与实际案例。交互工作已将任务与信息架构落实到首轮三端低保真稿；接下来审阅实际过程，按同一结构承接其余关键任务并补齐大量记录场景，不继续在旧导航中堆加演示页面。既有完整 MVP 范围保持，不缩减为单一活动。
-
-本阶段按以下工作次序推进，存在依赖的部分先满足输入，能够独立准备的内容同时进行：
-
-| 工作项 | 具体交付 | 当前状态与下一步 |
-| --- | --- | --- |
-| P4-01 产品结构与典型活动 | 三端任务与结构、ACT/FLOW/UI 合同及可运行走查 | 本轮后台已逐页调整并归并结论；学生／家长保留此前范围，后台采用 mock；真实任务、服务与数据迁移仍待完成 |
-| P4-02 数据与权限 | AUTH-001、生命周期、关系失效和外部处理路径 | 首稿已形成；具体服务与适用条件仍待 OPEN-004 核实 |
-| P4-03 实际内容与领域准备 | 两套材料的首批章节、对象与映射、目标、判断参考及维护记录 | 校内“分数的应用”的定义、映射、目标、51 条逐题参考与 8 幅关系图可在后台查看；审核与使用条件待核，校外材料后补 |
-| P4-04 评测材料与联合交接 | CASE、参考、版本、资产审查和 G4 输入 | 四十八个交互案例、十二个语义参考及十二组权限允许／拒绝材料已编制；合同与内容复核、正式留出材料及完整维护影响仍待完成 |
-
-这些是 Phase 4 内部工作项，不是新 Roadmap 阶段。只在出现新的产品取舍或需要材料、授权时请用户介入；已经明确的要求直接承接。
-
-可以先按下列图示建立整体认识，再阅读所在章节的规范描述和验收条件。图是正文的对应视图，不是另一套精简需求或正式界面方案。
-
-查验具体规则时，可直接阅读[行为验收 §6](phase-3-definition/MVP_Requirements_and_Acceptance.md#6-行为验收场景)：23 组场景分别列出前置情境和预期结果；质量目标见[指标目标 §2.1](phase-3-definition/MVP_Validation_Plan.md#21-指标目标)，计算条件、限制与准备责任见[测量口径 §2.2](phase-3-definition/MVP_Validation_Plan.md#22-测量口径与准备)。这些是尚待执行的要求，不是验收结果。
-
-| 阅读问题 | 图示及所在位置 |
-| --- | --- |
-| 学生、家长和管理员各做什么 | [Definition §2](phase-3-definition/MVP_Definition.md#2-用户角色与使用情境)，图 DEF-01 |
-| 主动求助和系统建议如何形成后续学习 | [Definition §5](phase-3-definition/MVP_Definition.md#5-完整-mvp-范围与能力边界)，图 DEF-02 |
-| 教材、领域定义、个人记录和判断是什么关系 | [Requirements §1](phase-3-definition/MVP_Requirements_and_Acceptance.md#1-范围术语与需求组织)，图 REQ-01 |
-| 讲解如何推进，独立检测求助后如何处理 | [Requirements §3.2](phase-3-definition/MVP_Requirements_and_Acceptance.md#32-学生求助检验与回看)，图 REQ-02、REQ-03 |
-| 后台如何从案例查到模型与运行依据 | [Requirements §3.5](phase-3-definition/MVP_Requirements_and_Acceptance.md#35-管理员查看模型与实际运行)，图 REQ-04 |
-| 章节状态与近期作答为何分开统计 | [Requirements §3.9](phase-3-definition/MVP_Requirements_and_Acceptance.md#39-章节学习情况与统计口径)，图 REQ-05 |
-| 三端如何衔接内容准备、个人采用、学习及修订 | [Requirements §3.10](phase-3-definition/MVP_Requirements_and_Acceptance.md#310-三端贯通业务示例)，图 REQ-06 |
-| 三端页面怎样组织，长期记录如何查找 | [Product §2](phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#2-角色旅程与整体结构)，图 UX-10／11／12；§2.6 为关键路径，§2.7 为数据组织 |
-| 定义、资产、工程、质量与使用价值怎样分阶段验证 | [Validation §1](phase-3-definition/MVP_Validation_Plan.md#1-验证问题与阶段责任)，图 VAL-01 |
-
-现行模型依据为 [正式概念与系统设计入口](../concept-design/README.md)，DEC-007 替代早期独立能力本体候选。DEC-011–016 已明确目标权限、已有空间更新、章节统计、必要基础回补及按需产品内介入；OPEN-002–004 保留实际教材、投入和服务条件核验，责任与不阻塞定义的理由见 Definition §7。模型有效性、内容质量和实际投入继续凭后续资产及测量判断。
-
-[文档架构评审](MVP_Document_Architecture_Review.md) 保留调整依据，不作为第十一份主体交付物或新 Gate。G3 已确认，Phase 4 按上述工作项推进；不重开已关闭的 Spike/Build。
-
-[学习模型复核稿](../concept-design/DeerMind_Learning_Model_Reassessment.md) 保留探索过程，当前单模板多维结论与逐文件变更见其 §11。MVP 管理操作按 DEC-026 收缩为直接维护；独立 Evolution 审核发布工作流后置，不改变下述模型语义所有权。既有模型基线为 Domain / Learning Space v1.3、Concept / Evaluation / Interaction / Evolution v1.5 和 System Design v1.4。本轮 MVP 的 Task–Solution–KC 关系以领域与内容基础 §2 为准；概念图仍含直接 Task–KC 关系，后续同步见 OPEN-012。实际资产与实现的迁移由 OPEN-010 跟踪，历史实验结论保留原范围。
+- 原MVP文档和截图整体进入[归档入口](archive/README.md)，不继续在旧正文中填新需求。已经确认的决定不会因归档自动失效，承接过程见DECISIONS。
+- 当前M1原型在[独立目录](m1/prototype/README.md)，默认端口5182；[旧原型](../../src/mvp_prototype/README.md)保留为参考，默认端口5181。当前包含领域手动管理、教材解析、待入库处理及章节关联，其他M1能力随工作包补齐；内容参考仍在[准备资产目录](../../src/mvp_foundation/README.md)，不把样例当作实际建模结果。
+- 只有与当前M1需求有关且核对过的旧内容才迁入新PRD；不整篇复制旧文档后换名称。需要改变已确认决定时说明理由并讨论。
+- 每次修改文档均升版并记录；旧冻结输入和真实运行结果不重算、不改判。当前图文设计发生修改时，文字、原型及截图仍需同步。

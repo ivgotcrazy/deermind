@@ -1,0 +1,21 @@
+{
+  "caseId": "C03",
+  "status": "schema_error",
+  "httpStatus": 200,
+  "usage": {
+    "prompt_tokens": 5747,
+    "completion_tokens": 597,
+    "total_tokens": 6344,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "prompt_cache_hit_tokens": 384,
+    "prompt_cache_miss_tokens": 5363
+  },
+  "returnedModel": "deepseek-flash",
+  "finishReason": "stop",
+  "issues": [
+    "['elements', 0, 'content', 1]: {'type': 'worked_example', 'expressions': [{'op': 'equal', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '8'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}]}, {'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '8'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}]}]}, {'op': 'equal', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '8'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '32'}]}]}], 'assertedCorrect': False} is not valid under any of the given schemas"
+  ],
+  "elapsedSeconds": 11.92
+}

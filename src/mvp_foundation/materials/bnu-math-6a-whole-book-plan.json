@@ -1,0 +1,1268 @@
+{
+  "id": "PLAN-BNU-6A-WHOLE-BOOK-001",
+  "version": "2",
+  "kind": "whole_book_catalog_modeling_and_acceptance_plan",
+  "updated_on": "2026-11-02",
+  "status": "source_adopted_representative_reference_prepared_whole_book_modeling_pending",
+  "authority": "DEC-039、040、041；SRC-030为来源核验，SRC-031为用户采用电子源的决定",
+  "source_verification": "bnu-math-6a-source-verification.json",
+  "target": "以用户已提供的北师大六上数学电子链接为M1工作源，覆盖整册；版权页后补，不阻塞独立准备。",
+  "catalog_basis": "出版社电子教材两页印刷目录，非根据旧版目录或模型记忆补全；目录本身只列单元／活动层级。",
+  "checklist_basis": "建模任务和检查例是Codex据目录及抽读正文提出的工作清单，不是已完成的模型、教材官方答案或运行结果。",
+  "common_acceptance": [
+    {
+      "id": "B01",
+      "name": "来源与内容",
+      "criterion": "核对每个教学内容块的原页／区域、文字公式、图表和跨页关系；正文、例题、练习、复习、实践和必要附页都有记录。",
+      "evidence_required": "原页定位表；内容块清单；漏页和识别疑点处理记录"
+    },
+    {
+      "id": "B02",
+      "name": "Task／Solution／KC",
+      "criterion": "按完成责任、参数、变化与边界建立或复用 Task；至少一个适用 Solution；递归子方法及 KC 引用完整无循环，KC 有反查路径。",
+      "evidence_required": "对象及版本清单；方法条件；知识引用和反查记录"
+    },
+    {
+      "id": "B03",
+      "name": "Claim／目标",
+      "criterion": "每个 Task Claim 绑定唯一模板版本；内部四方面分别有标准或有依据的裁剪说明；目标引用明确章节、方法和帮助条件。",
+      "evidence_required": "Claim方面与要求映射；正例、反例、信息不足例"
+    },
+    {
+      "id": "B04",
+      "name": "教学与题目",
+      "criterion": "准备可引用的原理、例子、图表与核对题；答案和合法方法、开放题判据完整；练习、检测和已展示答案可区分。",
+      "evidence_required": "题目与参考；模板绑定；来源；管理员核对记录"
+    },
+    {
+      "id": "B05",
+      "name": "反馈和评价",
+      "criterion": "用固定表现检查正确、错误、求助后答对与未知等情况；分别验证反馈、Evidence方面、Belief及目标达成，未测方面不变成通过。",
+      "evidence_required": "预期判断与实际结果对照；帮助记录；评价追溯"
+    },
+    {
+      "id": "B06",
+      "name": "应用与运行",
+      "criterion": "管理员应用内容后，学生能选用、讲解、提问、检测和查看反馈；按依据形成可接受／暂缓的后续任务，运行与重开可追溯。",
+      "evidence_required": "内容采用版本；活动／轮次记录；任务来源；完成或失败结果"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "U01",
+      "title": "第一单元 分数除法",
+      "publisher_catalog_id": "120170718181616016000",
+      "printed_pages": {
+        "start": 2,
+        "end": 10
+      },
+      "reader_indices": {
+        "start": 5,
+        "end": 13
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "all_main_pages_visually_read_not_model_reviewed",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "分数除以整数、除以非零分数、已知份额求整体；计算、图解和理由分别覆盖",
+      "candidate_solution_and_kc": "等分／包含图、乘除互逆或等量关系、乘倒数；KC 包括分数单位、倒数、等量关系与约分。",
+      "content_and_evaluation_notes": "保留同一整体的分割和涂色；除数非零；识别“算对”与“说清为何取倒数”的不同要求。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "U01-C01",
+          "input": "3/4÷1/2，要求计算并用分割图说明。",
+          "expected": "结果 3/2；图和单位整体对应。只写结果不能支持理解与解释方面。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "U01-C02",
+          "input": "某整体的 2/5 是 18，求整体并验算。",
+          "expected": "整体 45；45×2/5=18；把 18×2/5 当整体的路线应被区分。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "U02",
+      "title": "第二单元 圆",
+      "publisher_catalog_id": "120170718181616016060",
+      "printed_pages": {
+        "start": 11,
+        "end": 32
+      },
+      "reader_indices": {
+        "start": 14,
+        "end": 35
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "chapter_start_and_contents_verified_content_sampling_only",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "圆的性质、画圆、周长和面积及其关系、组合图形中的圆；逐页补齐具体子任务",
+      "candidate_solution_and_kc": "等距／对称解释、测量与推导、代入及分割组合；KC 包括圆心半径直径、圆周率、周长／面积及单位。",
+      "content_and_evaluation_notes": "图上的圆心、半径／直径标注、弧线与区域边界不能丢；附页 1、2 与正文连接。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "U02-C01",
+          "input": "同一圆半径扩大到原来的 2 倍，比较周长和面积变化并说明原因。",
+          "expected": "周长 2 倍、面积 4 倍；会代公式不直接证明会解释面积推导。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "U02-C02",
+          "input": "图中标注直径 6 cm，求周长和面积。",
+          "expected": "周长 6π cm，面积 9π cm²；不得把直径当半径或把周长当面积。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "U03",
+      "title": "第三单元 用字母表示（二）",
+      "publisher_catalog_id": "120170718181616016300",
+      "printed_pages": {
+        "start": 33,
+        "end": 43
+      },
+      "reader_indices": {
+        "start": 36,
+        "end": 46
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "chapter_start_and_contents_verified_content_sampling_only",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "由情境表达数量关系、解释字母与式子、代值及规律表达；具体小节待逐页登记",
+      "candidate_solution_and_kc": "确定量与角色、写式、代值检验及等价表达；KC 包括变量意义、运算约定、数量关系。",
+      "content_and_evaluation_notes": "表格列与字母一一对应，区分两个可独立变化的量；不直接扩大为初中代数课程。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "U03-C01",
+          "input": "每件 A 类物品 3 元、B 类 2 元，各买 a、b 件，写总价并代入 a=2、b=5。",
+          "expected": "3a+2b=16；字母对应不同件数，必须保留这个解释。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "U03-C02",
+          "input": "将上题写成 3a+2a，询问何时才可能适用。",
+          "expected": "一般不成立；只有相应数量相等等附加条件下才适用，不能只凭一次巧合算对通过。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "P01",
+      "title": "综合实践 制订节水方案",
+      "publisher_catalog_id": "120170718181616016600",
+      "printed_pages": {
+        "start": 44,
+        "end": 48
+      },
+      "reader_indices": {
+        "start": 47,
+        "end": 51
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "all_main_pages_visually_read_not_model_reviewed",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "提出调查问题、设计测量与记录、换算和估算用水量、比较并说明节水方案",
+      "candidate_solution_and_kc": "选变量与单位→采集／引用数据→推算→比较方案；递归复用计算和数据解释方法。",
+      "content_and_evaluation_notes": "实测、给定、估算数据分开；保留实验记录表、来源和假设。文字报告不能证明真实实验已完成。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "P01-C01",
+          "input": "给定稳定滴水速度 200 mL/分钟，估算 1 小时水量并说明假设。",
+          "expected": "12 L；明确速度保持不变，结果是给定条件下推算，不是学生的实际测量。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "P01-C02",
+          "input": "比较两个节水方案，但只有其中一个方案的用水数据。",
+          "expected": "可以解释已有数据，须指出缺少比较依据；不能编造另一个数据或自动给调查能力达标。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "U04",
+      "title": "第四单元 分数的应用",
+      "publisher_catalog_id": "120170718181616017047",
+      "printed_pages": {
+        "start": 49,
+        "end": 56
+      },
+      "reader_indices": {
+        "start": 52,
+        "end": 59
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "chapter_start_and_contents_verified_content_sampling_only",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "两级份额、相对基准增减、同基准组合、混合运算与情境检查；迁移旧候选",
+      "candidate_solution_and_kc": "分步求量／合并系数、找基准、差额与基准比较；KC 经实际方法汇总，停用旧 KCClaim。",
+      "content_and_evaluation_notes": "保留线段图、关系图与跨题引用；非整除运次按 DEC-019 仅作可选练习／迁移探针。",
+      "existing_asset": "content/fractions-application/package.json v1：旧合同候选，待迁移及逐项核对",
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "U04-C01",
+          "input": "原来有 80 本书，增加原来的 1/4 后有多少本？说明两种允许方法。",
+          "expected": "两种方法为 80+80×1/4=100、80×(1+1/4)=100；本题要求分别说明两种，只使用一种不能满足全部要求。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "U04-C02",
+          "input": "80 增到 100 与 100 减到 80，变化分率是否相同？",
+          "expected": "分别为 1/4 和 1/5；参照基准不同。讲解后立即答对不构成延迟保持证据。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ],
+      "reference_package": "src/mvp_foundation/m1/increase-reference/package.json",
+      "reference_note": "新增53–54页增加关系切片、2任务/3方法/5KC/1Claim/6题/13案例；正式对象引用及整章验收仍为空或待办。"
+    },
+    {
+      "id": "U05",
+      "title": "第五单元 比的认识",
+      "publisher_catalog_id": "120170718181617001087",
+      "printed_pages": {
+        "start": 57,
+        "end": 66
+      },
+      "reader_indices": {
+        "start": 60,
+        "end": 69
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "chapter_start_and_contents_verified_content_sampling_only",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "辨认比与比值、比较关系、化简及按比解决情境问题；逐页确认任务边界",
+      "candidate_solution_and_kc": "比较对应量、同倍变化、求总份数和每份量；KC 包括比的意义、比的基本性质、分数和除法关系。",
+      "content_and_evaluation_notes": "不把比项当占总量的分率；配比、图片长宽和量纲须与附页 3 图 1 对应。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "U05-C01",
+          "input": "两部分之比 2:3，总量 50，分别是多少并解释。",
+          "expected": "20 与 30；2/5、3/5 才是各自占总量的分率，不是 2/3。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "U05-C02",
+          "input": "长宽比 6:4 与 9:6 是否相同？只给 9 与 4 能否直接比较？",
+          "expected": "前两者比值均为 3/2；必须比较同一对象对应的长宽，不能混取不同图片的量。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "U06",
+      "title": "第六单元 确定位置",
+      "publisher_catalog_id": "120170718181617001300",
+      "printed_pages": {
+        "start": 67,
+        "end": 72
+      },
+      "reader_indices": {
+        "start": 70,
+        "end": 75
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "chapter_start_and_contents_verified_content_sampling_only",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "确定参照点、用方向角与距离定位、表达路线和变换观察点",
+      "candidate_solution_and_kc": "读方向标→量／读角→换算距离→定位；KC 包括方位、角、距离与图上尺度。",
+      "content_and_evaluation_notes": "附页 3 图 2 是可测量来源；图片缩放后保留尺度关系。只有方向或只有距离不足以唯一定位。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "U06-C01",
+          "input": "A 在 O 的北偏东 30°、距离 600 m 处，描述 O 相对 A 的位置。",
+          "expected": "南偏西 30°、600 m；交换观察点后方向改变，距离不变。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "U06-C02",
+          "input": "只知道某点在 O 的东北方，要求在图上唯一标出。",
+          "expected": "条件不足；不得随意补造距离或把大致方向当完整定位。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "F01",
+      "title": "数学好玩 五子棋",
+      "publisher_catalog_id": "120170718181617001600",
+      "printed_pages": {
+        "start": 73,
+        "end": 74
+      },
+      "reader_indices": {
+        "start": 76,
+        "end": 77
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "all_main_pages_visually_read_not_model_reviewed",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "理解教材棋规、读棋局、判断连线与攻防选择、说明有限步推演",
+      "candidate_solution_and_kc": "按行／列／斜线检查、比较候选落点和回应；KC 包括规则条件、空间关系与有条件推理。",
+      "content_and_evaluation_notes": "保留棋子颜色、交点、落子次序及轮到谁；关联附页 4。不给未证明的走法标“唯一最佳”或“必胜”。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "F01-C01",
+          "input": "给出合法棋局，双方均未成五：黑子在 (3,5)、(4,5)、(5,5)、(6,5)，轮黑落子，两端空。",
+          "expected": "(2,5) 或 (7,5) 均能横向成五；参考须接受两种，不硬设唯一落点。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "F01-C02",
+          "input": "给出含编号的棋局，但未说明轮到谁，要求下一步最佳落子。",
+          "expected": "应先核对执棋方和局面条件；局部连线正确不能推断完整对弈能力。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "U07",
+      "title": "第七单元 百分数的认识与应用（一）",
+      "publisher_catalog_id": "120170718181617002022",
+      "printed_pages": {
+        "start": 75,
+        "end": 85
+      },
+      "reader_indices": {
+        "start": 78,
+        "end": 88
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "chapter_start_and_contents_verified_content_sampling_only",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "解释百分数、与分数小数转换、求百分率及简单应用；具体范围按原页核对",
+      "candidate_solution_and_kc": "选比较基准、等值转换、份额／整体求量；KC 包括百分率意义、基准量及比值。",
+      "content_and_evaluation_notes": "保留分母对应对象和百分号；不把百分数都限定小于 100%，也不把人数当百分率。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "U07-C01",
+          "input": "比较投中 18/20 与 8/10 的记录，说明依据。",
+          "expected": "90% 与 80%；都未投中 2 次不表示同一命中率。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "U07-C02",
+          "input": "把 0.35 写为百分数，并解释 35% 的基准。",
+          "expected": "35%，不是 0.35%；计算正确与能解释参照整体分别记录。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "U08",
+      "title": "第八单元 观察物体（二）",
+      "publisher_catalog_id": "120170718181617003014",
+      "printed_pages": {
+        "start": 86,
+        "end": 90
+      },
+      "reader_indices": {
+        "start": 89,
+        "end": 93
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "chapter_start_and_contents_verified_content_sampling_only",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "从指定方向观察与投影、由视图描述或构造物体、讨论信息是否充分",
+      "candidate_solution_and_kc": "固定观察方向→建立物体和视图对应→按给定视图检验；KC 包括立体与平面表示、遮挡和方向。",
+      "content_and_evaluation_notes": "保留观察箭头、摆放与隐藏部分；圆柱／圆锥图及方块视图不可只保留文字名称。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "U08-C01",
+          "input": "直立圆柱和圆锥分别从上面、正面看，匹配给定视图。",
+          "expected": "方向和摆放条件必须一致；上面轮廓均为圆，正面轮廓分别为长方形、三角形。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "U08-C02",
+          "input": "仅给同一正面轮廓，问能否确定物体深度与完整形状。",
+          "expected": "一般不能；符合条件的多个构造都可接受，不能因不等于示例图而判错。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "U09",
+      "title": "第九单元 数据的表示和分析（三）",
+      "publisher_catalog_id": "120170718181617004024",
+      "printed_pages": {
+        "start": 91,
+        "end": 102
+      },
+      "reader_indices": {
+        "start": 94,
+        "end": 105
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "chapter_start_and_contents_verified_content_sampling_only",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "确定数据口径、整理统计表、选择和读取条形／折线／扇形图、比较并解释结论",
+      "candidate_solution_and_kc": "取值与分类→选图→单位和比例转换→解释；KC 包括统计对象、单位、构成比例与变化趋势。",
+      "content_and_evaluation_notes": "91–93 页为跨页表图关联；保留行列头、图例、轴、单位和取整。60岁及以上与65岁及以上是包含关系。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "U09-C01",
+          "input": "依据 91–93 页数据，比较老年人数与年龄构成；检查能否把 60 岁及以上和 65 岁及以上人数相加。",
+          "expected": "不能相加作互斥类别总量；图表的群体和单位须对齐，圆整值与原表允许规定差异。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "U09-C02",
+          "input": "给定某组占 25%，但不知道总体人数，要求求该组人数。",
+          "expected": "条件不足；扇形图能给比例，不自动给绝对数量；不能把选择图型正确当结论解释通过。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "title": "综合实践 制订营养食谱",
+      "publisher_catalog_id": "120170718181617008068",
+      "printed_pages": {
+        "start": 103,
+        "end": 107
+      },
+      "reader_indices": {
+        "start": 106,
+        "end": 110
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "all_main_pages_visually_read_not_model_reviewed",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "记录和分类食物数据、按给定参照比较、计算构成比例、提出并解释改进方案",
+      "candidate_solution_and_kc": "明确参照→整理质量与分类→计算比例→比较调整；复用比、百分数和统计方法。",
+      "content_and_evaluation_notes": "保留参考图、食物／营养成分不同口径、单位和数据来源。这里是数学课程任务，不据此推出个人健康诊断。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "P02-C01",
+          "input": "给定三类食材质量 100 g、200 g、300 g，求第三类所占比例并画构成示意。",
+          "expected": "总量 600 g，第三类 50%；食材质量不能直接冒充其中某营养成分的质量。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "P02-C02",
+          "input": "比较两份食谱，但缺少食材质量或参照标准。",
+          "expected": "指出缺哪些数据；可以讨论方案，不能编出比例或声称营养已达标。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    },
+    {
+      "id": "R01",
+      "title": "总复习",
+      "publisher_catalog_id": "120170718181618001088",
+      "printed_pages": {
+        "start": 108,
+        "end": 115
+      },
+      "reader_indices": {
+        "start": 111,
+        "end": 118
+      },
+      "range_basis": "纸面目录及本章首页确认起点；末页按下一目录项起点减一，R01另核到印刷115页结束。",
+      "source_review": "chapter_start_and_contents_verified_content_sampling_only",
+      "modeling_status": "pending",
+      "candidate_task_scopes": "数与代数、图形与几何、统计与概率、综合与实践；跨章选法与解释，不重建重复模板",
+      "candidate_solution_and_kc": "优先引用相应章节模板和复合 Solution；任务关系、责任或适用边界无法被现有定义覆盖时再新增，保留来源和方法条件。",
+      "content_and_evaluation_notes": "要求编号和 Claim 引用去重；同一作答支持多个方面时仍是一份有依赖关系的表现。",
+      "existing_asset": null,
+      "model_object_refs": [],
+      "target_refs": [],
+      "question_refs": [],
+      "acceptance_checks": [
+        {
+          "id": "R01-C01",
+          "input": "长方形场地 12 m×8 m，中间半径 2 m 的圆形花坛，求其余面积并说明方法。",
+          "expected": "96−4π m²；分解为长方形与圆面积再作差，明确半径和不重叠条件。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        },
+        {
+          "id": "R01-C02",
+          "input": "同一道复习题同时涉及分数与比，检查评价写入。",
+          "expected": "只更新被该表现和条件支持的 Claim 方面；不得把一次作答复制成两次独立证据，或宣布整册掌握。",
+          "source": "author_written_check_example",
+          "status": "not_executed",
+          "evidence": null
+        }
+      ],
+      "completion": [
+        {
+          "check": "B01",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B02",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B03",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B04",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B05",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        },
+        {
+          "check": "B06",
+          "status": "pending",
+          "evidence": null,
+          "reviewer": null,
+          "checked_on": null
+        }
+      ]
+    }
+  ],
+  "appendices": [
+    {
+      "id": "AP01",
+      "title": "附页1",
+      "printed_page": 117,
+      "reader_index": 119,
+      "relates_to": [
+        "U02"
+      ],
+      "content": "图形剪拼／圆的性质材料",
+      "status": "source_read_mapping_pending"
+    },
+    {
+      "id": "AP02",
+      "title": "附页2",
+      "printed_page": 119,
+      "reader_index": 120,
+      "relates_to": [
+        "U02"
+      ],
+      "content": "圆形与古镜图等操作材料",
+      "status": "source_read_mapping_pending"
+    },
+    {
+      "id": "AP03",
+      "title": "附页3",
+      "printed_page": 121,
+      "reader_index": 121,
+      "relates_to": [
+        "U05",
+        "U06"
+      ],
+      "content": "图1长宽比较；图2方位地图，1cm表示1000m",
+      "status": "source_read_mapping_pending"
+    },
+    {
+      "id": "AP04",
+      "title": "附页4",
+      "printed_page": 123,
+      "reader_index": 122,
+      "relates_to": [
+        "F01"
+      ],
+      "content": "带落子次序的棋盘",
+      "status": "source_read_mapping_pending"
+    }
+  ],
+  "other_pages": {
+    "front_matter_indices": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "postscript_index": 123,
+    "unavailable_index": 124,
+    "unaccounted_printed_page_numbers": [
+      116,
+      118,
+      120,
+      122
+    ],
+    "note": "附页只有117/119/121/123印刷号；缺少的偶数号可能为附页背面，但未见原件不能断言为空白。不得对全书固定使用电子序号减3，也不能把总页数124当印刷页数。"
+  },
+  "chapter_delivery_order": [
+    [
+      "U01",
+      "U04"
+    ],
+    [
+      "U03",
+      "U05",
+      "U07"
+    ],
+    [
+      "U02",
+      "U06",
+      "U08"
+    ],
+    [
+      "U09",
+      "P01",
+      "P02",
+      "F01",
+      "R01"
+    ]
+  ],
+  "order_note": "这是工具与内容准备顺序，不是学生学习顺序；同一批内可按依赖调整，全部13项及附页仍为M1整册范围。",
+  "release_blockers": [
+    "正式导入使用前核对原件完整性及相应处理用途；版权页后补，不再作为当前内容准备前置条件",
+    "逐页内容盘点及模型编制尚未完成",
+    "当前对象合同迁移、题目参考与实际运行验收尚未完成"
+  ],
+  "operational_tasks_boundary": "调查、测量、画图、构造、棋局和食谱均须建模；可用纸上操作及报告输入，不要求先做专用仿真工具。具体输入方式按M1接收合同确定。没有实际过程证据的操作／合作表现保持未知，不以模拟数据通过代替真实实践。",
+  "revisions": [
+    {
+      "version": "1",
+      "date": "2026-11-02",
+      "change": "建立官方目录、13项逐章建模与26个检查例、六项接收证据及附页清单；均未执行验收。"
+    },
+    {
+      "version": "2",
+      "date": "2026-11-02",
+      "change": "采用电子源并登记当前模型参考，13项正式建模和78项接收检查仍未完成。"
+    }
+  ],
+  "deferred_metadata": [
+    "本册ISBN、版次、出版/印刷年份；取得后核对实际差异，不把2024审定标记改成出版年"
+  ]
+}

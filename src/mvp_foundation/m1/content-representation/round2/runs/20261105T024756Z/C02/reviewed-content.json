@@ -1,0 +1,268 @@
+{
+  "tasks": [
+    {
+      "question": [
+        {
+          "regionIndex": 0,
+          "blocks": [
+            {
+              "type": "text",
+              "text": "分数的应用（一）"
+            },
+            {
+              "type": "text",
+              "text": "气象小组有12人。"
+            },
+            {
+              "type": "text",
+              "text": "摄影小组的人数是气象小组的"
+            },
+            {
+              "type": "formula",
+              "expression": {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "1"
+                  },
+                  {
+                    "op": "number",
+                    "value": "3"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "text",
+              "text": "航模小组的人数是摄影小组的"
+            },
+            {
+              "type": "formula",
+              "expression": {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "3"
+                  },
+                  {
+                    "op": "number",
+                    "value": "4"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "text",
+              "text": "航模小组有多少人？说一说你是如何思考的。"
+            }
+          ]
+        },
+        {
+          "regionIndex": 1,
+          "blocks": [
+            {
+              "type": "text",
+              "text": "请列式解决问题。"
+            },
+            {
+              "type": "table",
+              "headers": [
+                "答句"
+              ],
+              "rows": [
+                [
+                  {
+                    "state": "response_blank",
+                    "value": null
+                  }
+                ]
+              ],
+              "unit": ""
+            }
+          ]
+        }
+      ],
+      "solutions": [
+        {
+          "content": [
+            {
+              "regionIndex": 1,
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "先求摄影小组有多少人，再……"
+                },
+                {
+                  "type": "worked_example",
+                  "expressions": [
+                    {
+                      "op": "multiply",
+                      "args": [
+                        {
+                          "op": "multiply",
+                          "args": [
+                            {
+                              "op": "number",
+                              "value": "12"
+                            },
+                            {
+                              "op": "fraction",
+                              "args": [
+                                {
+                                  "op": "number",
+                                  "value": "1"
+                                },
+                                {
+                                  "op": "number",
+                                  "value": "3"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "op": "fraction",
+                          "args": [
+                            {
+                              "op": "number",
+                              "value": "3"
+                            },
+                            {
+                              "op": "number",
+                              "value": "4"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "op": "number",
+                      "value": "3"
+                    }
+                  ],
+                  "assertedCorrect": true
+                },
+                {
+                  "type": "text",
+                  "text": "结果单位：人。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "content": [
+            {
+              "regionIndex": 1,
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "先求航模小组的人数是气象小组的几分之几。"
+                },
+                {
+                  "type": "worked_example",
+                  "expressions": [
+                    {
+                      "op": "multiply",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "12"
+                        },
+                        {
+                          "op": "group",
+                          "args": [
+                            {
+                              "op": "multiply",
+                              "args": [
+                                {
+                                  "op": "fraction",
+                                  "args": [
+                                    {
+                                      "op": "number",
+                                      "value": "1"
+                                    },
+                                    {
+                                      "op": "number",
+                                      "value": "3"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "op": "fraction",
+                                  "args": [
+                                    {
+                                      "op": "number",
+                                      "value": "3"
+                                    },
+                                    {
+                                      "op": "number",
+                                      "value": "4"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "op": "multiply",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "12"
+                        },
+                        {
+                          "op": "fraction",
+                          "args": [
+                            {
+                              "op": "number",
+                              "value": "1"
+                            },
+                            {
+                              "op": "number",
+                              "value": "4"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "op": "number",
+                      "value": "3"
+                    }
+                  ],
+                  "assertedCorrect": true
+                },
+                {
+                  "type": "text",
+                  "text": "结果单位：人。"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "knowledge": [],
+      "teachingAids": [
+        {
+          "regionIndex": 1,
+          "blocks": [
+            {
+              "type": "text",
+              "text": "你能看懂笑笑的方法吗？"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "uncertainties": [
+    "原图约分笔迹未逐笔结构化；左列演算按首式与结果规范化展示，未伪造约分过程。",
+    "插画人物外观不是题目条件；保留文字给定的人数和比例。"
+  ]
+}

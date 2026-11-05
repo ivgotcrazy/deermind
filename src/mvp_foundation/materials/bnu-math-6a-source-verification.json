@@ -1,0 +1,573 @@
+{
+  "id": "SOURCE-BNU-6A-20261102",
+  "version": "1",
+  "kind": "publisher_source_verification",
+  "checked_on": "2026-11-02",
+  "source": "SRC-030",
+  "status": "publisher_grade_volume_and_catalog_verified_target_2026_match_pending",
+  "method": "publisher public reader and its normal image API",
+  "links": [
+    {
+      "url": "https://www.100875.com.cn/show/eBookAndTeacher.html?resId=7965194976af40f5b9abc4b3f89522fe&bookId=120170718181616016000&firstNum=120170718181616016000&contributeId=9276",
+      "http_status": 200,
+      "title": "数学|六年级上册",
+      "reader": [
+        {
+          "indexNum": "005",
+          "totalNum": "124",
+          "image_path": "/dzkb/xxsx/6s/005.jpg"
+        }
+      ]
+    },
+    {
+      "url": "https://www.100875.com.cn/show/eBookAndTeacher.html?resId=7965194976af40f5b9abc4b3f89522fe&bookId=120170718181616017047&firstNum=120170718181616017047&contributeId=9276",
+      "http_status": 200,
+      "title": "数学|六年级上册",
+      "reader": [
+        {
+          "indexNum": "052",
+          "totalNum": "124",
+          "image_path": "/dzkb/xxsx/6s/052.jpg"
+        }
+      ]
+    }
+  ],
+  "same_resource_id": "7965194976af40f5b9abc4b3f89522fe",
+  "identity": {
+    "title": "义务教育教科书 数学 六年级上册",
+    "publisher": "北京师范大学出版社",
+    "organized_by": "北京师范大学",
+    "cover_approval_year": 2024,
+    "series_revision": "第五版",
+    "curriculum_standard_year": 2022,
+    "publication_year": null,
+    "printing_year": null,
+    "edition_statement": null,
+    "isbn": null,
+    "matches_user_physical_book": null,
+    "conclusion": "北师大版、数学、六年级、上册已核到；2024审定、2022课标和系列第五版均不能替代本册版权页上的版次、出版年和印次。未最终确认与用户2026年用书一致，也不能据2024审定判断为不一致。"
+  },
+  "reader_reported_images": 124,
+  "downloaded_numbered_images": 45,
+  "visually_inspected_indices": [
+    1,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    36,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    60,
+    70,
+    76,
+    77,
+    78,
+    89,
+    94,
+    95,
+    96,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123
+  ],
+  "images": [
+    {
+      "reader_index": 1,
+      "filename": "page-001.jpg",
+      "bytes": 61441,
+      "sha256": "ad6549d15ec9cfd212531c5b3257416c0f435fc302e1b8020b9ee73ed8237827",
+      "source_path": "/dzkb/xxsx/6s/001.jpg"
+    },
+    {
+      "reader_index": 3,
+      "filename": "page-003.jpg",
+      "bytes": 90458,
+      "sha256": "a010923def80c77e406f0c9af277adddcee1534ba57fc4b13fe9693b1823fadf",
+      "source_path": "/dzkb/xxsx/6s/003.jpg"
+    },
+    {
+      "reader_index": 4,
+      "filename": "page-004.jpg",
+      "bytes": 102831,
+      "sha256": "dc5ac73ca11c5e7638795a5f05578a0ba7ab1776227fa848c0cfa7131ded39fb",
+      "source_path": "/dzkb/xxsx/6s/004.jpg"
+    },
+    {
+      "reader_index": 5,
+      "filename": "page-005.jpg",
+      "bytes": 127993,
+      "sha256": "af39fbc15f1ee1cbf4387ce8362d8261f6b0c048159512eaf2ad37d56be5021e",
+      "source_path": "/dzkb/xxsx/6s/005.jpg"
+    },
+    {
+      "reader_index": 6,
+      "filename": "page-006.jpg",
+      "bytes": 95279,
+      "sha256": "7240391229e32c68eb92a24c925d5959bf5099993aef8e414ae13f64dd4f431b",
+      "source_path": "/dzkb/xxsx/6s/006.jpg"
+    },
+    {
+      "reader_index": 14,
+      "filename": "page-014.jpg",
+      "bytes": 149478,
+      "sha256": "d93ae657a606782ea53a162c4b7c2ec638631aee0f9ea3c747c39183628217f1",
+      "source_path": "/dzkb/xxsx/6s/014.jpg"
+    },
+    {
+      "reader_index": 36,
+      "filename": "page-036.jpg",
+      "bytes": 143817,
+      "sha256": "5ae286900f753e89f766710f28df0ad26acf2b7a7a5126a0a41fb5057cd2f30c",
+      "source_path": "/dzkb/xxsx/6s/036.jpg"
+    },
+    {
+      "reader_index": 47,
+      "filename": "page-047.jpg",
+      "bytes": 168216,
+      "sha256": "27b3589a68440193d26b5dbae1296a07fec234807126ee53d524cacb07c57a6e",
+      "source_path": "/dzkb/xxsx/6s/047.jpg"
+    },
+    {
+      "reader_index": 48,
+      "filename": "page-048.jpg",
+      "bytes": 110919,
+      "sha256": "6ebb20b68f6baab5fa9c02ae3fcdc2c98e942a840efebf56be26dedf3f16ab64",
+      "source_path": "/dzkb/xxsx/6s/048.jpg"
+    },
+    {
+      "reader_index": 49,
+      "filename": "page-049.jpg",
+      "bytes": 134323,
+      "sha256": "05720a89eaee46df44eb7d14b53660dc33924f59d101a9ad39b7f45312d1f1a7",
+      "source_path": "/dzkb/xxsx/6s/049.jpg"
+    },
+    {
+      "reader_index": 50,
+      "filename": "page-050.jpg",
+      "bytes": 126744,
+      "sha256": "3eda525a5eabbea231e6ae89600b030d65c24d694a5acb5f2fffe805cf12ad51",
+      "source_path": "/dzkb/xxsx/6s/050.jpg"
+    },
+    {
+      "reader_index": 51,
+      "filename": "page-051.jpg",
+      "bytes": 156014,
+      "sha256": "cb9d99a5110ffccee6826b95932d0dd8f6f049b93caf55500bc0e9b200e7acc4",
+      "source_path": "/dzkb/xxsx/6s/051.jpg"
+    },
+    {
+      "reader_index": 52,
+      "filename": "page-052.jpg",
+      "bytes": 179108,
+      "sha256": "6a05931fa54805e5930bd600d572f59b20421629711bf14dadf7c4497e0a5722",
+      "source_path": "/dzkb/xxsx/6s/052.jpg"
+    },
+    {
+      "reader_index": 60,
+      "filename": "page-060.jpg",
+      "bytes": 158494,
+      "sha256": "03cf4d29e4dfa0caae0cce6e5af5e7c10444318192475e7cb57a45de00acd3be",
+      "source_path": "/dzkb/xxsx/6s/060.jpg"
+    },
+    {
+      "reader_index": 70,
+      "filename": "page-070.jpg",
+      "bytes": 154769,
+      "sha256": "569f2c75100b3fdf770def0752a536d4119142d7424560cd0be95f0158c45dab",
+      "source_path": "/dzkb/xxsx/6s/070.jpg"
+    },
+    {
+      "reader_index": 76,
+      "filename": "page-076.jpg",
+      "bytes": 198890,
+      "sha256": "1559c630e646709cf2ac23943b00acf13dae5d43b35bcfae3beba5034affd5cc",
+      "source_path": "/dzkb/xxsx/6s/076.jpg"
+    },
+    {
+      "reader_index": 77,
+      "filename": "page-077.jpg",
+      "bytes": 175967,
+      "sha256": "d9eeecfe78e068857c7e6de6c45b4c7c1884635e257c6739f174a7db804cbd21",
+      "source_path": "/dzkb/xxsx/6s/077.jpg"
+    },
+    {
+      "reader_index": 78,
+      "filename": "page-078.jpg",
+      "bytes": 182843,
+      "sha256": "1e1bab46f798fe24fb2f2a9c83577f4d6bddcabe95823ad5677fcb8269571578",
+      "source_path": "/dzkb/xxsx/6s/078.jpg"
+    },
+    {
+      "reader_index": 89,
+      "filename": "page-089.jpg",
+      "bytes": 125460,
+      "sha256": "080fa0f38e2dd3d79485d490d14afd953e997d4e9be6d2cc67d389c35f795c98",
+      "source_path": "/dzkb/xxsx/6s/089.jpg"
+    },
+    {
+      "reader_index": 94,
+      "filename": "page-094.jpg",
+      "bytes": 188819,
+      "sha256": "8ed97bf227c496dc49c45a2ade2c19df34f7445a02d0a8a5dca39bf8038d3ec1",
+      "source_path": "/dzkb/xxsx/6s/094.jpg"
+    },
+    {
+      "reader_index": 95,
+      "filename": "page-095.jpg",
+      "bytes": 147315,
+      "sha256": "757f1f5604cee7ebceef4ab2f929d6b265352442477b1d2ba32c9b6988061558",
+      "source_path": "/dzkb/xxsx/6s/095.jpg"
+    },
+    {
+      "reader_index": 96,
+      "filename": "page-096.jpg",
+      "bytes": 150190,
+      "sha256": "541714ef7f782647546735a319d723acaa7f5f11a745a097dcff25147be92fda",
+      "source_path": "/dzkb/xxsx/6s/096.jpg"
+    },
+    {
+      "reader_index": 106,
+      "filename": "page-106.jpg",
+      "bytes": 153257,
+      "sha256": "be20a739c37724c243d551ed7355d732f155dcc49323e4856c23c2bbd6f4b9b0",
+      "source_path": "/dzkb/xxsx/6s/106.jpg"
+    },
+    {
+      "reader_index": 107,
+      "filename": "page-107.jpg",
+      "bytes": 154456,
+      "sha256": "f96be95f82e0474c82804a3c8c3ae416b29bd1e882f5ed1abe61cc407119bfbd",
+      "source_path": "/dzkb/xxsx/6s/107.jpg"
+    },
+    {
+      "reader_index": 108,
+      "filename": "page-108.jpg",
+      "bytes": 133956,
+      "sha256": "a8d45d2dd30a26ca1d3d2ae402bf96d1069ed6b72a471ec88b0406938b27c210",
+      "source_path": "/dzkb/xxsx/6s/108.jpg"
+    },
+    {
+      "reader_index": 109,
+      "filename": "page-109.jpg",
+      "bytes": 112712,
+      "sha256": "ceba7531c33c6310c64e14fdc0d88ebd96335dcdb39255e14c1214832e3c3dd8",
+      "source_path": "/dzkb/xxsx/6s/109.jpg"
+    },
+    {
+      "reader_index": 110,
+      "filename": "page-110.jpg",
+      "bytes": 152890,
+      "sha256": "cc751099e709a9dc596b88d8b9df6ca62378a62edef2293e6e20b6b3c0908629",
+      "source_path": "/dzkb/xxsx/6s/110.jpg"
+    },
+    {
+      "reader_index": 111,
+      "filename": "page-111.jpg",
+      "bytes": 161412,
+      "sha256": "f61c28a518172a4e9110a70703aec22d688260c48f148bd7aeff7e48d4c91d9a",
+      "source_path": "/dzkb/xxsx/6s/111.jpg"
+    },
+    {
+      "reader_index": 121,
+      "filename": "page-121.jpg",
+      "bytes": 88253,
+      "sha256": "ba7c5f67061eb5d8a4b66b9dd7e8ca818dacfaeceff23f141121b7b30f5eb1d1",
+      "source_path": "/dzkb/xxsx/6s/121.jpg"
+    },
+    {
+      "reader_index": 122,
+      "filename": "page-122.jpg",
+      "bytes": 64029,
+      "sha256": "af303b6393a927eecf7f3d1276a622d039851472e4abaf405aab139b02c03271",
+      "source_path": "/dzkb/xxsx/6s/122.jpg"
+    },
+    {
+      "reader_index": 123,
+      "filename": "page-123.jpg",
+      "bytes": 244552,
+      "sha256": "ea620fe15dfe83181503cc45162d5ef82ae8164b8eabaef57ac009e9e71f776d",
+      "source_path": "/dzkb/xxsx/6s/123.jpg"
+    },
+    {
+      "reader_index": 2,
+      "filename": "page-002.jpg",
+      "bytes": 164924,
+      "sha256": "8eb1abb7ba2e49de302bf156b1f1351549f95cac248688b1e8fa5ce234904ac6",
+      "source_path": "/dzkb/xxsx/6s/002.jpg"
+    },
+    {
+      "reader_index": 7,
+      "filename": "page-007.jpg",
+      "bytes": 130040,
+      "sha256": "4559e88bf1c07ef1e109f19adfe65cc8019a5c6d059c9feb6b855edb88eb90f0",
+      "source_path": "/dzkb/xxsx/6s/007.jpg"
+    },
+    {
+      "reader_index": 8,
+      "filename": "page-008.jpg",
+      "bytes": 127804,
+      "sha256": "c98391b43438f55eabc0177e9d22f1f2b99deb9a7c43c0ec99df09b4876f5df0",
+      "source_path": "/dzkb/xxsx/6s/008.jpg"
+    },
+    {
+      "reader_index": 9,
+      "filename": "page-009.jpg",
+      "bytes": 108160,
+      "sha256": "069b0c05d70d29edb1a12578d36c133e4b4be722605fc82d44af2a332f3abfa6",
+      "source_path": "/dzkb/xxsx/6s/009.jpg"
+    },
+    {
+      "reader_index": 10,
+      "filename": "page-010.jpg",
+      "bytes": 141510,
+      "sha256": "8cf1aa9210641c86e1f6a81fe45eb468bc601849ef372736aff20f3964f4c638",
+      "source_path": "/dzkb/xxsx/6s/010.jpg"
+    },
+    {
+      "reader_index": 11,
+      "filename": "page-011.jpg",
+      "bytes": 151473,
+      "sha256": "8adaa666379b8978fe17071bb814135ba0b8e5c3464b2f4e53e5c564bae2f330",
+      "source_path": "/dzkb/xxsx/6s/011.jpg"
+    },
+    {
+      "reader_index": 12,
+      "filename": "page-012.jpg",
+      "bytes": 129014,
+      "sha256": "7edf0ee5402fb447118dd806aebb01f3747e4646ed0212ed4c11e260acf5d49e",
+      "source_path": "/dzkb/xxsx/6s/012.jpg"
+    },
+    {
+      "reader_index": 13,
+      "filename": "page-013.jpg",
+      "bytes": 120214,
+      "sha256": "9b99ba417d47a1e3e1367360b8dd5bfd3b61e7846b6730465f5c677bf4df218f",
+      "source_path": "/dzkb/xxsx/6s/013.jpg"
+    },
+    {
+      "reader_index": 115,
+      "filename": "page-115.jpg",
+      "bytes": 168238,
+      "sha256": "b9940e5844a1c5283ba9b28c434fa4932190ec297378d7f01d184f192e932c98",
+      "source_path": "/dzkb/xxsx/6s/115.jpg"
+    },
+    {
+      "reader_index": 116,
+      "filename": "page-116.jpg",
+      "bytes": 166607,
+      "sha256": "203d0d279a896d2278116f8ba8b5a3abc218ec350fd8d63c1ad5f8cf765d31fa",
+      "source_path": "/dzkb/xxsx/6s/116.jpg"
+    },
+    {
+      "reader_index": 117,
+      "filename": "page-117.jpg",
+      "bytes": 171231,
+      "sha256": "2e59faef2975c1ca59bda8cffb63fb3fb41de4e484319b632f0ed90ab637b8a0",
+      "source_path": "/dzkb/xxsx/6s/117.jpg"
+    },
+    {
+      "reader_index": 118,
+      "filename": "page-118.jpg",
+      "bytes": 144449,
+      "sha256": "f80525be4609f53bf84a174eacd0b40abc70b996bd7d3fcc4e800af69fd2fca8",
+      "source_path": "/dzkb/xxsx/6s/118.jpg"
+    },
+    {
+      "reader_index": 119,
+      "filename": "page-119.jpg",
+      "bytes": 62607,
+      "sha256": "510fc99f8f8f9b7464f4bfe69aecc8460dc59942c2fdb1de58ab6a67b2f1d4dc",
+      "source_path": "/dzkb/xxsx/6s/119.jpg"
+    },
+    {
+      "reader_index": 120,
+      "filename": "page-120.jpg",
+      "bytes": 67412,
+      "sha256": "32f8a0720be50dd142d4116be4e6b94019bd57272406d231558d2cfc66326f1d",
+      "source_path": "/dzkb/xxsx/6s/120.jpg"
+    }
+  ],
+  "cover": {
+    "filename": "cover.jpg",
+    "bytes": 123399,
+    "sha256": "270fbfb7d14180cc197e53a5a7587655d1569a90151a67a7b0808c0f0b815e3f",
+    "source_path": "/dzkb/xxsx/6s/5bb29da9bbf34383a0f8112c79bb9f33.jpg"
+  },
+  "failures": [
+    {
+      "reader_index": 124,
+      "attempts": 2,
+      "http_status": 404,
+      "meaning": "链接的读图接口报告124页，但此序号两次返回404；用途和是否有缺页未确认，不推定为版权页。"
+    }
+  ],
+  "catalog_navigation": [
+    {
+      "versionId": "beishidaban",
+      "resourceTypeTwoLevelId": "E-textbook",
+      "catalogList": [
+        {
+          "deep": "5",
+          "cataName": "第一单元 分数除法",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181616016000"
+        },
+        {
+          "deep": "5",
+          "cataName": "第二单元 圆",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181616016060"
+        },
+        {
+          "deep": "5",
+          "cataName": "第三单元 用字母表示（二）",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181616016300"
+        },
+        {
+          "deep": "5",
+          "cataName": "综合实践 制订节水方案",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181616016600"
+        },
+        {
+          "deep": "5",
+          "cataName": "第四单元 分数的应用",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181616017047"
+        },
+        {
+          "deep": "5",
+          "cataName": "第五单元 比的认识",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181617001087"
+        },
+        {
+          "deep": "5",
+          "cataName": "第六单元 确定位置",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181617001300"
+        },
+        {
+          "deep": "5",
+          "cataName": "数学好玩 五子棋",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181617001600"
+        },
+        {
+          "deep": "5",
+          "cataName": "第七单元 百分数的认识与应用（一）",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181617002022"
+        },
+        {
+          "deep": "5",
+          "cataName": "第八单元 观察物体（二）",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181617003014"
+        },
+        {
+          "deep": "5",
+          "cataName": "第九单元 数据的表示和分析（三）",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181617004024"
+        },
+        {
+          "deep": "5",
+          "cataName": "综合实践 制订营养食谱",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181617008068"
+        },
+        {
+          "deep": "5",
+          "cataName": "总复习",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181618001088"
+        },
+        {
+          "deep": "5",
+          "cataName": "旧资源",
+          "parentId": "120170713093153011060",
+          "bookId": "120170718181618001100"
+        },
+        {
+          "deep": "6",
+          "cataName": "数学好玩",
+          "parentId": "120170718181618001100",
+          "bookId": "120170718181618001200"
+        },
+        {
+          "deep": "6",
+          "cataName": "旧版资源",
+          "parentId": "120170718181618001100",
+          "bookId": "120170718181618001300"
+        }
+      ],
+      "sectionId": "xiaoxue",
+      "bookName": "六年级上册",
+      "subjectId": "xiaoxue-shuxue",
+      "subjectName": "数学"
+    }
+  ],
+  "excluded_navigation": [
+    "旧资源",
+    "数学好玩（旧资源下）",
+    "旧版资源"
+  ],
+  "retained_evidence": [
+    {
+      "file": "bnu-math-6a-source/cover.jpg",
+      "sha256": "270fbfb7d14180cc197e53a5a7587655d1569a90151a67a7b0808c0f0b815e3f"
+    },
+    {
+      "file": "bnu-math-6a-source/page-001.jpg",
+      "sha256": "ad6549d15ec9cfd212531c5b3257416c0f435fc302e1b8020b9ee73ed8237827"
+    },
+    {
+      "file": "bnu-math-6a-source/page-003.jpg",
+      "sha256": "a010923def80c77e406f0c9af277adddcee1534ba57fc4b13fe9693b1823fadf"
+    },
+    {
+      "file": "bnu-math-6a-source/page-004.jpg",
+      "sha256": "dc5ac73ca11c5e7638795a5f05578a0ba7ab1776227fa848c0cfa7131ded39fb"
+    },
+    {
+      "file": "bnu-math-6a-source/page-123.jpg",
+      "sha256": "ea620fe15dfe83181503cc45162d5ef82ae8164b8eabaef57ac009e9e71f776d"
+    }
+  ],
+  "limitations": [
+    "仅核查封面、扉页、目录、各目录项起始页及部分完整活动、尾页和附页，并非全册逐题审核。",
+    "网上可浏览不等于教材可再分发或可以提交任意外部服务，使用条件尚待核实。",
+    "网页动态资源可能更新；使用本记录时间、路径与哈希定位此次材料，不以网页ID中的数字推定出版日期。"
+  ],
+  "required_user_material": [
+    "实际拟用教材的封面和版权页（或完整ISBN、版次、印次文字）",
+    "若纸书目录不同，补充目录页；后续正式导入还需完整原件，包括附页。"
+  ]
+}

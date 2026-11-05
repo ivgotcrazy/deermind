@@ -1,0 +1,820 @@
+{
+  "asset_id": "EVAL-M1-INCREASE",
+  "version": "1",
+  "updated_on": "2026-11-02",
+  "held_out": false,
+  "group": "M1 W2 current-contract development references",
+  "package_ref": "M1-INCREASE-REFERENCE@1",
+  "status": "author_references_not_runtime_results",
+  "cases": [
+    {
+      "id": "CASE-M1-001",
+      "version": "1",
+      "name": "任选方法：分步法正确",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-004",
+        "AC-009"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-CHECK@1",
+        "response": "60×1/5=12，新增12本；60+12=72本。1/5是原来60本的1/5。",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-001"
+      },
+      "expected": {
+        "feedback": "结果和说明正确",
+        "belief_aspect_effects": {
+          "independent": "本次无当题帮助的完成有正向支持；不外推稳定掌握",
+          "explanation": "基准与增加量解释有局部支持"
+        },
+        "unchanged_aspects": [
+          "transfer",
+          "retention"
+        ],
+        "target_result": "不能宣布四方面均已达标",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "case_context": {
+        "visible_history": "此前看过80本例题，两法讲解均已展示",
+        "new_item_help": "无；仍记录同结构示范背景"
+      }
+    },
+    {
+      "id": "CASE-M1-002",
+      "version": "1",
+      "name": "任选方法：合并系数法正确",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-004",
+        "AC-009"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-CHECK@1",
+        "response": "60×(1+1/5)=72本，1是原来的全部，1/5也是相对原来的。",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-002"
+      },
+      "expected": {
+        "feedback": "允许方法B，不强迫改写为方法A",
+        "belief_aspect_effects": {
+          "independent": "同CASE-M1-001的支持边界",
+          "explanation": "同基准及系数意义有支持"
+        },
+        "unchanged_aspects": [
+          "transfer",
+          "retention"
+        ],
+        "target_result": "不能宣布四方面均已达标",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "case_context": {
+        "visible_history": "同结构80本示范",
+        "method_coverage": "只观察B，不推断A已掌握"
+      }
+    },
+    {
+      "id": "CASE-M1-003",
+      "version": "1",
+      "name": "受助后正确",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-005",
+        "AC-009"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-CHECK@1",
+        "response": "按你给的式子60+60×1/5=72本。",
+        "help_events": [
+          {
+            "displayed": "先算60×1/5，再加60。",
+            "replaces": [
+              "建立关系",
+              "确定步骤"
+            ]
+          }
+        ],
+        "event_id": "ATTEMPT-M1-003"
+      },
+      "expected": {
+        "feedback": "当题正确，但说明采用了系统给出的式子",
+        "belief_aspect_effects": {},
+        "unchanged_aspects": [
+          "independent",
+          "explanation",
+          "transfer",
+          "retention"
+        ],
+        "target_result": "不能宣布四方面均已达标",
+        "forbidden": [
+          "把受助成功写为独立支持",
+          "把缺独立证据记为能力反证",
+          "替学生补写解释"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "evidence_note": "保存受助成功及实际帮助；不写入该Claim无代替帮助的方面支持。"
+    },
+    {
+      "id": "CASE-M1-004",
+      "version": "1",
+      "name": "只写正确数字且未要求解释",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-004",
+        "AC-009"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-CHECK@1",
+        "response": "72本",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-004"
+      },
+      "expected": {
+        "feedback": "数值和单位正确",
+        "belief_aspect_effects": {
+          "independent": "仅有本次无帮助结果支持，缺少过程；不能假定所有求解环节均已展示"
+        },
+        "unchanged_aspects": [
+          "explanation",
+          "transfer",
+          "retention"
+        ],
+        "target_result": "不能宣布四方面均已达标",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "case_context": {
+        "visible_history": "无本题解法",
+        "request_override": "本案例只要求给出结果，未要求解释；不因缺理由记反证"
+      }
+    },
+    {
+      "id": "CASE-M1-005",
+      "version": "1",
+      "name": "把增加量当最终量",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-004",
+        "AC-009"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-CHECK@1",
+        "response": "60×1/5=12，所以现在共有12本。",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-005"
+      },
+      "expected": {
+        "feedback": "增加量算对，最终量答错",
+        "belief_aspect_effects": {
+          "independent": "对本次完整求解有局部反证",
+          "explanation": "明确混淆增加量与最终量，有局部反证"
+        },
+        "unchanged_aspects": [
+          "transfer",
+          "retention"
+        ],
+        "target_result": "本次未满足相应要求；不判全部任务或KC不会",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      }
+    },
+    {
+      "id": "CASE-M1-006",
+      "version": "1",
+      "name": "算对但理由矛盾",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-004",
+        "AC-009"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-CHECK@1",
+        "response": "60×(1+1/5)=72；这里的1就是1本书。",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-006"
+      },
+      "expected": {
+        "feedback": "计算正确；1的含义解释错误",
+        "belief_aspect_effects": {
+          "independent": "本次数值求解有支持，保留理由矛盾",
+          "explanation": "与系数意义相冲突，需后续澄清或补教"
+        },
+        "unchanged_aspects": [
+          "transfer",
+          "retention"
+        ],
+        "target_result": "不能宣布四方面均已达标",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      }
+    },
+    {
+      "id": "CASE-M1-007",
+      "version": "1",
+      "name": "仅换数字不构成迁移",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-004",
+        "AC-009"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-DELAY@1",
+        "response": "72×(1+1/6)=84本，1是原来的全部。",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-007"
+      },
+      "expected": {
+        "feedback": "正确",
+        "belief_aspect_effects": {
+          "independent": "同结构即时表现有支持",
+          "explanation": "基准与系数解释有支持"
+        },
+        "unchanged_aspects": [
+          "transfer",
+          "retention"
+        ],
+        "target_result": "不能宣布四方面均已达标",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "case_context": {
+        "elapsed_since_teaching_minutes": 3,
+        "variation": "只换数字，仍是熟悉文字题"
+      },
+      "interpretation": "迁移和保持均不更新；题目名称DELAY不会赋予延迟证据资格。"
+    },
+    {
+      "id": "CASE-M1-008",
+      "version": "1",
+      "name": "已知未练习的表格表征",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-004",
+        "AC-009"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-TRANSFER@1",
+        "response": "表里原长40米，延长的是40米的1/4，40+40×1/4=50米。",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-008"
+      },
+      "expected": {
+        "feedback": "正确读取两行数据并求新量",
+        "belief_aspect_effects": {
+          "independent": "本次求解有支持",
+          "explanation": "表中基准解释有支持",
+          "transfer": "仅支持文字到此表格的观察变化；不外推广泛迁移"
+        },
+        "unchanged_aspects": [
+          "retention"
+        ],
+        "target_result": "不能宣布四方面均已达标",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "case_context": {
+        "prior_exposure": "合成输入明确此前只练文字，未练这类表格；不是实际用户事实",
+        "elapsed_since_teaching_minutes": 20
+      },
+      "dependency_note": "三个方面均来自同一ATTEMPT，不能视为三个独立样本。"
+    },
+    {
+      "id": "CASE-M1-009",
+      "version": "1",
+      "name": "七天后表现且期间条件有记录",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-004",
+        "AC-009"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-DELAY@1",
+        "response": "72×1/6=12，再加72是84本；增加部分以原来的72本为基准。",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-009"
+      },
+      "expected": {
+        "feedback": "本次正确",
+        "belief_aspect_effects": {
+          "independent": "当次无帮助表现有支持",
+          "explanation": "本次解释有支持",
+          "retention": "在给定七天间隔及无期间练习的合成条件下有局部支持；不证明长期不忘"
+        },
+        "unchanged_aspects": [
+          "transfer"
+        ],
+        "target_result": "不能宣布四方面均已达标",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "case_context": {
+        "prior_success": {
+          "event": "PRIOR-001",
+          "days_before": 7,
+          "result": "同模板独立求解及解释正确"
+        },
+        "intervening_practice": "合成条件明确无；真实运行须保留来源与未知",
+        "current_help": "无",
+        "delay_policy": "七天是此案例条件，不是全局排程或掌握阈值"
+      }
+    },
+    {
+      "id": "CASE-M1-010",
+      "version": "1",
+      "name": "日期已到但期间帮助未知",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-004",
+        "AC-009"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-DELAY@1",
+        "response": "84本，因为72+72×1/6=84。",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-010"
+      },
+      "expected": {
+        "feedback": "本次正确",
+        "belief_aspect_effects": {
+          "independent": "本次无当题帮助的数值与关系有支持",
+          "explanation": "本次关系解释有支持",
+          "retention": "记录间隔后的成功，但不满足无强化保持断言；保留条件未知"
+        },
+        "unchanged_aspects": [
+          "transfer"
+        ],
+        "target_result": "不能宣布四方面均已达标",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "case_context": {
+        "prior_success": {
+          "event": "PRIOR-001",
+          "days_before": 7,
+          "result": "正确"
+        },
+        "intervening_practice": "unknown"
+      },
+      "forbidden_extra": "不能将unknown转换为期间从未练习。"
+    },
+    {
+      "id": "CASE-M1-011",
+      "version": "1",
+      "name": "识别不清",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-009",
+        "AC-018"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-CHECK@1",
+        "response": "无法确定学生写的是72还是12",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-011"
+      },
+      "expected": {
+        "feedback": "反馈无法判定并请求核对",
+        "belief_aspect_effects": {},
+        "unchanged_aspects": [
+          "independent",
+          "explanation",
+          "transfer",
+          "retention"
+        ],
+        "target_result": "当前表现未决；保留已有有效判断，不偷用旧头代替本轮解析",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "case_context": {
+        "observation_status": "unresolved",
+        "raw_input_retained": true
+      },
+      "evidence_note": "不提交正反Evidence，不更新任何方面。"
+    },
+    {
+      "id": "CASE-M1-012",
+      "version": "1",
+      "name": "同一作答重复提交",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-009",
+        "AC-018"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-CHECK@1",
+        "response": "60+60×1/5=72本",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-001"
+      },
+      "expected": {
+        "feedback": "返回已有处理结果",
+        "belief_aspect_effects": {},
+        "unchanged_aspects": [
+          "independent",
+          "explanation",
+          "transfer",
+          "retention"
+        ],
+        "target_result": "保持原目标结果",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "case_context": {
+        "duplicate_of": "ATTEMPT-M1-001",
+        "prior_belief": "已包含ATTEMPT-M1-001的一次更新"
+      },
+      "evidence_note": "本输入event_id须在执行时替换为ATTEMPT-M1-001；不产生第二次增强。"
+    },
+    {
+      "id": "CASE-M1-013",
+      "version": "1",
+      "name": "目标要求两法但只展示一种",
+      "package_ref": "M1-INCREASE-REFERENCE@1",
+      "source_kind": "author_written_synthetic_learner",
+      "ac_refs": [
+        "AC-009",
+        "AC-014"
+      ],
+      "metric_refs": [
+        "MET-003",
+        "MET-004"
+      ],
+      "preconditions": {
+        "learner": "SYNTHETIC-001",
+        "learning_space": "LS-M1-REFERENCE",
+        "claim_ref": "CL-M1-INCREASE@1",
+        "target_ref": "LT-M1-INCREASE-ALL-METHODS@1",
+        "prior_belief": "四方面未知，除非 case_context 明确给定；所有案例独立重建。",
+        "method_mode": "any",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "prior_exposure": "case_context 所列；未记录不当作无接触"
+      },
+      "input": {
+        "question_ref": "Q-M1-CHECK@1",
+        "response": "60+60×1/5=72本，新增量以60为基准。",
+        "help_events": [],
+        "event_id": "ATTEMPT-M1-013"
+      },
+      "expected": {
+        "feedback": "方法A正确",
+        "belief_aspect_effects": {
+          "independent": "Claim任选方法条件下有局部支持",
+          "explanation": "已展示的A解释有支持"
+        },
+        "unchanged_aspects": [
+          "transfer",
+          "retention"
+        ],
+        "target_result": "目标另要求A、B分别展示；B缺证据，不能说B失败或两法已达标",
+        "forbidden": [
+          "创建KC Belief",
+          "把一个表现解释成四个独立样本",
+          "自动把子任务状态判为掌握"
+        ]
+      },
+      "reference_basis": "教材关系及当前Claim合同；作者推导，需管理员复核",
+      "review_status": "author_reference_pending_admin_review",
+      "execution": {
+        "status": "not_run",
+        "actual": null
+      },
+      "case_context": {
+        "target_override": "仅本案例将方法覆盖设为all，A与B均须展示；属于独立目标版本参考，不改Claim为两个声明",
+        "target_ref": "LT-M1-INCREASE-ALL-METHODS@1"
+      },
+      "evidence_note": "证据保留method_ref=A；ANY能力判断与ALL目标满足性分开，不绕过Claim的条件。"
+    }
+  ],
+  "contract": "预期效果是语义参考而非关键词映射或数值推断算法；单次正确不自动转为学习目标达标。",
+  "limitations": [
+    "13例全部为合成学习者输入，未调用LLM。",
+    "不得用参考自己的字段一致性验证声称Evaluation准确率。",
+    "实际通过门槛仍由Validation及启用前校准负责。"
+  ]
+}

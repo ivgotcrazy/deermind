@@ -1,0 +1,27 @@
+flowchart TB
+  subgraph MATERIAL["教材：内容与课程采用"]
+    P["解析候选与原件来源<br/>知识 / 题目 / 教材解法"]
+    C["章节关联<br/>选择任务及本章方法"]
+  end
+  subgraph DOMAIN["Domain：独立于具体教材"]
+    direction TB
+    TT["TaskTemplate<br/>任务责任与问题范围"]
+    ST["SolutionTemplate<br/>方法与求解过程"]
+    SUB["选定的子方法<br/>及其子任务"]
+    KC["KnowledgeComponent<br/>定义与先修关系"]
+    TI["TaskInstance<br/>一道具体题"]
+    SI["SolutionInstance<br/>该题的一条具体解法"]
+    TT -->|"直接可用方法"| ST
+    ST -->|"直接依赖"| KC
+    ST -->|"递归分解并选定"| SUB
+    SUB -->|"直接依赖"| KC
+    TI -->|"归属模板"| TT
+    SI -->|"解决的题目"| TI
+    SI -->|"采用的方法"| ST
+  end
+  P -.->|"核对后在领域入库"| TI
+  P -.->|"核对后在领域入库"| SI
+  P -.->|"添加或复用"| KC
+  C -->|"采用"| TT
+  C -->|"选用任务的部分或全部方法"| ST
+  KC -.->|"沿选定方法递归去重"| KSUM["知识汇总是计算结果<br/>不建立直接 KC 引用"]

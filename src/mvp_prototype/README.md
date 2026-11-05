@@ -1,15 +1,21 @@
 # DeerMind MVP 交互原型
 
-> **版本**：v0.19<br>
+> **版本**：v0.22<br>
 > **文档性质**：当前原型入口、运行说明与切换记录<br>
-> **状态**：Phase 4 交互原型；统一目录，G4 尚未通过，不代表正式 MVP 实现<br>
+> **状态**：既有交互原型供M1逐包复用与调整；尚未形成完整M1产品设计基线<br>
 > **维护责任**：Codex 维护；用户确认产品取舍及界面调整<br>
 > **上游依据**：用户于 2026-10-25 授权以新版替换旧原型，原始来源及未迁入能力通过 Git 保留<br>
 > **写作规范**：[设计文档规范](../../doc/top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-29<br>
-> **修订说明**：v0.18 → v0.19：学生菜单简化为“首页、学习、教材、题目”，更新入口与走查说明；页面职责及持续对话保持不变。
+> **更新日期**：2026-11-03<br>
+> **修订说明**：v0.21 → v0.22：补充D01可浏览路径、缺陷修复和当前mock边界，连接新截图与待确认方案。见[本轮记录](../../doc/mvp/DECISIONS.md#12-d01教材导入与整理的首轮交付)。<br>
 
 ---
+
+**当前用途（2026-11-03）。** 本目录与[M1 PRD](../../doc/mvp/m1/PRD.md)、详细规格共同参与[M1六个业务包](../../doc/mvp/m1/README.md#2-六个产品设计工作包)的同步设计。保留V2布局、持续对话及mock。D01现有流程已走查，当前截图及必要补齐方案见[交互规格](../../doc/mvp/m1/design/Interaction_Design.md#11-批量导入与开始整理)。本次只修复残留输入错误提示和移除书页后仍生成其内容的问题，新增交互仍待方案确认。
+
+**D01浏览方法。** 打开[教材管理](http://127.0.0.1:5181/admin/#/textbooks)，点击“导入教材 → 载入真实教材书页 → 上传并开始整理”，可直接使用49—50、91—93页，不需要另存图片。左侧选择课题和内容，中间对照原页，右侧编辑、合并及核对；返回教材列表可继续或删除未完成导入。实际页面和采集清单见[本轮资产](../../doc/mvp/m1/design/assets/d01-v0.1/capture-manifest.json)。
+
+五页及识别结果仍是有限mock，普通上传也不实际运行OCR；不会据此创建真实学习评价。D01整体尚未完成，原件预览与补页、目录和遗漏内容维护、逐页处理状态待补齐。下文旧规格指向归档，旧采集脚本仍引用原Phase目录，不能直接用于当前M1或把新结果写入历史归档。原型测试在独立浏览器运行，不清空用户草稿。
 
 当前学生审阅入口：[持续对话与四页](http://127.0.0.1:5181/student/?preview=pages)。启动脚本以学生角色打开时进入该地址；普通 `/student/` 保留早期真实模型／课程专项路径，不是当前持续对话演示。
 
@@ -53,7 +59,7 @@
 
 ### 2.1 本轮先审阅这条路径
 
-同一案例的逐步操作、设计理由及截图见 [产品与交互设计 §3](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#3-按真实操作展开的交互规格)。
+同一案例的逐步操作、设计理由及截图见 [产品与交互设计 §3](../../doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#3-按真实操作展开的交互规格)。
 
 1. 管理员在教材管理导入内置真实书页，核对第49—50页并合并跨页解法，采用模型关联建议，生成目标建议，应用并供学生选用。91—93页仍用于图表整理检查。
 2. 学生从右上角新建学习空间，选用该教材与目标，在“分数的应用（一）”进入讲解。对话保留在左侧，教材上下文在右侧。
@@ -64,7 +70,7 @@
 
 ### 2.2 按比例增加：本轮建议审阅路径
 
-本轮用自编教材示例，先说明一个完整 Task 如何进入实际教学与评价；不把它冒充北师大版49—50页原题。逐步文字与截图见 [Product §3.11](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#fraction-walkthrough)。
+本轮用自编教材示例，先说明一个完整 Task 如何进入实际教学与评价；不把它冒充北师大版49—50页原题。逐步文字与截图见 [Product §3.11](../../doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#fraction-walkthrough)。
 
 1. 打开[教材章节](http://127.0.0.1:5181/admin/#/textbooks?id=BOOK-MATH&chapter=CH-INCREASE&tab=content)，点击“记录核对结果”，选择通过、保存，再“应用更新”。Task fraction、方法 S1-A/B、CLAIM-FRACTION 及目标要求已有 mock，可在所属页面查看和修改。
 2. 学生右上角新建空间，选“小学数学·教材管理示例”和目标，进入“按比例增加后的数量”讲解；80米例题和两种方法在同一对话中。
@@ -82,7 +88,7 @@
 
 页面按钮的预写对话只用于确认去向和上下文，后续输入仅保留。已创建课程的数量增加／连续比例活动、三种学生情境继续走既有 mock 教学；日常入口原有的真实对话服务没有并入这组示例评价。旧 FlowCoursePage、TeachingCoursePage 文件保留供历史参考，当前四页由 StudentPages 统一呈现；不再作为当前页面入口。
 
-文字、截图与限制见 [Product §3.12](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#student-pages)。每次文字或界面改变，都应更新对应截图与采集清单，不能只更新其中一项。
+文字、截图与限制见 [Product §3.12](../../doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#student-pages)。每次文字或界面改变，都应更新对应截图与采集清单，不能只更新其中一项。
 
 ## 3. 检查方式
 
@@ -123,11 +129,11 @@ M01–M16 的早期状态和作者评审按原时间阅读，不反写为当前�
 
 `BASELINE_MANIFEST.json` 与 `parent/BASELINE_MANIFEST.json` 保留复制当时的源、目标路径和哈希；其中 `mvp_prototype_next` 是历史路径。旧说明、旧代码、归档设计与评测结果应连同其 Git 基线阅读，不能因为当前目录同名就引用当前实现解释旧结果。
 
-v0.13 统一目录、依赖及入口，保留此前删除导入等已授权改动；v0.14 在此基础上增加 §2.1 的 mock 场景与截图。具体变更和文档升版见 [共同管理记录 §5.3](../../doc/mvp/MVP_Governance.md#53-原型目录统一2026-10-25)。G4/G5 未因此通过。
+v0.13 统一目录、依赖及入口，保留此前删除导入等已授权改动；v0.14 在此基础上增加 §2.1 的 mock 场景与截图。具体变更和文档升版见 [共同管理记录 §5.3](../../doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Governance.md#53-原型目录统一2026-10-25)。G4/G5 未因此通过。
 
 ## 5. 三种学生教学情境（v0.15）
 
-本轮实现基础含义不清、会算但理由不足、已有文字理解后检测图示的三种独立情境。教学材料、练习、检测、反馈都在原 V2 对话区内，底部唯一输入框根据状态发送消息或提交作答，右侧保留进入页面。逐步规格及 S01–S25 见 [Product §3.10](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#student-teaching)。
+本轮实现基础含义不清、会算但理由不足、已有文字理解后检测图示的三种独立情境。教学材料、练习、检测、反馈都在原 V2 对话区内，底部唯一输入框根据状态发送消息或提交作答，右侧保留进入页面。逐步规格及 S01–S25 见 [Product §3.10](../../doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#student-teaching)。
 
 演示入口先选情境和右侧页面；预设回答、准备失败和材料缺陷通过“演示工具”操作。普通自由输入未覆盖时保留未决，不用关键词判定。每个情境的交流和草稿只在当前标签页保存；重置在工具内执行，不清理其他真实会话或课程记录。后台模型的编辑不会自动改变固定 v1 学生脚本。
 
@@ -143,4 +149,4 @@ v0.13 统一目录、依赖及入口，保留此前删除导入等已授权改�
 
 数据使用本浏览器的 `deermind-space-conversations-v1` 本地示例记录。没有新LLM调用、真实语义检索、正式长期记忆或跨设备保存；不覆盖早期真实会话。默认活动和题目为合成记录，新增演示活动与作答在相应页面可追溯，能力要求状态不会因固定回复自动变化。
 
-验证：`node --test tests/conversation.test.mjs`；`node tests/capture-conversation.mjs`；`python tests/check-product-spec.py`。实际截图和逐步规格见 [Product §3.13](../../doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#continuous-conversation)。
+验证：`node --test tests/conversation.test.mjs`；`node tests/capture-conversation.mjs`；`python tests/check-product-spec.py`。实际截图和逐步规格见 [Product §3.13](../../doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md#continuous-conversation)。

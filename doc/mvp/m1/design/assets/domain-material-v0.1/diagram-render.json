@@ -1,0 +1,36 @@
+{
+  "renderedAt": "2026-11-05T16:09:48.991Z",
+  "renderer": "local Mermaid 11.12.0 + Chromium",
+  "diagrams": [
+    {
+      "id": "model-relations",
+      "sourceSha256": "af91ed171c04ab773d495abf3c34c07da447bf152ecc94d0fcd9ee684a5c766e",
+      "svg": "model-relations.svg",
+      "png": "model-relations.png"
+    },
+    {
+      "id": "prd-1",
+      "sourceSha256": "fa0696c59f453ace78a6757800832515fa24d30e37b7082d6adda2a2cf689835",
+      "svg": "prd-1.svg",
+      "png": "prd-1.png"
+    },
+    {
+      "id": "prd-2",
+      "sourceSha256": "0ef34e94817ba9b88be82396b19d921ae50e52e5398d6595d8974fa3dceb65d9",
+      "svg": "prd-2.svg",
+      "png": "prd-2.png"
+    },
+    {
+      "id": "prd-3",
+      "sourceSha256": "56875452a6b378f2b196bc20881dc93cd645119a89e271852a674f335dd66abe",
+      "svg": "prd-3.svg",
+      "png": "prd-3.png"
+    },
+    {
+      "id": "prd-4",
+      "sourceSha256": "65fd86b85205491754e51044b9f170047b3df64eaebc6129936897faafdb4df3",
+      "svg": "prd-4.svg",
+      "png": "prd-4.png"
+    }
+  ]
+}

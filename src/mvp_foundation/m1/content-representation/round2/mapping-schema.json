@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "taskIndex": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "taskMatch": {
+            "type": "object",
+            "properties": {
+              "catalogId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "type": "string"
+              },
+              "unmatchedProposal": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "catalogId",
+              "reason",
+              "unmatchedProposal"
+            ],
+            "additionalProperties": false
+          },
+          "solutions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "solutionIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "match": {
+                  "type": "object",
+                  "properties": {
+                    "catalogId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "unmatchedProposal": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "catalogId",
+                    "reason",
+                    "unmatchedProposal"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "solutionIndex",
+                "match"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "knowledge": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "knowledgeIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "match": {
+                  "type": "object",
+                  "properties": {
+                    "catalogId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "unmatchedProposal": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "catalogId",
+                    "reason",
+                    "unmatchedProposal"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "knowledgeIndex",
+                "match"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "taskIndex",
+          "taskMatch",
+          "solutions",
+          "knowledge"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "tasks"
+  ],
+  "additionalProperties": false
+}

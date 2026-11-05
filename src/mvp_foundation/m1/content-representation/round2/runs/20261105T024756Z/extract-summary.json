@@ -1,0 +1,106 @@
+[
+  {
+    "caseId": "C02",
+    "stage": "extract",
+    "httpStatus": 200,
+    "usage": {
+      "prompt_tokens": 1939,
+      "completion_tokens": 840,
+      "total_tokens": 2779,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 1939
+    },
+    "finishReason": "stop",
+    "returnedModel": "deepseek-flash",
+    "status": "schema_or_invariant_error",
+    "issues": [
+      "['tasks', 0, 'solutions', 0, 'content', 0, 'blocks', 2]: {'type': 'worked_example', 'expressions': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}, {'op': 'equal', 'args': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}, {'op': 'number', 'value': '3'}]}, {'op': 'equal', 'args': [{'op': 'number', 'value': '3'}, {'op': 'group', 'args': [{'op': 'text', 'value': '人'}]}]}], 'assertedCorrect': True} is not valid under any of the given schemas",
+      "['tasks', 0, 'solutions', 0, 'content', 0, 'blocks', 4]: {'type': 'worked_example', 'expressions': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'group', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}]}]}, {'op': 'equal', 'args': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'group', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}]}]}, {'op': 'number', 'value': '3'}]}, {'op': 'equal', 'args': [{'op': 'number', 'value': '3'}, {'op': 'group', 'args': [{'op': 'text', 'value': '人'}]}]}], 'assertedCorrect': True} is not valid under any of the given schemas"
+    ],
+    "attempts": [
+      {
+        "number": 1,
+        "status": 200,
+        "elapsedSeconds": 11.03
+      }
+    ]
+  },
+  {
+    "caseId": "C03",
+    "stage": "extract",
+    "httpStatus": 200,
+    "usage": {
+      "prompt_tokens": 1561,
+      "completion_tokens": 370,
+      "total_tokens": 1931,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 1561
+    },
+    "finishReason": "stop",
+    "returnedModel": "deepseek-flash",
+    "status": "ready_for_author_review",
+    "attempts": [
+      {
+        "number": 1,
+        "status": 200,
+        "elapsedSeconds": 9.62
+      }
+    ]
+  },
+  {
+    "caseId": "C05",
+    "stage": "extract",
+    "httpStatus": 200,
+    "usage": {
+      "prompt_tokens": 2109,
+      "completion_tokens": 236,
+      "total_tokens": 2345,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 1725
+    },
+    "finishReason": "stop",
+    "returnedModel": "deepseek-flash",
+    "status": "ready_for_author_review",
+    "attempts": [
+      {
+        "number": 1,
+        "status": 200,
+        "elapsedSeconds": 9.46
+      }
+    ]
+  },
+  {
+    "caseId": "C06",
+    "stage": "extract",
+    "httpStatus": 200,
+    "usage": {
+      "prompt_tokens": 1444,
+      "completion_tokens": 259,
+      "total_tokens": 1703,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 1060
+    },
+    "finishReason": "stop",
+    "returnedModel": "deepseek-flash",
+    "status": "ready_for_author_review",
+    "attempts": [
+      {
+        "number": 1,
+        "status": 200,
+        "elapsedSeconds": 8.95
+      }
+    ]
+  }
+]

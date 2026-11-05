@@ -1,0 +1,4826 @@
+{
+  "run": "20261105T024756Z",
+  "cases": [
+    {
+      "id": "C02",
+      "title": "跨页题目与两种原有解法",
+      "scope": "第49页原题条件及首问；第50页两列解法、答句空白及旁边提示。不要自行补全答句。约分笔迹无法表达时列出遗漏。",
+      "types": [
+        "text",
+        "formula",
+        "worked_example",
+        "table"
+      ],
+      "regions": [
+        {
+          "index": 0,
+          "page": 49,
+          "original": "../source/page-49.png",
+          "originalSha256": "fbbe663820ecff1e459b7f982463c94fd8919c86b2b968e1bae27e8a79eca151",
+          "pixelBox": [
+            76,
+            338,
+            1044,
+            822
+          ],
+          "originalSize": [
+            1087,
+            1536
+          ],
+          "file": "inputs/C02-0.png",
+          "sha256": "b45b4a0ef4e27cba31486d3a2008180bf6972b3469cbd0946c3bbe7e2ebb3ac5"
+        },
+        {
+          "index": 1,
+          "page": 50,
+          "original": "../source/page-50.png",
+          "originalSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+          "pixelBox": [
+            71,
+            154,
+            962,
+            545
+          ],
+          "originalSize": [
+            1087,
+            1536
+          ],
+          "file": "inputs/C02-1.png",
+          "sha256": "ffd8dd53a0dfbdbfa8f89ba21b40cd6a903df0ee31de6faf74c7443c72a40438"
+        }
+      ],
+      "raw": {
+        "tasks": [
+          {
+            "question": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "分数的应用（一）"
+                  },
+                  {
+                    "type": "text",
+                    "text": "气象小组有12人。"
+                  },
+                  {
+                    "type": "text",
+                    "text": "摄影小组的人数是气象小组的"
+                  },
+                  {
+                    "type": "formula",
+                    "expression": {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "1"
+                        },
+                        {
+                          "op": "number",
+                          "value": "3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "text": "航模小组的人数是摄影小组的"
+                  },
+                  {
+                    "type": "formula",
+                    "expression": {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "3"
+                        },
+                        {
+                          "op": "number",
+                          "value": "4"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "text": "航模小组有多少人？说一说你是如何思考的。"
+                  }
+                ]
+              }
+            ],
+            "solutions": [
+              {
+                "content": [
+                  {
+                    "regionIndex": 1,
+                    "blocks": [
+                      {
+                        "type": "text",
+                        "text": "请列式解决问题。"
+                      },
+                      {
+                        "type": "text",
+                        "text": "先求摄影小组有多少人，再……"
+                      },
+                      {
+                        "type": "worked_example",
+                        "expressions": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "12"
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "1"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "equal",
+                            "args": [
+                              {
+                                "op": "multiply",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "12"
+                                  },
+                                  {
+                                    "op": "fraction",
+                                    "args": [
+                                      {
+                                        "op": "number",
+                                        "value": "1"
+                                      },
+                                      {
+                                        "op": "number",
+                                        "value": "3"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "op": "fraction",
+                                    "args": [
+                                      {
+                                        "op": "number",
+                                        "value": "3"
+                                      },
+                                      {
+                                        "op": "number",
+                                        "value": "4"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "number",
+                                "value": "3"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "equal",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "3"
+                              },
+                              {
+                                "op": "group",
+                                "args": [
+                                  {
+                                    "op": "text",
+                                    "value": "人"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "assertedCorrect": true
+                      },
+                      {
+                        "type": "text",
+                        "text": "先求航模小组的人数是气象小组的几分之几。"
+                      },
+                      {
+                        "type": "worked_example",
+                        "expressions": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "12"
+                              },
+                              {
+                                "op": "group",
+                                "args": [
+                                  {
+                                    "op": "multiply",
+                                    "args": [
+                                      {
+                                        "op": "fraction",
+                                        "args": [
+                                          {
+                                            "op": "number",
+                                            "value": "1"
+                                          },
+                                          {
+                                            "op": "number",
+                                            "value": "3"
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "op": "fraction",
+                                        "args": [
+                                          {
+                                            "op": "number",
+                                            "value": "3"
+                                          },
+                                          {
+                                            "op": "number",
+                                            "value": "4"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "equal",
+                            "args": [
+                              {
+                                "op": "multiply",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "12"
+                                  },
+                                  {
+                                    "op": "group",
+                                    "args": [
+                                      {
+                                        "op": "multiply",
+                                        "args": [
+                                          {
+                                            "op": "fraction",
+                                            "args": [
+                                              {
+                                                "op": "number",
+                                                "value": "1"
+                                              },
+                                              {
+                                                "op": "number",
+                                                "value": "3"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "op": "fraction",
+                                            "args": [
+                                              {
+                                                "op": "number",
+                                                "value": "3"
+                                              },
+                                              {
+                                                "op": "number",
+                                                "value": "4"
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "number",
+                                "value": "3"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "equal",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "3"
+                              },
+                              {
+                                "op": "group",
+                                "args": [
+                                  {
+                                    "op": "text",
+                                    "value": "人"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "assertedCorrect": true
+                      },
+                      {
+                        "type": "text",
+                        "text": "答："
+                      },
+                      {
+                        "type": "text",
+                        "text": "你能看懂笑笑的方法吗？"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "knowledge": [],
+            "teachingAids": []
+          }
+        ],
+        "uncertainties": [
+          "第50页左侧解法中的约分笔迹（如12与3、3与3、3与4的划去标记）无法用给定表达式结构表达，未纳入。",
+          "第50页“答：”后的横线为空白，未补全答句。",
+          "第50页右侧解法中“12×（1/3×3/4）”的约分笔迹（如12与3、3与3、3与4的划去标记）无法用给定表达式结构表达，未纳入。"
+        ]
+      },
+      "extractResult": {
+        "caseId": "C02",
+        "stage": "extract",
+        "httpStatus": 200,
+        "usage": {
+          "prompt_tokens": 1939,
+          "completion_tokens": 840,
+          "total_tokens": 2779,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 1939
+        },
+        "finishReason": "stop",
+        "returnedModel": "deepseek-flash",
+        "status": "schema_or_invariant_error",
+        "issues": [
+          "['tasks', 0, 'solutions', 0, 'content', 0, 'blocks', 2]: {'type': 'worked_example', 'expressions': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}, {'op': 'equal', 'args': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}, {'op': 'number', 'value': '3'}]}, {'op': 'equal', 'args': [{'op': 'number', 'value': '3'}, {'op': 'group', 'args': [{'op': 'text', 'value': '人'}]}]}], 'assertedCorrect': True} is not valid under any of the given schemas",
+          "['tasks', 0, 'solutions', 0, 'content', 0, 'blocks', 4]: {'type': 'worked_example', 'expressions': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'group', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}]}]}, {'op': 'equal', 'args': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'group', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}]}]}, {'op': 'number', 'value': '3'}]}, {'op': 'equal', 'args': [{'op': 'number', 'value': '3'}, {'op': 'group', 'args': [{'op': 'text', 'value': '人'}]}]}], 'assertedCorrect': True} is not valid under any of the given schemas"
+        ],
+        "attempts": [
+          {
+            "number": 1,
+            "status": 200,
+            "elapsedSeconds": 11.03
+          }
+        ]
+      },
+      "reviewed": {
+        "tasks": [
+          {
+            "question": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "分数的应用（一）"
+                  },
+                  {
+                    "type": "text",
+                    "text": "气象小组有12人。"
+                  },
+                  {
+                    "type": "text",
+                    "text": "摄影小组的人数是气象小组的"
+                  },
+                  {
+                    "type": "formula",
+                    "expression": {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "1"
+                        },
+                        {
+                          "op": "number",
+                          "value": "3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "text": "航模小组的人数是摄影小组的"
+                  },
+                  {
+                    "type": "formula",
+                    "expression": {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "3"
+                        },
+                        {
+                          "op": "number",
+                          "value": "4"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "text": "航模小组有多少人？说一说你是如何思考的。"
+                  }
+                ]
+              },
+              {
+                "regionIndex": 1,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "请列式解决问题。"
+                  },
+                  {
+                    "type": "table",
+                    "headers": [
+                      "答句"
+                    ],
+                    "rows": [
+                      [
+                        {
+                          "state": "response_blank",
+                          "value": null
+                        }
+                      ]
+                    ],
+                    "unit": ""
+                  }
+                ]
+              }
+            ],
+            "solutions": [
+              {
+                "content": [
+                  {
+                    "regionIndex": 1,
+                    "blocks": [
+                      {
+                        "type": "text",
+                        "text": "先求摄影小组有多少人，再……"
+                      },
+                      {
+                        "type": "worked_example",
+                        "expressions": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "multiply",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "12"
+                                  },
+                                  {
+                                    "op": "fraction",
+                                    "args": [
+                                      {
+                                        "op": "number",
+                                        "value": "1"
+                                      },
+                                      {
+                                        "op": "number",
+                                        "value": "3"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "number",
+                            "value": "3"
+                          }
+                        ],
+                        "assertedCorrect": true
+                      },
+                      {
+                        "type": "text",
+                        "text": "结果单位：人。"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "content": [
+                  {
+                    "regionIndex": 1,
+                    "blocks": [
+                      {
+                        "type": "text",
+                        "text": "先求航模小组的人数是气象小组的几分之几。"
+                      },
+                      {
+                        "type": "worked_example",
+                        "expressions": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "12"
+                              },
+                              {
+                                "op": "group",
+                                "args": [
+                                  {
+                                    "op": "multiply",
+                                    "args": [
+                                      {
+                                        "op": "fraction",
+                                        "args": [
+                                          {
+                                            "op": "number",
+                                            "value": "1"
+                                          },
+                                          {
+                                            "op": "number",
+                                            "value": "3"
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "op": "fraction",
+                                        "args": [
+                                          {
+                                            "op": "number",
+                                            "value": "3"
+                                          },
+                                          {
+                                            "op": "number",
+                                            "value": "4"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "12"
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "1"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "number",
+                            "value": "3"
+                          }
+                        ],
+                        "assertedCorrect": true
+                      },
+                      {
+                        "type": "text",
+                        "text": "结果单位：人。"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "knowledge": [],
+            "teachingAids": [
+              {
+                "regionIndex": 1,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "你能看懂笑笑的方法吗？"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "uncertainties": [
+          "原图约分笔迹未逐笔结构化；左列演算按首式与结果规范化展示，未伪造约分过程。",
+          "插画人物外观不是题目条件；保留文字给定的人数和比例。"
+        ]
+      },
+      "contentReview": {
+        "reviewer": "Codex author source comparison; not independent human",
+        "decision": "accept_for_mapping",
+        "rawJudgment": "needs_substantial_correction",
+        "originalHash": "5d183bb1a343ab0abcb4b923f9e1f0570de8767756e7d749e466b03bab9bb665",
+        "reviewedContentHash": "382ad82bc6624c7034fd11ad35e6c0e2ab0e14efa3d7fbeedc83c896956953d5",
+        "reviewWindowStart": "2026-11-05T02:48:42+00:00",
+        "reviewWindowEnd": "2026-11-05T02:50:06.513197+00:00",
+        "timingScope": "Shared content inspection/edit window across four cases; includes author analysis and correction-script writing. Do not sum per-case times or use as end-user editing time.",
+        "notes": [
+          "把两个原有方法分成两个解法对象。",
+          "修复三元乘法及把“人”作为公式节点的非法结构；单位改为文本。",
+          "把待填答句放回题面，独立提示从解法移出。",
+          "依原图规范化运算展示；约分标注仍是已知缺口。"
+        ],
+        "changes": [
+          {
+            "path": "/tasks/0/question",
+            "before": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "分数的应用（一）"
+                  },
+                  {
+                    "type": "text",
+                    "text": "气象小组有12人。"
+                  },
+                  {
+                    "type": "text",
+                    "text": "摄影小组的人数是气象小组的"
+                  },
+                  {
+                    "type": "formula",
+                    "expression": {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "1"
+                        },
+                        {
+                          "op": "number",
+                          "value": "3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "text": "航模小组的人数是摄影小组的"
+                  },
+                  {
+                    "type": "formula",
+                    "expression": {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "3"
+                        },
+                        {
+                          "op": "number",
+                          "value": "4"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "text": "航模小组有多少人？说一说你是如何思考的。"
+                  }
+                ]
+              }
+            ],
+            "after": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "分数的应用（一）"
+                  },
+                  {
+                    "type": "text",
+                    "text": "气象小组有12人。"
+                  },
+                  {
+                    "type": "text",
+                    "text": "摄影小组的人数是气象小组的"
+                  },
+                  {
+                    "type": "formula",
+                    "expression": {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "1"
+                        },
+                        {
+                          "op": "number",
+                          "value": "3"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "text": "航模小组的人数是摄影小组的"
+                  },
+                  {
+                    "type": "formula",
+                    "expression": {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "3"
+                        },
+                        {
+                          "op": "number",
+                          "value": "4"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "text": "航模小组有多少人？说一说你是如何思考的。"
+                  }
+                ]
+              },
+              {
+                "regionIndex": 1,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "请列式解决问题。"
+                  },
+                  {
+                    "type": "table",
+                    "headers": [
+                      "答句"
+                    ],
+                    "rows": [
+                      [
+                        {
+                          "state": "response_blank",
+                          "value": null
+                        }
+                      ]
+                    ],
+                    "unit": ""
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "/tasks/0/solutions",
+            "before": [
+              {
+                "content": [
+                  {
+                    "regionIndex": 1,
+                    "blocks": [
+                      {
+                        "type": "text",
+                        "text": "请列式解决问题。"
+                      },
+                      {
+                        "type": "text",
+                        "text": "先求摄影小组有多少人，再……"
+                      },
+                      {
+                        "type": "worked_example",
+                        "expressions": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "12"
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "1"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "equal",
+                            "args": [
+                              {
+                                "op": "multiply",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "12"
+                                  },
+                                  {
+                                    "op": "fraction",
+                                    "args": [
+                                      {
+                                        "op": "number",
+                                        "value": "1"
+                                      },
+                                      {
+                                        "op": "number",
+                                        "value": "3"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "op": "fraction",
+                                    "args": [
+                                      {
+                                        "op": "number",
+                                        "value": "3"
+                                      },
+                                      {
+                                        "op": "number",
+                                        "value": "4"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "number",
+                                "value": "3"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "equal",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "3"
+                              },
+                              {
+                                "op": "group",
+                                "args": [
+                                  {
+                                    "op": "text",
+                                    "value": "人"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "assertedCorrect": true
+                      },
+                      {
+                        "type": "text",
+                        "text": "先求航模小组的人数是气象小组的几分之几。"
+                      },
+                      {
+                        "type": "worked_example",
+                        "expressions": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "12"
+                              },
+                              {
+                                "op": "group",
+                                "args": [
+                                  {
+                                    "op": "multiply",
+                                    "args": [
+                                      {
+                                        "op": "fraction",
+                                        "args": [
+                                          {
+                                            "op": "number",
+                                            "value": "1"
+                                          },
+                                          {
+                                            "op": "number",
+                                            "value": "3"
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "op": "fraction",
+                                        "args": [
+                                          {
+                                            "op": "number",
+                                            "value": "3"
+                                          },
+                                          {
+                                            "op": "number",
+                                            "value": "4"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "equal",
+                            "args": [
+                              {
+                                "op": "multiply",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "12"
+                                  },
+                                  {
+                                    "op": "group",
+                                    "args": [
+                                      {
+                                        "op": "multiply",
+                                        "args": [
+                                          {
+                                            "op": "fraction",
+                                            "args": [
+                                              {
+                                                "op": "number",
+                                                "value": "1"
+                                              },
+                                              {
+                                                "op": "number",
+                                                "value": "3"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "op": "fraction",
+                                            "args": [
+                                              {
+                                                "op": "number",
+                                                "value": "3"
+                                              },
+                                              {
+                                                "op": "number",
+                                                "value": "4"
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "number",
+                                "value": "3"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "equal",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "3"
+                              },
+                              {
+                                "op": "group",
+                                "args": [
+                                  {
+                                    "op": "text",
+                                    "value": "人"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "assertedCorrect": true
+                      },
+                      {
+                        "type": "text",
+                        "text": "答："
+                      },
+                      {
+                        "type": "text",
+                        "text": "你能看懂笑笑的方法吗？"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "after": [
+              {
+                "content": [
+                  {
+                    "regionIndex": 1,
+                    "blocks": [
+                      {
+                        "type": "text",
+                        "text": "先求摄影小组有多少人，再……"
+                      },
+                      {
+                        "type": "worked_example",
+                        "expressions": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "multiply",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "12"
+                                  },
+                                  {
+                                    "op": "fraction",
+                                    "args": [
+                                      {
+                                        "op": "number",
+                                        "value": "1"
+                                      },
+                                      {
+                                        "op": "number",
+                                        "value": "3"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "number",
+                            "value": "3"
+                          }
+                        ],
+                        "assertedCorrect": true
+                      },
+                      {
+                        "type": "text",
+                        "text": "结果单位：人。"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "content": [
+                  {
+                    "regionIndex": 1,
+                    "blocks": [
+                      {
+                        "type": "text",
+                        "text": "先求航模小组的人数是气象小组的几分之几。"
+                      },
+                      {
+                        "type": "worked_example",
+                        "expressions": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "12"
+                              },
+                              {
+                                "op": "group",
+                                "args": [
+                                  {
+                                    "op": "multiply",
+                                    "args": [
+                                      {
+                                        "op": "fraction",
+                                        "args": [
+                                          {
+                                            "op": "number",
+                                            "value": "1"
+                                          },
+                                          {
+                                            "op": "number",
+                                            "value": "3"
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "op": "fraction",
+                                        "args": [
+                                          {
+                                            "op": "number",
+                                            "value": "3"
+                                          },
+                                          {
+                                            "op": "number",
+                                            "value": "4"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "12"
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "1"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "number",
+                            "value": "3"
+                          }
+                        ],
+                        "assertedCorrect": true
+                      },
+                      {
+                        "type": "text",
+                        "text": "结果单位：人。"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "/tasks/0/teachingAids",
+            "before": [],
+            "after": [
+              {
+                "regionIndex": 1,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "你能看懂笑笑的方法吗？"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "/uncertainties",
+            "before": [
+              "第50页左侧解法中的约分笔迹（如12与3、3与3、3与4的划去标记）无法用给定表达式结构表达，未纳入。",
+              "第50页“答：”后的横线为空白，未补全答句。",
+              "第50页右侧解法中“12×（1/3×3/4）”的约分笔迹（如12与3、3与3、3与4的划去标记）无法用给定表达式结构表达，未纳入。"
+            ],
+            "after": [
+              "原图约分笔迹未逐笔结构化；左列演算按首式与结果规范化展示，未伪造约分过程。",
+              "插画人物外观不是题目条件；保留文字给定的人数和比例。"
+            ]
+          }
+        ]
+      },
+      "mapping": {
+        "tasks": [
+          {
+            "taskIndex": 0,
+            "taskMatch": {
+              "catalogId": "TT-CHAIN",
+              "reason": "已知气象小组人数及连续两层比例，求航模小组人数，符合两层比例求最终量的任务定义。",
+              "unmatchedProposal": null
+            },
+            "solutions": [
+              {
+                "solutionIndex": 0,
+                "match": {
+                  "catalogId": "ST-TWO",
+                  "reason": "先求摄影小组人数，再求航模小组人数，属于逐层求部分量。",
+                  "unmatchedProposal": null
+                }
+              },
+              {
+                "solutionIndex": 1,
+                "match": {
+                  "catalogId": "ST-COMBINE",
+                  "reason": "先求两层比例的乘积得到相对气象小组的比例，再乘原量，属于合并两层比例。",
+                  "unmatchedProposal": null
+                }
+              }
+            ],
+            "knowledge": []
+          }
+        ]
+      },
+      "mapResult": {
+        "caseId": "C02",
+        "stage": "map",
+        "httpStatus": 200,
+        "usage": {
+          "prompt_tokens": 2923,
+          "completion_tokens": 158,
+          "total_tokens": 3081,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 2795
+        },
+        "finishReason": "stop",
+        "returnedModel": "deepseek-flash",
+        "status": "ready_for_author_review",
+        "attempts": [
+          {
+            "number": 1,
+            "status": 200,
+            "elapsedSeconds": 9.8
+          }
+        ]
+      },
+      "graph": {
+        "caseId": "C02",
+        "status": "linked_pending_semantic_review",
+        "contentHash": "382ad82bc6624c7034fd11ad35e6c0e2ab0e14efa3d7fbeedc83c896956953d5",
+        "instances": [
+          {
+            "id": "R2-C02-T0",
+            "kind": "TaskInstance",
+            "templateId": "TT-CHAIN",
+            "contentRefs": [
+              "R2-C02-T0/question/0",
+              "R2-C02-T0/question/1"
+            ]
+          },
+          {
+            "id": "R2-C02-T0-S0",
+            "kind": "SolutionInstance",
+            "templateId": "ST-TWO",
+            "taskInstanceId": "R2-C02-T0",
+            "origin": "textbook",
+            "contentRefs": [
+              "R2-C02-T0-S0/solution/0"
+            ]
+          },
+          {
+            "id": "R2-C02-T0-S1",
+            "kind": "SolutionInstance",
+            "templateId": "ST-COMBINE",
+            "taskInstanceId": "R2-C02-T0",
+            "origin": "textbook",
+            "contentRefs": [
+              "R2-C02-T0-S1/solution/0"
+            ]
+          }
+        ],
+        "elements": [
+          {
+            "id": "R2-C02-T0/question/0",
+            "owner": "R2-C02-T0",
+            "role": "question",
+            "origin": "reviewed_source_extraction",
+            "source": {
+              "page": 49,
+              "pixelBox": [
+                76,
+                338,
+                1044,
+                822
+              ],
+              "sourceSha256": "fbbe663820ecff1e459b7f982463c94fd8919c86b2b968e1bae27e8a79eca151",
+              "cropSha256": "b45b4a0ef4e27cba31486d3a2008180bf6972b3469cbd0946c3bbe7e2ebb3ac5"
+            },
+            "blocks": [
+              {
+                "type": "text",
+                "text": "分数的应用（一）"
+              },
+              {
+                "type": "text",
+                "text": "气象小组有12人。"
+              },
+              {
+                "type": "text",
+                "text": "摄影小组的人数是气象小组的"
+              },
+              {
+                "type": "formula",
+                "expression": {
+                  "op": "fraction",
+                  "args": [
+                    {
+                      "op": "number",
+                      "value": "1"
+                    },
+                    {
+                      "op": "number",
+                      "value": "3"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "text",
+                "text": "航模小组的人数是摄影小组的"
+              },
+              {
+                "type": "formula",
+                "expression": {
+                  "op": "fraction",
+                  "args": [
+                    {
+                      "op": "number",
+                      "value": "3"
+                    },
+                    {
+                      "op": "number",
+                      "value": "4"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "text",
+                "text": "航模小组有多少人？说一说你是如何思考的。"
+              }
+            ]
+          },
+          {
+            "id": "R2-C02-T0/question/1",
+            "owner": "R2-C02-T0",
+            "role": "question",
+            "origin": "reviewed_source_extraction",
+            "source": {
+              "page": 50,
+              "pixelBox": [
+                71,
+                154,
+                962,
+                545
+              ],
+              "sourceSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+              "cropSha256": "ffd8dd53a0dfbdbfa8f89ba21b40cd6a903df0ee31de6faf74c7443c72a40438"
+            },
+            "blocks": [
+              {
+                "type": "text",
+                "text": "请列式解决问题。"
+              },
+              {
+                "type": "table",
+                "headers": [
+                  "答句"
+                ],
+                "rows": [
+                  [
+                    {
+                      "state": "response_blank",
+                      "value": null
+                    }
+                  ]
+                ],
+                "unit": ""
+              }
+            ]
+          },
+          {
+            "id": "R2-C02-T0/teaching_aid/0",
+            "owner": "R2-C02-T0",
+            "role": "teaching_aid",
+            "origin": "reviewed_source_extraction",
+            "source": {
+              "page": 50,
+              "pixelBox": [
+                71,
+                154,
+                962,
+                545
+              ],
+              "sourceSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+              "cropSha256": "ffd8dd53a0dfbdbfa8f89ba21b40cd6a903df0ee31de6faf74c7443c72a40438"
+            },
+            "blocks": [
+              {
+                "type": "text",
+                "text": "你能看懂笑笑的方法吗？"
+              }
+            ]
+          },
+          {
+            "id": "R2-C02-T0-S0/solution/0",
+            "owner": "R2-C02-T0-S0",
+            "role": "solution",
+            "origin": "reviewed_source_extraction",
+            "source": {
+              "page": 50,
+              "pixelBox": [
+                71,
+                154,
+                962,
+                545
+              ],
+              "sourceSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+              "cropSha256": "ffd8dd53a0dfbdbfa8f89ba21b40cd6a903df0ee31de6faf74c7443c72a40438"
+            },
+            "blocks": [
+              {
+                "type": "text",
+                "text": "先求摄影小组有多少人，再……"
+              },
+              {
+                "type": "worked_example",
+                "expressions": [
+                  {
+                    "op": "multiply",
+                    "args": [
+                      {
+                        "op": "multiply",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "12"
+                          },
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "1"
+                              },
+                              {
+                                "op": "number",
+                                "value": "3"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "3"
+                          },
+                          {
+                            "op": "number",
+                            "value": "4"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "number",
+                    "value": "3"
+                  }
+                ],
+                "assertedCorrect": true
+              },
+              {
+                "type": "text",
+                "text": "结果单位：人。"
+              }
+            ]
+          },
+          {
+            "id": "R2-C02-T0-S1/solution/0",
+            "owner": "R2-C02-T0-S1",
+            "role": "solution",
+            "origin": "reviewed_source_extraction",
+            "source": {
+              "page": 50,
+              "pixelBox": [
+                71,
+                154,
+                962,
+                545
+              ],
+              "sourceSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+              "cropSha256": "ffd8dd53a0dfbdbfa8f89ba21b40cd6a903df0ee31de6faf74c7443c72a40438"
+            },
+            "blocks": [
+              {
+                "type": "text",
+                "text": "先求航模小组的人数是气象小组的几分之几。"
+              },
+              {
+                "type": "worked_example",
+                "expressions": [
+                  {
+                    "op": "multiply",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "12"
+                      },
+                      {
+                        "op": "group",
+                        "args": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "1"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "multiply",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "12"
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "1"
+                          },
+                          {
+                            "op": "number",
+                            "value": "4"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "number",
+                    "value": "3"
+                  }
+                ],
+                "assertedCorrect": true
+              },
+              {
+                "type": "text",
+                "text": "结果单位：人。"
+              }
+            ]
+          }
+        ],
+        "knowledgeBindings": [],
+        "pending": [],
+        "definitions": [
+          {
+            "id": "KC-ORDER",
+            "kind": "KnowledgeComponent",
+            "title": "分数混合运算顺序",
+            "definition": "分数混合运算遵循括号及同级运算顺序。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-ORDER",
+            "kind": "SolutionTemplate",
+            "title": "按运算顺序化简",
+            "definition": "保持运算树，除以非零数改为乘其倒数，再计算。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-ORDER"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-EXPR",
+            "kind": "TaskTemplate",
+            "title": "计算含括号的分数混合运算",
+            "definition": "给定合法有理数表达式，按规定顺序计算结果；除数不能为零。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-ORDER"
+            ]
+          },
+          {
+            "id": "KC-FRACTION",
+            "kind": "KnowledgeComponent",
+            "title": "一个量的几分之几",
+            "definition": "确定作为整体的量，再按比例求其部分；多层关系需要辨明每层整体。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "KC-ASSOC",
+            "kind": "KnowledgeComponent",
+            "title": "乘法结合律",
+            "definition": "连乘可以改变结合次序而不改变乘积。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-TWO",
+            "kind": "SolutionTemplate",
+            "title": "逐层求部分量",
+            "definition": "先求中间量，再求最终量。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-FRACTION"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "ST-COMBINE",
+            "kind": "SolutionTemplate",
+            "title": "合并两层比例",
+            "definition": "先相乘得到相对原量的比例，再乘原量。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-FRACTION",
+              "KC-ASSOC"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-CHAIN",
+            "kind": "TaskTemplate",
+            "title": "已知两层比例求最终量",
+            "definition": "给定原量及连续两层比例，求最后一层数量；人数任务须满足整数条件。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-TWO",
+              "ST-COMBINE"
+            ]
+          },
+          {
+            "id": "KC-RECIP",
+            "kind": "KnowledgeComponent",
+            "title": "除以非零数等于乘其倒数",
+            "definition": "除数必须非零；改乘法时需要取倒数。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-ERROR",
+            "kind": "SolutionTemplate",
+            "title": "逐步核查运算变换",
+            "definition": "逐步比对表达式，定位首个不等价的变换并解释。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-RECIP"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-ERROR",
+            "kind": "TaskTemplate",
+            "title": "辨析分数除法的错误演算",
+            "definition": "给出他人演算，判断是否等价并说明理由。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-ERROR"
+            ]
+          },
+          {
+            "id": "KC-DATA",
+            "kind": "KnowledgeComponent",
+            "title": "数据的类别与单位",
+            "definition": "读数须结合列标题、统计范围、单位与来源；重叠类别不可直接相加。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-TABLE",
+            "kind": "SolutionTemplate",
+            "title": "按标题和单位读表",
+            "definition": "对应行列查找数据，保留单位并区分类别范围。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-DATA"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-TABLE",
+            "kind": "TaskTemplate",
+            "title": "整理并解读人口统计资料",
+            "definition": "区分调查方案、观测数据和结论，按年龄及普查批次整理。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-TABLE"
+            ]
+          },
+          {
+            "id": "KC-CHART",
+            "kind": "KnowledgeComponent",
+            "title": "统计图的表达",
+            "definition": "条形图比较数量，折线图呈现变化，扇形图表达互斥部分在整体中的占比。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-READ-CHART",
+            "kind": "SolutionTemplate",
+            "title": "结合图例与坐标读图",
+            "definition": "先确定系列、范围及单位，再读数和比较，不将包含关系当作互斥部分。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-CHART",
+              "KC-DATA"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-CHART",
+            "kind": "TaskTemplate",
+            "title": "解读同一资料的不同统计图",
+            "definition": "根据图形及图例说明数量、变化或构成；解释不能超出数据范围。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-READ-CHART"
+            ]
+          },
+          {
+            "id": "KC-CIRCLE",
+            "kind": "KnowledgeComponent",
+            "title": "圆与其他平面图形的区别",
+            "definition": "圆周到圆心距离相等；此知识定义是作者据教材活动抽象，不能冒充逐字提取。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-SHAPE",
+            "kind": "SolutionTemplate",
+            "title": "比较形状与中心距离",
+            "definition": "观察或操作图形，检验中心到边界的距离是否一致。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-CIRCLE"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-SHAPE",
+            "kind": "TaskTemplate",
+            "title": "比较圆与其他图形",
+            "definition": "比较指定圆、椭圆及多边形，提出区分依据；未给长度不得编造测量值。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-SHAPE"
+            ]
+          },
+          {
+            "id": "KC-POS",
+            "kind": "KnowledgeComponent",
+            "title": "方向与距离确定位置",
+            "definition": "给定参照点后，方向角与距离共同限定平面中的位置。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-POS",
+            "kind": "SolutionTemplate",
+            "title": "比较位置描述的约束范围",
+            "definition": "分别考察仅方向、仅距离、方向和距离齐全时的可能位置。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-POS"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-POS",
+            "kind": "TaskTemplate",
+            "title": "判断位置描述是否充分",
+            "definition": "判断相对同一参照点的描述能否唯一定位，说明缺少的信息。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-POS"
+            ]
+          },
+          {
+            "id": "KC-VIEW",
+            "kind": "KnowledgeComponent",
+            "title": "观察方向与物体视图",
+            "definition": "物体与观察方向共同决定看到的轮廓；这里限定直立圆柱和圆锥。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-VIEW",
+            "kind": "SolutionTemplate",
+            "title": "固定物体姿态比较视图",
+            "definition": "分别从上方、正面和侧面观察，区分三维物体与二维轮廓。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-VIEW"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-VIEW",
+            "kind": "TaskTemplate",
+            "title": "观察直立圆柱与圆锥",
+            "definition": "描述从不同方向看到的形状；不从一幅轮廓反推出唯一三维物体。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-VIEW"
+            ]
+          }
+        ]
+      },
+      "mappingReview": {
+        "reviewer": "Codex author semantic review against source and existing catalog",
+        "reviewedAt": "2026-11-05T02:55:20.954934+00:00",
+        "status": "accepted_for_this_trial",
+        "conclusion": "本例核对后内容匹配正确；程序编号、题目/解法归属及来源检查通过。",
+        "taskTemplate": "TT-CHAIN",
+        "solutionTemplates": [
+          "ST-TWO",
+          "ST-COMBINE"
+        ],
+        "contentHash": "382ad82bc6624c7034fd11ad35e6c0e2ab0e14efa3d7fbeedc83c896956953d5",
+        "limitation": "Small known catalog. Author-corrected input for C02/C03/C05; not raw extraction success, full-book acceptance or learner assessment."
+      },
+      "evidencePath": "runs/20261105T024756Z/C02/",
+      "mappingPrefix": "map-direct",
+      "rawInvalidBlocks": [
+        {
+          "type": "worked_example",
+          "expressions": [
+            {
+              "op": "multiply",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "12"
+                },
+                {
+                  "op": "fraction",
+                  "args": [
+                    {
+                      "op": "number",
+                      "value": "1"
+                    },
+                    {
+                      "op": "number",
+                      "value": "3"
+                    }
+                  ]
+                },
+                {
+                  "op": "fraction",
+                  "args": [
+                    {
+                      "op": "number",
+                      "value": "3"
+                    },
+                    {
+                      "op": "number",
+                      "value": "4"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "op": "equal",
+              "args": [
+                {
+                  "op": "multiply",
+                  "args": [
+                    {
+                      "op": "number",
+                      "value": "12"
+                    },
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "1"
+                        },
+                        {
+                          "op": "number",
+                          "value": "3"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "3"
+                        },
+                        {
+                          "op": "number",
+                          "value": "4"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "number",
+                  "value": "3"
+                }
+              ]
+            },
+            {
+              "op": "equal",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "3"
+                },
+                {
+                  "op": "group",
+                  "args": [
+                    {
+                      "op": "text",
+                      "value": "人"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "assertedCorrect": true
+        },
+        {
+          "type": "worked_example",
+          "expressions": [
+            {
+              "op": "multiply",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "12"
+                },
+                {
+                  "op": "group",
+                  "args": [
+                    {
+                      "op": "multiply",
+                      "args": [
+                        {
+                          "op": "fraction",
+                          "args": [
+                            {
+                              "op": "number",
+                              "value": "1"
+                            },
+                            {
+                              "op": "number",
+                              "value": "3"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "fraction",
+                          "args": [
+                            {
+                              "op": "number",
+                              "value": "3"
+                            },
+                            {
+                              "op": "number",
+                              "value": "4"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "op": "equal",
+              "args": [
+                {
+                  "op": "multiply",
+                  "args": [
+                    {
+                      "op": "number",
+                      "value": "12"
+                    },
+                    {
+                      "op": "group",
+                      "args": [
+                        {
+                          "op": "multiply",
+                          "args": [
+                            {
+                              "op": "fraction",
+                              "args": [
+                                {
+                                  "op": "number",
+                                  "value": "1"
+                                },
+                                {
+                                  "op": "number",
+                                  "value": "3"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "fraction",
+                              "args": [
+                                {
+                                  "op": "number",
+                                  "value": "3"
+                                },
+                                {
+                                  "op": "number",
+                                  "value": "4"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "number",
+                  "value": "3"
+                }
+              ]
+            },
+            {
+              "op": "equal",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "3"
+                },
+                {
+                  "op": "group",
+                  "args": [
+                    {
+                      "op": "text",
+                      "value": "人"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "assertedCorrect": true
+        }
+      ],
+      "reviewedInvalidBlocks": []
+    },
+    {
+      "id": "C03",
+      "title": "保留原题中的错误演算",
+      "scope": "提取提问和所给一列演算；这是要学生检查的原始内容，不要改正或重新求解。",
+      "types": [
+        "text",
+        "worked_example"
+      ],
+      "regions": [
+        {
+          "index": 0,
+          "page": 50,
+          "original": "../source/page-50.png",
+          "originalSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+          "pixelBox": [
+            82,
+            998,
+            810,
+            1037
+          ],
+          "originalSize": [
+            1087,
+            1536
+          ],
+          "file": "inputs/C03-0.png",
+          "sha256": "1768604e58b298f0298a688dee61537a4cc9f1984cc8fe762f38c56000e5c7d3"
+        },
+        {
+          "index": 1,
+          "page": 50,
+          "original": "../source/page-50.png",
+          "originalSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+          "pixelBox": [
+            234,
+            1075,
+            418,
+            1232
+          ],
+          "originalSize": [
+            1087,
+            1536
+          ],
+          "file": "inputs/C03-1.png",
+          "sha256": "b67ba7d703c48947b1bed071f82fbcdbd65d22c4df85d7ec838f2a4d5d6205ed"
+        }
+      ],
+      "raw": {
+        "tasks": [
+          {
+            "question": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "下面几道题算得对吗？计算时有什么好办法可以减少错误？"
+                  }
+                ]
+              },
+              {
+                "regionIndex": 1,
+                "blocks": [
+                  {
+                    "type": "worked_example",
+                    "expressions": [
+                      {
+                        "op": "multiply",
+                        "args": [
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "7"
+                              },
+                              {
+                                "op": "number",
+                                "value": "8"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "divide",
+                            "args": [
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "1"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": "multiply",
+                        "args": [
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "7"
+                              },
+                              {
+                                "op": "number",
+                                "value": "8"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "1"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "7"
+                          },
+                          {
+                            "op": "number",
+                            "value": "32"
+                          }
+                        ]
+                      }
+                    ],
+                    "assertedCorrect": false
+                  }
+                ]
+              }
+            ],
+            "solutions": [],
+            "knowledge": [],
+            "teachingAids": []
+          }
+        ],
+        "uncertainties": [
+          "第二行中3/4的分子3和1/3的分母3上有约分笔迹，无法用给定表达式结构表达，未纳入表达式。",
+          "原题未明确标注该演算是否正确，assertedCorrect按待检查题面标为false。"
+        ]
+      },
+      "extractResult": {
+        "caseId": "C03",
+        "stage": "extract",
+        "httpStatus": 200,
+        "usage": {
+          "prompt_tokens": 1561,
+          "completion_tokens": 370,
+          "total_tokens": 1931,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 1561
+        },
+        "finishReason": "stop",
+        "returnedModel": "deepseek-flash",
+        "status": "ready_for_author_review",
+        "attempts": [
+          {
+            "number": 1,
+            "status": 200,
+            "elapsedSeconds": 9.62
+          }
+        ]
+      },
+      "reviewed": {
+        "tasks": [
+          {
+            "question": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "下面几道题算得对吗？计算时有什么好办法可以减少错误？"
+                  }
+                ]
+              },
+              {
+                "regionIndex": 1,
+                "blocks": [
+                  {
+                    "type": "worked_example",
+                    "expressions": [
+                      {
+                        "op": "divide",
+                        "args": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "7"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "8"
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "1"
+                              },
+                              {
+                                "op": "number",
+                                "value": "3"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": "multiply",
+                        "args": [
+                          {
+                            "op": "multiply",
+                            "args": [
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "7"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "8"
+                                  }
+                                ]
+                              },
+                              {
+                                "op": "fraction",
+                                "args": [
+                                  {
+                                    "op": "number",
+                                    "value": "3"
+                                  },
+                                  {
+                                    "op": "number",
+                                    "value": "4"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "1"
+                              },
+                              {
+                                "op": "number",
+                                "value": "3"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "7"
+                          },
+                          {
+                            "op": "number",
+                            "value": "32"
+                          }
+                        ]
+                      }
+                    ],
+                    "assertedCorrect": false
+                  }
+                ]
+              }
+            ],
+            "solutions": [],
+            "knowledge": [],
+            "teachingAids": []
+          }
+        ],
+        "uncertainties": [
+          "第二行中3/4的分子3和1/3的分母3上有约分笔迹，无法用给定表达式结构表达，未纳入表达式。",
+          "原题未明确标注该演算是否正确，assertedCorrect按待检查题面标为false。"
+        ]
+      },
+      "contentReview": {
+        "reviewer": "Codex author source comparison; not independent human",
+        "decision": "accept_for_mapping",
+        "rawJudgment": "core_content_correct_normalization_needed",
+        "originalHash": "4a30fec6ececbcd9bbf6da963ae8fa19b13bec8209b6b6b446f918e1ae50d181",
+        "reviewedContentHash": "183da8ecd3f1fec3cc75aeafd4cb28a3b979d54bc94788c46f0ec40e75e3b2ec",
+        "reviewWindowStart": "2026-11-05T02:48:42+00:00",
+        "reviewWindowEnd": "2026-11-05T02:50:06.541696+00:00",
+        "timingScope": "Shared content inspection/edit window across four cases; includes author analysis and correction-script writing. Do not sum per-case times or use as end-user editing time.",
+        "notes": [
+          "原始输出的除号、各数值、三行及错误结果均保留正确。",
+          "原 AST 右结合与原式数值等价，但改成从左到右结合以保留教材运算次序；没有改变错误演算。",
+          "约分笔迹未逐笔表达，仍保留此缺口。"
+        ],
+        "changes": [
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/0/op",
+            "before": "multiply",
+            "after": "divide"
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/0/args/0/op",
+            "before": "fraction",
+            "after": "multiply"
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/0/args/0/args/0",
+            "before": {
+              "op": "number",
+              "value": "7"
+            },
+            "after": {
+              "op": "fraction",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "7"
+                },
+                {
+                  "op": "number",
+                  "value": "8"
+                }
+              ]
+            }
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/0/args/0/args/1",
+            "before": {
+              "op": "number",
+              "value": "8"
+            },
+            "after": {
+              "op": "fraction",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "3"
+                },
+                {
+                  "op": "number",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/0/args/1/op",
+            "before": "divide",
+            "after": "fraction"
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/0/args/1/args/0",
+            "before": {
+              "op": "fraction",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "3"
+                },
+                {
+                  "op": "number",
+                  "value": "4"
+                }
+              ]
+            },
+            "after": {
+              "op": "number",
+              "value": "1"
+            }
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/0/args/1/args/1",
+            "before": {
+              "op": "fraction",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "1"
+                },
+                {
+                  "op": "number",
+                  "value": "3"
+                }
+              ]
+            },
+            "after": {
+              "op": "number",
+              "value": "3"
+            }
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/1/args/0/op",
+            "before": "fraction",
+            "after": "multiply"
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/1/args/0/args/0",
+            "before": {
+              "op": "number",
+              "value": "7"
+            },
+            "after": {
+              "op": "fraction",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "7"
+                },
+                {
+                  "op": "number",
+                  "value": "8"
+                }
+              ]
+            }
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/1/args/0/args/1",
+            "before": {
+              "op": "number",
+              "value": "8"
+            },
+            "after": {
+              "op": "fraction",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "3"
+                },
+                {
+                  "op": "number",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/1/args/1/op",
+            "before": "multiply",
+            "after": "fraction"
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/1/args/1/args/0",
+            "before": {
+              "op": "fraction",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "3"
+                },
+                {
+                  "op": "number",
+                  "value": "4"
+                }
+              ]
+            },
+            "after": {
+              "op": "number",
+              "value": "1"
+            }
+          },
+          {
+            "path": "/tasks/0/question/1/blocks/0/expressions/1/args/1/args/1",
+            "before": {
+              "op": "fraction",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "1"
+                },
+                {
+                  "op": "number",
+                  "value": "3"
+                }
+              ]
+            },
+            "after": {
+              "op": "number",
+              "value": "3"
+            }
+          }
+        ]
+      },
+      "mapping": {
+        "tasks": [
+          {
+            "taskIndex": 0,
+            "taskMatch": {
+              "catalogId": "TT-ERROR",
+              "reason": "题目给出他人分数混合运算演算，要求判断算得对不对并找减少错误的办法，属于辨析错误演算。",
+              "unmatchedProposal": null
+            },
+            "solutions": [],
+            "knowledge": []
+          }
+        ]
+      },
+      "mapResult": {
+        "caseId": "C03",
+        "stage": "map",
+        "httpStatus": 200,
+        "usage": {
+          "prompt_tokens": 2635,
+          "completion_tokens": 67,
+          "total_tokens": 2702,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 2507
+        },
+        "finishReason": "stop",
+        "returnedModel": "deepseek-flash",
+        "status": "ready_for_author_review",
+        "attempts": [
+          {
+            "number": 1,
+            "status": 200,
+            "elapsedSeconds": 2.96
+          }
+        ]
+      },
+      "graph": {
+        "caseId": "C03",
+        "status": "linked_pending_semantic_review",
+        "contentHash": "183da8ecd3f1fec3cc75aeafd4cb28a3b979d54bc94788c46f0ec40e75e3b2ec",
+        "instances": [
+          {
+            "id": "R2-C03-T0",
+            "kind": "TaskInstance",
+            "templateId": "TT-ERROR",
+            "contentRefs": [
+              "R2-C03-T0/question/0",
+              "R2-C03-T0/question/1"
+            ]
+          }
+        ],
+        "elements": [
+          {
+            "id": "R2-C03-T0/question/0",
+            "owner": "R2-C03-T0",
+            "role": "question",
+            "origin": "reviewed_source_extraction",
+            "source": {
+              "page": 50,
+              "pixelBox": [
+                82,
+                998,
+                810,
+                1037
+              ],
+              "sourceSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+              "cropSha256": "1768604e58b298f0298a688dee61537a4cc9f1984cc8fe762f38c56000e5c7d3"
+            },
+            "blocks": [
+              {
+                "type": "text",
+                "text": "下面几道题算得对吗？计算时有什么好办法可以减少错误？"
+              }
+            ]
+          },
+          {
+            "id": "R2-C03-T0/question/1",
+            "owner": "R2-C03-T0",
+            "role": "question",
+            "origin": "reviewed_source_extraction",
+            "source": {
+              "page": 50,
+              "pixelBox": [
+                234,
+                1075,
+                418,
+                1232
+              ],
+              "sourceSha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+              "cropSha256": "b67ba7d703c48947b1bed071f82fbcdbd65d22c4df85d7ec838f2a4d5d6205ed"
+            },
+            "blocks": [
+              {
+                "type": "worked_example",
+                "expressions": [
+                  {
+                    "op": "divide",
+                    "args": [
+                      {
+                        "op": "multiply",
+                        "args": [
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "7"
+                              },
+                              {
+                                "op": "number",
+                                "value": "8"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "3"
+                              },
+                              {
+                                "op": "number",
+                                "value": "4"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "1"
+                          },
+                          {
+                            "op": "number",
+                            "value": "3"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "multiply",
+                    "args": [
+                      {
+                        "op": "multiply",
+                        "args": [
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "7"
+                              },
+                              {
+                                "op": "number",
+                                "value": "8"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "3"
+                              },
+                              {
+                                "op": "number",
+                                "value": "4"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "1"
+                          },
+                          {
+                            "op": "number",
+                            "value": "3"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "7"
+                      },
+                      {
+                        "op": "number",
+                        "value": "32"
+                      }
+                    ]
+                  }
+                ],
+                "assertedCorrect": false
+              }
+            ]
+          }
+        ],
+        "knowledgeBindings": [],
+        "pending": [],
+        "definitions": [
+          {
+            "id": "KC-ORDER",
+            "kind": "KnowledgeComponent",
+            "title": "分数混合运算顺序",
+            "definition": "分数混合运算遵循括号及同级运算顺序。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-ORDER",
+            "kind": "SolutionTemplate",
+            "title": "按运算顺序化简",
+            "definition": "保持运算树，除以非零数改为乘其倒数，再计算。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-ORDER"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-EXPR",
+            "kind": "TaskTemplate",
+            "title": "计算含括号的分数混合运算",
+            "definition": "给定合法有理数表达式，按规定顺序计算结果；除数不能为零。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-ORDER"
+            ]
+          },
+          {
+            "id": "KC-FRACTION",
+            "kind": "KnowledgeComponent",
+            "title": "一个量的几分之几",
+            "definition": "确定作为整体的量，再按比例求其部分；多层关系需要辨明每层整体。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "KC-ASSOC",
+            "kind": "KnowledgeComponent",
+            "title": "乘法结合律",
+            "definition": "连乘可以改变结合次序而不改变乘积。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-TWO",
+            "kind": "SolutionTemplate",
+            "title": "逐层求部分量",
+            "definition": "先求中间量，再求最终量。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-FRACTION"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "ST-COMBINE",
+            "kind": "SolutionTemplate",
+            "title": "合并两层比例",
+            "definition": "先相乘得到相对原量的比例，再乘原量。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-FRACTION",
+              "KC-ASSOC"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-CHAIN",
+            "kind": "TaskTemplate",
+            "title": "已知两层比例求最终量",
+            "definition": "给定原量及连续两层比例，求最后一层数量；人数任务须满足整数条件。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-TWO",
+              "ST-COMBINE"
+            ]
+          },
+          {
+            "id": "KC-RECIP",
+            "kind": "KnowledgeComponent",
+            "title": "除以非零数等于乘其倒数",
+            "definition": "除数必须非零；改乘法时需要取倒数。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-ERROR",
+            "kind": "SolutionTemplate",
+            "title": "逐步核查运算变换",
+            "definition": "逐步比对表达式，定位首个不等价的变换并解释。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-RECIP"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-ERROR",
+            "kind": "TaskTemplate",
+            "title": "辨析分数除法的错误演算",
+            "definition": "给出他人演算，判断是否等价并说明理由。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-ERROR"
+            ]
+          },
+          {
+            "id": "KC-DATA",
+            "kind": "KnowledgeComponent",
+            "title": "数据的类别与单位",
+            "definition": "读数须结合列标题、统计范围、单位与来源；重叠类别不可直接相加。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-TABLE",
+            "kind": "SolutionTemplate",
+            "title": "按标题和单位读表",
+            "definition": "对应行列查找数据，保留单位并区分类别范围。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-DATA"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-TABLE",
+            "kind": "TaskTemplate",
+            "title": "整理并解读人口统计资料",
+            "definition": "区分调查方案、观测数据和结论，按年龄及普查批次整理。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-TABLE"
+            ]
+          },
+          {
+            "id": "KC-CHART",
+            "kind": "KnowledgeComponent",
+            "title": "统计图的表达",
+            "definition": "条形图比较数量，折线图呈现变化，扇形图表达互斥部分在整体中的占比。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-READ-CHART",
+            "kind": "SolutionTemplate",
+            "title": "结合图例与坐标读图",
+            "definition": "先确定系列、范围及单位，再读数和比较，不将包含关系当作互斥部分。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-CHART",
+              "KC-DATA"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-CHART",
+            "kind": "TaskTemplate",
+            "title": "解读同一资料的不同统计图",
+            "definition": "根据图形及图例说明数量、变化或构成；解释不能超出数据范围。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-READ-CHART"
+            ]
+          },
+          {
+            "id": "KC-CIRCLE",
+            "kind": "KnowledgeComponent",
+            "title": "圆与其他平面图形的区别",
+            "definition": "圆周到圆心距离相等；此知识定义是作者据教材活动抽象，不能冒充逐字提取。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-SHAPE",
+            "kind": "SolutionTemplate",
+            "title": "比较形状与中心距离",
+            "definition": "观察或操作图形，检验中心到边界的距离是否一致。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-CIRCLE"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-SHAPE",
+            "kind": "TaskTemplate",
+            "title": "比较圆与其他图形",
+            "definition": "比较指定圆、椭圆及多边形，提出区分依据；未给长度不得编造测量值。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-SHAPE"
+            ]
+          },
+          {
+            "id": "KC-POS",
+            "kind": "KnowledgeComponent",
+            "title": "方向与距离确定位置",
+            "definition": "给定参照点后，方向角与距离共同限定平面中的位置。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-POS",
+            "kind": "SolutionTemplate",
+            "title": "比较位置描述的约束范围",
+            "definition": "分别考察仅方向、仅距离、方向和距离齐全时的可能位置。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-POS"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-POS",
+            "kind": "TaskTemplate",
+            "title": "判断位置描述是否充分",
+            "definition": "判断相对同一参照点的描述能否唯一定位，说明缺少的信息。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-POS"
+            ]
+          },
+          {
+            "id": "KC-VIEW",
+            "kind": "KnowledgeComponent",
+            "title": "观察方向与物体视图",
+            "definition": "物体与观察方向共同决定看到的轮廓；这里限定直立圆柱和圆锥。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-VIEW",
+            "kind": "SolutionTemplate",
+            "title": "固定物体姿态比较视图",
+            "definition": "分别从上方、正面和侧面观察，区分三维物体与二维轮廓。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-VIEW"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-VIEW",
+            "kind": "TaskTemplate",
+            "title": "观察直立圆柱与圆锥",
+            "definition": "描述从不同方向看到的形状；不从一幅轮廓反推出唯一三维物体。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-VIEW"
+            ]
+          }
+        ]
+      },
+      "mappingReview": {
+        "reviewer": "Codex author semantic review against source and existing catalog",
+        "reviewedAt": "2026-11-05T02:55:20.960283+00:00",
+        "status": "accepted_for_this_trial",
+        "conclusion": "本例核对后内容匹配正确；程序编号、题目/解法归属及来源检查通过。",
+        "taskTemplate": "TT-ERROR",
+        "solutionTemplates": [],
+        "contentHash": "183da8ecd3f1fec3cc75aeafd4cb28a3b979d54bc94788c46f0ec40e75e3b2ec",
+        "limitation": "Small known catalog. Author-corrected input for C02/C03/C05; not raw extraction success, full-book acceptance or learner assessment."
+      },
+      "evidencePath": "runs/20261105T024756Z/C03/",
+      "mappingPrefix": "map-direct",
+      "rawInvalidBlocks": [],
+      "reviewedInvalidBlocks": []
+    },
+    {
+      "id": "C05",
+      "title": "三种统计图与教学提示",
+      "scope": "提取三种统计图、原题提问和下方提示；提示必须单独保存。",
+      "types": [
+        "text",
+        "chart"
+      ],
+      "regions": [
+        {
+          "index": 0,
+          "page": 93,
+          "original": "../source/page-93.png",
+          "originalSha256": "ee511b5b0d901122872f3df9863e5878f83f61aa13738cfe6c8ba8baa37331c7",
+          "pixelBox": [
+            82,
+            246,
+            1016,
+            1459
+          ],
+          "originalSize": [
+            1087,
+            1536
+          ],
+          "file": "inputs/C05-0.png",
+          "sha256": "734c5ec4055874156d8fc642374c7092ea392742a66c7c35f19e64446aeac303"
+        }
+      ],
+      "raw": {
+        "tasks": [
+          {
+            "question": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "同学们根据整理的我国人口老龄化的数据绘制下面的统计图，从统计图中你能获得哪些信息？与同伴交流。"
+                  }
+                ]
+              }
+            ],
+            "solutions": [],
+            "knowledge": [],
+            "teachingAids": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "条形统计图很容易看出老年人口的数量……"
+                  },
+                  {
+                    "type": "text",
+                    "text": "折线统计图可以看出老年人口近二十年的变化……"
+                  },
+                  {
+                    "type": "text",
+                    "text": "扇形统计图可以看出人口普查各年龄段人口占比情况……"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "uncertainties": [
+          "条形统计图与折线统计图的图例颜色在图中可辨，但未在JSON中单独记录颜色。",
+          "扇形统计图各扇区颜色可辨，但未在JSON中记录颜色。",
+          "条形统计图与折线统计图纵轴刻度标签为0、0.5、1.0、1.5、2.0、2.5、3.0，单位“亿”已记录；扇形统计图未标注单位。"
+        ]
+      },
+      "extractResult": {
+        "caseId": "C05",
+        "stage": "extract",
+        "httpStatus": 200,
+        "usage": {
+          "prompt_tokens": 2109,
+          "completion_tokens": 236,
+          "total_tokens": 2345,
+          "prompt_tokens_details": {
+            "cached_tokens": 384
+          },
+          "prompt_cache_hit_tokens": 384,
+          "prompt_cache_miss_tokens": 1725
+        },
+        "finishReason": "stop",
+        "returnedModel": "deepseek-flash",
+        "status": "ready_for_author_review",
+        "attempts": [
+          {
+            "number": 1,
+            "status": 200,
+            "elapsedSeconds": 9.46
+          }
+        ]
+      },
+      "reviewed": {
+        "tasks": [
+          {
+            "question": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "同学们根据整理的我国人口老龄化的数据绘制下面的统计图，从统计图中你能获得哪些信息？与同伴交流。"
+                  },
+                  {
+                    "type": "chart",
+                    "chartType": "bar",
+                    "title": "第五～七次人口普查中老年人口数量统计图",
+                    "categories": [
+                      "第五次",
+                      "第六次",
+                      "第七次"
+                    ],
+                    "unit": "亿人",
+                    "precision": 2,
+                    "axis": {
+                      "min": 0,
+                      "max": 3,
+                      "step": 0.5
+                    },
+                    "labels": true,
+                    "series": [
+                      {
+                        "name": "60岁及以上",
+                        "values": [
+                          1.3,
+                          1.78,
+                          2.64
+                        ],
+                        "color": "#4f81bd"
+                      },
+                      {
+                        "name": "65岁及以上",
+                        "values": [
+                          0.88,
+                          1.19,
+                          1.91
+                        ],
+                        "color": "#e28036"
+                      }
+                    ],
+                    "cohortRelation": "second_subset_of_first",
+                    "stacked": false
+                  },
+                  {
+                    "type": "chart",
+                    "chartType": "line",
+                    "title": "第五～七次人口普查中老年人口数量变化情况",
+                    "categories": [
+                      "第五次",
+                      "第六次",
+                      "第七次"
+                    ],
+                    "unit": "亿人",
+                    "precision": 2,
+                    "axis": {
+                      "min": 0,
+                      "max": 3,
+                      "step": 0.5
+                    },
+                    "labels": true,
+                    "series": [
+                      {
+                        "name": "60岁及以上",
+                        "values": [
+                          1.3,
+                          1.78,
+                          2.64
+                        ],
+                        "color": "#4f81bd"
+                      },
+                      {
+                        "name": "65岁及以上",
+                        "values": [
+                          0.88,
+                          1.19,
+                          1.91
+                        ],
+                        "color": "#e28036"
+                      }
+                    ],
+                    "cohortRelation": "second_subset_of_first",
+                    "stacked": false
+                  },
+                  {
+                    "type": "chart",
+                    "chartType": "pie",
+                    "title": "第七次人口普查年龄分布图",
+                    "categories": [
+                      "0～14岁",
+                      "15～59岁",
+                      "60～64岁",
+                      "65岁及以上"
+                    ],
+                    "unit": "%",
+                    "precision": 2,
+                    "labels": true,
+                    "series": [
+                      {
+                        "name": "第七次人口普查",
+                        "values": [
+                          17.95,
+                          63.35,
+                          5.2,
+                          13.5
+                        ],
+                        "color": "#4f81bd"
+                      }
+                    ],
+                    "colors": [
+                      "#4f81bd",
+                      "#e28036",
+                      "#a5a5a5",
+                      "#ffc000"
+                    ],
+                    "cohortRelation": "disjoint_parts",
+                    "stacked": false
+                  }
+                ]
+              }
+            ],
+            "solutions": [],
+            "knowledge": [],
+            "teachingAids": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "条形统计图很容易看出老年人口的数量……"
+                  },
+                  {
+                    "type": "text",
+                    "text": "折线统计图可以看出老年人口近二十年的变化……"
+                  },
+                  {
+                    "type": "text",
+                    "text": "扇形统计图可以看出人口普查各年龄段人口占比情况……"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "uncertainties": [
+          "模型漏掉全部三个图表；作者依据本轮原图重新核对首轮人工参考中的系列、数值、单位及刻度后补入。",
+          "精确 RGB 并非教学语义；重绘用固定近似颜色并保留类别对应。"
+        ]
+      },
+      "contentReview": {
+        "reviewer": "Codex author source comparison; not independent human",
+        "decision": "accept_for_mapping",
+        "rawJudgment": "critical_content_missing",
+        "originalHash": "daeef8339c8f80a7bae3d65529cda425a298757e41102f9ae3b68fe90b4b678c",
+        "reviewedContentHash": "39eccf1fbf324ac7550af9d1cf28b58dd74c4b46ade037aad41d4280e798f699",
+        "reviewWindowStart": "2026-11-05T02:48:42+00:00",
+        "reviewWindowEnd": "2026-11-05T02:50:06.547113+00:00",
+        "timingScope": "Shared content inspection/edit window across four cases; includes author analysis and correction-script writing. Do not sum per-case times or use as end-user editing time.",
+        "notes": [
+          "原始输出没有任何 chart 块，不能因 JSON 合格判定提取完成。",
+          "三个统计图均为作者补齐，不计为本轮 LLM 提取成功。",
+          "题目提问和三条提示无需改动；已分开放置。"
+        ],
+        "changes": [
+          {
+            "path": "/tasks/0/question/0/blocks",
+            "before": [
+              {
+                "type": "text",
+                "text": "同学们根据整理的我国人口老龄化的数据绘制下面的统计图，从统计图中你能获得哪些信息？与同伴交流。"
+              }
+            ],
+            "after": [
+              {
+                "type": "text",
+                "text": "同学们根据整理的我国人口老龄化的数据绘制下面的统计图，从统计图中你能获得哪些信息？与同伴交流。"
+              },
+              {
+                "type": "chart",
+                "chartType": "bar",
+                "title": "第五～七次人口普查中老年人口数量统计图",
+                "categories": [
+                  "第五次",
+                  "第六次",
+                  "第七次"
+                ],
+                "unit": "亿人",
+                "precision": 2,
+                "axis": {
+                  "min": 0,
+                  "max": 3,
+                  "step": 0.5
+                },
+                "labels": true,
+                "series": [
+                  {
+                    "name": "60岁及以上",
+                    "values": [
+                      1.3,
+                      1.78,
+                      2.64
+                    ],
+                    "color": "#4f81bd"
+                  },
+                  {
+                    "name": "65岁及以上",
+                    "values": [
+                      0.88,
+                      1.19,
+                      1.91
+                    ],
+                    "color": "#e28036"
+                  }
+                ],
+                "cohortRelation": "second_subset_of_first",
+                "stacked": false
+              },
+              {
+                "type": "chart",
+                "chartType": "line",
+                "title": "第五～七次人口普查中老年人口数量变化情况",
+                "categories": [
+                  "第五次",
+                  "第六次",
+                  "第七次"
+                ],
+                "unit": "亿人",
+                "precision": 2,
+                "axis": {
+                  "min": 0,
+                  "max": 3,
+                  "step": 0.5
+                },
+                "labels": true,
+                "series": [
+                  {
+                    "name": "60岁及以上",
+                    "values": [
+                      1.3,
+                      1.78,
+                      2.64
+                    ],
+                    "color": "#4f81bd"
+                  },
+                  {
+                    "name": "65岁及以上",
+                    "values": [
+                      0.88,
+                      1.19,
+                      1.91
+                    ],
+                    "color": "#e28036"
+                  }
+                ],
+                "cohortRelation": "second_subset_of_first",
+                "stacked": false
+              },
+              {
+                "type": "chart",
+                "chartType": "pie",
+                "title": "第七次人口普查年龄分布图",
+                "categories": [
+                  "0～14岁",
+                  "15～59岁",
+                  "60～64岁",
+                  "65岁及以上"
+                ],
+                "unit": "%",
+                "precision": 2,
+                "labels": true,
+                "series": [
+                  {
+                    "name": "第七次人口普查",
+                    "values": [
+                      17.95,
+                      63.35,
+                      5.2,
+                      13.5
+                    ],
+                    "color": "#4f81bd"
+                  }
+                ],
+                "colors": [
+                  "#4f81bd",
+                  "#e28036",
+                  "#a5a5a5",
+                  "#ffc000"
+                ],
+                "cohortRelation": "disjoint_parts",
+                "stacked": false
+              }
+            ]
+          },
+          {
+            "path": "/uncertainties",
+            "before": [
+              "条形统计图与折线统计图的图例颜色在图中可辨，但未在JSON中单独记录颜色。",
+              "扇形统计图各扇区颜色可辨，但未在JSON中记录颜色。",
+              "条形统计图与折线统计图纵轴刻度标签为0、0.5、1.0、1.5、2.0、2.5、3.0，单位“亿”已记录；扇形统计图未标注单位。"
+            ],
+            "after": [
+              "模型漏掉全部三个图表；作者依据本轮原图重新核对首轮人工参考中的系列、数值、单位及刻度后补入。",
+              "精确 RGB 并非教学语义；重绘用固定近似颜色并保留类别对应。"
+            ]
+          }
+        ]
+      },
+      "mapping": {
+        "tasks": [
+          {
+            "taskIndex": 0,
+            "taskMatch": {
+              "catalogId": "TT-CHART",
+              "reason": "题目要求从同一人口资料的条形图、折线图、扇形图中获取信息，符合解读同一资料不同统计图的任务定义。",
+              "unmatchedProposal": null
+            },
+            "solutions": [],
+            "knowledge": []
+          }
+        ]
+      },
+      "mapResult": {
+        "caseId": "C05",
+        "stage": "map",
+        "httpStatus": 200,
+        "usage": {
+          "prompt_tokens": 2869,
+          "completion_tokens": 69,
+          "total_tokens": 2938,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 2869
+        },
+        "finishReason": "stop",
+        "returnedModel": "deepseek-flash",
+        "status": "ready_for_author_review",
+        "attempts": [
+          {
+            "number": 1,
+            "status": 200,
+            "elapsedSeconds": 6.48
+          }
+        ]
+      },
+      "graph": {
+        "caseId": "C05",
+        "status": "linked_pending_semantic_review",
+        "contentHash": "39eccf1fbf324ac7550af9d1cf28b58dd74c4b46ade037aad41d4280e798f699",
+        "instances": [
+          {
+            "id": "R2-C05-T0",
+            "kind": "TaskInstance",
+            "templateId": "TT-CHART",
+            "contentRefs": [
+              "R2-C05-T0/question/0"
+            ]
+          }
+        ],
+        "elements": [
+          {
+            "id": "R2-C05-T0/question/0",
+            "owner": "R2-C05-T0",
+            "role": "question",
+            "origin": "reviewed_source_extraction",
+            "source": {
+              "page": 93,
+              "pixelBox": [
+                82,
+                246,
+                1016,
+                1459
+              ],
+              "sourceSha256": "ee511b5b0d901122872f3df9863e5878f83f61aa13738cfe6c8ba8baa37331c7",
+              "cropSha256": "734c5ec4055874156d8fc642374c7092ea392742a66c7c35f19e64446aeac303"
+            },
+            "blocks": [
+              {
+                "type": "text",
+                "text": "同学们根据整理的我国人口老龄化的数据绘制下面的统计图，从统计图中你能获得哪些信息？与同伴交流。"
+              },
+              {
+                "type": "chart",
+                "chartType": "bar",
+                "title": "第五～七次人口普查中老年人口数量统计图",
+                "categories": [
+                  "第五次",
+                  "第六次",
+                  "第七次"
+                ],
+                "unit": "亿人",
+                "precision": 2,
+                "axis": {
+                  "min": 0,
+                  "max": 3,
+                  "step": 0.5
+                },
+                "labels": true,
+                "series": [
+                  {
+                    "name": "60岁及以上",
+                    "values": [
+                      1.3,
+                      1.78,
+                      2.64
+                    ],
+                    "color": "#4f81bd"
+                  },
+                  {
+                    "name": "65岁及以上",
+                    "values": [
+                      0.88,
+                      1.19,
+                      1.91
+                    ],
+                    "color": "#e28036"
+                  }
+                ],
+                "cohortRelation": "second_subset_of_first",
+                "stacked": false
+              },
+              {
+                "type": "chart",
+                "chartType": "line",
+                "title": "第五～七次人口普查中老年人口数量变化情况",
+                "categories": [
+                  "第五次",
+                  "第六次",
+                  "第七次"
+                ],
+                "unit": "亿人",
+                "precision": 2,
+                "axis": {
+                  "min": 0,
+                  "max": 3,
+                  "step": 0.5
+                },
+                "labels": true,
+                "series": [
+                  {
+                    "name": "60岁及以上",
+                    "values": [
+                      1.3,
+                      1.78,
+                      2.64
+                    ],
+                    "color": "#4f81bd"
+                  },
+                  {
+                    "name": "65岁及以上",
+                    "values": [
+                      0.88,
+                      1.19,
+                      1.91
+                    ],
+                    "color": "#e28036"
+                  }
+                ],
+                "cohortRelation": "second_subset_of_first",
+                "stacked": false
+              },
+              {
+                "type": "chart",
+                "chartType": "pie",
+                "title": "第七次人口普查年龄分布图",
+                "categories": [
+                  "0～14岁",
+                  "15～59岁",
+                  "60～64岁",
+                  "65岁及以上"
+                ],
+                "unit": "%",
+                "precision": 2,
+                "labels": true,
+                "series": [
+                  {
+                    "name": "第七次人口普查",
+                    "values": [
+                      17.95,
+                      63.35,
+                      5.2,
+                      13.5
+                    ],
+                    "color": "#4f81bd"
+                  }
+                ],
+                "colors": [
+                  "#4f81bd",
+                  "#e28036",
+                  "#a5a5a5",
+                  "#ffc000"
+                ],
+                "cohortRelation": "disjoint_parts",
+                "stacked": false
+              }
+            ]
+          },
+          {
+            "id": "R2-C05-T0/teaching_aid/0",
+            "owner": "R2-C05-T0",
+            "role": "teaching_aid",
+            "origin": "reviewed_source_extraction",
+            "source": {
+              "page": 93,
+              "pixelBox": [
+                82,
+                246,
+                1016,
+                1459
+              ],
+              "sourceSha256": "ee511b5b0d901122872f3df9863e5878f83f61aa13738cfe6c8ba8baa37331c7",
+              "cropSha256": "734c5ec4055874156d8fc642374c7092ea392742a66c7c35f19e64446aeac303"
+            },
+            "blocks": [
+              {
+                "type": "text",
+                "text": "条形统计图很容易看出老年人口的数量……"
+              },
+              {
+                "type": "text",
+                "text": "折线统计图可以看出老年人口近二十年的变化……"
+              },
+              {
+                "type": "text",
+                "text": "扇形统计图可以看出人口普查各年龄段人口占比情况……"
+              }
+            ]
+          }
+        ],
+        "knowledgeBindings": [],
+        "pending": [],
+        "definitions": [
+          {
+            "id": "KC-ORDER",
+            "kind": "KnowledgeComponent",
+            "title": "分数混合运算顺序",
+            "definition": "分数混合运算遵循括号及同级运算顺序。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-ORDER",
+            "kind": "SolutionTemplate",
+            "title": "按运算顺序化简",
+            "definition": "保持运算树，除以非零数改为乘其倒数，再计算。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-ORDER"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-EXPR",
+            "kind": "TaskTemplate",
+            "title": "计算含括号的分数混合运算",
+            "definition": "给定合法有理数表达式，按规定顺序计算结果；除数不能为零。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-ORDER"
+            ]
+          },
+          {
+            "id": "KC-FRACTION",
+            "kind": "KnowledgeComponent",
+            "title": "一个量的几分之几",
+            "definition": "确定作为整体的量，再按比例求其部分；多层关系需要辨明每层整体。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "KC-ASSOC",
+            "kind": "KnowledgeComponent",
+            "title": "乘法结合律",
+            "definition": "连乘可以改变结合次序而不改变乘积。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-TWO",
+            "kind": "SolutionTemplate",
+            "title": "逐层求部分量",
+            "definition": "先求中间量，再求最终量。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-FRACTION"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "ST-COMBINE",
+            "kind": "SolutionTemplate",
+            "title": "合并两层比例",
+            "definition": "先相乘得到相对原量的比例，再乘原量。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-FRACTION",
+              "KC-ASSOC"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-CHAIN",
+            "kind": "TaskTemplate",
+            "title": "已知两层比例求最终量",
+            "definition": "给定原量及连续两层比例，求最后一层数量；人数任务须满足整数条件。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-TWO",
+              "ST-COMBINE"
+            ]
+          },
+          {
+            "id": "KC-RECIP",
+            "kind": "KnowledgeComponent",
+            "title": "除以非零数等于乘其倒数",
+            "definition": "除数必须非零；改乘法时需要取倒数。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-ERROR",
+            "kind": "SolutionTemplate",
+            "title": "逐步核查运算变换",
+            "definition": "逐步比对表达式，定位首个不等价的变换并解释。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-RECIP"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-ERROR",
+            "kind": "TaskTemplate",
+            "title": "辨析分数除法的错误演算",
+            "definition": "给出他人演算，判断是否等价并说明理由。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-ERROR"
+            ]
+          },
+          {
+            "id": "KC-DATA",
+            "kind": "KnowledgeComponent",
+            "title": "数据的类别与单位",
+            "definition": "读数须结合列标题、统计范围、单位与来源；重叠类别不可直接相加。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-TABLE",
+            "kind": "SolutionTemplate",
+            "title": "按标题和单位读表",
+            "definition": "对应行列查找数据，保留单位并区分类别范围。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-DATA"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-TABLE",
+            "kind": "TaskTemplate",
+            "title": "整理并解读人口统计资料",
+            "definition": "区分调查方案、观测数据和结论，按年龄及普查批次整理。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-TABLE"
+            ]
+          },
+          {
+            "id": "KC-CHART",
+            "kind": "KnowledgeComponent",
+            "title": "统计图的表达",
+            "definition": "条形图比较数量，折线图呈现变化，扇形图表达互斥部分在整体中的占比。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-READ-CHART",
+            "kind": "SolutionTemplate",
+            "title": "结合图例与坐标读图",
+            "definition": "先确定系列、范围及单位，再读数和比较，不将包含关系当作互斥部分。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-CHART",
+              "KC-DATA"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-CHART",
+            "kind": "TaskTemplate",
+            "title": "解读同一资料的不同统计图",
+            "definition": "根据图形及图例说明数量、变化或构成；解释不能超出数据范围。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-READ-CHART"
+            ]
+          },
+          {
+            "id": "KC-CIRCLE",
+            "kind": "KnowledgeComponent",
+            "title": "圆与其他平面图形的区别",
+            "definition": "圆周到圆心距离相等；此知识定义是作者据教材活动抽象，不能冒充逐字提取。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-SHAPE",
+            "kind": "SolutionTemplate",
+            "title": "比较形状与中心距离",
+            "definition": "观察或操作图形，检验中心到边界的距离是否一致。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-CIRCLE"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-SHAPE",
+            "kind": "TaskTemplate",
+            "title": "比较圆与其他图形",
+            "definition": "比较指定圆、椭圆及多边形，提出区分依据；未给长度不得编造测量值。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-SHAPE"
+            ]
+          },
+          {
+            "id": "KC-POS",
+            "kind": "KnowledgeComponent",
+            "title": "方向与距离确定位置",
+            "definition": "给定参照点后，方向角与距离共同限定平面中的位置。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-POS",
+            "kind": "SolutionTemplate",
+            "title": "比较位置描述的约束范围",
+            "definition": "分别考察仅方向、仅距离、方向和距离齐全时的可能位置。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-POS"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-POS",
+            "kind": "TaskTemplate",
+            "title": "判断位置描述是否充分",
+            "definition": "判断相对同一参照点的描述能否唯一定位，说明缺少的信息。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-POS"
+            ]
+          },
+          {
+            "id": "KC-VIEW",
+            "kind": "KnowledgeComponent",
+            "title": "观察方向与物体视图",
+            "definition": "物体与观察方向共同决定看到的轮廓；这里限定直立圆柱和圆锥。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-VIEW",
+            "kind": "SolutionTemplate",
+            "title": "固定物体姿态比较视图",
+            "definition": "分别从上方、正面和侧面观察，区分三维物体与二维轮廓。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-VIEW"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-VIEW",
+            "kind": "TaskTemplate",
+            "title": "观察直立圆柱与圆锥",
+            "definition": "描述从不同方向看到的形状；不从一幅轮廓反推出唯一三维物体。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-VIEW"
+            ]
+          }
+        ]
+      },
+      "mappingReview": {
+        "reviewer": "Codex author semantic review against source and existing catalog",
+        "reviewedAt": "2026-11-05T02:55:20.965492+00:00",
+        "status": "accepted_for_this_trial",
+        "conclusion": "本例核对后内容匹配正确；程序编号、题目/解法归属及来源检查通过。",
+        "taskTemplate": "TT-CHART",
+        "solutionTemplates": [],
+        "contentHash": "39eccf1fbf324ac7550af9d1cf28b58dd74c4b46ade037aad41d4280e798f699",
+        "limitation": "Small known catalog. Author-corrected input for C02/C03/C05; not raw extraction success, full-book acceptance or learner assessment."
+      },
+      "evidencePath": "runs/20261105T024756Z/C05/",
+      "mappingPrefix": "map",
+      "rawInvalidBlocks": [],
+      "reviewedInvalidBlocks": []
+    },
+    {
+      "id": "C06",
+      "title": "六种平面图形和原图标记",
+      "scope": "提取剪图比较要求、图形序列和图内可见标记，不包含该区域之外的滚动、对折说明。",
+      "types": [
+        "text",
+        "shape_row"
+      ],
+      "regions": [
+        {
+          "index": 0,
+          "page": 11,
+          "original": "../source/page-11.jpg",
+          "originalSha256": "d93ae657a606782ea53a162c4b7c2ec638631aee0f9ea3c747c39183628217f1",
+          "pixelBox": [
+            114,
+            926,
+            946,
+            1094
+          ],
+          "originalSize": [
+            1087,
+            1536
+          ],
+          "file": "inputs/C06-0.png",
+          "sha256": "0d89df98de5d25933aea9ce6e608ac2a20475eaf3a262963fdf201b42c1f9732"
+        }
+      ],
+      "raw": {
+        "tasks": [
+          {
+            "question": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "从附页1中的图1剪出下面的图形，想办法说明圆和其他图形的不同。"
+                  },
+                  {
+                    "type": "shape_row",
+                    "items": [
+                      {
+                        "shape": "circle",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      },
+                      {
+                        "shape": "ellipse",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      },
+                      {
+                        "shape": "triangle",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      },
+                      {
+                        "shape": "square",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      },
+                      {
+                        "shape": "pentagon",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      },
+                      {
+                        "shape": "hexagon",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      }
+                    ],
+                    "dimensionsRole": "layout_only"
+                  }
+                ]
+              }
+            ],
+            "solutions": [],
+            "knowledge": [],
+            "teachingAids": []
+          }
+        ],
+        "uncertainties": [
+          "图形中的点仅按视觉判断为靠近中心，未由文字明确说明其数学含义。",
+          "未提供附页1图1的内容，无法核对剪出的图形是否与附页一致。"
+        ]
+      },
+      "extractResult": {
+        "caseId": "C06",
+        "stage": "extract",
+        "httpStatus": 200,
+        "usage": {
+          "prompt_tokens": 1444,
+          "completion_tokens": 259,
+          "total_tokens": 1703,
+          "prompt_tokens_details": {
+            "cached_tokens": 384
+          },
+          "prompt_cache_hit_tokens": 384,
+          "prompt_cache_miss_tokens": 1060
+        },
+        "finishReason": "stop",
+        "returnedModel": "deepseek-flash",
+        "status": "ready_for_author_review",
+        "attempts": [
+          {
+            "number": 1,
+            "status": 200,
+            "elapsedSeconds": 8.95
+          }
+        ]
+      },
+      "reviewed": {
+        "tasks": [
+          {
+            "question": [
+              {
+                "regionIndex": 0,
+                "blocks": [
+                  {
+                    "type": "text",
+                    "text": "从附页1中的图1剪出下面的图形，想办法说明圆和其他图形的不同。"
+                  },
+                  {
+                    "type": "shape_row",
+                    "items": [
+                      {
+                        "shape": "circle",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      },
+                      {
+                        "shape": "ellipse",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      },
+                      {
+                        "shape": "triangle",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      },
+                      {
+                        "shape": "square",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      },
+                      {
+                        "shape": "pentagon",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      },
+                      {
+                        "shape": "hexagon",
+                        "classificationBasis": "visual_recognition",
+                        "dot": "center_like",
+                        "label": ""
+                      }
+                    ],
+                    "dimensionsRole": "layout_only"
+                  }
+                ]
+              }
+            ],
+            "solutions": [],
+            "knowledge": [],
+            "teachingAids": []
+          }
+        ],
+        "uncertainties": [
+          "图形中的点仅按视觉判断为靠近中心，未由文字明确说明其数学含义。",
+          "未提供附页1图1的内容，无法核对剪出的图形是否与附页一致。"
+        ]
+      },
+      "contentReview": {
+        "reviewer": "Codex author source comparison; not independent human",
+        "decision": "accept_for_mapping",
+        "rawJudgment": "selected_content_accepted",
+        "originalHash": "71eec66bd418db48a21bada5f7121dbaa0300da91d234c1916ddc5faae2a81cf",
+        "reviewedContentHash": "71eec66bd418db48a21bada5f7121dbaa0300da91d234c1916ddc5faae2a81cf",
+        "reviewWindowStart": "2026-11-05T02:48:42+00:00",
+        "reviewWindowEnd": "2026-11-05T02:50:06.551420+00:00",
+        "timingScope": "Shared content inspection/edit window across four cases; includes author analysis and correction-script writing. Do not sum per-case times or use as end-user editing time.",
+        "notes": [
+          "核对原图：六种形状、顺序、六个可见点、剪图要求均有表达。",
+          "点只声明视觉上接近中间；尺寸与多边形规则性由示意布局决定，不作为新的题目已知关系。",
+          "附页图1未提供，不据此宣称完整动手活动可以替代。"
+        ],
+        "changes": []
+      },
+      "mapping": {
+        "tasks": [
+          {
+            "taskIndex": 0,
+            "taskMatch": {
+              "catalogId": "TT-SHAPE",
+              "reason": "任务要求比较圆与其他图形并说明不同，符合比较圆与多边形的任务定义。",
+              "unmatchedProposal": null
+            },
+            "solutions": [],
+            "knowledge": []
+          }
+        ]
+      },
+      "mapResult": {
+        "caseId": "C06",
+        "stage": "map",
+        "httpStatus": 200,
+        "usage": {
+          "prompt_tokens": 2524,
+          "completion_tokens": 61,
+          "total_tokens": 2585,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 2524
+        },
+        "finishReason": "stop",
+        "returnedModel": "deepseek-flash",
+        "status": "ready_for_author_review",
+        "attempts": [
+          {
+            "number": 1,
+            "status": 200,
+            "elapsedSeconds": 6.21
+          }
+        ]
+      },
+      "graph": {
+        "caseId": "C06",
+        "status": "linked_pending_semantic_review",
+        "contentHash": "71eec66bd418db48a21bada5f7121dbaa0300da91d234c1916ddc5faae2a81cf",
+        "instances": [
+          {
+            "id": "R2-C06-T0",
+            "kind": "TaskInstance",
+            "templateId": "TT-SHAPE",
+            "contentRefs": [
+              "R2-C06-T0/question/0"
+            ]
+          }
+        ],
+        "elements": [
+          {
+            "id": "R2-C06-T0/question/0",
+            "owner": "R2-C06-T0",
+            "role": "question",
+            "origin": "reviewed_source_extraction",
+            "source": {
+              "page": 11,
+              "pixelBox": [
+                114,
+                926,
+                946,
+                1094
+              ],
+              "sourceSha256": "d93ae657a606782ea53a162c4b7c2ec638631aee0f9ea3c747c39183628217f1",
+              "cropSha256": "0d89df98de5d25933aea9ce6e608ac2a20475eaf3a262963fdf201b42c1f9732"
+            },
+            "blocks": [
+              {
+                "type": "text",
+                "text": "从附页1中的图1剪出下面的图形，想办法说明圆和其他图形的不同。"
+              },
+              {
+                "type": "shape_row",
+                "items": [
+                  {
+                    "shape": "circle",
+                    "classificationBasis": "visual_recognition",
+                    "dot": "center_like",
+                    "label": ""
+                  },
+                  {
+                    "shape": "ellipse",
+                    "classificationBasis": "visual_recognition",
+                    "dot": "center_like",
+                    "label": ""
+                  },
+                  {
+                    "shape": "triangle",
+                    "classificationBasis": "visual_recognition",
+                    "dot": "center_like",
+                    "label": ""
+                  },
+                  {
+                    "shape": "square",
+                    "classificationBasis": "visual_recognition",
+                    "dot": "center_like",
+                    "label": ""
+                  },
+                  {
+                    "shape": "pentagon",
+                    "classificationBasis": "visual_recognition",
+                    "dot": "center_like",
+                    "label": ""
+                  },
+                  {
+                    "shape": "hexagon",
+                    "classificationBasis": "visual_recognition",
+                    "dot": "center_like",
+                    "label": ""
+                  }
+                ],
+                "dimensionsRole": "layout_only"
+              }
+            ]
+          }
+        ],
+        "knowledgeBindings": [],
+        "pending": [],
+        "definitions": [
+          {
+            "id": "KC-ORDER",
+            "kind": "KnowledgeComponent",
+            "title": "分数混合运算顺序",
+            "definition": "分数混合运算遵循括号及同级运算顺序。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-ORDER",
+            "kind": "SolutionTemplate",
+            "title": "按运算顺序化简",
+            "definition": "保持运算树，除以非零数改为乘其倒数，再计算。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-ORDER"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-EXPR",
+            "kind": "TaskTemplate",
+            "title": "计算含括号的分数混合运算",
+            "definition": "给定合法有理数表达式，按规定顺序计算结果；除数不能为零。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-ORDER"
+            ]
+          },
+          {
+            "id": "KC-FRACTION",
+            "kind": "KnowledgeComponent",
+            "title": "一个量的几分之几",
+            "definition": "确定作为整体的量，再按比例求其部分；多层关系需要辨明每层整体。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "KC-ASSOC",
+            "kind": "KnowledgeComponent",
+            "title": "乘法结合律",
+            "definition": "连乘可以改变结合次序而不改变乘积。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-TWO",
+            "kind": "SolutionTemplate",
+            "title": "逐层求部分量",
+            "definition": "先求中间量，再求最终量。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-FRACTION"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "ST-COMBINE",
+            "kind": "SolutionTemplate",
+            "title": "合并两层比例",
+            "definition": "先相乘得到相对原量的比例，再乘原量。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-FRACTION",
+              "KC-ASSOC"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-CHAIN",
+            "kind": "TaskTemplate",
+            "title": "已知两层比例求最终量",
+            "definition": "给定原量及连续两层比例，求最后一层数量；人数任务须满足整数条件。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-TWO",
+              "ST-COMBINE"
+            ]
+          },
+          {
+            "id": "KC-RECIP",
+            "kind": "KnowledgeComponent",
+            "title": "除以非零数等于乘其倒数",
+            "definition": "除数必须非零；改乘法时需要取倒数。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-ERROR",
+            "kind": "SolutionTemplate",
+            "title": "逐步核查运算变换",
+            "definition": "逐步比对表达式，定位首个不等价的变换并解释。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-RECIP"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-ERROR",
+            "kind": "TaskTemplate",
+            "title": "辨析分数除法的错误演算",
+            "definition": "给出他人演算，判断是否等价并说明理由。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-ERROR"
+            ]
+          },
+          {
+            "id": "KC-DATA",
+            "kind": "KnowledgeComponent",
+            "title": "数据的类别与单位",
+            "definition": "读数须结合列标题、统计范围、单位与来源；重叠类别不可直接相加。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-TABLE",
+            "kind": "SolutionTemplate",
+            "title": "按标题和单位读表",
+            "definition": "对应行列查找数据，保留单位并区分类别范围。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-DATA"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-TABLE",
+            "kind": "TaskTemplate",
+            "title": "整理并解读人口统计资料",
+            "definition": "区分调查方案、观测数据和结论，按年龄及普查批次整理。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-TABLE"
+            ]
+          },
+          {
+            "id": "KC-CHART",
+            "kind": "KnowledgeComponent",
+            "title": "统计图的表达",
+            "definition": "条形图比较数量，折线图呈现变化，扇形图表达互斥部分在整体中的占比。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-READ-CHART",
+            "kind": "SolutionTemplate",
+            "title": "结合图例与坐标读图",
+            "definition": "先确定系列、范围及单位，再读数和比较，不将包含关系当作互斥部分。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-CHART",
+              "KC-DATA"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-CHART",
+            "kind": "TaskTemplate",
+            "title": "解读同一资料的不同统计图",
+            "definition": "根据图形及图例说明数量、变化或构成；解释不能超出数据范围。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-READ-CHART"
+            ]
+          },
+          {
+            "id": "KC-CIRCLE",
+            "kind": "KnowledgeComponent",
+            "title": "圆与其他平面图形的区别",
+            "definition": "圆周到圆心距离相等；此知识定义是作者据教材活动抽象，不能冒充逐字提取。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-SHAPE",
+            "kind": "SolutionTemplate",
+            "title": "比较形状与中心距离",
+            "definition": "观察或操作图形，检验中心到边界的距离是否一致。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-CIRCLE"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-SHAPE",
+            "kind": "TaskTemplate",
+            "title": "比较圆与其他图形",
+            "definition": "比较指定圆、椭圆及多边形，提出区分依据；未给长度不得编造测量值。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-SHAPE"
+            ]
+          },
+          {
+            "id": "KC-POS",
+            "kind": "KnowledgeComponent",
+            "title": "方向与距离确定位置",
+            "definition": "给定参照点后，方向角与距离共同限定平面中的位置。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-POS",
+            "kind": "SolutionTemplate",
+            "title": "比较位置描述的约束范围",
+            "definition": "分别考察仅方向、仅距离、方向和距离齐全时的可能位置。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-POS"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-POS",
+            "kind": "TaskTemplate",
+            "title": "判断位置描述是否充分",
+            "definition": "判断相对同一参照点的描述能否唯一定位，说明缺少的信息。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-POS"
+            ]
+          },
+          {
+            "id": "KC-VIEW",
+            "kind": "KnowledgeComponent",
+            "title": "观察方向与物体视图",
+            "definition": "物体与观察方向共同决定看到的轮廓；这里限定直立圆柱和圆锥。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH"
+          },
+          {
+            "id": "ST-VIEW",
+            "kind": "SolutionTemplate",
+            "title": "固定物体姿态比较视图",
+            "definition": "分别从上方、正面和侧面观察，区分三维物体与二维轮廓。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "kcIds": [
+              "KC-VIEW"
+            ],
+            "subsolutionIds": []
+          },
+          {
+            "id": "TT-VIEW",
+            "kind": "TaskTemplate",
+            "title": "观察直立圆柱与圆锥",
+            "definition": "描述从不同方向看到的形状；不从一幅轮廓反推出唯一三维物体。",
+            "origin": "author_abstraction",
+            "domainId": "DOM-MATH",
+            "solutionIds": [
+              "ST-VIEW"
+            ]
+          }
+        ]
+      },
+      "mappingReview": {
+        "reviewer": "Codex author semantic review against source and existing catalog",
+        "reviewedAt": "2026-11-05T02:55:20.975816+00:00",
+        "status": "accepted_for_this_trial",
+        "conclusion": "本例核对后内容匹配正确；程序编号、题目/解法归属及来源检查通过。",
+        "taskTemplate": "TT-SHAPE",
+        "solutionTemplates": [],
+        "contentHash": "71eec66bd418db48a21bada5f7121dbaa0300da91d234c1916ddc5faae2a81cf",
+        "limitation": "Small known catalog. Author-corrected input for C02/C03/C05; not raw extraction success, full-book acceptance or learner assessment."
+      },
+      "evidencePath": "runs/20261105T024756Z/C06/",
+      "mappingPrefix": "map",
+      "rawInvalidBlocks": [],
+      "reviewedInvalidBlocks": []
+    }
+  ]
+}

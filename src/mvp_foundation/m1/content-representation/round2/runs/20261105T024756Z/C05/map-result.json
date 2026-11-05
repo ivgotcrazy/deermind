@@ -1,0 +1,25 @@
+{
+  "caseId": "C05",
+  "stage": "map",
+  "httpStatus": 200,
+  "usage": {
+    "prompt_tokens": 2869,
+    "completion_tokens": 69,
+    "total_tokens": 2938,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 2869
+  },
+  "finishReason": "stop",
+  "returnedModel": "deepseek-flash",
+  "status": "ready_for_author_review",
+  "attempts": [
+    {
+      "number": 1,
+      "status": 200,
+      "elapsedSeconds": 6.48
+    }
+  ]
+}

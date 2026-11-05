@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-03",
+  "scope": "M1-D01 current-flow specification, browseable mock, existing defect fixes and proposed UI additions",
+  "author_review": "pass",
+  "package_status": "D01 not complete; D01-P01/P02/P03 proposal awaits user confirmation",
+  "documents": [
+    {
+      "file": "doc/mvp/m1/PRD.md",
+      "old_version": "v0.6",
+      "new_version": "v0.7",
+      "before_sha256": "f777901d6f4f7603a52a5fe3baee1a450040827e83a6b0beb62b1c51ff0fc53e",
+      "sha256": "caaef598c8289f5d6cdf64cd151fb6807478dd9d5fa9304f675b09c200635dd9"
+    },
+    {
+      "file": "doc/mvp/m1/design/Interaction_Design.md",
+      "old_version": "v0.4",
+      "new_version": "v0.5",
+      "before_sha256": "bb9aa57a0284f9e1e0dc0b492ac24a07663e1c142696b28745f646c1035a7114",
+      "sha256": "8aabe43a4218294c94676a1b922f9297bf647cc80d62f6da4d2f02da6d7e898d"
+    },
+    {
+      "file": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "old_version": "v0.5",
+      "new_version": "v0.6",
+      "before_sha256": "0e676738b8751076e9c19a00a13bcedf79d3333f04c730f55caf954e48f3660a",
+      "sha256": "72d9904ae60c5fa0ec6aef830577b31ce6566e0bdfdcd9394ea869af3c9bc324"
+    },
+    {
+      "file": "doc/mvp/m1/design/README.md",
+      "old_version": "v0.6",
+      "new_version": "v0.7",
+      "before_sha256": "a92268dc70f6178789f565bd8208777f12fa8b2986216fb5ce2e76d370e62dde",
+      "sha256": "f42fe1d58e71fb021502e634083a8bff6fa3d62bb12f1271a7555220bc3f33e2"
+    },
+    {
+      "file": "doc/mvp/m1/README.md",
+      "old_version": "v0.6",
+      "new_version": "v0.7",
+      "before_sha256": "fc59699cef08c821125df974663a658e4b30df6efb125198865c0f364d4a7cc3",
+      "sha256": "4dd490b93fd91c7e2c8f65815e023cf5001db713521dc0f0912568b4bcbb760c"
+    },
+    {
+      "file": "src/mvp_prototype/README.md",
+      "old_version": "v0.21",
+      "new_version": "v0.22",
+      "before_sha256": "598c724ceb12f4572815c2bb5b51875b76e3f572295af0bdd080d66974dd41af",
+      "sha256": "f763c7ca38a5aa0785bb138ee36e003937d531ecb745851a67a5cf3274d0b314"
+    },
+    {
+      "file": "doc/mvp/DECISIONS.md",
+      "old_version": "v0.7",
+      "new_version": "v0.8",
+      "before_sha256": "ca931375e420ccc5dc14ae3c466fabeb58689b08fb4fcf7929aecf6c996af24a",
+      "sha256": "2192de400043dfd722b72962dade9332172f6f6a661a089ccf029cdabb193a6e"
+    }
+  ],
+  "changed_source_files": [
+    {
+      "file": "src/mvp_prototype/admin/src/components/TextbookImportWorkspace.vue",
+      "before_sha256": "81549e258034a692ddd1bda4a8d05346a2e64b1cdd967397e305116e56b53df3",
+      "sha256": "caddaffff7b7eda55bc99decc8ff80ec26ff5a0debc07b5c04ded20f81fe17b6"
+    },
+    {
+      "file": "src/mvp_prototype/admin/src/workbench/textbook-import.ts",
+      "before_sha256": "5a8ca31440f8c4acf430257a2897641ee0b7b154c63a3e204c524aa59cdaf89a",
+      "sha256": "c7a952b4e05b4aecade24cf3f534df7f2bb2674bd35607724664ca6ee613c9ff"
+    },
+    {
+      "file": "src/mvp_prototype/tests/textbook-import.test.mjs",
+      "before_sha256": "48adf728d821afdf93dce4968757beaf8793a126482c77129a8c8b2bbf2b3961",
+      "sha256": "1488cdbdf9988e3c11ef6c35c3d16544a90c297da966cf80fd5a2ebb8006f50e"
+    }
+  ],
+  "checks": {
+    "admin_build": "vue-tsc and Vite passed; existing bundle-size warning retained",
+    "test_command": "node --test --test-concurrency=1 tests/textbook-import.test.mjs tests/material-organizer.test.mjs",
+    "test_result": {
+      "passed": 16,
+      "failed": 0,
+      "log": "tests.log"
+    },
+    "browser": [
+      "Empty input is rejected without starting recognition",
+      "Recognition interruption resumes the same import without creating a duplicate book",
+      "Cross-page merge, table correction, chart references and lesson checks survive navigation and reload",
+      "1280px desktop viewport has no page-level horizontal overflow",
+      "Cancel deletion preserves draft; confirmed deletion affects only the selected unfinished import",
+      "Removed source page no longer creates content; missing source prevents lesson confirmation"
+    ],
+    "captures": 18,
+    "steps": 14,
+    "image_hashes_and_references": "checked",
+    "visual_review": "18-image overview inspected; upload, source/method, block/table/chart dialogs and deletion inspected at full size; error and confirmation captures repositioned to show feedback",
+    "local_links_checked": 139,
+    "protected_files_checked": 536,
+    "changed_existing_files": 10,
+    "source_and_historical_assets": "unchanged outside declared files",
+    "quarter_teaching_and_standard": "unchanged",
+    "prototype_urls": [
+      {
+        "url": "http://127.0.0.1:5181/admin/#/textbooks",
+        "status": 200,
+        "html": true
+      },
+      {
+        "url": "http://127.0.0.1:5181/student/?preview=pages",
+        "status": 200,
+        "html": true
+      }
+    ]
+  },
+  "fixed_issues": [
+    "Old empty-input alert remained after loading sample",
+    "Removed source pages still appeared in generated mock content; incomplete references could be confirmed"
+  ],
+  "pending_ui_proposals": [
+    "D01-P01 source preview/page numbering/add missing pages",
+    "D01-P02 directory and omitted-content editing",
+    "D01-P03 per-page processing and retry states"
+  ],
+  "limits": [
+    "No real OCR or LLM calls",
+    "No full-book modeling or quality validation",
+    "No user UI approval or engineering acceptance implied",
+    "Existing user browser storage was not modified by isolated-context reviews"
+  ],
+  "warnings": [],
+  "errors": []
+}

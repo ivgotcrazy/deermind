@@ -1,0 +1,52 @@
+{
+  "model": "deepseek-flash",
+  "baseUrl": "https://api.deepseek.com",
+  "plan": {
+    "version": "0.2",
+    "cases": [
+      "C02",
+      "C03",
+      "C05",
+      "C06"
+    ],
+    "stages": [
+      "extract",
+      "author_review",
+      "map",
+      "program_link",
+      "author_review"
+    ],
+    "provider": "existing official DeepSeek configuration",
+    "modelPolicy": "keep configured model, temperature 0, thinking disabled",
+    "maxNormalCalls": 8,
+    "maxTransportRetriesPerCall": 1,
+    "maxTotalCalls": 16,
+    "maxOutputTokens": 5000,
+    "timeoutSeconds": 90,
+    "maxParallel": 2,
+    "semanticRetries": 0,
+    "stop": "Four cases only. Do not tune prompts after seeing outputs. All edits explicit and separate.",
+    "comparisonLimits": [
+      "Region cropping, schema simplification, stage separation and deterministic geometry change together; not a controlled causal test",
+      "Existing small catalog only; no claims about full-book extraction or open-world model creation",
+      "Author review is required and timed; not independent user correction-time measurement"
+    ]
+  },
+  "hashes": {
+    "C02-schema.json": "749c3fbf276747244e84fd43f635f4a09ab1da01105f1e1482b46b6ddce72d36",
+    "C03-schema.json": "ddd4c48598e104c0107dfd76a3415db4c3d9e3a32bd014392cbe0898983d3290",
+    "C05-schema.json": "db7797f3fa2bf97ca29de6a98cdaf73c65d2332d0ae5aa1b162f0d6fa75be64b",
+    "C06-schema.json": "f52038c0ce6678ab15d102798530e1858b0d18c35e963e985e90b7a008f3b560",
+    "cases.json": "9a1dbd54772350f45f9abd51119ce0436bb31fb468b8b4ba5ce5226aff906599",
+    "catalog.json": "e8ac90a48d7524bcbc1ca8d240fdf7863f89db6bd2171459346c447511355825",
+    "extract-rules.txt": "dbf7323419eda050778960a99f23fe616d9cc6179d80c1a27ef435a911394581",
+    "map-rules.txt": "82151c945fbdc69b70ddfa357d99bf3ca15176ba4db3ae6152bcbf7b8c513b20",
+    "mapping-schema.json": "01c2b3d3d361a8b83dd585075624649d6544b9f7c9133cd7fd7bba2728eacc5f",
+    "pipeline.py": "26fa3f860ac893ba5eccd8c4eb6954fe08e5cb33f42f9c9517167bc56a063551",
+    "plan.json": "c5bc1df2572aa63c6fc5ac4860b1149eb0cef7d252ac5a7ad5bed1109a6d1c0c",
+    "prepare.py": "6911ff7207292e6bc3128992f3c47e31dbff91f1d1fbd921d5a6c8fc3f8b4fdb",
+    "test_pipeline.py": "9e5e521a423ca0270c661003a80c97a695399648acbec62a414a37796764a3fb"
+  },
+  "referenceInstancesSent": false,
+  "catalogSentDuringExtraction": false
+}

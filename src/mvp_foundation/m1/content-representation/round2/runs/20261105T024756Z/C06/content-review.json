@@ -1,0 +1,16 @@
+{
+  "reviewer": "Codex author source comparison; not independent human",
+  "decision": "accept_for_mapping",
+  "rawJudgment": "selected_content_accepted",
+  "originalHash": "71eec66bd418db48a21bada5f7121dbaa0300da91d234c1916ddc5faae2a81cf",
+  "reviewedContentHash": "71eec66bd418db48a21bada5f7121dbaa0300da91d234c1916ddc5faae2a81cf",
+  "reviewWindowStart": "2026-11-05T02:48:42+00:00",
+  "reviewWindowEnd": "2026-11-05T02:50:06.551420+00:00",
+  "timingScope": "Shared content inspection/edit window across four cases; includes author analysis and correction-script writing. Do not sum per-case times or use as end-user editing time.",
+  "notes": [
+    "核对原图：六种形状、顺序、六个可见点、剪图要求均有表达。",
+    "点只声明视觉上接近中间；尺寸与多边形规则性由示意布局决定，不作为新的题目已知关系。",
+    "附页图1未提供，不据此宣称完整动手活动可以替代。"
+  ],
+  "changes": []
+}

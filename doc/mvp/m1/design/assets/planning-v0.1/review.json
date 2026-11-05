@@ -1,0 +1,302 @@
+{
+  "date": "2026-11-03",
+  "reviewer": "Codex author review",
+  "type": "product_design_planning_and_document_consistency_not_work_package_acceptance",
+  "status": "pass",
+  "head_at_start": "c953f98da007846325d49f648245f43853b0f440",
+  "baseline_note": "The workspace was already dirty; per-file before hashes and local snapshots identify this delivery. HEAD is not claimed as its full input.",
+  "files": [
+    {
+      "old": "v0.5",
+      "destination": "doc/mvp/m1/README.md",
+      "new": "v0.6",
+      "reason": "按六条业务流程规划共同输出、依赖、现有缺口和完成条件",
+      "source": "doc/mvp/m1/README.md",
+      "before_sha256": "b093cda3b6c3a252b984beba247f664e0e85cc98eff230f9ebaac287eae6be97",
+      "sha256": "fc59699cef08c821125df974663a658e4b30df6efb125198865c0f364d4a7cc3"
+    },
+    {
+      "old": "v0.5",
+      "destination": "doc/mvp/m1/design/README.md",
+      "new": "v0.6",
+      "reason": "明确专题详规与PRD的分工、双向修订及共同接收",
+      "source": "doc/mvp/m1/design/README.md",
+      "before_sha256": "837bb34608882a71c6d0e40a89825ccc455aa12a5a1f17d2795f8c703d5a6515",
+      "sha256": "a92268dc70f6178789f565bd8208777f12fa8b2986216fb5ce2e76d370e62dde"
+    },
+    {
+      "old": "v0.5",
+      "destination": "doc/mvp/m1/PRD.md",
+      "new": "v0.6",
+      "reason": "确立产品规格共同完成条件并连接六包计划，业务范围和试用标准不变",
+      "source": "doc/mvp/m1/PRD.md",
+      "before_sha256": "5623fca3c3d2140a4cd9500c5b1a0779bf4f252561ff30d4701d246cc55c5470",
+      "sha256": "f777901d6f4f7603a52a5fe3baee1a450040827e83a6b0beb62b1c51ff0fc53e"
+    },
+    {
+      "old": "v0.3",
+      "destination": "doc/mvp/m1/design/Interaction_Design.md",
+      "new": "v0.4",
+      "reason": "按业务包共同推进操作、规则和内容，明确步骤与截图的对应责任",
+      "source": "doc/mvp/m1/design/Interaction_Design.md",
+      "before_sha256": "343aeb9b8b74e9e85d8a443c7784920d012aa2353aebc9348add32d9c2f99e2e",
+      "sha256": "bb9aa57a0284f9e1e0dc0b492ac24a07663e1c142696b28745f646c1035a7114"
+    },
+    {
+      "old": "v0.4",
+      "destination": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "new": "v0.5",
+      "reason": "明确内容详规、草案和示例的效力及交互反馈关系，保留原路径与样例标准",
+      "source": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "before_sha256": "fcf41664fd9dbf37535731f56779227efa6a4c9bdda52c5c76c488e3e1a8d784",
+      "sha256": "0e676738b8751076e9c19a00a13bcedf79d3333f04c730f55caf954e48f3660a"
+    },
+    {
+      "old": "v0.2",
+      "destination": "doc/mvp/m1/engineering/README.md",
+      "new": "v0.3",
+      "reason": "以共同产品设计及明确范围接收工程，区分提前可行性分析与正式实现",
+      "source": "doc/mvp/m1/engineering/README.md",
+      "before_sha256": "293f80a0725ee0c209edc9db40edf313c09a033b131ba2a468a9b4ed860c5e76",
+      "sha256": "015f814ad06b0aec49714272e0781826384c7c586365b12e556b7c6d8d9dd509"
+    },
+    {
+      "old": "v0.1",
+      "destination": "doc/mvp/m1/validation/README.md",
+      "new": "v0.2",
+      "reason": "验证准备随产品工作包展开，保留真实结果与mock走查的边界",
+      "source": "doc/mvp/m1/validation/README.md",
+      "before_sha256": "f18dedd47e73a8c5bd32bc645486ff67b72f9e327c0ac0be0c4f5e8554b81b74",
+      "sha256": "498f69e103f5f5df293b5eeb81cf99398ab02f3733e449f630345f95164e987e"
+    },
+    {
+      "old": "v0.16",
+      "destination": "doc/mvp/README.md",
+      "new": "v0.17",
+      "reason": "将当前工作入口改为共同产品设计及六包推进，明确输出分工",
+      "source": "doc/mvp/README.md",
+      "before_sha256": "0bbb12203920da7500e0a1560bf35b19dff436af7aeaa553b8c25ade3ca70d11",
+      "sha256": "54a9e0aca3604b4eccfdb4269e88ea7a8ce23c39d9d5638c1fe6652159edcfc5"
+    },
+    {
+      "old": "v0.20",
+      "destination": "src/mvp_prototype/README.md",
+      "new": "v0.21",
+      "reason": "明确原型参与PRD与详细规格同步设计，运行代码和页面不变",
+      "source": "src/mvp_prototype/README.md",
+      "before_sha256": "77502e3bbf307bd40907e6961512e943871e1b69582c72ee4659bbcd5b97a9ff",
+      "sha256": "598c724ceb12f4572815c2bb5b51875b76e3f572295af0bdd080d66974dd41af"
+    },
+    {
+      "old": "v0.9",
+      "destination": "doc/top/DeerMind_Development_Roadmap_v0.10.md",
+      "new": "v0.10",
+      "reason": "明确PRD、详规和原型同步推进及业务包交接，历史Gate不变",
+      "source": "doc/top/DeerMind_Development_Roadmap_v0.9.md",
+      "before_sha256": "479611102f037f4ff45881d257efdca07709fb73d549fd387f8d37e5a0664bd0",
+      "sha256": "b6124eda73bae0f1c53dc868be6905837e3aa4d5ee54f49768d1c94c4dafb5e4"
+    },
+    {
+      "old": "v0.10",
+      "destination": "doc/system-design/DeerMind_System_Design_Roadmap_v0.11.md",
+      "new": "v0.11",
+      "reason": "同步M1共同产品设计的当前工作顺序，系统合同与历史验证不变",
+      "source": "doc/system-design/DeerMind_System_Design_Roadmap_v0.10.md",
+      "before_sha256": "a9b1f01e45ccc630bd889bdf7becb4333fcdf477a8e6fc07e184b004ceb32f1a",
+      "sha256": "f7671160b227016f6179c545411bbeead2d4125416c7aa5ee13c9b570a18e8bc"
+    },
+    {
+      "old": "v0.6",
+      "destination": "doc/concept-design/DeerMind_Learning_Model_Reassessment.md",
+      "new": "v0.7",
+      "reason": "仅更新路线图导航；原业务正文、模型结论和历史评审含义不变",
+      "source": "doc/concept-design/DeerMind_Learning_Model_Reassessment.md",
+      "before_sha256": "07c9f0c2c6d018aa34dac5f2b5ef385ebeb30bd7b928a8bb38b4587ddabf0759",
+      "sha256": "138822e84b9b32989f1c434ef5441e517e2154ee7c042634af74eea2e17b8e93"
+    },
+    {
+      "old": "v0.6",
+      "destination": "doc/concept-design/README.md",
+      "new": "v0.7",
+      "reason": "仅更新路线图导航；原业务正文、模型结论和历史评审含义不变",
+      "source": "doc/concept-design/README.md",
+      "before_sha256": "cdcdfe2f5c9f43de4e749aa7b389d87dd9f8425bc766d292339e532f040cfa16",
+      "sha256": "a6633c4867ae307b1eb450158e8bb33e989502865f8cca807491fdd3c4feba2a"
+    },
+    {
+      "old": "v0.4",
+      "destination": "doc/system-design/README.md",
+      "new": "v0.5",
+      "reason": "更新路线图导航与M1同步设计的当前工作说明，模型及历史结论不变",
+      "source": "doc/system-design/README.md",
+      "before_sha256": "840de7bb47f13d2836401e8247d382eab52aad6e7209b661c200eed493c1df79",
+      "sha256": "46c7615b907c436a860e56103993bc0ea140044a77d7de265cf18771aa19c6ff"
+    },
+    {
+      "old": "v0.7",
+      "destination": "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Gate_Reviews.md",
+      "new": "v0.8",
+      "reason": "仅更新路线图导航；原业务正文、模型结论和历史评审含义不变",
+      "source": "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Gate_Reviews.md",
+      "before_sha256": "e75aac49638a9d273769afba038d44e436d544fe58e4860dbc0f71b855cc5548",
+      "sha256": "c6da3da13bb4ed9649a05c11d8a9e681bd011abf049188bdac19223a09a2c18c"
+    },
+    {
+      "old": "v0.18",
+      "destination": "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Governance.md",
+      "new": "v0.19",
+      "reason": "仅更新路线图导航；原业务正文、模型结论和历史评审含义不变",
+      "source": "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Governance.md",
+      "before_sha256": "cfd206f5e6dd02cad4e6a35ca8584f948935af626cd94261cb75801f2557377d",
+      "sha256": "736514eb0e79e3a7a9f141d52b7012778c2e422588c40fc39f547b112b5cc6fe"
+    },
+    {
+      "old": "v0.13",
+      "destination": "doc/mvp/archive/2026-11-02-before-m1-prd/README.md",
+      "new": "v0.14",
+      "reason": "仅更新路线图导航；原业务正文、模型结论和历史评审含义不变",
+      "source": "doc/mvp/archive/2026-11-02-before-m1-prd/README.md",
+      "before_sha256": "6164d7328a5d10671f6aeb02eacfa110857090ab5eba6a101ff409a78b32349e",
+      "sha256": "6aa7dfbb30fae6d5365a3c06386ea7dad78d6aa6230a7290cacb9af5a5be2f27"
+    },
+    {
+      "old": "v0.11",
+      "destination": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Definition.md",
+      "new": "v0.12",
+      "reason": "仅更新路线图导航；原业务正文、模型结论和历史评审含义不变",
+      "source": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Definition.md",
+      "before_sha256": "64c51fc94a0278f3b529389bf712863c98f4dd65e8f7e3506f0351b59198e967",
+      "sha256": "a0651d04eb38fb6880e285d37ab3002469462e73b0d6c3f3758a2810ff625757"
+    },
+    {
+      "old": "v0.6",
+      "destination": "doc/mvp/DECISIONS.md",
+      "new": "v0.7",
+      "reason": "记录同步产品设计决定、六包工作安排及逐文件变更",
+      "source": "doc/mvp/DECISIONS.md",
+      "before_sha256": "cb6587aa5b1aaf47bf29e6bdbc8b1cb8e85c095fce6212394ff928fce1f5c5c6",
+      "sha256": "ca931375e420ccc5dc14ae3c466fabeb58689b08fb4fcf7929aecf6c996af24a"
+    }
+  ],
+  "local_links_checked": 456,
+  "requirement_coverage": [
+    {
+      "package": "M1-D01 教材导入与整理",
+      "requirements": [
+        "M1-R02",
+        "M1-R03"
+      ],
+      "acceptance": [
+        "M1-A02",
+        "M1-A03"
+      ]
+    },
+    {
+      "package": "M1-D02 建模与课程内容准备",
+      "requirements": [
+        "M1-R04",
+        "M1-R05",
+        "M1-R06",
+        "M1-R07"
+      ],
+      "acceptance": [
+        "M1-A04",
+        "M1-A05",
+        "M1-A06",
+        "M1-A07"
+      ]
+    },
+    {
+      "package": "M1-D03 应用、选用与进入学习",
+      "requirements": [
+        "M1-R01",
+        "M1-R08",
+        "M1-R10",
+        "M1-R17"
+      ],
+      "acceptance": [
+        "M1-A01",
+        "M1-A08",
+        "M1-A10",
+        "M1-A16"
+      ]
+    },
+    {
+      "package": "M1-D04 讲解、提问与活动控制",
+      "requirements": [
+        "M1-R11",
+        "M1-R12",
+        "M1-R16",
+        "M1-R19"
+      ],
+      "acceptance": [
+        "M1-A11",
+        "M1-A15",
+        "M1-A18"
+      ]
+    },
+    {
+      "package": "M1-D05 检测、反馈与评价",
+      "requirements": [
+        "M1-R13",
+        "M1-R14"
+      ],
+      "acceptance": [
+        "M1-A12",
+        "M1-A13"
+      ]
+    },
+    {
+      "package": "M1-D06 后续任务、运行追溯与修正",
+      "requirements": [
+        "M1-R09",
+        "M1-R15",
+        "M1-R18"
+      ],
+      "acceptance": [
+        "M1-A09",
+        "M1-A14",
+        "M1-A17"
+      ]
+    }
+  ],
+  "unchanged_files_checked": 513,
+  "outside_scope_changes": [],
+  "archive_navigation_only": [
+    "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Gate_Reviews.md",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/MVP_Governance.md",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/README.md",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Definition.md"
+  ],
+  "quarter_sections_4_6_to_4_10_unchanged": true,
+  "roadmap_render": {
+    "document": "doc/top/DeerMind_Development_Roadmap_v0.10.md",
+    "version": "v0.10",
+    "diagram_index": 0,
+    "source_sha256": "0f6b43435792777cef5b06861d832247c5aeeaf097992fa0f5b568aca4d7ca2b",
+    "mermaid_version": "11.12.0",
+    "svg": "M1-PLAN-01.svg",
+    "png": "M1-PLAN-01.png"
+  },
+  "author_semantic_review": [
+    "PRD, detailed interaction/content specifications, prototype and screenshots form a joint product-design deliverable; each rule retains one governing location.",
+    "All nineteen requirements and eighteen acceptance IDs have exactly one primary package; permission, service failure, versions and AI responsibility also apply across packages.",
+    "Initial accounts/configuration are prepared alongside D01, not discovered after content already exists; formal course application and learner selection join D02/D03.",
+    "D06 follow-up tasks return to the same D04/D05 teaching/testing flow; no separate execution mechanism or approval center is added.",
+    "Existing V2 assets and real page samples are reusable references, not automatically current M1 evidence; diagrams and mock are not real quality or classroom results.",
+    "Common design completion is distinct from artifact existence, software completion and gate approval; gates keep their established responsibilities.",
+    "Whole-book modeling remains an M1 exit obligation through real tools; full manual modeling is not introduced as a pre-code prerequisite.",
+    "Current work starts with a D01 specification/prototype gap review; important product choices and unapproved UI changes still need concrete review before mutation."
+  ],
+  "visual_review": "Viewed rendered M1-PLAN-01.png: three stages, bidirectional design wording, arrows and Chinese labels readable without clipping. This is a roadmap figure, not a UI screenshot.",
+  "not_executed": [
+    "prototype changes",
+    "UI behavior test",
+    "OCR",
+    "LLM",
+    "learner evaluation",
+    "whole-book acceptance"
+  ],
+  "existing_link_issues": [],
+  "errors": []
+}

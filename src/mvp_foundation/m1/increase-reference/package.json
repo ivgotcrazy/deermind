@@ -1,0 +1,741 @@
+{
+  "asset_id": "M1-INCREASE-REFERENCE",
+  "version": "1",
+  "format_version": "reference-only-1",
+  "updated_on": "2026-11-02",
+  "status": "author_reference_not_activated",
+  "authority": [
+    "DEC-025",
+    "DEC-027",
+    "DEC-040",
+    "DEC-041"
+  ],
+  "purpose": "W2 的真实来源参考切片；不是全章模型、数据库Schema、LLM执行结果或正式评价规则。",
+  "review": {
+    "author": "Codex",
+    "admin_review": "pending",
+    "runtime_run": "not_run",
+    "held_out": false
+  },
+  "source_record": "../../materials/bnu-math-6a-source-verification.json",
+  "source_pages": [
+    {
+      "id": "PAGE-53",
+      "printed_page": 53,
+      "reader_index": 56,
+      "file": "source/page-056.png",
+      "sha256": "c6db1697758ee1207e0e4a5c1a7cfdba9dc1bed7759a69d964149a0277a1346b",
+      "publisher_path": "dzkb/xxsx/6s/056.jpg",
+      "note": "此前出版社原页的本地保存，2026-11-02 重新目视核对；未执行 OCR。"
+    },
+    {
+      "id": "PAGE-54",
+      "printed_page": 54,
+      "reader_index": 57,
+      "file": "source/page-057.png",
+      "sha256": "bf4d1f3b5ad25784d7a844adce6c4ff86429fb99ce36abd912cdb9899a01a79b",
+      "publisher_path": "dzkb/xxsx/6s/057.jpg",
+      "note": "此前出版社原页的本地保存，2026-11-02 重新目视核对；未执行 OCR。"
+    }
+  ],
+  "domain": {
+    "id": "DOM-M1-MATH",
+    "version": "1",
+    "name": "数学",
+    "scope": "本包仅表达U04增加关系及所选子任务，不定义整个数学领域覆盖。"
+  },
+  "task_templates": [
+    {
+      "id": "TT-M1-INCREASE",
+      "version": "1",
+      "domain_ref": "DOM-M1-MATH@1",
+      "name": "已知原量和增加分率求新量",
+      "responsibility": "确定增加分率以原量为基准，求增加后的最终量；题目可另要求解释或比较方法。",
+      "parameters": {
+        "a": "正有理数原量",
+        "r": "0<r<1 的有理数增加分率",
+        "unit": "前后量相同的单位",
+        "quantity_kind": [
+          "continuous",
+          "discrete"
+        ],
+        "representation": [
+          "text",
+          "bar_diagram",
+          "table"
+        ]
+      },
+      "conditions": [
+        "原量已知，r 明确相对原量；这里只有一次增加。",
+        "离散量 a、a×r 及最终量均为整数。"
+      ],
+      "allowed_variations": [
+        "合法数值",
+        "表面情境",
+        "明确的文字、条形图或表格",
+        "是否要求解释及比较两法"
+      ],
+      "exclusions": [
+        "反求原量",
+        "减少或连续多次变化",
+        "分率的基准不明或改为最终量",
+        "没有给定比例却要求推测比例"
+      ],
+      "solution_refs": [
+        "ST-M1-PARTS@1",
+        "ST-M1-FACTOR@1"
+      ],
+      "source_refs": [
+        "PAGE-53",
+        "PAGE-54"
+      ],
+      "scope_note": "本参考有意选取旧 PT-FA-COMBINE@1 的增加子范围，不是将旧宽模板直接改名。"
+    },
+    {
+      "id": "TT-M1-SCALE",
+      "version": "1",
+      "domain_ref": "DOM-M1-MATH@1",
+      "name": "求给定量的指定倍数",
+      "responsibility": "已给定 a 与正有理倍数 r，求 a×r 并保留单位。",
+      "parameters": {
+        "a": "正有理数",
+        "r": "正有理数，可大于 1",
+        "unit": "数量单位"
+      },
+      "conditions": [
+        "数量角色已绑定；不代替母任务识别基准和所求。"
+      ],
+      "allowed_variations": [
+        "合法数值及单位"
+      ],
+      "exclusions": [
+        "反求未知因子"
+      ],
+      "solution_refs": [
+        "ST-M1-MULTIPLY@1"
+      ],
+      "source_refs": [
+        "PAGE-53"
+      ],
+      "scope_note": "递归子任务；本包没有为它准备独立评价 Claim，不从母任务成功创建子任务 Belief。"
+    }
+  ],
+  "solution_templates": [
+    {
+      "id": "ST-M1-PARTS",
+      "version": "1",
+      "domain_ref": "DOM-M1-MATH@1",
+      "task_ref": "TT-M1-INCREASE@1",
+      "name": "先求增加量，再求总量",
+      "condition": "a 和 r 已由题意绑定，增加的是原量的 r。",
+      "inputs": [
+        "a",
+        "r",
+        "unit"
+      ],
+      "output": "t，最终量及单位",
+      "direct_kc_refs": [
+        "KC-M1-BASE@1",
+        "KC-M1-CHANGE@1"
+      ],
+      "children": [
+        {
+          "task_ref": "TT-M1-SCALE@1",
+          "solution_ref": "ST-M1-MULTIPLY@1",
+          "inputs": {
+            "a": "a",
+            "r": "r",
+            "unit": "unit"
+          },
+          "output_binding": "delta"
+        }
+      ],
+      "steps": [
+        "调用所选子方法得到 delta=a×r。",
+        "计算 t=a+delta，区分增加量与最终量，解释单位与大小。"
+      ]
+    },
+    {
+      "id": "ST-M1-FACTOR",
+      "version": "1",
+      "domain_ref": "DOM-M1-MATH@1",
+      "task_ref": "TT-M1-INCREASE@1",
+      "name": "先求增加后的倍数",
+      "condition": "1 与 r 都以 a 为基准；学生可以用此法而不必先用分步法。",
+      "inputs": [
+        "a",
+        "r",
+        "unit"
+      ],
+      "output": "t，最终量及单位",
+      "direct_kc_refs": [
+        "KC-M1-BASE@1",
+        "KC-M1-CHANGE@1",
+        "KC-M1-DISTRIBUTIVE@1",
+        "KC-M1-ARITHMETIC@1"
+      ],
+      "children": [
+        {
+          "task_ref": "TT-M1-SCALE@1",
+          "solution_ref": "ST-M1-MULTIPLY@1",
+          "inputs": {
+            "a": "a",
+            "r": "1+r",
+            "unit": "unit"
+          },
+          "output_binding": "t"
+        }
+      ],
+      "steps": [
+        "解释 1 为原量一整份，增加后系数为 1+r。",
+        "调用所选子方法求 t=a×(1+r)；比较两法时再说明分配律。"
+      ]
+    },
+    {
+      "id": "ST-M1-MULTIPLY",
+      "version": "1",
+      "domain_ref": "DOM-M1-MATH@1",
+      "task_ref": "TT-M1-SCALE@1",
+      "name": "计算给定量与倍数的乘积",
+      "condition": "两个输入已明确，计算不自行改变基准。",
+      "inputs": [
+        "a",
+        "r",
+        "unit"
+      ],
+      "output": "a×r 及单位",
+      "direct_kc_refs": [
+        "KC-M1-SCALE@1",
+        "KC-M1-ARITHMETIC@1"
+      ],
+      "children": [],
+      "steps": [
+        "把分率写成有理数并相乘、约分。",
+        "保留输入数量单位，离散对象核对整数性。"
+      ]
+    }
+  ],
+  "knowledge_components": [
+    {
+      "id": "KC-M1-BASE",
+      "version": "1",
+      "domain_ref": "DOM-M1-MATH@1",
+      "name": "分数的参照量",
+      "definition": "分率必须说明相对哪个量；同一差额相对不同基准的分率可以不同。",
+      "prerequisite_refs": [],
+      "personal_state": false
+    },
+    {
+      "id": "KC-M1-SCALE",
+      "version": "1",
+      "domain_ref": "DOM-M1-MATH@1",
+      "name": "一个量的几分之几",
+      "definition": "以 a 为基准取 r 份额得到 a×r；当 r 大于 1 时得到相应倍数。",
+      "prerequisite_refs": [
+        "KC-M1-BASE@1"
+      ],
+      "personal_state": false
+    },
+    {
+      "id": "KC-M1-CHANGE",
+      "version": "1",
+      "domain_ref": "DOM-M1-MATH@1",
+      "name": "增加量与最终量",
+      "definition": "新量等于原量加增加量；原量的一整份用 1 表示，增加 r 后为原量的 1+r。",
+      "prerequisite_refs": [
+        "KC-M1-BASE@1"
+      ],
+      "personal_state": false
+    },
+    {
+      "id": "KC-M1-DISTRIBUTIVE",
+      "version": "1",
+      "domain_ref": "DOM-M1-MATH@1",
+      "name": "乘法对加法的分配律",
+      "definition": "a×(1+r)=a+a×r；合并的是同一基准的系数，不能合并不同基准的比例。",
+      "prerequisite_refs": [],
+      "personal_state": false
+    },
+    {
+      "id": "KC-M1-ARITHMETIC",
+      "version": "1",
+      "domain_ref": "DOM-M1-MATH@1",
+      "name": "有理数加法与乘法",
+      "definition": "按合法分数运算计算和与积，约分保持数值，结果单位由数量关系决定。",
+      "prerequisite_refs": [],
+      "personal_state": false
+    }
+  ],
+  "claims": [
+    {
+      "id": "CL-M1-INCREASE",
+      "version": "1",
+      "type": "TaskProficiencyClaim",
+      "task_ref": "TT-M1-INCREASE@1",
+      "task_scope": "a>0、0<r<1；已知原量，求一次增加后的新量；文字、明确条形图或表格。",
+      "conditions": {
+        "method_mode": "any",
+        "solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "tools": "纸笔计算可用；检测时不代算所测运算"
+      },
+      "aspects": {
+        "independent": {
+          "name": "独立完成",
+          "responsibility": "自己识别基准、建立关系并求最终量。",
+          "quality": "数量关系、结果和单位正确，使用任选一种允许方法。",
+          "evidence_conditions": [
+            "记录当题提示、答案暴露和此前相似示范。",
+            "受助答对只保留受助表现；无当题提示不等于完全没有此前教学影响。"
+          ]
+        },
+        "explanation": {
+          "name": "理解与解释",
+          "responsibility": "说明 r 相对谁、为何加上原量或为何使用 1+r。",
+          "quality": "量、式或图之间对应正确；允许简短文字、算式配注释，不以复述措辞评分。",
+          "evidence_conditions": [
+            "正确数字不代替理由。",
+            "比较两法时说明同基准与等价关系；本包默认不要求两法均会。"
+          ]
+        },
+        "transfer": {
+          "name": "迁移",
+          "responsibility": "在同一模板内从熟悉文字转到此前未练习的表格或图示，仍能建立数量关系。",
+          "quality": "保留基准、所求、计算及要求的理由；只支持所观察的具体变化。",
+          "evidence_conditions": [
+            "记录对比任务、变化维度和接触记录。",
+            "只改数字不自动满足；陌生表征接触情况未知时保留不确定。"
+          ]
+        },
+        "retention": {
+          "name": "延迟保持",
+          "responsibility": "间隔后再次完成同一范围的任务，并说明必要理由。",
+          "quality": "记录先前表现、实际间隔、期间练习与帮助，结论只限于已知条件。",
+          "evidence_conditions": [
+            "同日连做不证明保持。",
+            "本文七天只用于一个参考案例，不规定所有课程固定七天、固定连对次数或掌握阈值。"
+          ]
+        }
+      }
+    }
+  ],
+  "chapter_mapping": {
+    "material_ref": "LM-M1-BNU-6A@1",
+    "chapter_id": "U04",
+    "source_refs": [
+      "PAGE-53",
+      "PAGE-54"
+    ],
+    "task_ref": "TT-M1-INCREASE@1",
+    "allowed_solution_refs": [
+      "ST-M1-PARTS@1",
+      "ST-M1-FACTOR@1"
+    ],
+    "claim_ref": "CL-M1-INCREASE@1",
+    "coverage": "部分参考；不代表U04或整册就绪"
+  },
+  "learning_target": {
+    "id": "LT-M1-INCREASE",
+    "version": "1",
+    "owner": "LearningSpace",
+    "name": "解决增加分率问题并解释",
+    "claim_ref": "CL-M1-INCREASE@1",
+    "requirements": [
+      {
+        "id": "LR-M1-INDEPENDENT",
+        "aspect": "independent",
+        "quality": "数量关系、结果和单位正确，使用任选一种允许方法。"
+      },
+      {
+        "id": "LR-M1-EXPLANATION",
+        "aspect": "explanation",
+        "quality": "量、式或图之间对应正确；允许简短文字、算式配注释，不以复述措辞评分。"
+      },
+      {
+        "id": "LR-M1-TRANSFER",
+        "aspect": "transfer",
+        "quality": "保留基准、所求、计算及要求的理由；只支持所观察的具体变化。"
+      },
+      {
+        "id": "LR-M1-RETENTION",
+        "aspect": "retention",
+        "quality": "记录先前表现、实际间隔、期间练习与帮助，结论只限于已知条件。"
+      }
+    ],
+    "method_mode": "any",
+    "allowed_solution_refs": [
+      "ST-M1-PARTS@1",
+      "ST-M1-FACTOR@1"
+    ],
+    "attainment_policy": "四方面分别呈现支持、反证和未知。案例只规定不能外推的边界；样本量、证据聚合和正式达标校准须在启用前完成，不设隐含一题过关或四维平均。",
+    "ready_for_formal_assessment": false
+  },
+  "questions": [
+    {
+      "id": "Q-M1-SOURCE-53",
+      "version": "1",
+      "task_ref": "TT-M1-INCREASE@1",
+      "parameters": {
+        "a": "18",
+        "r": "1/9",
+        "unit": "dm³",
+        "quantity_kind": "continuous"
+      },
+      "learner_input": {
+        "prompt": "有18 dm³水，结冰后的体积比原水增加原体积的1/9。求结冰后的体积。",
+        "representation": "text"
+      },
+      "origin": {
+        "kind": "source_normalization",
+        "source_ref": "PAGE-53",
+        "location": "试一试上题",
+        "legacy_reference": "REF-FA-53-02"
+      },
+      "reference": {
+        "answer": "20",
+        "unit": "dm³",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "explanation": "指出原量与增加比例的基准，区分增加量和新量。"
+      },
+      "content_check": "author_checked_pending_admin_review",
+      "formal_use": false,
+      "purpose": "教学例题；整页已印有两种解答，不能把整页作为无提示检测输入。"
+    },
+    {
+      "id": "Q-M1-SOURCE-54",
+      "version": "1",
+      "task_ref": "TT-M1-INCREASE@1",
+      "parameters": {
+        "a": "48",
+        "r": "1/4",
+        "unit": "棵",
+        "quantity_kind": "discrete"
+      },
+      "learner_input": {
+        "prompt": "依据树木数量关系图，求梨树数量并说明。",
+        "representation": "bar_diagram",
+        "visual_source": {
+          "page_ref": "PAGE-54",
+          "region": "练一练第2题左图",
+          "status": "region_not_yet_extracted",
+          "required_for_complete_input": true
+        }
+      },
+      "origin": {
+        "kind": "source_normalization",
+        "source_ref": "PAGE-54",
+        "location": "练一练第2题左图",
+        "legacy_reference": "REF-FA-54-02"
+      },
+      "reference": {
+        "answer": "60",
+        "unit": "棵",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "explanation": "指出原量与增加比例的基准，区分增加量和新量。"
+      },
+      "content_check": "author_checked_pending_admin_review",
+      "formal_use": false,
+      "required_visual": "原页左图：48棵桃树的一段为基准，梨树在同一基准段外多出其1/4；不得删除标注或自行按像素测量分率。",
+      "purpose": "图文整理参考；正式检测需形成核对过的区域输入，不能把含其他题的整页直接当单题。"
+    },
+    {
+      "id": "Q-M1-TEACH",
+      "version": "1",
+      "task_ref": "TT-M1-INCREASE@1",
+      "parameters": {
+        "a": "80",
+        "r": "1/4",
+        "unit": "本",
+        "quantity_kind": "discrete"
+      },
+      "learner_input": {
+        "prompt": "原有80本书，新添的书是原来的1/4，现在有多少本？请说明。",
+        "representation": "text"
+      },
+      "origin": {
+        "kind": "author_written",
+        "source_ref": "PAGE-54",
+        "relation": "沿用增加关系，非教材原题"
+      },
+      "reference": {
+        "answer": "100",
+        "unit": "本",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "explanation": "指出原量与增加比例的基准，区分增加量和新量。"
+      },
+      "content_check": "author_checked_pending_admin_review",
+      "formal_use": false,
+      "purpose": "教学示例"
+    },
+    {
+      "id": "Q-M1-CHECK",
+      "version": "1",
+      "task_ref": "TT-M1-INCREASE@1",
+      "parameters": {
+        "a": "60",
+        "r": "1/5",
+        "unit": "本",
+        "quantity_kind": "discrete"
+      },
+      "learner_input": {
+        "prompt": "原有60本书，新添的是原来的1/5，现有多少本？请说明依据。",
+        "representation": "text"
+      },
+      "origin": {
+        "kind": "author_written",
+        "source_ref": "PAGE-54",
+        "relation": "同结构变式"
+      },
+      "reference": {
+        "answer": "72",
+        "unit": "本",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "explanation": "指出原量与增加比例的基准，区分增加量和新量。"
+      },
+      "content_check": "author_checked_pending_admin_review",
+      "formal_use": false,
+      "purpose": "未给出当题方法的检测候选"
+    },
+    {
+      "id": "Q-M1-TRANSFER",
+      "version": "1",
+      "task_ref": "TT-M1-INCREASE@1",
+      "parameters": {
+        "a": "40",
+        "r": "1/4",
+        "unit": "m",
+        "quantity_kind": "continuous"
+      },
+      "learner_input": {
+        "prompt": "请根据表格计算延长后的路线长度，并说明表中分率相对哪个量。",
+        "representation": "table",
+        "table": {
+          "columns": [
+            "项目",
+            "数据"
+          ],
+          "rows": [
+            [
+              "原路线长度",
+              "40 m"
+            ],
+            [
+              "延长部分占原路线的比例",
+              "1/4"
+            ]
+          ]
+        }
+      },
+      "origin": {
+        "kind": "author_written",
+        "source_ref": "PAGE-54",
+        "relation": "同模板表征变化候选"
+      },
+      "reference": {
+        "answer": "50",
+        "unit": "m",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "explanation": "指出原量与增加比例的基准，区分增加量和新量。"
+      },
+      "content_check": "author_checked_pending_admin_review",
+      "formal_use": false,
+      "purpose": "迁移探针；须结合实际接触记录"
+    },
+    {
+      "id": "Q-M1-DELAY",
+      "version": "1",
+      "task_ref": "TT-M1-INCREASE@1",
+      "parameters": {
+        "a": "72",
+        "r": "1/6",
+        "unit": "本",
+        "quantity_kind": "discrete"
+      },
+      "learner_input": {
+        "prompt": "原有72本书，又添了原来数量的1/6，现在有多少本？请解释。",
+        "representation": "text"
+      },
+      "origin": {
+        "kind": "author_written",
+        "source_ref": "PAGE-54",
+        "relation": "同结构变式"
+      },
+      "reference": {
+        "answer": "84",
+        "unit": "本",
+        "allowed_solution_refs": [
+          "ST-M1-PARTS@1",
+          "ST-M1-FACTOR@1"
+        ],
+        "explanation": "指出原量与增加比例的基准，区分增加量和新量。"
+      },
+      "content_check": "author_checked_pending_admin_review",
+      "formal_use": false,
+      "purpose": "延迟案例候选；本题自身不携带延迟证据"
+    }
+  ],
+  "instance_admission_examples": [
+    {
+      "input": "原来80本，增加原来的1/4后求总量",
+      "mapping": "inside",
+      "reason": "基准、已知量和所求符合模板"
+    },
+    {
+      "input": "增加1/4后有100本，求原量",
+      "mapping": "outside",
+      "reason": "未知量改变；应由另一个适用模板承接，不能保存为本模板的合格实例"
+    },
+    {
+      "input": "80本书增加1/4，未说明相对哪个量",
+      "mapping": "needs_clarification",
+      "reason": "参考故意缺失基准信息；保留原始资料，不能强行保存为已核对实例"
+    },
+    {
+      "input": "3人增加原来的1/2，求实际人数",
+      "mapping": "invalid_parameters",
+      "reason": "离散增加量和结果非整数，不进入可用题库"
+    }
+  ],
+  "migration": {
+    "legacy_package": "CONTENT-BNU-6A-U4-001@1",
+    "legacy_template": "PT-FA-COMBINE@1",
+    "relation": "新窄范围参考，旧模板其他加减组合尚未迁移",
+    "legacy_claim_policy": "旧KCClaim及旧分数不迁入；保留历史文件。",
+    "new_claim": "CL-M1-INCREASE@1",
+    "belief_migration": "none"
+  },
+  "limitations": [
+    "对象与题目由作者整理，正式管理员核对及软件导入尚未完成。",
+    "参数生成和反向归类只有参考，无真实LLM分类执行。",
+    "数值检查不证明语义判断准确；本包没有个人KC状态。",
+    "KC均可反查到方法；全章所需针对性知识理解任务的覆盖尚未齐备。"
+  ],
+  "revisions": [
+    {
+      "version": "1",
+      "date": "2026-11-02",
+      "change": "依据已接受电子源，编制当前合同的增加关系参考及有限对照案例。"
+    }
+  ],
+  "target_variants": [
+    {
+      "id": "LT-M1-INCREASE-ALL-METHODS",
+      "version": "1",
+      "owner": "LearningSpace",
+      "name": "两种增加量方法均能说明",
+      "claim_ref": "CL-M1-INCREASE@1",
+      "requirements": [
+        {
+          "id": "LR-M1-INDEPENDENT",
+          "aspect": "independent",
+          "quality": "数量关系、结果和单位正确，使用任选一种允许方法。"
+        },
+        {
+          "id": "LR-M1-EXPLANATION",
+          "aspect": "explanation",
+          "quality": "量、式或图之间对应正确；允许简短文字、算式配注释，不以复述措辞评分。"
+        },
+        {
+          "id": "LR-M1-TRANSFER",
+          "aspect": "transfer",
+          "quality": "保留基准、所求、计算及要求的理由；只支持所观察的具体变化。"
+        },
+        {
+          "id": "LR-M1-RETENTION",
+          "aspect": "retention",
+          "quality": "记录先前表现、实际间隔、期间练习与帮助，结论只限于已知条件。"
+        }
+      ],
+      "method_mode": "all",
+      "allowed_solution_refs": [
+        "ST-M1-PARTS@1",
+        "ST-M1-FACTOR@1"
+      ],
+      "attainment_policy": "仅CASE-M1-013采用：对A与B分别取得表现依据；缺B是覆盖不足，不是B失败。其余方面与未知边界同原目标。",
+      "ready_for_formal_assessment": false
+    }
+  ],
+  "runtime_flow_reference": [
+    {
+      "step": "F1",
+      "actor": "管理员／内容整理",
+      "input": "PAGE-53、PAGE-54原页",
+      "output": "原页位置、图示标注、题意及参考分别保存；教材题和作者变式区分",
+      "boundary": "本包是人工参考，不表示OCR已执行"
+    },
+    {
+      "step": "F2",
+      "actor": "Domain／Evaluation定义／LearningSpace配置",
+      "input": "核对后的任务、方法、知识和要求",
+      "output": "本包对象及版本、章节采用的两种方法、Claim和目标",
+      "boundary": "跨Space打包不转移语义所有权；正式应用前需补足目标证据聚合及校准"
+    },
+    {
+      "step": "F3",
+      "actor": "Interaction／Reasoning",
+      "input": "学生请求讲解；当前目标、有效个人记录和可用内容",
+      "output": "基础不足时回补份额；会算但理由错时解释基准；已有基础时尝试或检查",
+      "boundary": "教学规则给条件，LLM解释实际表现；本包不固定所有人先看例题，版本采用与冲突处理见OPEN-013"
+    },
+    {
+      "step": "F4",
+      "actor": "Interaction／题目供给",
+      "input": "需要观察哪个方面、允许方法、已展示题目和帮助",
+      "output": "从6道核对候选中选择适用题并记录本次使用；实际展示与答案参考分开",
+      "boundary": "M1不要求现场生成；无适用题时记录内容缺口，不把缺题当学生不会"
+    },
+    {
+      "step": "F5",
+      "actor": "Reasoning→Evaluation",
+      "input": "原始作答、Observation、实际帮助、题目与Claim版本、已有有效Belief",
+      "output": "当题反馈；有适用依据时生成方面Evidence并更新一个多维Belief，再按目标判断",
+      "boundary": "观察未决时不提交正反证据；13例给预期范围，不给伪造概率或一题达标阈值"
+    },
+    {
+      "step": "F6",
+      "actor": "Interaction",
+      "input": "有效评价、目标、帮助记录、时间条件与已有任务",
+      "output": "选择有理由的后续任务或不介入；学生接受后才开始，暂缓／拒绝保留状态",
+      "boundary": "任务不是Domain模板；接受不等于完成，拒绝不作能力反证，重复触发不重复创建"
+    }
+  ],
+  "follow_up_references": [
+    {
+      "id": "FOLLOWUP-M1-01",
+      "basis": "CASE-M1-006 的明确理由矛盾",
+      "proposal": "解释1代表原量的一整份，再安排适用的新题",
+      "allowed_alternative": "先澄清学生“1本”的意思；不得凭一句话自动定为长期误概念",
+      "student_action": "接受后进入讲解，结束后基于新表现再评价"
+    },
+    {
+      "id": "FOLLOWUP-M1-02",
+      "basis": "CASE-M1-004 未被要求解释",
+      "proposal": "必要时邀请解释基准，或依据当前目标暂不介入",
+      "forbidden": "把没说理由当作不会并强制重学"
+    },
+    {
+      "id": "FOLLOWUP-M1-03",
+      "basis": "已有带依据的保持检查任务到期",
+      "proposal": "进入空间时核对适用性后呈现原任务",
+      "student_action": "暂缓不自动开测，再次触发不重复创建",
+      "forbidden": "本包七天样例不得成为系统默认每周测验"
+    }
+  ]
+}

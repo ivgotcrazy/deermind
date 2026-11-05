@@ -1,0 +1,163 @@
+{
+  "date": "2026-11-02",
+  "scope": "M1 necessary product design; local document and historical screenshot review only",
+  "document_revisions": [
+    {
+      "file": "doc/mvp/m1/PRD.md",
+      "from_version": "v0.2",
+      "to_version": "v0.3",
+      "after_sha256": "d69406149510879d98ba03de00ac1ce557945d59b7aea469cd2206cafcc297c8",
+      "before_sha256": "6f506d13b1be5d0972e38bbcdb590150e2ba9137ad81dc8b6c634dcecc4da502"
+    },
+    {
+      "file": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "from_version": "v0.1",
+      "to_version": "v0.2",
+      "after_sha256": "659f71590869145d02bc179607844c8ae992d1773c0a3a83484f8c232255a216",
+      "before_sha256": "97ce9909300178c6a56e4a2277c1940bc185c9dc6493d505a87b12fec3ff8c3c"
+    },
+    {
+      "file": "doc/mvp/m1/design/Interaction_Design.md",
+      "from_version": null,
+      "to_version": "v0.1",
+      "after_sha256": "b25acfba9a4854068b0f321a6d91b80188ed3afb9ebf7b8f21bd6c99cb174648"
+    },
+    {
+      "file": "doc/mvp/m1/design/README.md",
+      "from_version": "v0.2",
+      "to_version": "v0.3",
+      "after_sha256": "30d6167e06fd26bef51e4180948924b2b0f0564124ed1ac0ede5fd94371b0ae7",
+      "before_sha256": "f1c6a6600262bb29ef9b8eb13db1f53e573d1e3e819fe22ebe29038331d9705d"
+    },
+    {
+      "file": "doc/mvp/m1/README.md",
+      "from_version": "v0.3",
+      "to_version": "v0.4",
+      "after_sha256": "cd6ab7dc90c86fd765f0b55b435eb9b5445d9d64120da545583d4c182849223d",
+      "before_sha256": "015052cc02b8150f90a618b849f1c92dbe25765f34f3b9ce0335634b7b133280"
+    },
+    {
+      "file": "doc/mvp/README.md",
+      "from_version": "v0.15",
+      "to_version": "v0.16",
+      "after_sha256": "0bbb12203920da7500e0a1560bf35b19dff436af7aeaa553b8c25ade3ca70d11",
+      "before_sha256": "bb7c2872ec03c34ef179ae719604e0e8e6390842edcdc3ae4d097648e06bdb45"
+    },
+    {
+      "file": "doc/mvp/DECISIONS.md",
+      "from_version": "v0.3",
+      "to_version": "v0.4",
+      "after_sha256": "7ee9655a0233f20dacec1407467bcc807e8ded545e60cbae6be2df3f5b316a8c",
+      "before_sha256": "9b1978f997bdd463e28961499a367faf0c7e11960f8a6be53da07926d3e8eab5"
+    }
+  ],
+  "local_links_checked": 99,
+  "errors": [],
+  "screenshots": [
+    {
+      "file": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I03.png",
+      "sha256": "14de797c022c42c19064a1eeadfb01f11aef146720843e6c5317d8cf3b59a2d4",
+      "historical_capture": {
+        "sha256": "14de797c022c42c19064a1eeadfb01f11aef146720843e6c5317d8cf3b59a2d4",
+        "source_manifest": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/capture-manifest.json",
+        "source_id": "I03"
+      },
+      "visual_review": "inspected actual image; reuse limitations documented"
+    },
+    {
+      "file": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I05.png",
+      "sha256": "04f86fec4b29dbed689c47a3aa242b5af557ef5a1597e9048146b637df308376",
+      "historical_capture": {
+        "sha256": "04f86fec4b29dbed689c47a3aa242b5af557ef5a1597e9048146b637df308376",
+        "source_manifest": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/capture-manifest.json",
+        "source_id": "I05"
+      },
+      "visual_review": "inspected actual image; reuse limitations documented"
+    },
+    {
+      "file": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I17.png",
+      "sha256": "35a45924473578216e455c7efc1b8f7aa6246034a288f648955f89db698821c5",
+      "historical_capture": {
+        "sha256": "35a45924473578216e455c7efc1b8f7aa6246034a288f648955f89db698821c5",
+        "source_manifest": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/capture-manifest.json",
+        "source_id": "I17"
+      },
+      "visual_review": "inspected actual image; reuse limitations documented"
+    },
+    {
+      "file": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I18B.png",
+      "sha256": "42695a077c37ddfcc14553b2d75bc5308062e1dd2143eba7a31585a59ab0f64b",
+      "historical_capture": {
+        "sha256": "42695a077c37ddfcc14553b2d75bc5308062e1dd2143eba7a31585a59ab0f64b",
+        "source_manifest": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/capture-manifest.json",
+        "source_id": "I18B"
+      },
+      "visual_review": "inspected actual image; reuse limitations documented"
+    },
+    {
+      "file": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I19.png",
+      "sha256": "15915f2094ae2db91c16fabc860c8b596eb4efe1a291a4af308960a5e2f5db8f",
+      "historical_capture": {
+        "sha256": "15915f2094ae2db91c16fabc860c8b596eb4efe1a291a4af308960a5e2f5db8f",
+        "source_manifest": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/capture-manifest.json",
+        "source_id": "I19"
+      },
+      "visual_review": "inspected actual image; reuse limitations documented"
+    },
+    {
+      "file": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I20.png",
+      "sha256": "9d5717faa52c3c235dc23b47f4114f393239d28bbc0fc965eb156e9fc0d1ed09",
+      "historical_capture": {
+        "sha256": "9d5717faa52c3c235dc23b47f4114f393239d28bbc0fc965eb156e9fc0d1ed09",
+        "source_manifest": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/capture-manifest.json",
+        "source_id": "I20"
+      },
+      "visual_review": "inspected actual image; reuse limitations documented"
+    },
+    {
+      "file": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F13.png",
+      "sha256": "96a5360de82de202c74faae71d13ac1c630a2b9a0aa36bb83b686d5c91697a9f",
+      "historical_capture": {
+        "sha256": "96a5360de82de202c74faae71d13ac1c630a2b9a0aa36bb83b686d5c91697a9f",
+        "source_manifest": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/capture-manifest.json",
+        "source_id": "F13"
+      },
+      "visual_review": "inspected actual image; reuse limitations documented"
+    },
+    {
+      "file": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F15.png",
+      "sha256": "f80c9f9a785c18e9aa5a26bf94a8ec603a353eb08271631cdec185f87cff455d",
+      "historical_capture": {
+        "sha256": "f80c9f9a785c18e9aa5a26bf94a8ec603a353eb08271631cdec185f87cff455d",
+        "source_manifest": "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/capture-manifest.json",
+        "source_id": "F15"
+      },
+      "visual_review": "inspected actual image; reuse limitations documented"
+    }
+  ],
+  "protected_files_checked": 442,
+  "protected_files_changed": [],
+  "diagrams": "No new or modified diagrams; PRD Mermaid sources unchanged",
+  "semantic_walkthrough": [
+    "Defined content readiness separately from learner uncertainty",
+    "Confirmed Task to Solution to KC; domain definitions do not create learner states",
+    "Preserved one Task Claim with separate aspects; target attainment distinct from Belief",
+    "Checked existing 80 to 100, 60 to 72, 40 to 50, 72 to 84 reference arithmetic and question identities",
+    "Recorded missing diagram region in Q-M1-SOURCE-54 as unusable until prepared",
+    "Separated question admission from learner-specific selection and actual exposure",
+    "Confirmed whole-test help exit and no early answer feedback",
+    "Corrected acceptance cross references against PRD section 7",
+    "Documented historical screenshot context mismatch rather than presenting it as one M1 run",
+    "Corrected blanket no-cycle rule in teaching blueprint; no new workflow platform",
+    "Reminder choice remains pending; no response treated as approval"
+  ],
+  "not_performed": [
+    "UI changes",
+    "OCR",
+    "LLM calls",
+    "runtime integration tests",
+    "whole-book modeling",
+    "user acceptance",
+    "new Gate approval"
+  ]
+}

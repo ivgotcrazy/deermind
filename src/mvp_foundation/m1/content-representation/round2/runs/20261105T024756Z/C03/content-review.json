@@ -1,0 +1,202 @@
+{
+  "reviewer": "Codex author source comparison; not independent human",
+  "decision": "accept_for_mapping",
+  "rawJudgment": "core_content_correct_normalization_needed",
+  "originalHash": "4a30fec6ececbcd9bbf6da963ae8fa19b13bec8209b6b6b446f918e1ae50d181",
+  "reviewedContentHash": "183da8ecd3f1fec3cc75aeafd4cb28a3b979d54bc94788c46f0ec40e75e3b2ec",
+  "reviewWindowStart": "2026-11-05T02:48:42+00:00",
+  "reviewWindowEnd": "2026-11-05T02:50:06.541696+00:00",
+  "timingScope": "Shared content inspection/edit window across four cases; includes author analysis and correction-script writing. Do not sum per-case times or use as end-user editing time.",
+  "notes": [
+    "原始输出的除号、各数值、三行及错误结果均保留正确。",
+    "原 AST 右结合与原式数值等价，但改成从左到右结合以保留教材运算次序；没有改变错误演算。",
+    "约分笔迹未逐笔表达，仍保留此缺口。"
+  ],
+  "changes": [
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/0/op",
+      "before": "multiply",
+      "after": "divide"
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/0/args/0/op",
+      "before": "fraction",
+      "after": "multiply"
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/0/args/0/args/0",
+      "before": {
+        "op": "number",
+        "value": "7"
+      },
+      "after": {
+        "op": "fraction",
+        "args": [
+          {
+            "op": "number",
+            "value": "7"
+          },
+          {
+            "op": "number",
+            "value": "8"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/0/args/0/args/1",
+      "before": {
+        "op": "number",
+        "value": "8"
+      },
+      "after": {
+        "op": "fraction",
+        "args": [
+          {
+            "op": "number",
+            "value": "3"
+          },
+          {
+            "op": "number",
+            "value": "4"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/0/args/1/op",
+      "before": "divide",
+      "after": "fraction"
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/0/args/1/args/0",
+      "before": {
+        "op": "fraction",
+        "args": [
+          {
+            "op": "number",
+            "value": "3"
+          },
+          {
+            "op": "number",
+            "value": "4"
+          }
+        ]
+      },
+      "after": {
+        "op": "number",
+        "value": "1"
+      }
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/0/args/1/args/1",
+      "before": {
+        "op": "fraction",
+        "args": [
+          {
+            "op": "number",
+            "value": "1"
+          },
+          {
+            "op": "number",
+            "value": "3"
+          }
+        ]
+      },
+      "after": {
+        "op": "number",
+        "value": "3"
+      }
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/1/args/0/op",
+      "before": "fraction",
+      "after": "multiply"
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/1/args/0/args/0",
+      "before": {
+        "op": "number",
+        "value": "7"
+      },
+      "after": {
+        "op": "fraction",
+        "args": [
+          {
+            "op": "number",
+            "value": "7"
+          },
+          {
+            "op": "number",
+            "value": "8"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/1/args/0/args/1",
+      "before": {
+        "op": "number",
+        "value": "8"
+      },
+      "after": {
+        "op": "fraction",
+        "args": [
+          {
+            "op": "number",
+            "value": "3"
+          },
+          {
+            "op": "number",
+            "value": "4"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/1/args/1/op",
+      "before": "multiply",
+      "after": "fraction"
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/1/args/1/args/0",
+      "before": {
+        "op": "fraction",
+        "args": [
+          {
+            "op": "number",
+            "value": "3"
+          },
+          {
+            "op": "number",
+            "value": "4"
+          }
+        ]
+      },
+      "after": {
+        "op": "number",
+        "value": "1"
+      }
+    },
+    {
+      "path": "/tasks/0/question/1/blocks/0/expressions/1/args/1/args/1",
+      "before": {
+        "op": "fraction",
+        "args": [
+          {
+            "op": "number",
+            "value": "1"
+          },
+          {
+            "op": "number",
+            "value": "3"
+          }
+        ]
+      },
+      "after": {
+        "op": "number",
+        "value": "3"
+      }
+    }
+  ]
+}

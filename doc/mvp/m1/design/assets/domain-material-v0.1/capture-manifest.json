@@ -1,0 +1,291 @@
+{
+  "capturedAt": "2026-11-05T16:06:33.276Z",
+  "mock": true,
+  "modelCalls": 0,
+  "errors": [],
+  "script": "prototype/scripts/capture-domain-material-design.mjs",
+  "screens": [
+    {
+      "file": "D01-create-domain.png",
+      "step": "M1-D02-S01",
+      "route": "#/domain",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "cd094d0712cec2541837eaa7534ed49162803c1b78d9cccdd587e3f608e38db9"
+    },
+    {
+      "file": "D02-empty-domain.png",
+      "step": "M1-D02-S01",
+      "route": "#/domain?domain=DOM-7DE72EB6&kind=task",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "ac99f52d58df073882255598dcf4118f4c2d38c3464589747c15818a8c4eb885"
+    },
+    {
+      "file": "T01-import-domain.png",
+      "step": "M1-D01-S01",
+      "route": "#/textbooks?tab=import&source=IMPORT-D1A6B9C0",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "b146264cc21d07e7beca61de73fe746f07df5fcc35cca541f09e8428026e7e05"
+    },
+    {
+      "file": "T02-batch-pages.png",
+      "step": "M1-D01-S02",
+      "route": "#/textbooks?tab=import&source=IMPORT-D1A6B9C0",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "a9f891b551bcb9df3dc31c0219aa04d645b52452fd616f0514fef35db92ff4ac"
+    },
+    {
+      "file": "T03-parsed-chapter.png",
+      "step": "M1-D01-S03",
+      "route": "#/textbooks?tab=import&source=IMPORT-D1A6B9C0",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "022265e4243b1b124297cf0b928b7a508ee8aa9d56c2e1bdc5bd83d31a1a20aa"
+    },
+    {
+      "file": "T04-element-detail.png",
+      "step": "M1-D01-S04",
+      "route": "#/textbooks?tab=import&source=IMPORT-D1A6B9C0",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "03dbf9292d1dc8461ee40dbc6a2f81adcfec5caef99e30204eb3c6d6f103db83"
+    },
+    {
+      "file": "T05-source-page.png",
+      "step": "M1-D01-S04",
+      "route": "#/textbooks?tab=import&source=IMPORT-D1A6B9C0",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "a672034d719a600f10337bb619f8e60c065937fdc978c6eed8957a28d4a5c27e"
+    },
+    {
+      "file": "T06-textbook-list.png",
+      "step": "M1-D01-S01",
+      "route": "#/textbooks",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "24ed820644e6986f570665302e89e90a9bacabd6b12fb8887c6abdd7f8d2c3ac"
+    },
+    {
+      "file": "T07-delete-import.png",
+      "step": "M1-D01-S09",
+      "route": "#/textbooks",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "b7d53434887bddc7f0fa0dad12e295813f161cffefe9684af0f5981d2a43654c"
+    },
+    {
+      "file": "D14-method-ending.png",
+      "step": "M1-D02-S04",
+      "route": "#/domain?domain=DOM-A92F0E02&kind=solution&id=ST-89329C62",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "b3bb342a921f11494b586ae9f2a9aaa974fb2dc03bfc848d80bfbb3efd264cc3"
+    },
+    {
+      "file": "D10-instance-check.png",
+      "step": "M1-D02-S06",
+      "route": "#/domain?domain=DOM-425EDD87&kind=task&id=TT-809337AD&tab=instances",
+      "source": "this script, isolated browser",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "6da2f6c53111e21cfa6bf02b8ce083dcfaf6a603cd41ecad06c08d749607d08d"
+    },
+    {
+      "file": "D03-task-list.png",
+      "step": "M1-D02-S02",
+      "source": "prototype/test-results/domain/05-domain-tasks.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "13503211c7a59644d5c6a3f8c2e19a66eb5e608b80987aa97388c587e52b5182"
+    },
+    {
+      "file": "D04-task-definition.png",
+      "step": "M1-D02-S02",
+      "source": "prototype/test-results/domain/06-task-definition.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "938447354617bca6ecaf87c20396cb3a98962957a1f1f62a5fbd2e91af862b82"
+    },
+    {
+      "file": "D05-task-methods.png",
+      "step": "M1-D02-S03",
+      "source": "prototype/test-results/domain/07-task-methods.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "8e099410fcaecdceaf70c8ce7f4d95123555d5a01225b2343f6217d7d8a4c4a5"
+    },
+    {
+      "file": "D06-task-knowledge.png",
+      "step": "M1-D02-S03",
+      "source": "prototype/test-results/domain/08-task-knowledge.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "e65485a683771de09639338f5cf890f3b81e384073d64ef4697fb2fad1232e69"
+    },
+    {
+      "file": "D07-kc-prerequisites.png",
+      "step": "M1-D02-S05",
+      "source": "prototype/test-results/domain/11-prerequisite-list.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "e80f30e1cdbff2eb137225913882f28700315af6b41813931c27d1e9d7d68c6e"
+    },
+    {
+      "file": "D08-instances.png",
+      "step": "M1-D02-S06",
+      "source": "prototype/test-results/domain/04-instances.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "3ae872aa8169db260e4db06fa3f409f2f385649b9bf7530b4599d212142075a3"
+    },
+    {
+      "file": "D09-question-preview.png",
+      "step": "M1-D02-S06",
+      "source": "prototype/test-results/domain/02-student-question.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "ae5b1fe7637dd992d495ce96f2fda2877f9e368b947b5d19bc6c21bb01c50e0c"
+    },
+    {
+      "file": "D11-recursive-method.png",
+      "step": "M1-D02-S04",
+      "source": "prototype/test-results/solution-template/junior-parent.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "14892137f1c3a861dabaa98c9e8396bbcfdfd19b4caca67a4647b83b1795500c"
+    },
+    {
+      "file": "D12-method-cases.png",
+      "step": "M1-D02-S04",
+      "source": "prototype/test-results/solution-template/senior-all-cases.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "1fc928a191b1d20b49b0f9b061af589f827f029272167bbfb8972ff14ee5687a"
+    },
+    {
+      "file": "D13-method-recheck.png",
+      "step": "M1-D02-S04",
+      "source": "prototype/test-results/solution-template/k8s-recheck.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "c99bef837660d92cd6d1aedc2eeed4acb631bcf3a60047de89381b42c55d4555"
+    },
+    {
+      "file": "D15-junior-task.png",
+      "step": "M1-D02-S02",
+      "source": "prototype/test-results/task-template/junior-requirements.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "80edf3abf009178f106208836760296a64f8eb20e65bca939d30fd315d0c8828"
+    },
+    {
+      "file": "D16-senior-task.png",
+      "step": "M1-D02-S02",
+      "source": "prototype/test-results/task-template/senior-variables.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "82e75e7ddf7d133c812d4586da79599ec8515e0090d2a08388e3810d9cdbbafd"
+    },
+    {
+      "file": "D17-k8s-task.png",
+      "step": "M1-D02-S02",
+      "source": "prototype/test-results/task-template/k8s-variables.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "b8d35ec87ac4e04da3b6ed13717bc02fc9a25fdc37d478c8c9e62f31bfe2291d"
+    },
+    {
+      "file": "T08-separated-solutions.png",
+      "step": "M1-D01-S05",
+      "source": "prototype/test-results/material-flow/01-parsed-solutions.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "f82e0031a0182e6308f14e612c26737c9cef38b10a2e42b389c6979b62751990"
+    },
+    {
+      "file": "T09-reparse-preview.png",
+      "step": "M1-D01-S05",
+      "source": "prototype/test-results/material-flow/05-reparse-chart.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "99fb9b4d8d5e2d5fac434bc1a3ac62e681adb0906918512b36b8c44e2dab035b"
+    },
+    {
+      "file": "T10-intake-actions.png",
+      "step": "M1-D01-S06",
+      "source": "prototype/test-results/material-flow/07-row-actions.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "c30fda68207b984246b929a7f892f4ba1cfdebec447ed9d6b129cdf9fc9cb754"
+    },
+    {
+      "file": "T11-extract-template.png",
+      "step": "M1-D01-S07",
+      "source": "prototype/test-results/material-flow/08-extract-template.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "d65d199ecf9be8d1b6b9d1e7ba1f4ccd0c2dc84b19149a8aa83dbce6d0297e4e"
+    },
+    {
+      "file": "T12-partial-intake.png",
+      "step": "M1-D01-S07",
+      "source": "prototype/test-results/material-flow/09-partial-completion.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "8b227ab75c933774b32e6da2bad968b3503e7c17ba174295a5bea1f574e9c83f"
+    },
+    {
+      "file": "T13-intake-complete.png",
+      "step": "M1-D01-S07",
+      "source": "prototype/test-results/material-flow/04-intake-complete.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "30b120954e5d4462b72546c5937074020248f22a7f9782d0a4d1b6cef2838f61"
+    },
+    {
+      "file": "T14-add-chapter-link.png",
+      "step": "M1-D01-S08",
+      "source": "prototype/test-results/material-flow/10-add-chapter-link.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "a5999067fd03f48425e537aed2afec71682ac365cc332f1d304e86b85286994e"
+    },
+    {
+      "file": "T15-edit-chapter-link.png",
+      "step": "M1-D01-S08",
+      "source": "prototype/test-results/material-flow/11-edit-chapter-link.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "8fec3f83400126f09e422bba577ac2b9bd1850b60d5b92a514588fb421ab0a88"
+    },
+    {
+      "file": "T16-chapter-links.png",
+      "step": "M1-D01-S08",
+      "source": "prototype/test-results/material-flow/03-chapter-links.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "04a47dbb7b51069df86aaaf039e94db368154e21a216dc1039af54c74532cd43"
+    },
+    {
+      "file": "T17-add-knowledge.png",
+      "step": "M1-D01-S07",
+      "source": "prototype/test-results/intake-dialog/process.png",
+      "capture": "active regression suite, fresh browser; see tests for exact route and viewport",
+      "sha256": "be7bee2a85a23995eaed477ebf6d2b7c11cae669aa30611e4aa6612ff91f309f"
+    }
+  ]
+}

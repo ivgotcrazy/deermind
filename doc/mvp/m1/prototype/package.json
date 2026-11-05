@@ -1,0 +1,26 @@
+{
+  "name": "deermind-m1-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5182 --strictPort",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "node scripts/serve.mjs",
+    "test": "node --test --test-concurrency=1 tests/import-lifecycle.test.mjs tests/material-flow.test.mjs tests/intake-dialog.test.mjs tests/domain.test.mjs tests/task-template.test.mjs tests/solution-template.test.mjs",
+    "test:previous-import-ui": "node --test --test-concurrency=1 tests/import.test.mjs tests/textbook-fusion.test.mjs tests/extracted-instances.test.mjs tests/visual-ownership.test.mjs tests/content-review.test.mjs"
+  },
+  "dependencies": {
+    "vue": "3.5.43"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.9",
+    "@playwright/test": "1.64.0",
+    "typescript": "5.9.3",
+    "vite": "7.3.7",
+    "vue-tsc": "3.3.12"
+  }
+}

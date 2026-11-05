@@ -1,0 +1,137 @@
+{
+  "reviewed_on": "2026-11-02",
+  "review_type": "author_document_checks_and_semantic_walkthrough_not_runtime_validation",
+  "status": "pass",
+  "documents": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "before_version": "v0.4",
+      "version": "v0.5",
+      "before_sha256": "77d58431cf555d12d1c54c3d1facd532b8bb7d823ddaf18301aa61cea1a09cf7",
+      "sha256": "5623fca3c3d2140a4cd9500c5b1a0779bf4f252561ff30d4701d246cc55c5470"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "before_version": "v0.3",
+      "version": "v0.4",
+      "before_sha256": "b1ca1d717fcb676c0a658bcf21581e951d0cccd28e931be2e6c43ee77425eb03",
+      "sha256": "fcf41664fd9dbf37535731f56779227efa6a4c9bdda52c5c76c488e3e1a8d784"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "before_version": "v0.2",
+      "version": "v0.3",
+      "before_sha256": "02cc50458f71d9d22418c2951973c2ae9159ff646fc4fe276800e5e4004dbbb7",
+      "sha256": "343aeb9b8b74e9e85d8a443c7784920d012aa2353aebc9348add32d9c2f99e2e"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "before_version": "v0.4",
+      "version": "v0.5",
+      "before_sha256": "484a136ef422a3b9a7ea4d261ac9164a0c1b7111fabfbb8a40ac625d131b1927",
+      "sha256": "837bb34608882a71c6d0e40a89825ccc455aa12a5a1f17d2795f8c703d5a6515"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "before_version": "v0.4",
+      "version": "v0.5",
+      "before_sha256": "cd6ab7dc90c86fd765f0b55b435eb9b5445d9d64120da545583d4c182849223d",
+      "sha256": "b093cda3b6c3a252b984beba247f664e0e85cc98eff230f9ebaac287eae6be97"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "before_version": "v0.5",
+      "version": "v0.6",
+      "before_sha256": "3870085f0342e6b60fd996c698505d15d6a5a30450d8c46b90c3c082ac304ac2",
+      "sha256": "cb6587aa5b1aaf47bf29e6bdbc8b1cb8e85c095fce6212394ff928fce1f5c5c6"
+    }
+  ],
+  "local_links_checked": 95,
+  "existing_interaction_images": [
+    "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I03.png",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I05.png",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I17.png",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I18B.png",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I19.png",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/I20.png",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F13.png",
+    "doc/mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/assets/product-interaction/fraction-flow/F15.png"
+  ],
+  "protected_files_checked": 442,
+  "protected_files_changed": [],
+  "math_cases": [
+    {
+      "question": "Q-M1-TEACH",
+      "original": 80,
+      "increase": 20,
+      "result": 100
+    },
+    {
+      "question": "QTR-P1",
+      "original": 24,
+      "increase": 6,
+      "result": 30
+    },
+    {
+      "question": "QTR-C1",
+      "original": 120,
+      "increase": 30,
+      "result": 150
+    },
+    {
+      "question": "Q-M1-TRANSFER",
+      "original": 40,
+      "increase": 10,
+      "result": 50
+    },
+    {
+      "question": "QTR-D1",
+      "original": 72,
+      "increase": 18,
+      "result": 90
+    },
+    {
+      "question": "QTR-R1",
+      "original": 48,
+      "increase": 12,
+      "result": 60
+    }
+  ],
+  "diagram": {
+    "document": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+    "version": "v0.4",
+    "mermaid_version": "11.12.0",
+    "id": "M1-Q01",
+    "source_sha256": "570933335755b3483cd4c4e157478ec9e2430413be4ec80415bafb9b7a2cfee8",
+    "svg": "M1-Q01.svg",
+    "png": "M1-Q01.png",
+    "rendered_size": {
+      "x": 24,
+      "y": 24,
+      "width": 720,
+      "height": 1018
+    },
+    "visual_review": "Viewed rendered PNG: labels, branches and arrows readable; no clipped nodes. This is a product flow, not a UI screenshot."
+  },
+  "semantic_walkthrough": [
+    "Three teaching starting points retain user choice, brief necessary remediation and explicit stopping; voluntary testing needs no prerequisite proof of mastery.",
+    "Both valid solution methods are allowed; Task KC references remain through Solution; no new learner KC Belief.",
+    "Wrong number alone does not diagnose its cause; correct number alone does not establish explanation or unseen reasoning.",
+    "Assisted practice and repeated submissions do not fill independent-test counts; substantial help ends the entire test before explanation.",
+    "Evidence supports separate aspects of one Claim with actual scope and conditions; local target completion does not prove entire Claim or chapter coverage.",
+    "User accepted two distinct new tasks and at least one applicable representation transfer; multiple evidence aspects do not multiply observations.",
+    "Delayed check uses a real interval from the latest qualifying performance at attainment; intervening practice and uncertain prior exposure remain explicit.",
+    "M1-DEC-004 settles this pilot threshold only; formal target/question adoption and other chapter standards remain work to do.",
+    "Teaching version adoption, multiple applicable strategies, valid unknown learner state and no legal strategy have different outcomes.",
+    "PRD, content reference, interaction reference, indexes and decision log use current versions; historical screenshots and content packages retain their original status."
+  ],
+  "not_executed": [
+    "OCR",
+    "LLM teaching",
+    "LLM evaluation",
+    "application workflow",
+    "learner trial",
+    "whole-book content acceptance"
+  ],
+  "errors": []
+}

@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "expression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "enum": [
+                "number"
+              ]
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$"
+            }
+          },
+          "required": [
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "enum": [
+                "group"
+              ]
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/expression"
+              },
+              "minItems": 1,
+              "maxItems": 1
+            }
+          },
+          "required": [
+            "op",
+            "args"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "enum": [
+                "fraction",
+                "multiply",
+                "divide",
+                "add",
+                "subtract",
+                "equal"
+              ]
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/expression"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "op",
+            "args"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "block": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "enum": [
+                "text"
+              ]
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "text"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "enum": [
+                "chart"
+              ]
+            },
+            "title": {
+              "type": "string"
+            },
+            "chartType": {
+              "enum": [
+                "bar",
+                "line",
+                "pie"
+              ]
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 0
+            },
+            "unit": {
+              "type": "string"
+            },
+            "precision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            },
+            "labels": {
+              "type": "boolean"
+            },
+            "series": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "values": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 0
+                  },
+                  "color": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "values",
+                  "color"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "colors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 0
+            },
+            "axis": {
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "number"
+                },
+                "max": {
+                  "type": "number"
+                },
+                "step": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [
+                "min",
+                "max",
+                "step"
+              ],
+              "additionalProperties": false
+            },
+            "cohortRelation": {
+              "enum": [
+                "second_subset_of_first",
+                "disjoint_parts"
+              ]
+            },
+            "stacked": {
+              "type": "boolean"
+            },
+            "derivedFrom": {
+              "type": "string"
+            },
+            "conversion": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "title",
+            "chartType",
+            "categories",
+            "unit",
+            "precision",
+            "labels",
+            "series",
+            "cohortRelation",
+            "stacked"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "part": {
+      "type": "object",
+      "properties": {
+        "regionIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 0
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/block"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "regionIndex",
+        "blocks"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "properties": {
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/part"
+            },
+            "minItems": 1
+          },
+          "solutions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/part"
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "knowledge": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/part"
+            },
+            "minItems": 0
+          },
+          "teachingAids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/part"
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "question",
+          "solutions",
+          "knowledge",
+          "teachingAids"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "uncertainties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "tasks",
+    "uncertainties"
+  ],
+  "additionalProperties": false
+}

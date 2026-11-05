@@ -1,0 +1,97 @@
+{
+  "scope": "M1 PRD first full-flow draft; documentation author review only",
+  "date": "2026-11-02",
+  "document_version": "v0.2",
+  "user_review": "pending",
+  "application_changes": false,
+  "model_calls": 0,
+  "application_tests_run": false,
+  "document_revisions": [
+    {
+      "file": "doc/mvp/m1/PRD.md",
+      "from_version": "v0.1",
+      "to_version": "v0.2",
+      "before_sha256": "fe4cc25d46fe0dd6785f75f5fbc580254b36c031b248a6532022cf467a73b849",
+      "after_sha256": "6f506d13b1be5d0972e38bbcdb590150e2ba9137ad81dc8b6c634dcecc4da502"
+    },
+    {
+      "file": "doc/mvp/DECISIONS.md",
+      "from_version": "v0.1",
+      "to_version": "v0.2",
+      "before_sha256": "e062c8bfe55c064bc10c081cb6e45e1ccc01552669ad753026bcd3c166c020ef",
+      "after_sha256": "4d9b8f7f5b90a98537437cd16a4de12aa711bbe294b9c7d14a5c9477a2eaeaa0"
+    },
+    {
+      "file": "doc/mvp/README.md",
+      "from_version": "v0.13",
+      "to_version": "v0.14",
+      "before_sha256": "9efc792895b072a01291e7a38a9c71afc24b13a6bb6a04ef4911939d0b03f9f3",
+      "after_sha256": "88c4b6bae1e39a6a7aa82b15179ea93d8f9438746278cd21d8675957d508b1ff"
+    },
+    {
+      "file": "doc/mvp/m1/README.md",
+      "from_version": "v0.1",
+      "to_version": "v0.2",
+      "before_sha256": "7150cee5ab568bc82de006ce834595aed18f036f79408e8e4aed8dca1c34516a",
+      "after_sha256": "46846a5934d4d184cee719b285a8160fab931e58c6342528900fb6e4aaf46f71"
+    }
+  ],
+  "automated_checks": {
+    "local_links": 47,
+    "link_errors": [],
+    "requirements": 19,
+    "acceptance_scenarios": 19,
+    "legacy_requirements_mapped": 25,
+    "archived_files_unchanged": 186,
+    "versions_and_headers": "pass",
+    "whitespace": "pass"
+  },
+  "diagram_checks": {
+    "mermaid_version": "11.12.0",
+    "rendered": 4,
+    "normal_width_visual_review": "author checked Chinese labels, arrows and clipping; object diagram split into definitions and personal evaluation for readability",
+    "render_manifest": "diagram-render.json"
+  },
+  "author_walkthrough": [
+    {
+      "path": "administrator scan to available course",
+      "review": "checked producer/input/output across import, content, domain, evaluation, target, teaching and questions; upload is not modeling completion"
+    },
+    {
+      "path": "student selection to explanation and practice",
+      "review": "checked context, strategy changes, help and stopping; no fixed learner labels or scripted dialogue treated as real performance"
+    },
+    {
+      "path": "test to feedback and evaluation",
+      "review": "checked whole-test help termination, incomplete scope, evidence aspects and target separation; no inference to all methods or all KC"
+    },
+    {
+      "path": "evaluation to proactive task and return activity",
+      "review": "checked valid basis, acceptance, deferral, rejection, outdated basis and completion; repeat-reminder policy remains open"
+    },
+    {
+      "path": "maintenance and recovery",
+      "review": "checked save vs apply, historical versions, invalid basis and no direct belief editing; teaching version conflict behavior remains open"
+    },
+    {
+      "path": "time limit",
+      "review": "user chose reminder only; no hard pause/lock; actual overtime remains visible"
+    }
+  ],
+  "not_validated": [
+    "user approval of PRD",
+    "whole-book model and references",
+    "screen-by-screen prototype alignment",
+    "real model quality",
+    "child learning effects",
+    "engineering contracts"
+  ],
+  "open_items": [
+    "M1-OPEN-02",
+    "M1-OPEN-03",
+    "M1-OPEN-04",
+    "M1-OPEN-05",
+    "M1-OPEN-07",
+    "M1-OPEN-08"
+  ]
+}

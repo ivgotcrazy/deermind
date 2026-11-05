@@ -1,0 +1,22 @@
+{
+  "caseId": "C05",
+  "status": "relation_or_value_error",
+  "httpStatus": 200,
+  "usage": {
+    "prompt_tokens": 6762,
+    "completion_tokens": 1071,
+    "total_tokens": 7833,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "prompt_cache_hit_tokens": 384,
+    "prompt_cache_miss_tokens": 6378
+  },
+  "returnedModel": "deepseek-flash",
+  "finishReason": "stop",
+  "issues": [
+    "TI-CHART-READ-93: answer/help exposed in question",
+    "C05: unknown task"
+  ],
+  "elapsedSeconds": 7.91
+}

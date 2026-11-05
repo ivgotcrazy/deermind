@@ -14,7 +14,7 @@ import MaterialOrganizeWorkspace from './MaterialOrganizeWorkspace.vue';
 
 const location=window.location;
 const focusPage=ref<number>();
-function useRealBook(){if(draft.value?.pages.length){const id=newImport();fillRealSample(textbookImports.find(d=>d.id===id)!);go('textbooks',{tab:'import',source:id});}else fillRealSample(draft.value!);}
+function useRealBook(){error.value='';if(draft.value?.pages.length){const id=newImport();fillRealSample(textbookImports.find(d=>d.id===id)!);go('textbooks',{tab:'import',source:id});}else fillRealSample(draft.value!);}
 const draft=computed(()=>textbookImports.find(d=>d.id===route.source));
 const book=computed(()=>draft.value&&importBook(draft.value));
 const chapters=computed(()=>book.value?.units.flatMap(u=>u.chapters)||[]);

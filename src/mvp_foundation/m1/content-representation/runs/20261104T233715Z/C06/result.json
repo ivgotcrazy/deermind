@@ -1,0 +1,6 @@
+{
+  "caseId": "C06",
+  "status": "transport_error",
+  "error": "ConnectError",
+  "elapsedSeconds": 9.65
+}

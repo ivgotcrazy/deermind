@@ -1,0 +1,90 @@
+[
+  {
+    "caseId": "C02",
+    "stage": "map",
+    "status": "transport_error",
+    "attempts": [
+      {
+        "number": 1,
+        "status": "transport_error",
+        "error": "ConnectError",
+        "elapsedSeconds": 10.43
+      },
+      {
+        "number": 2,
+        "status": "transport_error",
+        "error": "ConnectError",
+        "elapsedSeconds": 9.83
+      }
+    ]
+  },
+  {
+    "caseId": "C03",
+    "stage": "map",
+    "status": "transport_error",
+    "attempts": [
+      {
+        "number": 1,
+        "status": "transport_error",
+        "error": "ConnectError",
+        "elapsedSeconds": 10.42
+      },
+      {
+        "number": 2,
+        "status": "transport_error",
+        "error": "ConnectError",
+        "elapsedSeconds": 9.81
+      }
+    ]
+  },
+  {
+    "caseId": "C05",
+    "stage": "map",
+    "httpStatus": 200,
+    "usage": {
+      "prompt_tokens": 2869,
+      "completion_tokens": 69,
+      "total_tokens": 2938,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 2869
+    },
+    "finishReason": "stop",
+    "returnedModel": "deepseek-flash",
+    "status": "ready_for_author_review",
+    "attempts": [
+      {
+        "number": 1,
+        "status": 200,
+        "elapsedSeconds": 6.48
+      }
+    ]
+  },
+  {
+    "caseId": "C06",
+    "stage": "map",
+    "httpStatus": 200,
+    "usage": {
+      "prompt_tokens": 2524,
+      "completion_tokens": 61,
+      "total_tokens": 2585,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 2524
+    },
+    "finishReason": "stop",
+    "returnedModel": "deepseek-flash",
+    "status": "ready_for_author_review",
+    "attempts": [
+      {
+        "number": 1,
+        "status": 200,
+        "elapsedSeconds": 6.21
+      }
+    ]
+  }
+]

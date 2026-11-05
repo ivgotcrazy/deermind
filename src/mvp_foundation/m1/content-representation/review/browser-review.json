@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "id": "C01",
+      "loaded": true,
+      "sourceImageLoaded": true,
+      "questionsAndSolutionsSeparated": true
+    },
+    {
+      "id": "C02",
+      "loaded": true,
+      "sourceImageLoaded": true,
+      "questionsAndSolutionsSeparated": true
+    },
+    {
+      "id": "C03",
+      "loaded": true,
+      "sourceImageLoaded": true,
+      "questionsAndSolutionsSeparated": true
+    },
+    {
+      "id": "C04",
+      "loaded": true,
+      "sourceImageLoaded": true,
+      "questionsAndSolutionsSeparated": true
+    },
+    {
+      "id": "C05",
+      "loaded": true,
+      "sourceImageLoaded": true,
+      "questionsAndSolutionsSeparated": true
+    },
+    {
+      "id": "C06",
+      "loaded": true,
+      "sourceImageLoaded": true,
+      "questionsAndSolutionsSeparated": true
+    },
+    {
+      "id": "C07",
+      "loaded": true,
+      "sourceImageLoaded": true,
+      "questionsAndSolutionsSeparated": true
+    },
+    {
+      "id": "C08",
+      "loaded": true,
+      "sourceImageLoaded": true,
+      "questionsAndSolutionsSeparated": true
+    }
+  ],
+  "rawResultViews": 8,
+  "narrowWidth": 800,
+  "errors": [],
+  "scope": "Browser behavior only; author separately inspects screenshots. Failed LLM output stays failed."
+}

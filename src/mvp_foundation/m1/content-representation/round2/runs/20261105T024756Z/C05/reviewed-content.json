@@ -1,0 +1,156 @@
+{
+  "tasks": [
+    {
+      "question": [
+        {
+          "regionIndex": 0,
+          "blocks": [
+            {
+              "type": "text",
+              "text": "同学们根据整理的我国人口老龄化的数据绘制下面的统计图，从统计图中你能获得哪些信息？与同伴交流。"
+            },
+            {
+              "type": "chart",
+              "chartType": "bar",
+              "title": "第五～七次人口普查中老年人口数量统计图",
+              "categories": [
+                "第五次",
+                "第六次",
+                "第七次"
+              ],
+              "unit": "亿人",
+              "precision": 2,
+              "axis": {
+                "min": 0,
+                "max": 3,
+                "step": 0.5
+              },
+              "labels": true,
+              "series": [
+                {
+                  "name": "60岁及以上",
+                  "values": [
+                    1.3,
+                    1.78,
+                    2.64
+                  ],
+                  "color": "#4f81bd"
+                },
+                {
+                  "name": "65岁及以上",
+                  "values": [
+                    0.88,
+                    1.19,
+                    1.91
+                  ],
+                  "color": "#e28036"
+                }
+              ],
+              "cohortRelation": "second_subset_of_first",
+              "stacked": false
+            },
+            {
+              "type": "chart",
+              "chartType": "line",
+              "title": "第五～七次人口普查中老年人口数量变化情况",
+              "categories": [
+                "第五次",
+                "第六次",
+                "第七次"
+              ],
+              "unit": "亿人",
+              "precision": 2,
+              "axis": {
+                "min": 0,
+                "max": 3,
+                "step": 0.5
+              },
+              "labels": true,
+              "series": [
+                {
+                  "name": "60岁及以上",
+                  "values": [
+                    1.3,
+                    1.78,
+                    2.64
+                  ],
+                  "color": "#4f81bd"
+                },
+                {
+                  "name": "65岁及以上",
+                  "values": [
+                    0.88,
+                    1.19,
+                    1.91
+                  ],
+                  "color": "#e28036"
+                }
+              ],
+              "cohortRelation": "second_subset_of_first",
+              "stacked": false
+            },
+            {
+              "type": "chart",
+              "chartType": "pie",
+              "title": "第七次人口普查年龄分布图",
+              "categories": [
+                "0～14岁",
+                "15～59岁",
+                "60～64岁",
+                "65岁及以上"
+              ],
+              "unit": "%",
+              "precision": 2,
+              "labels": true,
+              "series": [
+                {
+                  "name": "第七次人口普查",
+                  "values": [
+                    17.95,
+                    63.35,
+                    5.2,
+                    13.5
+                  ],
+                  "color": "#4f81bd"
+                }
+              ],
+              "colors": [
+                "#4f81bd",
+                "#e28036",
+                "#a5a5a5",
+                "#ffc000"
+              ],
+              "cohortRelation": "disjoint_parts",
+              "stacked": false
+            }
+          ]
+        }
+      ],
+      "solutions": [],
+      "knowledge": [],
+      "teachingAids": [
+        {
+          "regionIndex": 0,
+          "blocks": [
+            {
+              "type": "text",
+              "text": "条形统计图很容易看出老年人口的数量……"
+            },
+            {
+              "type": "text",
+              "text": "折线统计图可以看出老年人口近二十年的变化……"
+            },
+            {
+              "type": "text",
+              "text": "扇形统计图可以看出人口普查各年龄段人口占比情况……"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "uncertainties": [
+    "模型漏掉全部三个图表；作者依据本轮原图重新核对首轮人工参考中的系列、数值、单位及刻度后补入。",
+    "精确 RGB 并非教学语义；重绘用固定近似颜色并保留类别对应。"
+  ]
+}

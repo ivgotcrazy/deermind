@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdir } from 'node:fs/promises';
+import { chromium,expect as baseExpect } from '@playwright/test';
+import { createPreviewServer } from '../scripts/serve.mjs';
+const expect=baseExpect.configure({timeout:5000});
+
+test('intake row actions open directly, cancel without saving and show errors in the action dialog',async t=>{
+  const server=createPreviewServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));
+  const browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1280,height:900}});page.setDefaultTimeout(5000);
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  t.after(async()=>{await browser.close();await new Promise(r=>server.close(r));});
+  const btn=name=>page.getByRole('button',{name,exact:true}),modal=()=>page.getByRole('dialog');
+  const stored=()=>page.evaluate(()=>({imports:JSON.parse(localStorage.getItem('deermind-m1-import-v1')),domain:JSON.parse(localStorage.getItem('deermind-m1-domain-v1'))}));
+  await page.goto('http://127.0.0.1:'+server.address().port+'/admin/#/textbooks');await btn('导入教材').click();await btn('载入四例核对样例').click();await btn('上传并开始整理').click();
+  await btn('知识 1').click();await page.getByLabel('选择 除以非零数等于乘其倒数').check();await btn('提交到领域').click();
+  const before=await stored();await page.evaluate(domainId=>location.hash='/domain?domain='+domainId+'&kind=task&tab=intake',before.imports[0].book.domainId);
+  await expect(btn('待处理')).toHaveCount(0);await expect(btn('已入库')).toHaveCount(0);
+  await expect(btn('处理')).toHaveCount(0);await expect(modal()).toHaveCount(0);
+  const row=page.locator('.intake-list tbody tr');await expect(row).toHaveCount(1);
+  await expect(row.getByRole('button',{name:'添加知识成分',exact:true})).toBeVisible();
+  const remove=row.getByRole('button',{name:'删除',exact:true});await expect(remove).toBeVisible();assert.ok(await remove.evaluate(el=>el.classList.contains('btn')));
+  await btn('添加知识成分').click();await expect(modal()).toHaveCount(1);assert.ok(await modal().evaluate(el=>el.matches(':modal')));
+  const original=await modal().getByLabel('名称',{exact:true}).inputValue();
+  await modal().getByLabel('名称',{exact:true}).fill('未保存的改名');await modal().getByRole('button',{name:'关闭对话框',exact:true}).click();await expect(modal()).toHaveCount(0);assert.deepEqual(await stored(),before);
+  await btn('添加知识成分').click();await expect(modal().getByLabel('名称',{exact:true})).toHaveValue(original);
+  await modal().getByLabel('名称',{exact:true}).fill('');await modal().getByRole('button',{name:'确认添加',exact:true}).click();await expect(modal().getByRole('alert')).toContainText('补齐知识名称与定义');assert.deepEqual(await stored(),before);
+  await page.keyboard.press('Escape');await expect(modal()).toHaveCount(0);await expect(page.getByRole('alert')).toHaveCount(0);
+  await mkdir(new URL('../test-results/intake-dialog/',import.meta.url),{recursive:true});await page.screenshot({path:new URL('../test-results/intake-dialog/process.png',import.meta.url).pathname.replace(/^\/([A-Z]:)/,'$1')});
+  await btn('添加知识成分').click();assert.ok(await modal().evaluate(el=>el.scrollWidth<=el.clientWidth));await btn('确认添加').click();await expect(modal()).toHaveCount(0);await expect(page.getByRole('status')).toContainText('已添加');
+  const done=await stored();assert.equal(done.domain.knowledge.length,1);assert.equal(done.imports[0].flow.requests[0].status,'done');
+  await expect(page.locator('.intake-list tbody tr')).toHaveCount(0);await expect(page.getByText('当前没有待入库内容。',{exact:true})).toBeVisible();await page.reload();await expect(btn('处理')).toHaveCount(0);await expect(btn('已入库')).toHaveCount(0);assert.deepEqual(await stored(),done);assert.deepEqual(errors,[]);
+});

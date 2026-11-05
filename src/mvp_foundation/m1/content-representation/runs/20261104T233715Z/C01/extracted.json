@@ -1,0 +1,274 @@
+{
+  "schemaVersion": "0.1",
+  "caseId": "C01",
+  "taskId": "T-C01",
+  "solutionIds": [],
+  "newDefinitions": [],
+  "instances": [
+    {
+      "id": "TI-C01-1",
+      "kind": "TaskInstance",
+      "templateId": "TT-EXPR",
+      "contentRefs": [
+        "E-C01-Q1"
+      ]
+    },
+    {
+      "id": "TI-C01-2",
+      "kind": "TaskInstance",
+      "templateId": "TT-EXPR",
+      "contentRefs": [
+        "E-C01-Q2"
+      ]
+    },
+    {
+      "id": "TI-C01-3",
+      "kind": "TaskInstance",
+      "templateId": "TT-EXPR",
+      "contentRefs": [
+        "E-C01-Q3"
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "id": "E-C01-Q1",
+      "owner": "TI-C01-1",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "formula",
+          "expression": {
+            "op": "divide",
+            "args": [
+              {
+                "op": "divide",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "12"
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "4"
+                      },
+                      {
+                        "op": "number",
+                        "value": "5"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "3"
+                  },
+                  {
+                    "op": "number",
+                    "value": "8"
+                  }
+                ]
+              }
+            ]
+          },
+          "latex": "12\\div\\frac{4}{5}\\div\\frac{3}{8}"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.1,
+            0.47,
+            0.16,
+            0.06
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C01-Q2",
+      "owner": "TI-C01-2",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "formula",
+          "expression": {
+            "op": "multiply",
+            "args": [
+              {
+                "op": "divide",
+                "args": [
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "3"
+                      },
+                      {
+                        "op": "number",
+                        "value": "8"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "1"
+                      },
+                      {
+                        "op": "number",
+                        "value": "10"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "5"
+                  },
+                  {
+                    "op": "number",
+                    "value": "7"
+                  }
+                ]
+              }
+            ]
+          },
+          "latex": "\\frac{3}{8}\\div\\frac{1}{10}\\times\\frac{5}{7}"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.36,
+            0.47,
+            0.16,
+            0.06
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C01-Q3",
+      "owner": "TI-C01-3",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "formula",
+          "expression": {
+            "op": "multiply",
+            "args": [
+              {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "4"
+                  },
+                  {
+                    "op": "number",
+                    "value": "7"
+                  }
+                ]
+              },
+              {
+                "op": "group",
+                "args": [
+                  {
+                    "op": "divide",
+                    "args": [
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "5"
+                          },
+                          {
+                            "op": "number",
+                            "value": "8"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "5"
+                          },
+                          {
+                            "op": "number",
+                            "value": "14"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "latex": "\\frac{4}{7}\\times\\left(\\frac{5}{8}\\div\\frac{5}{14}\\right)"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.62,
+            0.47,
+            0.18,
+            0.06
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C01-K1",
+      "owner": "KC-ORDER",
+      "role": "knowledge",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "分数混合运算的顺序与整数混合运算的顺序一样。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.4,
+            0.55,
+            0.28,
+            0.06
+          ]
+        }
+      ]
+    }
+  ],
+  "uncertainties": [
+    "“试一试”三道题未给出教材解答，故未建立SolutionInstance。",
+    "运算顺序说明为教材提示，作为knowledge元素引用KC-ORDER，未放入question内容。"
+  ]
+}

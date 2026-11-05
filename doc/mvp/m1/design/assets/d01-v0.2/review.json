@@ -1,0 +1,105 @@
+{
+  "date": "2026-11-03",
+  "scope": "Independent M1 prototype with selected D01 reuse; no new D01 feature authorization implied",
+  "author_review": "pass",
+  "documents": [
+    {
+      "file": "doc/mvp/README.md",
+      "version": "> **版本**：v0.18<br>",
+      "sha256": "40cdaa957414c67f370e7d105edc1cd5d48f32688241e59eb6e934c014a92a2b",
+      "old_version": "v0.17"
+    },
+    {
+      "file": "doc/mvp/m1/README.md",
+      "version": "> **版本**：v0.8<br>",
+      "sha256": "d6e1f266dba7e314448d2482c6f9b618a288fbcb95b6ff729ebed04033697423",
+      "old_version": "v0.7"
+    },
+    {
+      "file": "doc/mvp/m1/PRD.md",
+      "version": "> **版本**：v0.8<br>",
+      "sha256": "062a27be1b11cdcb26af85ad590c2d52d7c898d02444c008d9fb742c1bbd60d8",
+      "old_version": "v0.7"
+    },
+    {
+      "file": "doc/mvp/m1/design/README.md",
+      "version": "> **版本**：v0.8<br>",
+      "sha256": "615d30123b777810fbc90f9241def08c7cc2b458c54decd5f467612ebfb37f20",
+      "old_version": "v0.7"
+    },
+    {
+      "file": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "version": "> **版本**：v0.7<br>",
+      "sha256": "f2f79823777b120756613f22be0ece06fb641c63fa5322082bbdbb9e581cb480",
+      "old_version": "v0.6"
+    },
+    {
+      "file": "doc/mvp/m1/design/Interaction_Design.md",
+      "version": "> **版本**：v0.6<br>",
+      "sha256": "d1f23677f0a6fff7f6a126ff7ebc8b889b410fc36ec9feae05f3d61a97c5332a",
+      "old_version": "v0.5"
+    },
+    {
+      "file": "doc/mvp/DECISIONS.md",
+      "version": "> **版本**：v0.9<br>",
+      "sha256": "5691e75cd77f9abe80f709f1582bd671a5073248067a605637fe8ae71cfd81a8",
+      "old_version": "v0.8"
+    },
+    {
+      "file": "doc/mvp/m1/prototype/README.md",
+      "version": "> **版本**：v0.1<br>",
+      "sha256": "b902030991d85536874ecbc210216996b23c714b910013e3007fc2545e46e291"
+    }
+  ],
+  "checks": {
+    "build": "vue-tsc and Vite passed",
+    "tests": {
+      "passed": 6,
+      "failed": 0,
+      "log": "test-result.txt"
+    },
+    "browser": [
+      "D01-only navigation; invalid inputs and unconnected OCR do not fabricate recognized content",
+      "Interrupted mock processing resumes the same batch; actual bundled source image loads",
+      "Cross-page methods remain separate blocks; question mode excludes assistance; cancellation and deliberately incorrect material remain intact",
+      "Table correction and cross-page chart references survive reload; handoff does not pretend D02 exists; desktop has no horizontal overflow",
+      "Delete affects only selected draft; absent pages are not generated; processing reload can resume; no old data or model API is used"
+    ],
+    "captures": 18,
+    "screenshot_hashes_and_document_references": "checked",
+    "visual_review": "All 18 captures inspected in overview; entry, workspace, chart editing and handoff inspected at full size",
+    "local_links": 157,
+    "protected_existing_files": 523,
+    "changed_existing_files": [
+      "doc/mvp/README.md",
+      "doc/mvp/DECISIONS.md",
+      "doc/mvp/m1/README.md",
+      "doc/mvp/m1/PRD.md",
+      "doc/mvp/m1/design/README.md",
+      "doc/mvp/m1/design/Interaction_Design.md",
+      "doc/mvp/m1/design/Content_and_Model_Reference.md"
+    ],
+    "old_prototype": "All inventoried old files unchanged",
+    "reuse": "Five selected source files and five source pages; no external source imports",
+    "teaching_standard": "Chapter 4 onwards unchanged",
+    "launch": "Start, repeated start, status, stop, restart verified; old service stays available",
+    "urls": [
+      {
+        "url": "http://127.0.0.1:5182/admin/",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5181/admin/",
+        "status": 200
+      }
+    ],
+    "health_root": "D:\\code\\deermind\\deermind\\doc\\mvp\\m1\\prototype\\"
+  },
+  "limits": [
+    "D01 existing mock flow only; no OCR, model API or full-book acceptance",
+    "D01-P01/P02/P03 await confirmation and implementation",
+    "D02-D06 remain M1 scope and have not been migrated",
+    "Author review does not mean user acceptance or engineering gate approval"
+  ],
+  "errors": []
+}

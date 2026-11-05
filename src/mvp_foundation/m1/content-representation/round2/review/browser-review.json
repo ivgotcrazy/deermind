@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "caseId": "C02",
+      "sourceLoaded": true,
+      "rawAndReviewedSeparated": true,
+      "graphShown": true
+    },
+    {
+      "caseId": "C03",
+      "sourceLoaded": true,
+      "rawAndReviewedSeparated": true,
+      "graphShown": true
+    },
+    {
+      "caseId": "C05",
+      "sourceLoaded": true,
+      "rawAndReviewedSeparated": true,
+      "graphShown": true
+    },
+    {
+      "caseId": "C06",
+      "sourceLoaded": true,
+      "rawAndReviewedSeparated": true,
+      "graphShown": true
+    }
+  ],
+  "errors": [],
+  "narrowWidth": 800,
+  "scope": "Display and provenance paths; not automatic semantic validation"
+}

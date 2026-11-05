@@ -1,0 +1,14 @@
+{
+  "tasks": [
+    {
+      "taskIndex": 0,
+      "taskMatch": {
+        "catalogId": "TT-CHART",
+        "reason": "题目要求从同一人口资料的条形图、折线图、扇形图中获取信息，符合解读同一资料不同统计图的任务定义。",
+        "unmatchedProposal": null
+      },
+      "solutions": [],
+      "knowledge": []
+    }
+  ]
+}

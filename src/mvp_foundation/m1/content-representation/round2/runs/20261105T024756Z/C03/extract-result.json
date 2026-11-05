@@ -1,0 +1,25 @@
+{
+  "caseId": "C03",
+  "stage": "extract",
+  "httpStatus": 200,
+  "usage": {
+    "prompt_tokens": 1561,
+    "completion_tokens": 370,
+    "total_tokens": 1931,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 1561
+  },
+  "finishReason": "stop",
+  "returnedModel": "deepseek-flash",
+  "status": "ready_for_author_review",
+  "attempts": [
+    {
+      "number": 1,
+      "status": 200,
+      "elapsedSeconds": 9.62
+    }
+  ]
+}

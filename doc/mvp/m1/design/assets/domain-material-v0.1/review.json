@@ -1,0 +1,260 @@
+{
+  "status": "author_review_passed_for_documented_mock_slice",
+  "started": "2026-11-05",
+  "updatedAt": "2026-11-05T16:08:50.278905+00:00",
+  "scope": "M1 Domain and textbook product documentation; UI unchanged",
+  "documents": 8,
+  "screenshots": 34,
+  "modelCallsThisBatch": 0,
+  "build": "npm run build passed",
+  "browserTests": {
+    "command": "npm test",
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0,
+    "rawLog": "browser-tests.log",
+    "logSha256": "8a4c97d530b630375c05d4a3763a0093ca3f7598a8a0b93fc5bd1eff7313cdb6"
+  },
+  "sourceFiles": [
+    {
+      "path": "doc/mvp/m1/prototype/src/App.vue",
+      "sha256": "bded7847b8a65b9275b51e8192dafb7be8f3387c5c82d63c193872da247b993d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ContentReviewWorkspace.vue",
+      "sha256": "c16ac04a7b1fa27f5a880d6af0965eb7648810bb1434600aecd74a3566b69f3e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ContentVisualEditor.vue",
+      "sha256": "6e12584de7bef307dd126b171c67a59acb6f51bba0283a4cb2a2dfa07e861a1e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ContentVisuals.vue",
+      "sha256": "31f642bdf617f4c04a745903104d84ca0ea9c6afda0c02dfadcd22b2922a3ee5"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/domain.css",
+      "sha256": "7c1755dded0ba26affadd1383f226d43eaf8d2864719bb63d48940c5ac794dc3"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/DomainIntake.vue",
+      "sha256": "acf3af33e13ccca719e2d6c4885b0ad7dd161ff92be6dbbb576e33d5047dc99e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/DomainWorkspace.vue",
+      "sha256": "820894cefa91602b31b51a0357dc4bcc577e07f1baf857fe6291121fab9ab629"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/KnowledgeWorkspace.vue",
+      "sha256": "7e85a51331711ab7fd50739f43b88cbd4013a83a0ca210bb6eeebf296501cbc9"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/MethodWorkspace.vue",
+      "sha256": "515592714a5d42770df6b187fef55d868cc9c5bc5091cf3babdccf9d2c1d1979"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/TaskInstances.vue",
+      "sha256": "42ff7d99ebe6fd918c7a4a4a261ac5f4acf09f47c416a31e22965e68a2fe3fac"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/TaskWorkspace.vue",
+      "sha256": "9d56583297d8d5b071c051a518152262662e12acd1bd2d78e4ba240cc88a51dc"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ExtractedMaterial.vue",
+      "sha256": "635652255d2e90045f56de940b28a99d9a46b293429d7cc2ab23576e2d982d11"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialBlockView.vue",
+      "sha256": "d610042364b4d2c089cf798ed19deae1c6abe59c81760c607025cfe693d911aa"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialContents.vue",
+      "sha256": "4e5222597617899dd16a1be4db6368e15b576efec3f318c01939806453903533"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialIntegrationWorkspace.vue",
+      "sha256": "4279d89a46b45ef8e346b6dc76ebb501cdec5017934e00675e933b68670db87e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialOrganizeWorkspace.vue",
+      "sha256": "a655fe72fd3a854dbbd019fd0defe9f75c2761c6ee75368d0d9301c1b5448412"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ParsedElementView.vue",
+      "sha256": "6b3f39b34c03c405c6ac8b73aeeceb587e59d0bcb60b5f388767f87ea9df3707"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ReviewBlockEditor.vue",
+      "sha256": "dcfd0076cc2aeb7d0945ccee44221aa5df40d59795d9a36aca48a7e9aa1ffd11"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ReviewBlockView.vue",
+      "sha256": "32727c942427c4569dad00d6174e7afe101da32217f77cb307a6e9986c8f2780"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ReviewSource.vue",
+      "sha256": "64896b3086a667a76bb92ade8125cdabde538c39bef2d864e5a87de99af002c5"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TextbookImport.vue",
+      "sha256": "efb5215bf7ed025b2c1d2f986ed187bccd7acecdaa81b16965e402dfe1141947"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/WorkbenchDialog.vue",
+      "sha256": "059e06ed901ab5360332182765360d9645de135b116a134497e5ab77c5fbfac1"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/main.ts",
+      "sha256": "5d2f4c0f5d289c2624f3569aea0b5a48e48cb0d22ef5f57a5ba47d64a0ec7969"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/content-visuals.ts",
+      "sha256": "521003ef6930c58333dfbbd45e71bcc7ec331b3fac10e4c99efd8d798d57d40c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/domain-complex-examples.ts",
+      "sha256": "a908e21e0b29430c7f64f45cfaf38518638f28381504ea3ec26374cb06dd6ade"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/domain-example.ts",
+      "sha256": "970311bb2fd812a5334cfeac2a66a529679bc696add4461f1a1aa6fda47f2e41"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/domain.ts",
+      "sha256": "d42fddd30863d67cbcdb2eaeb579f896cb1664afcdb34ac45c5c93358e3f555c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/imports.ts",
+      "sha256": "c80d4e3ec6bcd4d81074239a42f44499d03dcc09e3efbee25d542457e5c6078a"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/intake-actions.ts",
+      "sha256": "b80028d29ea52f3a4424002cc0b9ddcaba45781ec60fe28e3f79c7922583e949"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-content.ts",
+      "sha256": "908a5e322564348588d8172af3aa148405b042f5ddede1fc6700ecde95e01cd8"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-fixture.ts",
+      "sha256": "0ac08cb9dcc9c1f89149222ba074a24e31c239519312bf5c6801ecb69c39669a"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-flow.ts",
+      "sha256": "2f47a1803bc4175c30132c8bf0c638e9961c8b4bed61acf0971f67f22f9b0a67"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-integration.ts",
+      "sha256": "f4298d3390d744ecfb70ad109e3c7b30a889881ce3975acf07cfcb81c867ff7d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/method-flow-examples.ts",
+      "sha256": "a73d17502868dbd702d5889bc38fc8afcc9d1269fe4360a7a9a8417d460914f5"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/review-content.ts",
+      "sha256": "89f57b5b575bda7292530b031045e70baa01ed66c9db2c37e56f4acd7fbf3d2d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/review-fixtures.ts",
+      "sha256": "5760163d7891d1e95ddddd722e3aaccd36e9fcf9604deaaae4cc50705404527d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/textbook.ts",
+      "sha256": "82d30d2b500ea287588a7e34a0e739129d3f9aa1dbe1999562a0619c59c626ff"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/style.css",
+      "sha256": "00032b61cb37dcf522dc907d714da43abb4278aeb9e3b7e1b73b32b18c1b6297"
+    }
+  ],
+  "preserved": {
+    "quarterExampleSection4": "exact text unchanged",
+    "previousTrialReport": "not edited",
+    "archive": "not edited",
+    "userBrowserData": "isolated contexts only"
+  },
+  "semanticReview": [
+    "Source candidates are KC / TaskInstance / SolutionInstance, not automatically templates.",
+    "TaskInstance references TaskTemplate; SolutionInstance references both TaskInstance and SolutionTemplate.",
+    "Task and chapter have no direct KC link; KC is recursively aggregated through selected methods.",
+    "Extracting a template does not complete instance association; completed partial rows and cleared source groups are distinguished.",
+    "Chapter add/edit/unlink saves independently; adoption is not student application or mastery.",
+    "Draft, structurally complete, mock usable and real quality acceptance are distinct.",
+    "Old complex editing workflow replaced; original versions and screenshots remain historical.",
+    "D01 and Domain portion of D02 are the synchronized slice; Claim/target and student runtime remain pending."
+  ],
+  "visualReview": {
+    "screens": "all 34 images checked in contact sheets; method ending and instance failure recaptured to show the actual condition",
+    "diagrams": "5 rendered and visually inspected; diagrams are object/flow explanations, not UI screenshots"
+  },
+  "knownLimits": [
+    "Mock reparse/matching does not establish real LLM correction accuracy.",
+    "Whole-book modeling, real file processing, version transactions and downstream course application remain incomplete.",
+    "Upper model Task-KC alignment remains M1-OPEN-04.",
+    "No new M1 or G4 gate pass."
+  ],
+  "completedAt": "2026-11-05T16:09:53.681145+00:00",
+  "documentChecks": {
+    "file": "document-checks.json",
+    "errors": 0,
+    "localLinks": 179,
+    "versions": [
+      {
+        "path": "doc/mvp/README.md",
+        "before": "0.18",
+        "after": "0.19",
+        "sha256": "c26ff7513914e9dffc5bb1322cf93122ef33d3afcecce613f746c4be84c375ac"
+      },
+      {
+        "path": "doc/mvp/DECISIONS.md",
+        "before": "0.9",
+        "after": "0.10",
+        "sha256": "917605c4518f3534d7fab58e24ea5c5732305d0bbcc9eb982d08d57221302d6e"
+      },
+      {
+        "path": "doc/mvp/m1/README.md",
+        "before": "0.8",
+        "after": "0.9",
+        "sha256": "5f9b83ba45ba13b1b22c3d4e84a16126471e11adabc90c679a7b1fa5c2fcb55c"
+      },
+      {
+        "path": "doc/mvp/m1/PRD.md",
+        "before": "0.8",
+        "after": "0.9",
+        "sha256": "a7b81a16560af6def4f7e80733b352cc0b37711c6b52929831dd3b248f7ddeac"
+      },
+      {
+        "path": "doc/mvp/m1/design/README.md",
+        "before": "0.8",
+        "after": "0.9",
+        "sha256": "55716f3e3e492652e25ef8c2b3803c079ddca65f0436713ac05f8fed6b408e61"
+      },
+      {
+        "path": "doc/mvp/m1/design/Interaction_Design.md",
+        "before": "0.6",
+        "after": "0.7",
+        "sha256": "cc031a6f0c4775e37604c819818d8c825a13f94ea1825f93cc06dbbf76a54d22"
+      },
+      {
+        "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+        "before": "0.7",
+        "after": "0.8",
+        "sha256": "c5fa4a3aaa7ef678442309888a2cd711dd13d491b28f046a4d7ef49fab592d9a"
+      },
+      {
+        "path": "doc/mvp/m1/prototype/README.md",
+        "before": "0.1",
+        "after": "0.2",
+        "sha256": "1ac34949d9e732d831a99d7123bfb8130d6f109ad920916122e731c9164a7ab7"
+      }
+    ]
+  },
+  "serviceCheck": {
+    "url": "http://127.0.0.1:5182/__m1_health",
+    "name": "deermind-m1-prototype",
+    "pid": 16240,
+    "root": "doc/mvp/m1/prototype"
+  }
+}

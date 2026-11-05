@@ -1,0 +1,29 @@
+{
+  "caseId": "C02",
+  "stage": "extract",
+  "httpStatus": 200,
+  "usage": {
+    "prompt_tokens": 1939,
+    "completion_tokens": 840,
+    "total_tokens": 2779,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 1939
+  },
+  "finishReason": "stop",
+  "returnedModel": "deepseek-flash",
+  "status": "schema_or_invariant_error",
+  "issues": [
+    "['tasks', 0, 'solutions', 0, 'content', 0, 'blocks', 2]: {'type': 'worked_example', 'expressions': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}, {'op': 'equal', 'args': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}, {'op': 'number', 'value': '3'}]}, {'op': 'equal', 'args': [{'op': 'number', 'value': '3'}, {'op': 'group', 'args': [{'op': 'text', 'value': '人'}]}]}], 'assertedCorrect': True} is not valid under any of the given schemas",
+    "['tasks', 0, 'solutions', 0, 'content', 0, 'blocks', 4]: {'type': 'worked_example', 'expressions': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'group', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}]}]}, {'op': 'equal', 'args': [{'op': 'multiply', 'args': [{'op': 'number', 'value': '12'}, {'op': 'group', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}]}]}, {'op': 'number', 'value': '3'}]}, {'op': 'equal', 'args': [{'op': 'number', 'value': '3'}, {'op': 'group', 'args': [{'op': 'text', 'value': '人'}]}]}], 'assertedCorrect': True} is not valid under any of the given schemas"
+  ],
+  "attempts": [
+    {
+      "number": 1,
+      "status": 200,
+      "elapsedSeconds": 11.03
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "version": "0.2",
+  "cases": [
+    "C02",
+    "C03",
+    "C05",
+    "C06"
+  ],
+  "stages": [
+    "extract",
+    "author_review",
+    "map",
+    "program_link",
+    "author_review"
+  ],
+  "provider": "existing official DeepSeek configuration",
+  "modelPolicy": "keep configured model, temperature 0, thinking disabled",
+  "maxNormalCalls": 8,
+  "maxTransportRetriesPerCall": 1,
+  "maxTotalCalls": 16,
+  "maxOutputTokens": 5000,
+  "timeoutSeconds": 90,
+  "maxParallel": 2,
+  "semanticRetries": 0,
+  "stop": "Four cases only. Do not tune prompts after seeing outputs. All edits explicit and separate.",
+  "comparisonLimits": [
+    "Region cropping, schema simplification, stage separation and deterministic geometry change together; not a controlled causal test",
+    "Existing small catalog only; no claims about full-book extraction or open-world model creation",
+    "Author review is required and timed; not independent user correction-time measurement"
+  ]
+}

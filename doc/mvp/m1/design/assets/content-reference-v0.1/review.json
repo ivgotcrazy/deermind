@@ -1,0 +1,77 @@
+{
+  "date": "2026-11-02",
+  "scope": "Content reference and document responsibilities; no UI or engineering changes",
+  "document_revisions": [
+    {
+      "file": "doc/mvp/m1/design/README.md",
+      "from_version": "v0.1",
+      "to_version": "v0.2",
+      "before_sha256": "db408ed3073e32e800f87a484141bc26e1f67c2c9e052e1e73ab60ed994ecfd3",
+      "after_sha256": "f1c6a6600262bb29ef9b8eb13db1f53e573d1e3e819fe22ebe29038331d9705d"
+    },
+    {
+      "file": "doc/mvp/m1/engineering/README.md",
+      "from_version": "v0.1",
+      "to_version": "v0.2",
+      "before_sha256": "7df51a96b16accd8907b1bb2fa653c3bb6d64d8286228535d562e59e3c429096",
+      "after_sha256": "293f80a0725ee0c209edc9db40edf313c09a033b131ba2a468a9b4ed860c5e76"
+    },
+    {
+      "file": "doc/mvp/m1/README.md",
+      "from_version": "v0.2",
+      "to_version": "v0.3",
+      "before_sha256": "46846a5934d4d184cee719b285a8160fab931e58c6342528900fb6e4aaf46f71",
+      "after_sha256": "015052cc02b8150f90a618b849f1c92dbe25765f34f3b9ce0335634b7b133280"
+    },
+    {
+      "file": "doc/mvp/README.md",
+      "from_version": "v0.14",
+      "to_version": "v0.15",
+      "before_sha256": "88c4b6bae1e39a6a7aa82b15179ea93d8f9438746278cd21d8675957d508b1ff",
+      "after_sha256": "bb7c2872ec03c34ef179ae719604e0e8e6390842edcdc3ae4d097648e06bdb45"
+    },
+    {
+      "file": "doc/mvp/DECISIONS.md",
+      "from_version": "v0.2",
+      "to_version": "v0.3",
+      "before_sha256": "4d9b8f7f5b90a98537437cd16a4de12aa711bbe294b9c7d14a5c9477a2eaeaa0",
+      "after_sha256": "9b1978f997bdd463e28961499a367faf0c7e11960f8a6be53da07926d3e8eab5"
+    },
+    {
+      "file": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "from_version": null,
+      "to_version": "v0.1",
+      "after_sha256": "97ce9909300178c6a56e4a2277c1940bc185c9dc6493d505a87b12fec3ff8c3c"
+    }
+  ],
+  "local_links_checked": 62,
+  "link_errors": [],
+  "reference_package": {
+    "asset_id": "M1-INCREASE-REFERENCE",
+    "version": "1",
+    "sha256": "6d2b54c194841e96bb9cf273df97fc9308eeaf393f64bbfc32bd28fa4b0c88dd",
+    "formal_assessment_ready": false
+  },
+  "catalog_version": "2",
+  "catalog_items": 13,
+  "source_files_checked": [
+    {
+      "id": "PAGE-53",
+      "printed_page": 53,
+      "sha256": "c6db1697758ee1207e0e4a5c1a7cfdba9dc1bed7759a69d964149a0277a1346b"
+    },
+    {
+      "id": "PAGE-54",
+      "printed_page": 54,
+      "sha256": "bf4d1f3b5ad25784d7a844adce6c4ff86429fb99ce36abd912cdb9899a01a79b"
+    }
+  ],
+  "archived_files_unchanged": 186,
+  "model_calls": 0,
+  "ui_changed": false,
+  "limits": [
+    "No new OCR, modeling, teaching or evaluation run",
+    "PRD detail review remains pending",
+    "Reference case does not prove whole-chapter or whole-book readiness"
+  ]
+}

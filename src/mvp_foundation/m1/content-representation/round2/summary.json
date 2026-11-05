@@ -1,0 +1,67 @@
+{
+  "status": "four_case_review_completed",
+  "cases": [
+    {
+      "caseId": "C02",
+      "rawJudgment": "needs_substantial_correction",
+      "rawFormat": "schema_or_invariant_error",
+      "correctionPaths": 4,
+      "graphInstances": 3,
+      "mapping": "author_accepted",
+      "taskTemplate": "TT-CHAIN",
+      "solutionTemplates": [
+        "ST-TWO",
+        "ST-COMBINE"
+      ]
+    },
+    {
+      "caseId": "C03",
+      "rawJudgment": "core_content_correct_normalization_needed",
+      "rawFormat": "ready_for_author_review",
+      "correctionPaths": 13,
+      "graphInstances": 1,
+      "mapping": "author_accepted",
+      "taskTemplate": "TT-ERROR",
+      "solutionTemplates": []
+    },
+    {
+      "caseId": "C05",
+      "rawJudgment": "critical_content_missing",
+      "rawFormat": "ready_for_author_review",
+      "correctionPaths": 2,
+      "graphInstances": 1,
+      "mapping": "author_accepted",
+      "taskTemplate": "TT-CHART",
+      "solutionTemplates": []
+    },
+    {
+      "caseId": "C06",
+      "rawJudgment": "selected_content_accepted",
+      "rawFormat": "ready_for_author_review",
+      "correctionPaths": 0,
+      "graphInstances": 1,
+      "mapping": "author_accepted",
+      "taskTemplate": "TT-SHAPE",
+      "solutionTemplates": []
+    }
+  ],
+  "modelHttpAttempts": 14,
+  "http200": 8,
+  "transportFailures": 6,
+  "usage": {
+    "inputTokens": 18004,
+    "outputTokens": 2060
+  },
+  "contentReviewWindow": {
+    "start": "2026-11-05T02:48:42+00:00",
+    "end": "2026-11-05T02:50:06.551420+00:00",
+    "seconds": 84.6,
+    "includes": "Author inspection, reasoning and correction-script writing for all four cases. Excludes later mapping/browser review. Not end-user correction time."
+  },
+  "boundaries": [
+    "No additional semantic calls or sample expansion",
+    "Original extraction remains unmodified",
+    "Source annotations such as cancellation strokes still not fully represented",
+    "No extracted standalone KC statements in these cropped cases; KC creation/mapping is not validated by empty lists"
+  ]
+}

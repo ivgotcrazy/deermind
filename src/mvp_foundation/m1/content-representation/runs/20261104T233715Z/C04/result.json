@@ -1,0 +1,22 @@
+{
+  "caseId": "C04",
+  "status": "relation_or_value_error",
+  "httpStatus": 200,
+  "usage": {
+    "prompt_tokens": 5746,
+    "completion_tokens": 847,
+    "total_tokens": 6593,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "prompt_cache_hit_tokens": 384,
+    "prompt_cache_miss_tokens": 5362
+  },
+  "returnedModel": "deepseek-flash",
+  "finishReason": "stop",
+  "issues": [
+    "C04-TI1: answer/help exposed in question",
+    "C04: unknown task"
+  ],
+  "elapsedSeconds": 7.66
+}

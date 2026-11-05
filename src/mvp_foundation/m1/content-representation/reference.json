@@ -1,0 +1,1884 @@
+{
+  "schemaVersion": "0.1",
+  "id": "M1-CONTENT-REFERENCE-20261105",
+  "status": "author_reference_not_llm_output",
+  "sourceUrl": "https://www.100875.com.cn/show/eBookAndTeacher.html?resId=7965194976af40f5b9abc4b3f89522fe&bookId=120170718181616016000&firstNum=120170718181616016000&contributeId=9276",
+  "sources": [
+    {
+      "id": "P11",
+      "printedPage": 11,
+      "readerIndex": 14,
+      "file": "source/page-11.jpg",
+      "sha256": "d93ae657a606782ea53a162c4b7c2ec638631aee0f9ea3c747c39183628217f1"
+    },
+    {
+      "id": "P49",
+      "printedPage": 49,
+      "readerIndex": 52,
+      "file": "source/page-49.png",
+      "sha256": "fbbe663820ecff1e459b7f982463c94fd8919c86b2b968e1bae27e8a79eca151"
+    },
+    {
+      "id": "P50",
+      "printedPage": 50,
+      "readerIndex": 53,
+      "file": "source/page-50.png",
+      "sha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243"
+    },
+    {
+      "id": "P67",
+      "printedPage": 67,
+      "readerIndex": 70,
+      "file": "source/page-67.jpg",
+      "sha256": "569f2c75100b3fdf770def0752a536d4119142d7424560cd0be95f0158c45dab"
+    },
+    {
+      "id": "P86",
+      "printedPage": 86,
+      "readerIndex": 89,
+      "file": "source/page-86.jpg",
+      "sha256": "080fa0f38e2dd3d79485d490d14afd953e997d4e9be6d2cc67d389c35f795c98"
+    },
+    {
+      "id": "P91",
+      "printedPage": 91,
+      "readerIndex": 94,
+      "file": "source/page-91.png",
+      "sha256": "cf9f847c38dbe9f14a40f74208a5aae1e2fd1cb71ceea4fc4ffb4e4bbd89f4aa"
+    },
+    {
+      "id": "P92",
+      "printedPage": 92,
+      "readerIndex": 95,
+      "file": "source/page-92.png",
+      "sha256": "e782df6ec8db120e893d930d5051b0e407990233c16b681ffdfd1101a9e40af7"
+    },
+    {
+      "id": "P93",
+      "printedPage": 93,
+      "readerIndex": 96,
+      "file": "source/page-93.png",
+      "sha256": "ee511b5b0d901122872f3df9863e5878f83f61aa13738cfe6c8ba8baa37331c7"
+    }
+  ],
+  "definitions": [
+    {
+      "id": "KC-ORDER",
+      "kind": "KnowledgeComponent",
+      "title": "分数混合运算顺序",
+      "definition": "分数混合运算遵循括号及同级运算顺序。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-ORDER",
+      "kind": "SolutionTemplate",
+      "title": "按运算顺序化简",
+      "definition": "保持运算树，除以非零数改为乘其倒数，再计算。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-ORDER"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-EXPR",
+      "kind": "TaskTemplate",
+      "title": "计算含括号的分数混合运算",
+      "definition": "给定合法有理数表达式，按规定顺序计算结果；除数不能为零。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-ORDER"
+      ]
+    },
+    {
+      "id": "KC-FRACTION",
+      "kind": "KnowledgeComponent",
+      "title": "一个量的几分之几",
+      "definition": "确定作为整体的量，再按比例求其部分；多层关系需要辨明每层整体。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "KC-ASSOC",
+      "kind": "KnowledgeComponent",
+      "title": "乘法结合律",
+      "definition": "连乘可以改变结合次序而不改变乘积。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-TWO",
+      "kind": "SolutionTemplate",
+      "title": "逐层求部分量",
+      "definition": "先求中间量，再求最终量。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-FRACTION"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "ST-COMBINE",
+      "kind": "SolutionTemplate",
+      "title": "合并两层比例",
+      "definition": "先相乘得到相对原量的比例，再乘原量。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-FRACTION",
+        "KC-ASSOC"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-CHAIN",
+      "kind": "TaskTemplate",
+      "title": "已知两层比例求最终量",
+      "definition": "给定原量及连续两层比例，求最后一层数量；人数任务须满足整数条件。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-TWO",
+        "ST-COMBINE"
+      ]
+    },
+    {
+      "id": "KC-RECIP",
+      "kind": "KnowledgeComponent",
+      "title": "除以非零数等于乘其倒数",
+      "definition": "除数必须非零；改乘法时需要取倒数。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-ERROR",
+      "kind": "SolutionTemplate",
+      "title": "逐步核查运算变换",
+      "definition": "逐步比对表达式，定位首个不等价的变换并解释。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-RECIP"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-ERROR",
+      "kind": "TaskTemplate",
+      "title": "辨析分数除法的错误演算",
+      "definition": "给出他人演算，判断是否等价并说明理由。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-ERROR"
+      ]
+    },
+    {
+      "id": "KC-DATA",
+      "kind": "KnowledgeComponent",
+      "title": "数据的类别与单位",
+      "definition": "读数须结合列标题、统计范围、单位与来源；重叠类别不可直接相加。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-TABLE",
+      "kind": "SolutionTemplate",
+      "title": "按标题和单位读表",
+      "definition": "对应行列查找数据，保留单位并区分类别范围。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-DATA"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-TABLE",
+      "kind": "TaskTemplate",
+      "title": "整理并解读人口统计资料",
+      "definition": "区分调查方案、观测数据和结论，按年龄及普查批次整理。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-TABLE"
+      ]
+    },
+    {
+      "id": "KC-CHART",
+      "kind": "KnowledgeComponent",
+      "title": "统计图的表达",
+      "definition": "条形图比较数量，折线图呈现变化，扇形图表达互斥部分在整体中的占比。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-READ-CHART",
+      "kind": "SolutionTemplate",
+      "title": "结合图例与坐标读图",
+      "definition": "先确定系列、范围及单位，再读数和比较，不将包含关系当作互斥部分。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-CHART",
+        "KC-DATA"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-CHART",
+      "kind": "TaskTemplate",
+      "title": "解读同一资料的不同统计图",
+      "definition": "根据图形及图例说明数量、变化或构成；解释不能超出数据范围。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-READ-CHART"
+      ]
+    },
+    {
+      "id": "KC-CIRCLE",
+      "kind": "KnowledgeComponent",
+      "title": "圆与其他平面图形的区别",
+      "definition": "圆周到圆心距离相等；此知识定义是作者据教材活动抽象，不能冒充逐字提取。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-SHAPE",
+      "kind": "SolutionTemplate",
+      "title": "比较形状与中心距离",
+      "definition": "观察或操作图形，检验中心到边界的距离是否一致。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-CIRCLE"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-SHAPE",
+      "kind": "TaskTemplate",
+      "title": "比较圆与其他图形",
+      "definition": "比较指定圆、椭圆及多边形，提出区分依据；未给长度不得编造测量值。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-SHAPE"
+      ]
+    },
+    {
+      "id": "KC-POS",
+      "kind": "KnowledgeComponent",
+      "title": "方向与距离确定位置",
+      "definition": "给定参照点后，方向角与距离共同限定平面中的位置。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-POS",
+      "kind": "SolutionTemplate",
+      "title": "比较位置描述的约束范围",
+      "definition": "分别考察仅方向、仅距离、方向和距离齐全时的可能位置。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-POS"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-POS",
+      "kind": "TaskTemplate",
+      "title": "判断位置描述是否充分",
+      "definition": "判断相对同一参照点的描述能否唯一定位，说明缺少的信息。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-POS"
+      ]
+    },
+    {
+      "id": "KC-VIEW",
+      "kind": "KnowledgeComponent",
+      "title": "观察方向与物体视图",
+      "definition": "物体与观察方向共同决定看到的轮廓；这里限定直立圆柱和圆锥。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH"
+    },
+    {
+      "id": "ST-VIEW",
+      "kind": "SolutionTemplate",
+      "title": "固定物体姿态比较视图",
+      "definition": "分别从上方、正面和侧面观察，区分三维物体与二维轮廓。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "kcIds": [
+        "KC-VIEW"
+      ],
+      "subsolutionIds": []
+    },
+    {
+      "id": "TT-VIEW",
+      "kind": "TaskTemplate",
+      "title": "观察直立圆柱与圆锥",
+      "definition": "描述从不同方向看到的形状；不从一幅轮廓反推出唯一三维物体。",
+      "origin": "author_abstraction",
+      "domainId": "DOM-MATH",
+      "solutionIds": [
+        "ST-VIEW"
+      ]
+    }
+  ],
+  "instances": [
+    {
+      "id": "TI-EXPR",
+      "kind": "TaskInstance",
+      "templateId": "TT-EXPR",
+      "contentRefs": [
+        "E-EXPR"
+      ]
+    },
+    {
+      "id": "TI-CHAIN",
+      "kind": "TaskInstance",
+      "templateId": "TT-CHAIN",
+      "contentRefs": [
+        "E-GIVEN",
+        "E-BLANK"
+      ]
+    },
+    {
+      "id": "SI-CHAIN-A",
+      "kind": "SolutionInstance",
+      "templateId": "ST-TWO",
+      "taskInstanceId": "TI-CHAIN",
+      "contentRefs": [
+        "E-SOL-A"
+      ],
+      "origin": "textbook"
+    },
+    {
+      "id": "SI-CHAIN-B",
+      "kind": "SolutionInstance",
+      "templateId": "ST-COMBINE",
+      "taskInstanceId": "TI-CHAIN",
+      "contentRefs": [
+        "E-SOL-B"
+      ],
+      "origin": "textbook"
+    },
+    {
+      "id": "TI-ERROR",
+      "kind": "TaskInstance",
+      "templateId": "TT-ERROR",
+      "contentRefs": [
+        "E-WRONG"
+      ]
+    },
+    {
+      "id": "TI-DATA",
+      "kind": "TaskInstance",
+      "templateId": "TT-TABLE",
+      "contentRefs": [
+        "E-PLAN",
+        "E-COUNTS"
+      ]
+    },
+    {
+      "id": "TI-CHARTS",
+      "kind": "TaskInstance",
+      "templateId": "TT-CHART",
+      "contentRefs": [
+        "E-CHARTS"
+      ]
+    },
+    {
+      "id": "SI-CHARTS",
+      "kind": "SolutionInstance",
+      "templateId": "ST-READ-CHART",
+      "taskInstanceId": "TI-CHARTS",
+      "contentRefs": [
+        "E-CHART-TIPS"
+      ],
+      "origin": "textbook"
+    },
+    {
+      "id": "TI-SHAPES",
+      "kind": "TaskInstance",
+      "templateId": "TT-SHAPE",
+      "contentRefs": [
+        "E-SHAPES"
+      ]
+    },
+    {
+      "id": "TI-POS",
+      "kind": "TaskInstance",
+      "templateId": "TT-POS",
+      "contentRefs": [
+        "E-POS"
+      ]
+    },
+    {
+      "id": "SI-POS",
+      "kind": "SolutionInstance",
+      "templateId": "ST-POS",
+      "taskInstanceId": "TI-POS",
+      "contentRefs": [
+        "E-BEARING"
+      ],
+      "origin": "textbook"
+    },
+    {
+      "id": "TI-VIEW",
+      "kind": "TaskInstance",
+      "templateId": "TT-VIEW",
+      "contentRefs": [
+        "E-SOLIDS"
+      ]
+    },
+    {
+      "id": "SI-VIEW",
+      "kind": "SolutionInstance",
+      "templateId": "ST-VIEW",
+      "taskInstanceId": "TI-VIEW",
+      "contentRefs": [
+        "E-VIEWS"
+      ],
+      "origin": "textbook"
+    }
+  ],
+  "elements": [
+    {
+      "id": "E-EXPR",
+      "owner": "TI-EXPR",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "请你试着算一算。"
+        },
+        {
+          "type": "formula",
+          "expression": {
+            "op": "divide",
+            "args": [
+              {
+                "op": "divide",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "12"
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "4"
+                      },
+                      {
+                        "op": "number",
+                        "value": "5"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "3"
+                  },
+                  {
+                    "op": "number",
+                    "value": "8"
+                  }
+                ]
+              }
+            ]
+          },
+          "latex": "12\\div\\frac45\\div\\frac38"
+        },
+        {
+          "type": "formula",
+          "expression": {
+            "op": "multiply",
+            "args": [
+              {
+                "op": "divide",
+                "args": [
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "3"
+                      },
+                      {
+                        "op": "number",
+                        "value": "8"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "1"
+                      },
+                      {
+                        "op": "number",
+                        "value": "10"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "5"
+                  },
+                  {
+                    "op": "number",
+                    "value": "7"
+                  }
+                ]
+              }
+            ]
+          },
+          "latex": "\\frac38\\div\\frac1{10}\\times\\frac57"
+        },
+        {
+          "type": "formula",
+          "expression": {
+            "op": "multiply",
+            "args": [
+              {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "4"
+                  },
+                  {
+                    "op": "number",
+                    "value": "7"
+                  }
+                ]
+              },
+              {
+                "op": "group",
+                "args": [
+                  {
+                    "op": "divide",
+                    "args": [
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "5"
+                          },
+                          {
+                            "op": "number",
+                            "value": "8"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "5"
+                          },
+                          {
+                            "op": "number",
+                            "value": "14"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "latex": "\\frac47\\times(\\frac58\\div\\frac5{14})"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.08,
+            0.44,
+            0.72,
+            0.09
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-ORDER",
+      "owner": "KC-ORDER",
+      "role": "knowledge",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "分数混合运算的顺序与整数混合运算的顺序一样。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.39,
+            0.53,
+            0.38,
+            0.08
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-GIVEN",
+      "owner": "TI-CHAIN",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "气象小组有12人。摄影小组人数是气象小组的1/3，航模小组人数是摄影小组的3/4。航模小组有多少人？说明思路。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P49",
+          "rect": [
+            0.12,
+            0.22,
+            0.8,
+            0.32
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-SOL-A",
+      "owner": "SI-CHAIN-A",
+      "role": "solution",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "先求摄影小组人数，再求航模小组人数。"
+        },
+        {
+          "type": "formula",
+          "expression": {
+            "op": "multiply",
+            "args": [
+              {
+                "op": "multiply",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "12"
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "1"
+                      },
+                      {
+                        "op": "number",
+                        "value": "3"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "3"
+                  },
+                  {
+                    "op": "number",
+                    "value": "4"
+                  }
+                ]
+              }
+            ]
+          },
+          "latex": "12\\times\\frac13\\times\\frac34"
+        },
+        {
+          "type": "formula",
+          "expression": {
+            "op": "equal",
+            "args": [
+              {
+                "op": "multiply",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "4"
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "3"
+                      },
+                      {
+                        "op": "number",
+                        "value": "4"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "number",
+                "value": "3"
+              }
+            ]
+          },
+          "latex": "4\\times\\frac34=3"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.07,
+            0.09,
+            0.85,
+            0.18
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-SOL-B",
+      "owner": "SI-CHAIN-B",
+      "role": "solution",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "先求航模小组人数占气象小组的几分之几。"
+        },
+        {
+          "type": "formula",
+          "expression": {
+            "op": "multiply",
+            "args": [
+              {
+                "op": "number",
+                "value": "12"
+              },
+              {
+                "op": "group",
+                "args": [
+                  {
+                    "op": "multiply",
+                    "args": [
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "1"
+                          },
+                          {
+                            "op": "number",
+                            "value": "3"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "3"
+                          },
+                          {
+                            "op": "number",
+                            "value": "4"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "latex": "12\\times(\\frac13\\times\\frac34)"
+        },
+        {
+          "type": "formula",
+          "expression": {
+            "op": "equal",
+            "args": [
+              {
+                "op": "multiply",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "12"
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "1"
+                      },
+                      {
+                        "op": "number",
+                        "value": "4"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "number",
+                "value": "3"
+              }
+            ]
+          },
+          "latex": "12\\times\\frac14=3"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.07,
+            0.09,
+            0.85,
+            0.18
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-BLANK",
+      "owner": "TI-CHAIN",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "table",
+          "headers": [
+            "答句"
+          ],
+          "rows": [
+            [
+              {
+                "state": "response_blank",
+                "value": null
+              }
+            ]
+          ],
+          "unit": ""
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.1,
+            0.31,
+            0.36,
+            0.045
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-WRONG",
+      "owner": "TI-ERROR",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "下面这道题算得对吗？说明理由。"
+        },
+        {
+          "type": "worked_example",
+          "expressions": [
+            {
+              "op": "divide",
+              "args": [
+                {
+                  "op": "multiply",
+                  "args": [
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "7"
+                        },
+                        {
+                          "op": "number",
+                          "value": "8"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "3"
+                        },
+                        {
+                          "op": "number",
+                          "value": "4"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "fraction",
+                  "args": [
+                    {
+                      "op": "number",
+                      "value": "1"
+                    },
+                    {
+                      "op": "number",
+                      "value": "3"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "op": "multiply",
+              "args": [
+                {
+                  "op": "multiply",
+                  "args": [
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "7"
+                        },
+                        {
+                          "op": "number",
+                          "value": "8"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "fraction",
+                      "args": [
+                        {
+                          "op": "number",
+                          "value": "3"
+                        },
+                        {
+                          "op": "number",
+                          "value": "4"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "fraction",
+                  "args": [
+                    {
+                      "op": "number",
+                      "value": "1"
+                    },
+                    {
+                      "op": "number",
+                      "value": "3"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "op": "fraction",
+              "args": [
+                {
+                  "op": "number",
+                  "value": "7"
+                },
+                {
+                  "op": "number",
+                  "value": "32"
+                }
+              ]
+            }
+          ],
+          "assertedCorrect": false
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.195,
+            0.7,
+            0.18,
+            0.11
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-RECIP",
+      "owner": "KC-RECIP",
+      "role": "knowledge",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "除以一个不为零的数，等于乘这个数的倒数。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P50",
+          "rect": [
+            0.14,
+            0.81,
+            0.36,
+            0.09
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-PLAN",
+      "owner": "TI-DATA",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "讨论研究方案并填写表格。"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "收集什么样的数据",
+            "数据从哪里获取",
+            "怎样分析数据得出结论"
+          ],
+          "rows": [
+            [
+              {
+                "state": "response_blank",
+                "value": null
+              },
+              {
+                "state": "response_blank",
+                "value": null
+              },
+              {
+                "state": "response_blank",
+                "value": null
+              }
+            ]
+          ],
+          "unit": ""
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P91",
+          "rect": [
+            0.13,
+            0.52,
+            0.8,
+            0.14
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-COUNTS",
+      "owner": "TI-DATA",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "教材提供的三次人口普查老龄人数资料："
+        },
+        {
+          "type": "table",
+          "headers": [
+            "普查批次",
+            "60岁及以上人数",
+            "65岁及以上人数"
+          ],
+          "rows": [
+            [
+              {
+                "state": "provided",
+                "value": "第五次"
+              },
+              {
+                "state": "provided",
+                "value": 129977870
+              },
+              {
+                "state": "provided",
+                "value": 88274022
+              }
+            ],
+            [
+              {
+                "state": "provided",
+                "value": "第六次"
+              },
+              {
+                "state": "provided",
+                "value": 177648705
+              },
+              {
+                "state": "provided",
+                "value": 118831709
+              }
+            ],
+            [
+              {
+                "state": "provided",
+                "value": "第七次"
+              },
+              {
+                "state": "provided",
+                "value": 264018766
+              },
+              {
+                "state": "provided",
+                "value": 190635280
+              }
+            ]
+          ],
+          "unit": "人"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P91",
+          "rect": [
+            0.17,
+            0.78,
+            0.28,
+            0.11
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-CHARTS",
+      "owner": "TI-CHARTS",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "从这些统计图中能获得哪些信息？"
+        },
+        {
+          "type": "chart",
+          "chartType": "bar",
+          "title": "第五～七次人口普查中老年人口数量统计图",
+          "categories": [
+            "第五次",
+            "第六次",
+            "第七次"
+          ],
+          "unit": "亿人",
+          "precision": 2,
+          "axis": {
+            "min": 0,
+            "max": 3,
+            "step": 0.5
+          },
+          "labels": true,
+          "series": [
+            {
+              "name": "60岁及以上",
+              "values": [
+                1.3,
+                1.78,
+                2.64
+              ],
+              "color": "#4f81bd"
+            },
+            {
+              "name": "65岁及以上",
+              "values": [
+                0.88,
+                1.19,
+                1.91
+              ],
+              "color": "#e28036"
+            }
+          ],
+          "cohortRelation": "second_subset_of_first",
+          "stacked": false,
+          "derivedFrom": "E-COUNTS",
+          "conversion": "人数 / 100000000；四舍五入至两位小数"
+        },
+        {
+          "type": "chart",
+          "chartType": "line",
+          "title": "第五～七次人口普查中老年人口数量变化情况",
+          "categories": [
+            "第五次",
+            "第六次",
+            "第七次"
+          ],
+          "unit": "亿人",
+          "precision": 2,
+          "axis": {
+            "min": 0,
+            "max": 3,
+            "step": 0.5
+          },
+          "labels": true,
+          "series": [
+            {
+              "name": "60岁及以上",
+              "values": [
+                1.3,
+                1.78,
+                2.64
+              ],
+              "color": "#4f81bd"
+            },
+            {
+              "name": "65岁及以上",
+              "values": [
+                0.88,
+                1.19,
+                1.91
+              ],
+              "color": "#e28036"
+            }
+          ],
+          "cohortRelation": "second_subset_of_first",
+          "stacked": false,
+          "derivedFrom": "E-COUNTS",
+          "conversion": "人数 / 100000000；四舍五入至两位小数"
+        },
+        {
+          "type": "chart",
+          "chartType": "pie",
+          "title": "第七次人口普查年龄分布图",
+          "categories": [
+            "0～14岁",
+            "15～59岁",
+            "60～64岁",
+            "65岁及以上"
+          ],
+          "unit": "%",
+          "precision": 2,
+          "labels": true,
+          "series": [
+            {
+              "name": "第七次人口普查",
+              "values": [
+                17.95,
+                63.35,
+                5.2,
+                13.5
+              ],
+              "color": "#4f81bd"
+            }
+          ],
+          "colors": [
+            "#4f81bd",
+            "#e28036",
+            "#a5a5a5",
+            "#ffc000"
+          ],
+          "cohortRelation": "disjoint_parts",
+          "stacked": false
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P93",
+          "rect": [
+            0.13,
+            0.23,
+            0.8,
+            0.57
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-CHART-TIPS",
+      "owner": "SI-CHARTS",
+      "role": "solution",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "条形图便于比较数量；折线图便于观察变化；扇形图便于观察年龄构成。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P93",
+          "rect": [
+            0.07,
+            0.82,
+            0.84,
+            0.09
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-SHAPES",
+      "owner": "TI-SHAPES",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "观察圆、椭圆、三角形、正方形、五边形和六边形，说明圆与其他图形的不同。"
+        },
+        {
+          "type": "scene",
+          "coordinates": "layout_only",
+          "viewBox": [
+            0,
+            0,
+            600,
+            300
+          ],
+          "objects": [
+            {
+              "kind": "circle",
+              "id": "circle",
+              "cx": 55,
+              "cy": 120,
+              "r": 35
+            },
+            {
+              "kind": "ellipse",
+              "id": "ellipse",
+              "cx": 150,
+              "cy": 120,
+              "rx": 40,
+              "ry": 28
+            },
+            {
+              "kind": "polygon",
+              "id": "triangle",
+              "points": [
+                [
+                  250,
+                  80
+                ],
+                [
+                  210,
+                  155
+                ],
+                [
+                  290,
+                  155
+                ]
+              ]
+            },
+            {
+              "kind": "polygon",
+              "id": "square",
+              "points": [
+                [
+                  320,
+                  85
+                ],
+                [
+                  390,
+                  85
+                ],
+                [
+                  390,
+                  155
+                ],
+                [
+                  320,
+                  155
+                ]
+              ]
+            },
+            {
+              "kind": "polygon",
+              "id": "pentagon",
+              "points": [
+                [
+                  450,
+                  80
+                ],
+                [
+                  488,
+                  108
+                ],
+                [
+                  474,
+                  155
+                ],
+                [
+                  426,
+                  155
+                ],
+                [
+                  412,
+                  108
+                ]
+              ]
+            },
+            {
+              "kind": "polygon",
+              "id": "hexagon",
+              "points": [
+                [
+                  535,
+                  85
+                ],
+                [
+                  570,
+                  85
+                ],
+                [
+                  590,
+                  120
+                ],
+                [
+                  570,
+                  155
+                ],
+                [
+                  535,
+                  155
+                ],
+                [
+                  515,
+                  120
+                ]
+              ]
+            },
+            {
+              "kind": "point",
+              "id": "center55",
+              "x": 55,
+              "y": 120,
+              "label": ""
+            },
+            {
+              "kind": "point",
+              "id": "center150",
+              "x": 150,
+              "y": 120,
+              "label": ""
+            },
+            {
+              "kind": "point",
+              "id": "center250",
+              "x": 250,
+              "y": 120,
+              "label": ""
+            },
+            {
+              "kind": "point",
+              "id": "center355",
+              "x": 355,
+              "y": 120,
+              "label": ""
+            },
+            {
+              "kind": "point",
+              "id": "center450",
+              "x": 450,
+              "y": 120,
+              "label": ""
+            },
+            {
+              "kind": "point",
+              "id": "center552",
+              "x": 552,
+              "y": 120,
+              "label": ""
+            }
+          ],
+          "meaning": "六种图形及各自内部的标记点。绘制尺寸只用于布局，不是题目给定长度。",
+          "relations": []
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P11",
+          "rect": [
+            0.13,
+            0.61,
+            0.72,
+            0.09
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-POS",
+      "owner": "TI-POS",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "哪条信息能准确确定象群的位置？想一想，画一画。"
+        },
+        {
+          "type": "text",
+          "text": "①象群在指挥部的东北方向。"
+        },
+        {
+          "type": "text",
+          "text": "②象群距离指挥部6000米。"
+        },
+        {
+          "type": "text",
+          "text": "③象群在指挥部的北边再往东30°方向上，距离6000米。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P67",
+          "rect": [
+            0.13,
+            0.52,
+            0.79,
+            0.13
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-BEARING",
+      "owner": "SI-POS",
+      "role": "solution",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "第三条同时提供了方向角和距离。下图表达第三条信息。"
+        },
+        {
+          "type": "bearing",
+          "reference": "指挥部",
+          "target": "象群",
+          "referenceAxis": "north",
+          "turn": "east",
+          "angleDegrees": 30,
+          "distance": 6000,
+          "unit": "米",
+          "screenDistance": 150
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P67",
+          "rect": [
+            0.56,
+            0.71,
+            0.31,
+            0.17
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-SOLIDS",
+      "owner": "TI-VIEW",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "从上面、正面和侧面观察直立的圆柱和圆锥，看到的分别是什么形状？"
+        },
+        {
+          "type": "solids",
+          "items": [
+            {
+              "id": "cylinder",
+              "shape": "cylinder",
+              "orientation": "upright"
+            },
+            {
+              "id": "cone",
+              "shape": "cone",
+              "orientation": "upright"
+            }
+          ],
+          "dimensionsRole": "layout_only"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P86",
+          "rect": [
+            0.1,
+            0.2,
+            0.77,
+            0.2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-VIEWS",
+      "owner": "SI-VIEW",
+      "role": "solution",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "views",
+          "items": [
+            {
+              "solid": "cylinder",
+              "direction": "top",
+              "outline": "circle",
+              "centerDot": false
+            },
+            {
+              "solid": "cone",
+              "direction": "top",
+              "outline": "circle",
+              "centerDot": true
+            },
+            {
+              "solid": "cylinder",
+              "direction": "front",
+              "outline": "rectangle",
+              "centerDot": false
+            },
+            {
+              "solid": "cone",
+              "direction": "front",
+              "outline": "triangle",
+              "centerDot": false
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "所选教材答案框只画了上面和正面；这里不把侧面答案当成已提取内容。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P86",
+          "rect": [
+            0.285,
+            0.405,
+            0.36,
+            0.14
+          ]
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "C01",
+      "title": "公式：除号、分数与括号",
+      "pages": [
+        50
+      ],
+      "scope": "“试一试”第一组的三道计算题及运算顺序说明。",
+      "checks": [
+        "三个表达式的运算顺序不变",
+        "保留分数结构，不把连续除法合并成错误的分母",
+        "原题没有答案，题面不补答案"
+      ],
+      "taskId": "TI-EXPR",
+      "solutionIds": [],
+      "notes": [
+        "本轮未生成参考解法；数值检查只用于作者核对，不属于教材原文。"
+      ]
+    },
+    {
+      "id": "C02",
+      "title": "跨页例题：同一道题，两种解法",
+      "pages": [
+        49,
+        50
+      ],
+      "scope": "第49页条件与首问、第50页两列解法和答句空白。",
+      "checks": [
+        "三个已知条件来自原题，不按插画人物计数",
+        "两列解法分别关联同一道题",
+        "题面不显示4人、3人或解法",
+        "保留完整答句待填写的性质"
+      ],
+      "taskId": "TI-CHAIN",
+      "solutionIds": [
+        "SI-CHAIN-A",
+        "SI-CHAIN-B"
+      ],
+      "notes": [
+        "求解运算与方法顺序保留；红色约分笔迹尚未逐笔建模，是本轮已知表达缺口。",
+        "未覆盖第49页下方圆点图和线段图；本例不代表整页转换通过。"
+      ]
+    },
+    {
+      "id": "C03",
+      "title": "错例：错误内容也是原题的一部分",
+      "pages": [
+        50
+      ],
+      "scope": "底部绿色板书中的第一列；约分笔迹暂不逐笔复刻。",
+      "checks": [
+        "保留7/32这个错误结果",
+        "三行属于被评价的演算，不是标准解答",
+        "提取时不改写原题"
+      ],
+      "taskId": "TI-ERROR",
+      "solutionIds": [],
+      "notes": [
+        "本例识别首项为7/8；后续真实LLM必须从原图读取，不能看到本参考值。"
+      ]
+    },
+    {
+      "id": "C04",
+      "title": "表格：数据与待填写内容",
+      "pages": [
+        91
+      ],
+      "scope": "研究方案空表及左下老龄人数表；不含右下年龄占比整表。",
+      "checks": [
+        "三格为空是作答要求，不是OCR失败",
+        "65岁及以上不能变成以下",
+        "人数用整数保存，单位为人"
+      ],
+      "taskId": "TI-DATA",
+      "solutionIds": [],
+      "notes": [
+        "实际题组还有开放探究要求；本例只验表格及所选内容，不据此认定整个调查任务已完整建模。"
+      ]
+    },
+    {
+      "id": "C05",
+      "title": "统计图：并列柱、折线与扇形",
+      "pages": [
+        93,
+        91
+      ],
+      "scope": "第93页三个图形及下方提示，引用第91页原始人数。",
+      "checks": [
+        "柱图不能堆叠",
+        "60+包含65+，两组人数不能相加",
+        "图上保留两位小数及亿人单位",
+        "扇形四组互斥且合计100%",
+        "教学提示不进入原题"
+      ],
+      "taskId": "TI-CHARTS",
+      "solutionIds": [
+        "SI-CHARTS"
+      ],
+      "notes": []
+    },
+    {
+      "id": "C06",
+      "title": "几何：对象结构与绘图布局分开",
+      "pages": [
+        11
+      ],
+      "scope": "六种图形与中央标记点；按语义重述观察要求。",
+      "checks": [
+        "六种图形均可从结构重绘",
+        "布局数值不能成为题目已知长度",
+        "不把图形的样子当成新增数学条件"
+      ],
+      "taskId": "TI-SHAPES",
+      "solutionIds": [],
+      "notes": [
+        "原活动还要求使用附页剪图操作；本例只验证图形表达，不声称已经替代完整动手活动。"
+      ]
+    },
+    {
+      "id": "C07",
+      "title": "方向：北偏东与距离",
+      "pages": [
+        67
+      ],
+      "scope": "三张描述卡片，以及第三种描述的教学示意图。",
+      "checks": [
+        "30°以北为起始方向向东转",
+        "6000米是实际距离；150是绘图长度",
+        "题面不提前出现第三条正确的反馈"
+      ],
+      "taskId": "TI-POS",
+      "solutionIds": [
+        "SI-POS"
+      ],
+      "notes": [
+        "原页另外两幅不充分定位示意图未包含，本轮不声称整页重建。"
+      ]
+    },
+    {
+      "id": "C08",
+      "title": "立体：物体、视图与未提供的答案",
+      "pages": [
+        86
+      ],
+      "scope": "顶部圆柱圆锥及观察问题、中间四幅已画出的视图。",
+      "checks": [
+        "物体姿态为直立，尺寸只是绘图参数",
+        "圆锥上视图保留中心点",
+        "仅提取上面和正面四个视图，不编造侧面来源"
+      ],
+      "taskId": "TI-VIEW",
+      "solutionIds": [
+        "SI-VIEW"
+      ],
+      "notes": [
+        "不含下半页手电照射实验；本轮不是完整光照模拟。"
+      ]
+    }
+  ]
+}

@@ -1,13 +1,13 @@
 # DeerMind 学习模型目的需求与候选结构复核
 
-> **版本**：v0.4<br>
+> **版本**：v0.7<br>
 > **文档性质**：设计复核与变更记录<br>
 > **状态**：当前设计与工作入口；历史验证按原基线解释<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
 > **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-10-25<br>
-> **修订说明**：统一现行原型目录引用；旧版实现与既有原型评审章节固定到 Git 历史，避免替换后引用含义改变。逐文件记录见 MVP_Governance §5.3；本次不改变产品规则或 Gate 结论。
+> **更新日期**：2026-11-03<br>
+> **修订说明**：v0.6 → v0.7：仅更新路线图导航；原业务正文、模型结论和历史评审含义不变；见[本轮记录](../mvp/DECISIONS.md#11-产品设计同步推进与分包计划)。<br>
 
 ---
 
@@ -909,31 +909,31 @@ ProblemTemplate 参数化问题关系、约束与所求责任，不规定唯一�
 | [doc/concept-design/DeerMind_Learning_Model_Reassessment.md](DeerMind_Learning_Model_Reassessment.md) | v0.2 → v0.3 | 保留历史 §1–10，新建单模板多维修订及检查记录 |
 | [doc/concept-design/DeerMind_Learning_Space_Design_v1.3.md](DeerMind_Learning_Space_Design_v1.3.md) | v1.2 → v1.3 | 目标引用精确到任务 Claim 及内部方面；明确同模板评价条件与目标变化的区别；收敛目标覆盖与章节统计；明确方面级语义变化与失效传播；同步现行文档引用 |
 | [doc/concept-design/README.md](README.md) | v0.2 → v0.3 | 更新现行模型导航；更新历史与当前结论入口；同步现行文档引用 |
-| [doc/mvp/MVP_Document_Architecture_Review.md](../mvp/MVP_Document_Architecture_Review.md) | v0.2 → v0.3 | 同步现行文档引用 |
-| [doc/mvp/MVP_Gate_Reviews.md](../mvp/MVP_Gate_Reviews.md) | v0.2 → v0.3 | 记录新增结构变更，不改变 Gate 历史；同步现行文档引用 |
-| [doc/mvp/MVP_Governance.md](../mvp/MVP_Governance.md) | v0.2 → v0.3 | 登记单模板多维结构及授权边界；统一保留迁移项与接收要求；更新统一术语；同步现行文档引用 |
+| [doc/mvp/MVP_Document_Architecture_Review.md](../mvp/archive/2026-11-02-before-m1-prd/MVP_Document_Architecture_Review.md) | v0.2 → v0.3 | 同步现行文档引用 |
+| [doc/mvp/MVP_Gate_Reviews.md](../mvp/archive/2026-11-02-before-m1-prd/MVP_Gate_Reviews.md) | v0.2 → v0.3 | 记录新增结构变更，不改变 Gate 历史；同步现行文档引用 |
+| [doc/mvp/MVP_Governance.md](../mvp/archive/2026-11-02-before-m1-prd/MVP_Governance.md) | v0.2 → v0.3 | 登记单模板多维结构及授权边界；统一保留迁移项与接收要求；更新统一术语；同步现行文档引用 |
 | [doc/mvp/README.md](../mvp/README.md) | v0.2 → v0.3 | 更新 MVP 工作入口；同步现行文档引用 |
-| [doc/mvp/phase-3-definition/MVP_Definition.md](../mvp/phase-3-definition/MVP_Definition.md) | v0.2 → v0.3 | 同步产品能力组织方式；同步现行文档引用 |
-| [doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md](../mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md) | v0.2 → v0.3 | 明确后台多维任务组织；明确多维结果的展示和汇总边界；将准备缺口定位到方面；同步批准依据；补充 AC-009 方面局部更新对照；补充 AC-014 绑定与发布验收 |
-| [doc/mvp/phase-3-definition/MVP_Validation_Plan.md](../mvp/phase-3-definition/MVP_Validation_Plan.md) | v0.2 → v0.3 | 同步多维验证覆盖 |
-| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md](../mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md) | v0.2 → v0.3 | 同步内部方面的权限与数据边界 |
-| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md](../mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md) | v0.2 → v0.3 | 明确新领域包的单模板多维结构；细化内容交换合同；定义局部方面引用；同步新包迁移要求；同步方面级 Evidence 与目标关联；同步现行文档引用 |
-| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md](../mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md) | v0.2 → v0.3 | 更新默认四维案例的组织方式；补齐单模板、局部有效性、跨任务与历史迁移对照；同步现行文档引用 |
-| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md](../mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md) | v0.2 → v0.3 | 调整后台和用户结果的信息组织 |
-| [doc/mvp/phase-5-engineering/MVP_Delivery_and_Handover.md](../mvp/phase-5-engineering/MVP_Delivery_and_Handover.md) | v0.2 → v0.3 | 同步多维能力交付证据 |
-| [doc/mvp/phase-5-engineering/MVP_Engineering_Design.md](../mvp/phase-5-engineering/MVP_Engineering_Design.md) | v0.2 → v0.3 | 增加多维存储、提交、查询和迁移接收合同；同步现行文档引用 |
-| [doc/mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md](../mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md) | v0.2 → v0.3 | 同步增量准备与完成边界 |
+| [doc/mvp/phase-3-definition/MVP_Definition.md](../mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Definition.md) | v0.2 → v0.3 | 同步产品能力组织方式；同步现行文档引用 |
+| [doc/mvp/phase-3-definition/MVP_Requirements_and_Acceptance.md](../mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Requirements_and_Acceptance.md) | v0.2 → v0.3 | 明确后台多维任务组织；明确多维结果的展示和汇总边界；将准备缺口定位到方面；同步批准依据；补充 AC-009 方面局部更新对照；补充 AC-014 绑定与发布验收 |
+| [doc/mvp/phase-3-definition/MVP_Validation_Plan.md](../mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Validation_Plan.md) | v0.2 → v0.3 | 同步多维验证覆盖 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md](../mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Data_and_Authority_Design.md) | v0.2 → v0.3 | 同步内部方面的权限与数据边界 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md](../mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Domain_and_Content_Foundation.md) | v0.2 → v0.3 | 明确新领域包的单模板多维结构；细化内容交换合同；定义局部方面引用；同步新包迁移要求；同步方面级 Evidence 与目标关联；同步现行文档引用 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md](../mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Evaluation_Assets_Specification.md) | v0.2 → v0.3 | 更新默认四维案例的组织方式；补齐单模板、局部有效性、跨任务与历史迁移对照；同步现行文档引用 |
+| [doc/mvp/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md](../mvp/archive/2026-11-02-before-m1-prd/phase-4-product-and-domain-foundation/MVP_Product_and_Interaction_Design.md) | v0.2 → v0.3 | 调整后台和用户结果的信息组织 |
+| [doc/mvp/phase-5-engineering/MVP_Delivery_and_Handover.md](../mvp/archive/2026-11-02-before-m1-prd/phase-5-engineering/MVP_Delivery_and_Handover.md) | v0.2 → v0.3 | 同步多维能力交付证据 |
+| [doc/mvp/phase-5-engineering/MVP_Engineering_Design.md](../mvp/archive/2026-11-02-before-m1-prd/phase-5-engineering/MVP_Engineering_Design.md) | v0.2 → v0.3 | 增加多维存储、提交、查询和迁移接收合同；同步现行文档引用 |
+| [doc/mvp/phase-5-engineering/MVP_Incremental_Delivery_Plan.md](../mvp/archive/2026-11-02-before-m1-prd/phase-5-engineering/MVP_Incremental_Delivery_Plan.md) | v0.2 → v0.3 | 同步增量准备与完成边界 |
 | [doc/system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.4.md](../system-design/DeerMind_AI_Reasoning_Runtime_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；补齐多维推理候选输入输出及校验；同步现行文档引用 |
 | [doc/system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.4.md](../system-design/DeerMind_Evolution_Governance_Runtime_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；同步方面发布与重组治理；同步现行文档引用 |
 | [doc/system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.4.md](../system-design/DeerMind_Interaction_Decision_Runtime_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；明确 Policy 对方面状态的读取与失败边界；同步现行文档引用 |
 | [doc/system-design/DeerMind_Runtime_Event_Architecture_v1.4.md](../system-design/DeerMind_Runtime_Event_Architecture_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；保留多方面共同事实来源与重解释边界；同步现行文档引用 |
 | [doc/system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.4.md](../system-design/DeerMind_Semantic_Version_Replay_Migration_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；重写分维及多模板旧 Claim 的迁移合同；同步现行文档引用 |
 | [doc/system-design/DeerMind_State_Dependency_Architecture_v1.4.md](../system-design/DeerMind_State_Dependency_Architecture_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；落实根修订与方面级依赖、有效性；明确方面语义与目标调整的不同失效路径；同步现行文档引用 |
-| [doc/system-design/DeerMind_System_Design_Roadmap_v0.9.md](../system-design/DeerMind_System_Design_Roadmap_v0.9.md) | v0.8 → v0.9 | 记录模型修订，不重写历史阶段 |
+| [doc/system-design/DeerMind_System_Design_Roadmap_v0.9.md](../system-design/DeerMind_System_Design_Roadmap_v0.11.md) | v0.8 → v0.9 | 记录模型修订，不重写历史阶段 |
 | [doc/system-design/DeerMind_System_Design_v1.4.md](../system-design/DeerMind_System_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；明确状态身份、唯一任务绑定和内部方面结构；补齐 Evidence、提交与读取合同；同步当前交付边界；同步现行文档引用 |
 | [doc/system-design/README.md](../system-design/README.md) | v0.2 → v0.3 | 更新系统当前合同及阶段；同步现行文档引用 |
 | [doc/top/DeerMind_AI_Native_Architecture_Principles_v0.6.md](../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md) | v0.5 → v0.6 | 同步单模板多维的语义推理原则 |
-| [doc/top/DeerMind_Development_Roadmap_v0.6.md](../top/DeerMind_Development_Roadmap_v0.6.md) | v0.5 → v0.6 | 更新现行系统交接，不改旧准入 |
+| [doc/top/DeerMind_Development_Roadmap_v0.6.md](https://github.com/ivgotcrazy/deermind/blob/c953f98da007846325d49f648245f43853b0f440/doc/top/DeerMind_Development_Roadmap_v0.6.md) | v0.5 → v0.6 | 更新现行系统交接，不改旧准入 |
 | [src/mvp_foundation/README.md](../../src/mvp_foundation/README.md) | v0.2 → v0.3 | 同步运行资产未迁移状态 |
 | [src/mvp_prototype/README.md](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md) | v0.2 → v0.3 | 同步运行资产未迁移状态 |
 

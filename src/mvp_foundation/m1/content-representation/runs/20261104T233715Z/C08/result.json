@@ -1,0 +1,19 @@
+{
+  "caseId": "C08",
+  "status": "invalid_json",
+  "httpStatus": 200,
+  "usage": {
+    "prompt_tokens": 5744,
+    "completion_tokens": 780,
+    "total_tokens": 6524,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "prompt_cache_hit_tokens": 384,
+    "prompt_cache_miss_tokens": 5360
+  },
+  "returnedModel": "deepseek-flash",
+  "finishReason": "stop",
+  "error": "Expecting ':' delimiter: line 1 column 1716 (char 1715)",
+  "elapsedSeconds": 9.47
+}

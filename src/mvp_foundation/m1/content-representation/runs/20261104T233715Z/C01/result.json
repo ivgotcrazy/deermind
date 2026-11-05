@@ -1,0 +1,21 @@
+{
+  "caseId": "C01",
+  "status": "relation_or_value_error",
+  "httpStatus": 200,
+  "usage": {
+    "prompt_tokens": 5743,
+    "completion_tokens": 820,
+    "total_tokens": 6563,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 5743
+  },
+  "returnedModel": "deepseek-flash",
+  "finishReason": "stop",
+  "issues": [
+    "C01: unknown task"
+  ],
+  "elapsedSeconds": 11.45
+}

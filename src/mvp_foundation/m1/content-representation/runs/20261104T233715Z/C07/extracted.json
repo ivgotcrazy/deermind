@@ -1,0 +1,382 @@
+{
+  "schemaVersion": "0.1",
+  "caseId": "C07",
+  "taskId": "T-C07",
+  "solutionIds": [],
+  "newDefinitions": [],
+  "instances": [
+    {
+      "id": "TI-C07-01",
+      "kind": "TaskInstance",
+      "templateId": "TT-POS",
+      "contentRefs": [
+        "E-C07-Q1",
+        "E-C07-Q2"
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "id": "E-C07-HEAD",
+      "owner": "E-C07-HEAD",
+      "role": "teaching_aid",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "第六单元 确定位置"
+        },
+        {
+          "type": "text",
+          "text": "象群北迁（一）"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P67",
+          "rect": [
+            0.05,
+            0.03,
+            0.9,
+            0.18
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C07-STORY",
+      "owner": "E-C07-STORY",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "自2020年3月，一群云南野象从西双版纳向北迁移。为确保人象平安，云南省森林消防员全程监测并播报象群位置。7月7日21时，象群突然从监控画面中消失，经过全力搜寻，最终发现象群踪迹。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P67",
+          "rect": [
+            0.13,
+            0.28,
+            0.38,
+            0.18
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C07-MAP",
+      "owner": "E-C07-MAP",
+      "role": "teaching_aid",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "scene",
+          "coordinates": "layout_only",
+          "viewBox": [
+            0,
+            0,
+            100,
+            100
+          ],
+          "objects": [
+            {
+              "kind": "point",
+              "id": "P1",
+              "x": 20,
+              "y": 20,
+              "label": "北"
+            },
+            {
+              "kind": "point",
+              "id": "P2",
+              "x": 20,
+              "y": 80,
+              "label": "东"
+            },
+            {
+              "kind": "point",
+              "id": "P3",
+              "x": 70,
+              "y": 15,
+              "label": "居拉里村"
+            },
+            {
+              "kind": "point",
+              "id": "P4",
+              "x": 75,
+              "y": 45,
+              "label": "新腰树村"
+            },
+            {
+              "kind": "point",
+              "id": "P5",
+              "x": 45,
+              "y": 65,
+              "label": "指挥部"
+            },
+            {
+              "kind": "point",
+              "id": "P6",
+              "x": 40,
+              "y": 80,
+              "label": "高粱冲村"
+            }
+          ],
+          "meaning": "象群北迁位置示意图，含方向标及居拉里村、新腰树村、指挥部、高粱冲村等地点。",
+          "relations": [
+            {
+              "subject": "方向标",
+              "predicate": "指示",
+              "object": "北与东",
+              "basis": "explicit_mark"
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P67",
+          "rect": [
+            0.55,
+            0.22,
+            0.38,
+            0.28
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C07-Q1",
+      "owner": "E-C07-Q1",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "象群在指挥部的什么位置？请利用附页3中的图2编辑一条信息报告象群的位置。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P67",
+          "rect": [
+            0.1,
+            0.5,
+            0.85,
+            0.06
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C07-CARDS",
+      "owner": "E-C07-CARDS",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "① 象群在指挥部的东北方向。"
+        },
+        {
+          "type": "text",
+          "text": "② 象群距离指挥部6000m。"
+        },
+        {
+          "type": "text",
+          "text": "③ 象群在指挥部的北边再往东30°方向上，距离6000m。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P67",
+          "rect": [
+            0.1,
+            0.56,
+            0.85,
+            0.12
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C07-Q2",
+      "owner": "E-C07-Q2",
+      "role": "question",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "上面哪条信息能准确确定象群的位置？想一想，画一画。"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P67",
+          "rect": [
+            0.1,
+            0.7,
+            0.85,
+            0.05
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C07-DIAGRAMS",
+      "owner": "E-C07-DIAGRAMS",
+      "role": "teaching_aid",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "scene",
+          "coordinates": "layout_only",
+          "viewBox": [
+            0,
+            0,
+            100,
+            100
+          ],
+          "objects": [
+            {
+              "kind": "point",
+              "id": "D1",
+              "x": 15,
+              "y": 50,
+              "label": "北"
+            },
+            {
+              "kind": "point",
+              "id": "D2",
+              "x": 15,
+              "y": 80,
+              "label": "南"
+            },
+            {
+              "kind": "point",
+              "id": "D3",
+              "x": 5,
+              "y": 65,
+              "label": "西"
+            },
+            {
+              "kind": "point",
+              "id": "D4",
+              "x": 30,
+              "y": 65,
+              "label": "东"
+            },
+            {
+              "kind": "point",
+              "id": "D5",
+              "x": 50,
+              "y": 50,
+              "label": "象群"
+            },
+            {
+              "kind": "point",
+              "id": "D6",
+              "x": 50,
+              "y": 65,
+              "label": "指挥部"
+            },
+            {
+              "kind": "point",
+              "id": "D7",
+              "x": 85,
+              "y": 50,
+              "label": "北"
+            },
+            {
+              "kind": "point",
+              "id": "D8",
+              "x": 85,
+              "y": 80,
+              "label": "南"
+            },
+            {
+              "kind": "point",
+              "id": "D9",
+              "x": 75,
+              "y": 65,
+              "label": "西"
+            },
+            {
+              "kind": "point",
+              "id": "D10",
+              "x": 95,
+              "y": 65,
+              "label": "东"
+            },
+            {
+              "kind": "point",
+              "id": "D11",
+              "x": 85,
+              "y": 65,
+              "label": "指挥部"
+            }
+          ],
+          "meaning": "图①、图②、图③分别表示仅方向、仅距离、方向加距离三种定位描述；图③标注北偏东30°。",
+          "relations": [
+            {
+              "subject": "图③",
+              "predicate": "标注",
+              "object": "北偏东30°",
+              "basis": "explicit_text"
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P67",
+          "rect": [
+            0.1,
+            0.75,
+            0.85,
+            0.15
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E-C07-DIALOG",
+      "owner": "E-C07-DIALOG",
+      "role": "teaching_aid",
+      "origin": "textbook",
+      "content": [
+        {
+          "type": "text",
+          "text": "图中30°是指北偏东30°。"
+        },
+        {
+          "type": "text",
+          "text": "图①、图②有很多情况，不行。"
+        },
+        {
+          "type": "text",
+          "text": "图③用了距离，还用角度说明了方向……"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "page": "P67",
+          "rect": [
+            0.1,
+            0.85,
+            0.85,
+            0.1
+          ]
+        }
+      ]
+    }
+  ],
+  "uncertainties": [
+    "示意图为布局示意，坐标数字不代表题目已知长度或角度。",
+    "卡片③中“北边再往东30°”与图中“北偏东30°”表述略有差异，按原文保留。",
+    "未提供教材解答，故不建立SolutionInstance。"
+  ]
+}
