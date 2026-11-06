@@ -5,6 +5,7 @@ import TextbookImport from './components/TextbookImport.vue';
 import WorkbenchDialog from './components/WorkbenchDialog.vue';
 import DomainWorkspace from './components/domain/DomainWorkspace.vue';
 import EvaluationWorkspace from './components/EvaluationWorkspace.vue';
+import TeachingWorkspace from './components/TeachingWorkspace.vue';
 import TargetWorkspace from './components/TargetWorkspace.vue';
 import './components/domain/domain.css';
 import { domainData } from './model/domain';
@@ -18,7 +19,8 @@ const source = computed(() => new URLSearchParams(hash.value.split('?')[1] || ''
 const isDomain = computed(() => hash.value.split('?')[0] === '#/domain');
 const isEvaluation = computed(() => hash.value.split('?')[0] === '#/evaluation');
 const isTarget = computed(() => hash.value.split('?')[0] === '#/targets');
-const isTextbook = computed(() => !isDomain.value&&!isEvaluation.value&&!isTarget.value);
+const isTeaching = computed(() => hash.value.split('?')[0] === '#/interaction');
+const isTextbook = computed(() => !isDomain.value&&!isEvaluation.value&&!isTarget.value&&!isTeaching.value);
 const draft = computed(() => imports.find(d => d.id === source.value));
 const deleting = ref('');
 const toDelete = computed(() => imports.find(d => d.id === deleting.value));
@@ -41,9 +43,10 @@ function remove() { deleteImport(deleting.value); deleting.value = ''; }
     <button class="nav-item" :class="{active:isTextbook}" :aria-current="isTextbook?'page':undefined" @click="go()"><span class="nav-icon" aria-hidden="true">📚</span>教材管理</button>
     <button class="nav-item" :class="{active:isEvaluation}" :aria-current="isEvaluation?'page':undefined" @click="goModel('evaluation')"><span class="nav-icon" aria-hidden="true">📋</span>评估管理</button>
     <button class="nav-item" :class="{active:isTarget}" :aria-current="isTarget?'page':undefined" @click="goModel('targets')"><span class="nav-icon" aria-hidden="true">🎯</span>目标管理</button>
+    <button class="nav-item" :class="{active:isTeaching}" :aria-current="isTeaching?'page':undefined" @click="goModel('interaction')"><span class="nav-icon" aria-hidden="true">🧭</span>教学模型</button>
   </nav><footer class="sidebar-footer">管理员 · 交互原型</footer></aside>
   <main class="main-content"><div class="workbench-context"><strong>M1 独立原型</strong><span>Mock 数据保存在本浏览器 · 未连接真实模型服务</span></div><div v-if="storageError&&!isDomain" class="callout danger" role="alert">{{storageError}}</div>
-    <div class="page-container"><DomainWorkspace v-if="isDomain" :hash="hash"/><EvaluationWorkspace v-else-if="isEvaluation" :hash="hash"/><TargetWorkspace v-else-if="isTarget" :hash="hash"/><TextbookImport v-else-if="draft" :key="draft.id" :draft="draft" :hash="hash" @back="go()"/>
+    <div class="page-container"><DomainWorkspace v-if="isDomain" :hash="hash"/><EvaluationWorkspace v-else-if="isEvaluation" :hash="hash"/><TargetWorkspace v-else-if="isTarget" :hash="hash"/><TeachingWorkspace v-else-if="isTeaching" :hash="hash"/><TextbookImport v-else-if="draft" :key="draft.id" :draft="draft" :hash="hash" @back="go()"/>
       <section v-else class="wb-page"><header class="page-header"><div><h2>教材管理</h2><p class="page-desc">解析教材内容，提交领域入库，再建立章节与任务、方法的关联。</p></div><button class="btn primary" :disabled="!!storageError" @click="create">导入教材</button></header>
         <p v-if="source" class="callout" role="status">该导入在当前浏览器中不存在。请选择已有草稿或新建导入。</p>
         <div v-if="imports.length" class="edit-pair"><label class="search-label">查找教材<input v-model="query" type="search" placeholder="输入教材名称"/></label><label>按领域查找<select v-model="domainFilter" aria-label="按领域查找"><option value="">全部领域</option><option v-for="d in domainData.domains" :key="d.id" :value="d.id">{{d.name}}</option></select></label></div>
