@@ -9,7 +9,7 @@ const props=defineProps<{hash:string}>();
 function params(){return new URLSearchParams(props.hash.split('?')[1]);}
 const route={get tab(){return params().get('tab')||'blueprint';},get scope(){return params().get('scope')||'';},get round(){return params().get('round')||'';},get id(){return params().get('id')||'';},get returnTo(){return params().get('returnTo')||'';}};
 function go(page:string,query:Record<string,string>){location.hash='/'+page+'?'+new URLSearchParams(query);}
-const tabs=[{id:'blueprint',name:'教学蓝图'},{id:'strategies',name:'教学策略'},{id:'rules',name:'通用规则'},{id:'quarter',name:'四分之一走查'}];
+const tabs=[{id:'blueprint',name:'教学蓝图'},{id:'strategies',name:'教学策略'},{id:'rules',name:'教学规则'},{id:'quarter',name:'四分之一走查'}];
 const tab=computed(()=>route.tab||'blueprint');
 const draft=teachingBlueprintDraft;
 const dirty=computed(()=>JSON.stringify(draft.value)!==JSON.stringify(teachingMock.blueprint));
@@ -35,7 +35,7 @@ const strategyGroups=[
   {id:'basis',title:'依据与示例',fields:[['basis','依据与限制'],['examples','领域示例']]},
 ];
 const editingGroups=computed(()=>strategyGroups.filter(g=>!strategyGroup.value||g.id===strategyGroup.value));
-const dialogTitle=computed(()=>dialog.value==='stage'?(isNew.value?'添加教学阶段':'编辑阶段：'+stageForm.value.name):dialog.value==='edge'?(isNew.value?'添加连接':'编辑转移条件'):dialog.value==='strategy'?(isNew.value?'新建教学策略':'编辑'+(strategyGroups.find(g=>g.id===strategyGroup.value)?.title||'策略')):dialog.value==='rule'?(isNew.value?'新增通用规则':'编辑通用规则'):dialog.value==='meta'?'编辑蓝图信息':dialog.value==='history'?'教学模型修改记录':'放弃蓝图修改');
+const dialogTitle=computed(()=>dialog.value==='stage'?(isNew.value?'添加教学阶段':'编辑阶段：'+stageForm.value.name):dialog.value==='edge'?(isNew.value?'添加连接':'编辑转移条件'):dialog.value==='strategy'?(isNew.value?'新建教学策略':'编辑'+(strategyGroups.find(g=>g.id===strategyGroup.value)?.title||'策略')):dialog.value==='rule'?(isNew.value?'新增教学规则':'编辑教学规则'):dialog.value==='meta'?'编辑蓝图信息':dialog.value==='history'?'教学模型修改记录':'放弃蓝图修改');
 watch([query,status],()=>page.value=1);
 watch(pages,n=>page.value=Math.min(page.value,n));
 function stageName(id:string){return id==='start'?'开始':id==='end'?'结束':draft.value.stages.find(s=>s.id===id)?.name||'未指定';}
@@ -101,7 +101,7 @@ function saveStrategy(){
 }
 function toggleStrategy(){if(!strategy.value)return;strategy.value.enabled=!strategy.value.enabled;strategy.value.version++;recordTeachingChange((strategy.value.enabled?'启用':'停用')+'策略「'+strategy.value.name+'」');notice.value=strategy.value.enabled?'策略已启用。':'策略已停用，阶段保留引用，不再推荐。';}
 function editRule(rule?:TeachingRule){isNew.value=!rule;ruleForm.value=rule?copyTeaching(rule):{id:newTeachingId('rule'),name:'',when:'',requirement:'',basis:'',enabled:true,version:1};open('rule');}
-function saveRule(){const r=ruleForm.value;if(!r.name.trim()||!r.when.trim()||!r.requirement.trim()||!r.basis.trim())return fail('请填写规则名称、适用情况、要求和依据。');const current=teachingMock.rules.find(x=>x.id===r.id);r.version=current?current.version+1:1;if(current)Object.assign(current,copyTeaching(r));else teachingMock.rules.push(copyTeaching(r));recordTeachingChange((current?'修改':'新增')+'规则「'+r.name+'」');close();notice.value='通用规则已保存。';}
+function saveRule(){const r=ruleForm.value;if(!r.name.trim()||!r.when.trim()||!r.requirement.trim()||!r.basis.trim())return fail('请填写规则名称、适用情况、要求和依据。');const current=teachingMock.rules.find(x=>x.id===r.id);r.version=current?current.version+1:1;if(current)Object.assign(current,copyTeaching(r));else teachingMock.rules.push(copyTeaching(r));recordTeachingChange((current?'修改':'新增')+'规则「'+r.name+'」');close();notice.value='教学规则已保存。';}
 function toggleRule(r:TeachingRule){r.enabled=!r.enabled;r.version++;recordTeachingChange((r.enabled?'启用':'停用')+'规则「'+r.name+'」');}
 
 const sceneId=ref(teachingScenes.some(s=>s.id===route.scope)?route.scope:'foundation');
@@ -154,8 +154,13 @@ onMounted(()=>window.addEventListener('beforeunload',beforeUnload));onBeforeUnmo
   </template>
 
   <template v-else-if="tab==='strategies'">
-    <template v-if="!route.id"><div class="toolbar"><label class="search-label">搜索策略<input v-model="query" type="search" placeholder="名称、目的或适用情况"/></label><label>策略状态<select v-model="status"><option value="all">全部</option><option value="enabled">启用</option><option value="disabled">停用</option></select></label><button class="btn primary" @click="editStrategy('',true)">新建策略</button></div>
-      <section class="table-card"><table class="data-table strategy-table"><thead><tr><th>教学策略</th><th>教学目的 / 适用情况</th><th>被哪些阶段使用</th><th>状态 / 版本</th></tr></thead><tbody><tr v-for="s in filtered.slice((page-1)*8,page*8)" :key="s.id"><td><button class="text-link item-name" @click="openStrategy(s.id)">{{s.name}}</button></td><td>{{s.purpose}}<small>{{s.when}}</small></td><td>{{referencedBy(s.id)||'尚未引用'}}</td><td><span class="badge" :class="s.enabled?'green':''">{{s.enabled?'启用':'停用'}}</span><small>v{{s.version}}</small></td></tr></tbody></table><p v-if="!filtered.length" class="empty">没有匹配的策略，请调整搜索或新建。</p></section>
+    <template v-if="!route.id">
+      <section class="panel strategy-filters" aria-label="教学策略筛选">
+        <label>搜索策略<input v-model="query" type="search" placeholder="名称、目的或适用情况"/></label>
+        <label>策略状态<select v-model="status"><option value="all">全部</option><option value="enabled">启用</option><option value="disabled">停用</option></select></label>
+        <button class="btn primary" @click="editStrategy('',true)">新建策略</button>
+      </section>
+      <section class="table-card teaching-list"><table class="data-table strategy-table"><thead><tr><th>教学策略</th><th>教学目的 / 适用情况</th><th>推荐阶段</th><th>状态 / 版本</th></tr></thead><tbody><tr v-for="s in filtered.slice((page-1)*8,page*8)" :key="s.id"><td><button class="text-link item-name" @click="openStrategy(s.id)">{{s.name}}</button></td><td>{{s.purpose}}<small>{{s.when}}</small></td><td>{{referencedBy(s.id)||'尚未引用'}}</td><td><span class="badge" :class="s.enabled?'green':''">{{s.enabled?'启用':'停用'}}</span><small>v{{s.version}}</small></td></tr></tbody></table><div v-if="!filtered.length" class="empty"><p>没有符合条件的策略。</p><button v-if="query || status!=='all'" class="text-link" @click="query='';status='all'">清除筛选</button></div></section>
       <div v-if="pages>1" class="pagination"><button class="btn" :disabled="page===1" @click="page--">上一页</button><span>{{page}} / {{pages}}</span><button class="btn" :disabled="page===pages" @click="page++">下一页</button></div>
     </template>
     <template v-else-if="strategy"><button class="text-link" @click="returnFromStrategy">← 返回{{route.returnTo.includes('tab=scenes')?'情境推演':route.returnTo.includes('tab=blueprint')||route.returnTo==='#/interaction'?'教学蓝图':'策略列表'}}</button><div class="strategy-heading"><div><span class="eyebrow">通用教学策略 · v{{strategy.version}}</span><h3>{{strategy.name}}</h3></div><div><span class="badge" :class="strategy.enabled?'green':''">{{strategy.enabled?'启用':'停用'}}</span><button class="btn" @click="toggleStrategy">{{strategy.enabled?'停用策略':'启用策略'}}</button></div></div>
@@ -166,7 +171,7 @@ onMounted(()=>window.addEventListener('beforeunload',beforeUnload));onBeforeUnmo
 
   <template v-else-if="tab==='rules'">
     <div class="row-between rule-intro"><p class="muted">不同阶段共同遵循的教学要求；不在此改写学习目标或能力评价规则。</p><button class="btn primary" @click="editRule()">新增规则</button></div>
-    <section class="table-card"><table class="data-table rule-table"><thead><tr><th>规则 / 适用情况</th><th>具体要求</th><th>依据</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="r in teachingMock.rules" :key="r.id"><td><strong>{{r.name}}</strong><small>{{r.when}}</small></td><td>{{r.requirement}}</td><td>{{r.basis}}</td><td><span class="badge" :class="r.enabled?'green':''">{{r.enabled?'启用':'停用'}}</span><small>v{{r.version}}</small></td><td><div class="row-actions"><button class="text-link" :aria-label="'编辑规则：'+r.name" @click="editRule(r)">编辑</button><button class="text-link" :aria-label="(r.enabled?'停用':'启用')+'规则：'+r.name" @click="toggleRule(r)">{{r.enabled?'停用':'启用'}}</button></div></td></tr></tbody></table></section>
+    <section class="table-card teaching-list"><table class="data-table rule-table"><thead><tr><th>规则 / 适用情况</th><th>具体要求</th><th>依据</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="r in teachingMock.rules" :key="r.id"><td><strong>{{r.name}}</strong><small>{{r.when}}</small></td><td>{{r.requirement}}</td><td>{{r.basis}}</td><td><span class="badge" :class="r.enabled?'green':''">{{r.enabled?'启用':'停用'}}</span><small>v{{r.version}}</small></td><td><div class="row-actions"><button class="text-link" :aria-label="'编辑规则：'+r.name" @click="editRule(r)">编辑</button><button class="text-link" :aria-label="(r.enabled?'停用':'启用')+'规则：'+r.name" @click="toggleRule(r)">{{r.enabled?'停用':'启用'}}</button></div></td></tr></tbody></table></section>
     <details class="system-boundaries"><summary>适用的系统约束 · 只读</summary><ul><li>学生可以停止或暂停；当天使用满 30 分钟只提醒，由家长决定何时结束。</li><li>讲解分段推进；独立检测实质求助先结束检测，未做部分保持未检测。</li><li>实际帮助保留。教学完成不等于目标达成，能力认识仍由 Evaluation 负责。</li><li>本页不能改写正式学习目标、创建 KC 能力评分或借用另一个空间的个人记录。</li></ul></details>
   </template>
 
@@ -225,4 +230,29 @@ onMounted(()=>window.addEventListener('beforeunload',beforeUnload));onBeforeUnmo
 
 <style scoped>
 .teaching-workspace{max-width:1600px}.header-actions,.blueprint-tools>div,.strategy-heading>div:last-child{display:flex;align-items:center;gap:10px}.teaching-tabs{margin-top:0}.teaching-tabs .active{background:#2d6a4f;color:white}.saved-note{padding:9px 14px;color:#2b6b48;background:#eaf5ee;border-radius:6px;margin-bottom:14px;font-size:13px}.blueprint-heading{display:flex;justify-content:space-between;gap:20px;margin-bottom:14px}.blueprint-heading h3{font-size:18px;color:#2d4b3c}.blueprint-heading p{color:#687e70;font-size:13px;margin-top:4px}.blueprint-heading>.text-link{flex-shrink:0}.blueprint-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0}.blueprint-layout{display:grid;grid-template-columns:minmax(460px,1.45fr) minmax(300px,1fr);gap:18px;align-items:start}.graph-panel{padding:0;overflow:auto}.inspector{position:sticky;top:12px;padding:20px}.inspector h3{font-size:18px;margin:12px 0}.eyebrow{color:#7b8c80;font-size:11px;letter-spacing:.4px}.inspector-lead{font-size:13px;color:#4f6b59}.inspector-fields{font-size:13px;line-height:1.85}.inspector-fields dt{color:#788b7d;margin:17px 0 4px;font-size:12px}.inspector-fields dd{white-space:pre-wrap;overflow-wrap:anywhere}.strategy-links{display:flex;flex-direction:column;gap:9px}.strategy-links>div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.outgoing-link{display:block;width:100%;background:#f8faf9;border:1px solid #e3ebe6;border-radius:6px;padding:10px 12px;text-align:left;margin:8px 0;color:#365b44;font:inherit}.outgoing-link strong{display:block;font-size:13px}.outgoing-link span{display:block;color:#748479;font-size:12px;margin-top:3px}.connection-names{font-size:13px;color:#587461;padding:10px;background:#f1f7f3;border-radius:6px}.blueprint-save{position:sticky;bottom:0;z-index:2;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #dce6df;border-radius:8px;padding:12px 16px;box-shadow:0 -4px 18px #244b3410;margin-top:20px}.blueprint-save>span{flex:1;font-size:12px;color:#6f8175}.item-name{font-size:14px;font-weight:600}.strategy-table td:first-child{width:155px}.strategy-table td:nth-child(2){width:48%}.strategy-heading{display:flex;justify-content:space-between;gap:16px;align-items:center;margin:18px 0}.strategy-heading h3{font-size:22px;color:#264e37}.strategy-section .field-list{margin-bottom:0}.strategy-section .row-between h3{margin:0}.strategy-section .field-list dt{width:135px}.rule-intro{margin:18px 0}.rule-table td:first-child{width:20%}.rule-table td:nth-child(3){width:22%}.rule-table th:nth-child(4),.rule-table td:nth-child(4){width:76px;white-space:nowrap}.rule-table th:last-child,.rule-table td:last-child{width:106px;white-space:nowrap}.rule-table .row-actions .text-link{white-space:nowrap}.row-actions{display:flex;gap:12px}.system-boundaries ul{padding-left:22px;font-size:13px;line-height:2}.history-row{display:flex;gap:20px;padding:15px 0;border-bottom:1px solid #e5ece7;font-size:13px}.history-row small{display:block;color:#7a8d80;margin-top:5px}.strategy-picker{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;margin-top:14px}.strategy-picker legend,fieldset>legend{font-weight:600;color:#34553f;margin-top:12px}.remove-button{margin-right:auto;color:#a44b32}.scene-header{display:flex;justify-content:space-between;align-items:center;margin:18px 0}.scene-header h3{font-size:20px;color:#2d4b3c}.scene-choices{display:flex;gap:10px;margin:18px 0;flex-wrap:wrap}.scenario-context{padding:16px 20px}.scenario-context p{font-size:13px}.stage-strip{display:flex;gap:7px;flex-wrap:wrap;margin:16px 0}.stage-strip>span{display:flex;align-items:center;gap:6px;background:#edf0ee;color:#7a8c80;padding:7px 10px;border:1px solid transparent;border-radius:6px;font-size:12px}.stage-strip small{font-size:11px}.stage-strip>span.visited{background:#edf5f0;color:#426c51}.stage-strip>span.active{background:#e0efe6;border-color:#438b61;color:#214c32;font-weight:600}.scene-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);gap:18px;align-items:start}.conversation h3{margin:14px 0 20px;font-size:18px}.speech{padding:14px 16px;border-radius:8px;margin:14px 0;font-size:14px;line-height:1.95}.speech>span{font-size:11px;color:#738879}.speech.student{background:#f2f5f8;margin-left:22px}.speech.tutor{background:#eef7f1;margin-right:22px}.speech p{margin:4px 0}.teaching-figure{margin:16px 0 0;padding:8px;background:#fff;border:1px solid #dbe8df;border-radius:6px}.teaching-figure svg{display:block;width:100%;max-width:420px;margin:auto}.teaching-figure text{font-size:13px;fill:#345a43}.teaching-figure figcaption{font-size:12px;color:#647c6c;text-align:center;line-height:1.6;margin-top:4px}.decision h3{margin-top:14px}.decision dd>.text-link{display:block;margin-top:5px}.response-branches{border-top:1px solid #e3ebe6;margin-top:24px}.branch-button{display:block;background:white;border:1px solid #d6e3d9;color:#345e43;border-radius:6px;padding:10px 14px;width:100%;text-align:left;font-size:13px;margin:8px 0}.branch-button:hover{background:#eff7f2}.scene-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:24px}.path-summary{display:flex;align-items:flex-start;gap:16px;padding:12px 0;font-size:12px;color:#54715e;line-height:1.9}.path-summary>.muted{flex-shrink:0}.graph-toggle{margin:8px 0 16px}.scene-graph{margin-top:8px}@media(max-width:1180px){.blueprint-layout{grid-template-columns:minmax(440px,1.3fr) minmax(270px,1fr);gap:12px}.inspector{padding:15px}}@media(max-width:1250px){.blueprint-layout,.scene-layout{grid-template-columns:1fr}.inspector{position:static}.header-actions{flex-wrap:wrap}.blueprint-tools{flex-wrap:wrap}.graph-panel{max-width:740px}.scene-choices .btn{white-space:normal}}@media(max-width:700px){.page-header{flex-wrap:wrap}.strategy-picker{grid-template-columns:1fr}.blueprint-save{flex-wrap:wrap}.blueprint-save>span{flex-basis:100%}.strategy-heading{flex-wrap:wrap}.rule-table{min-width:650px}.table-card{overflow:auto}}
+
+.strategy-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 18px;
+  margin: 16px 0;
+}
+.strategy-filters label { min-width: 0; margin: 0; }
+.strategy-filters label:first-child { flex: 1 1 220px; max-width: 400px; }
+.strategy-filters label:nth-child(2) { flex: 0 1 160px; }
+.strategy-filters .btn { margin-inline-start: auto; }
+.teaching-list {
+  overflow-x: auto;
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 10px;
+}
+.teaching-list th, .teaching-list td { padding: 12px 16px; }
+.teaching-list tbody tr:last-child td { border-bottom: 0; }
+.teaching-list tbody tr:hover { background: #f7faf8; }
+.strategy-table { min-width: 600px; }
+@media (max-width: 760px) {
+  .strategy-filters label:first-child { flex-basis: 100%; max-width: none; }
+}
 </style>

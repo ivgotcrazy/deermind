@@ -25,7 +25,7 @@ test('M1 教学模型与四分之一走查', async t => {
     await button('停用策略').click();
     await page.reload();
     await expect(button('启用策略')).toBeVisible();
-    await button('通用规则').click();
+    await button('教学规则').click();
     await page.getByText('适用的系统约束 · 只读').click();
     await expect(page.locator('.system-boundaries')).toContainText('实质求助先结束检测');
   });

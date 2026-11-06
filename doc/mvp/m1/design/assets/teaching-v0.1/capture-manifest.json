@@ -1,0 +1,93 @@
+{
+  "viewport": [
+    1440,
+    1100
+  ],
+  "data": "独立浏览器，固定 mock",
+  "screens": [
+    {
+      "id": "B01",
+      "subject": "讲解后直接检测的条件",
+      "route": "#/interaction",
+      "sha256": "1bbb26d4d8920f630014a593f0b3a02e8bcefddd1f40a041eeb810cb90ec78d3"
+    },
+    {
+      "id": "B02",
+      "subject": "编辑转移的起点、终点、条件与依据",
+      "route": "#/interaction",
+      "sha256": "3f015a0eef2a3a69987de4cc2f4f1cdaa50a9ba3995a9ebd2dc149b30cbdc934"
+    },
+    {
+      "id": "B03",
+      "subject": "策略筛选、新建及推荐阶段",
+      "route": "#/interaction?tab=strategies",
+      "sha256": "40bd49bfd09968b20223ce8002f11d20b5c5363baf254ac5e67f292797b1913a"
+    },
+    {
+      "id": "B04",
+      "subject": "策略的适用条件与教学组织",
+      "route": "#/interaction?tab=strategies&id=contrast&returnTo=%23%2Finteraction%3Ftab%3Dstrategies",
+      "sha256": "ebe28636ac18c98ff3c8c038c52c287dd9a9a78969657aeeb1890f42020d9c20"
+    },
+    {
+      "id": "B05",
+      "subject": "教学规则和系统只读边界",
+      "route": "#/interaction?tab=rules",
+      "sha256": "e808c0dc291b76585389da331c96e7327280d5f06aa1eafda3668f052aef50cd"
+    },
+    {
+      "id": "S01",
+      "subject": "基础含义不清楚",
+      "route": "#/interaction?tab=scenes&scope=foundation&round=teach",
+      "sha256": "cbe0d395dfb4a8d513a4828b6c1de2f4dd4b39ce60f446730e92eb005ace64b3"
+    },
+    {
+      "id": "S02",
+      "subject": "会算但解释不清",
+      "route": "#/interaction?tab=scenes&scope=explanation&round=contrast",
+      "sha256": "213996e75361b924b40ea99cfa4842b784f7ea3f870ded5b8ef11203d1376d95"
+    },
+    {
+      "id": "S03",
+      "subject": "已理解，检验迁移",
+      "route": "#/interaction?tab=scenes&scope=transfer&round=check",
+      "sha256": "d2d1c8c9acbb5471710b085566c4dd53c856985bb420af1fa64138b3868871ed"
+    },
+    {
+      "id": "Q01",
+      "subject": "无推荐命中，讲解仍可开始",
+      "route": "#/interaction?tab=quarter",
+      "sha256": "6b290910c92165aced64a4ae15559fa36fee203e29e87636897e45e515b5f913"
+    },
+    {
+      "id": "Q02",
+      "subject": "从已有加法解释倍数",
+      "route": "#/interaction?tab=quarter",
+      "sha256": "68b9b11ee65565ae3764431577057d80534aa97a874658c683458c1ca1a3778f"
+    },
+    {
+      "id": "Q03",
+      "subject": "独立检测与未提交作答",
+      "route": "#/interaction?tab=quarter",
+      "sha256": "2699afbb9728e5e15ef1c7abecfc43a9288f12ee05e2464dc8bd32fa55afc8fd"
+    },
+    {
+      "id": "Q04",
+      "subject": "检测已结束，草稿保留，尚未展示提示",
+      "route": "#/interaction?tab=quarter",
+      "sha256": "399dcd4717a13b7a6f4eb19e553427d6eabbedcb7c0adefe55f34111d7d6fd77"
+    },
+    {
+      "id": "Q05",
+      "subject": "提示属于检测后讲解",
+      "route": "#/interaction?tab=quarter",
+      "sha256": "4e684dbe08c69b90f818c25b9186617ccabac217888072458619810d08e3ead8"
+    },
+    {
+      "id": "Q06",
+      "subject": "移除直接检测连接后的新走查",
+      "route": "#/interaction?tab=quarter",
+      "sha256": "3fcfd8676d6aa75b0392d5302dd5c15ebeb16a88a38443ac5d492cfe5a306c9c"
+    }
+  ]
+}

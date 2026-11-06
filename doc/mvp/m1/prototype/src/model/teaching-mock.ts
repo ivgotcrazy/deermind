@@ -52,8 +52,8 @@ export const teachingMock=reactive({revision:1,blueprint,strategies,rules:[
   {id:'meaning',name:'说明关键关系',when:'进行概念或方法讲解时。',requirement:'说明关键步骤为什么成立，不能只有计算过程；允许图示、动作和朴素表达。',basis:'概念与计算联系的教学参考。',enabled:true,version:1},
   {id:'support',name:'根据表现调整帮助',when:'学生尝试完成任务时。',requirement:'能接手时减少帮助；持续困难时调整解释或材料，不机械追加相同题目。',basis:'支架支持与逐步撤去帮助的设计参考。',enabled:true,version:1},
   {id:'repeat',name:'避免无目的重复',when:'已完成一轮解释或练习后。',requirement:'再次讲解或出题应说明具体目的；信息不足不等于学生不会。',basis:'控制负担；当前执行条件仍待验证。',enabled:true,version:1},
-  {id:'selection',name:'按当前目标和表现选择',when:'多种策略都可能适用，或需要切换策略时。',requirement:'结合当前目标、学生请求、实际表现与已提供的帮助选择，推荐均不适用时，可在当前阶段内采用其他教法，仍须遵守通用规则与系统约束。只澄清会改变选择的关键问题。',basis:'DeerMind 当前教学设计假设；不把局部判断写为新的能力状态。',enabled:true,version:1},
-] as TeachingRule[],history:[{version:1,at:'初始示例',change:'建立默认教学蓝图、六类策略和通用规则。'}]});
+  {id:'selection',name:'按当前目标和表现选择',when:'多种策略都可能适用，或需要切换策略时。',requirement:'结合当前目标、学生请求、实际表现与已提供的帮助选择，推荐均不适用时，可在当前阶段内采用其他教法，仍须遵守教学规则与系统约束。只澄清会改变选择的关键问题。',basis:'DeerMind 当前教学设计假设；不把局部判断写为新的能力状态。',enabled:true,version:1},
+] as TeachingRule[],history:[{version:1,at:'初始示例',change:'建立默认教学蓝图、六类策略和教学规则。'}]});
 
 const storageKey='deermind-m1-teaching-v1';
 export const teachingStorageError=ref('');
