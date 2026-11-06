@@ -2,38 +2,62 @@ import { domainData, id } from './domain';
 import { addDomainExample } from './domain-example';
 import { imports, newImport, loadSample, finishRecognition } from './imports';
 import { initializeFlow, chapters } from './material-flow';
-import { blankClaim, blankTarget, blankRequirement, evaluationData, saveDefinition } from './evaluation';
+import { blankClaim, blankTarget, blankRequirement, requirementBasis, defaultAspectRule, evaluationData, saveDefinition, type Claim, type Criterion } from './evaluation';
 
-// Opt-in fixture: never replaces existing domains, textbook drafts, Claims or targets.
+function entry(id:string,name:string,input:string,basis:string,met:string,counter:string,insufficient:string,examples=''):Criterion {
+  return {id,name,input,basis,met,counter,insufficient,examples};
+}
+function configureMethod(c:Claim,methodId:string,criteria:string[],explanation:string){
+  c.executions.push({methodId,criteria});
+  for(const aspect of c.aspects){
+    const rule=defaultAspectRule(methodId,aspect.id);
+    if(aspect.id==='explanation')rule.judgment=explanation;
+    c.rules.push(rule);
+  }
+}
+// Explicit opt-in. A separate sample leaves previously opened or edited examples intact.
 export function loadEvaluationExample(){
-  const existing=evaluationData.targets.find(t=>t.id==='TARGET-M1-QUARTER-DEMO');
+  const exampleId='TARGET-M1-QUARTER-SEPARATE';
+  const existing=evaluationData.targets.find(t=>t.id===exampleId);
   if(existing)return existing;
   const domainId=addDomainExample();
-  domainData.domains.find(d=>d.id===domainId)!.name='小学数学 · 评价与目标样例';
+  domainData.domains.find(d=>d.id===domainId)!.name='小学数学 · 方法判据样例';
   const task=domainData.tasks.find(t=>t.domainId===domainId&&t.parameters.some(p=>p.symbol==='W'))!;
-  const c=blankClaim(domainId,task.id);
-  Object.assign(c,{name:'比例增加任务的理解与求解',scope:'已知原量 V 和以原量为基准的增加比例 r，求新量并说明关系。限单次增加，含文字和表格；不含反求原量、连续增减。',methods:[...task.methods],support:'独立表现不得获得当题定位、列式、解法或答案帮助；受助练习保留记录但不能充作独立证据。按实际工具和帮助记录解释。'});
-  const definitions=[
-    ['自行识别原量与增加比例，选取允许的方法，正确求出新量及单位。','只有受助成功、只浏览讲解或尚未作答，不能确认独立完成。','无当题帮助时仍把增加量作为新量，或使用错误的参照整体。'],
-    ['说明分率以原量为整体，解释新量为何等于原量与增加量之和；可用文字、算式或图示表达。','只有正确数值，没有可解释的理由，不足以确认理解。','明确把 1 解释成一个实物，而非原量整体，或给出与题意冲突的关系。'],
-    ['在已记录的学习背景下，处理未练过但在任务范围内的表征变化，保持正确的数量关系与解释。','仅换数字或沿用已练过的同一表征，不构成所要求的迁移证据。','改变表征后误读原量或比例关系；不能推广为所有迁移能力不足。'],
-    ['在先前已能独立求解并解释之后，经过目标约定的间隔，仍能在可比的新题上求解并解释；记录期间练习与帮助。','尚未到检测时间、没有后测或期间背景未知，不能宣称已保持或自然遗忘。','满足约定延迟与可比条件后仍出现相应求解或解释错误，需要保留反证。'],
+  const [first,second]=task.methods;
+  const step=domainData.methods.find(m=>m.id===first)!.steps.find(s=>s.divided)!;
+  const child=blankClaim(domainId,step.taskId);
+  child.name='求一个量的几分之几';
+  child.criteria=[
+    entry('P1','计算对应部分','基准量、分率和乘法过程','子任务要求 Δ = V × r','选对基准量并求出对应部分及单位。','把新量或其他数量当作基准量。','只给出最终新量，看不到这一步所求的部分。','80 × 1/4 = 20 本。'),
+
   ];
-  c.aspects.forEach((a,i)=>Object.assign(a,{criterion:definitions[i][0],insufficient:definitions[i][1],counter:definitions[i][2]}));
-  const claim=saveDefinition(evaluationData.claims,c,'载入比例增加 Claim 样例')!;
+  configureMethod(child,step.solutionId,['P1'],'能指出对应的整体，并解释为什么基准量乘分率得到对应的部分。');
+  saveDefinition(evaluationData.claims,child,'载入子任务的乘法判据');
+  const c=blankClaim(domainId,task.id);
+  c.name='比例增加任务的理解与求解';
+  c.criteria=[
+    entry('F1','新量与单位正确','作答结果、单位和实例参考','Task 的新量与单位要求','结果满足原量、增加比例与新量的关系。','把增加量作为最终的新量。','仅浏览题目或没有最终数量。','80 本增加四分之一，新量为 100 本。'),
+
+    entry('FA','把子方法的增加量用于求新量','子方法输出和父层算式','先求增加量，再加原量','把返回的增加量与原量相加，求得新量。','求出增加量后直接作为最终结果。','没有可识别的本层处理过程。','子方法返回 20，本层计算 80 + 20 = 100。'),
+    entry('FB1','按新量倍数计算','倍数与运算过程','W = V × (1 + r)','自行确定新量倍数并乘原量。','只乘增加比例便作为新量。','只有最终数值，看不出方法。'),
+
+  ];
+  configureMethod(c,first,['F1','FA'],'能指出增加分率以原量为整体，并解释为什么要把增加量加回原量。');
+  configureMethod(c,second,['F1','FB1'],'能解释 1 代表原量整体，r 代表增加分率，所以新量是原量的 1＋r 倍。');
+  const claim=saveDefinition(evaluationData.claims,c,'载入比例增加任务的方法与判据')!;
   const importId=newImport(),d=imports.find(x=>x.id===importId)!;
   d.book.domainId=domainId;loadSample(d);finishRecognition(d);
   d.book.name='分数的应用 · 目标配置样例（mock）';
   d.book.sourceNote+=' 本副本用于自编比例增加目标走查；关联和目标不是自动提取或全章覆盖结论。';
   const flow=initializeFlow(d),chapter=chapters(flow)[0];
   flow.links[chapter]=[{taskId:task.id,methodIds:[...task.methods]}];
-  const t=blankTarget();Object.assign(t,{id:'TARGET-M1-QUARTER-DEMO',name:'增加四分之一：理解、求解与后续检查',bookId:d.book.id,chapters:[chapter]});
+  const t=blankTarget();Object.assign(t,{id:exampleId,name:'增加四分之一：理解、求解与后续检查',bookId:d.book.id,chapters:[chapter]});
   const r=blankRequirement();Object.assign(r,{id:id('REQ'),claimId:claim.id,claimVersion:claim.version,name:'能自己算出增加四分之一后的数量，并说明为什么',chapters:[chapter],scope:'只取 r=1/4；原量为正，单位一致，离散数量满足整量条件。不代表任意增加比例或整章达标。',methods:[...task.methods],checked:true});
   r.standards=[
     {aspectId:'independent',text:'2 道不同的新题，无当题实质帮助，均正确求解。订正、重试和同题重复不计为第二道新题。'},
     {aspectId:'explanation',text:'上述 2 道题均能解释四分之一的参照整体，以及原量、增加量、新量的关系；只答对数值不足。'},
     {aspectId:'transfer',text:'上述 2 道题中至少 1 道使用此前未练过的表格呈现，能够正确理解并求解、解释；记录此前学习表征。'},
     {aspectId:'retention',text:'独立完成与解释达标所用的最近一次合格表现至少 7×24 小时后，用 1 道未见解法的新题检查求解和解释。记录期间正常学习与帮助；未知背景不能宣称无强化保持。'},
-  ];t.requirements=[r];
+  ];r.criteriaBasis=requirementBasis(claim,r);t.requirements=[r];
   return saveDefinition(evaluationData.targets,t,'载入已确认的四分之一试用标准')!;
 }

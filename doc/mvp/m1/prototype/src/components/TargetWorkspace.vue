@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
+import MethodStandards from './MethodStandards.vue';
 import WorkbenchDialog from './WorkbenchDialog.vue';
 import { clone, domainData, domainStorageError } from '../model/domain';
 import { imports, storageError } from '../model/imports';
 import { materialUrl } from '../model/material-flow';
-import { evaluationData, evaluationStorageError, blankTarget, blankRequirement, saveDefinition, bookImport, bookChapters, chapterLinks, claimTask, claimIssues, methodName, mappedChapters, allowedMethods, candidateIssues, requirementIssues, targetIssues, type Claim, type LearningTarget, type Requirement } from '../model/evaluation';
+import { evaluationData, evaluationStorageError, blankTarget, blankRequirement, saveDefinition, bookImport, bookChapters, chapterLinks, directMethods, aspectRule, executionCriteria, requirementBasis, claimTask, claimIssues, methodName, mappedChapters, allowedMethods, candidateIssues, requirementIssues, targetIssues, type Claim, type LearningTarget, type Requirement } from '../model/evaluation';
 import { loadEvaluationExample } from '../model/evaluation-example';
 
 const props=defineProps<{hash:string}>();
@@ -40,10 +41,10 @@ function saveTarget(){
   const next=saveDefinition(evaluationData.targets,t,mode.value==='new'?'创建目标与课程范围':'修改目标名称与章节范围');if(!next)return;
   const creating=mode.value==='new';mode.value='';if(creating)open(next);else notice.value='目标信息已保存。调整目标不会改变学生的历史表现或 Belief。';
 }
-function editRequirement(r?:Requirement){requirement.value=r?clone(r):blankRequirement();requirement.value.checked=false;if(r&&claim(r.claimId)?.methodMode==='all')requirement.value.methodMode='all';editing.value=!!r;mode.value='requirement';error.value='';}
+function editRequirement(r?:Requirement){requirement.value=r?clone(r):blankRequirement();requirement.value.checked=false;editing.value=!!r;mode.value='requirement';error.value='';}
 function chooseClaim(){
   const c=selectedClaim.value;if(!c||!current.value)return;
-  requirement.value={...blankRequirement(),claimId:c.id,claimVersion:c.version,name:claimTask(c)?.name||'',scope:'',methodMode:c.methodMode};
+  requirement.value={...blankRequirement(),claimId:c.id,claimVersion:c.version,name:claimTask(c)?.name||'',scope:'',methodMode:'any'};
   const mapped=mappedChapters(current.value,c);
   if(mapped.length===1)requirement.value.chapters=[mapped[0]];
   requirement.value.methods=allowedMethods(current.value,c,requirement.value.chapters);
@@ -57,6 +58,7 @@ function toggleAspect(key:string,checked:boolean){
 function saveRequirement(){
   if(blocked.value||!current.value||!selectedClaim.value)return;
   const r=clone(requirement.value);r.claimVersion=selectedClaim.value.version;
+  r.criteriaBasis=requirementBasis(selectedClaim.value,r);
   const issues=requirementIssues(current.value,r);if(issues.length)return fail(issues.join('；'));
   const next=clone(current.value),index=next.requirements.findIndex(x=>x.id===r.id);
   if(index<0)next.requirements.push(r);else next.requirements[index]=r;
@@ -76,7 +78,7 @@ function compatible(c:Claim){return current.value?candidateIssues(current.value,
 <template><section class="wb-page target-workspace">
   <p v-if="evaluationStorageError||domainStorageError||storageError" role="alert" class="callout danger">{{evaluationStorageError||domainStorageError||storageError}}</p>
   <template v-if="!key">
-    <header class="page-header"><div><h2>学习目标管理</h2><p class="page-desc">结合教材章节范围，选用领域 Task Claim，配置课程要求与达标标准。</p></div><div class="button-row"><button class="btn" :disabled="blocked" @click="example">打开四分之一样例</button><button class="btn primary" :disabled="blocked" @click="edit('new')">新建学习目标</button></div></header>
+    <header class="page-header"><div><h2>目标管理</h2><p class="page-desc">结合教材章节范围，选用领域 Task Claim，配置课程要求与达标标准。</p></div><div class="button-row"><button class="btn" :disabled="blocked" @click="example">打开四分之一样例</button><button class="btn primary" :disabled="blocked" @click="edit('new')">新建学习目标</button></div></header>
     <div class="edit-pair"><label>筛选教材<select aria-label="筛选教材" v-model="bookFilter"><option value="">全部教材</option><option v-for="d in imports" :key="d.id" :value="d.book.id">{{d.book.name||'未命名教材'}}</option></select></label><label>查找学习目标<input v-model="query" type="search" placeholder="目标或教材名称"/></label></div>
     <section class="panel table-scroll"><table v-if="rows.length" class="data-table"><thead><tr><th>学习目标</th><th>教材与范围</th><th>学习要求</th><th>配置情况</th><th>操作</th></tr></thead><tbody><tr v-for="t in rows.slice((page-1)*10,page*10)" :key="t.id"><td><button class="text-link model-name" @click="open(t)">{{t.name}}</button><small>v{{t.version}} · {{t.updatedAt}}</small></td><td>{{bookImport(t.bookId)?.book.name||'教材不存在'}}<small>{{t.chapters.join('、')}}</small></td><td>{{t.requirements.length}} 项</td><td><span class="badge" :class="{warning:targetIssues(t).length}">{{targetIssues(t).length?'待补充／核对':'要求已配置（mock）'}}</span></td><td><button class="btn" @click="open(t)">查看</button></td></tr></tbody></table><div v-else class="empty"><h3>暂无符合条件的学习目标</h3><p>选择教材与章节，再添加对应的 Claim 和学习要求。</p></div></section>
     <div v-if="pages>1" class="pagination"><button class="btn" :disabled="page<=1" @click="page--">上一页</button>{{page}} / {{pages}}<button class="btn" :disabled="page>=pages" @click="page++">下一页</button></div><p class="muted">样例会新增独立 mock，不覆盖已有内容。这里显示目标配置情况，不是学生的达成结果。</p>
@@ -93,8 +95,8 @@ function compatible(c:Claim){return current.value?candidateIssues(current.value,
       <article v-for="r in current.requirements" :key="r.id" class="requirement-card" :data-requirement="r.id"><div class="row-between"><h3>{{r.name}}</h3><div class="button-row"><button class="btn" :disabled="blocked" :aria-label="'编辑要求 '+r.name" @click="editRequirement(r)">编辑</button><button class="btn" :disabled="blocked" :aria-label="'移除要求 '+r.name" @click="requirement=clone(r);mode='remove'">移除</button></div></div>
         <p><a :href="'#/evaluation?id='+r.claimId">{{claim(r.claimId)?.name||'Claim 不存在'}} ↗</a> <span class="muted">引用 v{{r.claimVersion}} · {{r.chapters.join('、')}}</span></p>
         <p v-if="requirementIssues(current,r).length" class="callout amber">{{requirementIssues(current,r).join('；')}}</p>
-        <dl class="field-list"><dt>本目标任务范围</dt><dd>{{r.scope}}</dd><dt>方法条件</dt><dd>{{r.methodMode==='all'?'各方法分别覆盖':r.methods.length===1?'使用指定方法':'任选一种'}}：{{r.methods.map(methodName).join('、')}}<small class="muted">实际评价按所用方法与帮助记录核对，不沿用其他方法的成功结论。</small></dd><dt>帮助条件</dt><dd>{{claim(r.claimId)?.support||'Claim 条件待补充'}}</dd></dl>
-        <table class="data-table standards-table"><thead><tr><th>评价方面</th><th>本目标达标标准</th></tr></thead><tbody><tr v-for="s in r.standards" :key="s.aspectId"><td>{{claim(r.claimId)?.aspects.find(a=>a.id===s.aspectId)?.name||'方面已不存在'}}</td><td class="multiline">{{s.text}}</td></tr></tbody></table><p v-if="r.omissionReason" class="muted">未纳入方面的依据：{{r.omissionReason}}</p>
+        <dl class="field-list"><dt>本目标任务范围</dt><dd>{{r.scope}}</dd><dt>方法条件</dt><dd>{{r.methodMode==='all'?'各方法分别覆盖':r.methods.length===1?'使用指定方法':'任选一种'}}：{{r.methods.map(methodName).join('、')}}<small class="muted">实际评价按所用方法与帮助记录核对。</small></dd></dl>
+        <MethodStandards :claim="claim(r.claimId)" :requirement="r"/><p v-if="r.omissionReason" class="muted">未纳入方面的依据：{{r.omissionReason}}</p>
       </article>
     </section>
     <p class="muted">配置保存不等于课程已应用，也不代表任何学生已达标。样例题量和七天间隔仅用于本例试用，不是通用门槛。</p>
@@ -114,21 +116,28 @@ function compatible(c:Claim){return current.value?candidateIssues(current.value,
     <label>选用 Claim<select aria-label="选用 Claim" v-model="requirement.claimId" :disabled="editing" @change="chooseClaim"><option value="">选择本教材范围内的 Claim</option><option v-for="c in candidates" :key="c.id" :value="c.id" :disabled="compatible(c).length>0">{{c.name}}{{compatible(c).length?'（待补充／方法不兼容）':''}}</option></select></label>
     <p v-if="!candidates.some(c=>!compatible(c).length)&&!editing" class="callout">没有可添加的 Claim。请检查章节关联、Claim 定义和方法条件。<a :href="'#/evaluation?domain='+(book?.book.domainId||'')">前往评估管理 →</a></p>
     <template v-if="selectedClaim">
-      <p class="muted">{{claimTask(selectedClaim)?.name}} · Claim v{{selectedClaim.version}}；当前范围：{{selectedClaim.scope}}</p>
+      <p class="muted">{{claimTask(selectedClaim)?.name}} · Claim v{{selectedClaim.version}} · Task v{{selectedClaim.taskVersion}}</p>
       <p v-if="!editing&&current.requirements.some(r=>r.claimId===selectedClaim!.id)" class="muted">此 Claim 已被本目标选用。可以另设不同范围或方面的要求；它们仍引用同一个 Claim，不新增个人能力状态。</p>
       <p v-if="claimIssues(selectedClaim).length" class="callout amber">{{claimIssues(selectedClaim).join('；')}}</p>
       <p v-if="editing&&requirement.claimVersion!==selectedClaim.version" class="callout amber">Claim 已从 v{{requirement.claimVersion}} 更新至 v{{selectedClaim.version}}。核对下方要求后保存，将明确采用新版；原来的达成结论不能直接沿用。</p>
       <label>学习要求名称<input v-model="requirement.name" placeholder="用学生能看懂的话表达"/></label>
       <fieldset class="object-fieldset"><legend>对应章节</legend><div class="picker-list"><label v-for="ch in candidateChapters" :key="ch" class="check-line"><input v-model="requirement.chapters" type="checkbox" :value="ch" @change="requirement.checked=false"/>{{ch}}</label></div></fieldset>
-      <label>具体任务范围<textarea v-model="requirement.scope" rows="3" placeholder="例如只取增加比例 r=1/4；范围应在 Claim 定义内。"/></label>
-      <fieldset class="object-fieldset"><legend>本要求采用的方法</legend><div class="picker-list"><label v-for="m in selectedClaim.methods" :key="m" class="check-line"><input v-model="requirement.methods" type="checkbox" :value="m" :disabled="!availableMethods.includes(m)&&!requirement.methods.includes(m)"/>{{methodName(m)}}<small v-if="!availableMethods.includes(m)" class="muted">所选章节未共同采用</small></label></div><p v-for="m in requirement.methods.filter(key=>!selectedClaim!.methods.includes(key))" :key="m" class="callout amber">{{methodName(m)}} 已不在 Claim 允许方法内。<button class="btn" @click="requirement.methods=requirement.methods.filter(key=>key!==m)">移除失效方法</button></p></fieldset>
+      <label>具体任务范围<textarea v-model="requirement.scope" rows="3" placeholder="例如只取增加比例 r=1/4；范围应在所引 Task 的定义内。"/></label>
+      <fieldset class="object-fieldset"><legend>本要求采用的方法</legend><div class="picker-list"><label v-for="m in directMethods(selectedClaim)" :key="m" class="check-line"><input v-model="requirement.methods" type="checkbox" :value="m" :disabled="!availableMethods.includes(m)&&!requirement.methods.includes(m)"/>{{methodName(m)}}<small v-if="!availableMethods.includes(m)" class="muted">所选章节未共同采用</small></label></div><p v-for="m in requirement.methods.filter(key=>!directMethods(selectedClaim!).includes(key))" :key="m" class="callout amber">{{methodName(m)}} 已不属于当前 Task。<button class="btn" @click="requirement.methods=requirement.methods.filter(key=>key!==m)">移除失效方法</button></p></fieldset>
       <p v-if="requirement.methods.some(m=>!availableMethods.includes(m))" class="callout amber">原选择的方法与当前章节不兼容。请选择匹配的章节或回教材修正关联；不会自动删掉你的选择。</p>
-      <label>要求的方法覆盖<select aria-label="要求的方法覆盖" v-model="requirement.methodMode" :disabled="selectedClaim.methodMode==='all'"><option value="any">任选一种（只选一个时为指定方法）</option><option value="all">各方法都要分别有表现依据</option></select></label><p class="muted">{{selectedClaim.methodMode==='all'?'该 Claim 要求覆盖全部指定方法，目标不能放宽。':'收窄方法或要求多法覆盖时，需要相应方法下的证据，不能直接沿用原来的总体判断。'}}</p>
-      <p class="callout">帮助与工具条件沿用 Claim：{{selectedClaim.support}}</p>
-      <fieldset class="object-fieldset"><legend>评价方面与达标标准</legend><div v-for="a in selectedClaim.aspects.filter(a=>a.enabled)" :key="a.id" class="entry-editor"><label class="check-line"><input type="checkbox" :checked="requirement.standards.some(s=>s.aspectId===a.id)" @change="toggleAspect(a.id,($event.target as HTMLInputElement).checked)"/>{{a.name}}</label><p class="muted">Claim 判据：{{a.criterion}}</p><label v-if="requirement.standards.some(s=>s.aspectId===a.id)">{{a.name}}达标标准<textarea v-model="requirement.standards.find(s=>s.aspectId===a.id)!.text" rows="3" placeholder="说明需要哪些表现、覆盖和条件；不要只填一个分数。"/></label></div></fieldset>
+      <label>要求的方法覆盖<select aria-label="要求的方法覆盖" v-model="requirement.methodMode"><option value="any">任选一种达标（只选一种时为指定方法）</option><option value="all">所选方法分别达标</option></select></label>
+      <p class="muted">{{requirement.methodMode==='all'?'所选方法分别满足下方各项标准，按每种方法实际取得的证据核对。':'同一种方法满足本项全部标准，即可满足这项要求。'}}</p>
+      <details v-if="requirement.methods.length"><summary>查看所选方法的执行判据</summary>
+        <p v-for="m in requirement.methods" :key="m">{{methodName(m)}} · {{executionCriteria(selectedClaim,m).map(c=>c.name).join('、')||'待配置'}}</p></details>
+      <fieldset class="object-fieldset"><legend>评价方面与达标标准</legend><div v-for="a in selectedClaim.aspects.filter(a=>a.enabled)" :key="a.id" class="entry-editor"><label class="check-line"><input type="checkbox" :checked="requirement.standards.some(s=>s.aspectId===a.id)" @change="toggleAspect(a.id,($event.target as HTMLInputElement).checked)"/>{{a.name}}</label><details v-if="requirement.methods.length"><summary>查看所选方法的「{{a.name}}」评价规则</summary>
+        <div v-for="m in requirement.methods" :key="m" class="goal-aspect-rule"><strong>{{methodName(m)}}</strong>
+          <p>{{aspectRule(selectedClaim,m,a.id).judgment||'判断依据待填写'}}</p>
+          <p class="muted">需要的证据 · {{aspectRule(selectedClaim,m,a.id).condition||'待填写'}}</p>
+        </div></details><label v-if="requirement.standards.some(s=>s.aspectId===a.id)">{{a.name}}达标标准<textarea v-model="requirement.standards.find(s=>s.aspectId===a.id)!.text" rows="3" placeholder="说明需要哪些表现、覆盖和条件；不要只填一个分数。"/></label></div></fieldset>
       <p v-for="s in requirement.standards.filter(s=>!selectedClaim!.aspects.some(a=>a.id===s.aspectId&&a.enabled))" :key="s.aspectId" class="callout amber">原标准对应的方面已不适用：{{selectedClaim.aspects.find(a=>a.id===s.aspectId)?.name||s.aspectId}}。<button class="btn" @click="toggleAspect(s.aspectId,false)">移除失效方面标准</button></p>
       <label v-if="omitted.length">未纳入方面的依据<textarea v-model="requirement.omissionReason" rows="3" :placeholder="'本目标未纳入：'+omitted.map(a=>a.name).join('、')"/></label>
-      <label class="check-line"><input v-model="requirement.checked" type="checkbox"/>已核对：范围在 Claim 内，方法条件兼容，标准没有改变 Claim 的含义</label><p class="muted">此项由管理员判断语义；mock 只检查引用和填写完整性。暂无证据、未到延迟时间不是裁剪依据。</p>
+      <details v-if="requirement.methodMode==='all'&&requirement.methods.length"><summary>预览各方法的达标要求</summary><MethodStandards :claim="selectedClaim" :requirement="requirement"/></details>
+      <label class="check-line"><input v-model="requirement.checked" type="checkbox"/>已核对：范围在 Task 内，所选方法和达标标准适用</label><p class="muted">此项由管理员判断语义；mock 只检查引用和填写完整性。暂无证据、未到延迟时间不是裁剪依据。</p>
     </template>
     <footer class="dialog-footer"><button class="btn" @click="mode=''">取消</button><button class="btn primary" :disabled="blocked||!selectedClaim" @click="saveRequirement">保存学习要求</button></footer>
   </WorkbenchDialog>
@@ -136,5 +145,6 @@ function compatible(c:Claim){return current.value?candidateIssues(current.value,
 </section></template>
 
 <style scoped>
+.goal-aspect-rule{border-left:2px solid #c5d8cb;padding:4px 12px;margin:8px 0}.goal-aspect-rule p{margin:4px 0}
 .row-between h3{margin:0}.requirement-card{border-top:1px solid #dde7e0;padding:20px 0 4px;margin-top:14px}.requirement-card .row-between{align-items:start}.standards-table{margin-top:20px}.standards-table th:first-child{width:140px}.standards-table td{vertical-align:top}.field-list small{display:block;margin-top:6px}.panel summary{cursor:pointer;color:#31543f}.button-row a{margin-right:16px}.check-line small{margin-left:auto}
 </style>

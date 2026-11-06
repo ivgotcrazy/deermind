@@ -36,7 +36,12 @@ function remove() { deleteImport(deleting.value); deleting.value = ''; }
 </script>
 
 <template><div class="app">
-  <aside class="sidebar"><div class="sidebar-brand"><span>🦌</span><strong>DeerMind</strong><span class="brand-tag">M1</span></div><nav aria-label="后台导航"><span class="nav-group-label">内容与模型</span><button class="nav-item" :class="{active:isDomain}" :aria-current="isDomain?'page':undefined" @click="goDomain">◈　领域管理</button><button class="nav-item" :class="{active:isTextbook}" :aria-current="isTextbook?'page':undefined" @click="go()">📚　教材管理</button><button class="nav-item" :class="{active:isEvaluation}" :aria-current="isEvaluation?'page':undefined" @click="goModel('evaluation')">◇　评估管理</button><button class="nav-item" :class="{active:isTarget}" :aria-current="isTarget?'page':undefined" @click="goModel('targets')">◎　学习目标管理</button></nav><footer class="sidebar-footer">管理员 · 交互原型</footer></aside>
+  <aside class="sidebar"><div class="sidebar-brand"><span>🦌</span><strong>DeerMind</strong><span class="brand-tag">M1</span></div><nav aria-label="后台导航"><span class="nav-group-label">内容与模型</span>
+    <button class="nav-item" :class="{active:isDomain}" :aria-current="isDomain?'page':undefined" @click="goDomain"><span class="nav-icon" aria-hidden="true">🧩</span>领域管理</button>
+    <button class="nav-item" :class="{active:isTextbook}" :aria-current="isTextbook?'page':undefined" @click="go()"><span class="nav-icon" aria-hidden="true">📚</span>教材管理</button>
+    <button class="nav-item" :class="{active:isEvaluation}" :aria-current="isEvaluation?'page':undefined" @click="goModel('evaluation')"><span class="nav-icon" aria-hidden="true">📋</span>评估管理</button>
+    <button class="nav-item" :class="{active:isTarget}" :aria-current="isTarget?'page':undefined" @click="goModel('targets')"><span class="nav-icon" aria-hidden="true">🎯</span>目标管理</button>
+  </nav><footer class="sidebar-footer">管理员 · 交互原型</footer></aside>
   <main class="main-content"><div class="workbench-context"><strong>M1 独立原型</strong><span>Mock 数据保存在本浏览器 · 未连接真实模型服务</span></div><div v-if="storageError&&!isDomain" class="callout danger" role="alert">{{storageError}}</div>
     <div class="page-container"><DomainWorkspace v-if="isDomain" :hash="hash"/><EvaluationWorkspace v-else-if="isEvaluation" :hash="hash"/><TargetWorkspace v-else-if="isTarget" :hash="hash"/><TextbookImport v-else-if="draft" :key="draft.id" :draft="draft" :hash="hash" @back="go()"/>
       <section v-else class="wb-page"><header class="page-header"><div><h2>教材管理</h2><p class="page-desc">解析教材内容，提交领域入库，再建立章节与任务、方法的关联。</p></div><button class="btn primary" :disabled="!!storageError" @click="create">导入教材</button></header>
