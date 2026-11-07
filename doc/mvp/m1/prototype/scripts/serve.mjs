@@ -17,7 +17,7 @@ export function createPreviewServer() {
         response.end(JSON.stringify({ name: 'deermind-m1-prototype', pid: process.pid, root: project })); return;
       }
       const name = ['/', '/admin/', '/admin', '/index.html'].includes(url.pathname) ? 'index.html' : decodeURIComponent(url.pathname).replace(/^\/+/, '');
-      const file = path.resolve(directory, name);
+      const file = path.resolve(directory, /^student\/?$/.test(name) ? 'student/index.html' : name);
       if (!file.startsWith(directory + path.sep)) { response.writeHead(404).end(); return; }
       const bytes = await readFile(file);
       response.writeHead(200, { 'Content-Type': mime[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
