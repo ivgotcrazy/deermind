@@ -31,21 +31,24 @@ function resultMatches() {
     <button v-if="turn.card!=='diagram'" @click="emit('action','diagram','没懂，画给我看')">没懂，画给我看</button>
     <button v-if="turn.card!=='formula'" @click="emit('action','formula','为什么能写成乘法？')">为什么能写成乘法？</button>
     <button @click="emit('action','offer','我想测一下')">我想测一下</button>
+    <button @click="emit('action','question','先问一个问题：分母为什么不能为零？')">先问一个相关问题</button>
     <button @click="emit('action','finish','先到这里')">先到这里</button>
   </div>
   <div v-if="turn.card==='offer' && latest" class="lesson-actions"><button class="primary" @click="emit('action','check','开始检测')">开始检测</button><button @click="emit('action','finish','今天先到这里')">先到这里</button></div>
   <section v-if="turn.check" class="test-card">
-    <header><strong>自己试一题</strong><small>{{turn.check.status==='answering'?'作答中':'本次检测已结束'}}</small></header>
+    <header><strong>自己试一题</strong><small>{{turn.check.status==='answering'?'检测轮作答中':'本轮已结束'}}</small></header>
     <p>{{items[turn.check.item].text}}</p>
-    <template v-if="turn.check.status==='answering'">
+    <template v-if="turn.check.status==='answering' && latest">
       <label>我的答案（{{items[turn.check.item].unit}}）<input :value="turn.check.answer" @input="edit('answer',$event)"></label>
       <label>我是怎么想的？<textarea rows="2" placeholder="四分之一指哪个量？" :value="turn.check.reason" @input="edit('reason',$event)"></textarea></label>
       <div class="lesson-actions"><button class="primary" :disabled="!turn.check.answer.trim()" @click="emit('finishCheck','submitted')">提交作答</button><button @click="emit('finishCheck','help')">结束检测并求助</button><button @click="emit('finishCheck','stopped')">先到这里</button></div>
     </template>
+    <p v-else-if="turn.check.status==='answering'">本轮已暂停，继续学习后可以恢复作答。</p>
     <template v-else>
       <p><b>{{turn.check.status==='submitted'?'我的作答':'未提交的草稿'}}</b><br>{{turn.check.answer || '未填写'}}<template v-if="turn.check.reason"><br>{{turn.check.reason}}</template></p>
-      <div v-if="turn.check.status==='submitted'" class="response-note"><strong>本题反馈</strong><p>{{resultMatches()?'结果正确。':'可以对照参考算式再看看。'}} {{items[turn.check.item].steps}}</p><p>{{turn.check.reason?'你写下了理由。可对照：四分之一指原来的数量，新增部分要加回原量。':'这次只看到了结果。你愿意说说四分之一指哪个量吗？'}}</p></div>
-      <div v-if="turn.check.status==='help'" class="response-note"><strong>提示</strong><p>先找原来的量，把它平均分成四份。新增的是其中一份，题目问的是增加以后的总量。</p></div>
+      <div v-if="turn.check.status==='submitted'&&turn.feedback" class="response-note"><strong>本题反馈 · 固定参考核对</strong><p>{{resultMatches()?'结果正确。':'可以对照参考算式再看看。'}} {{items[turn.check.item].steps}}</p><p>理由与个人掌握尚未交给真实评价模型判断。</p></div>
+      <p v-else-if="turn.check.status==='submitted'">已收到本轮作答。可以继续下一轮，或先结束检测查看反馈。</p>
+      <div v-if="turn.check.status==='help'" class="response-note"><strong>本轮因求助结束</strong><p>草稿已保留，原计划未开始的轮次已取消。点击下方讲解后才展示帮助；旧轮不能重新提交。</p></div>
       <div v-if="latest && turn.check.status!=='stopped'" class="lesson-actions"><button @click="emit('action','diagram','用图再讲一次')">用图再讲一次</button><button @click="emit('action','finish','先到这里')">先到这里</button></div>
     </template>
   </section>

@@ -108,10 +108,10 @@ test('聊天内讲解、追问、答题与求助（四分之一 mock）',async t
   await page.reload();
   await expect(first.getByLabel('我的答案（本）')).toHaveValue('120 ÷ 4');
   await button('结束检测并求助').click();
-  await expect(first).toContainText('本次检测已结束');
+  await expect(first).toContainText('本轮已结束');
   await expect(first).toContainText('未提交的草稿');
   await expect(first).toContainText('120 ÷ 4');
-  await expect(first).toContainText('提示');
+  await expect(first).toContainText('草稿已保留');
   await expect(first.getByRole('textbox')).toHaveCount(0);
   await button('用图再讲一次').click();
   await expect(page.locator('figure').last()).toContainText('每格 30 本');
@@ -121,8 +121,9 @@ test('聊天内讲解、追问、答题与求助（四分之一 mock）',async t
   await expect(second).toContainText('48 升');
   await second.getByLabel('我的答案（升）').fill('60');
   await button('提交作答').click();
+  await button('结束本次检测').click();
   await expect(second).toContainText('结果正确');
-  await expect(second).toContainText('只看到了结果');
+  await expect(second).toContainText('理由与个人掌握尚未交给真实评价模型判断');
   await button('先到这里').click();
   await expect(page.getByRole('log')).toContainText('今天先到这里');
 });

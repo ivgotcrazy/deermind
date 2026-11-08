@@ -1,8 +1,9 @@
 import { reactive, ref } from 'vue';
 
-export interface TeachingStage { id:string; name:string; purpose:string; inputs:string; approach:string; outputs:string; strategies:string[] }
+export interface NodeRouting { when:string; otherwise:string }
+export interface TeachingStage { id:string; name:string; purpose:string; inputs:string; approach:string; outputs:string; strategies:string[]; rules?:string[]; actions?:string; blocked?:string; routing?:NodeRouting }
 export interface TeachingTransition { id:string; from:string; to:string; label:string; condition:string; basis:string }
-export interface TeachingBlueprint { name:string; purpose:string; stages:TeachingStage[]; transitions:TeachingTransition[] }
+export interface TeachingBlueprint { name:string; purpose:string; stages:TeachingStage[]; transitions:TeachingTransition[]; startRouting?:NodeRouting }
 export interface TeachingStrategy {
   id:string; name:string; purpose:string; when:string; avoid:string; inputs:string;
   organization:string; help:string; observe:string; adjust:string; end:string;
@@ -21,12 +22,12 @@ const strategies:TeachingStrategy[]=[
   {id:'retention',name:'间隔巩固',purpose:'在间隔后检验并加强保持。',when:'已有初步学习结果，且到了需要再次观察的适当时点。',avoid:'在同一轮立即重复作答，就宣称已经验证持久性。',inputs:'时间间隔、期间学习与帮助、当前目标及相关表现。',organization:'先尝试回忆和应用，再按需反馈与补教。',help:'区分回忆前后提供的帮助。',observe:'在明确的间隔和帮助条件下能否再次完成。',adjust:'依据实际困难补教；不因时间流逝直接判定能力下降。',end:'本次观察和必要反馈完成，或学生选择停止。',basis:'间隔学习与提取练习；具体间隔尚未确定。',examples:'后续另一次使用中，重新检查连续两级数量关系。当前蓝图不增加预约或推送。',enabled:false,version:1},
 ];
 
-const blueprint:TeachingBlueprint={name:'有明确学习重点的教学',purpose:'用于章节讲解与问题求助；根据学生情况跳过、返回或展开阶段，不要求一次讲完整章。',stages:[
+const blueprint:TeachingBlueprint={name:'有明确学习重点的教学',purpose:'用于讲解活动；根据学生情况跳过、返回或展开蓝图节点，不要求一次讲完整章。',stages:[
   {id:'focus',name:'明确本次学习重点',purpose:'把请求收束为当前先处理的学习问题。',inputs:'学生请求、当前课程目标、教材或题目。',approach:'请求明确时直接采用；范围较大时与学生确定先处理的重点，不改写正式达标标准。',outputs:'本次重点、目标引用及暂未处理的范围。',strategies:[]},
   {id:'entry',name:'确定学习起点',purpose:'依据已有信息选择从哪里开始。',inputs:'当前重点、已有 Belief、近期表现与帮助记录。',approach:'优先使用已有信息；只澄清会影响选择的关键问题，不强制前测。未知不等于不会。',outputs:'选择的起点、依据及尚不清楚的部分。',strategies:[]},
-  {id:'teach',name:'讲解与互动',purpose:'理解本次关键问题，并获得尝试应用的基础。',inputs:'当前疑问、相关 Task / Solution / KC、实际表现和帮助。',approach:'每次处理一个关键问题，由学生选择继续、追问或尝试。需要时在本阶段内切换教法。',outputs:'实际展示内容、学生回应、实际帮助及尚未解决的疑问。',strategies:['foundation','example','contrast']},
+  {id:'teach',name:'讲解与互动',purpose:'理解本次关键问题，并获得尝试应用的基础。',inputs:'当前疑问、相关 Task / Solution / KC、实际表现和帮助。',approach:'每次处理一个关键问题，由学生选择继续、追问或尝试。需要时在本节点内切换教法。',outputs:'实际展示内容、学生回应、实际帮助及尚未解决的疑问。',strategies:['foundation','example','contrast']},
   {id:'practice',name:'练习与应用',purpose:'通过尝试应用逐渐接手关键工作。',inputs:'练习目的、合适题目、允许的帮助和先前表现。',approach:'练习可逐题反馈、提示和补充解释；变化任务应明确变化范围。',outputs:'原始作答、订正、实际帮助与下一步需要。',strategies:['practice','transfer']},
-  {id:'check',name:'检测与反馈',purpose:'在明确条件下获取表现，结束后统一反馈。',inputs:'检测目的、范围、题目、帮助条件及学生同意。',approach:'开始前说明安排；进行中不泄露对错。实质求助先结束整个检测，再返回教学；未做部分保持未检测。',outputs:'已测与未测内容、原作答、帮助条件及适用的 Evaluation 结果或未决项。',strategies:[]},
+  {id:'check',name:'检测与反馈',purpose:'等待检测子活动返回，在本节点接收结果；检测轮在子活动中执行。',inputs:'检测目的、范围、题目、帮助条件及学生同意。',approach:'开始前说明安排；进行中不泄露对错。由检测子活动管理检测轮；实质求助先结束当前轮，再进入其讲解或答疑子活动。未做部分保持未检测。',outputs:'已测与未测内容、原作答、帮助条件及适用的 Evaluation 结果或未决项。',strategies:[]},
   {id:'summary',name:'总结本次学习',purpose:'说明实际完成了什么、哪些尚不能判断。',inputs:'本次教学、练习、检测及有效评价结果。',approach:'区分听过、受助完成与符合检测条件的表现；学生可以选择后续行动。',outputs:'学生可读的小结、待验证部分与可选下一步；结束不自动达标。',strategies:[]},
 ],transitions:[
   {id:'start-focus',from:'start',to:'focus',label:'开始',condition:'学生发起或接受本次学习。',basis:'学生请求及当前空间。'},
@@ -48,11 +49,11 @@ const blueprint:TeachingBlueprint={name:'有明确学习重点的教学',purpose
 export const teachingSceneBlueprint=copyTeaching(blueprint);
 export const teachingSceneStrategies=copyTeaching(strategies);
 export const teachingBlueprintDraft=ref(copyTeaching(blueprint));
-export const teachingMock=reactive({revision:1,blueprint,strategies,rules:[
+export const teachingMock=reactive({revision:1,blueprint,strategies,activityRules:['repeat','selection','claims','stop','conflict'],activityStrategies:['adaptive'],rules:[
   {id:'meaning',name:'说明关键关系',when:'进行概念或方法讲解时。',requirement:'说明关键步骤为什么成立，不能只有计算过程；允许图示、动作和朴素表达。',basis:'概念与计算联系的教学参考。',enabled:true,version:1},
   {id:'support',name:'根据表现调整帮助',when:'学生尝试完成任务时。',requirement:'能接手时减少帮助；持续困难时调整解释或材料，不机械追加相同题目。',basis:'支架支持与逐步撤去帮助的设计参考。',enabled:true,version:1},
   {id:'repeat',name:'避免无目的重复',when:'已完成一轮解释或练习后。',requirement:'再次讲解或出题应说明具体目的；信息不足不等于学生不会。',basis:'控制负担；当前执行条件仍待验证。',enabled:true,version:1},
-  {id:'selection',name:'按当前目标和表现选择',when:'多种策略都可能适用，或需要切换策略时。',requirement:'结合当前目标、学生请求、实际表现与已提供的帮助选择，推荐均不适用时，可在当前阶段内采用其他教法，仍须遵守教学规则与系统约束。只澄清会改变选择的关键问题。',basis:'DeerMind 当前教学设计假设；不把局部判断写为新的能力状态。',enabled:true,version:1},
+  {id:'selection',name:'按当前目标和表现选择',when:'多种策略都可能适用，或需要切换策略时。',requirement:'结合当前目标、学生请求、实际表现与已提供的帮助选择，推荐均不适用时，可在当前节点内采用其他教法，仍须遵守教学规则与系统约束。只澄清会改变选择的关键问题。',basis:'DeerMind 当前教学设计假设；不把局部判断写为新的能力状态。',enabled:true,version:1},
 ] as TeachingRule[],history:[{version:1,at:'初始示例',change:'建立默认教学蓝图、六类策略和教学规则。'}]});
 
 const storageKey='deermind-m1-teaching-v1';
@@ -66,22 +67,45 @@ try {
     teachingBlueprintDraft.value=copyTeaching(teachingMock.blueprint);
   }
 } catch {teachingStorageError.value='已保存的教学配置无法读取，本页临时使用默认模型。';}
+
+// Fill newly introduced fields without replacing saved nodes, routes or definitions.
+const additionalRules:TeachingRule[]=[
+  {id:'claims',name:'表达不直接等于掌握',when:'学生说懂了，或本次说明已经完成。',requirement:'记录实际表达和表现；不能直接宣布达标或修改 Belief。评价由 Evaluation 负责。',basis:'M1 已确认的教学与评价边界。',enabled:true,version:1},
+  {id:'stop',name:'尊重暂停与结束',when:'学生明确要求暂停或结束。',requirement:'优先停止新增教学动作，保留进度与未解决内容；结束不要求先答对。',basis:'M1 已确认的活动退出规则。',enabled:true,version:1},
+  {id:'conflict',name:'规则冲突与子活动边界',when:'无法同时遵守规则，或调用子活动。',requirement:'停止冲突动作，澄清或带未决项结束，不自行豁免规则。子活动使用自己的活动级与节点级配置，父活动保留返回位置；系统约束始终生效。',basis:'M1 活动作用范围约定；本原型不自动识别语义冲突。',enabled:true,version:1},
+];
+for(const rule of additionalRules)if(!teachingMock.rules.some(r=>r.id===rule.id))teachingMock.rules.push(rule);
+if(!teachingMock.strategies.some(s=>s.id==='adaptive'))teachingMock.strategies.push({id:'adaptive',name:'短回应与逐步展开',purpose:'让当前信息量适合学生需要，避免一次输出过多内容。',when:'回应、说明或总结可以分段，学生希望逐步了解。',avoid:'拆分会破坏必要的完整说明，或学生明确希望看到完整过程。',inputs:'当前节点目的、学生请求和实际回应。',organization:'先回应关键部分，再按需要补充图示、例子或细节。',help:'按当前节点允许动作提供帮助，不突破检测及其他系统约束。',observe:'学生是否仍有明确疑问，是否希望继续。',adjust:'可调整详略或改用其他合规教法；无需强制采用本策略。',end:'当前说明已足够，或需要换表达。',basis:'M1 推荐策略示例，实际效果待验证。',examples:'先解释增加量以原量为参照，学生追问后再画线段图。',enabled:true,version:1});
+const nodeDefaults:Record<string,{rules:string[];actions:string;blocked:string}>={
+  focus:{rules:[],actions:'复述当前请求，澄清范围，确认先处理的问题；不改写正式目标。',blocked:'缺少题目或学习范围时询问必要信息；学生不再提供时保留未决项并暂停或结束。'},
+  entry:{rules:[],actions:'查看已有学习信息，澄清会影响起点的疑问，提出讲解、练习或检测建议。未知不等于不会。',blocked:'证据不足时保持未知，可用简短澄清确定起点；无法可靠选择时说明不足，不编造能力结论。'},
+  teach:{rules:['meaning'],actions:'解释关键关系，换图示或例子，澄清当前步骤，邀请学生表达或尝试。局部回应留在本节点；独立疑问或系统回补转交相应子活动。正式检测须转入检测活动。',blocked:'信息不足时澄清；已有说明无效时换表达或回补前提。内容无法核实时停止相关讲解并说明限制；规则冲突时停止冲突动作。可保留未解决问题暂停或结束，不无限重讲。'},
+  practice:{rules:['support'],actions:'提出引导练习，接收尝试，提供反馈或提示，按实际表现调整帮助；保留原作答，不冒充独立检测。',blocked:'题目有误或条件不足时停止该题，说明问题；持续困难时返回讲解，学生不愿继续时保留记录并结束。'},
+  check:{rules:[],actions:'说明检测目的和条件，经学生同意调用检测子活动；等待返回，再解释记录与可用评价，不在父节点执行检测轮。',blocked:'条件未满足时不启动检测；子活动未返回时等待或按暂停退出规则处理。没有有效评价时如实标明未确认。'},
+  summary:{rules:[],actions:'总结实际说明、表现、帮助及未解决内容，可建议下一步；不直接写入能力状态。',blocked:'记录不全时只总结可确认部分，列明未决项后结束；不为完成总结而虚构结果。'},
+};
+for(const node of teachingMock.blueprint.stages){const defaults=nodeDefaults[node.id];node.rules??=defaults?.rules||[];node.actions??=defaults?.actions||'围绕本节点目的开展工作；具体允许动作待补充。';node.blocked??=defaults?.blocked||'信息不足时澄清，无法可靠继续时停止相关动作并保留未决项。';}
+teachingBlueprintDraft.value=copyTeaching(teachingMock.blueprint);
 export function recordTeachingChange(change:string){
   teachingMock.revision++;
   teachingMock.history.unshift({version:teachingMock.revision,at:new Date().toLocaleString('sv-SE',{hour12:false}),change});
   try {localStorage.setItem(storageKey,JSON.stringify(teachingMock));teachingStorageError.value='';}
   catch {teachingStorageError.value='当前修改只在本页有效，浏览器存储未成功。';}
 }
-export function validateTeachingBlueprint(value:TeachingBlueprint):string {
+export function validateTeachingBlueprint(value:TeachingBlueprint,definitions:{rules:TeachingRule[];strategies:TeachingStrategy[]}=teachingMock):string {
   if(!value.name.trim()||!value.purpose.trim())return '请填写蓝图名称与用途。';
-  if(!value.stages.length)return '蓝图至少需要一个教学阶段。';
+  if(!value.stages.length)return '蓝图至少需要一个教学节点。';
   const ids=new Set(['start','end',...value.stages.map(s=>s.id)]);
+  if(ids.size!==value.stages.length+2)return '节点标识重复或占用了预置的开始、结束标识。';
+  if(!value.transitions.some(e=>e.from==='start')||!value.transitions.some(e=>e.to==='end'))return '请保留从开始进入流程和通往结束的连接。';
   for(const s of value.stages){
-    if(!s.name.trim()||!s.purpose.trim()||!s.inputs.trim()||!s.outputs.trim())return `请补齐「${s.name||'未命名阶段'}」的名称、目的、输入与结果。`;
-    if(s.strategies.some(id=>!teachingMock.strategies.some(x=>x.id===id)))return `「${s.name}」引用了不存在的策略。`;
+    if(!s.name.trim()||!s.purpose.trim()||!s.inputs.trim()||!s.outputs.trim())return `请补齐「${s.name||'未命名节点'}」的名称、目的、输入与结果。`;
+    if(s.strategies.some(id=>!definitions.strategies.some(x=>x.id===id)))return `「${s.name}」引用了不存在的策略。`;
+    if(!s.actions?.trim()||!s.blocked?.trim())return `请补齐「${s.name}」的允许动作和无法继续时的处理。`;
+    if(s.rules?.some(id=>!definitions.rules.some(x=>x.id===id)))return `「${s.name}」引用了不存在的规则。`;
   }
   for(const e of value.transitions){
-    if(!ids.has(e.from)||!ids.has(e.to)||e.from==='end'||e.to==='start'||e.from===e.to)return '有连接的起点或终点不正确，请修正后保存。';
+    if(!ids.has(e.from)||!ids.has(e.to)||e.from==='end'||e.to==='start')return '有连接的起点或终点不正确，请修正后保存。';
     if(!e.label.trim()||!e.condition.trim()||!e.basis.trim())return '请补齐每条连接的名称、转移条件和判断依据。';
   }
   function reachable(start:string,reverse=false){const seen=new Set([start]),queue=[start];while(queue.length){const id=queue.shift()!;for(const e of value.transitions){const from=reverse?e.to:e.from,to=reverse?e.from:e.to;if(from===id&&!seen.has(to)){seen.add(to);queue.push(to);}}}return seen;}
@@ -105,7 +129,7 @@ export const teachingScenes:TeachingScene[]=[
   {id:'explanation',name:'会算但解释不清',starting:'学生算出 3 人，理由是“看到两个分数就乘起来”。',path:'确定起点 → 对比辨析 → 新题练习 → 收束',steps:[
     {id:'entry',stage:'entry',title:'正确结果不代表理由已经明确',student:'12×1/3×3/4=3。看到两个分数就乘起来。',tutor:'你得到了 3 人。我们再看看第二个分数描述的是哪一组人数。',reason:'需要确认关键关系；不能仅因这句话就断定不理解。',observe:'学生能否指认、画图或解释参照数量。',evidence:'当前问题是解释信息不足，不是正式的能力失败结论。',next:'contrast'},
     {id:'contrast',stage:'teach',strategy:'contrast',title:'只改变一个关键条件',student:'两道题有什么不同？',tutor:'两题都保留气象 12 人、摄影占 1/3。A：航模是摄影的 3/4。B：航模是气象的 3/4。两题的 3/4 分别针对谁？',reason:'基础材料可理解，采用对比辨析聚焦参照数量。',observe:'能否说明 A 对应摄影人数，B 对应气象人数。',evidence:'B 是辨析材料，不作为连续两级关系任务的检测成绩。',choices:[{label:'能指出 4 人与 12 人的区别',next:'practice'},{label:'仍认为两种说法相同',next:'foundation'},{label:'希望直接听解释',next:'explain'}]},
-    {id:'foundation',stage:'teach',strategy:'foundation',title:'同一阶段内换教法',student:'我还是觉得都是 12 的四分之三。',tutor:'先看两组图：气象是 12 人，摄影是其中的 4 人。我们把“摄影的四分之三”圈在这 4 人里面。',reason:'辨析没有解决疑问，改用具体图示建立关系，不让学生反复猜。',observe:'是否能把题干中的对象对应到图中。',evidence:'阶段仍是讲解与互动；策略由对比辨析切换为概念回补。',next:'practice'},
+    {id:'foundation',stage:'teach',strategy:'foundation',title:'同一节点内换教法',student:'我还是觉得都是 12 的四分之三。',tutor:'先看两组图：气象是 12 人，摄影是其中的 4 人。我们把“摄影的四分之三”圈在这 4 人里面。',reason:'辨析没有解决疑问，改用具体图示建立关系，不让学生反复猜。',observe:'是否能把题干中的对象对应到图中。',evidence:'节点仍是讲解与互动；策略由对比辨析切换为概念回补。',next:'practice'},
     {id:'explain',stage:'teach',strategy:'contrast',title:'响应直接讲解请求',student:'直接给我讲清楚吧。',tutor:'A 针对摄影的 4 人，算 4×3/4=3；B 针对气象的 12 人，算 12×3/4=9。区别不在分数，而在分数对应的数量。',reason:'对比策略允许直接解释，不强制猜答案；当前是在策略内调整帮助。',observe:'学生是否愿意用新题尝试。',evidence:'关键关系和结果已经展示，后续须记录帮助。',next:'practice'},
     {id:'practice',stage:'practice',strategy:'practice',title:'用新题尝试应用',student:'30 本书，科技书是 12 本，动物类是这 12 本的一半，所以是 6 本。',tutor:'这次你说明了两层数量关系。我们保留你的原始过程和之前获得的帮助。',reason:'从辨析转入练习，观察是否能够在新题中运用关系。',observe:'关键工作由谁完成，而不只检查最终数字。',evidence:'练习反馈可以即时给出；没有自动开展正式检测。',next:'summary'},
     {id:'summary',stage:'summary',title:'结束本次辨析与练习',student:'我明白这两种说法的区别了。',tutor:'这次重点是分清每个分数对应的数量。已经完成的表现会保留；图示迁移和延迟保持仍需其他适用表现。',reason:'本次可收束，未进行的检测不补算。',observe:'本次疑问是否得到回应。',evidence:'不从一次练习推出全面、持久掌握。'},

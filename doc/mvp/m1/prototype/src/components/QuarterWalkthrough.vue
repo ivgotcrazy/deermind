@@ -11,7 +11,7 @@ const events = ref<Event[]>([{ who: '学生', text: initialQuestion }]);
 const answer = ref('');
 function snapshot() {
   const stage = teachingMock.blueprint.stages.find(s => s.id === 'teach');
-  const recommendations = teachingMock.strategies.filter(s => s.enabled && stage?.strategies.includes(s.id));
+  const recommendations = teachingMock.strategies.filter(s => s.enabled && (teachingMock.activityStrategies.includes(s.id) || stage?.strategies.includes(s.id)));
   return {
     version: teachingMock.revision,
     blueprint: copyTeaching(teachingMock.blueprint),
@@ -24,7 +24,7 @@ function connected(from: string, to: string) {
 const canExplain = computed(() => connected('start','focus') && connected('focus','entry') && connected('entry','teach'));
 const reason = computed(() => {
   switch (phase.value) {
-    case 'question': return canExplain.value ? '已知增加量，疑问是两种算法为何相等。本例没有命中推荐策略，可以在讲解阶段回应。' : '当前蓝图缺少从开始进入讲解的路径。';
+    case 'question': return canExplain.value ? '已知增加量，疑问是两种算法为何相等。本例没有命中推荐策略，可以在讲解节点回应。' : '当前蓝图缺少从开始进入讲解的路径。';
     case 'explanation': return connected('teach','check') ? '本例已准备一题未展示过解法的新题。学生同意后，可从讲解直接进入检测。' : '当前蓝图没有从讲解直接进入检测的连接。';
     case 'testing': return '独立检测进行中。可以提交或求助，提示与参考解法尚不可展示。';
     case 'test-ended': return connected('check','teach') ? '检测已结束。现在可以返回讲解并展示提示。' : '检测已结束。当前蓝图没有返回讲解的连接，暂停提示。';
@@ -83,7 +83,7 @@ function restart() {
     <ol class="quarter-events" aria-label="走查记录" aria-live="polite">
       <li v-for="(event,index) in events" :key="index"><strong>{{event.who}}</strong><p>{{event.text}}</p></li>
     </ol>
-    <details v-if="phase==='question'||phase==='explanation'"><summary>本阶段推荐的策略（{{model.recommendations.length}}）</summary>
+    <details v-if="phase==='question'||phase==='explanation'"><summary>本节点推荐的策略（{{model.recommendations.length}}）</summary>
       <p>{{model.recommendations.join('、') || '当前没有启用的推荐策略。'}}</p>
     </details>
     <p class="callout" role="status">{{reason}}</p>

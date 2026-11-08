@@ -1,0 +1,196 @@
+{
+  "capturedAt": "2026-11-08T00:45:28.756Z",
+  "viewport": [
+    1600,
+    1400
+  ],
+  "data": "独立浏览器固定 mock；不调用 LLM，不改变用户草稿",
+  "screens": [
+    {
+      "id": "IA01",
+      "subject": "讲解蓝图与节点定义",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction",
+      "sha256": "e0be56b1f40337760aa317dfbad78ffaa6a9403785cc0b3ee4db5d117c09d8c8"
+    },
+    {
+      "id": "IA02",
+      "subject": "节点内容、允许动作和无法继续时的处理",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction",
+      "sha256": "289d1bd0521e741fa1c18edd261edde78be5f5e1a01412f9e54859a1d31422aa"
+    },
+    {
+      "id": "IA03",
+      "subject": "节点仅选择本节点规则和推荐策略",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "crop": {
+        "x": 367,
+        "y": 930.234375,
+        "width": 866,
+        "height": 293.21875
+      },
+      "route": "/admin/#/interaction",
+      "sha256": "ee8473bb84bbc8ad44a6cafd1cb9ff264200f15869f0d4ebc0952f06cf690acd"
+    },
+    {
+      "id": "IA04",
+      "subject": "节点内配置有序条件转移",
+      "viewport": {
+        "width": 1600,
+        "height": 2200
+      },
+      "route": "/admin/#/interaction",
+      "sha256": "47d069c3e378bd5f04d06721ad7f3d682a20a94314c99a53d071f218603115de"
+    },
+    {
+      "id": "IA05",
+      "subject": "活动规则与规则定义",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?tab=rules&kind=explanation",
+      "sha256": "6dc7965d973e1e3f9ae335139275859ee0c36a1a1aabe0c3b9667faf48713396"
+    },
+    {
+      "id": "IA06",
+      "subject": "选择对所有节点生效的活动规则",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?tab=rules&kind=explanation",
+      "sha256": "246f30cb3115481d6c786400c5ecae66ff4a84b98f2ea12b3933e264810c66fc"
+    },
+    {
+      "id": "IA07",
+      "subject": "新增规则定义，保存后另选引用位置",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?tab=rules&kind=explanation",
+      "sha256": "7b47b93dca8bae04ff78b47ff493c39e631677c795dbae6ead7ed7a04b6209a3"
+    },
+    {
+      "id": "IA08",
+      "subject": "活动推荐策略与可搜索的策略定义",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?tab=strategies&kind=explanation",
+      "sha256": "fcf7552f9c01d9ce5f587944a15d84b834e8c04653a0743cc03570e25812a6c8"
+    },
+    {
+      "id": "IA09",
+      "subject": "选择活动推荐策略",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?tab=strategies&kind=explanation",
+      "sha256": "b543c710bc590832941bfdbe63d8ed5ace5c15f372197df873f034e7f2dff6fd"
+    },
+    {
+      "id": "IA10",
+      "subject": "策略目的、适用条件及具体组织",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?tab=strategies&id=contrast&returnTo=%23%2Finteraction%3Ftab%3Dstrategies%26kind%3Dexplanation&kind=explanation",
+      "sha256": "896392a9939ebe6b9e129b6f289aa42c32f0a5b7677e983b2e6a56d926556b7d"
+    },
+    {
+      "id": "IA11",
+      "subject": "答疑蓝图及专属节点",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?kind=question",
+      "sha256": "5d12c06cd5afd7237b6be51312677416f8fab7b506d7a892712b5e267ff993fb"
+    },
+    {
+      "id": "IA12",
+      "subject": "检测蓝图及专属节点",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?kind=assessment",
+      "sha256": "276690fc611b5a0fb59e1393d3aa98f74491c86ef5d72a853e1698f8676687dc"
+    },
+    {
+      "id": "IA13",
+      "subject": "自由交谈蓝图及专属节点",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?kind=free",
+      "sha256": "ab9c2cff60806710120c542aa2f1c643c6f3aa27c4d6ab5cd56ce90aca5f2700"
+    },
+    {
+      "id": "IA14",
+      "subject": "帮助后重新准备检测，不恢复旧轮",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?kind=assessment",
+      "sha256": "08873a8d0e294dda13463027dc4213b741a5884b10def5ad683f575c768dd4ad"
+    },
+    {
+      "id": "IS01",
+      "subject": "学生单页：教材、持续对话与讲解",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/student/",
+      "sha256": "a0f73c4dc76284017db7172d96ee09c3af9799573e13de65a58b0c61ff2e28ec"
+    },
+    {
+      "id": "IS02",
+      "subject": "先结束检测轮，保留草稿，尚未给提示",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/student/",
+      "sha256": "6f0770342c9f73720ee7635deef7d1db575324d9daaed36a58e45f757396f5de"
+    },
+    {
+      "id": "IS03",
+      "subject": "检测轮后的讲解子活动，随后可返回主线",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/student/",
+      "sha256": "136fab2f79a0a11ad669ce2e0abd6a305a83ccdca33765a560e3a38374565859"
+    },
+    {
+      "id": "IR01",
+      "subject": "当前浏览器的活动树与运行追溯",
+      "viewport": {
+        "width": 1600,
+        "height": 1400
+      },
+      "route": "/admin/#/interaction?kind=trace",
+      "sha256": "e7814982eeb7264b116d82ed2f6febde5ca178dab3a89d526464e5d266184264"
+    }
+  ]
+}
