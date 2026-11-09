@@ -1,0 +1,147 @@
+{
+  "reviewedAt": "2026-11-09T11:13:42.049346+08:00",
+  "scope": "Accepted review opinions and dedicated textbook Agent; documentation only",
+  "baseline": "src/mvp_foundation/m1/design-reviews/20261109-review-adoption/baseline.json",
+  "documents": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "old": "v0.19",
+      "version": "v0.20",
+      "sha256": "ef997ded0c12a80db82402dfd71b306d648d6811d9a522434d79876cbd52fae5"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "old": "v0.18",
+      "version": "v0.19",
+      "sha256": "86f7e478d403d3f16a3d06a9f7ed164bab1b95c4ad7725288f09987ab4056e3a"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "old": "v0.17",
+      "version": "v0.18",
+      "sha256": "882e03b3d7f4d8444092e684e55b37d5ad6a011a8403f22bf1578d7e49696dcb"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "old": "v0.19",
+      "version": "v0.20",
+      "sha256": "e692957444d685667a19b6849d4992033fe12fd2fd2fafc48f938be838c2a9c2"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "old": "v0.19",
+      "version": "v0.20",
+      "sha256": "dc97d291bb31f79d06d591c54806e6fef45271754dc707294db33890aaa771c2"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "old": "v0.29",
+      "version": "v0.30",
+      "sha256": "7ebd7eed6bb81f1ebcb2ee2cd91916fc33d9f7203c5015db91271f35807bc293"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "old": "v0.20",
+      "version": "v0.21",
+      "sha256": "2556a5b149b6e096d17b088ec72c3346e5a7a1a08cee3498889f5cfb76c348d1"
+    },
+    {
+      "path": "doc/mvp/m1/engineering/README.md",
+      "old": "v0.3",
+      "version": "v0.4",
+      "sha256": "d01101fc403d7f165475fe3476f6d4fc6851cf530d7638df07a96f0d25170360"
+    },
+    {
+      "path": "doc/mvp/m1/validation/README.md",
+      "old": "v0.2",
+      "version": "v0.3",
+      "sha256": "5981adc68f089c7ec84c85105472f00891e18ca60f696df2ba8b38c4a7c47837"
+    },
+    {
+      "path": "doc/concept-design/README.md",
+      "old": "v0.7",
+      "version": "v0.8",
+      "sha256": "f45059773e7e8ee643062e5ad7c154cc6a7f73b836973a07be7663956e5c0a96"
+    },
+    {
+      "path": "doc/system-design/README.md",
+      "old": "v0.5",
+      "version": "v0.6",
+      "sha256": "1b66015c28321b30bc288aad88addd49b6f40fff13219cbc525c1973625f496c"
+    },
+    {
+      "path": "doc/mvp/m1/validation/Validation_Plan.md",
+      "old": null,
+      "version": "v0.1",
+      "sha256": "9553ada4cce1c9ef192561b3485c2c705490917e4bd29d0e286fd2b02950e232"
+    }
+  ],
+  "localLinksChecked": 383,
+  "linkErrors": [],
+  "unchangedMermaidDiagrams": 7,
+  "unchangedImageTargets": 87,
+  "unchangedPrototypeFiles": 114,
+  "unchangedFrozenAssets": 186,
+  "newScreenshots": 0,
+  "testInventory": {
+    "total": 23,
+    "current": 9,
+    "historical": 5,
+    "unlisted": [
+      "tests/activity-editor.test.mjs",
+      "tests/activity-flow.test.mjs",
+      "tests/node-routing.test.mjs",
+      "tests/student-activity-directory.test.mjs",
+      "tests/student-activity-fixture.test.mjs",
+      "tests/student-activity-heading.test.mjs",
+      "tests/student-book-context.test.mjs",
+      "tests/student-entry.test.mjs",
+      "tests/teaching-scope.test.mjs"
+    ]
+  },
+  "numericalReference": {
+    "positive1": 0.7727272727272726,
+    "positive2": 0.9203821656050954,
+    "positive3": 0.9751885668916236,
+    "afterNegative": 0.6980676328502412,
+    "learningTransitionApplied": false
+  },
+  "authorSemanticReview": [
+    {
+      "case": "Dedicated textbook Agent",
+      "result": "Conversational correction of candidates; no manual parser editor; program controls IDs, refs and versions; Domain intake remains separate"
+    },
+    {
+      "case": "Four existing cases",
+      "result": "C02 separate methods, C03 preserve intentional error, C05 recover charts, C06 missing material remains unknown; no new run or expanded correction test scope"
+    },
+    {
+      "case": "Chapter method applicability",
+      "result": "Claim binds Task; aggregate methods with chapter provenance instead of all-chapter intersection; no unrestricted per-chapter union"
+    },
+    {
+      "case": "Help",
+      "result": "Distinguish substantive help, technical confirmation and ambiguous request; enforce round end before help and record actual exposure"
+    },
+    {
+      "case": "Learning opportunity",
+      "result": "Actual delivered complete teaching, stable identity, explicit component attribution; split messages, resume and retry do not add L again"
+    },
+    {
+      "case": "Numerical and empirical quality",
+      "result": "Parameters and target thresholds unchanged; implementation checks separate from held-out calibration; sample precision and pass criteria must be fixed before calibration"
+    },
+    {
+      "case": "Maturity and history",
+      "result": "Old screenshots, prototype, experiment and old model contracts preserved; current indices distinguish navigation fixes from full architecture migration"
+    }
+  ],
+  "notExecuted": [
+    "LLM Agent calls",
+    "Browser acceptance tests",
+    "Probability calibration",
+    "Whole-book modeling acceptance",
+    "Student effectiveness study"
+  ],
+  "result": "PASS: document integrity and author specification review only"
+}

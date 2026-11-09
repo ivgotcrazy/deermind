@@ -1,21 +1,21 @@
 # DeerMind 系统设计文档入口
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **文档性质**：文档导航与使用说明<br>
-> **状态**：当前设计与工作入口；历史验证按原基线解释<br>
+> **状态**：区分既有系统设计基线与当前M1规格；旧正文及实验结论保持<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户确认采纳方案并授权文档同步；作者自检不等于Agent、概率校准或整册运行已验证<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-03<br>
-> **修订说明**：v0.4 → v0.5：更新路线图导航与M1同步设计的当前工作说明，模型及历史结论不变；见[本轮记录](../mvp/DECISIONS.md#11-产品设计同步推进与分包计划)。<br>
+> **更新日期**：2026-11-09<br>
+> **修订说明**：v0.5 → v0.6，明确旧系统基线与M1当前合同的适用边界，补充Domain／Evaluation入口；逐文件记录见M1决定登记§25<br>
 
 ---
 
-当前设计合同为以下七份 v1.4，承接[概念设计与新模型](../concept-design/README.md)。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
+以下七份v1.4为既有系统设计基线，承接[概念设计入口](../concept-design/README.md)；其中旧模型摘要尚未全部按M1迁移，不是可直接照搬的新M1工程规格。当前Domain合同为[v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)，Evaluation为[v1.7](../concept-design/DeerMind_Evaluation_Space_Design_v1.7.md)，具体产品规则以[M1 PRD](../mvp/m1/PRD.md)及设计规格为准，差异由M1-OPEN-04登记。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
 
 **当前工作（2026-11-03）：按M1–M3组织产品迭代，M1的PRD、详细规格和原型按业务包同步推进。** 旧MVP文档及Phase 4资产已归档；单模板多维Claim等已确认规则需逐项承接。当前入口见[MVP文档](../mvp/README.md)。历史G3不等于新M1已通过设计或工程接收。
 
-归档 MVP 基线中的[基础领域演化选择](../mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Definition_v0.2.md#7-模型管理与运行可观察性)及其后续质量责任保留供新文档核对承接；明确确认的决定不因归档自动撤销。此次已同步修订领域/产品 owner、具体问题溯源、Claim 参照、版本依赖与发布路由；历史实验输入与结论保持，也不另开 Evolution Spike。
+归档 MVP 基线中的[基础领域演化选择](../mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Definition_v0.2.md#7-模型管理与运行可观察性)及其后续质量责任保留供新文档核对承接；明确确认的决定不因归档自动撤销。这些基线曾修订领域/产品owner、具体问题溯源、Claim参照、版本依赖与发布路由；当前M1的直接保存与应用、教材Agent及活动／评价合同须重新核对，不恢复旧审核发布流程；历史实验输入与结论保持，也不另开 Evolution Spike。
 
 Architecture Validation Build 已收口，此前 G2 准入与能力分期见[统一 Validation Report §9](build/DeerMind_Architecture_Validation_Build_Validation_Report_v0.3.md#9-build退出评审与能力分期决定)。原 R2 仍为 6/6 段完成路径、14/24 轮内容可用、EVAL-02/04 未满足及原条件 HOLD；R3/R4 失败不改写。Build 退出时 9 项定向机制及回归检查通过，未新增模型调用。R5 未启动，仍是后续工程候选输入，不再作为 Build 退出前置要求。
 
