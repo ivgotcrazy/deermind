@@ -12,14 +12,14 @@ const tree=computed(()=>{const list:{activity:Activity;depth:number}[]=[];functi
 <template>
   <section class="panel"><div class="row-between"><div><h3>本浏览器的学生走查记录</h3><p class="muted">模拟学生 · 北师大版数学六年级上册 · 固定脚本，未生成 Observation、Evidence 或 Belief。</p></div><button class="btn" @click="refresh">刷新记录</button></div>
     <p v-if="error" role="alert">{{error}}</p>
-    <p v-if="!tree.length">还没有活动。<a href="/student/" target="_blank">打开学生端</a>，创建学习空间并开始一次讲解或检测，再回到这里查看。</p>
+    <p v-if="!tree.length">还没有活动。<a href="/student/?mode=records" target="_blank">打开学生端</a>，创建学习空间并开始一次讲解或检测，再回到这里查看。</p>
     <div v-else class="trace-layout">
       <nav aria-label="活动树"><button v-for="row in tree" :key="row.activity.id" :style="{paddingLeft:12+row.depth*18+'px'}" :class="{selected:selected===row.activity.id}" @click="selected=row.activity.id"><strong>{{row.depth?'↳ ':''}}{{row.activity.kind}} · {{row.activity.title}}</strong><small>{{row.activity.status}} · {{row.activity.id}}</small></button></nav>
       <section v-if="activity" aria-label="活动运行详情"><h3>{{activity.title}}</h3><p>运行状态：{{activity.status}} · 当前蓝图节点：{{activity.state}}</p>
         <p>父活动：{{activity.parentId||'顶层活动'}}<template v-if="activity.triggerRound"> · 触发检测轮：{{activity.triggerRound}}</template></p>
         <p v-if="activity.helped">发生求助或讲解：原计划未开始轮次已取消，后续确认使用新题新轮。</p>
         <p v-if="!turns.length" class="muted">当前活动没有新消息。</p>
-        <article v-for="(turn,i) in turns" :key="i"><small>{{turn.chapter}} · 第 {{turn.page}} 页</small><p><b>学生：</b>{{turn.question}}</p><p v-if="turn.reply"><b>DeerMind：</b>{{turn.reply}}</p><p v-if="turn.card">展示内容：{{turn.card}}</p>
+        <article v-for="(turn,i) in turns" :key="i"><small v-if="turn.bookReference">引用教材 · {{turn.bookReference.chapter}} · 第 {{turn.bookReference.page}} 页</small><p><b>学生：</b>{{turn.question}}</p><p v-if="turn.reply"><b>DeerMind：</b>{{turn.reply}}</p><p v-if="turn.card">展示内容：{{turn.card}}</p>
           <div v-if="turn.check"><strong>{{turn.roundId}} · {{turn.check.status}}</strong><p>{{turn.check.status==='submitted'?'提交作答':'草稿'}}：{{turn.check.answer||'未填写'}}<br>理由：{{turn.check.reason||'未填写'}}</p><p>评价：未接入；未作答不判错。</p></div>
         </article>
       </section>

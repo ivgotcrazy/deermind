@@ -10,6 +10,7 @@ button:disabled{opacity:.45;cursor:default}
 .student{height:100dvh;display:flex;flex-direction:column}
 .mast,.course,.chat header,.reader header,.reader footer{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .mast{padding:10px clamp(16px,3vw,44px);background:#1c4335;color:#fff}.mast span{font-size:.8rem}
+.mast a{color:inherit;text-underline-offset:3px}
 .course{padding:10px clamp(16px,3vw,44px);background:#fff;border-bottom:1px solid #d2ded6;flex-wrap:wrap}
 small,.muted,.setup p{color:#51665b}.course small,.setup label{display:block}
 .setup{margin:clamp(30px,9vh,110px) auto auto;background:white;width:min(480px,94%);padding:clamp(18px,4vw,36px);border:1px solid #d2ded6;border-radius:16px}
@@ -33,4 +34,39 @@ small,.muted,.setup p{color:#51665b}.course small,.setup label{display:block}
 .lesson-actions{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.lesson-actions button{font-size:.9rem}
 .test-card{background:white}.chat .test-card header{padding:0;flex-wrap:wrap}.test-card label{display:grid;gap:4px;margin-block:8px}
 .test-card input,.test-card textarea{width:100%;min-width:0}.response-note{border-left:3px solid #72a68c;padding:4px 10px;background:#f0f6f2}
+.chat>.chat-heading{align-items:flex-start;border-bottom:1px solid #e3ebe5;background:#fafcfb}
+.chat-heading>button{flex-shrink:0;font-size:.85rem}.activity-heading{flex:1;min-width:0}
+.activity-path{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;font-size:.85rem}
+.activity-path strong{color:#245b44;font-size:1rem}.path-parent{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#51665b}
+.path-separator{color:#82958a}.path-more{padding:0 6px;background:transparent;font-size:.85rem}
+.path-expanded{display:block;max-height:160px;overflow:auto;overflow-wrap:anywhere}.path-expanded .path-parent{white-space:normal;max-width:none}.path-expanded .path-separator{margin:0 6px}
+.activity-subtitle{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin-top:4px;font-size:.9rem;overflow-wrap:anywhere}
+.activity-state{background:#edf3ee;border-radius:4px;padding:1px 6px;white-space:nowrap}
+.activity-notice{border-top:1px solid #e0e9e3;margin:18px 0 12px;padding-top:10px;color:#446653;font-size:.85rem;overflow-wrap:anywhere}
+.activity-notice strong{font-weight:500}.activity-notice small{display:block;margin-top:3px}.activity-notice button{margin-top:6px;font-size:.8rem}
+.activity-progress{border-top:1px solid #e0e9e3;padding-top:4px}
+.desk.with-directory{width:min(100%,1500px);grid-template-columns:220px minmax(0,1fr)}
+.desk.split.with-directory{grid-template-columns:220px minmax(0,1fr) minmax(0,1.1fr)}
+.with-directory .activity-directory{grid-column:1;grid-row:1/3}.with-directory .chat,.with-directory .composer{grid-column:2}
+.with-directory .chat,.with-directory .reader{grid-row:1}.with-directory .composer{grid-row:2}.with-directory .reader{grid-column:2}
+.split.with-directory .reader{grid-column:3;grid-row:1/3}
+.activity-directory{min-height:0;min-width:0;border:1px solid #d2ded6;border-radius:12px;background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.activity-directory header{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #e3ebe5;gap:8px}
+.activity-directory h2{font-size:1rem;margin:0}.activity-directory header button{font-size:.8rem;padding:3px 8px}
+.directory-scroll{overflow:auto;flex:1;min-height:0;padding:0 6px 12px}.directory-empty{padding:12px;font-size:.85rem}
+.directory-list{list-style:none;margin:0;padding:0}.directory-day{font-size:.75rem;color:#6b7c71;padding:14px 6px 6px}
+.directory-row{display:flex;align-items:flex-start;border-radius:6px;margin:3px 0;border:1px solid transparent}
+.directory-row.current{background:#edf5ef}.directory-row.reviewed{border-color:#599577}
+.directory-toggle,.directory-spacer{width:20px;flex:0 0 20px}.directory-toggle{border:0;background:transparent;padding:7px 0;border-radius:4px}
+.directory-name{border:0;background:transparent;border-radius:5px;flex:1;min-width:0;text-align:left;padding:6px 4px;font-size:.83rem;overflow-wrap:anywhere}
+.directory-name small{display:flex;align-items:center;flex-wrap:wrap;gap:3px 6px;font-size:.7rem}.directory-name b{color:#245b44;font-weight:500}
+.directory-title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:3px}.directory-more{display:block;margin:12px auto 0;font-size:.8rem}
+.directory-backdrop{position:fixed;inset:0;z-index:29;border:0;border-radius:0;background:#182f2555}
+.activity-directory.directory-overlay{position:fixed;z-index:30;left:12px;top:12px;bottom:12px;width:min(280px,calc(100vw - 32px));box-shadow:0 8px 30px #17362533}
+.chat-heading>.directory-open{padding:5px 8px}.review-banner{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 14px;background:#f3f7f0;border-bottom:1px solid #e0e9e3;font-size:.8rem}
+.review-banner div{min-width:0;overflow-wrap:anywhere}.review-banner strong{font-weight:500}.review-banner small{display:block}.review-banner button{font-size:.8rem;flex-shrink:0;padding:4px 7px}
+.activity-highlight{background:#edf5d8;outline:2px solid #89a763;outline-offset:2px;border-radius:4px}
+@media(prefers-reduced-motion:no-preference){.activity-highlight{transition:background-color .2s}}
 @media(max-width:650px){.desk{gap:6px;padding:6px}.desk.split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.reader header,.reader footer,.chat header{padding:7px;flex-wrap:wrap}.reader select{margin:0}.split .reader{grid-row:1}.split .composer{grid-column:1/-1}.transcript,.composer{padding:8px}.paper{padding:2px}.course{gap:4px}.course small{font-size:12px}}
+@media(max-width:650px){.chat-heading .activity-heading{flex-basis:100%}.chat-heading>button{margin-left:auto}}
+@media(max-width:650px){.review-banner{flex-wrap:wrap;padding:6px}.review-banner button{margin-left:auto}}

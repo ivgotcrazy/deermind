@@ -13,7 +13,7 @@ test('学生从书页发问，翻页后保留问题出处、对话和草稿', as
   const page = await browser.newPage({ viewport:{width:1120,height:760} });
   const output = fileURLToPath(new URL('../test-results/student-entry/', import.meta.url));
   await mkdir(output, {recursive:true});
-  await page.goto('http://127.0.0.1:' + server.address().port + '/student/');
+  await page.goto('http://127.0.0.1:' + server.address().port + '/student/?mode=records');
   const button = name => page.getByRole('button', {name,exact:true});
   await expect(button('创建并进入教材')).toBeDisabled();
   await page.getByLabel('教材',{exact:true}).selectOption('BNU-6A');
@@ -58,8 +58,8 @@ test('学生从书页发问，翻页后保留问题出处、对话和草稿', as
   await expect(button('展开对话')).toBeVisible();
   await expect(transcript).toHaveCount(0);
   await page.getByLabel('章节').selectOption('建设适老社会（一）');
-  await expect(prompt).toHaveCount(0);
-  await button('回到可讲解章节').click();
+  await expect(prompt).toHaveValue('草稿');
+  await expect(button('回到可讲解章节')).toHaveCount(0);
   await button('展开对话').click();
   await expect(prompt).toHaveValue('草稿');
   await expect(transcript.locator('article')).toHaveCount(2);
@@ -83,7 +83,7 @@ test('聊天内讲解、追问、答题与求助（四分之一 mock）',async t
   const browser=await chromium.launch();
   t.after(()=>browser.close());
   const page=await browser.newPage({viewport:{width:1120,height:760}});
-  await page.goto('http://127.0.0.1:'+server.address().port+'/student/');
+  await page.goto('http://127.0.0.1:'+server.address().port+'/student/?mode=records');
   const button=name=>page.getByRole('button',{name,exact:true});
   await page.getByLabel('教材',{exact:true}).selectOption('BNU-6A');
   await page.getByLabel('学习目标').selectOption({index:1});
@@ -124,6 +124,8 @@ test('聊天内讲解、追问、答题与求助（四分之一 mock）',async t
   await button('结束本次检测').click();
   await expect(second).toContainText('结果正确');
   await expect(second).toContainText('理由与个人掌握尚未交给真实评价模型判断');
-  await button('先到这里').click();
-  await expect(page.getByRole('log')).toContainText('今天先到这里');
+  // The finished child detection no longer offers actions on its old answer card.
+  await expect(second.getByRole('button')).toHaveCount(0);
+  await button('暂停学习').click();
+  await expect(page.getByRole('log')).toContainText('已暂停讲解');
 });

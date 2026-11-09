@@ -1,0 +1,125 @@
+{
+  "version": "0.1",
+  "capturedAt": "2026-11-08T16:06:28.669Z",
+  "timezone": "Asia/Shanghai",
+  "viewport": {
+    "width": 1440,
+    "height": 1100
+  },
+  "sourceScript": "src/mvp_foundation/m1/design-reviews/20261109-evaluation-trace/capture.mjs",
+  "data": "Fixed mock LS-001/LS-002/LS-003, isolated browser; no real evaluation or LLM",
+  "sources": [
+    {
+      "path": "doc/mvp/m1/prototype/src/components/LearningSpaceWorkspace.vue",
+      "sha256": "7739232f6866c6435d5d883fabc2e109d72f46399252cd3514c9e10fcf1023ea"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/learning-spaces.ts",
+      "sha256": "f5ed214b3935a940e8d58f5e1fe1877996b9c05bbe62c95536c64879170cfaaa"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/learning-spaces.test.mjs",
+      "sha256": "b3d9f4e06dd06f8b982b28284b9b9ec81cdd67f078f006b3ec301c9fb8aefd4d"
+    }
+  ],
+  "captures": [
+    {
+      "id": "EV01",
+      "step": "M1-D06-E01",
+      "description": "学习空间列表：学生、课程和采用目标",
+      "file": "EV01.png",
+      "route": "#/learning-spaces",
+      "sha256": "6f734b4fe6311d7ef54263b734e8a39df75d45a75a1c69fbea49a0d7cc1ffd93"
+    },
+    {
+      "id": "EV02",
+      "step": "M1-D06-E02",
+      "description": "按方法和方面查看目标结果",
+      "file": "EV02.png",
+      "route": "#/learning-spaces?id=LS-001&tab=goal",
+      "sha256": "c1283d9505ff04094a709d697c9ecc45a0134d760919a7f149c97486001cf0d7"
+    },
+    {
+      "id": "EV03",
+      "step": "M1-D06-E03",
+      "description": "当前 Belief 与三条累计有效 Evidence",
+      "file": "EV03.png",
+      "route": "#/learning-spaces?id=LS-001&tab=goal&chapter=fractions&expanded=TT-QUARTER&cell=TT-QUARTER-S1%3Aindependent",
+      "sha256": "6388513e11faa10688cada93862994e0355e715540b7a783dfe5b748619c1be8"
+    },
+    {
+      "id": "EV04",
+      "step": "M1-D06-E04",
+      "description": "单条 Evidence：判据、依据片段及三个来源事件",
+      "file": "EV04.png",
+      "route": "#/learning-spaces?id=LS-001&tab=goal&chapter=fractions&expanded=TT-QUARTER&cell=TT-QUARTER-S1%3Aindependent&evidence=LS-001-EVD-008E-independent",
+      "sha256": "0bc4b05088d96693de0c2d07328e267ca61027a68cb928f18ba05e101fe5a267"
+    },
+    {
+      "id": "EV05",
+      "step": "M1-D06-E05",
+      "description": "来源事件：原始作答及帮助，保持学习目标上下文",
+      "file": "EV05.png",
+      "route": "#/learning-spaces?id=LS-001&tab=goal&chapter=fractions&expanded=TT-QUARTER&cell=TT-QUARTER-S1%3Aindependent&evidence=LS-001-EVD-008E-independent&sourceEvent=LS-001-007",
+      "sha256": "ed2e48deac385d0866b43b6d8c4d259981519f8f439cbdefe00c3a4b36e137a5"
+    },
+    {
+      "id": "EV06",
+      "step": "M1-D06-E06",
+      "description": "纠正后有效证据与折叠的历史证据分开",
+      "file": "EV06.png",
+      "route": "#/learning-spaces?id=LS-001&tab=goal&chapter=fractions&expanded=TT-QUARTER&cell=TT-QUARTER-S1%3Aretention",
+      "sha256": "38eef97d3e2b788c7f538bf5a566579e75ea2f6fc3a766ed2e67e4a8d3ea0508"
+    },
+    {
+      "id": "EV07",
+      "step": "M1-D06-E06",
+      "description": "旧 Evidence 留存，明确被替代并可定位新解释",
+      "file": "EV07.png",
+      "route": "#/learning-spaces?id=LS-001&tab=goal&chapter=fractions&expanded=TT-QUARTER&cell=TT-QUARTER-S1%3Aretention&evidence=LS-001-EVD-017-retention",
+      "sha256": "75ad4746deb1156ddc7500d51bd1fc021f64604357c85a70df6aa874d77363dd"
+    },
+    {
+      "id": "EV08",
+      "step": "M1-D06-E07",
+      "description": "空间事件中的评价处理留痕",
+      "file": "EV08.png",
+      "route": "#/learning-spaces?id=LS-001&tab=events&category=%E8%AF%84%E4%BB%B7%E4%B8%8E%E7%B3%BB%E7%BB%9F",
+      "sha256": "bd0a4138654b7c021a505f2f0a158fe548397b49f098c699aeaada275ab0d6e9"
+    },
+    {
+      "id": "EV09",
+      "step": "M1-D06-E08",
+      "description": "Belief 更新事件：实际前后值与重算基线",
+      "file": "EV09.png",
+      "route": "#/learning-spaces?id=LS-001&tab=events&event=LS-001-020B",
+      "sha256": "b52c683ecf33efbf487184afbee5a217c03cfbc058ed97d6f0d17e428291011c"
+    },
+    {
+      "id": "EV10",
+      "step": "M1-D06-E09",
+      "description": "目标历史事件保留当时通过，当前状态已经需加强",
+      "file": "EV10.png",
+      "route": "#/learning-spaces?id=LS-001&tab=events&event=LS-001-018",
+      "sha256": "d5531c1fca72bff284f1773a4328d4c04f282384374700c5181e88fc1bf15376"
+    },
+    {
+      "id": "EV11",
+      "step": "M1-D06-E10",
+      "description": "未使用方法没有 Evidence，不显示先验为能力",
+      "file": "EV11.png",
+      "route": "#/learning-spaces?id=LS-001&tab=goal&chapter=fractions&expanded=TT-QUARTER&cell=TT-QUARTER-S2%3Aindependent",
+      "sha256": "c8acd234573e6dcd7e1c7355df5ac9e80c20ed007ea8038fb4385ca6aa967207"
+    },
+    {
+      "id": "EV12",
+      "step": "M1-D06-E10",
+      "description": "评价失败事件：保留作答，不制造新证据或进步",
+      "file": "EV12.png",
+      "route": "#/learning-spaces?id=LS-001&tab=events&event=LS-001-032",
+      "sha256": "5d96ce1516aa57600e0e837b2f83833be5d92c3fd3212cba88bec7c7d2f40b08"
+    }
+  ],
+  "errors": [],
+  "apiCalls": []
+}

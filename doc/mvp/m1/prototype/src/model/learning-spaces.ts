@@ -7,11 +7,20 @@ export type Aspect = typeof aspects[number]['id'];
 export type Result = '已达标'|'需加强'|'待确认';
 export type Category = '交流与内容'|'操作与作答'|'活动过程'|'空间与课程'|'评价与系统';
 export const categories:Category[] = ['交流与内容','操作与作答','活动过程','空间与课程','评价与系统'];
+export interface EvidenceRecord {
+  id:string; claim:string; method:string; aspect:Aspect; criterion:string;
+  attempt:string; quote:string; judgment:'支持'|'反证'; reason:string; sources:string[]; replaces?:string[];
+}
+export interface BeliefChange {
+  claim:string; method:string; aspect:Aspect; cell:string; before:number; after:number;
+  evidenceIds:string[]; evidenceEvent:string; previousEvent?:string; baseline?:number; note?:string;
+}
 export interface SpaceEvent {
   id:string; sequence:number; occurredAt:string; recordedAt:string; category:Category;
   type:string; actor:string; summary:string; chapter:string; activity:string;
   fields:{label:string;value:string}[]; causes:string[]; cells:string[];
   table?:{caption:string;columns:string[];rows:string[][]};
+  evidence?:EvidenceRecord[]; beliefChanges?:BeliefChange[];
 }
 export interface GoalCell {
   key:string; aspect:Aspect; required:boolean; requirement:string; status:Result;
@@ -35,7 +44,7 @@ const standards:Record<Aspect,string> = {
   independent:'在“增加四分之一”范围内，完成 2 道不同新题；无当题提示，列式与结果正确。',
   explanation:'结合这 2 道题说明四分之一以哪个量为参照，以及本方法为何能得到新量。',
   transfer:'至少 1 道新题使用此前未练过的表格呈现；能识别原量和增加比例，并正确求解、解释。',
-  retention:'独立与理解要求达标至少 7×24 小时后，完成 1 道新题；无当题帮助且能正确求解。',
+  retention:'独立与理解要求达标至少 7×24 小时后，完成 1 道新题；无当题帮助且能正确求解、解释。',
 };
 function task(id:string,name:string,chapter:string,methodNames:string[]):SpaceTask {
   return {id,claim:'CLAIM-'+id+'@1',name,chapter,mode:'all',methods:methodNames.map((name,i)=>({
@@ -55,6 +64,16 @@ function buildSpace(id:string,student:string,account:string,name:string,scenario
   function event(n:string,time:string,category:Category,type:string,actor:string,summary:string,fields:Record<string,string>,causes:string[]=[],cells:string[]=[],activity='',chapter='fractions',recordedAt=time){
     const e:SpaceEvent={id:ref(n),sequence:s.events.length+1,occurredAt:time,recordedAt,category,type,actor,summary,fields:Object.entries(fields).map(([label,value])=>({label,value})),causes:causes.map(ref),cells,activity,chapter};s.events.push(e);return e.id;
   }
+  // Fixed demonstration records, not an assessment engine. Values use the agreed trial parameters.
+  function evaluation(n:string,time:string,summary:string,attempt:string,source:string,roundEnd:string,quote:string,items:{aspect:Aspect;judgment:'支持'|'反证';reason:string;before:number;after:number}[],previous='',correction=false){
+    const criteria:Record<Aspect,string>={independent:'完整求出新量，且本轮无当题帮助',explanation:'说明参照原量以及为什么要加回原量',transfer:'此前未练过的表格表达中完成求解和解释',retention:'满足延迟条件的新题中完成求解和解释'};
+    const evidence=items.map(x=>({id:ref('EVD-'+n+'-'+x.aspect),claim:fraction.claim,method:fraction.methods[0].name,aspect:x.aspect,criterion:criteria[x.aspect]+' · v1',attempt,quote,judgment:x.judgment,reason:x.reason,sources:[...(s.events.find(e=>e.id===ref(source))?.causes||[]),ref(source),ref(roundEnd)]}));
+    const cells=items.map(x=>key(x.aspect));
+    event(n,time,'评价与系统','Evidence 形成','Evaluation',summary,{Claim:fraction.claim,方法:fraction.methods[0].name,适用条件:'增加四分之一；方法一；原始检测轮无当题帮助',记录性质:correction?'纠正后的解释，替代原错误 Evidence；不是新的作答。':'从原始作答和检测轮记录提取的评价依据，不是新的学生行为。'},[source,roundEnd,...(correction?['019']:[])],cells,attempt==='R3'?'ACT-03 保持检测':'ACT-02 检测');
+    s.events.at(-1)!.evidence=evidence;
+    event(n+'B',time,'评价与系统','Belief 更新','Evaluation',correction?'纠正后更新方法一的能力判断':attempt+' 更新方法一的能力判断',{Belief:ref('BLF-QUARTER')+' · '+fraction.claim,更新方式:correction?'排除错误解释，从受影响项的原有效基线重新计算；不将正负解释算成两次作答。':'按本次有效 Evidence 更新方法及评价方面的分项概率。',算法版本:'M1 分项 BKT 试用 v1 · M1-BELIEF-PARAM-01',说明:'本次仅记录证据更新，无教学预测增量。概率是试用估计，不等于目标达成率。'},[n,...(previous?[previous]:[])],cells,attempt==='R3'?'ACT-03 保持检测':'ACT-02 检测');
+    s.events.at(-1)!.beliefChanges=items.map((x,i)=>({claim:fraction.claim,method:fraction.methods[0].name,aspect:x.aspect,cell:key(x.aspect),before:x.before,after:x.after,evidenceIds:[evidence[i].id],evidenceEvent:ref(n),previousEvent:previous?ref(previous):undefined,note:correction?'反证使相应分项概率下降；被替代的历史更新保留在前序事件中。':previous?'同一作答的不同方面分别判断，不增加题数。':'更新前为试用先验，不代表已检测过。'}));
+  }
   event('001',s.adoptedAt,'空间与课程','空间创建','学生','创建学习空间',{学生:student+' · '+account,空间:name},[],[],'','');
   event('002',s.adoptedAt,'空间与课程','教材与目标采用','学生','选用教材与学习目标',{教材:s.book+' · v1',目标:s.target+' · v1',采用前:'尚未选用',采用后:'教材和目标 v1；范围由目标确定'},['001'],[],'','');
   if(scenario==='full'){
@@ -65,13 +84,20 @@ function buildSpace(id:string,student:string,account:string,name:string,scenario
     event('005A','2026-11-01 09:03:00','交流与内容','学生消息','学生','我想试着做两题',{消息:'讲解看懂了，我想试着做两题。'},['005'],[],'ACT-01 讲解');
     event('005B','2026-11-01 09:03:01','活动过程','子活动开始','Interaction','讲解中进入检测活动',{活动:'ACT-02 检测',父活动:'ACT-01 讲解',当前节点:'准备检测轮'},['005A'],[],'ACT-02 检测');
     event('006','2026-11-01 09:04:00','活动过程','检测轮开始','Interaction','开始新题检测 R1',{活动:'ACT-02 检测，父活动 ACT-01 讲解',检测轮:'R1',题目:'原有 120 本书，增加四分之一后有多少本？',规则:'未结束检测轮前不得给当题提示'},['005B'],[],'ACT-02 检测');
-    event('007','2026-11-01 09:05:00','操作与作答','答案提交','学生','120 本书：提交 150 本并解释',{题目:'原有 120 本书，增加四分之一后有多少本？',作答:'120 ÷ 4 = 30；120 + 30 = 150。四分之一以原来 120 本为参照。',帮助:'本轮未展示当题提示；此前看过 80 本书的讲解。',检测轮:'R1'},['006'],[],'ACT-02 检测');
+    event('007','2026-11-01 09:05:00','操作与作答','答案提交','学生','120 本书：提交 150 本并解释',{题目:'原有 120 本书，增加四分之一后有多少本？',作答:'120 ÷ 4 = 30；120 + 30 = 150。四分之一以原来 120 本为参照，求新量要加回原量。',帮助:'本轮未展示当题提示；此前看过 80 本书的讲解。',检测轮:'R1'},['006'],[],'ACT-02 检测');
     event('008','2026-11-01 09:05:01','活动过程','检测轮结束','Interaction','R1 已提交，停止收集本轮作答',{检测轮:'R1',结束原因:'答案提交',后续:'继续下一轮'},['007'],[],'ACT-02 检测');
+    evaluation('008E','2026-11-01 09:05:02','R1：求解与解释形成 Evidence','R1','007','008','120 ÷ 4 = 30；120 + 30 = 150。四分之一以原来 120 本为参照，求新量要加回原量。',[
+      {aspect:'independent',judgment:'支持',reason:'列式与结果正确；检测轮结束前没有当题帮助。',before:.5,after:17/22},
+      {aspect:'explanation',judgment:'支持',reason:'明确参照量，并解释增加量与新量的关系。',before:.5,after:17/22},
+    ]);
     event('009','2026-11-01 09:06:00','活动过程','检测轮开始','Interaction','开始新题检测 R2',{检测轮:'R2',题目:'原有 64 厘米彩带，增加四分之一后有多少厘米？'},['008'],[],'ACT-02 检测');
     event('010','2026-11-01 09:07:00','操作与作答','答案提交','学生','64 厘米：提交 80 厘米并解释',{题目:'原有 64 厘米彩带，增加四分之一后有多少厘米？',作答:'64 ÷ 4 = 16；64 + 16 = 80。增加的是原来的四分之一，求总量要加回原量。',帮助:'本轮未提供当题提示。',检测轮:'R2'},['009'],[],'ACT-02 检测');
     event('011','2026-11-01 09:07:01','活动过程','检测轮结束','Interaction','R2 已结束',{检测轮:'R2',结束原因:'答案提交'},['010'],[],'ACT-02 检测');
-    event('012','2026-11-01 09:07:04','评价与系统','评价完成','Evaluation','两道新题支持方法一的独立求解与解释',{Claim:fraction.claim,方法:fraction.methods[0].name,评价方面:'独立、理解与解释',Evidence:'EVD-01：两道新题作答与检测轮帮助记录',Belief:'BLF-01：支持本方法在当前任务范围的独立求解与解释；未推及方法二、迁移或保持。',结果:'求解正确，解释符合本例试用标准'},['007','010','008','011'],[key('independent'),key('explanation')],'ACT-02 检测');
-    const first=event('013','2026-11-01 09:07:05','评价与系统','目标状态更新','Evaluation','方法一的独立与理解已达标',{目标:s.target+' · v1',变化:'独立：待确认 → 已达标；理解与解释：待确认 → 已达标',依据:'两道不同新题，无当题帮助，求解和解释均满足要求',未覆盖:'方法二、表格迁移、延迟保持'},['012'],[key('independent'),key('explanation')],'ACT-02 检测');
+    evaluation('012','2026-11-01 09:07:04','R2：求解与解释形成 Evidence','R2','010','011','64 ÷ 4 = 16；64 + 16 = 80。增加的是原来的四分之一，求总量要加回原量。',[
+      {aspect:'independent',judgment:'支持',reason:'另一道不同新题，无当题帮助，完整求出新量。',before:17/22,after:289/314},
+      {aspect:'explanation',judgment:'支持',reason:'解释参照量和加回原量的理由。',before:17/22,after:289/314},
+    ],'008EB');
+    const first=event('013','2026-11-01 09:07:05','评价与系统','目标状态更新','Evaluation','方法一的独立与理解已达标',{目标:s.target+' · v1',变化:'独立：待确认 → 已达标；理解与解释：待确认 → 已达标',依据:'两道不同新题，无当题帮助，求解和解释均满足要求',未覆盖:'方法二、表格迁移、延迟保持'},['012B'],[key('independent'),key('explanation')],'ACT-02 检测');
     for(const aspect of ['independent','explanation'] as Aspect[])Object.assign(cell(aspect),{status:'已达标',reason:'两道不同新题均独立完成，并正确说明参照量与加回原量的理由。',eventId:first,updatedAt:'2026-11-01 09:07:05'});
     event('013A','2026-11-01 09:07:06','活动过程','子活动结束','Interaction','两轮检测完成，返回讲解',{活动:'ACT-02 检测',运行状态:'已结束',返回活动:'ACT-01 讲解'},['013'],[],'ACT-02 检测');
     event('013B','2026-11-01 09:07:07','交流与内容','系统内容已展示','DeerMind','反馈当前结果与尚未检测的方面',{内容:'你能独立求出增加后的数量，并解释原因。表格题、另一种方法和隔一段时间再做的情况还没有确认。'},['013A'],[],'ACT-01 讲解');
@@ -82,12 +108,26 @@ function buildSpace(id:string,student:string,account:string,name:string,scenario
     event('014','2026-11-08 09:10:00','活动过程','检测轮开始','Interaction','开始延迟保持检测 R3',{检测轮:'R3',活动:'ACT-03 系统建议的保持检测（顶层）',间隔:'距独立与理解达标已超过 7×24 小时',题目:'原有 48 升水，增加四分之一后有多少升？'},['013F'],[],'ACT-03 保持检测');
     event('015','2026-11-08 09:11:00','操作与作答','答案提交','学生','48 升水：只提交增加量 12 升',{题目:'原有 48 升水，增加四分之一后有多少升？',作答:'48 ÷ 4 = 12，所以是 12 升。',帮助:'本轮没有当题帮助。',检测轮:'R3'},['014'],[],'ACT-03 保持检测');
     event('016','2026-11-08 09:11:01','活动过程','检测轮结束','Interaction','R3 已提交',{检测轮:'R3',结束原因:'答案提交'},['015'],[],'ACT-03 保持检测');
-    event('017','2026-11-08 09:11:03','评价与系统','评价完成','Evaluation','保持检测评价通过',{Claim:fraction.claim,方法:fraction.methods[0].name,评价方面:'保持',Evidence:'EVD-02：48 升水的作答',Belief:'BLF-02：支持本方法的延迟保持',判断:'判定通过'},['015','016'],[key('retention')],'ACT-03 保持检测');
-    event('018','2026-11-08 09:11:04','评价与系统','目标状态更新','Evaluation','当时将保持改为已达标',{目标:s.target+' · v1',变化:'保持：待确认 → 已达标',依据:'当时引用 EVD-02 / BLF-02'},['017'],[key('retention')],'ACT-03 保持检测');
+    evaluation('017','2026-11-08 09:11:03','保持检测评价通过','R3','015','016','48 ÷ 4 = 12，所以是 12 升。',[
+      {aspect:'retention',judgment:'支持',reason:'判定通过：把本轮的 12 升识别为所求新量。',before:.5,after:17/22},
+    ]);
+    event('018','2026-11-08 09:11:04','评价与系统','目标状态更新','Evaluation','当时将保持改为已达标',{目标:s.target+' · v1',变化:'保持：待确认 → 已达标',依据:'当时引用保持 Evidence 及 Belief 更新事件，后续纠正不覆盖此记录。'},['017B'],[key('retention')],'ACT-03 保持检测');
     event('019','2026-11-08 09:15:00','评价与系统','评价结果纠正','Evaluation','撤销错误解释并追加更正',{被纠正记录:ref('017')+'、'+ref('018'),原因:'12 升是增加量，题目要求新量 60 升；原解释不成立。',处理:'保留原始作答与历史评价；新解释替代旧解释作为当前评价依据。'},['017','018'],[key('retention')],'ACT-03 保持检测');
-    event('020','2026-11-08 09:15:01','评价与系统','评价完成','Evaluation','重新判断：遗漏加回原量',{Claim:fraction.claim,方法:fraction.methods[0].name,评价方面:'保持',Evidence:'EVD-03：引用原始作答及纠正原因；替代 EVD-02 的解释',Belief:'BLF-03：本次延迟题未正确求新量，不能支持保持',结果:'本次保持检测不满足标准；此前两题表现作为历史保留'},['015','019'],[key('retention')],'ACT-03 保持检测');
-    const corrected=event('021','2026-11-08 09:15:02','评价与系统','目标状态更新','Evaluation','保持更正为需加强',{目标:s.target+' · v1',变化:'保持：已达标 → 需加强',依据:'EVD-03 / BLF-03；本次未加回原量',其他方面:'先前独立与理解结果保留，后续新证据可再次评价。'},['020'],[key('retention')],'ACT-03 保持检测');
+    evaluation('020','2026-11-08 09:15:01','重新判断：遗漏加回原量','R3','015','016','48 ÷ 4 = 12，所以是 12 升。',[
+      {aspect:'independent',judgment:'反证',reason:'本轮无帮助，但只求增加量，未完成完整方法。',before:289/314,after:289/414},
+      {aspect:'explanation',judgment:'反证',reason:'把增加量解释为新量，与此前正确解释相矛盾。',before:289/314,after:289/414},
+      {aspect:'retention',judgment:'反证',reason:'间隔超过 7×24 小时，但新题未完整求解和解释。',before:.5,after:1/6},
+    ],'012B',true);
+    const retentionChange=s.events.at(-1)!.beliefChanges!.find(c=>c.aspect==='retention')!;
+    retentionChange.baseline=.5;
+    retentionChange.before=17/22;
+    retentionChange.previousEvent=ref('017B');
+    retentionChange.note='保持项先排除被纠正的解释，从 50.0% 先验重算；没有新增作答。';
+    s.events.at(-1)!.causes.push(ref('017B'));
+    s.events.find(e=>e.id===ref('020'))!.evidence!.find(e=>e.aspect==='retention')!.replaces=[ref('EVD-017-retention')];
+    const corrected=event('021','2026-11-08 09:15:02','评价与系统','目标状态更新','Evaluation','保持更正为需加强',{目标:s.target+' · v1',变化:'保持：已达标 → 需加强',依据:'纠正后的 Evidence 与 Belief 更新；本次未加回原量。',其他方面:'独立与理解：已达标 → 需加强；保留此前两题，但出现尚未解决的反证。'},['020B'],[key('independent'),key('explanation'),key('retention')],'ACT-03 保持检测');
     Object.assign(cell('retention'),{status:'需加强',reason:'延迟新题只求出增加量，未求出新量。旧的通过结果已被后续纠正。',updatedAt:'2026-11-08 09:15:02',eventId:corrected});
+    for(const aspect of ['independent','explanation'] as Aspect[])Object.assign(cell(aspect),{status:'需加强',reason:'此前两道新题满足要求，但 R3 出现未加回原量的有效反证，尚未解决。',eventId:corrected,updatedAt:'2026-11-08 09:15:02'});
     event('021A','2026-11-08 09:15:03','交流与内容','系统内容已展示','DeerMind','反馈保持检测的更正结果',{内容:'刚才的判断需要更正：12 升是增加量，求新量还要加回 48 升，应该是 60 升。保持这项目前需要加强。'},['021'],[],'ACT-03 保持检测');
     event('021B','2026-11-08 09:15:04','活动过程','活动结束','Interaction','结束本次保持检测',{活动:'ACT-03 检测',运行状态:'已结束',结束原因:'本轮已完成并反馈'},['021A'],[],'ACT-03 保持检测');
     event('021C','2026-11-08 09:15:05','评价与系统','主动任务结束','系统','保持检测建议已执行',{任务:'PT-01',结果:'已执行，不代表已达标'},['021B']);
@@ -138,4 +178,15 @@ export function linkedCells(s:LearningSpace,eventId:string):string[]{
   const result=new Set<string>(),visited=new Set<string>();
   function visit(id:string){if(visited.has(id))return;visited.add(id);const e=s.events.find(e=>e.id===id);e?.cells.forEach(k=>result.add(k));s.events.filter(e=>e.causes.includes(id)&&e.category==='评价与系统').forEach(e=>visit(e.id));}
   visit(eventId);return [...result];
+}
+
+export function latestBeliefUpdate(s:LearningSpace,key:string){
+  return [...s.events].reverse().find(e=>e.beliefChanges?.some(c=>c.cell===key));
+}
+
+// Read-only evidence projection for one method/aspect, including superseded history.
+export function beliefEvidence(s:LearningSpace,key:string){
+  const used=new Set(s.events.flatMap(e=>(e.beliefChanges||[]).filter(c=>c.cell===key).flatMap(c=>c.evidenceIds)));
+  const rows=s.events.flatMap(event=>(event.evidence||[]).filter(e=>used.has(e.id)).map(e=>({evidence:e,event})));
+  return rows.map(row=>({...row,replacedBy:rows.find(other=>other.evidence.replaces?.includes(row.evidence.id))?.evidence.id}));
 }

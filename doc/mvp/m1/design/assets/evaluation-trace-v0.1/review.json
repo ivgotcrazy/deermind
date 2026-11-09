@@ -1,0 +1,109 @@
+{
+  "version": "0.1",
+  "reviewedAt": "2026-11-09T00:16:59.106756+08:00",
+  "scope": "M1 Evaluation product documentation, screenshots and logical main-flow handoffs; no UI changes in this batch",
+  "baseline": "src/mvp_foundation/m1/design-reviews/20261109-evaluation-trace/baseline.json",
+  "captureScript": "src/mvp_foundation/m1/design-reviews/20261109-evaluation-trace/capture.mjs",
+  "checkScript": "src/mvp_foundation/m1/design-reviews/20261109-evaluation-trace/check.py",
+  "documents": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "old": "v0.15",
+      "version": "v0.16",
+      "sha256": "42a5120637c53f511a821f9505bc516910976d7e0d9a89f5ffe8e88e69f9f616"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "old": "v0.13",
+      "version": "v0.14",
+      "sha256": "d81ed5223d19ef2f2f7e5119ef16b86fbd9e53f8f4172e62bb5b2cd5954c33b8"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "old": "v0.14",
+      "version": "v0.15",
+      "sha256": "ddc551a5a6f1277e1150ec0f83dbe664528befdbf4734b0d662d629644305ef5"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "old": "v0.15",
+      "version": "v0.16",
+      "sha256": "96cb1ce8a7aed8900c550192950ee30214706fcf59387da944278f61f48ed558"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "old": "v0.15",
+      "version": "v0.16",
+      "sha256": "838dc5e11113d33169bb3531cb9145aaa9ef137ca9636c4a7cf5e23c6542483f"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "old": "v0.25",
+      "version": "v0.26",
+      "sha256": "9325f57af93b01e604d8089137f69c6c716cff56e7ad07e5c72c539597ee2eeb"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "old": "v0.16",
+      "version": "v0.17",
+      "sha256": "67d37a189c0bb5ee373ae856c338b3a7e313f6f92ddd6cac086c5a18dbca3a29"
+    }
+  ],
+  "localLinksChecked": 276,
+  "linkErrors": [],
+  "unchangedMermaidDiagrams": 7,
+  "screenshotsVerified": 12,
+  "visualReview": {
+    "images": [
+      "EV03",
+      "EV04",
+      "EV09",
+      "EV10"
+    ],
+    "checks": [
+      "Goal tab retains cumulative Evidence and source-event navigation",
+      "Criterion, explanation and original sources are readable",
+      "Actual before/after probability and recomputation baseline are separate",
+      "Historical goal event and current goal are explicitly distinct"
+    ]
+  },
+  "checksExecutedThisBatch": [
+    {
+      "command": "npm run build --prefix doc/mvp/m1/prototype",
+      "result": "passed"
+    },
+    {
+      "command": "node --test tests/learning-spaces.test.mjs",
+      "cwd": "doc/mvp/m1/prototype",
+      "passed": 12,
+      "failed": 0
+    },
+    {
+      "command": "node src/mvp_foundation/m1/design-reviews/20261109-evaluation-trace/capture.mjs",
+      "result": "12 screenshots; no API calls or browser errors"
+    },
+    {
+      "command": "git diff --check -- <seven updated documents>",
+      "result": "passed"
+    }
+  ],
+  "mainFlowReview": {
+    "location": "doc/mvp/m1/README.md#6",
+    "findings": [
+      "LC-01: Domain Task role and local KC constraints need prototype alignment",
+      "LC-02: Saved configuration to applied/selectable course lacks a reachable handoff",
+      "LC-03: Student per-question feedback needs the target-outcome handoff",
+      "LC-04: Proactive suggestion acceptance, deferral and refusal need a student flow"
+    ],
+    "excluded": [
+      "Differences between fixed mock datasets",
+      "No shared database or live LLM"
+    ],
+    "next": "Propose minimal course check/apply interaction for confirmation; do not implement UI in this batch"
+  },
+  "limitations": [
+    "Fixed mock navigation, not real Evidence extraction or Belief calculation service",
+    "Does not validate parameter calibration, child Task updating or teaching-transition prediction",
+    "Does not establish full-book modeling, learning effectiveness or M1 Gate acceptance"
+  ]
+}

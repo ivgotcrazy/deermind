@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-09",
+  "commit": "1865287f726af1dbe72dc11534e823ae0462b7b7",
+  "note": "Working tree snapshot; includes previously authorized uncommitted changes.",
+  "files": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "sha256": "811800d6f1f2c00ebb878a111b0d175d5e361f61c3a4acf03c642cf56792e979"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "sha256": "32929c8033145b60f3cd87dd84f0aaf0c7790e894d6a58f21568f75d2f65fec1"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "sha256": "aecd0867199d3be72360e5ff1981052b0fd2a31faa2098919fd1c83c9bca522d"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "sha256": "3de4810fdd08d92da2ff2d5b9de674f3a061436d3719d017c616d4bd943fec37"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "sha256": "10031d7a2dc22fd2fcb2554d28b8d4f0b15ef1d8166e4dbd8197e937c7916aff"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "sha256": "8cc826bca22394a0f686ba114f2603389578ad7dca7da4566dbd51854d97efa1"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "sha256": "b4a5b7ab55d21fa800a2a3fcd580abcbf7759a8bdce995260c8209cd68c910a6"
+    }
+  ]
+}

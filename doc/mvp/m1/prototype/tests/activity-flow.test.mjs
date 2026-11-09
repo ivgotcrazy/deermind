@@ -42,7 +42,7 @@ test('活动定义编辑及学生检测轮、子讲解和返回主线', async t=
   await b('检测').click();await b('活动规则').click();await expect(page.getByText('检测轮原子性',{exact:true})).toBeVisible();
   await mkdir('test-results/activity-flow',{recursive:true});
   await page.screenshot({path:'test-results/activity-flow/admin-assessment.png',fullPage:true});
-  await page.goto(base+'/student/');
+  await page.goto(base+'/student/?mode=records');
   await page.getByLabel('教材',{exact:true}).selectOption('BNU-6A');
   await page.getByLabel('学习目标').selectOption({index:1});await b('创建并进入教材').click();
   await b('讲讲增加四分之一').click();await b('先问一个相关问题').click();

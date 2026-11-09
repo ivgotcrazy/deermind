@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import WorkbenchDialog from './WorkbenchDialog.vue';
-import { aspects, categories, learningSpaces, taskResult, latestLearning, latestEvaluation, relatedEvents, linkedCells, type GoalCell, type SpaceTask, type SpaceEvent } from '../model/learning-spaces';
+import { aspects, categories, learningSpaces, taskResult, latestLearning, latestEvaluation, relatedEvents, linkedCells, latestBeliefUpdate, beliefEvidence, type GoalCell, type SpaceTask, type SpaceEvent } from '../model/learning-spaces';
 
 const props=defineProps<{hash:string}>();
 const params=computed(()=>new URLSearchParams(props.hash.split('?')[1]||''));
@@ -23,6 +23,15 @@ const selectedCell=computed(()=>allCells.value.find(x=>x.cell.key===value('cell'
 const focusCell=computed(()=>allCells.value.find(x=>x.cell.key===value('focus')));
 const expanded=computed(()=>value('expanded')||tasks.value[0]?.id||'');
 const selectedEvent=computed(()=>space.value?.events.find(e=>e.id===value('event')));
+const cellBeliefEvent=computed(()=>space.value&&selectedCell.value?latestBeliefUpdate(space.value,selectedCell.value.cell.key):undefined);
+const cellBelief=computed(()=>cellBeliefEvent.value?.beliefChanges?.find(c=>c.cell===selectedCell.value?.cell.key));
+const cellEvidence=computed(()=>space.value&&selectedCell.value?beliefEvidence(space.value,selectedCell.value.cell.key):[]);
+const activeEvidence=computed(()=>cellEvidence.value.filter(row=>!row.replacedBy));
+const replacedEvidence=computed(()=>cellEvidence.value.filter(row=>row.replacedBy));
+const selectedEvidence=computed(()=>cellEvidence.value.find(row=>row.evidence.id===value('evidence')));
+const sourceEvent=computed(()=>selectedEvidence.value?.evidence.sources.includes(value('sourceEvent'))?space.value?.events.find(e=>e.id===value('sourceEvent')):undefined);
+const aspectName=(id:string)=>aspects.find(a=>a.id===id)?.name||id;
+const probability=(p:number)=>(p*100).toFixed(1)+'%';
 const focusedIds=computed(()=>space.value&&focusCell.value?relatedEvents(space.value,focusCell.value.cell.key):null);
 const eventRows=computed(()=>[...(space.value?.events||[])].filter(e=>(!focusedIds.value||focusedIds.value.has(e.id))&&(!value('ech')||e.chapter===value('ech'))&&(!value('category')||e.category===value('category'))&&(!value('activity')||e.activity===value('activity'))&&(!value('from')||e.occurredAt.slice(0,10)>=value('from'))&&(!value('to')||e.occurredAt.slice(0,10)<=value('to'))&&(e.id+' '+e.summary+' '+e.type+' '+e.fields.map(f=>f.value).join(' ')).includes(value('eq').trim())).sort((a,b)=>b.sequence-a.sequence));
 const eventPages=computed(()=>Math.max(1,Math.ceil(eventRows.value.length/8)));
@@ -36,17 +45,18 @@ watch(()=>props.hash,()=>{
   definition.value=false;pagePreview.value=0;filterError.value='';
 });
 watch(()=>space.value?.id,()=>{chapterQuery.value='';eventBack.value=[];});
+watch(()=>[value('evidence'),value('sourceEvent')],()=>{document.querySelector('.goal-evidence-drawer .dialog-content')?.scrollTo(0,0);},{flush:'post'});
 function clampPage(raw:string,max:number){const n=Number(raw);return Number.isInteger(n)&&n>0?Math.min(n,max):1;}
 function go(changes:Record<string,string>){const p=new URLSearchParams(params.value);for(const [k,v] of Object.entries(changes)){if(v)p.set(k,v);else p.delete(k);}location.hash='/learning-spaces'+(p.size?'?'+p:'');}
 function enter(id:string){go({id,tab:'goal',chapter:'',cell:'',expanded:'',event:'',focus:'',origin:'',ech:'',ep:'',category:'',activity:'',eq:'',from:'',to:'',mark:''});}
 function backList(){const p=new URLSearchParams();for(const key of ['student','q','book','target','lp'])if(value(key))p.set(key,value(key));location.hash='/learning-spaces'+(p.size?'?'+p:'');}
 function filterList(){go({student:listStudent.value.trim(),q:listQuery.value.trim(),book:listBook.value,target:listTarget.value,lp:''});}
-function switchTab(next:string){eventBack.value=[];go({tab:next,cell:'',event:''});}
+function switchTab(next:string){eventBack.value=[];go({tab:next,cell:'',event:'',evidence:'',sourceEvent:''});}
 function selectChapter(id:string){go({chapter:id,expanded:'',cell:''});}
-function openCell(t:SpaceTask,c:GoalCell){go({tab:'goal',chapter:t.chapter,expanded:t.id,cell:c.key,event:''});}
+function openCell(t:SpaceTask,c:GoalCell){go({tab:'goal',chapter:t.chapter,expanded:t.id,cell:c.key,event:'',evidence:'',sourceEvent:''});}
 function cellLabel(key:string){const row=allCells.value.find(x=>x.cell.key===key);return row?row.method.name+' · '+aspects.find(a=>a.id===row.cell.aspect)?.name:key;}
 function requiredAspectNames(cells:GoalCell[]){return cells.filter(c=>c.required).map(c=>aspects.find(a=>a.id===c.aspect)?.name).join('、');}
-function traceCell(key:string,event=''){eventBack.value=[];go({tab:'events',focus:key,origin:key,event,cell:'',eq:'',category:'',activity:'',from:'',to:'',ech:'',ep:''});}
+function openEvidence(id:string){go({evidence:id,sourceEvent:''});}
 function backGoal(key:string){const row=allCells.value.find(x=>x.cell.key===key);if(row)openCell(row.task,row.cell);}
 function openEvent(id:string){if(selectedEvent.value)eventBack.value.push(selectedEvent.value.id);else eventBack.value=[];go({tab:'events',event:id,cell:''});}
 function previousEvent(){const id=eventBack.value.pop();if(id)go({event:id});}
@@ -82,7 +92,7 @@ const badgeClass=(status:string)=>status==='已达标'?'passed':status==='需加
     <template v-if="tab==='book'||tab==='goal'">
       <section class="panel adoption-head"><div><h3>{{tab==='book'?space.book:space.target}}</h3><p class="muted">{{tab==='book'?space.bookVersion:space.targetVersion}} · 采用于 {{space.adoptedAt}}</p><p v-if="tab==='goal'">{{space.description}}</p><p v-if="tab==='goal'" class="muted">最近目标评价：{{latestEvaluation(space)}}</p></div><button class="btn" @click="definition=true">{{tab==='book'?'查看采用说明':'查看目标定义'}}</button></section>
       <div class="space-columns"><aside class="panel chapter-panel"><label>查找章节<input v-model="chapterQuery" type="search" placeholder="章节名称"/></label><nav aria-label="教材章节"><button v-for="ch in chapters" :key="ch.id" class="chapter-button" :class="{active:chapter?.id===ch.id}" :aria-current="chapter?.id===ch.id?'page':undefined" @click="selectChapter(ch.id)">{{ch.name}}</button></nav><p v-if="!chapters.length" class="empty">没有匹配章节</p></aside>
-        <section class="panel chapter-detail" v-if="chapter"><div class="row-between"><h3>{{chapter.name}}</h3><div class="button-row"><button v-if="tab==='book'" class="text-link" @click="switchTab('goal')">本章目标 →</button><button v-else class="text-link" @click="switchTab('book')">本章教材 →</button><button class="text-link" @click="chapterEvents">本章事件 →</button></div></div>
+        <section class="panel chapter-detail" v-if="chapter"><div class="row-between"><h3>{{chapter.name}}</h3><div class="button-row"><button v-if="tab==='book'" class="text-link" @click="switchTab('goal')">本章目标 →</button><button v-else class="text-link" @click="switchTab('book')">本章教材 →</button><button v-if="tab==='book'" class="text-link" @click="chapterEvents">本章事件 →</button></div></div>
           <template v-if="tab==='book'"><p>{{chapter.content}}</p><div class="student-question"><span class="badge">整理内容示例</span><p>{{chapter.question}}</p><p class="formula">{{chapter.formula}}</p></div><p class="muted">下方为采用的教材原页，可放大核对。上方整理示例不替代原页内容。</p><div class="book-pages"><button v-for="n in chapter.pages" :key="n" class="page-thumb" :aria-label="'第 '+n+' 页 · 放大查看'" @click="pagePreview=n"><img :src="'/materials/bnu6a/page-'+n+'.png'" :alt="'教材第 '+n+' 页缩略图'" loading="lazy"/><span>第 {{n}} 页 · 放大查看</span></button></div></template>
           <template v-else>
             <p v-if="!tasks.length" class="empty">本目标未选用本章任务。教材包含本章，不代表本目标要求评价本章。</p>
@@ -104,18 +114,44 @@ const badgeClass=(status:string)=>status==='已达标'?'passed':status==='需加
       <p v-if="value('event')&&!selectedEvent" class="callout" role="alert">此事件不属于当前学习空间，未打开其他空间的数据。</p>
     </template>
 
-    <WorkbenchDialog v-if="tab==='goal'&&selectedCell" class="space-drawer" title="目标项与判断依据" @close="go({cell:''})">
+    <WorkbenchDialog v-if="tab==='goal'&&selectedCell" class="space-drawer goal-evidence-drawer" :title="value('sourceEvent')?'来源事件':value('evidence')?'Evidence 详情':'目标项与判断依据'" @close="go({cell:'',evidence:'',sourceEvent:''})">
+      <div v-if="value('evidence')" class="button-row evidence-back"><button v-if="value('sourceEvent')" class="text-link" @click="go({sourceEvent:''})">← 返回 Evidence</button><button class="text-link" @click="go({evidence:'',sourceEvent:''})">← 返回目标依据</button></div>
+      <template v-if="value('sourceEvent')">
+        <template v-if="sourceEvent"><h3>{{sourceEvent.summary}}</h3><p class="muted">{{sourceEvent.id}} · {{sourceEvent.type}}</p><div class="event-times"><span>发生：{{sourceEvent.occurredAt}}</span><span>记录：{{sourceEvent.recordedAt}}</span></div><section class="detail-section"><h4>当时记录 <span class="badge">只读</span></h4><dl class="field-list"><template v-for="f in sourceEvent.fields" :key="f.label"><dt>{{f.label}}</dt><dd>{{f.value}}</dd></template></dl><div v-if="sourceEvent.table" class="table-scroll"><table class="data-table"><caption>{{sourceEvent.table.caption}}</caption><thead><tr><th v-for="c in sourceEvent.table.columns" :key="c">{{c}}</th></tr></thead><tbody><tr v-for="(row,i) in sourceEvent.table.rows" :key="i"><td v-for="(c,j) in row" :key="j">{{c}}</td></tr></tbody></table></div></section></template>
+        <p v-else role="alert">未找到属于这条 Evidence 的来源事件。</p>
+      </template>
+      <template v-else-if="value('evidence')">
+        <template v-if="selectedEvidence"><h3>{{cellLabel(selectedCell.cell.key)}}</h3><p class="muted">{{selectedEvidence.evidence.id}} · {{selectedEvidence.evidence.attempt}}</p><p><span class="badge">{{selectedEvidence.evidence.judgment}}</span> <span v-if="selectedEvidence.replacedBy" class="badge warning">已被替代 · 不参与当前判断</span></p>
+          <section class="detail-section"><h4>评价依据</h4><p><strong>判据：</strong>{{selectedEvidence.evidence.criterion}}</p><blockquote class="evidence-quote">{{selectedEvidence.evidence.quote}}</blockquote><p><strong>判断理由：</strong>{{selectedEvidence.evidence.reason}}</p><p class="muted">形成时间：{{selectedEvidence.event.recordedAt}}。{{selectedEvidence.evidence.claim}}</p></section>
+          <section v-if="selectedEvidence.replacedBy||selectedEvidence.evidence.replaces?.length" class="detail-section"><h4>纠正关系</h4><p v-if="selectedEvidence.replacedBy">此解释已被纠正；保留历史，不重复计入作答。<button class="text-link" @click="openEvidence(selectedEvidence.replacedBy)">查看替代后的 Evidence</button></p><button v-for="id in selectedEvidence.evidence.replaces" :key="id" class="text-link" @click="openEvidence(id)">查看被替代的 Evidence</button></section>
+          <section class="detail-section"><h4>来源事件</h4><p class="muted">以下是形成这条 Evidence 所依据的原始记录。</p><ul class="event-links"><li v-for="id in selectedEvidence.evidence.sources" :key="id"><button class="text-link" @click="go({sourceEvent:id})">{{lookup(id)?.summary||id}}</button><small>{{lookup(id)?.type}} · {{lookup(id)?.occurredAt}}</small></li></ul></section>
+        </template><p v-else role="alert">未找到属于当前目标项的 Evidence。</p>
+      </template>
+      <template v-else>
       <h3>{{selectedCell.task.name}}</h3><p>{{cellLabel(selectedCell.cell.key)}}</p><span class="status-label" :class="badgeClass(selectedCell.cell.status)">{{selectedCell.cell.status}}</span><span v-if="selectedCell.cell.processing" class="badge warning">{{selectedCell.cell.processing}}</span>
       <section class="detail-section"><h4>目标要求</h4><p>{{selectedCell.cell.requirement}}</p><p class="muted">{{space.target}} · v1；{{selectedCell.task.claim}}</p></section>
       <section class="detail-section"><h4>当前判断</h4><p>{{selectedCell.cell.reason}}</p><p class="muted">{{selectedCell.cell.updatedAt?'评价时间：'+selectedCell.cell.updatedAt:'尚未形成有效评价'}}。评价失败不会覆盖此前有效结果。</p></section>
-      <div class="button-row"><button v-if="selectedCell.cell.eventId" class="btn primary" @click="traceCell(selectedCell.cell.key,selectedCell.cell.eventId)">查看本次目标更新事件</button><button class="btn" @click="traceCell(selectedCell.cell.key)">查看相关事件</button></div>
-      <p class="muted">关联链：目标结果 → 评价结果 → 原始作答及帮助记录。事件详情可返回本目标项。</p>
+      <section class="detail-section belief-basis"><h4>对应的能力判断（Belief）</h4>
+        <template v-if="cellBelief&&cellBeliefEvent"><p><strong class="probability">{{probability(cellBelief.after)}}</strong> <span class="muted">{{aspectName(cellBelief.aspect)}} · 本方法的试用概率估计</span></p><p class="muted">最近更新：{{cellBeliefEvent.recordedAt}}。目标还要核对题数、情境、时间和反证，不能只看概率。</p></template>
+        <p v-else class="muted">尚无符合本方法、本评价方面的有效证据更新。不将初始概率显示为已掌握。</p>
+      </section>
+      <section class="detail-section"><h4>Evidence 列表 <span class="badge">{{activeEvidence.length}} 条</span></h4><p class="muted">当前方法、当前评价方面的累计有效依据。点击查看判据与来源事件。</p><div v-if="activeEvidence.length" class="table-scroll"><table class="data-table goal-evidence-list"><thead><tr><th>作答</th><th>Evidence 摘要</th><th>判断</th></tr></thead><tbody><tr v-for="row in activeEvidence" :key="row.evidence.id"><td>{{row.evidence.attempt}}<small>{{row.event.occurredAt}}</small></td><td><button class="text-link" :aria-label="'查看 '+row.evidence.attempt+' Evidence'" @click="openEvidence(row.evidence.id)">{{row.evidence.reason}}</button></td><td>{{row.evidence.judgment}}</td></tr></tbody></table></div><p v-else class="empty">暂无有效 Evidence；未检测、求助或评价失败不作为答错。</p>
+        <details v-if="replacedEvidence.length" class="replaced-evidence"><summary>查看已被替代的 Evidence（{{replacedEvidence.length}} 条）</summary><ul class="event-links"><li v-for="row in replacedEvidence" :key="row.evidence.id"><button class="text-link" @click="openEvidence(row.evidence.id)">{{row.evidence.attempt}} · {{row.evidence.judgment}} · 已被替代</button><small>保留历史，不计入当前有效依据。</small></li></ul></details>
+      </section>
+      </template>
     </WorkbenchDialog>
     <WorkbenchDialog v-if="tab==='events'&&selectedEvent" class="space-drawer" title="事件详情" @close="go({event:''})">
       <button v-if="eventBack.length" class="text-link" @click="previousEvent">← 返回上一条查看记录</button>
       <h3 class="event-title">{{selectedEvent.summary}}</h3><p class="muted">{{selectedEvent.id}} · {{selectedEvent.type}} · {{selectedEvent.actor==='学生'?space.student:selectedEvent.actor}}</p>
       <div class="event-times"><span>发生：{{selectedEvent.occurredAt}}</span><span>记录：{{selectedEvent.recordedAt}}</span></div>
       <section class="detail-section"><h4>当时记录 <span class="badge">只读</span></h4><dl class="field-list"><template v-for="f in selectedEvent.fields" :key="f.label"><dt>{{f.label}}</dt><dd>{{f.value}}</dd></template></dl><div v-if="selectedEvent.table" class="table-scroll event-stimulus"><table class="data-table"><caption>{{selectedEvent.table.caption}}</caption><thead><tr><th v-for="c in selectedEvent.table.columns" :key="c">{{c}}</th></tr></thead><tbody><tr v-for="(row,i) in selectedEvent.table.rows" :key="i"><td v-for="(cell,j) in row" :key="j">{{cell}}</td></tr></tbody></table></div></section>
+      <section v-if="selectedEvent.beliefChanges" class="detail-section"><h4>本次概率变化</h4><p class="muted">按方法和评价方面分别更新；更新事件用于留痕，不再作为新的能力证据。</p>
+        <div class="table-scroll"><table class="data-table belief-changes"><thead><tr><th>方法 / 方面</th><th>更新前 → 更新后</th><th>依据</th></tr></thead><tbody><tr v-for="c in selectedEvent.beliefChanges" :key="c.claim+c.method+c.aspect"><td>{{aspectName(c.aspect)}}<small>{{c.method}}</small></td><td class="probability">{{probability(c.before)}} → {{probability(c.after)}}<small v-if="c.baseline!==undefined">重算基线：{{probability(c.baseline)}}</small></td><td><button class="text-link" :aria-label="'查看'+aspectName(c.aspect)+'的 Evidence'" @click="openEvent(c.evidenceEvent)">查看 Evidence</button><small v-for="id in c.evidenceIds" :key="id">{{id}}</small></td></tr></tbody></table></div>
+        <p v-for="note in [...new Set(selectedEvent.beliefChanges.map(c=>c.note).filter(Boolean))]" :key="note" class="muted">{{note}}</p>
+      </section>
+      <section v-if="selectedEvent.evidence" class="detail-section"><h4>本次形成的 Evidence</h4><p class="muted">Evaluation 对原始事件的加工结果。同一检测轮用于多个评价方面，仍只算一次作答。</p>
+        <article v-for="e in selectedEvent.evidence" :key="e.id" class="evidence-record"><div class="row-between"><strong>{{aspectName(e.aspect)}} · {{e.judgment}}</strong><span class="badge">{{e.attempt}}</span></div><small class="muted">{{e.id}}</small><p>{{e.method}} · {{e.claim}}</p><p><strong>判据：</strong>{{e.criterion}}</p><blockquote>{{e.quote}}</blockquote><p><strong>判断理由：</strong>{{e.reason}}</p><ul class="event-links"><li v-for="id in e.sources" :key="id"><button class="text-link" @click="openEvent(id)">{{lookup(id)?.type}}：{{lookup(id)?.summary}}</button></li></ul></article>
+      </section>
       <section v-if="selectedEvent.causes.length" class="detail-section"><h4>引用的前序事件</h4><ul class="event-links"><li v-for="id in selectedEvent.causes" :key="id"><button class="text-link" @click="openEvent(id)">{{lookup(id)?.summary||id}}</button><small>{{id}}</small></li></ul></section>
       <section class="detail-section"><h4>后续关联</h4><p class="muted">由后续事件的引用关系形成，不改写上方的当时记录。</p><ul v-if="laterEvents.length" class="event-links"><li v-for="e in laterEvents" :key="e.id"><button class="text-link" @click="openEvent(e.id)">{{e.summary}}</button><small>{{e.type}} · {{e.recordedAt}}</small></li></ul><p v-else class="muted">暂无后续关联事件。</p></section>
       <section v-if="currentCells.length" class="detail-section"><h4>关联的当前目标项</h4><div class="relation-list"><button v-for="key in currentCells" :key="key" class="text-link" @click="backGoal(key)">{{cellLabel(key)}} → {{allCells.find(x=>x.cell.key===key)?.cell.status}}</button></div><p class="muted">这里进入当前状态；历史事件中的结果仍按发生当时保留。</p></section>
@@ -131,6 +167,8 @@ const badgeClass=(status:string)=>status==='已达标'?'passed':status==='需加
 </section></template>
 
 <style scoped>
+.evidence-back{margin-bottom:20px}.evidence-quote{margin:12px 0;padding:12px 16px;border-left:3px solid #9bbfa9;background:#f6f9f7;line-height:1.7}.goal-evidence-list td{vertical-align:top}.goal-evidence-list th:first-child{width:130px}.goal-evidence-list th:last-child{width:60px}.replaced-evidence{margin-top:18px;color:#617583}.replaced-evidence summary{cursor:pointer}
+.belief-basis .btn{margin-top:8px}.probability{font-variant-numeric:tabular-nums;white-space:nowrap}.belief-basis strong.probability{font-size:24px;color:#31543f}.belief-changes small{overflow-wrap:anywhere}.belief-changes th:nth-child(2){min-width:150px}.evidence-record{padding:16px;margin:14px 0;background:#f6f9f7;border:1px solid #e0e9e3;border-radius:8px}.evidence-record>small{display:block;margin-top:8px;overflow-wrap:anywhere}.evidence-record blockquote{margin:12px 0;padding:10px 14px;border-left:3px solid #9bbfa9;background:white;line-height:1.7}
 .located-event{background:#edf7ef;outline:1px solid #9bbfa9;outline-offset:-1px}
 .event-stimulus{margin-top:18px}.event-stimulus caption{text-align:left;margin-bottom:8px;font-size:12px;color:#74847b}
 .space-heading{margin-top:12px;margin-bottom:14px}.space-filters{display:grid;grid-template-columns:1fr 1fr 1.3fr 1.3fr;gap:14px}.space-filters label,.event-filters label{margin:0}.filter-actions{display:flex;gap:8px;align-items:end;justify-content:flex-end;grid-column:1/-1}.space-columns{display:grid;grid-template-columns:215px minmax(0,1fr);gap:18px;align-items:start}.chapter-panel{padding:16px;position:sticky;top:12px}.chapter-panel label{margin-top:0}.chapter-button{width:100%;padding:13px 10px;border:0;border-left:3px solid transparent;border-radius:5px;background:none;color:#405a4c;text-align:left;line-height:1.6;margin:4px 0}.chapter-button.active{background:#eaf4ee;border-color:#2d6a4f;color:#24583f}.chapter-detail{min-height:320px}.chapter-detail .row-between h3{margin:0}.adoption-head{display:flex;justify-content:space-between;align-items:start;gap:20px}.adoption-head p{margin:6px 0}.adoption-head .btn{flex-shrink:0}.goal-task{border-top:1px solid #e3ebe6;margin-top:18px}.task-toggle{display:flex;justify-content:space-between;gap:18px;align-items:center;width:100%;border:0;background:none;text-align:left;padding:18px 0;color:#244837;font-weight:600}.task-toggle small{display:block;font-weight:400;color:#72877a;margin-top:6px}.status-label{display:inline-block;white-space:nowrap;padding:4px 10px;border-radius:5px;font-size:13px;font-weight:500}.passed{color:#256343;background:#edf7ef}.attention{color:#8a4d1c;background:#fff3e5}.unknown{color:#617583;background:#edf2f5}.goal-matrix{min-width:640px}.goal-matrix td{vertical-align:top}.goal-matrix th:first-child{width:30%}.cell-result{border:1px solid transparent;border-radius:5px;white-space:nowrap;padding:5px 9px;font-size:13px}.cell-result:hover{border-color:currentColor}.processing-note{color:#926325!important;max-width:100px}.event-filters{display:grid;grid-template-columns:1fr 1fr 1.1fr 1.2fr 1.4fr;gap:14px}.event-table{min-width:760px}.event-table td{vertical-align:top}.time-cell{width:160px;font-variant-numeric:tabular-nums}.event-table th:nth-child(4){width:35%}.filter-error{grid-column:1/-1;margin:0;color:#963f26}.book-pages{display:flex;gap:18px;flex-wrap:wrap;margin-top:20px}.page-thumb{background:#f7faf8;border:1px solid #d9e4dd;border-radius:6px;padding:8px;max-width:180px;color:#31543f}.page-thumb img{width:100%;height:210px;object-fit:contain;display:block;margin-bottom:8px}.full-book-page{width:100%;height:auto}.formula{font-family:Georgia,serif;font-size:21px}.space-drawer{margin:0 0 0 auto;width:min(700px,96vw);height:100dvh;max-height:100dvh;border-radius:12px 0 0 12px}.space-drawer :deep(.dialog-content){padding:24px}.detail-section{padding:18px 0;border-bottom:1px solid #e3ebe6}.detail-section h4{margin:0 0 12px;font-size:14px;color:#31543f}.detail-section p{margin:8px 0}.detail-section .field-list{grid-template-columns:100px minmax(0,1fr);gap:13px}.event-links{list-style:none;margin:0;padding:0}.event-links li{margin:12px 0}.event-links small{display:block;color:#7b8c81;font-size:11px;margin-top:2px}.event-title{margin-top:18px}.event-times{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:#74847b}

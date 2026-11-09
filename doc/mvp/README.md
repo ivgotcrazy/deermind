@@ -1,14 +1,14 @@
 # MVP 产品迭代与文档入口
 
-> **版本**：v0.24<br>
+> **版本**：v0.26<br>
 > **文档性质**：当前MVP目录、阅读顺序与维护约定<br>
-> **状态**：Task 角色与依赖评价合同已同步；算法、原型适配及真实验证待完成<br>
+> **状态**：Evaluation追溯原型已阶段确认，图文已同步；主流程仍有产品交接缺口，未通过工程接收<br>
 > **上游依据与基线**：用户本次目录重建要求及已确认的M1–M3范围；当前为工作稿，未通过新阶段评审<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：用户确认本轮 Task／Solution／KC 关系并授权文档更新；作者核对正文与示例。未据此确认算法、原型适配或模型效果<br>
+> **评审记录**：用户确认目标侧Evidence优先、事件侧更新留痕，授权同步文档与截图；本批作者完成一致性和主流程检查，不代表真实评价或M1 Gate通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-08<br>
-> **修订说明**：v0.23 → v0.24，更新 Domain／Evaluation 现行入口，区分新合同、旧基线和未迁移资产；逐文件记录见 M1 决定登记§19<br>
+> **更新日期**：2026-11-09<br>
+> **修订说明**：v0.25 → v0.26，同步Evaluation事件、累计证据投影和目标追溯，补齐当前截图及主流程检查；逐文件记录见M1决定登记§21<br>
 
 ---
 
@@ -34,13 +34,13 @@ doc/mvp/
     └── 2026-11-02-before-m1-prd/  原MVP文档、截图及更早归档
 ```
 
-当前先读[已确认边界](DECISIONS.md)，再读[M1入口](m1/README.md)、[M1 PRD草案](m1/PRD.md)、[教材准备参考](m1/design/Content_and_Model_Reference.md)及[主流程交互设计](m1/design/Interaction_Design.md)。本轮先读[决定登记§19](DECISIONS.md#19-kc-task复合-task-与依赖更新合同)、[Task 角色和依赖定义](m1/design/Content_and_Model_Reference.md#32-领域对象与字段)及[四分之一父子任务示例](m1/design/Content_and_Model_Reference.md#415-task-依赖如何参与-evaluation)。规范合同为[Domain v1.4](../concept-design/DeerMind_Domain_Space_Design_v1.4.md)和[Evaluation v1.6](../concept-design/DeerMind_Evaluation_Space_Design_v1.6.md)；本轮不改原型、截图或旧参考包，算法尚未选定。此前活动与画面收束见决定登记§18，评估与目标见§15，领域与教材操作见§14。其余产品设计和正式工程接收仍未完成。
+当前先读[已确认边界](DECISIONS.md)，再读[M1入口](m1/README.md)、[M1 PRD草案](m1/PRD.md)、[教材准备参考](m1/design/Content_and_Model_Reference.md)及[主流程交互设计](m1/design/Interaction_Design.md)。本轮先读[决定登记§19](DECISIONS.md#19-kc-task复合-task-与依赖更新合同)、[Task 角色和依赖定义](m1/design/Content_and_Model_Reference.md#32-领域对象与字段)及[四分之一父子任务示例](m1/design/Content_and_Model_Reference.md#415-task-依赖如何参与-evaluation)。规范合同为[Domain v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)和[Evaluation v1.7](../concept-design/DeerMind_Evaluation_Space_Design_v1.7.md)；本轮已同步Evaluation追溯原型及12张当前截图，未改旧参考包；最小评估方案已确认，先读[决定登记§20](DECISIONS.md#20-m1-最小评估机制与试用参数)和[评估详规](m1/design/Content_and_Model_Reference.md#416-m1-belief按方法和方面保存分项概率)，校准与真实接入待完成。当前证据查询及主流程检查见[决定登记§21](DECISIONS.md#21-evaluation追溯与主流程交接检查)。此前活动与画面收束见决定登记§18，评估与目标见§15，领域与教材操作见§14。其余产品设计和正式工程接收仍未完成。
 
 ## 2. 三个产品阶段
 
 | 阶段 | 要回答的问题 | 当前投入 |
 | --- | --- | --- |
-| [M1 教材与教学核心闭环](m1/README.md) | 管理员能否完成指定教材整册导入建模，学生能否学习、提问、测验，系统能否依据评价安排后续任务？ | 领域、教材、评估、目标与 Interaction 活动模型已同步文档；四类活动配置和固定学生活动流程已有对应截图，真实执行与评价链待完善 |
+| [M1 教材与教学核心闭环](m1/README.md) | 管理员能否完成指定教材整册导入建模，学生能否学习、提问、测验，系统能否依据评价安排后续任务？ | 领域、教材、评估、目标与 Interaction 活动模型已同步文档；四类活动配置和固定学生活动流程已有对应截图，管理员Evaluation追溯已有图文，课程应用和学生反馈／主动任务交接仍待收束 |
 | [M2 日常学习与多角色完善](m2/README.md) | 如何在M1基础上补齐日常学习、资料、家长和第二课程？ | 保留方向，待M1结果后确定具体范围 |
 | [M3 持续学习与效果验证](m3/README.md) | 如何改善持续学习并用真实证据检验价值？ | 保留方向，不提前展开实现 |
 
@@ -56,7 +56,7 @@ M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工�
 | 验证计划与报告 | `m1/validation/`：测量方法、样本、配置、停止条件；实际结果另成报告 | 计划在运行前形成；有真实执行后才建立结果报告 |
 | 决定与待决 | `DECISIONS.md`：承接、变更、未决、阶段评审及版本记录 | 随需求推进维护；不另复制PRD正文 |
 
-文件不必一开始全部创建。design已对齐领域、教材、评估、目标与 Interaction 活动模型的产品规则；四类活动蓝图、两层配置、学生固定流程及运行追溯已有当前截图，正式评价链尚未完成。engineering尚未展开完整实现方案，validation已有有限真实内容提取试验，实际结果按原报告保留。PRD主文档、详细规格和原型共同表达产品设计；工程定义技术机制；验证说明怎样获得和解释证据。模型定义以现行专项 Space 合同为权威，PRD说明其产品作用。本轮 Domain v1.4／Evaluation v1.6 与 M1-DEC-015 已同步；仍引用旧关系的概念／系统摘要属于待迁移基线，不可据此覆盖新合同，迁移范围见 M1-OPEN-04。
+文件不必一开始全部创建。design已对齐领域、教材、评估、目标与 Interaction 活动模型的产品规则；四类活动蓝图、两层配置、学生固定流程及运行追溯已有当前截图，管理员证据及事件查询已有mock，真实评价链尚未完成。engineering尚未展开完整实现方案，validation已有有限真实内容提取试验，实际结果按原报告保留。PRD主文档、详细规格和原型共同表达产品设计；工程定义技术机制；验证说明怎样获得和解释证据。模型定义以现行专项 Space 合同为权威，PRD说明其产品作用。本轮 Domain v1.5／Evaluation v1.7 与 M1-DEC-015／016 已同步；仍引用旧关系的概念／系统摘要属于待迁移基线，不可据此覆盖新合同，迁移范围见 M1-OPEN-04。
 
 ## 4. 历史与资产的使用规则
 

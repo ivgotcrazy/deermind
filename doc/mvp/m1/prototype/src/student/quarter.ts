@@ -1,7 +1,7 @@
 export type LessonCard = 'example' | 'diagram' | 'formula' | 'offer' | 'check' | 'finish' | 'question' | 'return' | 'free';
 export type Check = { item:number; status:'answering'|'submitted'|'help'|'stopped'; answer:string; reason:string };
-export type Turn = { question:string; reply:string; chapter:string; page:string; card?:LessonCard; check?:Check; exampleItem?:number; activityId?:string; roundId?:string; feedback?:boolean };
-export type Activity = {id:string; parentId?:string; kind:string; title:string; status:'进行中'|'暂停'|'已结束'; state:string; triggerRound?:string; plan?:number; used?:number; helped?:boolean};
+export type Turn = { question:string; reply:string; bookReference?:{chapter:string;page:string}; card?:LessonCard; check?:Check; exampleItem?:number; activityId?:string; roundId?:string; feedback?:boolean };
+export type Activity = {id:string; parentId?:string; kind:string; title:string; startedAt?:string; status:'进行中'|'暂停'|'已结束'; state:string; triggerRound?:string; plan?:number; used?:number; helped?:boolean};
 
 export const items = [
   {text:'图书角原有 120 本书，又增加了原来数量的四分之一。现在共有多少本？', base:120, unit:'本', total:150, steps:'120 ÷ 4 = 30（本），120 + 30 = 150（本）。'},
@@ -26,6 +26,6 @@ export function chooseCard(text:string, previous?:Turn):LessonCard | undefined {
   if (/检测|测验|测一下|试一题|出.*题/.test(text)) return 'offer';
   if (!previous?.card && !/四分之一|增加|1\s*\/\s*4/.test(text)) return;
   if (/乘法|括号|合并|为什么.*乘|为什么.*加.*1/.test(text)) return 'formula';
-  if (/没懂|不懂|换|画|四格/.test(text) && previous?.card) return 'diagram';
+  if (/没懂|不懂|换(?:个|一种)(?:说法|方式|讲法)|画给我看|四格/.test(text) && previous?.card) return 'diagram';
   if (/四分之一|增加|1\s*\/\s*4/.test(text)) return 'example';
 }
