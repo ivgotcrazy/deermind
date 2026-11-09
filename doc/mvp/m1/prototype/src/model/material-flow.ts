@@ -3,6 +3,7 @@ import { clone, id, domainData } from './domain';
 import { initializeReview, blankBlock, blockIssues, type ReviewBlock } from './review-content';
 import { correctionCandidates, reviewCatalog } from './review-fixtures';
 import type { ImportDraft } from './imports';
+import type { MaterialAssistantState } from './material-assistant';
 
 export type ElementKind='question'|'solution'|'knowledge';
 export interface ParsedElement {
@@ -16,6 +17,7 @@ export interface IntakeGroup {
 }
 export interface ChapterLink { taskId:string; methodIds:string[] }
 export interface MaterialFlow {
+  assistant?:MaterialAssistantState;
   elements:ParsedElement[]; selectedChapter:string; tab:'content'|'links'; requests:IntakeGroup[];
   links:Record<string,ChapterLink[]>; changes:{at:string;prompt:string;before:ParsedElement[];after:ParsedElement[]}[];
 }
@@ -40,7 +42,7 @@ export function initializeFlow(draft:ImportDraft):MaterialFlow {
       const kind=part.role as ElementKind;
       elements.push({id:kind==='question'?qId:part.id,itemId:item.id,chapter:item.chapter,kind,title:kind==='question'?item.title:part.name,
         blocks:clone(part.blocks),taskElementId:kind==='solution'?qId:'',recipe:kind==='question'?(taskRecipes[key]||''):kind==='solution'&&key==='C02'?(item.parts.filter(p=>p.role==='solution').indexOf(part)===1?'ST-COMBINE':'ST-TWO'):kind==='knowledge'&&item.id==='MAT-KNOWLEDGE-DIVISION'?'KC-RECIP':'',sourceNote:item.sourceNote,
-        pending:key==='C05'&&kind==='question'&&!part.blocks.some(b=>b.type==='chart')?'统计图尚未完整解析，请重新解析题目。':''});
+        pending:key==='C05'&&kind==='question'&&!part.blocks.some(b=>b.type==='chart')?'统计图尚未完整解析，请与教材助手核对。':''});
     }
   }
   // Knowledge statements embedded in the old import also remain available as separate candidates.
@@ -97,9 +99,9 @@ export function submitElements(flow:MaterialFlow,keys:string[]):string[]{
   const roots=[...new Set(chosen.map(e=>e.taskElementId||e.id))];
   const groups:ParsedElement[][]=[];
   for(const root of roots){
-    const parent=flow.elements.find(e=>e.id===root);if(!parent)return ['解法缺少所属题目，请重新解析。'];
+    const parent=flow.elements.find(e=>e.id===root);if(!parent)return ['解法缺少所属题目，请与教材助手核对。'];
     const group=[clone(parent),...chosen.filter(e=>e.taskElementId===root).map(clone)];
-    if(group.some(e=>elementProblems(e).length))return ['所选内容仍有解析问题，请先重新解析。'];
+    if(group.some(e=>elementProblems(e).length))return ['所选内容仍有解析问题，请先与教材助手核对。'];
     groups.push(group);
   }
   for(const group of groups){

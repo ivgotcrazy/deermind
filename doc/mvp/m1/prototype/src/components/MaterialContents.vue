@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { initializeFlow, chapters, elementNames, elementText, elementProblems, reparseCandidate, adoptReparse, submitElements, isImported, elementResult, chapterSuggestions, saveChapterLinks, materialUrl, intakeUrl, type ParsedElement, type ElementKind, type ChapterLink } from '../model/material-flow';
+import { initializeFlow, chapters, elementNames, elementText, elementProblems, submitElements, isImported, elementResult, chapterSuggestions, saveChapterLinks, materialUrl, intakeUrl, type ParsedElement, type ElementKind, type ChapterLink } from '../model/material-flow';
 import { domainData, clone, collectKnowledge } from '../model/domain';
 import { storageError, type ImportDraft } from '../model/imports';
 import { materialPageUrl } from '../model/material-content';
 import WorkbenchDialog from './WorkbenchDialog.vue';
 import ParsedElementView from './ParsedElementView.vue';
+import MaterialAssistant from './MaterialAssistant.vue';
+import { assistantState, referenceElements } from '../model/material-assistant';
 
 const props=defineProps<{draft:ImportDraft;hash:string}>();
 const flow=initializeFlow(props.draft),kind=ref<ElementKind>('question'),selected=ref<string[]>([]),query=ref(''),notice=ref(''),error=ref('');
@@ -13,16 +15,21 @@ const chapter=computed(()=>flow.selectedChapter),tab=computed(()=>flow.tab);
 const pending=computed(()=>flow.requests.filter(r=>r.chapter===chapter.value&&r.status==='pending').length);
 const content=computed(()=>flow.elements.filter(e=>e.chapter===chapter.value));
 const rows=computed(()=>content.value.filter(e=>e.kind===kind.value&&(e.title+' '+elementText(e)).includes(query.value.trim())));
-const detail=ref<ParsedElement|null>(null),reparsing=ref<ParsedElement[]|null>(null),candidate=ref<ParsedElement[]|null>(null),prompt=ref(''),sourcePage=ref(0),showSource=ref(false);
+const detail=ref<ParsedElement|null>(null),sourcePage=ref(0),showSource=ref(false);
+const assistant=assistantState(flow),previewId=ref(''),compareBefore=ref(false);
+const preview=computed(()=>assistant.messages.find(m=>m.id===previewId.value));
+function showCandidate(key:string){previewId.value=key;compareBefore.value=false;showSource.value=false;sourcePage.value=0;}
+function ask(elements:ParsedElement[]){referenceElements(flow,elements,chapter.value);detail.value=null;}
+function adopted(){selected.value=[];notice.value='已采用修正结果。领域对象与章节关联未改变。';}
 const links=computed(()=>flow.links[chapter.value]||[]);
 const linkDraft=ref<ChapterLink|null>(null),editingTask=ref(''),linkError=ref('');
 const suggestions=computed(()=>chapterSuggestions(props.draft,chapter.value));
 const availableTasks=computed(()=>domainData.tasks.filter(t=>t.domainId===props.draft.book.domainId&&!links.value.some(l=>l.taskId===t.id)));
-const pageNumbers=computed(()=>[...new Set((reparsing.value||[detail.value].filter(Boolean) as ParsedElement[]).flatMap(e=>e.blocks.map(b=>b.page)))].sort((a,b)=>a-b));
+const pageNumbers=computed(()=>[...new Set((preview.value?.candidate?.after||[detail.value].filter(Boolean) as ParsedElement[]).flatMap(e=>e.blocks.map(b=>b.page)))].sort((a,b)=>a-b));
 const activePage=computed(()=>sourcePage.value||pageNumbers.value[0]||49);
 const sourceUrl=computed(()=>materialPageUrl(activePage.value));
 function parentName(e:ParsedElement){return flow.elements.find(q=>q.id===e.taskElementId)?.title||'所属题目待解析';}
-function state(e:ParsedElement){return isImported(flow,e)?'已入库':flow.requests.some(r=>r.status==='pending'&&!r.removed?.includes(e.id)&&r.elements.some(x=>x.id===e.id))?'待入库':elementProblems(e).length?'需重新解析':elementResult(flow,e.id)?'内容已更新':'可提交';}
+function state(e:ParsedElement){return isImported(flow,e)?'已入库':flow.requests.some(r=>r.status==='pending'&&!r.removed?.includes(e.id)&&r.elements.some(x=>x.id===e.id))?'待入库':elementProblems(e).length?'待核对':elementResult(flow,e.id)?'内容已更新':'可提交';}
 function navigate(ch=chapter.value,view=tab.value){location.hash=materialUrl(props.draft,ch,view);}
 watch(()=>props.hash,()=>{
   const p=new URLSearchParams(props.hash.split('?')[1]||'');
@@ -30,14 +37,11 @@ watch(()=>props.hash,()=>{
   if(ch&&chapters(flow).includes(ch))flow.selectedChapter=ch;
   if(item){const found=flow.elements.find(e=>e.itemId===item&&e.kind==='question');if(found){flow.selectedChapter=found.chapter;detail.value=found;}}
   flow.tab=p.get('view')==='links'?'links':'content';
-  closeLink();
+  closeLink();previewId.value='';
   selected.value=[];notice.value='';error.value='';
 },{immediate:true});
 function select(key:string,checked:boolean){selected.value=checked?[...selected.value,key]:selected.value.filter(k=>k!==key);}
 function inspect(e:ParsedElement){detail.value=e;sourcePage.value=0;showSource.value=false;}
-function reparse(elements:ParsedElement[]){reparsing.value=clone(elements);candidate.value=null;prompt.value='';detail.value=null;showSource.value=false;sourcePage.value=0;error.value='';}
-function propose(){if(!prompt.value.trim())return;candidate.value=reparsing.value!.flatMap(e=>reparseCandidate(flow,e));}
-function adopt(){if(!candidate.value||!reparsing.value)return;adoptReparse(flow,reparsing.value,candidate.value,prompt.value);reparsing.value=null;candidate.value=null;selected.value=[];notice.value='已采用重新解析结果。已入库的领域对象未被覆盖；需要时可重新提交。';}
 function submit(){error.value=submitElements(flow,selected.value).join('；');if(!error.value){notice.value='已提交到领域管理。题目和选中的解法按组处理。';selected.value=[];}}
 function openLink(link?:ChapterLink){editingTask.value=link?.taskId||'';linkDraft.value=clone(link||{taskId:'',methodIds:[]});linkError.value='';error.value='';notice.value='';}
 function closeLink(){linkDraft.value=null;editingTask.value='';linkError.value='';}
@@ -66,15 +70,25 @@ const method=(key:string)=>domainData.methods.find(m=>m.id===key&&m.domainId===p
 
 <template><div class="material-contents">
   <div v-if="notice" class="saved-note" role="status">{{notice}}</div><p v-if="error" class="callout danger" role="alert">{{error}}</p>
+  <button v-if="assistant.collapsed" class="btn assistant-expand" @click="assistant.collapsed=false">展开教材助手</button>
+  <div class="assistant-workspace" :class="{collapsed:assistant.collapsed}">
+  <MaterialAssistant :flow="flow" @preview="showCandidate" @adopted="adopted"/>
   <div class="material-layout">
-    <aside class="panel chapter-nav"><h3>章节</h3><button v-for="ch in chapters(flow)" :key="ch" :class="{active:chapter===ch}" @click="navigate(ch)">{{ch}}<small>{{flow.elements.filter(e=>e.chapter===ch&&e.kind==='question').length}} 道题 · {{flow.links[ch]?.length||0}} 项任务已关联</small></button></aside>
+    <details class="panel chapter-nav"><summary>章节：{{chapter}}</summary><button v-for="ch in chapters(flow)" :key="ch" :class="{active:chapter===ch}" @click="navigate(ch)">{{ch}}<small>{{flow.elements.filter(e=>e.chapter===ch&&e.kind==='question').length}} 道题 · {{flow.links[ch]?.length||0}} 项任务已关联</small></button></details>
     <section class="panel chapter-workspace">
-      <header class="row-between"><h3>{{chapter||'解析内容'}}</h3><a v-if="pending" class="text-link" :href="intakeUrl(draft,chapter)">领域待入库 {{pending}} 组 →</a></header>
+      <header class="row-between"><h3>{{preview?.reference?.chapter||chapter||'解析内容'}}</h3><a v-if="pending" class="text-link" :href="intakeUrl(draft,chapter)">领域待入库 {{pending}} 组 →</a></header>
       <nav class="material-tabs" aria-label="教材内容"><button :class="{active:tab==='content'}" @click="navigate(chapter,'content')">解析内容</button><button :class="{active:tab==='links'}" @click="navigate(chapter,'links')">章节关联</button></nav>
-      <template v-if="tab==='content'">
-        <div class="row-between content-toolbar"><div class="type-switch" aria-label="元素类型"><button v-for="(name,key) in elementNames" :key="key" :class="{active:kind===key}" @click="kind=key;query=''">{{name}} {{content.filter(e=>e.kind===key).length}}</button></div><button class="text-link" @click="reparse(content)">重新解析本章</button></div>
+      <section v-if="preview?.candidate" class="candidate-preview">
+        <div class="row-between"><h3>候选核对</h3><button class="btn" @click="previewId='';showSource=false">返回内容列表</button></div>
+        <p class="muted">{{preview.reference?.title}} · {{preview.candidate.status==='pending'?'尚未采用，原内容未改变':preview.candidate.status==='adopted'?'已采用的结果快照':preview.candidate.status==='superseded'?'历史候选，已有后续版本':'未采用的候选'}}</p>
+        <div class="button-row"><button class="btn" :class="{primary:!compareBefore}" @click="compareBefore=false">修正后</button><button class="btn" :class="{primary:compareBefore}" @click="compareBefore=true">修改前</button><button class="btn" @click="showSource=!showSource">{{showSource?'收起原页':'查看原页'}}</button></div>
+        <div v-if="showSource" class="original-preview"><label>原页<select v-model.number="sourcePage"><option v-for="n in pageNumbers" :key="n" :value="n">第 {{n}} 页</option></select></label><img :src="sourceUrl" :alt="'教材第'+activePage+'页'"/></div>
+        <ParsedElementView v-for="e in compareBefore?preview.candidate.before:preview.candidate.after" :key="e.id" :element="e"/>
+      </section>
+      <template v-else-if="tab==='content'">
+        <div class="row-between content-toolbar"><div class="type-switch" aria-label="元素类型"><button v-for="(name,key) in elementNames" :key="key" :class="{active:kind===key}" @click="kind=key;query=''">{{name}} {{content.filter(e=>e.kind===key).length}}</button></div><button class="text-link" @click="ask(content)">与助手讨论本章</button></div>
         <label class="search-label">查找{{elementNames[kind]}}<input v-model="query" type="search" placeholder="名称或内容"/></label>
-        <table v-if="rows.length" class="data-table element-table"><thead><tr><th class="select-cell">选择</th><th>{{elementNames[kind]}}</th><th v-if="kind==='solution'">所属题目</th><th v-else-if="kind==='question'">教材解法</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="e in rows" :key="e.id" :data-element="e.id"><td><input type="checkbox" :aria-label="'选择 '+e.title" :checked="selected.includes(e.id)" :disabled="isImported(flow,e)||!!elementProblems(e).length" @change="select(e.id,($event.target as HTMLInputElement).checked)"/></td><td><button class="text-link element-title" @click="inspect(e)">{{e.title}}</button><small>第 {{[...new Set(e.blocks.map(b=>b.page))].join('、')}} 页</small></td><td v-if="kind==='solution'">{{parentName(e)}}</td><td v-else-if="kind==='question'">{{flow.elements.filter(s=>s.taskElementId===e.id).length}} 种</td><td><span class="badge" :class="{warning:!!elementProblems(e).length}">{{state(e)}}</span></td><td><button class="text-link" :aria-label="'重新解析 '+e.title" @click="reparse([e])">重新解析</button></td></tr></tbody></table>
+        <table v-if="rows.length" class="data-table element-table"><thead><tr><th class="select-cell">选择</th><th>{{elementNames[kind]}}</th><th v-if="kind==='solution'">所属题目</th><th v-else-if="kind==='question'">教材解法</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="e in rows" :key="e.id" :data-element="e.id"><td><input type="checkbox" :aria-label="'选择 '+e.title" :checked="selected.includes(e.id)" :disabled="isImported(flow,e)||!!elementProblems(e).length" @change="select(e.id,($event.target as HTMLInputElement).checked)"/></td><td><button class="text-link element-title" @click="inspect(e)">{{e.title}}</button><small>第 {{[...new Set(e.blocks.map(b=>b.page))].join('、')}} 页</small></td><td v-if="kind==='solution'">{{parentName(e)}}</td><td v-else-if="kind==='question'">{{flow.elements.filter(s=>s.taskElementId===e.id).length}} 种</td><td><span class="badge" :class="{warning:!!elementProblems(e).length}">{{state(e)}}</span></td><td><button class="text-link" :aria-label="'请助手修正 '+e.title" @click="ask([e])">请助手修正</button></td></tr></tbody></table>
         <p v-else class="empty">当前章节没有{{elementNames[kind]}}解析结果。</p>
         <footer class="row-between selection-footer"><span class="muted">已选 {{selected.length}} 项。题目与解法分开选择；只选解法时自动带上所属题目。</span><button class="btn primary" :disabled="!selected.length||!!storageError" @click="submit">提交到领域</button></footer>
       </template>
@@ -86,6 +100,7 @@ const method=(key:string)=>domainData.methods.find(m=>m.id===key&&m.domainId===p
       </template>
     </section>
   </div>
+  </div>
   <WorkbenchDialog v-if="linkDraft" :title="editingTask?'编辑章节关联':'添加章节关联'" @close="closeLink">
     <p v-if="linkError||storageError" class="callout danger" role="alert">{{linkError||storageError}}</p>
     <p class="muted">当前章节：{{chapter}}</p>
@@ -96,15 +111,14 @@ const method=(key:string)=>domainData.methods.find(m=>m.id===key&&m.domainId===p
     <p v-if="linkDraft.taskId&&!editingTask&&suggestions.some(s=>s.taskId===linkDraft!.taskId)" class="muted">已按教材建议预选方法，可调整；保存后才建立本章关联。</p>
     <footer class="dialog-footer"><button class="btn" @click="closeLink">取消</button><button class="btn primary" :disabled="!!storageError" @click="saveLink">保存</button></footer>
   </WorkbenchDialog>
-  <WorkbenchDialog v-if="detail||reparsing" :title="reparsing?(reparsing.length===1?'重新解析'+elementNames[reparsing[0].kind]:'重新解析本章'):'解析内容'" wide @close="detail=null;reparsing=null;candidate=null">
-    <template v-if="reparsing"><label>需要纠正什么<textarea v-model="prompt" rows="3" placeholder="例如：这里是两种解法，请分别提取；原题中的错误算式请保留。"/></label><p class="muted">当前使用固定 mock 结果演示，不执行提示词、不调用 LLM。采用前不会替换原结果。</p></template>
+  <WorkbenchDialog v-if="detail" title="解析内容" wide @close="detail=null">
     <button class="text-link" @click="showSource=!showSource">{{showSource?'收起原页':'查看原页'}}</button>
     <div v-if="showSource" class="original-preview"><label>原页<select v-model.number="sourcePage"><option v-for="n in pageNumbers" :key="n" :value="n">第 {{n}} 页</option></select></label><img :src="sourceUrl" :alt="'教材第'+activePage+'页'"/></div>
-    <div v-if="candidate" class="reparse-result"><h4>重新解析结果</h4><ParsedElementView v-for="e in candidate" :key="e.id" :element="e"/></div>
-    <template v-else><ParsedElementView v-if="detail" :element="detail"/><details v-else open><summary>当前解析结果</summary><ParsedElementView v-for="e in reparsing" :key="e.id" :element="e"/></details></template>
-    <footer class="dialog-footer"><button class="btn" @click="detail=null;reparsing=null;candidate=null">取消</button><button v-if="detail" class="btn primary" @click="reparse([detail])">重新解析</button><button v-else-if="!candidate" class="btn primary" :disabled="!prompt.trim()" @click="propose">生成解析结果</button><button v-else class="btn primary" :disabled="!!storageError" @click="adopt">采用结果</button></footer>
+    <ParsedElementView :element="detail"/>
+    <footer class="dialog-footer"><button class="btn" @click="detail=null">取消</button><button class="btn primary" @click="ask([detail])">请助手修正</button></footer>
   </WorkbenchDialog>
 </div></template>
 <style scoped>
-.material-layout{display:grid;grid-template-columns:205px minmax(0,1fr);gap:20px}.chapter-nav{align-self:start}.chapter-nav>button{display:block;text-align:left;width:100%;padding:12px;border:0;border-radius:6px;background:none;color:#385746;margin:5px 0}.chapter-nav>button.active{background:#e9f3ed;border-left:3px solid #2d6a4f}.chapter-nav small{display:block;font-size:11px;color:#74847b;margin-top:5px}.material-tabs{display:flex;gap:24px;border-bottom:1px solid #dfe8e2;margin:14px 0 20px}.material-tabs button{border:0;border-bottom:3px solid transparent;background:none;padding:10px 0;color:#6b7f73}.material-tabs .active{border-color:#2d6a4f;color:#2d6a4f;font-weight:600}.type-switch{display:flex;gap:5px}.type-switch button{border:0;border-radius:6px;background:none;padding:8px 12px;color:#6b7f73}.type-switch .active{background:#edf5f0;color:#285b42}.select-cell{width:50px}.element-title{font-weight:600}.selection-footer{margin-top:20px;padding-top:14px;border-top:1px solid #e5ece7}.chapter-links-toolbar{gap:16px;margin:16px 0}.link-actions{display:flex;gap:8px;flex-wrap:wrap}.link-actions .btn{white-space:nowrap}.method-list{margin:0;padding-left:18px}.method-list li+li{margin-top:6px}.link-methods{border:0;padding:0;margin:20px 0}.link-methods legend{font-weight:600;margin-bottom:10px}.link-methods label{margin:10px 0}.original-preview img{display:block;max-width:100%;max-height:650px;margin:16px auto}.original-preview label{max-width:180px}.reparse-result{border-top:1px solid #dfe8e2;margin-top:16px}.chapter-links details{font-size:12px;color:#738579}.chapter-links td{vertical-align:top}.chapter-links td:nth-child(2){min-width:190px}.chapter-links td:last-child{min-width:160px}.element-table td{vertical-align:top}.content-toolbar{gap:10px}@media(max-width:1100px){.material-layout{grid-template-columns:160px minmax(0,1fr);gap:12px}.chapter-nav,.chapter-workspace{padding:14px}.type-switch button{padding:6px 8px}}
+.assistant-workspace{display:grid;grid-template-columns:350px minmax(0,1fr);gap:18px;align-items:start}.assistant-workspace.collapsed{grid-template-columns:minmax(0,1fr)}.assistant-expand{margin-bottom:12px}.material-layout{display:flex;flex-direction:column;gap:12px;min-width:0}.chapter-workspace{min-width:0;overflow:auto}.chapter-nav{width:100%;box-sizing:border-box;padding:14px 18px}.chapter-nav summary{cursor:pointer;font-weight:600}.candidate-preview .button-row{display:flex;gap:8px;margin:16px 0}.candidate-preview .parsed-element-view{padding:14px 0;border-top:1px solid #e5ece7}.chapter-nav{align-self:start}.chapter-nav>button{display:block;text-align:left;width:100%;padding:12px;border:0;border-radius:6px;background:none;color:#385746;margin:5px 0}.chapter-nav>button.active{background:#e9f3ed;border-left:3px solid #2d6a4f}.chapter-nav small{display:block;font-size:11px;color:#74847b;margin-top:5px}.material-tabs{display:flex;gap:24px;border-bottom:1px solid #dfe8e2;margin:14px 0 20px}.material-tabs button{border:0;border-bottom:3px solid transparent;background:none;padding:10px 0;color:#6b7f73}.material-tabs .active{border-color:#2d6a4f;color:#2d6a4f;font-weight:600}.type-switch{display:flex;gap:5px}.type-switch button{border:0;border-radius:6px;background:none;padding:8px 12px;color:#6b7f73}.type-switch .active{background:#edf5f0;color:#285b42}.select-cell{width:50px}.element-title{font-weight:600}.selection-footer{margin-top:20px;padding-top:14px;border-top:1px solid #e5ece7}.chapter-links-toolbar{gap:16px;margin:16px 0}.link-actions{display:flex;gap:8px;flex-wrap:wrap}.link-actions .btn{white-space:nowrap}.method-list{margin:0;padding-left:18px}.method-list li+li{margin-top:6px}.link-methods{border:0;padding:0;margin:20px 0}.link-methods legend{font-weight:600;margin-bottom:10px}.link-methods label{margin:10px 0}.original-preview img{display:block;max-width:100%;max-height:650px;margin:16px auto}.original-preview label{max-width:180px}.reparse-result{border-top:1px solid #dfe8e2;margin-top:16px}.chapter-links details{font-size:12px;color:#738579}.chapter-links td{vertical-align:top}.chapter-links td:nth-child(2){min-width:190px}.chapter-links td:last-child{min-width:160px}.element-table td{vertical-align:top}.content-toolbar{gap:10px}@media(max-width:1100px){.assistant-workspace{grid-template-columns:300px minmax(0,1fr);gap:12px}.chapter-nav,.chapter-workspace{padding:14px}.type-switch button{padding:6px 8px}}
+@media(max-width:800px){.assistant-workspace{grid-template-columns:minmax(0,1fr)}}
 </style>

@@ -16,7 +16,7 @@ test('textbook parsing, domain intake and chapter adoption form one simple workf
   const domain=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('deermind-m1-domain-v1')));
   const shot=async name=>{await page.locator('.page-container').evaluate(el=>el.scrollTop=0);await page.screenshot({path:new URL(name+'.png',output).pathname.replace(/^\/([A-Z]:)/,'$1'),fullPage:true});};
   const goContent=async(chapter='分数的应用')=>{const d=await data();await page.evaluate(hash=>location.hash=hash,'/textbooks?'+new URLSearchParams({source:d.id,chapter,view:'content'}));await expect(page.locator('.material-contents')).toBeVisible();};
-  const reparse=async(name,prompt,adopt=true)=>{await page.getByRole('button',{name:'重新解析 '+name,exact:true}).click();await dialog().getByLabel('需要纠正什么').fill(prompt);await dialog().getByRole('button',{name:'生成解析结果',exact:true}).click();if(adopt)await dialog().getByRole('button',{name:'采用结果',exact:true}).click();};
+  const reparse=async(name,prompt,adopt=true)=>{await page.getByRole('button',{name:'请助手修正 '+name,exact:true}).click();await page.getByLabel('给教材助手的消息').fill(prompt);await btn('发送').click();await expect(page.locator('.candidate-card').last()).toBeVisible();if(adopt){await page.locator('.candidate-card').last().getByRole('button',{name:'采用结果',exact:true}).click();await btn('返回内容列表').click();}};
   const intoDomain=async()=>{await page.getByRole('link',{name:/领域待入库/}).click();await expect(page.locator('.domain-intake')).toBeVisible();};
   const processRows=async()=>{
     const keys=await page.locator('.intake-list tbody tr').evaluateAll(rows=>rows.map(r=>r.dataset.element));
@@ -41,7 +41,7 @@ test('textbook parsing, domain intake and chapter adoption form one simple workf
   await t.test('re-parsing replaces only the chosen element after adoption; source content stays intact',async()=>{
     for(const name of ['编辑','框选出处','移动到…','检查并应用','添加内容'])await expect(btn(name)).toHaveCount(0);
     await reparse('跨页题目与两种原有解法','还原完整题目，不加入教材解法',false);
-    const before=(await data()).flow.elements.find(e=>e.id==='C02-question');assert.equal(before.title,'跨页题目与两种原有解法');await dialog().getByRole('button',{name:'取消',exact:true}).click();
+    const before=(await data()).flow.elements.find(e=>e.id==='C02-question');assert.equal(before.title,'跨页题目与两种原有解法');await page.locator('.candidate-card').last().getByRole('button',{name:'不采用',exact:true}).click();await btn('返回内容列表').click();
     await reparse('跨页题目与两种原有解法','还原完整题目，不加入教材解法');
     await btn('教材解法 1').click();await reparse('教材解法 1','这里是两种解法，请分别提取');
     await expect(page.locator('.element-table tbody tr')).toHaveCount(2);const d=await data();assert.equal(d.flow.elements.filter(e=>e.kind==='solution').length,2);assert.deepEqual(d.contentReview,initial.contentReview);
@@ -84,7 +84,7 @@ test('textbook parsing, domain intake and chapter adoption form one simple workf
     await page.reload();await expect(table.locator('.method-list li')).toHaveCount(1);assert.deepEqual(await domain(),model);
     await table.getByRole('button',{name:'取消关联',exact:true}).click();await expect(table.locator('tbody tr')).toHaveCount(0);assert.equal(await currentLinks(),undefined);assert.deepEqual(await domain(),model);await expect(nav.locator('button.active')).toContainText('0 项任务已关联');
     await page.reload();await expect(table.locator('tbody tr')).toHaveCount(0);await add();await btn('保存').click();await expect(table.locator('tbody tr')).toHaveCount(1);
-    await nav.getByRole('button',{name:/统计图/}).click();await expect(table.locator('tbody tr')).toHaveCount(0);await nav.getByRole('button',{name:/分数的应用/}).click();await expect(table.locator('tbody tr')).toHaveCount(1);
+    await nav.locator('summary').click();await nav.getByRole('button',{name:/统计图/}).click();await expect(table.locator('tbody tr')).toHaveCount(0);await nav.getByRole('button',{name:/分数的应用/}).click();await expect(table.locator('tbody tr')).toHaveCount(1);
     await page.setViewportSize({width:1280,height:900});assert.ok(await main.evaluate(el=>el.scrollWidth<=el.clientWidth));await shot('03-chapter-links');await page.setViewportSize({width:1500,height:1050});
   });
   await t.test('KC intake reuses knowledge and does not create a direct chapter-to-KC relationship',async()=>{
@@ -92,7 +92,7 @@ test('textbook parsing, domain intake and chapter adoption form one simple workf
     const d=await data(),r=d.flow.requests.find(r=>r.rootId==='K-RECIP');assert.equal(r.status,'done');assert.ok((await domain()).knowledge.some(k=>k.id===r.result['K-RECIP'].objectId));assert.equal(r.result['K-RECIP'].templateId,'');assert.deepEqual(Object.keys(d.flow.links['分数的应用'][0]).sort(),['methodIds','taskId']);
   });
   await t.test('chart re-parsing preserves rendering, geometry and wrong worked examples remain source data',async()=>{
-    await goContent('统计图');await expect(page.getByLabel('选择 三种统计图与教学提示')).toBeDisabled();await reparse('三种统计图与教学提示','补齐原题里的三张统计图',false);await expect(dialog().locator('svg')).toHaveCount(3);await shot('05-reparse-chart');await dialog().getByRole('button',{name:'采用结果',exact:true}).click();await page.getByLabel('选择 三种统计图与教学提示').check();await btn('提交到领域').click();await intoDomain();await finishFirst();
+    await goContent('统计图');await expect(page.getByLabel('选择 三种统计图与教学提示')).toBeDisabled();await reparse('三种统计图与教学提示','补齐原题里的三张统计图',false);await expect(page.locator('.candidate-preview svg')).toHaveCount(3);await shot('05-reparse-chart');await page.locator('.candidate-card').last().getByRole('button',{name:'采用结果',exact:true}).click();await btn('返回内容列表').click();await page.getByLabel('选择 三种统计图与教学提示').check();await btn('提交到领域').click();await intoDomain();await finishFirst();
     const model=await domain();const q=model.instances.find(i=>i.reviewContent?.some(p=>p.blocks.some(b=>b.type==='chart')));assert.equal(q.reviewContent.flatMap(p=>p.blocks).filter(b=>b.type==='chart').length,3);
     await goContent('圆');await page.getByRole('button',{name:'六种平面图形和原图标记',exact:true}).click();await expect(dialog().locator('svg circle[fill="#c62a7c"]')).toHaveCount(6);await dialog().getByRole('button',{name:'取消',exact:true}).click();
     await goContent();await reparse('保留原题中的错误演算','只修正格式，保留原题故意写错的算式');const e=(await data()).flow.elements.find(e=>e.id==='C03-question');assert.ok(e.blocks.some(b=>b.type==='formula'&&b.lines.some(l=>l.includes('7/32'))));
@@ -127,7 +127,7 @@ test('textbook parsing, domain intake and chapter adoption form one simple workf
     assert.equal(m.tasks.filter(t=>t.domainId===d.book.domainId).length,1);assert.equal(m.methods.filter(t=>t.domainId===d.book.domainId).length,2);
     await goContent();await btn('知识 1').click();await page.getByLabel('选择 除以非零数等于乘其倒数').check();await btn('提交到领域').click();await intoDomain();await expect(btn('处理')).toHaveCount(0);
     const beforeKc=await domain();await btn('删除').click();await btn('确认删除').click();await expect(page.getByText('当前没有待入库内容。',{exact:true})).toBeVisible();assert.deepEqual(await domain(),beforeKc);await expect(dialog()).toHaveCount(0);
-    await goContent();await reparse('保留原题中的错误演算','保留原题');await page.getByLabel('选择 保留原题中的错误演算').check();await btn('提交到领域').click();await intoDomain();await expect(btn('处理')).toHaveCount(0);
+    await goContent();await reparse('保留原题中的错误演算','核对并保留原题中的错误算式');await page.getByLabel('选择 保留原题中的错误演算').check();await btn('提交到领域').click();await intoDomain();await expect(btn('处理')).toHaveCount(0);
     await btn('提取任务模板').click();await btn('保存模板').click();const beforeQuestion=await domain();await btn('删除').click();await btn('确认删除').click();assert.deepEqual(await domain(),beforeQuestion);await expect(dialog()).toHaveCount(0);await expect(btn('处理')).toHaveCount(0);
   });
   assert.deepEqual(errors,[]);assert.deepEqual(network,[]);
