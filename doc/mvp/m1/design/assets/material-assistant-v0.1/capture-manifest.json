@@ -1,0 +1,672 @@
+{
+  "version": "0.1",
+  "capturedAt": "2026-11-09T05:56:02.580Z",
+  "baselineHead": "bfd8948393d11381751ead285d4d4e6a2662bca7",
+  "sourceScript": "src/mvp_foundation/m1/design-reviews/20261109-material-assistant/capture.mjs",
+  "data": "Fresh isolated browser; built-in four-case mock and actual UI clicks; no user storage, model calls or manual content edits",
+  "sources": [
+    {
+      "path": "doc/mvp/m1/prototype/.gitignore",
+      "sha256": "e1f0b9d25315a220bfccf630df06fd3ad03630abdea78ff0bf8c8d551498e642"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/index.html",
+      "sha256": "208038b8b3c27c8b641a066d8513cf5228746fd0e02a35cef9db360dd171d164"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/package-lock.json",
+      "sha256": "72d92a3ac62c1d1935cff3d883601227ed79d864931c1895e310c148cc33206e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/package.json",
+      "sha256": "fb26b92b7a3a4276249700bac91a09893c71121cda291883b27394de73cdfad0"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/prototype.cmd",
+      "sha256": "714749c57f1e4a46c6ed2912c3d7c42fa8db2da36138d630a612fd47fe41dc8b"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/reuse-manifest.json",
+      "sha256": "5c635f6a6a05f5ea818f13de8179ebb37dcfb6ec8485a4ec700216e9207694a6"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tsconfig.json",
+      "sha256": "3ab2995b4b80e9f4c7164c1eeab6d81880c3a018459f1e89a968016663ce921b"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/vite.config.ts",
+      "sha256": "ed1e432b384a02f771e62cc23a08ab69b60e8cac25650b522f44db7ebfe43d54"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/.tmp/5182-error.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/.tmp/5182.json",
+      "sha256": "caec7f9aa0fd792151affda2809a82b3515a918a2fc17d3484da527ccb32e037"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/.tmp/5182.log",
+      "sha256": "5b602845a0e165f356ec3f6d4bfc3b860b13478edccef50d4987cfc68c48c39f"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/.tmp/installed-lock.txt",
+      "sha256": "202f1558a8c6785d33195ca4a0753c0f89708f0f3f7a09fd1aff6e6716650000"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/scripts/capture-activities-design.mjs",
+      "sha256": "e0408430d44c40f0af177e38fe710ba2b84bcc00d56c60c76006377dd0a18c08"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/scripts/capture-domain-material-design.mjs",
+      "sha256": "b82f9cb40444b03010142e0a1924b92940ac8e2ffd677dd9c7d41981018be4b9"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/scripts/capture-evaluation-target-design.mjs",
+      "sha256": "3ec21a1348daf004c6be816a1ed4c72cd4bef3f43f4fa100b9f4059d99bf4286"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/scripts/capture-teaching-design.mjs",
+      "sha256": "32635b4c57a3a3efbd2c00722954da203185e0d4bc1be6b52eafe3b248fb15a1"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/scripts/prototype.ps1",
+      "sha256": "b8dfc1d917a85d6ab83fbdd3fd208304a1bb88914e13a2a2466a0ed9d40a64cf"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/scripts/render-domain-material-docs.mjs",
+      "sha256": "98539433294c755bc77b79eeed87f6931dd03eed2f4e78d8c03b2dc1bcb714c9"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/scripts/serve.mjs",
+      "sha256": "6fedd88c5986c77e974b217236fff94551d2343aaed723e7a00d73e52058b523"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/App.vue",
+      "sha256": "87eb305965bdca6d4e20b01e35a7edb7d79aa258306ce9763d99208a58610137"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/main.ts",
+      "sha256": "5d2f4c0f5d289c2624f3569aea0b5a48e48cb0d22ef5f57a5ba47d64a0ec7969"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/style.css",
+      "sha256": "7087e46eb9c890f34cf7292f92ac9008c2e5c7bdf2001866cc93400bfede86ba"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/student/index.html",
+      "sha256": "4e83600a376d2a52379054ede794ff388bb6374e12412799df55d17a201b0979"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/activity-editor.test.mjs",
+      "sha256": "bba2816e0770cceae4fc0b814c838e142a25a37885c0dbb90d720d5db6ce5b3a"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/activity-flow.test.mjs",
+      "sha256": "74c05ab0e85d13707ef29cd8d497d09b2719225dc6aa154ed18bd6615d9e08dc"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/content-review.test.mjs",
+      "sha256": "ed1402b3cdab80a46194670d27b1d54a8ce5d5bd7aa86e8d1512159bd01ef51c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/domain.test.mjs",
+      "sha256": "d4c84a1e04252258206ada6f7754ff2aae55e7296d32f05924097615c9300501"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/evaluation-target.test.mjs",
+      "sha256": "0633c62b0bdec6c4332f67c9188d0a33bec2c7331d7cdf65f1289a3948483a67"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/extracted-instances.test.mjs",
+      "sha256": "81d0d84c26b1924d013151117ab93aaa548e48c7d4c681c035d4cabccb359d91"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/import-lifecycle.test.mjs",
+      "sha256": "0c79596563bdd01199410f1337181637e6cd2f86a2fef0d26aa3deabc2e6a82f"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/import.test.mjs",
+      "sha256": "85095b233a0b0665363a90939d92ea8153586217902459cc8b970a9d023a7a6f"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/intake-dialog.test.mjs",
+      "sha256": "32ff671f67050e9e98bcf34257cf2214c6539f1407db83a3fcefe6b3f6531882"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/learning-spaces.test.mjs",
+      "sha256": "b3d9f4e06dd06f8b982b28284b9b9ec81cdd67f078f006b3ec301c9fb8aefd4d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/material-assistant.test.mjs",
+      "sha256": "1da592d7c35bcd48b0e65a2863cfbb9b3ba62145242ec75a476a2be010782542"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/material-flow.test.mjs",
+      "sha256": "a2bef79514c98a9ddaa8d72613a6910c7d251f4e4f7720d2246cfad46a5addde"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/node-routing.test.mjs",
+      "sha256": "75da82205fe08bc6bf36cb0cee770a3020aba03ef61f9e1db17ca603b357d92c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/solution-template.test.mjs",
+      "sha256": "2908aa789f8bfec34406f259f0d1257a23d0a88066ea75391022527f3d40216d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/student-activity-directory.test.mjs",
+      "sha256": "90b873a92e6d620568925a25fc775cd3c911a4d050e1e98834a24155c7bb9a3b"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/student-activity-fixture.test.mjs",
+      "sha256": "69ac4fcd46b563175a1df02d7de98d59862f7feb45487368880dcf3975fb0def"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/student-activity-heading.test.mjs",
+      "sha256": "c504bcd6bd5b439da004a13577e72479aafa1910e0bd8637ab6faf6c75771e22"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/student-book-context.test.mjs",
+      "sha256": "ccfa7aa0106492c6753f7aa7954a46a418784ad7a11c700c60a38531d13745da"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/student-entry.test.mjs",
+      "sha256": "785610167fc10657bbc6caba1a280094be5301735476b87fcc860afb43689b17"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/task-template.test.mjs",
+      "sha256": "6273b62d935314fce507f593221b2d94bd5f0c88dd7b3cde82fe6eada97cf1ac"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/teaching-scope.test.mjs",
+      "sha256": "67e72cd2b954bd88b30f3097366fffceb4cea0992bdb8f51a118534e2c9c5a2e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/teaching.test.mjs",
+      "sha256": "dd7895c84fdca296134b32ca4e19b1916c8744d99db864e0709fb305ea4a277e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/textbook-fusion.test.mjs",
+      "sha256": "6dc50ef25d75482ded27308eaebb4703ee7440f0384de19de2e964ea1f0c72a7"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/tests/visual-ownership.test.mjs",
+      "sha256": "031c04509309c1eaee0ddd1d08ec11974af555f2415e89daa85d607f3e2fc3e0"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ActivityEditor.vue",
+      "sha256": "33cf656634fcd6ec2871a8adbd7fab3fc20968aad42f50b1aa1f52ead7f7b250"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ActivityTrace.vue",
+      "sha256": "b830e888017031e7708d093159db9f83347eead2c4869956359b08ae19a627b8"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/AspectRulesPanel.vue",
+      "sha256": "0a12ef7689b42c6362fac93a8169ca1afd58963cc33f2fe6e158286977ce0f9c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ClaimCriteriaPanel.vue",
+      "sha256": "ee2afb94bc79b0a5a8c221bd22c50b0cd90cd8ab4edff63b66251a95854396d0"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ContentReviewWorkspace.vue",
+      "sha256": "c16ac04a7b1fa27f5a880d6af0965eb7648810bb1434600aecd74a3566b69f3e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ContentVisualEditor.vue",
+      "sha256": "6e12584de7bef307dd126b171c67a59acb6f51bba0283a4cb2a2dfa07e861a1e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ContentVisuals.vue",
+      "sha256": "31f642bdf617f4c04a745903104d84ca0ea9c6afda0c02dfadcd22b2922a3ee5"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/EvaluationWorkspace.vue",
+      "sha256": "a6cc806c31f94e0a5c59748d2cbe6c3643f7c5b14b22a72cd9e3fb293b51220c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ExtractedMaterial.vue",
+      "sha256": "635652255d2e90045f56de940b28a99d9a46b293429d7cc2ab23576e2d982d11"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/LearningSpaceWorkspace.vue",
+      "sha256": "7739232f6866c6435d5d883fabc2e109d72f46399252cd3514c9e10fcf1023ea"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialAssistant.vue",
+      "sha256": "17a3d9093b1efc1fed874cd0afcd79e89dea5b64a4b04bad21d8b373a6caa23d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialBlockView.vue",
+      "sha256": "d610042364b4d2c089cf798ed19deae1c6abe59c81760c607025cfe693d911aa"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialContents.vue",
+      "sha256": "002dcdc60a22a0f71086749fdeaf9dd2847b4a44c9556289591dfb7871e9245e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialIntegrationWorkspace.vue",
+      "sha256": "4279d89a46b45ef8e346b6dc76ebb501cdec5017934e00675e933b68670db87e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialOrganizeWorkspace.vue",
+      "sha256": "a655fe72fd3a854dbbd019fd0defe9f75c2761c6ee75368d0d9301c1b5448412"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MethodCriteriaTree.vue",
+      "sha256": "e5cb019c46dbffbe33390316e1635279861abf0cd1be5175110309fc36ecd51b"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MethodStandards.vue",
+      "sha256": "e0019d2e1eee50c1c5fb8a16277bb5a6649ef1617ddc4c8a0df0b9c455e46b52"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/NodeRoutingPanel.vue",
+      "sha256": "60318adf40ec8212509d54437aa2392fad5b362aed9abcdb61a1011a3b1ff190"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ParsedElementView.vue",
+      "sha256": "6b3f39b34c03c405c6ac8b73aeeceb587e59d0bcb60b5f388767f87ea9df3707"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/QuarterWalkthrough.vue",
+      "sha256": "0c20cd669adb17969ca0414fc0ff42b9bf9e37c39739eaeb23d1ccc9a3af8edf"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ReviewBlockEditor.vue",
+      "sha256": "dcfd0076cc2aeb7d0945ccee44221aa5df40d59795d9a36aca48a7e9aa1ffd11"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ReviewBlockView.vue",
+      "sha256": "32727c942427c4569dad00d6174e7afe101da32217f77cb307a6e9986c8f2780"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ReviewSource.vue",
+      "sha256": "64896b3086a667a76bb92ade8125cdabde538c39bef2d864e5a87de99af002c5"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TargetWorkspace.vue",
+      "sha256": "4d7c1d612b332313750e3e439b529ad63775ba4d1388fd6d16711a9f3090bb56"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TeachingBlueprint.vue",
+      "sha256": "ad2b2e5ce99c20cf3d4756bf0d0d3e71be41faa64df697edc556d1177ed82f14"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TeachingReferences.vue",
+      "sha256": "6f69a0c948e78102e77db66c03de094aa38736e7066f83199511ba6dfbd710b0"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TeachingWorkspace.vue",
+      "sha256": "53d780603cd2f7bc7d89118d2170e24468ba1386b1c98ea1c7e6a5b1e28a1ec0"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TextbookImport.vue",
+      "sha256": "fa4533dfd2e2e0c3b7142dfa811d82c1ab3557d881d9097ff8c1496ab9fbb943"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/WorkbenchDialog.vue",
+      "sha256": "059e06ed901ab5360332182765360d9645de135b116a134497e5ab77c5fbfac1"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/activity-mock.ts",
+      "sha256": "2c63c48c544974084b32e1286a8f1805cc1b51fc3fb91f717aebdff97232cccd"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/content-visuals.ts",
+      "sha256": "521003ef6930c58333dfbbd45e71bcc7ec331b3fac10e4c99efd8d798d57d40c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/domain-complex-examples.ts",
+      "sha256": "a908e21e0b29430c7f64f45cfaf38518638f28381504ea3ec26374cb06dd6ade"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/domain-example.ts",
+      "sha256": "970311bb2fd812a5334cfeac2a66a529679bc696add4461f1a1aa6fda47f2e41"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/domain.ts",
+      "sha256": "d42fddd30863d67cbcdb2eaeb579f896cb1664afcdb34ac45c5c93358e3f555c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/evaluation-example.ts",
+      "sha256": "04b9ba81a0eb5c06b702f9eeb33a00a3aa567715b07528c42c339d504807dff8"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/evaluation.ts",
+      "sha256": "767716522e6dc59053678eda845a35dae909f399de1c54892be42a5529d59b04"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/imports.ts",
+      "sha256": "c80d4e3ec6bcd4d81074239a42f44499d03dcc09e3efbee25d542457e5c6078a"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/intake-actions.ts",
+      "sha256": "b80028d29ea52f3a4424002cc0b9ddcaba45781ec60fe28e3f79c7922583e949"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/learning-spaces.ts",
+      "sha256": "f5ed214b3935a940e8d58f5e1fe1877996b9c05bbe62c95536c64879170cfaaa"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-assistant.ts",
+      "sha256": "95067151fabbac0bddf0e70975eb49ab9c290135016c3c55384f11201c499077"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-content.ts",
+      "sha256": "908a5e322564348588d8172af3aa148405b042f5ddede1fc6700ecde95e01cd8"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-fixture.ts",
+      "sha256": "0ac08cb9dcc9c1f89149222ba074a24e31c239519312bf5c6801ecb69c39669a"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-flow.ts",
+      "sha256": "9efc41ce23b1ed1a52aec7fca522f2c4a3cc86bee7523c47eb2f9081ca6e8f02"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-integration.ts",
+      "sha256": "f4298d3390d744ecfb70ad109e3c7b30a889881ce3975acf07cfcb81c867ff7d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/method-flow-examples.ts",
+      "sha256": "a73d17502868dbd702d5889bc38fc8afcc9d1269fe4360a7a9a8417d460914f5"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/review-content.ts",
+      "sha256": "89f57b5b575bda7292530b031045e70baa01ed66c9db2c37e56f4acd7fbf3d2d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/review-fixtures.ts",
+      "sha256": "5760163d7891d1e95ddddd722e3aaccd36e9fcf9604deaaae4cc50705404527d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/teaching-mock.ts",
+      "sha256": "c7d11e2611a5d7ee36318255428c5d6ee8e7b19d8cbbc22a5c7992bdd633a32c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/textbook.ts",
+      "sha256": "82d30d2b500ea287588a7e34a0e739129d3f9aa1dbe1999562a0619c59c626ff"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/activity-forest-fixture.ts",
+      "sha256": "4ba0531d3beff943a6c5e167e670b5f33e4fe795c4c6f2e6bb258bba4909e788"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/ActivityDirectory.vue",
+      "sha256": "aa7d473b68164b7a7cc812f854d619e249e61a25e190b8263d66876a01808273"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/LessonMessage.vue",
+      "sha256": "ecfe36e31bfe514184bee8322f499112d86bb1b61aaecd2e96b36e8a1f401eb8"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/main.ts",
+      "sha256": "5263761b8d75f208060f8bda12748801b013d3dc63918dc98e5cbcb8158efdd1"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/quarter.ts",
+      "sha256": "c4b796d84fbf68efe3e0de36f3ec5640262f9cf83cbb9277dccccd79b519f195"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/student.css",
+      "sha256": "9951ae5d6a60f0a8085954bdf00444118c066d6108e8249b8634b3f062b82fbf"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/StudentSpace.vue",
+      "sha256": "18850a595a6cb37c5f6651f52691bbedf539e4e70ef6fa6b6cfe5cdadd30fb27"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/domain.css",
+      "sha256": "7c1755dded0ba26affadd1383f226d43eaf8d2864719bb63d48940c5ac794dc3"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/DomainIntake.vue",
+      "sha256": "acf3af33e13ccca719e2d6c4885b0ad7dd161ff92be6dbbb576e33d5047dc99e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/DomainWorkspace.vue",
+      "sha256": "820894cefa91602b31b51a0357dc4bcc577e07f1baf857fe6291121fab9ab629"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/KnowledgeWorkspace.vue",
+      "sha256": "7e85a51331711ab7fd50739f43b88cbd4013a83a0ca210bb6eeebf296501cbc9"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/MethodWorkspace.vue",
+      "sha256": "515592714a5d42770df6b187fef55d868cc9c5bc5091cf3babdccf9d2c1d1979"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/TaskInstances.vue",
+      "sha256": "42ff7d99ebe6fd918c7a4a4a261ac5f4acf09f47c416a31e22965e68a2fe3fac"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/TaskWorkspace.vue",
+      "sha256": "9d56583297d8d5b071c051a518152262662e12acd1bd2d78e4ba240cc88a51dc"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/public/materials/bnu6a/page-11.png",
+      "sha256": "528168d688c9b3d23183aba537dc1af98f3900f494c94fabf91d47084189809a"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/public/materials/bnu6a/page-49.png",
+      "sha256": "fbbe663820ecff1e459b7f982463c94fd8919c86b2b968e1bae27e8a79eca151"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/public/materials/bnu6a/page-50.png",
+      "sha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/public/materials/bnu6a/page-91.png",
+      "sha256": "cf9f847c38dbe9f14a40f74208a5aae1e2fd1cb71ceea4fc4ffb4e4bbd89f4aa"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/public/materials/bnu6a/page-92.png",
+      "sha256": "e782df6ec8db120e893d930d5051b0e407990233c16b681ffdfd1101a9e40af7"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/public/materials/bnu6a/page-93.png",
+      "sha256": "ee511b5b0d901122872f3df9863e5878f83f61aa13738cfe6c8ba8baa37331c7"
+    }
+  ],
+  "captures": [
+    {
+      "id": "TA01",
+      "file": "TA01.png",
+      "step": "M1-D01-S02",
+      "description": "必选领域与批量样例；四例创建独立mock领域",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?tab=import&source=IMPORT-E30B6FFA",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "d06f8a6db53c0c6a813805bba455e06ca767d3671f6a7ba0b4bb4429415b5ccc"
+    },
+    {
+      "id": "TA02",
+      "file": "TA02.png",
+      "step": "M1-D01-S03",
+      "description": "持续对话与章节内容工作区",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?tab=import&source=IMPORT-E30B6FFA",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "d06c8b68d8fc9ac7d854cfb48478ab709b930ccd5fd6a288027270f909425674"
+    },
+    {
+      "id": "TA03",
+      "file": "TA03.png",
+      "step": "M1-D01-S05",
+      "description": "引用具体解法并输入修正要求",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?tab=import&source=IMPORT-E30B6FFA",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "a4e273eb6595da1e5cb7e7cbb440e1610047d96f3be9f91002a73fa58c4f0f49"
+    },
+    {
+      "id": "TA04",
+      "file": "TA04.png",
+      "step": "M1-D01-S06",
+      "description": "一条合并解法成为两条候选，尚未采用",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?tab=import&source=IMPORT-E30B6FFA",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "d849a15ef68e2b335aa1606342daa44ae1d0f2d96b1d7b67c57a5c080b5ce978"
+    },
+    {
+      "id": "TA05",
+      "file": "TA05.png",
+      "step": "M1-D01-S04/S06",
+      "description": "打开原页核对，公式结果仍只读",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?tab=import&source=IMPORT-E30B6FFA",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "a64b609b627d44616e598610c97925d476b20e3f38b9ede417f43e4844fdb209"
+    },
+    {
+      "id": "TA06",
+      "file": "TA06.png",
+      "step": "M1-D01-S06",
+      "description": "连续修正后保留历史候选；刷新可继续查看",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?tab=import&source=IMPORT-E30B6FFA",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "30bdcd5df14d7d197057a3360c36af26653fd8d9a253b5834006d855a7c6c702"
+    },
+    {
+      "id": "TA07",
+      "file": "TA07.png",
+      "step": "M1-D01-S07",
+      "description": "明确采用后更新解析内容，不自动入库",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?tab=import&source=IMPORT-E30B6FFA",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "510cb7e4b352f2b21334f62e447a0c22626891fbde1437454a5bd03360e484ec"
+    },
+    {
+      "id": "TA08",
+      "file": "TA08.png",
+      "step": "M1-D01-S07→M1-D02",
+      "description": "题目与两条解法进入原有领域待入库流程",
+      "url": "http://127.0.0.1:5182/admin/#/domain?domain=DOM-5167E589&tab=intake&source=IMPORT-E30B6FFA&chapter=%E5%88%86%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "a5ee2d406199c1ecbbe7ff7497b64107ed16c1a945bb3f609bf9fe29d4fa27da"
+    },
+    {
+      "id": "TA09A",
+      "file": "TA09A.png",
+      "step": "M1-D01-S08",
+      "description": "添加章节关联，明确选择任务及本章方法",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?tab=import&source=IMPORT-E30B6FFA&chapter=%E5%88%86%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8&view=links",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "7a8a1bd98016a7049a8a5d13eeccccd4316479bbf8945f6ad5fb00de13ffe680"
+    },
+    {
+      "id": "TA09",
+      "file": "TA09.png",
+      "step": "M1-D01-S08",
+      "description": "回教材显式关联章节任务及采用方法，KC汇总显示",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?tab=import&source=IMPORT-E30B6FFA&chapter=%E5%88%86%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8&view=links",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "b5737b3ec0ccba1835142d5dc1354349b510eb84a1b41389825b4bfe034268db"
+    },
+    {
+      "id": "TA09B",
+      "file": "TA09B.png",
+      "step": "M1-D01-S08",
+      "description": "章节方法仍在独立关联弹框中选择，不是解析结果编辑器",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?tab=import&source=IMPORT-E30B6FFA&chapter=%E5%88%86%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8&view=links",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "2c7515fd22dd3f82dbcf600ff6e18cc45feb77e51bd2f5039c1d3ff3f530f1c9"
+    },
+    {
+      "id": "TA10",
+      "file": "TA10.png",
+      "step": "M1-D01-S06",
+      "description": "完整三张统计图、数据与单位的候选渲染",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?source=IMPORT-E30B6FFA&chapter=%E7%BB%9F%E8%AE%A1%E5%9B%BE&view=content",
+      "viewport": {
+        "width": 1500,
+        "height": 2200
+      },
+      "selector": ".candidate-preview",
+      "sha256": "992b22a6dec6cb7d7495c71e05e0192bb7067a2b76ec1124b7f5eb539c222287"
+    },
+    {
+      "id": "TA11",
+      "file": "TA11.png",
+      "step": "M1-D01-S07",
+      "description": "不采用候选，旧解析结果保持",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?source=IMPORT-E30B6FFA&chapter=%E7%BB%9F%E8%AE%A1%E5%9B%BE&view=content",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "82d75f1cadb5d492a03f224f55016a809c9119eb5da0d41c45fd902343a3956e"
+    },
+    {
+      "id": "TA12",
+      "file": "TA12.png",
+      "step": "M1-D01-S06",
+      "description": "处理失败保留内容，提供重试",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?source=IMPORT-E30B6FFA&chapter=%E7%BB%9F%E8%AE%A1%E5%9B%BE&view=content",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "3a39456802c2d835647e2af2e68e16914c5368fc65c3ed2ab5bfec0a31c58568"
+    },
+    {
+      "id": "TA13",
+      "file": "TA13.png",
+      "step": "M1-D01-S06",
+      "description": "缺失附页先请求材料，不编造可采用结果",
+      "url": "http://127.0.0.1:5182/admin/#/textbooks?source=IMPORT-E30B6FFA&chapter=%E5%9C%86&view=content",
+      "viewport": {
+        "width": 1500,
+        "height": 1120
+      },
+      "selector": null,
+      "sha256": "d38ca70e35aa895509356247415cd433c2e4bd1a9f2bf3e6ba8f83815f3c8a1d"
+    }
+  ],
+  "errors": [],
+  "modelCalls": 0
+}

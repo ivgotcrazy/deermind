@@ -1,0 +1,125 @@
+{
+  "reviewedAt": "2026-11-09T13:56:31.915407+08:00",
+  "scope": "Textbook assistant conversation, references, candidate verification and adoption; documentation and screenshots only",
+  "baseline": "src\\mvp_foundation\\m1\\design-reviews\\20261109-material-assistant\\baseline.json",
+  "documents": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "old": "v0.20",
+      "version": "v0.21",
+      "sha256": "263e0c9866b9d98cf415504502d685c7b0fa254c901222a08a5bd5ae71d7659d"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "old": "v0.19",
+      "version": "v0.20",
+      "sha256": "9eff0428972362c9355acd8990c93aa9d554ce1e50e84adbf6e2bcec2efb5b3f"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "old": "v0.18",
+      "version": "v0.19",
+      "sha256": "2a21785d1d10b7d8b3e08e5a083d32f9eeaef750a34dd4595bb25d8aab9978c9"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "old": "v0.20",
+      "version": "v0.21",
+      "sha256": "13804f735b377a0b7be4a442380c4e91cbfab72d53e7a347551e0864c2c83ed3"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "old": "v0.20",
+      "version": "v0.21",
+      "sha256": "5bf5e4a32e40c89efa1eb92e132522190aaf95d935652a2392876dbfbf035085"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "old": "v0.30",
+      "version": "v0.31",
+      "sha256": "517bb9f165d7352f89734cbf0c80e23423755265e2d41174045a50a93b914315"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "old": "v0.21",
+      "version": "v0.22",
+      "sha256": "841f175940ac7394d841eb0e2fcca90bcf4a54d852bc58e3f9a5c1d2e7bf9769"
+    },
+    {
+      "path": "doc/mvp/m1/engineering/README.md",
+      "old": "v0.4",
+      "version": "v0.5",
+      "sha256": "6bd533761f653b12489884754bc0bf2fc8e58c28cc6296018faa57c3a95f0e72"
+    },
+    {
+      "path": "doc/mvp/m1/validation/Validation_Plan.md",
+      "old": "v0.1",
+      "version": "v0.2",
+      "sha256": "38f3eff42e84dd93e060d8b7402d760754f8a4345818a8585021fa7c9e98b671"
+    },
+    {
+      "path": "doc/mvp/m1/validation/README.md",
+      "old": "v0.3",
+      "version": "v0.4",
+      "sha256": "665917aa9cc63312d795788e7631bb34b6b4918a900efec745f2b2898af8e73c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/README.md",
+      "old": "v0.6",
+      "version": "v0.7",
+      "sha256": "0be9f415f2b455ebb6fc30ecca61f628e688a918f19c7db12572de55940cbd28"
+    }
+  ],
+  "localLinksChecked": 379,
+  "linkErrors": [],
+  "unchangedMermaidDiagrams": 7,
+  "imageReferencesChecked": 93,
+  "unchangedPrototypeFiles": 116,
+  "unchangedFrozenAssets": 186,
+  "newScreenshots": 15,
+  "modelCalls": 0,
+  "browserTests": {
+    "tests": 17,
+    "passed": 17,
+    "failed": 0,
+    "log": "src\\mvp_foundation\\m1\\design-reviews\\20261109-material-assistant\\browser-tests.tap"
+  },
+  "visualReview": [
+    "TA04: two solutions, scoped quote and candidate actions",
+    "TA06: continued correction and reload",
+    "TA09: chapter methods retained as separate operation; no KC inferred from absent links",
+    "TA10: three rendered charts, full-height candidate capture",
+    "TA13: missing attachment requested rather than invented"
+  ],
+  "testInventory": {
+    "total": 24,
+    "current": 10,
+    "historical": 5,
+    "unlisted": [
+      "tests/activity-editor.test.mjs",
+      "tests/activity-flow.test.mjs",
+      "tests/node-routing.test.mjs",
+      "tests/student-activity-directory.test.mjs",
+      "tests/student-activity-fixture.test.mjs",
+      "tests/student-activity-heading.test.mjs",
+      "tests/student-book-context.test.mjs",
+      "tests/student-entry.test.mjs",
+      "tests/teaching-scope.test.mjs"
+    ]
+  },
+  "authorSemanticReview": [
+    "Persistent import dialogue and explicit references; browsing does not silently retarget corrections",
+    "Pending, superseded, adopted and discarded candidates; source version checked before adoption",
+    "Adoption only changes parsed content; Domain intake and chapter association remain explicit and separate",
+    "No manual content editor; metadata and chapter method forms retain their separate roles",
+    "Mock supplement records filenames only, not uploads or recognition; production Agent behavior remains unverified",
+    "Evaluation formulas, protected specification sections and historic experiment assets unchanged"
+  ],
+  "notExecuted": [
+    "Real Agent correction",
+    "Probability calibration",
+    "Whole-book modeling acceptance",
+    "Student effectiveness study"
+  ],
+  "result": "PASS: documentation checks, fixed-mock browser regression and screenshot review"
+}
