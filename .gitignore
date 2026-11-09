@@ -37,6 +37,7 @@ Thumbs.db
 
 # ================= Python（ui-ux-pro-max 脚本）=================
 __pycache__/
+.pytest_cache/
 *.py[cod]
 .venv/
 venv/
