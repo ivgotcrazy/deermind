@@ -1,0 +1,129 @@
+{
+  "reviewedAt": "2026-11-09T23:10:05.450398+08:00",
+  "scope": "M1 generation, method-aspect Belief, natural queries and deferred personal-evaluation correction; documentation only",
+  "documents": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "old": "v0.21",
+      "version": "v0.22",
+      "sha256": "fd15939729351d6c638c15642b9d7d59729b1f37294e504569b04e9a94ca691c"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "old": "v0.20",
+      "version": "v0.21",
+      "sha256": "ecbc8a2179b77896b577d0a85dd739a3524f93dbb7f060aba09cc4b742a45e93"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "old": "v0.19",
+      "version": "v0.20",
+      "sha256": "31dd66c287f549eb33ecacac0fd3d1b7556404c20686cbd7319ece1b2023ab2b"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "old": "v0.21",
+      "version": "v0.22",
+      "sha256": "688a3cd7470cbce3373a1deb84635b3bcd5c7d1d85727ade9ab117e019b23ca9"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "old": "v0.21",
+      "version": "v0.22",
+      "sha256": "0007a10544f19552cd67d95f3c0a7a230e48d93bc4b47953e46bc858e6cd2df5"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "old": "v0.31",
+      "version": "v0.32",
+      "sha256": "e354208a1d0261819c2a5774ea14a6302aedf25941ea3452121135b17d5c76e2"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "old": "v0.22",
+      "version": "v0.23",
+      "sha256": "6fc27ac6a10c637bc847d52a214a0eb76b24a5ca2122ba5d2603aae0b4032ed5"
+    },
+    {
+      "path": "doc/mvp/m1/engineering/README.md",
+      "old": "v0.5",
+      "version": "v0.6",
+      "sha256": "770558bc9ebac2fa464537ea848366c1367d8bf635bc5d161c943622f6fb3412"
+    },
+    {
+      "path": "doc/mvp/m1/validation/Validation_Plan.md",
+      "old": "v0.2",
+      "version": "v0.3",
+      "sha256": "1eebd4e1840984751ceec607ed622f4909f7e7b30da60dcfd6ef079217c33ab4"
+    },
+    {
+      "path": "doc/mvp/m1/validation/README.md",
+      "old": "v0.4",
+      "version": "v0.5",
+      "sha256": "4273f461c19929f54e5700ad2db7ef9beee99ddab65b854ecd0ae6e35b3bb109"
+    },
+    {
+      "path": "doc/mvp/m2/README.md",
+      "old": "v0.1",
+      "version": "v0.2",
+      "sha256": "86a1d77efb2f9f185d7dd764dd0f27d38fbee516632cddcc433c5ff99a19f476"
+    },
+    {
+      "path": "doc/concept-design/README.md",
+      "old": "v0.8",
+      "version": "v0.9",
+      "sha256": "2777a85e03523699bfcf7d43e63254ceaf77bfaecb50b30965f2999b6df8c2d0"
+    },
+    {
+      "path": "doc/system-design/README.md",
+      "old": "v0.6",
+      "version": "v0.7",
+      "sha256": "88763d7a15b1346191f24eedc7bcdc5bb64baa2ab9be15f6358873eab5c0b45c"
+    },
+    {
+      "path": "doc/concept-design/DeerMind_Evaluation_Space_Design_v1.8.md",
+      "old": "v1.7",
+      "version": "v1.8",
+      "sha256": "9e8e2e21e76b4cbdb34b30b20cedd8abf23245e2580d692b6e3bbc41dff608cc"
+    }
+  ],
+  "localLinksChecked": 422,
+  "linkErrors": [],
+  "unchangedMermaidDiagrams": 7,
+  "unchangedImageReferences": 93,
+  "unchangedFrozenFiles": 317,
+  "unchangedPrototypeFiles": 113,
+  "preserved": [
+    "Earlier decision entries 2-26",
+    "Evaluation v1.7",
+    "Content formulas, parameters, thresholds and existing numerical example",
+    "Prototype sources and existing screenshots",
+    "Original content extraction trial report"
+  ],
+  "numericalReference": {
+    "initial": 0.5,
+    "afterQuarter": 0.7727272727272726,
+    "afterFifth": 0.9203821656050954,
+    "quarterEvidenceCount": 1,
+    "requiredQuarterEvidenceCount": 2,
+    "teachingBetween": false
+  },
+  "authorReview": [
+    "Runtime generation is required; no per-question approval",
+    "Method-aspect estimates share eligible parameters; targets retain actual coverage checks",
+    "Book browsing does not constrain dialogue; adopted course methods remain enforced",
+    "Personal evaluation correction is deferred; ordinary new evidence, processing retries and content maintenance remain",
+    "Implementation order covers the whole book; no new UI work required in this batch"
+  ],
+  "modelCalls": 0,
+  "newScreenshots": 0,
+  "notExecuted": [
+    "Browser regression",
+    "Production evaluation and event processing",
+    "Real Agent extraction or generation",
+    "Parameter calibration",
+    "Whole-book acceptance",
+    "Student effectiveness study"
+  ],
+  "result": "PASS: document versions, links, preserved assets, numerical illustration and author scope review"
+}

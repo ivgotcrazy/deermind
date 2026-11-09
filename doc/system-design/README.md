@@ -1,17 +1,17 @@
 # DeerMind 系统设计文档入口
 
-> **版本**：v0.6<br>
+> **版本**：v0.8<br>
 > **文档性质**：文档导航与使用说明<br>
-> **状态**：区分既有系统设计基线与当前M1规格；旧正文及实验结论保持<br>
+> **状态**：已同步M1全局0.90阈值及工程阶段边界；未改原型，真实实现与校准未验证<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：用户确认采纳方案并授权文档同步；作者自检不等于Agent、概率校准或整册运行已验证<br>
+> **评审记录**：用户确认全局阈值及简化范围并授权同步；本批为文档与算例自检，不代表工程或效果验收通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-09<br>
-> **修订说明**：v0.5 → v0.6，明确旧系统基线与M1当前合同的适用边界，补充Domain／Evaluation入口；逐文件记录见M1决定登记§25<br>
+> **修订说明**：v0.7 → v0.8，统一M1达标阈值、移除固定题数与额外恢复规则，明确Evolution版本演进后置及工程设计属于工程阶段；逐文件记录见MVP决定登记§28<br>
 
 ---
 
-以下七份v1.4为既有系统设计基线，承接[概念设计入口](../concept-design/README.md)；其中旧模型摘要尚未全部按M1迁移，不是可直接照搬的新M1工程规格。当前Domain合同为[v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)，Evaluation为[v1.7](../concept-design/DeerMind_Evaluation_Space_Design_v1.7.md)，具体产品规则以[M1 PRD](../mvp/m1/PRD.md)及设计规格为准，差异由M1-OPEN-04登记。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
+以下七份v1.4为既有系统设计基线，承接[概念设计入口](../concept-design/README.md)；其中旧模型摘要尚未全部按M1迁移，不是可直接照搬的新M1工程规格。当前Domain合同为[v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)，Evaluation为[v1.8](../concept-design/DeerMind_Evaluation_Space_Design_v1.9.md)，具体产品规则以[M1 PRD](../mvp/m1/PRD.md)及设计规格为准，差异由M1-OPEN-04登记。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
 
 **当前工作（2026-11-03）：按M1–M3组织产品迭代，M1的PRD、详细规格和原型按业务包同步推进。** 旧MVP文档及Phase 4资产已归档；单模板多维Claim等已确认规则需逐项承接。当前入口见[MVP文档](../mvp/README.md)。历史G3不等于新M1已通过设计或工程接收。
 

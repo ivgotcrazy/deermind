@@ -1,0 +1,136 @@
+{
+  "reviewedAt": "2026-11-09T23:30:58.399956+08:00",
+  "scope": "M1 global 0.90 threshold, Evolution deferral and engineering stage boundary; documentation only",
+  "documents": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "old": "v0.22",
+      "version": "v0.23",
+      "sha256": "e1529ef90543085114c4bf54f55a87c14c33ad6e98f2f12d121f00eb5f0a47bd"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "old": "v0.21",
+      "version": "v0.22",
+      "sha256": "9579dcd5794a081bd7000324e9d722e1357e43d89fc552256ba4611bdf51be27"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "old": "v0.20",
+      "version": "v0.21",
+      "sha256": "9a0237d4fcd65c0d1765793346d26172e9a2c180dd273366a796415750cfee39"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "old": "v0.22",
+      "version": "v0.23",
+      "sha256": "a9964cf517cfb25f213a4c3fe15f56c37a22afbb1c9fc0c8628dd088e7b64d18"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "old": "v0.22",
+      "version": "v0.23",
+      "sha256": "e4de7b0f268dc55fc9007e2d32d58d75adc5dae85b54870cdbd02347eb53ca55"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "old": "v0.32",
+      "version": "v0.33",
+      "sha256": "3aee881edeee41ea074d1f9b76432e71ef7e1aa9fa0ba954b4293940aadc9564"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "old": "v0.23",
+      "version": "v0.24",
+      "sha256": "47fcb346c36bd1355e54382ff1b91c4fb2c35511dc3045e46841f3c58c140eb3"
+    },
+    {
+      "path": "doc/mvp/m1/engineering/README.md",
+      "old": "v0.6",
+      "version": "v0.7",
+      "sha256": "229b58b1c1f236b0e44193f24936cfabb5cc93dde7b0eeca41c30e75f5427a6e"
+    },
+    {
+      "path": "doc/mvp/m1/validation/Validation_Plan.md",
+      "old": "v0.3",
+      "version": "v0.4",
+      "sha256": "52a6a1915fddb1fc0119f8f69d25a9d17f9f6bab11d5fb5d61cd833189a58eb5"
+    },
+    {
+      "path": "doc/mvp/m1/validation/README.md",
+      "old": "v0.5",
+      "version": "v0.6",
+      "sha256": "d080826954879d9c382fcd3c505adc18be4993882c44c022ccd3792ed8b7ea8c"
+    },
+    {
+      "path": "doc/mvp/m2/README.md",
+      "old": "v0.2",
+      "version": "v0.3",
+      "sha256": "98de87616ad4c30778c190beb2a53c62f0ef7d00463c7b5f1b53adb74d9299d2"
+    },
+    {
+      "path": "doc/concept-design/README.md",
+      "old": "v0.9",
+      "version": "v0.10",
+      "sha256": "bb46af15078c8656dfad6fe818995a1681f99d95a06f2d407cf16799adbc2c5e"
+    },
+    {
+      "path": "doc/system-design/README.md",
+      "old": "v0.7",
+      "version": "v0.8",
+      "sha256": "5b7f96427bad2ca46768a945d9ffae5a0ed5c5cf284d1b7f014a121fd8ccc3ae"
+    },
+    {
+      "path": "doc/concept-design/DeerMind_Evaluation_Space_Design_v1.9.md",
+      "old": "v1.8",
+      "version": "v1.9",
+      "sha256": "ca75e7af66ac82e8a299779ff1829e7f81e844d682c538eaf31b47358db4198f"
+    }
+  ],
+  "localLinksChecked": 426,
+  "linkErrors": [],
+  "unchangedMermaidDiagrams": 7,
+  "unchangedImageReferences": 93,
+  "unchangedFrozenFiles": 318,
+  "unchangedPrototypeFiles": 113,
+  "preserved": [
+    "Earlier decision entries 2-27",
+    "Evaluation v1.7 and v1.8",
+    "Belief update formulas, shared parameters and existing numerical example",
+    "Prototype sources and existing screenshots",
+    "Original content extraction trial report"
+  ],
+  "numericalReference": {
+    "initial": 0.5,
+    "afterQuarter": 0.7727272727272726,
+    "afterFifth": 0.9203821656050954,
+    "quarterEvidenceCount": 1,
+    "globalThreshold": 0.9,
+    "recovery": [
+      0.9203821656050954,
+      0.6980676328502412,
+      0.8871433730588658,
+      0.9639337072686562
+    ],
+    "teachingBetween": false
+  },
+  "authorReview": [
+    "One global threshold, evaluated separately per method and aspect; no averaging",
+    "Eligible evidence required; prior and L-only prediction cannot imply measured mastery",
+    "Fixed-count acceptance and extra recovery rules replaced; ordinary negative and positive evidence update the same estimate",
+    "E2 transfer and E4 retention remain below threshold; feedback and task outcomes updated",
+    "Evolution compatibility and migration deferred to M2/M3; append-only facts retained",
+    "Engineering design is engineering; no engineering design document or production code created in this batch"
+  ],
+  "modelCalls": 0,
+  "newScreenshots": 0,
+  "notExecuted": [
+    "Browser regression",
+    "Production evaluation and event processing",
+    "Real Agent extraction or generation",
+    "Parameter calibration",
+    "Whole-book acceptance",
+    "Student effectiveness study"
+  ],
+  "result": "PASS: document versions, links, preserved assets, numerical illustration and author scope review"
+}

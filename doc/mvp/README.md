@@ -1,14 +1,14 @@
 # MVP 产品迭代与文档入口
 
-> **版本**：v0.31<br>
+> **版本**：v0.33<br>
 > **文档性质**：当前MVP目录、阅读顺序与维护约定<br>
-> **状态**：M1教材助手交互已同步文档；继续收束主流程工程输入，不扩大界面范围<br>
+> **状态**：已同步M1全局0.90阈值及工程阶段边界；未改原型，真实实现与校准未验证<br>
 > **上游依据与基线**：用户本次目录重建要求及已确认的M1–M3范围；当前为工作稿，未通过新阶段评审<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：用户确认教材助手原型暂告一段落并授权同步；作者复采截图与走查，不等于真实解析或M1工程Gate通过<br>
+> **评审记录**：用户确认全局阈值及简化范围并授权同步；本批为文档与算例自检，不代表工程或效果验收通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-09<br>
-> **修订说明**：v0.30 → v0.31，同步教材助手持续对话、引用、候选核对和采用，补充截图及实现边界；未改原型源码，逐文件记录见M1决定登记§26<br>
+> **修订说明**：v0.32 → v0.33，统一M1达标阈值、移除固定题数与额外恢复规则，明确Evolution版本演进后置及工程设计属于工程阶段；逐文件记录见MVP决定登记§28<br>
 
 ---
 
@@ -34,7 +34,7 @@ doc/mvp/
     └── 2026-11-02-before-m1-prd/  原MVP文档、截图及更早归档
 ```
 
-当前先读[已确认边界](DECISIONS.md)，再读[M1入口](m1/README.md)、[M1 PRD草案](m1/PRD.md)、[教材准备参考](m1/design/Content_and_Model_Reference.md)及[主流程交互设计](m1/design/Interaction_Design.md)。本轮先读[决定登记§19](DECISIONS.md#19-kc-task复合-task-与依赖更新合同)、[Task 角色和依赖定义](m1/design/Content_and_Model_Reference.md#32-领域对象与字段)及[四分之一父子任务示例](m1/design/Content_and_Model_Reference.md#415-task-依赖如何参与-evaluation)。规范合同为[Domain v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)和[Evaluation v1.7](../concept-design/DeerMind_Evaluation_Space_Design_v1.7.md)；本轮已同步Evaluation追溯原型及12张当前截图，未改旧参考包；最小评估方案已确认，先读[决定登记§20](DECISIONS.md#20-m1-最小评估机制与试用参数)和[评估详规](m1/design/Content_and_Model_Reference.md#416-m1-belief按方法和方面保存分项概率)，校准与真实接入待完成。Evaluation查询见[决定登记§21](DECISIONS.md#21-evaluation追溯与主流程交接检查)；本轮学生端与13张新截图见[决定登记§22](DECISIONS.md#22-学生持续对话与活动目录同步)，工程前的必要交接统一见[M1工作表§6](m1/README.md#6-主流程闭环检查2026-11-09)。此前活动与画面收束见决定登记§18，评估与目标见§15，领域与教材操作见§14。其余产品设计和正式工程接收仍未完成。
+当前先读[已确认边界](DECISIONS.md)，再读[M1入口](m1/README.md)、[M1 PRD草案](m1/PRD.md)、[教材准备参考](m1/design/Content_and_Model_Reference.md)及[主流程交互设计](m1/design/Interaction_Design.md)。本轮先读[决定登记§19](DECISIONS.md#19-kc-task复合-task-与依赖更新合同)、[Task 角色和依赖定义](m1/design/Content_and_Model_Reference.md#32-领域对象与字段)及[四分之一父子任务示例](m1/design/Content_and_Model_Reference.md#415-task-依赖如何参与-evaluation)。规范合同为[Domain v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)和[Evaluation v1.9](../concept-design/DeerMind_Evaluation_Space_Design_v1.9.md)；本轮已同步Evaluation追溯原型及12张当前截图，未改旧参考包；最小评估方案已确认，先读[决定登记§20](DECISIONS.md#20-m1-最小评估机制与试用参数)和[评估详规](m1/design/Content_and_Model_Reference.md#416-m1-belief按方法和方面保存分项概率)，校准与真实接入待完成。Evaluation查询见[决定登记§21](DECISIONS.md#21-evaluation追溯与主流程交接检查)；本轮学生端与13张新截图见[决定登记§22](DECISIONS.md#22-学生持续对话与活动目录同步)，工程前的必要交接统一见[M1工作表§6](m1/README.md#6-主流程闭环检查2026-11-09)。此前活动与画面收束见决定登记§18，评估与目标见§15，领域与教材操作见§14。其余产品设计和正式工程接收仍未完成。
 
 ## 2. 三个产品阶段
 
@@ -56,7 +56,7 @@ M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工�
 | 验证计划与报告 | `m1/validation/`：测量方法、样本、配置、停止条件；实际结果另成报告 | 计划在运行前形成；有真实执行后才建立结果报告 |
 | 决定与待决 | `DECISIONS.md`：承接、变更、未决、阶段评审及版本记录 | 随需求推进维护；不另复制PRD正文 |
 
-文件不必一开始全部创建。design已对齐领域、教材、评估、目标与 Interaction 活动模型的产品规则；四类活动蓝图、两层配置、学生固定流程及运行追溯已有当前截图，管理员证据及事件查询已有mock，真实评价链尚未完成。engineering尚未展开完整实现方案，validation已有有限真实内容提取试验，实际结果按原报告保留。PRD主文档、详细规格和原型共同表达产品设计；工程定义技术机制；验证说明怎样获得和解释证据。模型定义以现行专项 Space 合同为权威，PRD说明其产品作用。本轮 Domain v1.5／Evaluation v1.7 与 M1-DEC-015／016 已同步；仍引用旧关系的概念／系统摘要属于待迁移基线，不可据此覆盖新合同，迁移范围见 M1-OPEN-04。
+文件不必一开始全部创建。design已对齐领域、教材、评估、目标与 Interaction 活动模型的产品规则；四类活动蓝图、两层配置、学生固定流程及运行追溯已有当前截图，管理员证据及事件查询已有mock，真实评价链尚未完成。engineering尚未展开完整实现方案，validation已有有限真实内容提取试验，实际结果按原报告保留。PRD主文档、详细规格和原型共同表达产品设计；工程设计属于工程阶段，负责定义技术机制；验证说明怎样获得和解释证据。模型定义以现行专项 Space 合同为权威，PRD说明其产品作用。本轮 Domain v1.5／Evaluation v1.9 与 M1-DEC-015／016／020／021 已同步；仍引用旧关系的概念／系统摘要属于待迁移基线，不可据此覆盖新合同，迁移范围见 M1-OPEN-04。
 
 ## 4. 历史与资产的使用规则
 
@@ -65,4 +65,6 @@ M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工�
 - 只有与当前M1需求有关且核对过的旧内容才迁入新PRD；不整篇复制旧文档后换名称。需要改变已确认决定时说明理由并讨论。
 - 每次修改文档均升版并记录；旧冻结输入和真实运行结果不重算、不改判。当前图文设计发生修改时，文字、原型及截图仍需同步。
 
-教材助手本轮已完成mock图文同步，当前版本及截图见[M1交互规格](m1/design/Interaction_Design.md#12-按章节核对与重新解析)。下一步按[M1主流程检查](m1/README.md#6-主流程闭环检查2026-11-09)核对工程接收输入；不把对话原型当作真实Agent、整册建模或评价服务完成。
+教材助手本轮已完成mock图文同步，当前版本及截图见[M1交互规格](m1/design/Interaction_Design.md#12-按章节核对与重新解析)。[M1主流程检查](m1/README.md#6-主流程闭环检查2026-11-09)已按下述四项决定收束，接下来整理工程接收输入；不把对话原型当作真实Agent、整册建模或评价服务完成。
+
+当前主流程规则已收束，见[登记§27](DECISIONS.md#27-m1主流程简化与工程实施顺序)：M1具备模板实时出题，Belief按方法与方面简化，提问不受阅读位置和目标章节限制，错误评价纠正后置M2。当前达标规则已由[登记§28](DECISIONS.md#28-m1全局达标阈值与工程阶段边界)统一为0.90，Evolution版本演进后置；下一步按[工程实施顺序](m1/engineering/README.md#4-已确认范围下的工程实施顺序)准备工程设计；原型与历史截图保持。
