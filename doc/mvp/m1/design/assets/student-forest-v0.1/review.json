@@ -1,0 +1,123 @@
+{
+  "version": "0.1",
+  "reviewedAt": "2026-11-09T09:28:25.508854+08:00",
+  "scope": "Confirmed student single-page interaction, activity forest, history navigation and book-context documentation; no UI change",
+  "baseline": "src/mvp_foundation/m1/design-reviews/20261109-student-forest/baseline.json",
+  "captureScript": "src/mvp_foundation/m1/design-reviews/20261109-student-forest/capture.mjs",
+  "checkScript": "src/mvp_foundation/m1/design-reviews/20261109-student-forest/check.py",
+  "documents": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "old": "v0.16",
+      "version": "v0.17",
+      "sha256": "e1652dcba980a0138b87f1519dc58eb13cc68d88945d355fa994e36fe8dd3657"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "old": "v0.14",
+      "version": "v0.15",
+      "sha256": "ba981dbc639a9330f2ff07ec5cb08d28b42d6b016b6573d501d9e1903451a9a0"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "old": "v0.15",
+      "version": "v0.16",
+      "sha256": "27ce713b61b5b688122f36ab604c8083341288c492c420be1be1b0e49a870be8"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "old": "v0.16",
+      "version": "v0.17",
+      "sha256": "ebec7ecd22c53754098e1adf5e9b5589fd84e53c905117e65788dbb809fbef6f"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "old": "v0.16",
+      "version": "v0.17",
+      "sha256": "17668df070e3e538a069d0fe975d82e08689e55e774b8f0c2960e498dd238a0b"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "old": "v0.26",
+      "version": "v0.27",
+      "sha256": "f4e6e61b8bba2c052cf1ca4a6c39af35a71cbed72d6968445041df46dc9b7d7c"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "old": "v0.17",
+      "version": "v0.18",
+      "sha256": "dcb4847b56eab37971183366381f87ad87645442933f0c1257a4147e91b6bddf"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/README.md",
+      "old": "v0.5",
+      "version": "v0.6",
+      "sha256": "f3b01b09a7b7c74870f6fab488af89ad082255026249269d15022314fd05576a"
+    }
+  ],
+  "localLinksChecked": 306,
+  "linkErrors": [],
+  "unchangedMermaidDiagrams": 7,
+  "screenshotsVerified": 13,
+  "unchangedPrototypeSourceFiles": 64,
+  "visualReview": {
+    "images": [
+      "SF01",
+      "SF02",
+      "SF03",
+      "SF04",
+      "SF05",
+      "SF06",
+      "SF07",
+      "SF08",
+      "SF09",
+      "SF10",
+      "SF11",
+      "SF12",
+      "SF13"
+    ],
+    "checks": [
+      "Student current path stays separate from history selection",
+      "Book browsing and explicit references differ",
+      "Normal empty entry and isolated seeded demo are distinct",
+      "Pause, return, end and round-help boundaries remain visible"
+    ]
+  },
+  "checksExecutedThisBatch": [
+    {
+      "command": "node --test --test-concurrency=1 tests/student-activity-fixture.test.mjs tests/student-activity-directory.test.mjs tests/student-book-context.test.mjs tests/student-activity-heading.test.mjs tests/student-entry.test.mjs tests/activity-flow.test.mjs",
+      "cwd": "doc/mvp/m1/prototype",
+      "passed": 29,
+      "failed": 0
+    },
+    {
+      "command": "node src/mvp_foundation/m1/design-reviews/20261109-student-forest/capture.mjs",
+      "result": "13 screenshots; no API calls or browser errors"
+    },
+    {
+      "command": "python src/mvp_foundation/m1/design-reviews/20261109-student-forest/check.py",
+      "result": "Document versions, local links, image hashes, tables and unchanged source checked"
+    }
+  ],
+  "mainFlowReview": {
+    "location": "doc/mvp/m1/README.md#6",
+    "alreadyDecidedAlignment": [
+      "LC-01: implement the existing KC Task/composite Task contract"
+    ],
+    "necessaryProductHandoffs": [
+      "LC-02: applied course output and student selectable availability",
+      "LC-03: evaluation output to student feedback",
+      "LC-04: system task to activity and subsequent result"
+    ],
+    "excluded": [
+      "Differences between mock datasets",
+      "Absence of a shared DB or LLM",
+      "New peripheral UI or reopening the agreed algorithm"
+    ]
+  },
+  "limitations": [
+    "Uses existing prototype build; no new build or UI implementation in this batch",
+    "No real model, teaching, Evidence or probability quality validation",
+    "No full-book modeling or M1 Gate approval"
+  ]
+}

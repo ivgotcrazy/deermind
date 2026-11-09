@@ -1,0 +1,305 @@
+{
+  "head": "9d4de87319eee6e0a6f59fb0cb3d2b6d855ea71a",
+  "files": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "old": "v0.18",
+      "new": "v0.19",
+      "sha256": "4e5c1ee13e8382970c929149651514ce2924a069165376a073d41ef14aa4217f"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "old": "v0.17",
+      "new": "v0.18",
+      "sha256": "c29321ff2ece71780f558858d9a89a9ef765c9fab3ce8f42ceb7876b084e5304"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "old": "v0.16",
+      "new": "v0.17",
+      "sha256": "0874c828810fb3cfae67d21fc1fd17097050144b73cb3d89815ede3985e197ce"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "old": "v0.18",
+      "new": "v0.19",
+      "sha256": "94a45d189ee3905088c19c5a9061b6d28facbee1defd97da1afd3619e0c84c01"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "old": "v0.18",
+      "new": "v0.19",
+      "sha256": "0d28490aba24966e86462014fc1e02a017af6558a43745d29740d29bcfee3b47"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "old": "v0.28",
+      "new": "v0.29",
+      "sha256": "8d7a07b50d7335753a9cd9a0ee65b66d8dc8e2fa0d80500426ec5c549f7b7777"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "old": "v0.19",
+      "new": "v0.20",
+      "sha256": "65cc4cae35c02e4a3cf340298d54e8d79f333481de739a8ee280ea392fb6b72a"
+    }
+  ],
+  "prototypeSources": [
+    {
+      "path": "doc/mvp/m1/prototype/src/App.vue",
+      "sha256": "87eb305965bdca6d4e20b01e35a7edb7d79aa258306ce9763d99208a58610137"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ActivityEditor.vue",
+      "sha256": "33cf656634fcd6ec2871a8adbd7fab3fc20968aad42f50b1aa1f52ead7f7b250"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ActivityTrace.vue",
+      "sha256": "b830e888017031e7708d093159db9f83347eead2c4869956359b08ae19a627b8"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/AspectRulesPanel.vue",
+      "sha256": "0a12ef7689b42c6362fac93a8169ca1afd58963cc33f2fe6e158286977ce0f9c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ClaimCriteriaPanel.vue",
+      "sha256": "ee2afb94bc79b0a5a8c221bd22c50b0cd90cd8ab4edff63b66251a95854396d0"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ContentReviewWorkspace.vue",
+      "sha256": "c16ac04a7b1fa27f5a880d6af0965eb7648810bb1434600aecd74a3566b69f3e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ContentVisualEditor.vue",
+      "sha256": "6e12584de7bef307dd126b171c67a59acb6f51bba0283a4cb2a2dfa07e861a1e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ContentVisuals.vue",
+      "sha256": "31f642bdf617f4c04a745903104d84ca0ea9c6afda0c02dfadcd22b2922a3ee5"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/domain.css",
+      "sha256": "7c1755dded0ba26affadd1383f226d43eaf8d2864719bb63d48940c5ac794dc3"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/DomainIntake.vue",
+      "sha256": "acf3af33e13ccca719e2d6c4885b0ad7dd161ff92be6dbbb576e33d5047dc99e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/DomainWorkspace.vue",
+      "sha256": "820894cefa91602b31b51a0357dc4bcc577e07f1baf857fe6291121fab9ab629"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/KnowledgeWorkspace.vue",
+      "sha256": "7e85a51331711ab7fd50739f43b88cbd4013a83a0ca210bb6eeebf296501cbc9"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/MethodWorkspace.vue",
+      "sha256": "515592714a5d42770df6b187fef55d868cc9c5bc5091cf3babdccf9d2c1d1979"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/TaskInstances.vue",
+      "sha256": "42ff7d99ebe6fd918c7a4a4a261ac5f4acf09f47c416a31e22965e68a2fe3fac"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/domain/TaskWorkspace.vue",
+      "sha256": "9d56583297d8d5b071c051a518152262662e12acd1bd2d78e4ba240cc88a51dc"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/EvaluationWorkspace.vue",
+      "sha256": "a6cc806c31f94e0a5c59748d2cbe6c3643f7c5b14b22a72cd9e3fb293b51220c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ExtractedMaterial.vue",
+      "sha256": "635652255d2e90045f56de940b28a99d9a46b293429d7cc2ab23576e2d982d11"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/LearningSpaceWorkspace.vue",
+      "sha256": "7739232f6866c6435d5d883fabc2e109d72f46399252cd3514c9e10fcf1023ea"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialBlockView.vue",
+      "sha256": "d610042364b4d2c089cf798ed19deae1c6abe59c81760c607025cfe693d911aa"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialContents.vue",
+      "sha256": "4e5222597617899dd16a1be4db6368e15b576efec3f318c01939806453903533"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialIntegrationWorkspace.vue",
+      "sha256": "4279d89a46b45ef8e346b6dc76ebb501cdec5017934e00675e933b68670db87e"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MaterialOrganizeWorkspace.vue",
+      "sha256": "a655fe72fd3a854dbbd019fd0defe9f75c2761c6ee75368d0d9301c1b5448412"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MethodCriteriaTree.vue",
+      "sha256": "e5cb019c46dbffbe33390316e1635279861abf0cd1be5175110309fc36ecd51b"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/MethodStandards.vue",
+      "sha256": "e0019d2e1eee50c1c5fb8a16277bb5a6649ef1617ddc4c8a0df0b9c455e46b52"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/NodeRoutingPanel.vue",
+      "sha256": "60318adf40ec8212509d54437aa2392fad5b362aed9abcdb61a1011a3b1ff190"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ParsedElementView.vue",
+      "sha256": "6b3f39b34c03c405c6ac8b73aeeceb587e59d0bcb60b5f388767f87ea9df3707"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/QuarterWalkthrough.vue",
+      "sha256": "0c20cd669adb17969ca0414fc0ff42b9bf9e37c39739eaeb23d1ccc9a3af8edf"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ReviewBlockEditor.vue",
+      "sha256": "dcfd0076cc2aeb7d0945ccee44221aa5df40d59795d9a36aca48a7e9aa1ffd11"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ReviewBlockView.vue",
+      "sha256": "32727c942427c4569dad00d6174e7afe101da32217f77cb307a6e9986c8f2780"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ReviewSource.vue",
+      "sha256": "64896b3086a667a76bb92ade8125cdabde538c39bef2d864e5a87de99af002c5"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TargetWorkspace.vue",
+      "sha256": "4d7c1d612b332313750e3e439b529ad63775ba4d1388fd6d16711a9f3090bb56"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TeachingBlueprint.vue",
+      "sha256": "ad2b2e5ce99c20cf3d4756bf0d0d3e71be41faa64df697edc556d1177ed82f14"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TeachingReferences.vue",
+      "sha256": "6f69a0c948e78102e77db66c03de094aa38736e7066f83199511ba6dfbd710b0"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TeachingWorkspace.vue",
+      "sha256": "53d780603cd2f7bc7d89118d2170e24468ba1386b1c98ea1c7e6a5b1e28a1ec0"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/TextbookImport.vue",
+      "sha256": "efb5215bf7ed025b2c1d2f986ed187bccd7acecdaa81b16965e402dfe1141947"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/WorkbenchDialog.vue",
+      "sha256": "059e06ed901ab5360332182765360d9645de135b116a134497e5ab77c5fbfac1"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/main.ts",
+      "sha256": "5d2f4c0f5d289c2624f3569aea0b5a48e48cb0d22ef5f57a5ba47d64a0ec7969"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/activity-mock.ts",
+      "sha256": "2c63c48c544974084b32e1286a8f1805cc1b51fc3fb91f717aebdff97232cccd"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/content-visuals.ts",
+      "sha256": "521003ef6930c58333dfbbd45e71bcc7ec331b3fac10e4c99efd8d798d57d40c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/domain-complex-examples.ts",
+      "sha256": "a908e21e0b29430c7f64f45cfaf38518638f28381504ea3ec26374cb06dd6ade"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/domain-example.ts",
+      "sha256": "970311bb2fd812a5334cfeac2a66a529679bc696add4461f1a1aa6fda47f2e41"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/domain.ts",
+      "sha256": "d42fddd30863d67cbcdb2eaeb579f896cb1664afcdb34ac45c5c93358e3f555c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/evaluation-example.ts",
+      "sha256": "04b9ba81a0eb5c06b702f9eeb33a00a3aa567715b07528c42c339d504807dff8"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/evaluation.ts",
+      "sha256": "767716522e6dc59053678eda845a35dae909f399de1c54892be42a5529d59b04"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/imports.ts",
+      "sha256": "c80d4e3ec6bcd4d81074239a42f44499d03dcc09e3efbee25d542457e5c6078a"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/intake-actions.ts",
+      "sha256": "b80028d29ea52f3a4424002cc0b9ddcaba45781ec60fe28e3f79c7922583e949"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/learning-spaces.ts",
+      "sha256": "f5ed214b3935a940e8d58f5e1fe1877996b9c05bbe62c95536c64879170cfaaa"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-content.ts",
+      "sha256": "908a5e322564348588d8172af3aa148405b042f5ddede1fc6700ecde95e01cd8"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-fixture.ts",
+      "sha256": "0ac08cb9dcc9c1f89149222ba074a24e31c239519312bf5c6801ecb69c39669a"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-flow.ts",
+      "sha256": "2f47a1803bc4175c30132c8bf0c638e9961c8b4bed61acf0971f67f22f9b0a67"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/material-integration.ts",
+      "sha256": "f4298d3390d744ecfb70ad109e3c7b30a889881ce3975acf07cfcb81c867ff7d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/method-flow-examples.ts",
+      "sha256": "a73d17502868dbd702d5889bc38fc8afcc9d1269fe4360a7a9a8417d460914f5"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/review-content.ts",
+      "sha256": "89f57b5b575bda7292530b031045e70baa01ed66c9db2c37e56f4acd7fbf3d2d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/review-fixtures.ts",
+      "sha256": "5760163d7891d1e95ddddd722e3aaccd36e9fcf9604deaaae4cc50705404527d"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/teaching-mock.ts",
+      "sha256": "c7d11e2611a5d7ee36318255428c5d6ee8e7b19d8cbbc22a5c7992bdd633a32c"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/model/textbook.ts",
+      "sha256": "82d30d2b500ea287588a7e34a0e739129d3f9aa1dbe1999562a0619c59c626ff"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/activity-forest-fixture.ts",
+      "sha256": "4ba0531d3beff943a6c5e167e670b5f33e4fe795c4c6f2e6bb258bba4909e788"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/ActivityDirectory.vue",
+      "sha256": "aa7d473b68164b7a7cc812f854d619e249e61a25e190b8263d66876a01808273"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/LessonMessage.vue",
+      "sha256": "ecfe36e31bfe514184bee8322f499112d86bb1b61aaecd2e96b36e8a1f401eb8"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/main.ts",
+      "sha256": "5263761b8d75f208060f8bda12748801b013d3dc63918dc98e5cbcb8158efdd1"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/quarter.ts",
+      "sha256": "c4b796d84fbf68efe3e0de36f3ec5640262f9cf83cbb9277dccccd79b519f195"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/student.css",
+      "sha256": "9951ae5d6a60f0a8085954bdf00444118c066d6108e8249b8634b3f062b82fbf"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/StudentSpace.vue",
+      "sha256": "18850a595a6cb37c5f6651f52691bbedf539e4e70ef6fa6b6cfe5cdadd30fb27"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/style.css",
+      "sha256": "7087e46eb9c890f34cf7292f92ac9008c2e5c7bdf2001866cc93400bfede86ba"
+    }
+  ]
+}

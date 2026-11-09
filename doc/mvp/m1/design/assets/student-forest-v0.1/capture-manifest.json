@@ -1,0 +1,196 @@
+{
+  "version": "0.1",
+  "capturedAt": "2026-11-09T01:19:34.063Z",
+  "sourceScript": "src/mvp_foundation/m1/design-reviews/20261109-student-forest/capture.mjs",
+  "data": "Isolated mock browser; preset forest and separately created records; no user storage accessed, no LLM",
+  "sources": [
+    {
+      "path": "doc/mvp/m1/prototype/src/student/StudentSpace.vue",
+      "sha256": "18850a595a6cb37c5f6651f52691bbedf539e4e70ef6fa6b6cfe5cdadd30fb27"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/ActivityDirectory.vue",
+      "sha256": "aa7d473b68164b7a7cc812f854d619e249e61a25e190b8263d66876a01808273"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/activity-forest-fixture.ts",
+      "sha256": "4ba0531d3beff943a6c5e167e670b5f33e4fe795c4c6f2e6bb258bba4909e788"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/quarter.ts",
+      "sha256": "c4b796d84fbf68efe3e0de36f3ec5640262f9cf83cbb9277dccccd79b519f195"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/LessonMessage.vue",
+      "sha256": "ecfe36e31bfe514184bee8322f499112d86bb1b61aaecd2e96b36e8a1f401eb8"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/student/student.css",
+      "sha256": "9951ae5d6a60f0a8085954bdf00444118c066d6108e8249b8634b3f062b82fbf"
+    },
+    {
+      "path": "doc/mvp/m1/prototype/src/components/ActivityTrace.vue",
+      "sha256": "b830e888017031e7708d093159db9f83347eead2c4869956359b08ae19a627b8"
+    }
+  ],
+  "captures": [
+    {
+      "id": "SF01",
+      "step": "M1-D03-ST01",
+      "description": "正常入口：选择教材与目标，尚未创建空间",
+      "file": "SF01.png",
+      "route": "/student/?mode=records",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "a835f93355f0d9ede5a2951e0077b6128672d21667d1fd1ac68f54ac9ce6da2c"
+    },
+    {
+      "id": "SF02",
+      "step": "M1-D03-ST02",
+      "description": "首次创建：教材、输入框和空活动目录；没有伪造历史",
+      "file": "SF02.png",
+      "route": "/student/?mode=records",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "9d334ac3208676177ad15c523e713398c8afa0d10693927cbfd522ba3702eb04"
+    },
+    {
+      "id": "SF03",
+      "step": "M1-D04-ST03",
+      "description": "独立预置示例：四次顶层活动与嵌套子活动，当前为讲解下的答疑",
+      "file": "SF03.png",
+      "route": "/student/",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "10ce7766bed1ecf7627a658f38ee590e51b5849667f1c4e2f830f6262f474600"
+    },
+    {
+      "id": "SF04",
+      "step": "M1-D04-ST04",
+      "description": "点击检测下的讲解内答疑：定位历史，标题仍显示当前活动",
+      "file": "SF04.png",
+      "route": "/student/",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "339475f72ea9c5166bc232ab840729827bd4cb45624ca0aef8773f2670c93e16"
+    },
+    {
+      "id": "SF05",
+      "step": "M1-D04-ST05",
+      "description": "独立收起目录和教材，保留聊天与输入",
+      "file": "SF05.png",
+      "route": "/student/",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "161e17bfc2c84adcf08befdcd7f5227b3a18e9c258aad46f597c9751dd00b1de"
+    },
+    {
+      "id": "SF06",
+      "step": "M1-D04-ST06",
+      "description": "子答疑结束，聊天提示返回原讲解，当前活动路径同步变化",
+      "file": "SF06.png",
+      "route": "/student/",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "09b3ee404d3fbc1fcb3ebdb2a93c1a773c97127f09cbb343f4e4f4e24a3d2498"
+    },
+    {
+      "id": "SF07",
+      "step": "M1-D03-ST03",
+      "description": "浏览另一章节不切换当前讲解，不限制可提问内容",
+      "file": "SF07.png",
+      "route": "/student/",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "8e93033c435ea4e121994a211f7530604c22848bdb312d66d38d3ccb57339c46"
+    },
+    {
+      "id": "SF08",
+      "step": "M1-D03-ST04",
+      "description": "明确请求当前书页时，消息保留当时章节及页码引用",
+      "file": "SF08.png",
+      "route": "/student/",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "8c68c2bd8a773343efc26e65fe7b0de7f8658b35284a83194f36c8445a215d7e"
+    },
+    {
+      "id": "SF09",
+      "step": "M1-D04-ST07",
+      "description": "暂停后刷新：保留活动进度及未发送草稿，继续按钮恢复原活动",
+      "file": "SF09.png",
+      "route": "/student/",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "accf41e107e37edf579a3458990db07c554cdf1c06f5117103525ce11270350d"
+    },
+    {
+      "id": "SF10",
+      "step": "M1-D04-ST08",
+      "description": "顶层活动结束：保留历史，不把完成讲解显示为掌握",
+      "file": "SF10.png",
+      "route": "/student/",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "b86d9d0db0f0eb4253e3a8e9581d1820bc863d1d0b66568c0667073a8114aad0"
+    },
+    {
+      "id": "SF11",
+      "step": "M1-D05-ST01",
+      "description": "第二轮求助已结束：草稿保留，尚未展示讲解",
+      "file": "SF11.png",
+      "route": "/student/?mode=records",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "a4fcadd366f4600750c6cf50eeb4f698878ad26012a9832138407345af6ad086"
+    },
+    {
+      "id": "SF12",
+      "step": "M1-D05-ST02",
+      "description": "检测后的讲解子活动：显示题目图解、父活动路径和返回入口",
+      "file": "SF12.png",
+      "route": "/student/?mode=records",
+      "viewport": {
+        "width": 1500,
+        "height": 1050
+      },
+      "sha256": "9705c09e31613930f69daff67c8cde62f9c157609315f19c1b11c98374fee898"
+    },
+    {
+      "id": "SF13",
+      "step": "M1-D04-ST05",
+      "description": "窄屏预置示例：目录以可收起侧栏打开",
+      "file": "SF13.png",
+      "route": "/student/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "dd847699a664841098b430ae65d46529a646add8875b5d3df16706b1b7ceb57a"
+    }
+  ],
+  "errors": [],
+  "apiCalls": []
+}

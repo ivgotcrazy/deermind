@@ -1,0 +1,104 @@
+{
+  "reviewedAt": "2026-11-09T09:41:38.040551+08:00",
+  "scope": "LC-02 course application and student adoption specification; documentation only",
+  "baseline": "src/mvp_foundation/m1/design-reviews/20261109-course-application/baseline.json",
+  "documents": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "old": "v0.17",
+      "version": "v0.18",
+      "sha256": "4e5c1ee13e8382970c929149651514ce2924a069165376a073d41ef14aa4217f"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "old": "v0.16",
+      "version": "v0.17",
+      "sha256": "c29321ff2ece71780f558858d9a89a9ef765c9fab3ce8f42ceb7876b084e5304"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "old": "v0.15",
+      "version": "v0.16",
+      "sha256": "0874c828810fb3cfae67d21fc1fd17097050144b73cb3d89815ede3985e197ce"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "old": "v0.17",
+      "version": "v0.18",
+      "sha256": "94a45d189ee3905088c19c5a9061b6d28facbee1defd97da1afd3619e0c84c01"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "old": "v0.17",
+      "version": "v0.18",
+      "sha256": "0d28490aba24966e86462014fc1e02a017af6558a43745d29740d29bcfee3b47"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "old": "v0.27",
+      "version": "v0.28",
+      "sha256": "8d7a07b50d7335753a9cd9a0ee65b66d8dc8e2fa0d80500426ec5c549f7b7777"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "old": "v0.18",
+      "version": "v0.19",
+      "sha256": "65cc4cae35c02e4a3cf340298d54e8d79f333481de739a8ee280ea392fb6b72a"
+    }
+  ],
+  "localLinksChecked": 305,
+  "linkErrors": [],
+  "unchangedMermaidDiagrams": 7,
+  "unchangedPrototypeSources": 64,
+  "previousStudentScreenshotsHashVerified": 13,
+  "newScreenshots": 0,
+  "authorSemanticReview": [
+    {
+      "case": "Saved without application",
+      "expected": "No new selectable combination; previous applied result stays effective",
+      "result": "consistent"
+    },
+    {
+      "case": "First application",
+      "expected": "Applied book and target available to all trial students; space creation does not imply mastery",
+      "result": "consistent"
+    },
+    {
+      "case": "Ordinary update of same combination",
+      "expected": "Current references updated; past activities retain actual versions; no Evidence or Belief change",
+      "result": "consistent"
+    },
+    {
+      "case": "Missing transfer criterion",
+      "expected": "Course preparation gap blocks that formal evaluation, not all questions or reliable help",
+      "result": "consistent"
+    },
+    {
+      "case": "No reserve question",
+      "expected": "Generate, check, save then use; lack of stored question alone is not a block",
+      "result": "consistent"
+    },
+    {
+      "case": "Retention interval not elapsed",
+      "expected": "Personal condition distinct from missing course definition; no early retention claim",
+      "result": "consistent"
+    },
+    {
+      "case": "Application or runtime failure",
+      "expected": "Keep prior effective adoption; do not write student failure Evidence",
+      "result": "consistent"
+    }
+  ],
+  "remaining": [
+    "LC-03 student feedback contract",
+    "LC-04 system task and activity result contract",
+    "Existing LC-01 Domain constraints require implementation alignment",
+    "Application UI operations not implemented in this batch"
+  ],
+  "limitations": [
+    "Semantic review is an author walkthrough, not executable integration tests",
+    "No UI, screenshot or algorithm changes",
+    "No LLM or application service execution",
+    "No full-book modeling or engineering Gate approval"
+  ]
+}

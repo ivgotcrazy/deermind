@@ -1,18 +1,18 @@
 # M1 交互原型
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **文档性质**：M1独立原型的范围、启动与复用说明<br>
-> **状态**：四类活动配置、学生单页及活动树可浏览；使用固定mock，无真实LLM<br>
+> **状态**：学生端持续对话、活动目录及教材独立浏览已同步图文；固定mock已走查，尚未通过完整M1工程接收<br>
 > **上游依据与基线**：[M1 PRD](../PRD.md)、[交互规格](../design/Interaction_Design.md)及用户关于在M1目录新建精简原型的要求<br>
 > **维护责任**：Codex维护；用户确认重要产品取舍<br>
-> **评审记录**：用户确认活动原型本轮收束并授权同步；作者核对当前页面、分层配置与固定活动走查。本文修订待用户审阅，真实教学与完整M1另行验收<br>
+> **评审记录**：用户确认本轮学生端逻辑并授权同步；作者核对原型、截图及主流程交接，未验证真实LLM或学习效果<br>
 > **写作规范**：[设计文档规范 v1.1](../../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-08<br>
-> **修订说明**：v0.4 → v0.5，更新四类活动入口、共享编辑器、固定运行边界及截图复采命令。逐文件变更见决定登记§18<br>
+> **更新日期**：2026-11-09<br>
+> **修订说明**：v0.5 → v0.6，同步单页持续对话、活动路径和目录、教材引用边界及独立mock记录；补齐13张截图并收敛工程前交接问题，逐文件记录见M1决定登记§22<br>
 
 ---
 
-本目录是M1当前交互代码的维护位置，与上一级的PRD及design共同推进。旧原型保留为参考，M1不在旧原型上继续叠加。当前维护领域管理、教材管理、评估管理、目标管理和交互活动五个入口，后续工作包各自设计、复用和核对，不把旧版完整菜单复制为新M1范围。
+本目录是M1当前交互代码的维护位置，与上一级的PRD及design共同推进。旧原型保留为参考，M1不在旧原型上继续叠加。当前维护领域管理、教材管理、评估管理、目标管理、交互活动及学习空间追溯入口，后续工作包各自设计、复用和核对，不把旧版完整菜单复制为新M1范围。
 
 ## 1. 启动与浏览
 
@@ -33,7 +33,9 @@
 
 在[评估管理](http://127.0.0.1:5182/admin/#/evaluation)点「打开四分之一样例」，切换两种方法，核对本层执行判据及四方面评价规则。到[目标管理](http://127.0.0.1:5182/admin/#/targets)打开同一样例，编辑学习要求并比较任选与分别达标。图文步骤见[交互规格§1.5](../design/Interaction_Design.md#15-评估管理与目标管理)。
 
-在[交互活动](http://127.0.0.1:5182/admin/#/interaction)切换讲解、答疑、检测或自由交谈，维护蓝图、活动级和节点级规则及推荐策略；节点只显示本节点引用。用[学生端](http://127.0.0.1:5182/student/)产生固定 mock 活动，再到“运行记录”查看。具体操作见[交互规格§1.6](../design/Interaction_Design.md#16-四类活动蓝图与规则策略管理)。旧情境及四分之一单轮脚本仍保留直接路由，已退出当前导航；不能视为新活动配置的通用执行器。
+在[交互活动](http://127.0.0.1:5182/admin/#/interaction)切换讲解、答疑、检测或自由交谈，维护蓝图、活动级和节点级规则及推荐策略；节点只显示本节点引用。用[原有记录入口](http://127.0.0.1:5182/student/?mode=records)产生固定mock活动，再到“运行记录”查看；[默认学生端](http://127.0.0.1:5182/student/)的预置活动森林独立保存，不会混入该管理视图。具体操作见[交互规格§1.6](../design/Interaction_Design.md#16-四类活动蓝图与规则策略管理)。旧情境及四分之一单轮脚本仍保留直接路由，已退出当前导航；不能视为新活动配置的通用执行器。
+
+**学生端两种浏览方式。** 默认学生端直接显示四次顶层活动、九个节点与十四轮预写交流；可展开子活动并点击定位聊天。右上角“查看原有记录”切回此前保存的数据，没有记录时进入选择教材／目标的初始流程。示例使用`deermind-m1-student-activity-forest-demo-v1`，原有记录仍使用`deermind-m1-student-trial-space-v1`，不清空、不合并。预置历史是原型审阅辅助，不是生产用户首次进入时的内容；刷新保留各自进度。
 
 内置四例会创建独立mock领域，方便复核而不覆盖手动数据。普通文件选择没有OCR，不应把固定样例当成上传结果。题目与解法可分别处理，提取模板和关联实例是不同操作；章节关联另行保存。
 
@@ -48,7 +50,7 @@
 | 内容与模型分工 | 教材保留解析候选；领域复用或补建定义并关联实例；回教材选择章节Task／Solution，KC计算汇总 |
 | 评估与目标 | 按领域任务维护 Claim 与判据；按教材章节维护目标、方法覆盖和各方面标准，核对版本及兼容性 |
 | 交互活动 | 四类活动的流程图、预置开始／结束、节点条件转移、允许动作、无法继续处理、两层规则与推荐策略；独立配置和保存 |
-| 学生与追溯 | 单页教材与持续聊天；固定讲解、答疑、多检测轮、求助后帮助及返回新轮、暂停恢复；同浏览器活动树追溯 |
+| 学生与追溯 | 单页聊天＋教材可各自收起；标题显示活动路径，目录显示时间／名称与子活动，定位不切换运行；浏览独立，明确书页请求才附引用；固定检测轮、求助及暂停返回；原有记录可在同浏览器后台追溯 |
 | 真实服务 | 解析、重新解析、生成和语义匹配均为mock；本原型不调用LLM，不验收真实PDF／全册建模 |
 
 当前使用本浏览器localStorage保存领域、教材、Claim、目标、活动定义及学生 mock 记录。它支持交互审阅，不是生产数据库、账号权限或不可变版本实现。测试用独立浏览器，不操作用户已有数据。历史组件代码仍在目录中，不表示都由当前路由使用；本次文档同步不删除旧组件。
@@ -63,7 +65,11 @@
 - `scripts/`：启动、静态预览及文档截图；`tests/`为浏览器回归。
 - [初始复用清单](reuse-manifest.json)记录独立原型建立时的来源，不代表后来每次新增功能的完整变更清单。
 
-运行`npm run build`及`npm test`。Playwright缺浏览器时执行`npx playwright install chromium`。本批构建通过，并运行活动编辑、活动流程、节点转移、两层引用、讲解兼容及学生入口6个测试文件，共13项通过；没有重跑全套或声称真实教学通过。本批结果见[复核记录](../design/assets/activities-v0.1/review.json)。
+运行`npm run build`及`npm test`。Playwright缺浏览器时执行`npx playwright install chromium`。本轮不改原型源码，使用当前已有构建；运行下列学生相关检查共29项通过，未重跑全部管理功能，不声称真实教学通过。结果见[本轮复核](../design/assets/student-forest-v0.1/review.json)。
+
+```powershell
+node --test --test-concurrency=1 tests/student-activity-fixture.test.mjs tests/student-activity-directory.test.mjs tests/student-book-context.test.mjs tests/student-activity-heading.test.mjs tests/student-entry.test.mjs tests/activity-flow.test.mjs
+```
 
 `npm run test:previous-import-ui`保留被替代工作区的旧测试，不能作为当前产品验收命令；它们尚未删除，也没有算入本批通过数。
 
@@ -71,4 +77,12 @@
 
 运行 `node scripts/capture-evaluation-target-design.mjs` 可从独立浏览器重新采集[评估与目标截图](../design/assets/evaluation-target-v0.1/capture-manifest.json)。采集使用当前构建的原型和示例数据。
 
-当前活动截图使用 `node scripts/capture-activities-design.mjs`，输出[activities-v0.1](../design/assets/activities-v0.1/capture-manifest.json)，在独立浏览器中完成18张截图。先构建再采集，运行追溯使用同一隔离浏览器产生的学生记录。旧 `capture-teaching-design.mjs` 对应当时 UI，保留历史，不用于重采当前活动页面。
+此前 `scripts/capture-activities-design.mjs` 输出[activities-v0.1](../design/assets/activities-v0.1/capture-manifest.json)的18张配置／运行截图；其中学生入口使用旧默认路径，不能直接用于重采当前学生页面。旧 `capture-teaching-design.mjs` 同样保留历史。本轮不重写这两批采集结果。
+
+当前学生截图从仓库根目录执行以下命令，使用独立浏览器分别采集正常记录与预置示例，不操作用户记录：
+
+```powershell
+node src/mvp_foundation/m1/design-reviews/20261109-student-forest/capture.mjs
+```
+
+输出13张截图及[采集清单](../design/assets/student-forest-v0.1/capture-manifest.json)；正文对应[交互§2](../design/Interaction_Design.md#2-学生选用并完成一次学习)。截图是当前构建的可视表达，原型改动后必须重新构建、核对正文并复采；不能仅刷新截图而保留旧规格。

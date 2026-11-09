@@ -1,0 +1,117 @@
+{
+  "reviewedAt": "2026-11-09T09:53:06.444531+08:00",
+  "scope": "LC-03 and LC-04 student feedback and system task handoff; documentation only",
+  "baseline": "src/mvp_foundation/m1/design-reviews/20261109-feedback-tasks/baseline.json",
+  "documents": [
+    {
+      "path": "doc/mvp/m1/PRD.md",
+      "old": "v0.18",
+      "version": "v0.19",
+      "sha256": "186cc54d73f2c542deb3fa4a78460d41f8b8203060b0478ec025b528b608f31a"
+    },
+    {
+      "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "old": "v0.17",
+      "version": "v0.18",
+      "sha256": "be70e02c1ddfdba34780e8ac00ce17f20f6a31ad9f2c7bc96bf8652c291521f4"
+    },
+    {
+      "path": "doc/mvp/m1/design/Interaction_Design.md",
+      "old": "v0.16",
+      "version": "v0.17",
+      "sha256": "3bc6c91e88c8c229be5024689d3bf001dda03204358c2ab08a966fc337447cb5"
+    },
+    {
+      "path": "doc/mvp/m1/README.md",
+      "old": "v0.18",
+      "version": "v0.19",
+      "sha256": "4091fe1904daab3e4ca2438b12e34f68fe6d84f60a77d9fe5f0df7dbb8e48e96"
+    },
+    {
+      "path": "doc/mvp/m1/design/README.md",
+      "old": "v0.18",
+      "version": "v0.19",
+      "sha256": "01a70debd7cc67d04d481b952b308cf652d5f454d91587a0a4089f964e423d0f"
+    },
+    {
+      "path": "doc/mvp/README.md",
+      "old": "v0.28",
+      "version": "v0.29",
+      "sha256": "9fc6ee331522ddb77c31243395ed63b81335d01dd31f7a60d5832c29a8936312"
+    },
+    {
+      "path": "doc/mvp/DECISIONS.md",
+      "old": "v0.19",
+      "version": "v0.20",
+      "sha256": "d39dc7b27f020ba9f2ab0dd68939c37f86a627ff51c9dd29cb3f51212faf6d25"
+    }
+  ],
+  "localLinksChecked": 316,
+  "linkErrors": [],
+  "unchangedMermaidDiagrams": 7,
+  "unchangedPrototypeSources": 64,
+  "previousStudentScreenshotsHashVerified": 13,
+  "newScreenshots": 0,
+  "numericalCheck": {
+    "parameters": {
+      "p0": 0.5,
+      "S": 0.15,
+      "G": 0.25
+    },
+    "positive1": 0.7727272727272726,
+    "positive2": 0.9203821656050954,
+    "positive3": 0.9751885668916236,
+    "afterNegative": 0.6980676328502412,
+    "learningTransitionApplied": false
+  },
+  "authorSemanticReview": [
+    {
+      "case": "E1 and E2",
+      "result": "Two distinct submissions; A has independent and explanation support plus one qualifying transfer; retention not yet observed; no copied success for B"
+    },
+    {
+      "case": "Only answer versus steps without explanation",
+      "result": "Answer-only cannot identify method; valid steps can support independent execution without inferring understanding"
+    },
+    {
+      "case": "Transfer background unknown",
+      "result": "Describe current table performance, not verified novel transfer"
+    },
+    {
+      "case": "Partial evaluation failure",
+      "result": "Keep successful facts and valid revisions; mark incomplete results; do not fabricate mastery or student failure"
+    },
+    {
+      "case": "Delayed task",
+      "result": "Use actual E2 performance time plus at least 7x24 hours; recheck necessity before invitation and execution"
+    },
+    {
+      "case": "Defer or refuse",
+      "result": "Preserve existing next-day and new-basis-only rules; no new task identifiers to bypass refusal"
+    },
+    {
+      "case": "Task acceptance and activity",
+      "result": "Acceptance is not execution; explicit start, no competing active leaf, retain task/activity/round relationship"
+    },
+    {
+      "case": "E4 return",
+      "result": "Actual new submission updates applicable A components; evaluation checks goal, then task purpose; completion event is not student Evidence"
+    },
+    {
+      "case": "Help or failure",
+      "result": "End round before help, retain untested status, new plan for confirmation; no automatic redoing due to processing failure"
+    }
+  ],
+  "remaining": [
+    "Engineering intake must record exact versions, existing prototype gaps and the first real implementation path",
+    "LC-01 Domain role and dependency constraints need implementation alignment",
+    "Application, complete student evaluation feedback and system task responses are not implemented by this batch"
+  ],
+  "limitations": [
+    "Author semantic review is not an executable integration test",
+    "Numbers only reproduce existing trial formulas, not parameter or learning-effect validation",
+    "No UI or screenshot changes",
+    "No LLM, evaluation or task service executed",
+    "No full-book modeling or Gate approval"
+  ]
+}

@@ -1,0 +1,85 @@
+import {createRequire} from 'node:module';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import path from 'node:path';
+
+const root=fileURLToPath(new URL('../../../../../',import.meta.url));
+const prototype=path.join(root,'doc/mvp/m1/prototype');
+const require=createRequire(path.join(prototype,'package.json'));
+const {chromium,expect}=require('@playwright/test');
+const {createPreviewServer}=await import(pathToFileURL(path.join(prototype,'scripts/serve.mjs')));
+const out=path.join(root,'doc/mvp/m1/design/assets/student-forest-v0.1');
+await mkdir(out,{recursive:true});
+const server=createPreviewServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));
+const browser=await chromium.launch();
+const context=await browser.newContext({viewport:{width:1500,height:1050},locale:'zh-CN',timezoneId:'Asia/Shanghai'});
+const page=await context.newPage(),errors=[],apiCalls=[],captures=[];
+page.on('pageerror',e=>errors.push(e.message));
+await context.route('**/api/**',r=>{apiCalls.push(r.request().url());return r.abort();});
+const base=`http://127.0.0.1:${server.address().port}`;
+const button=name=>page.getByRole('button',{name,exact:true});
+const say=async text=>{await page.locator('#student-prompt').fill(text);await button('发送').click();};
+async function shot(id,step,description){
+  await page.evaluate(()=>document.fonts.ready);
+  await page.locator('.paper img').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode().catch(()=>{}))));
+  const bytes=await page.screenshot({path:path.join(out,id+'.png'),animations:'disabled'});
+  captures.push({id,step,description,file:id+'.png',route:new URL(page.url()).pathname+new URL(page.url()).search,viewport:page.viewportSize(),sha256:createHash('sha256').update(bytes).digest('hex')});
+}
+try{
+  await page.goto(base+'/student/?mode=records');
+  await expect(page.getByRole('heading',{name:'创建学习空间'})).toBeVisible();
+  await page.getByLabel('教材',{exact:true}).selectOption('BNU-6A');
+  await page.getByLabel('学习目标').selectOption({index:1});
+  await shot('SF01','M1-D03-ST01','正常入口：选择教材与目标，尚未创建空间');
+  await button('创建并进入教材').click();
+  await shot('SF02','M1-D03-ST02','首次创建：教材、输入框和空活动目录；没有伪造历史');
+  await page.goto(base+'/student/');
+  await expect(page.locator('.directory-name')).toHaveCount(9);
+  await shot('SF03','M1-D04-ST03','独立预置示例：四次顶层活动与嵌套子活动，当前为讲解下的答疑');
+  await page.locator('[data-activity="DEMO-BASE"]').click();
+  await expect(page.locator('.review-banner')).toContainText('四分之一是按哪个量算的');
+  await shot('SF04','M1-D04-ST04','点击检测下的讲解内答疑：定位历史，标题仍显示当前活动');
+  await button('回到当前活动').click();
+  await button('收起活动目录').click();await button('收起教材').click();
+  await shot('SF05','M1-D04-ST05','独立收起目录和教材，保留聊天与输入');
+  await button('展开教材').click();await button('展开活动目录').click();
+  await button('回到原来的主线').click();
+  await expect(page.getByLabel('当前活动',{exact:true})).toContainText('把两步计算写成一个算式');
+  await shot('SF06','M1-D04-ST06','子答疑结束，聊天提示返回原讲解，当前活动路径同步变化');
+  await page.getByLabel('章节',{exact:true}).selectOption({index:1});
+  await expect(page.getByLabel('当前活动',{exact:true})).toContainText('把两步计算写成一个算式');
+  await shot('SF07','M1-D03-ST03','浏览另一章节不切换当前讲解，不限制可提问内容');
+  await page.getByLabel('章节',{exact:true}).selectOption('分数的应用（一）');
+  await say('讲讲这一页');
+  await expect(page.locator('article').last().locator('.book-reference')).toContainText('49');
+  await shot('SF08','M1-D03-ST04','明确请求当前书页时，消息保留当时章节及页码引用');
+  await page.locator('#student-prompt').fill('还没有发送的问题');await button('暂停学习').click();
+  await page.reload();await expect(page.getByLabel('当前活动',{exact:true})).toContainText('已暂停');
+  await shot('SF09','M1-D04-ST07','暂停后刷新：保留活动进度及未发送草稿，继续按钮恢复原活动');
+  await button('继续刚才的学习').first().click();
+  await button('结束当前活动').click();
+  await shot('SF10','M1-D04-ST08','顶层活动结束：保留历史，不把完成讲解显示为掌握');
+  await page.goto(base+'/student/?mode=records');
+  await button('直接测一测').click();await button('开始检测').click();
+  await page.getByLabel('我的答案（本）').fill('150');await page.getByLabel('我是怎么想的？').fill('120 除以 4 得 30，再加回 120。');
+  await button('提交作答').click();await button('下一轮').click();
+  await page.getByLabel('我的答案（升）').fill('12');await button('结束检测并求助').click();
+  await shot('SF11','M1-D05-ST01','第二轮求助已结束：草稿保留，尚未展示讲解');
+  await button('讲讲刚才这道题').click();
+  await expect(page.getByLabel('活动路径')).toContainText('检测');
+  await shot('SF12','M1-D05-ST02','检测后的讲解子活动：显示题目图解、父活动路径和返回入口');
+  const mobileContext=await browser.newContext({viewport:{width:390,height:844},locale:'zh-CN',timezoneId:'Asia/Shanghai'});
+  const mobile=await mobileContext.newPage();mobile.on('pageerror',e=>errors.push(e.message));
+  await mobile.goto(base+'/student/');await expect(mobile.getByLabel('活动目录',{exact:true})).toBeVisible();
+  const bytes=await mobile.screenshot({path:path.join(out,'SF13.png'),animations:'disabled'});
+  captures.push({id:'SF13',step:'M1-D04-ST05',description:'窄屏预置示例：目录以可收起侧栏打开',file:'SF13.png',route:'/student/',viewport:mobile.viewportSize(),sha256:createHash('sha256').update(bytes).digest('hex')});
+  await mobileContext.close();
+  expect(errors).toEqual([]);expect(apiCalls).toEqual([]);
+  const sources=[];
+  for(const file of ['src/student/StudentSpace.vue','src/student/ActivityDirectory.vue','src/student/activity-forest-fixture.ts','src/student/quarter.ts','src/student/LessonMessage.vue','src/student/student.css','src/components/ActivityTrace.vue']){
+    sources.push({path:'doc/mvp/m1/prototype/'+file,sha256:createHash('sha256').update(await readFile(path.join(prototype,file))).digest('hex')});
+  }
+  await writeFile(path.join(out,'capture-manifest.json'),JSON.stringify({version:'0.1',capturedAt:new Date().toISOString(),sourceScript:'src/mvp_foundation/m1/design-reviews/20261109-student-forest/capture.mjs',data:'Isolated mock browser; preset forest and separately created records; no user storage accessed, no LLM',sources,captures,errors,apiCalls},null,2)+'\n');
+  console.log(`Captured ${captures.length} current screenshots; no API calls or browser errors.`);
+}finally{await browser.close();await new Promise(r=>server.close(r));}
