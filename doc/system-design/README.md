@@ -1,19 +1,19 @@
 # DeerMind 系统设计文档入口
 
-> **版本**：v0.8<br>
+> **版本**：v0.9<br>
 > **文档性质**：文档导航与使用说明<br>
-> **状态**：已同步M1全局0.90阈值及工程阶段边界；未改原型，真实实现与校准未验证<br>
+> **状态**：M1工程目录及六份大纲已建立，待用户审阅；正文、技术选型与编码未展开<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：用户确认全局阈值及简化范围并授权同步；本批为文档与算例自检，不代表工程或效果验收通过<br>
+> **评审记录**：用户已确认目录方案并授权建立大纲；本批作者自检，不代表具体方案、实现或Gate通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-09<br>
-> **修订说明**：v0.7 → v0.8，统一M1达标阈值、移除固定题数与额外恢复规则，明确Evolution版本演进后置及工程设计属于工程阶段；逐文件记录见MVP决定登记§28<br>
+> **更新日期**：2026-11-10<br>
+> **修订说明**：v0.8 → v0.9，增加现行M1工程大纲入口，明确旧系统设计复用边界并校正Evaluation导航版本；逐文件记录见MVP决定登记§29<br>
 
 ---
 
-以下七份v1.4为既有系统设计基线，承接[概念设计入口](../concept-design/README.md)；其中旧模型摘要尚未全部按M1迁移，不是可直接照搬的新M1工程规格。当前Domain合同为[v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)，Evaluation为[v1.8](../concept-design/DeerMind_Evaluation_Space_Design_v1.9.md)，具体产品规则以[M1 PRD](../mvp/m1/PRD.md)及设计规格为准，差异由M1-OPEN-04登记。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
+以下七份v1.4为既有系统设计基线，承接[概念设计入口](../concept-design/README.md)；其中旧模型摘要尚未全部按M1迁移，不是可直接照搬的新M1工程规格。当前Domain合同为[v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)，Evaluation为[v1.9](../concept-design/DeerMind_Evaluation_Space_Design_v1.9.md)，具体产品规则以[M1 PRD](../mvp/m1/PRD.md)及设计规格为准，差异由M1-OPEN-04登记。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
 
-**当前工作（2026-11-03）：按M1–M3组织产品迭代，M1的PRD、详细规格和原型按业务包同步推进。** 旧MVP文档及Phase 4资产已归档；单模板多维Claim等已确认规则需逐项承接。当前入口见[MVP文档](../mvp/README.md)。历史G3不等于新M1已通过设计或工程接收。
+**当前工作（2026-11-10）：M1工程设计目录与大纲已建立，正文、选型和编码未展开。** 现行工程入口为[M1工程设计](../mvp/m1/engineering/README.md)，包含总体架构、Agent运行、上下文与记忆、业务运行、数据与接口五份技术设计及实施计划；本目录旧设计作为需逐项核对的复用输入，不并行维护另一套M1实现规格。产品规则仍由[MVP文档](../mvp/README.md)及现行Space合同承接。历史G3不等于新M1已通过设计或工程接收。
 
 归档 MVP 基线中的[基础领域演化选择](../mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Definition_v0.2.md#7-模型管理与运行可观察性)及其后续质量责任保留供新文档核对承接；明确确认的决定不因归档自动撤销。这些基线曾修订领域/产品owner、具体问题溯源、Claim参照、版本依赖与发布路由；当前M1的直接保存与应用、教材Agent及活动／评价合同须重新核对，不恢复旧审核发布流程；历史实验输入与结论保持，也不另开 Evolution Spike。
 
