@@ -1,18 +1,18 @@
 # MVP 产品迭代与文档入口
 
-> **版本**：v0.34<br>
+> **版本**：v0.35<br>
 > **文档性质**：当前MVP目录、阅读顺序与维护约定<br>
-> **状态**：M1工程目录及六份大纲已建立，待用户审阅；正文、技术选型与编码未展开<br>
-> **上游依据与基线**：用户本次目录重建要求及已确认的M1–M3范围；当前为工作稿，未通过新阶段评审<br>
+> **状态**：六份M1工程大纲已补齐评审承接与规则对应，修订稿待用户审阅；正文、技术选型与编码未展开<br>
+> **上游依据与基线**：用户已确认的M1范围、工程目录与本轮评审处理建议；产品工作基线未变，本批为大纲修订，未通过新阶段评审<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：用户已确认目录方案并授权建立大纲；本批作者自检，不代表具体方案、实现或Gate通过<br>
+> **评审记录**：用户授权按已接纳意见修订大纲；本批作者自检不代表具体技术方案、实现或Gate通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-10<br>
-> **修订说明**：v0.33 → v0.34，同步M1工程设计导航、六份大纲与当前工作阶段；逐文件记录见MVP决定登记§29<br>
+> **修订说明**：v0.34 → v0.35，更新工程大纲修订进度及产品规则对应导航；逐文件记录见MVP决定登记§30<br>
 
 ---
 
-当前进入**M1工程设计的目录与大纲审阅**：已建立五份技术设计和一份实施计划，尚未展开技术正文、选型或编码。产品输入仍由PRD、design详规与原型共同表达，按[M1六个业务包](m1/README.md#2-六个产品设计工作包)核对；工程发现产品语义缺口时返回上游修订，不自行补定。
+当前进入**M1工程设计的目录与大纲审阅**：五份技术设计和一份实施计划已按评审意见修订为v0.2大纲，尚未展开技术正文、选型或编码。产品输入仍由PRD、design详规与原型共同表达，按[M1六个业务包](m1/README.md#2-六个产品设计工作包)核对；工程发现产品语义缺口时返回上游修订，不自行补定。
 
 ## 1. 目录与当前阅读顺序
 
@@ -34,7 +34,7 @@ doc/mvp/
     └── 2026-11-02-before-m1-prd/  原MVP文档、截图及更早归档
 ```
 
-本轮先读[工程目录及分工](m1/engineering/README.md#1-已建立的文档与职责)和[本批决定与变更记录](DECISIONS.md#29-m1工程设计目录与大纲)。产品输入按[M1入口](m1/README.md)、[PRD v0.23](m1/PRD.md)、[内容规格 v0.22](m1/design/Content_and_Model_Reference.md)、[交互规格 v0.21](m1/design/Interaction_Design.md)及[验证计划 v0.4](m1/validation/Validation_Plan.md)查阅。Domain合同为[v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)，Evaluation为[v1.9](../concept-design/DeerMind_Evaluation_Space_Design_v1.9.md)，AI执行原则见[AI Native架构原则 v0.6](../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md)。
+本轮先读[产品规则到工程章节的对应表](m1/engineering/README.md#31-产品规则到工程章节的对应)、[工程目录及分工](m1/engineering/README.md#1-已建立的文档与职责)和[本批评审承接与变更记录](DECISIONS.md#30-m1工程大纲评审承接与产品规则对应)。产品输入按[M1入口](m1/README.md)、[PRD v0.23](m1/PRD.md)、[内容规格 v0.22](m1/design/Content_and_Model_Reference.md)、[交互规格 v0.21](m1/design/Interaction_Design.md)及[验证计划 v0.4](m1/validation/Validation_Plan.md)查阅。Domain合同为[v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)，Evaluation为[v1.9](../concept-design/DeerMind_Evaluation_Space_Design_v1.9.md)，AI执行原则见[AI Native架构原则 v0.6](../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md)。
 
 此前模型、活动、教材、学生及评价的决定和资产继续由[DECISIONS](DECISIONS.md)及[M1产品交接检查](m1/README.md#6-主流程闭环检查2026-11-09)索引。本批不重写历史结论，也不据大纲建立宣布产品或工程验收通过。
 
@@ -69,4 +69,4 @@ M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工�
 
 教材助手本轮已完成mock图文同步，当前版本及截图见[M1交互规格](m1/design/Interaction_Design.md#12-与教材导入-agent-对话核对和纠错)。[M1主流程检查](m1/README.md#6-主流程闭环检查2026-11-09)已按下述四项决定收束，工程接收输入纳入本轮大纲；不把对话原型当作真实Agent、整册建模或评价服务完成。
 
-当前主流程规则已收束，见[登记§27](DECISIONS.md#27-m1主流程简化与工程实施顺序)：M1具备模板实时出题，Belief按方法与方面简化，提问不受阅读位置和目标章节限制，错误评价纠正后置M2。当前达标规则已由[登记§28](DECISIONS.md#28-m1全局达标阈值与工程阶段边界)统一为0.90，Evolution版本演进后置；当前已按[登记§29](DECISIONS.md#29-m1工程设计目录与大纲)建立工程大纲，下一步审阅后按[三轮设计安排](m1/engineering/README.md#5-三轮设计推进与完成判断)细化；E01—E07保留为未来实现顺序，原型与历史截图保持。
+当前主流程规则已收束，见[登记§27](DECISIONS.md#27-m1主流程简化与工程实施顺序)：M1具备模板实时出题，Belief按方法与方面简化，提问不受阅读位置和目标章节限制，错误评价纠正后置M2。当前达标规则已由[登记§28](DECISIONS.md#28-m1全局达标阈值与工程阶段边界)统一为0.90，Evolution版本演进后置；当前已建立工程大纲，并按[登记§30](DECISIONS.md#30-m1工程大纲评审承接与产品规则对应)补齐评审承接及产品规则对应，下一步审阅后按[三轮设计安排](m1/engineering/README.md#5-三轮设计推进与完成判断)细化；E01—E07保留为未来实现顺序，原型与历史截图保持。
