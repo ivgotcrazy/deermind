@@ -1,19 +1,19 @@
 # DeerMind 系统设计文档入口
 
-> **版本**：v0.9<br>
+> **版本**：v0.18<br>
 > **文档性质**：文档导航与使用说明<br>
-> **状态**：M1工程目录及六份大纲已建立，待用户审阅；正文、技术选型与编码未展开<br>
+> **状态**：总体架构问题清单待审；暂停展开Operation和接口字段，未编码<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：用户已确认目录方案并授权建立大纲；本批作者自检，不代表具体方案、实现或Gate通过<br>
+> **评审记录**：本轮公共运行职责与路由／Operation边界已确认；机制、接口及部署未决仍须讨论<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-10<br>
-> **修订说明**：v0.8 → v0.9，增加现行M1工程大纲入口，明确旧系统设计复用边界并校正Evaluation导航版本；逐文件记录见MVP决定登记§29<br>
+> **更新日期**：2026-11-13<br>
+> **修订说明**：v0.17 → v0.18，引用统一质量清单，改为先审端到端主流程、后讨论质量目标与机制；见决定登记§46<br>
 
 ---
 
 以下七份v1.4为既有系统设计基线，承接[概念设计入口](../concept-design/README.md)；其中旧模型摘要尚未全部按M1迁移，不是可直接照搬的新M1工程规格。当前Domain合同为[v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)，Evaluation为[v1.9](../concept-design/DeerMind_Evaluation_Space_Design_v1.9.md)，具体产品规则以[M1 PRD](../mvp/m1/PRD.md)及设计规格为准，差异由M1-OPEN-04登记。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
 
-**当前工作（2026-11-10）：M1工程设计目录与大纲已建立，正文、选型和编码未展开。** 现行工程入口为[M1工程设计](../mvp/m1/engineering/README.md)，包含总体架构、Agent运行、上下文与记忆、业务运行、数据与接口五份技术设计及实施计划；本目录旧设计作为需逐项核对的复用输入，不并行维护另一套M1实现规格。产品规则仍由[MVP文档](../mvp/README.md)及现行Space合同承接。历史G3不等于新M1已通过设计或工程接收。
+**当前工作（2026-11-13）：M1总体架构问题清单待审，未编码。** 现行入口为[M1工程设计](../mvp/m1/engineering/README.md)，按[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)组织九份设计。先审阅[总体问题清单](../mvp/m1/engineering/System_Design.md#72-总体架构问题清单)，先沿端到端主流程确认模块协作，质量目标和保障方案登记后再议；已有Operation草案保留，暂不深入字段。WebSocket及Temporal＋Pydantic AI＋NATS JetStream＋PostgreSQL已确认，生产沿用Kubernetes；可靠交接、上下文与记忆及部署布局仍待审，见[选型登记§44](../mvp/DECISIONS.md#44-m1执行框架与事件组件选型)。旧M1草案见[归档](../mvp/archive/2026-11-11-before-swdd/README.md)，本目录旧设计均为历史参考；历史G3不等于新M1已通过架构或工程接收。
 
 归档 MVP 基线中的[基础领域演化选择](../mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Definition_v0.2.md#7-模型管理与运行可观察性)及其后续质量责任保留供新文档核对承接；明确确认的决定不因归档自动撤销。这些基线曾修订领域/产品owner、具体问题溯源、Claim参照、版本依赖与发布路由；当前M1的直接保存与应用、教材Agent及活动／评价合同须重新核对，不恢复旧审核发布流程；历史实验输入与结论保持，也不另开 Evolution Spike。
 
@@ -32,3 +32,5 @@ Build输出统一位于`build/`；[Build Plan v0.4](build/DeerMind_Architecture_
 `doc/` 当前文档对同一交付物保留最新工作版本，日常历史由 Git/GitHub 追溯。按本轮明确要求，`doc/mvp/archive/` 额外保留此次框架重建前的四份文档供参考，不作为新文档基线。`src/spike/` 允许保留多版本文档、代码快照和实验资料；校验所需的历史字节与索引继续保存在该目录。
 
 [统一 Spike Validation Report](spike/DeerMind_Architecture_Validation_Report_v0.1.md)是唯一 Spike 实验结论入口。`spike/archive/` 保留不同过程文档各自的最新版本；Cross-Cutting Coverage Review 保留其历史审查范围，不替代本次 Phase 6 评审。
+
+**当前工程讨论。** 先沿[端到端主流程](../mvp/m1/engineering/System_Design.md#72-总体架构问题清单)确认模块交接、数据与事件、AI取材及结果返回。[九类非功能质量问题](../mvp/m1/engineering/System_Design.md#63-非功能质量属性待讨论清单)已登记，待框架清楚后讨论目标和保障方案。既定职责、选型和质量约束保留；本批仅改工程文档、导航和决定登记。

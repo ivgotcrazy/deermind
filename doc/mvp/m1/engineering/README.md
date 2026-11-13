@@ -1,130 +1,162 @@
-# M1 工程设计与交付
+# M1 工程设计
 
-> **版本**：v0.9<br>
-> **文档性质**：M1工程设计导航、职责与推进安排<br>
-> **状态**：六份M1工程大纲已补齐评审承接与规则对应，修订稿待用户审阅；正文、技术选型与编码未展开<br>
-> **上游依据与基线**：用户已确认的M1范围、工程目录与本轮评审处理建议；产品工作基线未变，本批为大纲修订，未通过新阶段评审<br>
-> **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：用户授权按已接纳意见修订大纲；本批作者自检不代表具体技术方案、实现或Gate通过<br>
-> **写作规范**：[设计文档规范 v1.1](../../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-10<br>
-> **修订说明**：v0.8 → v0.9，同步六份v0.2大纲，建立产品规则到工程章节的对应表；逐文件记录见MVP决定登记§30<br>
+> **版本**：v0.26<br>
+> **状态**：端到端总体协作草案待审；模块草案保留，未编码<br>
+> **维护与评审**：Codex 编写及自检，用户审阅<br>
+> **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
+> **更新日期**：2026-11-13<br>
+> **修订说明**：v0.25 → v0.26，索引端到端总体协作草案和四项待确认建议，更新总体版本；模块草案及实现顺序保持<br>
 
----
+工程设计负责把M1产品规则落实为可实现的系统。当前交付是[总体设计v0.16的端到端协作草案](System_Design.md#4-主流程的跨模块协作)：从启动、教材准备与领域入库，走到学生选用、教学检测、评价及教学接续；配有总览、关键时序与输入输出说明。
 
-本目录接收按[M1业务工作包](../README.md#2-六个产品设计工作包)共同核对的[PRD](../PRD.md)、[详细设计](../design/README.md)与原型，不把PRD正文写完作为唯一开工条件。工程负责接口、数据存储、真实AI与识别服务、并发与顺序控制、权限实施、定义采用、持久化和恢复、启动工具及交付，不替产品决定学习流程和评价含义。
+[四项总体建议](System_Design.md#721-本轮需要确认的总体选择)分别处理入口路由、同一空间活动推进、跨空间结果就绪及上下文组装，均待用户确认。既定分层、公共运行与Operation边界、选型及最小账号范围保持；本轮未细化Operation字段或编码，见[本批记录§47](../../DECISIONS.md#47-端到端总体协作草案与未决选择)。
 
-## 1. 已建立的文档与职责
+其他工程稿保持：公共运行v0.9、AI底座v0.4、Interaction v0.5、产品业务v0.4、客户端v0.4、基础设施v0.5、实施计划v0.13、Domain v0.2、Evaluation v0.4。整体链路和关键选择通过后，再按[九类非功能质量问题](System_Design.md#63-非功能质量属性待讨论清单)讨论目标、保障、部署与验证，最后接收总体设计并细化模块。
 
-五份技术设计和一份实施计划均已修订为v0.2大纲：补齐已接纳评审意见的章节归属及产品规则对应，未展开方案正文。各文件的完成清单保持未勾选。
+## 1. 文档分工
 
-| 文档 | 唯一维护的工程内容 | 预期输出与接收者 |
-| --- | --- | --- |
-| [总体架构](Engineering_Design.md) | 系统结构、Space与模块责任、部署、资源和技术取舍 | 架构图、责任与部署约束；其余专题和实施计划使用 |
-| [Agent运行框架](Agent_Runtime_Design.md) | 执行生命周期、共享执行、任务依赖、等待恢复、工具执行与提交机制 | 运行状态和时序、故障处理；业务流程和接口设计使用 |
-| [上下文与记忆](Context_and_Memory_Design.md) | 信息归属、上下文资格、活动摘要、召回、预算和恢复刷新 | 上下文合同与读写规则；Agent执行和数据设计使用 |
-| [业务运行机制](Business_Flow_Design.md) | 产品主流程如何调用模块，以及业务特有的等待、写入和失败分支 | 逐步处理合同、端到端时序；功能实现、接口设计及联调使用 |
-| [数据与接口](Data_and_Interface_Design.md) | 完整字段、标识、Schema、API、消息和事件载荷、事务与幂等约束 | 唯一字段与接口合同；前后端、工具及任务处理共同使用 |
-| [实施计划](Delivery_Plan.md) | 技术验证安排、E01—E07依赖、复用、增量交付与退出条件 | 工作项、交付及测试安排；后续编码与验证使用 |
+详细设计按实现责任组织，同一模块的输入输出、处理过程、数据、事件和异常放在一起。文件划分不决定进程数或部署服务数。
 
-`Delivery_Report.md`有真实交付后才创建；它记录实际软件、配置、启动复测及限制，不复制验证报告结果。本批不创建报告、图表占位文件或生产代码。
+| 文档 | 职责与独立成文的理由 |
+| --- | --- |
+| [系统总体设计](System_Design.md) | 给出系统分层、模块与进程关系、跨模块协作和技术选择；为详细设计提供共同结构 |
+| [产品业务设计](Product_Application_Design.md) | 账号、教材与教材助手、目标定义、学习空间；明确产品条件怎样传入核心模型 |
+| [领域空间设计](Domain_Space_Design.md) | Domain、模板、实例、KC 与依赖、入库及供题；集中维护可复用领域内容 |
+| [交互空间设计](Interaction_Space_Design.md) | 活动配置与执行、学习助手、检测轮、主动任务及评价协作；集中说明活动怎样推进 |
+| [评估空间设计](Evaluation_Space_Design.md) | Claim、Evidence、Belief、数值核心及目标结果；一处读懂完整评价处理 |
+| [AI 底座设计](AI_Foundation_Design.md) | Agent 调用循环、工具协议、上下文与记忆；各类 AI 工作复用的执行方式 |
+| [公共运行机制设计](System_Foundation_Design.md) | 接入、路由、派发、运行保障、事件与回传；AI与普通后台任务共用，业务编排归Operation |
+| [客户端工程设计](Client_Design.md) | 学生与管理员网页的组件、状态、接口、内容渲染、恢复及浏览器验收 |
+| [基础设施与部署设计](Infrastructure_and_Deployment_Design.md) | 存储、外部服务适配、启动、配置、观测、部署与维护 |
 
-产品行为和算法语义仍由PRD与内容规格维护；质量指标与测量方法由validation维护；重要决定和跨文档待决由[DECISIONS](../../DECISIONS.md)维护。专题可以解释其机制，但须引用唯一字段、规则或指标来源，不另建一套合同。各文档之间的链接代表并行设计关系，不要求一份全部写完才开始下一份。
+AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己的定义与运行对象；Domain 题目实例不混入学生作答。Evolution 后置，在总体设计说明边界，不建立空的 M1 实现文档。
 
-Evaluation数值计算的模块责任由总体架构明确，语义解释、资格核对、计算、提交与反馈的衔接由业务运行机制展开；数据与接口维护函数及记录合同，实施计划安排实现与测试。合同写在数据文档不意味着计算归数据层；通用Agent运行框架不维护另一套评价算法。
+[实施与交付计划](Delivery_Plan.md)安排设计确认后的工作依赖、技术验证和交付，不属于上述九份设计。不新建交付报告占位；有实际交付后再记录结果。
 
-源码继续位于`src/`，原型保持在`m1/prototype/`；本批不移动或修改。各Space可以在简单部署中分模块，不据文件划分增加服务。
+## 2. 设计输入与历史参考
 
-## 2. 进入工程的条件
+| 当前产品输入 | 版本与作用 |
+| --- | --- |
+| [PRD](../PRD.md) | v0.24：M1产品行为与验收；Web交付，学习用时功能后置 |
+| [内容与模型规格](../design/Content_and_Model_Reference.md) | v0.22：对象关系、教学与评价语义、试用算法和参数 |
+| [交互规格](../design/Interaction_Design.md)及[原型](../prototype/README.md) | 交互规格 v0.21：管理员和学生的操作、状态、截图；原型用于理解交互 |
+| [验证计划](../validation/Validation_Plan.md) | v0.5：内容、语义、数值、效果及真实浏览器验收口径 |
 
-**工程设计属于工程阶段。** 工程阶段依次包含工程设计、编码实现、集成与验证。本批建立工程目录和大纲，已经进入工程设计工作；尚未展开正文、冻结技术选择或开始编码。目录授权不等于全部产品验收或工程Gate通过。
+内容与交互规格仍保持 `37bd334cf29fd56b1fe5ef6f61cc3c819f01dfb0` 中的版本；最小账号能力及取消离线保持检查由[后续决定§45](../../DECISIONS.md#45-公共运行底座路由与operation执行边界)收窄，旧产品输入中的宽泛权限或时间触发描述不得覆盖本轮决定。PRD v0.24与验证计划v0.5此前按浏览器交付及用时后置决定修订，以本表及[登记§34](../../DECISIONS.md#34-mvp浏览器交付与学习用时功能后置)为当前输入。正式接收具体模块时核对实际文件和资产，不把原型mock当成生产数据或算法。
 
-按拟接收范围核对业务规则、详细规格、原型和对应截图，记录准确版本、输入输出、依赖及未决项。可对已明确部分提前分析技术可行性；编码实现须满足对应范围的产品与设计接收记录，不因某份文档或一个包自检通过而自动开工。受产品未决项影响的部分继续设计，工程反馈可返回产品修订。
+分层依据见[已确认方向](../../DECISIONS.md#31-m1系统设计首轮实现草案)；领域与评价语义分别参考[Domain v1.5](../../../concept-design/DeerMind_Domain_Space_Design_v1.5.md)、[Evaluation v1.9](../../../concept-design/DeerMind_Evaluation_Space_Design_v1.9.md)，AI 执行边界参考[AI Native 原则](../../../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md)。具体 M1 规则以产品输入和后续已确认决定为准。
 
-M1最终须通过真实工具完成整册建模及教学闭环；开发可按章联调，不要求在产品设计阶段手工完成全书模型。整册实物内容与软件的最终验收，不与代表性设计样例混为一谈。
+旧工程稿已进入[归档](../../archive/2026-11-11-before-swdd/README.md)，含精确原文 ZIP、SHA-256 清单和可读副本。旧稿只供参考；重建时未直接复制旧稿正文，后续确认的选型与职责按各次决定登记更新。旧稿中的 Python、数据库、框架、调度和代码目录均不因归档或重建获得批准。
 
 ## 3. 本轮必须承接的实现与复测要求
 
-当前输入为[PRD v0.23](../PRD.md)、[内容规格v0.22](../design/Content_and_Model_Reference.md)、[交互规格v0.21](../design/Interaction_Design.md)和[验证计划v0.4](../validation/Validation_Plan.md)。产品工作基线仍为`37bd334`；本轮修改前提交`5547fcd`中的这四份输入与其一致，不随HEAD变化机械改基线。正式接收按范围固定文件及资产哈希；本节不是完整工程设计，也不宣布已开始实现。原型只承担交互说明，缺少真实引擎不等于要先把原型做成生产系统。
+下表是产品规则到新设计位置的索引。字段、算法和异常在责任文档中展开，不在此另写一套合同。
 
-| 实现项 | 必须接收的产品合同 | 工程输出与核对 |
+| 产品输入 | 主要设计位置 | 需要写出的工程内容 |
 | --- | --- | --- |
-| 教材导入Agent | 原件与对话上下文、受限工具动作、候选检查／渲染、采用与继续；无手工内容编辑器 | 工具协议、范围约束、结构化输出、编号引用、调用及失败记录；已有持续对话与候选采用mock；预设措辞和结果函数不是生产Agent，补充材料只存文件名 |
-| 模型适配 | KC Task／复合Task、子Task及方法依赖；跨章节方法汇总并保留适用来源 | 适配旧Task角色和`allowedMethods()`；不能仅改字段名或对所有章节无条件开放方法 |
-| 求助与教学机会 | 内容§4.9／4.18的分类、实际展示、稳定机会身份、资格与去重 | 明确程序字段和合法转移；语义解释不明不提供轮内帮助、不加L；同一机会拆消息／恢复不重复更新 |
-| 数值核心 | 既定观测更新、转移公式和参数；未决不作负证，迁移／保持不加L | 纯函数与参数校验，使用相同实现核对§4.19和对应fixture，覆盖边界、重复、跳过及同方法跨参数更新；错误评价纠正与历史重算不纳入M1；不把仅grep到公式视为引擎验收 |
-| 评价接线 | 先检查归因、帮助、版本、条件、重复来源，再调用数值函数 | 无资格项显式跳过；事件→Evidence→Belief→目标输入输出可追溯；禁止后验回灌 |
-| 分步启用 | 可以先实现公式并用结构化案例验证，再接LLM解释和真实事件 | L仅在机会资格和去重通过后调用；真实校准和教学效果另验，不将mock数值对上视为校准 |
+| PRD R01、R17：身份与必要确认 | [产品业务](Product_Application_Design.md)、[公共运行](System_Foundation_Design.md) | 预置账号、简单登录、固定两角色及必要确认；本人空间隔离与后台授权，不建设完整权限平台 |
+| R02–03：整册导入、对话纠错及候选采用 | [产品业务](Product_Application_Design.md)、[AI 底座](AI_Foundation_Design.md) | 文件与页序、引用、Agent 协议、候选检查、采用及失败处理 |
+| R04：领域管理与章节采用 | [Domain](Domain_Space_Design.md)、[产品业务](Product_Application_Design.md) | KC Task／复合 Task、模板与实例、依赖检查、入库、方法与章节适用来源 |
+| R05、R08、R10：Claim、目标与选用 | [Evaluation](Evaluation_Space_Design.md)、[产品业务](Product_Application_Design.md) | 评价定义、目标条件、应用检查、空间采用；目标定义与个人结果分开 |
+| R06、R11–13、R16：活动与检测 | [Interaction](Interaction_Space_Design.md)、[客户端](Client_Design.md) | 四类配置及活动森林、允许动作、帮助顺序、实际展示、提交与恢复 |
+| R07：题目准备与运行供题 | [Domain](Domain_Space_Design.md)、[Interaction](Interaction_Space_Design.md) | 已有实例筛选、生成检查保存、本次用途及无可用题分支 |
+| R14、内容§4.16–4.21：Evidence、概率与目标 | [Evaluation](Evaluation_Space_Design.md) | 解释资格、稳定机会身份、去重、纯函数、参数校验、子 Task 更新及目标派生 |
+| R09、R14、交互§3：运行及依据追溯 | [Evaluation](Evaluation_Space_Design.md)、[公共运行](System_Foundation_Design.md)、[产品业务](Product_Application_Design.md) | 原始事件、派生依据和结果的授权查询；事件只追加 |
+| R15：主动任务 | [Interaction](Interaction_Space_Design.md)、[公共运行](System_Foundation_Design.md) | 必要性和重复依据、接受／暂缓／拒绝、进入空间检查保持条件及等待评价；无离线保持检查 |
+| R18、验证§1–3：AI 与质量 | [AI 底座](AI_Foundation_Design.md)、[基础设施](Infrastructure_and_Deployment_Design.md)、[实施计划](Delivery_Plan.md) | 上下文及工具权限、识别来源、失败与成本记录；确定性、接线、交互和语义验证分别安排 |
 
-**原型测试接线待办。** 当前24个`tests/*.test.mjs`中，`test`列10个、历史导入脚本列5个，另9个未纳入package脚本。它们采用`node:test`调用Playwright浏览器，不要求改用Playwright Test运行器或另设`playwright.config`。教材助手测试已列入当前package脚本，本轮文档同步未改脚本；工程接收时应将当前有效测试统一列入可复跑命令，保留历史5项的用途区别，避免通配符把旧流程测试当现行验收。
+整册教材建模是 M1 交付范围，“四分之一”用于代表性运行链检查。R19／A18的学习用时功能整体后置，不再分派M1工程章节。Evolution、错误评价纠正、历史重算和跨版本演进按现有决定后置，正常失败重试、事件时间、保持及主动任务时间条件仍需设计。
 
-已有未接线测试可以从`doc/mvp/m1/prototype`运行以下命令；先按原型README安装依赖、构建并准备Playwright对应Chromium。本轮未执行这些浏览器测试，不据命令存在报告通过。
+## 4. 推进与审阅
 
-```text
-node --test --test-concurrency=1 tests/activity-editor.test.mjs tests/activity-flow.test.mjs tests/node-routing.test.mjs tests/teaching-scope.test.mjs tests/student-entry.test.mjs tests/student-activity-directory.test.mjs tests/student-activity-fixture.test.mjs tests/student-activity-heading.test.mjs tests/student-book-context.test.mjs
-```
+当前先审阅[总体§4](System_Design.md#4-主流程的跨模块协作)的完整协作草案，再集中确认[§7.2.1](System_Design.md#721-本轮需要确认的总体选择)的四项建议；A01–A12继续记录覆盖与决定状态。现有分层、Space所有权、公共路由与Operation边界、组件选型及质量约束作为输入。
 
-正式评价实现不能将`learning-spaces.ts`硬编码值当算法，也不应为了演示再维护一套公式。已有文档复算脚本仅提供数学参考；引擎测试须从结构化资格输入调用实际实现，核对结果与版本、跳过原因和留痕。开发案例不能兼作独立盲测样本。
-
-**教材Agent的第一条实现路径。** 接收前按PRD§3.3、内容§3.1及交互§1.2固定来源文件、导入身份和内容版本；工程设计须说明对话上下文和引用怎样传入、哪些工具能读原件／产生候选、结构校验和预览怎样执行，以及采用如何检查版本并写入。真实文件保存与读取、任意内容纠错、失败恢复和采用事务尚未实现，不能把原型的预设函数直接当成生产行为。领域待办、模板／实例关联及章节采用沿原职责连接，不让助手跨过这些操作自动写模型。
-
-教材助手上一批对当时构建复跑教材助手、教材主流程、导入生命周期和入库弹框四个测试文件，共17项通过；只证明有限mock的交互及关系，未执行上方另外9个未接线用例。证据见[教材助手复核](../design/assets/material-assistant-v0.1/review.json)。主流程检查已按既定简化决定收束；本批工程大纲已建立，接下来审阅分工后交叉细化；本节不替代完整设计或宣布工程Gate通过。
-
-
-### 3.1 产品规则到工程章节的对应
-
-本表登记已定产品规则的工程承接位置，供正文展开时逐项核对，不代替上游规则、完整需求验收表或实现结果。每行区分流程／模块责任与字段／执行／验证责任；不要求每条规则另开章节，也不在多份大纲重复维护正文。PRD、内容、交互、验证分别指上方四份现行输入。
-
-| 产品规则及依据 | 主要承接章节 | 协作章节及待交付的核对依据 |
+| 顺序 | 讨论范围 | 本轮要形成的输出 |
 | --- | --- | --- |
-| 初始化、账号与基础管理：PRD §3／§5／§6 | [业务§1](Business_Flow_Design.md#1-初始化与基础管理) | [架构§5](Engineering_Design.md#5-部署资源权限与运行要求)、[数据§7](Data_and_Interface_Design.md#7-权限隔离与数据恢复)：启动前提、权限和配置检查 |
-| 教材助手对话解析、核对候选与采用：PRD §3.3，内容§3.1，交互§1.1–1.2 | [业务§2](Business_Flow_Design.md#2-教材助手解析与候选采用) | [数据§2／4](Data_and_Interface_Design.md)、[上下文§2／4](Context_and_Memory_Design.md)：原件、多模态候选、采用及失败合同；无手工解析编辑器 |
-| Domain对象、模板／实例及依赖：内容§3.2，交互§1.3 | [数据§1](Data_and_Interface_Design.md#1-对象身份归属与存储) | [业务§1／3](Business_Flow_Design.md)：KC Task与复合Task、TT／ST／KC／TI／SI入库及引用约束 |
-| 章节TT／ST采用、Claim／目标与课程应用：PRD §3，交互§1.4–1.5／1.7 | [业务§3](Business_Flow_Design.md#3-领域入库章节关联与课程应用) | [数据§1／4](Data_and_Interface_Design.md)：方法×章节适用来源；旧`allowedMethods()`不能按全章无条件放行 |
-| 四类活动配置及两层规则／推荐策略：内容§4.14，交互§1.6 | [业务§1／4](Business_Flow_Design.md) | [数据§1](Data_and_Interface_Design.md#1-对象身份归属与存储)、[上下文§3](Context_and_Memory_Design.md#3-活动森林中的连续性)：配置与实例分开，节点继承本活动、子活动采用自身配置，推荐未命中仍可合法继续 |
-| 学生选用、活动森林与教材独立浏览：PRD §4，交互§2.1–2.3 | [业务§4](Business_Flow_Design.md#4-学生选用与四类活动执行) | [上下文§3／6](Context_and_Memory_Design.md)、[运行§2／4](Agent_Runtime_Design.md)：暂停／返回、历史定位不改活动、阅读位置不限定提问 |
-| 题目供给、检查保存与用途：PRD R07，内容§4.13，验证§2 | [业务§5](Business_Flow_Design.md#5-题目供给检测轮与求助) | [数据§2／4](Data_and_Interface_Design.md)、[实施§3／5](Delivery_Plan.md)：已有合格题不足才生成，检查失败且无替代题才不能检测 |
-| 检测开始、提交与求助：PRD §4.4，内容§4.9，交互§1.6／2.4 | [业务§5](Business_Flow_Design.md#5-题目供给检测轮与求助) | [运行§5](Agent_Runtime_Design.md#5-模型工具与业务提交)、[数据§3／5](Data_and_Interface_Design.md)：技术处理／含糊请求／实质帮助分开；先结束轮及取消未开始轮再帮助，之后重新准备；不提前泄露后题答案 |
-| Evidence资格、方法／四方面与子Task归因：内容§4.16–4.18，验证§3 | [业务§6](Business_Flow_Design.md#6-事件到评价再返回教学) | [上下文§2](Context_and_Memory_Design.md#2-各类任务的上下文合同)、[数据§3／4](Data_and_Interface_Design.md)：原始依据、实际帮助、未决与跳过；明确子证据才联动，不复制成功 |
-| 教学机会身份、资格与去重：内容§4.18，验证§3 | [数据§1／3／6](Data_and_Interface_Design.md) | [业务§5–6](Business_Flow_Design.md)、[上下文§2](Context_and_Memory_Design.md#2-各类任务的上下文合同)：收束及实际教学来源，同一机会不因拆消息／恢复／重试再次加L，父子责任分别依据 |
-| Evaluation数值模块与目标派生：内容§4.16–4.21，验证§3 | [架构§3](Engineering_Design.md#3-spaceagent程序与人工的责任)、[数据§4](Data_and_Interface_Design.md#4-模块agent与工具接口) | [业务§6](Business_Flow_Design.md#6-事件到评价再返回教学)、[实施§3／5](Delivery_Plan.md)：p0／S／G／L约束、纯函数输入输出、前后值与跳过原因；目标核对适用Evidence及未舍入值与0.90，教学预测不独自达标 |
-| 评价返回教学、目标依据与事件追溯：内容§4.21–4.24，交互§2.4／3.2 | [业务§6／8](Business_Flow_Design.md) | [数据§3／5／6](Data_and_Interface_Design.md)、[运行§4](Agent_Runtime_Design.md#4-任务依赖通知与恢复)：只追加事件、目标→Evidence→来源事件，分层失败保留有效结果，通知及迟到结果处理 |
-| 主动任务接受／暂缓／拒绝：PRD §4.6，内容§4.24，交互§3.1 | [业务§7](Business_Flow_Design.md#7-系统主动任务与用时提醒) | [数据§3／6](Data_and_Interface_Design.md)：依据去重、当天不再催、次日进入且仍必要才再提示、拒绝需新理由；评价未完成等待，不催重做 |
-| 用时累计、空闲与30分钟提醒：PRD §6.3／R19，决定§28 | [业务§7](Business_Flow_Design.md#7-系统主动任务与用时提醒) | [数据§3](Data_and_Interface_Design.md#3-事件与执行记录)、[运行§3](Agent_Runtime_Design.md#3-共享执行与资源调度)：跨空间计时、等待与后台运算、重叠时段、自动／补记／未知；空闲和补记方案待确认，不锁定、不将未知记零 |
-| 权限禁止项与后置边界：PRD §5／§6，验证§2–3，决定§28 | [数据§7](Data_and_Interface_Design.md#7-权限隔离与数据恢复) | [运行§5](Agent_Runtime_Design.md#5-模型工具与业务提交)、[业务§8](Business_Flow_Design.md#8-关键异常与端到端接收)：不手改概率、不越权改领域与章节采用；不依赖已知不可靠判断，不恢复错误评价纠正或历史重算 |
-| 多模态服务、上下文与恢复：PRD §6，内容§3.1，交互§1.2 | [架构§2](Engineering_Design.md#2-系统结构与外部依赖)、[上下文§2–7](Context_and_Memory_Design.md) | [运行§3–6](Agent_Runtime_Design.md)、[数据§2／4](Data_and_Interface_Design.md)：推理／识别／存储能力与失败记录、来源及隔离，候选与原件分开，旧Belief不诱导本次证据解释 |
-| 整册范围、质量验收与复用限制：PRD §7，内容§5，验证§1–3 | [实施§3／5／6](Delivery_Plan.md) | [架构§6](Engineering_Design.md#6-技术选择复用与关键风险)：资产分类、测试接线及四层检查映射五类验证对象，工程通过不代表语义可靠／校准完成／学习有效 |
+| 1：当前 | 初始化、教材准备与领域融合、课程选用、学习检测、评价及教学接续 | 明确谁发起、各模块处理什么、读取和保存什么、如何传递事件及返回结果；核对AI取材、依赖等待和关键业务分支 |
+| 2：随后 | [非功能质量清单](System_Design.md#63-非功能质量属性待讨论清单) | 按已明确流程确认质量目标、优先级、总体保障思路及验证条件；必要时返回调整框架 |
+| 3 | 模块详细设计与工程接收 | 细化已确认方案的Operation、接口、存储、恢复及配置，不将未决架构交给编码 |
 
-后续正文接收时逐行补实际图表、合同和验证位置；本轮只有章节归属。空闲／补记操作、机会识别质量、技术选择和服务条件仍按原决定及对应专题处理，不因表中已有一行就视为已定案或已验证。
+本轮交付总体协作草案和待审建议；响应时限、可接受停机或数据损失、费用阈值及补发去重方案仍在后续讨论，不将质量事项整体后置M2。A01–A12和V01–V08继续追溯；原有Operation及字段仍为草案。
 
-## 4. 已确认范围下的工程实施顺序
+E01—E07 继续表达已确认的实现顺序，见[原决定](../../DECISIONS.md#27-m1主流程简化与工程实施顺序)；设计文档交叉推进，不按九本文件逐本写完。每轮说明实际交付、当前未决和下一步，不把目录稿算作方案完成。
 
-本轮四项决定见[登记§27](../../DECISIONS.md#27-m1主流程简化与工程实施顺序)。下表是实施顺序及交接标准，不是完整工程设计、工期承诺或开工验收。本批按§1分工建立大纲，后续按§5交叉细化并接收PRD与设计中的已定输入；下表是未来实现顺序，不是文档填充顺序，本批不启动编码。
+## 5. M1 Operation总目录
 
-| 顺序 | 实现内容与依赖 | 可核对的交付与完成条件 |
+本表保留M1业务操作目录草案，尚不是已定的智能路由候选目录；求助Operation的拆分命名及登记方式待讨论，示意名不自动成为新接口。同一入口的有限动作以输入枚举区分，例如章节关联的添加、编辑与取消。实现不得新增一个含义不明的万能`execute`来绕过这些合同。每项的权限、输入输出、步骤、提交和失败处理只在所属模块维护。
+
+### 5.1 产品业务
+
+| Operation | 完成的工作 | 合同位置 |
 | --- | --- | --- |
-| E01 运行与数据基础 | 身份和空间隔离；受保护模型连接；文件／记录持久化；版本引用、只追加事件、失败恢复及基本调用记录 | 管理员和学生独立登录；原件、配置和事件可恢复；重复请求不产生重复事实。各Space可在一个部署中分模块，不先建微服务或通用Agent平台 |
-| E02 领域管理与教材Agent | 先建立Domain及TT／ST／KC／TI／SI手动管理和依赖检查；再接原件读取、结构化解析、持续对话、引用、候选校验与采用 | 用既有四例完成真实解析及对话纠错；候选提交领域、复用／补建模板、实例关联、章节TT／ST采用可追溯。管理员核对，无手工解析编辑器 |
-| E03 评价定义、目标与课程应用 | 依赖E02；建立Claim、方法执行判据和四方面规则；目标选取教材范围，应用明确版本 | 管理员保存并应用教材＋目标，学生选用建空间；草稿不泄露为可用课程，缺口与学生未知分开；目标变化不自动提高能力 |
-| E04 真实学习活动与题目供给 | 依赖E03；四类蓝图、活动树、持续聊天、教材独立浏览；选择已有题或模板生成、检查、保存 | 用四分之一完成分段讲解、追问、主动检测与轮后帮助；无推荐策略仍可合法继续，求助先结束检测轮。真实展示、提交及帮助留痕，失败不造学生反证 |
-| E05 Evidence、Belief与目标反馈 | Evaluation数值核心单列：参数校验、纯函数与fixture可在E02期间提前实现；真实接线依赖E04事件与E03定义 | 先资格与去重，再按方法×方面更新，明确子Task证据才联动；1/4与1/5共享分项，目标核对适用证据并比较0.90；结果返回聊天，后台可读依据。保留既定公式和初值，使用全局0.90及Evidence资格判断；不实现错误评价纠正、Evolution版本迁移和历史重算 |
-| E06 主动任务与主流程验证 | 依赖E05有效结果；接进入空间／活动结束／时间条件及接受、暂缓、拒绝 | 受助后补证及延迟检测任务可回到活动，评价返回后重查必要性；不重复催促、不抢占、不以失败降低能力。用提醒代替30分钟强制退出 |
-| E07 整册内容与M1验收 | E02–E03稳定后即可逐章准备，与后续工程并行；最终依赖E04–E06真实运行 | 全册内容、模型、Claim、目标及供题条件完成；逐章核查与有限真实案例质量验证，报告未决和成本。不是只完成四分之一示例，不要求学生做完整册 |
+| `product.save_trial_account` | 初始化或维护试用账号、角色和关系 | [产品业务§2.1](Product_Application_Design.md#21-productsave_trial_account初始化或维护试用账号) |
+| `product.record_usage_confirmation` | 留存必要使用确认 | [§2.2](Product_Application_Design.md#22-productrecord_usage_confirmation记录必要首次确认) |
+| `product.sign_in` | 验证原账号并建立登录身份 | [§2.3](Product_Application_Design.md#23-productsign_in登录原账号) |
+| `product.recover_account` | 管理员协助恢复原账号访问 | [§2.4](Product_Application_Design.md#24-productrecover_account管理员协助找回) |
+| `product.receive_material` | 上传整册或补充材料，保留页序及原件 | [§3.1](Product_Application_Design.md#31-productreceive_material接收整批或补充材料) |
+| `product.save_material_metadata` | 维护书名、领域和版本来源等基本信息 | [§3.2](Product_Application_Design.md#32-productsave_material_metadata补录教材基本信息) |
+| `product.delete_material_import` | 删除未完成导入，不删除已生效模型 | [§3.3](Product_Application_Design.md#33-productdelete_material_import删除未完成导入) |
+| `product.converse_material_assistant` | 通过持续对话解析或修正候选 | [§3.4](Product_Application_Design.md#34-productconverse_material_assistant持续对话解析与纠错) |
+| `product.decide_material_candidate` | 核对后采用或放弃候选 | [§3.5](Product_Application_Design.md#35-productdecide_material_candidate采用或不采用候选) |
+| `product.submit_domain_intake` | 分别提交知识、题目、解法供领域处理 | [§3.6](Product_Application_Design.md#36-productsubmit_domain_intake提交已采用内容到领域) |
+| `product.save_chapter_association` | 为章节添加、编辑或取消Task及方法采用 | [§4.1](Product_Application_Design.md#41-productsave_chapter_association添加编辑或取消章节关联) |
+| `product.save_learning_target` | 按教材范围和Claim保存目标条件 | [§4.2](Product_Application_Design.md#42-productsave_learning_target维护目标定义) |
+| `product.apply_course` | 检查准备情况并确认应用教材与目标组合 | [§4.3](Product_Application_Design.md#43-productapply_course检查并应用教材与目标组合) |
+| `product.open_learning_space` | 选用可用组合创建空间，或进入既有空间 | [§5.1](Product_Application_Design.md#51-productopen_learning_space创建或进入个人空间) |
+| `product.query_product_view` | 按资源与权限读取教材、目标、空间等视图 | [§5.2](Product_Application_Design.md#52-productquery_product_view按权限读取业务视图) |
 
-首条纵向联调使用“四分之一”，各步骤交付真实输入输出再扩章。测试数据可用于开发，但不冒充教材正式内容或真实学生证据。学习机会资格和去重未通过时不启用L转移；保持既定参数，未满足的输入不更新。真实质量、校准及试用条件按验证计划逐项获得证据，不以工程步骤完成代替效果验证。
+### 5.2 Domain
 
-错误评价纠正及Evolution版本演进由M2/M3重新确认具体范围；M1保留可追溯事实和定义维护，不建设替代Evidence／历史重算。实际服务与材料条件、逐章标准和校准参考仍在对应接入前落实，但不重新打开已确认产品范围。
-
-## 5. 三轮设计推进与完成判断
-
-| 轮次 | 共同推进的文档 | 应交付什么 |
+| Operation | 完成的工作 | 合同位置 |
 | --- | --- | --- |
-| 第一轮：架构骨架 | 总体架构、运行框架、上下文与记忆 | 模块与写入责任、执行及上下文边界、需要技术验证的选择；业务与数据专题同步核对是否可承接 |
-| 第二轮：主流程与合同 | 业务运行机制、数据与接口，并返回前三份修订 | 教材到课程、讲解到检测、事件到评价再到教学三条路径的时序和输入输出；形成必要异常合同 |
-| 第三轮：可实施性与计划 | 五份技术设计和实施计划 | 并发、恢复、权限、成本、部署与测试交叉检查，形成分步实现接收范围与退出条件 |
+| `domain.save_definition` | 保存Domain、TaskTemplate、SolutionTemplate或KC定义 | [Domain§2.1](Domain_Space_Design.md#21-domainsave_definition) |
+| `domain.receive_intake` | 幂等接收教材提交的待入库内容 | [§2.2](Domain_Space_Design.md#22-domainreceive_intake) |
+| `domain.process_intake` | 添加／复用KC，关联实例或移除待入库项 | [§2.3](Domain_Space_Design.md#23-domainprocess_intake) |
+| `domain.extract_template` | 根据题目或解法提出模板候选 | [§3.2](Domain_Space_Design.md#32-domainextract_template) |
+| `domain.query_dependencies` | 展开本层方法、子Task及KC依赖 | [§4.2](Domain_Space_Design.md#42-domainquery_dependencies) |
+| `domain.save_instance` | 检查并保存TaskInstance／SolutionInstance与模板关系 | [§5.1](Domain_Space_Design.md#51-domainsave_instance) |
+| `domain.supply_task` | 筛选已有题；不足时生成、检查、保存后供题 | [§5.2](Domain_Space_Design.md#52-domainsupply_task) |
+| `domain.query_content` | 查询已有定义、实例、候选与待入库内容 | [§6.1](Domain_Space_Design.md#61-domainquery_content) |
 
-本次只完成目录和大纲，以上三轮尚未展开。每轮报告交付物、已解决问题、剩余决定和下一步；后续技术验证需明确范围并按授权推进，本次不运行实验。
+### 5.3 Interaction
 
-共享执行器池、持久任务依赖、上下文按需组装等讨论方向分别由专题论证，不能以大纲建立视为技术选型已批准。Codex先提出最小技术候选与替代方案供用户审阅，不要求用户先指定技术栈。待决技术项记录问题、影响、候选、验证方式和最迟决定节点；需要改变产品含义时返回上游确认。Evolution、错误评价纠正、跨版本兼容迁移和历史重算后置；必要来源、实际采用依据、并发修订核对和只追加事件仍须承接。
+| Operation | 完成的工作 | 合同位置 |
+| --- | --- | --- |
+| `interaction.manage_activity_config` | 维护四类活动蓝图、规则与推荐策略 | [Interaction§1.1](Interaction_Space_Design.md#11-manage_activity_config维护活动配置) |
+| `interaction.control_activity` | 开始、暂停、继续、结束及切换活动 | [§2.1](Interaction_Space_Design.md#21-control_activity控制活动与检测开始) |
+| `interaction.query_conversation` | 读取当前活动、活动目录和聊天历史 | [§2.2](Interaction_Space_Design.md#22-query_conversation查询当前交流和历史) |
+| `interaction.handle_input` | 接收一次交流，校验并提交下一活动动作 | [§3.3](Interaction_Space_Design.md#33-handle_input处理一次学生交流) |
+| `interaction.record_presentation` | 记录实际内容呈现及已给出的帮助 | [§3.4](Interaction_Space_Design.md#34-record_presentation记录内容呈现) |
+| `interaction.prepare_detection` | 确定检测要求并异步准备题目 | [§4.1](Interaction_Space_Design.md#41-prepare_detection准备本次检测) |
+| `interaction.submit_answer` | 保存当轮作答及当时的检测条件 | [§4.2](Interaction_Space_Design.md#42-submit_answer提交实际作答) |
+| `interaction.check_proactive_task` | 根据有效依据核对是否提出主动任务 | [§5.1](Interaction_Space_Design.md#51-check_proactive_task核对主动任务) |
+| `interaction.respond_proactive_task` | 处理接受、暂缓、拒绝及提醒去重 | [§5.2](Interaction_Space_Design.md#52-respond_proactive_task响应主动任务) |
+| `interaction.continue_after_result` | 结果就绪后检查当前活动并接续 | [§6.4](Interaction_Space_Design.md#64-continue_after_result结果就绪后接续) |
 
-每份文件末尾的完成条件用于未来正文接收。共同检查要求是：沿一个场景能找到处理者、输入、读取、写入、等待、失败与测试方法；图表、正文和合同互相一致；实际验证与设计预期明确分开。初建记录见[登记§29](../../DECISIONS.md#29-m1工程设计目录与大纲)，本轮评审承接、逐文件升版和自检见[登记§30](../../DECISIONS.md#30-m1工程大纲评审承接与产品规则对应)。
+### 5.4 Evaluation
+
+| Operation | 完成的工作 | 合同位置 |
+| --- | --- | --- |
+| `evaluation.manage_claim` | 维护Task Claim、方法判据及四方面判据 | [Evaluation§1](Evaluation_Space_Design.md#1-claim方法判据与评价方面) |
+| `evaluation.evaluate_submission` | 作答解释、Evidence、概率更新、目标派生及结果发布 | [§2](Evaluation_Space_Design.md#2-原始事实到evidence) |
+| `evaluation.apply_learning_opportunity` | 判定教学机会资格并更新学习转移预测 | [§3](Evaluation_Space_Design.md#3-belief分项与数值更新) |
+| `evaluation.reassess_target` | 目标采用变化后仅重新派生目标结果 | [§4](Evaluation_Space_Design.md#4-学习目标达成计算) |
+| `evaluation.query_basis` | 沿目标、Belief、Evidence查询原始依据 | [§5](Evaluation_Space_Design.md#5-评价数据与公开接口) |
+
+### 5.5 覆盖与底座接口
+
+| PRD范围 | 对应操作 |
+| --- | --- |
+| R01、R17 身份与必要确认 | 产品业务§2四项操作；各操作共同授权检查 |
+| R02–03 教材输入、对话解析与纠错 | 产品业务§3.1–3.5 |
+| R04 领域建模与章节采用 | `submit_domain_intake`、Domain维护／入库／查询、`save_chapter_association` |
+| R05、R08、R10 Claim、目标与学生选用 | `manage_claim`、`save_learning_target`、`apply_course`、`open_learning_space` |
+| R06、R11–13、R16 配置、讲解、提问、检测及持续对话 | Interaction配置／活动／输入／呈现／作答／查询及接续操作 |
+| R07 出题与保存 | `prepare_detection`、`supply_task`、`save_instance` |
+| R09、R14 评价及依据追溯 | Evaluation处理／查询、`query_product_view`及公共事件查询 |
+| R15 主动任务 | `check_proactive_task`、`respond_proactive_task`、公共等待与到期触发 |
+| R18 AI与运行质量 | AI调用合同、公共执行记录、模块错误返回；验证另按实施计划进行 |
+
+以上38项是业务Operation定义，不表示要创建38个常驻Agent或独立服务。模型与工具循环、上下文组装是[AI底座技术接口](AI_Foundation_Design.md#1-ai任务协议与运行边界)；执行受理／查询／重试／取消／恢复以及结果读写／等待是[公共运行技术接口](System_Foundation_Design.md#33-operationrun与步骤记录)。它们共用一套实现，不在每个Space复制。
+
+数值函数、实例验证、来源校验等内部函数只列入所属Operation的步骤；不另建调度任务。底座具体事件存储、授权适配、浏览器API和外部工具接线仍需细化，本目录的业务覆盖不等于全部技术设计已完成。后续新增公开入口必须在本表登记用途、调用方及合同位置。

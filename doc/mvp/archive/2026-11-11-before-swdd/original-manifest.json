@@ -1,0 +1,44 @@
+[
+  {
+    "originalPath": "doc/mvp/m1/engineering/Agent_Runtime_Design.md",
+    "archivePath": "engineering/Agent_Runtime_Design.md",
+    "bytes": 22601,
+    "sha256": "0EDA94D02BD888333FA5E21AEF2E8362A7AA27D96CAF333605AD7330C669AF88"
+  },
+  {
+    "originalPath": "doc/mvp/m1/engineering/Business_Flow_Design.md",
+    "archivePath": "engineering/Business_Flow_Design.md",
+    "bytes": 18785,
+    "sha256": "CEC989679FCEF5687D7EFB2E0FF77D84DD7FD763A023B7C5A79F69D69D46EB6D"
+  },
+  {
+    "originalPath": "doc/mvp/m1/engineering/Context_and_Memory_Design.md",
+    "archivePath": "engineering/Context_and_Memory_Design.md",
+    "bytes": 21032,
+    "sha256": "8B984691A9C29D43ABAC6A49C1B02A770754856A88020CF9845AA2870743D2E6"
+  },
+  {
+    "originalPath": "doc/mvp/m1/engineering/Data_and_Interface_Design.md",
+    "archivePath": "engineering/Data_and_Interface_Design.md",
+    "bytes": 28953,
+    "sha256": "DE944472202006A5639E099283A8DBB74B74C1580780DFF11F7D406E42FB3F0E"
+  },
+  {
+    "originalPath": "doc/mvp/m1/engineering/Delivery_Plan.md",
+    "archivePath": "engineering/Delivery_Plan.md",
+    "bytes": 9975,
+    "sha256": "885449D6B7BFA813895401C0B8B76BACD51A451663591FD702851E33FAE2512B"
+  },
+  {
+    "originalPath": "doc/mvp/m1/engineering/Engineering_Design.md",
+    "archivePath": "engineering/Engineering_Design.md",
+    "bytes": 22308,
+    "sha256": "36D3705083C56C81D940291DEE869F4A3052368A4E1DFE54ABBD161E6211526A"
+  },
+  {
+    "originalPath": "doc/mvp/m1/engineering/README.md",
+    "archivePath": "engineering/README.md",
+    "bytes": 25401,
+    "sha256": "8A157654106C84EBBC681C2D2A4FAF9F0FEE617704EFEBFF308FB740E643AC3B"
+  }
+]
