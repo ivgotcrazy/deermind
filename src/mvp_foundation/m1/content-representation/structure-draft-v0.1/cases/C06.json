@@ -1,0 +1,250 @@
+{
+  "schema_version": "0.1",
+  "case_id": "C06",
+  "title": "六种平面图形和原图标记",
+  "content_revision": 1,
+  "binding_status": "pending_domain_match",
+  "sources": [
+    {
+      "id": "C06-source-0",
+      "page": 11,
+      "file": "../round2/inputs/C06-0.png",
+      "sha256": "0d89df98de5d25933aea9ce6e608ac2a20475eaf3a262963fdf201b42c1f9732",
+      "original_file": "../source/page-11.jpg",
+      "original_sha256": "d93ae657a606782ea53a162c4b7c2ec638631aee0f9ea3c747c39183628217f1",
+      "original_size": [
+        1087,
+        1536
+      ],
+      "pixel_box": [
+        114,
+        926,
+        946,
+        1094
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "C06-question",
+      "role": "statement",
+      "title": "比较图形",
+      "blocks": [
+        {
+          "id": "C06-request",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C06-source-0"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "从附页1中的图1剪出下面的图形，想办法说明圆和其他图形的不同。"
+            }
+          ]
+        },
+        {
+          "id": "C06-shapes",
+          "type": "diagram",
+          "provenance": {
+            "source_refs": [
+              "C06-source-0"
+            ],
+            "transformation": "normalized",
+            "note": "形状类别与标记来自原图；显示坐标只供重绘。三角形、五边形和六边形的规则排版不构成等边条件。"
+          },
+          "title": "六种图形及可见标记",
+          "layout_role": "display_only",
+          "view_box": [
+            0,
+            0,
+            680,
+            120
+          ],
+          "objects": [
+            {
+              "id": "C06-shape-0",
+              "shape": "circle",
+              "classification_basis": "visual_recognition",
+              "layout_box": [
+                18,
+                20,
+                78,
+                78
+              ],
+              "mark": {
+                "id": "C06-point-0",
+                "position": [
+                  57,
+                  59
+                ],
+                "meaning": "unspecified"
+              }
+            },
+            {
+              "id": "C06-shape-1",
+              "shape": "ellipse",
+              "classification_basis": "visual_recognition",
+              "layout_box": [
+                128,
+                20,
+                78,
+                56
+              ],
+              "mark": {
+                "id": "C06-point-1",
+                "position": [
+                  167,
+                  48
+                ],
+                "meaning": "unspecified"
+              }
+            },
+            {
+              "id": "C06-shape-2",
+              "shape": "triangle",
+              "classification_basis": "visual_recognition",
+              "layout_box": [
+                238,
+                20,
+                78,
+                78
+              ],
+              "mark": {
+                "id": "C06-point-2",
+                "position": [
+                  277,
+                  69
+                ],
+                "meaning": "unspecified"
+              }
+            },
+            {
+              "id": "C06-shape-3",
+              "shape": "square",
+              "classification_basis": "visual_recognition",
+              "layout_box": [
+                348,
+                20,
+                78,
+                78
+              ],
+              "mark": {
+                "id": "C06-point-3",
+                "position": [
+                  387,
+                  59
+                ],
+                "meaning": "unspecified"
+              }
+            },
+            {
+              "id": "C06-shape-4",
+              "shape": "pentagon",
+              "classification_basis": "visual_recognition",
+              "layout_box": [
+                458,
+                20,
+                78,
+                78
+              ],
+              "mark": {
+                "id": "C06-point-4",
+                "position": [
+                  497,
+                  59
+                ],
+                "meaning": "unspecified"
+              }
+            },
+            {
+              "id": "C06-shape-5",
+              "shape": "hexagon",
+              "classification_basis": "visual_recognition",
+              "layout_box": [
+                568,
+                20,
+                78,
+                78
+              ],
+              "mark": {
+                "id": "C06-point-5",
+                "position": [
+                  607,
+                  59
+                ],
+                "meaning": "unspecified"
+              }
+            }
+          ],
+          "relations": [
+            {
+              "kind": "inside",
+              "subject": "C06-point-0",
+              "object": "C06-shape-0",
+              "basis": "visual_recognition",
+              "source_refs": [
+                "C06-source-0"
+              ]
+            },
+            {
+              "kind": "inside",
+              "subject": "C06-point-1",
+              "object": "C06-shape-1",
+              "basis": "visual_recognition",
+              "source_refs": [
+                "C06-source-0"
+              ]
+            },
+            {
+              "kind": "inside",
+              "subject": "C06-point-2",
+              "object": "C06-shape-2",
+              "basis": "visual_recognition",
+              "source_refs": [
+                "C06-source-0"
+              ]
+            },
+            {
+              "kind": "inside",
+              "subject": "C06-point-3",
+              "object": "C06-shape-3",
+              "basis": "visual_recognition",
+              "source_refs": [
+                "C06-source-0"
+              ]
+            },
+            {
+              "kind": "inside",
+              "subject": "C06-point-4",
+              "object": "C06-shape-4",
+              "basis": "visual_recognition",
+              "source_refs": [
+                "C06-source-0"
+              ]
+            },
+            {
+              "kind": "inside",
+              "subject": "C06-point-5",
+              "object": "C06-shape-5",
+              "basis": "visual_recognition",
+              "source_refs": [
+                "C06-source-0"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "data_tables": [],
+  "notes": [
+    "六个图形和六个点均保留；没有center_of、等边、等角或相等长度断言。",
+    "附页1图1不在既定四例材料内；不能据本例宣称剪图操作材料齐备或完整活动可以实施。",
+    "本例只检验有限形状及点标记，不代表一般几何关系、立体、方向图均已验证。"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "origin": "author_inventory_from_existing_four_crops",
+  "case_ids": [
+    "C02",
+    "C03",
+    "C05",
+    "C06"
+  ],
+  "expected": {
+    "C02": {
+      "documents": 4,
+      "blocks": 9,
+      "references": 2,
+      "charts": 0,
+      "blank": 1,
+      "cancel_chains": 6
+    },
+    "C03": {
+      "documents": 1,
+      "blocks": 2,
+      "references": 0,
+      "charts": 0,
+      "blank": 0,
+      "cancel_chains": 2
+    },
+    "C05": {
+      "documents": 3,
+      "blocks": 9,
+      "references": 0,
+      "charts": 3,
+      "blank": 0,
+      "cancel_chains": 0
+    },
+    "C06": {
+      "documents": 1,
+      "blocks": 2,
+      "references": 0,
+      "charts": 0,
+      "blank": 0,
+      "cancel_chains": 0
+    }
+  },
+  "expected_roles": {
+    "C02-answer": "statement",
+    "C02-aid-text": "teaching_aid",
+    "C02-a-work": "reference",
+    "C02-b-work": "reference",
+    "C03-given-work": "statement",
+    "C05-chart-0": "statement",
+    "C05-chart-1": "statement",
+    "C05-chart-2": "statement",
+    "C05-aid-0": "teaching_aid",
+    "C05-aid-1": "teaching_aid",
+    "C05-aid-2": "teaching_aid",
+    "C05-population-view": "derived_view",
+    "C05-ages-view": "derived_view"
+  },
+  "limits": [
+    "无本轮LLM提取测量",
+    "没有新原页或新案例",
+    "表格来自C05同数据重排，不是新识别的原表",
+    "无独立KC定义样例",
+    "未验证合并表格、未知数值图、通用几何或全册覆盖"
+  ]
+}

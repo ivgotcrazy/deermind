@@ -1,0 +1,12 @@
+{
+  "renderedAt": "2026-11-14T11:22:14.958Z",
+  "renderer": "local Mermaid and Edge",
+  "diagrams": [
+    {
+      "id": "content-c03-scope",
+      "document": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "index": 3,
+      "sourceSha256": "9d870bd0a49ef4782c70ada67a649439d0b04d634086c50e04df7499c3f9197c"
+    }
+  ]
+}

@@ -1,0 +1,482 @@
+{
+  "schema_version": "0.1",
+  "case_id": "C05",
+  "title": "三种统计图与教学提示",
+  "content_revision": 1,
+  "binding_status": "pending_domain_match",
+  "sources": [
+    {
+      "id": "C05-source-0",
+      "page": 93,
+      "file": "../round2/inputs/C05-0.png",
+      "sha256": "734c5ec4055874156d8fc642374c7092ea392742a66c7c35f19e64446aeac303",
+      "original_file": "../source/page-93.png",
+      "original_sha256": "ee511b5b0d901122872f3df9863e5878f83f61aa13738cfe6c8ba8baa37331c7",
+      "original_size": [
+        1087,
+        1536
+      ],
+      "pixel_box": [
+        82,
+        246,
+        1016,
+        1459
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "C05-question",
+      "role": "statement",
+      "title": "原题及三幅图",
+      "blocks": [
+        {
+          "id": "C05-request",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C05-source-0"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "同学们根据整理的我国人口老龄化的数据绘制下面的统计图，从统计图中你能获得哪些信息？与同伴交流。"
+            }
+          ]
+        },
+        {
+          "id": "C05-chart-0",
+          "type": "chart",
+          "provenance": {
+            "source_refs": [
+              "C05-source-0"
+            ],
+            "transformation": "normalized",
+            "note": "保留图类、数值标签、轴与图例；用固定近似颜色重绘。亿人是人口数/亿的单位规范化。"
+          },
+          "kind": "bar",
+          "title": "第五～七次人口普查中老年人口数量统计图",
+          "data_ref": "C05-population",
+          "category_column": "census",
+          "series": [
+            {
+              "column": "age60",
+              "label": "60岁及以上",
+              "color": "#4f81bd"
+            },
+            {
+              "column": "age65",
+              "label": "65岁及以上",
+              "color": "#e28036"
+            }
+          ],
+          "unit": "亿人",
+          "axis": {
+            "min": 0,
+            "max": 3,
+            "step": 0.5,
+            "label": "人口数/亿"
+          },
+          "relationship": "overlapping_populations",
+          "stacked": false,
+          "slice_colors": []
+        },
+        {
+          "id": "C05-chart-1",
+          "type": "chart",
+          "provenance": {
+            "source_refs": [
+              "C05-source-0"
+            ],
+            "transformation": "normalized",
+            "note": "保留图类、数值标签、轴与图例；用固定近似颜色重绘。亿人是人口数/亿的单位规范化。"
+          },
+          "kind": "line",
+          "title": "第五～七次人口普查中老年人口数量变化情况",
+          "data_ref": "C05-population",
+          "category_column": "census",
+          "series": [
+            {
+              "column": "age60",
+              "label": "60岁及以上",
+              "color": "#4f81bd"
+            },
+            {
+              "column": "age65",
+              "label": "65岁及以上",
+              "color": "#e28036"
+            }
+          ],
+          "unit": "亿人",
+          "axis": {
+            "min": 0,
+            "max": 3,
+            "step": 0.5,
+            "label": "人口数/亿"
+          },
+          "relationship": "overlapping_populations",
+          "stacked": false,
+          "slice_colors": []
+        },
+        {
+          "id": "C05-chart-2",
+          "type": "chart",
+          "provenance": {
+            "source_refs": [
+              "C05-source-0"
+            ],
+            "transformation": "normalized",
+            "note": "保留图类、数值标签、轴与图例；用固定近似颜色重绘。亿人是人口数/亿的单位规范化。"
+          },
+          "kind": "pie",
+          "title": "第七次人口普查年龄分布图",
+          "data_ref": "C05-ages",
+          "category_column": "group",
+          "series": [
+            {
+              "column": "share",
+              "label": "占比",
+              "color": "#4f81bd"
+            }
+          ],
+          "unit": "%",
+          "axis": null,
+          "relationship": "disjoint_parts",
+          "stacked": false,
+          "slice_colors": [
+            "#4f81bd",
+            "#e28036",
+            "#a5a5a5",
+            "#ffc000"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C05-aid",
+      "role": "teaching_aid",
+      "title": "教材教学提示",
+      "blocks": [
+        {
+          "id": "C05-aid-0",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C05-source-0"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "条形统计图很容易看出老年人口的数量……"
+            }
+          ]
+        },
+        {
+          "id": "C05-aid-1",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C05-source-0"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "折线统计图可以看出老年人口近二十年的变化……"
+            }
+          ]
+        },
+        {
+          "id": "C05-aid-2",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C05-source-0"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "扇形统计图可以看出人口普查各年龄段人口占比情况……"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C05-data-view",
+      "role": "derived_view",
+      "title": "结构数据表（非教材原表）",
+      "blocks": [
+        {
+          "id": "C05-population-view",
+          "type": "table",
+          "provenance": {
+            "source_refs": [
+              "C05-source-0"
+            ],
+            "transformation": "derived",
+            "note": "同一批图中数据的表格视图；原书此处没有这张表，不自动放进学生题面。"
+          },
+          "data_ref": "C05-population",
+          "caption": "柱图和折线图的数据"
+        },
+        {
+          "id": "C05-ages-view",
+          "type": "table",
+          "provenance": {
+            "source_refs": [
+              "C05-source-0"
+            ],
+            "transformation": "derived",
+            "note": "同一批图中数据的表格视图；原书此处没有这张表，不自动放进学生题面。"
+          },
+          "data_ref": "C05-ages",
+          "caption": "扇形图的数据"
+        }
+      ]
+    }
+  ],
+  "data_tables": [
+    {
+      "id": "C05-population",
+      "provenance": {
+        "source_refs": [
+          "C05-source-0"
+        ],
+        "transformation": "normalized",
+        "note": "按原图数值标签整理；保留1.30等原显示精度。柱图与折线图核对后共用数据。"
+      },
+      "columns": [
+        {
+          "key": "census",
+          "label": "人口普查",
+          "value_type": "text",
+          "unit": ""
+        },
+        {
+          "key": "age60",
+          "label": "60岁及以上",
+          "value_type": "decimal",
+          "unit": "亿人"
+        },
+        {
+          "key": "age65",
+          "label": "65岁及以上",
+          "value_type": "decimal",
+          "unit": "亿人"
+        }
+      ],
+      "rows": [
+        [
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "第五次"
+              }
+            ]
+          },
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "1.30"
+              }
+            ]
+          },
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "0.88"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "第六次"
+              }
+            ]
+          },
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "1.78"
+              }
+            ]
+          },
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "1.19"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "第七次"
+              }
+            ]
+          },
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "2.64"
+              }
+            ]
+          },
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "1.91"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "C05-ages",
+      "provenance": {
+        "source_refs": [
+          "C05-source-0"
+        ],
+        "transformation": "normalized",
+        "note": "按原扇形图的类别和百分比整理，不推导其他人口数。"
+      },
+      "columns": [
+        {
+          "key": "group",
+          "label": "年龄段",
+          "value_type": "text",
+          "unit": ""
+        },
+        {
+          "key": "share",
+          "label": "占比",
+          "value_type": "decimal",
+          "unit": "%"
+        }
+      ],
+      "rows": [
+        [
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "0～14岁"
+              }
+            ]
+          },
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "17.95"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "15～59岁"
+              }
+            ]
+          },
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "63.35"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "60～64岁"
+              }
+            ]
+          },
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "5.20"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "65岁及以上"
+              }
+            ]
+          },
+          {
+            "state": "provided",
+            "content": [
+              {
+                "type": "text",
+                "text": "13.50"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "notes": [
+    "复用原C05第93页裁剪，不引入第91页表格；此处表格用于验证同一数据的另一种展示。",
+    "65岁及以上属于60岁及以上，柱图不得改成相加堆叠。百分比原标签总和为100%。",
+    "三个图和旁注由作者对照原图整理；没有新增模型调用，不把本次结构稿当成Agent自动提取成功。"
+  ]
+}

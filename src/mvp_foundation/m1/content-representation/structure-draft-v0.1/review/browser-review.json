@@ -1,0 +1,37 @@
+{
+  "version": "0.1",
+  "status": "passed",
+  "url": "http://127.0.0.1:5184/structure-draft-v0.1/",
+  "checks": [
+    {
+      "case_id": "C02",
+      "sources_loaded": true,
+      "question_isolated": true,
+      "reconstructed": true
+    },
+    {
+      "case_id": "C03",
+      "sources_loaded": true,
+      "question_isolated": true,
+      "reconstructed": true
+    },
+    {
+      "case_id": "C05",
+      "sources_loaded": true,
+      "question_isolated": true,
+      "reconstructed": true
+    },
+    {
+      "case_id": "C06",
+      "sources_loaded": true,
+      "question_isolated": true,
+      "reconstructed": true
+    }
+  ],
+  "browser_widths": [
+    1500,
+    900
+  ],
+  "errors": [],
+  "scope": "Standalone four-case renderer. Not product prototype, model extraction, or full-book semantic acceptance."
+}

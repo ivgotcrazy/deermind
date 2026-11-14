@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DeerMind · 四例内容结构稿 v0.1</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><div class="eyebrow">独立设计验证 · v0.1 · 非产品原型</div><h1>教材内容结构：原件与重建对照</h1>
+    <p>四个既有样例 · 作者核对结构稿 · 本轮没有调用 LLM</p>
+    <nav aria-label="四个样例"><a href="#C02">C02 跨页双解法</a><a href="#C03">C03 错误演算</a><a href="#C05">C05 统计图与数据表</a><a href="#C06">C06 几何图形</a></nav>
+  </header>
+  <main>
+    <div id="overview"></div>
+    <div class="workspace">
+      <aside><h2>固定来源区域</h2><p class="muted">沿用第二轮四例裁剪。点击原图可放大查看。</p><div id="sources"></div></aside>
+      <section class="reconstruction"><div class="tabbar" id="tabs"></div><div id="rendered" aria-live="polite"></div></section>
+    </div>
+    <section class="review-panel"><h2>核对与边界</h2><ul id="notes"></ul><div id="checks"></div>
+      <details><summary>查看本例结构 JSON</summary><pre id="json"></pre></details>
+      <p><a href="schema.json">最小 Schema</a> · <a href="checks.json">程序检查结果</a> · <a href="README.md">结构说明与复验命令</a></p>
+    </section>
+  </main>
+  <script type="module" src="viewer.js"></script>
+</body>
+</html>

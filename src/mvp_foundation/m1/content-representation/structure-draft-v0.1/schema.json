@@ -1,0 +1,985 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:deermind:content-structure:four-cases:0.1",
+  "title": "Four-case content structure draft, not a production contract",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "case_id": {
+      "enum": [
+        "C02",
+        "C03",
+        "C05",
+        "C06"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "content_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "binding_status": {
+      "const": "pending_domain_match"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "original_file": {
+            "type": "string",
+            "minLength": 1
+          },
+          "original_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "original_size": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "pixel_box": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minItems": 4,
+            "maxItems": 4
+          }
+        },
+        "required": [
+          "id",
+          "page",
+          "file",
+          "sha256",
+          "original_file",
+          "original_sha256",
+          "original_size",
+          "pixel_box"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "documents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/document"
+      },
+      "minItems": 1
+    },
+    "data_tables": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/data_table"
+      },
+      "minItems": 0
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "schema_version",
+    "case_id",
+    "title",
+    "content_revision",
+    "binding_status",
+    "sources",
+    "documents",
+    "data_tables",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "expression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "number"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^-?\\d+(\\.\\d+)?$"
+            },
+            "cancel_to": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^-?\\d+(\\.\\d+)?$"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "symbol"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "op",
+            "name"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "group"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/expression"
+              },
+              "minItems": 1,
+              "maxItems": 1
+            }
+          },
+          "required": [
+            "op",
+            "args"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "enum": [
+                "fraction",
+                "multiply",
+                "divide",
+                "add",
+                "subtract",
+                "equal"
+              ]
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/expression"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "op",
+            "args"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "inline": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "text"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "type",
+            "text"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "math"
+            },
+            "expression": {
+              "$ref": "#/$defs/expression"
+            }
+          },
+          "required": [
+            "type",
+            "expression"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "response_blank"
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "type",
+            "label"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "cell": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "state": {
+              "const": "provided"
+            },
+            "content": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/inline"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "state",
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "state": {
+              "enum": [
+                "response_blank",
+                "source_missing",
+                "unreadable"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "data_table": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "source_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+              },
+              "minItems": 1
+            },
+            "transformation": {
+              "enum": [
+                "extracted",
+                "normalized",
+                "derived"
+              ]
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "source_refs",
+            "transformation",
+            "note"
+          ],
+          "additionalProperties": false
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value_type": {
+                "enum": [
+                  "text",
+                  "decimal"
+                ]
+              },
+              "unit": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "label",
+              "value_type",
+              "unit"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/cell"
+            },
+            "minItems": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "provenance",
+        "columns",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "block": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+            },
+            "type": {
+              "const": "paragraph"
+            },
+            "provenance": {
+              "type": "object",
+              "properties": {
+                "source_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                  },
+                  "minItems": 1
+                },
+                "transformation": {
+                  "enum": [
+                    "extracted",
+                    "normalized",
+                    "derived"
+                  ]
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "source_refs",
+                "transformation",
+                "note"
+              ],
+              "additionalProperties": false
+            },
+            "content": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/inline"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "provenance",
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+            },
+            "type": {
+              "const": "math_sequence"
+            },
+            "provenance": {
+              "type": "object",
+              "properties": {
+                "source_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                  },
+                  "minItems": 1
+                },
+                "transformation": {
+                  "enum": [
+                    "extracted",
+                    "normalized",
+                    "derived"
+                  ]
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "source_refs",
+                "transformation",
+                "note"
+              ],
+              "additionalProperties": false
+            },
+            "purpose": {
+              "enum": [
+                "given_work",
+                "reference_work"
+              ]
+            },
+            "lines": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "relation": {
+                    "enum": [
+                      "",
+                      "="
+                    ]
+                  },
+                  "expression": {
+                    "$ref": "#/$defs/expression"
+                  },
+                  "suffix": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "relation",
+                  "expression",
+                  "suffix"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "provenance",
+            "purpose",
+            "lines"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+            },
+            "type": {
+              "const": "table"
+            },
+            "provenance": {
+              "type": "object",
+              "properties": {
+                "source_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                  },
+                  "minItems": 1
+                },
+                "transformation": {
+                  "enum": [
+                    "extracted",
+                    "normalized",
+                    "derived"
+                  ]
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "source_refs",
+                "transformation",
+                "note"
+              ],
+              "additionalProperties": false
+            },
+            "data_ref": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+            },
+            "caption": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "provenance",
+            "data_ref",
+            "caption"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+            },
+            "type": {
+              "const": "chart"
+            },
+            "provenance": {
+              "type": "object",
+              "properties": {
+                "source_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                  },
+                  "minItems": 1
+                },
+                "transformation": {
+                  "enum": [
+                    "extracted",
+                    "normalized",
+                    "derived"
+                  ]
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "source_refs",
+                "transformation",
+                "note"
+              ],
+              "additionalProperties": false
+            },
+            "kind": {
+              "enum": [
+                "bar",
+                "line",
+                "pie"
+              ]
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "data_ref": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+            },
+            "category_column": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+            },
+            "series": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "column": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "color": {
+                    "type": "string",
+                    "pattern": "^#[0-9a-fA-F]{6}$"
+                  }
+                },
+                "required": [
+                  "column",
+                  "label",
+                  "color"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "axis": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    },
+                    "step": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "label": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "min",
+                    "max",
+                    "step",
+                    "label"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "relationship": {
+              "enum": [
+                "overlapping_populations",
+                "disjoint_parts"
+              ]
+            },
+            "stacked": {
+              "type": "boolean"
+            },
+            "slice_colors": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^#[0-9a-fA-F]{6}$"
+              },
+              "minItems": 0
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "provenance",
+            "kind",
+            "title",
+            "data_ref",
+            "category_column",
+            "series",
+            "unit",
+            "axis",
+            "relationship",
+            "stacked",
+            "slice_colors"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+            },
+            "type": {
+              "const": "diagram"
+            },
+            "provenance": {
+              "type": "object",
+              "properties": {
+                "source_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                  },
+                  "minItems": 1
+                },
+                "transformation": {
+                  "enum": [
+                    "extracted",
+                    "normalized",
+                    "derived"
+                  ]
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "source_refs",
+                "transformation",
+                "note"
+              ],
+              "additionalProperties": false
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "layout_role": {
+              "const": "display_only"
+            },
+            "view_box": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "objects": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                  },
+                  "shape": {
+                    "enum": [
+                      "circle",
+                      "ellipse",
+                      "triangle",
+                      "square",
+                      "pentagon",
+                      "hexagon"
+                    ]
+                  },
+                  "classification_basis": {
+                    "enum": [
+                      "visual_recognition",
+                      "explicit_text"
+                    ]
+                  },
+                  "layout_box": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 4,
+                    "maxItems": 4
+                  },
+                  "mark": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                      },
+                      "position": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                      },
+                      "meaning": {
+                        "const": "unspecified"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "position",
+                      "meaning"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "shape",
+                  "classification_basis",
+                  "layout_box",
+                  "mark"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "relations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "inside"
+                  },
+                  "subject": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                  },
+                  "object": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                  },
+                  "basis": {
+                    "const": "visual_recognition"
+                  },
+                  "source_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                    },
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "kind",
+                  "subject",
+                  "object",
+                  "basis",
+                  "source_refs"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "provenance",
+            "title",
+            "layout_role",
+            "view_box",
+            "objects",
+            "relations"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "document": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+        },
+        "role": {
+          "enum": [
+            "statement",
+            "reference",
+            "teaching_aid",
+            "derived_view"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/block"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "role",
+        "title",
+        "blocks"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

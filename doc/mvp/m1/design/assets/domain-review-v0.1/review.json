@@ -1,0 +1,38 @@
+{
+  "checkedAt": "2026-11-14T11:25:14.709720+00:00",
+  "baselineCommit": "dafed5eca717433dc8bc847e21441094d3bb025e",
+  "status": "passed",
+  "documents": 26,
+  "localLinks": 811,
+  "anchors": 386,
+  "mermaidDiagrams": 1,
+  "prototypeUnchanged": true,
+  "decisionHistoryUnchanged": true,
+  "numericContractUnchanged": true,
+  "aiOperationIds": [
+    "product.converse_material_assistant",
+    "domain.extract_template",
+    "domain.supply_task",
+    "domain.classify_instance",
+    "interaction.handle_input",
+    "interaction.prepare_detection",
+    "interaction.check_proactive_task",
+    "evaluation.evaluate_submission",
+    "evaluation.apply_learning_opportunity"
+  ],
+  "eventIdsUnchanged": true,
+  "manualReview": "P1/P2/P3 ownership, main examples and source boundaries reviewed; rendered Mermaid visually inspected",
+  "whitespaceCheck": "git -c core.whitespace=cr-at-eol diff --check passed; existing CRLF preserved",
+  "reviewScope": [
+    "P1 candidate scope source, owner, bounded use and retained evidence basis",
+    "P2 Domain path confirmation, Evaluation criteria and Product readiness check",
+    "P3 current terminology and detailed-design migration inventory"
+  ],
+  "limitations": [
+    "Document-only contract review; no new UI implementation",
+    "No LLM or real evidence/learning validation",
+    "No prototype regression rerun; prior results are historical",
+    "Detailed field names and migration mechanisms remain pending"
+  ],
+  "errors": []
+}

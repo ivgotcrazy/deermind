@@ -1,0 +1,153 @@
+{
+  "version": "0.1",
+  "status": "passed",
+  "cases": [
+    {
+      "case_id": "C02",
+      "schema": "passed",
+      "invariants": "passed",
+      "sources": "hashes_verified",
+      "author_inventory": "passed"
+    },
+    {
+      "case_id": "C03",
+      "schema": "passed",
+      "invariants": "passed",
+      "sources": "hashes_verified",
+      "author_inventory": "passed"
+    },
+    {
+      "case_id": "C05",
+      "schema": "passed",
+      "invariants": "passed",
+      "sources": "hashes_verified",
+      "author_inventory": "passed"
+    },
+    {
+      "case_id": "C06",
+      "schema": "passed",
+      "invariants": "passed",
+      "sources": "hashes_verified",
+      "author_inventory": "passed"
+    }
+  ],
+  "negative_cases": [
+    {
+      "name": "wrong formula arity",
+      "rejected": true,
+      "reason": "schema: documents/0/blocks/1 {'id': 'C03-given-work', 'type': 'math_sequence', 'provenance': {'source_refs': ['C03-source-1'], 'transformation': 'extracted', 'note': '按原图内容整理；不表示已自动识别正确。'}, 'purpose': 'given_work', 'lines': [{'relation': '', 'expression': {'op': 'divide', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '8'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3'}, {'op': 'number', 'value': '4'}]}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3'}]}, {'op': 'number', 'value': '3'}]}, 'suffix': ''}, {'relation': '=', 'expression': {'op': 'multiply', 'args': [{'op': 'multiply', 'args': [{'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '8'}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '3', 'cancel_to': ['1']}, {'op': 'number', 'value': '4'}]}]}, {'op': 'fraction', 'args': [{'op': 'number', 'value': '1'}, {'op': 'number', 'value': '3', 'cancel_to': ['1']}]}]}, 'suffix': ''}, {'relation': '=', 'expression': {'op': 'fraction', 'args': [{'op': 'number', 'value': '7'}, {'op': 'number', 'value': '32'}]}, 'suffix': ''}]} is not valid under any of the given schemas"
+    },
+    {
+      "name": "unknown content type",
+      "rejected": true,
+      "reason": "schema: documents/0/blocks/0 {'id': 'C03-request', 'type': 'html', 'provenance': {'source_refs': ['C03-source-0'], 'transformation': 'extracted', 'note': '按原图内容整理；不表示已自动识别正确。'}, 'content': [{'type': 'text', 'text': '下面几道题算得对吗？计算时有什么好办法可以减少错误？'}]} is not valid under any of the given schemas"
+    },
+    {
+      "name": "blank cannot carry an answer",
+      "rejected": true,
+      "reason": "schema: documents/0/blocks/3 {'id': 'C02-answer', 'type': 'paragraph', 'provenance': {'source_refs': ['C02-source-1'], 'transformation': 'extracted', 'note': '按原图内容整理；不表示已自动识别正确。'}, 'content': [{'type': 'text', 'text': '答：'}, {'type': 'response_blank', 'label': '答句', 'value': '3'}, {'type': 'text', 'text': '。'}]} is not valid under any of the given schemas"
+    },
+    {
+      "name": "dangling source",
+      "rejected": true,
+      "reason": "unknown source reference"
+    },
+    {
+      "name": "reference leaked into question",
+      "rejected": true,
+      "reason": "reference solution leaked into question"
+    },
+    {
+      "name": "hint swapped into question with valid counts",
+      "rejected": true,
+      "reason": "author source-purpose mismatch: C02-aid-text"
+    },
+    {
+      "name": "unknown table reference",
+      "rejected": true,
+      "reason": "missing table/chart data reference"
+    },
+    {
+      "name": "table row lost a cell",
+      "rejected": true,
+      "reason": "table row/column count mismatch"
+    },
+    {
+      "name": "unit mismatch",
+      "rejected": true,
+      "reason": "chart data type/unit mismatch"
+    },
+    {
+      "name": "overlapping cohorts stacked",
+      "rejected": true,
+      "reason": "overlapping populations cannot be stacked as additive totals"
+    },
+    {
+      "name": "axis clips value",
+      "rejected": true,
+      "reason": "chart axis would clip data"
+    },
+    {
+      "name": "derived table falsely labeled source",
+      "rejected": true,
+      "reason": "derived view mislabeled as extracted"
+    },
+    {
+      "name": "all charts omitted despite valid schema",
+      "rejected": true,
+      "reason": "author inventory mismatch: {\"documents\": 3, \"blocks\": 6, \"references\": 0, \"charts\": 0, \"blank\": 0, \"cancel_chains\": 0}"
+    },
+    {
+      "name": "square rendered as rectangle",
+      "rejected": true,
+      "reason": "square/circle layout distorted"
+    },
+    {
+      "name": "display point claimed as center",
+      "rejected": true,
+      "reason": "schema: documents/0/blocks/1 {'id': 'C06-shapes', 'type': 'diagram', 'provenance': {'source_refs': ['C06-source-0'], 'transformation': 'normalized', 'note': '形状类别与标记来自原图；显示坐标只供重绘。三角形、五边形和六边形的规则排版不构成等边条件。'}, 'title': '六种图形及可见标记', 'layout_role': 'display_only', 'view_box': [0, 0, 680, 120], 'objects': [{'id': 'C06-shape-0', 'shape': 'circle', 'classification_basis': 'visual_recognition', 'layout_box': [18, 20, 78, 78], 'mark': {'id': 'C06-point-0', 'position': [57, 59], 'meaning': 'center'}}, {'id': 'C06-shape-1', 'shape': 'ellipse', 'classification_basis': 'visual_recognition', 'layout_box': [128, 20, 78, 56], 'mark': {'id': 'C06-point-1', 'position': [167, 48], 'meaning': 'unspecified'}}, {'id': 'C06-shape-2', 'shape': 'triangle', 'classification_basis': 'visual_recognition', 'layout_box': [238, 20, 78, 78], 'mark': {'id': 'C06-point-2', 'position': [277, 69], 'meaning': 'unspecified'}}, {'id': 'C06-shape-3', 'shape': 'square', 'classification_basis': 'visual_recognition', 'layout_box': [348, 20, 78, 78], 'mark': {'id': 'C06-point-3', 'position': [387, 59], 'meaning': 'unspecified'}}, {'id': 'C06-shape-4', 'shape': 'pentagon', 'classification_basis': 'visual_recognition', 'layout_box': [458, 20, 78, 78], 'mark': {'id': 'C06-point-4', 'position': [497, 59], 'meaning': 'unspecified'}}, {'id': 'C06-shape-5', 'shape': 'hexagon', 'classification_basis': 'visual_recognition', 'layout_box': [568, 20, 78, 78], 'mark': {'id': 'C06-point-5', 'position': [607, 59], 'meaning': 'unspecified'}}], 'relations': [{'kind': 'inside', 'subject': 'C06-point-0', 'object': 'C06-shape-0', 'basis': 'visual_recognition', 'source_refs': ['C06-source-0']}, {'kind': 'inside', 'subject': 'C06-point-1', 'object': 'C06-shape-1', 'basis': 'visual_recognition', 'source_refs': ['C06-source-0']}, {'kind': 'inside', 'subject': 'C06-point-2', 'object': 'C06-shape-2', 'basis': 'visual_recognition', 'source_refs': ['C06-source-0']}, {'kind': 'inside', 'subject': 'C06-point-3', 'object': 'C06-shape-3', 'basis': 'visual_recognition', 'source_refs': ['C06-source-0']}, {'kind': 'inside', 'subject': 'C06-point-4', 'object': 'C06-shape-4', 'basis': 'visual_recognition', 'source_refs': ['C06-source-0']}, {'kind': 'inside', 'subject': 'C06-point-5', 'object': 'C06-shape-5', 'basis': 'visual_recognition', 'source_refs': ['C06-source-0']}]} is not valid under any of the given schemas"
+    },
+    {
+      "name": "missing geometry point reference",
+      "rejected": true,
+      "reason": "unknown diagram relation reference"
+    },
+    {
+      "name": "invalid crop",
+      "rejected": true,
+      "reason": "source region outside original page"
+    },
+    {
+      "name": "response_blank is not zero",
+      "rejected": true,
+      "reason": "unavailable chart values: unknown/blank cells cannot become chart numbers"
+    },
+    {
+      "name": "source_missing is not zero",
+      "rejected": true,
+      "reason": "unavailable chart values: unknown/blank cells cannot become chart numbers"
+    },
+    {
+      "name": "unreadable is not zero",
+      "rejected": true,
+      "reason": "unavailable chart values: unknown/blank cells cannot become chart numbers"
+    }
+  ],
+  "original_error_preserved": {
+    "C03_line_values": [
+      "63/32",
+      "7/32",
+      "7/32"
+    ],
+    "changes_to_source": false
+  },
+  "boundaries": [
+    "无本轮LLM提取测量",
+    "没有新原页或新案例",
+    "表格来自C05同数据重排，不是新识别的原表",
+    "无独立KC定义样例",
+    "未验证合并表格、未知数值图、通用几何或全册覆盖"
+  ],
+  "model_calls": 0,
+  "interpretation": "Program checks and a fixed author inventory passed. This does not prove autonomous extraction or general semantic completeness."
+}

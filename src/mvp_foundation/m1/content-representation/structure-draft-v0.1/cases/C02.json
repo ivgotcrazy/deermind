@@ -1,0 +1,472 @@
+{
+  "schema_version": "0.1",
+  "case_id": "C02",
+  "title": "跨页题目与两种原有解法",
+  "content_revision": 1,
+  "binding_status": "pending_domain_match",
+  "sources": [
+    {
+      "id": "C02-source-0",
+      "page": 49,
+      "file": "../round2/inputs/C02-0.png",
+      "sha256": "b45b4a0ef4e27cba31486d3a2008180bf6972b3469cbd0946c3bbe7e2ebb3ac5",
+      "original_file": "../source/page-49.png",
+      "original_sha256": "fbbe663820ecff1e459b7f982463c94fd8919c86b2b968e1bae27e8a79eca151",
+      "original_size": [
+        1087,
+        1536
+      ],
+      "pixel_box": [
+        76,
+        338,
+        1044,
+        822
+      ]
+    },
+    {
+      "id": "C02-source-1",
+      "page": 50,
+      "file": "../round2/inputs/C02-1.png",
+      "sha256": "ffd8dd53a0dfbdbfa8f89ba21b40cd6a903df0ee31de6faf74c7443c72a40438",
+      "original_file": "../source/page-50.png",
+      "original_sha256": "d5353591ebea4ee17e26e82c4273e558336d02f783d6abaf687da660dbcf6243",
+      "original_size": [
+        1087,
+        1536
+      ],
+      "pixel_box": [
+        71,
+        154,
+        962,
+        545
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "C02-question",
+      "role": "statement",
+      "title": "原题",
+      "blocks": [
+        {
+          "id": "C02-background",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C02-source-0"
+            ],
+            "transformation": "normalized",
+            "note": "将三处对话框条件串为一段；人物插画不是人数统计依据。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "气象小组有12人。摄影小组的人数是气象小组的"
+            },
+            {
+              "type": "math",
+              "expression": {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "1"
+                  },
+                  {
+                    "op": "number",
+                    "value": "3"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "text",
+              "text": "。航模小组的人数是摄影小组的"
+            },
+            {
+              "type": "math",
+              "expression": {
+                "op": "fraction",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "3"
+                  },
+                  {
+                    "op": "number",
+                    "value": "4"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "text",
+              "text": "。"
+            }
+          ]
+        },
+        {
+          "id": "C02-request",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C02-source-0"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "航模小组有多少人？说一说你是如何思考的。"
+            }
+          ]
+        },
+        {
+          "id": "C02-calculate",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C02-source-1"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "请列式解决问题。"
+            }
+          ]
+        },
+        {
+          "id": "C02-answer",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C02-source-1"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "答："
+            },
+            {
+              "type": "response_blank",
+              "label": "答句"
+            },
+            {
+              "type": "text",
+              "text": "。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C02-reference-a",
+      "role": "reference",
+      "title": "教材解法 A：先求中间人数",
+      "blocks": [
+        {
+          "id": "C02-a-text",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C02-source-1"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "先求摄影小组有多少人，再……"
+            }
+          ]
+        },
+        {
+          "id": "C02-a-work",
+          "type": "math_sequence",
+          "provenance": {
+            "source_refs": [
+              "C02-source-1"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "purpose": "reference_work",
+          "lines": [
+            {
+              "relation": "",
+              "expression": {
+                "op": "multiply",
+                "args": [
+                  {
+                    "op": "multiply",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "12"
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "1"
+                          },
+                          {
+                            "op": "number",
+                            "value": "3"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "3"
+                      },
+                      {
+                        "op": "number",
+                        "value": "4"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "suffix": ""
+            },
+            {
+              "relation": "=",
+              "expression": {
+                "op": "multiply",
+                "args": [
+                  {
+                    "op": "multiply",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "12",
+                        "cancel_to": [
+                          "4",
+                          "1"
+                        ]
+                      },
+                      {
+                        "op": "fraction",
+                        "args": [
+                          {
+                            "op": "number",
+                            "value": "1"
+                          },
+                          {
+                            "op": "number",
+                            "value": "3",
+                            "cancel_to": [
+                              "1"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "3"
+                      },
+                      {
+                        "op": "number",
+                        "value": "4",
+                        "cancel_to": [
+                          "1"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "suffix": ""
+            },
+            {
+              "relation": "=",
+              "expression": {
+                "op": "number",
+                "value": "3"
+              },
+              "suffix": "（人）"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C02-reference-b",
+      "role": "reference",
+      "title": "教材解法 B：先合并比例",
+      "blocks": [
+        {
+          "id": "C02-b-text",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C02-source-1"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "先求航模小组的人数是气象小组的几分之几。"
+            }
+          ]
+        },
+        {
+          "id": "C02-b-work",
+          "type": "math_sequence",
+          "provenance": {
+            "source_refs": [
+              "C02-source-1"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "purpose": "reference_work",
+          "lines": [
+            {
+              "relation": "",
+              "expression": {
+                "op": "multiply",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "12"
+                  },
+                  {
+                    "op": "group",
+                    "args": [
+                      {
+                        "op": "multiply",
+                        "args": [
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "1"
+                              },
+                              {
+                                "op": "number",
+                                "value": "3"
+                              }
+                            ]
+                          },
+                          {
+                            "op": "fraction",
+                            "args": [
+                              {
+                                "op": "number",
+                                "value": "3"
+                              },
+                              {
+                                "op": "number",
+                                "value": "4"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "suffix": ""
+            },
+            {
+              "relation": "=",
+              "expression": {
+                "op": "multiply",
+                "args": [
+                  {
+                    "op": "number",
+                    "value": "12",
+                    "cancel_to": [
+                      "3"
+                    ]
+                  },
+                  {
+                    "op": "fraction",
+                    "args": [
+                      {
+                        "op": "number",
+                        "value": "1"
+                      },
+                      {
+                        "op": "number",
+                        "value": "4",
+                        "cancel_to": [
+                          "1"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "suffix": ""
+            },
+            {
+              "relation": "=",
+              "expression": {
+                "op": "number",
+                "value": "3"
+              },
+              "suffix": "（人）"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C02-aid",
+      "role": "teaching_aid",
+      "title": "教材旁注",
+      "blocks": [
+        {
+          "id": "C02-aid-text",
+          "type": "paragraph",
+          "provenance": {
+            "source_refs": [
+              "C02-source-1"
+            ],
+            "transformation": "extracted",
+            "note": "按原图内容整理；不表示已自动识别正确。"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "你能看懂笑笑的方法吗？"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "data_tables": [],
+  "notes": [
+    "沿用原四例的裁剪范围；未提取裁剪范围外的线段图或其他练习。",
+    "两份解法是题内参考内容，未创建独立 SolutionInstance，也未假定已匹配领域 Solution。",
+    "补回原图约分：左式12→4→1、分母3→1和4→1；右式12→3、分母4→1。保留被划去的原数；不改变运算树的操作数。",
+    "约分标记保存含义及先后，不复刻笔迹像素；答句是填写空白，不是教材表格。"
+  ]
+}
