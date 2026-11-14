@@ -1,17 +1,17 @@
 # M1 工程设计
 
-> **版本**：v0.43<br>
-> **状态**：主流程边界、恢复保障及三项权限边界已确认；总体设计尚未接收，未编码<br>
+> **版本**：v0.44<br>
+> **状态**：总体设计待审，未编码；确认范围和未决项见总体§7.2<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-14<br>
-> **修订说明**：v0.42 → v0.43，同步教材Agent解析与对话修正决定及工程版本，OCR不再作为M1待选依赖<br>
+> **修订说明**：v0.43 → v0.44，补跨模块事件目录及使用分类，统一总体状态引用和工程版本<br>
 
-工程设计负责把M1产品规则落实为可实现的系统。当前交付是[总体设计v0.33的端到端协作草案](System_Design.md#4-主流程的跨模块协作)：从启动、教材准备与领域入库，走到学生选用、教学检测、评价及教学接续；配有总览、关键时序与输入输出说明。
+工程设计把M1产品规则落实为实现方案。当前审阅[系统总体设计v0.34](System_Design.md)；**确认状态和未决项统一见[总体§7.2](System_Design.md#72-总体架构问题清单)**，本入口维护文档、Operation和事件索引，不另列确认进度。
 
-[总体选择及确认进展](System_Design.md#721-本轮需要确认的总体选择)集中记录路由、消息处理顺序、结果就绪及上下文组装。已确认同一学习空间内Interaction按消息串行，依赖通知恢复当前处理，其他Space和学习空间可并行，见[本批记录§49](../../DECISIONS.md#49-同一学习空间内interaction按消息串行)。结果通知与授权读取、展示组织仍按[§48](../../DECISIONS.md#48-评价通知授权读取与展示组织边界)分开；生产方发布与消费方等待沿用[§50](../../DECISIONS.md#50-生产方独立发布与消费方等待边界)。上下文与记忆沿用[§51](../../DECISIONS.md#51-operation负责上下文与记忆)。入口路由已确认明确入口直接派发、需语义判断才调用LLM、拿不准先询问，见[§52](../../DECISIONS.md#52-m1入口路由方案)。四项关键协作选择已明确；[三项恢复目标](System_Design.md#64-已确认的恢复目标)沿用[§53](../../DECISIONS.md#53-m1三项恢复目标)；已确认[四点保障方案](System_Design.md#65-已确认的恢复保障方案)，见[登记§54](../../DECISIONS.md#54-m1四点恢复保障方案)。已确认[三项权限边界](System_Design.md#66-已确认的读取工具与越权边界)，见[登记§56](../../DECISIONS.md#56-m1读取工具与越权边界)。已按[登记§57](../../DECISIONS.md#57-m1模型外发的简化边界)确认Operation负责外发内容、底座限制模型服务并保护凭据，不增加材料标记或内容审查。已按[登记§58](../../DECISIONS.md#58-m1可用性与备份恢复边界)确认允许短暂停机、恢复后接续任务，并保留数据库和教材原件的备份恢复能力。日志与事件的观测边界按[登记§59](../../DECISIONS.md#59-m1日志与事件的可观测边界)确认，完整口径见[总体§6.7](System_Design.md#67-已确认的日志与事件记录)。聊天消息和空间事件按[登记§60](../../DECISIONS.md#60-聊天消息与空间事件分开存储及总体收口检查)分开存储、通过引用关联，完整边界见[总体§3.2.1](System_Design.md#321-聊天消息与空间事件分开存储)。总体仍待接收；未新增接口字段或编码。
+本轮修正统一供题、确认开测及评价原文取材，新增[跨模块事件目录](#6-跨模块事件目录)；变更及自检见[登记§65](../../DECISIONS.md#65-总体设计评审修订与跨模块合同对齐)。总体尚待用户接收，Operation与字段保持草案，未编码。
 
-相关工程稿版本：公共运行v0.21、AI底座v0.11、Interaction v0.9、产品业务v0.8、客户端v0.8、基础设施v0.15、实施计划v0.24、Domain v0.3、Evaluation v0.7。[总体收口检查](System_Design.md#722-总体收口检查2026-11-13)已区分未定技术选择、详细设计与运行验证；代码组织和前后端框架已确认，见[登记§61](../../DECISIONS.md#61-m1代码组织与前后端框架)；初期文件存储已按[登记§62](../../DECISIONS.md#62-m1初期文件存储与同节点部署)确认，模型API已按[登记§63](../../DECISIONS.md#63-m1模型api统一接入与agent配置)确认由AI底座统一接入、各类Agent分别配置；教材解析按[登记§64](../../DECISIONS.md#64-m1教材agent解析与对话修正)由Agent通过多模态模型API与持续对话完成，M1不单独接入OCR。总体尚未接收。
+相关工程稿版本：公共运行v0.22、AI底座v0.12、Interaction v0.10、产品业务v0.9、客户端v0.9、基础设施v0.16、实施计划v0.25、Domain v0.4、Evaluation v0.8。
 
 ## 1. 文档分工
 
@@ -69,15 +69,15 @@ AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己�
 
 ## 4. 推进与审阅
 
-[总体§4](System_Design.md#4-主流程的跨模块协作)已形成主流程边界，[§7.2.1](System_Design.md#721-本轮需要确认的总体选择)记录逐项决定。入口路由、同空间消息串行、生产方发布／消费方等待及Operation上下文记忆职责均已确认。恢复目标及四点保障方案已确认；A07按[登记§55](../../DECISIONS.md#55-m1资源不足的简化处理)取消业务优先级，资源不足直接返回错误和提示，不建设专门资源调度。A08的权限和模型外发职责已确认，M1不增加材料标记或内容审查；A11的短暂停机及备份恢复边界已确认，A12的日志与事件观测要求已确认，消息与事件分存边界已补齐。收口检查见[总体§7.2.2](System_Design.md#722-总体收口检查2026-11-13)，未发现需新增Space或底座模块的主流程缺口；单仓模块化后端、API／Worker共用代码及Python＋FastAPI已定；前端采用Vue 3＋TypeScript＋Vite，一个工程两个入口。初期API与Worker同节点共用local-path＋PVC，保留文件存储隔离与后续替换能力；现成模型API由AI底座统一接入，各类Agent可分别配置；教材解析与对话修正已确认不单独接入OCR；具体模型和量化验收安排仍需确认。表结构、接口和重试参数不展开。A01–A12继续记录覆盖与决定状态。现有分层、Space所有权、公共路由与Operation边界、组件选型及质量约束作为输入。
+[总体§4](System_Design.md#4-主流程的跨模块协作)已形成主流程边界，[§7.2.1](System_Design.md#721-已确认的总体选择)记录逐项决定。入口路由、同空间消息串行、生产方发布／消费方等待及Operation上下文记忆职责均已确认。恢复目标及四点保障方案已确认；A07按[登记§55](../../DECISIONS.md#55-m1资源不足的简化处理)取消业务优先级，资源不足直接返回错误和提示，不建设专门资源调度。A08的权限和模型外发职责已确认，M1不增加材料标记或内容审查；A11的短暂停机及备份恢复边界已确认，A12的日志与事件观测要求已确认，消息与事件分存边界已补齐。收口检查见[总体§7.2.2](System_Design.md#722-总体收口检查)，未发现需新增Space或底座模块的主流程缺口；单仓模块化后端、API／Worker共用代码及Python＋FastAPI已定；前端采用Vue 3＋TypeScript＋Vite，一个工程两个入口。初期API与Worker同节点共用local-path＋PVC，保留文件存储隔离与后续替换能力；现成模型API由AI底座统一接入，各类Agent可分别配置；教材解析与对话修正已确认不单独接入OCR；具体模型和量化验收安排仍需确认。表结构、接口和重试参数不展开。A01–A12继续记录覆盖与决定状态。现有分层、Space所有权、公共路由与Operation边界、组件选型及质量约束作为输入。
 
 | 顺序 | 讨论范围 | 本轮要形成的输出 |
 | --- | --- | --- |
 | 1：已形成主流程边界 | 初始化、教材准备与领域融合、课程选用、学习检测、评价及教学接续 | 明确谁发起、各模块处理什么、读取和保存什么、如何传递事件及返回结果；核对AI取材、依赖等待和关键业务分支 |
-| 2：当前 | [总体收口检查](System_Design.md#722-总体收口检查2026-11-13) | 继续确认具体模型及量化验收安排；接收总体边界，列清详细设计与验证承接 |
+| 2：当前 | [总体收口检查](System_Design.md#722-总体收口检查) | 继续确认具体模型及量化验收安排；接收总体边界，列清详细设计与验证承接 |
 | 3 | 模块详细设计与工程接收 | 细化已确认方案的Operation、接口、存储、恢复及配置，不将未决架构交给编码 |
 
-主流程边界、三项恢复目标及四点保障方案已确认，总体设计尚未接收；已允许短暂停机；具体恢复时限、数据损失窗口、响应时限、费用阈值及保障实现细节仍在后续讨论，不将质量事项整体后置M2。A01–A12和V01–V08继续追溯；原有Operation及字段仍为草案。
+总体当前状态只在§7.2维护；[收口检查](System_Design.md#722-总体收口检查)承接详细设计与验证事项，量化验收由责任文档提出、用户确认，见[实施计划§2.1](Delivery_Plan.md#21-量化验收的提出与确认)。原有Operation及字段不因索引补齐而自动获批。
 
 E01—E07 继续表达已确认的实现顺序，见[原决定](../../DECISIONS.md#27-m1主流程简化与工程实施顺序)；设计文档交叉推进，不按九本文件逐本写完。每轮说明实际交付、当前未决和下一步，不把目录稿算作方案完成。
 
@@ -160,3 +160,47 @@ E01—E07 继续表达已确认的实现顺序，见[原决定](../../DECISIONS.
 以上38项是业务Operation定义，不表示要创建38个常驻Agent或独立服务。模型与工具循环、通用材料处理使用[AI底座技术能力](AI_Foundation_Design.md#1-ai任务协议与运行边界)，上下文取材、组装及记忆保存由所属Operation组织；执行受理／查询／重试／取消／恢复以及结果读写／等待是[公共运行技术接口](System_Foundation_Design.md#33-operationrun与步骤记录)。它们共用一套实现，不在每个Space复制。
 
 数值函数、实例验证、来源校验及按需摘要只列入所属Operation的步骤；不另建调度任务。摘要可通过AI底座调用LLM，记忆存取使用共用能力；本轮不增加独立摘要Operation。底座具体事件存储、授权适配、浏览器API和外部工具接线仍需细化，本目录的业务覆盖不等于全部技术设计已完成。后续新增公开入口必须在本表登记用途、调用方及合同位置。
+
+
+## 6. 跨模块事件目录
+
+本目录登记主流程的事件含义、生产方、使用方和关联事实，作为图与模块合同的共同索引。**业务含义归生产模块，公共信封与投递机制归公共运行。** 目录中的具体命名沿用已有合同草案，字段、订阅接线及尚未命名事件留待详细设计确认；不把结果类型或Operation名称当成事件类型。
+
+“触发处理”表示消费方因事实开展工作；“结果通知”只提示可授权读取；“查询取证／留痕”不新增订阅任务。生产方不读取使用方等待条件，是否等待、期限及超时仍归使用方；无等待者也保留正式事实。
+
+### 6.1 触发处理与结果交接
+
+| 事件或事实 | 何时产生／生产方 | 使用方与用途 | 关联事实与唯一合同位置 |
+| --- | --- | --- | --- |
+| `DomainIntakeRequested` | 产品业务提交已采用的知识、题目或解法 | Domain触发`receive_intake` | 导入、章节、已采用候选及所选内容；[产品业务§3.6](Product_Application_Design.md#36-productsubmit_domain_intake提交已采用内容到领域)、[Domain§2.2](Domain_Space_Design.md#22-domainreceive_intake) |
+| `DomainIntakeReceived` | Domain已接收并保存待入库组 | 产品业务获取接收结果；不表示内容已入库 | 原提交事件、处理组和接收结果；[Domain§2.2](Domain_Space_Design.md#22-domainreceive_intake) |
+| `MaterialCandidatesAdopted` | 产品业务采用教材修正候选 | Domain核对受影响待办的来源是否仍有效；不改已入库定义 | 导入、采用内容及替代关系；[产品业务§3.5](Product_Application_Design.md#35-productdecide_material_candidate采用或不采用候选)、[Domain§2](Domain_Space_Design.md#2-定义维护与教材内容入库) |
+| `MaterialImportDeleted` | 产品业务删除未完成导入 | Domain标记相应未入库来源失效，保留已入库内容 | 导入及受影响来源；[产品业务§3.3](Product_Application_Design.md#33-productdelete_material_import删除未完成导入)、[Domain§2](Domain_Space_Design.md#2-定义维护与教材内容入库) |
+| `LearningTargetApplied` | 产品业务向学习空间应用目标条件 | Evaluation触发`reassess_target`，只重新派生目标结果 | 学习空间、实际目标采用和条件；[产品业务§4.3／5.1](Product_Application_Design.md#43-productapply_course检查并应用教材与目标组合)、[Evaluation§4](Evaluation_Space_Design.md#4-学习目标达成计算) |
+| `TaskSupplyRequested` | Interaction形成一组供题要求 | Domain触发`supply_task`，统一筛选及补足题目 | 当前活动、Task、方法、用途、条件和接触事实；[Interaction§4.1](Interaction_Space_Design.md#41-prepare_detection准备本次检测)、[Domain§5.2](Domain_Space_Design.md#52-domainsupply_task) |
+| `DomainTaskSupplyCompleted` | Domain完成供题处理并保存批次；可有未满足项 | Interaction读取批次并复核使用条件，不自动开测 | 原供题事件、批次、实例及未满足项；[Domain§5.2](Domain_Space_Design.md#52-domainsupply_task) |
+| `AnswerSubmitted` | Interaction接受实际作答并固定当时条件 | Evaluation触发`evaluate_submission`；不等当题判题 | 本次题目使用、作答、活动／轮及内容引用；[Interaction§4.2](Interaction_Space_Design.md#42-submit_answer提交实际作答)、[Evaluation§2](Evaluation_Space_Design.md#2-原始事实到evidence) |
+| `TeachingOpportunityClosed` | Interaction确认教学目的收束且有实际展示依据 | Evaluation触发`apply_learning_opportunity`，再判断资格 | 稳定机会身份、展示、目的及收束依据；[Interaction§3.4](Interaction_Space_Design.md#34-record_presentation记录内容呈现)、[Evaluation§3](Evaluation_Space_Design.md#3-belief分项与数值更新) |
+| Evidence处理／Belief更新事实（事件名待定） | Evaluation完成证据处理或确定性更新 | Interaction按需要授权读取掌握发布；目标及追溯查询可读取相关依据 | 原始触发事件、Evidence、更新或未更新原因、只读发布引用；[Evaluation§6](Evaluation_Space_Design.md#6-处理顺序提交与恢复)；`belief_result`是结果类型 |
+| 目标计算事实（事件名待定） | Evaluation完成目标对照并保存结果 | Interaction按需接续；产品业务查询入口组织目标展示 | 原始触发、目标采用、所用能力依据及目标发布引用；[Evaluation§4／6](Evaluation_Space_Design.md#4-学习目标达成计算)；`goal_result`是结果类型 |
+
+### 6.2 查询取证与业务留痕
+
+| 事件或事实 | 生产方与含义 | 使用方式与关联事实 | 合同位置 |
+| --- | --- | --- | --- |
+| `DomainDefinitionSaved` | Domain保存定义 | 查询定义及实际依据，不自动重新评价历史作答 | [Domain§2.1](Domain_Space_Design.md#21-domainsave_definition) |
+| `DomainIntakeSourceInvalidated` | Domain确认未入库来源已被替代或删除 | 教材与待办查询来源失效结果；不撤销已入库对象 | [Domain§2.2](Domain_Space_Design.md#22-domainreceive_intake) |
+| `DomainIntakeItemProcessed` | Domain处理入库项 | 教材可查询处理结果及关联对象；不自动建立章节关联 | [Domain§2.3](Domain_Space_Design.md#23-domainprocess_intake) |
+| `DomainTemplateCandidatePrepared` | Domain形成模板候选 | 管理员核对候选及来源，不等于正式定义已保存 | [Domain§3.2](Domain_Space_Design.md#32-domainextract_template) |
+| `DomainInstanceSaved` | Domain保存实例及模板关系 | 查询TI／SI、模板及来源；不等于学生已见题 | [Domain§5.1](Domain_Space_Design.md#51-domainsave_instance) |
+| `ActivityConfigSaved` | Interaction保存活动配置 | 查询蓝图、规则及推荐策略的实际依据 | [Interaction§1.1](Interaction_Space_Design.md#11-manage_activity_config维护活动配置) |
+| `ActivityChanged` | Interaction改变活动及父子接续位置 | 聊天和活动目录查询；Evaluation按需核对当时活动，不据此直接加分 | [Interaction§2.1](Interaction_Space_Design.md#21-control_activity控制活动与检测开始) |
+| `DetectionPlanPrepared` | Interaction保存可确认题单 | 查询计划、覆盖及反馈安排；不是开测或作答事件 | [Interaction§4.1](Interaction_Space_Design.md#41-prepare_detection准备本次检测) |
+| 出题／题目使用事实（事件名待定） | Interaction实际安排本轮题目 | Evaluation沿作答查询当时题面和条件；引用Domain实例及实际使用内容 | [Interaction§4.2](Interaction_Space_Design.md#42-submit_answer提交实际作答)、[Evaluation§2](Evaluation_Space_Design.md#2-原始事实到evidence) |
+| `PresentationRecorded`及帮助事实 | Interaction记录实际内容呈现及帮助 | Evaluation查询实际展示、时点与内容引用；没有回执仍为未知 | [Interaction§3.4](Interaction_Space_Design.md#34-record_presentation记录内容呈现) |
+| `DetectionRoundClosed` | Interaction记录检测轮结束 | 查询提交、求助或结束原因；不是第二次作答评价触发 | [Interaction§2.1／4.2](Interaction_Space_Design.md#21-control_activity控制活动与检测开始) |
+| 当题判题事实（事件名待定） | Interaction保存当题判断及反馈 | 用于反馈和追溯，M1不作为Evaluation的语义Evidence输入 | [Interaction§6.1](Interaction_Space_Design.md#61-提交事实由evaluation订阅处理) |
+| `ProactiveTaskChanged` | Interaction提出任务或处理学生响应 | 查询建议依据、接受／暂缓／拒绝及提醒记录，不直接改Belief | [Interaction§5](Interaction_Space_Design.md#5-主动任务的触发与接续) |
+| `ClaimDefinitionChanged` | Evaluation保存Claim及判据定义 | 查询实际定义依据；不因保存自动重算历史 | [Evaluation§1](Evaluation_Space_Design.md#1-claim方法判据与评价方面) |
+
+普通账号、上传、候选等模块内部留痕仍在各自合同维护；一旦成为跨模块触发或取证依据须登记到本目录。消息正文经所有者授权读取，事件仅保存事实及必要引用；不得为了省一次读取把所有正文复制进事件。登记不决定所有事件都发消息或推送浏览器，订阅与客户端刷新接线仍待设计。
