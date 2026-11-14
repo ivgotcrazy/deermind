@@ -6,7 +6,7 @@ import { createPreviewServer } from '../scripts/serve.mjs';
 test('M1 教学模型与四分之一走查', async t => {
   const server = createPreviewServer();
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({channel:process.env.PLAYWRIGHT_CHANNEL||'msedge'});
   t.after(async () => { await browser.close(); await new Promise(resolve => server.close(resolve)); });
   const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
   page.setDefaultTimeout(6000);

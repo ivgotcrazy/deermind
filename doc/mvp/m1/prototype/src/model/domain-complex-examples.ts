@@ -1,10 +1,10 @@
-import { domainData, id, instanceSignature, blankTask, blankMethod, blankKnowledge, blankInstance, type DomainData, type Task } from './domain';
+import { methodProcedure, domainData, id, instanceSignature, blankTask, blankMethod, blankKnowledge, blankInstance, type DomainData, type Task } from './domain';
 import { addDomainExample } from './domain-example';
 import { addMethodFlows } from './method-flow-examples';
 
 export const taskExamples=[
-  {key:'primary',name:'小学数学 · 比例增加',description:'原有入门示例：两种解法、子方法与知识汇总。'},
-  {key:'junior',name:'初中数学 · 动点综合题',description:'递归分解：综合任务 → 面积研究 → 最值子方法；衔接输入输出。'},
+  {key:'primary',name:'小学数学 · 比例增加',description:'两种方法、按方法适用的先导与直接知识汇总。'},
+  {key:'junior',name:'初中数学 · 动点综合题',description:'综合责任：面积研究、最值与几何条件；用关键过程说明方法。'},
   {key:'senior',name:'高中数学 · 含参数函数',description:'完整分类：研究所有参数情况，汇总根数并检查临界值和端点。'},
   {key:'k8s',name:'K8s · 服务排障',description:'条件选择与复查：修复后再验证，按新证据继续或以未解决停止。'},
 ] as const;
@@ -17,6 +17,14 @@ export function loadTaskExample(key:TaskExampleKey,latest=false){
   }
   const data=key==='junior'?junior():key==='senior'?senior():k8s();data.domains[0].exampleKey=key;data.domains[0].exampleRevision=2;
   addMethodFlows(data,key);
+  // Only builds new demonstration content. It is not a migration of stored relations.
+  const allKc=(key:string,path:string[]=[]):string[]=>{
+    const m=data.methods.find(x=>x.id===key);if(!m||path.includes(key))return [];
+    return [...new Set([...m.kc,...m.steps.filter(s=>s.divided).flatMap(s=>allKc(s.solutionId,[...path,key]))])];
+  };
+  const knowledgeByMethod=new Map(data.methods.map(m=>[m.id,allKc(m.id)]));
+  for(const m of data.methods){m.procedure=methodProcedure({...m,procedure:undefined});m.kc=knowledgeByMethod.get(m.id)!;}
+
   if(domainData.domains.some(d=>d.exampleKey===key))data.domains[0].name+=' · 方法流程版';
   domainData.domains.push(...data.domains);domainData.knowledge.push(...data.knowledge);
   domainData.tasks.push(...data.tasks);domainData.methods.push(...data.methods);

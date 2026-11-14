@@ -1697,7 +1697,7 @@ export const reviewCatalog=[
   },
   {
     "id": "ST-TWO",
-    "kind": "SolutionTemplate",
+    "kind": "Solution",
     "title": "逐层求部分量",
     "definition": "先求中间量，再求最终量。",
     "origin": "author_abstraction",
@@ -1710,7 +1710,7 @@ export const reviewCatalog=[
   },
   {
     "id": "ST-COMBINE",
-    "kind": "SolutionTemplate",
+    "kind": "Solution",
     "title": "合并两层比例",
     "definition": "先相乘得到相对原量的比例，再乘原量。",
     "origin": "author_abstraction",
@@ -1724,7 +1724,7 @@ export const reviewCatalog=[
   },
   {
     "id": "TT-CHAIN",
-    "kind": "TaskTemplate",
+    "kind": "Task",
     "title": "已知两层比例求最终量",
     "definition": "给定原量及连续两层比例，求最后一层数量；人数任务须满足整数条件。",
     "origin": "author_abstraction",
@@ -1747,7 +1747,7 @@ export const reviewCatalog=[
   },
   {
     "id": "ST-ERROR",
-    "kind": "SolutionTemplate",
+    "kind": "Solution",
     "title": "逐步核查运算变换",
     "definition": "逐步比对表达式，定位首个不等价的变换并解释。",
     "origin": "author_abstraction",
@@ -1760,7 +1760,7 @@ export const reviewCatalog=[
   },
   {
     "id": "TT-ERROR",
-    "kind": "TaskTemplate",
+    "kind": "Task",
     "title": "辨析分数除法的错误演算",
     "definition": "给出他人演算，判断是否等价并说明理由。",
     "origin": "author_abstraction",
@@ -1792,7 +1792,7 @@ export const reviewCatalog=[
   },
   {
     "id": "ST-READ-CHART",
-    "kind": "SolutionTemplate",
+    "kind": "Solution",
     "title": "结合图例与坐标读图",
     "definition": "先确定系列、范围及单位，再读数和比较，不将包含关系当作互斥部分。",
     "origin": "author_abstraction",
@@ -1806,7 +1806,7 @@ export const reviewCatalog=[
   },
   {
     "id": "TT-CHART",
-    "kind": "TaskTemplate",
+    "kind": "Task",
     "title": "解读同一资料的不同统计图",
     "definition": "根据图形及图例说明数量、变化或构成；解释不能超出数据范围。",
     "origin": "author_abstraction",
@@ -1828,7 +1828,7 @@ export const reviewCatalog=[
   },
   {
     "id": "ST-SHAPE",
-    "kind": "SolutionTemplate",
+    "kind": "Solution",
     "title": "比较形状与中心距离",
     "definition": "观察或操作图形，检验中心到边界的距离是否一致。",
     "origin": "author_abstraction",
@@ -1841,7 +1841,7 @@ export const reviewCatalog=[
   },
   {
     "id": "TT-SHAPE",
-    "kind": "TaskTemplate",
+    "kind": "Task",
     "title": "比较圆与其他图形",
     "definition": "比较指定圆、椭圆及多边形，提出区分依据；未给长度不得编造测量值。",
     "origin": "author_abstraction",

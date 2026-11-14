@@ -27,6 +27,12 @@ export function addDomainExample(){
     m.steps.forEach((s,i)=>Object.assign(s,{key:'step-'+(i+1),kind:'process',inputs:stepIO[m.id][i][0],output:stepIO[m.id][i][1],next:'$next',routes:[],coverage:''}));
     m.ending={success:m.id===partMethod?'明确比例参照量；乘法结果与单位正确，得到对应数量。':'新量满足原量、增加比例与新量的关系；单位正确，能说明计算依据。',stop:'缺少原量或比例、参照整体不明确、单位不相容或子方法未解决时停止并保留原因。'};
   }
+  // This newly authored fixture supplies complete direct KC links; saved user records are not rewritten.
+  methods[1].kc=[ref,fraction,growth];
+  methods[0].procedure='明确基准量与分率，计算对应数量 Δ=V×r，核对单位。';
+  methods[1].procedure='明确原量和增加比例；计算增加量 Δ=V×r；加回原量 W=V+Δ；检查最终量及单位。';
+  methods[2].procedure='把原量作为1份，确定新量为1+r份；计算 W=V×(1+r)，说明比例的参照量并检查结果。';
+  domainData.tasks.find(t=>t.id===taskId)!.prerequisites=[{taskId:partId,reason:'先求增加量的方法需要识别整体并求对应部分。',methodIds:[a]}];
   domainData.methods.push(...methods);
   const q:Instance={id:id('TI'),domainId,taskId,version:1,question:'一根绳原长40米，增加原长的四分之一后，共长多少米？请说明数量关系。',bindings:{V:'40 米',r:'1/4'},table:null,answer:'50米；增加的四分之一以原长40米为整体。',solutions:[{methodId:a,working:'40 × 1/4 = 10（米），40 + 10 = 50（米）。'},{methodId:b,working:'40 × (1 + 1/4) = 50（米）。'}],source:'人工编写',sourceNote:'M1 自编示例，非教材原题；检查为固定 mock。',checkedSignature:'',checkedAt:new Date().toLocaleString('zh-CN')};
   q.checkedSignature=instanceSignature(q);domainData.instances.push(q);

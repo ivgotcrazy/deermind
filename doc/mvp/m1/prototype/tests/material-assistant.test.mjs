@@ -8,7 +8,7 @@ const output=new URL('../test-results/material-assistant/',import.meta.url);
 
 test('textbook assistant keeps scoped conversations and explicit candidate adoption',async t=>{
   await mkdir(output,{recursive:true});const server=createPreviewServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));
-  const browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1500,height:1000}});page.setDefaultTimeout(8000);
+  const browser=await chromium.launch({headless:true,channel:process.env.PLAYWRIGHT_CHANNEL||'msedge'});const page=await browser.newPage({viewport:{width:1500,height:1000}});page.setDefaultTimeout(8000);
   const errors=[],calls=[];page.on('pageerror',e=>errors.push(e.message));await page.route('**/api/**',r=>{calls.push(r.request().url());return r.abort();});
   t.after(async()=>{await browser.close();await new Promise(r=>server.close(r));});
   const btn=name=>page.getByRole('button',{name,exact:true});

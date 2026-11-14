@@ -8,7 +8,7 @@ const output=new URL('../test-results/material-flow/',import.meta.url);
 
 test('textbook parsing, domain intake and chapter adoption form one simple workflow',async t=>{
   await mkdir(output,{recursive:true});const server=createPreviewServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));
-  const browser=await chromium.launch({headless:true});const context=await browser.newContext({viewport:{width:1500,height:1050}});const page=await context.newPage();page.setDefaultTimeout(8000);
+  const browser=await chromium.launch({headless:true,channel:process.env.PLAYWRIGHT_CHANNEL||'msedge'});const context=await browser.newContext({viewport:{width:1500,height:1050}});const page=await context.newPage();page.setDefaultTimeout(8000);
   const errors=[],network=[];page.on('pageerror',e=>errors.push(e.message));await context.route('**/api/**',r=>{network.push(r.request().url());return r.abort();});
   t.after(async()=>{await browser.close();await new Promise(r=>server.close(r));});
   const btn=name=>page.getByRole('button',{name,exact:true});const dialog=()=>page.getByRole('dialog');
@@ -26,11 +26,11 @@ test('textbook parsing, domain intake and chapter adoption form one simple workf
       if(await row.getByRole('button',{name:'添加知识成分',exact:true}).count()){
         await row.getByRole('button',{name:'添加知识成分',exact:true}).click();await btn('确认添加').click();continue;
       }
-      const question=await row.getByRole('button',{name:'关联任务模板',exact:true}).count(),kind=question?'任务':'解法';
-      await row.getByRole('button',{name:'关联'+kind+'模板',exact:true}).click();
-      if(!await dialog().getByRole('combobox').inputValue()){
-        await btn('取消').click();await row.getByRole('button',{name:'提取'+kind+'模板',exact:true}).click();await btn('保存模板').click();
-        await row.getByRole('button',{name:'关联'+kind+'模板',exact:true}).click();
+      const question=await row.getByRole('button',{name:'关联任务',exact:true}).count(),kind=question?'任务':'方法';
+      await row.getByRole('button',{name:'关联'+kind,exact:true}).click();
+      if(!await dialog().getByRole('combobox').first().inputValue()){
+        await btn('取消').click();await row.getByRole('button',{name:'提取'+kind,exact:true}).click();await btn('保存定义').click();
+        await row.getByRole('button',{name:'关联'+kind,exact:true}).click();
       }
       await btn('确认关联').click();await expect(dialog()).toHaveCount(0);await expect(page.getByRole('status')).toContainText('已关联');
     }
@@ -50,11 +50,11 @@ test('textbook parsing, domain intake and chapter adoption form one simple workf
   let instanceId;
   await t.test('question-only intake creates or reuses templates without creating a solution instance',async()=>{
     await btn('题目 2').click();await page.getByLabel('选择 三个兴趣小组的人数',{exact:true}).check();await btn('提交到领域').click();
-    assert.equal((await domain()).instances.length,0);await intoDomain();await shot('02-domain-intake');await btn('提取任务模板').click();await btn('保存模板').click();assert.equal((await domain()).instances.length,0);await expect(page.locator('.intake-list')).toContainText('待关联');await processRows();
+    assert.equal((await domain()).instances.length,0);await intoDomain();await shot('02-domain-intake');await btn('提取任务').click();await btn('保存定义').click();assert.equal((await domain()).instances.length,0);await expect(page.locator('.intake-list')).toContainText('待关联');await btn('关联任务').click();for(const result of ['mismatch','unclear']){await dialog().getByRole('combobox').last().selectOption(result);await btn('确认关联').click();await expect(dialog().getByRole('alert')).toBeVisible();assert.equal((await domain()).instances.length,0);}await btn('取消').click();await processRows();
     const model=await domain();assert.equal(model.instances.length,1);const q=model.instances[0];instanceId=q.id;assert.equal(q.solutions.length,0);assert.equal(q.reviewContent.filter(p=>p.role==='solution').length,0);assert.equal(model.tasks.find(t=>t.id===q.taskId).methods.length,0);assert.equal(model.methods.length,0);assert.equal(model.knowledge.length,0);assert.equal(q.checkedSignature,'');
     await page.getByRole('link',{name:'返回教材章节 →',exact:true}).click();await expect(page.locator('.chapter-links tbody tr')).toHaveCount(0);
     await expect(btn('保存章节关联')).toHaveCount(0);await expect(page.getByRole('combobox')).toHaveCount(0);
-    await btn('添加关联').click();await dialog().getByLabel('任务模板',{exact:true}).selectOption(q.taskId);await btn('保存').click();await expect(dialog().getByRole('alert')).toContainText('至少选择一个');await btn('取消').click();
+    await btn('添加关联').click();await dialog().getByLabel('任务',{exact:true}).selectOption(q.taskId);await btn('保存').click();await expect(dialog().getByRole('alert')).toContainText('至少选择一个');await btn('取消').click();
     assert.equal((await data()).flow.links['分数的应用'],undefined);await page.reload();await expect(page.locator('.chapter-links tbody tr')).toHaveCount(0);
   });
   await t.test('later solutions reuse the same question and bind both required references',async()=>{
@@ -66,12 +66,12 @@ test('textbook parsing, domain intake and chapter adoption form one simple workf
     await page.getByRole('link',{name:'返回教材章节 →',exact:true}).click();
     const model=await domain(),taskId=model.instances[0].taskId;
     const main=page.locator('.chapter-workspace'),table=page.locator('.chapter-links'),nav=page.locator('.chapter-nav');
-    const add=async()=>{await btn('添加关联').click();await dialog().getByLabel('任务模板',{exact:true}).selectOption(taskId);};
+    const add=async()=>{await btn('添加关联').click();await dialog().getByLabel('任务',{exact:true}).selectOption(taskId);};
     const currentLinks=async()=> (await data()).flow.links['分数的应用'];
     await expect(table.locator('tbody tr')).toHaveCount(0);await expect(nav.locator('button.active')).toContainText('0 项任务已关联');
     await expect(main.getByRole('combobox')).toHaveCount(0);await expect(btn('保存章节关联')).toHaveCount(0);await expect(btn('不关联')).toHaveCount(0);
     assert.ok(await btn('添加关联').evaluate(el=>el.classList.contains('primary')));
-    await btn('添加关联').click();await btn('保存').click();await expect(dialog().getByRole('alert')).toContainText('请选择任务模板');await btn('取消').click();
+    await btn('添加关联').click();await btn('保存').click();await expect(dialog().getByRole('alert')).toContainText('请选择任务');await btn('取消').click();
     await add();await expect(dialog().getByLabel('本章采用 逐层求部分量')).toBeChecked();await expect(dialog().getByLabel('本章采用 合并两层比例')).toBeChecked();
     await shot('10-add-chapter-link');await btn('取消').click();assert.equal(await currentLinks(),undefined);await expect(table.locator('tbody tr')).toHaveCount(0);
     await add();await btn('保存').click();await expect(dialog()).toHaveCount(0);await expect(page.getByRole('status')).toContainText('本章关联已保存');await expect(nav.locator('button.active')).toContainText('1 项任务已关联');
@@ -110,17 +110,17 @@ test('textbook parsing, domain intake and chapter adoption form one simple workf
     const d=await data();assert.equal(d.flow.requests.filter(r=>r.status==='pending').length,1);assert.equal(d.flow.requests[0].elements.length,3);await intoDomain();await expect(btn('处理')).toHaveCount(0);
     const solution2=d.flow.requests[0].elements.find(e=>e.recipe==='ST-COMBINE').id;
     const row=id=>page.locator('.intake-list [data-element="'+id+'"]');
-    await expect(page.locator('.intake-list').getByRole('button',{name:'关联解法模板',exact:true}).first()).toBeDisabled();
+    await expect(page.locator('.intake-list').getByRole('button',{name:'关联方法',exact:true}).first()).toBeDisabled();
     await expect(page.locator('.domain-tabs button.active span')).toHaveText('3');await shot('07-row-actions');
     const beforeParent=await domain();await row('C02-question').getByRole('button',{name:'删除',exact:true}).click();await expect(dialog()).toContainText('2 条待处理解法');await btn('确认删除').click();await expect(page.locator('.intake-list tbody tr')).toHaveCount(0);assert.deepEqual((await data()).flow.elements,d.flow.elements);assert.deepEqual(await domain(),beforeParent);await expect(dialog()).toHaveCount(0);
     await goContent();await page.getByLabel('选择 三个兴趣小组的人数').check();await btn('教材解法 2').click();await page.getByLabel('选择 逐层求出人数').check();await page.getByLabel('选择 先合并两层比例').check();await btn('提交到领域').click();await intoDomain();await expect(btn('处理')).toHaveCount(0);
     const beforeDelete=await domain();await row(solution2).getByRole('button',{name:'删除',exact:true}).click();await btn('确认删除').click();await expect(row(solution2)).toHaveCount(0);
     assert.deepEqual((await data()).flow.elements,d.flow.elements);assert.deepEqual(await domain(),beforeDelete);await expect(dialog()).toHaveCount(0);
     await goContent();await btn('教材解法 2').click();await page.getByLabel('选择 先合并两层比例').check();await btn('提交到领域').click();await intoDomain();await expect(btn('处理')).toHaveCount(0);await expect(row(solution2)).toBeVisible();
-    await btn('提取任务模板').click();await shot('08-extract-template');await btn('保存模板').click();
+    await btn('提取任务').click();await shot('08-extract-template');await btn('保存定义').click();
     assert.equal((await domain()).instances.filter(i=>i.domainId===d.book.domainId).length,0);await expect(row('C02-question')).toContainText('待关联');
     await expect(dialog()).toHaveCount(0);await page.reload();await expect(btn('处理')).toHaveCount(0);await expect(row('C02-question')).toContainText('已提取');
-    await btn('关联任务模板').click();await btn('确认关联').click();await expect(row('C02-question')).toContainText('已关联');
+    await btn('关联任务').click();await btn('确认关联').click();await expect(row('C02-question')).toContainText('已关联');
     await expect(row('C02-question').getByRole('button',{name:'删除',exact:true})).toHaveCount(0);
     await expect(page.locator('.domain-tabs button.active span')).toHaveText('2');await shot('09-partial-completion');await expect(dialog()).toHaveCount(0);await page.reload();await expect(btn('处理')).toHaveCount(0);await expect(row('C02-question')).toContainText('已关联');
     await processRows();const m=await domain(),q=m.instances.filter(i=>i.domainId===d.book.domainId);assert.equal(q.length,1);assert.equal(q[0].solutions.length,2);assert.ok(q[0].solutions.every(s=>s.taskInstanceId===q[0].id));
@@ -128,7 +128,7 @@ test('textbook parsing, domain intake and chapter adoption form one simple workf
     await goContent();await btn('知识 1').click();await page.getByLabel('选择 除以非零数等于乘其倒数').check();await btn('提交到领域').click();await intoDomain();await expect(btn('处理')).toHaveCount(0);
     const beforeKc=await domain();await btn('删除').click();await btn('确认删除').click();await expect(page.getByText('当前没有待入库内容。',{exact:true})).toBeVisible();assert.deepEqual(await domain(),beforeKc);await expect(dialog()).toHaveCount(0);
     await goContent();await reparse('保留原题中的错误演算','核对并保留原题中的错误算式');await page.getByLabel('选择 保留原题中的错误演算').check();await btn('提交到领域').click();await intoDomain();await expect(btn('处理')).toHaveCount(0);
-    await btn('提取任务模板').click();await btn('保存模板').click();const beforeQuestion=await domain();await btn('删除').click();await btn('确认删除').click();assert.deepEqual(await domain(),beforeQuestion);await expect(dialog()).toHaveCount(0);await expect(btn('处理')).toHaveCount(0);
+    await btn('提取任务').click();await btn('保存定义').click();const beforeQuestion=await domain();await btn('删除').click();await btn('确认删除').click();assert.deepEqual(await domain(),beforeQuestion);await expect(dialog()).toHaveCount(0);await expect(btn('处理')).toHaveCount(0);
   });
   assert.deepEqual(errors,[]);assert.deepEqual(network,[]);
   await writeFile(new URL('review.json',output),JSON.stringify({status:'passed',modelCalls:0,cases:['question-only','later-solutions','knowledge','charts','geometry','wrong-example','reparse-stale-request','extract-without-associating','partial-completion-reload','remove-knowledge-question-solution','chapter-link-add-edit-cancel-unlink-reload'],errors},null,2));

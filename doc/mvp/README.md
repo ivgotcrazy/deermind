@@ -1,18 +1,20 @@
 # MVP 产品迭代与文档入口
 
-> **版本**：v0.60<br>
+> **版本**：v0.63<br>
 > **文档性质**：当前MVP目录、阅读顺序与维护约定<br>
-> **状态**：M1总体设计待审，未编码；确认范围与未决项见总体§7.2<br>
-> **上游依据与基线**：M1 PRD v0.24、内容规格v0.22、交互规格v0.21及本轮用户决定；原型与历史证据不变<br>
+> **状态**：本轮领域模型、原型及关联合同已修订，待用户审阅；真实服务与效果未验证<br>
+> **上游依据与基线**：M1 PRD v0.25、内容规格v0.23、交互规格v0.22及本轮用户决定；原型随新模型适配，历史证据保留<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：本轮修订及作者自检见MVP决定登记§65，待用户审阅<br>
+> **评审记录**：用户批准模型变更及完整实施；作者检查见MVP决定登记§68，不代表真实效果验收通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-14<br>
-> **修订说明**：v0.59 → v0.60，精简重复工程进度，统一指向总体状态和本轮事件目录<br>
+> **修订说明**：v0.62 → v0.63，同步新领域模型、现行文档版本、原型入口与检查边界；逐文件记录见MVP决定登记§68<br>
 
 ---
 
-当前按[工程设计入口](m1/engineering/README.md)审阅总体架构，确认状态与未决项只在[总体§7.2](m1/engineering/System_Design.md#72-总体架构问题清单)维护。本轮对齐供题、确认开测及评价取材，补齐[事件目录](m1/engineering/README.md#6-跨模块事件目录)，见[登记§65](DECISIONS.md#65-总体设计评审修订与跨模块合同对齐)。总体仍待用户接收，暂不展开接口、不编码。产品输入由PRD、design详规与原型共同表达，按[M1六个业务包](m1/README.md#2-六个产品设计工作包)核对，产品语义缺口返回上游确认。
+本轮模型、原型与合同调整见[变更清单](m1/design/Domain_Model_Revision_Checklist.md)和[决定登记§68](DECISIONS.md#68-domain模型修订与m1原型同步)。
+
+当前按[工程设计入口](m1/engineering/README.md)审阅总体架构，确认状态与未决项只在[总体§7.2](m1/engineering/System_Design.md#72-总体架构问题清单)维护。此前已将Operation限定为AI业务能力，普通API／消息处理另列，同步路由、Worker和执行边界，见[目录](m1/engineering/README.md#5-m1-operation总目录)及[登记§67](DECISIONS.md#67-operation限定为ai业务能力)。总体仍待用户接收，暂不展开接口、不编码。产品输入由PRD、design详规与原型共同表达，按[M1六个业务包](m1/README.md#2-六个产品设计工作包)核对，产品语义缺口返回上游确认。
 
 ## 1. 目录与当前阅读顺序
 
@@ -35,7 +37,7 @@ doc/mvp/
     └── 2026-11-11-before-swdd/    原七份M1工程文件、原文快照与清单
 ```
 
-本轮先读[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)、[九份文档分工](m1/engineering/README.md#1-文档分工)、[总体设计](m1/engineering/System_Design.md)及[本批决定与变更](DECISIONS.md#46-先审主流程架构质量属性登记后讨论)。产品输入按[M1入口](m1/README.md)、[PRD v0.24](m1/PRD.md)、[内容规格 v0.22](m1/design/Content_and_Model_Reference.md)、[交互规格 v0.21](m1/design/Interaction_Design.md)及[验证计划 v0.5](m1/validation/Validation_Plan.md)查阅。Domain合同为[v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)，Evaluation为[v1.9](../concept-design/DeerMind_Evaluation_Space_Design_v1.9.md)，AI执行原则见[AI Native架构原则 v0.6](../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md)。
+本轮先读[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)、[九份文档分工](m1/engineering/README.md#1-文档分工)、[总体设计](m1/engineering/System_Design.md)及[本批决定与变更](DECISIONS.md#46-先审主流程架构质量属性登记后讨论)。产品输入按[M1入口](m1/README.md)、[PRD v0.25](m1/PRD.md)、[内容规格 v0.23](m1/design/Content_and_Model_Reference.md)、[交互规格 v0.22](m1/design/Interaction_Design.md)及[验证计划 v0.6](m1/validation/Validation_Plan.md)查阅。Domain合同为[v1.6](../concept-design/DeerMind_Domain_Space_Design_v1.6.md)，Evaluation为[v1.10](../concept-design/DeerMind_Evaluation_Space_Design_v1.10.md)，AI执行原则见[AI Native架构原则 v0.7](../top/DeerMind_AI_Native_Architecture_Principles_v0.7.md)。
 
 此前模型、活动、教材、学生及评价的决定和资产继续由[DECISIONS](DECISIONS.md)及[M1产品交接检查](m1/README.md#6-主流程闭环检查2026-11-09)索引。本批不重写历史结论，总体设计首稿不代表产品验收或全部工程设计完成。
 
@@ -47,7 +49,7 @@ doc/mvp/
 | [M2 日常学习与多角色完善](m2/README.md) | 如何在M1基础上补齐日常学习、资料、家长和第二课程？ | 保留方向，待M1结果后确定具体范围 |
 | [M3 持续学习与效果验证](m3/README.md) | 如何改善持续学习并用真实证据检验价值？ | 保留方向，不提前展开实现 |
 
-M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工程、内部质量、真实使用等责任仍需履行，但不再用它们作为当前文档的一级目录。路线及Gate含义见[Development Roadmap](../top/DeerMind_Development_Roadmap_v0.10.md)；历史G3不自动成为新M1批准。
+M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工程、内部质量、真实使用等责任仍需履行，但不再用它们作为当前文档的一级目录。路线及Gate含义见[Development Roadmap](../top/DeerMind_Development_Roadmap_v0.11.md)；历史G3不自动成为新M1批准。
 
 ## 3. 每类输出只维护一份
 
@@ -59,7 +61,7 @@ M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工�
 | 验证计划与报告 | `m1/validation/`：测量方法、样本、配置、停止条件；实际结果另成报告 | 计划在运行前形成；有真实执行后才建立结果报告 |
 | 决定与待决 | `DECISIONS.md`：承接、变更、未决、阶段评审及版本记录 | 随需求推进维护；不另复制PRD正文 |
 
-文件不必一开始全部创建。design已对齐领域、教材、评估、目标与 Interaction 活动模型的产品规则；四类活动蓝图、两层配置、学生固定流程及运行追溯已有当前截图，管理员证据及事件查询已有mock，真实评价链尚未完成。engineering已按SwDD组织设计，本轮先逐项审阅总体架构问题，既有Operation草案保留且暂不继续展开，旧稿留在归档；本批未运行产品实验或编码；validation已有有限真实内容提取试验，实际结果按原报告保留。PRD主文档、详细规格和原型共同表达产品设计；工程设计属于工程阶段，负责定义技术机制；验证说明怎样获得和解释证据。模型定义以现行专项 Space 合同为权威，PRD说明其产品作用。本轮 Domain v1.5／Evaluation v1.9 与 M1-DEC-015／016／020／021 已同步；仍引用旧关系的概念／系统摘要属于待迁移基线，不可据此覆盖新合同，迁移范围见 M1-OPEN-04。
+文件不必一开始全部创建。design已对齐领域、教材、评估、目标与 Interaction 活动模型的产品规则；四类活动蓝图、两层配置、学生固定流程及运行追溯已有当前截图，管理员证据及事件查询已有mock，真实评价链尚未完成。engineering已按SwDD组织设计，本轮先逐项审阅总体架构问题，既有Operation草案保留且暂不继续展开，旧稿留在归档；本批更新mock原型，未实现真实后端或执行产品效果实验；validation已有有限真实内容提取试验，实际结果按原报告保留。PRD主文档、详细规格和原型共同表达产品设计；工程设计属于工程阶段，负责定义技术机制；验证说明怎样获得和解释证据。模型定义以现行专项 Space 合同为权威，PRD说明其产品作用。本轮Domain与Evaluation按Task／Solution新模型同步，见决定登记§68；仍引用旧关系的概念／系统摘要属于待迁移基线，不可据此覆盖新合同，迁移范围见 M1-OPEN-04。
 
 ## 4. 历史与资产的使用规则
 

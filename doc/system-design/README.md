@@ -1,19 +1,19 @@
 # DeerMind 系统设计文档入口
 
-> **版本**：v0.33<br>
+> **版本**：v0.36<br>
 > **文档性质**：文档导航与使用说明<br>
-> **状态**：M1总体设计待审，未编码；确认范围与未决项见总体§7.2<br>
+> **状态**：本轮领域模型、原型及关联合同已修订，待用户审阅；真实服务与效果未验证<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：本轮修订及作者自检见MVP决定登记§65，待用户审阅<br>
+> **评审记录**：用户批准模型变更及完整实施；作者检查见MVP决定登记§68，不代表真实效果验收通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-14<br>
-> **修订说明**：v0.32 → v0.33，统一M1当前状态入口，保留历史设计及验证结论<br>
+> **修订说明**：v0.35 → v0.36，同步新领域模型、现行文档版本、原型入口与检查边界；逐文件记录见MVP决定登记§68<br>
 
 ---
 
-以下七份v1.4为既有系统设计基线，承接[概念设计入口](../concept-design/README.md)；其中旧模型摘要尚未全部按M1迁移，不是可直接照搬的新M1工程规格。当前Domain合同为[v1.5](../concept-design/DeerMind_Domain_Space_Design_v1.5.md)，Evaluation为[v1.9](../concept-design/DeerMind_Evaluation_Space_Design_v1.9.md)，具体产品规则以[M1 PRD](../mvp/m1/PRD.md)及设计规格为准，差异由M1-OPEN-04登记。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
+以下七份v1.4为既有系统设计基线，承接[概念设计入口](../concept-design/README.md)；其中旧模型摘要尚未全部按M1迁移，不是可直接照搬的新M1工程规格。当前Domain合同为[v1.6](../concept-design/DeerMind_Domain_Space_Design_v1.6.md)，Evaluation为[v1.10](../concept-design/DeerMind_Evaluation_Space_Design_v1.10.md)，具体产品规则以[M1 PRD](../mvp/m1/PRD.md)及设计规格为准，差异由M1-OPEN-04登记。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
 
-**当前工作：** 审阅[M1总体设计](../mvp/m1/engineering/System_Design.md)，确认状态和未决项统一见[§7.2](../mvp/m1/engineering/System_Design.md#72-总体架构问题清单)。本轮修正主流程与供题合同、补[跨模块事件目录](../mvp/m1/engineering/README.md#6-跨模块事件目录)，记录见[§65](../mvp/DECISIONS.md#65-总体设计评审修订与跨模块合同对齐)；总体仍待用户接收，未编码。M1按[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)组织，旧稿与本目录既有设计仅供历史参考，历史G3不等于新M1通过接收。
+**当前工作：** 先审[新领域模型及M1适配清单](../mvp/m1/design/Domain_Model_Revision_Checklist.md)，本轮没有改动这里的历史系统基线。 审阅[M1总体设计](../mvp/m1/engineering/System_Design.md)，确认状态和未决项统一见[§7.2](../mvp/m1/engineering/System_Design.md#72-总体架构问题清单)。此前已重分[AI Operation与普通处理目录](../mvp/m1/engineering/README.md#5-m1-operation总目录)，同步路由、Worker和执行保障，记录见[§67](../mvp/DECISIONS.md#67-operation限定为ai业务能力)；总体仍待用户接收，未编码。M1按[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)组织，旧稿与本目录既有设计仅供历史参考，历史G3不等于新M1通过接收。
 
 归档 MVP 基线中的[基础领域演化选择](../mvp/archive/2026-11-02-before-m1-prd/archive/DeerMind_MVP_Definition_v0.2.md#7-模型管理与运行可观察性)及其后续质量责任保留供新文档核对承接；明确确认的决定不因归档自动撤销。这些基线曾修订领域/产品owner、具体问题溯源、Claim参照、版本依赖与发布路由；当前M1的直接保存与应用、教材Agent及活动／评价合同须重新核对，不恢复旧审核发布流程；历史实验输入与结论保持，也不另开 Evolution Spike。
 

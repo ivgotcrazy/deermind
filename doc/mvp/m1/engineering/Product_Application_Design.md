@@ -1,29 +1,29 @@
 # M1 产品业务设计
 
-> **版本**：v0.9<br>
-> **状态**：M1业务Operation合同草案，待审；存储、认证协议及传输接口仍待细化<br>
+> **版本**：v0.12<br>
+> **状态**：本轮领域模型、原型及关联合同已修订，待用户审阅；真实服务与效果未验证<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-14<br>
-> **修订说明**：v0.8 → v0.9，接入跨模块事件目录，保持候选、入库与章节采用的边界<br>
+> **修订说明**：v0.11 → v0.12，同步Task／Solution新定义、多KC方法、Task先导、题内参考及相关Task独立取证；保持既定数值规则和工程边界；逐文件记录见MVP决定登记§68<br>
 
 本文设计教材准备、学习目标、学习空间和账号关系等产品业务，说明这些业务如何调用核心Space。教材助手归本模块管理，个人能力与目标达成计算仍由Evaluation负责；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。学习用时统计与提醒后置，不作为M1模块或验收条件。
 
 ## 1. 业务对象与模块组织
 
-本文件完整维护产品业务Operation；不是给每个内部函数或校验步骤建立一个OperationRun。共用身份、执行状态及Step合同见[系统底座§1.3](System_Foundation_Design.md#13-operationstep与operationrun)。本轮不决定HTTP路由、数据库或Agent框架。
+本文件维护产品业务处理合同；只有教材助手持续对话属于AI Operation。账号、上传、候选采用、章节关联、目标及空间维护是普通API／消息处理。它们可以调用已有查询或安排AI能力，但不因多步骤而各建OperationRun。共用边界见[系统底座§1.3](System_Foundation_Design.md#13-operationstep与operationrun)。本轮不展开传输接口。
 
 | 对象／责任 | 本模块拥有的数据与边界 |
 | --- | --- |
 | 账号与使用条件 | 固定管理员／学生身份、必要监护确认；产品业务对接认证组件，底座执行授权检查，M1不建设完整账号权限平台或家长产品 |
 | 教材与导入 | 原文件引用、教材信息、章节目录、助手对话、内容候选及采用；原件不被候选覆盖 |
 | 领域交接 | 保存待入库提交及来源有效性；Domain订阅请求后维护其待办、模板、知识和实例，本模块不写Domain私有数据 |
-| 目标与采用 | 章节→TaskTemplate／SolutionTemplate关联、目标定义、应用结果与空间当前引用；Claim及个人判断归Evaluation |
+| 目标与采用 | 章节→Task／Solution关联、目标定义、应用结果与空间当前引用；Claim及个人判断归Evaluation |
 | 学习空间 | 学生所有权、选用教材／目标、采用记录；持续对话与活动归Interaction，Evidence／Belief与目标达成归Evaluation |
 
 ### 1.1 共用入参与类型
 
-所有操作接收程序建立的`access_context`。有写入的调用携带稳定`request_id`；同操作、同作用范围、同请求身份只执行一次，参数变化返回`identity_conflict`。程序生成的`operation_run_id`不由LLM指定。更新请求带`expected_revision`，用于检查并发变化，不是Evolution版本。
+所有操作接收程序建立的`access_context`。有写入的调用携带稳定`request_id`；同操作、同作用范围、同请求身份只执行一次，参数变化返回`identity_conflict`。仅AI业务执行使用`operation_run_id`，由程序生成，不由LLM指定。更新请求带`expected_revision`，用于检查并发变化，不是Evolution版本。
 
 | 类型 | 必需字段／允许的可选字段 | 约束与唯一维护位置 |
 | --- | --- | --- |
@@ -32,13 +32,15 @@
 | `ConfirmationInput` | `student_id:ID, kind:enum, notice_ref:Ref, decision:enum, occurred_at:timestamp, source_ref:Ref` | kind为`guardian_consent`／`student_assent`；decision为`accepted`／`declined`／`pending`，分别表示同意／未同意／待确认，不把缺值当同意 |
 | `MaterialInput` | `domain_ref:Ref, title:string, source:string, files:FileReceipt[]`非空；`edition:string?` | FileReceipt含`storage_ref:Ref, type:pdf|jpg|png, original_name:string, order:int`；文件内分页保留顺序，版权页未知如实留空 |
 | `MaterialSelection` | `import_id:ID, scope:batch|chapter|content, basis_revision:Revision, source_refs:Ref[]` | chapter／content需对应对象引用；引用按本次明确请求确定，浏览位置不能自动替代选区 |
-| `CandidateRef` | `candidate_id:ID, candidate_revision:Revision, basis_revision:Revision` | 内容为KC／TaskInstance／SolutionInstance候选；图表和公式随所属元素，SI必须引用父题；结构语义见[内容规格§3.1](../design/Content_and_Model_Reference.md#31-提取什么以及怎样保存图表和来源) |
+| `CandidateRef` | `candidate_id:ID, candidate_revision:Revision, basis_revision:Revision` | 内容为KC／TaskInstance及题内参考解法候选；图表和公式随所属元素，参考解法必须归属于题目；结构语义见[内容规格§3.1](../design/Content_and_Model_Reference.md#31-提取什么以及怎样保存图表和来源) |
 | `GoalItem` | `item_id:ID?`（仅新增可省）、`title:string, claim_ref:Ref, chapter_refs:Ref[], task_conditions:object, method_mode:enum, methods:MethodRequirement[]` | method_mode为`specified`／`any_one`／`each`；MethodRequirement含`method_ref:Ref, chapter_refs:Ref[], aspects:{aspect_ref:Ref, condition_values:object}[]`。条件值受Claim判据约束；不提供逐目标概率阈值 |
 | `ApplicationRef` | 不可变应用结果引用 | 固定教材、目标、Domain、章节方法、Claim、活动定义及逐行为可用条件；不是新增课程模型 |
 
-未列为可选的操作入参均必需。`action`属于参数明确的操作族，分支不同不改变所有权。各操作编号依次定义逻辑Step `s01`、`s02`等；需要恢复的步骤持久保存此身份，后续插入步骤不得重排已使用身份。同步函数、AI循环和跨模块等待是Step的实现方式，不另编产品操作身份。
+既有入参与动作族保留为待审合同；编号条目说明处理次序，不统一当作持久Step。只有AI Operation中需要恢复的步骤按执行合同保留身份；普通函数、查询和短事务按自身提交边界处理，不逐项进入Agent框架。
 
 ## 2. 账号、角色与业务权限
+
+调用授权按[总体§6.6.1](System_Design.md#661-最小调用授权矩阵)细化；内部Space身份不冒充管理员。账号模块不因为维护身份而获得修改评价结果或私有Agent记忆的权限。
 
 依据：[PRD R01](../PRD.md#31-初次启动与试用账号m1-r01)、[R17](../PRD.md#51-谁定义谁产生谁可以修改m1-r17)。真实学习输入前必须核对使用条件；登录成功不代表必要确认已经完成。
 
@@ -165,7 +167,7 @@
 
 ### 4.1 `product.save_chapter_association`：添加、编辑或取消章节关联
 
-**调用与合同。** 管理员提交`action=add|update|remove, textbook_id, chapter_id, task_ref, expected_revision`；add／update另需非空`method_refs:Ref[]`。输出已保存的章节关联及由方法递归汇总的只读KC；不接收直接KC关联。
+**调用与合同。** 管理员提交`action=add|update|remove, textbook_id, chapter_id, task_ref, expected_revision`；add／update另需非空`method_refs:Ref[]`。输出已保存的章节关联及由章节所选方法直接汇总去重的只读KC；不接收直接KC关联。
 
 1. 从Domain公开读取所选Task及直接方法，核对同领域、引用有效和方法属于该Task；add／update至少一法。
 2. 比较修订；add保存新关联，update只替换本章方法，remove只删除该章节引用，不删领域对象。
@@ -189,10 +191,12 @@
 
 1. `check`读取原件／语义内容、章节方法、目标／Claim、活动定义和题目供给依据，保存引用固定的检查结果；可读、讲解答疑、反馈与正式评价分别列缺口。无备用题但可生成并检查不算自动阻塞。
 2. `confirm`复核检查依据仍有效、教材与目标及其适用关系合法；阻塞组合身份的缺口拒绝，其余逐行为限制随应用保存。检查过时要求重查。
-3. 共同提交新采用记录、组合当前引用、已选同一教材及同一目标的空间当前采用与`CourseApplied`／`LearningSpaceAdoptionChanged`事件；失败不替换旧有效引用，普通保存不走此步骤。
-4. 若某空间目标条件实际变化，再追加`LearningTargetApplied`供Evaluation订阅重新对照；不直接调用计算或修改概率。既有活动保留旧依据，后续活动读取新采用；目标结果更新不作为应用成功的前提。
+3. 共同提交新采用记录、组合当前引用及`CourseApplied`；对已选同一教材及同一目标、且当前采用实际改变的已有空间保存采用变化及`LearningSpaceAdoptionChanged`。失败不替换旧有效引用，普通保存不走此步骤。
+4. 若某空间目标条件实际变化，将`LearningTargetApplied`与该空间采用变化共同留存，供Evaluation订阅重新对照；不直接调用计算或修改概率。既有活动保留旧依据，后续活动读取新采用；目标结果更新不作为应用成功的前提。
 
 **恢复与验收。** 同请求恢复原应用结果，不重复更新空间；新的管理员确认使用新请求并校验前序。验证未确认不出现学生选项、部分评价缺口不封禁全章提问、更新不换目标身份、不改旧活动；跨对象提交方案由存储设计落实，失败不能出现一半空间被宣称成功。
+
+上述事件及定义保存事件的用途统一见[事件目录](README.md#6-跨模块事件目录)。首次个人采用由§5.1产生`LearningTargetApplied`；本节只在已有空间目标条件实际变化时产生。`LearningTargetSaved`、`CourseApplied`和`LearningSpaceAdoptionChanged`不另触发目标重评，仅更新教材内容且目标条件未变时也不额外触发。
 
 ## 5. 学习空间生命周期与核心输入
 
@@ -235,13 +239,13 @@
 
 ### 6.1 写入、事件与跨模块交接
 
-每项变更操作在结果可见前共同保存业务写入、请求去重收据及需投递的事件；需持久执行时另保存OperationRun及Step完成位置，短事务维护不强制建立后台任务。跨Space异步工作仅由事件触发；本模块作为消费方决定等待条件、期限及超时处理，底座提供通用支持。本方结束等待不自动取消Domain或Evaluation工作；具体恢复机制采用底座合同，内部函数不另起同源OperationRun。
+每项变更操作在结果可见前共同保存业务写入、请求去重收据及需投递的事件；AI能力保存OperationRun及必要Step位置；普通异步工作保留受理与处理进度，短事务不强制建立后台任务。跨Space异步工作仅由事件触发；本模块作为消费方决定等待条件、期限及超时处理，底座提供通用支持。本方结束等待不自动取消Domain或Evaluation工作；具体恢复机制采用底座合同，内部函数不另起同源OperationRun。
 
 | 交接事件 | 最小业务载荷（共用事件信封不重复） | 接收结果与边界 |
 | --- | --- | --- |
 | `DomainIntakeRequested` | `scope_id`为导入资源全局身份；`domain_id:ID, intake_request_id:ID, candidate_refs:Ref[]`均指向已采用不可变内容；类别、父题关系及来源经§5.2公开读取 | Domain负责受理和待办；`producer=domain, result_kind=intake_receipt`返回候选与待办／分组映射，失败保留原提交等待恢复，不自动入库 |
 | `MaterialCandidatesAdopted`／`MaterialImportDeleted` | 导入ID、替代／删除前后来源引用、受影响待入库提交引用 | Domain使尚未入库的过时来源不可继续；入库时仍复核来源有效性，防止通知延迟造成误入库 |
-| `LearningTargetApplied` | `scope_id, target_basis_ref, applied_at, previous_target_basis_ref?, application_ref, cause_ref`；`cause_ref`引用原请求收据／事实事件，持久执行另带可选`caused_by_operation_run_id` | 首次空间建立或目标条件变化时触发Evaluation目标对照；只更新目标结果，不增权或历史重算。仅补教材来源说明不发此事件 |
+| `LearningTargetApplied` | `scope_id, target_basis_ref, applied_at, previous_target_basis_ref?, application_ref, cause_ref`；`cause_ref`引用原请求收据／事实事件，仅由AI执行引发时可附`caused_by_operation_run_id`，普通处理不为此创建AI Run | 首次空间建立或目标条件变化时触发Evaluation目标对照；只更新目标结果，不增权或历史重算。仅补教材来源说明不发此事件 |
 
 本模块其他事件记录对应操作对象、前后引用、操作者与原因；学校／使用时长不由这些操作推算。账号及教材管理事件不冒充学生学习事件；空间创建和采用变化进入该空间只追加事件列表。
 
@@ -249,9 +253,11 @@
 
 `forbidden`拒绝越权，`invalid_request`说明字段／引用错误，`revision_conflict`要求重读，`identity_conflict`拒绝同请求换参数，`not_ready`说明使用／应用条件，`dependency_pending`表示本方尚未取得所需处理依据，不凭缺少通知推断对方未完成，`temporarily_unavailable`保留已提交结果等待技术恢复。空结果与合法未决不是技术失败；认证错误的外部披露由认证合同裁剪。
 
-本轮已给出15项操作的输入、完成条件、Step和最低验收。仍须细化：凭据／首次管理员初始化协议；文件上传及限额；Agent候选Schema；草稿修订、批量采用和空间更新的存储事务；查询分页与传输接口。这些不改变本文件的产品权限或完成条件，不能由LLM临时决定。
+15项业务入口分为1项AI Operation与14项普通处理，原有完成条件和最低验收仍适用。仍须细化：凭据／首次管理员初始化协议；文件上传及限额；Agent候选Schema；草稿修订、批量采用和空间更新的存储事务；查询分页与传输接口。这些不改变本文件的产品权限或完成条件，不能由LLM临时决定。
 
 端到端接收按以下顺序核对：账号与确认 → 批量接收 → 对话及候选采用 → 领域受理／入库 → 章节关联与目标 → 检查及确认应用 → 学生创建／进入空间 → 只读追溯。每项最小验收须配正常和本节失败分支；当前只定义验收输入，不声称已有实现或测试通过。
+
+自动重试结束后的失败收尾按[总体§6.5.1](System_Design.md#651-自动重试结束后的收尾责任)处理；本模块保留已采用／已提交部分，不以恢复名义重复采用或生成新请求。教材、学生消息和取证原文的保留／删除业务范围由本模块牵头提出，各数据所有者配合；未完成导入从列表移除不等于获准物理销毁来源，责任和确认时点见[总体§7.2.3](System_Design.md#723-详细设计事项的责任与确认时点)。
 
 ### 6.3 修订记录
 
@@ -263,3 +269,7 @@
 | v0.7 | 2026-11-13 | 对齐当前学习空间取材与后台授权，明确Operation选材及业务提交、底座通用权限检查的分工 |
 | v0.8 | 2026-11-14 | 承接教材Agent根据提示查看原页、修改候选及管理员核对采用的边界，不增加手工内容编辑器 |
 | v0.9 | 2026-11-14 | 接入跨模块事件目录，保持候选、入库与章节采用的边界 |
+| v0.10 | 2026-11-14 | 明确采用相关事件与唯一目标重评触发，承接授权、失败恢复及保留删除的业务责任 |
+| v0.11 | 2026-11-14 | 保留教材助手AI能力，账号、采用及空间维护改列普通处理，纠正Step及运行记录口径 |
+
+本轮修订（v0.12，2026-11-14）：同步Task／Solution新定义、多KC方法、Task先导、题内参考及相关Task独立取证；保持既定数值规则和工程边界。完整范围和检查见MVP决定登记§68。

@@ -24,7 +24,7 @@ export interface Integration {
   applications:{entryId:string;at:string;signature:string;goal:string;claim:string;teaching:string;requirements:string}[];
   notice?:string;
 }
-export const objectKinds:Record<ObjectKind,string>={kc:'知识成分',solution:'方法模板',task:'任务模板',instance:'具体题目'};
+export const objectKinds:Record<ObjectKind,string>={kc:'知识成分',solution:'方法',task:'任务',instance:'具体题目'};
 export const slots=[
   {key:'base',kind:'kc',name:'分率的参照整体'},
   {key:'multiply',kind:'kc',name:'求一个量的几分之几'},
@@ -71,7 +71,7 @@ export function normalizeExtraction(book:MockTextbook,integration:Integration,le
   }
   const visualChange=normalizeVisuals(book,integration);
   if(visualChange&&legacy)integration.notice='旧稿图表已按用途整理：教学辅助图不进入题面，归属不明的内容请核对。已有领域对象未自动改写。';
-  if(changed&&legacy)integration.notice='旧稿已按 KC、TaskInstance 和 SolutionInstance 展示，原文与已有引用保留。请重新核对；未记录的解法来源不会自动认作教材原有。';
+  if(changed&&legacy)integration.notice='旧稿已按 KC、TaskInstance 和 参考解法 展示，原文与已有引用保留。请重新核对；未记录的解法来源不会自动认作教材原有。';
 }
 
 function normalizeVisuals(book:MockTextbook,integration:Integration){
@@ -173,11 +173,11 @@ export function proposalSlots(e:SemanticEntry):{key:string;kind:ObjectKind;name:
   if(e.knowledgeOnly)return (e.knowledgeItems||[]).map(k=>({key:k.key,kind:'kc',name:k.name}));
   if(isFraction(e))return [...slots.filter(s=>s.kind!=='instance').map(s=>({...s})),...(e.knowledgeItems||[]).filter(k=>!slots.some(s=>s.key===k.key)).map(k=>({key:k.key,kind:'kc' as const,name:k.name})),...(e.solutionInstances||[]).filter(x=>!slots.some(s=>s.key===x.key)).map(x=>({key:x.key,kind:'solution' as const,name:x.name}))];
   if(isPractice(e))return [{key:'division',kind:'kc',name:'除以非零数等于乘以倒数'},{key:'order',kind:'kc',name:'同级运算从左到右'},{key:'methodCalc',kind:'solution',name:'从左到右计算连续除法'},{key:'task',kind:'task',name:'连续除以两个非零分数'}];
-  return [...(e.knowledgeItems||[]).map(k=>({key:k.key,kind:'kc' as const,name:k.name})),{key:'task',kind:'task',name:'本题所属任务模板'},...(e.solutionInstances||[]).map(s=>({key:s.key,kind:'solution' as const,name:s.name}))];
+  return [...(e.knowledgeItems||[]).map(k=>({key:k.key,kind:'kc' as const,name:k.name})),{key:'task',kind:'task',name:'本题所属任务'},...(e.solutionInstances||[]).map(s=>({key:s.key,kind:'solution' as const,name:s.name}))];
 }
 export function instanceCandidate(book:MockTextbook,e:SemanticEntry):Instance {
   const t=domainData.tasks.find(t=>t.id===e.bindings.task?.id&&t.domainId===book.domainId);
-  if(!t||!e.taskInstance)throw Error('请先匹配本题的 TaskTemplate。');
+  if(!t||!e.taskInstance)throw Error('请先匹配本题的 Task。');
   const q=blankInstance(t),existing=findObject('instance',e.bindings.question?.id,book.domainId) as Instance|undefined;
   q.id=existing?.id||e.taskInstance.id;
   Object.assign(q,{question:e.conditions+'\n'+e.question,bindings:{...e.taskInstance.parameters},table:null,visuals:clone(e.taskInstance.visuals||[]),answer:e.answer||(e.solutionInstances||[]).find(s=>s.origin!=='来源待确认')?.result||'',source:'教材导入',sourceNote:book.name+' · '+e.pages.join('、')+'页 · '+e.title+'；题目提取和归类为 mock。',solutions:(e.solutionInstances||[]).map(s=>({id:s.id,taskInstanceId:q.id,methodId:e.bindings[s.key]?.id||'',working:s.working,result:s.result,origin:s.origin,sourceNote:s.sourceNote,visuals:clone(s.visuals||[])}))});
@@ -239,7 +239,7 @@ export function seedIntegration(book:MockTextbook,integration:Integration,mode:'
 }
 export function generatedSolution(book:MockTextbook,e:SemanticEntry,methodId:string):ExtractedSolution {
   const task=findObject('task',e.bindings.task?.id,book.domainId) as Task|undefined;
-  if(!task?.methods.includes(methodId))throw Error('请先选择属于本题 TaskTemplate 的适用方法。');
+  if(!task?.methods.includes(methodId))throw Error('请先选择属于本题 Task 的适用方法。');
   const key=Object.keys(e.bindings).find(k=>e.bindings[k].id===methodId);
   const method=findObject('solution',methodId,book.domainId) as Method|undefined;
   if(!e.taskInstance||!method||!key)throw Error('本题或方法关联缺失。');
@@ -271,14 +271,14 @@ export function mappingIssues(book:MockTextbook,e:SemanticEntry){
   if(!isReviewed(book,e))issues.push('本项语义内容尚未核对，或来源／内容已有变化');
   if(e.knowledgeOnly)return [...issues,'此项只提取了 KC。可归入领域；课程使用仍需通过 Task 与 Solution 组织，不能直接将 KC 应用成学习任务。'];
   const t=domainData.tasks.find(t=>t.id===e.bindings.task?.id&&t.domainId===book.domainId);
-  if(!t)issues.push('尚未选择本项 TaskTemplate');else issues.push(...taskDefinitionIssues(t));
+  if(!t)issues.push('尚未选择本项 Task');else issues.push(...taskDefinitionIssues(t));
   if(!e.selectedMethods.length)issues.push('尚未选择本教材采用的方法');
   for(const id of e.selectedMethods)if(!t?.methods.includes(id))issues.push('所选方法不属于当前 Task，请在领域定义中检查关联');
   issues.push(...collectKnowledge(e.selectedMethods,book.domainId).issues);
   const q=domainData.instances.find(q=>q.id===e.bindings.question?.id&&q.domainId===book.domainId);
   if(!q)issues.push('尚未关联具体题目');
   else {
-    if(q.taskId!==t?.id)issues.push('题目不属于所选 TaskTemplate');
+    if(q.taskId!==t?.id)issues.push('题目不属于所选 Task');
     if(instanceStatus(q)!=='可用（mock）')issues.push('题目仍需完成归类和解答检查（mock）');
     if(JSON.stringify(q.visuals||[])!==JSON.stringify(e.taskInstance?.visuals||[]))issues.push('题面图表已变化，请重新保存实例');
     if(e.selectedMethods.some(id=>!q.solutions.some(s=>s.methodId===id)))issues.push('题目缺少本教材选用方法的具体解答');

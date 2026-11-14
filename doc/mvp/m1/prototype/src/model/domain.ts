@@ -10,9 +10,11 @@ export const parameterKinds=['数值','点／图形','函数／表达式','区�
 export interface Parameter { symbol:string; name:string; kind:string; role:typeof parameterRoles[number]; condition:string }
 export interface Completion { deliverable:string; criterion:string }
 export interface Variation { target:string; range:string; constraint:string }
+export interface TaskPrerequisite { taskId:string; reason:string; methodIds:string[] }
 export interface Task extends Entity {
   summary:string; goal:string; responsibility:string; requirements:Completion[];
   parameters:Parameter[]; relations:string; variations:Variation[]; exclusions:string; methods:string[];
+  prerequisites?:TaskPrerequisite[];
 }
 export const stepKinds={process:'顺序处理',choice:'条件选择',cases:'分类讨论',check:'检查与复查'} as const;
 export interface Route { condition:string; action:string; result:string; next:string }
@@ -23,25 +25,28 @@ export interface Step {
 }
 export interface Method extends Entity {
   description:string; conditions:string; inputs:string; output:string; steps:Step[]; kc:string[];
+  procedure?:string;
   ending?:{success:string;stop:string};
 }
 export interface Knowledge extends Entity { description:string; conditions:string; example:string; prerequisites:string[]; visuals?:ContentVisual[] }
-export interface InstanceSolution {
+export interface ReferenceSolution {
   methodId:string; working:string; id?:string; taskInstanceId?:string;
   origin?:'教材原有'|'系统生成'|'来源待确认'; sourceNote?:string; result?:string;
   visuals?:ContentVisual[];
 }
+// Existing saved records keep their content IDs and their enclosing question.
+export type InstanceSolution = ReferenceSolution;
 export interface Instance {
   reviewContent?:ReviewPart[];
   reviewSource?:{importId:string;itemId:string};
   id:string; domainId:string; taskId:string; version:number; question:string; bindings:Record<string,string>;
-  table:{headers:string[];rows:string[][]}|null; answer:string; solutions:InstanceSolution[];
+  table:{headers:string[];rows:string[][]}|null; answer:string; solutions:ReferenceSolution[];
   source:'人工编写'|'教材导入'; sourceNote:string; checkedSignature:string; checkedAt:string;
   visuals?:ContentVisual[];
 }
 export interface DomainData { domains:Domain[]; tasks:Task[]; methods:Method[]; knowledge:Knowledge[]; instances:Instance[] }
 export const kinds:Record<Kind,{name:string;english:string}> = {
-  task:{name:'任务模板',english:'TaskTemplate'}, solution:{name:'方法模板',english:'SolutionTemplate'}, kc:{name:'知识成分',english:'KnowledgeComponent'},
+  task:{name:'任务',english:'Task'}, solution:{name:'方法',english:'Solution'}, kc:{name:'知识成分',english:'KnowledgeComponent'},
 };
 export const clone=<T>(value:T):T=>JSON.parse(JSON.stringify(value));
 export const id=(prefix:string)=>prefix+'-'+crypto.randomUUID().slice(0,8).toUpperCase();
@@ -56,7 +61,7 @@ type StoredTask=Omit<Task,'parameters'|'variations'|'requirements'>&{
 function readTask(value:StoredTask):Task {
   const {output,...task}=value;
   return {...task,requirements:task.requirements??(output?[{deliverable:output,criterion:''}]:[]),
-    parameters:task.parameters.map(p=>({...p,kind:p.kind||'',role:p.role==='已知量'?'题目已给定':p.role==='最终输出'?'需要研究或求解':p.role as Parameter['role']})),
+    parameters:(task.parameters||[]).map(p=>({...p,kind:p.kind||'',role:p.role==='已知量'?'题目已给定':p.role==='最终输出'?'需要研究或求解':p.role as Parameter['role']})),
     variations:typeof task.variations==='string'?(task.variations?[{target:'旧版变化说明',range:task.variations,constraint:''}]:[]):task.variations};
 }
 try {
@@ -71,18 +76,24 @@ watch(domainData,value=>{
 },{deep:true});
 
 export function blankTask(domainId:string):Task {
-  return {id:id('TT'),domainId,name:'',version:0,summary:'',goal:'',responsibility:'',requirements:[],parameters:[],relations:'',variations:[],exclusions:'',methods:[]};
+  return {id:id('TT'),domainId,name:'',version:0,summary:'',goal:'',responsibility:'',requirements:[],parameters:[],relations:'',variations:[],exclusions:'',methods:[],prerequisites:[]};
 }
 export function blankMethod(domainId:string):Method {
-  return {id:id('ST'),domainId,name:'',version:0,description:'',conditions:'',inputs:'',output:'',steps:[],kc:[],ending:{success:'',stop:''}};
+  return {id:id('ST'),domainId,name:'',version:0,description:'',conditions:'',inputs:'',output:'',procedure:'',steps:[],kc:[],ending:{success:'',stop:''}};
 }
 export function blankStep():Step {
   return {title:'',detail:'',divided:false,taskId:'',solutionId:'',key:id('STEP'),kind:'process',inputs:'',output:'',next:'$next',routes:[],coverage:''};
 }
 export function readMethod(m:Method):Method {
-  return {...clone(m),ending:m.ending?clone(m.ending):{success:'',stop:''},steps:m.steps.map((s,i)=>({
+  return {...clone(m),procedure:methodProcedure(m),ending:m.ending?clone(m.ending):{success:'',stop:''},steps:m.steps.map((s,i)=>({
     ...s,key:s.key||'step-'+(i+1),kind:s.kind||'process',inputs:s.inputs||'',output:s.output||'',next:s.next||'$next',routes:clone(s.routes||[]),coverage:s.coverage||'',
   }))};
+}
+export function methodProcedure(m:Method):string {
+  if(m.procedure!==undefined)return m.procedure;
+  // Preserve the reasoning in old mock records, without interpreting calls as dependencies.
+  return m.steps.map((s,i)=>[`${i+1}. ${s.title}`,s.detail,
+    ...(s.routes||[]).map(r=>`${r.condition}：${r.action}；${r.result}`),s.coverage].filter(Boolean).join('\n')).join('\n\n');
 }
 export function nextLabel(m:Method,key:string){
   return key==='$next'?'下一步（末步后核对完成条件）':key==='$success'?'核对成功条件并结束':key==='$stop'?'未解决，停止当前方法':
@@ -126,58 +137,59 @@ export function saveEntity<T extends {id:string;version:number}>(rows:T[],value:
 }
 export function collection(kind:Kind){return kind==='task'?domainData.tasks:kind==='solution'?domainData.methods:domainData.knowledge;}
 
-export function knowledgeIssues(k:Knowledge,path:string[]=[]):string[]{
-  if(path.includes(k.id))return ['知识先修循环：'+[...path,k.id].map(x=>domainData.knowledge.find(y=>y.id===x)?.name||x).join(' → ')];
-  const issues:string[]=[];
-  issues.push(...visualIssues(k.visuals));
+export function knowledgeIssues(k:Knowledge):string[]{
+  const issues=visualIssues(k.visuals);
   if(!k.description.trim())issues.push(k.name+'：缺少知识定义');
   if(!k.conditions.trim())issues.push(k.name+'：缺少适用条件');
-  for(const key of k.prerequisites){const dep=domainData.knowledge.find(x=>x.id===key&&x.domainId===k.domainId);if(!dep)issues.push(k.name+'：先修知识不存在或不属本领域');else issues.push(...knowledgeIssues(dep,[...path,k.id]));}
-  return [...new Set(issues)];
+  return issues;
 }
 export function collectKnowledge(methodIds:string[],domainId:string){
   const rows=new Map<string,{knowledge:Knowledge;paths:string[][]}>(), issues=new Set<string>();
-  function visit(key:string,path:string[]){
+  for(const key of new Set(methodIds)){
     const m=domainData.methods.find(x=>x.id===key&&x.domainId===domainId);
-    if(!m){issues.add('引用的方法不存在或不属本领域：'+key);return;}
-    if(path.includes(key)){issues.add('方法循环：'+[...path,key].map(x=>domainData.methods.find(y=>y.id===x)?.name||x).join(' → '));return;}
-    for(const [field,label] of [[m.description,'方法思路'],[m.conditions,'适用条件'],[m.inputs,'输入'],[m.output,'输出']])if(!field.trim())issues.add(m.name+'：缺少'+label);
-    if(!m.steps.length)issues.add(m.name+'：尚无求解步骤');
-    for(const issue of methodFlowIssues(m))issues.add(m.name+'：'+issue);
-    if(!m.kc.length&&!m.steps.some(s=>s.divided&&s.solutionId))issues.add(m.name+'：尚未关联知识依据');
-    for(const key of m.kc){
+    if(!m){issues.add('引用的方法不存在或不属本领域：'+key);continue;}
+    for(const [field,label] of [[m.description,'方法思路'],[m.conditions,'适用条件'],[methodProcedure(m),'关键过程']])if(!field.trim())issues.add(m.name+'：缺少'+label);
+    if(!m.kc.length)issues.add(m.name+'：尚未关联知识依据');
+    if(m.procedure===undefined&&m.steps.some(s=>s.divided))issues.add(m.name+'：旧版子调用尚未核对，请确认本方法所用知识与过程；不再递归汇总');
+    for(const key of new Set(m.kc)){
       const k=domainData.knowledge.find(x=>x.id===key&&x.domainId===domainId);
       if(!k){issues.add(m.name+'：知识不存在或不属本领域');continue;}
-      for(const issue of knowledgeIssues(k))issues.add(issue);
+      knowledgeIssues(k).forEach(x=>issues.add(x));
       if(!rows.has(key))rows.set(key,{knowledge:k,paths:[]});
-      rows.get(key)!.paths.push([...path,m.id]);
-    }
-    for(const [index,s] of m.steps.entries()){
-      if(!s.title.trim()||!s.detail.trim())issues.add(m.name+'：步骤'+(index+1)+'缺少名称或输入输出说明');
-      if(!s.divided)continue;
-      const t=domainData.tasks.find(x=>x.id===s.taskId&&x.domainId===domainId);
-      if(!t)issues.add(m.name+'：步骤'+(index+1)+'尚未选择有效子任务');
-      else for(const issue of taskDefinitionIssues(t))issues.add(m.name+'：子任务“'+t.name+'”'+issue);
-      if(!s.solutionId){issues.add(m.name+'：步骤'+(index+1)+'尚未选择子方法');continue;}
-      if(t&&!t.methods.includes(s.solutionId))issues.add(m.name+'：子方法不在所选子任务的方法中');
-      visit(s.solutionId,[...path,m.id]);
+      rows.get(key)!.paths.push([m.id]);
     }
   }
-  for(const key of new Set(methodIds))visit(key,[]);
   return {rows:[...rows.values()],issues:[...issues]};
+}
+export function prerequisiteIssues(task:Task):string[]{
+  const issues=new Set<string>();
+  const visit=(t:Task,path:string[])=>{
+    if(path.includes(t.id)){issues.add('先导任务存在循环');return;}
+    const seen=new Set<string>();
+    for(const dep of t.prerequisites||[]){
+      if(seen.has(dep.taskId))issues.add('先导任务重复');
+      seen.add(dep.taskId);
+      if(dep.taskId===t.id){issues.add('不能将自身设为先导任务');continue;}
+      if(!dep.reason.trim())issues.add('请说明先导理由');
+      if(dep.methodIds.some(key=>!t.methods.includes(key)))issues.add('先导关系的适用方法不在当前任务中');
+      const next=dep.taskId===task.id?task:domainData.tasks.find(x=>x.id===dep.taskId&&x.domainId===task.domainId);
+      if(!next)issues.add('先导任务不存在或不属本领域');else visit(next,[...path,t.id]);
+    }
+  };
+  visit(task,[]);
+  return [...issues];
 }
 export function taskDefinitionIssues(t:Task):string[]{
   const issues:string[]=[];
   for(const [value,label] of [[t.goal,'任务目标'],[t.responsibility,'学习者承担的工作'],[t.relations,'条件与关系'],[t.exclusions,'适用边界']])if(!value.trim())issues.push('缺少'+label);
   if(!t.requirements.length)issues.push('尚未定义完成要求');
   if(t.requirements.some(r=>!r.deliverable.trim()||!r.criterion.trim()))issues.push('完成要求的交付内容和完成条件需要补齐');
-  if(!t.parameters.length)issues.push('尚未定义对象与变量');
   if(t.parameters.some(p=>!p.symbol.trim()||!p.name.trim()||!p.kind.trim()||!parameterRoles.includes(p.role)||!p.condition.trim()))issues.push('对象与变量的标识、名称、类型、用途和约束需要补齐');
   if(new Set(t.parameters.map(p=>p.symbol.trim())).size!==t.parameters.length)issues.push('对象或变量标识重复');
   if(t.variations.some(v=>!v.target.trim()||!v.range.trim()||!v.constraint.trim()))issues.push('允许的变化需要补齐变化对象、范围和条件');
   return issues;
 }
-export function taskIssues(t:Task){return [...taskDefinitionIssues(t),...(!t.methods.length?['尚未关联方法']:collectKnowledge(t.methods,t.domainId).issues)];}
+export function taskIssues(t:Task){return [...taskDefinitionIssues(t),...prerequisiteIssues(t),...(!t.methods.length?['尚未关联方法']:collectKnowledge(t.methods,t.domainId).issues)];}
 export function instanceIssues(q:Instance):string[]{
   const t=domainData.tasks.find(x=>x.id===q.taskId&&x.domainId===q.domainId);
   if(!t)return ['所属任务不存在'];
@@ -185,10 +197,8 @@ export function instanceIssues(q:Instance):string[]{
   issues.push(...visualIssues(q.visuals),...q.solutions.flatMap(s=>visualIssues(s.visuals)));
   if(q.visuals?.some(v=>v.kind==='description'))issues.push('题面必要图形尚待补绘，不能视为完整题面');
   if(!q.question.trim())issues.push('请填写题面');
-  if(t.parameters.some(p=>p.role==='题目已给定'&&!q.bindings[p.symbol]?.trim()))issues.push('请填写所有题目已给定信息的具体内容');
   if(!q.answer.trim())issues.push('请填写参考答案或评分要点');
   if(!q.sourceNote.trim())issues.push('请填写来源说明');
-  if(!q.solutions.length)issues.push('请至少选择一种参考方法');
   for(const s of q.solutions){
     if(!t.methods.includes(s.methodId))issues.push('参考方法不在当前任务的方法中');
     if(!s.working.trim())issues.push('请补齐所选方法的具体解答');
@@ -199,12 +209,9 @@ export function instanceIssues(q:Instance):string[]{
 // Invalidates a mock check when the instance or any relevant definition changes.
 export function instanceSignature(q:Instance):string {
   const t=domainData.tasks.find(x=>x.id===q.taskId);
-  const methods=new Set<string>(), knowledge=new Set<string>(), tasks=new Set<string>([q.taskId]);
-  function visitKC(key:string){if(knowledge.has(key))return;knowledge.add(key);domainData.knowledge.find(k=>k.id===key)?.prerequisites.forEach(visitKC);}
-  function visit(key:string){if(methods.has(key))return;methods.add(key);const m=domainData.methods.find(x=>x.id===key);m?.kc.forEach(visitKC);m?.steps.filter(s=>s.divided).forEach(s=>{tasks.add(s.taskId);visit(s.solutionId);});}
-  q.solutions.forEach(s=>visit(s.methodId));
+  const methods=new Set(q.solutions.map(s=>s.methodId)),knowledge=new Set(domainData.methods.filter(m=>methods.has(m.id)).flatMap(m=>m.kc));
   const {id:_,version:__,checkedSignature:___,checkedAt:____,...content}=q;
-  return JSON.stringify({content,task:t,methods:domainData.methods.filter(m=>methods.has(m.id)),knowledge:domainData.knowledge.filter(k=>knowledge.has(k.id)),subtasks:domainData.tasks.filter(x=>tasks.has(x.id))});
+  return JSON.stringify({content,task:t,methods:domainData.methods.filter(m=>methods.has(m.id)),knowledge:domainData.knowledge.filter(k=>knowledge.has(k.id))});
 }
 export function instanceStatus(q:Instance){
   if(!q.checkedSignature)return '待检查';

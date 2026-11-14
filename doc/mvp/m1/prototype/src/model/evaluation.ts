@@ -1,5 +1,5 @@
 import { reactive, ref, watch } from 'vue';
-import { clone, id, domainData, type Task, type Method, type Step } from './domain';
+import { clone, id, domainData, type Task, type Method } from './domain';
 import { imports } from './imports';
 import { chapters } from './material-flow';
 
@@ -174,38 +174,15 @@ export function claimReferenceIssues(c:Claim){
   return issues;
 }
 
-export interface MethodNode {
-  taskId:string; methodId:string; method?:Method; owner?:Claim; step?:Step; entryConditions:string[];
-  issue:string; sources:Claim[]; children:MethodNode[];
+export interface MethodCriteria {
+  taskId:string; methodId:string; method?:Method; owner?:Claim;
+  issue:string;
 }
-// Expand occurrences, not a set of method IDs: a shared submethod can be called twice with different inputs.
-export function methodTree(root:Claim,methodId:string):MethodNode {
-  function visit(taskId:string,key:string,path:string[],step?:Step,parent?:Method):MethodNode {
-    const task=domainData.tasks.find(t=>t.id===taskId&&t.domainId===root.domainId);
-    const method=domainData.methods.find(m=>m.id===key&&m.domainId===root.domainId);
-    const entryConditions=step?.key?parent?.steps.flatMap(s=>(s.routes||[]).filter(r=>r.next===step.key).map(r=>r.condition))||[]:[];
-    const node:MethodNode={taskId,methodId:key,method,step,entryConditions,issue:'',sources:[],children:[]};
-    if(!task||!method||!task.methods.includes(key)){
-      node.issue='Domain 中的子任务或所选方法缺失，请核对该分解步骤';
-      return node;
-    }
-    const pair=taskId+'/'+key;
-    if(path.includes(pair)){
-      node.issue='分解路径重复，已在此处停止展开';
-      return node;
-    }
-    if(!step)node.owner=root;
-    else {
-      node.sources=evaluationData.claims.filter(c=>c.domainId===root.domainId&&c.taskId===taskId);
-      const matching=node.sources.filter(c=>c.taskVersion===task.version);
-      if(matching.length===1)node.owner=matching[0];
-      else if(matching.length>1)node.issue='有多个当前版本的子任务 Claim，请核对判据来源';
-      else node.issue=node.sources.length?'子任务 Claim 引用旧版 Task，请核对版本':'子任务尚无 Claim，请先建立本层判据';
-    }
-    node.children=method.steps.filter(s=>s.divided).map(s=>visit(s.taskId,s.solutionId,[...path,pair],s,method));
-    return node;
-  }
-  return visit(root.taskId,methodId,[]);
+// Only the current Task's method and Claim contribute criteria.
+export function methodCriteria(root:Claim,methodId:string):MethodCriteria {
+  const task=claimTask(root),method=domainData.methods.find(m=>m.id===methodId&&m.domainId===root.domainId);
+  return {taskId:root.taskId,methodId,method,owner:root,
+    issue:!task||!method||!task.methods.includes(methodId)?'当前 Task 或方法引用缺失':''};
 }
 
 function executionIssues(c:Claim,key:string){
@@ -215,34 +192,33 @@ function executionIssues(c:Claim,key:string){
   if(binding.criteria.some(id=>!c.criteria.some(item=>item.id===id&&completeCriterion(item))))return [prefix+'执行判据缺失或待补充'];
   return [];
 }
-function treeIssues(node:MethodNode,aspects:string[],checkExecution=aspects.some(id=>id!=='explanation')):string[]{
+function methodCriteriaIssues(node:MethodCriteria,aspects:string[],checkExecution=aspects.some(id=>id!=='explanation')):string[]{
   const issues=node.issue?[methodName(node.methodId)+'：'+node.issue]:[];
   if(node.owner){
     if(checkExecution)issues.push(...executionIssues(node.owner,node.methodId));
-    if(!node.step){
+    {
       for(const id of aspects){
         const rule=aspectRule(node.owner,node.methodId,id);
         if(!rule.judgment.trim()||!rule.condition.trim())issues.push(methodName(node.methodId)+'：评价规则或证据条件待填写');
       }
     }
   }
-  if(checkExecution)node.children.forEach(child=>issues.push(...treeIssues(child,[],true)));
   return issues;
 }
 export function claimIssues(c:Claim){
   const issues=claimReferenceIssues(c);
-  for(const key of directMethods(c))issues.push(...treeIssues(methodTree(c,key),c.aspects.filter(a=>a.enabled).map(a=>a.id),true));
+  for(const key of directMethods(c))issues.push(...methodCriteriaIssues(methodCriteria(c,key),c.aspects.filter(a=>a.enabled).map(a=>a.id),true));
   return [...new Set(issues)];
 }
 export function requirementBasis(c:Claim,r:Requirement){
-  function source(node:MethodNode):unknown {
-    return [node.taskId,node.methodId,node.method?.version,node.owner?.id,node.owner?.version,node.issue,node.children.map(source)];
+  function source(node:MethodCriteria):unknown {
+    return [node.taskId,node.methodId,node.method?.version,node.owner?.id,node.owner?.version,node.issue];
   }
-  return JSON.stringify(r.methods.map(key=>source(methodTree(c,key))));
+  return JSON.stringify(r.methods.map(key=>source(methodCriteria(c,key))));
 }
 export function mappedChapters(t:LearningTarget,c:Claim){return t.chapters.filter(ch=>chapterLinks(t.bookId,ch).some(l=>l.taskId===c.taskId));}
 export function allowedMethods(t:LearningTarget,c:Claim,selected:string[]){
-  return directMethods(c).filter(key=>selected.length>0&&selected.every(ch=>chapterLinks(t.bookId,ch).some(l=>l.taskId===c.taskId&&l.methodIds.includes(key))));
+  return directMethods(c).filter(key=>selected.length>0&&selected.some(ch=>chapterLinks(t.bookId,ch).some(l=>l.taskId===c.taskId&&l.methodIds.includes(key))));
 }
 export function candidateIssues(t:LearningTarget,c:Claim){
   const d=bookImport(t.bookId),issues:string[]=[];
@@ -255,8 +231,8 @@ export function candidateIssues(t:LearningTarget,c:Claim){
   else {
     const aspects=c.aspects.filter(a=>a.enabled);
     const hasUsableCell=[...eligible].some(key=>{
-      const tree=methodTree(c,key);
-      return aspects.some(a=>!treeIssues(tree,[a.id]).length);
+      const tree=methodCriteria(c,key);
+      return aspects.some(a=>!methodCriteriaIssues(tree,[a.id]).length);
     });
     if(!hasUsableCell)issues.push('章节所用方法的判据待准备');
   }
@@ -270,7 +246,7 @@ export function requirementIssues(t:LearningTarget,r:Requirement){
   if(!r.chapters.length||r.chapters.some(ch=>!t.chapters.includes(ch)||!bookChapters(t.bookId).includes(ch)||!mappedChapters(t,c).includes(ch)))issues.push('要求章节不在目标范围内或未关联该任务');
   const allowed=allowedMethods(t,c,r.chapters);
   if(!r.methods.length||r.methods.some(m=>!allowed.includes(m)))issues.push('所选方法与教材章节不兼容，请核对章节关联');
-  for(const key of r.methods)issues.push(...treeIssues(methodTree(c,key),r.standards.map(s=>s.aspectId)));
+  for(const key of r.methods)issues.push(...methodCriteriaIssues(methodCriteria(c,key),r.standards.map(s=>s.aspectId)));
   if(r.criteriaBasis&&r.criteriaBasis!==requirementBasis(c,r))issues.push('引用的判据来源或方法版本已变更，请重新核对学习要求');
   if(!r.name.trim()||!r.scope.trim())issues.push('请填写学习要求名称和具体任务范围');
   if(!r.standards.length||r.standards.some(s=>!s.text.trim()||!c.aspects.some(a=>a.id===s.aspectId&&a.enabled)))issues.push('请选择适用评价方面，并填写达标标准');

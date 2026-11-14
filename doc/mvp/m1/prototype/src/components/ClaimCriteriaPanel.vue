@@ -2,11 +2,10 @@
 import { computed, ref, watch } from 'vue';
 import WorkbenchDialog from './WorkbenchDialog.vue';
 import AspectRulesPanel from './AspectRulesPanel.vue';
-import MethodCriteriaTree from './MethodCriteriaTree.vue';
 import { clone } from '../model/domain';
 import {
   completeCriterion, directMethods, evaluationData, executionCriteria,
-  methodName, methodTree, newCriterion, saveDefinition, type Claim, type Criterion, type MethodExecution,
+  methodName, methodCriteria, newCriterion, saveDefinition, type Claim, type Criterion, type MethodExecution,
 } from '../model/evaluation';
 
 const props=defineProps<{claim:Claim;requestedMethod:string;blocked:boolean}>();
@@ -16,7 +15,7 @@ const selectedId=computed(()=>{
   if(!props.requestedMethod)return methods.value[0]||'';
   return methods.value.includes(props.requestedMethod)?props.requestedMethod:'';
 });
-const selected=computed(()=>selectedId.value?methodTree(props.claim,selectedId.value):undefined);
+const selected=computed(()=>selectedId.value?methodCriteria(props.claim,selectedId.value):undefined);
 const checks=computed(()=>executionCriteria(props.claim,selectedId.value));
 const tabId=(key:string)=>'method-tab-'+props.claim.id+'-'+key;
 const panelId=computed(()=>'method-panel-'+props.claim.id);
@@ -36,10 +35,9 @@ function navigateTab(event:KeyboardEvent,key:string){
 }
 const mode=ref<''|'criterion'|'remove'|'binding'>('');
 const item=ref<Criterion>(newCriterion()), binding=ref<MethodExecution>();
-const returnToRule=ref(false), expanded=ref(''), error=ref('');
+const returnToRule=ref(false), error=ref('');
 watch(selectedId,()=>{
   mode.value='';
-  expanded.value='';
   binding.value=undefined;
   returnToRule.value=false;
 });
@@ -86,7 +84,7 @@ function saveBinding(){
   const next=clone(props.claim);
   next.executions=next.executions.filter(e=>e.methodId!==selected.methodId);
   if(selected.criteria.length)next.executions.push(selected);
-  if(commit(next,'修改「'+methodName(selected.methodId)+'」的本层执行判据'))close();
+  if(commit(next,'修改「'+methodName(selected.methodId)+'」的本方法执行判据'))close();
 }
 function removeCriterion(){
   if(usage(item.value.id).length){error.value='请先解除这条判据的引用。';return;}
@@ -116,16 +114,11 @@ function removeCriterion(){
           <thead><tr><th>判据</th><th>满足的表现</th><th>操作</th></tr></thead>
           <tbody><tr v-for="c in checks" :key="c.id" :data-criterion="c.id">
             <td><strong>{{c.name}}</strong><small>{{c.id}}{{completeCriterion(c)?'':' · 待补充'}}</small></td><td>{{c.met||'待填写'}}</td>
-            <td><button class="btn" :disabled="blocked" :aria-label="'编辑本层判据 '+c.name" @click="editCriterion(c)">编辑</button></td>
+            <td><button class="btn" :disabled="blocked" :aria-label="'编辑本方法判据 '+c.name" @click="editCriterion(c)">编辑</button></td>
           </tr></tbody>
         </table>
         <p v-else class="muted">本方法的执行判据待关联。</p>
-        <template v-if="selected.children.length">
-          <button class="text-link tree-toggle" :aria-expanded="expanded===selectedId" @click="expanded=expanded===selectedId?'':selectedId">{{expanded===selectedId?'收起':'展开'}}子方法（{{selected.children.length}}）</button>
-          <div v-if="expanded===selectedId" class="method-children">
-            <MethodCriteriaTree v-for="(child,i) in selected.children" :key="i" :node="child"/>
-          </div>
-        </template>
+
       </section>
       <AspectRulesPanel :key="selectedId" :claim="claim" :method-id="selectedId" :blocked="blocked" @saved="emit('saved',$event)"/>
     </template>
@@ -135,7 +128,7 @@ function removeCriterion(){
   <details class="panel table-scroll criterion-library"><summary>本 Task 的可复用判据（{{claim.criteria.length}}）</summary>
     <div class="library-actions"><button class="btn primary" :disabled="blocked" @click="editCriterion()">新建判据</button></div>
     <table v-if="claim.criteria.length" class="data-table criterion-list">
-      <thead><tr><th>判据</th><th>满足的表现</th><th>本层引用</th><th>操作</th></tr></thead>
+      <thead><tr><th>判据</th><th>满足的表现</th><th>本方法引用</th><th>操作</th></tr></thead>
       <tbody><tr v-for="c in claim.criteria" :key="c.id" :data-criterion="c.id">
         <td><strong>{{c.name}}</strong><small>{{c.id}}{{completeCriterion(c)?'':' · 待补充'}}</small></td>
         <td>{{c.met||'待填写'}}</td>
@@ -146,7 +139,7 @@ function removeCriterion(){
           <button class="btn" :aria-label="'删除判据 '+c.name" :disabled="blocked||!!usage(c.id).length" :title="usage(c.id).length?'先解除现有引用':'删除判据'" @click="item=clone(c);error='';mode='remove'">删除</button></div></td>
       </tr></tbody>
     </table>
-    <p v-else class="empty">先创建用于检查求解过程和结果的判据，再关联到本层方法。</p>
+    <p v-else class="empty">先创建用于检查求解过程和结果的判据，再关联到本方法方法。</p>
   </details>
 
   <details v-if="claim.previous" class="panel"><summary>旧版配置参考</summary>
@@ -169,7 +162,7 @@ function removeCriterion(){
     <label>正反样例（选填）<textarea v-model="item.examples" rows="2"/></label>
     <footer class="dialog-footer"><button class="btn" @click="close">取消</button><button class="btn primary" :disabled="blocked" @click="saveCriterion">保存判据</button></footer>
   </WorkbenchDialog>
-  <WorkbenchDialog v-if="mode==='binding'&&binding" title="关联本层执行判据" wide @close="close">
+  <WorkbenchDialog v-if="mode==='binding'&&binding" title="关联本方法执行判据" wide @close="close">
     <strong>{{methodName(binding.methodId)}}</strong>
     <p v-if="error" role="alert" class="callout danger">{{error}}</p>
     <div class="row-between"><p>选择本方法需要核对的过程和结果。</p><button class="btn" @click="editCriterion(undefined,true)">新建判据</button></div>

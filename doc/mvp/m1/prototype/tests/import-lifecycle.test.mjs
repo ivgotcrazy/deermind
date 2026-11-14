@@ -5,7 +5,7 @@ import { createPreviewServer } from '../scripts/serve.mjs';
 const expect=baseExpect.configure({timeout:10000});
 // The old source/semantic tabs were replaced. Keep upload, interruption and deletion coverage here.
 test('import lifecycle keeps domain requirement, source pages and scoped draft deletion',async t=>{
-  const server=createPreviewServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch({headless:true});const page=await browser.newPage();page.setDefaultTimeout(10000);page.on('dialog',d=>d.accept());
+  const server=createPreviewServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch({headless:true,channel:process.env.PLAYWRIGHT_CHANNEL||'msedge'});const page=await browser.newPage();page.setDefaultTimeout(10000);page.on('dialog',d=>d.accept());
   t.after(async()=>{await browser.close();await new Promise(r=>server.close(r));});const btn=name=>page.getByRole('button',{name,exact:true});
   await page.goto('http://127.0.0.1:'+server.address().port+'/admin/#/textbooks');await btn('导入教材').click();await expect(btn('上传并开始整理')).toBeDisabled();await btn('新建领域').click();await page.getByLabel('领域名称',{exact:true}).fill('导入边界测试领域');await btn('创建并选用').click();
   await page.locator('input[type=file]').setInputFiles({name:'notes.txt',mimeType:'text/plain',buffer:Buffer.from('text')});await expect(page.getByRole('alert')).toContainText('请选择PDF');

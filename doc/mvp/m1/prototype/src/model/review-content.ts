@@ -105,9 +105,9 @@ export function matchingIssues(item:ReviewItem,domainId:string){
   const task=domainData.tasks.find(t=>t.id===item.parts.find(p=>p.role==='question')?.templateId&&t.domainId===domainId);
   for(const p of targetRows(item)){
     if(!definitions(p.role,domainId).some(d=>d.id===p.templateId))errors.push(p.name+'尚未匹配');
-    if(p.role==='solution'&&!task?.methods.includes(p.templateId))errors.push(p.name+'不属于当前任务模板');
+    if(p.role==='solution'&&!task?.methods.includes(p.templateId))errors.push(p.name+'不属于当前任务');
   }
-  if(task){if(!task.methods.length)errors.push('任务模板至少需要一个方法定义；不等于教材必须提供解法实例');for(const p of task.parameters.filter(p=>p.role==='题目已给定'))if(!item.parts.find(p=>p.role==='question')?.parameters[p.symbol]?.trim())errors.push('请填写模板参数 '+p.symbol+' 的对应值');}
+  if(task){if(!task.methods.length)errors.push('任务至少需要一个方法定义；不等于教材必须提供解法实例');for(const p of task.parameters.filter(p=>p.role==='题目已给定'))if(!item.parts.find(p=>p.role==='question')?.parameters[p.symbol]?.trim())errors.push('请填写任务参数 '+p.symbol+' 的对应值');}
   return [...new Set(errors)];
 }
 export function saveReviewMapping(item:ReviewItem,domainId:string,importId:string){
@@ -126,8 +126,8 @@ export function seedReviewDefinitions(domainId:string){
   for(const d of reviewCatalog){
     const base={id:ids[d.id],domainId,name:d.title,version:0};
     if(d.kind==='KnowledgeComponent'&&!domainData.knowledge.some(x=>x.id===base.id))saveEntity(domainData.knowledge,{...base,description:d.definition,conditions:'本轮样例适用范围',example:'',prerequisites:[]});
-    if(d.kind==='SolutionTemplate'&&!domainData.methods.some(x=>x.id===base.id))saveEntity(domainData.methods,{...base,description:d.definition,conditions:'按教材给定条件和方法范围核对',inputs:'本题的已知条件',output:'求解过程或说明',steps:[],kc:d.kcIds.map(k=>ids[k]),ending:{success:'达到本任务要求',stop:'条件不足时停止'}});
-    if(d.kind==='TaskTemplate'&&!domainData.tasks.some(x=>x.id===base.id))saveEntity(domainData.tasks,{...base,summary:d.definition,goal:d.definition,responsibility:'完成本题要求',requirements:[],parameters:d.id==='TT-CHAIN'?['A','r','s'].map((symbol,i)=>({symbol,name:['气象人数','摄影相对气象的比例','航模相对摄影的比例'][i],kind:'数值',role:'题目已给定' as const,condition:'按教材给定值'})):[],relations:d.definition,variations:[],exclusions:'超出本定义的任务另行建模',methods:d.solutionIds.map(k=>ids[k])});
+    if(d.kind==='Solution'&&!domainData.methods.some(x=>x.id===base.id))saveEntity(domainData.methods,{...base,description:d.definition,conditions:'按教材给定条件和方法范围核对',inputs:'本题的已知条件',output:'求解过程或说明',steps:[],kc:d.kcIds.map(k=>ids[k]),ending:{success:'达到本任务要求',stop:'条件不足时停止'}});
+    if(d.kind==='Task'&&!domainData.tasks.some(x=>x.id===base.id))saveEntity(domainData.tasks,{...base,summary:d.definition,goal:d.definition,responsibility:'完成本题要求',requirements:[],parameters:d.id==='TT-CHAIN'?['A','r','s'].map((symbol,i)=>({symbol,name:['气象人数','摄影相对气象的比例','航模相对摄影的比例'][i],kind:'数值',role:'题目已给定' as const,condition:'按教材给定值'})):[],relations:d.definition,variations:[],exclusions:'超出本定义的任务另行建模',methods:d.solutionIds.map(k=>ids[k])});
   }
 }
 export function initializeReview(draft:ImportDraft):ReviewState {

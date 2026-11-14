@@ -1,14 +1,14 @@
 # M1 交互原型
 
-> **版本**：v0.7<br>
+> **版本**：v0.8<br>
 > **文档性质**：M1独立原型的范围、启动与复用说明<br>
-> **状态**：教材助手持续对话、引用、候选核对及采用已有mock；保留领域入库和章节关联<br>
+> **状态**：本轮领域模型、原型及关联合同已修订，待用户审阅；真实服务与效果未验证<br>
 > **上游依据与基线**：[M1 PRD](../PRD.md)、[交互规格](../design/Interaction_Design.md)及用户关于在M1目录新建精简原型的要求<br>
 > **维护责任**：Codex维护；用户确认重要产品取舍<br>
-> **评审记录**：用户确认教材助手原型暂告一段落并授权同步；作者复采截图与走查，不等于真实解析或M1工程Gate通过<br>
+> **评审记录**：用户批准模型变更及完整实施；作者检查见MVP决定登记§68，不代表真实效果验收通过<br>
 > **写作规范**：[设计文档规范 v1.1](../../../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-09<br>
-> **修订说明**：v0.6 → v0.7，同步教材助手持续对话、引用、候选核对和采用，补充截图及实现边界；未改原型源码，逐文件记录见M1决定登记§26<br>
+> **更新日期**：2026-11-14<br>
+> **修订说明**：v0.7 → v0.8，同步新领域模型、现行文档版本、原型入口与检查边界；逐文件记录见MVP决定登记§68<br>
 
 ---
 
@@ -29,15 +29,17 @@
 
 默认地址是[http://127.0.0.1:5182/admin/#/textbooks](http://127.0.0.1:5182/admin/#/textbooks)。旧5181仍是旧原型，根目录原来的`prototype.cmd`也仍启动旧版，二者不会互相替换。
 
+**新模型入口：** 在领域列表点“载入示例领域”，选择“理解 d=v×t · 新模型示例”。可查看两种方法、多个KC、按方法适用的先导以及题内参考；再到评估管理选择这个领域查看Claim。样例使用独立领域身份，重载不覆盖已有内容。
+
 **走查路径：** 先在[领域管理](http://127.0.0.1:5182/admin/#/domain)新建领域或载入示例，查看Task、Solution、KC与实例；再在教材管理导入并选择领域，载入真实书页或四例样例，解析并核对。在教材助手中引用内容、说明问题，核对候选并继续修正，采用后选择题目／解法／知识提交领域；处理完回教材添加章节任务及方法关联。
 
-在[评估管理](http://127.0.0.1:5182/admin/#/evaluation)点「打开四分之一样例」，切换两种方法，核对本层执行判据及四方面评价规则。到[目标管理](http://127.0.0.1:5182/admin/#/targets)打开同一样例，编辑学习要求并比较任选与分别达标。图文步骤见[交互规格§1.5](../design/Interaction_Design.md#15-评估管理与目标管理)。
+在[评估管理](http://127.0.0.1:5182/admin/#/evaluation)点「打开四分之一样例」，切换两种方法，核对本方法执行判据及四方面评价规则。到[目标管理](http://127.0.0.1:5182/admin/#/targets)打开同一样例，编辑学习要求并比较任选与分别达标。图文步骤见[交互规格§1.5](../design/Interaction_Design.md#15-评估管理与目标管理)。
 
 在[交互活动](http://127.0.0.1:5182/admin/#/interaction)切换讲解、答疑、检测或自由交谈，维护蓝图、活动级和节点级规则及推荐策略；节点只显示本节点引用。用[原有记录入口](http://127.0.0.1:5182/student/?mode=records)产生固定mock活动，再到“运行记录”查看；[默认学生端](http://127.0.0.1:5182/student/)的预置活动森林独立保存，不会混入该管理视图。具体操作见[交互规格§1.6](../design/Interaction_Design.md#16-四类活动蓝图与规则策略管理)。旧情境及四分之一单轮脚本仍保留直接路由，已退出当前导航；不能视为新活动配置的通用执行器。
 
 **学生端两种浏览方式。** 默认学生端直接显示四次顶层活动、九个节点与十四轮预写交流；可展开子活动并点击定位聊天。右上角“查看原有记录”切回此前保存的数据，没有记录时进入选择教材／目标的初始流程。示例使用`deermind-m1-student-activity-forest-demo-v1`，原有记录仍使用`deermind-m1-student-trial-space-v1`，不清空、不合并。预置历史是原型审阅辅助，不是生产用户首次进入时的内容；刷新保留各自进度。
 
-内置四例会创建独立mock领域，方便复核而不覆盖手动数据。普通文件选择没有OCR，不应把固定样例当成上传结果。题目与解法可分别处理，提取模板和关联实例是不同操作；章节关联另行保存。
+内置四例会创建独立mock领域，方便复核而不覆盖手动数据。普通文件选择没有OCR，不应把固定样例当成上传结果。题目与解法可分别处理，提取定义和关联题目／参考是不同操作；章节关联另行保存。
 
 页面使用构建结果，修改代码后运行restart。开发时可在本目录执行`npm run dev`，须先停止占用5182的预览服务。浏览器mock保存在本目录服务自己的来源下，使用M1专用存储键；更换端口或浏览器不会自动带入草稿。
 
@@ -45,7 +47,7 @@
 
 | 范围 | 当前表达 |
 | --- | --- |
-| Domain | 新建／编辑领域；Task、Solution、KC手动维护与搜索；复杂任务样例、递归方法、实例及参考解法 |
+| Domain | 新建／编辑领域；Task、Solution、KC手动维护与搜索；Task责任与可选参数、按方法适用的先导、多KC方法、题内参考解法 |
 | 教材 | 必选领域、批量样例、持续助手对话、引用单项／章节、原页和候选对照、继续修正、采用／放弃、刷新恢复；分别提交题目和解法、领域待入库与章节关联仍保留 |
 | 内容与模型分工 | 教材保留解析候选；领域复用或补建定义并关联实例；回教材选择章节Task／Solution，KC计算汇总 |
 | 评估与目标 | 按领域任务维护 Claim 与判据；按教材章节维护目标、方法覆盖和各方面标准，核对版本及兼容性 |
@@ -65,7 +67,7 @@
 - `scripts/`：启动、静态预览及文档截图；`tests/`为浏览器回归。
 - [初始复用清单](reuse-manifest.json)记录独立原型建立时的来源，不代表后来每次新增功能的完整变更清单。
 
-运行`npm run build`及`npm test`。Playwright缺浏览器时执行`npx playwright install chromium`。此前学生批次使用当时构建，运行下列学生相关检查共29项通过，未重跑全部管理功能，不声称真实教学通过。结果见[该批复核](../design/assets/student-forest-v0.1/review.json)。
+运行`npm run build`及`npm test`。测试默认使用已安装的Edge；可设置`PLAYWRIGHT_CHANNEL`选择其他已安装通道。此前学生批次使用当时构建，运行下列学生相关检查共29项通过，未重跑全部管理功能，不声称真实教学通过。结果见[该批复核](../design/assets/student-forest-v0.1/review.json)。
 
 ```powershell
 node --test --test-concurrency=1 tests/student-activity-fixture.test.mjs tests/student-activity-directory.test.mjs tests/student-book-context.test.mjs tests/student-activity-heading.test.mjs tests/student-entry.test.mjs tests/activity-flow.test.mjs
@@ -73,9 +75,9 @@ node --test --test-concurrency=1 tests/student-activity-fixture.test.mjs tests/s
 
 `npm run test:previous-import-ui`保留被替代工作区的旧测试，不能作为当前产品验收命令；它们尚未删除，也没有算入本批通过数。
 
-构建及当前测试后，运行`node scripts/capture-domain-material-design.mjs`可重采本批文档画面，写入[当前资产](../design/assets/domain-material-v0.1/capture-manifest.json)。脚本包含独立采集及复制本次测试截图，原型源码不因截图改变。文档正文、截图和检查需一起维护；旧`d01-v0.1`／`d01-v0.2`保留历史。
+本轮截图在`design/assets/domain-model-v0.1/`，由当前领域测试、教材流程测试和`node scripts/capture-domain-revision-evaluation.mjs`采集。历史采集脚本与旧目录保留，不用旧脚本覆盖历史截图或冒充当前页面。
 
-运行 `node scripts/capture-evaluation-target-design.mjs` 可从独立浏览器重新采集[评估与目标截图](../design/assets/evaluation-target-v0.1/capture-manifest.json)。采集使用当前构建的原型和示例数据。
+本轮复采：先构建并运行默认测试，再依次执行`node scripts/capture-domain-revision-evaluation.mjs`（合并25张截图清单）、`node scripts/capture-domain-revision-question.mjs`（重采未编辑的题目参考）；Mermaid渲染使用`node scripts/render-domain-revision.mjs`和本轮图源清单。
 
 此前 `scripts/capture-activities-design.mjs` 输出[activities-v0.1](../design/assets/activities-v0.1/capture-manifest.json)的18张配置／运行截图；其中学生入口使用旧默认路径，不能直接用于重采当前学生页面。旧 `capture-teaching-design.mjs` 同样保留历史。本轮不重写这两批采集结果。
 
@@ -89,7 +91,7 @@ node src/mvp_foundation/m1/design-reviews/20261109-student-forest/capture.mjs
 
 教材助手当前走查：载入四例样例并开始整理，在“教材解法”点“请助手修正”，输入“两种解法请分开”；查看修改前后和原页，继续要求核对公式与单位，再采用或不采用。三张统计图可走补漏，缺附页保持待补；浏览其他章节不改变引用，刷新保留消息和输入。采用只更新解析内容，提交领域、处理实例及回教材关联仍是明确操作。
 
-本次文档同步复跑下列四个文件共17项通过；TA系列15张新截图及采集脚本见[清单](../design/assets/material-assistant-v0.1/capture-manifest.json)，结果见[复核](../design/assets/material-assistant-v0.1/review.json)。本轮使用已有构建，未修改源码或重新进行真实模型实验。
+此前教材助手批次复跑下列四个文件共17项通过；TA系列15张截图及采集脚本见[清单](../design/assets/material-assistant-v0.1/capture-manifest.json)，结果见[复核](../design/assets/material-assistant-v0.1/review.json)。该批使用当时已有构建；本轮已修改源码并构建，默认54项结果见[本批复核](../design/assets/domain-model-v0.1/review.json)，未重新进行真实模型实验。
 
 ```powershell
 node --test --test-concurrency=1 tests/material-assistant.test.mjs tests/material-flow.test.mjs tests/import-lifecycle.test.mjs tests/intake-dialog.test.mjs

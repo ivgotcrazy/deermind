@@ -1,0 +1,64 @@
+{
+  "viewport": [
+    1440,
+    1000
+  ],
+  "data": "独立浏览器；四分之一 mock 样例",
+  "screens": [
+    {
+      "file": "E01.png",
+      "subject": "Task 与方法入口",
+      "route": "#/evaluation?id=CLAIM-FB3FBA1B"
+    },
+    {
+      "file": "E02.png",
+      "subject": "名称与适用评价方面",
+      "route": "#/evaluation?id=CLAIM-FB3FBA1B"
+    },
+    {
+      "file": "E03.png",
+      "subject": "本 Task 可复用执行判据的字段",
+      "route": "#/evaluation?id=CLAIM-FB3FBA1B"
+    },
+    {
+      "file": "E04.png",
+      "subject": "为分步法选择本方法判据",
+      "route": "#/evaluation?id=CLAIM-FB3FBA1B"
+    },
+    {
+      "file": "E06.png",
+      "subject": "倍数法的理解与解释规则",
+      "route": "#/evaluation?id=CLAIM-FB3FBA1B&method=ST-C42A062F"
+    },
+    {
+      "file": "G01.png",
+      "subject": "目标、教材与四分之一要求",
+      "route": "#/targets?id=TARGET-M1-QUARTER-SEPARATE"
+    },
+    {
+      "file": "G02.png",
+      "subject": "要求的章节、Claim 与任务范围",
+      "route": "#/targets?id=TARGET-M1-QUARTER-SEPARATE"
+    },
+    {
+      "file": "G03.png",
+      "subject": "同一要求改为两法分别达标",
+      "route": "#/targets?id=TARGET-M1-QUARTER-SEPARATE"
+    },
+    {
+      "file": "G04.png",
+      "subject": "新建目标选择教材与章节",
+      "route": "#/targets"
+    },
+    {
+      "file": "E07.png",
+      "subject": "在教材以外从领域和任务创建 Claim",
+      "route": "#/evaluation"
+    },
+    {
+      "file": "G05.png",
+      "subject": "Claim 修订后学习要求提示核对",
+      "route": "#/targets?id=TARGET-M1-QUARTER-SEPARATE"
+    }
+  ]
+}

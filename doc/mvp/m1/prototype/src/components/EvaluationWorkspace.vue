@@ -86,7 +86,7 @@ function example(){if(blocked.value||storageError.value)return;const t=loadEvalu
     <p v-if="error" role="alert" class="callout danger">{{error}}</p>
       <div v-if="mode==='new'" class="edit-pair"><label>所属领域<select aria-label="所属领域" v-model="draft.domainId" @change="draft.taskId='';draft.taskVersion=0"><option value="">请选择领域</option><option v-for="d in domainData.domains" :key="d.id" :value="d.id">{{d.name}}</option></select></label><label>关联 Task<select aria-label="关联 Task" v-model="draft.taskId" @change="chooseTask"><option value="">请选择任务</option><option v-for="t in domainData.tasks.filter(t=>t.domainId===draft.domainId)" :key="t.id" :value="t.id">{{t.name}}</option></select></label></div>
       <p v-else class="muted">关联任务：{{selectedTask?.name}}。修改其他任务的评价，请另建 Claim。</p>
-      <p v-if="mode==='new'&&draft.domainId&&!domainData.tasks.some(t=>t.domainId===draft.domainId)" class="callout">该领域尚无任务，请先到领域管理创建 TaskTemplate。</p>
+      <p v-if="mode==='new'&&draft.domainId&&!domainData.tasks.some(t=>t.domainId===draft.domainId)" class="callout">该领域尚无任务，请先到领域管理创建 Task。</p>
       <label>Claim 名称<input v-model="draft.name"/></label>
       <p v-if="selectedTask?.exclusions" class="muted">Task 边界参考：{{selectedTask.exclusions}}</p>
     <fieldset v-if="mode==='basic'" class="aspect-settings" @input="error=''">

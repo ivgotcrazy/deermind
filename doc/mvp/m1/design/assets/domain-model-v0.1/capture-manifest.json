@@ -1,0 +1,160 @@
+{
+  "capturedAt": "2026-11-14T10:30:32.037Z",
+  "type": "Independent browser mock; no LLM",
+  "screens": [
+    {
+      "file": "D01-task-prerequisites.png",
+      "route": "#/domain?domain=DOM-8A372FA8&kind=task&id=TT-EDAB28AA&tab=definition",
+      "source": "solution-template.test.mjs",
+      "sha256": "8cc79414589579c1a8b8d87144448aa373eb69dcea35d47a19ae8f7688667a4e"
+    },
+    {
+      "file": "D02-task-knowledge.png",
+      "route": "#/domain?domain=DOM-8A372FA8&kind=task&id=TT-EDAB28AA&tab=knowledge",
+      "source": "solution-template.test.mjs",
+      "sha256": "dc60c782c232243698c5ce459d6ab3bb138e6ca81e01550b27e33899bd08f6f9"
+    },
+    {
+      "file": "D03-solution.png",
+      "route": "#/domain?domain=DOM-8A372FA8&kind=solution&id=ST-5C28FE1D&tab=definition",
+      "source": "solution-template.test.mjs",
+      "sha256": "decb7cb832266cc6645b09e46eb94796bb9b7cfd8b8e911b0746eded723fe2c5"
+    },
+    {
+      "file": "D04-question-references.png",
+      "route": "#/domain?domain=DOM-A8FDB878&kind=task&id=TT-CCBA65DA&tab=instances",
+      "source": "capture-domain-revision-question.mjs",
+      "sha256": "9a29e8ab755ebd3cd7cf95937c0dca52462a75d2c54359ee09a44ad11467097b",
+      "capturedAt": "2026-11-14T10:30:43.214Z"
+    },
+    {
+      "file": "D05-claim-methods.png",
+      "route": "#/evaluation?id=CLAIM-34BD5142&domain=DOM-8A372FA8&task=TT-EDAB28AA",
+      "source": "solution-template.test.mjs",
+      "sha256": "53da09d0dfc5243f7d34b85417014177c292c720d1479038bb448364dc307cb9"
+    },
+    {
+      "file": "D06-claim-second-method.png",
+      "route": "#/evaluation?id=CLAIM-34BD5142&domain=DOM-8A372FA8&task=TT-EDAB28AA&method=ST-09B00B0A",
+      "source": "solution-template.test.mjs",
+      "sha256": "23a612171e8b4b54cc3dd385498a7eaebc18ef37975e26f194dc007a1d82fb59"
+    },
+    {
+      "file": "E01.png",
+      "subject": "Task 与方法入口",
+      "route": "#/evaluation?id=CLAIM-FB3FBA1B",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "cb1284eb5c9e588e7bc395118348e27866d47e3d812dbba3a6dab8631608d215"
+    },
+    {
+      "file": "E02.png",
+      "subject": "名称与适用评价方面",
+      "route": "#/evaluation?id=CLAIM-FB3FBA1B",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "b438b44c275641291f6000dd5df400907c25ef34fbadaefb3c52c85bcf4238f4"
+    },
+    {
+      "file": "E03.png",
+      "subject": "本 Task 可复用执行判据的字段",
+      "route": "#/evaluation?id=CLAIM-FB3FBA1B",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "e073a8969e133ae4a7a76abd0e8691858141caaf43f1f2df25770b940994b844"
+    },
+    {
+      "file": "E04.png",
+      "subject": "为分步法选择本方法判据",
+      "route": "#/evaluation?id=CLAIM-FB3FBA1B",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "8109ee982f2b0c5ddc936df11550ea675911e01b78df078ffa75ff719c7471a5"
+    },
+    {
+      "file": "E06.png",
+      "subject": "倍数法的理解与解释规则",
+      "route": "#/evaluation?id=CLAIM-FB3FBA1B&method=ST-C42A062F",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "d95ccd9b01a8a6b3be2233f0fcd70cc559820863ecf789f05f609df5af350575"
+    },
+    {
+      "file": "G01.png",
+      "subject": "目标、教材与四分之一要求",
+      "route": "#/targets?id=TARGET-M1-QUARTER-SEPARATE",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "cb7fd69cc620d97ad2073336842220eb8f7db58d2d856f76701265c3e52c7913"
+    },
+    {
+      "file": "G02.png",
+      "subject": "要求的章节、Claim 与任务范围",
+      "route": "#/targets?id=TARGET-M1-QUARTER-SEPARATE",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "e320e2d2e8169d24e2fb98cf6df463f30eabea741d8af10e6e540617dd0d972d"
+    },
+    {
+      "file": "G03.png",
+      "subject": "同一要求改为两法分别达标",
+      "route": "#/targets?id=TARGET-M1-QUARTER-SEPARATE",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "01bee1ba7f06e56efeb70d3331cb7fc33b791fee190dfd9eb15ad9e575009060"
+    },
+    {
+      "file": "G04.png",
+      "subject": "新建目标选择教材与章节",
+      "route": "#/targets",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "2b15e4ac257530721c411bd17b676f0329b34de27ce913d9c2e9b648be05231d"
+    },
+    {
+      "file": "E07.png",
+      "subject": "在教材以外从领域和任务创建 Claim",
+      "route": "#/evaluation",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "87943266839224f18b713890ee158c1d217f81b854abbdfd8ca6419e81aa95f4"
+    },
+    {
+      "file": "G05.png",
+      "subject": "Claim 修订后学习要求提示核对",
+      "route": "#/targets?id=TARGET-M1-QUARTER-SEPARATE",
+      "source": "capture-domain-revision-evaluation.mjs",
+      "sha256": "d0f4b44cfdd1e77b9d8f95724748748519028d67087082ecf2081b10770740fe"
+    },
+    {
+      "file": "T10-intake-actions.png",
+      "source": "test-results/material-flow/07-row-actions.png",
+      "sha256": "b833d17f4cd9c740d841272c345e80f409a4c175443052833a22d351cf34dbd4"
+    },
+    {
+      "file": "T11-extract-definition.png",
+      "source": "test-results/material-flow/08-extract-template.png",
+      "sha256": "b8149e4818ac75ece717e7583e3a64b3f4384933250910771549afef6299428a"
+    },
+    {
+      "file": "T12-partial-intake.png",
+      "source": "test-results/material-flow/09-partial-completion.png",
+      "sha256": "79db8945e4b06840257293db936a2462a1d52cef91f84ffa48279d1ff61239e1"
+    },
+    {
+      "file": "T13-intake-complete.png",
+      "source": "test-results/material-flow/04-intake-complete.png",
+      "sha256": "84f38b9fdc5b7e2e8f4380b25578826f5c52ed9da78827a4c7feb7aafb1943ef"
+    },
+    {
+      "file": "T14-add-chapter-link.png",
+      "source": "test-results/material-flow/10-add-chapter-link.png",
+      "sha256": "4bd3841375cedc0d9f87518b3e6ad009dbeaef6bee70f03b128446c62d095474"
+    },
+    {
+      "file": "T15-edit-chapter-link.png",
+      "source": "test-results/material-flow/11-edit-chapter-link.png",
+      "sha256": "c60bd106813b23b82c581a45dd11c8f91dba9f1a9607ebc117a2d24271e208c2"
+    },
+    {
+      "file": "T16-chapter-links.png",
+      "source": "test-results/material-flow/03-chapter-links.png",
+      "sha256": "a38e00bed42c6e26a924700cf3c8555b18f95e6075f5c400050cd1435e2d6217"
+    },
+    {
+      "file": "T17-add-knowledge.png",
+      "source": "test-results/intake-dialog/process.png",
+      "sha256": "6c027160ddb26d041a9724e27fd453ed1c809a34013c74090872f94e2857bdbd"
+    }
+  ]
+}

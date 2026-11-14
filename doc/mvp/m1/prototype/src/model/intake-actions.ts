@@ -14,7 +14,7 @@ function canProcess(draft:ImportDraft,request:IntakeGroup,e:ParsedElement):strin
   if(request.status!=='pending'||request.removed?.includes(e.id)||!request.elements.some(x=>x.id===e.id))return ['这项内容已处理或已移出待入库列表。'];
   if(rowResult(draft,request,e))return ['这项内容已经处理，不需要重复操作。'];
   if(!domainData.domains.some(d=>d.id===draft.book.domainId))return ['所属领域不存在。'];
-  return elementProblems(e).length?['内容尚未完整解析，请先返回教材重新解析。']:[];
+  return elementProblems(e).length?['内容尚未完整解析，请返回教材助手说明问题并修正。']:[];
 }
 export function templateCandidate(draft:ImportDraft,request:IntakeGroup,e:ParsedElement):Task|Method|null {
   if(e.kind==='knowledge')return null;
@@ -27,14 +27,14 @@ export function templateCandidate(draft:ImportDraft,request:IntakeGroup,e:Parsed
     return task;
   }
   const step=blankStep();Object.assign(step,{title:'执行方法',detail:recipe.definition,inputs:'当前任务的给定条件',output:'求解过程及结果',next:'$success'});
-  return {...blankMethod(draft.book.domainId),name:recipe.title,description:recipe.definition,conditions:'适用于所关联任务的给定条件',inputs:'题目条件',output:'解题过程及结果',steps:[step],
+  return {...blankMethod(draft.book.domainId),name:recipe.title,description:recipe.definition,procedure:recipe.definition,conditions:'适用于所关联任务的给定条件',inputs:'题目条件',output:'解题过程及结果',steps:[step],
     kc:recipe.kcIds.flatMap(key=>{const name=catalog.find(c=>c.id===key)?.title;return domainData.knowledge.filter(k=>k.domainId===draft.book.domainId&&k.name===name).map(k=>k.id);}),ending:{success:'完成任务要求并检查结果',stop:'条件不足或不适用时停止'}};
 }
 export function saveTemplate(draft:ImportDraft,request:IntakeGroup,e:ParsedElement,value:Task|Method):string[]{
   const issues=canProcess(draft,request,e);if(issues.length)return issues;
-  if(e.kind==='knowledge'||value.domainId!==draft.book.domainId||!value.name.trim()||!('goal' in value?value.goal:value.description).trim())return ['请补齐模板名称和定义。'];
+  if(e.kind==='knowledge'||value.domainId!==draft.book.domainId||!value.name.trim()||!('goal' in value?value.goal:value.description).trim())return ['请补齐名称和定义说明。'];
   const kind=e.kind==='question'?'task':'solution';
-  if(collection(kind).some(t=>t.domainId===value.domainId&&t.name===value.name&&t.id!==value.id))return ['已有同名模板，请返回后直接关联已有模板。'];
+  if(collection(kind).some(t=>t.domainId===value.domainId&&t.name===value.name&&t.id!==value.id))return ['已有同名定义，请返回后直接关联已有定义。'];
   if('goal' in value)saveEntity(domainData.tasks,{...value,summary:value.goal});else saveEntity(domainData.methods,value);
   (request.templates??={})[e.id]=value.id;return [];
 }
@@ -68,13 +68,14 @@ export function suggestedTemplate(draft:ImportDraft,request:IntakeGroup,e:Parsed
   const options=templateOptions(draft,request,e);
   return options.find(t=>t.id===old?.templateId)?.id||options.find(t=>t.id===request.templates?.[e.id])?.id||options.find(t=>t.name===recipe?.title)?.id||'';
 }
-export function associateElement(draft:ImportDraft,request:IntakeGroup,e:ParsedElement,templateId:string):string[]{
+export function associateElement(draft:ImportDraft,request:IntakeGroup,e:ParsedElement,templateId:string,classification='match'):string[]{
   const issues=canProcess(draft,request,e);if(issues.length)return issues;
+  if(classification!=='match')return [classification==='mismatch'?'责任、条件或方法不匹配，不能保存关联。':'归属尚未确认，不能保存关联。'];
   const flow=initializeFlow(draft),domainId=draft.book.domainId;
   if(e.kind==='question'){
-    const task=domainData.tasks.find(t=>t.id===templateId&&t.domainId===domainId);if(!task)return ['请选择当前领域中的任务模板。'];
+    const task=domainData.tasks.find(t=>t.id===templateId&&t.domainId===domainId);if(!task)return ['请选择当前领域中的任务。'];
     const previous=elementResult(flow,e.id),old=domainData.instances.find(q=>q.id===previous?.objectId&&q.domainId===domainId);
-    if(old&&old.taskId!==task.id)return ['这道题已经入库，请沿用原有任务模板。'];
+    if(old&&old.taskId!==task.id)return ['这道题已经入库，请沿用原有任务。'];
     const q=old?clone(old):blankInstance(task);
     q.question=elementText(e);q.source='教材导入';q.sourceNote=draft.book.name+' · '+e.chapter+' · '+e.sourceNote;q.reviewSource={importId:draft.id,itemId:e.itemId};q.checkedSignature='';q.checkedAt='';
     if(e.recipe==='TT-CHAIN')q.bindings={A:'12',r:'1/3',s:'3/4'};
@@ -83,12 +84,12 @@ export function associateElement(draft:ImportDraft,request:IntakeGroup,e:ParsedE
   }else if(e.kind==='solution'){
     const parent=parentInstance(draft,request,e);if(!parent)return ['请先关联所属题目。'];
     const method=domainData.methods.find(m=>m.id===templateId&&m.domainId===domainId),task=domainData.tasks.find(t=>t.id===parent.taskId&&t.domainId===domainId);
-    if(!method||!task)return ['请选择有效的解法模板。'];
+    if(!method||!task)return ['请选择有效的方法。'];
     if(!task.methods.includes(method.id)){
       // The association dialog explicitly confirms adopting this method for the task.
       saveEntity(domainData.tasks,{...task,methods:[...task.methods,method.id]});
     }
-    const q=clone(parent),previous=elementResult(flow,e.id),solutionId=previous?.objectId||id('SI');
+    const q=clone(parent),previous=elementResult(flow,e.id),solutionId=previous?.objectId||id('REF');
     const solution={id:solutionId,taskInstanceId:q.id,methodId:method.id,working:elementText(e),origin:'教材原有' as const,sourceNote:draft.book.name+' · '+e.sourceNote};
     const index=q.solutions.findIndex(s=>s.id===solutionId);if(index<0)q.solutions.push(solution);else q.solutions[index]=solution;
     q.reviewContent=[...(q.reviewContent||[]).filter(p=>p.id!==e.id),{...newPart('solution',e.title),id:e.id,templateId:method.id,blocks:clone(e.blocks)}];q.checkedSignature='';q.checkedAt='';

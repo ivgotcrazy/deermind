@@ -1,0 +1,38 @@
+[
+  {
+    "id": "diagram-01",
+    "document": "doc/concept-design/DeerMind_Concept_Architecture_v1.6.md",
+    "index": 1,
+    "text": "flowchart TB\n    CONST[\"Product Constitution\"]\n    GOV[\"Governance\"]\n    LS[\"Learning Space<br/>LearningMaterial + LearningTarget\"]\n    EVENT[\"Global Event Model<br/>发生事实与来源\"]\n    subgraph OBJ[\"对象层核心语义空间\"]\n        DS[\"Domain Space<br/>Task + Solution + KC\"]\n        ES[\"Evaluation Space<br/>Task Claim Belief\"]\n        IS[\"Interaction Space<br/>观察、状态与决策\"]\n    end\n    EVO[\"Evolution Space<br/>系统认识与验证\"]\n    LS -. \"映射与版本引用\" .-> DS\n    LS -->|\"目标与材料上下文\"| ES\n    LS -->|\"目标与材料上下文\"| IS\n    DS -->|\"领域定义\"| ES\n    DS -->|\"领域定义\"| IS\n    EVENT -->|\"事实历史\"| IS\n    IS -->|\"Observation\"| ES\n    ES -->|\"Belief 与派生评价\"| IS\n    IS -->|\"实际发生的行动\"| EVENT\n    OBJ -->|\"运行结果与失配\"| EVO\n    LS -->|\"目标与映射失配\"| EVO\n    EVENT -->|\"可追溯历史\"| EVO\n    EVO -->|\"受验证的变更提案\"| GOV\n    GOV -->|\"授权，由各 owner 提交\"| OBJ\n    GOV -->|\"产品规范变更授权\"| LS\n    CONST -. \"约束\" .-> OBJ\n    CONST -. \"约束\" .-> LS\n    CONST -. \"约束\" .-> GOV\n    CONST -. \"约束\" .-> EVO"
+  },
+  {
+    "id": "diagram-02",
+    "document": "doc/concept-design/DeerMind_Domain_Space_Design_v1.6.md",
+    "index": 1,
+    "text": "flowchart TB\n    subgraph D[\"Domain\"]\n        T[\"Task：任务责任\"] --> S[\"Solution\"]\n        S -->|\"直接涉及\"| K[\"多个 KC\"]\n        T -->|\"先导依赖\"| P[\"先导 Task\"]\n        Q[\"TaskInstance：题目\"] -->|\"主要归属\"| T\n        Q --> R[\"题内参考解法\"]\n        R -->|\"采用\"| S\n    end\n    C[\"教材章节\"] -. \"采用任务\" .-> T\n    C -. \"选用该任务的方法\" .-> S\n    CL[\"Task Claim\"] -. \"评价一个任务\" .-> T"
+  },
+  {
+    "id": "diagram-03",
+    "document": "doc/concept-design/DeerMind_Evaluation_Space_Design_v1.10.md",
+    "index": 2,
+    "text": "flowchart TB\n    TT[\"Domain：Task<br/>任务定义及版本\"]\n    C[\"Evaluation：Task Claim<br/>只绑定一个Task版本\"]\n    A[\"Claim 内部评价方面<br/>独立 · 理解 · 迁移 · 保持\"]\n    O[\"实际表现及上下文<br/>方法、帮助、变化与时间\"]\n    E[\"Evidence<br/>指向 Claim 版本、实际方法与方面\"]\n    B[\"一个学习者的多维 Belief<br/>按方法与方面保存概率、条件和依据\"]\n    G[\"LearningTarget<br/>选择任务、方面与标准\"]\n    TA[\"派生 TargetAssessment\"]\n    C -->|\"引用唯一Task\"| TT\n    C -->|\"包含\"| A\n    A -->|\"定义解释条件\"| E\n    O -->|\"提供表现来源\"| E\n    E -->|\"经推断按实际方法和适用方面更新\"| B\n    G -->|\"引用已发布声明及方面\"| C\n    G -->|\"提供目标要求\"| TA\n    B -->|\"提供分方面认识\"| TA"
+  },
+  {
+    "id": "diagram-04",
+    "document": "doc/mvp/m1/PRD.md",
+    "index": 2,
+    "text": "flowchart TB\n    M[\"教材章节映射\"] -->|\"选择适用任务\"| T[\"Task\"]\n    M -->|\"选择适用方法\"| S[\"Solution\"]\n    G[\"LearningTarget<br/>要求与达标标准\"] -->|\"选择方面与条件\"| CL[\"Task Claim<br/>四个内部方面\"]\n    CL -->|\"绑定一个Task版本\"| T\n    subgraph D[\"Domain：共享领域定义\"]\n        T -->|\"可用解法\"| S\n        S -->|\"直接关联多个知识\"| K[\"KC\"]\n        T -. \"先导理由及适用方法\" .-> CT[\"其他 Task\"]\n    end"
+  },
+  {
+    "id": "diagram-05",
+    "document": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+    "index": 1,
+    "text": "flowchart LR\n    T[\"Task：任务责任\"] -->|\"可采用\"| A[\"Solution A\"]\n    T -->|\"可采用\"| B[\"Solution B\"]\n    A --> K1[\"KC 1\"]\n    A --> K2[\"KC 2\"]\n    B --> K1\n    B --> K3[\"KC 3\"]\n    T -. \"A适用；附先导理由\" .-> P[\"先导Task\"]\n    Q[\"TaskInstance及参考解法\"] --> T\n    Q -->|\"参考解法采用\"| A"
+  },
+  {
+    "id": "diagram-06",
+    "document": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+    "index": 3,
+    "text": "flowchart TB\n    E[\"空间事件：实际作答、帮助及时间，只追加\"] --> X[\"Evaluation 提取候选 Evidence，定位原始片段\"]\n    D[\"Domain任务与方法；Evaluation Claim判据\"] --> X\n    X --> C{\"该分项的归因、条件、判据及去重检查通过？\"}\n    C -->|\"否\"| U[\"保留原因，不更新该分项\"]\n    C -->|\"是\"| B[\"程序按实际方法和方面更新 Belief\"]\n    X -->|\"有明确局部表现；不以整体通过为前提\"| S[\"在获准范围核对相关Task的方法、判据及四方面条件\"]\n    S -->|\"通过相同资格检查；不回传后验当证据\"| B\n    S -->|\"没有明确适用证据\"| U\n    L[\"明确相关教学事件\"] -->|\"仅适用项的学习预测，不增加成功证据\"| B\n    B --> A[\"核对目标适用条件与0.90概率阈值\"]\n    T[\"目标：方法要求与达标标准\"] --> A\n    A --> R[\"达成结果及来源追溯\"]"
+  }
+]

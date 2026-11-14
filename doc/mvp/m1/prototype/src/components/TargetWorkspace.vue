@@ -25,6 +25,7 @@ const selectedClaim=computed(()=>claim(requirement.value.claimId));
 const candidates=computed(()=>current.value?evaluationData.claims.filter(c=>c.domainId===book.value?.book.domainId&&taskIds.value.includes(c.taskId)):[]);
 const candidateChapters=computed(()=>current.value&&selectedClaim.value?mappedChapters(current.value,selectedClaim.value):[]);
 const availableMethods=computed(()=>current.value&&selectedClaim.value?allowedMethods(current.value,selectedClaim.value,requirement.value.chapters):[]);
+const methodSources=(c:Claim,chapters:string[],key:string)=>chapters.filter(ch=>current.value&&chapterLinks(current.value.bookId,ch).some(l=>l.taskId===c.taskId&&l.methodIds.includes(key))).join('、');
 const omitted=computed(()=>selectedClaim.value?.aspects.filter(a=>a.enabled&&!requirement.value.standards.some(s=>s.aspectId===a.id))||[]);
 const taskName=(key:string)=>domainData.tasks.find(t=>t.id===key)?.name||'任务不存在';
 watch([bookFilter,query],()=>page.value=1);
@@ -99,7 +100,7 @@ function compatible(c:Claim){return current.value?candidateIssues(current.value,
         <MethodStandards :claim="claim(r.claimId)" :requirement="r"/><p v-if="r.omissionReason" class="muted">未纳入方面的依据：{{r.omissionReason}}</p>
       </article>
     </section>
-    <p class="muted">配置保存不等于课程已应用，也不代表任何学生已达标。样例题量和七天间隔仅用于本例试用，不是通用门槛。</p>
+    <p class="muted">配置保存不等于课程已应用，也不代表任何学生已达标。各方法、方面按合格证据更新后的概率判断，全局阈值为 0.90；七天间隔只用于本例的保持证据条件。</p>
     <details class="panel"><summary>修改记录</summary><ul><li v-for="(h,i) in current.history" :key="i">v{{h.version}} · {{h.at}} · {{h.change}}</li></ul></details>
   </template>
   <div v-else class="empty"><h2>当前浏览器中没有这个学习目标</h2><a href="#/targets">返回学习目标列表</a></div>
@@ -123,7 +124,7 @@ function compatible(c:Claim){return current.value?candidateIssues(current.value,
       <label>学习要求名称<input v-model="requirement.name" placeholder="用学生能看懂的话表达"/></label>
       <fieldset class="object-fieldset"><legend>对应章节</legend><div class="picker-list"><label v-for="ch in candidateChapters" :key="ch" class="check-line"><input v-model="requirement.chapters" type="checkbox" :value="ch" @change="requirement.checked=false"/>{{ch}}</label></div></fieldset>
       <label>具体任务范围<textarea v-model="requirement.scope" rows="3" placeholder="例如只取增加比例 r=1/4；范围应在所引 Task 的定义内。"/></label>
-      <fieldset class="object-fieldset"><legend>本要求采用的方法</legend><div class="picker-list"><label v-for="m in directMethods(selectedClaim)" :key="m" class="check-line"><input v-model="requirement.methods" type="checkbox" :value="m" :disabled="!availableMethods.includes(m)&&!requirement.methods.includes(m)"/>{{methodName(m)}}<small v-if="!availableMethods.includes(m)" class="muted">所选章节未共同采用</small></label></div><p v-for="m in requirement.methods.filter(key=>!directMethods(selectedClaim!).includes(key))" :key="m" class="callout amber">{{methodName(m)}} 已不属于当前 Task。<button class="btn" @click="requirement.methods=requirement.methods.filter(key=>key!==m)">移除失效方法</button></p></fieldset>
+      <fieldset class="object-fieldset"><legend>本要求采用的方法</legend><div class="picker-list"><label v-for="m in directMethods(selectedClaim)" :key="m" class="check-line"><input v-model="requirement.methods" type="checkbox" :aria-label="methodName(m)" :value="m" :disabled="!availableMethods.includes(m)&&!requirement.methods.includes(m)"/>{{methodName(m)}}<small class="muted">{{methodSources(selectedClaim,requirement.chapters,m)||'所选章节未采用'}}</small></label></div><p v-for="m in requirement.methods.filter(key=>!directMethods(selectedClaim!).includes(key))" :key="m" class="callout amber">{{methodName(m)}} 已不属于当前 Task。<button class="btn" @click="requirement.methods=requirement.methods.filter(key=>key!==m)">移除失效方法</button></p></fieldset>
       <p v-if="requirement.methods.some(m=>!availableMethods.includes(m))" class="callout amber">原选择的方法与当前章节不兼容。请选择匹配的章节或回教材修正关联；不会自动删掉你的选择。</p>
       <label>要求的方法覆盖<select aria-label="要求的方法覆盖" v-model="requirement.methodMode"><option value="any">任选一种达标（只选一种时为指定方法）</option><option value="all">所选方法分别达标</option></select></label>
       <p class="muted">{{requirement.methodMode==='all'?'所选方法分别满足下方各项标准，按每种方法实际取得的证据核对。':'同一种方法满足本项全部标准，即可满足这项要求。'}}</p>

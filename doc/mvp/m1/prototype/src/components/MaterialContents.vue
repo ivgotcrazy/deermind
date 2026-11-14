@@ -53,7 +53,7 @@ function chooseLinkTask(){
 function selectMethod(link:ChapterLink,key:string,checked:boolean){link.methodIds=checked?[...link.methodIds,key]:link.methodIds.filter(k=>k!==key);}
 function saveLink(){
   if(!linkDraft.value||storageError.value)return;
-  if(!linkDraft.value.taskId){linkError.value='请选择任务模板。';return;}
+  if(!linkDraft.value.taskId){linkError.value='请选择任务。';return;}
   if(!editingTask.value&&links.value.some(l=>l.taskId===linkDraft.value!.taskId)){linkError.value='本章已经关联该任务，请使用编辑修改方法。';return;}
   const next=editingTask.value?links.value.map(l=>l.taskId===editingTask.value?linkDraft.value!:l):[...links.value,linkDraft.value];
   linkError.value=saveChapterLinks(props.draft,chapter.value,next).join('；');
@@ -95,7 +95,7 @@ const method=(key:string)=>domainData.methods.find(m=>m.id===key&&m.domainId===p
       <template v-else>
         <p class="muted">选择本章涉及的任务及采用的方法。已有领域定义可以直接关联；教材解析内容只作为依据。</p>
         <div class="row-between chapter-links-toolbar"><a class="text-link" :href="intakeUrl(draft,chapter)">前往领域处理待入库内容 →</a><button class="btn primary" :disabled="!!storageError" @click="openLink()">添加关联</button></div>
-        <table v-if="links.length" class="data-table chapter-links"><thead><tr><th>任务模板</th><th>本章采用的方法</th><th>汇总知识</th><th>操作</th></tr></thead><tbody><tr v-for="link in links" :key="link.taskId" :data-task="link.taskId"><td>{{task(link.taskId)?.name||'任务不存在'}}<details><summary>教材依据</summary><p v-for="r in flow.requests.filter(r=>r.chapter===chapter&&r.status==='done'&&Object.values(r.result).some(v=>v.templateId===link.taskId))" :key="r.id">{{r.elements[0].title}}</p><small>仅作为章节关联的来源依据。</small></details></td><td><ul class="method-list"><li v-for="key in link.methodIds" :key="key">{{method(key)?.name||'方法不存在'}}</li></ul></td><td>{{collectKnowledge(link.methodIds,draft.book.domainId).rows.map(r=>r.knowledge.name).join('、')||'暂无关联知识'}}</td><td><div class="link-actions"><button class="btn" :disabled="!!storageError" @click="openLink(link)">编辑</button><button class="btn" :disabled="!!storageError" @click="removeLink(link)">取消关联</button></div></td></tr></tbody></table>
+        <table v-if="links.length" class="data-table chapter-links"><thead><tr><th>任务</th><th>本章采用的方法</th><th>汇总知识</th><th>操作</th></tr></thead><tbody><tr v-for="link in links" :key="link.taskId" :data-task="link.taskId"><td>{{task(link.taskId)?.name||'任务不存在'}}<details><summary>教材依据</summary><p v-for="r in flow.requests.filter(r=>r.chapter===chapter&&r.status==='done'&&Object.values(r.result).some(v=>v.templateId===link.taskId))" :key="r.id">{{r.elements[0].title}}</p><small>仅作为章节关联的来源依据。</small></details></td><td><ul class="method-list"><li v-for="key in link.methodIds" :key="key">{{method(key)?.name||'方法不存在'}}</li></ul></td><td>{{collectKnowledge(link.methodIds,draft.book.domainId).rows.map(r=>r.knowledge.name).join('、')||'暂无关联知识'}}</td><td><div class="link-actions"><button class="btn" :disabled="!!storageError" @click="openLink(link)">编辑</button><button class="btn" :disabled="!!storageError" @click="removeLink(link)">取消关联</button></div></td></tr></tbody></table>
         <p v-else class="empty">尚无章节关联。点击“添加关联”选择任务及本章采用的方法。</p>
       </template>
     </section>
@@ -104,8 +104,8 @@ const method=(key:string)=>domainData.methods.find(m=>m.id===key&&m.domainId===p
   <WorkbenchDialog v-if="linkDraft" :title="editingTask?'编辑章节关联':'添加章节关联'" @close="closeLink">
     <p v-if="linkError||storageError" class="callout danger" role="alert">{{linkError||storageError}}</p>
     <p class="muted">当前章节：{{chapter}}</p>
-    <p v-if="editingTask"><strong>任务模板：</strong>{{task(linkDraft.taskId)?.name||'任务不存在'}}</p>
-    <label v-else>任务模板<select v-model="linkDraft.taskId" aria-label="任务模板" @change="chooseLinkTask"><option value="">请选择当前领域中的任务</option><option v-for="t in availableTasks" :key="t.id" :value="t.id">{{t.name}}{{suggestions.some(s=>s.taskId===t.id)?'（教材建议）':''}}</option></select></label>
+    <p v-if="editingTask"><strong>任务：</strong>{{task(linkDraft.taskId)?.name||'任务不存在'}}</p>
+    <label v-else>任务<select v-model="linkDraft.taskId" aria-label="任务" @change="chooseLinkTask"><option value="">请选择当前领域中的任务</option><option v-for="t in availableTasks" :key="t.id" :value="t.id">{{t.name}}{{suggestions.some(s=>s.taskId===t.id)?'（教材建议）':''}}</option></select></label>
     <p v-if="!editingTask&&!availableTasks.length" class="muted">当前没有可添加的任务。已有任务可在表格中编辑，缺少的任务请先在领域管理中建立。</p>
     <fieldset v-if="linkDraft.taskId" class="link-methods"><legend>本章采用的方法</legend><label v-for="key in task(linkDraft.taskId)?.methods||[]" :key="key" class="check-line"><input type="checkbox" :aria-label="'本章采用 '+method(key)?.name" :checked="linkDraft.methodIds.includes(key)" @change="selectMethod(linkDraft,key,($event.target as HTMLInputElement).checked)"/>{{method(key)?.name||'方法不存在'}}</label><p v-if="!task(linkDraft.taskId)?.methods.length" class="muted">该任务尚未关联方法，请先在领域管理中补齐。</p></fieldset>
     <p v-if="linkDraft.taskId&&!editingTask&&suggestions.some(s=>s.taskId===linkDraft!.taskId)" class="muted">已按教材建议预选方法，可调整；保存后才建立本章关联。</p>

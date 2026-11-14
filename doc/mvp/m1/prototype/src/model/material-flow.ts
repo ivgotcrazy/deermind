@@ -25,8 +25,8 @@ export const elementNames:Record<ElementKind,string>={question:'题目',solution
 const cases:Record<string,string>={'MAT-GROUPS':'C02','MAT-ERROR':'C03','MAT-CHARTS':'C05','MAT-CIRCLES':'C06'};
 const taskRecipes:Record<string,string>={C02:'TT-CHAIN',C03:'TT-ERROR',C05:'TT-CHART',C06:'TT-SHAPE','MAT-MIXED':'TT-DIVIDE','MAT-MIXED-2':'TT-DIVIDE','MAT-MIXED-3':'TT-DIVIDE'};
 const extraCatalog=[
-  {id:'ST-DIVIDE',kind:'SolutionTemplate',title:'按运算顺序将除法转为乘倒数',definition:'按原式的运算顺序逐步转化，除数取倒数，保留其他因数并检查约分。',solutionIds:[],kcIds:['KC-RECIP']},
-  {id:'TT-DIVIDE',kind:'TaskTemplate',title:'分数除乘混合运算',definition:'按给定的运算顺序完成分数除乘混合计算，并说明运算变换。',solutionIds:['ST-DIVIDE'],kcIds:[]},
+  {id:'ST-DIVIDE',kind:'Solution',title:'按运算顺序将除法转为乘倒数',definition:'按原式的运算顺序逐步转化，除数取倒数，保留其他因数并检查约分。',solutionIds:[],kcIds:['KC-RECIP']},
+  {id:'TT-DIVIDE',kind:'Task',title:'分数除乘混合运算',definition:'按给定的运算顺序完成分数除乘混合计算，并说明运算变换。',solutionIds:['ST-DIVIDE'],kcIds:[]},
 ];
 export const catalog=[...reviewCatalog,...extraCatalog];
 const canonicalCase=(itemId:string)=>cases[itemId]||itemId;

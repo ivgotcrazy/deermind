@@ -7,7 +7,7 @@ const expect=baseExpect.configure({timeout:5000});
 
 test('intake row actions open directly, cancel without saving and show errors in the action dialog',async t=>{
   const server=createPreviewServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));
-  const browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1280,height:900}});page.setDefaultTimeout(5000);
+  const browser=await chromium.launch({headless:true,channel:process.env.PLAYWRIGHT_CHANNEL||'msedge'});const page=await browser.newPage({viewport:{width:1280,height:900}});page.setDefaultTimeout(5000);
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   t.after(async()=>{await browser.close();await new Promise(r=>server.close(r));});
   const btn=name=>page.getByRole('button',{name,exact:true}),modal=()=>page.getByRole('dialog');

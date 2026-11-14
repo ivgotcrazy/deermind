@@ -1,15 +1,17 @@
 # DeerMind 学习模型目的需求与候选结构复核
 
-> **版本**：v0.7<br>
+> **版本**：v0.8<br>
 > **文档性质**：设计复核与变更记录<br>
-> **状态**：当前设计与工作入口；历史验证按原基线解释<br>
+> **状态**：本轮领域模型、原型及关联合同已修订，待用户审阅；真实服务与效果未验证<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户批准模型变更及完整实施；作者检查见MVP决定登记§68，不代表真实效果验收通过<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-03<br>
-> **修订说明**：v0.6 → v0.7：仅更新路线图导航；原业务正文、模型结论和历史评审含义不变；见[本轮记录](../mvp/DECISIONS.md#11-产品设计同步推进与分包计划)。<br>
+> **更新日期**：2026-11-14<br>
+> **修订说明**：v0.7 → v0.8，同步Task／Solution新定义、多KC方法、Task先导、题内参考及相关Task独立取证；保持既定数值规则和工程边界；逐文件记录见MVP决定登记§68<br>
 
 ---
+
+**当前使用口径：** 本文保留历次分析依据。Domain当前采用Task／Solution／KC与题内参考内容、Task先导关系；旧强制参数化、单KC角色和方法递归约束已被替代。实现以[当前Domain定义](DeerMind_Domain_Space_Design_v1.6.md)及[M1内容规格](../mvp/m1/design/Content_and_Model_Reference.md)为准，不从本报告恢复旧约束。
 
 本文保留设计讨论的演进。**当前单模板多维 Claim 结论与逐文件变更见 §11**；§1–10 为早期探索和先前修订，按当时语境及对应 Git 基线阅读。历史 C1–C4 和多模板 Claim 不作为现行合同，历史验证不反写。
 
@@ -901,13 +903,13 @@ ProblemTemplate 参数化问题关系、约束与所求责任，不规定唯一�
 
 | 文档 | 旧版本 → 新版本 | 变更内容 |
 | --- | --- | --- |
-| [doc/concept-design/DeerMind_Concept_Architecture_v1.5.md](DeerMind_Concept_Architecture_v1.5.md) | v1.4 → v1.5 | 统一单模板声明、多维状态与跨任务目标归属；重写核心模型之间的输入输出关系；同步现行文档引用 |
+| [doc/concept-design/DeerMind_Concept_Architecture_v1.6.md](DeerMind_Concept_Architecture_v1.6.md) | v1.4 → v1.5 | 统一单模板声明、多维状态与跨任务目标归属；重写核心模型之间的输入输出关系；同步现行文档引用 |
 | [doc/concept-design/DeerMind_Domain_Space_Design_v1.3.md](DeerMind_Domain_Space_Design_v1.3.md) | v1.2 → v1.3 | 明确单模板能力参照与子任务证据边界；同步现行文档引用 |
 | [doc/concept-design/DeerMind_Evaluation_Space_Design_v1.5.md](DeerMind_Evaluation_Space_Design_v1.5.md) | v1.4 → v1.5 | 重写 Claim、Evidence、Belief 主体；四维改为内部方面；补齐方法／任务／目标边界、局部有效性与旧结构迁移；分数例子改为单 Claim；修正不变量重复编号，更新图与检查清单 |
-| [doc/concept-design/DeerMind_Evolution_Space_Design_v1.5.md](DeerMind_Evolution_Space_Design_v1.5.md) | v1.4 → v1.5 | 收敛模型演化对象与方面影响分析；同步现行文档引用 |
-| [doc/concept-design/DeerMind_Interaction_Space_Design_v1.5.md](DeerMind_Interaction_Space_Design_v1.5.md) | v1.4 → v1.5 | 将决策输入与取证落到具体方面；同步跨空间输入清单；同步现行文档引用 |
+| [doc/concept-design/DeerMind_Evolution_Space_Design_v1.6.md](DeerMind_Evolution_Space_Design_v1.6.md) | v1.4 → v1.5 | 收敛模型演化对象与方面影响分析；同步现行文档引用 |
+| [doc/concept-design/DeerMind_Interaction_Space_Design_v1.6.md](DeerMind_Interaction_Space_Design_v1.6.md) | v1.4 → v1.5 | 将决策输入与取证落到具体方面；同步跨空间输入清单；同步现行文档引用 |
 | [doc/concept-design/DeerMind_Learning_Model_Reassessment.md](DeerMind_Learning_Model_Reassessment.md) | v0.2 → v0.3 | 保留历史 §1–10，新建单模板多维修订及检查记录 |
-| [doc/concept-design/DeerMind_Learning_Space_Design_v1.3.md](DeerMind_Learning_Space_Design_v1.3.md) | v1.2 → v1.3 | 目标引用精确到任务 Claim 及内部方面；明确同模板评价条件与目标变化的区别；收敛目标覆盖与章节统计；明确方面级语义变化与失效传播；同步现行文档引用 |
+| [doc/concept-design/DeerMind_Learning_Space_Design_v1.4.md](DeerMind_Learning_Space_Design_v1.4.md) | v1.2 → v1.3 | 目标引用精确到任务 Claim 及内部方面；明确同模板评价条件与目标变化的区别；收敛目标覆盖与章节统计；明确方面级语义变化与失效传播；同步现行文档引用 |
 | [doc/concept-design/README.md](README.md) | v0.2 → v0.3 | 更新现行模型导航；更新历史与当前结论入口；同步现行文档引用 |
 | [doc/mvp/MVP_Document_Architecture_Review.md](../mvp/archive/2026-11-02-before-m1-prd/MVP_Document_Architecture_Review.md) | v0.2 → v0.3 | 同步现行文档引用 |
 | [doc/mvp/MVP_Gate_Reviews.md](../mvp/archive/2026-11-02-before-m1-prd/MVP_Gate_Reviews.md) | v0.2 → v0.3 | 记录新增结构变更，不改变 Gate 历史；同步现行文档引用 |
@@ -932,7 +934,7 @@ ProblemTemplate 参数化问题关系、约束与所求责任，不规定唯一�
 | [doc/system-design/DeerMind_System_Design_Roadmap_v0.9.md](../system-design/DeerMind_System_Design_Roadmap_v0.11.md) | v0.8 → v0.9 | 记录模型修订，不重写历史阶段 |
 | [doc/system-design/DeerMind_System_Design_v1.4.md](../system-design/DeerMind_System_Design_v1.4.md) | v1.3 → v1.4 | 更新单模板多维输入合同及历史边界；明确状态身份、唯一任务绑定和内部方面结构；补齐 Evidence、提交与读取合同；同步当前交付边界；同步现行文档引用 |
 | [doc/system-design/README.md](../system-design/README.md) | v0.2 → v0.3 | 更新系统当前合同及阶段；同步现行文档引用 |
-| [doc/top/DeerMind_AI_Native_Architecture_Principles_v0.6.md](../top/DeerMind_AI_Native_Architecture_Principles_v0.6.md) | v0.5 → v0.6 | 同步单模板多维的语义推理原则 |
+| [doc/top/DeerMind_AI_Native_Architecture_Principles_v0.7.md](../top/DeerMind_AI_Native_Architecture_Principles_v0.7.md) | v0.5 → v0.6 | 同步单模板多维的语义推理原则 |
 | [doc/top/DeerMind_Development_Roadmap_v0.6.md](https://github.com/ivgotcrazy/deermind/blob/c953f98da007846325d49f648245f43853b0f440/doc/top/DeerMind_Development_Roadmap_v0.6.md) | v0.5 → v0.6 | 更新现行系统交接，不改旧准入 |
 | [src/mvp_foundation/README.md](../../src/mvp_foundation/README.md) | v0.2 → v0.3 | 同步运行资产未迁移状态 |
 | [src/mvp_prototype/README.md](https://github.com/ivgotcrazy/deermind/blob/e0895562acb4757e9f80af888643ab1e27d48506/src/mvp_prototype/README.md) | v0.2 → v0.3 | 同步运行资产未迁移状态 |
@@ -953,3 +955,5 @@ ProblemTemplate 参数化问题关系、约束与所求责任，不规定唯一�
 作者按 §11.2 的八组对照及 Evaluation §6.8 的分数例子核对结果归属：一次表现可以影响多个方面，但共享来源；没有解释证据不能补成理解已掌握；更新一个方面不刷新其余方面；不同任务不能复制状态；旧命题合并／拆分必须核对原依据。上述是设计逻辑检查，尚未执行相应软件或模型测量。
 
 本轮仅交付文档语义修订及迁移合同。旧 Spike／Build、G3 冻结快照、实际源码和内容／案例资产保持原样；没有新模型实验或 G4/G5 通过结论。允许作者推进不等于实证已通过，实际迁移仍须按 OPEN-010 取得相应产物与证据。
+
+本轮修订（v0.8，2026-11-14）：同步Task／Solution新定义、多KC方法、Task先导、题内参考及相关Task独立取证；保持既定数值规则和工程边界。完整范围和检查见MVP决定登记§68。

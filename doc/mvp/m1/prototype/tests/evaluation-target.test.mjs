@@ -9,7 +9,7 @@ const expect=baseExpect.configure({timeout:8000});
 test('M1 Domain Claim and textbook target management',async t=>{
   const server=createPreviewServer();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   const base='http://127.0.0.1:'+server.address().port;
-  const browser=await chromium.launch({headless:true});
+  const browser=await chromium.launch({headless:true,channel:process.env.PLAYWRIGHT_CHANNEL||'msedge'});
   const context=await browser.newContext({viewport:{width:1440,height:1000},locale:'zh-CN'});
   const page=await context.newPage();page.setDefaultTimeout(8000);
   const errors=[],api=[],screens=[];page.on('pageerror',e=>errors.push(e.message));
@@ -25,7 +25,7 @@ test('M1 Domain Claim and textbook target management',async t=>{
   await t.test('Claim creation is independent of textbook; incomplete definitions stay pending',async()=>{
     await go('domain');await btn('新建领域').click();await label('领域名称').fill('无教材领域');await label('覆盖范围').fill('人工定义的学习任务');await btn('创建并进入').click();
     const domainId=(await state()).domain.domains[0].id;
-    await btn('新建任务模板').click();await label('任务名称').fill('独立领域任务');await label('任务目标').fill('完成指定工作');await label('学习者承担的工作').fill('自行完成并说明');await btn('创建任务模板').click();
+    await btn('新建任务').click();await label('任务名称').fill('独立领域任务');await label('任务目标').fill('完成指定工作');await label('学习者承担的工作').fill('自行完成并说明');await btn('创建任务').click();
     const taskId=(await state()).domain.tasks[0].id;
     await go('evaluation');await btn('新建 Claim').click();await expect(label('帮助与工具条件')).toHaveCount(0);await label('所属领域').selectOption(domainId);await label('关联 Task').selectOption(taskId);await label('Claim 名称').fill('不依附教材的 Claim');await btn('创建 Claim').click();
     await expect(page.getByRole('heading',{name:'不依附教材的 Claim',exact:true})).toBeVisible();
@@ -50,11 +50,11 @@ test('M1 Domain Claim and textbook target management',async t=>{
     const execution=detail.getByRole('region',{name:'本方法执行判据'});
     const dimensions=detail.getByRole('region',{name:'四方面评价规则'});
     await expect(tabs.nth(0)).toHaveAttribute('aria-selected','true');
-    await expect(execution).toContainText('把子方法的增加量用于求新量');
+    await expect(execution).toContainText('计算增加量并加回原量');
     await expect(dimensions.locator('[data-aspect="explanation"]')).toContainText('加回原量');
     await tabs.nth(1).click();
     await expect(execution).toContainText('按新量倍数计算');
-    await expect(execution).not.toContainText('把子方法的增加量用于求新量');
+    await expect(execution).not.toContainText('计算增加量并加回原量');
     await expect(dimensions.locator('[data-aspect="explanation"]')).toContainText('1＋r');
     await expect(detail.getByRole('combobox')).toHaveCount(0);
     await page.reload();await expect(tabs.nth(1)).toHaveAttribute('aria-selected','true');
@@ -67,7 +67,7 @@ test('M1 Domain Claim and textbook target management',async t=>{
     await tabs.nth(1).click();await expect(dimensions).toBeVisible();
     await tabs.nth(1).press('ArrowLeft');
     await expect(tabs.nth(0)).toBeFocused();
-    await expect(execution).toContainText('把子方法的增加量用于求新量');
+    await expect(execution).toContainText('计算增加量并加回原量');
     await tabs.nth(0).press('End');await expect(tabs.nth(1)).toBeFocused();
     await expect(detail.getByRole('tabpanel',{name:'按原量的 1+r 倍计算',exact:true})).toContainText('四方面评价规则');
     await shot('01b-single-method-workspace');
@@ -133,7 +133,7 @@ test('M1 Domain Claim and textbook target management',async t=>{
     await page.getByRole('checkbox',{name:/已核对：范围在 Task 内/}).check();
     await btn('保存学习要求').click();
     await expect(page.locator('.method-standards tbody')).toHaveCount(2);
-    for(const group of await page.locator('.method-standards tbody').all())await expect(group).toContainText('2 道不同的新题');
+    for(const group of await page.locator('.method-standards tbody').all())await expect(group).toContainText('达到 0.90 才达标');
     await shot('04-both-methods-required');
     await go('textbooks?'+new URLSearchParams({tab:'import',source:seedBook.id,chapter:seedTarget.chapters[0],view:'links'}));await page.locator('.chapter-links').getByRole('button',{name:'编辑',exact:true}).click();
     const methods=(await state()).domain.methods.filter(m=>task.methods.includes(m.id));await label('本章采用 '+methods[1].name).uncheck();await btn('保存').click();
@@ -211,27 +211,12 @@ test('M1 Domain Claim and textbook target management',async t=>{
     await expect(aspectPanel.locator('[data-aspect="transfer"]')).not.toContainText('取消修改');
     await expect(shown).toContainText('按新量倍数计算');
   });
-  await t.test('expand the actual Domain call and edit child only at its source',async()=>{
-    await go('targets?id='+seedTarget.id);
-    await btn('编辑要求 '+seedTarget.requirements[0].name).click();
-    await page.getByRole('checkbox',{name:/已核对：范围在 Task 内/}).check();
-    await btn('保存学习要求').click();await expect(page.locator('.preparation')).toHaveCount(0);
+  await t.test('prerequisites do not inject criteria into the current Claim',async()=>{
     await go('evaluation?id='+seedClaim.id);
-    await btn('展开子方法（1）').click();
-    const child=page.locator('.child-source');
-    await expect(child).toContainText('使用分数乘法求对应数量');
-    await expect(child).toContainText('计算对应部分');await expect(child).toContainText('返回');
-    const link=child.getByRole('link',{name:/求一个量的几分之几 · v/});
-    const first=(await state()).evaluation.claims.find(c=>c.id===seedClaim.id);
-    assert.ok(first.criteria.every(c=>c.name!=='计算对应部分'));
-    await shot('10-domain-call-expanded');await link.click();
-    await expect(page.getByRole('tab',{name:'使用分数乘法求对应数量',exact:true})).toHaveAttribute('aria-selected','true');
-    await btn('编辑本层判据 计算对应部分').click();await label('判据名称').fill('核对部分量与单位');await btn('保存判据').click();
-    await go('evaluation?id='+seedClaim.id);await btn('展开子方法（1）').click();
-    await expect(page.locator('.child-source')).toContainText('核对部分量与单位');
-    const parent=(await state()).evaluation.claims.find(c=>c.id===seedClaim.id);
-    assert.deepEqual(parent,first);
-    await go('targets?id='+seedTarget.id);await expect(page.locator('.requirement-card .callout')).toContainText('判据来源或方法版本已变更');
+    await expect(page.getByRole('button',{name:/展开子方法/})).toHaveCount(0);
+    const current=(await state()).evaluation.claims.find(c=>c.id===seedClaim.id);
+    assert.ok(current.criteria.every(c=>c.name!=='计算对应部分'));
+    await expect(page.getByRole('region',{name:'本方法执行判据'})).not.toContainText('计算对应部分');
   });
   await t.test('unbinding a local criterion does not block a goal restricted to the other prepared method',async()=>{
     const all=(await state()).domain.methods;
@@ -337,37 +322,13 @@ test('M1 Domain Claim and textbook target management',async t=>{
       assert.deepEqual(cleaned,expected);
     }finally{await isolated.close();}
   });
-  await t.test('multiple recursion levels, repeated calls, missing sources and cycles retain their own paths',async()=>{
-    const data=await state();
-    const first=data.domain.methods.find(m=>m.id===task.methods[0]);
-    const call=first.steps.find(s=>s.divided);
-    const child=data.domain.methods.find(m=>m.id===call.solutionId);
-    const childTask=data.domain.tasks.find(t=>t.id===call.taskId);
-    const leaf={...structuredClone(child),id:'ST-TEST-LEAF',name:'走查第三层'};
-    const leafTask={...structuredClone(childTask),id:'TT-TEST-LEAF',name:'第三层任务',methods:[leaf.id]};
-    const substep={...structuredClone(call),title:'第三层调用',taskId:leafTask.id,solutionId:leaf.id};
-    child.steps.push(substep);
-    first.steps.push({...structuredClone(call),title:'再次调用，用于另一个输入'});
-    data.domain.methods.push(leaf);data.domain.tasks.push(leafTask);
-    leaf.steps.push({...structuredClone(call),title:'循环回子方法'});
-    const isolated=await browser.newContext();
-    try{
-      await isolated.addInitScript(data=>{
-        if(localStorage.getItem('deermind-m1-evaluation-v3'))return;
-        localStorage.setItem('deermind-m1-domain-v1',JSON.stringify(data.domain));
-        localStorage.setItem('deermind-m1-evaluation-v3',JSON.stringify(data.evaluation));
-      },data);
-      const p=await isolated.newPage();await p.goto(base+'/admin/#/evaluation?id='+seedClaim.id);
-      await p.getByRole('button',{name:'展开子方法（2）'}).click();
-      const branches=p.locator('.method-children > .child-source');
-      await expect(branches).toHaveCount(2);
-      await expect(branches.nth(1)).toContainText('再次调用，用于另一个输入');
-      await branches.first().locator('summary').first().click();
-      const nested=branches.first().locator(':scope > details > .child-source');
-      await expect(nested).toContainText('子任务尚无 Claim');
-      await nested.locator(':scope > details > summary').click();
-      await expect(nested.locator(':scope > details > .child-source')).toContainText('分解路径重复');
-    } finally {await isolated.close();}
+  await t.test('stored legacy decomposition is preserved but does not drive evaluation',async()=>{
+    const data=await state(),first=data.domain.methods.find(m=>m.id===task.methods[0]);
+    assert.ok(first.steps.some(s=>s.divided));
+    const before=structuredClone(first.steps);
+    await go('evaluation?id='+seedClaim.id);await page.reload();
+    await expect(page.locator('.method-children')).toHaveCount(0);
+    assert.deepEqual((await state()).domain.methods.find(m=>m.id===first.id).steps,before);
   });
   assert.deepEqual(errors,[]);assert.deepEqual(api,[]);
   await writeFile(output+'review.json',JSON.stringify({screens,consoleErrors:errors,apiCalls:api},null,2));

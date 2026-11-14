@@ -1,0 +1,164 @@
+[
+  {
+    "path": "doc/concept-design/DeerMind_Concept_Architecture_v1.6.md",
+    "previousPath": "doc/concept-design/DeerMind_Concept_Architecture_v1.5.md",
+    "before": "v1.5",
+    "after": "v1.6"
+  },
+  {
+    "path": "doc/concept-design/DeerMind_Domain_Space_Design_v1.6.md",
+    "previousPath": "doc/concept-design/DeerMind_Domain_Space_Design_v1.5.md",
+    "before": "v1.5",
+    "after": "v1.6"
+  },
+  {
+    "path": "doc/concept-design/DeerMind_Evaluation_Space_Design_v1.10.md",
+    "previousPath": "doc/concept-design/DeerMind_Evaluation_Space_Design_v1.9.md",
+    "before": "v1.9",
+    "after": "v1.10"
+  },
+  {
+    "path": "doc/concept-design/DeerMind_Evolution_Space_Design_v1.6.md",
+    "previousPath": "doc/concept-design/DeerMind_Evolution_Space_Design_v1.5.md",
+    "before": "v1.5",
+    "after": "v1.6"
+  },
+  {
+    "path": "doc/concept-design/DeerMind_Interaction_Space_Design_v1.6.md",
+    "previousPath": "doc/concept-design/DeerMind_Interaction_Space_Design_v1.5.md",
+    "before": "v1.5",
+    "after": "v1.6"
+  },
+  {
+    "path": "doc/concept-design/DeerMind_Learning_Model_Reassessment.md",
+    "previousPath": "doc/concept-design/DeerMind_Learning_Model_Reassessment.md",
+    "before": "v0.7",
+    "after": "v0.8"
+  },
+  {
+    "path": "doc/concept-design/DeerMind_Learning_Space_Design_v1.4.md",
+    "previousPath": "doc/concept-design/DeerMind_Learning_Space_Design_v1.3.md",
+    "before": "v1.3",
+    "after": "v1.4"
+  },
+  {
+    "path": "doc/concept-design/README.md",
+    "previousPath": "doc/concept-design/README.md",
+    "before": "v0.10",
+    "after": "v0.11"
+  },
+  {
+    "path": "doc/mvp/README.md",
+    "previousPath": "doc/mvp/README.md",
+    "before": "v0.62",
+    "after": "v0.63"
+  },
+  {
+    "path": "doc/system-design/README.md",
+    "previousPath": "doc/system-design/README.md",
+    "before": "v0.35",
+    "after": "v0.36"
+  },
+  {
+    "path": "doc/top/DeerMind_AI_Native_Architecture_Principles_v0.7.md",
+    "previousPath": "doc/top/DeerMind_AI_Native_Architecture_Principles_v0.6.md",
+    "before": "v0.6",
+    "after": "v0.7"
+  },
+  {
+    "path": "doc/top/DeerMind_Development_Roadmap_v0.11.md",
+    "previousPath": "doc/top/DeerMind_Development_Roadmap_v0.10.md",
+    "before": "v0.10",
+    "after": "v0.11"
+  },
+  {
+    "path": "doc/mvp/m1/PRD.md",
+    "previousPath": "doc/mvp/m1/PRD.md",
+    "before": "v0.24",
+    "after": "v0.25"
+  },
+  {
+    "path": "doc/mvp/m1/README.md",
+    "previousPath": "doc/mvp/m1/README.md",
+    "before": "v0.41",
+    "after": "v0.42"
+  },
+  {
+    "path": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+    "previousPath": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+    "before": "v0.22",
+    "after": "v0.23"
+  },
+  {
+    "path": "doc/mvp/m1/design/Domain_Model_Revision_Checklist.md",
+    "previousPath": "doc/mvp/m1/design/Domain_Model_Revision_Checklist.md",
+    "before": "v0.1",
+    "after": "v0.2"
+  },
+  {
+    "path": "doc/mvp/m1/design/Interaction_Design.md",
+    "previousPath": "doc/mvp/m1/design/Interaction_Design.md",
+    "before": "v0.21",
+    "after": "v0.22"
+  },
+  {
+    "path": "doc/mvp/m1/design/README.md",
+    "previousPath": "doc/mvp/m1/design/README.md",
+    "before": "v0.40",
+    "after": "v0.41"
+  },
+  {
+    "path": "doc/mvp/m1/engineering/Domain_Space_Design.md",
+    "previousPath": "doc/mvp/m1/engineering/Domain_Space_Design.md",
+    "before": "v0.6",
+    "after": "v0.7"
+  },
+  {
+    "path": "doc/mvp/m1/engineering/Evaluation_Space_Design.md",
+    "previousPath": "doc/mvp/m1/engineering/Evaluation_Space_Design.md",
+    "before": "v0.10",
+    "after": "v0.11"
+  },
+  {
+    "path": "doc/mvp/m1/engineering/Product_Application_Design.md",
+    "previousPath": "doc/mvp/m1/engineering/Product_Application_Design.md",
+    "before": "v0.11",
+    "after": "v0.12"
+  },
+  {
+    "path": "doc/mvp/m1/engineering/README.md",
+    "previousPath": "doc/mvp/m1/engineering/README.md",
+    "before": "v0.46",
+    "after": "v0.47"
+  },
+  {
+    "path": "doc/mvp/m1/engineering/System_Design.md",
+    "previousPath": "doc/mvp/m1/engineering/System_Design.md",
+    "before": "v0.36",
+    "after": "v0.37"
+  },
+  {
+    "path": "doc/mvp/m1/prototype/README.md",
+    "previousPath": "doc/mvp/m1/prototype/README.md",
+    "before": "v0.7",
+    "after": "v0.8"
+  },
+  {
+    "path": "doc/mvp/m1/validation/README.md",
+    "previousPath": "doc/mvp/m1/validation/README.md",
+    "before": "v0.7",
+    "after": "v0.8"
+  },
+  {
+    "path": "doc/mvp/m1/validation/Validation_Plan.md",
+    "previousPath": "doc/mvp/m1/validation/Validation_Plan.md",
+    "before": "v0.5",
+    "after": "v0.6"
+  },
+  {
+    "path": "doc/mvp/DECISIONS.md",
+    "previousPath": "doc/mvp/DECISIONS.md",
+    "before": "v0.63",
+    "after": "v0.64"
+  }
+]

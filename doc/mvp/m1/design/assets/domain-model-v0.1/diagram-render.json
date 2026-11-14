@@ -1,0 +1,42 @@
+{
+  "renderedAt": "2026-11-14T10:17:38.638Z",
+  "renderer": "local Mermaid and Edge",
+  "diagrams": [
+    {
+      "id": "diagram-01",
+      "document": "doc/concept-design/DeerMind_Concept_Architecture_v1.6.md",
+      "index": 1,
+      "sourceSha256": "9ffae95db816cfeb2596b90556a808f9cdabac22d39b2f89c088e0dac4011c79"
+    },
+    {
+      "id": "diagram-02",
+      "document": "doc/concept-design/DeerMind_Domain_Space_Design_v1.6.md",
+      "index": 1,
+      "sourceSha256": "1dc6c7620be327a0c8fe7307b4be5e31de5dab57e2202fa8e94b9b9d5f3c8bf5"
+    },
+    {
+      "id": "diagram-03",
+      "document": "doc/concept-design/DeerMind_Evaluation_Space_Design_v1.10.md",
+      "index": 2,
+      "sourceSha256": "df8e4dc43f243dd738bcfe5350349a6f4d83471c94df82f75f1bcdbf6c6b86b5"
+    },
+    {
+      "id": "diagram-04",
+      "document": "doc/mvp/m1/PRD.md",
+      "index": 2,
+      "sourceSha256": "b8ed5b986fbd1ec824235a562fc2f0d7dbea6da34157c1deadda8163d9a91809"
+    },
+    {
+      "id": "diagram-05",
+      "document": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "index": 1,
+      "sourceSha256": "853d75f56ba68cfb8e8d495db0c44f669756a27d7daab9d47cf94df3b17baca2"
+    },
+    {
+      "id": "diagram-06",
+      "document": "doc/mvp/m1/design/Content_and_Model_Reference.md",
+      "index": 3,
+      "sourceSha256": "ddd7d351f8ff4b08e4f34ca952a76308cfec647cafa8a465f29b9e06f276968c"
+    }
+  ]
+}

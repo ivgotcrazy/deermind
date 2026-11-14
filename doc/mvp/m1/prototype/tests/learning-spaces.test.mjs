@@ -77,7 +77,7 @@ test('evaluation trace uses source evidence, deterministic snapshots and explici
 
 test('learning spaces read-only end-to-end review',async t=>{
   const server=createPreviewServer();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-  const browser=await chromium.launch({headless:true});
+  const browser=await chromium.launch({headless:true,channel:process.env.PLAYWRIGHT_CHANNEL||'msedge'});
   const context=await browser.newContext({viewport:{width:1440,height:1000},locale:'zh-CN'});
   const page=await context.newPage();page.setDefaultTimeout(8000);
   const errors=[],api=[];page.on('pageerror',e=>errors.push(e.message));

@@ -1,15 +1,15 @@
-# DeerMind Development Roadmap v0.10
-> **版本**：v0.10<br>
+# DeerMind Development Roadmap v0.11
+> **版本**：v0.11<br>
 > **中文名称**：DeerMind 开发总路线图<br>
 > **文档性质**：项目级全生命周期开发路线图 / Development Roadmap<br>
-> **状态**：MVP 三阶段规划；M1 范围与交接收敛中，历史 Gate 按原基线保留<br>
-> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.5.md`、Domain Space v1.3、Learning Space v1.3 与 Evaluation / Interaction / Evolution v1.5、`DeerMind_AI_Native_Architecture_Principles_v0.6.md`<br>
+> **状态**：本轮领域模型、原型及关联合同已修订，待用户审阅；真实服务与效果未验证<br>
+> **上位基线**：`DeerMind_Product_Thesis_v1.0.md`、`DeerMind_Product_Constitution_v1.0.md`、`DeerMind_Concept_Architecture_v1.6.md`、Domain Space v1.3、Learning Space v1.3 与 Evaluation / Interaction / Evolution v1.5、`DeerMind_AI_Native_Architecture_Principles_v0.7.md`<br>
 > **专项路线图**：`DeerMind_System_Design_Roadmap_v0.11.md`<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
-> **评审记录**：用户确认调整方向并授权修订；具体合同由作者推演与核对，文档检查不代表模型效果或 Gate 通过<br>
+> **评审记录**：用户批准模型变更及完整实施；作者检查见MVP决定登记§68，不代表真实效果验收通过<br>
 > **写作规范**：[设计文档规范 v1.1](DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-03<br>
-> **修订说明**：v0.9 → v0.10：明确PRD、详规和原型同步推进及业务包交接，历史Gate不变；见[本轮记录](../mvp/DECISIONS.md#11-产品设计同步推进与分包计划)。<br>
+> **更新日期**：2026-11-14<br>
+> **修订说明**：v0.10 → v0.11，同步Task／Solution新定义、多KC方法、Task先导、题内参考及相关Task独立取证；保持既定数值规则和工程边界；逐文件记录见MVP决定登记§68<br>
 
 ---
 
@@ -140,13 +140,13 @@ Reopen 必须发生在对应责任层级。产品问题不应通过偷偷修改 
 
 当前主要产物包括：
 
-- `DeerMind_Concept_Architecture_v1.5.md`；
-- `DeerMind_Domain_Space_Design_v1.3.md`；
-- `DeerMind_Learning_Space_Design_v1.3.md`；
-- `DeerMind_Evaluation_Space_Design_v1.5.md`；
-- `DeerMind_Interaction_Space_Design_v1.5.md`；
-- `DeerMind_Evolution_Space_Design_v1.5.md`；
-- `DeerMind_AI_Native_Architecture_Principles_v0.6.md`；
+- `DeerMind_Concept_Architecture_v1.6.md`；
+- `DeerMind_Domain_Space_Design_v1.6.md`；
+- `DeerMind_Learning_Space_Design_v1.4.md`；
+- `DeerMind_Evaluation_Space_Design_v1.10.md`；
+- `DeerMind_Interaction_Space_Design_v1.6.md`；
+- `DeerMind_Evolution_Space_Design_v1.6.md`；
+- `DeerMind_AI_Native_Architecture_Principles_v0.7.md`；
 - `DeerMind_Design_Document_Standard_v1.1.md`。
 
 **Architecture Baseline Gate**：四个 Space 的 semantic ownership、全局 Event contract、Product Constitution、Governance、Evolution Contract 和 AI-native Invariants 之间不存在已知一级矛盾；后续问题已经可以进入 System Design 而不需要重新发明顶层语义责任。 Target Definition / Binding / Assessment、Context Authority、Authority Directive 与 typed invalidation 已完成跨文档 Freeze Gate，不再留给实现阶段重新决定 owner。
@@ -286,7 +286,7 @@ flowchart LR
 
 为当前阶段准备可实现的业务流程、必要交互、内容与模型资产、权限及评测参考。复用V2基本布局和对话原型，以逻辑一致的mock呈现必要操作、状态和反馈；按业务包同步修订PRD、详规、原型和截图。外围视觉优化后置，核心交互属于产品设计共同完成条件。
 
-M1 的内容准备从实际扫描件开始：保留原页和图表，整理章、节及内容来源，形成 Domain 中的 TaskTemplate、SolutionTemplate、KC，连接 Evaluation 的 Task Claim 和 Learning Space 的教材、目标及要求，再准备可检验的题目与参考。AI 辅助、管理员核对并修正，直接保存并应用；不恢复维护审批发布工作流。用户已明确 M1 完成整册建模（DEC-040）。批量导入能力和整册建模结果分别验收：全册内容整理、领域及章节映射、Claim／目标、教学与检测参考齐备，不能以一章样例或全书上传代替。可按章实施和应用，M1 完成时覆盖整册；整册范围已由旧DEC-040确认；历史详细口径见[归档Definition §5](../mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Definition.md#mvp-stages)，新业务规格由[M1 PRD](../mvp/m1/PRD.md)承接，当前草案与原型尚未共同完成。
+M1 的内容准备从实际扫描件开始：保留原页和图表，整理章、节及内容来源，形成 Domain 中的 Task、Solution、KC，连接 Evaluation 的 Task Claim 和 Learning Space 的教材、目标及要求，再准备可检验的题目与参考。AI 辅助、管理员核对并修正，直接保存并应用；不恢复维护审批发布工作流。用户已明确 M1 完成整册建模（DEC-040）。批量导入能力和整册建模结果分别验收：全册内容整理、领域及章节映射、Claim／目标、教学与检测参考齐备，不能以一章样例或全书上传代替。可按章实施和应用，M1 完成时覆盖整册；整册范围已由旧DEC-040确认；历史详细口径见[归档Definition §5](../mvp/archive/2026-11-02-before-m1-prd/phase-3-definition/MVP_Definition.md#mvp-stages)，新业务规格由[M1 PRD](../mvp/m1/PRD.md)承接，当前草案与原型尚未共同完成。
 
 **产物与 G4：** 当前阶段的操作方案、真实材料样本、模型关系与交换合同、数据权限和验收参考足以交给工程。不能以截图、旧模型包或预写对话代替实际资产；也不要求软件尚未实现时就完成全书自动识别。当前导入链所需的输入样本和预期结果必须先可核查，实际工具在 Phase 5 实现。
 
@@ -598,3 +598,5 @@ ControlledPilot \neq ProductionLaunch
 Pilot 是受控真实实验；Production Launch 意味着系统开始承担持续的用户、数据、安全和运营责任。
 
 这三个边界不因项目进度压力而改变。
+
+本轮修订（v0.11，2026-11-14）：同步Task／Solution新定义、多KC方法、Task先导、题内参考及相关Task独立取证；保持既定数值规则和工程边界。完整范围和检查见MVP决定登记§68。
