@@ -1,13 +1,15 @@
 # M1 Domain Space 设计
 
-> **版本**：v0.2<br>
+> **版本**：v0.3<br>
 > **状态**：Operation 合同设计草案，待用户审阅；存储选型及语义检查实现待设计<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-12<br>
-> **修订说明**：v0.1 → v0.2，定义领域维护、教材入库、模板提取、实例保存、依赖查询和供题的 Operation 合同；见[决定登记§36](../../DECISIONS.md#36-operation与step的工程定义)。
+> **更新日期**：2026-11-13<br>
+> **修订说明**：v0.2 → v0.3，明确Domain独立发布入库与供题事实，消费方管理自身等待和超时；不展开新接口<br>
 
 本文维护可复用领域内容及其业务操作，不保存学生作答、个人接触史或 Belief。依据为 [PRD R04](../PRD.md#34-维护领域处理入库并关联章节m1-r04)、[R07](../PRD.md#37-准备题目和参考m1-r07)与[内容规格§3.2–3.3](../design/Content_and_Model_Reference.md#32-领域对象与字段)；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
+
+入库受理和供题按Domain自己的业务合同执行并发布事实事件，公开结果保留来源引用。Product或Interaction是否等待、采用什么期限，不改变Domain的处理义务和执行预算；它们结束等待不自动取消Domain任务。消费方通过底座订阅匹配及处理自己的超时，见[总体§7.2.1三](System_Design.md#721-本轮需要确认的总体选择)。
 
 ## 1. 领域对象、身份与关系
 
@@ -148,7 +150,7 @@ Operation 是业务操作，Step 是其中需要保存进度的执行步骤，�
 
 生成输出为§1.2的 TI／SI 候选及条件绑定，参考解法、提示和题面分开。程序校验结构与引用，语义检查记录所用模型／规则及理由；检查无法确认不作通过。模型超时、格式错误走有界技术重试；合法但无合格题是业务结果，不无限换题。
 
-提交保存 `DomainTaskSupplyCompleted`，按请求事件发布 `producer=domain,result_kind=task_supply`。载荷为 `supply_batch_ref, items[{task_instance_ref,content_ref,reference_solution_refs[],matched_method_refs[],use_check_ref}], unfilled[{condition,reason}]`；无题也返回空批及原因。检查通过、保存成功后方可交付，无须管理员逐题批准。
+提交保存 `DomainTaskSupplyCompleted`，按请求事件发布 `producer=domain,result_kind=task_supply`。载荷为 `supply_batch_ref, items[{task_instance_ref,content_ref,reference_solution_refs[],matched_method_refs[],use_check_ref}], unfilled[{condition,reason}]`；无合格题时记录空批及原因，作为本次供题事实发布；不因消费方等待到期提前伪造空批。检查通过、保存成功后方可交付，无须管理员逐题批准。
 
 成功结果同键只发布一次；重试不追加第二批实例。Interaction 取回后核对活动仍有效、条件未变及题面是否刚被展示，再建立本次题单和展示事件。题目晚到不自动开始检测。**验收例：** 现有题都展示过答案时生成新题；生成检查失败且无替代时返回缺口，不能把旧题当新独立证据。
 
@@ -190,6 +192,7 @@ OperationRun 幂等键、Step 尝试、租约和预算由公共运行维护。Do
 | 实例引用 | 解法父题未入库；ST不在TT中；管理员未确认补方法 | 失败不创建半关联；确认后引用和SI一并提交；不修改模板含义 |
 | 供题 | “增加四分之一”，方法A/B；无库存；候选答案错误或缺图 | 优先已有适用题；不足生成检查保存；错误候选不下发、不宣称掌握不足 |
 | 恢复 | 生成后崩溃；保存后通知丢失；成功结果重复投递；活动已切换 | 复用产物，不重复实例；仍可读取批次；由Interaction决定是否采用迟到结果 |
+| 消费方等待 | 没有等待者；Interaction或Product先超时 | Domain按自身规则处理并发布；不读取消费方期限，不因等待结束取消任务 |
 | 读取 | 学生读取statement；跨领域引用；分页期间更新 | 不泄漏答案；拒绝越域；固定读取范围或要求刷新，不静默漏项 |
 
 本批自检范围为八项 Operation 的字段、分支、事件、去重及模块边界；没有运行实现或内容质量测试。后续应先核对接口样例与失败路径，再实现 Schema、检查器和持久接线。
