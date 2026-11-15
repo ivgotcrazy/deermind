@@ -1,17 +1,17 @@
 # M1 工程设计
 
-> **版本**：v0.49<br>
-> **状态**：已进入模块详细设计；本批Domain稿待用户审阅，未编码或运行验证<br>
+> **版本**：v0.59<br>
+> **状态**：认证与浏览器接线详细稿待审；部署和数值配置继续细化，未编码<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-14<br>
-> **修订说明**：v0.48 → v0.49，登记Domain详细设计及相关交接，更新阶段和阅读入口；见MVP决定登记§70<br>
+> **更新日期**：2026-11-15<br>
+> **修订说明**：v0.58 → v0.59，同步认证与客户端详细设计入口及版本；见MVP决定登记§80<br>
 
-工程设计把M1产品规则落实为实现方案。用户已同意从[系统总体设计v0.38](System_Design.md)进入模块详细设计，当前先完成Domain的对象、内容和入库设计。总体决定及架构未决项仍以[总体§7.2](System_Design.md#72-总体架构问题清单)为准；进入详细设计不等于全部模块或实现已验收。
+工程设计把M1产品规则落实为实现方案。本批交付[最小登录](Product_Application_Design.md#25-密码与登录会话)、[执行授权及通信](System_Foundation_Design.md#51-授权上下文)、[客户端恢复](Client_Design.md#5-网络异步结果与展示回执)。服务端登录会话和同浏览器共用账号已确认；字段与接线待审，未改原型或代码。总体状态仍见[总体§7.2](System_Design.md#72-总体架构问题清单)。
 
 Operation仅封装AI业务能力，普通业务入口另列于[§7](#7-普通业务处理目录)；本批仍为9项AI Operation，不因新增字段或保存检查扩充目录。详细设计直接形成可审阅文稿，用户review后再处理意见；不以逐条对话或先写验证代码作为推进前置。影响架构的风险单独提出，其他验证留实现阶段，见[登记§70](../../DECISIONS.md#70-domain详细设计对象内容与入库)。
 
-相关工程稿版本：公共运行v0.24、AI底座v0.13、Interaction v0.13、产品业务v0.14、客户端v0.12、基础设施v0.18、实施计划v0.27、Domain v0.9、Evaluation v0.12。
+相关工程稿版本：总体v0.42、公共运行v0.32、AI底座v0.17、Interaction v0.19、产品业务v0.20、客户端v0.20、基础设施v0.25、实施计划v0.37、Domain v0.13、Evaluation v0.17。
 
 ## 1. 文档分工
 
@@ -37,10 +37,10 @@ AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己�
 
 | 当前产品输入 | 版本与作用 |
 | --- | --- |
-| [PRD](../PRD.md) | v0.26：M1产品行为与验收；Web交付，学习用时功能后置 |
-| [内容与模型规格](../design/Content_and_Model_Reference.md) | v0.24：对象关系、教学与评价语义、试用算法和参数 |
-| [交互规格](../design/Interaction_Design.md)及[原型](../prototype/README.md) | 交互规格 v0.23：管理员和学生的操作、状态、截图；原型用于理解交互 |
-| [验证计划](../validation/Validation_Plan.md) | v0.7：内容、语义、数值、效果及真实浏览器验收口径 |
+| [PRD](../PRD.md) | v0.28：M1产品行为与验收；Web交付，学习用时功能后置 |
+| [内容与模型规格](../design/Content_and_Model_Reference.md) | v0.26：对象关系、教学与评价语义、试用算法和参数 |
+| [交互规格](../design/Interaction_Design.md)及[原型](../prototype/README.md) | 交互规格 v0.25：管理员和学生的操作、状态、截图；原型用于理解交互 |
+| [验证计划](../validation/Validation_Plan.md) | v0.9：内容、语义、数值、效果及真实浏览器验收口径 |
 
 本轮产品输入已按新领域模型修订，不再沿用`37bd334`作为当前内容基线。此前最小账号、取消离线检查、浏览器交付及用时后置决定仍有效。正式接收模块时固定本表现行文件与资产哈希；历史输入和mock不构成生产模型或算法。
 
@@ -57,12 +57,12 @@ AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己�
 | PRD R01、R17：身份与必要确认 | [产品业务](Product_Application_Design.md)、[公共运行](System_Foundation_Design.md) | 预置账号、简单登录、固定两角色及必要确认；本人空间隔离与后台授权，不建设完整权限平台 |
 | R02–03：整册导入、对话纠错及候选采用 | [产品业务](Product_Application_Design.md)、[AI 底座](AI_Foundation_Design.md) | 文件与页序、引用、Agent 协议、候选检查、采用及失败处理 |
 | R04：领域管理与章节采用 | [Domain](Domain_Space_Design.md)、[产品业务](Product_Application_Design.md) | Domain§1维护固定版本和内容语法，§2维护复用／入库，§5.3维护归类与保存交接，§4.3维护KC路径；Product负责章节明确采用 |
-| R05、R08、R10：Claim、目标与选用 | [Evaluation](Evaluation_Space_Design.md)、[产品业务](Product_Application_Design.md) | 评价定义、目标条件、应用检查、空间采用；目标定义与个人结果分开 |
-| R06、R11–13、R16：活动与检测 | [Interaction](Interaction_Space_Design.md)、[客户端](Client_Design.md) | 四类配置及活动森林、允许动作、帮助顺序、实际展示、提交与恢复 |
+| R05、R08、R10：Claim、目标与选用 | [Evaluation§1](Evaluation_Space_Design.md#1-claim方法判据与评价方面)、[Product§4—5](Product_Application_Design.md#4-章节关联目标定义与课程应用) | Claim快照、方法判据／方面规则、目标条件和应用；旧应用不改，空间可采用新版 |
+| R06、R11–13、R16：活动与检测 | [Interaction](Interaction_Space_Design.md)、[客户端](Client_Design.md) | 四类配置及活动森林、busy与停止、整条回复、先关轮再帮助、正式提供事实及恢复 |
 | R07：题目准备与运行供题 | [Domain](Domain_Space_Design.md)、[Interaction](Interaction_Space_Design.md) | 已有实例筛选、生成检查保存、本次用途及无可用题分支 |
-| R14、内容§4.16–4.21：Evidence、概率与目标 | [Evaluation](Evaluation_Space_Design.md) | Evaluation§2.2生成并记录候选范围；解释资格、稳定机会身份、去重、纯函数、参数校验、相关Task独立取证更新及目标派生 |
+| R14、内容§4.16–4.21：Evidence、概率与目标 | [Evaluation](Evaluation_Space_Design.md) | §2取材与资格；§3数值接线；§4目标计算；§5.6存储；§6.4／6.6提交。§6.7顺序处理；§6.8保持时间 |
 | R09、R14、交互§3：运行及依据追溯 | [Evaluation](Evaluation_Space_Design.md)、[公共运行](System_Foundation_Design.md)、[产品业务](Product_Application_Design.md) | 原始事件、派生依据和结果的授权查询；事件只追加 |
-| R15：主动任务 | [Interaction](Interaction_Space_Design.md)、[公共运行](System_Foundation_Design.md) | 必要性和重复依据、接受／暂缓／拒绝、进入空间检查保持条件及等待评价；无离线保持检查 |
+| R15：主动任务 | [Interaction§5.1](Interaction_Space_Design.md#51-check_proactive_task核对主动任务)、[Product§5.1](Product_Application_Design.md#51-productopen_learning_space创建或进入个人空间) | 实际进入事件触发保持检查；同请求及同依据去重，无离线检查；接受／暂缓／拒绝按已有规则 |
 | R18、验证§1–3：AI 与质量 | [总体§6.6](System_Design.md#66-已确认的读取工具与越权边界)、[AI 底座](AI_Foundation_Design.md)、[公共运行](System_Foundation_Design.md#5-授权执行与访问隔离)、[实施计划](Delivery_Plan.md) | Operation选材、工具及业务校验，底座通用授权与越权拦截；识别、失败和成本沿基础设施设计；确定性、接线、交互及语义验证分开 |
 
 整册教材建模是 M1 交付范围，“四分之一”用于代表性运行链检查。R19／A18的学习用时功能整体后置，不再分派M1工程章节。Evolution、错误评价纠正、历史重算和跨版本演进按现有决定后置，正常失败重试、事件时间、保持及主动任务时间条件仍需设计。
@@ -75,13 +75,13 @@ AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己�
 | --- | --- | --- |
 | 1：已形成主流程边界 | 初始化、教材准备与领域融合、课程选用、学习检测、评价及教学接续 | 明确谁发起、各模块处理什么、读取和保存什么、如何传递事件及返回结果；核对AI取材、依赖等待和关键业务分支 |
 | 2：作为输入 | [总体收口检查](System_Design.md#722-总体收口检查) | 保留未决及验证责任，不重复以总体未确认阻塞已获准的详细设计 |
-| 3：当前 | 模块详细设计与工程接收 | 先写Domain对象、内容、入库与匹配归类，随后补存储和接口；相关模块按交接同步，不将未决架构交给编码 |
+| 3：当前 | 模块详细设计与工程接收 | 业务Space及Product已有详细稿；运行和AI底座补齐主要接线；本批补登录与客户端接线；下一批补部署、存储迁移和恢复 |
 
 总体当前状态只在§7.2维护；[收口检查](System_Design.md#722-总体收口检查)承接详细设计与验证事项，量化验收由责任文档提出、用户确认，见[实施计划§2.1](Delivery_Plan.md#21-量化验收的提出与确认)。原有Operation及字段不因索引补齐而自动获批。
 
 E01—E07 继续表达已确认的实现顺序，见[原决定](../../DECISIONS.md#27-m1主流程简化与工程实施顺序)；设计文档交叉推进，不按九本文件逐本写完。每轮说明实际交付、当前未决和下一步，不把目录稿算作方案完成。
 
-本批阅读顺序：[Domain§1对象与内容](Domain_Space_Design.md#1-领域对象身份与关系) → [§2入库](Domain_Space_Design.md#2-定义维护与教材内容入库) → [§5.3匹配归类](Domain_Space_Design.md#53-domainclassify_instance) → [§5.1保存条件](Domain_Space_Design.md#51-domainsave_instance)。四例结构参考及实现验收输入见[§7](Domain_Space_Design.md#7-设计核对与实现验收案例)。本批只做文档和图示自检，不运行Schema、原型、浏览器业务或LLM验证；后续承接见[Domain§6.3](Domain_Space_Design.md#63-设计范围与后续承接)。
+本批阅读顺序：[Product§2.5登录](Product_Application_Design.md#25-密码与登录会话) → [公共运行§5.2后台授权](System_Foundation_Design.md#52-后台执行授权) → [§5.3—5.5通信恢复](System_Foundation_Design.md#53-websocket连接与命令) → [Client§5](Client_Design.md#5-网络异步结果与展示回执)。认证、心跳、同步及限额数值在部署接线前确认；AI型号和大载荷待决保持。
 
 ## 5. M1 Operation总目录
 
@@ -130,7 +130,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 - `reassess_target`是确定性消息处理，不调用LLM、不创建AI OperationRun；作答解释内部的目标计算复用同一函数，不另建任务。
 - 公共结果、等待、订阅、授权和回传服务于两类处理。结果的生产方不必是Operation；生产记录与技术执行身份的具体映射仍待详细设计。
 
-调用方及资源边界见[总体§6.6.1](System_Design.md#661-最小调用授权矩阵)。评价原文读取见[Interaction§2.3](Interaction_Space_Design.md#23-评价原文的授权读取边界)；其接口是否复用聊天查询仍待确认，不能因需要读原文新增一个AI Operation。新增AI能力或普通公开入口均须更新相应目录和所属合同；[§3](#3-本轮必须承接的实现与复测要求)继续承接产品规则覆盖。
+调用方及资源边界见[总体§6.6.1](System_Design.md#661-最小调用授权矩阵)。评价原文读取见[Interaction§2.3](Interaction_Space_Design.md#23-评价原文的授权读取边界)，通过内部只读适配器承接答题区、聊天及附件，不新增AI Operation。新增AI能力或普通公开入口均须更新相应目录和所属合同；[§3](#3-本轮必须承接的实现与复测要求)继续承接产品规则覆盖。
 
 ## 6. 跨模块事件目录
 
@@ -146,13 +146,14 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | `DomainIntakeReceived` | Domain已接收并保存待入库组 | 产品业务获取接收结果；不表示内容已入库 | 原提交事件、处理组和接收结果；[Domain§2.2](Domain_Space_Design.md#22-domainreceive_intake) |
 | `MaterialCandidatesAdopted` | 产品业务采用教材修正候选 | Domain核对受影响待办的来源是否仍有效；不改已入库定义 | 导入、采用内容及替代关系；[产品业务§3.5](Product_Application_Design.md#35-productdecide_material_candidate采用或不采用候选)、[Domain§2](Domain_Space_Design.md#2-定义维护与教材内容入库) |
 | `MaterialImportDeleted` | 产品业务删除未完成导入 | Domain标记相应未入库来源失效，保留已入库内容 | 导入及受影响来源；[产品业务§3.3](Product_Application_Design.md#33-productdelete_material_import删除未完成导入)、[Domain§2](Domain_Space_Design.md#2-定义维护与教材内容入库) |
-| `LearningTargetApplied` | 产品业务在空间首次采用目标或其目标条件实际变化时产生 | Evaluation普通消息处理`reassess_target`，只重新派生目标结果，不更新Belief | 学习空间、实际目标采用和条件；[应用§4.3](Product_Application_Design.md#43-productapply_course检查并应用教材与目标组合)、[创建§5.1](Product_Application_Design.md#51-productopen_learning_space创建或进入个人空间)、[Evaluation§4](Evaluation_Space_Design.md#4-学习目标达成计算) |
+| `LearningTargetApplied` | Product在空间首次采用或目标依据变化时产生 | Evaluation普通处理reassess_target，只重新对照已有状态 | scope_id（学习空间）、adoption_ref、application_ref、target_basis_ref；[Product§6.1](Product_Application_Design.md#61-写入事件与跨模块交接)、[Evaluation§4](Evaluation_Space_Design.md#4-学习目标达成计算) |
+| `LearningSpaceEntered` | Product接受学生实际进入；同请求一次，重连／查询除外 | Interaction的check_proactive_task；不自动开测、不触发评价 | 空间及进入时采用引用、request_ref；[Product§5.1](Product_Application_Design.md#51-productopen_learning_space创建或进入个人空间)、[Interaction§5.1](Interaction_Space_Design.md#51-check_proactive_task核对主动任务) |
 | `TaskSupplyRequested` | Interaction形成一组供题要求 | Domain触发`supply_task`，统一筛选及补足题目 | 当前活动、Task、方法、用途、条件和接触事实；[Interaction§4.1](Interaction_Space_Design.md#41-prepare_detection准备本次检测)、[Domain§5.2](Domain_Space_Design.md#52-domainsupply_task) |
 | `DomainTaskSupplyCompleted` | Domain完成供题处理并保存批次；可有未满足项 | Interaction读取批次并复核使用条件，不自动开测 | 原供题事件、批次、实例及未满足项；[Domain§5.2](Domain_Space_Design.md#52-domainsupply_task) |
 | `AnswerSubmitted` | Interaction接受实际作答并固定当时条件 | Evaluation触发`evaluate_submission`；不等当题判题 | 本次题目使用、作答、活动／轮及内容引用，当时目标／教材采用依据与存在时的题单引用；[Interaction§4.2](Interaction_Space_Design.md#42-submit_answer提交实际作答)、[Evaluation§2](Evaluation_Space_Design.md#2-原始事实到evidence) |
-| `TeachingOpportunityClosed` | Interaction确认教学目的收束且有实际展示依据 | Evaluation触发`apply_learning_opportunity`，再判断资格 | 稳定机会身份、展示、目的、收束依据及实际目标／教材采用引用；[Interaction§3.4](Interaction_Space_Design.md#34-record_presentation记录内容呈现)、[Evaluation§3](Evaluation_Space_Design.md#3-belief分项与数值更新) |
-| Evidence处理／Belief更新事实（事件名待定） | Evaluation完成证据处理或确定性更新 | Interaction按需要授权读取掌握发布；目标及追溯查询可读取相关依据 | 原始触发事件、Evidence、更新或未更新原因、只读发布引用；[Evaluation§6](Evaluation_Space_Design.md#6-处理顺序提交与恢复)；`belief_result`是结果类型 |
-| 目标计算事实（事件名待定） | Evaluation完成目标对照并保存结果 | Interaction按需接续；产品业务查询入口组织目标展示 | 原始触发、目标采用、所用能力依据及目标发布引用；[Evaluation§4／6](Evaluation_Space_Design.md#4-学习目标达成计算)；`goal_result`是结果类型 |
+| `TeachingOpportunityClosed` | Interaction收束服务端正式提供的教学段，不等显示回执 | Evaluation触发`apply_learning_opportunity`，再判断资格 | 机会身份、正式内容、目的、收束及采用引用；[Interaction§3.7](Interaction_Space_Design.md#37-帮助与教学机会的服务端事实)、[Evaluation§3](Evaluation_Space_Design.md#3-belief分项与数值更新) |
+| `BeliefEvaluationCompleted` | Evaluation提交一批Evidence及更新／未更新结果 | Interaction按需要授权读取掌握发布；目标及追溯查询可读取相关依据 | 原始触发、input_ref、Evidence／修订、snapshot_ref、result_ref及原因；[Evaluation§6.5](Evaluation_Space_Design.md#65-事件与结果交接)；belief_result是结果类型，完成不等于掌握 |
+| `GoalEvaluationCompleted` | Evaluation保存本次目标计算结果，含历史／未推进结果 | Interaction核对当前依据后接续；Product授权查询并组织展示 | 触发、固定目标及掌握快照、结果引用、是否推进当前；[Evaluation§6.5](Evaluation_Space_Design.md#65-事件与结果交接)；goal_result仍为结果类型 |
 
 ### 6.2 查询取证与业务留痕
 
@@ -167,23 +168,28 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | `DomainIntakeItemProcessed` | Domain处理入库项 | 教材可查询处理结果及关联对象；不自动建立章节关联 | [Domain§2.3](Domain_Space_Design.md#23-domainprocess_intake) |
 | `DomainTemplateCandidatePrepared` | Domain形成Task／Solution候选 | 管理员核对候选及来源，不等于正式定义已保存 | [Domain§3.2](Domain_Space_Design.md#32-domainextract_template) |
 | `DomainInstanceSaved` | Domain保存题目、题内参考及定义关系 | 查询题目、题内参考、Task／Solution及来源；不等于学生已见题 | [Domain§5.1](Domain_Space_Design.md#51-domainsave_instance) |
+| `DomainKCTestPathConfirmed` | Domain确认已有版本的KC直接检验路径 | 查询内容就绪依据；不产生个人评价、不自动改章节关联 | [Domain§4.3](Domain_Space_Design.md#43-kc直接检验路径的准备与确认)、[§6.6](Domain_Space_Design.md#66-http请求响应与分页) |
 | `ActivityConfigSaved` | Interaction保存活动配置 | 查询蓝图、规则及推荐策略的实际依据 | [Interaction§1.1](Interaction_Space_Design.md#11-manage_activity_config维护活动配置) |
 | `ActivityChanged` | Interaction改变活动及父子接续位置 | 聊天和活动目录查询；Evaluation按需核对当时活动，不据此直接加分 | [Interaction§2.1](Interaction_Space_Design.md#21-control_activity控制活动与检测开始) |
 | `DetectionPlanPrepared` | Interaction保存可确认题单 | 查询计划、覆盖及反馈安排；不是开测或作答事件 | [Interaction§4.1](Interaction_Space_Design.md#41-prepare_detection准备本次检测) |
-| 出题／题目使用事实（事件名待定） | Interaction实际安排本轮题目 | Evaluation沿作答查询当时题面和条件；引用Domain实例及实际使用内容 | [Interaction§4.2](Interaction_Space_Design.md#42-submit_answer提交实际作答)、[Evaluation§2](Evaluation_Space_Design.md#2-原始事实到evidence) |
-| `PresentationRecorded`及帮助事实 | Interaction记录实际内容呈现及帮助 | Evaluation查询实际展示、时点与内容引用；没有回执仍为未知 | [Interaction§3.4](Interaction_Space_Design.md#34-record_presentation记录内容呈现) |
+| `TaskUseCreated` | Interaction固定并正式提供本次题面 | Evaluation沿作答读取当时题面、条件和采用引用；不代表浏览器已阅读 | [Interaction§4.3、§6.5](Interaction_Space_Design.md#43-计划题目使用与提交记录) |
+| `PresentationRecorded` | Interaction保存客户端显示报告 | 只供显示追溯；缺失或迟到不影响评价 | [Interaction§3.4](Interaction_Space_Design.md#34-record_presentation记录内容呈现) |
+| `HelpHandled` | Interaction提交帮助分类／轮处置或正式帮助内容 | Evaluation沿作答读取提交前正式帮助；请求与提供分开留痕 | [Interaction§3.7、§6.5](Interaction_Space_Design.md#37-帮助与教学机会的服务端事实) |
+| `ChatMessageRecorded` | Interaction保存正式消息 | 查询消息与事件的引用；不等于新的作答或机会 | [Interaction§6.5](Interaction_Space_Design.md#65-本space的事件载荷) |
+| `InteractionInputStopped` | Interaction停止当前回复并废止提交令牌 | 查询停止及已有结果；不撤销作答或评价 | [Interaction§3.6](Interaction_Space_Design.md#36-停止本次回复) |
 | `DetectionRoundClosed` | Interaction记录检测轮结束 | 查询提交、求助或结束原因；不是第二次作答评价触发 | [Interaction§2.1／4.2](Interaction_Space_Design.md#21-control_activity控制活动与检测开始) |
-| 当题判题事实（事件名待定） | Interaction保存当题判断及反馈 | 用于反馈和追溯，M1不作为Evaluation的语义Evidence输入 | [Interaction§6.1](Interaction_Space_Design.md#61-提交事实由evaluation订阅处理) |
-| `ProactiveTaskChanged` | Interaction提出任务或处理学生响应 | 查询建议依据、接受／暂缓／拒绝及提醒记录，不直接改Belief | [Interaction§5](Interaction_Space_Design.md#5-主动任务的触发与接续) |
+| `AnswerFeedbackPrepared` | Interaction保存当题判断及反馈 | 用于反馈和追溯，M1不作为Evaluation的语义Evidence输入 | [Interaction§6.1](Interaction_Space_Design.md#61-提交事实由evaluation订阅处理) |
+| `ProactiveTaskChanged`／`ProactiveTaskResponded` | Interaction提出任务或处理学生响应 | 查询建议依据、接受／暂缓／拒绝及提醒记录，不直接改Belief | [Interaction§5](Interaction_Space_Design.md#5-主动任务的触发与接续) |
+| `ProactiveTaskPrompted` | Interaction在安全时点保存正式提示 | 查询提示发生及消息引用；不触发接受、活动执行或概率更新 | [Interaction§5.4／6.5](Interaction_Space_Design.md#54-提示接受与返回) |
 | `ClaimDefinitionChanged` | Evaluation保存Claim及判据定义 | 查询实际定义依据；不因保存自动重算历史 | [Evaluation§1](Evaluation_Space_Design.md#1-claim方法判据与评价方面) |
 
-普通账号、上传、候选等模块内部留痕仍在各自合同维护；一旦成为跨模块触发或取证依据须登记到本目录。消息正文经所有者授权读取，事件仅保存事实及必要引用；不得为了省一次读取把所有正文复制进事件。登记不决定所有事件都发消息或推送浏览器，订阅与客户端刷新接线仍待设计。
+普通账号、上传、候选等模块内部留痕仍在各自合同维护；一旦成为跨模块触发或取证依据须登记到本目录。消息正文经所有者授权读取，事件仅保存事实及必要引用；不得为了省一次读取把所有正文复制进事件。登记不决定所有事件都推送浏览器；仅按公共运行§5.4登记刷新提示，正文仍经所有者查询。
 
 `apply_course`原合同已有`LearningTargetApplied`；本轮补登记而非新增触发路径。Evaluation按§6.1的作答、教学机会两类事实启动AI Operation，目标采用事实启动普通目标对照处理，不同时订阅上述保存、应用和空间留痕事件重算同一目标。需交接但未被可靠承接的失败按[总体§6.5.1](System_Design.md#651-自动重试结束后的收尾责任)处理；没有订阅用途的留痕不记“无人消费故障”。
 
 ## 7. 普通业务处理目录
 
-以下30项从原Operation目录移出，原有业务责任继续保留。标识只是对应合同的处理名称，不统一包装为Agent或OperationRun。API、消息及内部回调的具体接线待详细设计；并非每项都对浏览器开放。
+以下31项普通处理保留原有业务责任，其中30项从原Operation目录移出，KC路径确认已另行登记。认证会话读取、退出及连接订阅是技术子接口，不另列AI能力。标识只是对应合同的处理名称，不统一包装为Agent或OperationRun。Domain的API与消息端口见其§6，其余接线按模块细化；并非每项都对浏览器开放。
 
 | 普通处理 | 完成的工作 | 合同位置 |
 | --- | --- | --- |
@@ -204,13 +210,14 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | `domain.save_definition` | 新建、追加修订或软删除定义；保留全部历史版本 | [Domain§2.1](Domain_Space_Design.md#21-domainsave_definition) |
 | `domain.receive_intake` | 幂等接收教材提交的待入库内容 | [§2.2](Domain_Space_Design.md#22-domainreceive_intake) |
 | `domain.process_intake` | 添加／复用KC，关联实例或移除待入库项 | [§2.3](Domain_Space_Design.md#23-domainprocess_intake) |
+| `domain.confirm_kc_path` | 确认已有KC／Task／Solution版本的直接检验路径，追加内容就绪依据 | [Domain§4.3](Domain_Space_Design.md#43-kc直接检验路径的准备与确认)、[§6.6](Domain_Space_Design.md#66-http请求响应与分页) |
 | `domain.query_dependencies` | 读取直接方法、KC及按方法适用的Task先导 | [§4.2](Domain_Space_Design.md#42-domainquery_dependencies) |
 | `domain.save_instance` | 检查归属后保存题目／参考的新版本，或软删除题目 | [§5.1](Domain_Space_Design.md#51-domainsave_instance) |
 | `domain.query_content` | 查询已有定义、实例、候选与待入库内容 | [§6.1](Domain_Space_Design.md#61-domainquery_content) |
 | `interaction.manage_activity_config` | 维护四类活动蓝图、规则与推荐策略 | [Interaction§1.1](Interaction_Space_Design.md#11-manage_activity_config维护活动配置) |
-| `interaction.control_activity` | 开始、暂停、继续、结束及切换活动 | [§2.1](Interaction_Space_Design.md#21-control_activity控制活动与检测开始) |
+| `interaction.control_activity` | 开始、暂停、继续、结束及切换活动；停止本次回复 | [§2.1](Interaction_Space_Design.md#21-control_activity控制活动与检测开始) |
 | `interaction.query_conversation` | 读取当前活动、活动目录和聊天历史 | [§2.2](Interaction_Space_Design.md#22-query_conversation查询当前交流和历史) |
-| `interaction.record_presentation` | 记录实际内容呈现及已给出的帮助 | [§3.4](Interaction_Space_Design.md#34-record_presentation记录内容呈现) |
+| `interaction.record_presentation` | 记录客户端显示报告，不触发评价 | [§3.4](Interaction_Space_Design.md#34-record_presentation记录内容呈现) |
 | `interaction.submit_answer` | 保存当轮作答及当时的检测条件 | [§4.2](Interaction_Space_Design.md#42-submit_answer提交实际作答) |
 | `interaction.respond_proactive_task` | 处理接受、暂缓、拒绝及提醒去重 | [§5.2](Interaction_Space_Design.md#52-respond_proactive_task响应主动任务) |
 | `interaction.continue_after_result` | 结果就绪后检查当前活动并接续 | [§6.4](Interaction_Space_Design.md#64-continue_after_result结果就绪后接续) |
@@ -220,10 +227,30 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 
 普通处理同样执行授权、业务校验、提交防重和事件留痕；普通异步工作的失败及恢复要求不取消。查询和短事务可直接在API执行，需要后台处理的普通工作也可交Worker，是否需要Temporal持久执行按恢复要求设计，不因此改名为Operation。
 
-[Operation目录](#5-m1-operation总目录)有9项AI能力，本节另列30项普通处理。其中`domain.classify_instance`从原`save_instance`已包含的AI归类步骤中分出：归类产生检查结论，普通保存处理验证所用内容仍有效后提交实例。没有增加一项用户操作，也不新增实例管理页面。
+[Operation目录](#5-m1-operation总目录)有9项AI能力，本节另列31项普通处理。其中`domain.classify_instance`从原`save_instance`已包含的AI归类步骤中分出：归类产生检查结论，普通保存处理验证所用内容仍有效后提交实例。没有增加一项用户操作，也不新增实例管理页面。
 
 此前评价候选范围和KC路径修订见[决定登记§69](../../DECISIONS.md#69-评价候选范围与kc直接检验路径补齐)。领域旧技术名称与本批详细设计字段的对应见[变更清单§9](../design/Domain_Model_Revision_Checklist.md#9-评审修订与待迁移名称)；不把旧字段名或Operation标识当成模型结构。
 
 本轮修订（v0.48，2026-11-14）：同步现行版本及产品规则到工程责任；链接候选范围、KC路径及迁移登记。本轮仅改文档；完整记录见MVP决定登记§69。
 
 本轮修订（v0.49，2026-11-14）：转入模块详细设计，登记Domain v0.9、产品业务v0.14和客户端v0.12；更新入库、内容、版本及审阅入口，Operation和事件目录数量不变。变更清单与自检见MVP决定登记§70。
+
+本轮修订（v0.50，2026-11-14）：登记Domain v0.10存储／接口及同库事务，更新相关版本和下一步；9项AI Operation不变，普通处理增补KC路径确认及其留痕事件，见MVP决定登记§71。
+
+本轮修订（v0.51，2026-11-14）：更新Product详细设计审阅路径、关联模块版本及后续安排；AI Operation仍9项、普通入口31项。教材内部工具及保护端口不另登记业务能力，见决定登记§72。
+
+本轮修订（v0.52，2026-11-15）：登记目标应用和学生选用交付，补进入事件及跨模块读取；AI Operation仍9项、普通入口31项，见MVP决定登记§73。
+
+本轮修订（v0.53，2026-11-15）：更新Evaluation审阅入口、版本与目标计算事件目录；本批只修订文档，见MVP决定登记§74。
+
+本轮修订（v0.54，2026-11-15）：更新评价取材审阅入口、版本及Belief事件目录；本批仅修订文档，见MVP决定登记§75。
+
+本轮修订（v0.55，2026-11-15）：同步事件目录、版本、审阅入口及后续安排。本批仅修订文档，见MVP决定登记§76。
+
+本轮修订（v0.56，2026-11-15）：同步版本、事件登记、规则归属与本批审阅入口。仅修订文档，见MVP决定登记§77。
+
+本轮修订（v0.57，2026-11-15）：同步现行版本、运行合同与审阅入口。仅修订文档，见MVP决定登记§78。
+
+本轮修订（v0.58，2026-11-15）：同步AI底座交付、工程版本及审阅入口。仅修订文档，见MVP决定登记§79。
+
+本轮修订（v0.59，2026-11-15）：同步认证与客户端详细设计入口及版本。仅修订文档，见MVP决定登记§80。

@@ -1,17 +1,17 @@
 # M1 产品业务设计
 
-> **版本**：v0.14<br>
+> **版本**：v0.20<br>
 > **状态**：文档修订待用户审阅；本轮未修改原型或实现真实服务<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-14<br>
-> **修订说明**：v0.13 → v0.14，对齐Domain内容结构、精确版本引用、待入库父题和来源复用边界；见MVP决定登记§70<br>
+> **更新日期**：2026-11-15<br>
+> **修订说明**：v0.19 → v0.20，细化预置账号、登录会话、凭据重置和授权来源；见MVP决定登记§80<br>
 
 本文设计教材准备、学习目标、学习空间和账号关系等产品业务，说明这些业务如何调用核心Space。教材助手归本模块管理，个人能力与目标达成计算仍由Evaluation负责；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。学习用时统计与提醒后置，不作为M1模块或验收条件。
 
 ## 1. 业务对象与模块组织
 
-本文件维护产品业务处理合同；只有教材助手持续对话属于AI Operation。账号、上传、候选采用、章节关联、目标及空间维护是普通API／消息处理。它们可以调用已有查询或安排AI能力，但不因多步骤而各建OperationRun。共用边界见[系统底座§1.3](System_Foundation_Design.md#13-operationstep与operationrun)。本轮不展开传输接口。
+本文件维护产品业务处理合同；只有教材助手持续对话属于AI Operation。账号、上传、候选采用、章节关联、目标及空间维护是普通API／消息处理。它们可以调用已有查询或安排AI能力，但不因多步骤而各建OperationRun。共用边界见[系统底座§1.3](System_Foundation_Design.md#13-operationstep与operationrun)。本批补最小认证及授权来源，目标、应用与选用合同保持；字段和提交方案为待审详细稿。
 
 | 对象／责任 | 本模块拥有的数据与边界 |
 | --- | --- |
@@ -33,7 +33,7 @@
 | `MaterialInput` | `domain_ref:Ref, title:string, source:string, files:FileReceipt[]`非空；`edition:string?` | FileReceipt含`storage_ref:Ref, type:pdf|jpg|png, original_name:string, order:int`；文件内分页保留顺序，版权页未知如实留空 |
 | `MaterialSelection` | `import_id:ID, scope:batch|chapter|content, basis_revision:Revision, source_refs:Ref[]` | chapter／content需对应对象引用；引用按本次明确请求确定，浏览位置不能自动替代选区 |
 | `CandidateRef` | `candidate_id:ID, candidate_revision:Revision, basis_revision:Revision` | 内容为KC／TaskInstance及题内参考解法候选；图表和公式随所属元素，参考解法必须归属于题目；结构语义见[内容规格§3.1](../design/Content_and_Model_Reference.md#31-提取什么以及怎样保存图表和来源) |
-| `GoalItem` | `item_id:ID?`（仅新增可省）、`title:string, claim_ref:Ref, chapter_refs:Ref[], task_conditions:object, method_mode:enum, methods:MethodRequirement[]` | method_mode为`specified`／`any_one`／`each`；MethodRequirement含`method_ref:Ref, chapter_refs:Ref[], aspects:{aspect_ref:Ref, condition_values:object}[]`。条件值受Claim判据约束；不提供逐目标概率阈值 |
+| `GoalItem` | §4.2.1定义 | 目标内条目，不是独立“学习要求”实体；Claim按精确Task版本核对 |
 | `ApplicationRef` | 不可变应用结果引用 | 固定教材、目标、Domain、章节方法、Claim、活动定义及逐行为可用条件；不是新增课程模型 |
 
 既有入参与动作族保留为待审合同；编号条目说明处理次序，不统一当作持久Step。只有AI Operation中需要恢复的步骤按执行合同保留身份；普通函数、查询和短事务按自身提交边界处理，不逐项进入Agent框架。
@@ -46,7 +46,7 @@
 
 本轮确认的最小范围：试用账号提前创建并统一发放、简单登录、固定学生／管理员角色、学生仅访问自己的学习空间，以及Agent／后台任务的受限身份。必要的监护与使用确认记录保留。
 
-不建设自助注册、自定义角色、权限配置、完整亲子关系管理、复杂找回或单点登录。下列既有操作合同仍待审，开户与必要重置可由受控管理方式完成，不据操作名新增整套管理页面；是否保留专门找回入口在最小认证方案中确认。认证组件尚未选型。
+不建设自助注册、自定义角色、权限配置、完整亲子关系管理、复杂找回或单点登录。开户与必要重置通过受控管理命令或已有后台操作完成，不新增自助找回页面。用户已确认预置账号＋密码＋服务端登录会话，具体合同见§2.5—2.7；不引入独立认证服务。
 
 账号及学习空间归产品业务，所属Space定义资源访问规则，公共运行底座在路由、派发、读取及恢复处执行授权检查。按已登记的公开查询向底座提供必要路由事实，不转移数据所有权。
 
@@ -76,29 +76,75 @@
 
 **调用与合同。** 未认证的学生或管理员提交`login_identifier, CredentialProof`，可选客户端返回位置（仅允许站内）；输出认证会话收据、角色、可进入的业务范围和必要确认缺口，密钥及凭据不进入业务日志。
 
-1. 交认证组件核验凭据与账号，不根据请求中的角色授权。
+1. 按§2.5核验密码与账号，不根据请求中的角色授权。
 2. 取得角色、关系及必要确认结果；校验返回位置。
 3. 建立认证会话，留`AccountSignedIn`安全操作记录，返回进入页面所需身份；缺确认者仅进入允许完成确认的流程。
 
-**恢复与验收。** 认证失败不创建学习空间或暴露他人账号详情；重复成功请求按认证收据恢复，不因重试创建新身份。验证学生与管理员的访问边界及缺确认登录后的写入限制；会话时限与凭据协议待认证设计确认。
+**恢复与验收。** 认证失败不创建空间或暴露账号是否存在。登录响应丢失先查当前登录；没有有效Cookie则重新验证密码，允许建立新登录会话，不创建新学生身份。登录不套用业务写请求的“原凭据重放”合同；服务器不能通过普通收据重新返回登录秘密。
 
 ### 2.4 `product.recover_account`：管理员协助找回
 
 **调用与合同。** 管理员在线下重新核实后提交`account_id, verification_ref, CredentialReset, expected_revision`；输出恢复收据及原账号身份，不返回学生历史内容给未获授权的人。
 
 1. 核对管理员权限、找回对象和有效核实依据。
-2. 通过认证组件更换该账号凭据并处理旧认证凭据，具体会话失效协议交认证设计。
+2. 先计算新密码摘要，短事务核对账号修订，更换摘要并递增credential_revision，使该账号旧登录会话失效；细则见§2.6。
 3. 追加`AccountRecovered`记录，保留学生ID、关系与空间引用，返回恢复结果。
 
 **恢复与验收。** 同请求只恢复一次；核实不足拒绝，认证组件未确认成功不返回完成。验收恢复后仍进入原空间，失败不新建学生或清空历史。
+
+### 2.5 密码与登录会话
+
+用户确认同一浏览器配置的标签页共用一个当前账号。两种角色同时测试使用不同浏览器或浏览器配置；学生／管理员入口不各存一套登录凭据。这里的登录会话只用于认证，与学习空间的一条持续对话无关。
+
+密码采用成熟库校验的Argon2id摘要，盐由库生成，数据库不存明文或可逆密码。接线草案采用pwdlib，版本和参数在依赖配置评审确认；参考[FastAPI密码散列](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/#password-hashing)及[OWASP密码存储](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)，不继承该教程的JWT方案。
+
+登录成功后生成密码学安全的随机session_token，数据库仅保存其hash及会话记录。浏览器通过HttpOnly、Secure、SameSite=Lax、Path=/且不带Domain的`__Host-dm_session` Cookie携带token；不向JavaScript或localStorage返回token。开发环境使用受控本地代理和独立配置，不能将生产Cookie的保护选项随意关闭。[会话保护依据](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)。
+
+| Product记录 | 字段与约束 |
+| --- | --- |
+| accounts | account_id、唯一login_identifier、固定role、status、revision；角色来自记录，不允许学生修改 |
+| credentials | account_id唯一、password_hash、credential_revision、changed_at；仅认证适配读取摘要 |
+| auth_sessions | session_id、唯一token_hash、account_id、credential_revision、created_at、expires_at、revoked_at、csrf_token；session_id只用于诊断，不可代替Cookie登录 |
+
+csrf_token是会话绑定的防伪值，不是登录凭据；作为受限字段保存，仅通过已认证的会话查询返回，不能写日志。后台会话记录与账号身份均归Product；底座通过认证端口核验，不直接读凭据表。M1采用固定到期时间，不因WebSocket心跳无限续期；时限、密码长度和失败限流数值在部署配置评审确认，缺值不得默认无限。
+
+登录过程：检查来源及请求格式→执行有限登录尝试控制→读取账号和密码修订→事务外校验密码→短事务重查账号及凭据修订→生成会话并登记安全记录→提交后设置Cookie。密码重置先完成时，旧密码验证结果不得建立新会话。未知账号也走受控等价校验，错误只返回“账号或密码不正确”；不记录密码或整段登录请求。
+
+同一浏览器切换账号时，成功登录事务撤销请求携带的旧会话，再设置新Cookie；其他浏览器的会话不因这次切换失效。账号数据、草稿及已受理工作不迁给新账号，客户端处理见[Client§5](Client_Design.md#5-网络异步结果与展示回执)。
+
+### 2.6 退出、重置与初始化
+
+退出先撤销当前会话，提交后清除Cookie；重复退出成功。密码重置递增credential_revision，所有旧会话在下次检查时失效；接口和WebSocket不能仅在连接建立时鉴权。退出、登录到期及密码重置不取消已合法受理的后台工作；工作按[公共运行§5.2](System_Foundation_Design.md#52-后台执行授权)继续检查自身权限。
+
+首个管理员由部署命令调用bootstrap_admin，密码通过受保护输入取得，不作为命令行参数、代码默认值或日志。数据库唯一约束保证只能初始化一次。后续学生开户／重置仍按§2.1／2.4核实，返回账号及操作收据，不返回历史密码。受保护凭据载荷不保存到通用请求正文；业务收据只留“凭据已设置”及修订。重试不重复更换密码。
+
+管理员遗失自身凭据由部署维护者经受控命令恢复原账号，复用同一凭据更新函数及日志，不开放无身份的远程重置入口。监护／使用确认不由密码重置推定为已完成。
+
+### 2.7 认证端口与请求保护
+
+以下属于认证技术子接口，不新增AI Operation或独立账号产品。业务入口目录仍以sign_in、recover_account等动作族定位。
+
+| 接口／端口 | 处理和输出 |
+| --- | --- |
+| POST /auth/sign-in | 登录标识、密码；设置Cookie，返回account_id、role、expires_at及使用条件缺口，不返回session_token |
+| GET /auth/session | 核验当前Cookie；返回当前账号、会话诊断ID、csrf_token及缺口。未登录401，响应禁止缓存 |
+| POST /auth/sign-out | 当前Cookie和CSRF证明；撤销会话、清Cookie；不调用后台取消接口 |
+| authenticate_session(credential) | 底座内部调用；核对token hash、账号状态、凭据修订、撤销和到期，返回Identity或unauthenticated |
+| check_execution_subject(account_id) | 后台只读核对账号及使用条件；不要求浏览器Cookie仍有效，不授予其他空间权限 |
+
+普通浏览器API请求另带X-Expected-Session，值为页面已核验的session_id；它不是凭据。服务端先认证Cookie，再比较该ID，身份已切换则返回session_changed，不按新账号继续执行旧页面的请求。GET /auth/session及登录入口不带此预期，用于取得当前身份；客户端收到不匹配后清空旧视图并重新核验。私有读取返回前复查会话有效性，响应禁止缓存。
+
+认证身份只来自上述服务端校验。登录请求限定同源JSON及精确Origin；已登录的写请求另携带会话csrf_token，GET不产生业务写入。WebSocket首帧验证同一csrf_token，避免只靠浏览器自动携带Cookie建立可写连接。Origin必须精确匹配受控列表，不接受通配或缺失Origin的浏览器入口；开发来源单独配置。[WebSocket安全依据](https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html)。
+
+缺少必要确认的学生可以登录、查看自己的确认状态和提交本人意愿；不能提交真实学习输入、取用学习内容或建立学习活动。初始化、后台内容准备和合成案例不因此被阻止。401表示需登录，403表示身份有效但不允许操作，服务故障不伪装成密码错误。
 
 ## 3. 教材助手与内容准备
 
 依据：[PRD R02–03](../PRD.md#32-批量导入教材m1-r02)。本节管理员操作记录归教材业务，不写成学生空间聊天或能力Evidence。
 
-教材助手Operation决定取用哪些原件、对话、候选及采用记录，组装上下文并保存需要保留的记忆。历史摘要归教材业务；生成摘要先作为所属Operation内部步骤，通过AI底座调用模型，存取使用共用能力。具体摘要要求、时机和检索方式待设计，共同边界见[总体§3.4](System_Design.md#34-agent上下文和记忆)。
+教材助手Operation决定取用哪些原件、对话、候选及采用记录，组装上下文并保存需要保留的记忆。共同边界见[总体§3.4](System_Design.md#34-agent上下文和记忆)，本模块的材料、工具和恢复合同见§3.4。
 
-教材解析与纠错按[总体§6.1.2](System_Design.md#612-教材agent解析与对话修正)由教材Agent通过多模态模型API完成，M1不单独接入OCR。管理员通过对话指出问题，Agent查看对应原页和当前内容后提出修正候选；不增加手工内容编辑器。候选核对、采用、领域入库与章节关联仍分别处理，具体操作合同保持下述草案，未在本轮展开字段或工具协议。
+教材解析与纠错按[总体§6.1.2](System_Design.md#612-教材agent解析与对话修正)由教材Agent通过多模态模型API完成，M1不单独接入OCR。管理员通过对话指出问题，Agent查看对应原页和当前内容后提出修正候选；不增加手工内容编辑器。候选采用、领域入库、章节关联和课程应用是四次不同的业务提交，任何一步成功都不代替后一步。
 
 ### 3.1 `product.receive_material`：接收整批或补充材料
 
@@ -109,6 +155,10 @@
 3. 建立或补充同一导入记录及`MaterialReceived`事件；失败文件单列，已有内容可继续使用。
 
 **恢复与验收。** 同请求、同文件收据不重复追加；部分上传失败按原导入继续接收，删除中的导入拒绝新材料。验证整批PDF／图片、未选领域、补页及重试保留已收部分。文件大小／数量上限与上传协议待基础设施设计，不在此编造数值。
+
+文件收据须经存储适配核实上传完成、访问权限及实际类型；浏览器给出的文件名不是有效收据。原文件字节不被后续识别覆盖，原件定位使用固定文件引用与文件内页号；印刷页码为可为空的内容信息。PDF转页图属于文件准备，不等于OCR或语义提取。补充文件追加新的原件身份；“用这张替代上一张”的含义由助手提出候选并经采用确认，不直接改写旧原件。
+
+首次接收创建教材草稿、一个导入资源及其持续对话；补页沿用同一导入。保存原件不启动整本解析，后续明确的“解析整本”请求可以覆盖全册，管理员不必逐页发送。整册识别的内部拆批见§3.4.4；文件传输和落盘不能占住业务数据库事务。
 
 ### 3.2 `product.save_material_metadata`：补录教材基本信息
 
@@ -122,48 +172,262 @@
 
 ### 3.3 `product.delete_material_import`：删除未完成导入
 
-**调用与合同。** 管理员提交`import_id, expected_revision, confirmed_scope_ref`，确认引用对应界面已说明的删除范围；输出删除收据。已应用教材不能从本入口撤下。
+**调用与合同。** 管理员提交`import_id, expected_revision, confirmed_scope_ref`，expected_revision对应导入控制修订revision，确认引用固定界面已说明的原件、候选及执行情况；输出删除收据。已应用教材不能从本入口撤下。
 
 1. 核对导入未完成、确认范围仍有效，列明领域已入库内容不受影响。
-2. 标记该导入不再可操作，追加`MaterialImportDeleted`事件；取消该导入未完成的助手工作及提交等待，晚到结果在提交检查时失效。
+2. 按§3.6.1锁定导入并复核后，标记该导入不再可操作，追加`MaterialImportDeleted`事件；取消该导入未完成的助手工作及提交等待，晚到结果在提交检查时失效。
 3. 返回列表移除结果；相关未入库来源失效通过事件交Domain处理，不删除其已保存对象。
 
 **恢复与验收。** 重复删除返回原收据；应用状态已变化则拒绝。验收旧助手候选不能在删除后采用，已入库定义、实例及其他教材不受影响。原文件物理保留／销毁不由此操作决定。
 
 ### 3.4 `product.converse_material_assistant`：持续对话解析与纠错
 
-**调用与合同。** 管理员提交`import_id, message:string`；可选`MaterialSelection`、前一候选引用及补充材料收据。输出持久对话消息、澄清请求或候选批引用及处理状态；没有明确选区时只澄清，不默认整个教材。
+**调用与合同。** 管理员提交`request_id, import_id, message:string`；可选`selection:MaterialSelection, previous_batch_ref, supplementary_file_refs[]`。显式引用固定版本，文字可以明确指定“整本”“第49—50页”等范围。浏览位置不是引用；没有选区但请求已明确时可以执行，只有范围含糊时才询问。返回受理收据，完成后可取得助手答复、补充问题或候选批。
 
-1. 保存消息及本次明确引用；读取原件、同一导入的相关历史、当前采用内容和已有候选，不把后来浏览章节替换引用。
-2. 本Operation组装材料、要求及授权工具，通过AI底座调用多模态模型API进行解析与修正。允许澄清、补图、纠正公式、拆解法；只读来源，只写候选。底座不自行挑选教材内容或保存导入记忆。
-3. 程序维护编号、父题与原件定位，核对本次修改范围、必需图表／条件和结构；缺信息返回补充请求，服务故障记失败，不能编造合格结果。
-4. 保存候选批、原内容对照、改动说明及`MaterialCandidateProposed`事件；等待管理员采用或继续对话，不自动覆盖当前内容。
+#### 3.4.1 请求受理与忙时处理
 
-候选的文字、公式、表格和图形采用[Domain§1.4](Domain_Space_Design.md#14-文字公式图表的统一内容结构)的内容语法；Product拥有导入候选和原件，Domain拥有入库后的对象版本。题面、参考和辅助内容分开；程序维护局部编号、父题及出处，Agent不能编造已入库ID。结构合法与内容完整分开检查；无法表达、漏图或读不清保留具体问题，仍通过本助手对话修正，不增加手工编辑器。入库结果不会因候选更新被静默覆盖。
+同一导入只允许一条尚未结束的助手请求。忙时新消息返回`assistant_busy`，不排队、不追加服务端聊天，客户端保留草稿。查看教材和已有候选不受影响，不同教材可以同时处理。`needs_input`表示本轮已结束、需要人补充，不占住执行位置。该规则由用户确认，见[登记§72](../../DECISIONS.md#72-教材助手与内容采用详细设计)。
 
-**恢复与验收。** 长操作通过`read_operation_run`读取进度及输出。缺信息时本轮以`needs_input`合法完成，下条管理员消息是新请求，引用同一对话／候选；技术重试沿原消息恢复。已有候选不重做采用，旧内容变化须重新核对。验证刷新恢复、局部修正不改整章、题面不带提示、无手工编辑器；具体Agent输出Schema／预算引用AI底座后续合同。
+受理的短事务依次执行：鉴权 → 检查同请求收据 → 锁定导入 → 复核可用及忙闲 → 保存用户消息、固定请求输入和当前执行引用 → 由底座登记持久派发。提交后返回202。相同请求先返回原收据；同键改内容返回`identity_conflict`；不能因为本请求正在执行就把它的重试当成新消息拒绝。
+
+`active_request_ref`覆盖已受理、执行中和可恢复的技术重试。完成、`needs_input`或最终失败时，程序仅在该引用仍等于本请求的条件下清空。客户端断线、超时或Worker暂时离线不释放它；恢复处理先查询底座的持久执行结果，再按同一请求完成收尾。旧执行晚到时必须再次核对执行归属与导入状态，不能覆盖较新请求。具体Temporal状态接线归公共运行，不在本模块设另一套超时解锁器。
+
+最终失败已经释放占用后，若经公共恢复入口继续原请求，须重新在导入锁内检查空闲、来源和相关基准，并重新登记原请求为当前执行；已有其他请求运行或相关内容已变时拒绝恢复，不抢占或排队。新的补充消息始终是新请求；已结束的旧请求不会因浏览器重连自动复活。
+
+图1：教材助手从消息受理到候选交付；采用与领域入库不在这次Operation内执行。
+
+```mermaid
+sequenceDiagram
+    participant A as 管理员浏览器
+    participant P as Product
+    participant R as 公共运行
+    participant W as 教材助手Operation
+    A->>P: 发送消息和明确引用
+    P->>P: 鉴权、原请求去重、锁定导入
+    alt 已有其他请求未结束
+        P-->>A: 正在处理上一条，保留草稿
+    else 可以受理
+        P->>P: 保存消息、固定输入、执行占用
+        P->>R: 同事务登记派发
+        P-->>A: 已受理及请求引用
+        R->>W: 在Worker上执行
+        W->>P: 授权读取原件和相关内容
+        W->>W: 组装上下文、调用AI底座、核对产物
+        W->>P: 保存答复与候选，或补充请求
+        P->>P: 共同保存结果和留痕，释放本请求占用
+        P->>R: 登记可回传的结果引用
+        R-->>A: 已授权结果可取
+    end
+```
+
+图中的保存与派发登记均通过所属模块参加同库事务；模型调用在事务外。底座不会把通用模型产物未经Product核对就推成可采用内容。
+
+#### 3.4.2 Operation取材与工具
+
+每轮建立固定`MaterialTurnInput`，字段由Product准备：
+
+| 字段 | 类型／必填 | 含义 |
+| --- | --- | --- |
+| `import_id, message_ref, request_ref` | ID／是 | 当前导入、已保存原文及本轮身份；账号和权限来自服务端上下文 |
+| `scope` | MaterialSelection或待定位标记／是 | 已明确引用的全册、章节或元素范围；只有自然语言定位时保留原文及待定位标记 |
+| `source_manifest_ref` | Ref／是 | 本轮可用原件、页序及校验摘要；新增补页不会悄悄进入旧输入 |
+| `basis_refs, dependency_refs` | Ref数组／是，可空 | 已采用内容及必要依赖；修正解法须含其父题，新增内容用明确的章节／页段范围标识 |
+| `previous_batch_ref, history_refs` | Ref可空、Ref数组／是 | 继续核对的候选和相关原始对话；跨教材历史不在本次授权中 |
+| `work_state_ref` | Ref／可选 | 上次缺口、已处理页和未闭合的跨页题目；不能代替原件或当前采用内容 |
+
+必需输入为当前请求原文、实际要处理的原页／完整跨页内容、被修改元素及其依赖。相关历史按引用补取；超过模型容量时分段处理，不能裁掉题目条件以换取“成功”。教材中的指令是材料，不得改变工具权限或操作范围。
+
+范围需语义定位时，模型先依据本导入目录和请求提出定位，程序核验后另存固定的resolved_scope及依据，不回改原MaterialTurnInput。含糊则needs_input询问；已经明确“整本”或指定页码不必再次确认。后续读取和候选write_set受该范围约束，不能把处理过程中偶然浏览的章节扩入请求。
+
+提示协议由Product维护：固定规则说明“只提取／修正候选、保持未知和原题信息、题面与参考分离”；本轮指令给出明确范围及所需改动；材料区给出带来源引用的原页和内容；输出区要求§3.4.3结构。既有候选和教材原文作为数据传入，不拼进系统规则。实现时该协议落为本模块的提示模板并记录模板标识；AI底座不维护教材业务提示词，模型配置和预算另沿其公共合同。
+
+| 授予助手的普通工具 | 返回内容与限制 |
+| --- | --- |
+| `read_material_pages` | 本导入获准文件的指定页图及定位；相邻页仅在请求授权范围内补取，否则询问，不接受任意URL或磁盘路径 |
+| `read_material_content` | 指定候选／已采用元素及父题、完整内容、出处、采用状态；读取结果固定引用，不读取Domain私表 |
+| `read_material_history` | 同一导入内指定消息、候选和决定的原文；按用途限定范围，不给其他教材全量历史 |
+| `store_material_work` | 保存本轮工作草稿或候选建议；Product检查来源、结构、执行归属和范围，不改变当前采用、Domain或章节关联 |
+
+这些工具是本Operation内部能力，不新增AI Operation。最终发布候选由程序执行§3.4.3检查；工具保存草稿不等于已向管理员交付候选。助手无权调用采用、删除导入、提交Domain或保存章节关联的写入口。
+
+#### 3.4.3 Agent输出与程序接收
+
+模型输出是`MaterialProposal`，不是可直接写入的领域对象。下列结构为本模块唯一的候选外壳；元素正文复用[Domain§1.4](Domain_Space_Design.md#14-文字公式图表的统一内容结构)，不另造公式／图形语法。
+
+| 字段 | 类型／条件 | 程序检查 |
+| --- | --- | --- |
+| `outcome` | `proposal|needs_input|reply`／必需 | proposal至少含一项changes或catalog_changes；needs_input含可回答的问题；reply只用于说明已有内容，不宣称修改成功 |
+| `reply` | string／必需 | 给管理员的简短说明；技术失败由执行层返回，不让模型伪造成功答复 |
+| `changes` | Change数组／proposal必需，可空 | 每项`action=add|replace|retire, local_key, target_ref?, chapter_ref或chapter_key, source_refs[], content?, reason`；chapter_key指本批新目录项，两种章节定位恰一；replace／retire须指向本轮固定目标，add不得覆盖既有身份 |
+| `content` | 候选正文／add、replace必需 | `kind=kc|task_instance|reference`及RichContent；reference须带`parent_key`或固定`parent_ref`，两者恰一 |
+| `catalog_changes` | 目录候选数组／可选 | 每项含action、local_key、target_chapter_ref可空、名称、顺序、页段及理由；新目录用局部key配对，修正用已有引用，程序分配正式章节ID。不能改变章节Task／Solution采用关系 |
+| `coverage` | 页／元素处理清单／proposal必需 | 记录已处理、缺失、读不清和明确不提取的内容及理由；跨页问题须闭合，不以进度100%证明无遗漏 |
+| `issues, questions` | 有定位的问题数组／可空 | 每项含问题位置、原因及对内容完整性的影响；必需图形／条件缺失时不能生成可采用批次 |
+
+`local_key`只用于本批配对。程序分配候选ID、修订、章节ID、父题引用、来源锚点和改动集合；模型返回的官方ID只有在输入白名单中才可引用，不能通过自行编号插入对象。新解析元素新建candidate_id；替代同一元素沿用candidate_id并追加candidate_revision，不覆盖旧正文。绑定新章节和同批父题在保存批次时一次完成，不能先保存悬空参考。模型返回的出处必须落在实际提供的页／内容中；结构校验不能证明语义正确，管理员仍需对照原件核对。
+
+程序按请求范围、已有正文、变更目标及依赖生成`CandidateBatch`：`batch_id, batch_revision, turn_ref, scope, basis_revision, read_set[], write_set[], candidate_refs[], catalog_changes, coverage, issues, diff_summary`。`read_set`记录实际依据的不可变引用；`write_set`列明新增／替代／撤下的目标和前后引用。它们由程序固定，不能仅相信模型声称“未修改其他部分”。新增目标还记录所在章节／页段的占用基准，避免两批相同位置内容同时新增。
+
+`basis_revision`只是定位本轮读取快照，**不要求等于整本最新修订**。是否仍可采用按§3.5的相关内容／依赖检查。批次内容固定后不能原地编辑；“继续修正”产生新批次，成功保存新候选后才将明确被替代的旧待审批次标为`superseded`。修正失败不使旧候选凭空消失；已采用批次始终保留其历史决定。
+
+题目与参考分别列候选，例题有参考也必须有独立题面；教学辅助不放进题面。题目数据表和统计图共享相同值来源，无法识别的值保持未知。`retire`只表示经明确请求移除错误／重复的解析元素，须列入采用对照；缺少某项输出不等于删除它。本操作不能撤下已入库Domain对象。目录修改不得使已有章节关联悬空，遇到已有采用无法对应的章节拆合须先澄清，不自动迁移关联。
+
+#### 3.4.4 分段处理、记忆与恢复
+
+全册请求在同一Operation中按页段处理：固定原件清单 → 读取目录与页段 → 逐段提取 → 合并跨页题和独立解法 → 检查覆盖与引用 → 交付候选批。页段大小服从模型输入限额，不是产品章节限制。中间草稿可以保存和恢复，但未闭合的片段不能冒充完整可采用批次；缺页、限额耗尽或服务失败时保留已做部分及未完成范围，不能把全册请求默默缩成几页完成。
+
+| 可恢复位置 | 保存内容 | 再执行时的规则 |
+| --- | --- | --- |
+| 请求受理后 | 原消息、授权引用、固定输入、当前执行引用 | 同请求复用；不因断线再追加消息 |
+| 页段处理后 | 已完成段的结构稿、原页引用、剩余范围及跨页依赖 | 复用已保存结果；没有可靠结果的外部调用可能重做，记录重复费用风险 |
+| 候选交付后 | 不可变批次、对照、助手答复、事件和最终收据 | 回传失败只补取；不重调模型生成第二批 |
+| `needs_input`／最终失败 | 缺口、已完成工作引用及明确结果 | 结束本轮、释放占用；新补充消息开始新请求，技术重试仍由原运行按底座规则处理 |
+
+Product的最小工作记忆是结构化工作记录：本轮范围、已处理页、未解决问题、当前候选和采用引用。原始对话另存，不要求每轮生成摘要。历史超出上下文预算时，由本Operation选定相关原文生成带来源引用的摘要，作为内部步骤保存；下次取用前重新核对正式内容。摘要不替代题面、父题、采用决定或授权范围，不能据此自动扩大修改范围。
+
+候选发布前检查导入仍可用、请求仍归当前执行、相关依据是否仍有效。若处理中发生相关采用变化，保存工作草稿及冲突说明，不发布可采用批次；无关章节变化不阻止发布。删除发生后，迟到产物只作运行留痕，不重新创建导入或可操作候选。所有AI调用、页图读取和WebSocket发送均在最终保存事务之外。
 
 ### 3.5 `product.decide_material_candidate`：采用或不采用候选
 
-**调用与合同。** 管理员提交`CandidateRef, decision=adopt|decline, expected_revision`；输出采用记录或未采用结论与当前解析内容引用。只接受完整核对范围内的候选批，变更范围由候选明确列出。
+**调用与合同。** 管理员提交`request_id, import_id, batch_ref, decision=adopt|decline, expected_revision`；`batch_ref={batch_id,batch_revision}`，expected_revision比较该批决定状态的修订，不比较整本教材修订。输出决定收据、已采用内容引用和影响说明；批次内元素用CandidateRef标识，不以单个元素引用代替整批决定。
 
-1. 校验候选仍待核对、基础内容修订未变、必要内容完整且父题引用有效。
-2. `decline`保留旧内容；`adopt`只替换声明范围，保留旧内容和候选来历，标记被替代候选。
-3. 共同保存当前引用、决定及`MaterialCandidatesAdopted`或`MaterialCandidateDeclined`事件；采用使旧待入库来源失效，由Domain订阅处理。
+1. 鉴权并查询原请求收据；按§3.6.1锁定导入，复核批次仍待核对。已处理批的新请求返回`already_decided`，不反向改写原决定。
+2. `decline`只登记不采用，不要求旧正文仍是当前正文。`adopt`则比较程序保存的read_set／write_set：修改目标、父题及相关目录／原页映射仍须相同；无关章节变化忽略。相关变化返回`candidate_basis_changed`及变化引用，不自动合并、不自行重解析，管理员可通过助手重新核对。
+3. adopt时验证本批内容结构、完整性和所有父题关系。若题面被修正，原来绑旧题面的参考不能自动沿用为有效；本批须明确重核参考，或将这些参考保留为历史并标明需继续核对，禁止以旧参考提交新题。不能只改parent_ref声称已核对。decline不做这些内容合格检查。
+4. adopt只更新write_set声明的当前内容／目录指针，追加采用决定、失效来源清单和`MaterialCandidatesAdopted`事件；decline仅保存拒绝决定和`MaterialCandidateDeclined`。不改变Domain对象和章节采用。事件、决定及发生的指针变更与请求结果共同提交。冲突／失败不留下半批采用。
 
-**恢复与验收。** 同请求返回原决定；来源变化或并发采用冲突不覆盖，要求重新引用核对。验证未采用内容不能提交入库、旧待办不能使用过时来源、已入库领域对象不被本操作改写。
+已有Domain对象不因采用修正而失效；未完成待办由通知及入库时的来源保护阻止使用旧内容。解法和题目的分别入库选择发生在§3.6，不把采用操作改成任意删改候选块的编辑器。同请求重取原决定前仍检查权限；结果回包丢失不重复采用。
+
+例如A章候选修正题Q，依据Q@1和原页P；B章随后采用修正，A仍可采用。若Q@1已被Q@2替代，或参考R的父题Q改变，则A必须重新核对。单纯增加另一份文件不使未受影响的P失效；被替换的是P对应的语义内容／定位时才纳入冲突。
 
 ### 3.6 `product.submit_domain_intake`：提交已采用内容到领域
 
-**调用与合同。** 管理员提交`import_id, adopted_content_refs:Ref[], expected_revision`；可选已入库父题引用。输出提交收据及Domain待办受理引用；不输出“模板已建立”或“章节已关联”。
+**调用与合同。** 管理员提交`request_id, import_id, adopted_content_refs:CandidateRef[]`；每项引用固定内容修订，不用整本expected_revision阻止其他章节提交。另可带按参考候选逐项对应的`parent_bindings`：父题为本批题目、已有待办或确切TaskInstance版本，三者恰一。输出提交收据；取得Domain受理结果后补充待办引用，不输出“模板已建立”或“章节已关联”。
 
 1. 核对所选内容均已采用且来源有效；KC、题目、解法分别选择。选解法必须定位同一道父题：本批同时提交、此前已有有效待办，或准确引用已入库题目版本。父题待入库时只允许解法进入待办，不能提前完成关联；父题均未登记则先提交题目，不能偷偷附带其他内容。
 2. 保存按来源修订固定的提交包，追加`DomainIntakeRequested`事件；Domain的`domain.receive_intake`订阅创建待办，Product不直接写其模板或实例。
-3. 产品业务按本次提交关联的Domain受理事件定义等待条件、期限及超时处理，交底座执行。取得对应待办引用及候选映射后才确认受理完成；等待到期由产品业务处理，不将其直接记作Domain受理失败。具体超时展示和恢复分支待详细设计。
+3. 产品业务以本次固定触发事件对应的`intake_receipt`等待Domain受理，期限交底座执行。取得对应待办引用及完整候选映射后才确认受理完成；等待到期显示“已提交，尚未确认领域受理”，保留原提交并允许查询，不能显示入库失败或新建一批请求。
 
 **恢复与验收。** 同一来源修订的重复提交复用待办／已有入库引用；确认原事件未投递时可按底座保障重投，不再生成提交包；仅等待超时不能证明Domain未受理，也不触发新的入库请求。来源已替代不得继续入库，需提交新内容。验证只选题不带解法、缺父题被挡、重复投递只建一次待办。
 
 Domain返回本次新建／复用对象的精确版本、来源映射和检查引用。新增出处记入入库结果，不要求复用对象为此修改内容或升版。Product不能把“定义已创建”“题目已关联”或“参考已追加”当成章节采用成功，章节关系仍由§4.1明确保存。Domain入库、失败与恢复的唯一规则见[Domain§2](Domain_Space_Design.md#2-定义维护与教材内容入库)。
+
+提交记录只维护`submitted|received|rejected`：submitted为请求已共同保存并等待受理；received为取得Domain明确收据；rejected为取得Domain明确业务拒绝。投递／执行故障和本方等待到期另记`delivery_state`／`wait_state`，不把消息迟到当业务拒绝。Domain待办后续的入库、放弃或失效通过其授权查询读取，Product不复制一套待办状态机。消息重复或乱序按trigger_event_id关联同一提交；迟到的受理结果仍可登记，但不把已失效来源改回有效。程序核对结果覆盖本次候选，不能把其他提交的成功通知填入本批。
+
+delivery_state是底座投递／执行结果的只读投影，不在Product自建发送队列或重试计数；wait_state为`waiting|timed_out|closed`，按本消费方等待决定变化。收到明确成功／业务拒绝后关闭等待；底座技术失败只关闭本次等待并展示恢复条件，不推导领域业务拒绝。具体公共失败载荷随底座详细设计接线。
+
+### 3.6.1 教材来源读取与提交保护
+
+教材、Domain及事件共用业务PostgreSQL，模块各操作自己的schema；只在最后保存时参加同一个短事务。确认见[登记§71](../../DECISIONS.md#71-domain存储接口与同库短事务)。这不把Domain入库改成同步调用教材Agent，也不允许Domain直接读取教材私有表。
+
+| Product端口 | 输入与输出 | 执行条件 |
+| --- | --- | --- |
+| `read_adopted_content` | `access_context,candidate_refs[]` → `items[{candidate_ref,domain_id,kind,content_ref,content,parent_ref,source_refs,adoption_state}]` | 普通只读；返回不可变已采用内容及当时有效性，用于准备检查，不能当作最终入库许可 |
+| `read_intake_submission` | `access_context,intake_request_id` → `import_id,domain_id,trigger_event_id,candidate_refs[],parent_bindings` | Domain按事件引用读取固定提交，候选必须与事件相同；父题绑定说明本批选择，不替代Domain核对待办／实例的真实来源映射 |
+| `guard_adopted_sources` | `access_context,transaction_context,source_refs[]` → `valid_source_refs[]`，或具体失效原因 | 只能在同进程、同业务数据库事务中调用；按导入ID排序取得`FOR SHARE`，校验候选仍已采用、内容未被替代、父题引用有效、导入可用及领域一致；锁保持到外层提交／回滚 |
+
+三个端口均校验授权；已知来源失效返回`source_unavailable`，数据库故障返回`temporarily_unavailable`，不混为“来源不存在”。内容里的图表、公式和教学辅助仍按各自用途交付；候选不是任意教材文件的访问凭证。read_intake_submission返回的原提交不会随候选失效改写，当前来源资格仍由其余端口独立检查。
+
+`decide_material_candidate`和`delete_material_import`必须先对同一`product.material_import`记录取`FOR UPDATE`，再复核状态并修改采用／有效性；任何其他改变来源资格的入口也使用同一锁。校验针对所选内容，不能仅因为另一章采用了新内容就使本候选失效。表与投影见§3.7，Domain仍只使用端口。
+
+若教材变更先提交，Domain随后取得锁会拒绝旧来源。若Domain已锁定有效来源并先提交，教材变更随后生效，已入库对象保持合法历史；失效事件只处理尚未完成的待办。仅靠通知先到、读取候选一次或保留旧原件，都不能替代此提交保护。完整锁序、事务步骤与时序图维护于[Domain§6.5](Domain_Space_Design.md#65-短事务与来源并发保护)。
+
+Domain持有已入库内容的结构化副本，Product继续拥有原件、采用记录和出处。教材随后替代或删除不改写Domain正文，也不自动建立／更新章节关联。回到教材后仍由管理员明确采用精确Task及Solution版本。
+
+### 3.7 教材持久化与状态
+
+以下为`product` schema内的表设计；ID为程序生成的不透明身份，修订为递增正整数，时间沿公共时间合同，不另定时区。JSON字段承载本文已定义的类型，未知不记空成功。表名和字段为待审详细稿，驱动及迁移工具仍由基础设施确认；本节不实现建表。
+
+| 表／主键 | 主要字段及索引 | 可变边界 |
+| --- | --- | --- |
+| `textbook`／textbook_id | domain_id、metadata、metadata_revision、import_id（唯一） | M1每个教材草稿一个持续导入；领域创建后不换，基本信息仅由§3.2改 |
+| `material_import`／import_id | textbook_id、status、revision、source_revision、content_revision、active_request_ref可空、next_message_seq | status为active／deleted；是否已应用从采用记录核验。revision在原件、候选、采用或执行归属等删除确认范围变化时递增；source_revision仅随原件追加，content_revision随正式内容／目录采用；不内嵌全本正文 |
+| `material_source`／source_id | import_id、file_receipt、文件内页清单、保存摘要；同导入同收据唯一 | 原件引用和字节依据固定；页码修正、目录及替代对应关系进入候选／采用记录，不覆盖文件 |
+| `material_message`／message_id | import_id、seq、role、body、explicit_refs、turn_ref；唯一(import_id,seq) | 正文追加；role为user／assistant，运行进度不是反复改写的聊天正文；事件只存消息引用 |
+| `material_turn`／request_ref | 输入摘要、MaterialTurnInput、runtime_ref、state、work_state_ref、result_ref、error；一条命令收据对应一轮 | 固定输入不可变；state为accepted／running／completed／needs_input／failed／cancelled；进度与当前工作指针可更新 |
+| `material_candidate_batch`／batch_id | batch_revision、turn_ref、scope、read_set、write_set、coverage、diff_summary、decision_state及decision_revision | 提案内容固定；决定状态为pending／adopted／declined／superseded，终结后不反向改回pending；新提案另建批 |
+| `material_candidate`／(candidate_id,candidate_revision) | batch_id、import_id、kind、chapter_ref、正文、parent_ref可空、source_refs、basis_revision | 不可变正文；reference必须有父题；同批local_key唯一，采用时已转换为固定候选引用 |
+| `material_content_current`／(import_id,candidate_id) | candidate_ref、chapter_id、validity、adoption_ref | 同一解析元素的当前投影；validity为current／requires_review／retired；候选历史和Domain副本不随指针改变 |
+| `material_adoption`／decision_id | batch_ref、decision、操作者、前后内容引用、影响范围、request_ref；同batch唯一终结决定 | 追加历史；替代旧内容不修改旧决定，不删除旧候选 |
+| `material_chapter`／chapter_id | textbook_id、parent_id可空、title、order、page_refs、revision、catalog_basis_ref | 目录当前投影；采用记录保留原目录。身份不随重排变化，有现存关联时不得静默撤掉该章 |
+| `material_intake_submission`／submission_id | import_id、固定候选和父题绑定、trigger_event_id、status、domain_receipt_ref、wait_state、delivery_state | 固定提交不可换内容；受理结果与等待／技术状态分开，按trigger_event_id唯一关联 |
+| `chapter_association`／association_id | textbook_id、chapter_id、task_ref、method_refs、revision、active、last_event_ref | 同章同Task稳定身份最多一条当前有效关系；取消保留记录并递增修订，历史采用快照不变 |
+| `command_receipt`／request_ref | principal_id、action、scope_id、request_id、input_digest、result_ref／error | (principal_id,action,scope_id,request_id)唯一；普通写入与AI受理复用此去重约束，不能只在浏览器防双击 |
+
+候选引用含元素身份与修订；读取旧版本不代表该内容仍有效。`material_content_current`可重建，但重建不得产生第二次采用事件。`material_adoption`记录管理员采用／拒绝；被新提案取代的未采用批次在批次处理记录留痕，不伪造管理员拒绝。父题变动引起的requires_review也须在采用影响集合中记录，其参考不能提交Domain。
+
+本模块内容引用为`{owner:"product",candidate_ref,path}`，path是候选正文内的JSON Pointer；批次和原件使用各自有类型的引用，不混用路径。读取器同时检查所属导入、视图和授权；有引用不等于有原件或参考权限。工作草稿通过turn_ref／步骤身份保持幂等，当前work_state_ref可更新，但已经交付的候选内容和原输入不被恢复覆盖。
+
+批次采用的read_set由固定候选／父题／目录依据和必要的页段占用基准组成；write_set包含每个更新的旧引用。事务内逐项比较，所有受影响投影在同一导入行锁下检查并提交。content_revision仅作整本变化游标，不作为局部采用的唯一乐观锁。原件、消息、提案正文和决定历史不原地改写；物理删除及留存期限不在本批决定。
+
+普通请求收据保存业务结果，不替代Temporal、OperationRun或事件outbox。请求通过鉴权后先查收据，再按“命令收据→导入→Domain→本模块目标行→运行登记”的顺序锁定；Domain参与的完整顺序见其§6.5。§3.4消息受理及最终完成各有一个短事务，AI执行不贯穿事务。业务事件由公共运行写入runtime schema，聊天正文留在Product，不塞进事件载荷。
+
+### 3.8 HTTP与客户端交接
+
+路径相对`/api/m1`，JSON沿Domain§6.6的UTF-8、蛇形命名及错误外壳。请求体不能指定角色或提升资源权限。普通写入用200返回已保存结果；持久受理的AI／跨模块提交用202返回`request_ref,state,result_ref?,runtime_ref?`。拒绝受理时不返回伪造的处理中收据。
+
+| 方法与路径 | 合同及结果 |
+| --- | --- |
+| `POST /material-imports` | §3.1 new_import；已完成文件收据 → 教材、导入及可用原件；上传字节走存储适配协议 |
+| `POST /material-imports/{id}/files` | §3.1 append_files；新增收据与expected_revision（source_revision） → 已收及失败部分 |
+| `PATCH /textbooks/{id}/metadata` | §3.2，expected_revision比较metadata_revision；成功不触发教材应用 |
+| `POST /material-imports/{id}/delete` | §3.3；expected_revision与confirmed_scope_ref须同时覆盖读取时的导入、采用及执行情况 |
+| `POST /material-imports/{id}/messages` | §3.4；明确派发教材助手，无语义路由猜测；受理后可按请求查回原消息 |
+| `GET /material-imports/{id}/messages` | 按seq升序；after_seq、可选upper_seq及有限limit。首次读取固定本次上界，返回upper_seq、next_cursor、last_seq、消息与当前执行引用；续页沿原上界，不返回其他导入或系统私有提示 |
+| `GET /material-imports/{id}/contents` | chapter_id可选；按一次只读快照返回当前元素、引用、有效性和content_revision；读取精确历史内容须明确引用 |
+| `GET /material-imports/{id}/candidate-batches/{batch_id}` | 固定提案、改动对照、缺口与当前决定状态；候选非Domain对象 |
+| `POST /material-imports/{id}/candidate-batches/{batch_id}/decision` | §3.5；批次修订和决定修订各自核对，采用不返回“已入库” |
+| `POST /material-imports/{id}/intake-submissions` | §3.6；保存提交后202，Domain受理可稍后到达 |
+| `GET /material-imports/{id}/intake-submissions/{submission_id}` | 原提交、Domain受理映射及等待／投递状态；查询不创建新请求 |
+| `POST /textbooks/{id}/chapters/{chapter_id}/associations` | §4.1 add／update／remove，确认即保存；取消弹框不请求 |
+| `GET /product-requests/{request_ref}` | 原请求人或获该资源权限者读取业务结果；不触发自动重跑、不绕过当前权限 |
+
+上述查询为`product.query_product_view`相应用途的HTTP投影或本模块内部读取，不新增AI Operation。导入、章节和候选ID必须核验相互归属。单章内容读取超出服务限额时明确返回需缩小范围，不默默截断；目录、教材及其他全量查询的分页协议后续随查询设计细化。消息只追加，用seq续取；重新加载的正文不得与旧content_revision混拼。
+
+| HTTP／错误 | 处理要求 |
+| --- | --- |
+| 400 `invalid_request`；401／403认证／授权错误 | 未受理；指出可公开的错误，不泄露其他导入是否存在或私有正文 |
+| 409 `assistant_busy` | 未保存新消息，不排队，保留客户端草稿；当前请求结束后由用户发送 |
+| 409 `identity_conflict, revision_conflict, already_decided` | 同键改参数或对象已变化；查询现状再明确操作，不静默覆盖 |
+| 409 `candidate_basis_changed` | 给出获授权的相关变更引用；继续与助手核对，无关章节变化不触发此错误 |
+| 422 `source_unavailable, incomplete_candidate, missing_parent, invalid_reference, not_ready` | 业务条件不满足；原内容保留，不能记为模型服务故障 |
+| 503 `temporarily_unavailable` | 故障不是无内容；若可能已受理先查原request_id对应收据，不新建一次消息 |
+
+首次发送回执丢失时，用同一request_id重发可取得原request_ref；不能要求客户端先拥有丢失回执里的request_ref。执行中发生的错误从收据读取，不回改已经返回的202。WebSocket通知由底座按请求身份回传，具体信封及重连序号归公共运行；浏览器以可查询的已保存结果为准。
+
+采用请求的设计样例（身份仅作示意，导入与batch_id已在路径中）：
+
+```json
+{
+  "request_id": "adopt-example-01",
+  "batch_ref": {"batch_id": "batch-example-01", "batch_revision": 1},
+  "decision": "adopt",
+  "expected_revision": 1
+}
+```
+
+成功响应的result含`decision_ref, batch_ref, decision, adopted_content_refs, affected_source_refs, content_revision`；纯目录候选的adopted_content_refs可空，目录变化随决定记录返回。`decline`的adopted_content_refs为空，content_revision保持不变。同请求恢复原结果，即使后来整本content_revision已增长；新请求遇到相关依据变化则返回409及变化引用，不返回部分采用结果。
+
+### 3.9 本批逻辑核对与实现检查输入
+
+本节记录设计应满足的分支，不声称已运行测试。内容仍限定既有C02、C03、C05、C06，原件及结构语法见[Domain§7.1](Domain_Space_Design.md#71-四例内容结构稿)。
+
+| 输入／中断 | 应得到的结果 |
+| --- | --- |
+| C02跨页题、两个参考解法 | 原题独立一项、参考分两项且均绑同一父题；只提交题目不暗带参考，分别提交时核对父题身份 |
+| C03辨错题原错误被识别成正确式 | 对话指出后产生修正候选；采用保留原题错误式，参考正确答案不混入题面 |
+| C05必要图形漏提 | 读取原页后补入所属元素；无法确认关系则needs_input，不用原图或“已识别”标签掩盖缺口 |
+| C06统计图表 | 共享数值、单位、标签及出处；改值时相关表图共同修正，未知不变成零 |
+| 忙时新消息／原消息重发 | 新消息409且草稿保留；原消息返回原受理，不追加聊天 |
+| B章变化／同题或父题变化 | 前者不阻止A章采用；后者拒绝覆盖，交回助手核对 |
+| 候选已保存、通知丢失 | 查询原结果，候选和答复只一份，不再次执行模型 |
+| 导入删除／内容替代与入库竞争 | 按来源锁决定先后；Domain已保存版本不回滚，失效来源不能晚到入库 |
+| Domain受理晚于Product等待期限 | 原提交保持，按同一trigger查询并登记结果；不重复创建待办 |
+| 关联方法在最终保存前软删除 | Domain引用保护拒绝该次关联，章节、事件和成功收据不能半提交 |
+
+尚需后续模块给出：文件上传与大小限额、通用运行／回传及最终失败恢复、模型配置和调用预算、全局时间、数据保留与迁移工具。它们各有既定责任文档；本批不臆定数值或宣称语义提取可靠率达标。
+
+教材助手的执行接线采用[公共运行§3.3／4.5](System_Foundation_Design.md#33-operationrun与步骤记录)：busy和候选提交资格由Product维护，底座启动及恢复原Run。明确失败后只释放匹配原请求的忙闲标记；获准恢复时再次检查导入可用、无其他运行且来源仍适用，再建立新尝试。原消息和已保存候选不重建；输入确需修改则要求新消息，不以技术重试覆盖旧请求。
 
 ## 4. 章节关联、目标定义与课程应用
 
@@ -171,40 +435,135 @@ Domain返回本次新建／复用对象的精确版本、来源映射和检查�
 
 ### 4.1 `product.save_chapter_association`：添加、编辑或取消章节关联
 
-**调用与合同。** 管理员提交`action=add|update|remove, textbook_id, chapter_id, task_ref, expected_revision`；add／update另需非空`method_refs:Ref[]`。输出已保存的章节关联及由章节所选方法直接汇总去重的只读KC；不接收直接KC关联。
+**调用与合同。** 管理员提交`request_id, action=add|update|remove, textbook_id, chapter_id`。add带`task_ref, method_refs:Ref[]`及读取时的chapter_revision；update／remove带association_id及expected_revision（该关联修订），update另带非空method_refs。Task身份及版本从原关联读取；换用另一Task须明确新建关联，不能借编辑方法更换Task。输出已保存的关联修订及所选方法直接汇总去重的只读KC；不接收直接KC关联。
 
-1. 从Domain公开读取所选Task及直接方法，核对同领域、引用有效和方法属于该Task；add／update至少一法。
-2. 比较修订；add保存新关联，update只替换本章方法，remove只删除该章节引用，不删领域对象。
-3. 保存`ChapterAssociationSaved`事件及结果；提示受影响目标需要核对，原已应用采用记录不被草稿改写。
+1. 页面从Domain公开读取所选Task及直接方法；这次读取只供选择，不是最终保存许可。add／update至少一法，每项引用必须是该Task固定版本实际包含的Solution。
+2. 最终短事务先鉴权与去重，锁定教材对应导入并核对章节／关联修订；add拒绝同章同Task身份重复，update不能修改已取消关系，remove只将本章关联标为无效并递增修订，不删领域对象。
+3. add／update在同事务中调用[Domain引用保护端口](Domain_Space_Design.md#67-模块端口与消息交接)，确认同领域、对象身份可用及精确方法关系；程序使用该结果汇总KC，不接受浏览器自报知识。remove不要求旧Domain引用仍可建立新关联，否则会无法取消已失效关系。
+4. 保存章节关联、`ChapterAssociationSaved`事件及请求结果，共同提交；本次失败全部回滚。原已应用采用记录不被草稿改写，目标缺口在重新检查时按新关联核对，不直接重算个人状态。
 
 Task和方法均使用[Domain的ObjectRef](Domain_Space_Design.md#11-公共输入与引用)，引用确切版本。方法新版本不会自动改章节引用；需要采用时先确认Task与方法版本关系，再明确保存章节关联。已软删除身份不能建立新关联，已有采用和历史读取保留原引用，不能用新版本覆盖历史。新用途的就绪检查仍须核对当前引用是否可用。
 
 **恢复与验收。** 同请求复用结果；无效引用或并发冲突不生效。验收取消弹窗无写入、确认即保存；第一章A与第二章B保留各自来源，不能被计算成全章只允许交集或任意章均开放两法。
 
+图2：章节添加／修改的最终提交；取消关联不需要Domain新引用校验。
+
+```mermaid
+sequenceDiagram
+    participant A as 管理员
+    participant P as Product保存处理
+    participant D as Domain引用保护
+    participant R as 运行事件登记
+    A->>P: 确认本章Task与方法
+    P->>P: 开始短事务，锁导入并核对关联修订
+    P->>D: 同事务校验精确引用并持有领域共享锁
+    D-->>P: 可用的Task、方法及KC汇总
+    P->>P: 保存本章关联
+    P->>R: 同事务登记事件及结果
+    P->>P: 提交，释放锁
+    P-->>A: 已保存章节关联
+    Note over P,D: 不调用AI，不自动应用到学生
+```
+
+Domain软删除需要领域排他锁。若删除先完成，本次新关联拒绝；若关联先提交，随后删除保留旧引用可追溯，新用途检查报告已失效。M1不自动更换章节方法或批量升级引用。关系数据及锁顺序维护于§3.7；模型内容与有效性判断仍由Domain负责。
+
 ### 4.2 `product.save_learning_target`：维护目标定义
 
-**调用与合同。** 管理员提交`action=create|update, textbook_ref, title, items:GoalItem[]`；update另需`target_id, expected_revision`。输出目标定义修订及待补缺口；不创建Claim、不写个人达成结果。
+管理员提交`request_id, action=create|update, textbook_id, title, items:GoalItem[]`；update另带`target_id, expected_revision`。教材身份创建后不换，title与items非空。返回`target_ref={target_id,revision}, gaps[]`；保存不应用、不创建Claim、不写个人结果。
 
-1. 读取所选章节采用的Task／方法和Evaluation公开Claim，核对Claim绑定Task及方法／方面适用性。
-2. 按章节方法并集保留方法来源；校验任务条件、方面要求和`specified`／`any_one`／`each`：指定一种、同一种任选达标、各法分别达标。
-3. 保存合法目标定义及`LearningTargetSaved`事件；缺定义或方法来源失效单列，不通过删除目标项伪装完整，不把保存当应用。
+1. 按精确引用读取Claim及其Task，从本教材章节关联取得方法来源。引用不存在、越域、Task版本不一致或方法不在指定章节时拒绝。
+2. 校验§4.2.1条目。方法／方面已定义但判据尚不完整，可保存并列准备缺口；不虚构条件，不删要求。
+3. 短事务内按§5.3锁序复核教材、章节关联和目标修订；调用Domain的guard_references保护所选Task／方法，再追加目标版本、LearningTargetSaved及请求收据。新条目由程序编号；同请求返回原版本，冲突返回revision_conflict。
 
-**恢复与验收。** 非法引用拒绝；可描述的准备缺口保留为未具备应用条件，不能造学生“待确认”。同请求返回原目标，冲突不覆盖。验收两法分别要求不会拼接成达标，不允许修改全局0.90阈值。
+#### 4.2.1 目标条目
+
+| 字段 | 类型／必填 | 校验 |
+| --- | --- | --- |
+| `item_id, title` | ID、string／是；新增item_id可省 | 同一条目更新沿用ID；同一目标内唯一 |
+| `claim_ref` | 精确修订引用／是 | Evaluation所有；其task_ref须与所选章节关联的Task版本一致，不自动兼容不同版本 |
+| `chapter_refs` | 章节ID数组／是，非空 | 本教材内的要求来源；不是学生长期选章，也不是聊天限制 |
+| `task_conditions` | `{description:string, parameter_values:object}`／是 | description说明本项范围；parameter_values只用Task已声明参数及值域，可空。无形式化参数的范围由Evaluation核对证据，不能凭文本当作已满足 |
+| `method_mode` | `specified|any_one|each`／是 | specified恰一法；any_one须同一法满足全部要求；each逐法满足，不拼接不同方法的方面 |
+| `methods` | MethodRequirement数组／是，非空 | 每项`method_ref, chapter_refs[], aspects[]`；章节是本条目的子集，且确实采用该方法；方法不得重复 |
+| `aspects` | `{aspect_ref, condition_values:object}[]`／是，非空 | 来自Claim；值仅可填写该方面规则声明的可配置条件，缺省取该修订默认值并固定；无规则时仅可留空并列缺口 |
+
+本条目实际方法范围为相关章节方法的并集，同时保留“方法→章节”的来源；不能算成交集，也不能将某章方法对所有章开放。Claim重复出现在不同条目时分别对照要求，不因此新增Belief或重复更新概率。
+
+`condition_values`由Evaluation返回的条件Schema校验，Product不另建判据库。自填概率阈值、固定答对题数和永久反证否决字段一律拒绝；M1沿[内容§4.20](../design/Content_and_Model_Reference.md#420-从-belief-与证据基础派生目标达成)使用全局0.90和适用Evidence。条件不足是准备缺口或证据未知，不能靠浏览器补默认判断。
 
 ### 4.3 `product.apply_course`：检查并应用教材与目标组合
 
-**调用与合同。** 管理员提交`action=check|confirm, textbook_ref, target_ref`；check可含所选章节／内容引用，confirm须带`check_ref, expected_revision`。check输出逐行为检查结果；confirm成功输出`ApplicationRef`、可用范围及受影响空间，不新增课程实体。
+普通管理操作分check与confirm。check只读取已保存定义，不调用教材助手、不出题、不计算个人状态；confirm只采用管理员已核对的结果。没有新增课程实体或审批步骤。
 
-1. `check`读取原件／语义内容、章节方法、目标／Claim、活动定义和题目供给依据，保存引用固定的检查结果；可读、讲解答疑、反馈与正式评价分别列缺口。Domain提供本次采用方法所涉KC的直接检验路径确认及缺口，Evaluation提供对应Claim的方法判据与方面规则就绪情况；产品业务汇总到受影响用途，不要求Domain等待评价定义才能保存草稿。无备用题但可生成并检查不算自动阻塞。
-2. `confirm`复核检查依据仍有效、教材与目标及其适用关系合法；阻塞组合身份的缺口拒绝，其余逐行为限制随应用保存。检查过时要求重查。
-3. 共同提交新采用记录、组合当前引用及`CourseApplied`；对已选同一教材及同一目标、且当前采用实际改变的已有空间保存采用变化及`LearningSpaceAdoptionChanged`。失败不替换旧有效引用，普通保存不走此步骤。
-4. 若某空间目标条件实际变化，将`LearningTargetApplied`与该空间采用变化共同留存，供Evaluation订阅重新对照；不直接调用计算或修改概率。既有活动保留旧依据，后续活动读取新采用；目标结果更新不作为应用成功的前提。
+| 动作 | 必需输入（均含request_id） | 输出 |
+| --- | --- | --- |
+| `check` | textbook_id、target_ref、待应用章节／内容引用、activity_config_refs；base_application_ref首次可空 | check_ref、固定的拟应用内容、逐行为检查、阻塞项及变化摘要 |
+| `confirm` | check_ref、expected_application_ref（首次明确为null） | application_ref、受影响space_id及各自采用引用、是否实际改变 |
 
-**恢复与验收。** 同请求恢复原应用结果，不重复更新空间；新的管理员确认使用新请求并校验前序。验证未确认不出现学生选项、部分评价缺口不封禁全章提问、更新不换目标身份、不改旧活动；跨对象提交方案由存储设计落实，失败不能出现一半空间被宣称成功。
+#### 4.3.1 检查与固定输入
 
-上述事件及定义保存事件的用途统一见[事件目录](README.md#6-跨模块事件目录)。首次个人采用由§5.1产生`LearningTargetApplied`；本节只在已有空间目标条件实际变化时产生。`LearningTargetSaved`、`CourseApplied`和`LearningSpaceAdoptionChanged`不另触发目标重评，仅更新教材内容且目标条件未变时也不额外触发。
+1. 从Product读取目录、已采用内容、章节关联和目标；从Domain读取对应定义、KC检验路径及供题依据；从Evaluation读取Claim合同；从Interaction读取四类活动配置。均使用授权查询，不读私表。
+2. 形成完整拟应用快照：首次只纳入明确选择的已准备内容，其余保留未准备说明；更新以当前应用为基准，只替换本次选中的部分，未选中的部分沿用原应用，不能顺带发布其他草稿。范围不足以承载所选目标引用时列为阻塞。
+3. 固定实际引用及修订、目标条件、方法章节来源、活动配置和检查结论。检查期间相关资料变化时重新取一致输入或返回`check_stale`；技术读取失败不伪装成业务缺口。
 
-本模块维护空间实际采用的目标及教材依据，不由浏览器或Interaction自报可评价Task。Evaluation通过§5.2授权读取这些固定依据，按其§2.2生成候选范围；题单、其他参考解法或先导不能扩大范围。当前Task内部的合法参数变化不新增Task身份，目标参数覆盖仍用于目标对照。
+| 检查结果 | 影响 |
+| --- | --- |
+| 教材／目标不存在、领域不符、所引用Task／方法关系无效 | 阻止confirm，不形成学生选项 |
+| 原页或语义内容缺失 | 标明受影响阅读／取材；不把尚未解析内容当作完整题目 |
+| 方法、KC路径或讲解／答疑配置缺口 | 限制相应的正式讲解用途；可靠材料仍可用于回应问题，不封禁整章聊天 |
+| 检测活动、方法执行判据或方面规则缺口 | 限制对应检测／评价；课程准备不足不写成学生“待确认”或“需加强” |
+| 无备用实例，但Task／方法和检查依据可用于生成 | 不阻止应用；实际供题由Domain统一筛选、生成、检查并保存 |
+| 学生尚无证据、保持间隔未到 | 不属于课程检查，不在应用阶段判断 |
+
+每条结果保存`subject_ref, purpose, status=ready|limited|blocked, reasons[], basis_refs[]`。subject可定位教材章节、Task、方法或方面；purpose为reading／explanation／qa／practice_feedback／detection／evaluation。没有覆盖到的用途不是ready。检查不是保证未来模型服务或每道生成题都可用，运行时仍核对。
+
+#### 4.3.2 确认与提交
+
+1. 鉴权并查原请求收据；取得同教材的导入锁，比较base_application_ref、目标版本及本次选择的内容／关联基准。只要相关依据变化就返回`check_stale`；不自动采用最新内容。未选中的草稿变化不阻止确认。
+2. Domain在同一短事务内保护所引用Task／Solution，检查当前身份可用。Claim和活动按检查时的固定修订采用，不追最新头版本；其历史定义由各所有者保存，运行时仍执行已知不可靠内容的限制。
+3. 保存不可变应用结果和组合当前指针；按space_id顺序更新同教材、同目标的已有空间，追加采用记录及事件。所有写入和公共事件登记在一个业务库短事务内完成；不等待AI或Evaluation，不调用NATS发送。
+4. 提交后返回结果，底座投递通知。失败回滚整次应用；回执丢失查询原请求。完全相同的采用内容返回现有引用，不重复更新空间或发目标事件。
+
+M1沿首批小规模使用共同提交，暂不做分批更新／补偿平台；若实际空间数量使事务超出预算，拒绝本次应用并保留旧结果，不能只更新一部分却宣布完成。事务时限由公共运行设计，不在这里设数值。
+
+#### 4.3.3 应用依据与目标依据
+
+`ApplicationRef`固定教材内容、章节方法、目标版本、Claim、检查时活动配置及使用限制。活动配置引用用于追溯检查；新活动仍按Interaction读取当前有效配置，已开始的活动保留自己的配置。`target_basis_ref`仅标识影响评价范围和目标对照的部分：
+
+| 变化 | 处理 |
+| --- | --- |
+| 书名、来源说明、教材正文或活动配置变化，评价要求未变 | 新application_ref，沿用target_basis_ref；更新空间采用，不重评目标 |
+| 目标条目、Task／Claim／方法／方面、任务条件、证据条件、适用章节方法或评价准备限制变化 | 新target_basis_ref；每个受影响空间追加LearningTargetApplied，只重新对照已有状态 |
+| 同目标不同内容修订，但规范化的评价依据完全相同 | 沿用target_basis_ref；显示名称从应用中的目标版本读取，不制造学习进步 |
+
+比较由程序对固定字段做规范化摘要：集合排序、数值保持精度，自然语言范围与证据要求也参与比较，不用LLM判断语义等价。排除纯展示名称、来源说明、操作时间和目标文档修订号；所引用Claim等模型修订不可排除。目标要求的方法子集与教材允许取证的方法集合分别保存。
+
+首次创建空间产生LearningSpaceCreated与LearningTargetApplied。后续应用总记录CourseApplied；空间采用实际变化记录LearningSpaceAdoptionChanged；仅目标依据变化另发LearningTargetApplied。事件目录见[工程入口§6](README.md#6-跨模块事件目录)，前三种事件不重复触发目标计算。
+
+图3：确认应用到目标结果；Evaluation通过事件独立处理，应用成功不等待评价。
+
+```mermaid
+sequenceDiagram
+    participant A as 管理员
+    participant P as Product
+    participant R as 公共运行
+    participant E as Evaluation
+    A->>P: 确认check_ref和应用基准
+    P->>P: 复核并保存应用、空间采用
+    P->>R: 同事务登记事件及结果
+    P-->>A: 提交成功及实际影响范围
+    opt 目标依据实际变化
+        R-->>E: LearningTargetApplied
+        E->>P: 授权读取固定目标依据
+        P-->>E: 目标、Claim及方法章节来源
+        E->>E: 对照已有Belief和Evidence
+        E->>E: 保存目标结果
+        E->>R: 同事务登记goal_result发布
+    end
+    Note over P,E: 不更新概率，不改旧活动，不重算旧作答
+```
+
+Evaluation按自己的§2.2生成有限候选Task清单；Product提供采用事实，不让浏览器自报可评价Task。题单、题内其他参考、KC和先导不能扩大清单，参数变化不创建新的概率分项。
 
 ## 5. 学习空间生命周期与核心输入
 
@@ -212,13 +571,23 @@ Task和方法均使用[Domain的ObjectRef](Domain_Space_Design.md#11-公共输�
 
 ### 5.1 `product.open_learning_space`：创建或进入个人空间
 
-**调用与合同。** 学生提交`action=create|enter`；create须带`ApplicationRef`，enter须带`space_id`。输出空间身份、当前采用、使用条件和可恢复的页面／活动引用；首个真实输入仍按当时有效使用条件再校验。
+学生提交`request_id, action=create|enter`；create带application_ref，enter带space_id。学生身份从认证取得，不能由请求代填。首个真实学习输入仍复核必要使用条件。
 
-1. 校验学生身份与必要确认；create只允许应用成功且仍适用的组合，所有试用学生同等可选，不增加教材授权审批；enter只允许本人空间。
-2. create保存个人空间及`LearningSpaceCreated`、首次`LearningTargetApplied`事件；enter读取当前引用并记录实际进入事件，不复制教材、不切换当前活动或重建对话。
-3. 返回首次呈现条件或原阅读位置／活动／草稿引用，分别由客户端和Interaction读取与恢复。未产生表现不填掌握结果；Evaluation通过事件完成初始目标对照，未完成明确返回处理中。
+用户已确认：同一学生、同一教材、同一目标只有一个M1学习空间。再次选用直接进入原空间；不同目标可分别建空间。此唯一性按稳定身份判断，与应用版本无关，见[登记§73](../../DECISIONS.md#73-目标应用与学生选用详细设计)。
 
-**恢复与验收。** 同创建请求只产生一个空间；进入失败不创建替代空间。应用已变时核对当前组合，不能悄悄采用无效旧请求。验证无组合时提示未准备、浏览章节不影响活动、首次与再次进入的恢复不同、他人空间不可进入。本操作不新增学生修改教材／目标或空间删除能力。
+| 条件 | 处理／返回 |
+| --- | --- |
+| 无权限或必要使用确认未成立 | 拒绝新建／进入，不暴露他人内容；说明允许完成的确认操作 |
+| create，同组合已有本人空间 | 返回原space_id及当前采用，created=false；不清空聊天、活动、Evidence或Belief，不重发首次目标事件 |
+| create，无已有空间且应用仍为当前有效版本 | 保存新空间、首次采用、LearningSpaceCreated及LearningTargetApplied；created=true |
+| create，无已有空间但选项已更新 | `application_changed`，返回可重新选择的当前选项；不悄悄替学生接受新版本 |
+| enter，本人已有空间 | 读取当前采用及恢复入口；读取失败不新建替代空间，不因旧活动存在而重新开活动 |
+
+新建和应用更新按§5.3共同锁序执行：应用先完成则新空间只能采用新结果；新建先完成则随后应用更新会包含该空间。数据库唯一约束处理不同request_id的并发创建；请求重放则返回原收据。
+
+每次实际进入追加`LearningSpaceEntered`并返回entry_ref，同请求重试不重复追加。公共底座按订阅交Interaction核对主动任务；该事件不触发能力评价，也不自动开测。重连补取和只读页面查询不作为新进入。
+
+返回`space_id, created, adoption_ref, application_ref, target_basis_ref, entry_ref, usage_conditions`。Interaction提供持续聊天和活动恢复内容，客户端恢复阅读／草稿；Product不复制聊天或创建空Belief。Evaluation尚未完成首次目标对照时显示处理中；取得无证据结论后才显示待确认。
 
 ### 5.2 `product.query_product_view`：按权限读取业务视图
 
@@ -241,6 +610,89 @@ Task和方法均使用[Domain的ObjectRef](Domain_Space_Design.md#11-公共输�
 
 **恢复与验收。** 读取故障可以重读，无写入去重要求；无权限、对象不存在与参数非法分别返回受保护错误。验证领域筛选、本人空间隔离、目标→Evidence→事件追溯及无数据不显示零掌握率。关闭窗口或历史浏览不触发新活动。
 
+#### 5.2.1 采用依据的公开读取
+
+下列为`query_product_view`的内部端口，不新增Operation或写权限。指定历史引用时读取当时值，不用当前教材／目标替换。
+
+| 端口 | 输入 | 输出及使用方 |
+| --- | --- | --- |
+| `read_space_adoption` | access_context、space_id；adoption_ref可空 | 省略引用读当前；返回adoption_ref、adoption_seq、application_ref、target_basis_ref及实际采用时间。Interaction用于新活动，Evaluation核对事实依据 |
+| `read_application_basis` | access_context、space_id、application_ref | 固定教材目录／内容引用、Task／方法章节来源、目标版本、Claim、活动配置及用途限制；该应用须确被此空间采用过 |
+| `read_target_basis` | access_context、space_id、target_basis_ref | 固定目标条目、Task／Claim、允许方法来源、所需方法方面、证据条件及评价准备缺口；不包含掌握概率或目标结果 |
+
+`guard_target_adoption(access_context, transaction_context, space_id, target_basis_ref)`供Evaluation保存目标结果时调用：Product对learning_space行取FOR SHARE，读取当前采用及其固定目标依据，返回adoption_ref、target_basis_ref和is_current。空间不存在／越权报错；依据已换返回is_current=false，不阻止对方保存历史结果。只读本模块、不自行提交；持有引用不授予Evaluation修改空间的权限。
+
+空间应用更新对同一行取FOR UPDATE后追加space_adoption并移动当前指向。正式应用、目标版本和旧采用记录保持不变；本保护只防止“检查当前指向”与“保存当前结果”之间交错。
+
+管理员检查未应用草稿走管理查询，不借学生空间读取端口扩权。返回内容只供被授权用途；知道application_ref或target_basis_ref不构成访问其他学生资料的凭证。
+
+目标展示合并当前采用和Evaluation结果时，必须匹配target_basis_ref；不匹配的旧结果保留为历史，当前显示等待重新对照。评价服务故障显示处理失败，不显示待确认；课程缺口单列。原目标→Evidence→来源事件的查询路径保持。
+
+### 5.3 目标与采用的存储和提交
+
+下列记录归`product` schema；ID、修订及请求收据沿§1／§3.7。历史版本、应用、检查和采用记录追加保存；当前指针可变，不建设跨版本迁移。
+
+| 表／主键 | 主要内容与约束 |
+| --- | --- |
+| `learning_target`／target_id | textbook_id、head_revision；教材身份固定 |
+| `learning_target_version`／(target_id,revision) | title、GoalItem数组、章节关联依据及gaps；完整快照，修改追加版本 |
+| `application_check`／check_id | request_ref、base_application_ref、固定输入、拟应用快照、逐用途结果及阻塞项；重查另建记录，不改原检查 |
+| `course_application`／application_id | textbook_id、target_id、前一应用、check_ref、内容快照、target_basis_ref、操作人和时间；不可变采用结果，不是新课程模型 |
+| `application_head`／(textbook_id,target_id) | current_application_ref、revision；只在确认成功时变更 |
+| `target_basis`／basis_id | textbook_id、target_id、规范化评价依据及摘要；同组合相同摘要复用，并比较正文防止误判；包含的字段见§4.3.3 |
+| `learning_space`／space_id | student_id、textbook_id、target_id、current_adoption_ref；唯一(student_id,textbook_id,target_id) |
+| `space_adoption`／adoption_id | space_id、adoption_seq、application_ref、target_basis_ref、前一采用、原因及事件引用；唯一(space_id,adoption_seq)，追加不覆盖 |
+
+**锁序：** 请求收据 → 教材导入 → Domain根 → 本模块目标／组合 → 按ID排序的空间 → 公共提交登记。目标保存及确认应用取导入FOR UPDATE；新建／进入取FOR SHARE。需要Domain引用保护时按其§6.5执行，无需时跳过；取材查询在事务前完成，事务内只做同库授权校验和写入，不调用LLM或外部服务。
+
+检查保存的是固定引用和结论；confirm锁内只核对基准及引用有效性、写当前指针与事件，不重跑检查或AI。不同教材不共用教材锁。空间当前采用只允许应用或首次选择处理更新，学生浏览、活动恢复和Evaluation不能写它。
+
+Evaluation按[§6.4](Evaluation_Space_Design.md#64-目标结果存储与原子提交)使用同库短事务：Product保护当前引用，Evaluation写自己的结果，底座登记事件。锁序为请求／结果键→Product空间→Evaluation目标索引→公共登记；计算在事务外。双方不修改已应用版本，展示仍按当前目标依据匹配。
+
+### 5.4 HTTP与失败处理
+
+路径相对`/api/m1`；输入沿上述合同，服务端鉴权后再查询收据。字段未知或引用归属不符拒绝，不能忽略后继续保存。
+
+| 方法与路径 | 结果 |
+| --- | --- |
+| `POST /learning-targets` | create／update；200返回target_ref、gaps，保存不是应用 |
+| `GET /learning-targets/{id}` | 可选revision；返回精确目标版本及章节来源，缺省为当前草稿 |
+| `POST /course-applications/checks` | check；保存检查后200返回check_ref、变化摘要及逐用途结果，未确认不出现在学生选项 |
+| `POST /course-applications/confirmations` | confirm；共同提交后200返回application_ref、changed、affected_spaces；无变化不生成第二次应用 |
+| `GET /course-options` | 学生可选的已应用组合、主要限制及已有本人space_id；不混入草稿或个人掌握率 |
+| `POST /learning-spaces/open` | create／enter；200返回§5.1收据；刷新重连查询旧收据不新增进入事件 |
+| `GET /learning-spaces/{id}/adoption` | 当前或指定采用，限本人／获授权调用方；不触发评价或主动检查 |
+| `GET /learning-spaces/{id}/goal` | 当前目标要求与匹配依据的Evaluation结果；缺口、处理中、失败和个人判断分开 |
+
+409：同键改内容为identity_conflict；并发保存为revision_conflict；检查基准变化为check_stale；首次选用的版本已变为application_changed。422：非法引用、越出教材范围或组合不可应用。403：无权限。503：技术故障，可能已提交时先查询原收据。错误不替换旧有效应用，不记学生答错。
+
+confirm的请求示例（示意ID，首次应用）：
+
+```json
+{
+  "request_id": "apply-example-01",
+  "check_ref": "check-example-01",
+  "expected_application_ref": null
+}
+```
+
+同一请求重试返回原application_ref和影响列表。新检查以当前应用为基准且内容无变化时，确认返回changed=false；旧check_ref换请求ID仍须通过基准校验，不能绕过check_stale。首次确认须明确expected_application_ref=null，不能省略并发基准。
+
+### 5.5 逻辑核对与实现检查输入
+
+| 输入／竞争 | 应有结果 |
+| --- | --- |
+| “四分之一”目标从A、B任选改为两法分别达标 | 新目标依据，只重新对照两法已有结果；不复制A的概率给B |
+| 只改教材来源说明 | 更新采用引用，沿用目标依据，不发LearningTargetApplied |
+| 同组合、不同请求同时首次选用 | 仅一个空间和一次初始目标采用；两次真正进入各自留痕，主动任务仍按依据去重 |
+| 创建空间与应用更新竞争 | 遵循同一锁序，空间采用最终应用；无漏更新或半次应用 |
+| 检查后相关章节关联变化／无关草稿变化 | 前者要求重查；后者可确认，不附带发布无关修改 |
+| 应用事务失败／成功后响应丢失 | 前者全部回滚；后者同请求取原结果，不再发目标事件 |
+| 无备用题／保持规则缺失／学生尚无证据 | 分别为可按模板供题、对应用途未准备、个人待确认；不得混为一类 |
+| 旧目标计算晚于新应用返回 | 保留历史结果，当前目标不显示旧依据；不改变已有活动或概率 |
+
+本表为设计走查和后续实现输入，未运行代码验证。
+
 ## 6. 数据、接口与业务验证
 
 跨模块事件见[工程入口§6](README.md#6-跨模块事件目录)：区分触发Domain／Evaluation处理的事件、领域处理结果及可查询的留痕，不以教材候选采用自动改写领域定义或启动历史重算。
@@ -251,17 +703,20 @@ Task和方法均使用[Domain的ObjectRef](Domain_Space_Design.md#11-公共输�
 
 | 交接事件 | 最小业务载荷（共用事件信封不重复） | 接收结果与边界 |
 | --- | --- | --- |
-| `DomainIntakeRequested` | `scope_id`为导入资源全局身份；`domain_id:ID, intake_request_id:ID, candidate_refs:Ref[]`均指向已采用不可变内容；类别、父题关系及来源经§5.2公开读取 | Domain负责受理和待办；`producer=domain, result_kind=intake_receipt`返回候选与待办／分组映射，失败保留原提交等待恢复，不自动入库 |
+| `DomainIntakeRequested` | `scope_id`为导入资源全局身份；`domain_id:ID, intake_request_id:ID, candidate_refs:Ref[]`均指向已采用不可变内容；类别、父题关系及来源经§3.6.1公开读取 | Domain负责受理和待办；`producer=domain, result_kind=intake_receipt`返回候选与待办／分组映射，失败保留原提交等待恢复，不自动入库 |
 | `MaterialCandidatesAdopted`／`MaterialImportDeleted` | 导入ID、替代／删除前后来源引用、受影响待入库提交引用 | Domain使尚未入库的过时来源不可继续；入库时仍复核来源有效性，防止通知延迟造成误入库 |
-| `LearningTargetApplied` | `scope_id, target_basis_ref, applied_at, previous_target_basis_ref?, application_ref, cause_ref`；`cause_ref`引用原请求收据／事实事件，仅由AI执行引发时可附`caused_by_operation_run_id`，普通处理不为此创建AI Run | 首次空间建立或目标条件变化时触发Evaluation目标对照；只更新目标结果，不增权或历史重算。仅补教材来源说明不发此事件 |
+| `LearningTargetApplied` | `scope_id, adoption_ref, target_basis_ref, applied_at, previous_target_basis_ref?, application_ref, cause_ref`；依据通过§5.2.1读取，cause_ref为原请求／事实引用 | 首次空间建立或目标依据变化时触发Evaluation目标对照；不更新概率或重算旧作答 |
+| `LearningSpaceEntered` | `scope_id, adoption_ref, application_ref, target_basis_ref, request_ref`；entry_ref即事件引用，发生时间沿共用信封 | Interaction核对主动任务；实际进入才产生，同请求不重复，重连／查询不产生 |
 
 本模块其他事件记录对应操作对象、前后引用、操作者与原因；学校／使用时长不由这些操作推算。账号及教材管理事件不冒充学生学习事件；空间创建和采用变化进入该空间只追加事件列表。
+
+教材助手受理与本轮完成另记模块内事实`MaterialAssistantMessageReceived`、`MaterialAssistantTurnFinished`，载荷为import_id、request_ref、message_ref、候选／结果引用及结果类型，不复制正文。它们用于查询与恢复追溯，不新增跨Space订阅。候选提出、拒绝及章节保存仍沿既有模块事件；技术日志另存，不要求模型输出隐藏思考过程。
 
 ### 6.2 共同错误与待细化边界
 
 `forbidden`拒绝越权，`invalid_request`说明字段／引用错误，`revision_conflict`要求重读，`identity_conflict`拒绝同请求换参数，`not_ready`说明使用／应用条件，`dependency_pending`表示本方尚未取得所需处理依据，不凭缺少通知推断对方未完成，`temporarily_unavailable`保留已提交结果等待技术恢复。空结果与合法未决不是技术失败；认证错误的外部披露由认证合同裁剪。
 
-15项业务入口分为1项AI Operation与14项普通处理，原有完成条件和最低验收仍适用。仍须细化：凭据／首次管理员初始化协议；文件上传及限额；Agent候选Schema；草稿修订、批量采用和空间更新的存储事务；查询分页与传输接口。这些不改变本文件的产品权限或完成条件，不能由LLM临时决定。
+15项业务入口分为1项AI Operation与14项普通处理；工具、读取端口和HTTP投影不新增AI业务。教材准备见§3，目标／应用／空间数据与接口见§4—5；目标提交保护见§5.2.1。后续补凭据／首次初始化、上传限额、列表分页及公共传输；公共预算、时间、保留与迁移政策由责任模块提出。
 
 端到端接收按以下顺序核对：账号与确认 → 批量接收 → 对话及候选采用 → 领域受理／入库 → 章节关联与目标 → 检查及确认应用 → 学生创建／进入空间 → 只读追溯。每项最小验收须配正常和本节失败分支；当前只定义验收输入，不声称已有实现或测试通过。
 
@@ -285,3 +740,15 @@ Task和方法均使用[Domain的ObjectRef](Domain_Space_Design.md#11-公共输�
 本轮修订（v0.13，2026-11-14）：明确采用依据的所有权与授权读取内容；应用检查汇总Domain路径与Evaluation判据就绪情况。本轮仅改文档；完整记录见MVP决定登记§69。
 
 本轮修订（v0.14，2026-11-14）：教材候选使用统一内容语法，解法可引用已有父题待办，入库返回精确版本与来源映射，章节明确采用固定版本。仅修改交接合同；未改原型、编码或执行验证，见MVP决定登记§70。
+
+本轮修订（v0.15，2026-11-14）：明确同库短事务中的教材来源读取与锁定端口，采用／删除使用相同导入锁，区分入库前失效与入库后的历史保留。具体锁序与Domain存储互引，未改原型或运行代码，见MVP决定登记§71。
+
+本轮修订（v0.16，2026-11-14）：落实教材助手忙时不受理、保留草稿及相关内容／依赖冲突判断；补取材与工具、候选结构、分段处理和记忆恢复、采用与Domain受理、章节引用保护、存储与HTTP合同。用户已确认两项并发取舍，其余细则待审；仅做文档核对，不改原型、不运行业务验证，见MVP决定登记§72。
+
+本轮修订（v0.17，2026-11-15）：补目标条目、检查应用、采用依据、空间复用、存储接口及并发分支；登记进入事件和跨模块读取。用户确认同学生同教材目标复用空间，其余细则待审，见MVP决定登记§73。
+
+本轮修订（v0.18，2026-11-15）：补当前目标引用保护，衔接Evaluation短事务保存；本批只修订文档，见MVP决定登记§74。
+
+本轮修订（v0.19，2026-11-15）：补教材助手失败释放与原请求恢复接线。仅修订文档，见MVP决定登记§78。
+
+本轮修订（v0.20，2026-11-15）：细化预置账号、登录会话、凭据重置和授权来源。仅修订文档，见MVP决定登记§80。
