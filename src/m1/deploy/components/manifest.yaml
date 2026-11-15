@@ -1,0 +1,11 @@
+# E01-01 only. Add other components when their increments are approved.
+schema_version: 1
+k3s:
+  version: v1.37.2+k3s1
+  architecture: amd64
+  release_url: https://github.com/k3s-io/k3s/releases/tag/v1.37.2%2Bk3s1
+  binary_sha256: 265b3ee6a3198ef14033c63ef46cbb32370d83795199fb6d1b01f21575eddbda
+  images_file: k3s-airgap-images-amd64.tar.zst
+  images_sha256: 35a5af1e69b57b8b627a4f6b1c29ea104209b661067b8c97fd40dc3f860bfcd2
+  installer_url: https://get.k3s.io
+  installer_sha256: c2a2643dd7c259121a876d16538844c60928de3d38ae98f22f7b95a7ffcfab9d
