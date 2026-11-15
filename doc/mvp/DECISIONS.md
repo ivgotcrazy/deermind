@@ -3171,7 +3171,7 @@ M1-DEC-086：用户确认M1继续用schema划分模块数据，数据库拆分�
 - 交付环境、版本与校验清单、只读目标检查脚本及可重复测试；每次显式指定目标，不修改全局默认context。用户另提供网络代理用于访问受阻时的下载。
 - 本批仅E01-01；PG/Temporal/NATS属于E01-02，应用及客户端属于E01-03。不得因测试通过提前标记用户评审通过。
 
-工程路径为`src/m1`。实际问题、验证结果和复核命令见[本机环境说明](../../src/m1/deploy/environments/local-wsl/README.md#e01-01-自检记录)，进度只在[实施计划E01](m1/engineering/Delivery_Plan.md#13-e01基础运行)维护。自检使用真实本机集群，未验证100人容量或远程部署。
+工程路径为`src/m1`。实际问题、验证结果和复核命令见[本机环境说明](../../src/m1/deploy/environments/local-wsl/E01-01-local-cluster.md#e01-01-自检记录)，进度只在[实施计划E01](m1/engineering/Delivery_Plan.md#13-e01基础运行)维护。自检使用真实本机集群，未验证100人容量或远程部署。
 
 | 文档 | 版本 |
 | :--- | :--- |
@@ -3192,7 +3192,7 @@ M1-DEC-086：用户确认M1继续用schema划分模块数据，数据库拆分�
 - PG、NATS各1副本；Temporal四个内部服务各1副本。常驻容器内存limit共2816Mi。PG/NATS/共享文件PVC分别8Gi/2Gi/8Gi；PG最多80连接，NATS文件最多1Gi。
 - 保留现有WSL内存与旧发行版；这是低并发功能测试配置，不是100人容量结论。应用资源、SDK版本及业务stream仍按后续增量确认。
 
-本次交付薄部署脚本、PG及显式Schema Job、环境values、digest清单与可重复组件测试。三个库分账号；业务库为空。镜像下载通过用户代理完成，未修改全局代理；旧环境保留。部署修正和验证结果见[基础组件记录](../../src/m1/deploy/environments/local-wsl/components.md#自检记录)，进度只在实施计划维护，自检通过不等于用户已验收。
+本次交付薄部署脚本、PG及显式Schema Job、环境values、digest清单与可重复组件测试。三个库分账号；业务库为空。镜像下载通过用户代理完成，未修改全局代理；旧环境保留。部署修正和验证结果见[基础组件记录](../../src/m1/deploy/environments/local-wsl/E01-02-components.md#自检记录)，进度只在实施计划维护，自检通过不等于用户已验收。
 
 | 文档 | 版本 |
 | :--- | :--- |
@@ -3268,7 +3268,7 @@ M1-DEC-086：用户确认M1继续用schema划分模块数据，数据库拆分�
 
 ## 110. E01-03应用骨架与接线
 
-用户确认本增量使用工程候选中的Python/FastAPI/Pydantic/Temporal SDK及Vue/TypeScript/Vite版本；采用uv、Hatchling、Nginx和按需BuildKit。具体版本、hash和复核命令归[应用交付说明](../../src/m1/deploy/environments/local-wsl/application.md)，工程职责归基础设施和源码分册。
+用户确认本增量使用工程候选中的Python/FastAPI/Pydantic/Temporal SDK及Vue/TypeScript/Vite版本；采用uv、Hatchling、Nginx和按需BuildKit。具体版本、hash和复核命令归[应用交付说明](../../src/m1/deploy/environments/local-wsl/E01-03-application.md)，工程职责归基础设施和源码分册。
 
 API、应用Worker和前端各一副本，接收其候选CPU／内存限额；继续同节点共享既有PVC。Temporal namespace为`dm-local-wsl`，队列为`dm.local-wsl.application`，Workflow任务并发2、Activity并发4。拉取、缓存和线程池按W02候选接线，随本增量评审；不因此批准事件、业务数据库、AI调用等后续参数。
 
@@ -3288,7 +3288,7 @@ API、应用Worker和前端各一副本，接收其候选CPU／内存限额；�
 
 用户确认继续E01-04，并接收SQLAlchemy 2.1.8、psycopg 3.3.9、Alembic 1.20.1；API和Worker各用一个连接池，最多5连接、不扩容。D01起点：建连5秒、池等待3秒、SQL10秒、锁等待3秒、事务空闲10秒。迁移独立运行，不套用短SQL时限。
 
-首批建立六个模块schema和Alembic版本表，业务表仍按所属增量迁移。迁移账号与运行账号分开，API／Worker只检查版本、不执行DDL。单一发布链、事务部署锁和失败整体回滚沿已定设计实施，不改Temporal内部表。交付及验证见[数据库实施](../../src/m1/deploy/environments/local-wsl/database.md)，进度只在实施计划维护；本节记录E01-04时点，后续实施见§112。
+首批建立六个模块schema和Alembic版本表，业务表仍按所属增量迁移。迁移账号与运行账号分开，API／Worker只检查版本、不执行DDL。单一发布链、事务部署锁和失败整体回滚沿已定设计实施，不改Temporal内部表。交付及验证见[数据库实施](../../src/m1/deploy/environments/local-wsl/E01-04-database.md)，进度只在实施计划维护；本节记录E01-04时点，后续实施见§112。
 
 | 文档 | 版本 |
 | :--- | :--- |
@@ -3304,7 +3304,7 @@ API、应用Worker和前端各一副本，接收其候选CPU／内存限额；�
 
 用户确认继续E01-05；E01-04按该确认接收。本轮沿既定共同短事务和事件唯一事实源合同，实现内联事件、生产者投影、应用收据与请求收据的原子保存。未增加架构选择或依赖参数。
 
-首个接线为TrialAccountSaved/bootstrap_admin子集，测试数据只在随机测试库；不提供登录或账号管理入口。其他事件、附件、查询、发布订阅与重建仍按实施计划推进，不扩大为所有表的一次性实现。代码、自检和部署见[交付记录](../../src/m1/deploy/environments/local-wsl/facts.md)，本增量待用户评审，不标记完成。
+首个接线为TrialAccountSaved/bootstrap_admin子集，测试数据只在随机测试库；不提供登录或账号管理入口。其他事件、附件、查询、发布订阅与重建仍按实施计划推进，不扩大为所有表的一次性实现。代码、自检和部署见[交付记录](../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，本增量待用户评审，不标记完成。
 
 | 文档 | 版本 |
 | :--- | :--- |

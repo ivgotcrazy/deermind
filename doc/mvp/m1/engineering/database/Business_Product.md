@@ -185,7 +185,7 @@ erDiagram
     product__textbook ||--o| product__material_import : "textbook_id"
 ```
 
-E01-05仅接线初始账号的内联事实、生产者投影及收据；其余类型按所属增量实施。范围、验证和限制见[交付记录](../../../../../src/m1/deploy/environments/local-wsl/facts.md)，进度以[实施计划](../Delivery_Plan.md)为准。
+E01-05仅接线初始账号的内联事实、生产者投影及收据；其余类型按所属增量实施。范围、验证和限制见[交付记录](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，进度以[实施计划](../Delivery_Plan.md)为准。
 
 ## 1. `product.accounts`
 

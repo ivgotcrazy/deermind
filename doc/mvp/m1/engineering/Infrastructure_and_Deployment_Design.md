@@ -108,7 +108,7 @@ API及Worker的异步入口使用异步Engine；迁移命令独立运行，可�
 
 连接失败返回服务错误；提交回应丢失先查原业务收据，不能认定回滚后另起一份业务。池大小、等待、SQL及锁超时由配置给出有限值；所有API／Worker／Temporal连接上限加维护余量不得超过PG容量。部署检查配置关系，数值在接收前确认。
 
-E01-05已沿本节接通事件、生产者投影及请求收据的共同事务；运行权限只扩展到本次五张表，不扩大连接池或依赖范围。测试与本机升级见[原子保存交付](../../../../src/m1/deploy/environments/local-wsl/facts.md)。
+E01-05已沿本节接通事件、生产者投影及请求收据的共同事务；运行权限只扩展到本次五张表，不扩大连接池或依赖范围。测试与本机升级见[原子保存交付](../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)。
 
 ### 2.3 文件对象与上传合同
 
@@ -458,7 +458,7 @@ Temporal数据库只用其版本对应的官方工具升级，不纳入业务Ale
 
 ### 5.5 依赖版本候选
 
-**E01-03已接收范围。** Python 3.14.10、FastAPI 0.163.0、Uvicorn 0.54.0、Pydantic 2.14.3、Temporal Python SDK 1.36.1；前端Node 24.22.3、npm 11.19.1、Vue 3.5.43、TypeScript 5.9.3、Vite 7.3.7。后端由uv 0.13.8锁定依赖、Hatchling 1.33.0构建wheel；前端使用npm锁文件。镜像用BuildKit 0.35.0按需构建，Nginx 1.30.6提供静态入口和同源转发，基础镜像固定digest。确切清单见[应用交付说明](../../../../src/m1/deploy/environments/local-wsl/application.md)。AI、数据库客户端、事件订阅及界面组件库不在本次接线范围。
+**E01-03已接收范围。** Python 3.14.10、FastAPI 0.163.0、Uvicorn 0.54.0、Pydantic 2.14.3、Temporal Python SDK 1.36.1；前端Node 24.22.3、npm 11.19.1、Vue 3.5.43、TypeScript 5.9.3、Vite 7.3.7。后端由uv 0.13.8锁定依赖、Hatchling 1.33.0构建wheel；前端使用npm锁文件。镜像用BuildKit 0.35.0按需构建，Nginx 1.30.6提供静态入口和同源转发，基础镜像固定digest。确切清单见[应用交付说明](../../../../src/m1/deploy/environments/local-wsl/E01-03-application.md)。AI、数据库客户端、事件订阅及界面组件库不在本次接线范围。
 
 应用Chart只部署API、Worker及静态服务，各一个副本；同节点挂载既有文件PVC。命名空间初始化为显式Job，不在应用启动时自动执行。Worker readiness文件仅证明配置、存储及Temporal初始连接已检查；实际队列执行由部署探测验证，不能把就绪文件视为持续执行健康保证。测试Workflow不属于9项AI Operation，不写学习事实。
 
@@ -485,7 +485,7 @@ Helm、组件Chart和Temporal管理工具已按§5.7接收；镜像digest及Char
 
 用户确认新建Ubuntu 24.04 WSL，名称`DeerMind-M1`、目录`D:\wsl\DeerMind-M1`；K3s固定为`v1.37.2+k3s1`，节点/context/namespace使用`deermind-m1`。保留旧发行版和现有WSL内存设置，不据此批准后续组件的资源值。
 
-实际安装、校验值、只读目标检查、启动/停止及复核命令见[本机环境说明](../../../../src/m1/deploy/environments/local-wsl/README.md)。使用同版本官方离线镜像补齐内置组件，不增加镜像服务；下载受阻时可使用用户提供的代理。WSL测试期间保留一个进程，避免终端退出导致发行版停止；不增加系统开机任务。该本机处置不改变远程部署合同。
+实际安装、校验值、只读目标检查、启动/停止及复核命令见[本机环境说明](../../../../src/m1/deploy/environments/local-wsl/E01-01-local-cluster.md)。使用同版本官方离线镜像补齐内置组件，不增加镜像服务；下载受阻时可使用用户提供的代理。WSL测试期间保留一个进程，避免终端退出导致发行版停止；不增加系统开机任务。该本机处置不改变远程部署合同。
 
 部署代码与配置遵循[编程规范](Coding_Standard.md)。自有PG与Temporal Schema Chart已补values Schema，拒绝缺项和错误类型；离线检查、显式集群测试分别由`check.sh`与`test.sh`承载。开发工具版本见`src/m1/quality/`，不变更本节应用运行依赖候选。
 
@@ -509,7 +509,7 @@ Helm、组件Chart和Temporal管理工具已按§5.7接收；镜像digest及Char
 
 ### 5.7 本机部署配置草案
 
-E01-02已确认PG、NATS各1份和Temporal四个内部服务各1份，常驻内存limit合计2816Mi；PG/NATS/文件PVC分别8Gi/2Gi/8Gi，PG最多80连接、shared_buffers=128MiB，NATS文件上限1Gi。已完成本机功能接线，见[部署与自检](../../../../src/m1/deploy/environments/local-wsl/components.md)。应用、前端资源和业务连接池仍为候选；本机实测不代表100人试用或10人并发容量。
+E01-02已确认PG、NATS各1份和Temporal四个内部服务各1份，常驻内存limit合计2816Mi；PG/NATS/文件PVC分别8Gi/2Gi/8Gi，PG最多80连接、shared_buffers=128MiB，NATS文件上限1Gi。已完成本机功能接线，见[部署与自检](../../../../src/m1/deploy/environments/local-wsl/E01-02-components.md)。应用、前端资源和业务连接池仍为候选；本机实测不代表100人试用或10人并发容量。
 
 #### 5.7.1 组件包与启用项
 
@@ -703,7 +703,7 @@ API、Worker和业务维护命令共用同版server镜像；前端同版产物�
 
 ## 7. 本批接收与剩余决定
 
-E01-01/02与E01-03应用骨架已实施；E01-04迁移交付见[数据库实施](../../../../src/m1/deploy/environments/local-wsl/database.md)，自检入口见本机部署说明，其余内容按实施计划接收。后续实现至少检查：首次启动与重复初始化；未迁移时拒绝启动；同库共同回滚；上传中断及收据丢失；同卷读写和错误挂载；兼容／不兼容升级；同一备份批次恢复；迟到消息与已提交结果不重复生效。
+E01-01/02与E01-03应用骨架已实施；E01-04迁移交付见[数据库实施](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)，自检入口见本机部署说明，其余内容按实施计划接收。后续实现至少检查：首次启动与重复初始化；未迁移时拒绝启动；同库共同回滚；上传中断及收据丢失；同卷读写和错误挂载；兼容／不兼容升级；同一备份批次恢复；迟到消息与已提交结果不重复生效。
 
 | 未决项 | 责任与最晚确认点 |
 | --- | --- |

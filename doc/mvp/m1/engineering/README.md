@@ -7,7 +7,7 @@
 > **更新日期**：2026-11-16<br>
 > **修订说明**：v0.90 → v0.91，登记E01-05原子保存交付，状态继续归实施计划<br>
 
-工程设计把M1产品规则落实为实现方案。[实施计划](Delivery_Plan.md)保留E01—E07里程碑，并逐项列出可验证的小增量；依赖、交付物、场景、预期和进度集中维护。每项验证通过后单独提交用户评审，评审通过才标完成。事件合同、容量候选及源码/OpenAPI设计继续作为输入。目录见[源码组织](Source_Organization.md)，公开字段见[API与消息总册](API_and_Message_Design.md)，物理定义见数据库分册；已推进至E01-05，[原子保存交付](../../../../src/m1/deploy/environments/local-wsl/facts.md)记录首个事实、投影、收据闭环；[迁移交付](../../../../src/m1/deploy/environments/local-wsl/database.md)记录首批结构、命令和验证；[应用交付说明](../../../../src/m1/deploy/environments/local-wsl/application.md)记录骨架、构建、测试和限制，业务功能仍按后续增量实现。
+工程设计把M1产品规则落实为实现方案。[实施计划](Delivery_Plan.md)保留E01—E07里程碑，并逐项列出可验证的小增量；依赖、交付物、场景、预期和进度集中维护。每项验证通过后单独提交用户评审，评审通过才标完成。事件合同、容量候选及源码/OpenAPI设计继续作为输入。目录见[源码组织](Source_Organization.md)，公开字段见[API与消息总册](API_and_Message_Design.md)，物理定义见数据库分册；已推进至E01-05，[原子保存交付](../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)记录首个事实、投影、收据闭环；[迁移交付](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)记录首批结构、命令和验证；[应用交付说明](../../../../src/m1/deploy/environments/local-wsl/E01-03-application.md)记录骨架、构建、测试和限制，业务功能仍按后续增量实现。
 
 Operation仅封装AI业务能力，普通业务入口另列于[§7](#7-普通业务处理目录)；本批仍为9项AI Operation，不因新增字段或保存检查扩充目录。详细设计直接形成可审阅文稿，用户review后再处理意见；不以逐条对话或先写验证代码作为推进前置。影响架构的风险单独提出，其他验证留实现阶段，见[登记§70](../../DECISIONS.md#70-domain详细设计对象内容与入库)。
 

@@ -40,7 +40,7 @@ check_charts() {
   local root="$1"
   local cache=${M1_CHART_CACHE:-"$root/../../.tmp/e01-02/charts"}
   if [[ ! -f "$cache/temporal-1.8.0.tgz" || ! -f "$cache/nats-2.15.2.tgz" ]]; then
-    echo 'Missing upstream chart archives; see deploy/environments/local-wsl/components.md' >&2
+    echo 'Missing upstream chart archives; see deploy/environments/local-wsl/E01-02-components.md' >&2
     return 1
   fi
 

@@ -9,7 +9,7 @@
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
-E01-05仅接线初始账号的内联事实、生产者投影及收据；其余类型按所属增量实施。范围、验证和限制见[交付记录](../../../../../src/m1/deploy/environments/local-wsl/facts.md)，进度以[实施计划](../Delivery_Plan.md)为准。
+E01-05仅接线初始账号的内联事实、生产者投影及收据；其余类型按所属增量实施。范围、验证和限制见[交付记录](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，进度以[实施计划](../Delivery_Plan.md)为准。
 
 ## 1. 事实边界
 

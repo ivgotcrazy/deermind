@@ -1,5 +1,7 @@
 # E01-04：数据库结构与迁移
 
+[环境目录](README.md) · [实施计划 E01](../../../../../doc/mvp/m1/engineering/Delivery_Plan.md#13-e01基础运行)
+
 本增量建立业务库的六个模块schema和`public.alembic_version`。112张规划表按所属增量逐步迁移；本轮不创建业务空表，不实现E01-05的事件和收据写入。
 
 ## 1. 交付边界
@@ -29,7 +31,7 @@ API与Worker各自只有一个Engine：pool_size=5、max_overflow=0、pool_timeo
 
 不在命令行、配置仓库或日志中输出密码。迁移使用与应用相同的后端镜像；wheel内携带脚本，容器不挂载源码。开发态从`server/migrations`读取，仍经过同一个命令和部署锁，不提供绕过保护的直接Alembic执行入口。
 
-按[应用交付§2](application.md#2-构建)启动本机BuildKit，构建新后端：
+按[应用交付§2](E01-03-application.md#2-安装检查与构建)启动本机BuildKit，构建新后端：
 
 ```bash
 bash scripts/build-app.sh deermind/server:e01-04-r2 deermind/client:e01-03-r2 \

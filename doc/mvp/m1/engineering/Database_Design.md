@@ -10,7 +10,7 @@
 
 模块文档维护接口、业务载荷、读写流程和事务边界；数据库分册维护表、物理字段、约束、索引及表关系；本册维护分库总览、公共存储规则和导航。模块通过链接引用分册，不再复制物理表定义。
 
-用户确认M1继续采用同库分schema，数据库拆分留后续阶段；本轮沿用共同短事务并明确先追加事件、再同步投影，不增加拆库设计。字段稿仍待审阅。E01-02已建立三个数据库及隔离账号，并运行官方Temporal Schema工具；E01-04交付六个模块schema与迁移记录表；E01-05增加五张事实、投影及收据表；其余规划表按所属增量迁移。实际部署及验证见[迁移交付](../../../../src/m1/deploy/environments/local-wsl/database.md)。
+用户确认M1继续采用同库分schema，数据库拆分留后续阶段；本轮沿用共同短事务并明确先追加事件、再同步投影，不增加拆库设计。字段稿仍待审阅。E01-02已建立三个数据库及隔离账号，并运行官方Temporal Schema工具；E01-04交付六个模块schema与迁移记录表；E01-05增加五张事实、投影及收据表；其余规划表按所属增量迁移。实际部署及验证见[迁移交付](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)。
 
 ## 1. 库与账号
 
@@ -20,7 +20,7 @@
 | `temporal` | Workflow历史、执行、任务队列及组件元数据 | 40 | Temporal专用账号，官方Schema工具升级 | [执行库](database/Temporal.md) |
 | `temporal_visibility` | Workflow检索视图及Schema记录 | 3 | Temporal查询库专用账号，官方工具升级 | [查询库](database/Temporal_Visibility.md) |
 
-后两个库的表数按已确认Server v1.32.2的官方工具逐版迁移结果核对；执行库含迁移保留的`cluster_metadata`历史表，包含各自两张Schema管理表；正式接收版本改变时更新附录，当前已安装版本与验证记录见[基础组件说明](../../../../src/m1/deploy/environments/local-wsl/components.md)。PostgreSQL自带的`postgres`维护库、`template0/1`及系统目录不算应用数据库。
+后两个库的表数按已确认Server v1.32.2的官方工具逐版迁移结果核对；执行库含迁移保留的`cluster_metadata`历史表，包含各自两张Schema管理表；正式接收版本改变时更新附录，当前已安装版本与验证记录见[基础组件说明](../../../../src/m1/deploy/environments/local-wsl/E01-02-components.md)。PostgreSQL自带的`postgres`维护库、`template0/1`及系统目录不算应用数据库。
 
 ```mermaid
 flowchart LR
@@ -314,11 +314,11 @@ P为事件正文的业务投影，D为由事实生成的当前索引，C为运�
 
 `0002_atomic_facts`依赖首个revision，建立runtime.events、runtime.scope_event_heads、runtime.projection_receipts、product.accounts及product.command_receipt。字段沿各分册；应用仅获当前需要的列/表权限，事件及投影收据不可改删。当前总计6张表（含迁移表），不等于112张规划表全部落库。
 
-首个生产者保存已有合同中的初始账号事实，不开放登录/开户API。共同事务、幂等和失败验证见[事实保存交付](../../../../src/m1/deploy/environments/local-wsl/facts.md)。
+首个生产者保存已有合同中的初始账号事实，不开放登录/开户API。共同事务、幂等和失败验证见[事实保存交付](../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)。
 
 ## 6. 自检与审阅范围
 
-首轮字段稿的表字段、官方Temporal Schema及Mermaid语法核对见[登记§92](../../DECISIONS.md#92-m1完整数据库设计与字段字典)。本轮检查字段承接、主外键及索引列、链接和升版；早期归并结果见[登记§93](../../DECISIONS.md#93-数据库定义单一维护与schema边界)。该段是首轮字段稿的检查范围；E01-04迁移验证另见[交付记录](../../../../src/m1/deploy/environments/local-wsl/database.md)，不等于112张表或性能验收完成。
+首轮字段稿的表字段、官方Temporal Schema及Mermaid语法核对见[登记§92](../../DECISIONS.md#92-m1完整数据库设计与字段字典)。本轮检查字段承接、主外键及索引列、链接和升版；早期归并结果见[登记§93](../../DECISIONS.md#93-数据库定义单一维护与schema边界)。该段是首轮字段稿的检查范围；E01-04迁移验证另见[交付记录](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)，不等于112张表或性能验收完成。
 
 本次供审阅的选择是：业务字段的物理类型及枚举、JSON与列的分界、同schema外键/跨schema逻辑引用、索引以及少量此前只有逻辑对象的落表位置。它们不是已批准的实现。若审阅调整这些细节，只同步相关表和责任合同，不扩大产品范围。
 

@@ -4,7 +4,7 @@
 
 当前已推进到E01-05：内联事实、生产者投影及请求收据原子保存，沿用E01-03的可安装后端包、API／共享Worker、Vue学生／管理员双入口，以及应用镜像和Helm。仅接通首个初始账号事实；登录、聊天和AI留对应增量。
 
-应用遵循[编程规范](../../doc/mvp/m1/engineering/Coding_Standard.md)。E01-03的安装、启动、复核和自检见[应用交付](deploy/environments/local-wsl/application.md)，检查工具见[quality说明](quality/README.md)。E01-04的迁移命令、范围和验证见[数据库交付](deploy/environments/local-wsl/database.md)；E01-05的事务测试、实施范围和复核见[原子保存交付](deploy/environments/local-wsl/facts.md)。
+应用遵循[编程规范](../../doc/mvp/m1/engineering/Coding_Standard.md)。E01-03的安装、启动、复核和自检见[应用交付](deploy/environments/local-wsl/E01-03-application.md)，检查工具见[quality说明](quality/README.md)。E01-04的迁移命令、范围和验证见[数据库交付](deploy/environments/local-wsl/E01-04-database.md)；E01-05的事务测试、实施范围和复核见[原子保存交付](deploy/environments/local-wsl/E01-05-facts.md)。
 
 | 目录 | 用途 |
 | :--- | :--- |
@@ -24,7 +24,7 @@
 | `deploy/environments/local-wsl/` | 本机初始化与复核说明 |
 | `.artifacts/` | 本机测试输出，不提交凭据或大文件 |
 
-基础组件：[部署与复核](deploy/environments/local-wsl/components.md)。
+基础组件：[部署与复核](deploy/environments/local-wsl/E01-02-components.md)。
 
 开始使用：[本机环境说明](deploy/environments/local-wsl/README.md)。脚本在 WSL/Linux 执行；Windows 不另实现一套部署逻辑。
 

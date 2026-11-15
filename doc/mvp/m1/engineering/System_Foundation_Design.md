@@ -232,7 +232,7 @@ Evaluation需要连续扫描时使用§2.2的read_scope_events，不把筛选后
 
 Product先取得请求收据身份，同键同文复用结果，同键异文拒绝。所有者投影完成后写在线代次1的应用收据，最后完成请求收据。序号、事实、投影和两种收据共同提交；任一步失败全部回滚。规范化请求按固定UTF-8 JSON编码取SHA-256，并比较完整输入；不保存凭据。
 
-首个登记是无业务订阅的TrialAccountSaved/bootstrap_admin子集，不创建待发安排。只接线server_recorded与新账号投影；附件、查询、其他事件、订阅扫描和维护重建按后续增量实现。字段仍归数据库分册，测试和部署见[交付记录](../../../../src/m1/deploy/environments/local-wsl/facts.md)。
+首个登记是无业务订阅的TrialAccountSaved/bootstrap_admin子集，不创建待发安排。只接线server_recorded与新账号投影；附件、查询、其他事件、订阅扫描和维护重建按后续增量实现。字段仍归数据库分册，测试和部署见[交付记录](../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)。
 
 ## 3. 持久任务与执行资源
 
