@@ -1,11 +1,11 @@
 # M1 Interaction Space 设计
 
-> **版本**：v0.21<br>
-> **状态**：主流程合同检查及修正稿待用户审阅；未编码<br>
+> **版本**：v0.24<br>
+> **状态**：API与消息设计稿待审阅；未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.20 → v0.21，补齐教学供题接续、等待超时收尾及主动检查触发登记；见MVP决定登记§91<br>
+> **修订说明**：v0.23 → v0.24，集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码<br>
 
 本文设计四类活动、持续对话、学习助手及主动任务的运行方式，负责决定当前学生交互如何推进。模型与工具调用交AI底座执行，持久等待和调度交系统底座，当题判题与反馈由Interaction负责，掌握状态及目标判断交Evaluation；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -156,7 +156,7 @@ ActivityRevision保存实际node_id、动作及transition_id；新增DecisionRec
 2. 目录按根活动开始时间分批读取，子活动保持开始顺序；消息按不可变顺序定位，可围绕活动首条消息读取邻页。
 3. 返回已提交消息身份、内容、归属活动、处理状态和下一游标；不返回模型候选、私有判题或未提交草稿。
 
-此查询不改变活动、计证据或开启教学，点击历史名称也不恢复活动。无历史返回空列表；故障返回读取失败，不能用空列表掩盖。分页期间新消息可继续追加，但已返回消息身份和排序不重写。消息页返回last_seq、upper_seq及next_cursor：首屏固定该空间已提交消息上界，续页沿同一上界；历史锚点／筛选绑定游标。当前活动另查询current，不因补读改变活动。完整多条件历史搜索不在M1；索引见§7.1，分页上限在客户端与运行接线时确定。
+此查询不改变活动、计证据或开启教学，点击历史名称也不恢复活动。无历史返回空列表；故障返回读取失败，不能用空列表掩盖。分页期间新消息可继续追加，但已返回消息身份和排序不重写。消息页返回last_seq、upper_seq及next_cursor：首屏固定该空间已提交消息上界，续页沿同一上界；历史锚点／筛选绑定游标。当前活动另查询current，不因补读改变活动。完整多条件历史搜索不在M1；历史查询的索引见[数据字典](database/Business_Interaction.md#4-interactionmessages)，分页上限在客户端与运行接线时确定。
 
 聊天历史由本Space的消息记录提供，不通过扫描全部空间事件拼成对话。消息正文、内容块与活动归属在本Space保存；收发、作答、呈现等事件另经公共运行底座追加，通过引用关联消息。一条消息可有多个相关事件，事件时间不能替代聊天顺序。共同存储和追溯边界见[总体§3.2.1](System_Design.md#321-聊天消息与空间事件分开存储)。
 
@@ -189,15 +189,15 @@ Evaluation先查底座事件，再调用本端口；需要有界历史时，按�
 
 ### 2.4 输入、消息与活动引用
 
-ID由程序分配或在受理时校验；客户端request_id仅用于重试，不授予资源访问权。每空间保存交互索引`space_runtime`：current_leaf_ref、active_input_id、turn_epoch、last_message_seq。索引可更新，历史内容和迁移记录只追加。
+ID由程序分配或在受理时校验；客户端request_id仅用于重试，不授予资源访问权。[空间交互索引](database/Business_Interaction.md#3-interactionspace_runtime)保存当前入口和活动位置，历史内容与迁移记录只追加。以下只说明记录用途，字段和约束见各表链接。
 
-| 记录 | 主要字段及约束 |
+| 记录与表定义 | 业务含义 |
 | --- | --- |
-| Input | input_id、scope_id、request_id、kind、原文／操作引用、accepted_at、turn_epoch；唯一(scope_id,request_id)。正文固定，不把后来的AI改写当原输入 |
-| Message | message_id、scope_id、message_seq、role、parts、source_input_ref或source_trigger_ref、committed_at；role为student／assistant／system。正文不可变，空间内序号唯一；主动提示引用实际触发，不伪造学生输入 |
-| MessageAssignment | message_id、activity_ref、assigned_by_input_ref或source_trigger_ref；一个消息只归属一个活动。待辨认输入可暂未归属，查询显示处理中／失败，不挂到猜测的新活动 |
-| Activity | activity_id、scope_id、root_id、parent_id、type、name、config_ref、adoption_ref、started_at、first_message_ref；根无parent，子活动沿根的课程依据 |
-| ActivityRevision | activity_ref、revision、node_id、run_state、return_point、related_round_ref、reason、source_input_ref或source_trigger_ref；revision递增，历史可查，当前引用为派生索引 |
+| [Input](database/Business_Interaction.md#1-interactioninputs) | 固定收到的原文或操作，不把后来的AI改写当原输入 |
+| [Message](database/Business_Interaction.md#4-interactionmessages) | 已提交的聊天正文；主动提示引用实际触发，不伪造学生输入 |
+| [MessageAssignment](database/Business_Interaction.md#5-interactionmessage_assignments) | 一条消息只归属一个活动；待辨认输入可暂未归属，显示处理中或失败，不挂到猜测的新活动 |
+| [Activity](database/Business_Interaction.md#6-interactionactivities) | 保存根/子活动及固定配置、课程依据；子活动沿根的课程依据 |
+| [ActivityRevision](database/Business_Interaction.md#7-interactionactivity_revisions) | 保存节点、运行情况与返回位置的变化，当前引用只是历史修订的索引 |
 
 parts为有序列表：`text`保留提交原文；`rich_content`采用Domain的RichContent；`attachment`引用受控文件；`task_card`／`answer_form`引用本次task_use；`activity_notice`展示已提交的开始、返回或结束。每部分有稳定part_id，文字、公式、图表不另造一套内容语法。学生手写图片保留原文件，不把AI转写覆盖原文。
 
@@ -354,13 +354,13 @@ M1以服务端正式提供的内容为依据：回复通过规则检查、保存
 
 M1先使用原始记录、结构化工作记忆和按需摘要，不引入跨空间画像或向量记忆库。正式活动／检测／帮助状态直接读取，不复制到摘要作为另一份权威状态。记忆只辅助Interaction组织下一轮回应，Evaluation不以它取证。
 
-| 记录 | 字段及来源 |
+| 内容 | 表定义与业务结构 |
 | --- | --- |
-| WorkingMemoryRevision | memory_id、revision、scope_id、activity_ref、basis_message_seq、entries、source_input_ref、previous_ref；每项为pending_question／discussion_point／explicit_preference，含短文本、source_refs、open／resolved及解决依据 |
-| SummaryRevision | summary_id、revision、scope_id、activity_ref、covered_message_refs、through_message_seq、content、source_refs、call_ref、previous_ref；只概括声明的原文范围 |
-| MemoryHead | scope_id、activity_ref、kind、current_ref；可更新索引，历史修订保留；没有记忆返回明确空值 |
+| 工作记忆 | [memory_revisions](database/Business_Interaction.md#29-interactionmemory_revisions)的working内容含entries；每项有entry_id、type、text、source_refs、state、resolution_refs。type为pending_question／discussion_point／explicit_preference，state为open／resolved |
+| 摘要 | 同表的summary内容含covered_refs、text、model_call_ref；只概括声明的原文范围，保留来源和覆盖位置 |
+| 当前记忆 | [memory_heads](database/Business_Interaction.md#30-interactionmemory_heads)引用当前修订；无记录返回明确空值，历史修订保留 |
 
-WorkingMemoryRevision.entries可以为空；每项有entry_id及source_refs，resolved必须另给resolution_refs。不能从整段无出处摘要反推一个已解决事项。
+工作记忆的entries可以为空；每项有entry_id及source_refs，resolved必须另给resolution_refs。不能从整段无出处摘要反推一个已解决事项。
 
 “尚未解释为什么加回原量”可以成为pending_question，但须引用学生的问题或本轮未完成事项；解决时引用相应回应或学生确认。此处resolved只表示会话事项已处理，不等于Claim已掌握。学生明确说“先用图说明”可以记为当前活动偏好，不能推断成永久学习风格。已给提示从HelpFact读取，不靠摘要猜测。
 
@@ -444,17 +444,17 @@ Operation按照用途保留以下材料顺序，AI底座只报告通用容量和
 
 ### 4.3 计划、题目使用与提交记录
 
-下表ID均由程序分配，引用必须属于同一空间。修订采用追加记录及当前指针；题面、提交和历史依据不覆盖。
+记录身份由程序分配，引用必须属于同一空间。下表说明业务责任；物理字段与约束见对应数据表。题面、提交和历史依据不覆盖。
 
-| 记录 | 主要字段与约束 |
+| 记录与表定义 | 业务含义 |
 | --- | --- |
-| DetectionPlanRevision | plan_id、revision、activity_ref、adoption_ref、purpose、items、coverage、gaps、feedback_policy；items含稳定item_id、实例版本及方法／方面条件。确认引用精确修订，开始后不增题 |
-| PlanProgress | plan_ref、confirmed_by_input_ref、status、cancelled_item_refs及原因；状态prepared／confirmed／finished／cancelled／superseded。改计划产生新修订，旧确认不沿用 |
-| TaskUse | task_use_id、scope_id、activity_ref、round_ref（可空）、plan_item_ref（可空）、instance_ref（可空）、statement、adoption_ref、purpose、method_conditions、prepared_at、provided_message_ref；固定本次实际题面和受控附件，待映射自然提问题不伪造实例 |
-| DetectionRound | round_id、activity_ref、plan_ref、item_ref、task_use_ref、opened_at；唯一(plan_ref,item_ref)，未开始项只有计划项，没有伪造检测轮 |
-| RoundRevision | round_ref、revision、state、reason、source_input_ref、submission_ref（可空）；state为open／paused／closed，closed不可重开 |
-| Submission | submission_id、scope_id、source_input_ref、task_use_ref、activity_ref、round_ref（可空）、answer_ref、help_basis、adoption_ref、accepted_at、event_ref；原始答案不可改，检测轮最多一个正式提交 |
-| AnswerFeedback | feedback_id、submission_ref、verdict、basis_refs、limitations、run_ref；当题核对的私有结果，正式可见反馈另引用Message，不作为Evaluation的Evidence |
+| [DetectionPlanRevision](database/Business_Interaction.md#10-interactionplan_revisions) | 固定本次题单；items每项含稳定item_id、实例精确版本、方法/方面条件及供题检查。学生确认精确修订，开始后不增题 |
+| [PlanProgress](database/Business_Interaction.md#11-interactionplan_progress) | 记录确认、取消与完成；计划改变时旧确认不沿用 |
+| [TaskUse](database/Business_Interaction.md#14-interactiontask_uses) | 固定本次实际题面和受控附件；待映射自然提问题不伪造实例 |
+| [DetectionRound](database/Business_Interaction.md#12-interactiondetection_rounds) | 对应已开始的题单项；未开始项不建立虚假检测轮 |
+| [RoundRevision](database/Business_Interaction.md#13-interactionround_revisions) | 记录开放、暂停或关闭的原因；关闭后不能重开 |
+| [Submission](database/Business_Interaction.md#15-interactionsubmissions) | 保留原始答案、提交条件与帮助依据；检测轮最多一个正式提交 |
+| [AnswerFeedback](database/Business_Interaction.md#16-interactionanswer_feedback) | 当题核对的私有结果；正式反馈另通过Message提供，不作为Evaluation的Evidence |
 
 TaskUse.statement使用Domain RichContent的statement用途，只含题面；参考答案及教学辅助图分别取用，不能混进学生题目卡片。聊天提交的answer_ref引用原Message及片段；答题区提交保存独立原文，历史可显示其卡片，不另复制一份答案消息。练习中的同一输入即使换submission_id也不能重复入账；新输入确为新练习时另留事实，是否属于新Evidence由Evaluation判断。
 
@@ -526,12 +526,12 @@ sequenceDiagram
 
 订阅登记见工程入口§6.1。ActivityChanged先由Interaction普通接入检查其固定修订是否表示结束；创建、暂停及普通节点迁移不派发检查Operation。评价完成通知先授权读取结果；旧目标依据或已被覆盖的结果不能作为当前建议依据，同一原始表现通过Belief和目标两次通知仍按basis_key去重。这里核对既有触发资格，不新增Operation或后台计时器。
 
-| 记录 | 必填字段及用途 |
+| 记录与表定义 | 业务含义 |
 | --- | --- |
-| ProactiveCheck | check_id、scope_id、trigger_ref、adoption_ref、goal_result_ref／snapshot_ref（可空）、相关提交及处理结果、activity_revision_ref、server_time、candidate／no_task／waiting及原因；相同触发一次 |
-| ProactiveTask | task_id、scope_id、purpose、activity_type、subject_refs、basis_key、reason_kind、reason_refs、not_before（可空）、created_by_check；这里的task_id不是Domain Task |
-| ProactiveRevision | task_id、revision、state、reason、source_ref、execution_activity_ref（可空）；保留每次状态变化及当前索引 |
-| ProactivePrompt | prompt_id、task_id、basis_key、local_date、message_ref、source_trigger_ref；同一次提示重发沿原身份，不用浏览器回执决定是否已经提示 |
+| [ProactiveCheck](database/Business_Interaction.md#31-interactionproactive_checks) | 固定本次触发、课程/评价/活动依据及检查时刻，记录候选、无需建议或等待的结论 |
+| [ProactiveTask](database/Business_Interaction.md#32-interactionproactive_tasks) | 保存建议的目的、理由和开始条件；不是Domain的Task |
+| [ProactiveRevision](database/Business_Interaction.md#33-interactionproactive_revisions) | 保留每次状态变化及接受后执行的活动关联 |
+| [ProactivePrompt](database/Business_Interaction.md#34-interactionproactive_prompts) | 保存正式提示；重发沿原身份，不靠浏览器回执判断是否已提示 |
 
 basis_key由程序按空间、目的、目标要求、Task／方法／方面及实际新依据规范化生成，模型只提出候选。表现依据用提交或Evidence来源；目标依据用确切目标条目；保持依据用合格表现基准及首次满足的延迟条件。相同来源的新通知、快照编号、跨午夜、不同措辞或重试均不是新理由；目标只有选用或具体要求实际改变才构成新依据，单纯换修订号不算。
 
@@ -608,6 +608,8 @@ Interaction作为消费方，自行决定要等的事件条件、期限及命中
 
 ### 6.3 保存等待与恢复动作
 
+本节已定义的业务接续依据持久化到`interaction.resume_actions`，公共等待状态仍由runtime.waits维护；两者分别保存业务继续条件与通用通知/到期决议，见[完整字段](database/Business_Interaction.md)。
+
 Interaction为依赖结果的动作保存恢复位置，并将本方等待条件、期限及超时处理交给底座。下表保存业务恢复位置；等待条件、期限和唯一结局采用[公共运行§3.1—3.2](System_Foundation_Design.md#31-等待记录)。按此边界调整`register_wait`；公共`owner_ref`填`interaction / activity / owner_activity_id`。每个所需结果登记一个等待；单个等待就绪只触发检查，全部必需结果就绪后才提交接续，否则保留动作未完成。通用等待状态和竞争处理见[公共运行§3–4](System_Foundation_Design.md#3-持久任务与执行资源)。
 
 | 字段 | 类型／必填 | 用途 |
@@ -662,21 +664,7 @@ Interaction为依赖结果的动作保存恢复位置，并将本方等待条件
 
 以下为业务载荷，event_id、scope_id、space_event_seq、时间和执行来源沿底座共同信封。正式消息及事件共同保存，事件保留引用，不复制整段正文。只有AnswerSubmitted和TeachingOpportunityClosed触发能力评价。
 
-| 事件 | 业务载荷与发生条件 |
-| --- | --- |
-| ChatMessageRecorded | message_ref、activity_ref（待辨认时可空）、source_input_ref或source_trigger_ref、role；正式消息保存时追加 |
-| ActivityChanged | activity_ref、revision_ref、parent_ref、node_id、reason、source_input_ref或source_trigger_ref；活动及路径迁移 |
-| DetectionPlanPrepared | plan_ref、activity_ref、coverage_ref、source_input_ref；待学生确认，不是开测 |
-| TaskUseCreated | task_use_ref、activity_ref、round_ref、plan_ref、adoption_ref；题面固定并正式提供，显示情况另记 |
-| AnswerSubmitted | submission_ref、task_use_ref、activity_ref、round_ref、plan_ref、adoption_ref、help_basis_ref；接受实际回答时追加 |
-| DetectionRoundClosed | round_ref、revision_ref、reason、submission_ref（可空）；submitted／help_requested／finished／switched／content_unusable等原因 |
-| HelpHandled | help_ref、source_input_ref、classification、round_closure_ref、provided_message_ref（可空）；处置和正式提供分别追加，事件不能把请求当成已提供 |
-| TeachingOpportunityClosed | opportunity_id、closure_ref、activity_ref、adoption_ref、provided_part_refs、purpose、close_reason；服务端教学段收束，与显示回执无关 |
-| AnswerFeedbackPrepared | feedback_ref、submission_ref、source_input_ref；私有当题判断已保存，不替代作答事件 |
-| PresentationRecorded | presentation_ref、surface、resource_ref、part_refs；仅查询显示追溯，不触发评价或改旧事实 |
-| ProactiveTaskChanged／ProactiveTaskResponded | task_ref、revision_ref、basis_key、reason_refs、response（适用时）、execution_activity_ref（可空）；建议及响应分别留痕 |
-| ProactiveTaskPrompted | prompt_ref、task_ref、basis_key、source_trigger_ref、message_ref；正式提示已保存，不代表学生接受 |
-| InteractionInputStopped | input_ref、stop_request_ref、已提交结果引用；拒绝后续候选，不撤销已发生效果 |
+逐事件字段、产生时点及消费关系见[事件消息分册](contracts/Event_Messages.md#answersubmitted)；活动、计划、求助及主动任务的处理规则保留在本模块。
 
 TaskUseCreated不是浏览器阅读证明；独立资格核对提交时的正式帮助和接触事实。帮助处置后尚未提供内容时，HelpHandled的provided_message_ref为空；正式提供后追加新事件引用同一help_id。事件名称的跨模块登记见[入口§6](README.md#6-跨模块事件目录)。
 
@@ -684,33 +672,15 @@ TaskUseCreated不是浏览器阅读证明；独立资格核对提交时的正式
 
 ### 7.1 存储和约束
 
-Interaction使用业务PostgreSQL的interaction schema，表按本模块逻辑对象落地；不新建消息库或独立任务队列。
+活动配置、消息、作答、帮助、记忆、主动任务和接续的完整表定义见[Interaction数据字典](database/Business_Interaction.md)。本模块维护读写顺序、业务状态与恢复行为。
 
-| 表组 | 唯一约束与主要索引 |
-| --- | --- |
-| inputs、input_results、space_runtime | inputs唯一(scope_id,request_id)；input_results按(input_id,提交步骤键)防重；space_runtime每空间一行，active_input_id和turn_epoch控制提交；后台投递同时核对原输入和尝试 |
-| messages、message_assignments | message_id主键，唯一(scope_id,message_seq)；assignment以message_id唯一；索引(scope_id,message_seq)及(activity_ref,message_seq)用于历史定位 |
-| activities、activity_revisions、activity_heads | 版本唯一(activity_id,revision)；父引用同空间、根索引(scope_id,started_at,activity_id)；head仅指当前版本 |
-| detection_plans、plan_revisions、plan_progress、detection_rounds、round_revisions | 计划版本唯一(plan_id,revision)，轮唯一(plan_ref,item_ref)，每计划最多一轮未关闭（open或paused）；由plan_progress锁及当前轮指针约束，当前修订使用预期值校验 |
-| task_uses、submissions、answer_feedback | submission唯一(scope_id,submission_id)，正式轮提交唯一(round_ref)，同输入／题目使用唯一(source_input_ref,task_use_ref)；索引(scope_id,task_use_ref,accepted_at) |
-| help_facts、presentations、teaching_opportunities、opportunity_closures | HelpFact按(help_id,处置／提供阶段)追加且同阶段防重；presentation身份唯一；closure以opportunity_id唯一；按适用表分别索引(scope_id,activity_ref)、(scope_id,resource_ref)及(task_use_ref,服务端提供时间) |
-
-所有事实携带scope_id，跨表引用核对同空间。可变head／progress只是当前索引；业务内容、活动修订和事件不覆盖。原始附件经文件隔离层读取。配置、主动任务与工作记忆的补充表见下表；长期画像不在M1建设。
-
-补充存储均在interaction schema：
-
-| 表组 | 约束与读取 |
-| --- | --- |
-| blueprint_revisions、rule_revisions、strategy_revisions、binding_revisions、resolved_configs、config_heads | 各对象(id,revision)唯一；config_heads每活动类型一行。新包和所改定义同事务保存，旧config_ref可完整读取 |
-| decision_records、context_bundles | 引用run／input及固定配置；按执行步骤身份防重。记录实际判断材料和接受／拒绝，不复制所有原文或模型隐藏思考 |
-| memory_revisions、memory_heads | 每修订有来源与覆盖范围；head以(scope_id,activity_ref,kind)唯一。保存新head核对旧head及覆盖位置，迟到旧摘要只留历史，不覆盖较新记忆 |
-| proactive_checks、proactive_tasks、proactive_revisions、proactive_prompts | check按(scope_id,trigger_ref)防重；任务按(scope_id,basis_key)唯一；修订按(task_id,revision)唯一；提示重发按prompt_id防重，暂缓后的日期限制在任务锁内核对 |
+运行事实通过自身或所属记录确定学习空间，保存时核对全部引用属于同一空间。历史正文和修订不覆盖；当前头与进度是派生索引。保存配置时固定一份完整配置包；保存计划进度时防止同时开放两轮。具体提交次序见§7.2。
 
 模型记忆候选只在其引用的正式消息／动作保存后接收；已提交回复不等待可重建摘要成功。摘要失败记录memory_unavailable，本轮仍返回已保存结果；下次按§3.9回查。不同输入的记忆提交通过head比较处理，不用旧input令牌重新修改活动。
 
-普通配置入口路径草案为GET／PUT /interaction/activity-configs/{activity_type}；PUT携config_kind、稳定request_id、expected_revision及对象内容，只允许管理员。运行取材继续使用read_activity_contract内部读取，不开放学生修改配置。
+活动配置HTTP见[Interaction API I01—I02](contracts/Interaction_API.md#i01)；运行取材仍走read_activity_contract内部读取，不开放学生修改配置。
 
-主动任务查询沿query_conversation(current)返回已正式提供的卡片及当前执行关联；尚待安全时点的建议不混入聊天。响应路径为POST /learning-spaces/{scope_id}/proactive-tasks/{task_id}/responses，携response、expected_revision及request_id，沿respond_proactive_task校验。无权限、重复及版本冲突沿§7.3，不新增AI Operation。
+主动任务查询只返回已正式提供的卡片；尚待安全时点的建议不混入聊天。响应见[Interaction API I08](contracts/Interaction_API.md#i08)，由respond_proactive_task校验，不新增AI Operation。
 
 
 ### 7.2 短事务与恢复
@@ -727,23 +697,11 @@ Interaction使用业务PostgreSQL的interaction schema，表按本模块逻辑�
 
 ### 7.3 HTTP与内部读取
 
-浏览器登录、执行授权和WebSocket信封沿[公共运行§5](System_Foundation_Design.md#5-授权执行与访问隔离)。消息身份不绑定连接，当前登录到期不取消合法受理的后台工作；引用当前工作时仍核对本人空间及执行资格。
+学生输入、活动控制、作答、呈现、历史和主动任务字段统一见[Interaction API](contracts/Interaction_API.md)；HTTP和[WebSocket](contracts/Runtime_Protocols.md#websocket-信封)复用同一业务处理器。登录到期不取消已受理后台工作，后续读取仍核对本人空间与当前权限。
 
-下列为路径草案，普通API与WebSocket使用相同业务处理器。写请求均含稳定request_id和已认证scope；受理前校验权限。学生身份由服务端获取。
+202只表示受理；已保存作答不随反馈失败变回未提交。重复请求取原收据，busy不排队；停止保留已提交事实。prepare_detection、反馈及主动任务由已受理输入/事件派发，不允许浏览器指定任意Operation。
 
-| 路径 | 请求／结果 | 处理 |
-| --- | --- | --- |
-| POST /learning-spaces/{scope_id}/inputs | text／attachment、显式内容引用；返回input_id、run_ref、状态及已提交结果引用 | handle_input的受理适配；返回202不代表回复已完成 |
-| POST /learning-spaces/{scope_id}/activity-actions | action及§2.1字段；stop_reply携target_input_id | control_activity；停止不进入AI |
-| POST /learning-spaces/{scope_id}/answers | §4.2提交字段；返回submission_ref、event_ref及反馈处理引用 | submit_answer；已保存后评价独立运行 |
-| POST /learning-spaces/{scope_id}/presentations | §3.4显示回执 | record_presentation；不占聊天入口 |
-| GET /learning-spaces/{scope_id}/conversation | view、activity_ref或锚点、cursor、limit | query_conversation；只返回授权正式内容 |
-
-客户端查询收据、显式重试与WebSocket信封使用公共运行合同，不在本模块再造一套Run API。prepare_detection、反馈及主动建议由后端按已接受输入／事件派发，不让前端直接执行任意Operation名称。
-
-重复同正文返回原结果；identity_conflict、interaction_busy、stale_input／revision_conflict返回409；非法字段422，无权403，不存在404，技术不可用503。已受理后台失败在原收据中返回失败及可否恢复，不用第二次HTTP成功掩盖。query_conversation按消息序号游标，不按事件发生时间分页；页量上限在客户端接线评审中确定。
-
-原文内部端口沿§2.3：source返回task_use、submission或closure的固定引用，help_basis不随回执变化，provision_facts只取正式消息。答题区原文与聊天原文分别沿answer_ref读取；Evaluation不能通过消息历史接口绕过范围限制。附加presentation_facts仅用于诊断，缺回执不令completeness变成incomplete。
+原文内部读取合同仍以§2.3为准：作答沿answer_ref取得，help_basis不随浏览器回执变化，provision_facts只取正式提供内容。Evaluation不能绕过范围限制读完整历史，缺显示回执不令材料completeness变成incomplete。
 
 ### 7.4 接收用例
 
@@ -812,3 +770,9 @@ Interaction使用业务PostgreSQL的interaction schema，表按本模块逻辑�
 本轮修订（v0.20，2026-11-15）：明确业务内意图判断、澄清接续及同工作检测准备。仅修订文档，见MVP决定登记§83。
 
 本轮修订（v0.21，2026-11-15）：补齐教学供题接续、等待超时收尾及主动检查触发登记。仅修订文档，见MVP决定登记§91。
+
+本轮修订（v0.22，2026-11-15）：同步数据库总目录、完整字段及关系图；维护字段与处理合同的单一职责，物理设计待审阅。仅文档修订，见MVP决定登记§92。
+
+本轮修订（v0.23，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.24，2026-11-15）：集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码。见[MVP决定登记§94](../../DECISIONS.md#94-api与消息设计分册及唯一维护位置)。

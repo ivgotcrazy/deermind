@@ -1,11 +1,11 @@
 # M1 系统底座设计
 
-> **版本**：v0.42<br>
-> **状态**：入口与执行参数候选已集中，待用户审阅；未编码<br>
+> **版本**：v0.45<br>
+> **状态**：API与消息设计稿待审阅；未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.41 → v0.42，统一引用入口参数表，区分连接超时与后台执行期限；见MVP决定登记§90<br>
+> **修订说明**：v0.44 → v0.45，集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码<br>
 
 本文设计接入、路由、派发、运行保障、全局事件和输出回传等共用机制，为业务模块、核心Space及AI底座提供基础接口。事件含义、业务先后关系和状态判断由调用方定义，本文件不建立中央教学或评价决策器；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -30,11 +30,11 @@
 
 以下结果登记用于生产方自身的执行追溯和公开读取，不是等待者交给生产方的应答清单；有没有消费方等待不影响其业务处理和事件发布。生产方受理后登记该操作预期产生的结果键；受理前，触发事件可以已经存在。公开结果与技术执行记录分开保存：
 
-| 记录 | 必要字段 | 可变性与用途 |
-| --- | --- | --- |
-| 预期结果登记 | `result_key`、`execution_id`、`accepted_at` | 同一键只绑定一次生产处理；用于区分未受理与已受理 |
-| 执行尝试记录 | `result_key`、`attempt_id`、发生时间、尝试状态、可选 `failure_ref` | 受理、执行和失败分别留痕；新尝试使用新 `attempt_id`，不覆盖旧错误记录 |
-| 已发布结果 | `result_key`、`result_ref`、`execution_id`、`published_at`、生产方载荷 | `result_ref` 指向不可变批结果；每个键只能有一个成功发布结果 |
+| 记录与表定义 | 用途 |
+| --- | --- |
+| [预期结果登记](database/Business_Runtime.md#15-runtimeexpected_results) | 将结果键绑定到一次生产处理，区分未受理与已受理 |
+| [结果处理尝试](database/Business_Runtime.md#16-runtimeresult_attempts) | 分别保留受理、执行和失败；新尝试不覆盖旧错误 |
+| [已发布结果](database/Business_Runtime.md#17-runtimepublished_results) | 指向不可变批结果；每个结果键只能有一个成功发布结果 |
 
 M1公共结果的生产者均有Execution：Domain入库接收与独立目标对照为handler，供题及证据解释为ai_operation；解释流程内部的目标结果沿原Execution发布。预期结果登记绑定execution_id，发布携带该执行的有效attempt_id；普通同步API收据不借用此表伪造Execution。跨尝试保持execution_id与结果键不变。
 
@@ -148,7 +148,7 @@ AI Operation或普通处理器把可公开的进度或已校验结果交回底�
 
 事件的查询与过滤要求按[总体§6.7](System_Design.md#67-已确认的日志与事件记录)执行。所属模块提供资源归属和事件含义；底座保存通用关联并提供授权查询，使调用方能直接列出某学习空间的事件及筛选结果，不依赖全文人工查找。
 
-§2.2—2.3先定义Evaluation依赖的空间排序与时间字段；完整事件信封、因果关联、筛选组合、分页上限及索引在本模块继续细化。业务事实和派生更新事件均须可追溯；结果通知和技术日志不能替代持久事件。
+§2.2—2.3定义Evaluation依赖的排序与时间语义；完整信封和传输字段见[事件消息分册](contracts/Event_Messages.md)，查询见[运行协议](contracts/Runtime_Protocols.md#r05)，物理索引见数据字典。业务事实和派生更新事件均须可追溯；结果通知和技术日志不能替代持久事件。
 
 ### 2.1 订阅与处理入口
 
@@ -172,13 +172,7 @@ Evaluation按源事件顺序自行选择下一个处理对象；底座只提供�
 
 用户已确认服务端时间为评价依据，统一存UTC，界面显示Asia/Shanghai。字段采用带时区的时间值，传输使用UTC ISO 8601；时长用秒。客户端时间保留来源，不作为可信发生时点。
 
-| 字段 | 类型／必填 | 含义 |
-| --- | --- | --- |
-| occurred_at | 时间或null／是 | 所有者能确认的实际业务时点；不确定则null，不用记录时间冒充 |
-| recorded_at | 时间／是 | 底座保存本事件的服务端时间；重试不覆盖原记录 |
-| time_basis | 枚举／是 | server_recorded／referenced_fact／unknown；引用既有事实时同时提供time_source_ref |
-| client_reported_at | 时间或null／否 | 客户端声称的时点，仅作参考；省略等同未提供 |
-| time_source_ref | 引用或null／是 | 发生时间引用其他已确认事实时必填；不能指向未提交草稿 |
+时间字段逐项定义见[事件信封](contracts/Event_Messages.md#1-正式事件信封-v1)；本节保留可信时间的解释与取值规则。
 
 业务接受作答、开始检测等由服务端执行的动作，可用确认时点作为occurred_at。呈现回执的接收时间只能证明“此时收到回执”，不证明内容就在该时刻首次显示；具体呈现仍保留未知。Evaluation使用明确的规则端点计算间隔，unknown不补0。底座不替消费方解释七天保持或帮助资格。
 
@@ -188,15 +182,7 @@ Evaluation按源事件顺序自行选择下一个处理对象；底座只提供�
 
 业务事件保存在runtime.events，以下字段在保存时固定。正文、题面和大附件只存所有者引用；模型候选不能自行登记事件。
 
-| 字段 | 类型／必填 | 约束 |
-| --- | --- | --- |
-| event_id、event_type、schema_version | ID、登记名、正整数／是 | ID由程序生成并沿重试复用；类型和载荷校验器在代码登记，当前信封为v1 |
-| producer、scope_kind、scope_id | 登记模块、资源类型、ID／是 | 学习空间、教材导入或模型定义分别使用自身归属；不能将教材事件伪挂到学生空间 |
-| owner_ref、subject_refs | 主对象引用、关联对象列表／是 | 供查询定位；引用不授予原文读取权限 |
-| actor_ref、source_execution_ref | 身份、执行引用／是，可null | 后台事实使用服务身份；短保存可无执行引用，但须有source_request_id或因果来源 |
-| source_request_id、causation_event_id、correlation_id | ID／是，前两者按来源可null | 记录直接请求／前因和整条链；correlation_id仅用于追溯，不能作为防重键 |
-| space_event_seq、时间字段 | 序号、§2.3字段／按适用填写 | 学习空间事件必有序号；其他归属不伪造空间序号；记录时间不改写发生时间 |
-| payload | 对象／是 | 按event_type及schema_version校验；只保存该事实必需内容和不可变引用 |
+正式事件信封和逐类型payload统一见[事件消息分册](contracts/Event_Messages.md)。本节维护保存、去重及消费机制，不再重复字段表。
 
 event_id相同且事实内容相同返回原事件，内容不同返回identity_conflict。通知和重试不能新建第二个事件身份。版本不识别时保留失败及原始传输引用，不按最新版猜读；旧解码器与执行兼容按[基础设施§5.3](Infrastructure_and_Deployment_Design.md#53-schema迁移与版本兼容)接收，正式事件不改写。
 
@@ -563,36 +549,13 @@ access_context由API认证适配或后台执行适配创建，是程序内部参
 
 浏览器连接同源`/ws`，生产使用WSS，协议名`deermind.v1`。握手校验Origin和Cookie；首帧为hello，携csrf_token及已知session_id，服务器核对身份未切换后返回ready(connection_id,server_time)。在ready之前不处理业务帧；认证失败关闭连接，协议不支持明确报错。
 
-| 帧 | 必需内容／含义 |
-| --- | --- |
-| hello／ready | 仅建立已认证技术连接；connection_id不是业务身份 |
-| command | frame_id、request_id、action、resource、payload；payload按登记动作Schema验证，不能指定任意Operation |
-| receipt | 对应frame_id／request_id；accepted或completed、owner_receipt_ref、可选execution_ref及结果引用。只有持久受理或提交后发送 |
-| error | 对应帧及请求、code、message、acceptance=not_accepted或unknown；不携模型原文或服务堆栈 |
-| watch／unwatch／watch_ready | frame_id、watch_id及有限的resource／views；每连接范围经授权，watch_ready只确认订阅，不是数据已同步 |
-| changed | watch_id、resource、views及可选request_id；只提示补读，不携原始事件、聊天正文、Evidence或概率 |
-| ping／pong、resync_required | 连接健康及需要重新补读的提示；不记录学习事实，不延长登录会话 |
+WebSocket信封逐字段定义见[运行协议](contracts/Runtime_Protocols.md#websocket-信封)。
 
 每个command重新核验会话、CSRF绑定及资源权限。明确入口直接派发；聊天文字里的教学意图由Interaction处理，不能让前端指定“已结束检测”。HTTP既有业务端口与WS复用同一处理器，先将路径／action映射为同一owner和entry，再计算防重键；前端固定使用一种发送路径，断线不自动改走另一写接口。
 
-| WS动作 | 登记处理与条件 |
-| --- | --- |
-| learning.input | Interaction.handle_input受理；同空间busy拒绝，原请求重试先取原收据 |
-| learning.answer | submit_answer；题面及轮引用由服务器核对，不附客户端自算成绩 |
-| learning.activity_action | control_activity；包括stop_reply，停止为忙时控制例外 |
-| learning.proactive_response | respond_proactive_task；按既有接受／暂缓／拒绝合同 |
-| learning.presentation | record_presentation；诊断回执，不启动评价 |
-| material.input | Product教材助手受理；同导入busy拒绝，其他导入可独立处理 |
+六种动作及其HTTP映射见[运行协议动作表](contracts/Runtime_Protocols.md#动作与授权视图)。
 
-示例：以下只演示信封，业务字段仍以所属模块为准。
-
-```json
-{
-  "type": "command", "frame_id": "F-1", "request_id": "REQ-1",
-  "action": "learning.input", "resource": {"kind": "learning_space", "id": "LS-1"},
-  "payload": {"text": "给我一点提示", "explicit_refs": []}
-}
-```
+信封与请求/回执示例只在运行协议维护。
 
 frame_id只对应一次网络请求；重连重试可换frame_id，但request_id、动作、资源和原正文保持。同键异内容拒绝。同一已受理请求即使正在busy也返回原收据；新输入的busy错误是未受理，客户端保留草稿，不进入服务端待发送队列。
 
@@ -604,7 +567,7 @@ API实例使用同一个NATS服务的实时订阅接收已提交事件的刷新�
 
 收到事件后按登记适配查询正式事件引用及资源，不能只相信传输载荷；回传前重新核验会话及资源授权。通知只含授权的资源与视图键，不能把内部事件全文广播给在线用户。连接记录在API内存，后台工作不依赖它，重连到另一个API也能恢复。
 
-通用只读查询为`GET /requests/receipt?action=...&resource_kind=...&resource_id=...&request_id=...`。底座按动作登记委托所有者读取已有收据，返回receipt_state、receipt_ref、适用的execution_ref／execution_state、结果引用和允许操作。receipt_state为not_found／accepted／completed／rejected，表示所属业务提交；execution_state单独表示后台运行、完成、失败或取消。作答提交成功后，即使反馈生成失败，也不能把已保存答案显示为未提交。它不重新派发、不扫描所有Space，也不要求客户端拥有已经丢失的receipt_ref。
+通用请求回执见[运行协议R04](contracts/Runtime_Protocols.md#r04)。底座按登记入口委托所有者读取；业务收据与后台执行状态分别表达。作答已保存而反馈失败时，不得把答案显示为未提交。读取不重新派发，不扫描所有Space，也不要求客户端已知丢失的receipt_ref。
 
 not_found只表示该时刻没有可读的持久收据，不能证明正在网络中的请求永远不会到。数据库故障返回temporarily_unavailable。用户重试原输入仍用原request_id；已取消／已完成的执行返回原收据和执行状态，不重新执行。按execution_ref查询进度同样检查当前权限，不向浏览器暴露Worker控制权。
 
@@ -653,25 +616,15 @@ M1按[总体§6.7](System_Design.md#67-已确认的日志与事件记录)以日�
 
 ### 6.1 必记日志与存储
 
+事件、执行、交接、等待及文件登记的表定义统一见[Runtime数据字典](database/Business_Runtime.md)。本节维护日志内容与运行记录的使用边界。
+
 日志记录：受理／拒绝、派发及确认、订阅承接、尝试开始／结束、步骤复用／提交、等待登记／决定／接续、取消、重试耗尽及人工恢复。每条包含UTC时间、级别、component、action、outcome、简短说明和适用的scope_id、request_id、event_id、`execution_id`、attempt_id、step_key、wait_id、handoff_id；没有的字段不伪造。错误另含error_code、retry_state和来源引用。
 
 说明应能直接读懂，例如“等待本轮评价已到期，未取得可用结果；原评价继续运行”，不能只写timeout堆栈。日志不默认复制聊天／题面全文、完整Prompt或凭据；沿引用授权查原文。正式空间事件、传输记录和日志分别保存，重发日志不新增学生事实。应用日志以结构化JSON写stdout／stderr，不增加日志文件表或日志采集任务。日志不可用不等于业务未发生，恢复仍查持久事件、收据与Step。
 
-| runtime表组 | 唯一性及主要查询 |
-| --- | --- |
-| file_objects、file_uploads | 由infrastructure/files仓储维护技术登记；文件身份、上传状态及hash见基础设施§2.3；业务授权与采用引用仍归所有者 |
-| events、scope_event_heads | event_id唯一；学习空间(scope_id,space_event_seq)唯一；索引scope＋type＋序号、correlation_id、causation_event_id及subject引用 |
-| execution_authorizations | execution_id唯一；固定发起者、owner／entry、资源和动作范围、授权依据，不保存登录秘密；与受理共同提交，读取时仍检查当前权限 |
-| executions、execution_attempts、step_results | 受理键含owner、entry、scope及原请求／事件；(execution_id,attempt_id)、Step key唯一；索引当前状态及待收尾尝试 |
-| handoffs、handoff_attempts | (kind,logical_key)唯一；kind为publish／start／signal／cancel；索引state及next_attempt_at。状态pending／leased／delivered／exhausted；publish另存订阅快照、投递ID、stream／sequence，重送留新尝试及授权引用 |
-| delivery_failures | 按投递引用、subscriber_id及失败来源防重；保存待核对／已确认原因和处理引用，索引事件、订阅者及未解决项；不混入业务评价结果 |
-| subscription_receipts | (subscriber_id,event_id)唯一；绑定处理合同版本及承接引用；解析不支持单列rejected并保留失败，不当作成功业务 |
-| waits、wait_handling | wait_id及(execution_id,step_key,condition_hash)唯一；索引owner／resolution／deadline；一份resume_action_id最多一次业务提交 |
-| expected_results、result_attempts、published_results | result_key唯一；发布引用不可变；执行错误保留尝试，成功结果不被旧失败覆盖 |
-
 handoff租约只避免多Relay同时发送，不授予业务执行权；租约过期允许重送相同交接。读取命令状态不扫描所有Space私表；原始内容归所属模块。表结构迁移及整套恢复见[基础设施§5—6](Infrastructure_and_Deployment_Design.md#5-配置部署与启动)；保留期限待确认，不擅自清理被引用记录。
 
-logical_key分别取(event_id,redelivery_ref)、attempt_id、(wait_id,event_id,target_attempt_id)和(cancel_request_id,target_attempt_id)。首次publish的redelivery_ref为空；获准重送取固定维护命令引用，普通重试不生成新值。恢复后向新尝试唤醒使用新目标绑定；旧Signal不启动已结束Workflow，新尝试仍先probe原Wait。
+交接身份的组成见[handoffs数据定义](database/Business_Runtime.md#9-runtimehandoffs)。普通重试沿用原交接身份；恢复后向新尝试唤醒使用新目标绑定，旧Signal不启动已结束Workflow，新尝试仍先probe原Wait。
 
 ## 7. 存储合同与可靠性验证
 
@@ -713,7 +666,7 @@ logical_key分别取(event_id,redelivery_ref)、attempt_id、(wait_id,event_id,t
 | 输出与重连 | §5.3—5.5及Client§5维护协议；基础设施§4.5统一候选，§4.6检查组合，接线前确认 |
 | SDK与部署 | AI底座固定Pydantic AI／Temporal版本及注册适配；基础设施定义实际队列、subject、迁移、保留、技术核对周期和备份；部署前确认 |
 
-本批表组见§6.1；Temporal内部表由其管理，业务模块不直接读取，NATS保留策略不决定正式事件能否删除。不增选型PoC，数据库、事件、执行及语义验证在实现阶段开展。
+完整表定义见[Runtime数据字典](database/Business_Runtime.md)；Temporal内部表由其管理，业务模块不直接读取，NATS保留策略不决定正式事件能否删除。不增选型PoC，数据库、事件、执行及语义验证在实现阶段开展。
 
 ### 7.3 机制依据与补充接收
 
@@ -787,3 +740,9 @@ logical_key分别取(event_id,redelivery_ref)、attempt_id、(wait_id,event_id,t
 本轮修订（v0.41，2026-11-15）：补9项AI能力、普通handler与既有接续的Worker注册映射。仅修订文档，见MVP决定登记§89。
 
 本轮修订（v0.42，2026-11-15）：统一引用入口参数表，区分连接超时与后台执行期限。仅修订文档，见MVP决定登记§90。
+
+本轮修订（v0.43，2026-11-15）：同步数据库总目录、完整字段及关系图；维护字段与处理合同的单一职责，物理设计待审阅。仅文档修订，见MVP决定登记§92。
+
+本轮修订（v0.44，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.45，2026-11-15）：集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码。见[MVP决定登记§94](../../DECISIONS.md#94-api与消息设计分册及唯一维护位置)。

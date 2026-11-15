@@ -1,0 +1,921 @@
+# M1 事件与消息载荷
+
+> **版本**：v0.1<br>
+> **状态**：接口与消息详细设计稿，待用户审阅；未编码<br>
+> **维护与评审**：Codex 编写及自检，用户审阅<br>
+> **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
+> **更新日期**：2026-11-15
+
+本分册是正式事件传输结构的唯一字段定义。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
+
+## 1. 正式事件信封 v1
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `event_id` | ID | 是 | 程序分配；同事实重投不改 |
+| `event_type` | 登记事件名 | 是 | 下文精确名称，大小写敏感 |
+| `schema_version` | int | 是；本稿1 | 该类型payload版本，不是Domain内容版本 |
+| `producer` | product/domain/interaction/evaluation等已登记模块 | 是 | 由受权保存者确定 |
+| `scope_kind` | string | 是 | 登记资源种类，见各事件归属 |
+| `scope_id` | ID | 是 | 对应范围身份；空间事件必须是真实学习空间 |
+| `owner_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `subject_refs` | Ref[] | 是 | 便于按活动、作答、题目等过滤 |
+| `actor_ref` | Ref或null | 是 | 已核验用户/服务身份，不是客户端角色 |
+| `source_execution_ref` | Ref或null | 是 | 普通短提交允许null |
+| `source_request_id` | RequestId或null | 是 | 用户/管理员请求来源 |
+| `causation_event_id` | ID或null | 是 | 直接前因；与source_request_id至少一项有值 |
+| `correlation_id` | ID | 是 | 链路查询，不作去重键 |
+| `space_event_seq` | int或null | 是 | 学习空间正整数；其他范围null |
+| `occurred_at` | Timestamp或null | 是 | 已核实业务发生时点；未知null |
+| `recorded_at` | Timestamp | 是 | 服务端追加时间，不在重试覆盖 |
+| `time_basis` | server_recorded/referenced_fact/unknown | 是 | 可信时间来源 |
+| `time_source_ref` | Ref或null | 是 | referenced_fact必须有引用；unknown不伪造 |
+| `client_reported_at` | Timestamp或null | 否；null | 只作参考 |
+| `payload` | 按event_type的对象 | 是 | 下文逐类型定义；禁止任意脚本或未登记字段 |
+
+同字段若为跨模块交接方便在payload中出现，必须与信封一致，否则拒绝；本稿原则上不重复scope_id。scope_kind的本批代码登记为learning_space、material_import、domain、learning_target、course_application、activity_config；账号内部事实另用account。它们是待审的传输名称，不改变数据所有者。
+
+发生时间未知时time_basis=unknown且occurred_at=null；用引用时校验time_source_ref；服务端保存动作取服务端确认时点。学习评价顺序按space_event_seq，不能用不同机器的到达时间排序。详见[公共运行§2.2—2.3](../System_Foundation_Design.md#22-空间事件顺序与有界读取)。
+
+## 2. NATS 交接与订阅
+
+正式事件保存在数据库；JetStream只保存投递副本。subject沿基础设施已有候选`dm.<deployment_key>.event.<event_type>`，不带学生姓名、题面或消息正文。subject、durable名称仍由原配置候选审批，不由各Space自行命名。
+
+| DeliveryNotice字段 | 类型/必填 | 含义 |
+| --- | --- | --- |
+| delivery_id | ID/是 | 本次可靠交接身份；技术重发沿用，获准重新投递另记交接 |
+| event_id | ID/是 | 正式事件身份；重新投递仍不变 |
+| event_type | 登记名/是 | 必须和subject及正式记录一致 |
+| schema_version | int/是 | 对应正式事件payload版本 |
+| producer | 登记模块/是 | 正式生产者 |
+| scope_kind、scope_id | string、ID/是 | 帮助授权定位；不能信任它们代替查正式事件 |
+
+消费者先按event_id向底座核验正式记录，再解析payload；伪造/不支持的消息留下接入失败，不调用业务处理器。事件及执行安排可靠保存后Ack，不等待AI结束；最终业务失败归原模块处理，不靠MQ重投整条业务。subscriber_id+event_id防重复承接；NATS投递确认不是业务成功。
+
+订阅项完整字段为subscriber_id:string、event_types:string[]、handler_ref:string、handler_revision:string、scope_policy:登记授权策略引用、acceptor_ref:string、on_success:string、on_failure:string。handler只能来自程序装配登记，不接收事件里的函数名。超时属于消费方Wait，使用单独on_timeout登记，不要求生产者在指定时间发布。
+
+消息是否订阅只按下文“消费方式”。仅留痕事件没有业务订阅者不算失败；浏览器刷新由底座按已授权watch转换为changed，不能直接转发完整信封。成功发布仍以正式数据库事实为准。
+
+## 3. 逐类型业务载荷
+
+每节默认schema_version=1。表中Ref表示固定事实引用；确切形状沿[总册§3](../API_and_Message_Design.md#3-共用类型与字段规则)。列表允许空时必须表示确认无项，未知以缺口/限制表达。时间、账号及源请求由信封保留，不因正文省略而丢失追溯。
+
+<a id="domainintakerequested"></a>
+### 3.1 `DomainIntakeRequested`
+
+生产方：`product`；归属：`material_import`。产生条件：管理员提交已采用内容并共同保存请求。
+
+消费方式：domain.receive_intake。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `domain_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `intake_request_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `candidate_refs` | CandidateRef[] | 是；非空 | 固定所选已采用内容；类别/父题从提交读取 |
+
+不包含原文；只提交题目允许，单独提交解法须有可定位父题。
+
+<a id="domainintakereceived"></a>
+### 3.2 `DomainIntakeReceived`
+
+生产方：`domain`；归属：`material_import`。产生条件：整批接收或业务拒绝与结果共同保存。
+
+消费方式：Product读取intake_receipt；等待桥按已登记条件提示。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `trigger_event_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `domain_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `intake_request_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `receipt_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `outcome` | 常量received | 是 | 固定已提交引用；读取仍须授权 |
+
+只有可信Product提交才有业务决定；技术失败不发拒绝。事件不表示定义/题目已经入库。
+
+<a id="domainintakerejected"></a>
+### 3.3 `DomainIntakeRejected`
+
+生产方：`domain`；归属：`material_import`。产生条件：整批接收或业务拒绝与结果共同保存。
+
+消费方式：Product读取intake_receipt；等待桥按已登记条件提示。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `trigger_event_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `domain_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `intake_request_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `receipt_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `outcome` | 常量rejected | 是 | 固定已提交引用；读取仍须授权 |
+
+只有可信Product提交才有业务决定；技术失败不发拒绝。事件不表示定义/题目已经入库。
+
+<a id="materialcandidatesadopted"></a>
+### 3.4 `MaterialCandidatesAdopted`
+
+生产方：`product`；归属：`material_import`。产生条件：管理员采用修正内容。
+
+消费方式：domain.receive_intake来源失效分支。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `import_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `adopted_refs` | CandidateRef[] | 是 | 固定已提交引用；读取仍须授权 |
+| `replaced_refs` | CandidateRef[] | 是 | 固定已提交引用；读取仍须授权 |
+| `affected_submission_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+
+Domain只处理仍pending的受影响待办；已入库定义保持。
+
+<a id="materialimportdeleted"></a>
+### 3.5 `MaterialImportDeleted`
+
+生产方：`product`；归属：`material_import`。产生条件：未完成导入业务删除成功。
+
+消费方式：domain.receive_intake来源失效分支。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `import_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `deletion_receipt_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `invalidated_source_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `affected_submission_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+
+不授权物理删文件，不撤销既有领域对象。
+
+<a id="learningtargetapplied"></a>
+### 3.6 `LearningTargetApplied`
+
+生产方：`product`；归属：`learning_space`。产生条件：空间首次采用或实际目标依据改变。
+
+消费方式：evaluation.reassess_target。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `application_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `target_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `previous_target_basis_ref` | Ref或null | 是 | 首次为null |
+| `applied_at` | Timestamp | 是 | 固定已提交引用；读取仍须授权 |
+| `cause_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+
+只重算目标对照，不重算Belief；仅改教材说明不发本事件。
+
+<a id="learningspaceentered"></a>
+### 3.7 `LearningSpaceEntered`
+
+生产方：`product`；归属：`learning_space`。产生条件：接受学生实际进入请求。
+
+消费方式：interaction.check_proactive_task。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `application_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `target_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+
+同请求一次；查询/重连不产生；不自动开始检测。
+
+<a id="activitychanged"></a>
+### 3.8 `ActivityChanged`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：活动与路径修订共同保存。
+
+消费方式：Interaction普通接入先判定固定修订是否结束，再决定check_proactive_task；其他只追溯。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `revision_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `parent_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `node_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `reason` | string | 是 | 固定已提交引用；读取仍须授权 |
+| `source_input_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `source_trigger_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+
+来源输入/事实至少一项；只有结束条件命中才安排主动检查，不能所有节点迁移都调用AI。
+
+<a id="tasksupplyrequested"></a>
+### 3.9 `TaskSupplyRequested`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：形成固定的例题/练习/检测供题要求。
+
+消费方式：domain.supply_task。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `request_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `supply_input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `domain_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `purpose` | example/practice/assessment | 是 | 固定已提交引用；读取仍须授权 |
+| `task_ref` | ObjectRef(task) | 是 | 固定已提交引用；读取仍须授权 |
+| `allowed_method_refs` | ObjectRef(solution)[] | 是 | 固定已提交引用；读取仍须授权 |
+| `assessment_constraints_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `method_source_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `exposure_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `count` | int | 是；正数 | 需提供的题量 |
+
+复杂条件通过固定supply_input_ref读取Domain§5.2输入；exposure_refs=[]只在确认无经历时使用，未知须带输入缺口。
+
+<a id="domaintasksupplycompleted"></a>
+### 3.10 `DomainTaskSupplyCompleted`
+
+生产方：`domain`；归属：`learning_space`。产生条件：供题批次及合格新题保存完成。
+
+消费方式：Interaction读取task_supply及批次；仅匹配等待才接续。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `trigger_event_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `supply_batch_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+
+空批是合法业务结果，技术失败不是空批；取回后仍需条件复核，检测先确认题单。
+
+<a id="answersubmitted"></a>
+### 3.11 `AnswerSubmitted`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：接受实际作答并固定条件。
+
+消费方式：evaluation.evaluate_submission，按空间顺序扫描。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `submission_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `task_use_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `round_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `plan_ref` | PlanRef或null | 是 | 固定已提交引用；读取仍须授权 |
+| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `help_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+
+练习可无轮/题单；原文在Interaction，事件不带答案全文。一次已接受提交只产生一次触发。
+
+<a id="teachingopportunityclosed"></a>
+### 3.12 `TeachingOpportunityClosed`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：服务端教学段收束。
+
+消费方式：evaluation.apply_learning_opportunity，按空间顺序扫描。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `opportunity_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `closure_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `provided_part_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `purpose` | string | 是 | 固定已提交引用；读取仍须授权 |
+| `close_reason` | completed/interrupted/cancelled/unable_to_continue | 是 | 固定已提交引用；读取仍须授权 |
+
+只含已正式提供内容，不靠浏览器回执；拆消息/暂停/重试不另增学习机会。
+
+<a id="beliefevaluationcompleted"></a>
+### 3.13 `BeliefEvaluationCompleted`
+
+生产方：`evaluation`；归属：`learning_space`。产生条件：本批解释及更新/不更新结果共同提交。
+
+消费方式：Interaction按授权读取、匹配等待或核对主动任务；其他只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `trigger_event_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `evidence_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `belief_revision_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `snapshot_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `reason_codes` | string[] | 是 | 固定已提交引用；读取仍须授权 |
+
+零数值变化也可合法完成并发布覆盖；事件本身不携概率，不表示目标已达标。
+
+<a id="goalevaluationcompleted"></a>
+### 3.14 `GoalEvaluationCompleted`
+
+生产方：`evaluation`；归属：`learning_space`。产生条件：目标结果及是否成为当前结果共同保存。
+
+消费方式：Interaction读取当前依据后接续/核对建议；Product查询展示。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `trigger_event_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `goal_evaluation_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `target_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `snapshot_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `previous_current_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `current_state_applied` | boolean | 是 | 固定已提交引用；读取仍须授权 |
+| `not_applied_reason` | string或null | 是 | 固定已提交引用；读取仍须授权 |
+
+旧目标/旧快照结果也留痕；读取者不能看到事件名就宣布达标，同源两类评价通知不重复建建议。
+
+<a id="learningtargetsaved"></a>
+### 3.15 `LearningTargetSaved`
+
+生产方：`product`；归属：`learning_target`。产生条件：保存目标定义修订。
+
+消费方式：只查询，不重评。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `target_ref` | TargetRef | 是 | 固定已提交引用；读取仍须授权 |
+| `previous_target_ref` | TargetRef或null | 是 | 固定已提交引用；读取仍须授权 |
+| `textbook_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+
+定义保存不等于应用。
+
+<a id="courseapplied"></a>
+### 3.16 `CourseApplied`
+
+生产方：`product`；归属：`course_application`。产生条件：确认教材目标组合应用。
+
+消费方式：只查询，不替代个人目标采用触发。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `application_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `previous_application_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `check_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `textbook_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `target_ref` | TargetRef | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+
+每个受影响空间另保留自己的采用事实。
+
+<a id="learningspacecreated"></a>
+### 3.17 `LearningSpaceCreated`
+
+生产方：`product`；归属：`learning_space`。产生条件：新建本人空间及初次采用。
+
+消费方式：只查询；同次提交LearningTargetApplied触发目标对照。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `student_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `textbook_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `target_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+
+重复选同组合复用原空间，不再发创建事件。
+
+<a id="learningspaceadoptionchanged"></a>
+### 3.18 `LearningSpaceAdoptionChanged`
+
+生产方：`product`；归属：`learning_space`。产生条件：空间当前教材/目标采用推进。
+
+消费方式：只查询；目标依据变更另发LearningTargetApplied。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `previous_adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `previous_target_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `target_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `cause_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+
+既有活动仍沿原采用，不因通知改写过去题目和作答。
+
+<a id="domaindefinitionsaved"></a>
+### 3.19 `DomainDefinitionSaved`
+
+生产方：`domain`；归属：`domain`。产生条件：新建/修订/软删除定义提交。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `object_ref` | ObjectRef | 是 | 固定已提交引用；读取仍须授权 |
+| `previous_ref` | ObjectRef或null | 是 | 固定已提交引用；读取仍须授权 |
+| `action` | create/update/soft_delete | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+
+对象完整历史保留，不启动历史评价。
+
+<a id="domainintakesourceinvalidated"></a>
+### 3.20 `DomainIntakeSourceInvalidated`
+
+生产方：`domain`；归属：`domain`。产生条件：pending来源确认不可继续入库。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `item_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `source_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `cause_event_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `reason` | string | 是 | 固定已提交引用；读取仍须授权 |
+
+已终结项不反向改状态；重复通知无变化不另发事件。
+
+<a id="domainintakeitemprocessed"></a>
+### 3.21 `DomainIntakeItemProcessed`
+
+生产方：`domain`；归属：`domain`。产生条件：待入库处理结果提交。
+
+消费方式：Product授权查询；不自动写章节关联。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `item_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `group_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `action` | add_kc/associate_task/associate_solution/discard | 是 | 固定已提交引用；读取仍须授权 |
+| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `object_refs` | ObjectRef[] | 是 | 固定已提交引用；读取仍须授权 |
+| `check_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `source_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+
+放弃项对象数组可空；组只负责展示组织，不是整组事务。
+
+<a id="domaintemplatecandidateprepared"></a>
+### 3.22 `DomainTemplateCandidatePrepared`
+
+生产方：`domain`；归属：`domain`。产生条件：Task/Solution定义候选完成。
+
+消费方式：管理员查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `candidate_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `check_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `source_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+
+候选不是正式定义，更不是已完成实例归类。
+
+<a id="domaininstancesaved"></a>
+### 3.23 `DomainInstanceSaved`
+
+生产方：`domain`；归属：`domain`。产生条件：题目版本与参考保存。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `task_instance_ref` | ObjectRef(task_instance) | 是 | 固定已提交引用；读取仍须授权 |
+| `previous_ref` | ObjectRef或null | 是 | 固定已提交引用；读取仍须授权 |
+| `task_ref` | ObjectRef(task) | 是 | 固定已提交引用；读取仍须授权 |
+| `reference_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `check_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+
+不会产生学生已见题或作答事件。
+
+<a id="domainkctestpathconfirmed"></a>
+### 3.24 `DomainKCTestPathConfirmed`
+
+生产方：`domain`；归属：`domain`。产生条件：确认直接检验路径。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `confirmation_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `kc_ref` | ObjectRef(kc) | 是 | 固定已提交引用；读取仍须授权 |
+| `task_ref` | ObjectRef(task) | 是 | 固定已提交引用；读取仍须授权 |
+| `solution_ref` | ObjectRef(solution) | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+
+不修改个人状态和章节采用。
+
+<a id="activityconfigsaved"></a>
+### 3.25 `ActivityConfigSaved`
+
+生产方：`interaction`；归属：`activity_config`。产生条件：保存对象修订及新解析包。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `activity_type` | explanation/question_answer/detection/free_chat | 是 | 固定已提交引用；读取仍须授权 |
+| `config_kind` | blueprint/rule/strategy/binding | 是 | 固定已提交引用；读取仍须授权 |
+| `definition_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `config_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `previous_config_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+
+旧活动不换包。
+
+<a id="detectionplanprepared"></a>
+### 3.26 `DetectionPlanPrepared`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：形成可确认题单。
+
+消费方式：只查询/通知补读。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `plan_ref` | PlanRef | 是 | 固定已提交引用；读取仍须授权 |
+| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `coverage_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `source_input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+
+不能将本事件当已同意开测。
+
+<a id="taskusecreated"></a>
+### 3.27 `TaskUseCreated`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：固定题面并正式提供。
+
+消费方式：Evaluation沿相关作答取材；不是新评价触发。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `task_use_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `round_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `plan_ref` | PlanRef或null | 是 | 固定已提交引用；读取仍须授权 |
+| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+
+正式提供不等于已经阅读；题面原文由Interaction提供。
+
+<a id="presentationrecorded"></a>
+### 3.28 `PresentationRecorded`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：保存显示报告。
+
+消费方式：仅显示追溯。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `presentation_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `surface` | chat/history/textbook | 是 | 固定已提交引用；读取仍须授权 |
+| `resource_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `part_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+
+缺失、重复或迟到不更新学习机会或概率。
+
+<a id="helphandled"></a>
+### 3.29 `HelpHandled`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：分类/轮处置或正式提供帮助分别保存。
+
+消费方式：Evaluation经源事件取证，不直接触发评价。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `help_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `stage` | handled/provided | 是 | 区分本次留痕阶段 |
+| `source_input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `classification` | neutral/substantive/uncertain | 是 | 固定已提交引用；读取仍须授权 |
+| `round_closure_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `provided_message_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+
+provided阶段必须有已提交消息；处理阶段为null，不把请求帮助当已提供提示。
+
+<a id="chatmessagerecorded"></a>
+### 3.30 `ChatMessageRecorded`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：正式消息保存。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `message_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `activity_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `source_input_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `source_trigger_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `role` | student/assistant/system | 是 | 固定已提交引用；读取仍须授权 |
+
+至少一种实际来源；待分配活动不伪造归属；消息正文不进payload。
+
+<a id="interactioninputstopped"></a>
+### 3.31 `InteractionInputStopped`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：废止当前输入后续提交权。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `stop_request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `committed_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+
+不撤销已发生作答/供题/评价。
+
+<a id="detectionroundclosed"></a>
+### 3.32 `DetectionRoundClosed`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：检测轮收束。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `round_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `revision_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `reason` | string | 是 | submitted/help_requested/finished/switched/content_unusable等登记原因 |
+| `submission_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+
+不是第二次作答触发；没有提交时不制造答案。
+
+<a id="answerfeedbackprepared"></a>
+### 3.33 `AnswerFeedbackPrepared`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：私有当题核对已保存。
+
+消费方式：只查询；Evaluation不订阅其语义结果。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `feedback_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `submission_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `source_input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+
+反馈何时给学生由检测规则控制，不随事件提前暴露答案。
+
+<a id="proactivetaskchanged"></a>
+### 3.34 `ProactiveTaskChanged`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：保存建议变化或学生响应。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `task_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `revision_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `basis_key` | string | 是 | 固定已提交引用；读取仍须授权 |
+| `reason_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `execution_activity_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+
+不直接修改Belief；接受不等于检测已开始；拒绝不记负证据。
+
+<a id="proactivetaskresponded"></a>
+### 3.35 `ProactiveTaskResponded`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：保存建议变化或学生响应。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `task_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `revision_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `basis_key` | string | 是 | 固定已提交引用；读取仍须授权 |
+| `reason_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `execution_activity_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `response` | accept/defer/reject | 是 | 固定已提交引用；读取仍须授权 |
+
+不直接修改Belief；接受不等于检测已开始；拒绝不记负证据。
+
+<a id="proactivetaskprompted"></a>
+### 3.36 `ProactiveTaskPrompted`
+
+生产方：`interaction`；归属：`learning_space`。产生条件：安全时点正式提示提交。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `prompt_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `task_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `basis_key` | string | 是 | 固定已提交引用；读取仍须授权 |
+| `source_trigger_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `message_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+
+不等浏览器回执；开放检测轮不插入提示。
+
+<a id="claimdefinitionchanged"></a>
+### 3.37 `ClaimDefinitionChanged`
+
+生产方：`evaluation`；归属：`domain`。产生条件：Claim完整修订保存。
+
+消费方式：只查询。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `domain_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `task_ref` | ObjectRef(task) | 是 | 固定已提交引用；读取仍须授权 |
+| `previous_claim_ref` | ClaimRef或null | 是 | 固定已提交引用；读取仍须授权 |
+| `claim_ref` | ClaimRef | 是 | 固定已提交引用；读取仍须授权 |
+| `action` | string | 是 | E03合法动作 |
+| `affected_method_refs` | ObjectRef(solution)[] | 是 | 固定已提交引用；读取仍须授权 |
+| `affected_criterion_ids` | ID[] | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+
+非学生学习事件，不自动重评或替换应用中的Claim。
+
+## 4. 仅模块内部使用的事实
+
+以下沿既有模块合同留痕，不新增跨Space订阅。均采用同一信封，payload按下表；secret/password/hash/完整对话不得写入。将来用作跨模块触发时，必须先登记消费者与版本。
+
+<a id="trialaccountsaved"></a>
+### 4.1 `TrialAccountSaved`
+
+生产方/归属：product/account。产生条件：账号及必要关系共同保存。仅模块留痕，不新增业务订阅。
+
+| 字段 | 类型 | 必填／缺省 | 含义 |
+| --- | --- | --- | --- |
+| `account_id` | ID | 是 | 涉及的账号，不是凭据 |
+| `action` | bootstrap_admin/create_student/update_student | 是 | 本次合法管理动作 |
+| `account_revision` | Revision | 是 | 保存后的账号修订 |
+| `relation_refs` | Ref[] | 是 | 本次涉及的已核实关系 |
+
+<a id="usageconfirmationrecorded"></a>
+### 4.2 `UsageConfirmationRecorded`
+
+生产方/归属：product/account。产生条件：真实确认记录保存；不从密码重置推断同意。仅模块留痕，不新增业务订阅。
+
+| 字段 | 类型 | 必填／缺省 | 含义 |
+| --- | --- | --- | --- |
+| `student_id` | ID | 是 | 已核实学生身份 |
+| `confirmation_ref` | Ref | 是 | 实际使用确认记录 |
+| `usage_conditions_ref` | Ref | 是 | 程序计算的使用条件 |
+
+<a id="accountsignedin"></a>
+### 4.3 `AccountSignedIn`
+
+生产方/归属：product/account。产生条件：成功登录；会话ID不是Cookie凭据。仅模块留痕，不新增业务订阅。
+
+| 字段 | 类型 | 必填／缺省 | 含义 |
+| --- | --- | --- | --- |
+| `account_id` | ID | 是 | 涉及的账号，不是凭据 |
+| `session_id` | ID | 是 | 内部会话身份，不是Cookie令牌 |
+
+<a id="accountrecovered"></a>
+### 4.4 `AccountRecovered`
+
+生产方/归属：product/account。产生条件：凭据已更新，不含明文或摘要。仅模块留痕，不新增业务订阅。
+
+| 字段 | 类型 | 必填／缺省 | 含义 |
+| --- | --- | --- | --- |
+| `account_id` | ID | 是 | 涉及的账号，不是凭据 |
+| `verification_ref` | Ref | 是 | 找回账号所据核实记录 |
+| `credential_revision` | Revision | 是 | 重置后凭据修订，不含密码摘要 |
+
+<a id="materialreceived"></a>
+### 4.5 `MaterialReceived`
+
+生产方/归属：product/material_import。产生条件：已接收文件引用保存；不代表已经解析。仅模块留痕，不新增业务订阅。
+
+| 字段 | 类型 | 必填／缺省 | 含义 |
+| --- | --- | --- | --- |
+| `import_id` | ID | 是 | 本次导入 |
+| `source_refs` | Ref[] | 是 | 已接收文件来源 |
+| `source_revision` | int | 是 | 保存后的来源修订 |
+| `failed` | Issue[] | 是 | 未成功部分及原因，无则[] |
+
+<a id="materialmetadatasaved"></a>
+### 4.6 `MaterialMetadataSaved`
+
+生产方/归属：product/material_import。产生条件：白名单基本信息保存。仅模块留痕，不新增业务订阅。
+
+| 字段 | 类型 | 必填／缺省 | 含义 |
+| --- | --- | --- | --- |
+| `textbook_id` | ID | 是 | 教材身份 |
+| `metadata_revision` | Revision | 是 | 保存后的教材信息修订 |
+| `changed_fields` | string[] | 是 | 本次修改的白名单字段名 |
+
+<a id="materialassistantmessagereceived"></a>
+### 4.7 `MaterialAssistantMessageReceived`
+
+生产方/归属：product/material_import。产生条件：教材助手受理成功。仅模块留痕，不新增业务订阅。
+
+| 字段 | 类型 | 必填／缺省 | 含义 |
+| --- | --- | --- | --- |
+| `import_id` | ID | 是 | 本次导入 |
+| `request_ref` | ID | 是 | 已保存请求 |
+| `message_ref` | ID | 是 | 正式输入消息引用 |
+
+<a id="materialassistantturnfinished"></a>
+### 4.8 `MaterialAssistantTurnFinished`
+
+生产方/归属：product/material_import。产生条件：真实结束结局；失败不生成假候选。仅模块留痕，不新增业务订阅。
+
+| 字段 | 类型 | 必填／缺省 | 含义 |
+| --- | --- | --- | --- |
+| `import_id` | ID | 是 | 本次导入 |
+| `request_ref` | ID | 是 | 已保存请求 |
+| `reply_ref` | ID或null | 是 | 已保存回复；无回复为null |
+| `candidate_batch_refs` | Ref[] | 是 | 本次保存的候选批次，无则[] |
+| `outcome` | completed/needs_input/failed/cancelled | 是 | 本轮实际结局 |
+
+
+未命名的纯技术日志不冒充正式事件。新增正式事件类型须先登记类型、产生条件及payload，不能在实现中临时拼字符串发布。
+
+### 4.9 `MaterialCandidateDeclined`
+
+Product在管理员明确不采用候选且决定已保存时产生；scope_kind=material_import。只供追溯，不触发Domain或评价。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `import_id` | ID | 是 | 原导入 |
+| `batch_ref` | {batch_id:ID,batch_revision:Revision} | 是 | 固定候选批次 |
+| `decision_ref` | Ref | 是 | 不可变拒绝决定 |
+| `request_ref` | ID | 是 | 本次请求 |
+
+### 4.10 `ChapterAssociationSaved`
+
+Product完成章节添加、编辑或取消关联时产生；scope_kind=material_import。只供追溯，未应用的修改不直接改变学生目标或个人状态。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `textbook_id` | ID | 是 | 教材 |
+| `chapter_id` | ID | 是 | 章节 |
+| `association_ref` | Ref | 是 | 本次保存关系修订 |
+| `previous_ref` | Ref或null | 是 | 新增为null |
+| `action` | add/update/remove | 是 | 已完成动作 |
+| `task_ref` | ObjectRef(task) | 是 | 实际Task |
+| `method_refs` | ObjectRef(solution)[] | 是 | 该修订采用的方法；取消为[] |
+
+## 5. 例子与接收检查
+
+下面只演示作答事件，不代表已经生成Evidence：
+
+```json
+{
+  "event_id": "00000000-0000-4000-8000-000000000201",
+  "event_type": "AnswerSubmitted",
+  "schema_version": 1,
+  "producer": "interaction",
+  "scope_kind": "learning_space",
+  "scope_id": "00000000-0000-4000-8000-000000000100",
+  "owner_ref": {
+    "owner": "interaction",
+    "type": "submission",
+    "id": "00000000-0000-4000-8000-000000000200"
+  },
+  "subject_refs": [],
+  "actor_ref": {
+    "owner": "product",
+    "type": "account",
+    "id": "00000000-0000-4000-8000-000000000001"
+  },
+  "source_execution_ref": null,
+  "source_request_id": "answer-01",
+  "causation_event_id": null,
+  "correlation_id": "00000000-0000-4000-8000-000000000202",
+  "space_event_seq": 17,
+  "occurred_at": "2026-11-15T02:00:00Z",
+  "recorded_at": "2026-11-15T02:00:00Z",
+  "time_basis": "server_recorded",
+  "time_source_ref": null,
+  "payload": {
+    "submission_ref": {
+      "owner": "interaction",
+      "type": "submission",
+      "id": "00000000-0000-4000-8000-000000000200"
+    },
+    "task_use_ref": {
+      "owner": "interaction",
+      "type": "task_use",
+      "id": "00000000-0000-4000-8000-000000000203"
+    },
+    "activity_ref": {
+      "owner": "interaction",
+      "type": "activity",
+      "id": "00000000-0000-4000-8000-000000000204"
+    },
+    "round_ref": null,
+    "plan_ref": null,
+    "adoption_ref": {
+      "owner": "product",
+      "type": "space_adoption",
+      "id": "00000000-0000-4000-8000-000000000205"
+    },
+    "help_basis_ref": {
+      "owner": "interaction",
+      "type": "submission_help_basis",
+      "id": "00000000-0000-4000-8000-000000000200"
+    }
+  }
+}
+```
+
+对应传输副本不复制payload：
+
+```json
+{
+  "delivery_id": "00000000-0000-4000-8000-000000000206",
+  "event_id": "00000000-0000-4000-8000-000000000201",
+  "event_type": "AnswerSubmitted",
+  "schema_version": 1,
+  "producer": "interaction",
+  "scope_kind": "learning_space",
+  "scope_id": "00000000-0000-4000-8000-000000000100"
+}
+```
+
+| 输入 | 接收规则 |
+| --- | --- |
+| 同event_id同事实重投 | 原承接收据，不新增第二次评价 |
+| 同event_id不同正文/不同scope | identity_conflict，保留技术失败；不覆盖正式事件 |
+| 已接受结果通知早于Wait | 结果已经持久化，后续probe可读取；不依赖再发一次通知 |
+| 已结束工作收到迟到结果 | 保存可查询事实，不自动重启活动 |
+| 未知event_type/schema_version | 不猜读；保留失败及传输引用，升级合法解码器后按恢复合同继续 |
+| 无关作用范围或原文读取越权 | 拒绝，不以字段过滤后的空结果冒充成功 |
+
+事件变更采用显式schema_version。旧事实不改写；新增字段先部署兼容读取，破坏性变化保留旧解码器。详细迁移和恢复顺序沿基础设施§5.3，本稿不引入Evolution或历史重算。
+
+## 修订记录
+
+| 版本 | 日期 | 修改 |
+| --- | --- | --- |
+| v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |

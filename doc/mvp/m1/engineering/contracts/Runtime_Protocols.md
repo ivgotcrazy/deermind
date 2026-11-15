@@ -1,0 +1,354 @@
+# M1 运行接口与 WebSocket 协议
+
+> **版本**：v0.1<br>
+> **状态**：接口与消息详细设计稿，待用户审阅；未编码<br>
+> **维护与评审**：Codex 编写及自检，用户审阅<br>
+> **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
+> **更新日期**：2026-11-15
+
+公共运行只提供通用认证、收据、派发、等待与回传；所有者仍决定业务处理和可展示内容。HTTP路径相对/api/m1，WebSocket /ws使用deermind.v1。底层订阅与发布格式见[事件分册](Event_Messages.md)。
+
+<a id="r01"></a>
+## R01 登记文件上传
+
+`POST /file-uploads` → `infrastructure.files/register_upload`。权限：管理员教材用途；本人学习附件用途。处理规则：[文件处理规则](../Infrastructure_and_Deployment_Design.md#23-文件对象与上传合同)。
+
+请求字段（路径字段不重复放入正文）：
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `request_id` | RequestId | 是 | 同一次操作重试沿用；不随重新连接改变 |
+| `purpose` | material_source/student_attachment | 是 | 本稿HTTP用途登记；技术AI/Temporal载荷不从浏览器上传 |
+| `original_name` | string | 是 | 只供显示，不作路径 |
+| `declared_media_type` | string | 是 | 服务器另核验真实类型 |
+| `declared_byte_size` | int | 是；非负 | 按文件限额校验 |
+| `domain_ref` | ObjectRef(domain) | 教材用途是 | 无领域不发上传身份 |
+| `import_id` | ID | 教材补页时是 | 已有导入归属 |
+| `scope_id` | ID | 学习附件是 | 本人学习空间 |
+
+成功：200，直接返回下表对象。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `upload_id` | ID | 是 | 稳定上传身份 |
+| `state` | receiving | 是 | 未接收完整字节 |
+
+处理边界：普通登记；相同账号/用途/request_id返回原身份；不创建教材，不调用LLM。公开用途代码是本稿待审映射，不新增附件能力。
+
+错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；invalid_reference；payload_too_large。
+
+请求／查询参数（示意数据）：
+
+```json
+{
+  "request_id": "upload-01",
+  "purpose": "material_source",
+  "original_name": "book.pdf",
+  "declared_media_type": "application/pdf",
+  "declared_byte_size": 1024,
+  "domain_ref": {
+    "kind": "domain",
+    "object_id": "00000000-0000-4000-8000-000000000001",
+    "version": 1
+  }
+}
+```
+
+<a id="r02"></a>
+## R02 上传完整字节
+
+`PUT /file-uploads/{id}/content` → `infrastructure.files/write_upload`。权限：原上传者，重新核对用途权限。处理规则：[文件处理规则](../Infrastructure_and_Deployment_Design.md#23-文件对象与上传合同)。
+
+请求字段（路径字段不重复放入正文）：
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `body` | binary | 是 | 完整文件，Content-Type为申报类型；不是JSON字段 |
+
+成功：200，直接返回下表对象。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `upload_id` | ID | 是 | 原上传 |
+| `state` | ready | 是 | 核验并保存完成 |
+| `receipt` | FileReceipt | 是 | 固定引用/hash/实际类型/大小 |
+
+处理边界：200直接返回上传结果，无业务MutationReceipt；失败重传本文件。ready后字节不可覆盖，同内容重复返回原结果；没有分块续传。
+
+错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；upload_busy；content_conflict；unsupported_media_type；payload_too_large。
+
+请求／查询参数（示意数据）：
+
+```json
+{
+  "说明": "请求体为文件二进制；此JSON不是上传正文"
+}
+```
+
+<a id="r03"></a>
+## R03 上传查询
+
+`GET /file-uploads/{id}` → `infrastructure.files/read_upload`。权限：原上传者。处理规则：[文件处理规则](../Infrastructure_and_Deployment_Design.md#23-文件对象与上传合同)。
+
+除路径与共同认证头外，无业务请求字段。
+
+响应：200，直接返回下列对象。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `upload_id` | ID | 是 | 原上传 |
+| `state` | receiving/ready/failed | 是 | 已保存状态 |
+| `receipt` | FileReceipt或null | 是 | 只有ready有值 |
+| `error` | ErrorResponse.error或null | 是 | 失败原因 |
+
+处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
+
+错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
+
+请求／查询参数（示意数据）：
+
+```json
+{}
+```
+
+<a id="r04"></a>
+## R04 按原请求查回执
+
+`GET /requests/receipt` → `runtime.read_request_receipt`。权限：原请求人，并通过所有者当前权限。处理规则：[恢复规则](../System_Foundation_Design.md#55-重连与通知遗漏)。
+
+请求字段（路径字段不重复放入正文）：
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `action` | 登记动作名 | 是 | HTTP和WS映射同一owner/entry |
+| `resource_kind` | 登记资源类型 | 是 | 例如learning_space/material_import |
+| `resource_id` | ID | 是 | 作用范围 |
+| `request_id` | RequestId | 是 | 首次发送使用的身份 |
+
+响应：200，直接返回下列对象。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `receipt_state` | not_found/accepted/completed/rejected | 是 | 原业务处理投影 |
+| `receipt_ref` | ID或null | 是 | 已存在的所有者收据 |
+| `execution_ref` | ID或null | 是 | 适用后台工作 |
+| `execution_state` | string或null | 是 | 底座执行状态，与业务状态分开 |
+| `result_refs` | Ref[] | 是 | 已保存可取结果 |
+| `allowed_actions` | string[] | 是 | 当前允许动作；不是额外授权 |
+
+处理边界：委托已登记所有者，不遍历私表；即使反馈失败，已提交答案的receipt_state仍completed。not_found不自动生成新请求。
+
+错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
+
+请求／查询参数（示意数据）：
+
+```json
+{
+  "action": "learning.input",
+  "resource_kind": "learning_space",
+  "resource_id": "00000000-0000-4000-8000-000000000100",
+  "request_id": "chat-01"
+}
+```
+
+<a id="r05"></a>
+## R05 空间事件列表
+
+`GET /learning-spaces/{scope_id}/events` → `runtime.query_events`。权限：本人可见内容/获授权管理员；补齐既有空间事件查询。处理规则：[事件查询规则](../System_Foundation_Design.md#25-查询与读取边界)。
+
+请求字段（路径字段不重复放入正文）：
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `event_types` | 登记事件名[] | 否 | 等值筛选，不允许脚本 |
+| `subject_ref` | Ref | 否 | 活动/作答等主体 |
+| `correlation_id` | ID，各可选 | 否 | 链路及直接前因 |
+| `causation_event_id` | ID，各可选 | 否 | 链路及直接前因 |
+| `recorded_from` | Timestamp，各可选 | 否 | 记录时间闭开区间[from,to) |
+| `recorded_to` | Timestamp，各可选 | 否 | 记录时间闭开区间[from,to) |
+| `cursor` | string | 否；首次省略 | 不透明续页游标，绑定筛选、身份及读取范围 |
+| `limit` | int | 否；沿总册分页配置 | 正整数，不超过部署已接收上限 |
+
+响应：200，直接返回下列对象。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `items` | EventEnvelope[] | 是 | 按权限允许的事实与引用；不含原文 |
+| `upper_seq` | int | 是 | 首屏已提交上界 |
+| `next_cursor` | string或null | 是 | 绑定筛选和上界 |
+
+处理边界：只读；正式事件无编辑/删除接口。过滤列表不能作为Evaluation连续扫描游标。
+
+错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
+
+请求／查询参数（示意数据）：
+
+```json
+{
+  "event_types": [
+    "AnswerSubmitted"
+  ],
+  "limit": 20
+}
+```
+
+<a id="r06"></a>
+## R06 精确事件读取
+
+`GET /learning-spaces/{scope_id}/events/{event_id}` → `runtime.query_events/read_event`。权限：本人可见内容/获授权管理员。处理规则：[事件查询规则](../System_Foundation_Design.md#25-查询与读取边界)。
+
+除路径与共同认证头外，无业务请求字段。
+
+响应：200，直接返回下列对象。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `event` | EventEnvelope | 是 | 固定事实 |
+| `source_content_refs` | Ref[] | 是 | 仅给有权继续读取的来源 |
+
+处理边界：原文另走所有者授权查询；事件ID不授予读取整个空间的权限。
+
+错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
+
+请求／查询参数（示意数据）：
+
+```json
+{}
+```
+
+<a id="r07"></a>
+## R07 授权读取文件
+
+`GET /resource-files` → `owner.query_file → infrastructure.files/read_file`。权限：当前资源有权读取者；补齐基础设施§2.4既有所有者查询入口。处理规则：[文件展示规则](../Infrastructure_and_Deployment_Design.md#24-授权展示与派生资源)。
+
+请求字段（路径字段不重复放入正文）：
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `owner_ref` | Ref | 是 | 教材来源、当前题面附件、已提供消息附件等具体业务引用；不接受任意路径/URL |
+| `storage_ref` | ID | 是 | 必须由该业务引用确切引用 |
+| `view` | source/statement/provided | 是 | 与该资源已授权展示用途一致 |
+
+响应：200，文件字节流及响应头如下；不是JSON对象。
+
+| 字段 | 类型 | 必填／缺省 | 含义与约束 |
+| --- | --- | --- | --- |
+| `body` | binary | 是 | 已核验原文件或固定派生文件字节 |
+| `Content-Type` | HTTP响应头 | 是 | 实际媒体类型 |
+| `Content-Length` | HTTP响应头 | 是 | 返回字节数 |
+| `Cache-Control` | HTTP响应头 | 是；no-store | 私有文件不得共享缓存 |
+
+处理边界：200是文件字节而非JSON。网关只向已登记所有者派发；所有者核对引用、用途及空间采用，再调用文件适配。不能借题面引用读取参考答案，不能读取Temporal或AI内部载荷。
+
+错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；forbidden；not_found；source_unavailable。
+
+请求／查询参数（示意数据）：
+
+```json
+{
+  "owner_ref": {
+    "owner": "product",
+    "type": "material_source",
+    "id": "00000000-0000-4000-8000-000000000011"
+  },
+  "storage_ref": "00000000-0000-4000-8000-000000000012",
+  "view": "source"
+}
+```
+
+## WebSocket 信封
+
+所有帧为UTF-8 JSON对象。下表是传输字段定义，业务payload只引用对应API请求结构。未知type/action拒绝，不透传任意函数或Operation名称。
+
+| 字段 | 类型 | 必填条件 | 含义 |
+| --- | --- | --- | --- |
+| type | string | 所有帧 | 下表登记的帧种类 |
+| frame_id | RequestId | 客户端命令/订阅/健康帧；对应回执原样回传 | 单次传输关联，不作为业务防重键 |
+| request_id | RequestId | command及其receipt/error | 同一业务请求跨断线保持；业务字段payload不重复声明不同request_id |
+| action | string | command | 已登记动作名 |
+| resource | {kind:string,id:ID} | command | 已验证作用范围；不是权限声明 |
+| payload | 对应API正文去除request_id的对象 | command | 类型由action唯一决定；路径资源由resource确定 |
+
+| type | 方向 | 此帧其余字段（未列字段不接收） | 行为 |
+| --- | --- | --- | --- |
+| hello | 客户端→服务端 | csrf_token:string、session_id:ID | 第一帧；比对Cookie当前身份和来源 |
+| ready | 服务端→客户端 | connection_id:ID、server_time:Timestamp | 只确认连接可用，不替业务数据同步 |
+| command | 客户端→服务端 | 上述公共字段 | 每帧重新授权和作用范围校验 |
+| receipt | 服务端→客户端 | frame_id、request_id、state:accepted/completed、owner_receipt_ref:ID、execution_ref:ID\|null、result_refs:Ref[] | 可靠受理/保存后才发送；最终结果另读 |
+| error | 服务端→客户端 | frame_id:string\|null、request_id:string\|null、code:string、message:string、acceptance:not_accepted/unknown | 传输未知先查原收据；不返回模型正文/服务堆栈 |
+| watch | 客户端→服务端 | frame_id、watch_id:ID、resource:{kind,id}、views:string[] | 登记授权范围内有限刷新订阅 |
+| watch_ready | 服务端→客户端 | frame_id、watch_id、resource、views | 客户端随后补读权威数据；不表示订阅前消息都已推送 |
+| unwatch | 客户端→服务端 | frame_id、watch_id | 幂等取消；返回unwatch_ready(type,frame_id,watch_id) |
+| unwatch_ready | 服务端→客户端 | frame_id、watch_id | 确认取消，不需要重新发送resource或views |
+| changed | 服务端→客户端 | watch_id、resource、views、request_id:ID\|null | 只通知重新查询，不携聊天/Evidence/概率正文 |
+| ping / pong | 双向 | frame_id | 保活；不延长登录到期，不记学习事件 |
+| resync_required | 服务端→客户端 | watch_id:ID\|null、reason:string | 重新建立订阅并补读，不重发新业务请求 |
+
+### 动作与授权视图
+
+| action | 所有者与HTTP合同 | 权限与路径参数 |
+| --- | --- | --- |
+| learning.input | [I03](Interaction_API.md#i03) | 本人；resource.kind=learning_space |
+| learning.answer | [I05](Interaction_API.md#i05) | 本人；source_input_ref只能由程序内部设置 |
+| learning.activity_action | [I04](Interaction_API.md#i04) | 本人；停止仍按target_input_id校验 |
+| learning.proactive_response | [I08](Interaction_API.md#i08) | 本人；payload另带task_id定位待响应任务 |
+| learning.presentation | [I06](Interaction_API.md#i06) | 本人；request_id与presentation_id保持同一重试身份 |
+| material.input | [P09](Product_API.md#p09) | 管理员；resource.kind=material_import |
+
+watch的最小view登记：learning_space允许conversation、activity_tree、goal、events；material_import允许messages、contents、candidates、intake。所有者校验角色与字段权限；订阅不扩大读取能力。原请求人可以同时取得对应收据变化提示，跨账号后清理旧订阅。浏览器不订阅原始NATS主题。
+
+```json
+{
+  "type": "command",
+  "frame_id": "frame-01",
+  "request_id": "chat-01",
+  "action": "learning.input",
+  "resource": {
+    "kind": "learning_space",
+    "id": "00000000-0000-4000-8000-000000000100"
+  },
+  "payload": {
+    "input": {
+      "text": "给我一点提示",
+      "attachment_refs": [],
+      "explicit_refs": []
+    }
+  }
+}
+```
+
+```json
+{
+  "type": "receipt",
+  "frame_id": "frame-01",
+  "request_id": "chat-01",
+  "state": "accepted",
+  "owner_receipt_ref": "00000000-0000-4000-8000-000000000101",
+  "execution_ref": "00000000-0000-4000-8000-000000000102",
+  "result_refs": []
+}
+```
+
+连接中断不取消后台工作。重新hello→watch→补读消息/当前状态/原请求；changed可合并或重复，客户端按实体身份/修订合并，不按通知数量新增消息。服务端回复按已定规则检查保存后整条提供，WS不直传未经核对的模型token。
+
+## 内部运行端口
+
+下列不是HTTP接口。字段保持[公共运行§1—4](../System_Foundation_Design.md#1-共用合同与调用边界)的唯一执行合同，本分册登记调用边界；不会在事件payload中传执行函数。
+
+| 端口 | 使用者及作用 | 唯一字段与执行合同 |
+| --- | --- | --- |
+| read_result / read_publication / publish_result | 注册生产者及获授权消费者 | [公共运行§1.2](../System_Foundation_Design.md#12-公开操作) |
+| register_wait / cancel_wait | 消费模块 | [公共运行§3.1](../System_Foundation_Design.md#31-等待记录) |
+| query_events / read_scope_events | 获授权读取方；完整扫描与界面筛选分开 | [公共运行§2.2](../System_Foundation_Design.md#22-空间事件顺序与有界读取)、[§2.5](../System_Foundation_Design.md#25-查询与读取边界) |
+| read_operation_run | 原工作授权读取方 | [公共运行§1.3](../System_Foundation_Design.md#13-operationstep与operationrun) |
+| read_execution / retry_execution / read_handoffs / retry_handoff | 受控维护入口；不新增浏览器任意执行权限 | [公共运行§4.5](../System_Foundation_Design.md#45-失败收尾停止与授权恢复) |
+
+受理、重试、恢复、停止、投递和清理仍沿公共运行/基础设施实现合同。未新增开放给浏览器的任意执行启动、概率写入或后台维护接口。
+
+HTTP请求收据中的action采用登记的所有者入口名；WS动作名先按本册映射为同一个入口名，再生成去重键。两种通道不能为同一次输入建立两份业务请求。R07返回二进制，R02请求体为二进制，两者的字段表描述流和HTTP头，不是JSON包装。
+
+## 修订记录
+
+| 版本 | 日期 | 修改 |
+| --- | --- | --- |
+| v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |

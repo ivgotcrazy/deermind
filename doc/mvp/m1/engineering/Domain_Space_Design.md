@@ -1,11 +1,11 @@
 # M1 Domain Space 设计
 
-> **版本**：v0.16<br>
-> **状态**：主流程合同检查及修正稿待用户审阅；未编码<br>
+> **版本**：v0.19<br>
+> **状态**：API与消息设计稿待审阅；未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.15 → v0.16，对齐例题、练习和检测供题的消费路径；见MVP决定登记§91<br>
+> **修订说明**：v0.18 → v0.19，集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码<br>
 
 本文维护可复用领域内容及其业务操作，不保存学生作答、个人接触史或 Belief。依据为 [PRD R04](../PRD.md#34-维护领域处理入库并关联章节m1-r04)、[R07](../PRD.md#37-准备题目和参考m1-r07)与[内容规格§3.2–3.3](../design/Content_and_Model_Reference.md#32-领域对象与字段)；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -415,42 +415,26 @@ Domain的内容准备负责这项检查，管理员在维护定义时确认，Ag
 
 ### 6.2 PostgreSQL记录与约束
 
-**已确认边界。** 教材、Domain和正式事件共用一个业务PostgreSQL数据库，按模块分schema。Domain只写`domain`，教材由Product写`product`，事件与待发记录由底座写`runtime`；同一进程内的所有者适配器可以参加同一个短事务。数据库共用不授予跨模块读写权限，也不把AI调用、NATS或Temporal纳入数据库事务。确认记录见[决定登记§71](../../DECISIONS.md#71-domain存储接口与同库短事务)。
+表、字段、主外键、约束、索引和关系图统一见[Domain数据字典](database/Business_Domain.md)。库与schema划分见[数据库总册](Database_Design.md#1-库与账号)。
 
-Domain使用下面九类表。表名、字段和索引是本批详细设计；没有创建数据库。Domain本地记录主键及对象ID由程序生成，数据库用`uuid`，JSON中作为不透明字符串；版本和修订用正`bigint`，记录时刻用`timestamptz`。外部事件、账户、执行及来源引用沿所有者合同保存为字符串／结构，不强制其他模块采用Domain的ID格式。`request_id`、枚举和名称用`text`，枚举加值域约束；`input_hash`保存规范化输入的SHA-256十六进制字符串。记录时刻不能替代原始事件发生时间或据此确定“七天保持”的业务时钟。
+Domain维护自己的领域内容；教材来源由Product维护，事件及待发记录由公共运行维护。各所有者按[§6.5](#65-短事务与来源并发保护)参加共同短事务，只读写自己的表，AI和外部调用在事务外。
 
-| 表 | 字段与用途 | 主键、约束及更新方式 |
-| --- | --- | --- |
-| `object_identity` | `object_id, kind, domain_id?, head_version, catalog_revision?` | PK `object_id`；`kind`限定五类。根Domain无`domain_id`，其`catalog_revision`必填；成员反之。类型、归属不变，仅更新头版本；目录修订是运行计数，不是Domain内容版本 |
-| `object_version` | `object_id, version, content_schema_version, content:jsonb, is_deleted, created_at, created_by, change_note` | PK `(object_id,version)`，FK身份；只INSERT／SELECT。完整保存§1.2载荷，修改和软删除均追加快照 |
-| `object_reference` | `owner_id, owner_version, path, relation_kind, target_id, target_version` | PK `(owner_id,owner_version,path)`；两端FK精确版本，禁止级联删除。由快照派生并同事务插入，不对外提供独立编辑入口 |
-| `intake_submission` | `submission_id, trigger_event_id, domain_id, product_submission_ref, input_artifact_id, outcome, item_refs:jsonb, issues:jsonb, decision_event_id, created_at` | PK `submission_id`，UNIQUE `trigger_event_id`；outcome为received／rejected，只追加；拒绝时item_refs为空且issues非空。接收时记录完整待办映射；同候选可被多个提交引用同一待办 |
-| `intake_item` | `item_id, domain_id, candidate_key, source_ref:jsonb, input_artifact_id, kind, group_id, parent_item_id?, parent_instance_ref?, state, revision, result:jsonb?, processed_request_ref?` | PK `item_id`，UNIQUE `(domain_id,candidate_key)`；父题待办FK本表。来源、内容及类型不改；处理状态按§6.4转移，终态结果固定 |
-| `artifact` | `artifact_id, domain_id, kind, input_ref?, definition_refs:jsonb, payload:jsonb, rule_ref?, model_call_ref?, command_ref?, created_at` | PK `artifact_id`；只追加。`kind`限定`input`、`definition_candidate`、`classification_check`、`use_check`、`readiness_check`。各类载荷分别校验，不能当任意JSON仓库 |
-| `kc_test_path` | `confirmation_id, kc_ref, task_ref, solution_ref, basis_artifact_id, confirmed_by, confirmed_at` | PK `confirmation_id`；三类引用分别存对象ID／版本并FK版本表，`basis_artifact_id`指向含观察要求和边界的输入记录。追加确认，不覆盖旧版本确认 |
-| `supply_batch` | `batch_id, trigger_event_id, scope_id, input_artifact_id, items:jsonb, unfilled:jsonb, completed_event_id, created_at` | PK `batch_id`，UNIQUE `trigger_event_id`；成功批只追加，空批也保存；项目引用固定题目、解法及用途检查，不保存学生原始聊天 |
-| `command_receipt` | `receipt_id, principal_id, action, scope_id, request_id, normalized_input:jsonb, input_hash, state, input_artifact_id?, runtime_ref?, result:jsonb?, error:jsonb?, created_at, updated_at` | PK `receipt_id`，UNIQUE `(principal_id,action,scope_id,request_id)`；普通写请求的防重及返回依据。执行尝试、任务队列不在此表维护，见§6.4 |
+保存版本时，Domain核对对象类型、同领域、方法属于Task及先导无环；同时从同一内容快照提取引用投影。快照是正文与关系的依据，引用投影不提供独立编辑入口。JSON内的引用仍须由程序检查，数据库外键不代替业务校验。
 
-`ObjectRef.kind`在接口中保留，持久化引用以ID／版本连接身份表取得类型，程序核对两者一致。`object_identity.head_version`通过延迟到提交检查的复合外键指向自己的版本；创建身份和第一版在同一事务完成，不允许提交一个空身份。其余版本引用用外键限制删除。外键保证引用存在，类型、同领域、方法属于Task和先导无环仍由Domain检查。
+已完成候选不重建待办，修正内容使用新的候选修订。解法父题待办完成后，沿其固定结果取得题目；保留原父绑定以便追溯。来源检查及失败恢复见§2、§6.4—6.5。
 
-成员的`object_identity.domain_id`外键指向根身份，程序同时核对其kind为Domain。`object_reference.relation_kind`限定`task_method`、`task_prerequisite`、`prerequisite_method_scope`、`solution_kc`、`instance_task`、`reference_solution`。`path`定位快照中的具体项／题内参考。快照是正文与关系的权威内容，引用表是查询索引；新增版本时程序从同一载荷生成二者，不能接收两份各自可编辑的关系。入库结果、产物和供题批内的其他引用也在保存前核验；不宣称JSON内所有引用均由外键覆盖。
+入库题面和参考的结构化正文保存到Domain版本，原页保留来源引用。内容指纹用于规范化输入核对，不是语义等价判据。
 
-`candidate_key`由Product固定候选身份及修订生成，包含来源所有者、导入、候选ID／修订和采用依据，不能用题目名称或AI相似度生成。已有终态候选不会重建待办；修正内容须使用新候选身份／修订。`parent_item_id`与`parent_instance_ref`在解法行中恰一；其他行两者均空。父待办成功后沿其不可变结果解析父题，不抹掉原始来源关系。
-
-`content`和结构化产物用JSONB保存，顺序放在数组、显示精度放在字符串，不依赖JSON对象键顺序。语法固定`schema_version`；入库题面和参考的结构化正文复制到Domain版本，原页文件保留所有者引用。产物指纹基于程序规范化后的输入计算，保留规范化原文用于同键比较；指纹不是语义等价判据。
-
-必要索引为：身份的`(domain_id,kind,object_id)`；引用的`(target_id,target_version,relation_kind)`；待办的`(domain_id,state,item_id)`、`parent_item_id`；产物的`(domain_id,kind,artifact_id)`；供题的`(scope_id,batch_id)`，以及上述主键／唯一索引。名称子串先在已限领域和类型的结果中筛选；M1不增加全JSON GIN、向量库或独立搜索服务。容量与查询性能在实现时检验。
-
-表结构依据PostgreSQL的[JSONB](https://www.postgresql.org/docs/current/datatype-json.html)与[外键约束](https://www.postgresql.org/docs/current/ddl-constraints.html)能力设计。M1不开放物理删除；模块运行凭据不向不可变版本、产物、确认或批次授予UPDATE／DELETE权限。迁移使用单独受控权限，按[基础设施§5.3](Infrastructure_and_Deployment_Design.md#53-schema迁移与版本兼容)统一执行Alembic脚本；技术Schema升级不覆盖正式领域内容版本。
+名称搜索先限定领域与类型；M1不新增向量库或独立搜索服务。迁移权限与工具由[基础设施§2.2／5.3](Infrastructure_and_Deployment_Design.md#22-数据库连接与短事务)统一维护。
 
 ### 6.3 设计范围与后续承接
 
-本批补齐Domain表、保存事务、来源保护、接口和错误分支。用户已确认同库短事务；具体表名、路径、锁顺序和收据状态作为详细设计交付review，不宣称已实现。§1—5维护业务规则，本节只定义如何保存、调用和恢复。
+本模块维护领域操作、来源保护及保存恢复流程，物理表定义由[Domain数据字典](database/Business_Domain.md)维护。已确认同库短事务；具体接口和锁序仍按详细设计审阅。
 
 | 后续事项 | 主责与关闭时点 |
 | --- | --- |
 | 公共事务适配、受理派发、事件待发与NATS／Temporal交接的实现合同 | 公共运行和基础设施详细设计；遵守§6.5共同提交，编码前确定连接／恢复实现，不在Domain另做调度器 |
-| 教材物理表和读取／来源锁实现 | Product§3.6.1／§3.7已给出设计稿，公共运行与基础设施继续落实事务装配；实现不能退回远程查询后直接保存 |
+| 教材物理表和读取／来源锁实现 | [Product数据字典](database/Business_Product.md)定义物理表，Product§3.6.1／§3.7定义来源保护；实现不能退回远程查询后直接保存 |
 | 数据库连接、迁移与兼容 | 基础设施§2.2／5.3已形成SQLAlchemy＋psycopg及Alembic接线稿；具体版本、时限和升级接收待审，Domain不自行建表或另开连接提交 |
 | Schema代码、提示模板、渲染器、结构检查器及四例复验 | 实现阶段按§7执行；本阶段不做代码验证，非架构问题允许修订详细设计后继续实现 |
 | 未覆盖的数学符号、复杂表格与图形 | Domain内容协议与客户端共同补充；表达不了先留缺口，不静默丢失 |
@@ -548,73 +532,11 @@ Product保存章节／目标或确认应用时，先锁教材导入，再通过�
 
 ### 6.6 HTTP请求响应与分页
 
-浏览器使用明确API，鉴权由入口建立`access_context`，请求体不能传入可提升权限的账户或角色。路径下列为相对`/api/m1`的草案；JSON使用UTF-8、蛇形字段，`ObjectRef.kind=domain|task|solution|kc|task_instance`，未知字段拒绝，省略与`null`按各业务字段定义处理。API不直接暴露物理表名。
+公开入口、请求与响应字段、错误和分页统一见[Domain API分册](contracts/Domain_API.md)；共同类型及回执见[API与消息总册](API_and_Message_Design.md)。本节不再维护第二份路径表或JSON样例。
 
-| 路径与方法 | 调用者及输入 | 处理与输出 |
-| --- | --- | --- |
-| `GET /domains` | 获授权的领域使用者 | 当前可见Domain列表；M1领域数量小，返回完整列表，不承担领域内容分页 |
-| `POST /domain-definitions` | 管理员；`save_definition`的§2.1入参 | 普通保存；返回`object_ref,content_ref,gaps`。`soft_delete`不给definition，必须给对象及预期版本，无物理DELETE入口 |
-| `GET /domains/{domain_id}/objects` | 管理员及获授权内容选择入口；§6.1过滤、分页参数 | 最新未删除对象列表；不触发检查或供题 |
-| `GET /domains/{domain_id}/objects/{object_id}` | 内容读取者；可选`version`，实例另需`view` | 无version返回最新；有version精确读取并标出当前删除状态；来源／参考按权限裁剪 |
-| `GET /domains/{domain_id}/dependencies` | 内容管理及内部取材；`task_id,version,solution_ids[]?` | §4.2直接方法、KC汇总及适用先导；每个Solution解析为该Task引用的精确版本 |
-| `GET /domains/{domain_id}/intake-items` | 领域管理员；分页、可选来源／类型 | 默认仅`pending`；完成记录可按已知item ID读取，不增加管理页签 |
-| `GET /domains/{domain_id}/intake-items/{item_id}` | 领域管理员／获授权教材业务 | 来源、固定内容、当前修订、父题及处理结果 |
-| `POST /domains/{domain_id}/intake-items/{item_id}/actions` | 管理员；§2.3动作参数 | 添加、关联或放弃；需要归类时202并给请求收据，完成后返回对象／参考及待办结果 |
-| `POST /domains/{domain_id}/instances` | 管理员；§5.1动作及完整instance | 普通保存可安排归类AI；修改必填object_ref／expected_version；软删除省略instance并复制旧快照 |
-| `POST /domains/{domain_id}/kc-test-paths` | 管理员；`request_id,kc_ref,task_ref,solution_ref,observable_behavior,insufficient_examples` | 普通确认处理`domain.confirm_kc_path`；按§4.3核对并保存确认，返回`confirmation_ref`，不调用评价或改概率 |
-| `POST /domains/{domain_id}/definition-candidates` | 管理员；§3.2定义提取入参及request_id | 明确派发`domain.extract_template`，返回202及底座运行引用；仅产生候选 |
-| `GET /domains/{domain_id}/artifacts/{artifact_id}` | 候选／检查的授权读取者 | 固定产物及依据，模型凭据、私有系统提示和不相关材料不外露 |
-| `GET /domain-requests/{receipt_id}` | 原请求人或有对应资源权限的管理员／内部恢复者 | `state,result,error,runtime_ref`；查询不自动恢复、不改变结果 |
+实例软删除不重新归类；新建或修订仍按§5.1核对。KC路径确认是普通处理，沿§4.3去重、锁定及精确引用检查，不增加AI Operation。后台检查完成不等于正式入库，只有§6.4收据committed表示保存完成。页面刷新只补读原结果，不再次提交。
 
-§5.1中实例软删除不重新归类；新建／修订使用相应固定输入检查。引用更新后其余未改部分能否复用检查，仍逐项核对定义、内容和规则是否相同。`confirm_kc_path`没有独立AI Operation；确认也采用请求去重、领域短写锁与精确版本校验，事实事件登记为`DomainKCTestPathConfirmed`，不伪装成定义内容升版。
-
-**响应。** 成功短请求返回200及`{request_ref,result}`；已持久受理的长请求返回202及`{request_ref,state:"accepted",runtime_ref}`。ID含domain时服务端核对实际归属，不能以路径覆盖对象的领域。既有命令若进入后台执行，结果仍从同一收据读取，不把OperationRun完成当成正式保存成功。直接AI提取使用底座运行查询，普通提交使用Domain收据，两者互相引用。
-
-新建成员的请求必须给`domain_id`；新建Domain不填所属领域。服务端从已授权领域、对象或导入引用解析`scope_id`，从认证上下文解析`principal_id`，不接受客户端代填授权身份。`expected_revision`是当前待办修订，`expected_version`是被修改领域对象版本，两者不得互换。
-
-Domain返回的`content_ref`分两种：对象内容为`{owner:"domain",object_ref,path}`，产物内容为`{owner:"domain",artifact_id,path}`，二者恰一。`path`为所属载荷内的JSON Pointer，读取器只允许该view已授权字段及块；引用`/answer_basis`不能绕过题面权限。其他所有者的引用交其端口解析，客户端不自行拼出数据库或文件路径。
-
-以下为待入库题目关联的JSON设计样例。ID仅作格式示例，不指向原型中的数据；POST路径已指定Domain和item，后台可取得行内来源，不要求浏览器重新上传题面。
-
-```json
-{
-  "request_id": "associate-question-01",
-  "expected_revision": 1,
-  "action": "associate_task",
-  "task_ref": {
-    "kind": "task",
-    "object_id": "11111111-1111-4111-8111-111111111111",
-    "version": 1
-  }
-}
-```
-
-若需AI检查，先返回202：
-
-```json
-{
-  "request_ref": "22222222-2222-4222-8222-222222222222",
-  "state": "accepted",
-  "runtime_ref": "run-associate-question-01"
-}
-```
-
-随后查询同一请求，完成结果的`result`使用§2.3规定的题目版本、待办状态和检查引用；`state=committed`才表示正式入库。若归类未决，`state=rejected`及`classification_unresolved`指向实际检查，不返回伪造实例。浏览器刷新只补取此收据，不再创建第二次关联。
-
-错误统一为`{error:{code,message,issues[],retryable},request_ref?}`。`issues`定位字段／块；有检查结果时提供授权检查引用，不返回堆栈。即时错误用下表HTTP状态；202之后发生错误通过收据的`rejected/failed`表达，不篡改已经返回的HTTP状态。
-
-| HTTP | 错误 | 客户端／调用方处理 |
-| --- | --- | --- |
-| 400 | `invalid_request` | 修正格式、必填项或枚举；未受理则无收据 |
-| 401／403 | `unauthenticated`／`forbidden` | 重新认证或停止；不得返回无权访问的原请求结果 |
-| 404 | `not_found` | 指定授权范围内不存在；不返回跨域对象内容帮助定位 |
-| 409 | `request_conflict`、`version_conflict`、`revision_conflict`、`already_processed`、`read_range_changed` | 同键改内容拒绝；其他冲突重读并由调用者明确选择，不静默覆盖 |
-| 422 | `invalid_reference`、`dependency_cycle`、`source_unavailable`、`missing_parent`、`parent_not_linked`、`confirmation_required`、`classification_failed`、`classification_unresolved` | 返回具体业务原因；材料修正走教材助手，选择改变后新请求 |
-| 503 | `temporarily_unavailable` | 未受理时可沿原ID重试；若已有收据先查询，不把故障当“无内容” |
-
-**分页。** 领域内列表按`object_id`或`item_id`升序键集分页。首屏在一个短只读一致性事务中取得`catalog_revision`及列表；游标包含领域、规范化过滤／视图、权限范围标识、目录修订和最后ID。续页复核权限、参数及目录修订，变了返回`read_range_changed`，要求重新加载；不持有跨HTTP请求的数据库快照。`read_token`用于客户端避免拼接不同批结果，不是授权令牌。`limit`为受服务上限约束的正整数，实际默认和上限由实现时结合页面需求确定，不能无限请求整库。
-
-图文重排不改变版本；客户端缓存键必须包含完整ObjectRef及view，不能仅按object_id缓存题面和答案。字段未知／不支持的内容块明确显示不可展示及缺口，不能自动降为未经校验的HTML。
+ContentRef及题面/参考的授权规则见[分册共用视图](contracts/Domain_API.md#响应对象)；普通读取不执行供题筛选。写入与并发保护仍以§6.5为准。
 
 ### 6.7 模块端口与消息交接
 
@@ -633,7 +555,7 @@ Domain返回的`content_ref`分两种：对象内容为`{owner:"domain",object_r
 | `MaterialCandidatesAdopted`／`MaterialImportDeleted` | Product → Domain普通处理 | 引用失效来源；只更新未处理待办。重复事件无新状态变化便不再产生失效事件；入库仍以事务内来源检查为准 |
 | `TaskSupplyRequested` | Interaction → Domain AI能力 | 固定用途、Task／方法、接触事实 → §5.2统一供题；成功发`DomainTaskSupplyCompleted`及`task_supply`，不存在浏览器直接启动此事件的公共入口 |
 
-Domain事实事件载荷保留`request_ref`或`trigger_event_id`、`domain_id`、受影响精确对象／待办／批次引用、检查引用和来源引用；不复制整份题面、模型提示或学生聊天。完整名称和用途维护于工程入口§6，信封与版本策略维护于公共运行。`DomainKCTestPathConfirmed`另包含`confirmation_ref`及所确认的KC／Task／Solution引用。
+Domain事实事件载荷保留`request_ref`或`trigger_event_id`、`domain_id`、受影响精确对象／待办／批次引用、检查引用和来源引用；不复制整份题面、模型提示或学生聊天。名称索引见工程入口§6，逐事件字段见[事件消息分册](contracts/Event_Messages.md)，发布、失败与恢复机制见公共运行。`DomainKCTestPathConfirmed`另包含`confirmation_ref`及所确认的KC／Task／Solution引用。
 
 Domain只维护自身命令唯一键、受理唯一键和供题批唯一键。事件ID、跨进程投递防重、Temporal启动恢复、公共结果唯一键由底座维护；不得用Domain轮询表替代执行框架。同消息重投后读取原业务结果并确保原结果已登记，不再安排一次AI生成。执行失败没有成功批次时，底座按运行失败合同留痕，不伪造空供题批。
 
@@ -718,3 +640,9 @@ C06  relation={subject: point_1, predicate: inside, object: circle_1,
 本轮修订（v0.15，2026-11-15）：补领域整批拒收、终态回执和重复提交边界。仅修订文档，见MVP决定登记§83。
 
 本轮修订（v0.16，2026-11-15）：对齐例题、练习和检测供题的消费路径。仅修订文档，见MVP决定登记§91。
+
+本轮修订（v0.17，2026-11-15）：同步数据库总目录、完整字段及关系图；维护字段与处理合同的单一职责，物理设计待审阅。仅文档修订，见MVP决定登记§92。
+
+本轮修订（v0.18，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.19，2026-11-15）：集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码。见[MVP决定登记§94](../../DECISIONS.md#94-api与消息设计分册及唯一维护位置)。

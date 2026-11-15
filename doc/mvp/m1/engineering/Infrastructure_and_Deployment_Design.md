@@ -1,11 +1,11 @@
 # M1 基础设施与部署设计
 
-> **版本**：v0.34<br>
-> **状态**：入口与执行参数候选已集中，待用户审阅；未编码<br>
+> **版本**：v0.37<br>
+> **状态**：API与消息设计稿待审阅；未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.33 → v0.34，集中入口与执行限额候选，补组合检查及超限处理；见MVP决定登记§90<br>
+> **修订说明**：v0.36 → v0.37，集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码<br>
 
 本文确定计算资源、存储、外部服务连接、网络和部署运维的实现方式，将总体架构落实为可启动和可恢复的运行环境。业务字段及规则留在所属模块，本文维护技术适配和运行配置；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -72,15 +72,9 @@ K3s控制面最低资源不包括DeerMind工作负载，见[K3s要求](https://d
 
 ## 2. 数据库、文件与存储适配
 
-| 数据 | 存储与管理者 | 隔离 |
-| --- | --- | --- |
-| 业务对象、消息及正式事件 | PG的deermind业务库；所有者各写自己的schema | product、domain、interaction、evaluation、runtime；AI技术记录使用独立ai schema |
-| Temporal执行历史 | 同实例的temporal数据库，Temporal维护 | 独立账号；业务模块不查询内部表 |
-| Temporal查询数据 | 同实例的temporal_visibility数据库，Temporal维护 | 独立账号，不替代业务只读发布视图 |
-| 消息交接 | JetStream持久文件存储 | NATS自己的数据卷；正式事件仍在业务PG |
-| 原件、派生图及技术大内容 | 文件隔离层，初期local-path＋PVC | 所有者维护授权和业务引用，适配管理字节及技术登记 |
+数据库清单、schema归属、表字段及关系统一见[数据库设计](Database_Design.md#1-库与账号)。部署使用同一映射，不由各模块随意创建库或schema。
 
-库名和schema名是本稿接线名称，部署按同一映射登记，不能由各模块随意创建。Product、Domain、Interaction、Evaluation和正式事件在同一业务库的短事务内提交；AI、NATS、Temporal调用不进入该事务。共同提交沿[公共运行§4.1.1](System_Foundation_Design.md#411-同库事务适配)，不能因共库直接读其他模块私表。
+本模块维护数据库连接、账号权限、迁移与备份，以及NATS和文件卷的部署。NATS保存投递副本，正式事件保存在业务库；文件字节经隔离层保存。共同提交按[公共运行§4.1.1](System_Foundation_Design.md#411-同库事务适配)执行，AI和外部服务调用不进入事务。
 
 ### 2.1 文件存储隔离与切换
 
@@ -118,22 +112,13 @@ API及Worker的异步入口使用异步Engine；迁移命令独立运行，可�
 
 文件适配仅处理字节、校验值和存储位置。Product维护教材来源，Domain维护已采用内容引用，AI底座维护候选，SDK持久历史引用运行载荷；文件适配不根据文件名决定业务归属。
 
-| 数据 | 内容及维护者 |
-| --- | --- |
-| StoredFile | file_id、backend、storage_key、media_type、byte_size、sha256、created_at；基础设施技术登记，ready后内容不可覆盖 |
-| Upload | upload_id、发起账号、用途、可选已有资源、request_id、状态、write_attempt_id、lease_until及file_id；同账号／用途／request_id唯一，状态为receiving／ready／failed |
-| FileReceipt | storage_ref、media_type、byte_size、sha256；程序核验后交业务使用，持有引用本身不授予读取权 |
-| 业务引用 | 所有者保存教材来源、页图派生、候选或执行引用；正式采用与相关事件仍由所有者共同提交 |
+技术登记表见[文件对象](database/Business_Runtime.md#1-runtimefile_objects)与[上传记录](database/Business_Runtime.md#2-runtimefile_uploads)。本节维护文件保存和恢复机制；HTTP协议见运行分册，不重复物理列。
+
+`FileReceipt`是接口收据，包含storage_ref、media_type、byte_size、sha256；由完整写入后的技术登记生成。持有收据不授予读取权。所有者仍维护教材来源、候选和执行材料等业务引用。
 
 技术登记存于runtime schema，由`infrastructure/files`仓储维护；公共运行只引用，不取得教材或AI正文的管理权。文件名和客户端申报类型只作输入，原始名称进入Product的显示信息，不作为磁盘路径或MIME判定依据。
 
-| 接口／端口 | 输入与结果 |
-| --- | --- |
-| POST /file-uploads | request_id、用途、原名、申报类型／大小及适用资源；教材用途先由Product核对必选domain_ref及导入归属，再登记并返回upload_id。仅技术登记，不创建教材或AI工作 |
-| PUT /file-uploads/{id}/content | 发送该文件完整字节流；校验后返回ready及FileReceipt。M1失败后重传该文件，不建设分块续传协议 |
-| GET /file-uploads/{id} | 原上传者按当前授权查询状态；响应丢失先查询，不重复创建身份 |
-| read_file(access_context, file_ref) | 所有者授权后的内部读取；返回受限字节流和校验信息，不接受任意路径或URL |
-| save_derived(access_context, source_refs, transform_ref, bytes) | 保存页图／渲染资源／AI技术产物；按稳定产物身份去重，返回新的FileReceipt，不覆盖来源 |
+上传登记、传输、状态查询及授权文件读取字段见[运行协议R01—R03、R07](contracts/Runtime_Protocols.md#r01)。内部read_file(access_context,file_ref)只接收所有者授权引用；save_derived(access_context,source_refs,transform_ref,bytes)按固定产物身份保存，返回FileReceipt，不覆盖来源。
 
 上传正文走HTTPS流式传输，不走WS或模型提示。管理员可一次选择全册文件，客户端逐文件登记成功／失败；已成功文件保留原收据，只重传失败文件。批量并行数、单文件大小和总量均有限；缺配置拒绝接入，不默许无限上传。
 
@@ -715,3 +700,9 @@ Temporal保留从Workflow关闭计时，不能按业务页面显示完成或首�
 本轮修订（v0.33，2026-11-15）：定义共享Worker与Temporal队列装配，统一启动和升级核对。仅修订文档，见MVP决定登记§89。
 
 本轮修订（v0.34，2026-11-15）：集中入口与执行限额候选，补组合检查及超限处理。仅修订文档，见MVP决定登记§90。
+
+本轮修订（v0.35，2026-11-15）：同步数据库总目录、完整字段及关系图；维护字段与处理合同的单一职责，物理设计待审阅。仅文档修订，见MVP决定登记§92。
+
+本轮修订（v0.36，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.37，2026-11-15）：集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码。见[MVP决定登记§94](../../DECISIONS.md#94-api与消息设计分册及唯一维护位置)。

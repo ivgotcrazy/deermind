@@ -1,14 +1,14 @@
 # MVP 决定承接与工作记录
 
-> **版本**：v0.87<br>
+> **版本**：v0.90<br>
 > **文档性质**：新MVP目录的决定、待决和变更登记<br>
-> **状态**：主流程合同检查及修正稿待用户审阅；未编码<br>
+> **状态**：API与消息设计稿待审阅；未编码<br>
 > **上游依据与基线**：M1 PRD v0.28、内容规格v0.26、交互规格v0.25及本轮用户决定；本轮仅修订文档，历史原型与证据保留<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：本批静态自检见登记§91；配置候选仍待确认<br>
+> **评审记录**：本轮接口与消息自检见登记§94；具体字段与配置候选待审阅<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.86 → v0.87，登记主流程合同检查与交接修正，未新增产品取舍或参数批准；见MVP决定登记§91<br>
+> **修订说明**：v0.89 → v0.90，新增§94，记录API与消息设计分册及维护归属<br>
 
 ---
 
@@ -2751,3 +2751,97 @@ M1先用一个应用Worker进程和一条共享Temporal逻辑执行队列，承�
 已核对10份文档逐份升版、现行版本索引及修订记录；600处本地链接、427处锚点有效，编号无重复。9项AI Operation及31项普通入口未增删，历史决定和原型保持不变。
 
 对照检查供题三用途、结果早到／迟到、超时／停止竞争、主动触发资格及顺序评价图文；对应实现接收案例已补入Interaction§7.4。差异与空白检查通过。未运行代码、模型、浏览器或部署测试，所有参数候选仍待确认。
+
+## 92. M1完整数据库设计与字段字典
+
+### 92.1 用户要求与本批范围
+
+M1-DEC-085：用户要求列清系统全部数据库、各库的表、每列定义、表关系，并为每个库提供Mermaid图。本批授权是补齐工程设计，未要求创建数据库或修改原型。
+
+仍采用已确认的一个PostgreSQL实例、业务/Temporal执行/Temporal查询三个数据库；业务schema归属、模块授权、只追加历史及同库短事务边界不变。新增物理字段、键、JSON/列分界及索引形成待审稿，不能把本批编写视为用户已批准每项细节。
+
+### 92.2 交付与维护位置
+
+- [数据库总册](m1/engineering/Database_Design.md)：库、账号边界、表索引、跨模块关系、字段通则及迁移表。
+- `m1/engineering/database/`：Product、Domain、Interaction、Evaluation、Runtime、AI六个业务字段分册，以及Temporal执行库和查询库两个官方结构分册。
+- 业务稿共110张表；Temporal候选v1.32.2的执行库39张、查询库3张，包含组件Schema管理表。组件内部表不由业务Alembic维护；它们不构成新增M1功能。
+- 各模块仍维护业务流程与对象载荷；字典维护物理列。未新建SolutionInstance生命周期、KC Claim、权限平台、监控库或Evolution库。
+
+### 92.3 升版
+
+| 文档 | 版本 |
+| --- | --- |
+| `mvp/m1/engineering/README.md` | v0.70 → v0.71 |
+| `mvp/m1/engineering/System_Design.md` | v0.47 → v0.48 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.42 → v0.43 |
+| `mvp/m1/engineering/AI_Foundation_Design.md` | v0.24 → v0.25 |
+| `mvp/m1/engineering/Product_Application_Design.md` | v0.25 → v0.26 |
+| `mvp/m1/engineering/Domain_Space_Design.md` | v0.16 → v0.17 |
+| `mvp/m1/engineering/Interaction_Space_Design.md` | v0.21 → v0.22 |
+| `mvp/m1/engineering/Evaluation_Space_Design.md` | v0.19 → v0.20 |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.34 → v0.35 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.48 → v0.49 |
+| `mvp/m1/README.md` | v0.65 → v0.66 |
+| `mvp/README.md` | v0.86 → v0.87 |
+| `mvp/DECISIONS.md` | v0.87 → v0.88 |
+| 数据库总册及八个数据字典分册 | 新建v0.1 |
+
+### 92.4 自检与后续
+
+自检通过：22份文档、982个本地链接、746个锚点、10张Mermaid图；业务110张表954个列定义，Temporal两库分别39张/230列与3张/93列。已检查主键非空、显式外键目标及类型、官方组件表字段，并保持Operation、事件和普通处理目录不变。静态检查不等于DDL迁移或恢复验证；本轮未编写产品实现、未创建数据库、未改原型。下一步由用户审阅数据划分与字段约束，确认后纳入迁移和工程接线。
+
+## 93. 数据库定义单一维护与schema边界
+
+### 93.1 确认范围
+
+M1-DEC-086：用户确认M1继续用schema划分模块数据，数据库拆分留后续阶段；要求清理模块设计中的冗余和不一致数据库定义，直接引用现有数据分册。
+
+模块文档维护接口、业务载荷、读写流程、并发及事务边界；数据分册唯一维护表、物理字段、约束、索引和表关系；数据库总册维护分库总览、公共存储规则和导航。接口参数、事件信封和AI输出Schema不是物理列，不因清理而删除。
+
+### 93.2 本轮整理
+
+- 删除六个模块的重复表结构清单，改为对应分册/表的直接链接；基础设施不再重列数据库清单或文件登记列。
+- 将原模块中已有而字典未列全的Domain、历史消息、评价及运行查询索引和引用条件归入分册；不增加表和列。
+- 按Evaluation既有§5.6修正字典：未决、不适用、重复来源和有效L=0不新增数值修订，原因留在Evidence和批结果；实际数值更新才有belief_revision。
+- 目标提交标志统一为current_state_applied，表示本次是否实际推进当前结果；Product的delivery_state明确为底座只读投影。活动历史按归属表关联消息排序，不定义跨两张表的虚假列索引。
+- 保留现行同库短事务、事件目录、Operation目录、业务流程和全部Mermaid图；未拆库、未改原型、未编码。
+
+### 93.3 升版
+
+| 文档 | 版本 |
+| --- | --- |
+| `mvp/m1/engineering/AI_Foundation_Design.md` | v0.25 → v0.26 |
+| `mvp/m1/engineering/Database_Design.md` | v0.1 → v0.2 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.49 → v0.50 |
+| `mvp/m1/engineering/Domain_Space_Design.md` | v0.17 → v0.18 |
+| `mvp/m1/engineering/Evaluation_Space_Design.md` | v0.20 → v0.21 |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.35 → v0.36 |
+| `mvp/m1/engineering/Interaction_Space_Design.md` | v0.22 → v0.23 |
+| `mvp/m1/engineering/Product_Application_Design.md` | v0.26 → v0.27 |
+| `mvp/m1/engineering/README.md` | v0.71 → v0.72 |
+| `mvp/m1/engineering/System_Design.md` | v0.48 → v0.49 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.43 → v0.44 |
+| `mvp/m1/engineering/database/Business_AI.md` | v0.1 → v0.2 |
+| `mvp/m1/engineering/database/Business_Domain.md` | v0.1 → v0.2 |
+| `mvp/m1/engineering/database/Business_Evaluation.md` | v0.1 → v0.2 |
+| `mvp/m1/engineering/database/Business_Interaction.md` | v0.1 → v0.2 |
+| `mvp/m1/engineering/database/Business_Product.md` | v0.1 → v0.2 |
+| `mvp/m1/engineering/database/Business_Runtime.md` | v0.1 → v0.2 |
+| `mvp/m1/README.md` | v0.66 → v0.67 |
+| `mvp/README.md` | v0.87 → v0.88 |
+| `mvp/DECISIONS.md` | v0.88 → v0.89 |
+
+### 93.4 自检与下一步
+
+自检通过：20份修订文档、971个本地链接、741个锚点及升版对应；业务库仍为110张表、954个列定义，主键非空、显式外键及索引列有效。重复物理字段已集中，模块保留处理规则和接口；数据库10张图及其他模块图源未改，Operation、事件和普通处理目录、既往决定未改写。未执行数据库或产品测试。下一步审阅现有详细设计，暂不开展数据库拆分。
+
+## 94. API与消息设计分册及唯一维护位置
+
+- **编号**：M1-DEC-087
+- **日期**：2026-11-15
+- **用户确认**：按数据库分册的做法补齐API与消息详细设计；不是只列入口名称。
+- **交付**：[API与消息总册](m1/engineering/API_and_Message_Design.md)及Product、Domain、Interaction、Evaluation、运行协议、事件消息六个分册。逐入口说明请求/响应字段、权限、错误、幂等和样例；逐事件说明生产方、消费方式、产生时点及载荷。
+- **唯一维护位置**：公开传输格式归合同分册；模块维护业务语义、内部端口、事务及恢复；数据库分册维护物理结构。已有HTTP/WS/事件字段表改为引用，内部端口在分册只做索引。
+- **边界**：9项AI Operation、31项普通处理及数据库结构不变；未改产品规格、交互原型或代码。新增查询路径与具体字段为待审设计，沿现有业务用途，不代表已确认或已实现。
+- **自检**：核对既有入口、WS动作和事件覆盖，检查本地链接、JSON示例、版本引用及既有图示和数据字典保持不变。仅文档静态核对，未进行协议联调或运行测试。
+- **下一步**：用户审阅接口与消息合同，落实反馈；实现时据此生成OpenAPI、消息Schema和类型，避免另建手工维护的副本。
