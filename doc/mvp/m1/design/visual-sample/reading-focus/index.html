@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>DeerMind · 专注阅读样板</title><link rel="stylesheet" href="style.css"></head><body><div id="deermind-directions"><div class="dm-preview reading" aria-label="专注阅读方向稿">
+        <div class="dm-preview-toolbar">
+          <div class="dm-view-switch" role="group" aria-label="预览页面">
+            <button type="button" data-view="student" aria-pressed="true">学生端</button>
+            <button type="button" data-view="admin" aria-pressed="false">教材助手</button>
+          </div>
+          <label class="sample-state">预览状态 <select id="sample-state"><option value="normal">正常</option><option value="empty">空态</option><option value="busy">处理中</option><option value="error">失败</option></select></label><span>交互样板 · mock</span>
+        </div>
+        <div class="dm-window dm-student">
+          <header class="dm-topbar">
+            <div class="dm-brand"><strong>DeerMind</strong></div>
+            <span class="dm-space-name">我的数学空间</span>
+            <span class="dm-profile">小禾</span>
+          </header>
+          <div class="dm-student-grid">
+            <aside class="dm-activity">
+              <div class="dm-pane-title"><strong>活动目录</strong></div>
+              <p class="dm-day">今天</p>
+              <div class="dm-history-item"><time>09:12</time><span>聊聊今天的学习</span></div>
+              <details open>
+                <summary><time>09:18</time><span>理解增加四分之一</span></summary>
+                <div class="dm-current-activity"><time>09:21</time><span>为什么要除以4？</span><small>当前答疑</small></div>
+              </details>
+              <p class="dm-day dm-earlier">昨天</p>
+              <div class="dm-history-item"><time>16:30</time><span>生活中的分数</span></div>
+            </aside>
+            <main class="dm-conversation">
+              <div class="dm-chat-heading"><button type="button" class="dm-quiet" id="directory-toggle">收起目录</button>
+                <div><div class="dm-path">讲解 <span>／</span> 答疑</div><h2>为什么要除以4？</h2></div>
+                <button type="button" class="dm-quiet dm-book-toggle"><span>收起教材</span></button>
+              </div>
+              <div class="dm-messages" aria-live="polite">
+                <div class="dm-flow-marker"><span></span>进入答疑 · 为什么要除以4？<span></span></div>
+                <div class="dm-user-message">我还没懂，为什么用80除以4？</div>
+                <article class="dm-assistant-message">
+                  <div class="dm-speaker">DeerMind</div>
+                  <p>这里的“四分之一”，指的是<strong>原来80人的四分之一</strong>。</p>
+                  <p>把80人平均分成4份，每份就是20人。</p>
+                  <figure class="dm-math-figure">
+                    <figcaption>原来的人数：80人</figcaption>
+                    <div class="dm-fraction-bar" aria-label="80人平均分成4份，每份20人"><span>20</span><span>20</span><span>20</span><span>20</span></div>
+                    <div class="dm-one-part"><span>20人</span><small>其中的一份</small></div>
+                    <div class="dm-equation">80 ÷ 4 = 20<span>人</span></div>
+                  </figure>
+                  <p>“增加四分之一”就是在原来的80人上，<strong>再增加这样的一份</strong>。</p>
+                  <p class="dm-question">你能说说，现在为什么要用80＋20吗？</p>
+                </article>
+              </div>
+              <div class="sample-actions"><button type="button" id="request-detection">我想检测一下</button><button type="button" id="return-explanation">回到讲解</button></div><div class="dm-composer">
+                <label class="dm-hidden-label">回答或继续提问<textarea aria-label="回答或继续提问" placeholder="说说你的想法，也可以继续提问…"></textarea></label>
+                <div class="dm-composer-bottom"><span>答疑结束后，继续原来的讲解</span><button type="button" class="dm-primary" aria-label="发送">发送</button></div>
+              </div>
+            </main>
+            <aside class="dm-book">
+              <div class="dm-pane-title"><button type="button" class="dm-quiet" id="chat-toggle">收起聊天</button><strong>教材</strong></div>
+              <div class="dm-book-meta">北师大版数学 · 六年级上册</div>
+              <div class="dm-book-page">
+                <p class="dm-chapter-no">当前章节</p><h3>分数的应用（一）</h3>
+                <div class="dm-page-rule"></div>
+                <h4>读一读，想一想</h4>
+                <p>合唱队原来有80人，今年的人数比去年增加了四分之一。今年有多少人？</p>
+                <div class="dm-book-notes"><span>原来</span><strong>80人</strong><span>增加</span><strong>原来的四分之一</strong></div>
+                <p class="dm-book-hint">找一找：题目中的“四分之一”是相对于什么来说的？</p>
+              </div>
+              <div class="dm-page-footer">教材内容示意</div>
+            </aside>
+          </div>
+        </div>
+        <div class="dm-window dm-admin" hidden>
+          <header class="dm-topbar"><div class="dm-brand"><strong>DeerMind</strong></div><span class="dm-space-name">管理工作台</span><span class="dm-profile">管理员</span></header>
+          <div class="dm-admin-layout">
+            <nav class="dm-admin-nav" aria-label="管理员菜单">
+              <span class="dm-nav-selected">教材管理</span><span>领域管理</span><span>评估管理</span><span>目标管理</span><span>交互活动</span><span>学习空间</span>
+            </nav>
+            <main class="dm-admin-main">
+              <div class="dm-admin-heading"><div><p class="dm-breadcrumb">教材管理 / 分数的应用（一）</p><h2>北师大版数学六年级上册</h2></div><span class="dm-domain-tag">小学数学</span></div>
+              <div class="dm-admin-tabs"><strong>教材助手</strong><span>解析内容</span><span>章节关联</span></div>
+              <div class="dm-assistant-workspace">
+                <section class="dm-material-chat" aria-label="教材助手对话">
+                  <div class="dm-speaker">教材助手</div>
+                  <p>已找到这道例题的题目和解法。题目与解法分别核对，可以只提交题目入库。</p>
+                  <div class="dm-user-message">增加的应该是原来的四分之一，帮我核对这处。</div>
+                  <div class="dm-source-quote"><span>引用：合唱队人数<br><small>题目中的数量关系</small></span></div>
+                  <p>已按这条关系修正候选：原有80人，增加20人。右侧可以分别查看题面和解法。</p>
+                  <div class="dm-composer dm-admin-composer"><label class="dm-hidden-label">告诉教材助手如何修正<textarea aria-label="告诉教材助手如何修正" placeholder="指出哪里不对，或引用内容继续核对…"></textarea></label><div class="dm-composer-bottom"><span>候选核对中</span><button class="dm-primary" type="button" aria-label="发送">发送</button></div></div>
+                </section>
+                <section class="dm-candidate" aria-label="核对候选">
+                  <div class="dm-candidate-heading"><h3>核对候选</h3><span class="dm-status">待采用</span></div>
+                  <p class="dm-small">分数的应用（一） / 合唱队人数</p>
+                  <div class="dm-candidate-part"><span class="dm-part-kind">题目</span><h4>合唱队人数</h4><p>合唱队原来有80人，今年的人数比去年增加了四分之一。今年有多少人？</p><div class="dm-relation"><span>原有人数</span><strong>80人</strong><span>增加比例</span><strong>1/4</strong></div></div>
+                  <div class="dm-candidate-part dm-solution"><span class="dm-part-kind">教材原有解法</span><h4>先求增加人数，再求总人数</h4><div class="dm-calculation">80 × 1/4 = 20（人）<br>80 ＋ 20 = 100（人）</div><p class="dm-small">对应题目：合唱队人数</p></div>
+                  <div class="dm-candidate-footer"><span>采用后更新教材解析内容</span><button type="button" class="dm-primary">采用结果</button></div>
+                </section>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div></div><script src="sample.js"></script></body></html>

@@ -1,0 +1,95 @@
+- iframe [ref=e2]:
+  - group "DeerMind视觉方向" [ref=f1e3]:
+    - group "专注阅读" [ref=f1e4]:
+      - generic "专注阅读方向稿" [ref=f1e5]:
+        - generic [ref=f1e6]:
+          - group "预览页面" [ref=f1e7]:
+            - button "学生端" [pressed] [ref=f1e8] [cursor=pointer]
+            - button "教材助手" [ref=f1e9] [cursor=pointer]
+          - generic [ref=f1e10]: 视觉方向稿
+        - generic [ref=f1e11]:
+          - banner [ref=f1e12]:
+            - strong [ref=f1e17]: DeerMind
+            - generic [ref=f1e18]: 我的数学空间
+            - generic [ref=f1e19]: 小禾
+          - generic [ref=f1e20]:
+            - complementary [ref=f1e21]:
+              - strong [ref=f1e23]: 活动目录
+              - paragraph [ref=f1e27]: 今天
+              - generic [ref=f1e28]:
+                - time [ref=f1e29]: 09:12
+                - generic [ref=f1e30]: 聊聊今天的学习
+              - group [ref=f1e31]:
+                - generic "09:18 理解增加四分之一" [ref=f1e32] [cursor=pointer]:
+                  - time [ref=f1e33]: 09:18
+                  - generic [ref=f1e34]: 理解增加四分之一
+                - generic [ref=f1e35]:
+                  - time [ref=f1e36]: 09:21
+                  - generic [ref=f1e37]: 为什么要除以4？
+                  - generic [ref=f1e38]: 当前答疑
+              - paragraph [ref=f1e39]: 昨天
+              - generic [ref=f1e40]:
+                - time [ref=f1e41]: 16:30
+                - generic [ref=f1e42]: 生活中的分数
+            - main [ref=f1e43]:
+              - generic [ref=f1e44]:
+                - generic [ref=f1e45]:
+                  - generic [ref=f1e46]: 讲解 ／ 答疑
+                  - heading "为什么要除以4？" [level=2] [ref=f1e47]
+                - button "收起教材" [ref=f1e48] [cursor=pointer]
+              - generic [ref=f1e53]:
+                - generic [ref=f1e54]: 进入答疑 · 为什么要除以4？
+                - generic [ref=f1e57]: 我还没懂，为什么用80除以4？
+                - article [ref=f1e58]:
+                  - generic [ref=f1e59]: DeerMind
+                  - paragraph [ref=f1e63]:
+                    - text: 这里的“四分之一”，指的是
+                    - strong [ref=f1e64]: 原来80人的四分之一
+                    - text: 。
+                  - paragraph [ref=f1e65]: 把80人平均分成4份，每份就是20人。
+                  - figure "原来的人数：80人" [ref=f1e66]:
+                    - generic "80人平均分成4份，每份20人" [ref=f1e68]:
+                      - generic [ref=f1e69]: "20"
+                      - generic [ref=f1e70]: "20"
+                      - generic [ref=f1e71]: "20"
+                      - generic [ref=f1e72]: "20"
+                    - generic [ref=f1e73]:
+                      - generic [ref=f1e74]: 20人
+                      - generic [ref=f1e75]: 其中的一份
+                    - generic [ref=f1e76]: 80 ÷ 4 = 20人
+                  - paragraph [ref=f1e77]:
+                    - text: “增加四分之一”就是在原来的80人上，
+                    - strong [ref=f1e78]: 再增加这样的一份
+                    - text: 。
+                  - paragraph [ref=f1e79]: 你能说说，现在为什么要用80＋20吗？
+              - generic [ref=f1e80]:
+                - generic [ref=f1e81]:
+                  - text: 回答或继续提问
+                  - textbox "回答或继续提问" [ref=f1e82]:
+                    - /placeholder: 说说你的想法，也可以继续提问…
+                - generic [ref=f1e83]:
+                  - generic [ref=f1e84]: 答疑结束后，继续原来的讲解
+                  - button "发送（方向稿暂不发送）" [disabled] [ref=f1e85]
+            - complementary [ref=f1e88]:
+              - strong [ref=f1e90]: 教材
+              - generic [ref=f1e93]: 北师大版数学 · 六年级上册
+              - generic [ref=f1e94]:
+                - paragraph [ref=f1e95]: 第三单元
+                - heading "分数的应用（一）" [level=3] [ref=f1e96]
+                - heading "读一读，想一想" [level=4] [ref=f1e98]
+                - paragraph [ref=f1e99]: 合唱队原来有80人，今年的人数比去年增加了四分之一。今年有多少人？
+                - generic [ref=f1e100]:
+                  - generic [ref=f1e101]: 原来
+                  - strong [ref=f1e102]: 80人
+                  - generic [ref=f1e103]: 增加
+                  - strong [ref=f1e104]: 原来的四分之一
+                - paragraph [ref=f1e105]: 找一找：题目中的“四分之一”是相对于什么来说的？
+              - generic [ref=f1e106]: 教材内容示意
+    - generic [ref=f1e109]:
+      - button "上一种" [ref=f1e110] [cursor=pointer]
+      - group [ref=f1e113]:
+        - generic "1 / 2 专注阅读" [ref=f1e114] [cursor=pointer]:
+          - generic [ref=f1e115]: 1 / 2
+          - generic [ref=f1e116]: 专注阅读
+      - button "下一种" [ref=f1e119] [cursor=pointer]
+    - status [ref=f1e122]

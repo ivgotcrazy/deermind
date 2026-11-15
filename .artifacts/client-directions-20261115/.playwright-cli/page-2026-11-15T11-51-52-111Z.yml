@@ -1,0 +1,95 @@
+- iframe [active] [ref=e2]:
+  - group "DeerMind视觉方向" [ref=f1e3]:
+    - group "协作工作台" [ref=f1e213]:
+      - generic "协作工作台方向稿" [ref=f1e214]:
+        - generic [ref=f1e215]:
+          - group "预览页面" [ref=f1e216]:
+            - button "学生端" [pressed] [ref=f1e217] [cursor=pointer]
+            - button "教材助手" [ref=f1e218] [cursor=pointer]
+          - generic [ref=f1e219]: 视觉方向稿
+        - generic [ref=f1e220]:
+          - banner [ref=f1e221]:
+            - strong [ref=f1e226]: DeerMind
+            - generic [ref=f1e227]: 我的数学空间
+            - generic [ref=f1e228]: 小禾
+          - generic [ref=f1e229]:
+            - complementary [ref=f1e230]:
+              - strong [ref=f1e232]: 活动目录
+              - paragraph [ref=f1e236]: 今天
+              - generic [ref=f1e237]:
+                - time [ref=f1e238]: 09:12
+                - generic [ref=f1e239]: 聊聊今天的学习
+              - group [ref=f1e240]:
+                - generic "09:18 理解增加四分之一" [ref=f1e241] [cursor=pointer]:
+                  - time [ref=f1e242]: 09:18
+                  - generic [ref=f1e243]: 理解增加四分之一
+                - generic [ref=f1e244]:
+                  - time [ref=f1e245]: 09:21
+                  - generic [ref=f1e246]: 为什么要除以4？
+                  - generic [ref=f1e247]: 当前答疑
+              - paragraph [ref=f1e248]: 昨天
+              - generic [ref=f1e249]:
+                - time [ref=f1e250]: 16:30
+                - generic [ref=f1e251]: 生活中的分数
+            - main [ref=f1e252]:
+              - generic [ref=f1e253]:
+                - generic [ref=f1e254]:
+                  - generic [ref=f1e255]: 讲解 ／ 答疑
+                  - heading "为什么要除以4？" [level=2] [ref=f1e256]
+                - button "收起教材" [ref=f1e257] [cursor=pointer]
+              - generic [ref=f1e262]:
+                - generic [ref=f1e263]: 进入答疑 · 为什么要除以4？
+                - generic [ref=f1e266]: 我还没懂，为什么用80除以4？
+                - article [ref=f1e267]:
+                  - generic [ref=f1e268]: DeerMind
+                  - paragraph [ref=f1e272]:
+                    - text: 这里的“四分之一”，指的是
+                    - strong [ref=f1e273]: 原来80人的四分之一
+                    - text: 。
+                  - paragraph [ref=f1e274]: 把80人平均分成4份，每份就是20人。
+                  - figure "原来的人数：80人" [ref=f1e275]:
+                    - generic "80人平均分成4份，每份20人" [ref=f1e277]:
+                      - generic [ref=f1e278]: "20"
+                      - generic [ref=f1e279]: "20"
+                      - generic [ref=f1e280]: "20"
+                      - generic [ref=f1e281]: "20"
+                    - generic [ref=f1e282]:
+                      - generic [ref=f1e283]: 20人
+                      - generic [ref=f1e284]: 其中的一份
+                    - generic [ref=f1e285]: 80 ÷ 4 = 20人
+                  - paragraph [ref=f1e286]:
+                    - text: “增加四分之一”就是在原来的80人上，
+                    - strong [ref=f1e287]: 再增加这样的一份
+                    - text: 。
+                  - paragraph [ref=f1e288]: 你能说说，现在为什么要用80＋20吗？
+              - generic [ref=f1e289]:
+                - generic [ref=f1e290]:
+                  - text: 回答或继续提问
+                  - textbox "回答或继续提问" [ref=f1e291]:
+                    - /placeholder: 说说你的想法，也可以继续提问…
+                - generic [ref=f1e292]:
+                  - generic [ref=f1e293]: 答疑结束后，继续原来的讲解
+                  - button "发送（方向稿暂不发送）" [disabled] [ref=f1e294]
+            - complementary [ref=f1e297]:
+              - strong [ref=f1e299]: 教材
+              - generic [ref=f1e302]: 北师大版数学 · 六年级上册
+              - generic [ref=f1e303]:
+                - paragraph [ref=f1e304]: 第三单元
+                - heading "分数的应用（一）" [level=3] [ref=f1e305]
+                - heading "读一读，想一想" [level=4] [ref=f1e307]
+                - paragraph [ref=f1e308]: 合唱队原来有80人，今年的人数比去年增加了四分之一。今年有多少人？
+                - generic [ref=f1e309]:
+                  - generic [ref=f1e310]: 原来
+                  - strong [ref=f1e311]: 80人
+                  - generic [ref=f1e312]: 增加
+                  - strong [ref=f1e313]: 原来的四分之一
+                - paragraph [ref=f1e314]: 找一找：题目中的“四分之一”是相对于什么来说的？
+              - generic [ref=f1e315]: 教材内容示意
+    - generic [ref=f1e109]:
+      - button "上一种" [ref=f1e110] [cursor=pointer]
+      - group [ref=f1e113]:
+        - generic "2 / 2 协作工作台" [ref=f1e318] [cursor=pointer]:
+          - generic [ref=f1e115]: 2 / 2
+          - generic [ref=f1e116]: 协作工作台
+      - button "下一种" [active] [ref=f1e119] [cursor=pointer]
+    - status [ref=f1e122]: "2 / 2: 协作工作台"

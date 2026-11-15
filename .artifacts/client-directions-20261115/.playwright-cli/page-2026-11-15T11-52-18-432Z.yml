@@ -1,0 +1,77 @@
+- iframe [active] [ref=e2]:
+  - group "DeerMind视觉方向" [ref=f1e3]:
+    - group "协作工作台" [ref=f1e213]:
+      - generic "协作工作台方向稿" [ref=f1e214]:
+        - generic [ref=f1e215]:
+          - group "预览页面" [ref=f1e216]:
+            - button "学生端" [ref=f1e217] [cursor=pointer]
+            - button "教材助手" [active] [pressed] [ref=f1e218] [cursor=pointer]
+          - generic [ref=f1e219]: 视觉方向稿
+        - generic [ref=f1e319]:
+          - banner [ref=f1e320]:
+            - strong [ref=f1e325]: DeerMind
+            - generic [ref=f1e326]: 管理工作台
+            - generic [ref=f1e327]: 管理员
+          - generic [ref=f1e328]:
+            - navigation "管理员菜单" [ref=f1e329]:
+              - generic [ref=f1e330]: 教材管理
+              - generic [ref=f1e333]: 领域管理
+              - generic [ref=f1e339]: 评估管理
+              - generic [ref=f1e344]: 目标管理
+              - generic [ref=f1e349]: 交互活动
+              - generic [ref=f1e353]: 学习空间
+            - main [ref=f1e357]:
+              - generic [ref=f1e358]:
+                - generic [ref=f1e359]:
+                  - paragraph [ref=f1e360]: 教材管理 / 分数的应用（一）
+                  - heading "北师大版数学六年级上册" [level=2] [ref=f1e361]
+                - generic [ref=f1e362]: 小学数学
+              - generic [ref=f1e363]:
+                - strong [ref=f1e364]: 教材助手
+                - generic [ref=f1e365]: 解析内容
+                - generic [ref=f1e366]: 章节关联
+              - generic [ref=f1e367]:
+                - region "教材助手对话" [ref=f1e368]:
+                  - generic [ref=f1e369]: 教材助手
+                  - paragraph [ref=f1e373]: 已找到这道例题的题目和解法。题目与解法分别核对，可以只提交题目入库。
+                  - generic [ref=f1e374]: 增加的应该是原来的四分之一，帮我核对这处。
+                  - generic [ref=f1e375]: 引用：合唱队人数题目中的数量关系
+                  - paragraph [ref=f1e380]: 已按这条关系修正候选：原有80人，增加20人。右侧可以分别查看题面和解法。
+                  - generic [ref=f1e381]:
+                    - generic [ref=f1e382]:
+                      - text: 告诉教材助手如何修正
+                      - textbox "告诉教材助手如何修正" [ref=f1e383]:
+                        - /placeholder: 指出哪里不对，或引用内容继续核对…
+                    - generic [ref=f1e384]:
+                      - generic [ref=f1e385]: 候选核对中
+                      - button "发送（方向稿暂不发送）" [disabled] [ref=f1e386]
+                - region "核对候选" [ref=f1e389]:
+                  - generic [ref=f1e390]:
+                    - heading "核对候选" [level=3] [ref=f1e391]
+                    - generic [ref=f1e392]: 待采用
+                  - paragraph [ref=f1e393]: 分数的应用（一） / 合唱队人数
+                  - generic [ref=f1e394]:
+                    - text: 题目
+                    - heading "合唱队人数" [level=4] [ref=f1e395]
+                    - paragraph [ref=f1e396]: 合唱队原来有80人，今年的人数比去年增加了四分之一。今年有多少人？
+                    - generic [ref=f1e397]:
+                      - generic [ref=f1e398]: 原有人数
+                      - strong [ref=f1e399]: 80人
+                      - generic [ref=f1e400]: 增加比例
+                      - strong [ref=f1e401]: 1/4
+                  - generic [ref=f1e402]:
+                    - text: 教材原有解法
+                    - heading "先求增加人数，再求总人数" [level=4] [ref=f1e403]
+                    - generic [ref=f1e404]: 80 × 1/4 = 20（人）80 ＋ 20 = 100（人）
+                    - paragraph [ref=f1e405]: 对应题目：合唱队人数
+                  - generic [ref=f1e406]:
+                    - generic [ref=f1e407]: 采用后更新教材解析内容
+                    - button "采用结果" [disabled] [ref=f1e408]
+    - generic [ref=f1e109]:
+      - button "上一种" [ref=f1e110] [cursor=pointer]
+      - group [ref=f1e113]:
+        - generic "2 / 2 协作工作台" [ref=f1e318] [cursor=pointer]:
+          - generic [ref=f1e115]: 2 / 2
+          - generic [ref=f1e116]: 协作工作台
+      - button "下一种" [ref=f1e119] [cursor=pointer]
+    - status [ref=f1e122]: "2 / 2: 协作工作台"

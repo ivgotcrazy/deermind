@@ -1,0 +1,133 @@
+
+#deermind-directions .dm-preview {--dm-bg:light-dark(#f3f6fb,#171c29);--dm-surface:light-dark(#ffffff,#202737);--dm-ink:light-dark(#1c2b45,#e9effc);--dm-muted:light-dark(#53647a,#b0bfd5);--dm-line:light-dark(#dfe6f0,#3b475c);--dm-accent:light-dark(#3155a5,#9bb9ff);--dm-tint:light-dark(#eaf0fc,#293c60);--dm-on-accent:light-dark(#ffffff,#14233b);--dm-reading-size:15px;font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--dm-ink);font-size:13px;line-height:1.65;min-height:755px;}
+#deermind-directions *,#deermind-directions *::before,#deermind-directions *::after {box-sizing:border-box;}
+#deermind-directions [hidden] {display:none!important;}
+#deermind-directions .dm-preview-toolbar {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;padding-right:94px;color:var(--dm-muted);font-size:12px;}
+#deermind-directions .dm-view-switch {display:flex;gap:6px;}
+#deermind-directions button {font:inherit;cursor:pointer;}
+#deermind-directions button:focus-visible,#deermind-directions summary:focus-visible {outline:3px solid var(--dm-accent);outline-offset:3px;}
+#deermind-directions .dm-view-switch button {border:1px solid var(--dm-line);border-radius:6px;background:var(--dm-surface);color:var(--dm-ink);padding:7px 14px;}
+#deermind-directions .dm-view-switch button[aria-pressed="true"] {background:var(--dm-accent);border-color:var(--dm-accent);color:var(--dm-on-accent);}
+#deermind-directions h2,#deermind-directions h3,#deermind-directions h4,#deermind-directions p,#deermind-directions figure {margin:0;}
+#deermind-directions h2 {font-size:18px;line-height:1.5;font-weight:600;}
+#deermind-directions h3 {font-size:17px;font-weight:600;}
+#deermind-directions h4 {font-size:14px;font-weight:600;}
+#deermind-directions svg {width:17px;height:17px;flex-shrink:0;}
+#deermind-directions .dm-window {border:1px solid var(--dm-line);border-radius:12px;overflow:hidden;background:var(--dm-surface);}
+#deermind-directions .dm-topbar {display:flex;align-items:center;gap:22px;min-height:60px;padding:12px 22px;border-bottom:1px solid var(--dm-line);}
+#deermind-directions .dm-brand {display:flex;align-items:center;gap:9px;color:var(--dm-accent);font-size:19px;letter-spacing:-.6px;}
+#deermind-directions .dm-brand svg {width:24px;height:24px;}
+#deermind-directions .dm-space-name {color:var(--dm-muted);}
+#deermind-directions .dm-profile {margin-left:auto;background:var(--dm-tint);color:var(--dm-accent);padding:5px 10px;border-radius:6px;font-size:12px;white-space:nowrap;}
+#deermind-directions .dm-student-grid {display:grid;grid-template-columns:150px minmax(0,1fr) 245px;min-height:645px;}
+#deermind-directions .dm-activity {padding:21px 14px;background:var(--dm-bg);border-right:1px solid var(--dm-line);font-size:12px;}
+#deermind-directions .dm-pane-title {display:flex;justify-content:space-between;align-items:center;gap:8px;}
+#deermind-directions .dm-pane-title strong {font-size:13px;font-weight:600;}
+#deermind-directions .dm-day {font-size:11px;color:var(--dm-muted);margin:26px 0 12px;}
+#deermind-directions .dm-history-item {display:grid;gap:3px;margin-bottom:16px;}
+#deermind-directions time {font-size:11px;color:var(--dm-muted);font-variant-numeric:tabular-nums;}
+#deermind-directions summary {cursor:pointer;}
+#deermind-directions summary span {display:block;margin:4px 0 12px;}
+#deermind-directions .dm-current-activity {border-left:2px solid var(--dm-accent);padding:7px 9px;background:var(--dm-tint);display:grid;gap:3px;}
+#deermind-directions small {font-size:11px;}
+#deermind-directions .dm-current-activity small {color:var(--dm-accent);}
+#deermind-directions .dm-earlier {margin-top:44px;}
+#deermind-directions .dm-conversation {padding:20px 24px;display:flex;flex-direction:column;min-width:0;}
+#deermind-directions .dm-chat-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:17px;border-bottom:1px solid var(--dm-line);}
+#deermind-directions .dm-path {font-size:11px;color:var(--dm-accent);margin-bottom:5px;}
+#deermind-directions .dm-path span {margin:0 6px;color:var(--dm-muted);}
+#deermind-directions .dm-quiet {border:0;background:none;color:var(--dm-muted);display:flex;gap:5px;align-items:center;font-size:11px;padding:7px 0;white-space:nowrap;}
+#deermind-directions .dm-messages {padding:20px 0 18px;flex:1;font-size:var(--dm-reading-size);}
+#deermind-directions .dm-flow-marker {display:flex;align-items:center;gap:10px;color:var(--dm-muted);font-size:11px;margin-bottom:20px;}
+#deermind-directions .dm-flow-marker span {height:1px;background:var(--dm-line);flex:1;}
+#deermind-directions .dm-user-message {background:var(--dm-tint);padding:10px 14px;border-radius:10px 10px 2px 10px;margin-left:auto;width:fit-content;max-width:95%;font-size:13px;margin-bottom:20px;}
+#deermind-directions .dm-speaker {display:flex;gap:7px;align-items:center;font-weight:600;color:var(--dm-accent);font-size:12px;margin-bottom:14px;}
+#deermind-directions .dm-assistant-message p {margin-bottom:12px;line-height:1.95;}
+#deermind-directions .dm-math-figure {padding:18px 0;margin:14px 0 16px;max-width:360px;}
+#deermind-directions figcaption {font-size:12px;margin-bottom:12px;color:var(--dm-muted);}
+#deermind-directions .dm-fraction-bar {display:grid;grid-template-columns:repeat(4,1fr);gap:3px;}
+#deermind-directions .dm-fraction-bar span {display:flex;align-items:center;justify-content:center;height:31px;background:var(--dm-tint);font-size:12px;}
+#deermind-directions .dm-fraction-bar span:first-child {background:var(--dm-accent);color:var(--dm-on-accent);}
+#deermind-directions .dm-one-part {display:flex;gap:14px;align-items:center;font-size:12px;margin-top:9px;}
+#deermind-directions .dm-one-part>span {width:calc(25% - 2px);border-top:2px solid var(--dm-accent);padding-top:6px;text-align:center;color:var(--dm-accent);}
+#deermind-directions .dm-one-part small {color:var(--dm-muted);}
+#deermind-directions .dm-equation {font-size:23px;font-variant-numeric:tabular-nums;letter-spacing:.5px;padding-top:14px;}
+#deermind-directions .dm-equation>span {font-size:12px;margin-left:8px;color:var(--dm-muted);}
+#deermind-directions .dm-question {font-weight:500;}
+#deermind-directions .dm-composer {border:1px solid var(--dm-line);border-radius:10px;padding:12px 13px;background:var(--dm-surface);}
+#deermind-directions .dm-hidden-label {font-size:0;display:block;}
+#deermind-directions textarea {display:block;width:100%;min-height:38px;border:0;resize:none;font:13px/1.6 "Segoe UI","Microsoft YaHei",sans-serif;color:var(--dm-ink);background:transparent;}
+#deermind-directions textarea::placeholder {color:var(--dm-muted);}
+#deermind-directions .dm-composer-bottom {display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;color:var(--dm-muted);}
+#deermind-directions .dm-primary {background:var(--dm-accent);color:var(--dm-on-accent);border:0;border-radius:6px;min-height:32px;padding:7px 12px;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;font-size:12px;}
+#deermind-directions button:disabled {cursor:default;}
+#deermind-directions .dm-book {background:var(--dm-bg);padding:21px 18px;border-left:1px solid var(--dm-line);}
+#deermind-directions .dm-book-meta {font-size:11px;color:var(--dm-muted);margin:19px 0;}
+#deermind-directions .dm-book-page {background:var(--dm-surface);padding:22px 19px 25px;min-height:405px;}
+#deermind-directions .dm-chapter-no {font-size:11px;color:var(--dm-muted);margin-bottom:7px;}
+#deermind-directions .dm-book-page h3 {font-family:"Noto Serif SC","Songti SC",SimSun,serif;font-size:20px;line-height:1.6;}
+#deermind-directions .dm-page-rule {width:26px;height:3px;background:var(--dm-accent);margin:18px 0 25px;}
+#deermind-directions .dm-book-page h4 {margin-bottom:12px;}
+#deermind-directions .dm-book-page>p:not(.dm-chapter-no) {font-size:13px;line-height:2;}
+#deermind-directions .dm-book-notes {display:grid;grid-template-columns:34px 1fr;gap:10px;margin:24px 0;font-size:12px;}
+#deermind-directions .dm-book-notes span {color:var(--dm-muted);}
+#deermind-directions .dm-book-notes strong {font-weight:500;}
+#deermind-directions .dm-book-hint {color:var(--dm-muted);padding-top:18px;border-top:1px solid var(--dm-line);}
+#deermind-directions .dm-page-footer {margin-top:16px;display:flex;gap:7px;align-items:center;color:var(--dm-muted);font-size:11px;}
+#deermind-directions .dm-student-grid.dm-book-hidden {grid-template-columns:150px minmax(0,1fr);}
+#deermind-directions .dm-book-hidden .dm-book {display:none;}
+#deermind-directions .dm-admin-layout {min-height:645px;}
+#deermind-directions .dm-admin-nav {display:flex;gap:22px;padding:0 24px;border-bottom:1px solid var(--dm-line);overflow-wrap:anywhere;}
+#deermind-directions .dm-admin-nav>span {display:flex;align-items:center;gap:7px;padding:14px 0;font-size:12px;color:var(--dm-muted);}
+#deermind-directions .dm-admin-nav .dm-nav-selected {color:var(--dm-accent);border-bottom:2px solid var(--dm-accent);}
+#deermind-directions .dm-admin-main {padding:24px;min-width:0;}
+#deermind-directions .dm-admin-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;}
+#deermind-directions .dm-breadcrumb {font-size:11px;color:var(--dm-muted);margin-bottom:8px;}
+#deermind-directions .dm-domain-tag {font-size:11px;padding:4px 8px;background:var(--dm-tint);color:var(--dm-accent);border-radius:4px;white-space:nowrap;}
+#deermind-directions .dm-admin-tabs {display:flex;gap:26px;border-bottom:1px solid var(--dm-line);margin-top:16px;font-size:12px;color:var(--dm-muted);}
+#deermind-directions .dm-admin-tabs>* {padding:12px 0;}
+#deermind-directions .dm-admin-tabs strong {border-bottom:2px solid var(--dm-accent);color:var(--dm-accent);font-weight:500;}
+#deermind-directions .dm-assistant-workspace {display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:36px;padding-top:24px;}
+#deermind-directions .dm-material-chat {display:flex;flex-direction:column;gap:18px;min-width:0;}
+#deermind-directions .dm-material-chat .dm-speaker {margin-bottom:0;}
+#deermind-directions .dm-material-chat p {font-size:14px;line-height:1.9;}
+#deermind-directions .dm-material-chat .dm-user-message {margin:2px 0 0 auto;}
+#deermind-directions .dm-source-quote {display:flex;align-items:center;gap:10px;border-left:3px solid var(--dm-accent);background:var(--dm-bg);padding:10px 12px;font-size:12px;}
+#deermind-directions .dm-source-quote small {color:var(--dm-muted);}
+#deermind-directions .dm-admin-composer {margin-top:auto;}
+#deermind-directions .dm-candidate {border-left:1px solid var(--dm-line);padding-left:24px;}
+#deermind-directions .dm-candidate-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;}
+#deermind-directions .dm-status {font-size:11px;background:var(--dm-tint);color:var(--dm-accent);padding:3px 8px;border-radius:4px;}
+#deermind-directions .dm-small {font-size:11px!important;color:var(--dm-muted);margin-top:7px;}
+#deermind-directions .dm-candidate-part {padding:19px 0;border-bottom:1px solid var(--dm-line);}
+#deermind-directions .dm-part-kind {font-size:11px;color:var(--dm-accent);}
+#deermind-directions .dm-candidate-part h4 {margin:7px 0 10px;}
+#deermind-directions .dm-candidate-part p {font-size:13px;line-height:1.9;}
+#deermind-directions .dm-relation {display:grid;grid-template-columns:70px 1fr;gap:7px;font-size:12px;margin-top:14px;}
+#deermind-directions .dm-relation span {color:var(--dm-muted);}
+#deermind-directions .dm-relation strong {font-weight:500;}
+#deermind-directions .dm-calculation {font-size:16px;line-height:2;}
+#deermind-directions .dm-candidate-footer {display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:18px;font-size:11px;color:var(--dm-muted);}
+@media(prefers-reduced-motion:reduce){#deermind-directions *{scroll-behavior:auto;transition:none;animation:none;}}
+body{margin:0;padding:20px;background:#f5f7fb;color:#1c2b45;font-family:"Segoe UI","Microsoft YaHei",sans-serif;color-scheme:light}
+#deermind-directions{max-width:1480px;margin:auto}#deermind-directions .dm-preview{min-height:0}
+#deermind-directions .dm-preview-toolbar{padding-right:0;flex-wrap:wrap}#deermind-directions .dm-window{background:#fff}
+#deermind-directions .dm-student-grid{grid-template-columns:185px minmax(0,1fr) 300px}
+#deermind-directions .dm-messages{min-height:410px;max-height:560px;overflow:auto;scroll-behavior:smooth;padding-right:10px}
+#deermind-directions .dm-conversation{padding:22px 30px}#deermind-directions .dm-assistant-message p{font-size:16px}
+#deermind-directions .dm-chat-heading{flex-wrap:wrap}#deermind-directions .dm-chat-heading>div{flex:1}
+#deermind-directions .dm-primary:disabled{opacity:.5}#deermind-directions textarea:focus-visible{outline:2px solid #3155a5;outline-offset:4px}
+#deermind-directions button:not(.dm-primary):not(.dm-quiet):not([data-view]){background:white;border:1px solid #ccd7e7;color:#3155a5;border-radius:6px;padding:7px 11px}
+.sample-actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.sample-state select{font:inherit;padding:6px;border:1px solid #ccd7e7;border-radius:5px;margin-left:8px;background:white;color:#1c2b45}
+.sample-status{margin:16px 0;padding:18px;background:#eff3fa;border-radius:8px;color:#34517d;font-size:14px}.sample-status button{margin:10px 10px 0 0}
+#deermind-directions .no-directory{grid-template-columns:minmax(0,1fr) 300px}#deermind-directions .no-directory.dm-book-hidden{grid-template-columns:1fr}
+#deermind-directions .dm-student-grid.no-chat{grid-template-columns:185px minmax(0,1fr)}#deermind-directions .no-chat.no-directory{grid-template-columns:1fr}
+.no-directory .dm-activity,.no-chat .dm-conversation{display:none!important}.no-chat .dm-book{display:block!important}
+#deermind-directions .dm-admin-composer{margin-top:20px}#deermind-directions .dm-material-chat{max-height:630px;overflow:auto}
+#deermind-directions .dm-history-item button{font-size:12px!important;text-align:left;padding:0!important;background:transparent!important;border:0!important;color:inherit!important}
+.round-card{border:1px solid #ccd7e7;border-radius:8px;padding:18px;margin:18px 0;font-size:14px}.round-card p{margin:8px 0!important}.round-card textarea{border:1px solid #ccd7e7!important;margin:12px 0;min-height:75px!important;padding:10px}.round-card button{margin:5px 8px 0 0}
+@media(max-width:1050px){body{padding:12px}#deermind-directions .dm-student-grid{grid-template-columns:150px minmax(0,1fr) 230px}#deermind-directions .dm-conversation{padding:16px}#deermind-directions .dm-admin-nav{flex-wrap:wrap;gap:14px}}
+@media(max-width:730px){#deermind-directions .dm-student-grid{display:flex;flex-direction:column}#deermind-directions .dm-activity{border-right:0}#deermind-directions .dm-activity details{display:block}#deermind-directions .dm-earlier,#deermind-directions .dm-activity>.dm-history-item{display:none}#deermind-directions .dm-assistant-workspace{grid-template-columns:1fr}#deermind-directions .dm-candidate{border-left:0;padding-left:0}#deermind-directions .dm-topbar{gap:12px;flex-wrap:wrap}#deermind-directions .dm-admin-heading{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){#deermind-directions .dm-messages{scroll-behavior:auto}}
+
+.sample-history-entry{padding:8px 0;color:#53647a;font-size:12px;border-bottom:1px solid #dfe6f0;margin-bottom:16px}

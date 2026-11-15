@@ -1,0 +1,10 @@
+{
+  "documents": 4,
+  "local_links": 505,
+  "skills": {
+    "frontend-design": true,
+    "shadcn-vue": true,
+    "playwright": true
+  },
+  "errors": []
+}
