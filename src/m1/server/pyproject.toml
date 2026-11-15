@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling==1.33.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deermind"
+version = "0.1.0"
+description = "DeerMind M1 application"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+  "fastapi==0.163.0",
+  "uvicorn==0.54.0",
+  "pydantic==2.14.3",
+  "temporalio==1.36.1",
+]
+
+[project.scripts]
+deermind-api = "deermind.entrypoints.api.app:main"
+deermind-worker = "deermind.entrypoints.worker.main:main"
+deermind-probe = "deermind.entrypoints.maintenance.probe:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/deermind"]
+
+[tool.uv]
+required-version = "==0.13.8"

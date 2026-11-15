@@ -1,0 +1,4 @@
+{
+  "extends": "../quality/tsconfig.base.json",
+  "include": ["src/**/*.ts", "src/**/*.vue", "env.d.ts", "vite.config.ts"]
+}

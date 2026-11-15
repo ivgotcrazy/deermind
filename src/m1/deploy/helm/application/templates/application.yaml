@@ -1,0 +1,171 @@
+{{- if not .Values.initializeNamespace }}
+{{- $root := . }}
+{{- range $component := list "api" "worker" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $root.Release.Name }}-{{ $component }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ $root.Release.Name }}
+      app.kubernetes.io/component: {{ $component }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: {{ $root.Release.Name }}
+        app.kubernetes.io/component: {{ $component }}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {{ $root.Values.nodeSelector | toJson }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: {{ $component }}
+          image: {{ required "server image is required" $root.Values.images.server | quote }}
+          imagePullPolicy: IfNotPresent
+          command: [{{ printf "deermind-%s" $component | quote }}]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          env:
+            - name: M1_FILES_ROOT
+              value: /data/files
+            - name: M1_TEMPORAL_ADDRESS
+              value: {{ required "Temporal address is required" $root.Values.temporal.address | quote }}
+            - name: M1_TEMPORAL_NAMESPACE
+              value: {{ required "Temporal namespace is required" $root.Values.temporal.namespace | quote }}
+            - name: M1_TASK_QUEUE
+              value: {{ required "Task Queue is required" $root.Values.temporal.taskQueue | quote }}
+          resources: {{ index $root.Values.resources $component | toJson }}
+          volumeMounts:
+            - name: files
+              mountPath: /data/files
+            - name: tmp
+              mountPath: /tmp
+          {{- if eq $component "api" }}
+          ports:
+            - name: http
+              containerPort: 8000
+          startupProbe:
+            httpGet: {path: /health/live, port: http}
+            periodSeconds: 5
+            failureThreshold: 24
+          readinessProbe:
+            httpGet: {path: /health/ready, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health/live, port: http}
+            periodSeconds: 10
+          {{- else }}
+          readinessProbe:
+            exec:
+              command: ["test", "-f", "/tmp/deermind-worker-ready"]
+            periodSeconds: 5
+          {{- end }}
+      volumes:
+        - name: files
+          persistentVolumeClaim:
+            claimName: {{ required "Existing files PVC is required" $root.Values.filesClaim | quote }}
+        - name: tmp
+          emptyDir: {}
+---
+{{- end }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-api
+spec:
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: api
+  ports:
+    - port: 8000
+      targetPort: http
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-nginx
+data:
+  nginx.conf: |
+{{ tpl (.Files.Get "files/nginx.conf") . | indent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-client
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: client
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: client
+      annotations:
+        config-checksum: {{ tpl (.Files.Get "files/nginx.conf") . | sha256sum | quote }}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {{ .Values.nodeSelector | toJson }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+      containers:
+        - name: client
+          image: {{ required "client image is required" .Values.images.client | quote }}
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources: {{ .Values.resources.client | toJson }}
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet: {path: /health/live, port: http}
+          livenessProbe:
+            httpGet: {path: /health/live, port: http}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-nginx
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-client
+spec:
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: client
+  ports:
+    - port: 8080
+      targetPort: http
+{{- end }}

@@ -1,0 +1,31 @@
+"""Explicit worker assembly; the SDK rejects duplicate workflow/activity names."""
+
+from concurrent.futures import ThreadPoolExecutor
+
+from deermind.bootstrap.settings import Settings
+from deermind.infrastructure.temporal.probe import StorageProbe
+from deermind.infrastructure.temporal.probe_activity import ProbeActivity
+from temporalio.client import Client
+from temporalio.worker import PollerBehaviorSimpleMaximum, Worker
+
+
+def create_worker(
+    client: Client,
+    settings: Settings,
+    workflow_executor: ThreadPoolExecutor,
+    activity_executor: ThreadPoolExecutor,
+) -> Worker:
+    """Register only the startup probe; business registration arrives with its increment."""
+    return Worker(
+        client,
+        task_queue=settings.task_queue,
+        workflows=[StorageProbe],
+        activities=[ProbeActivity(settings.files_root).reply],
+        max_concurrent_workflow_tasks=2,
+        max_concurrent_activities=4,
+        max_cached_workflows=8,
+        workflow_task_executor=workflow_executor,
+        activity_executor=activity_executor,
+        workflow_task_poller_behavior=PollerBehaviorSimpleMaximum(maximum=2),
+        activity_task_poller_behavior=PollerBehaviorSimpleMaximum(maximum=2),
+    )

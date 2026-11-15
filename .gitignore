@@ -49,6 +49,7 @@ env/
 .output/
 .cache/
 .eslintcache
+.playwright-cli/
 
 # ================= 其他 =================
 *.orig

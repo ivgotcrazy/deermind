@@ -1,14 +1,14 @@
 # MVP 决定承接与工作记录
 
-> **版本**：v0.105<br>
+> **版本**：v0.106<br>
 > **文档性质**：新MVP目录的决定、待决和变更登记<br>
 > **状态**：已进入小增量工程实现；进度与待确认项见实施计划<br>
-> **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；已推进至E01-02工程实现；未修改产品规则或历史原型<br>
+> **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；已推进至E01-03工程实现；未修改产品规则或历史原型<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
 > **评审记录**：小增量规则见§101；编程规范与整改见§107；日志格式补齐见§108；规范完善与重新整改见§109<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.104 → v0.105，登记业界规范与可读性整改；不推进E01-03，见§109<br>
+> **修订说明**：v0.105 → v0.106，登记E01-03依赖、资源和应用接线；见§110<br>
 
 ---
 
@@ -3264,3 +3264,22 @@ M1-DEC-086：用户确认M1继续用schema划分模块数据，数据库拆分�
 | m1/engineering/Delivery_Plan.md | v0.63 → v0.64 |
 | m1/engineering/README.md | v0.87 → v0.88 |
 | DECISIONS.md | v0.104 → v0.105 |
+
+
+## 110. E01-03应用骨架与接线
+
+用户确认本增量使用工程候选中的Python/FastAPI/Pydantic/Temporal SDK及Vue/TypeScript/Vite版本；采用uv、Hatchling、Nginx和按需BuildKit。具体版本、hash和复核命令归[应用交付说明](../../src/m1/deploy/environments/local-wsl/application.md)，工程职责归基础设施和源码分册。
+
+API、应用Worker和前端各一副本，接收其候选CPU／内存限额；继续同节点共享既有PVC。Temporal namespace为`dm-local-wsl`，队列为`dm.local-wsl.application`，Workflow任务并发2、Activity并发4。拉取、缓存和线程池按W02候选接线，随本增量评审；不因此批准事件、业务数据库、AI调用等后续参数。
+
+交付可安装后端包、分开的API/Worker入口、Vue两个独立入口、镜像/Helm及测试。测试任务验证真实队列执行和共享卷，不构成新Operation，也不实现业务事实、AI或恢复处理。应用进度只在实施计划维护；用户评审前不标完成，不推进E01-04。
+
+| 文档 | 版本 |
+| :--- | :--- |
+| Infrastructure_and_Deployment_Design.md | v0.46 → v0.47 |
+| System_Foundation_Design.md | v0.50 → v0.51 |
+| Source_Organization.md | v0.5 → v0.6 |
+| Coding_Standard.md | v0.3 → v0.4 |
+| Delivery_Plan.md | v0.64 → v0.65 |
+| engineering/README.md | v0.88 → v0.89 |
+| DECISIONS.md | v0.105 → v0.106 |

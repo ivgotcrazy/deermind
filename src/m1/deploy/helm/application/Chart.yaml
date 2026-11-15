@@ -1,0 +1,6 @@
+apiVersion: v2
+name: deermind-application
+description: DeerMind API, shared Worker and browser entries
+type: application
+version: 0.1.0
+appVersion: 0.1.0

@@ -1,5 +1,6 @@
 .artifacts/
 **/node_modules/
+**/.venv/
 **/generated/
 **/dist/
 **/package-lock.json

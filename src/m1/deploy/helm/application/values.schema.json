@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["images", "filesClaim", "temporal", "nodeSelector", "resources"],
+  "properties": {
+    "images": {
+      "type": "object",
+      "required": ["server", "client"],
+      "properties": {
+        "server": {
+          "type": "string",
+          "minLength": 1
+        },
+        "client": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "filesClaim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nodeSelector": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "temporal": {
+      "type": "object",
+      "required": ["address", "namespace", "taskQueue"],
+      "properties": {
+        "address": {
+          "type": "string",
+          "minLength": 1
+        },
+        "namespace": {
+          "type": "string",
+          "minLength": 1
+        },
+        "taskQueue": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "resources": {
+      "type": "object",
+      "required": ["api", "worker", "client"],
+      "additionalProperties": {
+        "type": "object",
+        "required": ["requests", "limits"],
+        "properties": {
+          "requests": {
+            "type": "object",
+            "required": ["cpu", "memory"],
+            "properties": {
+              "cpu": {
+                "type": "string",
+                "minLength": 1
+              },
+              "memory": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "limits": {
+            "type": "object",
+            "required": ["cpu", "memory"],
+            "properties": {
+              "cpu": {
+                "type": "string",
+                "minLength": 1
+              },
+              "memory": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "initializeNamespace": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

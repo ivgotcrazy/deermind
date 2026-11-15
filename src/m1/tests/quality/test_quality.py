@@ -122,6 +122,12 @@ class QualityTests(unittest.TestCase):
 
     def test_python_module_boundaries(self) -> None:
         cases = [
+            ("deermind.infrastructure.files.store", "import deermind.product.ports", False),
+            ("deermind.infrastructure.files.store", "import deermind.product.public", False),
+            ("deermind.entrypoints.api.routes", "import deermind.product.persistence", True),
+            ("deermind.infrastructure.files.store", "import deermind.bootstrap.settings", True),
+            ("deermind.product.targets.save", "import deermind.entrypoints.api", True),
+            ("deermind.bootstrap.services", "import deermind.product.targets.save", False),
             (
                 "deermind.foundation.events.store",
                 "from deermind.spaces.domain.public import Task",

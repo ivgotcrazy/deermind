@@ -11,12 +11,18 @@ check_sources() {
   pyright --project pyrightconfig.json
   python3 quality/check_boundaries.py
 
+  if [[ -d server/src ]]; then
+    ruff check server/src server/tests
+    ruff format --check server/src server/tests
+    pyright --project server/pyrightconfig.json
+  fi
+
   local shells=()
   mapfile -d '' shells < <(find scripts -type f -name '*.sh' -print0)
   shellcheck --shell=bash "${shells[@]}"
   shfmt -d -i 2 -ci "${shells[@]}"
 
-  prettier --check '**/*.{json,yaml,yml,mjs,ts,vue}'
+  prettier --check '**/*.{json,yaml,yml,mjs,ts,vue,css,html}'
   eslint --config quality/eslint.config.mjs quality --max-warnings 0
 
   # Helm 模板不是普通 YAML；此处跳过，渲染后再检查。
@@ -73,6 +79,14 @@ check_charts() {
       --no-hooks --skip-tests "${extra[@]}" |
       yamllint -s -d '{rules: {key-duplicates: enable}}' -
   done
+
+  if [[ -d deploy/helm/application ]]; then
+    "${helm_command[@]}" lint deploy/helm/application \
+      -f deploy/environments/local-wsl/application.values.yaml
+    "${helm_command[@]}" template deermind-app deploy/helm/application \
+      -f deploy/environments/local-wsl/application.values.yaml |
+      yamllint -s -d '{rules: {key-duplicates: enable}}' -
+  fi
 }
 
 # 存在客户端时必须有真实 tsconfig；不能静默跳过已建立的应用。

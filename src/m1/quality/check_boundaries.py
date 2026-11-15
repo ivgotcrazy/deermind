@@ -15,6 +15,22 @@ def owner(module: str) -> str:
 
 
 def violation(source: str, target: str) -> str | None:
+    if source.startswith(("deermind.foundation.", "deermind.infrastructure.")):
+        if target.startswith(("deermind.bootstrap", "deermind.entrypoints")):
+            return "底座与技术适配不能反向导入装配或入口"
+    if source.startswith(BUSINESS):
+        if target.startswith(("deermind.bootstrap", "deermind.entrypoints")):
+            return "业务模块不能反向导入装配或入口"
+    if source.startswith("deermind.entrypoints.") and target.startswith(BUSINESS):
+        if ".public." not in target and not target.endswith(".public"):
+            return "入口只能通过业务公开合同访问业务模块"
+    if source.startswith("deermind.infrastructure.") and target.startswith(BUSINESS):
+        if (
+            ".ports." not in target
+            and ".public." not in target
+            and not target.endswith((".ports", ".public"))
+        ):
+            return "技术适配只能依赖业务端口或公开合同"
     if source.startswith("deermind.foundation.") and target.startswith(BUSINESS):
         return "foundation不能导入业务模块"
     if source.startswith(BUSINESS) and target.startswith(BUSINESS):

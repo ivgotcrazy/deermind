@@ -6,7 +6,7 @@
 
 | 工具 | 固定版本/位置 |
 | :--- | :--- |
-| Node / npm | 24.22.3 / 11.19.1，仅作为检查工具运行环境 |
+| Node / npm | 24.22.3 / 11.19.1，E01-03同时用于正式客户端构建 |
 | Ruff / yamllint | 0.17.5 / 1.38.0；Python直接和传递依赖见`requirements.txt` |
 | ShellCheck / shfmt | 0.9.0 / 3.8.0；本次Ubuntu包分别为`0.9.0-1`、`3.8.0-1` |
 | Pyright、ESLint、Prettier、Vue/TS检查依赖 | 精确版本见`package.json`，传递依赖及完整性值见`package-lock.json` |
@@ -34,7 +34,7 @@ bash scripts/test.sh local
 
 `check.sh`只检查，不修改代码。包含Python/TS/脚本/配置的静态检查与离线Helm渲染；普通格式检查忽略模板、生成物、依赖缓存及历史文档。模板渲染后检查YAML，真实Kubernetes验证仍由组件测试承担。官方Chart缓存默认沿E01-02路径，也可显式传`M1_CHART_CACHE`；缺缓存或工具时报错。
 
-`local`测试使用临时正反样例验证检查器确实能拒绝错误，并运行E01-01本地测试。不会访问集群。前端只验证规则和样例，未创建正式客户端；真实前后端源码建立后再接入相应构建、类型和依赖测试。
+`local`测试使用临时正反样例验证检查器确实能拒绝错误，并运行E01-01本地测试。不会访问集群。E01-03已接入正式后端严格类型和单元测试、客户端Vue/TS检查、实际模块边界检查；集群应用测试须显式选application。
 
 需要显式格式化时，执行对应工具而非绕过检查：
 
@@ -103,3 +103,10 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 首次组件回归中，Temporal启动探测工作流超时；同一时段日志显示PG重启后数据库连接超时。未放宽断言、时限或资源配置，连接恢复后单项复测及整组复测通过。首次失败保留在`component-tests.txt`，单项结果在`temporal-recheck.txt`。这说明本机短暂恢复窗口仍需关注，不能把复测通过当成恢复时延或100人容量已达标。
 
 本轮整改包括函数类型标注、格式和导入、Shell参数校验写法，以及自有Chart的values Schema。没有创建API、Worker或客户端，未推进E01-03；规则样例不代替实际应用验证。E01-01/02保持待用户评审。
+
+
+## E01-03应用接入
+
+`check.sh`新增server严格类型检查、客户端检查和应用Chart渲染。通用脚本仍使用quality环境；依赖应用包的OpenAPI导出与SDK夹具由server配置检查。`.venv`、产物和锁文件不做通用格式扫描。
+
+`test.sh local`另运行后端单元测试；`test.sh application`要求显式kubeconfig、context、namespace和`M1_APPLICATION_RELEASE`，只验证本轮应用，不重启E01-02基础组件。用例、实测及限制归[应用交付说明](../deploy/environments/local-wsl/application.md)。

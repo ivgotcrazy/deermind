@@ -1,11 +1,11 @@
 # M1 基础设施与部署设计
 
-> **版本**：v0.46<br>
+> **版本**：v0.47<br>
 > **状态**：E01-02基础组件已实施；其余候选与进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.45 → v0.46，统一引用应用日志格式和示例，保留原生组件日志边界，见决定登记§108<br>
+> **修订说明**：v0.46 → v0.47，登记E01-03应用依赖、资源和执行队列接线，见决定登记§110<br>
 
 本文确定计算资源、存储、外部服务连接、网络和部署运维的实现方式，将总体架构落实为可启动和可恢复的运行环境。业务字段及规则留在所属模块，本文维护技术适配和运行配置；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -299,7 +299,7 @@ collector保存技术失败记录后才确认，不生成新的学习空间事�
 
 ### 4.4 共享Worker与Temporal队列
 
-用户确认首轮一个应用Worker进程、一个共享逻辑Task Queue；API独立运行。Worker执行9项AI能力及普通后台工作，各Space的代码和数据所有权不变。表中物理名称为待审候选，不以环境默认值代替。
+用户确认首轮一个应用Worker进程、一个共享逻辑Task Queue；API独立运行。Worker执行9项AI能力及普通后台工作，各Space的代码和数据所有权不变。E01-03已确认本机namespace为`dm-local-wsl`、逻辑队列为`dm.local-wsl.application`；其他部署须显式配置。
 
 | 装配项 | M1接线 |
 | --- | --- |
@@ -329,7 +329,7 @@ flowchart LR
 
 **并行和资源。** 共用队列不保证学生消息或事件的业务顺序；Interaction和Evaluation按各自合同控制。同一进程内的Workflow任务、Activity任务与Relay循环分别执行；等待Timer／Signal不长期占用模型调用或数据库连接。阻塞文件处理不放在异步主循环。工作共用资源，教材处理可能增加教学或评价等待，M1接受这一取舍，不引入优先级或专属资源。
 
-Workflow／Activity并发数、拉取数量和执行器上限见§4.5的W01／W02，仍待审；不批准SDK默认并发或不限量排队。新工作资源不足按既定入口规则返回错误；已受理工作按有限期限执行与恢复，不能静默丢弃。队列名和资源限额随发布清单固定，不能由客户端或模型传入。
+E01-03已确认Workflow任务并发2、Activity并发4；拉取、缓存和线程池按§4.5的W02接线并随本增量评审；不批准SDK默认并发或不限量排队。新工作资源不足按既定入口规则返回错误；已受理工作按有限期限执行与恢复，不能静默丢弃。队列名和资源限额随发布清单固定，不能由客户端或模型传入。
 
 **启动与升级。** 启动前对照业务登记核验Workflow、Activity和Agent清单及摘要；API／Worker登记不一致时不开放相应能力。拼错队列名可能创建无人消费的新队列，不能把Temporal接收启动当作Worker能执行的证明。就绪检查核对指定namespace、队列与注册，不通过试跑AI来检查。
 
@@ -337,7 +337,7 @@ Workflow／Activity并发数、拉取数量和执行器上限见§4.5的W01／W0
 
 ### 4.5 首轮入口与执行参数建议
 
-以下全部为**待用户审阅的本机接线值**，不是已批准默认值或性能承诺。按一个API进程、一个应用Worker及§5.7的资源候选估算；不增加优先级、专属队列或自动扩容。数值在本表维护，业务模块只引用本表及对应处理规则。
+下表W01已在E01-03确认；W02按其候选接线、待本增量评审，其余未单独接收的项仍为候选。所有值均不是性能承诺。按一个API进程、一个应用Worker及§5.7的资源候选估算；不增加优先级、专属队列或自动扩容。数值在本表维护，业务模块只引用本表及对应处理规则。
 
 | 编号／责任 | 建议值 | 到上限或失败时 |
 | --- | --- | --- |
@@ -450,7 +450,12 @@ Temporal数据库只用其版本对应的官方工具升级，不纳入业务Ale
 
 ### 5.5 依赖版本候选
 
-K3s、PostgreSQL 17.12、Temporal Server/admin-tools 1.32.2、NATS Server 2.15.3及§5.7所列Helm/组件Chart已确认并部署，制品锁定见实现清单。下表其他语言、SDK与客户端版本仍为候选，不因基础组件接线通过而自动获准。
+**E01-03已接收范围。** Python 3.14.10、FastAPI 0.163.0、Uvicorn 0.54.0、Pydantic 2.14.3、Temporal Python SDK 1.36.1；前端Node 24.22.3、npm 11.19.1、Vue 3.5.43、TypeScript 5.9.3、Vite 7.3.7。后端由uv 0.13.8锁定依赖、Hatchling 1.33.0构建wheel；前端使用npm锁文件。镜像用BuildKit 0.35.0按需构建，Nginx 1.30.6提供静态入口和同源转发，基础镜像固定digest。确切清单见[应用交付说明](../../../../src/m1/deploy/environments/local-wsl/application.md)。AI、数据库客户端、事件订阅及界面组件库不在本次接线范围。
+
+应用Chart只部署API、Worker及静态服务，各一个副本；同节点挂载既有文件PVC。命名空间初始化为显式Job，不在应用启动时自动执行。Worker readiness文件仅证明配置、存储及Temporal初始连接已检查；实际队列执行由部署探测验证，不能把就绪文件视为持续执行健康保证。测试Workflow不属于9项AI Operation，不写学习事实。
+
+
+K3s、PostgreSQL 17.12、Temporal Server/admin-tools 1.32.2、NATS Server 2.15.3及§5.7所列Helm/组件Chart已确认并部署，制品锁定见实现清单。下表除本节已接收范围外的SDK与工具仍为候选，按对应增量确认。
 
 | 组件 | 首轮候选 | 依据与限制 |
 | --- | --- | --- |
@@ -464,9 +469,9 @@ K3s、PostgreSQL 17.12、Temporal Server/admin-tools 1.32.2、NATS Server 2.15.3
 | NATS Server／Python客户端 | 2.15.3／nats-py 2.16.0 | [服务发布](https://github.com/nats-io/nats-server/releases/tag/v2.15.3)、[客户端](https://pypi.org/project/nats-py/2.16.0/)；Server已确认，Python客户端仍待确认；启用JetStream，客户端版本号无需与服务相同 |
 | 本机K3s | v1.37.2+k3s1 | E01-01已确认并安装；固定发布，不自动追随stable。来源与hash见[实现清单](../../../../src/m1/deploy/components/manifest.yaml)，远程集群不要求同为K3s |
 | Node.js | 24.22.3 LTS | [发布索引](https://nodejs.org/dist/index.json)与[支持状态](https://nodejs.org/en/about/previous-releases)；用于前端构建，浏览器运行不依赖Node服务 |
-| Vue／TypeScript／Vite | 3.5.43／5.9.3／7.3.7 | 来自现有[原型package.json](../prototype/package.json)的候选；只复用构建起点，不复制mock业务。正式锁文件仍须接收 |
+| Vue／TypeScript／Vite | 3.5.43／5.9.3／7.3.7 | 来自现有[原型package.json](../prototype/package.json)的候选；只复用构建起点，不复制mock业务。已在E01-03生成正式锁文件，随应用增量评审 |
 
-Helm、组件Chart和Temporal管理工具已按§5.7接收；镜像digest及Chart校验值已写入实现清单。Chart不得静默带入额外数据库、监控栈或另一套NATS。全部直接与传递依赖在实施时形成带hash的锁文件；本轮没有创建伪锁文件，也不因一项声明兼容就称完整组合已验证。
+Helm、组件Chart和Temporal管理工具已按§5.7接收；镜像digest及Chart校验值已写入实现清单。Chart不得静默带入额外数据库、监控栈或另一套NATS。全部直接与传递依赖在实施时形成带hash的锁文件；E01-03已生成uv.lock及package-lock.json；未接线依赖不生成占位锁，也不据此宣称整套业务已验证。
 
 #### 5.5.1 E01-01本机环境接收
 
@@ -515,11 +520,11 @@ Schema只由§5.2的部署Job维护。Temporal关闭Chart内自动建库／manag
 
 NATS采用单副本、JetStream文件存储，关闭cluster、memoryStore、常驻natsBox、promExporter和reloader；配置变化通过受控重启生效；本机已启用podTemplate.configChecksumAnnotation，让配置变更触发滚动重启，不自动热改服务。JetStream数据保留在PVC；临时管理工具按需运行。字段及默认值依据[固定版values](https://github.com/nats-io/k8s/blob/nats-2.15.2/helm/charts/nats/values.yaml)。不安装Prometheus、Grafana或Elasticsearch。
 
-依赖与应用分别使用release，部署命令按§5.2排序。修改应用不连带升级PG、Temporal或NATS；包版本、镜像digest及渲染后的启用清单都进入ReleaseManifest。安装包与薄脚本目录已在源码组织分册展开，当前仅创建E01-01/02需要的脚本、Chart、环境配置与测试，不建立后续模块占位。
+依赖与应用分别使用release，部署命令按§5.2排序。修改应用不连带升级PG、Temporal或NATS；包版本、镜像digest及渲染后的启用清单都进入ReleaseManifest。安装包与薄脚本目录已在源码组织分册展开，已扩展到E01-03的应用包、双入口前端、构建与应用Chart；后续业务模块按增量建立。
 
 #### 5.7.2 CPU、内存与连接数
 
-应用Worker按已确认的单进程设置1副本；PG、NATS及Temporal资源已按上文接收，API、应用Worker和前端资源值仍待审，不额外启动多个应用Worker进程。CPU单位m，1000m为1个逻辑CPU；资源值是试运行假设，不是厂商最低需求。requests供调度使用，limits限制容器消耗；超限可能导致限速或OOM，不能把配置上限当实际用量。[Kubernetes资源语义](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)。
+应用Worker按已确认的单进程设置1副本；PG、NATS及Temporal资源已按上文接收，API、应用Worker和前端资源值已在E01-03确认，不额外启动多个应用Worker进程。CPU单位m，1000m为1个逻辑CPU；资源值是试运行假设，不是厂商最低需求。requests供调度使用，limits限制容器消耗；超限可能导致限速或OOM，不能把配置上限当实际用量。[Kubernetes资源语义](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)。
 
 | 常驻容器 | CPU request／limit | 内存request／limit |
 | --- | --- | --- |
@@ -690,7 +695,7 @@ API、Worker和业务维护命令共用同版server镜像；前端同版产物�
 
 ## 7. 本批接收与剩余决定
 
-E01-01/02已实施，自检入口见本机部署说明，其余内容按实施计划接收。后续实现至少检查：首次启动与重复初始化；未迁移时拒绝启动；同库共同回滚；上传中断及收据丢失；同卷读写和错误挂载；兼容／不兼容升级；同一备份批次恢复；迟到消息与已提交结果不重复生效。
+E01-01/02与E01-03应用骨架已实施，自检入口见本机部署说明，其余内容按实施计划接收。后续实现至少检查：首次启动与重复初始化；未迁移时拒绝启动；同库共同回滚；上传中断及收据丢失；同卷读写和错误挂载；兼容／不兼容升级；同一备份批次恢复；迟到消息与已提交结果不重复生效。
 
 | 未决项 | 责任与最晚确认点 |
 | --- | --- |
@@ -752,3 +757,4 @@ E01-01/02已实施，自检入口见本机部署说明，其余内容按实施�
 | v0.44 | 2026-11-15 | 接收E01-02组件版本和本机资源，引用部署及重启验证，见决定登记§106 |
 | v0.45 | 2026-11-15 | 补E01-01/02编码整改、配置Schema与离线检查入口，见决定登记§107 |
 | v0.46 | 2026-11-15 | 对齐单行JSON日志合同及原生组件格式边界；见决定登记§108 |
+| v0.47 | 2026-11-15 | 登记E01-03应用依赖、资源和执行队列接线，见决定登记§110 |

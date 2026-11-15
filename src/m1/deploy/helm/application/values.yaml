@@ -1,0 +1,20 @@
+images:
+  server: ''
+  client: ''
+initializeNamespace: false
+nodeSelector: {}
+filesClaim: ''
+temporal:
+  address: ''
+  namespace: ''
+  taskQueue: ''
+resources:
+  api:
+    requests: { cpu: 250m, memory: 256Mi }
+    limits: { cpu: 1000m, memory: 512Mi }
+  worker:
+    requests: { cpu: 500m, memory: 512Mi }
+    limits: { cpu: 2000m, memory: 1536Mi }
+  client:
+    requests: { cpu: 25m, memory: 32Mi }
+    limits: { cpu: 100m, memory: 64Mi }

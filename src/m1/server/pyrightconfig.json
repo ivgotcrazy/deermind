@@ -1,0 +1,13 @@
+{
+  "include": [
+    "src",
+    "tests",
+    "../tests/deployment/fixtures/check_worker.py",
+    "../scripts/export-openapi.py"
+  ],
+  "exclude": [".venv", "dist"],
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.14",
+  "typeCheckingMode": "strict"
+}

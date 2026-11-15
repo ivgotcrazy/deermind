@@ -1,0 +1,38 @@
+{{- if .Values.initializeNamespace }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 90
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      nodeSelector: {{ .Values.nodeSelector | toJson }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+      containers:
+        - name: initialize
+          image: {{ .Values.images.server | quote }}
+          imagePullPolicy: IfNotPresent
+          command: ["deermind-probe", "init-namespace"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources: {{ .Values.resources.api | toJson }}
+          env:
+            - name: M1_FILES_ROOT
+              value: /tmp
+            - name: M1_TEMPORAL_ADDRESS
+              value: {{ .Values.temporal.address | quote }}
+            - name: M1_TEMPORAL_NAMESPACE
+              value: {{ .Values.temporal.namespace | quote }}
+            - name: M1_TASK_QUEUE
+              value: {{ .Values.temporal.taskQueue | quote }}
+{{- end }}

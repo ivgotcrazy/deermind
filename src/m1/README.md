@@ -2,9 +2,9 @@
 
 按[实施计划](../../doc/mvp/m1/engineering/Delivery_Plan.md)的小增量交付。旧交互原型仅作参考。
 
-当前已交付 E01-01 环境和 E01-02 基础组件自检：PostgreSQL、Temporal、NATS及共享文件卷。应用、业务表和前端留到后续增量。
+当前已推进到E01-03：可安装后端包、API／共享Worker、Vue学生／管理员双入口，以及应用镜像和Helm。业务表、登录、聊天和AI留对应增量。
 
-本轮落实[编程规范](../../doc/mvp/m1/engineering/Coding_Standard.md)并整改E01-01/02，待评审，暂不推进E01-03。检查工具的安装和本轮结果见[quality说明](quality/README.md)。
+应用遵循[编程规范](../../doc/mvp/m1/engineering/Coding_Standard.md)。E01-03的安装、启动、复核和自检见[应用交付](deploy/environments/local-wsl/application.md)，检查工具见[quality说明](quality/README.md)。用户评审后再推进E01-04。
 
 | 目录 | 用途 |
 | :--- | :--- |
@@ -12,7 +12,11 @@
 | `scripts/deploy.sh` | 显式目标下部署一个Helm release，不自动执行迁移或删库 |
 | `scripts/check.sh` / `scripts/test.sh` | 静态检查、本地正反样例及显式目标回归 |
 | `quality/` | 独立开发检查依赖、规则和版本锁；不包含应用 |
-| `deploy/helm/` | PG服务、数据库初始化及显式Temporal Schema Job |
+| `server/` | 唯一Python安装包、uv锁文件及严格类型测试 |
+| `clients/` | Vue双入口、共享组件与样式、npm锁文件 |
+| `contracts/generated/http/` | 从实际FastAPI路由生成的OpenAPI快照 |
+| `deploy/images/` / `scripts/build-app.sh` | 锁定基础镜像和仅产物构建入口 |
+| `deploy/helm/` | 基础组件、自有应用及显式初始化Job |
 | `tests/deployment/` | 目标检查、组件重启持久化、权限及共享卷测试 |
 | `deploy/components/manifest.yaml` | 本批实际安装版本、来源与文件校验值 |
 | `deploy/environments/local-wsl/` | 本机初始化与复核说明 |

@@ -1,6 +1,12 @@
 {
   "include": ["scripts", "tests", "quality"],
-  "exclude": ["**/node_modules", "**/__pycache__", ".artifacts"],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    ".artifacts",
+    "tests/deployment/fixtures/check_worker.py",
+    "scripts/export-openapi.py"
+  ],
   "pythonVersion": "3.12",
   "typeCheckingMode": "standard",
   "reportUnnecessaryTypeIgnoreComment": "error"
