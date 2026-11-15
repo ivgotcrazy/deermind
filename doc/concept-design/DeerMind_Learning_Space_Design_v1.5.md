@@ -118,6 +118,9 @@ TargetBinding 的发生事实进入全局 Event；关系是否具有合法来源
 
 原 Learning Space Design 的 Target source、success semantics、support boundary、Definition／Binding 分层、TargetAssessment 派生性及版本历史约束在本文 §4–6 承接；Domain 中不再保留另一份可修改的目标定义。MVP Gate 是否满足仍以对应交付与真实证据判断，本文件完成不替代 G3、G4 或 G5 的批准。
 
-本轮修订（v1.4，2026-11-14）：同步Task／Solution新定义、多KC方法、Task先导、题内参考及相关Task独立取证；保持既定数值规则和工程边界。完整范围和检查见MVP决定登记§68。
+## 修订记录
 
-本轮修订（v1.5，2026-11-14）：同步现行引用与文档导航；不改变其余模型或历史结论。本轮仅改文档；完整记录见MVP决定登记§69。
+| 版本 | 日期 | 修改 |
+| :--- | :--- | :--- |
+| v1.4 | 2026-11-14 | 同步Task／Solution新定义、多KC方法、Task先导、题内参考及相关Task独立取证；保持既定数值规则和工程边界。完整范围和检查见MVP决定登记§68。 |
+| v1.5 | 2026-11-14 | 同步现行引用与文档导航；不改变其余模型或历史结论。本轮仅改文档；完整记录见MVP决定登记§69。 |

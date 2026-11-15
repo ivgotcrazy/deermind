@@ -1,10 +1,10 @@
 # deermind 数据库：交互空间数据字典
 
-> **版本**：v0.4<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **版本**：v0.5<br>
+> **状态**：事件合同评审修订稿；容量与保留候选待确认，未编码<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.3 → v0.4，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **修订说明**：v0.4 → v0.5，补正文、投影矩阵、状态及读取授权；容量候选待审，见MVP决定登记§98<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **35 张表、306 个列定义**。处理流程、接口和业务载荷由[Interaction_Space_Design.md](../Interaction_Space_Design.md) §1.3、§2.4、§3.7—3.9、§4.3、§5.3、§6.3、§7.1维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -313,7 +313,7 @@ erDiagram
 | `scope_id` | `uuid` | 否 | 无 | 学习空间身份；逻辑引用 product.learning_space.space_id |
 | `message_seq` | `bigint` | 否 | 无 | 空间内递增序号 |
 | `role` | `text` | 否 | 无 | student、assistant、system |
-| `parts` | `jsonb` | 否 | 无 | Interaction§2.4消息parts：part_id、type以及text/RichContent/附件引用/task_use/活动通知 |
+| `parts` | `jsonb` | 否 | 无 | 完整消息parts：part_id、type以及text/RichContent/附件引用/task_use/活动通知；事件DTO同形，不接受EventPartRef替代整个parts |
 | `source_input_ref` | `uuid` | 是 | 无 | 源输入；与触发事件至少一个；FK → `interaction.inputs.input_id` |
 | `source_trigger_ref` | `uuid` | 是 | 无 | 系统触发事件；逻辑引用runtime.events |
 | `committed_at` | `timestamptz` | 否 | 无 | 服务端正式提供时间；不是浏览器显示回执 |
@@ -580,7 +580,7 @@ erDiagram
 | `task_use_ref` | `uuid` | 否 | 无 | 本次题目；FK → `interaction.task_uses.task_use_id` |
 | `activity_id` | `uuid` | 否 | 无 | 活动；FK → `interaction.activities.activity_id` |
 | `round_id` | `uuid` | 是 | 无 | 检测轮；非检测写SQL NULL，接口round_ref为null；空字符串非法；FK → `interaction.detection_rounds.round_id` |
-| `answer` | `jsonb` | 否 | 无 | 提交的parts或原消息精确片段；图片保留文件引用，不被AI转写覆盖 |
+| `answer` | `jsonb` | 否 | 无 | 本次完整提交parts；取自聊天片段时也复制实际内容并保留来源依据；图片为固定文件引用，不被AI转写覆盖 |
 | `help_basis` | `jsonb` | 否 | 无 | 提交前已正式提供的帮助/题面事实、查询截止序号及完整性 |
 | `adoption_ref` | `uuid` | 否 | 无 | 当时采用；逻辑引用product.space_adoption |
 | `accepted_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
@@ -1090,11 +1090,9 @@ LLM提议与程序采用结果。
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | v0.1 | 2026-11-15 | 逐表补齐列、键、空值、默认值、约束和关系；未执行建表或迁移 |
-
-本轮修订（v0.2，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
-
-本轮修订（v0.3，2026-11-15）：无检测轮的作答明确写SQL NULL，保留原部分唯一约束。见MVP决定登记§95。
-
-本轮修订（v0.4，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。
+| v0.2 | 2026-11-15 | 物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。 |
+| v0.3 | 2026-11-15 | 无检测轮的作答明确写SQL NULL，保留原部分唯一约束。见MVP决定登记§95。 |
+| v0.4 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
+| v0.5 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |

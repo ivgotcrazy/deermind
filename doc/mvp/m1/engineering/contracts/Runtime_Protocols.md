@@ -1,11 +1,11 @@
 # M1 运行接口与 WebSocket 协议
 
-> **版本**：v0.3<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **版本**：v0.4<br>
+> **状态**：事件合同评审修订稿；容量与保留候选待确认，未编码<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **修订说明**：v0.3 → v0.4，补正文、投影矩阵、状态及读取授权；容量候选待审，见MVP决定登记§98<br>
 
 公共运行只提供通用认证、收据、派发、等待与回传；所有者仍决定业务处理和可展示内容。HTTP路径相对/api/m1，WebSocket /ws使用deermind.v1。底层订阅与发布格式见[事件分册](Event_Messages.md)。
 
@@ -186,7 +186,7 @@ Domain和Product分别提供[D13](Domain_API.md#d13)、[P26](Product_API.md#p26)
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `items` | EventEnvelope[] | 是 | 按权限允许的事实与引用；不含原文 |
+| `items` | EventSummaryView[] | 是 | 授权摘要；字段定义见下文，不返回完整payload/records |
 | `upper_seq` | int | 是 | 首屏已提交上界 |
 | `next_cursor` | string或null | 是 | 绑定筛选和上界 |
 
@@ -205,6 +205,10 @@ Domain和Product分别提供[D13](Domain_API.md#d13)、[P26](Product_API.md#p26)
 }
 ```
 
+EventSummaryView包含event_id、event_type、schema_version、scope_kind、scope_id、scope_event_seq、occurred_at、recorded_at、time_basis、owner_ref、subject_refs及summary:string；身份/关系先经授权过滤，summary由登记模板及可见字段生成，不调用LLM。EventDetailView在此基础上增加payload_view:已授权类型化动作字段、record_views:{record_id,record_type,schema_version,content:已授权字段对象,visible_paths:string[],visibility:complete/partial}[]。partial仅表示授权裁剪，不表示原事件损坏；记录身份本身不可见时整条省略。记录内容不返回文件storage_key、私有模型输入或其他人的字段。
+
+浏览器视图不冒充完整FactRecord DTO，不用于重建；未知事件类型只可返回获准摘要，不能兜底透传原payload。服务端按[正文§2.2](Event_Facts.md#22-原文读取用途与权限)选择student_history或admin_review，浏览器不提交purpose。
+
 <a id="r06"></a>
 ## R06 精确事件读取
 
@@ -216,8 +220,8 @@ Domain和Product分别提供[D13](Domain_API.md#d13)、[P26](Product_API.md#p26)
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `event` | EventEnvelope | 是 | 固定事实 |
-| `source_content_refs` | Ref[] | 是 | 仅给有权继续读取的来源 |
+| `event` | EventDetailView | 是 | 已授权事实片段；不是完整内部事件信封，字段定义见R05后的公共视图 |
+| `source_content_refs` | EventPartRef[] | 是 | 仅给有权继续读取的来源；后续请求重新授权 |
 
 处理边界：详情原文由read_event_facts按EventPartRef读取；事件列表返回摘要及获授权片段，事件ID不授予整个空间或私有记录的读取权限。
 
@@ -385,9 +389,8 @@ HTTP请求收据中的action采用登记的所有者入口名；WS动作名先�
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |
-
-本轮修订（v0.2，2026-11-15）：统一收据结果投影、WS错误内层与跨通道输入计量。见MVP决定登记§95。
-
-本轮修订（v0.3，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。
+| v0.2 | 2026-11-15 | 统一收据结果投影、WS错误内层与跨通道输入计量。见MVP决定登记§95。 |
+| v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
+| v0.4 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |

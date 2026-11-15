@@ -826,4 +826,8 @@ System\ Design
 | Historical Reconstruction | 基于已记录历史重建当时真实 execution，而不是重新调用模型猜测当时结果 |
 | Semantic Reinterpretation | 使用新的语义与 reasoning version 对旧 factual history 形成新的 derived semantics |
 
-本轮修订（v0.7，2026-11-14）：同步Task／Solution新定义、多KC方法、Task先导、题内参考及相关Task独立取证；保持既定数值规则和工程边界。完整范围和检查见MVP决定登记§68。
+## 修订记录
+
+| 版本 | 日期 | 修改 |
+| :--- | :--- | :--- |
+| v0.7 | 2026-11-14 | 同步Task／Solution新定义、多KC方法、Task先导、题内参考及相关Task独立取证；保持既定数值规则和工程边界。完整范围和检查见MVP决定登记§68。 |

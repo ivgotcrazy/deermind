@@ -1,10 +1,11 @@
 # M1 事件与消息载荷
 
-> **版本**：v0.2<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **版本**：v0.3<br>
+> **状态**：事件合同评审修订稿；容量与保留候选待确认，未编码<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15
+> **修订说明**：v0.2 → v0.3，补正文、投影矩阵、状态及读取授权；容量候选待审，见MVP决定登记§98<br>
 
 本分册是事件信封、类型化动作字段与通知结构的唯一字段定义；完整事实正文及投影登记见[事件正文合同](Event_Facts.md)。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
 
@@ -59,7 +60,7 @@
 
 ## 3. 逐类型业务载荷
 
-§3、§4原47类事件的schema_version统一为2，新增records及各范围序号；旧解码器保留。§4.1新类型为1。每类payload均必须有records:FactRecord[]，其字段及逐类型正文约束见[正文合同§2—3](Event_Facts.md#2-正文结构)。以下字段表列其余字段，不重复records。表中Ref表示固定事实引用；确切形状沿[总册§3](../API_and_Message_Design.md#3-共用类型与字段规则)。列表允许空时必须表示确认无项，未知以缺口/限制表达。时间、账号及源请求由信封保留，不因正文省略而丢失追溯。
+§3、§4原47类事件的schema_version统一为2，新增records及各范围序号；旧解码器保留。§4.1新类型为1。每类payload均必须有records:FactRecord[]，其字段及逐类型正文约束见[正文合同§2—3](Event_Facts.md#2-正文结构)。以下字段表列其余字段，不重复records。每个事件允许和必须携带的正文、数量、条件唯一维护在[正文§3.2](Event_Facts.md#32-事件携带记录与条件)；payload引用不等于需要重复携带该对象正文。Ref可标识本事件新建的业务对象或既有对象，不能据此证明投影行已存在；原文来源使用EventPartRef。对象ID须与records中的主键及版本相符，重建保留原ID。确切形状沿[总册§3](../API_and_Message_Design.md#3-共用类型与字段规则)。列表允许空时必须表示确认无项，未知以缺口/限制表达。时间、账号及源请求由信封保留，不因正文省略而丢失追溯。
 
 <a id="domainintakerequested"></a>
 ### 3.1 `DomainIntakeRequested`
@@ -70,8 +71,8 @@
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `domain_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `intake_request_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `domain_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `intake_request_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `candidate_refs` | CandidateRef[] | 是；非空 | 固定所选已采用内容；类别/父题从提交读取 |
 
 本事件固定所提交内容的EventPartRef及来源闭包，不依赖候选业务行取原文；只提交题目允许，单独提交解法须有可定位父题。
@@ -85,12 +86,12 @@
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `trigger_event_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `domain_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `intake_request_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `receipt_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `outcome` | 常量received | 是 | 固定已提交引用；读取仍须授权 |
+| `trigger_event_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `domain_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `intake_request_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `receipt_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `result_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `outcome` | 常量received | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 只有可信Product提交才有业务决定；技术失败不发拒绝。事件不表示定义/题目已经入库。
 
@@ -103,12 +104,12 @@
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `trigger_event_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `domain_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `intake_request_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `receipt_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `outcome` | 常量rejected | 是 | 固定已提交引用；读取仍须授权 |
+| `trigger_event_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `domain_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `intake_request_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `receipt_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `result_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `outcome` | 常量rejected | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 只有可信Product提交才有业务决定；技术失败不发拒绝。事件不表示定义/题目已经入库。
 
@@ -121,11 +122,11 @@
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `import_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `adopted_refs` | CandidateRef[] | 是 | 固定已提交引用；读取仍须授权 |
-| `replaced_refs` | CandidateRef[] | 是 | 固定已提交引用；读取仍须授权 |
-| `affected_submission_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `import_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `adoption_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `adopted_refs` | CandidateRef[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `replaced_refs` | CandidateRef[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `affected_submission_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 Domain只处理仍pending的受影响待办；已入库定义保持。
 
@@ -138,10 +139,10 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `import_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `deletion_receipt_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `invalidated_source_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `affected_submission_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `import_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `deletion_receipt_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `invalidated_source_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `affected_submission_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 不授权物理删文件，不撤销既有领域对象。
 
@@ -154,12 +155,12 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `application_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `target_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `adoption_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `application_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `target_basis_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `previous_target_basis_ref` | Ref或null | 是 | 首次为null |
-| `applied_at` | Timestamp | 是 | 固定已提交引用；读取仍须授权 |
-| `cause_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `applied_at` | Timestamp | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `cause_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 只重算目标对照，不重算Belief；仅改教材说明不发本事件。
 
@@ -172,10 +173,10 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `application_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `target_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `adoption_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `application_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `target_basis_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 同请求一次；查询/重连不产生；不自动开始检测。
 
@@ -188,13 +189,13 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `revision_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `parent_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `node_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `reason` | string | 是 | 固定已提交引用；读取仍须授权 |
-| `source_input_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `source_trigger_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `activity_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `revision_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `parent_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `node_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `reason` | string | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `source_input_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `source_trigger_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 来源输入/事实至少一项；只有结束条件命中才安排主动检查，不能所有节点迁移都调用AI。
 
@@ -207,16 +208,16 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `request_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `supply_input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `domain_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `purpose` | example/practice/assessment | 是 | 固定已提交引用；读取仍须授权 |
-| `task_ref` | ObjectRef(task) | 是 | 固定已提交引用；读取仍须授权 |
-| `allowed_method_refs` | ObjectRef(solution)[] | 是 | 固定已提交引用；读取仍须授权 |
-| `assessment_constraints_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `method_source_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `exposure_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `request_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `supply_input_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `domain_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `activity_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `purpose` | example/practice/assessment | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `task_ref` | ObjectRef(task) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `allowed_method_refs` | ObjectRef(solution)[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `assessment_constraints_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `method_source_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `exposure_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `count` | int | 是；正数 | 需提供的题量 |
 
 复杂条件通过固定supply_input_ref读取Domain§5.2输入；exposure_refs=[]只在确认无经历时使用，未知须带输入缺口。
@@ -230,9 +231,9 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `trigger_event_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `supply_batch_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `trigger_event_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `supply_batch_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `result_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 空批是合法业务结果，技术失败不是空批；取回后仍需条件复核，检测先确认题单。
 
@@ -245,13 +246,13 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `submission_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `task_use_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `round_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `plan_ref` | PlanRef或null | 是 | 固定已提交引用；读取仍须授权 |
-| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `help_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `submission_ref` | Ref | 是 | 本事件submissions记录的预分配身份；不要求查询行先存在 |
+| `task_use_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `activity_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `round_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `plan_ref` | PlanRef或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `adoption_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `help_basis_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 练习可无轮/题单；原文在Interaction，答案全文在事件正文或固定事件附件中。一次已接受提交只产生一次触发。
 
@@ -264,13 +265,13 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `opportunity_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `closure_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `provided_part_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `purpose` | string | 是 | 固定已提交引用；读取仍须授权 |
-| `close_reason` | completed/interrupted/cancelled/unable_to_continue | 是 | 固定已提交引用；读取仍须授权 |
+| `opportunity_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `closure_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `activity_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `adoption_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `provided_part_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `purpose` | string | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `close_reason` | completed/interrupted/cancelled/unable_to_continue | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 只含已正式提供内容，不靠浏览器回执；拆消息/暂停/重试不另增学习机会。
 
@@ -283,13 +284,13 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `trigger_event_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `evidence_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `belief_revision_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `snapshot_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `reason_codes` | string[] | 是 | 固定已提交引用；读取仍须授权 |
+| `trigger_event_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `input_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `evidence_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `belief_revision_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `snapshot_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `result_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `reason_codes` | string[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 零数值变化也可合法完成并发布覆盖；事件本身不携概率，不表示目标已达标。
 
@@ -302,14 +303,14 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `trigger_event_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `goal_evaluation_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `target_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `snapshot_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `previous_current_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `current_state_applied` | boolean | 是 | 固定已提交引用；读取仍须授权 |
-| `not_applied_reason` | string或null | 是 | 固定已提交引用；读取仍须授权 |
+| `trigger_event_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `goal_evaluation_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `target_basis_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `snapshot_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `result_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `previous_current_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `current_state_applied` | boolean | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `not_applied_reason` | string或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 旧目标/旧快照结果也留痕；读取者不能看到事件名就宣布达标，同源两类评价通知不重复建建议。
 
@@ -322,10 +323,10 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `target_ref` | TargetRef | 是 | 固定已提交引用；读取仍须授权 |
-| `previous_target_ref` | TargetRef或null | 是 | 固定已提交引用；读取仍须授权 |
-| `textbook_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `target_ref` | TargetRef | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `previous_target_ref` | TargetRef或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `textbook_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 定义保存不等于应用。
 
@@ -338,12 +339,12 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `application_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `previous_application_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `check_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `textbook_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `target_ref` | TargetRef | 是 | 固定已提交引用；读取仍须授权 |
-| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `application_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `previous_application_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `check_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `textbook_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `target_ref` | TargetRef | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 每个受影响空间另保留自己的采用事实。
 
@@ -356,10 +357,10 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `student_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `textbook_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `target_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `student_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `textbook_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `target_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `adoption_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 重复选同组合复用原空间，不再发创建事件。
 
@@ -372,11 +373,11 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `previous_adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `previous_target_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `target_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `cause_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `previous_adoption_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `adoption_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `previous_target_basis_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `target_basis_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `cause_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 既有活动仍沿原采用，不因通知改写过去题目和作答。
 
@@ -389,10 +390,10 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `object_ref` | ObjectRef | 是 | 固定已提交引用；读取仍须授权 |
-| `previous_ref` | ObjectRef或null | 是 | 固定已提交引用；读取仍须授权 |
-| `action` | create/update/soft_delete | 是 | 固定已提交引用；读取仍须授权 |
-| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `object_ref` | ObjectRef | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `previous_ref` | ObjectRef或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `action` | create/update/soft_delete | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 对象完整历史保留，不启动历史评价。
 
@@ -405,10 +406,10 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `item_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `source_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `cause_event_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `reason` | string | 是 | 固定已提交引用；读取仍须授权 |
+| `item_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `source_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `cause_event_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `reason` | string | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 已终结项不反向改状态；重复通知无变化不另发事件。
 
@@ -421,14 +422,14 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `item_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `group_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `action` | add_kc/associate_task/associate_solution/discard | 是 | 固定已提交引用；读取仍须授权 |
-| `result_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `object_refs` | ObjectRef[] | 是 | 固定已提交引用；读取仍须授权 |
-| `check_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `source_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `item_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `group_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `action` | add_kc/associate_task/associate_solution/discard | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `result_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `object_refs` | ObjectRef[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `check_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `source_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 放弃项对象数组可空；组只负责展示组织，不是整组事务。
 
@@ -441,10 +442,10 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `candidate_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `check_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `source_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `candidate_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `check_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `source_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 候选不是正式定义，更不是已完成实例归类。
 
@@ -457,12 +458,12 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `task_instance_ref` | ObjectRef(task_instance) | 是 | 固定已提交引用；读取仍须授权 |
-| `previous_ref` | ObjectRef或null | 是 | 固定已提交引用；读取仍须授权 |
-| `task_ref` | ObjectRef(task) | 是 | 固定已提交引用；读取仍须授权 |
-| `reference_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `check_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `task_instance_ref` | ObjectRef(task_instance) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `previous_ref` | ObjectRef或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `task_ref` | ObjectRef(task) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `reference_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `check_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 不会产生学生已见题或作答事件。
 
@@ -475,11 +476,11 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `confirmation_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `kc_ref` | ObjectRef(kc) | 是 | 固定已提交引用；读取仍须授权 |
-| `task_ref` | ObjectRef(task) | 是 | 固定已提交引用；读取仍须授权 |
-| `solution_ref` | ObjectRef(solution) | 是 | 固定已提交引用；读取仍须授权 |
-| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `confirmation_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `kc_ref` | ObjectRef(kc) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `task_ref` | ObjectRef(task) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `solution_ref` | ObjectRef(solution) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 不修改个人状态和章节采用。
 
@@ -492,12 +493,12 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `activity_type` | explanation/question_answer/detection/free_chat | 是 | 固定已提交引用；读取仍须授权 |
-| `config_kind` | blueprint/rule/strategy/binding | 是 | 固定已提交引用；读取仍须授权 |
-| `definition_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `config_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `previous_config_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `activity_type` | explanation/question_answer/detection/free_chat | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `config_kind` | blueprint/rule/strategy/binding | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `definition_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `config_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `previous_config_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 旧活动不换包。
 
@@ -510,10 +511,10 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `plan_ref` | PlanRef | 是 | 固定已提交引用；读取仍须授权 |
-| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `coverage_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `source_input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `plan_ref` | PlanRef | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `activity_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `coverage_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `source_input_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 不能将本事件当已同意开测。
 
@@ -526,11 +527,11 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `task_use_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `activity_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `round_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `plan_ref` | PlanRef或null | 是 | 固定已提交引用；读取仍须授权 |
-| `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `task_use_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `activity_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `round_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `plan_ref` | PlanRef或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `adoption_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 正式提供不等于已经阅读；题面原文由Interaction提供。
 
@@ -543,10 +544,10 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `presentation_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `surface` | chat/history/textbook | 是 | 固定已提交引用；读取仍须授权 |
-| `resource_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `part_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `presentation_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `surface` | chat/history/textbook | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `resource_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `part_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 缺失、重复或迟到不更新学习机会或概率。
 
@@ -559,12 +560,12 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `help_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `help_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `stage` | handled/provided | 是 | 区分本次留痕阶段 |
-| `source_input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `classification` | neutral/substantive/uncertain | 是 | 固定已提交引用；读取仍须授权 |
-| `round_closure_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `provided_message_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `source_input_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `classification` | neutral/substantive/uncertain | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `round_closure_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `provided_message_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 provided阶段必须有已提交消息；处理阶段为null，不把请求帮助当已提供提示。
 
@@ -577,13 +578,13 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `message_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `activity_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `source_input_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `source_trigger_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `role` | student/assistant/system | 是 | 固定已提交引用；读取仍须授权 |
+| `message_ref` | Ref | 是 | 消息业务身份；ChatMessageRecorded中对应本事件message记录，其余事件只引用同批或既有消息 |
+| `activity_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `source_input_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `source_trigger_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `role` | student/assistant/system | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
-至少一种实际来源；待分配活动不伪造归属；消息完整正文进入records，或通过EventPartRef复用已接收原文。
+至少一种实际来源；待分配活动不伪造归属；消息完整parts进入records；来源用EventPartRef追溯，不以引用替代必填正文。
 
 <a id="interactioninputstopped"></a>
 ### 3.31 `InteractionInputStopped`
@@ -594,9 +595,9 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `stop_request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `committed_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
+| `input_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `stop_request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `committed_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 不撤销已发生作答/供题/评价。
 
@@ -609,10 +610,10 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `round_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `revision_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `round_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `revision_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `reason` | string | 是 | submitted/help_requested/finished/switched/content_unusable等登记原因 |
-| `submission_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `submission_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 不是第二次作答触发；没有提交时不制造答案。
 
@@ -625,9 +626,9 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `feedback_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `submission_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `source_input_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `feedback_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `submission_ref` | Ref | 是 | 本事件submissions记录的预分配身份；不要求查询行先存在 |
+| `source_input_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 反馈何时给学生由检测规则控制，不随事件提前暴露答案。
 
@@ -640,11 +641,11 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `task_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `revision_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `basis_key` | string | 是 | 固定已提交引用；读取仍须授权 |
-| `reason_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `execution_activity_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
+| `task_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `revision_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `basis_key` | string | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `reason_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `execution_activity_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 不直接修改Belief；接受不等于检测已开始；拒绝不记负证据。
 
@@ -657,12 +658,12 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `task_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `revision_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `basis_key` | string | 是 | 固定已提交引用；读取仍须授权 |
-| `reason_refs` | Ref[] | 是 | 固定已提交引用；读取仍须授权 |
-| `execution_activity_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
-| `response` | accept/defer/reject | 是 | 固定已提交引用；读取仍须授权 |
+| `task_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `revision_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `basis_key` | string | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `reason_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `execution_activity_ref` | Ref或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `response` | accept/defer/reject | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 不直接修改Belief；接受不等于检测已开始；拒绝不记负证据。
 
@@ -675,11 +676,11 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `prompt_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `task_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `basis_key` | string | 是 | 固定已提交引用；读取仍须授权 |
-| `source_trigger_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
-| `message_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `prompt_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `task_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `basis_key` | string | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `source_trigger_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `message_ref` | Ref | 是 | 消息业务身份；ChatMessageRecorded中对应本事件message记录，其余事件只引用同批或既有消息 |
 
 不等浏览器回执；开放检测轮不插入提示。
 
@@ -692,14 +693,14 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `domain_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
-| `task_ref` | ObjectRef(task) | 是 | 固定已提交引用；读取仍须授权 |
-| `previous_claim_ref` | ClaimRef或null | 是 | 固定已提交引用；读取仍须授权 |
-| `claim_ref` | ClaimRef | 是 | 固定已提交引用；读取仍须授权 |
+| `domain_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `task_ref` | ObjectRef(task) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `previous_claim_ref` | ClaimRef或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `claim_ref` | ClaimRef | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `action` | string | 是 | E03合法动作 |
-| `affected_method_refs` | ObjectRef(solution)[] | 是 | 固定已提交引用；读取仍须授权 |
-| `affected_criterion_ids` | ID[] | 是 | 固定已提交引用；读取仍须授权 |
-| `request_ref` | ID | 是 | 固定已提交引用；读取仍须授权 |
+| `affected_method_refs` | ObjectRef(solution)[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `affected_criterion_ids` | ID[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 非学生学习事件，不自动重评或替换应用中的Claim。
 
@@ -783,7 +784,7 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 | --- | --- | --- | --- |
 | `import_id` | ID | 是 | 本次导入 |
 | `request_ref` | ID | 是 | 已保存请求 |
-| `message_ref` | ID | 是 | 正式输入消息引用 |
+| `message_ref` | ID | 是 | 本事件用户消息记录的预分配身份，与records主键一致 |
 
 <a id="materialassistantturnfinished"></a>
 ### 4.8 `MaterialAssistantTurnFinished`
@@ -794,7 +795,7 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 | --- | --- | --- | --- |
 | `import_id` | ID | 是 | 本次导入 |
 | `request_ref` | ID | 是 | 已保存请求 |
-| `reply_ref` | ID或null | 是 | 已保存回复；无回复为null |
+| `reply_ref` | ID或null | 是 | 本事件回复记录身份；非空必须有且仅有对应记录，无回复为null |
 | `candidate_batch_refs` | Ref[] | 是 | 本次保存的候选批次，无则[] |
 | `outcome` | completed/needs_input/failed/cancelled | 是 | 本轮实际结局 |
 
@@ -854,13 +855,13 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
 | `ModelRequestChanged` | ai / execution | 模型请求预约或取得结果 | 实际请求、输出/错误、用量及未知项 |
 | `ToolActionChanged` | ai / execution | 工具调用获准/拒绝或完成 | 实际参数、授权结论及结果；副作用由所属业务事件证明 |
 | `AICandidatePrepared` | ai / execution | 保存通过结构校验的技术候选 | 候选完整内容及材料来源 |
-| `ExecutionStateChanged` | runtime / execution | 工作受理、尝试开始、停止、失败、完成或恢复 | 执行、尝试及已保存步骤；不把模型超时当成外部未执行 |
+| `ExecutionStateChanged` | runtime / execution | 工作受理、尝试开始、保存Step、停止、失败、完成或恢复 | 执行、尝试及已保存步骤；不把模型超时当成外部未执行 |
 | `WaitStateChanged` | runtime / execution | 登记等待、匹配、到期、取消或处理接续 | 等待条件、期限、决定及处理结果 |
-| `DeliveryStateChanged` | runtime / event_delivery | 交接安排、确认承接或失败/获准重送 | 事件、订阅、交接和故障身份；不记录每次网络心跳 |
+| `DeliveryStateChanged` | runtime / event_delivery | 交接安排、承接/拒绝/忽略或失败/获准重送 | 事件、订阅、交接和故障身份；不记录每次网络心跳 |
 | `FileReceived` | runtime / file | 文件完整保存且校验通过 | 文件身份、媒体、字节数、hash和非秘密存储定位 |
 | `ProjectionRebuildFinished` | runtime / maintenance | 维护重建完成或明确失败 | 范围、代次、固定上界、检查结果或错误 |
 
-共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过§3登记Schema校验。
+共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过正文合同§3登记Schema校验。本文和正文Schema尚未编码或部署，本轮校正草案条件；既有schema_version编号保留，不宣称执行过历史数据迁移。
 
 | 类型 | outcome允许值 | 额外字段 |
 | --- | --- | --- |
@@ -871,14 +872,14 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
 | InteractionInputCompleted | completed/failed | 无；失败原因不可为空 |
 | ProactiveCheckCompleted | suggested/no_action/blocked | 无 |
 | AICallChanged / ModelRequestChanged / ToolActionChanged | started/completed/failed/cancelled/unknown/denied | reason_code按结果填写；unknown保留未确认边界 |
-| ExecutionStateChanged | accepted/started/stopped/failed/completed/recovery_accepted | 无 |
+| ExecutionStateChanged | accepted/started/stopped/failed/completed/recovery_accepted/progress_saved | 无 |
 | WaitStateChanged | registered/matched/timed_out/cancelled/handled | 无 |
-| DeliveryStateChanged | arranged/accepted/failed/redelivery_approved | source_event_ref:EventPartRef，必填；不能订阅自身再生成无穷投递事实 |
+| DeliveryStateChanged | arranged/accepted/rejected/ignored/failed/redelivery_approved | source_event_ref:EventPartRef，必填；不能订阅自身再生成无穷投递事实 |
 | ProjectionRebuildFinished | completed/failed | projector_id:string、generation:integer、scope_bounds:{scope_kind,scope_id,upper_seq}[]、checks:Issue[]，必填 |
 
 InteractionDecisionRecorded的outcome为allowed/denied/clarify。EvaluationInterpretationPrepared的recorded只表示候选保存，不代表Evidence资格成立。新事件引用具体消息/作答时，只使用其事件正文；没有正文快照的纯动作事件，其完整事实即上述payload。
 
-runtime运行留痕的records使用固定DTO：ExecutionStateChanged采用executions/execution_attempts/step_results，WaitStateChanged采用waits/wait_handling，DeliveryStateChanged采用handoffs/handoff_attempts/subscription_receipts/delivery_failures，FileReceived采用file_objects。record_type为runtime.表名，schema_version=1，业务字段和JSON映射按正文合同§2.1；不含授权秘密。它们用于历史核对，不纳入业务查询表的自动重建。技术游标、锁和MQ内部状态不逐次转成事件。
+runtime运行留痕的records使用固定DTO，逐事件数量及条件见正文§3.2（H类）：ExecutionStateChanged采用executions/execution_attempts/step_results，WaitStateChanged采用waits/wait_handling，DeliveryStateChanged采用handoffs/handoff_attempts/subscription_receipts/delivery_failures，FileReceived采用file_objects。record_type为runtime.表名，schema_version=1，业务字段和JSON映射按正文合同§2.1；不含授权秘密。它们用于历史核对，不纳入业务查询表的自动重建。技术游标、锁和MQ内部状态不逐次转成事件。
 
 按scope_kind分配序号，AI和runtime工作事实使用execution_id；投递事实使用handoff_id。对应原学习空间/教材作为subject_refs登记，可授权关联查询，但不得混进该学习空间的评价顺序。事件本身的追加、查询、发布不再产生“追加事件的事件”。
 
@@ -1010,7 +1011,7 @@ runtime运行留痕的records使用固定DTO：ExecutionStateChanged采用execut
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |
-
-本轮修订（v0.2，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。
+| v0.2 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
+| v0.3 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |

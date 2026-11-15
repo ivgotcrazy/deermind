@@ -1,10 +1,10 @@
 # deermind 数据库：产品业务数据字典
 
-> **版本**：v0.4<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **版本**：v0.5<br>
+> **状态**：事件合同评审修订稿；容量与保留候选待确认，未编码<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.3 → v0.4，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **修订说明**：v0.4 → v0.5，补正文、投影矩阵、状态及读取授权；容量候选待审，见MVP决定登记§98<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **28 张表、246 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -447,7 +447,7 @@ erDiagram
 数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
 
 
-教材助手的一条受理消息。
+教材助手的一条受理消息。state记录已提交业务结果；运行状态和实时检查点由查询入口经runtime公开接口组合，重建不恢复历史执行为可运行任务。
 
 主键：`(request_ref)`。写入方式：输入固定；执行状态可更新。
 
@@ -458,8 +458,8 @@ erDiagram
 | `input_digest` | `text` | 否 | 无 | 规范化MaterialTurnInput的SHA-256 |
 | `input` | `jsonb` | 否 | 无 | Product§3 MaterialTurnInput：文本、显式引用、范围、原件及内容依据 |
 | `runtime_ref` | `uuid` | 是 | 无 | 执行身份；逻辑引用runtime.executions |
-| `state` | `text` | 否 | 无 | 枚举：accepted、running、completed、needs_input、failed、cancelled |
-| `work_state_ref` | `jsonb` | 是 | 无 | 可恢复的已保存进度；Ref，见总册§3 |
+| `state` | `text` | 否 | 无 | 业务状态：accepted、completed、needs_input、failed、cancelled；running/waiting由运行视图组合，不写本列 |
+| `work_state_ref` | `jsonb` | 是 | 无 | 受理或轮结束时确认的检查点；只随对应业务事件更新；运行中的新Step经runtime查询，不覆盖本列 |
 | `result_ref` | `jsonb` | 是 | 无 | 完成结果或候选批次；Ref，见总册§3 |
 | `error` | `jsonb` | 是 | 无 | 失败：code、message、retryable、source_ref；非失败为空 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
@@ -489,7 +489,7 @@ erDiagram
 | `write_set` | `jsonb` | 否 | 无 | 本次拟替换、补充内容及基准引用 |
 | `coverage` | `jsonb` | 否 | 无 | 已覆盖、缺失范围及问题；不以缺失当空白 |
 | `diff_summary` | `jsonb` | 否 | 无 | 逐项变更说明及前后引用 |
-| `decision_state` | `text` | 否 | 无 | pending、adopted、declined、superseded |
+| `decision_state` | `text` | 否 | 无 | pending由Prepared；adopted由Adopted；declined由Declined；superseded由替代批Prepared保存；完整映射见事件正文§3.2 |
 | `decision_revision` | `bigint` | 否 | 无 | 决定并发令牌；正整数 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
@@ -870,11 +870,9 @@ erDiagram
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | v0.1 | 2026-11-15 | 逐表补齐列、键、空值、默认值、约束和关系；未执行建表或迁移 |
-
-本轮修订（v0.2，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
-
-本轮修订（v0.3，2026-11-15）：补齐空间稳定身份及采用引用一致性约束。见MVP决定登记§95。
-
-本轮修订（v0.4，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。
+| v0.2 | 2026-11-15 | 物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。 |
+| v0.3 | 2026-11-15 | 补齐空间稳定身份及采用引用一致性约束。见MVP决定登记§95。 |
+| v0.4 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
+| v0.5 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |

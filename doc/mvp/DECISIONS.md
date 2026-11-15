@@ -1,14 +1,14 @@
 # MVP 决定承接与工作记录
 
-> **版本**：v0.93<br>
+> **版本**：v0.96<br>
 > **文档性质**：新MVP目录的决定、待决和变更登记<br>
-> **状态**：完整工程组织与OpenAPI修订稿待审；未创建源码、未编码<br>
+> **状态**：实施计划重构稿待审；开发进度与待确认项见实施计划<br>
 > **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；本轮仅修订文档，历史原型与证据保留<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：本轮目录与OpenAPI修订、自检见MVP决定登记§97；待用户审阅<br>
+> **评审记录**：本轮实施计划重构及自检见MVP决定登记§99<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.92 → v0.93，同步完整工程目录、模块依赖及OpenAPI使用；见MVP决定登记§97<br>
+> **修订说明**：v0.95 → v0.96，登记历史摘录删除并清理引用；见§100<br>
 
 ---
 
@@ -1088,7 +1088,7 @@ PRD、内容规格、交互规格及验证计划的SHA-256与本轮开始时一�
 
 总人数上限100人、同时学习验证规模10人，均指学生人数，不等于并行Agent、LLM调用或执行槽数量。该决定是容量设计与验证的输入，不是实测能力；不新增自动人数限制、排队页面或管理配置。
 
-A01仅完成规模部分。质量优先级、可接受等待、费用与实际部署资源仍待讨论；A07的资源分配规则和A11的恢复目标未定。数据库、调度、通知及Agent框架未因本次确认获批。试用假设的正文在[总体§1.3](m1/engineering/System_Design.md#13-已确认的试用与容量验证假设)，验证安排由[实施计划§2](m1/engineering/Delivery_Plan.md#2-必要技术验证)承接；继续先讨论总体架构，不展开Operation或字段。
+A01仅完成规模部分。质量优先级、可接受等待、费用与实际部署资源仍待讨论；A07的资源分配规则和A11的恢复目标未定。数据库、调度、通知及Agent框架未因本次确认获批。试用假设的正文在[总体§1.3](m1/engineering/System_Design.md#13-已确认的试用与容量验证假设)，验证安排由[实施计划§2](m1/engineering/Delivery_Plan.md#4-验证与证据)承接；继续先讨论总体架构，不展开Operation或字段。
 
 | 文件（相对doc/mvp） | 版本变化 | 本批修改 |
 | --- | --- | --- |
@@ -1108,7 +1108,7 @@ A01仅完成规模部分。质量优先级、可接受等待、费用与实际�
 
 本次只确认资源竞争时的优先级方向。调度组件、任务队列组织、执行槽与模型并发数、限流、抢占和超时参数均未决定；并非所有Evaluation任务都自动取得同等优先级。不因本次确认另建管理页面或配置平台。
 
-正文归[总体§1.3](m1/engineering/System_Design.md#13-已确认的试用与容量验证假设)，A01与A07登记已定方向及剩余未决，V01与[实施计划§2](m1/engineering/Delivery_Plan.md#2-必要技术验证)承接资源竞争验证。100人总规模、10名学生同时学习并行教材导入的假设不变；A01的响应、费用与部署约束仍未关闭。
+正文归[总体§1.3](m1/engineering/System_Design.md#13-已确认的试用与容量验证假设)，A01与A07登记已定方向及剩余未决，V01与[实施计划§2](m1/engineering/Delivery_Plan.md#4-验证与证据)承接资源竞争验证。100人总规模、10名学生同时学习并行教材导入的假设不变；A01的响应、费用与部署约束仍未关闭。
 
 | 文件（相对doc/mvp） | 版本变化 | 本批修改 |
 | --- | --- | --- |
@@ -1198,7 +1198,7 @@ A01仅完成规模部分。质量优先级、可接受等待、费用与实际�
 - 取消选型PoC及候选对比试验前置。正常实现测试、主流程验收和故障恢复检查继续纳入交付，不以本次确认冒充验证通过。
 - Kubernetes方向已定，具体版本、部署单元、副本、资源和持久化配置仍待讨论；业务数据库、文件存储和Agent框架不因本次确认一并选定。
 
-取舍依据是用户认为Temporal及RabbitMQ对当前M1偏重，希望使用统一的Dapr运行体系并结合Kubernetes控制维护负担。本次记录该选择，不把维护成本视为已经测量的事实。总体方案见[总体§6.1](m1/engineering/System_Design.md#61-已定技术与待选方案)，运行及存储边界见[基础设施设计](m1/engineering/Infrastructure_and_Deployment_Design.md)，实施安排见[实施计划§2](m1/engineering/Delivery_Plan.md#2-必要技术验证)。
+取舍依据是用户认为Temporal及RabbitMQ对当前M1偏重，希望使用统一的Dapr运行体系并结合Kubernetes控制维护负担。本次记录该选择，不把维护成本视为已经测量的事实。总体方案见[总体§6.1](m1/engineering/System_Design.md#61-已定技术与待选方案)，运行及存储边界见[基础设施设计](m1/engineering/Infrastructure_and_Deployment_Design.md)，实施安排见[实施计划§2](m1/engineering/Delivery_Plan.md#4-验证与证据)。
 
 | 文件（相对doc/mvp） | 版本变化 | 本批修改 |
 | --- | --- | --- |
@@ -2454,7 +2454,7 @@ AI底座补SDK登记、配置装载、图文材料、模型可见出处及恢复
 | 组件及SDK版本 | [基础设施§5.5](m1/engineering/Infrastructure_and_Deployment_Design.md#55-依赖版本候选)；已核对发布资料，未批准依赖锁，未做安装或兼容测试 |
 | 部署入口与载荷限额 | [基础设施§5.6](m1/engineering/Infrastructure_and_Deployment_Design.md#56-可切换集群的部署入口)；部署方式已确认，Codec阈值、Chart、资源及容量待审 |
 | 调用与连接参数 | [公共运行§3.5](m1/engineering/System_Foundation_Design.md#35-首轮调用与连接参数建议)；有限候选值，不是已批准SLA或Operation总预算 |
-| 审阅与实施顺序 | [实施计划§2.5](m1/engineering/Delivery_Plan.md#25-本批候选与接收顺序)；先审候选，再补资源及总预算，真实验证留实施阶段 |
+| 审阅与实施顺序 | 当时的实施计划§2.5；先审候选，再补资源及总预算，真实验证留实施阶段 |
 
 基础设施原有重复§2.5已整理：PVC装配仍为§2.5，Temporal载荷外置改为§2.6并保留旧锚点；当前引用同步，历史决定不改。9项AI Operation和31项普通入口不变。
 
@@ -2610,7 +2610,7 @@ AI底座补SDK登记、配置装载、图文材料、模型可见出处及恢复
 
 [总体§6.7](m1/engineering/System_Design.md#67-已确认的日志与事件记录)、[公共运行§6.1](m1/engineering/System_Foundation_Design.md#61-必记日志与存储)与[基础设施§6.1／6.4](m1/engineering/Infrastructure_and_Deployment_Design.md#61-日志事件及运行检查)统一日志边界，移除集中采集作为M1前置的要求。基础设施说明节点轮转及Pod生命周期的限制，不增加采集器、日志卷或清理任务。
 
-后续按[实施计划§2.6](m1/engineering/Delivery_Plan.md#26-剩余设计与审阅顺序)补Worker与队列接线、入口限额，随后做主流程合同检查并集中审阅已有配置候选。保留规则之外，本批没有批准新的参数，也不进入安装或编码。
+后续按当时的实施计划§2.6补Worker与队列接线、入口限额，随后做主流程合同检查并集中审阅已有配置候选。保留规则之外，本批没有批准新的参数，也不进入安装或编码。
 
 ### 88.3 修改清单
 
@@ -2715,7 +2715,7 @@ M1先用一个应用Worker进程和一条共享Temporal逻辑执行队列，承�
 
 ### 91.1 检查结果与修正
 
-[实施计划§2.7](m1/engineering/Delivery_Plan.md#27-主流程合同检查)记录教材解析、领域入库、章节与目标应用、学生进入、讲解答疑、检测、评价和主动任务的交接。
+当时的实施计划§2.7记录教材解析、领域入库、章节与目标应用、学生进入、讲解答疑、检测、评价和主动任务的交接。
 
 | 发现 | 修正及唯一维护位置 |
 | --- | --- |
@@ -2989,3 +2989,90 @@ M1-DEC-086：用户确认M1继续用schema划分模块数据，数据库拆分�
 复核已清理总体中的旧源码路径与独立识别目录，统一README当前批次、源码唯一维护位置和OpenAPI生成口径。前后端依赖、表映射与迁移、测试分层、发布资产均有明确归属；未决工具及版本继续标为待确认。
 
 未创建src/m1、源码、锁文件、Schema、测试或部署脚本；未运行接口生成、编译、工程测试或真实服务。文档检查不代表实现已通过，下一步由用户审阅本轮详细稿。
+
+## 98. 事件正文、投影映射与读取权限评审修订
+
+- **编号**：M1-DEC-091
+- **日期**：2026-11-15
+- **用户确认**：按评审分析补齐合同。消息保存完整正文；事件逐项明确携带记录；业务状态可重建，执行状态按控制恢复；补用途授权及容量/保留方案。本批仅修订文档。
+- **正文与身份**：输入、消息和作答各存完整正文，允许文字重复；附件固定引用。EventPartRef只用于明确来源字段。业务ID预分配，不要求查询行先存在，重建保留原ID。
+- **投影**：73类业务DTO登记主键与追加/快照方式；74类事件登记记录类型、数量和条件。每事件全部所属记录及收据共同提交；候选采用/拒绝/替代留完整状态；输入和题单不可变正文不在结束事件重复生成。
+- **执行与权限**：教材turn不另存running，查询组合Execution；正式业务结果和运行控制分别恢复。用途由登记处理器提供，按身份、资源、记录和字段校验；浏览器读取授权视图，不透传完整内部信封。
+- **草案调整**：已有ExecutionStateChanged补progress_saved以记录Step保存，DeliveryStateChanged区分accepted/rejected/ignored；未增加事件类型、表、AI Operation或API路径。草案尚未部署，本批不声称进行了历史Schema迁移。
+- **待确认**：32KiB正文外置、1MiB单事件上限、30日试用预算均为候选；不更改既有环境默认值。M1不自动删除继续有效，长期保留与停止试用后的处置需用户确认；不自动物理删除。
+- **阅读顺序**：[正文与矩阵](m1/engineering/contracts/Event_Facts.md) → [公开事件视图](m1/engineering/contracts/Runtime_Protocols.md#r05) → [容量与保留](m1/engineering/Infrastructure_and_Deployment_Design.md#641-事实载荷与保留候选)。实现接收见[计划§2.9](m1/engineering/Delivery_Plan.md#42-各增量必须覆盖的场景)。
+
+### 98.1 升版
+
+| 文档 | 版本 |
+| --- | --- |
+| `doc/mvp/DECISIONS.md` | v0.93 → v0.94 |
+| `doc/mvp/README.md` | v0.92 → v0.93 |
+| `doc/mvp/m1/README.md` | v0.71 → v0.72 |
+| `doc/mvp/m1/engineering/API_and_Message_Design.md` | v0.4 → v0.5 |
+| `doc/mvp/m1/engineering/Client_Design.md` | v0.28 → v0.29 |
+| `doc/mvp/m1/engineering/Database_Design.md` | v0.5 → v0.6 |
+| `doc/mvp/m1/engineering/Delivery_Plan.md` | v0.53 → v0.54 |
+| `doc/mvp/m1/engineering/Evaluation_Space_Design.md` | v0.25 → v0.26 |
+| `doc/mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.40 → v0.41 |
+| `doc/mvp/m1/engineering/Interaction_Space_Design.md` | v0.27 → v0.28 |
+| `doc/mvp/m1/engineering/Product_Application_Design.md` | v0.31 → v0.32 |
+| `doc/mvp/m1/engineering/README.md` | v0.76 → v0.77 |
+| `doc/mvp/m1/engineering/System_Design.md` | v0.52 → v0.53 |
+| `doc/mvp/m1/engineering/System_Foundation_Design.md` | v0.48 → v0.49 |
+| `doc/mvp/m1/engineering/contracts/Event_Facts.md` | v0.1 → v0.2 |
+| `doc/mvp/m1/engineering/contracts/Event_Messages.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/contracts/Product_API.md` | v0.3 → v0.4 |
+| `doc/mvp/m1/engineering/contracts/Runtime_Protocols.md` | v0.3 → v0.4 |
+| `doc/mvp/m1/engineering/database/Business_Interaction.md` | v0.4 → v0.5 |
+| `doc/mvp/m1/engineering/database/Business_Product.md` | v0.4 → v0.5 |
+
+
+### 98.2 自检
+
+20份文档完成静态检查：74类事件与映射逐项对应，73类业务DTO的主键与字典一致，10类runtime核对记录不参与P重建；112张表、1042个字段数量未增加。1372个本地链接/锚点及43个JSON示例检查通过；历史决定、9项AI Operation、普通处理与HTTP路径清单未扩大。本批没有修改Mermaid图。
+
+人工复核修正了重复登记不可变输入/题单、候选后续状态漏记、事件自带业务身份的误写，以及浏览器直接采用完整内部事件类型的授权缺口。容量基线和长上下文情形已复算；候选阈值/保留期未标为已确认。
+
+未修改原型和源码，未创建DDL/Schema或执行真实数据库、模型、消息、权限与重建测试。容量为假设粗算，不代表实测或已批准资源。下一步由用户审阅本批修订及候选。
+
+## 99. 实施与交付计划重构
+
+- **编号**：M1-DEC-092；2026-11-15。
+- **用户要求**：评估Delivery_Plan的结构问题并主动重构，使开发顺序、依赖、完成条件和交付物清楚可审。
+- **采纳**：分成范围与顺序、开工门槛、待确认清单、验证与证据、交付物五节；合并重复验收，移出历史检查，修正过期数量与导航。
+- **裁剪**：参数值仍由责任文档维护，计划只索引确认点；开发状态与设计确认分开。E01—E07不改顺序，不虚构工期、运行结果或候选批准。
+- **交付**：[计划v0.55](m1/engineering/Delivery_Plan.md)补七项增量的依赖、可并行工作、退出条件与交付件；E01再分四步。V01—V08映射到增量、用例和证据；事件事实源检查并入相应验收。
+- **历史**：原§2.4/2.7检查、§2.5—2.6当时安排及既有修订记录曾移入历史摘录；该摘录后按§100删除。旧决定原意保留。
+- **边界**：9项AI能力、31项普通处理、业务规则、接口、数据与事件定义不变；未调整配置候选或启动编码。下一步接收E01所需合同和配置。
+
+### 99.1 升版
+
+| 文档 | 版本 |
+| --- | --- |
+| `doc/mvp/DECISIONS.md` | v0.94 → v0.95 |
+| `doc/mvp/README.md` | v0.93 → v0.94 |
+| `doc/mvp/m1/README.md` | v0.72 → v0.73 |
+| `doc/mvp/m1/engineering/AI_Foundation_Design.md` | v0.28 → v0.29 |
+| `doc/mvp/m1/engineering/Client_Design.md` | v0.29 → v0.30 |
+| `doc/mvp/m1/engineering/Delivery_Plan.md` | v0.54 → v0.55 |
+| `doc/mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.41 → v0.42 |
+| `doc/mvp/m1/engineering/README.md` | v0.77 → v0.78 |
+| `doc/mvp/m1/engineering/System_Design.md` | v0.53 → v0.54 |
+| 历史摘录（后按§100删除） | 新建 → v0.1 |
+
+### 99.2 自检
+
+本批9份现行文档升版，新增1份历史记录。实施计划由347行重排为181行；五节职责、E01—E07依赖、V01—V08入口及旧内容去向已核对。754个本地链接/锚点、新表格列数及升版登记检查通过，未修改Mermaid图。
+
+9项AI Operation、31项普通处理及事件目录与本批修改前一致；旧决定正文保持原意，只迁移链接。参数候选未转为已确认。未修改源码或原型，未安装环境、执行工程测试或填入验收通过结果。
+
+## 100. 删除工程历史摘录目录
+
+2026-11-15，用户确认删除engineering/reviews目录。该目录只有旧实施计划的历史摘录；同步清理计划、工程README及本文件的引用。保留历史决定原意，现行实施安排不变。
+
+| 文档 | 版本 |
+| --- | --- |
+| Delivery_Plan.md | v0.55 → v0.56 |
+| engineering/README.md | v0.78 → v0.79 |
+| DECISIONS.md | v0.95 → v0.96 |
