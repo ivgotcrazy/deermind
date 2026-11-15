@@ -1,15 +1,22 @@
 """追加事实并应用已登记的生产者投影；提交和回滚由外层用例负责。"""
 
+import hashlib
 import json
 from collections.abc import Mapping, Sequence
+from dataclasses import replace
 from datetime import datetime
 from uuid import UUID
 
 from deermind.foundation.system.events.contracts import (
+    EVENT_LIMIT,
+    INLINE_LIMIT,
     EventConflict,
     EventDraft,
     EventPayload,
     EventRegistration,
+    FileContent,
+    InlineContent,
+    PreparedEvents,
     ProducerAccess,
     StoredEvent,
 )
@@ -39,7 +46,7 @@ class EventStore:
         self,
         connection: AsyncConnection,
         access: ProducerAccess,
-        drafts: Sequence[EventDraft],
+        drafts: Sequence[EventDraft] | PreparedEvents,
         *,
         commit_id: UUID,
         correlation_id: UUID,
@@ -52,9 +59,26 @@ class EventStore:
         """
         if not connection.in_transaction() or not drafts:
             raise ValueError("An active transaction and a nonempty event batch are required")
-        drafts = tuple(drafts)
+        if isinstance(drafts, PreparedEvents):
+            prepared = drafts
+            drafts = prepared.drafts
+        else:
+            prepared = None
+            drafts = tuple(drafts)
+        if not drafts:
+            raise ValueError("An event batch cannot be empty")
         expected_seq = dict(expected_seq)
-        validated = self._validate(access, drafts)
+        if prepared is not None:
+            if prepared.access != access or len(prepared.decoded_payloads) != len(drafts):
+                raise PermissionError("Prepared facts belong to a different producer context")
+            decoded_drafts = tuple(
+                replace(draft, payload=json.loads(payload))
+                for draft, payload in zip(drafts, prepared.decoded_payloads, strict=True)
+            )
+            validated = self.validate_inline(access, decoded_drafts)
+        else:
+            validated = self.validate_inline(access, drafts)
+        await self._check_content(connection, drafts, validated)
         scopes = {(draft.scope_kind, draft.scope_id) for draft in drafts}
         if set(expected_seq) != scopes or any(
             type(n) is not int or n < 0 for n in expected_seq.values()
@@ -116,7 +140,7 @@ class EventStore:
             )
         return stored
 
-    def _validate(
+    def validate_inline(
         self, access: ProducerAccess, drafts: Sequence[EventDraft]
     ) -> list[tuple[EventRegistration, EventPayload]]:
         """所有者验证记录矩阵与正文；未登记类型、错范围和重复身份一律拒绝。"""
@@ -148,6 +172,8 @@ class EventStore:
             remaining.remove(draft.event_id)
             # 从固定JSON解码，UUID/UTC等正文由其登记Schema严格校验。
             payload = registration.payload_model.model_validate_json(canonical_json(draft.payload))
+            if any(not isinstance(record.content, InlineContent) for record in payload.records):
+                raise ValueError("File-backed facts require verified attachment preparation")
             record_ids = [record.record_id for record in payload.records]
             if len(record_ids) != len(set(record_ids)):
                 raise ValueError("Duplicate record identity in event")
@@ -156,10 +182,91 @@ class EventStore:
         return result
 
     @staticmethod
+    async def _check_content(
+        connection: AsyncConnection,
+        drafts: Sequence[EventDraft],
+        validated: list[tuple[EventRegistration, EventPayload]],
+    ) -> None:
+        """只查不可变文件登记，不在业务事务内读文件；核对外置与完整DTO一致。"""
+        for draft, (registration, decoded) in zip(drafts, validated, strict=True):
+            wire = registration.payload_model.model_validate_json(canonical_json(draft.payload))
+            if len(wire.records) != len(decoded.records):
+                raise ValueError("Prepared record count changed")
+            for record, full in zip(wire.records, decoded.records, strict=True):
+                if not isinstance(full.content, InlineContent):
+                    raise ValueError("Decoded record must contain its complete DTO")
+                content = canonical_json(full.content.value).encode("utf-8")
+                if isinstance(record.content, FileContent):
+                    reference = record.content
+                    if reference.sha256 != hashlib.sha256(content).hexdigest():
+                        raise ValueError("Attachment hash differs from its decoded DTO")
+                    row = (
+                        await connection.execute(
+                            text(
+                                "SELECT sha256, byte_size, media_type, artifact_key "
+                                "FROM runtime.file_objects WHERE file_id=:id"
+                            ),
+                            {"id": reference.file_id},
+                        )
+                    ).one_or_none()
+                    if row != (
+                        reference.sha256,
+                        len(content),
+                        reference.media_type,
+                        f"fact:{draft.event_id}:{record.record_id}",
+                    ):
+                        raise ValueError("Attachment is not registered for this fact record")
+                else:
+                    if record.content != full.content:
+                        raise ValueError("Prepared inline content changed")
+                    if len(content) > INLINE_LIMIT:
+                        raise ValueError("Large fact record must be prepared as an attachment")
+            restored = wire.model_copy(
+                update={
+                    "records": [
+                        record.model_copy(update={"content": full.content})
+                        for record, full in zip(wire.records, decoded.records, strict=True)
+                    ]
+                }
+            )
+            if restored != decoded:
+                raise ValueError("Prepared event metadata changed")
+
+    @staticmethod
     async def _insert(
         connection: AsyncConnection, access: ProducerAccess, event: StoredEvent
     ) -> None:
         draft = event.draft
+        # 大小包括完整信封，而不是只计算payload。UTC时间使用实际保存值。
+        envelope = {
+            "event_id": str(draft.event_id),
+            "commit_id": str(event.commit_id),
+            "event_type": draft.event_type,
+            "schema_version": draft.schema_version,
+            "producer": access.producer,
+            "scope_kind": draft.scope_kind,
+            "scope_id": str(draft.scope_id),
+            "owner_ref": draft.owner_ref.model_dump(),
+            "subject_refs": [ref.model_dump() for ref in draft.subject_refs],
+            "actor_ref": access.actor_ref.model_dump(),
+            "source_execution_ref": str(draft.source_execution_ref)
+            if draft.source_execution_ref
+            else None,
+            "source_request_id": draft.source_request_id,
+            "causation_event_id": str(draft.causation_event_id)
+            if draft.causation_event_id
+            else None,
+            "correlation_id": str(event.correlation_id),
+            "scope_event_seq": event.scope_event_seq,
+            "occurred_at": event.recorded_at.isoformat(),
+            "recorded_at": event.recorded_at.isoformat(),
+            "time_basis": "server_recorded",
+            "time_source_ref": None,
+            "client_reported_at": None,
+            "payload": draft.payload,
+        }
+        if len(canonical_json(envelope).encode("utf-8")) > EVENT_LIMIT:
+            raise ValueError("Encoded event exceeds 1MiB")
         await connection.execute(
             text(
                 "INSERT INTO runtime.events "
@@ -191,6 +298,6 @@ class EventStore:
                 "correlation": event.correlation_id,
                 "seq": event.scope_event_seq,
                 "time": event.recorded_at,
-                "payload": event.payload.model_dump_json(),
+                "payload": canonical_json(draft.payload),
             },
         )

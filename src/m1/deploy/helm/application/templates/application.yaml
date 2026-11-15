@@ -51,6 +51,8 @@ spec:
                 secretKeyRef:
                   name: {{ $root.Values.database.existingSecret | quote }}
                   key: app-password
+            - name: M1_FILES_BACKEND
+              value: pvc
             - name: M1_FILES_ROOT
               value: /data/files
             - name: M1_TEMPORAL_ADDRESS

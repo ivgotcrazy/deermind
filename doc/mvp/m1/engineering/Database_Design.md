@@ -1,16 +1,16 @@
 # M1 数据库设计
 
-> **版本**：v0.9<br>
-> **状态**：E01-05原子保存表已接入；进度见实施计划，112张规划表按需迁移<br>
+> **版本**：v0.10<br>
+> **状态**：E01-06文件登记表已接入；进度见实施计划，112张规划表按需迁移<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.8 → v0.9，登记E01-05五张表及原子保存迁移，字段继续由分册维护<br>
+> **修订说明**：v0.9 → v0.10，登记E01-06文件登记迁移与附件类别<br>
 
 **一个PostgreSQL实例，三个数据库。** `deermind`保存业务与应用运行数据；`temporal`、`temporal_visibility`由Temporal管理。业务库内部按责任划分schema，schema不是独立数据库，也不等于独立服务。
 
 模块文档维护接口、业务载荷、读写流程和事务边界；数据库分册维护表、物理字段、约束、索引及表关系；本册维护分库总览、公共存储规则和导航。模块通过链接引用分册，不再复制物理表定义。
 
-用户确认M1继续采用同库分schema，数据库拆分留后续阶段；本轮沿用共同短事务并明确先追加事件、再同步投影，不增加拆库设计。字段稿仍待审阅。E01-02已建立三个数据库及隔离账号，并运行官方Temporal Schema工具；E01-04交付六个模块schema与迁移记录表；E01-05增加五张事实、投影及收据表；其余规划表按所属增量迁移。实际部署及验证见[迁移交付](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)。
+用户确认M1继续采用同库分schema，数据库拆分留后续阶段；本轮沿用共同短事务并明确先追加事件、再同步投影，不增加拆库设计。字段稿仍待审阅。E01-02已建立三个数据库及隔离账号，并运行官方Temporal Schema工具；E01-04交付六个模块schema与迁移记录表；E01-05增加五张事实、投影及收据表；E01-06增加runtime.file_objects；其余规划表按所属增量迁移。实际部署及验证见[迁移交付](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)。
 
 ## 1. 库与账号
 
@@ -312,9 +312,13 @@ P为事件正文的业务投影，D为由事实生成的当前索引，C为运�
 
 ### 5.2 E01-05实施范围
 
-`0002_atomic_facts`依赖首个revision，建立runtime.events、runtime.scope_event_heads、runtime.projection_receipts、product.accounts及product.command_receipt。字段沿各分册；应用仅获当前需要的列/表权限，事件及投影收据不可改删。当前总计6张表（含迁移表），不等于112张规划表全部落库。
+`0002_atomic_facts`依赖首个revision，建立runtime.events、runtime.scope_event_heads、runtime.projection_receipts、product.accounts及product.command_receipt。字段沿各分册；应用仅获当前需要的列/表权限，事件及投影收据不可改删。E01-05完成时总计6张表（含迁移表），不等于112张规划表全部落库。
 
 首个生产者保存已有合同中的初始账号事实，不开放登录/开户API。共同事务、幂等和失败验证见[事实保存交付](../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)。
+
+### 5.3 E01-06实施范围
+
+`0003_file_objects`依赖`0002_atomic_facts`，建立runtime.file_objects及产物键唯一索引。文件登记只追加；新增`fact`类别承载非AI专属的事实正文，字段仍以[运行分册§1](database/Business_Runtime.md#1-runtimefile_objects)为准。本批完成后共7张表（含迁移表），file_uploads随教材上传实现。验证见[文件交付](../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)。
 
 ## 6. 自检与审阅范围
 
@@ -339,3 +343,4 @@ P为事件正文的业务投影，D为由事实生成的当前索引，C为运�
 | v0.7 | 2026-11-15 | 登记E01-02三个库及官方Temporal Schema已建立；业务表尚未迁移 |
 | v0.8 | 2026-11-16 | 登记E01-04首批schema迁移、版本表和权限；业务表仍随增量建立 |
 | v0.9 | 2026-11-16 | 登记E01-05五张表及原子保存迁移，字段继续由分册维护 |
+| v0.10 | 2026-11-16 | 登记E01-06文件登记迁移与附件类别 |

@@ -37,7 +37,7 @@ class StartupTests(unittest.IsolatedAsyncioTestCase):
     def test_storage_and_path_rejection(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            check_storage(root)
+            check_storage(root, require_mount=False)
             self.assertEqual(list(root.iterdir()), [])
             probe = ProbeActivity(root)
             with self.assertRaises(ValueError):

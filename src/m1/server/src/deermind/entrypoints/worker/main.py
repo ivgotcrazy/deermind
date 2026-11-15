@@ -22,7 +22,7 @@ async def run() -> None:
     """SIGTERM stops polling; unexpected worker failure exits the process."""
     READY_FILE.unlink(missing_ok=True)
     settings = Settings.from_environment()
-    check_storage(settings.files_root)
+    check_storage(settings.files_root, require_mount=settings.files_backend == "pvc")
     async with database_lifespan():
         await serve(settings)
 

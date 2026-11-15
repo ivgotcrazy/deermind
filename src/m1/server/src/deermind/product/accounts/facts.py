@@ -9,6 +9,7 @@ from deermind.foundation.system.events.contracts import (
     EventPayload,
     EventRegistration,
     FactModel,
+    InlineContent,
     NonEmpty,
     Ref,
     StoredEvent,
@@ -61,6 +62,8 @@ def account_content(payload: EventPayload) -> AccountFact:
     record = payload.records[0]
     if record.record_type != "product.accounts" or record.schema_version != 1:
         raise ValueError("Unsupported account fact record")
+    if not isinstance(record.content, InlineContent):
+        raise ValueError("Account projection requires decoded content")
     fact = AccountFact.model_validate_json(canonical_json(record.content.value))
     if (
         payload.action != "bootstrap_admin"

@@ -236,6 +236,7 @@ class MigrationTests(DatabaseTestCase):
                     "M1_DB_USER": "deermind_app",
                     "M1_DB_PASSWORD": str(self.app.password),
                     "M1_FILES_ROOT": directory,
+                    "M1_FILES_BACKEND": "local",
                     "M1_TEMPORAL_ADDRESS": "127.0.0.1:1",
                     "M1_TEMPORAL_NAMESPACE": "dm-test",
                     "M1_TASK_QUEUE": "test",

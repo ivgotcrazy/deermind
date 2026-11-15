@@ -29,7 +29,7 @@ def create_app() -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
         settings = Settings.from_environment()
-        check_storage(settings.files_root)
+        check_storage(settings.files_root, require_mount=settings.files_backend == "pvc")
         app.state.settings = settings
         try:
             async with database_lifespan() as engine:
@@ -57,7 +57,7 @@ def create_app() -> FastAPI:
     async def ready() -> Health:
         try:
             settings: Settings = app.state.settings
-            check_storage(settings.files_root)
+            check_storage(settings.files_root, require_mount=settings.files_backend == "pvc")
             await check_database(app.state.database)
         except (OSError, SQLAlchemyError, DatabaseNotReady) as error:
             LOGGER.error(

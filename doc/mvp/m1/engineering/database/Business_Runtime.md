@@ -1,10 +1,10 @@
 # deermind 数据库：公共运行及文件登记数据字典
 
-> **版本**：v0.4<br>
+> **版本**：v0.5<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.3 → v0.4，同步E01-05接线范围；保留既定字段与记录矩阵<br>
+> **修订说明**：v0.4 → v0.5，新增事实附件类别，登记E01-06文件表接线<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **19 张表、194 个列定义**。处理流程、接口和业务载荷由[System_Foundation_Design.md](../System_Foundation_Design.md) §2—6；文件由基础设施§2维护维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -142,7 +142,7 @@ erDiagram
     runtime__waits ||--o| runtime__wait_handling : "wait_id"
 ```
 
-E01-05仅接线初始账号的内联事实、生产者投影及收据；其余类型按所属增量实施。范围、验证和限制见[交付记录](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，进度以[实施计划](../Delivery_Plan.md)为准。
+E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_objects和FileReceived，file_uploads尚未建立；其余类型按所属增量实施。既有事实保存见[E01-05](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，文件与附件见[E01-06](../../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)，进度以[实施计划](../Delivery_Plan.md)为准。
 
 ## 1. `runtime.file_objects`
 
@@ -158,7 +158,7 @@ E01-05仅接线初始账号的内联事实、生产者投影及收据；其余�
 | `media_type` | `text` | 否 | 无 | 经过校验的MIME类型 |
 | `byte_size` | `bigint` | 否 | 无 | 完整文件字节数；非负 |
 | `sha256` | `text` | 否 | 无 | 完整文件SHA-256；64位小写十六进制 |
-| `category` | `text` | 否 | 无 | original、page、render、ai_material、ai_candidate、sdk_payload |
+| `category` | `text` | 否 | 无 | original、page、render、ai_material、ai_candidate、sdk_payload、fact；fact为完整事实DTO附件 |
 | `artifact_key` | `text` | 是 | 无 | 派生写入的稳定产物键；原始上传可空 |
 | `source_refs` | `jsonb` | 否 | '[]'::jsonb | 派生文件的原件/转换输入；原件可空；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `transform_ref` | `jsonb` | 是 | 无 | 派生规则及版本；原件为空；Ref，见总册§3 |
@@ -593,3 +593,4 @@ E01-05仅接线初始账号的内联事实、生产者投影及收据；其余�
 | v0.2 | 2026-11-15 | 物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。 |
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.4 | 2026-11-16 | 同步E01-05接线范围；保留既定字段与记录矩阵 |
+| v0.5 | 2026-11-16 | 新增事实附件类别，登记E01-06文件表接线 |

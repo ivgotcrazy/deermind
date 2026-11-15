@@ -10,6 +10,8 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 NonEmpty = Annotated[str, Field(min_length=1)]
+INLINE_LIMIT = 32 * 1024
+EVENT_LIMIT = 1024 * 1024
 
 
 class FactModel(BaseModel):
@@ -38,11 +40,20 @@ class InlineContent(FactModel):
     value: dict[str, JsonValue]
 
 
+class FileContent(FactModel):
+    """固定文件身份与完整性信息；不是路径或读取授权。"""
+
+    storage: Literal["file"]
+    file_id: UUID
+    sha256: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+    media_type: Literal["application/json"]
+
+
 class FactRecord(FactModel):
     record_id: NonEmpty
     record_type: NonEmpty
     schema_version: Annotated[int, Field(ge=1)]
-    content: InlineContent
+    content: InlineContent | FileContent
 
 
 class EventPayload(FactModel):
@@ -51,7 +62,7 @@ class EventPayload(FactModel):
 
 @dataclass(frozen=True)
 class EventDraft:
-    """身份由生产方预分配；本批仅接线服务端发生的内联事实。"""
+    """身份由生产方预分配；本批接线服务端发生的事实。"""
 
     event_id: UUID
     event_type: str
@@ -74,6 +85,15 @@ class ProducerAccess:
     actor_ref: Ref
     scopes: frozenset[tuple[str, UUID]]
     source_event_ids: frozenset[UUID] = frozenset()
+
+
+@dataclass(frozen=True)
+class PreparedEvents:
+    """事务外已核验的附件；完整正文是固定JSON字符串，提交时重新校验。"""
+
+    drafts: tuple[EventDraft, ...]
+    decoded_payloads: tuple[str, ...]
+    access: ProducerAccess
 
 
 @dataclass(frozen=True)

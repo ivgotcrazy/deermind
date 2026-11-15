@@ -17,8 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> int:
     """核对目标，运行临时测试Pod；任一步失败均返回非零并清理本次Pod。"""
     group = sys.argv[1] if len(sys.argv) == 2 else "database"
-    if group not in {"database", "facts"} or len(sys.argv) > 2:
-        raise ValueError("Expected database or facts test group")
+    if group not in {"database", "facts", "files"} or len(sys.argv) > 2:
+        raise ValueError("Expected database, facts or files test group")
     target = [
         "kubectl",
         f"--kubeconfig={os.environ['M1_KUBECONFIG']}",
@@ -92,6 +92,20 @@ def main() -> int:
             "volumes": [{"name": "tmp", "emptyDir": {}}],
         },
     }
+    if group == "files":
+        environment.append({"name": "M1_TEST_FILES_ROOT", "value": "/data/files"})
+        pod["spec"]["volumes"].append(
+            {
+                "name": "files",
+                "persistentVolumeClaim": {"claimName": os.environ["M1_FILES_CLAIM"]},
+            }
+        )
+        pod["spec"]["containers"][0]["volumeMounts"].append(
+            {
+                "name": "files",
+                "mountPath": "/data/files",
+            }
+        )
     subprocess.run(
         [*target, "create", "-f", "-"], input=json.dumps(pod), text=True, check=True, timeout=30
     )
@@ -102,7 +116,11 @@ def main() -> int:
             timeout=75,
         )
         fixtures = ROOT / "tests/migrations"
-        pattern = "test_database.py" if group == "database" else "test_atomic_facts.py"
+        pattern = {
+            "database": "test_database.py",
+            "facts": "test_atomic_facts.py",
+            "files": "test_file_facts.py",
+        }[group]
         # 将测试文件放进临时目录；生产包仍只从镜像读取，不挂载源码。
         driver = """
 import json

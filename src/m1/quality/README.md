@@ -118,3 +118,7 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 ## E01-05事实保存接入
 
 `test.sh facts`复用数据库目标/镜像配置，在随机测试库验证原子保存、并发防重、来源授权与全批回滚；`database`继续验证迁移。server类型检查显式包含源码和数据库测试辅助模块，不依赖已安装包代替源码检查。场景、结果与限制归[交付记录](../deploy/environments/local-wsl/E01-05-facts.md)。
+
+## E01-06文件与附件接入
+
+`test.sh files`沿用数据库目标、Secret与镜像参数，另要求显式`M1_FILES_CLAIM`；随机测试库验证附件外置、完整性、投影一致及失败原子性，实际PVC只创建并清理本用例的UUID文件。部署和结果见[交付记录](../deploy/environments/local-wsl/E01-06-files.md)。本地文件边界用例纳入`test.sh local`。

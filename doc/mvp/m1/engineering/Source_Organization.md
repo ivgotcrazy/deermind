@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.8<br>
-> **状态**：E01-05事件、投影和收据接线已加入；进度见实施计划<br>
+> **版本**：v0.9<br>
+> **状态**：E01-06文件与附件接线已加入；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.7 → v0.8，登记E01-05事件登记、所有者投影和收据代码位置<br>
+> **修订说明**：v0.8 → v0.9，补齐E01-06文件端口、适配、附件准备及测试位置<br>
 
 ## 1. 范围与维护位置
 
@@ -278,6 +278,12 @@ server/migrations/
 
 本批用SQLAlchemy连接执行显式SQL，尚无ORM表映射，不为凑目录添加空metadata。迁移`0002_atomic_facts`固定历史DDL，不导入可变业务模型。`tests/migrations/test_atomic_facts.py`在已构建包与随机PG测试库中验证，`test.sh facts`是显式集群入口。
 
+### 6.3 E01-06落地
+
+`foundation/system/files/ports.py`定义字节存储端口；`infrastructure/files/local.py`处理local/PVC，`records.py`维护文件登记Schema和确定性写入。`foundation/system/events/attachments.py`负责事务外附件准备及FileReceived接线；事件保存器保留外置引用并向投影器提供完整DTO。
+
+迁移`0003_file_objects`独立追加，不改旧DDL；`server/tests/test_files.py`验证文件失败边界，`tests/migrations/test_file_facts.py`经`test.sh files`验证真实PG与PVC。浏览器授权读取、上传租约和Codec不提前建空模块。
+
 ## 7. 测试目录与执行边界
 
 ```text
@@ -408,3 +414,4 @@ Helm沿[官方Chart文件结构](https://helm.sh/docs/topics/charts/)组织。�
 | v0.6 | 2026-11-15 | 落实E01-03后端包、双入口客户端、镜像与应用测试；不建立后续功能占位 |
 | v0.7 | 2026-11-16 | 登记首批迁移脚本、wheel打包和数据库验证入口 |
 | v0.8 | 2026-11-16 | 登记E01-05事件登记、所有者投影和收据代码位置 |
+| v0.9 | 2026-11-16 | 补齐E01-06文件端口、适配、附件准备及测试位置 |
