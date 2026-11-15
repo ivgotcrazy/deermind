@@ -122,3 +122,7 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 ## E01-06文件与附件接入
 
 `test.sh files`沿用数据库目标、Secret与镜像参数，另要求显式`M1_FILES_CLAIM`；随机测试库验证附件外置、完整性、投影一致及失败原子性，实际PVC只创建并清理本用例的UUID文件。部署和结果见[交付记录](../deploy/environments/local-wsl/E01-06-files.md)。本地文件边界用例纳入`test.sh local`。
+
+## E01-07授权查询接入
+
+`test.sh reads`沿用数据库组的目标、Secret和构建镜像参数，在随机PG测试库及临时文件目录验证字段/来源授权、固定上界分页、连续扫描、附件损坏和读取限额。业务权限使用明确标记的夹具，正式账号维护另测；不接HTTP或登录。JSON Pointer单元测试纳入local组，结果及限制见[查询交付](../deploy/environments/local-wsl/E01-07-reads.md)。

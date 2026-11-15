@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 显式选择本地、只读目标或组件测试，不把集群写操作混入默认本地验证。
-# 用法：test.sh local|target|components|application|database|facts|files；环境变量见 quality/README.md。
+# 用法：test.sh local|target|components|application|database|facts|files|reads；环境变量见 quality/README.md。
 # 任一测试失败即非零退出；不安装依赖、不自动更换目标。
 set -euo pipefail
 
@@ -12,7 +12,7 @@ main() {
   export PATH="$root/quality/node_modules/.bin:$PATH"
 
   if (($# != 1)); then
-    echo 'Usage: test.sh local|target|components|application|database|facts|files' >&2
+    echo 'Usage: test.sh local|target|components|application|database|facts|files|reads' >&2
     return 1
   fi
 
@@ -25,14 +25,14 @@ main() {
         server/.venv/bin/python -m unittest discover -s server/tests -v
       fi
       ;;
-    target | components | application | database | facts | files)
+    target | components | application | database | facts | files | reads)
       # 真实测试必须显式指定目标；components 还会重启测试 release。
       : "${M1_KUBECONFIG:?Explicit test kubeconfig required}"
       : "${M1_CONTEXT:?Explicit test context required}"
       : "${M1_NAMESPACE:?Explicit test namespace required}"
       if [[ "$1" == target ]]; then
         python3 tests/deployment/test_target.py
-      elif [[ "$1" == database || "$1" == facts || "$1" == files ]]; then
+      elif [[ "$1" == database || "$1" == facts || "$1" == files || "$1" == reads ]]; then
         : "${M1_POSTGRES_RELEASE:?Explicit PostgreSQL release required}"
         : "${M1_DATABASE_SECRET:?Explicit database secret name required}"
         : "${M1_TEST_NODE:?Explicit test node required}"

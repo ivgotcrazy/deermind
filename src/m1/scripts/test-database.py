@@ -17,8 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> int:
     """核对目标，运行临时测试Pod；任一步失败均返回非零并清理本次Pod。"""
     group = sys.argv[1] if len(sys.argv) == 2 else "database"
-    if group not in {"database", "facts", "files"} or len(sys.argv) > 2:
-        raise ValueError("Expected database, facts or files test group")
+    if group not in {"database", "facts", "files", "reads"} or len(sys.argv) > 2:
+        raise ValueError("Expected database, facts, files or reads test group")
     target = [
         "kubectl",
         f"--kubeconfig={os.environ['M1_KUBECONFIG']}",
@@ -120,6 +120,7 @@ def main() -> int:
             "database": "test_database.py",
             "facts": "test_atomic_facts.py",
             "files": "test_file_facts.py",
+            "reads": "test_event_reads.py",
         }[group]
         # 将测试文件放进临时目录；生产包仍只从镜像读取，不挂载源码。
         driver = """
@@ -140,7 +141,7 @@ with tempfile.TemporaryDirectory() as directory:
         return subprocess.run(
             [*target, "exec", "-i", name, "--", "python", "-c", driver, pattern],
             input=json.dumps(
-                {path.name: path.read_text(encoding="utf-8") for path in fixtures.glob("test_*.py")}
+                {path.name: path.read_text(encoding="utf-8") for path in fixtures.glob("*.py")}
             ),
             text=True,
             timeout=150,

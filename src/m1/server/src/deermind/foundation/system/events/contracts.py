@@ -1,7 +1,7 @@
 """事件保存的内部合同；只接受程序登记的类型，不接受任意表名或SQL。"""
 
-from collections.abc import Awaitable, Callable
-from dataclasses import dataclass
+from collections.abc import Awaitable, Callable, Mapping
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
@@ -118,6 +118,9 @@ class EventRegistration:
     validate: Callable[[EventDraft, EventPayload], None]
     projector_id: str
     project: Callable[[AsyncConnection, StoredEvent], Awaitable[None]]
+    record_models: Mapping[tuple[str, int], type[FactModel]] = field(
+        default_factory=lambda: dict[tuple[str, int], type[FactModel]]()
+    )
 
 
 class EventConflict(ValueError):

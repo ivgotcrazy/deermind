@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.9<br>
-> **状态**：E01-06文件与附件接线已加入；进度见实施计划<br>
+> **版本**：v0.10<br>
+> **状态**：E01-07内部授权读取接线已加入；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.8 → v0.9，补齐E01-06文件端口、适配、附件准备及测试位置<br>
+> **修订说明**：v0.9 → v0.10，补齐E01-07读取合同、查询实现和授权测试位置<br>
 
 ## 1. 范围与维护位置
 
@@ -284,6 +284,12 @@ server/migrations/
 
 迁移`0003_file_objects`独立追加，不改旧DDL；`server/tests/test_files.py`验证文件失败边界，`tests/migrations/test_file_facts.py`经`test.sh files`验证真实PG与PVC。浏览器授权读取、上传租约和Codec不提前建空模块。
 
+### 6.4 E01-07落地
+
+`foundation/system/events/reading.py`维护读取合同与JSON Pointer处理；`query.py`维护固定上界查询、受信用途核验及授权后解引用。所有者在既有facts/records文件登记固定DTO及字段许可，`bootstrap/events.py`汇总已实现的维护读取。不引入通用全文访问或业务空模块。
+
+`server/tests/test_event_pointers.py`验证指针规则；`tests/migrations/event_read_fixture.py`提供隔离的业务授权夹具，`test_event_reads.py`通过`test.sh reads`验证构建包和真实PG。不新增表或迁移，正式浏览器入口随登录及业务功能实施。
+
 ## 7. 测试目录与执行边界
 
 ```text
@@ -415,3 +421,4 @@ Helm沿[官方Chart文件结构](https://helm.sh/docs/topics/charts/)组织。�
 | v0.7 | 2026-11-16 | 登记首批迁移脚本、wheel打包和数据库验证入口 |
 | v0.8 | 2026-11-16 | 登记E01-05事件登记、所有者投影和收据代码位置 |
 | v0.9 | 2026-11-16 | 补齐E01-06文件端口、适配、附件准备及测试位置 |
+| v0.10 | 2026-11-16 | 补齐E01-07读取合同、查询实现和授权测试位置 |

@@ -14,6 +14,7 @@ from deermind.foundation.system.events.contracts import (
     Ref,
     StoredEvent,
 )
+from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.foundation.system.events.store import canonical_json
 from pydantic import Field, field_validator
 from sqlalchemy import text
@@ -108,4 +109,32 @@ ACCOUNT_REGISTRATION = EventRegistration(
     validate=validate_account,
     projector_id="product.accounts.v1",
     project=project_account,
+    record_models={("product.accounts", 1): AccountFact},
+)
+
+
+def account_maintenance(access: ReadAccess, event: EventFact) -> ReadGrant | None:
+    """账号事实只向已授权维护读取开放；通用管理员事件页不展示账号敏感依据。"""
+    if access.maintenance_ref is None:
+        return None
+    return ReadGrant(
+        {("product.accounts", 1): None},
+        frozenset(
+            {
+                "account_id",
+                "action",
+                "account_revision",
+                "relation_refs",
+            }
+        ),
+        "初始账号已保存",
+    )
+
+
+ACCOUNT_READ_POLICY = ReadPolicy(
+    "TrialAccountSaved",
+    1,
+    "runtime",
+    "projection_rebuild",
+    account_maintenance,
 )
