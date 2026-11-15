@@ -2,13 +2,15 @@
 
 本机使用独立 `DeerMind-M1` WSL，安装在 `D:\wsl\DeerMind-M1`，不替换旧 Ubuntu，不修改 `.wslconfig`。这是低并发功能测试环境，尚未验证 100 人试用容量。
 
+基础组件的部署和复核见[E01-02](components.md)；下方保留E01-01的环境记录。
+
 ## 已安装的环境
 
 | 项目 | 值 |
 | :--- | :--- |
 | 系统 | Ubuntu 24.04.5 LTS / WSL 2，systemd 已启用 |
 | 集群 | K3s `v1.37.2+k3s1`，单节点 `deermind-m1` |
-| 工具 | 使用 K3s 自带 kubectl，暂未安装 Helm |
+| 工具 | 使用 K3s 自带 kubectl；Helm 4.3.2已在E01-02安装 |
 | 命名空间 / context | `deermind-m1` / `deermind-m1` |
 | 本机管理 kubeconfig | WSL 内 `/root/.kube/deermind-m1.yaml`，权限 0600 |
 | 基础镜像 | 同版本官方离线包；保留默认 CoreDNS、local-path、Traefik、metrics-server |

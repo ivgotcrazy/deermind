@@ -1,0 +1,11 @@
+image: docker.io/library/postgres:17.12@sha256:0d938e975177bef9f1f61f3f9dbcf2e0aa0a139568f66d3415ed8892eb97f6ac
+existingSecret: deermind-postgres
+storageClass: local-path
+storageSize: 8Gi
+nodeSelector:
+  kubernetes.io/hostname: deermind-m1
+maxConnections: 80
+sharedBuffers: 128MB
+resources:
+  requests: {cpu: 250m, memory: 256Mi}
+  limits: {cpu: 1000m, memory: 768Mi}

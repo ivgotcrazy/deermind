@@ -1,0 +1,86 @@
+{{- if not .Values.bootstrap.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  serviceName: {{ .Release.Name }}
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {{ .Values.nodeSelector | toJson }}
+      securityContext:
+        fsGroup: 999
+      containers:
+        - name: postgres
+          image: {{ required "image is required" .Values.image | quote }}
+          imagePullPolicy: IfNotPresent
+          args: ["-c", {{ printf "max_connections=%v" .Values.maxConnections | quote }}, "-c", {{ printf "shared_buffers=%s" .Values.sharedBuffers | quote }}]
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+            - name: POSTGRES_PASSWORD_FILE
+              value: /run/credentials/postgres-password
+            - name: POSTGRES_INITDB_ARGS
+              value: "--auth-host=scram-sha-256"
+          resources: {{ .Values.resources | toJson }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+          startupProbe:
+            exec:
+              command: ["pg_isready", "-h", "127.0.0.1", "-U", "postgres"]
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-h", "127.0.0.1", "-U", "postgres"]
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-h", "127.0.0.1", "-U", "postgres"]
+            periodSeconds: 10
+            failureThreshold: 6
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: credentials
+              mountPath: /run/credentials
+              readOnly: true
+      volumes:
+        - name: credentials
+          secret:
+            secretName: {{ required "existingSecret is required" .Values.existingSecret }}
+            defaultMode: 0400
+            items:
+              - key: postgres-password
+                path: postgres-password
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: {{ required "storageClass is required" .Values.storageClass | quote }}
+        resources:
+          requests:
+            storage: {{ required "storageSize is required" .Values.storageSize | quote }}
+{{- end }}

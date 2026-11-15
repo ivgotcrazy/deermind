@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-{{ required "runId is required" .Values.runId }}
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 180
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      nodeSelector: {{ .Values.nodeSelector | toJson }}
+      initContainers:
+        {{- range $database, $store := dict "temporal" (dict "schema" "temporal" "key" "temporal-password") "temporal_visibility" (dict "schema" "visibility" "key" "visibility-password") }}
+        - name: {{ $store.schema }}
+          image: {{ required "image is required" $.Values.image | quote }}
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+          env:
+            - {name: SQL_HOST, value: {{ required "postgresHost is required" $.Values.postgresHost | quote }}}
+            - {name: SQL_PORT, value: "5432"}
+            - {name: SQL_PLUGIN, value: postgres12}
+            - {name: SQL_USER, value: {{ $database }}}
+            - {name: SQL_DATABASE, value: {{ $database }}}
+            - name: SQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "existingSecret is required" $.Values.existingSecret }}
+                  key: {{ $store.key }}
+          command: [sh, -ec]
+          args:
+            - temporal-sql-tool setup-schema -v 0.0 && temporal-sql-tool update-schema --schema-dir /etc/temporal/schema/postgresql/v12/{{ $store.schema }}/versioned
+        {{- end }}
+      containers:
+        - name: done
+          image: {{ .Values.image | quote }}
+          imagePullPolicy: IfNotPresent
+          command: [sh, -ec, "echo 'Both Temporal schemas are ready.'"]
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: 500m, memory: 256Mi}

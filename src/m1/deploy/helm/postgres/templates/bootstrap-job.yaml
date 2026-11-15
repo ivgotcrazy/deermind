@@ -1,0 +1,70 @@
+{{- if .Values.bootstrap.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-init-{{ required "bootstrap.runId is required" .Values.bootstrap.runId }}
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 120
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      nodeSelector: {{ .Values.nodeSelector | toJson }}
+      containers:
+        - name: init
+          image: {{ required "image is required" .Values.image | quote }}
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+          env:
+            - {name: PGHOST, value: {{ .Release.Name | quote }}}
+            - {name: PGUSER, value: postgres}
+            - {name: PGDATABASE, value: postgres}
+            - {name: PGCONNECT_TIMEOUT, value: "10"}
+            {{- range $env, $key := dict "PGPASSWORD" "postgres-password" "MIGRATION_PASSWORD" "migration-password" "APP_PASSWORD" "app-password" "TEMPORAL_PASSWORD" "temporal-password" "VISIBILITY_PASSWORD" "visibility-password" }}
+            - name: {{ $env }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.existingSecret }}
+                  key: {{ $key }}
+            {{- end }}
+          command: [sh, -ec]
+          args:
+            - |
+              psql -X -q -v ON_ERROR_STOP=1 <<'SQL'
+              \getenv migration_password MIGRATION_PASSWORD
+              \getenv app_password APP_PASSWORD
+              \getenv temporal_password TEMPORAL_PASSWORD
+              \getenv visibility_password VISIBILITY_PASSWORD
+              SELECT format('CREATE ROLE %I LOGIN PASSWORD %L', name, password)
+              FROM (VALUES ('deermind_migrator', :'migration_password'), ('deermind_app', :'app_password'),
+                           ('temporal', :'temporal_password'), ('temporal_visibility', :'visibility_password')) AS r(name,password)
+              WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname=r.name) \gexec
+              SELECT format('CREATE DATABASE %I OWNER %I', name, owner)
+              FROM (VALUES ('deermind', 'deermind_migrator'), ('temporal', 'temporal'),
+                           ('temporal_visibility', 'temporal_visibility')) AS d(name,owner)
+              WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname=d.name) \gexec
+              DO $ownership$ BEGIN
+                IF EXISTS (SELECT FROM pg_roles WHERE rolname IN ('deermind_migrator','deermind_app','temporal','temporal_visibility')
+                           AND (rolsuper OR rolcreatedb OR rolcreaterole OR rolbypassrls)) THEN
+                  RAISE EXCEPTION 'Unexpected elevated database role';
+                END IF;
+                IF EXISTS (SELECT FROM pg_database WHERE (datname='deermind' AND pg_get_userbyid(datdba)<>'deermind_migrator')
+                   OR (datname='temporal' AND pg_get_userbyid(datdba)<>'temporal')
+                   OR (datname='temporal_visibility' AND pg_get_userbyid(datdba)<>'temporal_visibility')) THEN
+                  RAISE EXCEPTION 'Database owner does not match this deployment';
+                END IF;
+              END $ownership$;
+              REVOKE ALL ON DATABASE postgres,template1,deermind,temporal,temporal_visibility FROM PUBLIC;
+              GRANT CONNECT ON DATABASE deermind TO deermind_app;
+              \connect deermind
+              REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+              \connect temporal
+              REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+              \connect temporal_visibility
+              REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+              SQL
+              echo 'Database identities and ownership checked; no business tables created.'
+{{- end }}

@@ -1,11 +1,11 @@
 # temporal_visibility 数据库：检索数据字典
 
-> **版本**：v0.1<br>
-> **状态**：完整字段稿待审阅；未创建数据库或执行迁移<br>
+> **版本**：v0.2<br>
+> **状态**：官方Schema已在E01-02初始化；应用不直接维护组件表<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-15
 
-本册列出候选 **Temporal Server v1.32.2 / PostgreSQL Schema 1.14** 的 **3 张表、93 个列定义**。它是组件官方结构的查阅附录，不是DeerMind自行维护的DDL，也不表示本批批准或安装此版本。正式选定不同Server版本时，必须重新比对本册。
+本册列出已确认 **Temporal Server v1.32.2 / PostgreSQL Schema 1.14** 的 **3 张表、93 个列定义**。它是组件官方结构的查阅附录，不是DeerMind自行维护的DDL，已按同版admin-tools逐版迁移建立。正式选定不同Server版本时，必须重新比对本册。
 
 来源：[官方建表文件](https://github.com/temporalio/temporal/blob/v1.32.2/schema/postgresql/v12/visibility/schema.sql)、[Schema版本常量](https://github.com/temporalio/temporal/blob/v1.32.2/schema/postgresql/v12/version.go)、[两张Schema管理表](https://github.com/temporalio/temporal/blob/v1.32.2/common/persistence/sql/sqlplugin/postgresql/admin.go)。原始建表文件SHA-256：`de6dc9f06c556f58585b115fa0b9b11b7286b95b753b1aa46015c4fc8b9ae286`（UTF-8、LF）。
 
@@ -308,3 +308,4 @@ Workflow检索视图及搜索属性。
 | 版本 | 日期 | 修改 |
 | :--- | :--- | :--- |
 | v0.1 | 2026-11-15 | 按官方候选版本列全表、列、约束及关系；未安装或修改组件 |
+| v0.2 | 2026-11-15 | E01-02按官方工具初始化；核对实际表数，保留组件迁移结构 |

@@ -1,0 +1,4 @@
+image: docker.io/temporalio/admin-tools:1.32.2@sha256:4a95866efba29d7e17ab012df5232795e8b0ad0f7d5f9d1ec4df321f7792a754
+existingSecret: deermind-postgres
+postgresHost: deermind-postgres
+nodeSelector: {kubernetes.io/hostname: deermind-m1}

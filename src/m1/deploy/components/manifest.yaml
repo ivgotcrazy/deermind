@@ -1,4 +1,4 @@
-# E01-01 only. Add other components when their increments are approved.
+# Confirmed E01-01/E01-02 components; no application dependency lock yet.
 schema_version: 1
 k3s:
   version: v1.37.2+k3s1
@@ -9,3 +9,24 @@ k3s:
   images_sha256: 35a5af1e69b57b8b627a4f6b1c29ea104209b661067b8c97fd40dc3f860bfcd2
   installer_url: https://get.k3s.io
   installer_sha256: c2a2643dd7c259121a876d16538844c60928de3d38ae98f22f7b95a7ffcfab9d
+helm:
+  version: 4.3.2
+  archive_url: https://get.helm.sh/helm-v4.3.2-linux-amd64.tar.gz
+  archive_sha256: d1c0278d46beab79582d7e50f5b3dc206944ba8e577cde618513fd07daa53983
+postgres:
+  version: "17.12"
+  image: docker.io/library/postgres:17.12@sha256:0d938e975177bef9f1f61f3f9dbcf2e0aa0a139568f66d3415ed8892eb97f6ac
+  chart: deploy/helm/postgres
+temporal:
+  version: 1.32.2
+  image: docker.io/temporalio/server:1.32.2@sha256:7bf69188a6232fea14869b9cef3d94aa82a1601d99517f7e86c71f22da4e0670
+  admin_image: docker.io/temporalio/admin-tools:1.32.2@sha256:4a95866efba29d7e17ab012df5232795e8b0ad0f7d5f9d1ec4df321f7792a754
+  chart_version: 1.8.0
+  chart_repository: https://temporalio.github.io/helm-charts
+  chart_sha256: e65b454d620129f3d7da2c16611a7f754e2d89b20b7a135dc5f0916a062f3a9e
+nats:
+  version: 2.15.3
+  image: docker.io/library/nats:2.15.3-alpine@sha256:558394a23dd3c36f2d3a64b51865fd09908010e80a542cea5e75c2af543ed62a
+  chart_version: 2.15.2
+  chart_repository: https://nats-io.github.io/k8s/helm/charts
+  chart_sha256: a7e829a5cfa06591b02534ee76e2acaaab8fd0bfd2e8a4785629e8df5a6b8427

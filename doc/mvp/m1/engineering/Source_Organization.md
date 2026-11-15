@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.2<br>
-> **状态**：目录与OpenAPI设计保持；E01-01已创建环境检查及部署测试，进度见实施计划<br>
+> **版本**：v0.3<br>
+> **状态**：目录与OpenAPI设计保持；E01-01/02已创建目标检查、组件部署及测试，进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.1 → v0.2，补E01-01实际脚本入口；仅创建当前所需文件，见决定登记§105
+> **修订说明**：v0.2 → v0.3，登记E01-02部署脚本、组件Chart和测试入口；不创建应用占位<br>
 
 ## 1. 范围与维护位置
 
@@ -321,13 +321,12 @@ deploy/
 │   │       ├── configmap.yaml
 │   │       ├── files-pvc.yaml
 │   │       └── jobs/           # 迁移、初始化、维护按命令显式执行
-│   └── postgres/              # 沿现有单实例PG部署设计
+│   ├── postgres/              # 单实例PG及显式账号/库初始化Job
+│   └── temporal-schema/       # 官方Schema工具的显式Job；不使用隐式hook
 ├── components/
-│   ├── manifest.yaml          # 上游Chart/镜像来源、版本与校验依据
-│   ├── temporal.values.yaml
-│   └── nats.values.yaml
+│   └── manifest.yaml          # 上游Chart/镜像来源、版本与校验依据
 ├── environments/
-│   ├── local-wsl/             # 本机K3s环境覆盖配置
+│   ├── local-wsl/             # 本机values、文件PVC、环境及组件部署说明
 │   └── remote.example/        # 远程目标模板，无真实凭据
 └── release/
     ├── manifest.schema.json   # ReleaseManifest结构
@@ -340,7 +339,7 @@ scripts/
 ├── export-contracts.sh         # 导出Schema并生成浏览器客户端
 ├── build.sh                    # 安装包、前端、镜像及清单
 ├── check-target.sh             # 只读核对显式集群、namespace与节点就绪
-├── deploy.sh                   # 显式目标集群、渲染、迁移及发布
+├── deploy.sh                   # 显式目标集群、配置检查及单release发布；迁移单独执行
 ├── backup.sh                   # 维护窗口整批备份
 ├── restore.sh                  # 核对后整批恢复
 └── lib/                        # 出现实际复用需求后再提取共用函数
@@ -389,3 +388,4 @@ Helm沿[官方Chart文件结构](https://helm.sh/docs/topics/charts/)组织。�
 | :--- | :--- | :--- |
 | v0.1 | 2026-11-15 | 完整工程目录、模块依赖、合同/迁移归属、测试和部署规划；未创建源码 |
 | v0.2 | 2026-11-15 | 登记E01-01实际目标检查入口及增量建目录原则；不创建应用或客户端占位 |
+| v0.3 | 2026-11-15 | 登记E01-02部署脚本、组件Chart和测试入口；不创建应用占位 |

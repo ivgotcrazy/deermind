@@ -1,0 +1,11 @@
+image: ""
+existingSecret: ""
+storageClass: ""
+storageSize: ""
+nodeSelector: {}
+resources: {}
+maxConnections: 80
+sharedBuffers: 128MB
+bootstrap:
+  enabled: false
+  runId: ""

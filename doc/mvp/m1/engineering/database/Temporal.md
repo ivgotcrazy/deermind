@@ -1,13 +1,15 @@
 # temporal 数据库：执行与历史数据字典
 
-> **版本**：v0.1<br>
-> **状态**：完整字段稿待审阅；未创建数据库或执行迁移<br>
+> **版本**：v0.2<br>
+> **状态**：官方Schema已在E01-02初始化；应用不直接维护组件表<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-15
 
-本册列出候选 **Temporal Server v1.32.2 / PostgreSQL Schema 1.19** 的 **39 张表、230 个列定义**。它是组件官方结构的查阅附录，不是DeerMind自行维护的DDL，也不表示本批批准或安装此版本。正式选定不同Server版本时，必须重新比对本册。
+本册列出已确认 **Temporal Server v1.32.2 / PostgreSQL Schema 1.19** 的 **40 张表、234 个列定义**。它是组件官方结构的查阅附录，不是DeerMind自行维护的DDL，已按同版admin-tools逐版迁移建立。正式选定不同Server版本时，必须重新比对本册。
 
 来源：[官方建表文件](https://github.com/temporalio/temporal/blob/v1.32.2/schema/postgresql/v12/temporal/schema.sql)、[Schema版本常量](https://github.com/temporalio/temporal/blob/v1.32.2/schema/postgresql/v12/version.go)、[两张Schema管理表](https://github.com/temporalio/temporal/blob/v1.32.2/common/persistence/sql/sqlplugin/postgresql/admin.go)。原始建表文件SHA-256：`2250d567eee8e11cba8cb8dab34d1ab14a43e7e1f79bd68a0b2886bb3213cad3`（UTF-8、LF）。
+
+E01-02实测：逐版迁移保留`cluster_metadata`旧表，比最终`schema.sql`多1张表、4列；Schema仍为1.19。该表来自[官方v1.0迁移](https://github.com/temporalio/temporal/blob/v1.32.2/schema/postgresql/v12/temporal/versioned/v1.0/schema.sql)，经后续迁移调整字段；本册补记，不手动删除。
 
 ## 表目录与关系
 
@@ -52,6 +54,7 @@
 | [nexus_endpoints_partition_status](#37-nexus_endpoints_partition_status) | Nexus端点表整体修订 |
 | [schema_version](#38-schema_version) | 组件数据库当前Schema版本 |
 | [schema_update_history](#39-schema_update_history) | 组件Schema升级记录 |
+| [cluster_metadata](#40-cluster_metadata) | 逐版迁移保留的旧集群元数据表 |
 
 以下为逻辑关联，官方DDL未建立这些业务外键；不得补上自定义跨库外键。组件自己维护一致性。图中没有连线的表是独立元数据，不代表缺少结构。
 
@@ -88,6 +91,7 @@ erDiagram
     history_tree
     queue
     queue_metadata
+    cluster_metadata
     cluster_metadata_info
     cluster_membership
     queues
@@ -818,6 +822,19 @@ Nexus端点表整体修订。
 
 - `PRIMARY KEY(version_partition, year, month, update_time)`
 
+## 40. `cluster_metadata`
+
+官方逐版迁移保留的历史表；当前接线检查为空，不作为应用读写入口。字段依据E01-02数据库实际Schema。
+
+| 字段 | 类型 | 可空 | 默认值 | 说明 |
+| :--- | :--- | :--- | :--- | :--- |
+| `metadata_partition` | `INTEGER` | 否 | 无 | 旧集群元数据分区，主键 |
+| `data` | `BYTEA` | 否 | 空字节串 | 组件序列化元数据 |
+| `data_encoding` | `VARCHAR(16)` | 否 | `Proto3` | 载荷编码 |
+| `version` | `BIGINT` | 否 | `1` | 行并发版本 |
+
+官方约束：`PRIMARY KEY(metadata_partition)`；无外键。不补应用外键或业务用途。
+
 ## 维护边界
 
 由Temporal专用账号和官方工具建表、升级、保留及清理；业务Alembic不接管。备份与业务库、NATS及文件按同批维护窗口执行。关闭执行的内部历史保留30天；业务事件、消息、结果与Step记录不因此删除。这里的组件执行状态不能代替业务所有者的提交收据。
@@ -827,3 +844,4 @@ Nexus端点表整体修订。
 | 版本 | 日期 | 修改 |
 | :--- | :--- | :--- |
 | v0.1 | 2026-11-15 | 按官方候选版本列全表、列、约束及关系；未安装或修改组件 |
+| v0.2 | 2026-11-15 | E01-02按官方工具初始化；核对实际表数，保留组件迁移结构 |

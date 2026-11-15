@@ -1,14 +1,14 @@
 # MVP 决定承接与工作记录
 
-> **版本**：v0.101<br>
+> **版本**：v0.102<br>
 > **文档性质**：新MVP目录的决定、待决和变更登记<br>
 > **状态**：已进入小增量工程实现；进度与待确认项见实施计划<br>
-> **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；已开始E01-01工程实现；未修改产品规则或历史原型<br>
+> **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；已推进至E01-02工程实现；未修改产品规则或历史原型<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：小增量规则见§101；E01-01确认与交付见§105<br>
+> **评审记录**：小增量规则见§101；E01-02确认与交付见§106<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.100 → v0.101，登记E01-01环境配置及工程交付；见§105<br>
+> **修订说明**：v0.101 → v0.102，登记E01-02版本、资源确认及交付，见§106<br>
 
 ---
 
@@ -3183,3 +3183,27 @@ M1-DEC-086：用户确认M1继续用schema划分模块数据，数据库拆分�
 | m1/README.md | v0.74 → v0.75 |
 | mvp/README.md | v0.95 → v0.96 |
 | DECISIONS.md | v0.100 → v0.101 |
+
+## 106. E01-02基础组件配置与部署
+
+2026-11-15，用户确认本次仅安装基础组件，不安装应用或前端：
+
+- PG 17.12；Temporal Server/admin-tools 1.32.2、官方Chart 1.8.0；NATS 2.15.3、官方Chart 2.15.2；Helm 4.3.2。
+- PG、NATS各1副本；Temporal四个内部服务各1副本。常驻容器内存limit共2816Mi。PG/NATS/共享文件PVC分别8Gi/2Gi/8Gi；PG最多80连接，NATS文件最多1Gi。
+- 保留现有WSL内存与旧发行版；这是低并发功能测试配置，不是100人容量结论。应用资源、SDK版本及业务stream仍按后续增量确认。
+
+本次交付薄部署脚本、PG及显式Schema Job、环境values、digest清单与可重复组件测试。三个库分账号；业务库为空。镜像下载通过用户代理完成，未修改全局代理；旧环境保留。部署修正和验证结果见[基础组件记录](../../src/m1/deploy/environments/local-wsl/components.md#自检记录)，进度只在实施计划维护，自检通过不等于用户已验收。
+
+| 文档 | 版本 |
+| :--- | :--- |
+| m1/engineering/Delivery_Plan.md | v0.61 → v0.62 |
+| m1/engineering/Infrastructure_and_Deployment_Design.md | v0.43 → v0.44 |
+| m1/engineering/Database_Design.md | v0.6 → v0.7 |
+| m1/engineering/Source_Organization.md | v0.2 → v0.3 |
+| m1/engineering/System_Design.md | v0.57 → v0.58 |
+| m1/engineering/README.md | v0.84 → v0.85 |
+| m1/README.md | v0.75 → v0.76 |
+| README.md | v0.96 → v0.97 |
+| DECISIONS.md | v0.101 → v0.102 |
+| database/Temporal.md | v0.1 → v0.2 |
+| database/Temporal_Visibility.md | v0.1 → v0.2 |

@@ -1,0 +1,61 @@
+fullnameOverride: deermind-temporal
+server:
+  replicaCount: 1
+  image:
+    repository: docker.io/temporalio/server
+    tag: 1.32.2@sha256:7bf69188a6232fea14869b9cef3d94aa82a1601d99517f7e86c71f22da4e0670
+    pullPolicy: IfNotPresent
+  nodeSelector: {kubernetes.io/hostname: deermind-m1}
+  metrics:
+    annotations: {enabled: false}
+    serviceMonitor: {enabled: false}
+  config:
+    persistence:
+      numHistoryShards: 512
+      datastores:
+        default:
+          sql:
+            pluginName: postgres12
+            databaseName: temporal
+            connectAddr: deermind-postgres:5432
+            connectProtocol: tcp
+            user: temporal
+            existingSecret: deermind-postgres
+            secretKey: temporal-password
+            createDatabase: false
+            manageSchema: false
+            maxConns: 5
+            maxIdleConns: 5
+        visibility:
+          sql:
+            pluginName: postgres12
+            databaseName: temporal_visibility
+            connectAddr: deermind-postgres:5432
+            connectProtocol: tcp
+            user: temporal_visibility
+            existingSecret: deermind-postgres
+            secretKey: visibility-password
+            createDatabase: false
+            manageSchema: false
+            maxConns: 5
+            maxIdleConns: 5
+    namespaces: {create: false}
+  frontend:
+    resources:
+      requests: {cpu: 100m, memory: 128Mi}
+      limits: {cpu: 500m, memory: 256Mi}
+  internal-frontend: {enabled: false}
+  history:
+    resources:
+      requests: {cpu: 250m, memory: 384Mi}
+      limits: {cpu: 1000m, memory: 1024Mi}
+  matching:
+    resources:
+      requests: {cpu: 100m, memory: 128Mi}
+      limits: {cpu: 500m, memory: 256Mi}
+  worker:
+    resources:
+      requests: {cpu: 100m, memory: 128Mi}
+      limits: {cpu: 500m, memory: 256Mi}
+admintools: {enabled: false}
+web: {enabled: false}

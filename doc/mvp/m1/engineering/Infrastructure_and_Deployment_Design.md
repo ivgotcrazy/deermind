@@ -1,11 +1,11 @@
 # M1 基础设施与部署设计
 
-> **版本**：v0.43<br>
-> **状态**：E01-01环境已实施；其余候选与进度见实施计划<br>
+> **版本**：v0.44<br>
+> **状态**：E01-02基础组件已实施；其余候选与进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.42 → v0.43，接收E01-01本机环境配置并引用实测记录；见决定登记§105<br>
+> **修订说明**：v0.43 → v0.44，接收E01-02组件版本和本机资源，引用部署及重启验证，见决定登记§106<br>
 
 本文确定计算资源、存储、外部服务连接、网络和部署运维的实现方式，将总体架构落实为可启动和可恢复的运行环境。业务字段及规则留在所属模块，本文维护技术适配和运行配置；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -450,7 +450,7 @@ Temporal数据库只用其版本对应的官方工具升级，不纳入业务Ale
 
 ### 5.5 依赖版本候选
 
-下表除K3s外仍为2026-11-15核对发布元数据后的候选，未批准为依赖锁。K3s已按E01-01安装并自检，其余组件未安装或验证；单项接收不代表整个组合已确认。
+K3s、PostgreSQL 17.12、Temporal Server/admin-tools 1.32.2、NATS Server 2.15.3及§5.7所列Helm/组件Chart已确认并部署，制品锁定见实现清单。下表其他语言、SDK与客户端版本仍为候选，不因基础组件接线通过而自动获准。
 
 | 组件 | 首轮候选 | 依据与限制 |
 | --- | --- | --- |
@@ -459,14 +459,14 @@ Temporal数据库只用其版本对应的官方工具升级，不纳入业务Ale
 | Pydantic／Pydantic AI Slim | 2.14.3／2.68.0，extras为openai、temporal | [Pydantic](https://pypi.org/project/pydantic/2.14.3/)、[AI依赖元数据](https://pypi.org/pypi/pydantic-ai-slim/2.68.0/json)；AI要求Pydantic≥2.12、Python≥3.11 |
 | Temporal Python SDK／供应商协议SDK | temporalio 1.36.1／openai 3.51.0 | [Temporal SDK](https://pypi.org/pypi/temporalio/1.36.1/json)、[协议SDK](https://pypi.org/project/openai/3.51.0/)；满足上述AI声明的最低版本，不等于运行接线已验证 |
 | SQLAlchemy／psycopg／Alembic | 2.1.8／3.3.9／1.20.1 | [SQLAlchemy](https://pypi.org/project/sqlalchemy/2.1.8/)、[psycopg](https://pypi.org/project/psycopg/3.3.9/)、[Alembic](https://pypi.org/project/alembic/1.20.1/)；沿已选工具，安装制品与传递依赖一起锁定 |
-| PostgreSQL | 17.12 | 复核[11月12日补丁发布](https://www.postgresql.org/docs/release/17.12/)，将上批17.11候选更新为17.12；仍待确认。Temporal的PG Visibility见[官方说明](https://docs.temporal.io/self-hosted-guide/visibility) |
-| Temporal Server | 1.32.2 | [官方发布](https://github.com/temporalio/temporal/releases/tag/v1.32.2)；服务、Schema工具和部署Chart必须匹配，不能用同号推断Python SDK版本 |
-| NATS Server／Python客户端 | 2.15.3／nats-py 2.16.0 | [服务发布](https://github.com/nats-io/nats-server/releases/tag/v2.15.3)、[客户端](https://pypi.org/project/nats-py/2.16.0/)；启用JetStream，版本号无需与服务相同 |
+| PostgreSQL | 17.12 | 复核[11月12日补丁发布](https://www.postgresql.org/docs/release/17.12/)，17.12已按E01-02确认。Temporal的PG Visibility见[官方说明](https://docs.temporal.io/self-hosted-guide/visibility) |
+| Temporal Server | 1.32.2 | [官方发布](https://github.com/temporalio/temporal/releases/tag/v1.32.2)；Server/admin-tools已确认；Schema工具和部署Chart必须匹配，不能用同号推断Python SDK版本 |
+| NATS Server／Python客户端 | 2.15.3／nats-py 2.16.0 | [服务发布](https://github.com/nats-io/nats-server/releases/tag/v2.15.3)、[客户端](https://pypi.org/project/nats-py/2.16.0/)；Server已确认，Python客户端仍待确认；启用JetStream，客户端版本号无需与服务相同 |
 | 本机K3s | v1.37.2+k3s1 | E01-01已确认并安装；固定发布，不自动追随stable。来源与hash见[实现清单](../../../../src/m1/deploy/components/manifest.yaml)，远程集群不要求同为K3s |
 | Node.js | 24.22.3 LTS | [发布索引](https://nodejs.org/dist/index.json)与[支持状态](https://nodejs.org/en/about/previous-releases)；用于前端构建，浏览器运行不依赖Node服务 |
 | Vue／TypeScript／Vite | 3.5.43／5.9.3／7.3.7 | 来自现有[原型package.json](../prototype/package.json)的候选；只复用构建起点，不复制mock业务。正式锁文件仍须接收 |
 
-Helm、组件Chart和Temporal管理工具候选见§5.7；镜像digest在实施锁定时核验。Chart不得静默带入额外数据库、监控栈或另一套NATS。全部直接与传递依赖在实施时形成带hash的锁文件；本轮没有创建伪锁文件，也不因一项声明兼容就称完整组合已验证。
+Helm、组件Chart和Temporal管理工具已按§5.7接收；镜像digest及Chart校验值已写入实现清单。Chart不得静默带入额外数据库、监控栈或另一套NATS。全部直接与传递依赖在实施时形成带hash的锁文件；本轮没有创建伪锁文件，也不因一项声明兼容就称完整组合已验证。
 
 #### 5.5.1 E01-01本机环境接收
 
@@ -494,7 +494,7 @@ Helm、组件Chart和Temporal管理工具候选见§5.7；镜像digest在实施�
 
 ### 5.7 本机部署配置草案
 
-以下均为待审候选，适用“一名学生＋一名管理员”的功能接线；不改变100人试用及10人并发验证目标。只核对官方资料和静态预算，未安装、渲染Chart或测量服务用量。
+E01-02已确认PG、NATS各1份和Temporal四个内部服务各1份，常驻内存limit合计2816Mi；PG/NATS/文件PVC分别8Gi/2Gi/8Gi，PG最多80连接、shared_buffers=128MiB，NATS文件上限1Gi。已完成本机功能接线，见[部署与自检](../../../../src/m1/deploy/environments/local-wsl/components.md)。应用、前端资源和业务连接池仍为候选；本机实测不代表100人试用或10人并发容量。
 
 #### 5.7.1 组件包与启用项
 
@@ -502,22 +502,22 @@ Helm、组件Chart和Temporal管理工具候选见§5.7；镜像digest在实施�
 | --- | --- | --- |
 | 部署工具 | Helm 4.3.2；kubectl采用所选K3s附带版本 | [Helm发布](https://github.com/helm/helm/releases/tag/v4.3.2)；4.3.x的[支持范围](https://helm.sh/docs/topics/version_skew/)覆盖Kubernetes 1.37，不据此宣称所有Chart已验证 |
 | Temporal | 官方Chart 1.8.0、Server和admin-tools 1.32.2 | [版本定义](https://github.com/temporalio/helm-charts/blob/temporal-1.8.0/charts/temporal/Chart.yaml)；连接已有PG的两个专用库，不另装数据库 |
-| NATS | 官方Chart 2.15.2，显式覆盖Server为上批候选2.15.3 | [版本定义](https://github.com/nats-io/k8s/blob/nats-2.15.2/helm/charts/nats/Chart.yaml)默认Server为2.15.2；补丁覆盖须在实施接收时验证，不把Chart号当服务号 |
+| NATS | 官方Chart 2.15.2，显式覆盖Server为已确认2.15.3 | [版本定义](https://github.com/nats-io/k8s/blob/nats-2.15.2/helm/charts/nats/Chart.yaml)默认Server为2.15.2；补丁覆盖须在实施接收时验证，不把Chart号当服务号 |
 | PostgreSQL | 官方17.12镜像；项目维护最小单实例Helm模板 | 一套StatefulSet、Service、Secret引用和独立PVC；不引入数据库Operator。权限初始化、升级和备份沿§2.2及§5—6 |
 | DeerMind | 项目应用Chart | API／应用Worker分别Deployment，共用后端镜像；独立前端静态服务和同源路由，外部依赖地址显式传入 |
 | 浏览器入口 | 本机复用K3s的Traefik，远程指定已有IngressClass | [K3s内置组件](https://docs.k3s.io/installation/packaged-components)；不向远程集群擅自安装第二个入口控制器 |
 
-Temporal保留frontend、history、matching和内部worker，各1副本；这些不是DeerMind应用Worker。建议关闭常驻web、admintools和internal-frontend；管理工具以临时Job运行。保留官方默认512个history shards，并显式写入配置；它不表示512个Pod，初始化后不能随意改变，故不靠降低分片数节省本机资源。依据见[固定版values](https://github.com/temporalio/helm-charts/blob/temporal-1.8.0/charts/temporal/values.yaml)。
+Temporal保留frontend、history、matching和内部worker，各1副本；这些不是DeerMind应用Worker。本机已关闭常驻web、admintools和internal-frontend；管理工具以临时Job运行。保留官方默认512个history shards，并显式写入配置；它不表示512个Pod，初始化后不能随意改变，故不靠降低分片数节省本机资源。依据见[固定版values](https://github.com/temporalio/helm-charts/blob/temporal-1.8.0/charts/temporal/values.yaml)。
 
 Schema只由§5.2的部署Job维护。Temporal关闭Chart内自动建库／manageSchema及自动namespace创建，避免Helm安装时再次迁移或变更既有环境。迁移Job使用同版admin-tools，按发布清单显式运行；失败停止部署。Chart默认迁移重试与期限不直接继承，统一按项目迁移流程配置。
 
-NATS采用单副本、JetStream文件存储，关闭cluster、memoryStore、常驻natsBox、promExporter和reloader；配置变化通过受控重启生效；建议同时启用podTemplate.configChecksumAnnotation，让配置变更触发滚动重启，不自动热改服务。JetStream数据保留在PVC；临时管理工具按需运行。字段及默认值依据[固定版values](https://github.com/nats-io/k8s/blob/nats-2.15.2/helm/charts/nats/values.yaml)。不安装Prometheus、Grafana或Elasticsearch。
+NATS采用单副本、JetStream文件存储，关闭cluster、memoryStore、常驻natsBox、promExporter和reloader；配置变化通过受控重启生效；本机已启用podTemplate.configChecksumAnnotation，让配置变更触发滚动重启，不自动热改服务。JetStream数据保留在PVC；临时管理工具按需运行。字段及默认值依据[固定版values](https://github.com/nats-io/k8s/blob/nats-2.15.2/helm/charts/nats/values.yaml)。不安装Prometheus、Grafana或Elasticsearch。
 
-依赖与应用分别使用release，部署命令按§5.2排序。修改应用不连带升级PG、Temporal或NATS；包版本、镜像digest及渲染后的启用清单都进入ReleaseManifest。安装包与薄脚本目录已在源码组织分册展开，详细稿待审；本轮不创建文件占位。
+依赖与应用分别使用release，部署命令按§5.2排序。修改应用不连带升级PG、Temporal或NATS；包版本、镜像digest及渲染后的启用清单都进入ReleaseManifest。安装包与薄脚本目录已在源码组织分册展开，当前仅创建E01-01/02需要的脚本、Chart、环境配置与测试，不建立后续模块占位。
 
 #### 5.7.2 CPU、内存与连接数
 
-应用Worker按已确认的单进程设置1副本；其他组件暂列1副本，资源值仍待审，不额外启动多个应用Worker进程。CPU单位m，1000m为1个逻辑CPU；资源值是试运行假设，不是厂商最低需求。requests供调度使用，limits限制容器消耗；超限可能导致限速或OOM，不能把配置上限当实际用量。[Kubernetes资源语义](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)。
+应用Worker按已确认的单进程设置1副本；PG、NATS及Temporal资源已按上文接收，API、应用Worker和前端资源值仍待审，不额外启动多个应用Worker进程。CPU单位m，1000m为1个逻辑CPU；资源值是试运行假设，不是厂商最低需求。requests供调度使用，limits限制容器消耗；超限可能导致限速或OOM，不能把配置上限当实际用量。[Kubernetes资源语义](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)。
 
 | 常驻容器 | CPU request／limit | 内存request／limit |
 | --- | --- | --- |
@@ -538,15 +538,15 @@ WSL2内存设置作用于共享虚拟机，新发行版不会额外获得一份8
 
 迁移、管理和备份Job建议一次只运行一个，内存request 128Mi、limit 256Mi；迁移在应用启动前，备份按维护窗口执行。构建镜像与整册解析分时运行，构建不是常驻服务，不把构建进程漏入宿主预算。该安排不新增业务优先级或改变受理后的恢复规则。
 
-连接候选：PG max_connections=80、shared_buffers=128MiB；API和应用Worker各1个进程、各1个共享业务Engine，pool_size=5、max_overflow=0，不按Space重复建池。Temporal四个内部服务的两个SQL datastore各设maxConns=5，最坏40条；应用10条，维护与检查预留10条，共60条，余20条。增加副本、进程或工具前重算；不把公共运行§3.6的业务SQL超时套到Temporal内部库。[PG内存说明](https://www.postgresql.org/docs/17/runtime-config-resource.html)。
+已确认并配置PG max_connections=80、shared_buffers=128MiB和Temporal各SQL datastore最多5连接。应用连接池仍为候选：API和应用Worker各1个进程、各1个共享业务Engine，pool_size=5、max_overflow=0，不按Space重复建池。Temporal四个内部服务的两个SQL datastore各设maxConns=5，最坏40条；应用10条，维护与检查预留10条，共60条，余20条。增加副本、进程或工具前重算；不把公共运行§3.6的业务SQL超时套到Temporal内部库。[PG内存说明](https://www.postgresql.org/docs/17/runtime-config-resource.html)。
 
 #### 5.7.3 卷容量与宿主磁盘
 
 | 存储项目 | 本机预算候选 | 使用边界 |
 | --- | --- | --- |
-| PG数据PVC | 8GiB | 本机接线候选；同实例三个数据库含执行历史，不代表100人试用；另见§6.4.1 |
-| 业务文件PVC | 8GiB | 本机接线候选；含事件附件、原件、候选及Codec；API／Worker同节点挂载，100人试用另核定 |
-| NATS数据PVC | 2GiB | JetStream fileStore.maxSize建议1GiB，留存储开销余量；stream保留规则另审 |
+| PG数据PVC | 8GiB | E01-02已确认并配置；同实例三个数据库含执行历史，不代表100人试用；另见§6.4.1 |
+| 业务文件PVC | 8GiB | E01-02已确认并配置；后续承载事件附件、原件、候选及Codec；API／Worker同节点挂载，100人试用另核定 |
+| NATS数据PVC | 2GiB | JetStream fileStore.maxSize已配置1GiB，留存储开销余量；stream保留规则另审 |
 | 新WSL系统及工具 | 6GiB | 使用D盘新VHD，现有WSL保留 |
 | 镜像、构建缓存及日志 | 10GiB | 技术文件也计入宿主占用；仅使用节点容器日志，不新增日志卷或采集器 |
 | 同盘恢复演练备份 | 20GiB | 临时预算，不是容灾副本；备份前按实际数据重新估算 |
@@ -688,7 +688,7 @@ API、Worker和业务维护命令共用同版server镜像；前端同版产物�
 
 ## 7. 本批接收与剩余决定
 
-E01-01环境已实施，其余内容按实施计划接收。后续实现至少检查：首次启动与重复初始化；未迁移时拒绝启动；同库共同回滚；上传中断及收据丢失；同卷读写和错误挂载；兼容／不兼容升级；同一备份批次恢复；迟到消息与已提交结果不重复生效。
+E01-01/02已实施，自检入口见本机部署说明，其余内容按实施计划接收。后续实现至少检查：首次启动与重复初始化；未迁移时拒绝启动；同库共同回滚；上传中断及收据丢失；同卷读写和错误挂载；兼容／不兼容升级；同一备份批次恢复；迟到消息与已提交结果不重复生效。
 
 | 未决项 | 责任与最晚确认点 |
 | --- | --- |
@@ -747,3 +747,4 @@ E01-01环境已实施，其余内容按实施计划接收。后续实现至少�
 | v0.41 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |
 | v0.42 | 2026-11-15 | 更新实施计划量化验收及验证章节引用，未改本模块合同。见MVP决定登记§99。 |
 | v0.43 | 2026-11-15 | 接收E01-01的WSL/K3s配置、固定版本及实际验证入口；其他资源与组件候选保持待确认 |
+| v0.44 | 2026-11-15 | 接收E01-02组件版本和本机资源，引用部署及重启验证，见决定登记§106 |
