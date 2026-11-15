@@ -3,7 +3,7 @@
 from sqlalchemy import URL, text
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
-EXPECTED_REVISION = "0001_infrastructure_schemas"
+EXPECTED_REVISION = "0002_atomic_facts"
 SCHEMAS = ("product", "domain", "interaction", "evaluation", "runtime", "ai")
 
 

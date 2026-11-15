@@ -2,7 +2,7 @@
 
 本机使用独立 `DeerMind-M1` WSL，安装在 `D:\wsl\DeerMind-M1`，不替换旧 Ubuntu，不修改 `.wslconfig`。这是低并发功能测试环境，尚未验证 100 人试用容量。
 
-数据库迁移和当前应用部署顺序见[E01-04](database.md)；应用骨架的原始交付见[E01-03](application.md)；基础组件见[E01-02](components.md)；下方保留E01-01的环境记录。
+当前原子保存与应用升级见[E01-05](facts.md)；数据库迁移的首批交付见[E01-04](database.md)；应用骨架的原始交付见[E01-03](application.md)；基础组件见[E01-02](components.md)；下方保留E01-01的环境记录。
 
 本轮编程规范整改与回归结果见[自检记录](../../../quality/README.md#本轮自检)，不覆盖下方原始交付记录。
 

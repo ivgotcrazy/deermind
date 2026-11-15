@@ -8,6 +8,7 @@
     "../tests/migrations"
   ],
   "exclude": [".venv", "dist"],
+  "extraPaths": ["src", "../tests/migrations"],
   "venvPath": ".",
   "venv": ".venv",
   "pythonVersion": "3.14",

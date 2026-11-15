@@ -2,9 +2,9 @@
 
 按[实施计划](../../doc/mvp/m1/engineering/Delivery_Plan.md)的小增量交付。旧交互原型仅作参考。
 
-当前已推进到E01-04：六个模块schema、数据库迁移及启动检查，沿用E01-03的可安装后端包、API／共享Worker、Vue学生／管理员双入口，以及应用镜像和Helm。业务表、登录、聊天和AI留对应增量。
+当前已推进到E01-05：内联事实、生产者投影及请求收据原子保存，沿用E01-03的可安装后端包、API／共享Worker、Vue学生／管理员双入口，以及应用镜像和Helm。仅接通首个初始账号事实；登录、聊天和AI留对应增量。
 
-应用遵循[编程规范](../../doc/mvp/m1/engineering/Coding_Standard.md)。E01-03的安装、启动、复核和自检见[应用交付](deploy/environments/local-wsl/application.md)，检查工具见[quality说明](quality/README.md)。E01-04的迁移命令、范围和验证见[数据库交付](deploy/environments/local-wsl/database.md)。
+应用遵循[编程规范](../../doc/mvp/m1/engineering/Coding_Standard.md)。E01-03的安装、启动、复核和自检见[应用交付](deploy/environments/local-wsl/application.md)，检查工具见[quality说明](quality/README.md)。E01-04的迁移命令、范围和验证见[数据库交付](deploy/environments/local-wsl/database.md)；E01-05的事务测试、实施范围和复核见[原子保存交付](deploy/environments/local-wsl/facts.md)。
 
 | 目录 | 用途 |
 | :--- | :--- |
@@ -18,7 +18,7 @@
 | `deploy/images/` / `scripts/build-app.sh` | 锁定基础镜像和仅产物构建入口 |
 | `deploy/helm/` | 基础组件、自有应用及显式初始化Job |
 | `server/migrations/` | 单一业务库迁移链，随后端wheel发布 |
-| `tests/migrations/` | 临时数据库中的升级、回滚、权限和服务启动测试 |
+| `tests/migrations/` | 临时数据库中的升级、原子提交、防重、回滚、权限和服务启动测试 |
 | `tests/deployment/` | 目标检查、组件重启持久化、权限及共享卷测试 |
 | `deploy/components/manifest.yaml` | 本批实际安装版本、来源与文件校验值 |
 | `deploy/environments/local-wsl/` | 本机初始化与复核说明 |

@@ -1,14 +1,14 @@
 # MVP 决定承接与工作记录
 
-> **版本**：v0.107<br>
+> **版本**：v0.108<br>
 > **文档性质**：新MVP目录的决定、待决和变更登记<br>
 > **状态**：已进入小增量工程实现；进度与待确认项见实施计划<br>
-> **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；已推进至E01-03工程实现；未修改产品规则或历史原型<br>
+> **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；已推进至E01-05工程实现；未修改产品规则或历史原型<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
 > **评审记录**：小增量规则见§101；编程规范与整改见§107；日志格式补齐见§108；规范完善与重新整改见§109<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.106 → v0.107，登记E01-04依赖、数据库连接参数和首批迁移范围<br>
+> **修订说明**：v0.107 → v0.108，登记用户批准E01-05及本轮事实保存接线范围<br>
 
 ---
 
@@ -3288,7 +3288,7 @@ API、应用Worker和前端各一副本，接收其候选CPU／内存限额；�
 
 用户确认继续E01-04，并接收SQLAlchemy 2.1.8、psycopg 3.3.9、Alembic 1.20.1；API和Worker各用一个连接池，最多5连接、不扩容。D01起点：建连5秒、池等待3秒、SQL10秒、锁等待3秒、事务空闲10秒。迁移独立运行，不套用短SQL时限。
 
-首批建立六个模块schema和Alembic版本表，业务表仍按所属增量迁移。迁移账号与运行账号分开，API／Worker只检查版本、不执行DDL。单一发布链、事务部署锁和失败整体回滚沿已定设计实施，不改Temporal内部表。交付及验证见[数据库实施](../../src/m1/deploy/environments/local-wsl/database.md)，进度只在实施计划维护；E01-05未开始。
+首批建立六个模块schema和Alembic版本表，业务表仍按所属增量迁移。迁移账号与运行账号分开，API／Worker只检查版本、不执行DDL。单一发布链、事务部署锁和失败整体回滚沿已定设计实施，不改Temporal内部表。交付及验证见[数据库实施](../../src/m1/deploy/environments/local-wsl/database.md)，进度只在实施计划维护；本节记录E01-04时点，后续实施见§112。
 
 | 文档 | 版本 |
 | :--- | :--- |
@@ -3299,3 +3299,23 @@ API、应用Worker和前端各一副本，接收其候选CPU／内存限额；�
 | Delivery_Plan.md | v0.65 → v0.66 |
 | engineering/README.md | v0.89 → v0.90 |
 | DECISIONS.md | v0.106 → v0.107 |
+
+## 112. E01-05事件、生产者投影与请求收据
+
+用户确认继续E01-05；E01-04按该确认接收。本轮沿既定共同短事务和事件唯一事实源合同，实现内联事件、生产者投影、应用收据与请求收据的原子保存。未增加架构选择或依赖参数。
+
+首个接线为TrialAccountSaved/bootstrap_admin子集，测试数据只在随机测试库；不提供登录或账号管理入口。其他事件、附件、查询、发布订阅与重建仍按实施计划推进，不扩大为所有表的一次性实现。代码、自检和部署见[交付记录](../../src/m1/deploy/environments/local-wsl/facts.md)，本增量待用户评审，不标记完成。
+
+| 文档 | 版本 |
+| :--- | :--- |
+| Database_Design.md | v0.8 → v0.9 |
+| Infrastructure_and_Deployment_Design.md | v0.48 → v0.49 |
+| System_Foundation_Design.md | v0.52 → v0.53 |
+| Source_Organization.md | v0.7 → v0.8 |
+| Delivery_Plan.md | v0.66 → v0.67 |
+| engineering/README.md | v0.90 → v0.91 |
+| contracts/Event_Facts.md | v0.2 → v0.3 |
+| contracts/Event_Messages.md | v0.3 → v0.4 |
+| database/Business_Product.md | v0.5 → v0.6 |
+| database/Business_Runtime.md | v0.3 → v0.4 |
+| DECISIONS.md | v0.107 → v0.108 |

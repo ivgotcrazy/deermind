@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.7<br>
-> **状态**：E01-04迁移、数据库连接及验证入口已接入；进度见实施计划<br>
+> **版本**：v0.8<br>
+> **状态**：E01-05事件、投影和收据接线已加入；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.6 → v0.7，登记首批迁移脚本、wheel打包和数据库验证入口<br>
+> **修订说明**：v0.7 → v0.8，登记E01-05事件登记、所有者投影和收据代码位置<br>
 
 ## 1. 范围与维护位置
 
@@ -272,6 +272,12 @@ server/migrations/
 
 首批没有业务表，不建立空的六模块表映射或metadata汇总。后续有表时按本节所有权补入；Alembic生成模板也在需要生成新revision时增加。实际数据库测试位于`tests/migrations/`，由`scripts/test-database.py`在显式集群的临时Pod中使用已构建包运行；部署Job归`deploy/helm/database-migration/`。
 
+### 6.2 E01-05落地
+
+`foundation/system/events/`维护通用登记、批次校验、序号分配和事实保存；不导入Product或Space。`product/accounts/facts.py`将首个固定正文Schema、记录矩阵及其确定性投影放在同一功能文件；`product/accounts/save.py`拥有短事务，`product/persistence/receipts.py`维护普通命令防重。`bootstrap/events.py`汇总登记，业务模块不反向导入装配层。
+
+本批用SQLAlchemy连接执行显式SQL，尚无ORM表映射，不为凑目录添加空metadata。迁移`0002_atomic_facts`固定历史DDL，不导入可变业务模型。`tests/migrations/test_atomic_facts.py`在已构建包与随机PG测试库中验证，`test.sh facts`是显式集群入口。
+
 ## 7. 测试目录与执行边界
 
 ```text
@@ -401,3 +407,4 @@ Helm沿[官方Chart文件结构](https://helm.sh/docs/topics/charts/)组织。�
 | v0.5 | 2026-11-15 | 登记部署命令夹具及可读性评审要求，不创建后续应用；见决定登记§109 |
 | v0.6 | 2026-11-15 | 落实E01-03后端包、双入口客户端、镜像与应用测试；不建立后续功能占位 |
 | v0.7 | 2026-11-16 | 登记首批迁移脚本、wheel打包和数据库验证入口 |
+| v0.8 | 2026-11-16 | 登记E01-05事件登记、所有者投影和收据代码位置 |

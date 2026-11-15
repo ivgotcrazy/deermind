@@ -113,4 +113,8 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 
 ## E01-04数据库接入
 
-`check.sh`包含迁移脚本的格式、类型和迁移Chart；`test.sh local`增加数据库配置与单一迁移链检查。真实数据库测试显式选择`test.sh database`，使用已构建后端镜像，在临时Pod及随机测试库中验证；所需目标、Secret名称和镜像参数见[数据库交付](../deploy/environments/local-wsl/database.md)。不读取密码到工具输出，不清空业务库，不推进E01-05。
+`check.sh`包含迁移脚本的格式、类型和迁移Chart；`test.sh local`增加数据库配置与单一迁移链检查。真实数据库测试显式选择`test.sh database`，使用已构建后端镜像，在临时Pod及随机测试库中验证；所需目标、Secret名称和镜像参数见[数据库交付](../deploy/environments/local-wsl/database.md)。不读取密码到工具输出，不清空业务库。该段记录E01-04验证边界。
+
+## E01-05事实保存接入
+
+`test.sh facts`复用数据库目标/镜像配置，在随机测试库验证原子保存、并发防重、来源授权与全批回滚；`database`继续验证迁移。server类型检查显式包含源码和数据库测试辅助模块，不依赖已安装包代替源码检查。场景、结果与限制归[交付记录](../deploy/environments/local-wsl/facts.md)。

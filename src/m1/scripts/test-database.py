@@ -7,6 +7,7 @@
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 from uuid import uuid4
 
@@ -15,6 +16,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> int:
     """核对目标，运行临时测试Pod；任一步失败均返回非零并清理本次Pod。"""
+    group = sys.argv[1] if len(sys.argv) == 2 else "database"
+    if group not in {"database", "facts"} or len(sys.argv) > 2:
+        raise ValueError("Expected database or facts test group")
     target = [
         "kubectl",
         f"--kubeconfig={os.environ['M1_KUBECONFIG']}",
@@ -97,10 +101,29 @@ def main() -> int:
             check=True,
             timeout=75,
         )
-        fixture = ROOT / "tests/migrations/test_database.py"
+        fixtures = ROOT / "tests/migrations"
+        pattern = "test_database.py" if group == "database" else "test_atomic_facts.py"
+        # 将测试文件放进临时目录；生产包仍只从镜像读取，不挂载源码。
+        driver = """
+import json
+import pathlib
+import sys
+import tempfile
+import unittest
+
+with tempfile.TemporaryDirectory() as directory:
+    for name, content in json.load(sys.stdin).items():
+        path = pathlib.Path(directory, name)
+        path.write_text(content, encoding='utf-8')
+    suite = unittest.defaultTestLoader.discover(directory, pattern=sys.argv[1])
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    sys.exit(not result.wasSuccessful())
+"""
         return subprocess.run(
-            [*target, "exec", "-i", name, "--", "python", "-"],
-            input=fixture.read_text(encoding="utf-8"),
+            [*target, "exec", "-i", name, "--", "python", "-c", driver, pattern],
+            input=json.dumps(
+                {path.name: path.read_text(encoding="utf-8") for path in fixtures.glob("test_*.py")}
+            ),
             text=True,
             timeout=150,
         ).returncode

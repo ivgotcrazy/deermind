@@ -31,8 +31,8 @@ from sqlalchemy.exc import TimeoutError as PoolTimeout
 from sqlalchemy.pool import NullPool
 
 
-class MigrationTests(unittest.TestCase):
-    """验证真实DDL、断连回滚、权限和两类应用启动检查。"""
+class DatabaseTestCase(unittest.TestCase):
+    """为真实数据库用例提供独立测试库和最小权限连接。"""
 
     def setUp(self) -> None:
         """每个用例创建独立测试库，并立即登记逆序清理。"""
@@ -90,6 +90,10 @@ class MigrationTests(unittest.TestCase):
             )
             names = connection.scalars(text("SELECT nspname FROM pg_namespace"))
             self.assertFalse(set(names) & set(SCHEMAS))
+
+
+class MigrationTests(DatabaseTestCase):
+    """验证真实DDL、断连回滚、权限和两类应用启动检查。"""
 
     def test_empty_upgrade_and_repeat(self) -> None:
         """空库升级及重复升级得到同一版本、字段与所有者。"""
