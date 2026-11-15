@@ -1,12 +1,12 @@
 # deermind 数据库：AI调用数据字典
 
-> **版本**：v0.2<br>
-> **状态**：数据库定义归并稿待审阅；schema边界已确认，未编码<br>
+> **版本**：v0.3<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.1 → v0.2，归并物理数据定义、修正重复口径；见MVP决定登记§93<br>
+> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **7 张表、71 个列定义**。处理流程、接口和业务载荷由[AI_Foundation_Design.md](../AI_Foundation_Design.md) §2—4、§6.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **7 张表、77 个列定义**。处理流程、接口和业务载荷由[AI_Foundation_Design.md](../AI_Foundation_Design.md) §2—4、§6.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
@@ -63,6 +63,9 @@ erDiagram
 
 ## 1. `ai.execution_configs`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 工作受理时固定的模型配置。
 
 主键：`(execution_id)`。写入方式：只追加。
@@ -74,12 +77,16 @@ erDiagram
 | `config_hash` | `text` | 否 | 无 | 固定配置SHA-256 |
 | `config` | `jsonb` | 否 | 无 | AI底座§2.4/3.4：provider/model、协议、输出方式、thinking/temperature、调用和预算限制、credential_ref；不存密钥 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：进行中及恢复工作不自动换模型；凭据按当前有效引用取得。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 2. `ai.ai_calls`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 一项AI步骤的稳定调用。
 
@@ -98,12 +105,16 @@ erDiagram
 | `state` | `text` | 否 | 无 | 枚举：pending、running、completed、failed、cancelled |
 | `candidate_ref` | `uuid` | 是 | 无 | 成功候选；FK → `ai.ai_candidates.candidate_id` |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(execution_id,step_key,call_key)；同键异输入拒绝；候选与调用循环提交时检查。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 3. `ai.ai_call_attempts`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 AI调用的一次恢复尝试。
 
@@ -120,10 +131,11 @@ AI调用的一次恢复尝试。
 | `outcome` | `text` | 否 | 无 | running、completed、failed、cancelled、unknown |
 | `error` | `jsonb` | 是 | 无 | code、message、retryable；无错误为空 |
 | `valid_candidate` | `boolean` | 否 | false | 是否取得通过结构校验的技术候选 |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(call_id,attempt_no)；不与每次HTTP传输次数混为一谈。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 4. `ai.execution_usage`
 
@@ -150,6 +162,9 @@ AI调用的一次恢复尝试。
 
 ## 5. `ai.model_requests`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 每次实际模型HTTP请求及用量。
 
 主键：`(call_id,attempt_id,request_ordinal,transport_attempt)`。写入方式：预约先保存；结果一次结算。
@@ -172,12 +187,16 @@ AI调用的一次恢复尝试。
 | `started_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `finished_at` | `timestamptz` | 是 | 无 | 未确认结束为空 |
 | `response_ref` | `jsonb` | 是 | 无 | 可授权读取的输出或错误引用；Ref，见总册§3 |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：FK(call_id,attempt_id)→ai_call_attempts；实际值非负；known必须有用量，unknown不得填0。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 6. `ai.tool_actions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 每次工具调用的参数与收据。
 
@@ -197,12 +216,16 @@ AI调用的一次恢复尝试。
 | `outcome` | `text` | 否 | 无 | pending、completed、failed、denied |
 | `started_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `finished_at` | `timestamptz` | 是 | 无 | 尚未完成为空 |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：FK(call_id,attempt_id)→ai_call_attempts；底座不因模型要求而授予写概率权限。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 7. `ai.ai_candidates`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 通过结构校验的技术候选。
 
@@ -218,10 +241,11 @@ AI调用的一次恢复尝试。
 | `tool_refs` | `jsonb` | 否 | '[]'::jsonb | 实际工具取材来源；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `content_hash` | `text` | 否 | 无 | 候选规范化内容SHA-256 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(call_id)；只是技术输出，业务模块核对后才形成教材候选或Evidence。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 修订记录
 
@@ -230,3 +254,5 @@ AI调用的一次恢复尝试。
 | v0.1 | 2026-11-15 | 逐表补齐列、键、空值、默认值、约束和关系；未执行建表或迁移 |
 
 本轮修订（v0.2，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.3，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

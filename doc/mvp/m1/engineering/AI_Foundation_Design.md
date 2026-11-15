@@ -1,15 +1,17 @@
 # M1 AI 底座设计
 
-> **版本**：v0.26<br>
-> **状态**：数据库定义归并稿待审阅；schema边界已确认，未编码<br>
+> **版本**：v0.27<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.25 → v0.26，归并物理数据定义、修正重复口径；见MVP决定登记§93<br>
+> **修订说明**：v0.26 → v0.27，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
 本文设计各业务和Space共用的模型调用、工具循环及通用材料处理能力。业务Operation决定取材、组装上下文和保存记忆；底座按调用方要求执行，代码不内置学习空间、活动或题目等业务概念。职责以[总体§3.4](System_Design.md#34-agent上下文和记忆)为准；持久任务生命周期归公共运行底座，共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
 执行框架采用Pydantic AI，需要持久恢复的AI工作通过其[官方Temporal集成](https://pydantic.dev/docs/ai/capabilities/durable_execution/temporal/)运行。框架承接模型、工具调用及结构化输出；上下文与记忆逻辑由所属Operation实现；共用工具授权、预算和候选交接按本文接线。Operation以AI业务目标为边界，可包含模型调用和确定性步骤，不等同于一次Agent运行。普通保存、查询及确定性派生无需Pydantic AI；AI使用的普通工具函数也不因此成为Operation。组件分工以[总体§6.1](System_Design.md#61-已定技术与待选方案)为准。
+
+**事件事实源。** AI工作配置、实际输入输出、工具调用及其已知结果记录到事件及固定附件；调用表由其投影。密钥、隐藏思考不记录；外部调用结果未知时明确保留unknown，不补造成功。字段及投影登记只在[事件正文合同](contracts/Event_Facts.md)维护；本稿中的“保存业务对象”均指共同短事务内由事件生成投影。
 
 ## 1. AI任务协议与运行边界
 
@@ -346,7 +348,7 @@ execute_ai_task返回status、call_ref、source_manifest_ref、usage_ref及trace
 | 权限撤回／输入冲突／来源变化／过期尝试 | forbidden／input_conflict／source_changed／stale_attempt | 停止本次业务提交，保留已有结果 |
 | 预算耗尽／主动停止 | budget_exhausted／cancelled | 保留已做部分；不自动补一份新工作绕过限制 |
 
-错误记录同时标明发生层、已尝试次数和是否耗尽；候选结构通过不证明语义正确。底座不把任何技术错误直接变成正式空间事件或学生能力结论。
+错误记录同时标明发生层、已尝试次数和是否耗尽；候选结构通过不证明语义正确。技术失败记录为执行范围事件，不冒充学习空间表现或学生能力结论。
 
 ### 6.2 保存和交接顺序
 
@@ -368,10 +370,12 @@ sequenceDiagram
             T-->>A: 固定来源、结果或拒绝
         end
     end
-    A->>A: 校验结构，保存候选和实际材料清单
+    A->>A: 校验结构，追加候选及材料事件
+    A->>A: 同事务生成调用和候选投影
     A-->>O: candidate_ref及来源清单
     O->>O: 业务校验与所有者短事务
-    Note over O: 正式结果、收据与事件共同保存
+    Note over O: 先追加完整业务事件
+    Note over O: 再投影正式结果、保存收据并共同提交
 ```
 
 AI底座的prepare_call在短事务按调用唯一键受理并固定input_hash，重复调用返回原记录；预执行错误也关联该call_id。已有候选先核对输入与读取权限，直接交回所有者，不要求模型在线。没有候选才继续模型循环。
@@ -388,7 +392,7 @@ AI底座使用业务PostgreSQL中的独立schema；技术候选及调用材料�
 
 内部读取接口为read_ai_call(access_context,call_id,view=summary)及read_ai_candidate(access_context,candidate_ref)。summary返回状态、用量和关联引用；读取正文须匹配调用所属模块及当前授权，维护人员排错权限另由公共运行落实。客户端不能凭call_id直接读Prompt或原始模型响应，不新增AI管理页面。
 
-调用记录用于排错，不等于业务记忆或学习空间事件。日志每条含可读动作、结果、execution_id、attempt_id、call_id和关联请求；工具另带tool_action_key。正常日志不复制原文或完整Prompt；授权排查沿引用读取输入输出。服务凭据、HTTP认证头和隐藏思维过程不落普通日志或候选。
+AI调用及已知请求/工具结果通过AIConfigurationPinned、AICallChanged、ModelRequestChanged、ToolActionChanged和AICandidatePrepared留正式事实；调用表为查询投影。它们属于execution范围，不冒充学习空间作答或记忆。日志每条含可读动作、结果、execution_id、attempt_id、call_id和关联请求；工具另带tool_action_key。正常日志不复制原文或完整Prompt；授权排查沿EventPartRef及固定事件附件读取实际输入输出。服务凭据、HTTP认证头和隐藏思维过程不落普通日志或候选。
 
 模型输入清单包括Operation提供材料以及实际工具取材，分别固定来源及hash。工具授权范围变化不回改历史清单，当前读取仍重新鉴权。结构化输出若由SDK用返回工具表达，该工具只负责解析最终候选，不授予业务操作。模型生成的出处须由所有者检查是否在实际清单内；底座不将“引用格式合法”当作内容正确证明。
 
@@ -457,3 +461,5 @@ AI底座使用业务PostgreSQL中的独立schema；技术候选及调用材料�
 本轮修订（v0.25，2026-11-15）：同步数据库总目录、完整字段及关系图；维护字段与处理合同的单一职责，物理设计待审阅。仅文档修订，见MVP决定登记§92。
 
 本轮修订（v0.26，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.27，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

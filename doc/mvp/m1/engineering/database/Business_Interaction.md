@@ -1,12 +1,12 @@
 # deermind 数据库：交互空间数据字典
 
-> **版本**：v0.2<br>
-> **状态**：数据库定义归并稿待审阅；schema边界已确认，未编码<br>
+> **版本**：v0.4<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.1 → v0.2，归并物理数据定义、修正重复口径；见MVP决定登记§93<br>
+> **修订说明**：v0.3 → v0.4，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **35 张表、276 个列定义**。处理流程、接口和业务载荷由[Interaction_Space_Design.md](../Interaction_Space_Design.md) §1.3、§2.4、§3.7—3.9、§4.3、§5.3、§6.3、§7.1维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **35 张表、306 个列定义**。处理流程、接口和业务载荷由[Interaction_Space_Design.md](../Interaction_Space_Design.md) §1.3、§2.4、§3.7—3.9、§4.3、§5.3、§6.3、§7.1维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
@@ -234,6 +234,9 @@ erDiagram
 
 ## 1. `interaction.inputs`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 学生消息或明确控制的固定输入。
 
 主键：`(input_id)`。写入方式：只追加。
@@ -247,12 +250,15 @@ erDiagram
 | `input` | `jsonb` | 否 | 无 | Interaction§2.4：原文本、附件、task_use或控制参数；原提交不可改写 |
 | `turn_epoch` | `bigint` | 否 | 无 | 本次取得入口时的递增令牌 |
 | `accepted_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(scope_id,request_id)；忙时不生成Input。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 2. `interaction.input_results`
+
+数据性质：已接受决定的查询投影；稳定结果身份、确认和取消状态、资格结论需随事件保存，不能重建时重新裁决。见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)。
 
 输入的已提交处理结果。
 
@@ -268,10 +274,11 @@ erDiagram
 | `activity_revision_refs` | `jsonb` | 否 | '[]'::jsonb | 本次活动变化；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `error_ref` | `jsonb` | 是 | 无 | 故障依据；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行决定的事件；逻辑引用runtime.events.event_id；按record_type和主键定位完整正文 |
 
 约束与关系：UQ(input_id,step_key)；失败后恢复新步骤记录，不覆盖旧失败。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 3. `interaction.space_runtime`
 
@@ -293,6 +300,9 @@ erDiagram
 
 ## 4. `interaction.messages`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 聊天正文，独立于空间事件。
 
 主键：`(message_id)`。写入方式：只追加。
@@ -307,12 +317,16 @@ erDiagram
 | `source_input_ref` | `uuid` | 是 | 无 | 源输入；与触发事件至少一个；FK → `interaction.inputs.input_id` |
 | `source_trigger_ref` | `uuid` | 是 | 无 | 系统触发事件；逻辑引用runtime.events |
 | `committed_at` | `timestamptz` | 否 | 无 | 服务端正式提供时间；不是浏览器显示回执 |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(scope_id,message_seq)；输入或系统事实来源不可同时缺失。
 
-查询索引：主键、(scope_id,message_seq)唯一键；活动历史通过message_assignments关联后按message_seq排序。
+查询索引：source_event_id；主键、(scope_id,message_seq)唯一键；活动历史通过message_assignments关联后按message_seq排序。
 
 ## 5. `interaction.message_assignments`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 消息归属的活动。
 
@@ -325,12 +339,16 @@ erDiagram
 | `assigned_by_input_ref` | `uuid` | 是 | 无 | 决定归属的输入；FK → `interaction.inputs.input_id` |
 | `source_trigger_ref` | `uuid` | 是 | 无 | 系统归属的触发事件；与输入至少一项 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：消息至多一个活动；未判定可暂时没有此行；同空间校验。
 
-查询索引：主键；(activity_id,message_id)；联查messages取得消息序号，不定义不存在于本表的message_seq索引。
+查询索引：source_event_id；主键；(activity_id,message_id)；联查messages取得消息序号，不定义不存在于本表的message_seq索引。
 
 ## 6. `interaction.activities`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 活动森林中的稳定节点。
 
@@ -348,12 +366,16 @@ erDiagram
 | `adoption_ref` | `uuid` | 否 | 无 | 根采用的课程；逻辑引用product.space_adoption |
 | `started_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `first_message_ref` | `uuid` | 否 | 无 | 活动起点消息；FK → `interaction.messages.message_id` |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：父/根须同空间；无父子环；同根沿原采用；子活动固定自己类型的配置。
 
-查询索引：主键；(scope_id,started_at,activity_id)；parent_id。
+查询索引：source_event_id；主键；(scope_id,started_at,activity_id)；parent_id。
 
 ## 7. `interaction.activity_revisions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 节点位置及活动运行状态历史。
 
@@ -371,12 +393,15 @@ erDiagram
 | `source_input_ref` | `uuid` | 是 | 无 | 用户触发输入；FK → `interaction.inputs.input_id` |
 | `source_trigger_ref` | `uuid` | 是 | 无 | 系统触发事件 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：来源至少一项；挂起保留前状态；结束后不能因迟到通知自动重启。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 8. `interaction.activity_heads`
+
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
 
 每个活动当前修订。
 
@@ -393,6 +418,9 @@ erDiagram
 
 ## 9. `interaction.detection_plans`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 检测准备的稳定计划身份。
 
 主键：`(plan_id)`。写入方式：只追加。
@@ -403,12 +431,16 @@ erDiagram
 | `activity_id` | `uuid` | 否 | 无 | 所属检测活动；FK → `interaction.activities.activity_id` |
 | `scope_id` | `uuid` | 否 | 无 | 学习空间身份；逻辑引用 product.learning_space.space_id |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：题单准备不等于学生确认。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 10. `interaction.plan_revisions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 供学生确认的题单内容。
 
@@ -425,12 +457,15 @@ erDiagram
 | `gaps` | `jsonb` | 否 | '[]'::jsonb | Issue[]；准备不完整的原因 |
 | `feedback_policy` | `jsonb` | 否 | 无 | 轮后反馈与帮助规则的固定依据 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：已确认版不修改；重排内容另建修订。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 11. `interaction.plan_progress`
+
+数据性质：已接受决定的查询投影；稳定结果身份、确认和取消状态、资格结论需随事件保存，不能重建时重新裁决。见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)。
 
 题单确认和执行进度。
 
@@ -444,12 +479,16 @@ erDiagram
 | `status` | `text` | 否 | 无 | prepared、confirmed、finished、cancelled、superseded |
 | `cancelled_items` | `jsonb` | 否 | 无 | 已取消item_id、原因、来源引用列表 |
 | `current_round_ref` | `uuid` | 是 | 无 | 当前轮；未开始或结束为空；FK → `interaction.detection_rounds.round_id` |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行决定的事件；逻辑引用runtime.events.event_id；按record_type和主键定位完整正文 |
 
 约束与关系：FK(plan_id,plan_revision)→plan_revisions；未确认不得建立首轮。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 12. `interaction.detection_rounds`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 每一道检测题的一次轮身份。
 
@@ -464,12 +503,16 @@ erDiagram
 | `item_id` | `text` | 否 | 无 | 本版题单中的题目项 |
 | `task_use_ref` | `uuid` | 否 | 无 | 该次题目使用；FK → `interaction.task_uses.task_use_id` |
 | `opened_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(plan_id,plan_revision,item_id)；FK(plan_id,plan_revision)→plan_revisions；一题单最多一开放/暂停轮，由进度指针锁保证。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 13. `interaction.round_revisions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 检测轮的状态历史。
 
@@ -485,12 +528,16 @@ erDiagram
 | `source_trigger_ref` | `uuid` | 是 | 无 | 系统触发事实 |
 | `submission_ref` | `uuid` | 是 | 无 | 本轮提交；未作答为空；FK → `interaction.submissions.submission_id` |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：closed后不再开放；求助先提交closed事实再给实质帮助。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 14. `interaction.task_uses`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 题目在本次活动中的实际呈现。
 
@@ -510,12 +557,16 @@ erDiagram
 | `method_conditions` | `jsonb` | 否 | 无 | 本次要求的方法与题目条件；沿Domain及Claim公开定义 |
 | `prepared_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `provided_message_ref` | `uuid` | 否 | 无 | 已正式提供的消息；FK → `interaction.messages.message_id` |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：一题多次使用分别留痕；题内图表归题面；非检测不强建检测轮。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 15. `interaction.submissions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 学生一次实际提交的原文。
 
@@ -528,18 +579,22 @@ erDiagram
 | `source_input_ref` | `uuid` | 否 | 无 | 提交输入；FK → `interaction.inputs.input_id` |
 | `task_use_ref` | `uuid` | 否 | 无 | 本次题目；FK → `interaction.task_uses.task_use_id` |
 | `activity_id` | `uuid` | 否 | 无 | 活动；FK → `interaction.activities.activity_id` |
-| `round_id` | `uuid` | 是 | 无 | 检测轮；非检测可空；FK → `interaction.detection_rounds.round_id` |
+| `round_id` | `uuid` | 是 | 无 | 检测轮；非检测写SQL NULL，接口round_ref为null；空字符串非法；FK → `interaction.detection_rounds.round_id` |
 | `answer` | `jsonb` | 否 | 无 | 提交的parts或原消息精确片段；图片保留文件引用，不被AI转写覆盖 |
 | `help_basis` | `jsonb` | 否 | 无 | 提交前已正式提供的帮助/题面事实、查询截止序号及完整性 |
 | `adoption_ref` | `uuid` | 否 | 无 | 当时采用；逻辑引用product.space_adoption |
 | `accepted_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `event_ref` | `uuid` | 否 | 无 | AnswerSubmitted；逻辑引用runtime.events |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(source_input_ref,task_use_ref)；部分UQ(round_id) WHERE round_id IS NOT NULL；一次轮提交不反复覆盖。
 
-查询索引：主键及上述唯一键；(scope_id,task_use_ref,accepted_at)。
+查询索引：source_event_id；主键及上述唯一键；(scope_id,task_use_ref,accepted_at)。
 
 ## 16. `interaction.answer_feedback`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 本次答题反馈，不等于能力评价。
 
@@ -555,12 +610,16 @@ erDiagram
 | `limitations` | `jsonb` | 否 | 无 | 尚不能判断事项的字符串列表 |
 | `run_ref` | `uuid` | 否 | 无 | 执行身份；逻辑引用runtime.executions |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：同一次反馈步骤沿底座Step幂等；Evaluation不将此结论当学生新表现。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 17. `interaction.help_facts`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 求助处理和实质帮助提供事实。
 
@@ -579,12 +638,16 @@ erDiagram
 | `round_closure_ref` | `jsonb` | 是 | 无 | 独立检测求助时先关轮的依据；Ref，见总册§3 |
 | `provided_part_refs` | `jsonb` | 否 | '[]'::jsonb | provided阶段的正式消息片段；handled为空；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：不同阶段只追加；provided实质帮助必须有正文来源。
 
-查询索引：主键；(scope_id,activity_id,created_at)；(task_use_id,stage,created_at)。
+查询索引：source_event_id；主键；(scope_id,activity_id,created_at)；(task_use_id,stage,created_at)。
 
 ## 18. `interaction.presentations`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 浏览器显示回执，仅用于展示追溯。
 
@@ -599,12 +662,16 @@ erDiagram
 | `part_refs` | `jsonb` | 否 | '[]'::jsonb | 已显示部分；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `received_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `client_reported_at` | `timestamptz` | 是 | 无 | 客户端报告时间，仅参考 |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：不决定教学机会、帮助或概率更新；重复ID同文返回原记录。
 
-查询索引：主键；(scope_id,received_at)；按resource_ref等值查询由所有者验证范围。
+查询索引：source_event_id；主键；(scope_id,received_at)；按resource_ref等值查询由所有者验证范围。
 
 ## 19. `interaction.teaching_opportunities`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 一次可识别的教学机会。
 
@@ -620,12 +687,16 @@ erDiagram
 | `opened_by_input` | `uuid` | 是 | 无 | 引起教学的输入；FK → `interaction.inputs.input_id` |
 | `source_trigger_ref` | `uuid` | 是 | 无 | 系统触发；与输入至少一项 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：按字段引用及总册公共约束检查；无额外唯一键。
 
-查询索引：主键；(scope_id,activity_id,created_at)。
+查询索引：source_event_id；主键；(scope_id,activity_id,created_at)。
 
 ## 20. `interaction.opportunity_closures`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 教学机会完成或中止的固定事实。
 
@@ -641,12 +712,16 @@ erDiagram
 | `source_input_ref` | `uuid` | 是 | 无 | 结束输入；FK → `interaction.inputs.input_id` |
 | `source_trigger_ref` | `uuid` | 是 | 无 | 结束触发；与输入至少一项 |
 | `event_ref` | `uuid` | 否 | 无 | TeachingOpportunityClosed；逻辑引用runtime.events |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：每机会最多一条；无浏览器回执不等于未教学。
 
-查询索引：主键；event_ref；按机会关联teaching_opportunities取得空间和活动。
+查询索引：source_event_id；主键；event_ref；按机会关联teaching_opportunities取得空间和活动。
 
 ## 21. `interaction.blueprint_revisions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 四类活动蓝图。
 
@@ -660,12 +735,16 @@ erDiagram
 | `definition` | `jsonb` | 否 | 无 | Interaction§1.3 BlueprintRevision：nodes、transitions；节点完整输入/动作/fallback，转移含顺序/条件/依据 |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：同对象每次修改追加修订；配置不可跨活动混绑。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 22. `interaction.rule_revisions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 必须遵守的教学规则。
 
@@ -679,12 +758,16 @@ erDiagram
 | `definition` | `jsonb` | 否 | 无 | Interaction§1.3 RuleRevision：name、applies_when、requirement、basis、limitations、enabled |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：同对象每次修改追加修订；配置不可跨活动混绑。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 23. `interaction.strategy_revisions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 推荐策略，不强制命中。
 
@@ -698,12 +781,16 @@ erDiagram
 | `definition` | `jsonb` | 否 | 无 | Interaction§1.3 StrategyRevision：name、purpose、applicability、materials、approach、adaptation、finish_conditions、enabled |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：同对象每次修改追加修订；配置不可跨活动混绑。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 24. `interaction.binding_revisions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 活动级和节点级绑定。
 
@@ -717,12 +804,16 @@ erDiagram
 | `definition` | `jsonb` | 否 | 无 | Interaction§1.3 ActivityBindingRevision：活动规则/策略引用、节点本层引用；不复制继承内容 |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：同对象每次修改追加修订；配置不可跨活动混绑。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 25. `interaction.resolved_configs`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 活动固定采用的完整配置包。
 
@@ -737,12 +828,15 @@ erDiagram
 | `rule_refs` | `jsonb` | 否 | '[]'::jsonb | 解析后的精确规则及enabled值；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `strategy_refs` | `jsonb` | 否 | '[]'::jsonb | 解析后的精确策略及enabled值；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：保存时按同类型检查所有引用；运行只读此包，不逐步读最新版。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 26. `interaction.config_heads`
+
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
 
 每类活动当前生效配置。
 
@@ -759,6 +853,9 @@ erDiagram
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
 ## 27. `interaction.decision_records`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 LLM提议与程序采用结果。
 
@@ -777,12 +874,16 @@ LLM提议与程序采用结果。
 | `validation` | `jsonb` | 否 | 无 | 硬条件、权限、允许动作和引用检查：code、passed、basis |
 | `accepted_action` | `jsonb` | 否 | 无 | 实际采用动作或clarify/blocked；不执行模型脚本 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：按字段引用及总册公共约束检查；无额外唯一键。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 28. `interaction.context_bundles`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 某次AI调用实际取材清单。
 
@@ -803,12 +904,16 @@ LLM提议与程序采用结果。
 | `publication_refs` | `jsonb` | 否 | '[]'::jsonb | 本次读取的公开掌握状态/目标快照；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `omissions` | `jsonb` | 否 | 无 | 未取到或因预算省略的可选内容与原因；必要内容缺失必须失败 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：按字段引用及总册公共约束检查；无额外唯一键。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 29. `interaction.memory_revisions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 业务选择保存的记忆或摘要。
 
@@ -826,12 +931,15 @@ LLM提议与程序采用结果。
 | `source_ref` | `jsonb` | 否 | 无 | 产生本版的输入或触发事实；Ref，见总册§3 |
 | `previous_ref` | `jsonb` | 是 | 无 | 前一修订；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：来源与摘要同时保留；更新追加版本。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 30. `interaction.memory_heads`
+
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
 
 每活动各类当前记忆。
 
@@ -851,6 +959,9 @@ LLM提议与程序采用结果。
 
 ## 31. `interaction.proactive_checks`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 安全时点的主动任务检查。
 
 主键：`(check_id)`。写入方式：只追加。
@@ -867,12 +978,16 @@ LLM提议与程序采用结果。
 | `server_time` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `outcome` | `text` | 否 | 无 | candidate、no_task、waiting |
 | `task_refs` | `jsonb` | 否 | '[]'::jsonb | 生成或复用的建议；Ref[]，固定版本；空数组表示没有，不表示未知 |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(scope_id,trigger_ref)；不以失败强催重做。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 32. `interaction.proactive_tasks`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 一项有明确依据的建议。
 
@@ -891,12 +1006,16 @@ LLM提议与程序采用结果。
 | `not_before` | `timestamptz` | 是 | 无 | 最早合理提示时刻；没有时间条件为空 |
 | `created_by_check` | `uuid` | 否 | 无 | 首次检查；FK → `interaction.proactive_checks.check_id` |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(scope_id,basis_key)；拒绝不降Belief。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 33. `interaction.proactive_revisions`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 主动建议的状态历程。
 
@@ -911,12 +1030,16 @@ LLM提议与程序采用结果。
 | `source_ref` | `jsonb` | 否 | 无 | 学生反应或系统事实；Ref，见总册§3 |
 | `execution_activity_ref` | `uuid` | 是 | 无 | 接受后活动；其他状态可空；FK → `interaction.activities.activity_id` |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：只追加；暂缓当天不再提示；拒绝后旧依据不重建。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 34. `interaction.proactive_prompts`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 实际发出的主动提示。
 
@@ -931,10 +1054,11 @@ LLM提议与程序采用结果。
 | `message_ref` | `uuid` | 否 | 无 | 提示聊天消息；FK → `interaction.messages.message_id` |
 | `source_trigger_ref` | `uuid` | 否 | 无 | 安全时点事实；逻辑引用runtime.events |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(task_id,basis_key,local_date)；等待中的检测轮不插入提示。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 35. `interaction.resume_actions`
 
@@ -970,3 +1094,7 @@ LLM提议与程序采用结果。
 | v0.1 | 2026-11-15 | 逐表补齐列、键、空值、默认值、约束和关系；未执行建表或迁移 |
 
 本轮修订（v0.2，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.3，2026-11-15）：无检测轮的作答明确写SQL NULL，保留原部分唯一约束。见MVP决定登记§95。
+
+本轮修订（v0.4，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

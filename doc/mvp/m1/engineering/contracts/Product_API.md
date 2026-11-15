@@ -1,12 +1,15 @@
 # M1 Product API
 
-> **版本**：v0.1<br>
-> **状态**：接口与消息详细设计稿，待用户审阅；未编码<br>
+> **版本**：v0.3<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-15
+> **更新日期**：2026-11-15<br>
+> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
 共同类型、认证头、回执和错误见[总册](../API_and_Message_Design.md)。本分册定义前后端载荷；内容提取、采用和应用规则仍由Product负责。
+
+来源通则：业务ID及查询响应维持现有形状，来源字段source_event_id:ID指向生成该对象的事实；正文片段返回EventPartRef。正文读取来自事件及固定附件，业务表只是投影。内部适配器负责本业务用途和范围，不从私有表提供独立原文；写请求仍走原业务入口，客户端不能指定事件内容或source_event_id。
 
 ## 响应对象
 
@@ -769,7 +772,7 @@
 | `changed` | boolean | 是 | 内容未变化可false |
 | `affected_spaces` | ID[] | 是 | 实际推进采用的空间 |
 
-处理边界：一起保存应用、空间采用及相关事件；仅目标依据改变才产生LearningTargetApplied。
+处理边界：一起保存应用、空间采用及相关事件；只推进同textbook_id、同target_id的空间，不修改空间身份；仅目标依据改变才产生LearningTargetApplied。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；check_stale；not_ready。
 
@@ -940,7 +943,7 @@
 | `result` | GoalResult或null | 是 | Evaluation§4.4，待计算不是未达标 |
 | `gaps` | Issue[] | 是 | 课程准备缺口 |
 
-处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
+处理边界：学生目标页统一使用本入口，Product在内部按授权读取Evaluation并聚合当前采用及目标要求；不重算评价。Evidence／Belief详情沿[Evaluation E06](Evaluation_API.md#e06)读取，不把目标页直接跳到事件列表。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
 
@@ -951,13 +954,11 @@
 ```
 
 <a id="p26"></a>
-## P26 Product请求结果
+## P26 Product收据内部投影
 
-`GET /product-requests/{request_ref}` → `product.query_product_view`。权限：原请求人或获同资源权限者。处理规则：[Product处理规则](../Product_Application_Design.md#38-http与客户端交接)。
+本节不是HTTP接口。公共运行通过`product.query_product_view`取得原请求的收据；浏览器只调用[公共收据R04](Runtime_Protocols.md#r04)。查找依据为原action、resource及request_id，加已验证的原请求人；所有者再次核对当前权限。业务处理规则见[模块合同](../Product_Application_Design.md#38-http与客户端交接)。
 
-除路径与共同认证头外，无业务请求字段。
-
-响应：200，直接返回下列对象。
+所有者返回下列内部投影；底座按R04转换字段。无记录返回not_found，查询故障返回读取失败，不伪造空收据。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
@@ -966,16 +967,6 @@
 | `result` | 入口对应结果或null | 是 | 成功前可null |
 | `error` | ErrorResponse.error或null | 是 | 失败原因 |
 | `runtime_ref` | ID或null | 是 | 有后台工作时非null |
-
-处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
-
-错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
-
-请求／查询参数（示意数据）：
-
-```json
-{}
-```
 
 ## 内部入口与授权读取
 
@@ -1148,3 +1139,7 @@
 | 版本 | 日期 | 修改 |
 | --- | --- | --- |
 | v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |
+
+本轮修订（v0.2，2026-11-15）：收据改为内部投影，明确目标页入口及应用空间范围。见MVP决定登记§95。
+
+本轮修订（v0.3，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

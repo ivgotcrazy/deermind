@@ -1,11 +1,11 @@
 # M1 Interaction Space 设计
 
-> **版本**：v0.24<br>
-> **状态**：API与消息设计稿待审阅；未编码<br>
+> **版本**：v0.26<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.23 → v0.24，集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码<br>
+> **修订说明**：v0.25 → v0.26，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
 本文设计四类活动、持续对话、学习助手及主动任务的运行方式，负责决定当前学生交互如何推进。模型与工具调用交AI底座执行，持久等待和调度交系统底座，当题判题与反馈由Interaction负责，掌握状态及目标判断交Evaluation；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -31,6 +31,8 @@
 入口路由由公共运行底座完成，Interaction提供普通处理入口、AI能力说明、授权查询与业务校验。明确的提交、活动控制、查询直接进入普通处理器；需要学习交流、检测准备或主动建议时派发AI Operation，由Worker在Temporal之上执行其业务代码。公共底座不先执行本模块的意图识别函数，也不逐步指挥教学。
 
 普通请求不必先经过`handle_input`。求助中的语义理解及提示生成属于学习交流能力，暂用现有`handle_input`承接，不新增独立`handle_help`；是否需要更细的AI能力拆分在详细设计审阅。完整边界见[总体§3.5及求助时序](System_Design.md#45-从求助请求到前端回显)。
+
+**事件事实源。** 学生输入、正式消息、活动/轮变化、当时题面、提交、帮助、记忆和主动任务先记录完整事实，再生成本Space查询数据。未正式提供的AI候选不能投影成学生已见内容。字段及投影登记只在[事件正文合同](contracts/Event_Facts.md)维护；本稿中的“保存业务对象”均指共同短事务内由事件生成投影。
 
 ## 1. 活动定义与配置
 
@@ -156,13 +158,13 @@ ActivityRevision保存实际node_id、动作及transition_id；新增DecisionRec
 2. 目录按根活动开始时间分批读取，子活动保持开始顺序；消息按不可变顺序定位，可围绕活动首条消息读取邻页。
 3. 返回已提交消息身份、内容、归属活动、处理状态和下一游标；不返回模型候选、私有判题或未提交草稿。
 
-此查询不改变活动、计证据或开启教学，点击历史名称也不恢复活动。无历史返回空列表；故障返回读取失败，不能用空列表掩盖。分页期间新消息可继续追加，但已返回消息身份和排序不重写。消息页返回last_seq、upper_seq及next_cursor：首屏固定该空间已提交消息上界，续页沿同一上界；历史锚点／筛选绑定游标。当前活动另查询current，不因补读改变活动。完整多条件历史搜索不在M1；历史查询的索引见[数据字典](database/Business_Interaction.md#4-interactionmessages)，分页上限在客户端与运行接线时确定。
+此查询不改变活动、计证据或开启教学，点击历史名称也不恢复活动。无历史返回空列表；故障返回读取失败，不能用空列表掩盖。分页期间新消息可继续追加，但已返回消息身份和排序不重写。消息页返回last_seq、upper_seq及next_cursor：首屏固定该空间已提交消息上界，续页沿同一上界；历史锚点／筛选绑定游标。当前活动另查询current，不因补读改变活动。完整多条件历史搜索不在M1；历史查询的索引见[数据字典](database/Business_Interaction.md#4-interactionmessages)，条数和字节限额统一引用[基础设施§4.5 H02](Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)，候选数值待审，本模块不另定上限。
 
-聊天历史由本Space的消息记录提供，不通过扫描全部空间事件拼成对话。消息正文、内容块与活动归属在本Space保存；收发、作答、呈现等事件另经公共运行底座追加，通过引用关联消息。一条消息可有多个相关事件，事件时间不能替代聊天顺序。共同存储和追溯边界见[总体§3.2.1](System_Design.md#321-聊天消息与空间事件分开存储)。
+聊天历史读取本Space的消息投影，不在每次查询时扫描全部事件。消息正文、内容块、归属和作答原文首先保存在事件及固定附件；本Space在同一短事务生成查询投影，并记录source_event_id。事件时间不能替代聊天顺序。共同存储和追溯边界见[总体§3.2.1](System_Design.md#321-聊天消息与空间事件分开存储)。
 
 ### 2.3 评价原文的授权读取边界
 
-Evaluation取得来源事件后，通过Interaction的公开只读能力，按事实引用读取本次评价所需的原始内容。授权范围按[总体§6.6.1](System_Design.md#661-最小调用授权矩阵)检查，持有事件引用不能自动获取整个空间的内容。
+Evaluation取得来源事件后，由事件管理read_event_facts读取本次所需原文。Interaction的read_evaluation_facts只负责关联限定和用途检查，内部仍读事件正文及固定附件，不把本模块查询表当成另一个事实源。授权范围按[总体§6.6.1](System_Design.md#661-最小调用授权矩阵)检查，持有事件引用不能自动获取整个空间的内容。
 
 | 必须可读取的事实 | 范围与排除项 |
 | --- | --- |
@@ -175,15 +177,15 @@ Evaluation取得来源事件后，通过Interaction的公开只读能力，按�
 | 输入／返回 | 合同 |
 | --- | --- |
 | access_context | Evaluation内部服务身份及本次处理身份；端口重新校验权限和空间，不能仅凭事件ID访问 |
-| scope_id、trigger_event_id | 必填；只接受本空间的AnswerSubmitted或TeachingOpportunityClosed，核对Interaction记录与事件引用对应 |
+| scope_id、trigger_event_id | 必填；只接受本空间的AnswerSubmitted或TeachingOpportunityClosed，核对源事件及其正文归属 |
 | related_event_refs | 可选，默认空；Evaluation经底座授权取得的相关呈现、帮助或历史事实。逐项核对空间、事件用途及正文归属；不接受任意消息ID替代 |
 | source | submission_id或opportunity_id、活动／轮、题目使用、当时采用依据、已提交内容引用 |
-| content_parts | 实际题面、原始作答／教学内容及所需帮助；正文按Domain统一内容结构返回，附件保留受控文件引用；每项带不可变内容身份与校验值 |
+| content_parts | 实际题面、原始作答／教学内容及所需帮助；正文按Domain统一内容结构返回，附件保留受控文件引用；每项带EventPartRef及校验值，原文来自事件正文或固定附件 |
 | provision_facts、help_basis | 正式提供的内容／帮助引用、服务端时间及提交时已固定条件；草稿与私有候选不纳入 |
 | presentation_facts | 可选显示追溯；回执缺失不构成评价材料缺口，不触发或阻塞评价 |
 | completeness | complete／incomplete及missing_reasons；标明事实窗口和未知项。故障返回错误，不能返回complete空列表 |
 
-Interaction只沿该来源的题目使用、活动／轮及帮助关联取材；返回的内容必须在源记录中有依据。查询不改活动、不启动教学或评价、不占学生输入入口。原文无权、引用不存在、永久材料缺口和暂时读取故障分别返回；不会以当前改写内容替换历史原文。
+Interaction只沿该来源的题目使用、活动／轮及帮助关联取材；返回的内容必须在源事件正文中有依据。查询不改活动、不启动教学或评价、不占学生输入入口。原文无权、引用不存在、永久材料缺口和暂时读取故障分别返回；不会以当前改写内容替换历史原文。
 
 Evaluation先查底座事件，再调用本端口；需要有界历史时，按固定Task／方法、指定参照和截止事实取得事件引用，再放入related_event_refs读取。Interaction按服务权限及事件的原文用途授权，拒绝私有记忆、草稿、判题结论和无关用途；不提供任意空间全文检索。保持基准和个人评价由Evaluation自己读取。完整取材结构见[Evaluation§2.3](Evaluation_Space_Design.md#23-固定本次材料)。
 
@@ -201,7 +203,7 @@ ID由程序分配或在受理时校验；客户端request_id仅用于重试，�
 
 parts为有序列表：`text`保留提交原文；`rich_content`采用Domain的RichContent；`attachment`引用受控文件；`task_card`／`answer_form`引用本次task_use；`activity_notice`展示已提交的开始、返回或结束。每部分有稳定part_id，文字、公式、图表不另造一套内容语法。学生手写图片保留原文件，不把AI转写覆盖原文。
 
-**受理步骤。** 先校验当前身份可访问该空间，再按request_id查询原收据；同正文返回原引用，异正文为identity_conflict。新请求短暂锁定space_runtime：忙则返回interaction_busy，不创建Input、聊天消息或AI工作；空闲则递增turn_epoch、保存Input、已有学生原文及其事件，登记active_input_id和待派发依据，一起提交。明确普通控制不生成虚假的学生聊天文本。
+**受理步骤。** 先校验当前身份可访问该空间，再按request_id查询原收据；同正文返回原引用，异正文为identity_conflict。新请求短暂锁定space_runtime：忙则返回interaction_busy，不创建Input、聊天消息或AI工作；空闲则递增turn_epoch；先追加InteractionInputAccepted及需要的ChatMessageRecorded，保存完整输入，再同步投影Input和消息，登记active_input_id、收据和待派发依据，一起提交。明确普通控制不生成虚假的学生聊天文本。
 
 底座按已登记入口派发，Operation持input_id和turn_epoch处理。每次业务提交核对两者仍匹配；成功、等待补充、合法无法继续或最终技术失败后释放入口。依赖结果的等待期间仍占本入口但不占Worker；用户可停止本次回复。独立后台评价不持有该入口。
 
@@ -568,7 +570,7 @@ basis_key由程序按空间、目的、目标要求、Task／方法／方面及�
 
 ### 6.1 提交事实，由Evaluation订阅处理
 
-Interaction保存作答、所属活动／检测轮和实际帮助引用；通过公共运行底座追加`AnswerSubmitted`事件并关联原始作答，再返回提交收据。消息正文与事件分别存储，但按共同恢复保障可靠保存；本Space按授权提供事件所引用的原始内容。重复提交沿用同一个提交身份和事件身份。Evaluation订阅该事件，自行受理评价工作并按关联查询出题及相关事实；Interaction不另建评价任务或调用评价计算接口。
+Interaction先追加包含原始作答、活动/轮和帮助依据的AnswerSubmitted，再在同一事务生成Submission及相关查询数据，提交后返回收据。聊天中提交的答案可沿EventPartRef复用已接收原文；答题区提交直接保存完整正文，不要求伪造聊天消息。重复提交沿用同一个提交身份和事件身份。Evaluation订阅该事件，自行受理评价工作并按关联查询出题及相关事实；Interaction不另建评价任务或调用评价计算接口。
 
 题目使用、轮开始、实际提交及机会收束保留服务端确认时间。空间事件序号由底座同事务分配，不由Interaction或客户端编排；教学机会不能按其首次消息时间插入旧序号。Evaluation按记录顺序处理，资格按当时事实判断，两者不混用，见[公共运行§2.2—2.3](System_Foundation_Design.md#22-空间事件顺序与有界读取)。
 
@@ -662,7 +664,7 @@ Interaction为依赖结果的动作保存恢复位置，并将本方等待条件
 
 ### 6.5 本Space的事件载荷
 
-以下为业务载荷，event_id、scope_id、space_event_seq、时间和执行来源沿底座共同信封。正式消息及事件共同保存，事件保留引用，不复制整段正文。只有AnswerSubmitted和TeachingOpportunityClosed触发能力评价。
+以下为业务载荷，event_id、scope_id、scope_event_seq、时间和执行来源沿底座共同信封。事件保存完整事实，消息/活动/作答由其投影；大正文使用固定附件。只有AnswerSubmitted和TeachingOpportunityClosed触发能力评价。
 
 逐事件字段、产生时点及消费关系见[事件消息分册](contracts/Event_Messages.md#answersubmitted)；活动、计划、求助及主动任务的处理规则保留在本模块。
 
@@ -701,7 +703,7 @@ TaskUseCreated不是浏览器阅读证明；独立资格核对提交时的正式
 
 202只表示受理；已保存作答不随反馈失败变回未提交。重复请求取原收据，busy不排队；停止保留已提交事实。prepare_detection、反馈及主动任务由已受理输入/事件派发，不允许浏览器指定任意Operation。
 
-原文内部读取合同仍以§2.3为准：作答沿answer_ref取得，help_basis不随浏览器回执变化，provision_facts只取正式提供内容。Evaluation不能绕过范围限制读完整历史，缺显示回执不令材料completeness变成incomplete。
+原文内部读取合同仍以§2.3为准：answer_ref定位业务身份，原文沿该作答的EventPartRef取得，help_basis不随浏览器回执变化，provision_facts只取正式提供内容。Evaluation不能绕过范围限制读完整历史，缺显示回执不令材料completeness变成incomplete。
 
 ### 7.4 接收用例
 
@@ -776,3 +778,7 @@ TaskUseCreated不是浏览器阅读证明；独立资格核对提交时的正式
 本轮修订（v0.23，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
 
 本轮修订（v0.24，2026-11-15）：集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码。见[MVP决定登记§94](../../DECISIONS.md#94-api与消息设计分册及唯一维护位置)。
+
+本轮修订（v0.25，2026-11-15）：分页限额统一引用基础设施H02。见MVP决定登记§95。
+
+本轮修订（v0.26，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

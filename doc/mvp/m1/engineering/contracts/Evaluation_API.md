@@ -1,12 +1,15 @@
 # M1 Evaluation API
 
-> **版本**：v0.1<br>
-> **状态**：接口与消息详细设计稿，待用户审阅；未编码<br>
+> **版本**：v0.3<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-15
+> **更新日期**：2026-11-15<br>
+> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
 所有写入口只维护评价定义；个人Evidence、Belief和目标结果只能由已登记处理流程产生。查询不重新评价、不改概率。共同认证、回执和错误见[总册](../API_and_Message_Design.md)。
+
+来源通则：业务ID及查询响应维持现有形状，来源字段source_event_id:ID指向生成该对象的事实；正文片段返回EventPartRef。正文读取来自事件及固定附件，业务表只是投影。内部适配器负责本业务用途和范围，不从私有表提供独立原文；写请求仍走原业务入口，客户端不能指定事件内容或source_event_id。
 
 ## 共用结果
 
@@ -143,10 +146,12 @@ ClaimRow只含claim_ref:ClaimRef、task_ref:ObjectRef(task)、title:string、gap
 }
 ```
 
+目标展示的入口分工：学生目标页读[Product P25](Product_API.md#p25)聚合结果；管理员直接核对评价可用E04，固定历史用E05；目标项Evidence列表及Evidence／Belief详情用E06。上述分工不扩大读取权限，所有引用仍核对本人空间或管理授权。
+
 <a id="e04"></a>
 ## E04 目标结果查询
 
-`GET /evaluation/spaces/{scope_id}/goals` → `evaluation.query_basis/target`。权限：本人/获授权管理员或内部Product。处理规则：[Evaluation处理规则](../Evaluation_Space_Design.md#55-目标结果http与查询状态)。
+`GET /evaluation/spaces/{scope_id}/goals` → `evaluation.query_basis/target`。权限：本人/获授权管理员；Product内部调用query_basis，不借浏览器身份调用HTTP。处理规则：[Evaluation处理规则](../Evaluation_Space_Design.md#55-目标结果http与查询状态)。
 
 请求字段（路径字段不重复放入正文）：
 
@@ -300,3 +305,7 @@ E06的target分支先返回证据摘要，点击后以evidence_ref读取详情�
 | 版本 | 日期 | 修改 |
 | --- | --- | --- |
 | v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |
+
+本轮修订（v0.2，2026-11-15）：明确学生目标聚合、管理查询及Evidence／Belief读取入口。见MVP决定登记§95。
+
+本轮修订（v0.3，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

@@ -1,12 +1,15 @@
 # M1 Domain API
 
-> **版本**：v0.1<br>
-> **状态**：接口与消息详细设计稿，待用户审阅；未编码<br>
+> **版本**：v0.3<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-15
+> **更新日期**：2026-11-15<br>
+> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
 共同类型与回执见[总册](../API_and_Message_Design.md)。接口只接受已授权领域及精确对象引用；所有定义/内容结构以[Domain§1](../Domain_Space_Design.md#1-领域对象身份与关系)为唯一来源。API不直接接收数据库行或模型任意生成的ID。
+
+来源通则：业务ID及查询响应维持现有形状，来源字段source_event_id:ID指向生成该对象的事实；正文片段返回EventPartRef。正文读取来自事件及固定附件，业务表只是投影。内部适配器负责本业务用途和范围，不从私有表提供独立原文；写请求仍走原业务入口，客户端不能指定事件内容或source_event_id。
 
 ## 响应对象
 
@@ -473,13 +476,11 @@
 ```
 
 <a id="d13"></a>
-## D13 Domain请求收据
+## D13 Domain收据内部投影
 
-`GET /domain-requests/{receipt_id}` → `domain.query_content`。权限：原请求人/获同资源权限管理员。处理规则：[Domain处理规则](../Domain_Space_Design.md#64-请求与待办状态)。
+本节不是HTTP接口。公共运行通过`domain.query_content`取得原请求的收据；浏览器只调用[公共收据R04](Runtime_Protocols.md#r04)。查找依据为原action、resource及request_id，加已验证的原请求人；所有者再次核对当前权限。业务处理规则见[模块合同](../Domain_Space_Design.md#64-请求与待办状态)。
 
-除路径与共同认证头外，无业务请求字段。
-
-响应：200，直接返回下列对象。
+所有者返回下列内部投影；底座按R04转换字段。无记录返回not_found，查询故障返回读取失败，不伪造空收据。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
@@ -489,16 +490,6 @@
 | `error` | ErrorResponse.error或null | 是 | 真实失败原因 |
 | `runtime_ref` | ID或null | 是 | 后台执行 |
 
-处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
-
-错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
-
-请求／查询参数（示意数据）：
-
-```json
-{}
-```
-
 ## 内部查询与提交保护
 
 | 端口 | 调用方 | 唯一合同位置 |
@@ -507,11 +498,11 @@
 | guard_references | Product保存/应用、Evaluation定义保存 | [Domain§6.7](../Domain_Space_Design.md#67-模块端口与消息交接) |
 | read_intake_result | Product | [Domain§6.7](../Domain_Space_Design.md#67-模块端口与消息交接) |
 
-以上字段及来源锁规则见[Domain§6.7](../Domain_Space_Design.md#67-模块端口与消息交接)。供题、归类和提取按原Operation合同执行；HTTP不能直接伪造供题完成事件。task_supply、intake_receipt结果载荷分别沿[§5.2](../Domain_Space_Design.md#52-domainsupply_task)、[§2.2](../Domain_Space_Design.md#22-domainreceive_intake)，事件只传固定引用。
+以上字段及来源锁规则见[Domain§6.7](../Domain_Space_Design.md#67-模块端口与消息交接)。供题、归类和提取按原Operation合同执行；HTTP不能直接伪造供题完成事件。task_supply、intake_receipt结果载荷分别沿[§5.2](../Domain_Space_Design.md#52-domainsupply_task)、[§2.2](../Domain_Space_Design.md#22-domainreceive_intake)，正式事件保存完整正文及来源，NATS只传事件通知。
 
 ## 入库结果样例
 
-D08需归类时先返回202；之后按D13查询。成功返回的结果固定本次保存版本，后续编辑不改原收据：
+D08需归类时先返回202；浏览器随后按[公共收据R04](Runtime_Protocols.md#r04)查询。以下为D13内部投影示例，R04将state映射为business_state并以completed表示已提交；result保持相同结构。后续编辑不改原收据：
 
 ```json
 {
@@ -552,3 +543,7 @@ ContentRef只允许所属view已授权的JSON Pointer；图文重排不升对象
 | 版本 | 日期 | 修改 |
 | --- | --- | --- |
 | v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |
+
+本轮修订（v0.2，2026-11-15）：将模块收据改为内部投影，浏览器统一查询公共收据。见MVP决定登记§95。
+
+本轮修订（v0.3，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

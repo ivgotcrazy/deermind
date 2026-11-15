@@ -1,10 +1,11 @@
 # M1 API 与消息设计
 
-> **版本**：v0.1<br>
-> **状态**：接口与消息详细设计稿，待用户审阅；未编码<br>
+> **版本**：v0.3<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-15
+> **更新日期**：2026-11-15<br>
+> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
 本册维护传输格式、入口目录和共同约束；分册逐项定义请求、响应与事件。模块文档维护业务处理、AI输入输出语义、提交和恢复规则；数据库分册维护物理字段。接口对象不直接等于数据库行。
 
@@ -19,11 +20,12 @@
 | [Interaction API](contracts/Interaction_API.md) | 活动配置、学生输入、作答、控制、历史和评价原文读取 |
 | [Evaluation API](contracts/Evaluation_API.md) | Claim定义、目标、Evidence与Belief只读查询；不提供概率写接口 |
 | [运行协议](contracts/Runtime_Protocols.md) | 文件上传、请求收据、空间事件查询、WebSocket及内部结果/等待端口 |
+| [事件正文](contracts/Event_Facts.md) | 完整事实DTO、EventPartRef、逐表投影绑定及重建边界 |
 | [事件消息](contracts/Event_Messages.md) | 正式事件信封、逐类型payload、生产/消费关系、NATS投递格式和版本处理 |
 
 每份分册中的P/D/I/E/R编号只用于文档定位，不进入业务请求。
 
-所有HTTP路径相对`/api/m1`；WebSocket为同源`/ws`，协议名`deermind.v1`。内部端口是程序调用，不因列入分册自动成为HTTP接口。Temporal任务、AI提示与模型响应不是业务事件。
+所有HTTP路径相对`/api/m1`；WebSocket为同源`/ws`，协议名`deermind.v1`。内部端口是程序调用，不因列入分册自动成为HTTP接口。Temporal内部历史不是业务事实；AI实际请求和已知结果有专门留痕事件，不作为学生新表现。
 
 ## 2. 认证回执与错误
 
@@ -37,6 +39,10 @@
 | Issue | code:string、path:string、message:string、related_ref?:Ref | path定位请求字段/内容块；related_ref只在当前调用者可读取时返回 |
 
 查询成功返回分册指定对象，不再套一层含义不明的data。写请求的最终result类型沿该入口定义；后台技术状态与业务状态分别返回。首次回执丢失，用原request_id查询公共收据，不能要求客户端先知道丢失的request_ref。
+
+HTTP错误响应与WebSocket error帧共用同一个error对象（code、message、issues、retryable）。WS另带传输关联与acceptance；HTTP保留状态码和可选request_ref。客户端统一读取error，受理是否明确则按各自传输字段判断。
+
+浏览器统一通过[运行协议R04](contracts/Runtime_Protocols.md#r04)按原请求查询收据和结果。Domain、Product的收据结构是底座向所有者读取的内部投影，不另开放模块收据路由；底座不直接读各模块私表。
 
 | HTTP | code与使用条件 | 行为 |
 | --- | --- | --- |
@@ -61,6 +67,7 @@
 | ObjectRef | {kind,object_id,version} | kind=domain/task/solution/kc/task_instance；精确版本；定义见Domain§1.1 |
 | TargetRef | {target_id:ID,revision:Revision} | 精确学习目标定义；不可用名称匹配 |
 | ClaimRef | {claim_id,revision} | Task精确版本对应的评价定义修订 |
+| EventPartRef | {event_id,record_id:string或null,path:string} | 原文片段；path为JSON Pointer；引用不授权，见事件正文合同§2 |
 | Ref | {owner,type,id,revision?或version?,path?} | 具体所有者若已有专用引用形状，沿专用形状；不可将任意JSON当引用；持有引用不等于授权 |
 | CandidateRef | {candidate_id,candidate_revision,basis_revision} | 固定采用候选；版本不可省略 |
 | PlanRef | {plan_id,revision} | 学生确认和继续均指明精确题单修订 |
@@ -69,6 +76,8 @@
 | ResultKey | {scope_id,trigger_event_id,producer,result_kind} | 四者完全匹配；不能只用correlation_id匹配结果 |
 | GoalProcessing | available/pending/failed | Evaluation目标查询状态；已有结果时可同时存在后续pending，不与掌握结论合并 |
 | Processing | {state:not_started/pending/completed/failed,execution_ref:ID或null,failure_ref:Ref或null} | 新查询视图的技术进度；不改模块原业务状态，GoalProcessing另用目标查询合同 |
+
+学习空间范围内，路径中的id、scope_id和Product的space_id表示同一个值；其他schema沿用scope_id，不做身份转换。通用合同中resource.kind或scope.kind不是learning_space时，resource.id或scope_id表示该类资源身份，例如教材导入ID，不能当作学习空间ID。
 
 同一字段组合的条件以分支说明为准；未使用分支的字段不得发送。
 
@@ -85,10 +94,12 @@
 | Domain对象/待办 | object_id/item_id升序；catalog_revision变化返回read_range_changed |
 | 教材、目标、空间列表 | 稳定ID升序，游标绑定调用者和筛选；这是当前视图，允许页间内容更新。新建较小ID需刷新才能看到，不承诺跨页数据库快照 |
 | 聊天 | message_seq/seq升序；首屏固定upper_seq，续页同范围。锚点与活动筛选绑定游标 |
-| 空间事件 | space_event_seq升序，固定已提交上界；事件只追加，缺页以查询补齐 |
+| 空间事件 | scope_event_seq升序，固定已提交上界；事件只追加，缺页以查询补齐 |
 | Evidence/概率修订 | 先固定发布快照或目标结果，再分页其引用集合；不能翻页时切到最新结论 |
 
 通用字段为cursor?:string、limit?:int；返回items及next_cursor:string|null。读取需保持同一依据时另返回read_token或upper_seq。无游标首次读取，游标携带已绑定筛选，调用者不得中途改筛选；修改后重新开始。每页条数、响应字节与超限行为引用[基础设施§4.5](Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)，候选数值仍待审，不在本册批准新数值。
+
+具有HTTP和WS两种承载的同一动作，使用相同业务输入限额；HTTP通用正文上限不扩大聊天容量。共同计量与拒绝规则见[运行协议](contracts/Runtime_Protocols.md#动作与授权视图)，数值仅引用基础设施H02／S03。
 
 ## 5. 三类消息的边界
 
@@ -98,7 +109,7 @@ HTTP承担查询与普通写入；WebSocket command映射同一业务入口，ch
 
 ## 6. 审阅与接收
 
-本批检查：原HTTP入口、WS动作和正式事件均能找到分册；请求/响应类型、权限、错误和幂等一致；消息字段不复制正文；Operation目录与数据库结构不变。静态检查结果记入DECISIONS §94，不代表实现或协议联调通过。
+本批检查：原HTTP入口、WS动作和正式事件均能找到分册；请求/响应类型、权限、错误和幂等一致；事件保存完整事实、查询对象保留来源；Operation及页面不变，数据库新增投影进度和来源字段。首次分册检查见DECISIONS §94，本轮评审修订见[§95](../../DECISIONS.md#95-api与数据库评审修订)；静态检查不代表实现或协议联调通过。
 
 具体路径、字段、错误和新增查询投影供本轮审阅；通过后实现者据此编写OpenAPI/消息Schema及类型定义。本轮只维护文档，不另生成一份待手工同步的OpenAPI草稿。限额候选、技术选型版本继续由原责任文档审阅。
 
@@ -107,3 +118,7 @@ HTTP承担查询与普通写入；WebSocket command映射同一业务入口，ch
 | 版本 | 日期 | 修改 |
 | --- | --- | --- |
 | v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |
+
+本轮修订（v0.2，2026-11-15）：统一公共收据、HTTP／WS错误内层、范围身份和共同输入限额。见MVP决定登记§95。
+
+本轮修订（v0.3，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

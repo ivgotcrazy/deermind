@@ -1,17 +1,17 @@
 # M1 工程设计
 
-> **版本**：v0.73<br>
-> **状态**：API与消息设计分册待审阅；未编码<br>
+> **版本**：v0.75<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.72 → v0.73，集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码<br>
+> **修订说明**：v0.74 → v0.75，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
-工程设计把M1产品规则落实为实现方案。本批形成[API与消息总册](API_and_Message_Design.md)及六份合同分册，集中维护对外字段；模块保留业务流程与提交规则，物理结构仍以数据库分册为准。接口稿待审阅，未编码。
+工程设计把M1产品规则落实为实现方案。本批把事件确立为唯一事实源，补齐完整正文、同步投影、按需订阅和无副作用重建；清理原文分存的旧合同。公开字段见[API与消息总册](API_and_Message_Design.md)，物理定义见数据库分册；修订稿待审阅，未编码。
 
 Operation仅封装AI业务能力，普通业务入口另列于[§7](#7-普通业务处理目录)；本批仍为9项AI Operation，不因新增字段或保存检查扩充目录。详细设计直接形成可审阅文稿，用户review后再处理意见；不以逐条对话或先写验证代码作为推进前置。影响架构的风险单独提出，其他验证留实现阶段，见[登记§70](../../DECISIONS.md#70-domain详细设计对象内容与入库)。
 
-相关工程稿版本：总体v0.50、公共运行v0.45、AI底座v0.26、Interaction v0.24、产品业务v0.28、客户端v0.25、基础设施v0.37、实施计划v0.51、Domain v0.19、Evaluation v0.22；数据库总册及六个业务分册v0.2，Temporal两个分册v0.1；API与消息总册及六个合同分册v0.1。
+当前版本以各文档头部及[本轮升版表](../../DECISIONS.md#961-升版)为准；不在此重复维护第二份版本清单。
 
 ## 1. 文档分工
 
@@ -31,20 +31,22 @@ Operation仅封装AI业务能力，普通业务入口另列于[§7](#7-普通业
 | [客户端工程设计](Client_Design.md) | 学生与管理员网页的组件、状态、接口、内容渲染、恢复及浏览器验收 |
 | [基础设施与部署设计](Infrastructure_and_Deployment_Design.md) | 存储、外部服务适配、启动、配置、观测、部署与维护 |
 
-[API与消息设计](API_and_Message_Design.md)及其六份分册属于上述模块的合同附件，不增加系统模块。
+[API与消息设计](API_and_Message_Design.md)及其七份分册属于上述模块的合同附件，不增加系统模块。
 
 AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己的定义与运行对象；Domain 题目实例不混入学生作答。Evolution 后置，在总体设计说明边界，不建立空的 M1 实现文档。
 
 [实施与交付计划](Delivery_Plan.md)安排设计确认后的工作依赖、技术验证和交付，不属于上述九份设计。不新建交付报告占位；有实际交付后再记录结果。
 
+事件传输和正文分开维护：[事件消息](contracts/Event_Messages.md)定义信封与逐类型动作字段；[事件正文](contracts/Event_Facts.md)定义完整内容、投影及来源闭包。字段字典仍在数据库分册，不复制到各业务模块。
+
 ## 2. 设计输入与历史参考
 
 | 当前产品输入 | 版本与作用 |
 | --- | --- |
-| [PRD](../PRD.md) | v0.28：M1产品行为与验收；Web交付，学习用时功能后置 |
-| [内容与模型规格](../design/Content_and_Model_Reference.md) | v0.26：对象关系、教学与评价语义、试用算法和参数 |
-| [交互规格](../design/Interaction_Design.md)及[原型](../prototype/README.md) | 交互规格 v0.25：管理员和学生的操作、状态、截图；原型用于理解交互 |
-| [验证计划](../validation/Validation_Plan.md) | v0.9：内容、语义、数值、效果及真实浏览器验收口径 |
+| [PRD](../PRD.md) | v0.29：M1产品行为与验收；Web交付，学习用时功能后置 |
+| [内容与模型规格](../design/Content_and_Model_Reference.md) | v0.27：对象关系、教学与评价语义、试用算法和参数 |
+| [交互规格](../design/Interaction_Design.md)及[原型](../prototype/README.md) | 交互规格 v0.26：管理员和学生的操作、状态、截图；原型用于理解交互 |
+| [验证计划](../validation/Validation_Plan.md) | v0.10：内容、语义、数值、效果及真实浏览器验收口径 |
 
 本轮产品输入已按新领域模型修订，不再沿用`37bd334`作为当前内容基线。此前最小账号、取消离线检查、浏览器交付及用时后置决定仍有效。正式接收模块时固定本表现行文件与资产哈希；历史输入和mock不构成生产模型或算法。
 
@@ -65,6 +67,7 @@ AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己�
 | R06、R11–13、R16：活动与检测 | [Interaction](Interaction_Space_Design.md)、[客户端](Client_Design.md) | 四类配置及活动森林、busy与停止、整条回复、先关轮再帮助、正式提供事实及恢复 |
 | R07：题目准备与运行供题 | [Domain](Domain_Space_Design.md)、[Interaction](Interaction_Space_Design.md) | 已有实例筛选、生成检查保存、本次用途及无可用题分支 |
 | R14、内容§4.16–4.21：Evidence、概率与目标 | [Evaluation](Evaluation_Space_Design.md) | §2取材与资格；§3数值接线；§4目标计算；[物理表](database/Business_Evaluation.md)；§5.6维护覆盖规则，§6.4／6.6维护提交。§6.7顺序处理；§6.8保持时间 |
+| 事件唯一事实源（登记§96） | [事件正文](contracts/Event_Facts.md)、[公共运行§2](System_Foundation_Design.md#2-全局事件的追加与查询)、[数据库](Database_Design.md) | 完整事实、生产者共同事务投影、订阅和历史接续、无副作用重建；消息和结果不能是独立事实源 |
 | R09、R14、交互§3：运行及依据追溯 | [Evaluation](Evaluation_Space_Design.md)、[公共运行](System_Foundation_Design.md)、[产品业务](Product_Application_Design.md) | 原始事件、派生依据和结果的授权查询；事件只追加 |
 | R15：主动任务 | [Interaction§5.1](Interaction_Space_Design.md#51-check_proactive_task核对主动任务)、[Product§5.1](Product_Application_Design.md#51-productopen_learning_space创建或进入个人空间) | 实际进入事件触发保持检查；同请求及同依据去重，无离线检查；接受／暂缓／拒绝按已有规则 |
 | R18、验证§1–3：AI 与质量 | [总体§6.6](System_Design.md#66-已确认的读取工具与越权边界)、[AI 底座](AI_Foundation_Design.md)、[公共运行](System_Foundation_Design.md#5-授权执行与访问隔离)、[实施计划](Delivery_Plan.md) | Operation选材、工具及业务校验，底座通用授权与越权拦截；识别、失败和成本沿基础设施设计；确定性、接线、交互及语义验证分开 |
@@ -79,13 +82,13 @@ AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己�
 | --- | --- | --- |
 | 1：已形成主流程边界 | 初始化、教材准备与领域融合、课程选用、学习检测、评价及教学接续 | 明确谁发起、各模块处理什么、读取和保存什么、如何传递事件及返回结果；核对AI取材、依赖等待和关键业务分支 |
 | 2：作为输入 | [总体收口检查](System_Design.md#722-总体收口检查) | 保留未决及验证责任，不重复以总体未确认阻塞已获准的详细设计 |
-| 3：当前 | 模块详细设计与工程接收 | 本批补齐API与消息字段并归并唯一维护位置；接口与既有配置候选待用户审阅 |
+| 3：当前 | 模块详细设计与工程接收 | 本批落实事件事实源、同步投影与按需订阅，并核对各合同的一致性；修订稿与既有配置候选待用户审阅 |
 
 总体当前状态只在§7.2维护；[收口检查](System_Design.md#722-总体收口检查)承接详细设计与验证事项，量化验收由责任文档提出、用户确认，见[实施计划§2.1](Delivery_Plan.md#21-量化验收的提出与确认)。原有Operation及字段不因索引补齐而自动获批。
 
 E01—E07 继续表达已确认的实现顺序，见[原决定](../../DECISIONS.md#27-m1主流程简化与工程实施顺序)；设计文档交叉推进，不按九本文件逐本写完。每轮说明实际交付、当前未决和下一步，不把目录稿算作方案完成。
 
-本批先审[主流程检查与修正](Delivery_Plan.md#27-主流程合同检查)，再按[接收顺序](Delivery_Plan.md#25-本批候选与接收顺序)审阅配置候选。真实运行和语义验证留实施阶段，本轮只有文档静态检查。
+本批先审[事件事实源与投影](contracts/Event_Facts.md)，再看[主流程检查与修正](Delivery_Plan.md#27-主流程合同检查)，再按[接收顺序](Delivery_Plan.md#25-本批候选与接收顺序)审阅配置候选。真实运行和语义验证留实施阶段，本轮只有文档静态检查。
 
 ## 5. M1 Operation总目录
 
@@ -191,9 +194,43 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | `ProactiveTaskPrompted` | Interaction在安全时点保存正式提示 | 查询提示发生及消息引用；不触发接受、活动执行或概率更新 | [Interaction§5.4／6.5](Interaction_Space_Design.md#54-提示接受与返回) |
 | `ClaimDefinitionChanged` | Evaluation保存Claim及判据定义 | 查询实际定义依据；不因保存自动重算历史 | [Evaluation§1](Evaluation_Space_Design.md#1-claim方法判据与评价方面) |
 
-普通账号、上传、候选等模块内部留痕仍在各自合同维护；一旦成为跨模块触发或取证依据须登记到本目录。消息正文经所有者授权读取，事件仅保存事实及必要引用；不得为了省一次读取把所有正文复制进事件。登记不决定所有事件都推送浏览器；仅按公共运行§5.4登记刷新提示，正文仍经所有者查询。
+账号、上传、候选和运行留痕统一登记于事件合同；本目录索引生产方和用途。事件保存当时完整事实，大正文使用固定附件，NATS只传通知。登记不表示向浏览器推送完整事件；客户端仍按授权查询业务视图。
 
 `apply_course`原合同已有`LearningTargetApplied`；本轮补登记而非新增触发路径。Evaluation按§6.1的作答、教学机会两类事实启动AI Operation，目标采用事实启动普通目标对照处理，不同时订阅上述保存、应用和空间留痕事件重算同一目标。需交接但未被可靠承接的失败按[总体§6.5.1](System_Design.md#651-自动重试结束后的收尾责任)处理；没有订阅用途的留痕不记“无人消费故障”。
+
+### 6.3 完整事实与运行留痕补充
+
+正文和类型化字段只在[事件消息](contracts/Event_Messages.md#41-补齐的事实类型schema_version1)与[事件正文](contracts/Event_Facts.md)维护。下表是新增类型的责任索引；只留痕不等于自动订阅，不增加AI Operation。原47类载荷升至v2，新27类为v1；共74类。
+
+| 事件 | 生产方 / 范围 | 事实及用途 |
+| --- | --- | --- |
+| `MaterialCandidatePrepared` | product / material_import | 助手保存一批候选；核对或继续修正另存新候选；按授权查询/投影，不默认触发AI |
+| `MaterialIntakeStatusUpdated` | product / material_import | 消费Domain接收/拒绝事件后保存教材侧状态；Product消费Domain结果后生成教材状态 |
+| `ApplicationChecked` | product / course_application | 保存教材/目标应用检查结果；按授权查询/投影，不默认触发AI |
+| `AccountSignedOut` | product / account | 确认退出或使旧登录失效；按授权查询/投影，不默认触发AI |
+| `DomainClassificationPrepared` | domain / domain | 保存题目或解法归类候选；按授权查询/投影，不默认触发AI |
+| `InteractionInputAccepted` | interaction / learning_space | 接受学生输入，先于AI处理；按授权查询/投影，不默认触发AI |
+| `InteractionInputCompleted` | interaction / learning_space | 本次处理完成或明确失败；按授权查询/投影，不默认触发AI |
+| `MessageAssigned` | interaction / learning_space | 正式确定消息所属活动；按授权查询/投影，不默认触发AI |
+| `DetectionRoundStarted` | interaction / learning_space | 学生确认题单后开始一轮；按授权查询/投影，不默认触发AI |
+| `TeachingOpportunityStarted` | interaction / learning_space | 创建稳定教学机会；按授权查询/投影，不默认触发AI |
+| `InteractionDecisionRecorded` | interaction / learning_space | 保存允许/拒绝的活动决策；按授权查询/投影，不默认触发AI |
+| `InteractionContextPrepared` | interaction / learning_space | 固定本次AI上下文；按授权查询/投影，不默认触发AI |
+| `InteractionMemorySaved` | interaction / learning_space | 保存一版记忆或摘要；按授权查询/投影，不默认触发AI |
+| `ProactiveCheckCompleted` | interaction / learning_space | 完成一次主动任务必要性检查；按授权查询/投影，不默认触发AI |
+| `EvaluationInputPrepared` | evaluation / learning_space | 固定本次取证材料；按授权查询/投影，不默认触发AI |
+| `EvaluationInterpretationPrepared` | evaluation / learning_space | 保存解释候选与校验结论；按授权查询/投影，不默认触发AI |
+| `GoalCalculationPrepared` | evaluation / learning_space | 固定目标计算依据；按授权查询/投影，不默认触发AI |
+| `AIConfigurationPinned` | ai / execution | 工作受理时固定模型配置；按授权查询/投影，不默认触发AI |
+| `AICallChanged` | ai / execution | AI调用开始、完成、失败或获准恢复；按授权查询/投影，不默认触发AI |
+| `ModelRequestChanged` | ai / execution | 模型请求预约或取得结果；按授权查询/投影，不默认触发AI |
+| `ToolActionChanged` | ai / execution | 工具调用获准/拒绝或完成；按授权查询/投影，不默认触发AI |
+| `AICandidatePrepared` | ai / execution | 保存通过结构校验的技术候选；按授权查询/投影，不默认触发AI |
+| `ExecutionStateChanged` | runtime / execution | 工作受理、尝试开始、停止、失败、完成或恢复；按授权查询/投影，不默认触发AI |
+| `WaitStateChanged` | runtime / execution | 登记等待、匹配、到期、取消或处理接续；按授权查询/投影，不默认触发AI |
+| `DeliveryStateChanged` | runtime / event_delivery | 交接安排、确认承接或失败/获准重送；按授权查询/投影，不默认触发AI |
+| `FileReceived` | runtime / file | 文件完整保存且校验通过；按授权查询/投影，不默认触发AI |
+| `ProjectionRebuildFinished` | runtime / maintenance | 维护重建完成或明确失败；按授权查询/投影，不默认触发AI |
 
 ## 7. 普通业务处理目录
 
@@ -290,3 +327,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 本轮修订（v0.72，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
 
 本轮修订（v0.73，2026-11-15）：集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码。见[MVP决定登记§94](../../DECISIONS.md#94-api与消息设计分册及唯一维护位置)。
+
+本轮修订（v0.74，2026-11-15）：落实API与数据库评审，统一相关文档口径。见MVP决定登记§95。
+
+本轮修订（v0.75，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

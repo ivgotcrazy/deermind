@@ -1,12 +1,12 @@
 # deermind 数据库：领域空间数据字典
 
-> **版本**：v0.2<br>
-> **状态**：数据库定义归并稿待审阅；schema边界已确认，未编码<br>
+> **版本**：v0.3<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.1 → v0.2，归并物理数据定义、修正重复口径；见MVP决定登记§93<br>
+> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **9 张表、85 个列定义**。处理流程、接口和业务载荷由[Domain_Space_Design.md](../Domain_Space_Design.md) §1、§4.3、§6.2维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **9 张表、91 个列定义**。处理流程、接口和业务载荷由[Domain_Space_Design.md](../Domain_Space_Design.md) §1、§4.3、§6.2维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
@@ -74,6 +74,8 @@ erDiagram
 
 ## 1. `domain.object_identity`
 
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
+
 五类领域对象的稳定身份。
 
 主键：`(object_id)`。写入方式：仅头及目录修订可更新。
@@ -92,6 +94,9 @@ erDiagram
 
 ## 2. `domain.object_version`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 完整领域对象版本，含删除标记。
 
 主键：`(object_id,version)`。写入方式：只追加。
@@ -106,12 +111,15 @@ erDiagram
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `created_by` | `jsonb` | 否 | 无 | 创建者或服务授权身份；Ref，见总册§3 |
 | `change_note` | `text` | 否 | 无 | 新建、修订或软删除原因，非空 |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：引用的旧版保持；M1没有物理删除；不能修改旧版JSON。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 3. `domain.object_reference`
+
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
 
 版本正文内引用的可查询投影。
 
@@ -132,6 +140,9 @@ erDiagram
 
 ## 4. `domain.intake_submission`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 Domain接收教材来源的固定结论。
 
 主键：`(submission_id)`。写入方式：只追加。
@@ -148,12 +159,16 @@ Domain接收教材来源的固定结论。
 | `issues` | `jsonb` | 否 | '[]'::jsonb | Issue[] |
 | `decision_event_id` | `uuid` | 否 | 无 | 受理事实；逻辑引用runtime.events |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(trigger_event_id)；rejected时item_refs为空且issues非空；received记录完整待办映射，同一待办可被多个提交引用。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 5. `domain.intake_item`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 待入库条目及处理状态。
 
@@ -175,12 +190,16 @@ Domain接收教材来源的固定结论。
 | `result_ref` | `jsonb` | 是 | 无 | 已加入KC、已关联题目或题内解法的结果；Ref，见总册§3 |
 | `processed_request_ref` | `uuid` | 是 | 无 | 处理收据；FK → `domain.command_receipt.receipt_id` |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(domain_id,candidate_key)；reference必须恰有一个父绑定，其他kind两者均空；删除待办不删领域对象。
 
-查询索引：主键、唯一键；(domain_id,state,item_id)；parent_item_id。
+查询索引：source_event_id；主键、唯一键；(domain_id,state,item_id)；parent_item_id。
 
 ## 6. `domain.artifact`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 输入、定义候选及检查依据。
 
@@ -198,12 +217,16 @@ Domain接收教材来源的固定结论。
 | `model_call_ref` | `jsonb` | 是 | 无 | 需要AI时的调用依据；Ref，见总册§3 |
 | `command_ref` | `jsonb` | 是 | 无 | 触发命令；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：按字段引用及总册公共约束检查；无额外唯一键。
 
-查询索引：主键；(domain_id,kind,artifact_id)。
+查询索引：source_event_id；主键；(domain_id,kind,artifact_id)。
 
 ## 7. `domain.kc_test_path`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 已确认的KC直接检验路径。
 
@@ -221,12 +244,16 @@ Domain接收教材来源的固定结论。
 | `basis_artifact_id` | `uuid` | 否 | 无 | 直接检验依据；FK → `domain.artifact.artifact_id` |
 | `confirmed_by` | `jsonb` | 否 | 无 | 确认者；Ref，见总册§3 |
 | `confirmed_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：三组ID/version均FKobject_version；核对Solution属于Task且直接引用KC；依据说明本Task如何直接检验KC，不仅是引用。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 8. `domain.supply_batch`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 一次用途明确的供题结果。
 
@@ -242,10 +269,11 @@ Domain接收教材来源的固定结论。
 | `unfilled` | `jsonb` | 否 | 无 | 未满足的需求项、原因、可重试性；不足不伪造成空成功 |
 | `completed_event_id` | `uuid` | 否 | 无 | 供题完成事件；逻辑引用runtime.events |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(trigger_event_id)。
 
-查询索引：主键、唯一键；(scope_id,batch_id)。
+查询索引：source_event_id；主键、唯一键；(scope_id,batch_id)。
 
 ## 9. `domain.command_receipt`
 
@@ -281,3 +309,5 @@ Domain接收教材来源的固定结论。
 | v0.1 | 2026-11-15 | 逐表补齐列、键、空值、默认值、约束和关系；未执行建表或迁移 |
 
 本轮修订（v0.2，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.3，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

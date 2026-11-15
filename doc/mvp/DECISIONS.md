@@ -1,14 +1,14 @@
 # MVP 决定承接与工作记录
 
-> **版本**：v0.90<br>
+> **版本**：v0.92<br>
 > **文档性质**：新MVP目录的决定、待决和变更登记<br>
-> **状态**：API与消息设计稿待审阅；未编码<br>
-> **上游依据与基线**：M1 PRD v0.28、内容规格v0.26、交互规格v0.25及本轮用户决定；本轮仅修订文档，历史原型与证据保留<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；本轮仅修订文档，历史原型与证据保留<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：本轮接口与消息自检见登记§94；具体字段与配置候选待审阅<br>
+> **评审记录**：本轮事件事实源修订与自检见MVP决定登记§96；待用户审阅<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.89 → v0.90，新增§94，记录API与消息设计分册及维护归属<br>
+> **修订说明**：v0.91 → v0.92，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
 ---
 
@@ -2845,3 +2845,105 @@ M1-DEC-086：用户确认M1继续用schema划分模块数据，数据库拆分�
 - **边界**：9项AI Operation、31项普通处理及数据库结构不变；未改产品规格、交互原型或代码。新增查询路径与具体字段为待审设计，沿现有业务用途，不代表已确认或已实现。
 - **自检**：核对既有入口、WS动作和事件覆盖，检查本地链接、JSON示例、版本引用及既有图示和数据字典保持不变。仅文档静态核对，未进行协议联调或运行测试。
 - **下一步**：用户审阅接口与消息合同，落实反馈；实现时据此生成OpenAPI、消息Schema和类型，避免另建手工维护的副本。
+
+## 95. API与数据库评审修订
+
+- **编号**：M1-DEC-088
+- **日期**：2026-11-15
+- **确认范围**：用户确认按评审分析修订文档；不改原型、不编码、不改变数据表结构。
+- **空间身份**：保留学生＋教材＋target_id的复用规则。同一目标升版只追加采用；另选target_id进入另一空间，不迁移或清空原记录。Product提交采用时核对应用、目标依据与空间的教材／目标身份一致。
+- **收据与错误**：浏览器统一查公共收据；Domain、Product收据保留为内部投影。公共回包提供原业务状态、结果及独立执行状态；HTTP与WS共用error对象，传输字段各自保留。
+- **查询与限额**：学生目标页读Product聚合；Evidence／Belief详情读Evaluation E06；管理员可直接核对评价。分页只引用H02，共用动作的HTTP／WS输入采用同一业务限制；数值仍为待审候选，不增加自动通道回退。
+- **身份与空值**：学习空间范围的scope_id与space_id同值；其他范围仍用各自资源身份。练习没有检测轮时，接口round_ref为null，数据库round_id为SQL NULL，空字符串拒绝。
+- **不重复建设**：E06查询及47类事件字段已经存在，不新增路由或第二份事件清单；本次只清理冲突及失效表述。保留版本表、当前索引、防重键、锁序和AI事务外执行。
+
+### 95.1 升版
+
+| 文档 | 版本 |
+| --- | --- |
+| `doc/mvp/DECISIONS.md` | v0.90 → v0.91 |
+| `doc/mvp/m1/engineering/API_and_Message_Design.md` | v0.1 → v0.2 |
+| `doc/mvp/m1/engineering/Client_Design.md` | v0.25 → v0.26 |
+| `doc/mvp/m1/engineering/contracts/Domain_API.md` | v0.1 → v0.2 |
+| `doc/mvp/m1/engineering/contracts/Evaluation_API.md` | v0.1 → v0.2 |
+| `doc/mvp/m1/engineering/contracts/Interaction_API.md` | v0.1 → v0.2 |
+| `doc/mvp/m1/engineering/contracts/Product_API.md` | v0.1 → v0.2 |
+| `doc/mvp/m1/engineering/contracts/Runtime_Protocols.md` | v0.1 → v0.2 |
+| `doc/mvp/m1/engineering/database/Business_Interaction.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/database/Business_Product.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/Database_Design.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/Evaluation_Space_Design.md` | v0.22 → v0.23 |
+| `doc/mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.37 → v0.38 |
+| `doc/mvp/m1/engineering/Interaction_Space_Design.md` | v0.24 → v0.25 |
+| `doc/mvp/m1/engineering/Product_Application_Design.md` | v0.28 → v0.29 |
+| `doc/mvp/m1/engineering/README.md` | v0.73 → v0.74 |
+| `doc/mvp/m1/engineering/System_Foundation_Design.md` | v0.45 → v0.46 |
+| `doc/mvp/m1/README.md` | v0.68 → v0.69 |
+| `doc/mvp/README.md` | v0.89 → v0.90 |
+
+### 95.2 自检
+
+本轮19份文档完成静态检查：1279个本地链接与锚点、71个JSON示例、修订版本及交叉引用有效；两个模块收据HTTP路由已移除，公共入口返回原业务结果。数据库仍为110张业务表、954个字段；既有Mermaid图、47类事件字段、9项AI Operation及31项普通处理目录未变，历史决定未改写。未改代码或原型，未运行产品测试；检查不代表接口联调通过。
+
+下一步审阅本轮修订，分页与资源等数值候选继续按原责任文档确认。
+
+## 96. 事件唯一事实源与同步投影
+
+- **编号**：M1-DEC-089
+- **日期**：2026-11-15
+- **用户确认**：事件记录实际发生的事实，是唯一事实源；消息只是其中一种事实。已讨论生产者同步生成业务对象、消费者自行订阅、事件管理归公共底座，用户授权落实并自检。
+- **替代关系**：替代§60及相关模块“原文独立保存在业务表、事件只记引用”的口径。聊天和事件仍分表，但聊天、活动、定义和评价表改为事件的查询投影。其他历史决定保留原文，由本条明确覆盖；算法、目标范围、授权边界不变。
+- **完整事实**：事件保存当时输入、输出、决定、依据及结果；大内容使用不可变附件。对象ID只定位身份，原文不能依赖消息/候选私表；来源片段使用EventPartRef。
+- **生产者**：业务条件和AI准备完成后，在同一短事务先追加事件，再投影本模块业务对象，保存收据与待发安排；失败整笔回滚。无需订阅自己的事件再异步生成本地对象。
+- **消费者**：自行登记事件类型及处理入口，接住后独立加工，生成自己的派生事实。通知只带定位信息；内容、权限、顺序和去重以正式事件及登记合同为准。
+- **事件管理**：公共运行内统一管理追加、正文及附件读取、范围顺序、授权查询、订阅和投影进度；不新增Space、部署服务或AI Operation。PG、NATS JetStream、Temporal分工不变。
+- **重建边界**：只重建白名单查询投影；使用已记录的AI/算法结果，不重新调用模型、评价旧作答、推送通知或创建任务。运行控制、凭据和Temporal按原执行恢复与整批备份处理。M1首次登记/变更订阅、重建在维护窗口进行；具体接线为本轮待审设计。
+- **覆盖**：正文合同登记73类业务快照及其产生事件；原47类事件补全正文，新登记27类已存在行为的事实，共74类。数据库新增2张投影收据/游标表及反向来源字段，业务库共112张表、1042个字段（含Alembic）。不新增产品行为或页面。
+- **交付位置**：[总体](m1/engineering/System_Design.md#321-事件事实源与业务查询数据)、[公共运行§2](m1/engineering/System_Foundation_Design.md#2-全局事件的追加与查询)、[事件消息](m1/engineering/contracts/Event_Messages.md)、[正文与投影](m1/engineering/contracts/Event_Facts.md)、[数据库](m1/engineering/Database_Design.md)。各模块、接口与产品规格同步引用。
+
+### 96.1 升版
+
+| 文档 | 版本 |
+| --- | --- |
+| `doc/mvp/DECISIONS.md` | v0.91 → v0.92 |
+| `doc/mvp/m1/design/Content_and_Model_Reference.md` | v0.26 → v0.27 |
+| `doc/mvp/m1/design/Interaction_Design.md` | v0.25 → v0.26 |
+| `doc/mvp/m1/design/README.md` | v0.44 → v0.45 |
+| `doc/mvp/m1/engineering/AI_Foundation_Design.md` | v0.26 → v0.27 |
+| `doc/mvp/m1/engineering/API_and_Message_Design.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/Client_Design.md` | v0.26 → v0.27 |
+| `doc/mvp/m1/engineering/contracts/Domain_API.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/contracts/Evaluation_API.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/contracts/Event_Messages.md` | v0.1 → v0.2 |
+| `doc/mvp/m1/engineering/contracts/Interaction_API.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/contracts/Product_API.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/contracts/Runtime_Protocols.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/database/Business_AI.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/database/Business_Domain.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/database/Business_Evaluation.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/database/Business_Interaction.md` | v0.3 → v0.4 |
+| `doc/mvp/m1/engineering/database/Business_Product.md` | v0.3 → v0.4 |
+| `doc/mvp/m1/engineering/database/Business_Runtime.md` | v0.2 → v0.3 |
+| `doc/mvp/m1/engineering/Database_Design.md` | v0.3 → v0.4 |
+| `doc/mvp/m1/engineering/Delivery_Plan.md` | v0.51 → v0.52 |
+| `doc/mvp/m1/engineering/Domain_Space_Design.md` | v0.19 → v0.20 |
+| `doc/mvp/m1/engineering/Evaluation_Space_Design.md` | v0.23 → v0.24 |
+| `doc/mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.38 → v0.39 |
+| `doc/mvp/m1/engineering/Interaction_Space_Design.md` | v0.25 → v0.26 |
+| `doc/mvp/m1/engineering/Product_Application_Design.md` | v0.29 → v0.30 |
+| `doc/mvp/m1/engineering/README.md` | v0.74 → v0.75 |
+| `doc/mvp/m1/engineering/System_Design.md` | v0.50 → v0.51 |
+| `doc/mvp/m1/engineering/System_Foundation_Design.md` | v0.46 → v0.47 |
+| `doc/mvp/m1/PRD.md` | v0.28 → v0.29 |
+| `doc/mvp/m1/README.md` | v0.69 → v0.70 |
+| `doc/mvp/m1/validation/Validation_Plan.md` | v0.9 → v0.10 |
+| `doc/mvp/README.md` | v0.90 → v0.91 |
+| `doc/mvp/m1/engineering/contracts/Event_Facts.md` | 新增 v0.1 |
+
+### 96.2 自检
+
+34份文档完成静态复核：本地链接与锚点有效，71个JSON示例可解析，74类事件与73类正文快照的登记及来源字段对应；112张业务表、1042个字段的目录与字典一致。9张修改的Mermaid图均已渲染检查。既有60条HTTP路由、6个WS动作、9项AI Operation及31项普通处理目录未扩大；历史决定正文未改写。
+
+复核已修正原文读取仍依赖业务表、投影遗漏已作出决定、订阅首次启用漏接边界，以及当前版本与历史批次混用。生产者追加与投影共同提交、消费者防重与扫描进度、受控重建不重复业务副作用三条路径均有对应合同和实施验收项。
+
+未修改原型或产品代码，未执行DDL、真实模型调用、消息联调或恢复试验。本文静态检查不代表运行正确性；实施验收见事件正文§5和实施计划“事件事实源修订的实现接收”。配置候选和其他原有未决项保持原状态，下一步由用户审阅本轮修订。

@@ -1,12 +1,12 @@
 # deermind 数据库：评估空间数据字典
 
-> **版本**：v0.2<br>
-> **状态**：数据库定义归并稿待审阅；schema边界已确认，未编码<br>
+> **版本**：v0.3<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.1 → v0.2，归并物理数据定义、修正重复口径；见MVP决定登记§93<br>
+> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **13 张表、119 个列定义**。处理流程、接口和业务载荷由[Evaluation_Space_Design.md](../Evaluation_Space_Design.md) §1.5、§2.3—2.4、§3—6维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **13 张表、127 个列定义**。处理流程、接口和业务载荷由[Evaluation_Space_Design.md](../Evaluation_Space_Design.md) §1.5、§2.3—2.4、§3—6维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
@@ -95,6 +95,8 @@ erDiagram
 
 ## 1. `evaluation.claim`
 
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
+
 Task评价定义身份。
 
 主键：`(claim_id)`。写入方式：头指针可更新。
@@ -114,6 +116,9 @@ Task评价定义身份。
 
 ## 2. `evaluation.claim_version`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 判据及四方面的完整定义。
 
 主键：`(claim_id,revision)`。写入方式：只追加。
@@ -127,12 +132,16 @@ Task评价定义身份。
 | `request_ref` | `text` | 否 | 无 | 创建本修订的幂等请求引用 |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：同一Claim修订不改；目标选哪些方法，Claim不勾选方法。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 3. `evaluation.evaluation_input`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 本次评价的固定取材与规则。
 
@@ -148,12 +157,16 @@ Task评价定义身份。
 | `source_id` | `uuid` | 否 | 无 | Submission或TeachingOpportunity身份 |
 | `input` | `jsonb` | 否 | 无 | Evaluation§2.3 EvaluationInput：采用依据、task_use/活动/轮、候选Task边界、材料、历史资格、解释合同、算法及参数引用 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(scope_id,trigger_event_id)；原始来源变更不能在同一输入下覆盖。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 4. `evaluation.interpretation`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 AI对表现的解释候选。
 
@@ -168,12 +181,16 @@ AI对表现的解释候选。
 | `candidate` | `jsonb` | 否 | 无 | Evaluation§2.4：candidates[]、unattributed[]；判据结果、方面判断、条件、原文片段和限制 |
 | `validation` | `jsonb` | 否 | 无 | 来源、Schema、候选边界及冲突检查的逐项结果 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：模型不输出概率；未通过验证不得保存成功Evidence批。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 5. `evaluation.evidence`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 可追溯的逐分项证据。
 
@@ -204,12 +221,16 @@ AI对表现的解释候选。
 | `reason` | `text` | 否 | 无 | 解释结论的简短依据 |
 | `limitations` | `jsonb` | 否 | 无 | 未确认事项列表 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(scope_id,claim_id,claim_revision,method_id,method_version,aspect_code,source_kind,source_id)；FK(claim_id,claim_revision)→claim_version；重复片段不重复更新。
 
-查询索引：主键、来源分项唯一键；(scope_id,claim_id,claim_revision,method_id,method_version,aspect_code)；input_ref。
+查询索引：source_event_id；主键、来源分项唯一键；(scope_id,claim_id,claim_revision,method_id,method_version,aspect_code)；input_ref。
 
 ## 6. `evaluation.belief_revision`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 一次正式数值处理的不可变记录。
 
@@ -237,12 +258,15 @@ AI对表现的解释候选。
 | `reason_codes` | `jsonb` | 否 | 无 | 此次数值更新原因；跳过原因留在Evidence和批结果 |
 | `trigger_event_id` | `uuid` | 否 | 无 | 唯一触发事实；逻辑引用 runtime.events.event_id |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(evidence_ref)；未决、不适用、重复来源和有效L=0不创建数值修订，由Evidence/批结果保留原因；数值前后及使用参数固定，不按LLM置信度代入。
 
-查询索引：主键、evidence_ref唯一键；(scope_id,claim_id,claim_revision,method_id,method_version,aspect_code,created_at)；previous_revision_id。
+查询索引：source_event_id；主键、evidence_ref唯一键；(scope_id,claim_id,claim_revision,method_id,method_version,aspect_code,created_at)；previous_revision_id。
 
 ## 7. `evaluation.belief_current`
+
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
 
 每个方法×方面的当前值索引。
 
@@ -267,6 +291,9 @@ AI对表现的解释候选。
 
 ## 8. `evaluation.mastery_snapshot`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 授权发布的掌握状态快照。
 
 主键：`(snapshot_id)`。写入方式：只追加。
@@ -280,12 +307,15 @@ AI对表现的解释候选。
 | `coverage` | `jsonb` | 否 | 无 | 覆盖分项及未完成/未知分项 |
 | `result_coverage` | `jsonb` | 否 | '[]'::jsonb | 本快照已纳入的触发及结果身份；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `published_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(scope_id,publication_seq)；只读发布，不能由Interaction改写。
 
-查询索引：主键；(scope_id,publication_seq)唯一键。
+查询索引：source_event_id；主键；(scope_id,publication_seq)唯一键。
 
 ## 9. `evaluation.mastery_head`
+
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
 
 当前掌握快照。
 
@@ -302,6 +332,9 @@ AI对表现的解释候选。
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
 ## 10. `evaluation.goal_calculation_input`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 目标结果的固定计算输入。
 
@@ -320,12 +353,16 @@ AI对表现的解释候选。
 | `calculation_rule_ref` | `text` | 否 | 无 | 目标派生规则版本；M1全局阈值0.90 |
 | `planned_result_id` | `uuid` | 否 | 无 | 预分配本次goal_evaluation身份 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(scope_id,trigger_event_id)；无快照不填先验当达标依据。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 11. `evaluation.goal_evaluation`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 一次目标计算的完整结果。
 
@@ -342,12 +379,15 @@ AI对表现的解释候选。
 | `previous_current_ref` | `uuid` | 是 | 无 | 保存前可比的当前结果；FK → `evaluation.goal_evaluation.goal_evaluation_id` |
 | `current_state_applied` | `boolean` | 否 | false | 此次提交是否实际推进当前结果；旧目标、旧快照或already_current均为false，随后变化不回改 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(scope_id,trigger_event_id)；目标变了只留历史，不覆盖新目标；目标结果不是LLM自由标签。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 12. `evaluation.goal_current`
+
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
 
 空间当前目标结果指针。
 
@@ -388,3 +428,5 @@ AI对表现的解释候选。
 | v0.1 | 2026-11-15 | 逐表补齐列、键、空值、默认值、约束和关系；未执行建表或迁移 |
 
 本轮修订（v0.2，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.3，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

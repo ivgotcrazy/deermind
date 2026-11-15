@@ -1,31 +1,32 @@
 # M1 事件与消息载荷
 
-> **版本**：v0.1<br>
-> **状态**：接口与消息详细设计稿，待用户审阅；未编码<br>
+> **版本**：v0.2<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15
 
-本分册是正式事件传输结构的唯一字段定义。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
+本分册是事件信封、类型化动作字段与通知结构的唯一字段定义；完整事实正文及投影登记见[事件正文合同](Event_Facts.md)。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
 
-## 1. 正式事件信封 v1
+## 1. 正式事件信封 v2
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `event_id` | ID | 是 | 程序分配；同事实重投不改 |
+| `commit_id` | ID | 是 | 同一数据库提交的事件共用身份；事务重试沿用，不等于请求或Execution身份 |
 | `event_type` | 登记事件名 | 是 | 下文精确名称，大小写敏感 |
-| `schema_version` | int | 是；本稿1 | 该类型payload版本，不是Domain内容版本 |
+| `schema_version` | int | 是；原47类升至2，新登记类型为1 | 该类型payload版本，不是Domain内容版本 |
 | `producer` | product/domain/interaction/evaluation等已登记模块 | 是 | 由受权保存者确定 |
 | `scope_kind` | string | 是 | 登记资源种类，见各事件归属 |
 | `scope_id` | ID | 是 | 对应范围身份；空间事件必须是真实学习空间 |
-| `owner_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
+| `owner_ref` | Ref | 是 | 事实描述的对象身份；不是原文存储位置，不要求先有业务行 |
 | `subject_refs` | Ref[] | 是 | 便于按活动、作答、题目等过滤 |
 | `actor_ref` | Ref或null | 是 | 已核验用户/服务身份，不是客户端角色 |
 | `source_execution_ref` | Ref或null | 是 | 普通短提交允许null |
 | `source_request_id` | RequestId或null | 是 | 用户/管理员请求来源 |
 | `causation_event_id` | ID或null | 是 | 直接前因；与source_request_id至少一项有值 |
 | `correlation_id` | ID | 是 | 链路查询，不作去重键 |
-| `space_event_seq` | int或null | 是 | 学习空间正整数；其他范围null |
+| `scope_event_seq` | int | 是 | 每个(scope_kind,scope_id)内正整数，所有范围必填 |
 | `occurred_at` | Timestamp或null | 是 | 已核实业务发生时点；未知null |
 | `recorded_at` | Timestamp | 是 | 服务端追加时间，不在重试覆盖 |
 | `time_basis` | server_recorded/referenced_fact/unknown | 是 | 可信时间来源 |
@@ -33,9 +34,9 @@
 | `client_reported_at` | Timestamp或null | 否；null | 只作参考 |
 | `payload` | 按event_type的对象 | 是 | 下文逐类型定义；禁止任意脚本或未登记字段 |
 
-同字段若为跨模块交接方便在payload中出现，必须与信封一致，否则拒绝；本稿原则上不重复scope_id。scope_kind的本批代码登记为learning_space、material_import、domain、learning_target、course_application、activity_config；账号内部事实另用account。它们是待审的传输名称，不改变数据所有者。
+同字段若为跨模块交接方便在payload中出现，必须与信封一致，否则拒绝；本稿原则上不重复scope_id。scope_kind的本批代码登记为learning_space、material_import、domain、learning_target、course_application、activity_config；账号内部事实另用account；AI及工作用execution，投递用event_delivery，文件用file，维护用maintenance。它们是待审的传输名称，不改变数据所有者。
 
-发生时间未知时time_basis=unknown且occurred_at=null；用引用时校验time_source_ref；服务端保存动作取服务端确认时点。学习评价顺序按space_event_seq，不能用不同机器的到达时间排序。详见[公共运行§2.2—2.3](../System_Foundation_Design.md#22-空间事件顺序与有界读取)。
+发生时间未知时time_basis=unknown且occurred_at=null；用引用时校验time_source_ref；服务端保存动作取服务端确认时点。学习评价顺序按scope_event_seq，不能用不同机器的到达时间排序。详见[公共运行§2.2—2.3](../System_Foundation_Design.md#22-空间事件顺序与有界读取)。
 
 ## 2. NATS 交接与订阅
 
@@ -52,13 +53,13 @@
 
 消费者先按event_id向底座核验正式记录，再解析payload；伪造/不支持的消息留下接入失败，不调用业务处理器。事件及执行安排可靠保存后Ack，不等待AI结束；最终业务失败归原模块处理，不靠MQ重投整条业务。subscriber_id+event_id防重复承接；NATS投递确认不是业务成功。
 
-订阅项完整字段为subscriber_id:string、event_types:string[]、handler_ref:string、handler_revision:string、scope_policy:登记授权策略引用、acceptor_ref:string、on_success:string、on_failure:string。handler只能来自程序装配登记，不接收事件里的函数名。超时属于消费方Wait，使用单独on_timeout登记，不要求生产者在指定时间发布。
+订阅按start_policy=new_only或history_then_live登记；后者只允许确定性查询投影，沿公共运行§2.6补读，不重做历史评价。订阅项完整字段为subscriber_id:string、event_types:string[]、handler_ref:string、handler_revision:string、scope_policy:登记授权策略引用、acceptor_ref:string、on_success:string、on_failure:string、start_policy:string。投影订阅还固定projector_id及projector_revision；在线代次为1，重建代次按公共运行§2.6。handler只能来自程序装配登记，不接收事件里的函数名。超时属于消费方Wait，使用单独on_timeout登记，不要求生产者在指定时间发布。
 
 消息是否订阅只按下文“消费方式”。仅留痕事件没有业务订阅者不算失败；浏览器刷新由底座按已授权watch转换为changed，不能直接转发完整信封。成功发布仍以正式数据库事实为准。
 
 ## 3. 逐类型业务载荷
 
-每节默认schema_version=1。表中Ref表示固定事实引用；确切形状沿[总册§3](../API_and_Message_Design.md#3-共用类型与字段规则)。列表允许空时必须表示确认无项，未知以缺口/限制表达。时间、账号及源请求由信封保留，不因正文省略而丢失追溯。
+§3、§4原47类事件的schema_version统一为2，新增records及各范围序号；旧解码器保留。§4.1新类型为1。每类payload均必须有records:FactRecord[]，其字段及逐类型正文约束见[正文合同§2—3](Event_Facts.md#2-正文结构)。以下字段表列其余字段，不重复records。表中Ref表示固定事实引用；确切形状沿[总册§3](../API_and_Message_Design.md#3-共用类型与字段规则)。列表允许空时必须表示确认无项，未知以缺口/限制表达。时间、账号及源请求由信封保留，不因正文省略而丢失追溯。
 
 <a id="domainintakerequested"></a>
 ### 3.1 `DomainIntakeRequested`
@@ -73,7 +74,7 @@
 | `intake_request_id` | ID | 是 | 固定已提交引用；读取仍须授权 |
 | `candidate_refs` | CandidateRef[] | 是；非空 | 固定所选已采用内容；类别/父题从提交读取 |
 
-不包含原文；只提交题目允许，单独提交解法须有可定位父题。
+本事件固定所提交内容的EventPartRef及来源闭包，不依赖候选业务行取原文；只提交题目允许，单独提交解法须有可定位父题。
 
 <a id="domainintakereceived"></a>
 ### 3.2 `DomainIntakeReceived`
@@ -252,7 +253,7 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 | `adoption_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
 | `help_basis_ref` | Ref | 是 | 固定已提交引用；读取仍须授权 |
 
-练习可无轮/题单；原文在Interaction，事件不带答案全文。一次已接受提交只产生一次触发。
+练习可无轮/题单；原文在Interaction，答案全文在事件正文或固定事件附件中。一次已接受提交只产生一次触发。
 
 <a id="teachingopportunityclosed"></a>
 ### 3.12 `TeachingOpportunityClosed`
@@ -582,7 +583,7 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 | `source_trigger_ref` | Ref或null | 是 | 固定已提交引用；读取仍须授权 |
 | `role` | student/assistant/system | 是 | 固定已提交引用；读取仍须授权 |
 
-至少一种实际来源；待分配活动不伪造归属；消息正文不进payload。
+至少一种实际来源；待分配活动不伪造归属；消息完整正文进入records，或通过EventPartRef复用已接收原文。
 
 <a id="interactioninputstopped"></a>
 ### 3.31 `InteractionInputStopped`
@@ -825,6 +826,62 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
 | `task_ref` | ObjectRef(task) | 是 | 实际Task |
 | `method_refs` | ObjectRef(solution)[] | 是 | 该修订采用的方法；取消为[] |
 
+## 4.1 补齐的事实类型（schema_version=1）
+
+以下均为正式留痕，默认不触发跨Space业务。需要订阅时由消费模块登记；不能因为新增事实就默认调用AI。payload均含records，完整正文见正文合同§3；runtime补充记录见下表后的规则。
+
+| 事件 | 生产方 / 范围 | 何时产生 | 必需事实 |
+| --- | --- | --- | --- |
+| `MaterialCandidatePrepared` | product / material_import | 助手保存一批候选；核对或继续修正另存新候选 | 候选及批次完整正文 |
+| `MaterialIntakeStatusUpdated` | product / material_import | 消费Domain接收/拒绝事件后保存教材侧状态 | 原提交及所用Domain事件 |
+| `ApplicationChecked` | product / course_application | 保存教材/目标应用检查结果 | 完整检查项、限制及固定依据 |
+| `AccountSignedOut` | product / account | 确认退出或使旧登录失效 | 账号、会话非秘密身份和原因 |
+| `DomainClassificationPrepared` | domain / domain | 保存题目或解法归类候选 | 所用实例内容、候选Task/Solution及检查依据 |
+| `InteractionInputAccepted` | interaction / learning_space | 接受学生输入，先于AI处理 | 完整学生输入及固定空间/采用依据 |
+| `InteractionInputCompleted` | interaction / learning_space | 本次处理完成或明确失败 | 输入身份、正式输出引用、结果或错误 |
+| `MessageAssigned` | interaction / learning_space | 正式确定消息所属活动 | 消息及活动身份、归属版本 |
+| `DetectionRoundStarted` | interaction / learning_space | 学生确认题单后开始一轮 | 轮及计划修订、题目使用身份、检测条件 |
+| `TeachingOpportunityStarted` | interaction / learning_space | 创建稳定教学机会 | 机会身份、覆盖对象及依据 |
+| `InteractionDecisionRecorded` | interaction / learning_space | 保存允许/拒绝的活动决策 | 规则检查、语义依据及决定；无隐藏思考 |
+| `InteractionContextPrepared` | interaction / learning_space | 固定本次AI上下文 | 实际输入内容及来源；仅内部授权读取 |
+| `InteractionMemorySaved` | interaction / learning_space | 保存一版记忆或摘要 | 正文、来源和替代关系；私有用途不变 |
+| `ProactiveCheckCompleted` | interaction / learning_space | 完成一次主动任务必要性检查 | 输入依据、建议或无建议原因 |
+| `EvaluationInputPrepared` | evaluation / learning_space | 固定本次取证材料 | 候选范围、原始事件片段、历史及缺口 |
+| `EvaluationInterpretationPrepared` | evaluation / learning_space | 保存解释候选与校验结论 | 完整解释及资格依据；不是概率更新 |
+| `GoalCalculationPrepared` | evaluation / learning_space | 固定目标计算依据 | 目标版本、快照、覆盖状态 |
+| `AIConfigurationPinned` | ai / execution | 工作受理时固定模型配置 | 配置内容与credential_ref；禁止密钥 |
+| `AICallChanged` | ai / execution | AI调用开始、完成、失败或获准恢复 | 调用及尝试的已知状态；不包括每个token |
+| `ModelRequestChanged` | ai / execution | 模型请求预约或取得结果 | 实际请求、输出/错误、用量及未知项 |
+| `ToolActionChanged` | ai / execution | 工具调用获准/拒绝或完成 | 实际参数、授权结论及结果；副作用由所属业务事件证明 |
+| `AICandidatePrepared` | ai / execution | 保存通过结构校验的技术候选 | 候选完整内容及材料来源 |
+| `ExecutionStateChanged` | runtime / execution | 工作受理、尝试开始、停止、失败、完成或恢复 | 执行、尝试及已保存步骤；不把模型超时当成外部未执行 |
+| `WaitStateChanged` | runtime / execution | 登记等待、匹配、到期、取消或处理接续 | 等待条件、期限、决定及处理结果 |
+| `DeliveryStateChanged` | runtime / event_delivery | 交接安排、确认承接或失败/获准重送 | 事件、订阅、交接和故障身份；不记录每次网络心跳 |
+| `FileReceived` | runtime / file | 文件完整保存且校验通过 | 文件身份、媒体、字节数、hash和非秘密存储定位 |
+| `ProjectionRebuildFinished` | runtime / maintenance | 维护重建完成或明确失败 | 范围、代次、固定上界、检查结果或错误 |
+
+共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过§3登记Schema校验。
+
+| 类型 | outcome允许值 | 额外字段 |
+| --- | --- | --- |
+| 名称以Prepared/Pinned/Saved/Started/Accepted/Assigned/Received结尾的本节类型 | recorded | 无；仅保留服务端已确认事实 |
+| MaterialIntakeStatusUpdated | received/rejected | source_event_ref:EventPartRef，必填，指Domain接收结果 |
+| ApplicationChecked | ready/blocked | 无；完整检查项在正文 |
+| AccountSignedOut | signed_out/invalidated | account_id:ID、session_id:ID，必填；不能包含会话秘密 |
+| InteractionInputCompleted | completed/failed | 无；失败原因不可为空 |
+| ProactiveCheckCompleted | suggested/no_action/blocked | 无 |
+| AICallChanged / ModelRequestChanged / ToolActionChanged | started/completed/failed/cancelled/unknown/denied | reason_code按结果填写；unknown保留未确认边界 |
+| ExecutionStateChanged | accepted/started/stopped/failed/completed/recovery_accepted | 无 |
+| WaitStateChanged | registered/matched/timed_out/cancelled/handled | 无 |
+| DeliveryStateChanged | arranged/accepted/failed/redelivery_approved | source_event_ref:EventPartRef，必填；不能订阅自身再生成无穷投递事实 |
+| ProjectionRebuildFinished | completed/failed | projector_id:string、generation:integer、scope_bounds:{scope_kind,scope_id,upper_seq}[]、checks:Issue[]，必填 |
+
+InteractionDecisionRecorded的outcome为allowed/denied/clarify。EvaluationInterpretationPrepared的recorded只表示候选保存，不代表Evidence资格成立。新事件引用具体消息/作答时，只使用其事件正文；没有正文快照的纯动作事件，其完整事实即上述payload。
+
+runtime运行留痕的records使用固定DTO：ExecutionStateChanged采用executions/execution_attempts/step_results，WaitStateChanged采用waits/wait_handling，DeliveryStateChanged采用handoffs/handoff_attempts/subscription_receipts/delivery_failures，FileReceived采用file_objects。record_type为runtime.表名，schema_version=1，业务字段和JSON映射按正文合同§2.1；不含授权秘密。它们用于历史核对，不纳入业务查询表的自动重建。技术游标、锁和MQ内部状态不逐次转成事件。
+
+按scope_kind分配序号，AI和runtime工作事实使用execution_id；投递事实使用handoff_id。对应原学习空间/教材作为subject_refs登记，可授权关联查询，但不得混进该学习空间的评价顺序。事件本身的追加、查询、发布不再产生“追加事件的事件”。
+
 ## 5. 例子与接收检查
 
 下面只演示作答事件，不代表已经生成Evidence：
@@ -833,7 +890,7 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
 {
   "event_id": "00000000-0000-4000-8000-000000000201",
   "event_type": "AnswerSubmitted",
-  "schema_version": 1,
+  "schema_version": 2,
   "producer": "interaction",
   "scope_kind": "learning_space",
   "scope_id": "00000000-0000-4000-8000-000000000100",
@@ -852,7 +909,7 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
   "source_request_id": "answer-01",
   "causation_event_id": null,
   "correlation_id": "00000000-0000-4000-8000-000000000202",
-  "space_event_seq": 17,
+  "scope_event_seq": 17,
   "occurred_at": "2026-11-15T02:00:00Z",
   "recorded_at": "2026-11-15T02:00:00Z",
   "time_basis": "server_recorded",
@@ -884,8 +941,44 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
       "owner": "interaction",
       "type": "submission_help_basis",
       "id": "00000000-0000-4000-8000-000000000200"
-    }
-  }
+    },
+    "records": [
+      {
+        "record_id": "answer",
+        "record_type": "interaction.submissions",
+        "schema_version": 1,
+        "content": {
+          "storage": "inline",
+          "value": {
+            "submission_id": "00000000-0000-4000-8000-000000000200",
+            "scope_id": "00000000-0000-4000-8000-000000000100",
+            "source_input_ref": "00000000-0000-4000-8000-000000000208",
+            "task_use_ref": "00000000-0000-4000-8000-000000000203",
+            "activity_id": "00000000-0000-4000-8000-000000000204",
+            "round_id": null,
+            "answer": {
+              "parts": [
+                {
+                  "part_id": "p1",
+                  "type": "text",
+                  "text": "原量80，增加20，新量100。"
+                }
+              ]
+            },
+            "help_basis": {
+              "help_refs": [],
+              "cutoff_seq": 16,
+              "completeness": "complete"
+            },
+            "adoption_ref": "00000000-0000-4000-8000-000000000205",
+            "accepted_at": "2026-11-15T02:00:00Z",
+            "event_ref": "00000000-0000-4000-8000-000000000201"
+          }
+        }
+      }
+    ]
+  },
+  "commit_id": "00000000-0000-4000-8000-000000000207"
 }
 ```
 
@@ -896,7 +989,7 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
   "delivery_id": "00000000-0000-4000-8000-000000000206",
   "event_id": "00000000-0000-4000-8000-000000000201",
   "event_type": "AnswerSubmitted",
-  "schema_version": 1,
+  "schema_version": 2,
   "producer": "interaction",
   "scope_kind": "learning_space",
   "scope_id": "00000000-0000-4000-8000-000000000100"
@@ -912,10 +1005,12 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
 | 未知event_type/schema_version | 不猜读；保留失败及传输引用，升级合法解码器后按恢复合同继续 |
 | 无关作用范围或原文读取越权 | 拒绝，不以字段过滤后的空结果冒充成功 |
 
-事件变更采用显式schema_version。旧事实不改写；新增字段先部署兼容读取，破坏性变化保留旧解码器。详细迁移和恢复顺序沿基础设施§5.3，本稿不引入Evolution或历史重算。
+事件变更采用显式schema_version。旧事实不改写；新增字段先部署兼容读取，破坏性变化保留旧解码器。v1旧事件缺少完整正文时不能宣称可重建；现阶段未上线，不需虚构迁移记录。将来升级须明确旧事实完整性，不能静默从当前业务表补历史。详细迁移和恢复顺序沿基础设施§5.3，本稿不引入Evolution或历史重算。
 
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
 | --- | --- | --- |
 | v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |
+
+本轮修订（v0.2，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

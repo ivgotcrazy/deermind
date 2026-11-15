@@ -1,11 +1,11 @@
 # M1 Evaluation Space 设计
 
-> **版本**：v0.22<br>
-> **状态**：API与消息设计稿待审阅；未编码<br>
+> **版本**：v0.24<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.21 → v0.22，集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码<br>
+> **修订说明**：v0.23 → v0.24，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
 本文设计评价定义、Evidence形成、Belief更新和个人目标达成计算，明确语义解释与确定性计算怎样衔接。学习目标定义归产品业务，原始交互事实及当题判题反馈归Interaction，Evaluation不直接控制教学；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -22,6 +22,8 @@
 只有`evaluate_submission`和`apply_learning_opportunity`是AI Operation：前者解释学生表现，后者识别实际教学机会。`manage_claim`、`query_basis`和`reassess_target`是普通维护、查询及确定性消息处理。共同执行边界见[公共运行§1.3](System_Foundation_Design.md#13-operationstep与operationrun)。两类处理均按触发身份防重，不能由Interaction同步调用评价计算，技术重试不另造学生表现。
 
 两个AI Operation在原Run内复用目标计算函数，不为确定性计算创建子Operation。目标采用变化则由普通`reassess_target`处理，保留本次受理、结果及失败记录，不创建AI OperationRun；两类生产处理都可发布`goal_result`，公共结果关联不能限定为AI运行身份。
+
+**事件事实源。** 取材、解释、Evidence、概率修订及目标结果分别以完整事件保存。已有算法、资格和顺序不变；保存先事件后投影，重建不再调用AI或计算概率。字段及投影登记只在[事件正文合同](contracts/Event_Facts.md)维护；本稿中的“保存业务对象”均指共同短事务内由事件生成投影。
 
 ## 1. Claim、方法判据与评价方面
 
@@ -116,9 +118,9 @@ Evaluation按自身订阅和规则运行、保存并发布事实及公开结果�
 | Task、方法及参考解法 | Domain公开定义，按当时采用的内容依据读取 |
 | Claim判据与目标要求 | Evaluation的评价定义及本次采用的目标条件 |
 
-事件由公共运行底座提供授权查询；当时题面、原始作答及帮助正文经Interaction授权查询取得，Task／Solution、题目及题内参考解法由Domain公开查询提供。事件记录和内容原文是两步读取，整体路径见[总体图4](System_Design.md#43-学习检测与评价接续)。Evaluation的Operation按本次评价需要取材、组织上下文，再通过AI底座调用模型；AI底座不自行选择证据。共同边界见[总体§3.4](System_Design.md#34-agent上下文和记忆)。Evaluation不读取Interaction私有聊天记忆，历史摘要不能代替原始作答及资格事实；需要保存的派生材料仍由本Space的Operation决定，不新增独立摘要Operation。
+事件由公共运行底座提供授权查询；当时题面、原始作答及帮助正文从事件正文或固定附件读取，Interaction适配器只限定关联和用途；Task／Solution及题内参考可读Domain版本投影，并保留其来源事件。事件列表与原文详情分别授权，整体路径见[总体图4](System_Design.md#43-学习检测与评价接续)。Evaluation的Operation按本次评价需要取材、组织上下文，再通过AI底座调用模型；AI底座不自行选择证据。共同边界见[总体§3.4](System_Design.md#34-agent上下文和记忆)。Evaluation不读取Interaction私有聊天记忆，历史摘要不能代替原始作答及资格事实；需要保存的派生材料仍由本Space的Operation决定，不新增独立摘要Operation。
 
-作答须关联这次出题，而非仅凭相同题目编号匹配。取材固定当时事实或可追溯快照，后续提示不算作答前帮助；无法核实记录完整性时保留未知，不把“未查到提示”等同独立完成。聊天消息与事件按[总体§3.2.1](System_Design.md#321-聊天消息与空间事件分开存储)分别保存。Evaluation沿事件引用读取内容所有者提供的当时正文，不访问其私有表；引用不可读或无权限时保留缺失／失败原因，不用空答案、摘要或当前改写内容补位。取材合同见§2.3，公共事件信封仍由底座维护。
+作答须关联这次出题，而非仅凭相同题目编号匹配。取材固定当时事实或可追溯快照，后续提示不算作答前帮助；无法核实记录完整性时保留未知，不把“未查到提示”等同独立完成。事件及其消息查询投影按[总体§3.2.1](System_Design.md#321-聊天消息与空间事件分开存储)共同提交。Evaluation沿EventPartRef读取事件正文，不访问其他模块私有表；引用不可读或无权限时保留缺失／失败原因，不用空答案、摘要或当前改写内容补位。取材合同见§2.3，公共事件信封仍由底座维护。
 
 现有入口使用`trigger_event_id`及所属`scope_id`，其他事实从事件与受控引用读取；不接收Interaction传来的“应提高多少”或客户端自报帮助等级。
 
@@ -162,7 +164,7 @@ Evaluation按自身订阅和规则运行、保存并发布事实及公开结果�
 
 ### 2.3 固定本次材料
 
-`EvaluationInput`在调用AI前保存。引用均指向不可变记录；正文留在内容所有者，Evaluation保存引用、摘要校验值和实际使用的结构化事实。读取失败不生成空材料包。
+`EvaluationInput`在调用AI前保存。原文使用EventPartRef及固定附件；Evaluation把取材清单、校验值和实际使用的结构化事实保存为EvaluationInputPrepared，再生成取材投影。读取失败不生成空材料包。
 
 | 字段 | 类型／必填 | 约束 |
 | --- | --- | --- |
@@ -180,7 +182,7 @@ Evaluation按自身订阅和规则运行、保存并发布事实及公开结果�
 
 1. 底座授权读取触发事件，核对类型、空间及来源身份。重复事件沿原input_id恢复。
 2. Product读取当时采用依据；Evaluation生成有限候选清单，读取精确Claim及Domain定义、题目参考。
-3. 调用Interaction的`read_evaluation_facts(access_context, scope_id, trigger_event_id, related_event_refs=[])`，取得本次题面、已提交原文、help_basis和正式提供事实。该端口只读，不启动活动或评价。
+3. 通过事件管理read_event_facts取得当时题面、已提交原文、help_basis和正式提供事实；Interaction的read_evaluation_facts作为有界取材适配器使用同一事件源并校验用途。只读，不启动活动或评价。
 4. 按方面规则补取有界历史：同一Task／方法的接触记录、指定迁移参照、保持基准及基准至本次提交的相关练习。先从底座查询授权事件，再以related_event_refs读取所需原文。查询固定截止依据并返回完整性；缺页、未知业务时间和未知接触条件不能补成“没有”；缺浏览器回执不构成评价材料缺口。
 5. 固定材料及资格背景后调用AI。读取故障沿原引用重试；同一不可变引用返回不同内容时报source_conflict，停止处理。
 
@@ -447,9 +449,9 @@ Interaction只取与当前教学有关的分项，保留快照引用、证据覆
 3. 查询Evidence返回方法／方面、判据、资格与正反依据、原始片段和来源事件引用。原事件通过公共授权查询读取，再沿来源引用读取授权原文；不在Evaluation复制一套可编辑事实或聊天库。
 4. 查询处理情况按结果键返回阶段就绪、失败或未受理信息；完成但无证据与技术失败分开。需要掌握快照时使用§5.1公共发布接口，不因此启动评价。
 
-返回对象不存在、越权与读取故障分别为`not_found`、`forbidden`、`temporarily_unavailable`。查询无写入、无OperationRun和数值副作用；分页固定对象修订及排序，避免浏览期间同一依据重复或漏项。完整HTTP路由和分页上限待客户端与存储接线确认。验收包含目标→Evidence→源事件追溯、查看旧修订不改当前结果、跨空间引用被拒绝，以及读取不能重算概率。
+返回对象不存在、越权与读取故障分别为`not_found`、`forbidden`、`temporarily_unavailable`。查询无写入、无OperationRun和数值副作用；分页固定对象修订及排序，避免浏览期间同一依据重复或漏项。四类查询的HTTP字段见[Evaluation API E06](contracts/Evaluation_API.md#e06)；分页限额统一引用[基础设施§4.5 H02](Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)，候选数值待审。验收包含目标→Evidence→源事件追溯、查看旧修订不改当前结果、跨空间引用被拒绝，以及读取不能重算概率。
 
-跨模块触发及结果使用方见[工程入口§6](README.md#6-跨模块事件目录)。belief_result和goal_result是结果类型。目标计算事件为GoalEvaluationCompleted，载荷见§6.5；Evidence／Belief事件随其详细设计确定。
+跨模块触发及结果使用方见[工程入口§6](README.md#6-跨模块事件目录)。belief_result和goal_result是结果类型。目标计算事件为GoalEvaluationCompleted，载荷见§6.5；Evidence／Belief事件及载荷统一见[事件分册](contracts/Event_Messages.md)，不另建事件目录。
 
 ### 5.5 目标结果HTTP与查询状态
 
@@ -469,13 +471,13 @@ Interaction只取与当前教学有关的分项，保留快照引用、证据覆
 
 ### 5.6 Evidence与Belief存储
 
-Evidence、Belief及快照的物理字段、分项键和查询索引见[Evaluation数据字典](database/Business_Evaluation.md#3-evaluationevaluation_input)。原文和事件仍由其所有者保存；正式批次结果引用固定取材、Evidence及无法归因的解释。方法不明时不造虚假分项身份。
+Evidence、Belief及快照的物理字段、分项键和查询索引见[Evaluation数据字典](database/Business_Evaluation.md#3-evaluationevaluation_input)。原文保存在公共事件及附件，业务语义和读取用途仍由生产模块约束；正式批次结果引用固定取材、Evidence及无法归因的解释。方法不明时不造虚假分项身份。
 
 **更新与覆盖分开。** 未决、不适用、重复来源和有效L=0不写数值修订，但保留Evidence／原因和本次结果。每个合法完成的belief_result发布一个新空间快照，含当时全部分项、累计证据覆盖和已处理结果引用；无数值变化也能证明本次已处理。公开覆盖可分页，但页必须固定snapshot_ref，不能翻页时换成最新结果。
 
 快照中的证据覆盖固定到本次提交；后续追加的Evidence不进入旧快照。目标读取时只用同快照内的作答Evidence及条件；教学条目沿source_refs追溯，不能替代实际验证。新的不确定表现不抹掉此前p_obs，限制说明另存。
 
-`query_basis(view=evidence)`返回资格、表现、方法判据、方面规则、原文片段引用、更新或未更新原因；`view=belief`返回前后值、前序修订、参数、算法及Evidence引用。沿Evidence再查源事件和所有者原文，不把目标查询重定向成事件列表。页面筛选及分页上限沿公共查询合同，本批不扩展UI。
+`query_basis(view=evidence)`返回资格、表现、方法判据、方面规则、原文片段引用、更新或未更新原因；`view=belief`返回前后值、前序修订、参数、算法及Evidence引用。沿Evidence的EventPartRef读取源事件正文及固定附件，不把目标查询重定向成事件列表。页面筛选及分页上限沿公共查询合同，本批不扩展UI。
 
 ## 6. 处理顺序、提交与恢复
 
@@ -522,7 +524,7 @@ Evaluation通过已注册的订阅接收事实事件，按触发身份去重，�
 
 ### 6.4 目标结果存储与原子提交
 
-用户已确认：目标没变就保存为当前结果；空间已采用新目标时，旧结果只留历史，新目标另算。保护只在保存的短事务内，不等AI；见[登记§74](../../DECISIONS.md#74-evaluation定义目标计算与结果保存)。
+目标依据仍当前时可保存为当前结果；同一target_id采用新版且target_basis_ref改变时，旧结果只留历史，新依据另算。仅名称等变化而依据未变，继续使用原结果。这里的“目标变化”不表示在原空间更换target_id；不同目标进入不同空间，见[Product§5.1](Product_Application_Design.md#51-productopen_learning_space创建或进入个人空间)。短事务保护及历史保留沿[登记§74](../../DECISIONS.md#74-evaluation定义目标计算与结果保存)。
 
 目标计算输入、历史结果与当前引用的表定义见[Evaluation数据字典](database/Business_Evaluation.md#10-evaluationgoal_calculation_input)。
 
@@ -533,7 +535,7 @@ Evaluation通过已注册的订阅接收事实事件，按触发身份去重，�
 1. 核对授权与本次执行身份，保护结果键；已有成功结果直接返回原引用。
 2. Product的guard_target_adoption锁定空间当前采用指向，返回实际target_basis_ref及本次是否匹配；Evaluation不读取Product私表。
 3. 创建或锁定本空间goal_current，按下表决定是否推进。只在首次使用时插入空索引行，再取FOR UPDATE；并发创建按scope_id唯一键合并。
-4. 追加goal_evaluation；必要时更新goal_current。底座同事务登记GoalEvaluationCompleted、goal_result和待发通知，完成处理收据。
+4. 先追加含完整目标结论、依据和是否推进当前索引的GoalEvaluationCompleted；再按事件生成goal_evaluation及必要的goal_current，登记投影收据、goal_result和待发通知，完成处理收据。
 5. 提交后释放保护，底座另行投递；任何写入失败全部回滚。响应丢失查询原结果，不再计算或推进一次。
 
 | 保存时的情况 | 结果及索引 |
@@ -543,9 +545,9 @@ Evaluation通过已注册的订阅接收事实事件，按触发身份去重，�
 | 依据相同、序号相同且计算规则、业务结果相同 | 保存本次触发结果并引用已有当前结果；reason=already_current，不重复推进 |
 | 依据当前，序号不早于当前索引，且未被上一行涵盖 | 推进索引，current_state_applied=true；可以是达标、不足、未知或课程未准备 |
 
-比较业务正文时排除本次触发、处理时间和提交标志。相同依据及快照却出现不同规则或判断正文时返回calculation_conflict，停止推进，不能用新处理覆盖已保存结论。无快照序号0不能覆盖已使用有效快照的当前结果。新目标与旧目标都读取本空间快照序列，不为换目标重置序号。
+比较业务正文时排除本次触发、处理时间和提交标志。相同依据及快照却出现不同规则或判断正文时返回calculation_conflict，停止推进，不能用新处理覆盖已保存结论。无快照序号0不能覆盖已使用有效快照的当前结果。同一目标的新旧依据都读取本空间快照序列，不因采用新版重置序号。
 
-锁序为本次请求／结果键 → Product空间行FOR SHARE → Evaluation目标索引 → 公共提交登记。应用新目标时Product对同一空间行取FOR UPDATE。各适配器共享短事务但只操作自己的schema；不能在持有Evaluation锁时反向取得Product锁。Belief阶段先提交并释放事务，再进入目标阶段。
+锁序为本次请求／结果键 → Product空间行FOR SHARE → Evaluation目标索引 → 公共提交登记。应用同一目标的新版时Product对同一空间行取FOR UPDATE。各适配器共享短事务但只操作自己的schema；不能在持有Evaluation锁时反向取得Product锁。Belief阶段先提交并释放事务，再进入目标阶段。
 
 图1：按旧目标算出的结果可以留存，但不能冒充当前目标结果。
 
@@ -561,11 +563,13 @@ sequenceDiagram
     P-->>E: 当前目标依据及是否匹配
     E->>E: 锁定目标索引，检查快照顺序
     alt 可推进当前结果
-        E->>E: 追加结果，推进当前索引
+        E->>E: 确定结果及推进当前索引的决定
     else 旧依据或旧快照
-        E->>E: 追加历史结果，保留当前索引
+        E->>E: 确定历史结果及不推进的原因
     end
-    E->>R: 同事务登记事件、结果和待发通知
+    E->>R: 同事务先追加完整目标事实
+    E->>E: 按事件生成结果及当前索引
+    E->>R: 登记投影收据、结果和待发通知
     E->>R: 提交；失败共同回滚
     Note over P,R: 提交后释放锁<br/>历史记录不改
     R-->>R: 提交成功后投递通知
@@ -588,8 +592,8 @@ AI解释和资格核对在事务外完成。按§6.7取得该批的有序提交�
 1. 底座保护本次belief_result键，已有成功结果即返回。核对当前执行尝试仍可提交，迟到的旧尝试不能覆盖新尝试。
 2. 锁定本空间evaluation_progress并核对active_trigger_event_id仍为本次触发，再锁定mastery_head。两行首次按空间唯一键建立；锁不跨AI调用持有。
 3. 按来源唯一键检查正式Evidence。已处理来源复用原引用；新增条目核对完整资格，读取belief_current的正确前序，调用确定性函数。一个批次对一个分项最多更新一次。
-4. 追加Evidence、需要的belief_revision并推进belief_current。资格未知／不适用的条目不调数值函数。任何分项技术失败回滚整批，不能提交半份成功结果。
-5. 固定累计覆盖和下一publication_seq，追加mastery_snapshot并推进mastery_head；evaluation_progress推进至本次源事件，清空active引用。底座同事务登记BeliefEvaluationCompleted、belief_result、发布引用和待发通知／下一次扫描依据。
+4. 固定Evidence、前后概率、参数、算法、累计覆盖及下一publication_seq；先追加含全部结果的BeliefEvaluationCompleted。资格未知/不适用不调用数值更新函数；任何技术失败回滚整批。
+5. 按该事件同步生成Evidence、belief_revision、belief_current、mastery_snapshot和mastery_head；保存投影收据，推进evaluation_progress并登记belief_result、发布引用及待发安排。重建读取这些已记录值，不再执行算法或AI。
 6. 提交后释放锁，底座再投递。目标Step用该快照另起计算与§6.4事务；其失败不撤回或重复本批更新。
 
 锁序为本次结果键 → Evaluation空间进度 → 空间发布索引 → 分项索引 → 公共提交登记。本事务不取得Product锁、不读取其他模块私表；取材已在前面固定。行锁用于提交互斥，来源顺序由§6.7保证。
@@ -599,9 +603,9 @@ AI解释和资格核对在事务外完成。按§6.7取得该批的有序提交�
 ```mermaid
 flowchart TD
     A["按来源顺序选中本次评价<br/>固定材料与候选范围"] --> B["AI解释，程序核对资格"]
-    B --> C["复核本次仍是有效来源及执行"]
-    C --> D["短事务：来源去重<br/>更新概率"]
-    D --> E["同事务：Evidence与修订<br/>快照、结果及事件"]
+    B --> C["核对当前来源<br/>及执行身份"]
+    C --> D["短事务：来源去重<br/>计算前后概率"]
+    D --> E["追加Evidence及概率事实<br/>投影修订和快照"]
     E --> F{"提交成功？"}
     F -->|否| R["回滚，沿原输入恢复"]
     R --> C
@@ -617,7 +621,7 @@ flowchart TD
 
 ### 6.7 按空间顺序评价
 
-用户已确认：同空间顺序评价，前序技术故障时暂停后续更新；学生仍可学习，保留上次掌握结果并标明评价未完成。顺序按底座的space_event_seq，不按消息到达时间。该序号表示空间内记录顺序，不等于实际发生时间，合同见[公共运行§2.2](System_Foundation_Design.md#22-空间事件顺序与有界读取)。
+用户已确认：同空间顺序评价，前序技术故障时暂停后续更新；学生仍可学习，保留上次掌握结果并标明评价未完成。顺序按底座的scope_event_seq，不按消息到达时间。该序号表示空间内记录顺序，不等于实际发生时间，合同见[公共运行§2.2](System_Foundation_Design.md#22-空间事件顺序与有界读取)。
 
 Evaluation用[空间评价进度记录](database/Business_Evaluation.md#13-evaluationevaluation_progress)保存扫描位置与当前来源，不复制Temporal执行状态；失败原因及尝试沿运行引用查询。
 
@@ -722,3 +726,7 @@ condition_facts保存start_ref、end_ref、两端时间、elapsed_seconds及know
 本轮修订（v0.21，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
 
 本轮修订（v0.22，2026-11-15）：集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码。见[MVP决定登记§94](../../DECISIONS.md#94-api与消息设计分册及唯一维护位置)。
+
+本轮修订（v0.23，2026-11-15）：区分目标身份与评价依据，清理分页、查询和事件字段的过期待定表述。见MVP决定登记§95。
+
+本轮修订（v0.24，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

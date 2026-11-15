@@ -1,10 +1,11 @@
 # M1 运行接口与 WebSocket 协议
 
-> **版本**：v0.1<br>
-> **状态**：接口与消息详细设计稿，待用户审阅；未编码<br>
+> **版本**：v0.3<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-15
+> **更新日期**：2026-11-15<br>
+> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
 公共运行只提供通用认证、收据、派发、等待与回传；所有者仍决定业务处理和可展示内容。HTTP路径相对/api/m1，WebSocket /ws使用deermind.v1。底层订阅与发布格式见[事件分册](Event_Messages.md)。
 
@@ -129,14 +130,26 @@
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `receipt_state` | not_found/accepted/completed/rejected | 是 | 原业务处理投影 |
-| `receipt_ref` | ID或null | 是 | 已存在的所有者收据 |
+| `receipt_state` | not_found/accepted/completed/rejected | 是 | 受理／提交投影；不替代业务及执行状态 |
+| `receipt_ref` | ID或null | 是 | 所有者收据的稳定身份；原模块request_ref或receipt_id在此统一命名 |
+| `business_state` | string或null | 是 | 所属入口的原业务状态，不把技术失败显示成处理中 |
+| `result` | 原入口定义的结果或null | 是 | 按登记action返回已保存结果，与原写入口result类型一致 |
+| `error` | ErrorResponse.error或null | 是 | 已保存的处理失败／拒绝；本次查询自身失败使用HTTP错误响应 |
 | `execution_ref` | ID或null | 是 | 适用后台工作 |
 | `execution_state` | string或null | 是 | 底座执行状态，与业务状态分开 |
 | `result_refs` | Ref[] | 是 | 已保存可取结果 |
 | `allowed_actions` | string[] | 是 | 当前允许动作；不是额外授权 |
 
-处理边界：委托已登记所有者，不遍历私表；即使反馈失败，已提交答案的receipt_state仍completed。not_found不自动生成新请求。
+底座按原action、资源、request_id及已验证发起者委托所有者查找，不要求浏览器预先知道receipt_ref。HTTP查询使用所有者入口名；WS动作按动作表转换，例如learning.input映射interaction.handle_input。只返回原请求人当前可读的结果，不遍历私表、不重新派发。
+
+| 所有者情况 | 统一投影 |
+| --- | --- |
+| 尚无可读收据 | receipt_state=not_found；所有可空字段为null，引用和动作数组为空；读取故障不能用not_found代替 |
+| 已可靠受理但业务未提交 | receipt_state=accepted；business_state和execution_state照实返回；失败／停止不能仅凭accepted显示为处理中 |
+| 业务已提交，包括Domain committed | receipt_state=completed；返回原入口result；关联AI仍执行或失败不撤销提交 |
+| 已明确业务拒绝 | receipt_state=rejected；error保留原因，不自动重做 |
+
+Domain和Product分别提供[D13](Domain_API.md#d13)、[P26](Product_API.md#p26)内部投影：state映射business_state，result／error原样按授权返回，runtime_ref映射execution_ref；receipt_state由登记的所有者适配器按上表投影。其他入口沿其原写结果映射，不另造业务状态。not_found不自动生成新请求。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
 
@@ -144,7 +157,7 @@
 
 ```json
 {
-  "action": "learning.input",
+  "action": "interaction.handle_input",
   "resource_kind": "learning_space",
   "resource_id": "00000000-0000-4000-8000-000000000100",
   "request_id": "chat-01"
@@ -206,7 +219,7 @@
 | `event` | EventEnvelope | 是 | 固定事实 |
 | `source_content_refs` | Ref[] | 是 | 仅给有权继续读取的来源 |
 
-处理边界：原文另走所有者授权查询；事件ID不授予读取整个空间的权限。
+处理边界：详情原文由read_event_facts按EventPartRef读取；事件列表返回摘要及获授权片段，事件ID不授予整个空间或私有记录的读取权限。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
 
@@ -275,7 +288,7 @@
 | ready | 服务端→客户端 | connection_id:ID、server_time:Timestamp | 只确认连接可用，不替业务数据同步 |
 | command | 客户端→服务端 | 上述公共字段 | 每帧重新授权和作用范围校验 |
 | receipt | 服务端→客户端 | frame_id、request_id、state:accepted/completed、owner_receipt_ref:ID、execution_ref:ID\|null、result_refs:Ref[] | 可靠受理/保存后才发送；最终结果另读 |
-| error | 服务端→客户端 | frame_id:string\|null、request_id:string\|null、code:string、message:string、acceptance:not_accepted/unknown | 传输未知先查原收据；不返回模型正文/服务堆栈 |
+| error | 服务端→客户端 | frame_id:string\|null、request_id:string\|null、error:ErrorResponse.error、acceptance:not_accepted/unknown | 传输未知先查原收据；不返回模型正文/服务堆栈 |
 | watch | 客户端→服务端 | frame_id、watch_id:ID、resource:{kind,id}、views:string[] | 登记授权范围内有限刷新订阅 |
 | watch_ready | 服务端→客户端 | frame_id、watch_id、resource、views | 客户端随后补读权威数据；不表示订阅前消息都已推送 |
 | unwatch | 客户端→服务端 | frame_id、watch_id | 幂等取消；返回unwatch_ready(type,frame_id,watch_id) |
@@ -294,6 +307,10 @@
 | learning.proactive_response | [I08](Interaction_API.md#i08) | 本人；payload另带task_id定位待响应任务 |
 | learning.presentation | [I06](Interaction_API.md#i06) | 本人；request_id与presentation_id保持同一重试身份 |
 | material.input | [P09](Product_API.md#p09) | 管理员；resource.kind=material_import |
+
+上述六个动作在HTTP和WS使用同一业务大小校验：将输入投影为本册command，计量时frame_id固定取request_id，其余action、resource和payload完整保留；采用无多余空白、不转义非ASCII字符的UTF-8 JSON计量。投影总字节不得超过[基础设施§4.5 S03](../Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)。HTTP仍须符合H02，实际WS消息还须符合S03的传输限制；额外空白或过长frame_id不能绕过传输检查。
+
+超限在受理前拒绝：HTTP返回413，WS返回error.code=payload_too_large、acceptance=not_accepted；无法安全解析超大消息时可关闭连接。客户端保留草稿，文件沿上传接口；不截断正文、不自动改走HTTP。H02、S03数值仍是待审候选。
 
 watch的最小view登记：learning_space允许conversation、activity_tree、goal、events；material_import允许messages、contents、candidates、intake。所有者校验角色与字段权限；订阅不扩大读取能力。原请求人可以同时取得对应收据变化提示，跨账号后清理旧订阅。浏览器不订阅原始NATS主题。
 
@@ -329,6 +346,23 @@ watch的最小view登记：learning_space允许conversation、activity_tree、go
 }
 ```
 
+错误帧示例（同一error对象也用于HTTP响应）：
+
+```json
+{
+  "type": "error",
+  "frame_id": "frame-02",
+  "request_id": "chat-02",
+  "error": {
+    "code": "interaction_busy",
+    "message": "正在处理上一条，请稍后发送。",
+    "issues": [],
+    "retryable": false
+  },
+  "acceptance": "not_accepted"
+}
+```
+
 连接中断不取消后台工作。重新hello→watch→补读消息/当前状态/原请求；changed可合并或重复，客户端按实体身份/修订合并，不按通知数量新增消息。服务端回复按已定规则检查保存后整条提供，WS不直传未经核对的模型token。
 
 ## 内部运行端口
@@ -339,6 +373,7 @@ watch的最小view登记：learning_space允许conversation、activity_tree、go
 | --- | --- | --- |
 | read_result / read_publication / publish_result | 注册生产者及获授权消费者 | [公共运行§1.2](../System_Foundation_Design.md#12-公开操作) |
 | register_wait / cancel_wait | 消费模块 | [公共运行§3.1](../System_Foundation_Design.md#31-等待记录) |
+| append_events / read_event_facts / apply_projection / rebuild_projection | 注册生产者、获授权读取方或维护处理器；不开放任意事件写HTTP入口 | [公共运行§2](../System_Foundation_Design.md#2-全局事件的追加与查询)、[正文合同](Event_Facts.md) |
 | query_events / read_scope_events | 获授权读取方；完整扫描与界面筛选分开 | [公共运行§2.2](../System_Foundation_Design.md#22-空间事件顺序与有界读取)、[§2.5](../System_Foundation_Design.md#25-查询与读取边界) |
 | read_operation_run | 原工作授权读取方 | [公共运行§1.3](../System_Foundation_Design.md#13-operationstep与operationrun) |
 | read_execution / retry_execution / read_handoffs / retry_handoff | 受控维护入口；不新增浏览器任意执行权限 | [公共运行§4.5](../System_Foundation_Design.md#45-失败收尾停止与授权恢复) |
@@ -352,3 +387,7 @@ HTTP请求收据中的action采用登记的所有者入口名；WS动作名先�
 | 版本 | 日期 | 修改 |
 | --- | --- | --- |
 | v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |
+
+本轮修订（v0.2，2026-11-15）：统一收据结果投影、WS错误内层与跨通道输入计量。见MVP决定登记§95。
+
+本轮修订（v0.3，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

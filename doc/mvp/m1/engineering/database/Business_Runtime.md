@@ -1,12 +1,12 @@
 # deermind 数据库：公共运行及文件登记数据字典
 
-> **版本**：v0.2<br>
-> **状态**：数据库定义归并稿待审阅；schema边界已确认，未编码<br>
+> **版本**：v0.3<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.1 → v0.2，归并物理数据定义、修正重复口径；见MVP决定登记§93<br>
+> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **17 张表、179 个列定义**。处理流程、接口和业务载荷由[System_Foundation_Design.md](../System_Foundation_Design.md) §2—6；文件由基础设施§2维护维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **19 张表、194 个列定义**。处理流程、接口和业务载荷由[System_Foundation_Design.md](../System_Foundation_Design.md) §2—6；文件由基础设施§2维护维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
@@ -15,7 +15,7 @@
 | [file_objects](#1-runtimefile_objects) | 文件隔离层的不可变文件登记 |
 | [file_uploads](#2-runtimefile_uploads) | 一次受控上传及完成收据 |
 | [events](#3-runtimeevents) | 所有正式业务事实的追加日志 |
-| [scope_event_heads](#4-runtimescope_event_heads) | 学习空间事件提交序号 |
+| [scope_event_heads](#4-runtimescope_event_heads) | 各资源范围的事件提交序号 |
 | [execution_authorizations](#5-runtimeexecution_authorizations) | 一次受理工作的授权依据 |
 | [executions](#6-runtimeexecutions) | 稳定后台工作，不等于一次尝试 |
 | [execution_attempts](#7-runtimeexecution_attempts) | 一次有限时长的运行或恢复 |
@@ -29,6 +29,8 @@
 | [expected_results](#15-runtimeexpected_results) | 生产方受理后登记的结果身份 |
 | [result_attempts](#16-runtimeresult_attempts) | 生产工作各尝试的结果状态 |
 | [published_results](#17-runtimepublished_results) | 生产方正式发布的不可变结果 |
+| [projection_receipts](#18-runtimeprojection_receipts) | 同投影代次的事件应用收据 |
+| [projection_offsets](#19-runtimeprojection_offsets) | 按范围连续补读及接续位置 |
 
 图中实体前缀是schema；实线为列外键，虚线为复合键或受程序校验的固定引用。图按“可有多条引用”展示；一对一关系的UQ/PK以表下注明为准，不能忽略唯一约束。跨schema关系在总册集中列出。
 
@@ -44,6 +46,7 @@ erDiagram
         uuid event_id PK
     }
     runtime__scope_event_heads {
+        text scope_kind PK
         uuid scope_id PK
     }
     runtime__execution_authorizations {
@@ -99,6 +102,18 @@ erDiagram
         text producer PK
         text result_kind PK
     }
+    runtime__projection_receipts {
+        text projector_id PK
+        bigint generation PK
+        uuid event_id PK
+    }
+    runtime__projection_offsets {
+        text projector_id PK
+        bigint generation PK
+        text scope_kind PK
+        uuid scope_id PK
+    }
+    runtime__events ||--o{ runtime__projection_receipts : "event_id"
     runtime__events |o--o{ runtime__events : "causation_event_id"
     runtime__events |o--o{ runtime__waits : "matched_event_ref"
     runtime__events ||--o{ runtime__delivery_failures : "event_id"
@@ -112,7 +127,7 @@ erDiagram
     runtime__execution_attempts ||--o{ runtime__published_results : "attempt_id"
     runtime__execution_attempts ||--o{ runtime__result_attempts : "attempt_id"
     runtime__execution_attempts ||--o{ runtime__step_results : "completed_by_attempt"
-    runtime__executions |o--o{ runtime__events : "source_execution_ref"
+    runtime__executions |o..o{ runtime__events : "trace_identity_only"
     runtime__executions ||--o{ runtime__execution_attempts : "execution_id"
     runtime__executions ||--o{ runtime__expected_results : "execution_id"
     runtime__executions ||--o{ runtime__published_results : "execution_id"
@@ -187,6 +202,7 @@ erDiagram
 | 字段 | PostgreSQL 类型 | 可空 | 默认值 | 定义、约束与引用 |
 | --- | --- | --- | --- | --- |
 | `event_id` | `uuid` | 否 | 无 | 固定事实身份；重试不换ID；主键组成字段 |
+| `commit_id` | `uuid` | 否 | 无 | 同一短事务事件批身份；重试沿用；便于按批重建及一次推进catalog_revision |
 | `event_type` | `text` | 否 | 无 | README事件目录的登记名称 |
 | `schema_version` | `bigint` | 否 | 无 | 信封/载荷解释版本；正整数 |
 | `producer` | `text` | 否 | 无 | 实际生产模块 |
@@ -195,31 +211,32 @@ erDiagram
 | `owner_ref` | `jsonb` | 否 | 无 | 主对象；Ref，见总册§3 |
 | `subject_refs` | `jsonb` | 否 | '[]'::jsonb | 关联对象定位索引；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `actor_ref` | `jsonb` | 是 | 无 | 学生、管理员或服务身份；Ref，见总册§3 |
-| `source_execution_ref` | `uuid` | 是 | 无 | 源执行；FK → `runtime.executions.execution_id` |
+| `source_execution_ref` | `uuid` | 是 | 无 | 源执行身份；逻辑追踪，不是事件存在前提；原文不从执行表取得 |
 | `source_request_id` | `text` | 是 | 无 | 直接请求身份；事件触发时可空 |
 | `causation_event_id` | `uuid` | 是 | 无 | 直接前因；FK → `runtime.events.event_id` |
 | `correlation_id` | `uuid` | 否 | 无 | 追溯链；不是防重键 |
-| `space_event_seq` | `bigint` | 是 | 无 | 学习空间内正式序号；非空间事件为空 |
+| `scope_event_seq` | `bigint` | 否 | 无 | 本(scope_kind,scope_id)提交序号；正整数；所有范围必填 |
 | `occurred_at` | `timestamptz` | 是 | 无 | 可信业务发生时间；未知为空 |
 | `recorded_at` | `timestamptz` | 否 | 无 | 服务端正式记录时间 |
 | `time_basis` | `text` | 否 | 无 | server_recorded、referenced_fact、unknown |
 | `time_source_ref` | `jsonb` | 是 | 无 | 引用的可信时间事实；无外部依据为空；Ref，见总册§3 |
 | `client_reported_at` | `timestamptz` | 是 | 无 | 客户端自报时间，仅参考 |
-| `payload` | `jsonb` | 否 | 无 | 按event_type+schema_version的登记载荷；正文保存引用，不复制整段聊天 |
+| `payload` | `jsonb` | 否 | 无 | 完整事实及records；按事件消息和正文Schema校验；大内容是固定事件附件，不是独立业务表引用 |
 
-约束与关系：部分UQ(scope_id,space_event_seq) WHERE scope_kind=learning_space；序号在scope_event_heads锁内分配；只追加不删改。
+约束与关系：UQ(scope_kind,scope_id,scope_event_seq)；序号在scope_event_heads锁内分配；只追加不删改。
 
-查询索引：scope_kind,scope_id,space_event_seq；scope_kind,scope_id,event_type,space_event_seq；scope_kind,scope_id,recorded_at,event_id；event_type,recorded_at；source_execution_ref；correlation_id；causation_event_id；subject_refs按确有查询再建GIN。
+查询索引：commit_id；scope_kind,scope_id,scope_event_seq；scope_kind,scope_id,event_type,scope_event_seq；scope_kind,scope_id,recorded_at,event_id；event_type,recorded_at；source_execution_ref；correlation_id；causation_event_id；subject_refs按确有查询再建GIN。
 
 ## 4. `runtime.scope_event_heads`
 
-学习空间事件提交序号。
+各资源范围的事件提交序号。
 
-主键：`(scope_id)`。写入方式：可更新索引。
+主键：`(scope_kind,scope_id)`。写入方式：可更新提交索引；可从正式事件最大序号恢复。
 
 | 字段 | PostgreSQL 类型 | 可空 | 默认值 | 定义、约束与引用 |
 | --- | --- | --- | --- | --- |
-| `scope_id` | `uuid` | 否 | 无 | 学习空间身份；逻辑引用 product.learning_space.space_id；主键组成字段 |
+| `scope_kind` | `text` | 否 | 无 | 登记资源种类；主键组成字段 |
+| `scope_id` | `uuid` | 否 | 无 | 资源身份；learning_space时等于Product空间ID；主键组成字段 |
 | `last_seq` | `bigint` | 否 | 0 | 最后正式分配序号 |
 
 约束与关系：事件及此指针同事务；不能使用不受回滚控制的PG sequence当事实顺序。
@@ -527,6 +544,45 @@ erDiagram
 
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
+## 18. `runtime.projection_receipts`
+
+一次事件对某投影代次已经完整应用的收据。
+
+主键：`(projector_id,generation,event_id)`。写入方式：只追加；与该投影的数据变更同事务。
+
+| 字段 | PostgreSQL 类型 | 可空 | 默认值 | 定义、约束与引用 |
+| --- | --- | --- | --- | --- |
+| `projector_id` | `text` | 否 | 无 | 程序登记投影器；主键组成字段 |
+| `generation` | `bigint` | 否 | 无 | 在线固定1；受控重建使用>1的代次；主键组成字段 |
+| `event_id` | `uuid` | 否 | 无 | FK → runtime.events.event_id；主键组成字段 |
+| `applied_at` | `timestamptz` | 否 | 无 | 本代次完成投影的服务端时间；不是业务发生时间 |
+
+约束与关系：重复应用返回原收据；失败事务不留成功收据。不能只写收据而未写投影，不能用其他投影器的收据跳过处理。
+
+查询索引：主键；event_id。
+
+## 19. `runtime.projection_offsets`
+
+历史补读与实时接续的已检查位置；与对应投影/收据同事务推进。
+
+主键：`(projector_id,generation,scope_kind,scope_id)`。写入方式：可更新；不是业务事实源。
+
+| 字段 | PostgreSQL 类型 | 可空 | 默认值 | 定义、约束与引用 |
+| --- | --- | --- | --- | --- |
+| `projector_id` | `text` | 否 | 无 | 登记投影器；主键组成字段 |
+| `generation` | `bigint` | 否 | 无 | 在线固定1；维护代次>1；主键组成字段 |
+| `scope_kind` | `text` | 否 | 无 | 登记资源种类；主键组成字段 |
+| `scope_id` | `uuid` | 否 | 无 | 资源身份；主键组成字段 |
+| `scanned_through_seq` | `bigint` | 否 | 0 | 连续检查完成的位置，不是最后命中事件；不得跳过缺失或失败项 |
+| `history_upper_seq` | `bigint` | 否 | 无 | 启动时固定的已提交上界；new_only从该位置开始；≥0 |
+| `state` | `text` | 否 | 无 | catching_up、live、blocked、completed；completed用于受控单次重建 |
+| `error` | `jsonb` | 是 | 无 | code、message、event_id；blocked必填，不含秘密 |
+| `updated_at` | `timestamptz` | 否 | 无 | 服务端进度时间 |
+
+约束与关系：同代次的Schema及投影实现固定；失败不推进scanned_through_seq。业务写入时的投影收据不直接推进扫描位置，防止越过其他事件。
+
+查询索引：主键；projector_id,generation,state。
+
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
@@ -534,3 +590,5 @@ erDiagram
 | v0.1 | 2026-11-15 | 逐表补齐列、键、空值、默认值、约束和关系；未执行建表或迁移 |
 
 本轮修订（v0.2，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.3，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。

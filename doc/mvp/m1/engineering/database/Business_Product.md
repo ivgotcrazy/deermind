@@ -1,12 +1,12 @@
 # deermind 数据库：产品业务数据字典
 
-> **版本**：v0.2<br>
-> **状态**：数据库定义归并稿待审阅；schema边界已确认，未编码<br>
+> **版本**：v0.4<br>
+> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.1 → v0.2，归并物理数据定义、修正重复口径；见MVP决定登记§93<br>
+> **修订说明**：v0.3 → v0.4，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **28 张表、223 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **28 张表、246 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
@@ -187,6 +187,9 @@ erDiagram
 
 ## 1. `product.accounts`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 预置账号与固定角色。
 
 主键：`(account_id)`。写入方式：当前记录可更新。
@@ -200,10 +203,11 @@ erDiagram
 | `status` | `text` | 否 | 无 | active 或 disabled |
 | `revision` | `bigint` | 否 | 无 | 从1递增；写入时比较预期修订，不以时间代替 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(login_identifier)；角色与停用只由管理入口修改；固定角色，update_student不能授予管理员角色。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 2. `product.credentials`
 
@@ -245,6 +249,9 @@ erDiagram
 
 ## 4. `product.guardian_records`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 最小监护人登记，不建立家长端账号。
 
 主键：`(guardian_id)`。写入方式：只追加。
@@ -255,12 +262,16 @@ erDiagram
 | `verified_identity_ref` | `jsonb` | 否 | 无 | 经过产品确认的身份依据；不复制证件原文；Ref，见总册§3 |
 | `display_name` | `text` | 否 | 无 | 登记称谓 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：同一核实依据复用；不得凭名称自动合并。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 5. `product.student_guardian_relations`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 监护关系的历次登记。
 
@@ -277,12 +288,16 @@ erDiagram
 | `previous_relation_id` | `uuid` | 是 | 无 | 前一条关系记录；FK → `product.student_guardian_relations.relation_id` |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(student_id,guardian_id,revision)；学生角色及有效关系由Product检查。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 6. `product.usage_confirmations`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 监护人同意及学生知情记录。
 
@@ -299,12 +314,15 @@ erDiagram
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `occurred_at` | `timestamptz` | 是 | 无 | 确认发生时间；未知为空 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：按字段引用及总册公共约束检查；无额外唯一键。
 
-查询索引：student_id, kind, created_at。
+查询索引：source_event_id；student_id, kind, created_at。
 
 ## 7. `product.usage_conditions`
+
+数据性质：已接受决定的查询投影；稳定结果身份、确认和取消状态、资格结论需随事件保存，不能重建时重新裁决。见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)。
 
 学生当前可使用条件的索引。
 
@@ -318,12 +336,16 @@ erDiagram
 | `eligibility` | `text` | 否 | 无 | allowed、blocked、pending；由产品规则派生 |
 | `reasons` | `jsonb` | 否 | '[]'::jsonb | Issue[]：code、path、message；不设置用时额度 |
 | `updated_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行决定的事件；逻辑引用runtime.events.event_id；按record_type和主键定位完整正文 |
 
 约束与关系：按字段引用及总册公共约束检查；无额外唯一键。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 8. `product.textbook`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 教材基本信息。
 
@@ -337,12 +359,16 @@ erDiagram
 | `metadata` | `jsonb` | 否 | 无 | Product§3：title、subject、grade、term、edition_note；未知版次明确为空 |
 | `metadata_revision` | `bigint` | 否 | 无 | 基本信息修订；正整数 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(import_id)；domain_id首次导入后不更换；import循环外键提交时检查。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 9. `product.material_import`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 一次教材助手工作区及忙状态。
 
@@ -360,12 +386,16 @@ erDiagram
 | `next_message_seq` | `bigint` | 否 | 1 | 下一消息序号；锁此行分配 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `updated_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(textbook_id)；删除仅软删除；忙时不创建新turn。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 10. `product.material_source`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 不可变原件及页序依据。
 
@@ -381,12 +411,16 @@ erDiagram
 | `pages` | `jsonb` | 否 | 无 | 页列表：page_id、file_page_index、printed_page_label可空、derived_file_ref可空；页序从1起 |
 | `sha256` | `text` | 否 | 无 | 原文件SHA-256，小写64位十六进制 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(import_id,file_id)；校正页码追加采用依据，不改原文件。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 11. `product.material_message`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 教材助手的持续对话原文。
 
@@ -402,12 +436,16 @@ erDiagram
 | `explicit_refs` | `jsonb` | 否 | '[]'::jsonb | 管理员明确引用的书页、候选及内容；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `turn_ref` | `uuid` | 否 | 无 | 对应受理轮；FK → `product.material_turn.request_ref` |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(import_id,seq)。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 12. `product.material_turn`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 教材助手的一条受理消息。
 
@@ -426,12 +464,16 @@ erDiagram
 | `error` | `jsonb` | 是 | 无 | 失败：code、message、retryable、source_ref；非失败为空 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `updated_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：按字段引用及总册公共约束检查；无额外唯一键。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 13. `product.material_candidate_batch`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 一批待核对的修正提案。
 
@@ -450,12 +492,16 @@ erDiagram
 | `decision_state` | `text` | 否 | 无 | pending、adopted、declined、superseded |
 | `decision_revision` | `bigint` | 否 | 无 | 决定并发令牌；正整数 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：按字段引用及总册公共约束检查；无额外唯一键。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 14. `product.material_candidate`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 结构化解析内容的不可变候选。
 
@@ -475,12 +521,15 @@ erDiagram
 | `source_refs` | `jsonb` | 否 | '[]'::jsonb | 原页及内容出处；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `basis_revision` | `bigint` | 否 | 无 | 解析依据的内容修订 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(batch_id,local_key)；reference的parent_ref须同导入；未采用内容不算正式来源。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 15. `product.material_content_current`
+
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
 
 当前采用内容的查询索引。
 
@@ -501,6 +550,9 @@ erDiagram
 
 ## 16. `product.material_adoption`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 采用或不采用的不可变决定。
 
 主键：`(decision_id)`。写入方式：只追加。
@@ -517,12 +569,16 @@ erDiagram
 | `impact` | `jsonb` | 否 | 无 | 受影响章节、内容、待入库引用及需重核项 |
 | `request_ref` | `uuid` | 否 | 无 | 幂等收据；FK → `product.command_receipt.request_ref` |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(batch_id,batch_revision)；只检查本次读写集合及依赖，不因无关章变化拒绝。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 17. `product.material_chapter`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 教材当前目录索引。
 
@@ -539,12 +595,16 @@ erDiagram
 | `revision` | `bigint` | 否 | 无 | 从1递增；写入时比较预期修订，不以时间代替 |
 | `catalog_basis_ref` | `jsonb` | 否 | 无 | 本次目录依据的采用记录或初始解析；Ref，见总册§3 |
 | `updated_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：父子须同教材且无环；存在章节关联时不得静默移除该章；不物理删除；历史目录由采用快照恢复。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 18. `product.material_intake_submission`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 提交Domain的教材内容包。
 
@@ -561,12 +621,16 @@ erDiagram
 | `domain_receipt_ref` | `jsonb` | 是 | 无 | Domain受理收据；Ref，见总册§3 |
 | `wait_state` | `text` | 否 | 无 | waiting、timed_out、closed |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(trigger_event_id)；接口delivery_state从runtime投递/执行结果投影；本表只保存受理及wait_state，不复制队列或重试状态。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 19. `product.chapter_association`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 章节采用的Task及方法。
 
@@ -584,10 +648,11 @@ erDiagram
 | `active` | `boolean` | 否 | true | 是否仍作为当前章节关联 |
 | `last_event_ref` | `uuid` | 否 | 无 | 变更事实；逻辑引用runtime.events |
 | `updated_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：部分UQ(chapter_id,task_id) WHERE active；保留方法×章节适用关系；不直接关联KC。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 20. `product.command_receipt`
 
@@ -616,6 +681,9 @@ erDiagram
 
 ## 21. `product.learning_target`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 学习目标身份及草稿头。
 
 主键：`(target_id)`。写入方式：头指针可更新。
@@ -626,12 +694,16 @@ erDiagram
 | `textbook_id` | `uuid` | 否 | 无 | 适用教材；FK → `product.textbook.textbook_id` |
 | `head_revision` | `bigint` | 否 | 无 | 最新目标修订 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：FK(target_id,head_revision)→learning_target_version，提交时检查。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 22. `product.learning_target_version`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 完整目标定义快照。
 
@@ -647,12 +719,16 @@ erDiagram
 | `gaps` | `jsonb` | 否 | '[]'::jsonb | Issue[]；草稿缺口，不等于可应用 |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：同一修订不可覆盖；应用只能引用完整快照。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 23. `product.application_check`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 应用课程前的固定检查结果。
 
@@ -668,12 +744,16 @@ erDiagram
 | `purpose_checks` | `jsonb` | 否 | 无 | 各用途检查结果及Domain/Evaluation依据引用 |
 | `blockers` | `jsonb` | 否 | '[]'::jsonb | Issue[]；非空不得应用 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：按字段引用及总册公共约束检查；无额外唯一键。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 24. `product.course_application`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 正式应用的课程快照。
 
@@ -690,12 +770,15 @@ erDiagram
 | `target_basis_ref` | `uuid` | 否 | 无 | 评价目标依据；FK → `product.target_basis.basis_id` |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：同一request重试返回原应用；应用不改不删。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 25. `product.application_head`
+
+数据性质：确定性派生索引；来源和重建规则见[事件正文§3.1](../contracts/Event_Facts.md#31-派生索引与控制数据)。不保存独立历史事实。
 
 教材与目标组合的当前应用。
 
@@ -714,6 +797,9 @@ erDiagram
 
 ## 26. `product.target_basis`
 
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
+
 规范化的目标评价依据。
 
 主键：`(basis_id)`。写入方式：只追加。
@@ -726,12 +812,16 @@ erDiagram
 | `normalized_basis` | `jsonb` | 否 | 无 | Product§5：目标项、Claim/方法精确引用、条件、采用规则；显示名称不参与评价依据 |
 | `digest` | `text` | 否 | 无 | 规范化依据SHA-256；命中后仍比较实际正文 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(textbook_id,target_id,digest)；散列冲突不同正文拒绝，不错误复用。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 27. `product.learning_space`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 一个学生的教材和目标组合。
 
@@ -742,15 +832,19 @@ erDiagram
 | `space_id` | `uuid` | 否 | 无 | 学习空间身份；主键组成字段 |
 | `student_id` | `uuid` | 否 | 无 | 学生；FK → `product.accounts.account_id` |
 | `textbook_id` | `uuid` | 否 | 无 | 教材；FK → `product.textbook.textbook_id` |
-| `target_id` | `uuid` | 否 | 无 | 目标；FK → `product.learning_target.target_id` |
+| `target_id` | `uuid` | 否 | 无 | 稳定目标身份，创建空间后不换；修订由采用记录固定；FK → `product.learning_target.target_id` |
 | `current_adoption_ref` | `uuid` | 否 | 无 | 当前采用；FK → `product.space_adoption.adoption_id` |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
 约束与关系：UQ(student_id,textbook_id,target_id)；重复选用直接进入原空间；采用指针循环提交时检查。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 28. `product.space_adoption`
+
+数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
+
 
 空间的历次课程采用。
 
@@ -767,10 +861,11 @@ erDiagram
 | `reason` | `text` | 否 | 无 | 首次选用或管理员应用新课程的原因 |
 | `event_ref` | `uuid` | 否 | 无 | 采用事件；逻辑引用runtime.events |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
+| `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
-约束与关系：UQ(space_id,adoption_seq)；指针更新与Evaluation当前结果校验共享短事务。
+约束与关系：UQ(space_id,adoption_seq)；Product在同一短事务内核对application_ref与target_basis_ref的textbook_id、target_id均等于所属空间；previous_adoption_id及current_adoption_ref只能引用本空间采用。同目标升版追加采用，不修改空间身份；指针更新与Evaluation当前结果校验共享短事务。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
 ## 修订记录
 
@@ -779,3 +874,7 @@ erDiagram
 | v0.1 | 2026-11-15 | 逐表补齐列、键、空值、默认值、约束和关系；未执行建表或迁移 |
 
 本轮修订（v0.2，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
+
+本轮修订（v0.3，2026-11-15）：补齐空间稳定身份及采用引用一致性约束。见MVP决定登记§95。
+
+本轮修订（v0.4，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。
