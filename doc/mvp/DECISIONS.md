@@ -1,14 +1,14 @@
 # MVP 决定承接与工作记录
 
-> **版本**：v0.106<br>
+> **版本**：v0.107<br>
 > **文档性质**：新MVP目录的决定、待决和变更登记<br>
 > **状态**：已进入小增量工程实现；进度与待确认项见实施计划<br>
 > **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；已推进至E01-03工程实现；未修改产品规则或历史原型<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
 > **评审记录**：小增量规则见§101；编程规范与整改见§107；日志格式补齐见§108；规范完善与重新整改见§109<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-15<br>
-> **修订说明**：v0.105 → v0.106，登记E01-03依赖、资源和应用接线；见§110<br>
+> **更新日期**：2026-11-16<br>
+> **修订说明**：v0.106 → v0.107，登记E01-04依赖、数据库连接参数和首批迁移范围<br>
 
 ---
 
@@ -3283,3 +3283,19 @@ API、应用Worker和前端各一副本，接收其候选CPU／内存限额；�
 | Delivery_Plan.md | v0.64 → v0.65 |
 | engineering/README.md | v0.88 → v0.89 |
 | DECISIONS.md | v0.105 → v0.106 |
+
+## 111. E01-04数据库结构与迁移
+
+用户确认继续E01-04，并接收SQLAlchemy 2.1.8、psycopg 3.3.9、Alembic 1.20.1；API和Worker各用一个连接池，最多5连接、不扩容。D01起点：建连5秒、池等待3秒、SQL10秒、锁等待3秒、事务空闲10秒。迁移独立运行，不套用短SQL时限。
+
+首批建立六个模块schema和Alembic版本表，业务表仍按所属增量迁移。迁移账号与运行账号分开，API／Worker只检查版本、不执行DDL。单一发布链、事务部署锁和失败整体回滚沿已定设计实施，不改Temporal内部表。交付及验证见[数据库实施](../../src/m1/deploy/environments/local-wsl/database.md)，进度只在实施计划维护；E01-05未开始。
+
+| 文档 | 版本 |
+| :--- | :--- |
+| Database_Design.md | v0.7 → v0.8 |
+| Infrastructure_and_Deployment_Design.md | v0.47 → v0.48 |
+| Source_Organization.md | v0.6 → v0.7 |
+| System_Foundation_Design.md | v0.51 → v0.52 |
+| Delivery_Plan.md | v0.65 → v0.66 |
+| engineering/README.md | v0.89 → v0.90 |
+| DECISIONS.md | v0.106 → v0.107 |

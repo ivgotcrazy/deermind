@@ -2,7 +2,7 @@
   "components": {
     "schemas": {
       "Health": {
-        "description": "Only the API and mounted file storage are covered in this increment.",
+        "description": "报告就绪状态，不暴露连接配置或数据库内部信息。",
         "properties": {
           "status": {
             "title": "Status",

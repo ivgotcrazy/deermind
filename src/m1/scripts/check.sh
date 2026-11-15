@@ -12,8 +12,8 @@ check_sources() {
   python3 quality/check_boundaries.py
 
   if [[ -d server/src ]]; then
-    ruff check server/src server/tests
-    ruff format --check server/src server/tests
+    ruff check server/src server/tests server/migrations
+    ruff format --check server/src server/tests server/migrations
     pyright --project server/pyrightconfig.json
   fi
 
@@ -56,7 +56,7 @@ check_charts() {
   local component
   local chart
   local extra=()
-  for component in postgres temporal nats temporal-schema; do
+  for component in postgres temporal nats temporal-schema database-migration; do
     chart="deploy/helm/$component"
     case "$component" in
       temporal)

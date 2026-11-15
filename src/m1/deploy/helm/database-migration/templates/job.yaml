@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 120
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      nodeSelector: {{ .Values.nodeSelector | toJson }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+      containers:
+        - name: migrate
+          image: {{ required "migration image is required" .Values.image | quote }}
+          imagePullPolicy: IfNotPresent
+          command: ["deermind-database", "upgrade"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources: {{ .Values.resources | toJson }}
+          env:
+            - name: M1_DB_HOST
+              value: {{ required "database host is required" .Values.database.host | quote }}
+            - name: M1_DB_PORT
+              value: {{ .Values.database.port | quote }}
+            - name: M1_DB_NAME
+              value: {{ .Values.database.name | quote }}
+            - name: M1_DB_USER
+              value: deermind_migrator
+            - name: M1_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "database secret is required" .Values.database.existingSecret | quote }}
+                  key: migration-password

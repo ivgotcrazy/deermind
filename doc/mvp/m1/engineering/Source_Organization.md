@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.6<br>
-> **状态**：目录与OpenAPI设计保持；已创建E01-03应用骨架及构建部署入口，进度见实施计划<br>
+> **版本**：v0.7<br>
+> **状态**：E01-04迁移、数据库连接及验证入口已接入；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-15<br>
-> **修订说明**：v0.5 → v0.6，落实E01-03后端包、双入口客户端、镜像与应用测试；不建立后续功能占位<br>
+> **更新日期**：2026-11-16<br>
+> **修订说明**：v0.6 → v0.7，登记首批迁移脚本、wheel打包和数据库验证入口<br>
 
 ## 1. 范围与维护位置
 
@@ -258,13 +258,19 @@ server/migrations/
 
 | 配置或资产 | 归属与生效 |
 | --- | --- |
-| 技术配置结构 | bootstrap/settings.py；环境取值来自deploy/environments或本机忽略文件 |
+| 技术配置结构 | bootstrap/settings.py与bootstrap/database.py；环境取值来自deploy/environments或本机忽略文件 |
 | 蓝图、规则、目标、领域定义 | 所属模块正式数据；初始化也走业务处理和事实事件，不在values.yaml维护第二份 |
 | 模型用途与受理配置 | AI底座及正式配置记录；密钥只取当前凭据 |
 | 指令模板与AI输出Schema | 所属Operation，随Python包发布 |
 | API/Worker依赖 | server依赖清单及唯一锁文件；不分两套版本 |
 | 前端依赖 | clients/package.json及其锁文件 |
 | 敏感连接、密码、模型密钥 | Secret引用或本地受限文件；Git、OpenAPI和VITE变量均不包含秘密 |
+
+### 6.1 E01-04落地
+
+本批建立`server/migrations/env.py`及首个schema revision；迁移命令位于`entrypoints/maintenance/database.py`。Hatch将迁移目录打入wheel的`deermind/_migrations`；容器无需源码目录。连接配置由`bootstrap/database.py`装配，Engine与版本检查在`infrastructure/database/connection.py`。
+
+首批没有业务表，不建立空的六模块表映射或metadata汇总。后续有表时按本节所有权补入；Alembic生成模板也在需要生成新revision时增加。实际数据库测试位于`tests/migrations/`，由`scripts/test-database.py`在显式集群的临时Pod中使用已构建包运行；部署Job归`deploy/helm/database-migration/`。
 
 ## 7. 测试目录与执行边界
 
@@ -394,3 +400,4 @@ Helm沿[官方Chart文件结构](https://helm.sh/docs/topics/charts/)组织。�
 | v0.4 | 2026-11-15 | 落实编程规范和独立开发检查工具；不建立E01-03应用，见决定登记§107 |
 | v0.5 | 2026-11-15 | 登记部署命令夹具及可读性评审要求，不创建后续应用；见决定登记§109 |
 | v0.6 | 2026-11-15 | 落实E01-03后端包、双入口客户端、镜像与应用测试；不建立后续功能占位 |
+| v0.7 | 2026-11-16 | 登记首批迁移脚本、wheel打包和数据库验证入口 |

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["images", "filesClaim", "temporal", "nodeSelector", "resources"],
+  "required": ["images", "filesClaim", "temporal", "nodeSelector", "resources", "database"],
   "properties": {
     "images": {
       "type": "object",
@@ -92,6 +92,30 @@
     },
     "initializeNamespace": {
       "type": "boolean"
+    },
+    "database": {
+      "type": "object",
+      "required": ["host", "port", "name", "existingSecret"],
+      "properties": {
+        "host": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "existingSecret": {
+          "type": "string",
+          "minLength": 1
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

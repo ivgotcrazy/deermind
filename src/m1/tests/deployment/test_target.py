@@ -156,6 +156,7 @@ class TargetTests(unittest.TestCase):
                             str(values),
                             "--no-hooks",
                             "--wait",
+                            "--wait-for-jobs",
                             "--timeout",
                             "5m",
                         ],

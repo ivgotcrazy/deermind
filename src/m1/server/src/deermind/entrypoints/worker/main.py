@@ -6,6 +6,7 @@ import signal
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from deermind.bootstrap.database import database_lifespan
 from deermind.bootstrap.services import create_worker
 from deermind.bootstrap.settings import Settings
 from deermind.foundation.system.logging import configure_logging
@@ -22,6 +23,12 @@ async def run() -> None:
     READY_FILE.unlink(missing_ok=True)
     settings = Settings.from_environment()
     check_storage(settings.files_root)
+    async with database_lifespan():
+        await serve(settings)
+
+
+async def serve(settings: Settings) -> None:
+    """数据库版本检查通过后，才连接Temporal并拉取任务。"""
     async with asyncio.timeout(15):
         client = await Client.connect(
             settings.temporal_address,

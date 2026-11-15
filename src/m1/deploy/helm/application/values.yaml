@@ -4,6 +4,11 @@ images:
 initializeNamespace: false
 nodeSelector: {}
 filesClaim: ''
+database:
+  host: ''
+  port: 5432
+  name: deermind
+  existingSecret: ''
 temporal:
   address: ''
   namespace: ''

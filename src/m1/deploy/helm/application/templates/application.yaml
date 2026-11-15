@@ -38,6 +38,19 @@ spec:
             capabilities:
               drop: ["ALL"]
           env:
+            - name: M1_DB_HOST
+              value: {{ $root.Values.database.host | quote }}
+            - name: M1_DB_PORT
+              value: {{ $root.Values.database.port | quote }}
+            - name: M1_DB_NAME
+              value: {{ $root.Values.database.name | quote }}
+            - name: M1_DB_USER
+              value: deermind_app
+            - name: M1_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $root.Values.database.existingSecret | quote }}
+                  key: app-password
             - name: M1_FILES_ROOT
               value: /data/files
             - name: M1_TEMPORAL_ADDRESS

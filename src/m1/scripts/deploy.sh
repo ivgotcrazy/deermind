@@ -81,7 +81,7 @@ main() {
   # 先检查 Chart；禁止上游 schema hooks，初始化必须由独立步骤明确执行。
   helm "${target[@]}" lint "$chart" -f "$values"
   helm "${target[@]}" upgrade --install "$release" "$chart" -f "$values" \
-    --no-hooks --wait --timeout 5m
+    --no-hooks --wait --wait-for-jobs --timeout 5m
 }
 
 main "$@"

@@ -1,9 +1,14 @@
 images:
-  server: deermind/server:e01-03-r2
+  server: deermind/server:e01-04-r2
   client: deermind/client:e01-03-r2
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
 filesClaim: deermind-files
+database:
+  host: deermind-postgres
+  port: 5432
+  name: deermind
+  existingSecret: deermind-postgres
 temporal:
   address: deermind-temporal-frontend:7233
   namespace: dm-local-wsl

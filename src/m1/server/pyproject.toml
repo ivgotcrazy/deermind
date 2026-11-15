@@ -12,15 +12,22 @@ dependencies = [
   "uvicorn==0.54.0",
   "pydantic==2.14.3",
   "temporalio==1.36.1",
+  "sqlalchemy[asyncio]==2.1.8",
+  "psycopg[binary]==3.3.9",
+  "alembic==1.20.1",
 ]
 
 [project.scripts]
 deermind-api = "deermind.entrypoints.api.app:main"
 deermind-worker = "deermind.entrypoints.worker.main:main"
 deermind-probe = "deermind.entrypoints.maintenance.probe:main"
+deermind-database = "deermind.entrypoints.maintenance.database:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/deermind"]
+
+[tool.hatch.build.targets.wheel.force-include]
+migrations = "deermind/_migrations"
 
 [tool.uv]
 required-version = "==0.13.8"

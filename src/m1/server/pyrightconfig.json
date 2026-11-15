@@ -3,7 +3,9 @@
     "src",
     "tests",
     "../tests/deployment/fixtures/check_worker.py",
-    "../scripts/export-openapi.py"
+    "../scripts/export-openapi.py",
+    "migrations",
+    "../tests/migrations"
   ],
   "exclude": [".venv", "dist"],
   "venvPath": ".",

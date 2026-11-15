@@ -1,0 +1,5 @@
+apiVersion: v2
+name: deermind-database-migration
+description: Explicit business schema migration; no application pods
+type: application
+version: 0.1.0
