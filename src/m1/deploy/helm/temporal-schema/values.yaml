@@ -1,5 +1,5 @@
-image: ""
-existingSecret: ""
-postgresHost: ""
-runId: ""
+image: ''
+existingSecret: ''
+postgresHost: ''
+runId: ''
 nodeSelector: {}

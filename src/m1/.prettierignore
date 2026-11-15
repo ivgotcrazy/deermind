@@ -1,0 +1,7 @@
+.artifacts/
+**/node_modules/
+**/generated/
+**/dist/
+**/package-lock.json
+**/templates/**
+**/*.md

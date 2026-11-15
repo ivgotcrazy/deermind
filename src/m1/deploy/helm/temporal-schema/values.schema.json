@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["image", "existingSecret", "postgresHost", "runId"],
+  "properties": {
+    "image": { "type": "string", "minLength": 1 },
+    "existingSecret": { "type": "string", "minLength": 1 },
+    "postgresHost": { "type": "string", "minLength": 1 },
+    "runId": { "type": "string", "minLength": 1, "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "nodeSelector": { "type": "object", "additionalProperties": { "type": "string" } }
+  }
+}

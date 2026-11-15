@@ -14,7 +14,7 @@ helm:
   archive_url: https://get.helm.sh/helm-v4.3.2-linux-amd64.tar.gz
   archive_sha256: d1c0278d46beab79582d7e50f5b3dc206944ba8e577cde618513fd07daa53983
 postgres:
-  version: "17.12"
+  version: '17.12'
   image: docker.io/library/postgres:17.12@sha256:0d938e975177bef9f1f61f3f9dbcf2e0aa0a139568f66d3415ed8892eb97f6ac
   chart: deploy/helm/postgres
 temporal:

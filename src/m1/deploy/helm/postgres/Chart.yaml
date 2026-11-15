@@ -3,4 +3,4 @@ name: deermind-postgres
 description: Single PostgreSQL instance for the M1 integration environment
 type: application
 version: 0.1.0
-appVersion: "17.12"
+appVersion: '17.12'

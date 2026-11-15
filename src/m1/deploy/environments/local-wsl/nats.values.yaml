@@ -6,7 +6,7 @@ config:
     enabled: true
     fileStore:
       maxSize: 1Gi
-      pvc: {enabled: true, size: 2Gi, storageClassName: local-path}
+      pvc: { enabled: true, size: 2Gi, storageClassName: local-path }
     memoryStore:
       enabled: false
   merge:
@@ -21,16 +21,16 @@ container:
   env:
     NATS_TOKEN:
       valueFrom:
-        secretKeyRef: {name: deermind-nats, key: token}
+        secretKeyRef: { name: deermind-nats, key: token }
   resources:
-    requests: {cpu: 100m, memory: 128Mi}
-    limits: {cpu: 500m, memory: 256Mi}
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: 500m, memory: 256Mi }
 podTemplate:
   configChecksumAnnotation: true
   merge:
     spec:
       automountServiceAccountToken: false
-      nodeSelector: {kubernetes.io/hostname: deermind-m1}
-reloader: {enabled: false}
-promExporter: {enabled: false}
-natsBox: {enabled: false}
+      nodeSelector: { kubernetes.io/hostname: deermind-m1 }
+reloader: { enabled: false }
+promExporter: { enabled: false }
+natsBox: { enabled: false }

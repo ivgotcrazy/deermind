@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "image",
+    "existingSecret",
+    "storageClass",
+    "storageSize",
+    "maxConnections",
+    "sharedBuffers",
+    "bootstrap"
+  ],
+  "properties": {
+    "image": { "type": "string", "minLength": 1 },
+    "existingSecret": { "type": "string", "minLength": 1 },
+    "storageClass": { "type": "string", "minLength": 1 },
+    "storageSize": { "type": "string", "minLength": 1 },
+    "nodeSelector": { "type": "object", "additionalProperties": { "type": "string" } },
+    "resources": { "type": "object" },
+    "maxConnections": { "type": "integer", "minimum": 1 },
+    "sharedBuffers": { "type": "string", "minLength": 1 },
+    "bootstrap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "runId"],
+      "properties": { "enabled": { "type": "boolean" }, "runId": { "type": "string" } },
+      "if": { "properties": { "enabled": { "const": true } } },
+      "then": { "properties": { "runId": { "minLength": 1, "pattern": "^[a-z0-9][a-z0-9-]*$" } } }
+    }
+  }
+}

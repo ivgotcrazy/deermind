@@ -1,0 +1,23 @@
+{
+  "name": "deermind-quality",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Development checks only; not a client or server application",
+  "engines": {
+    "node": "24.22.3",
+    "npm": "11.19.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.15.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-vue": "10.12.1",
+    "globals": "17.14.0",
+    "prettier": "3.10.1",
+    "pyright": "1.1.414",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.2",
+    "vue": "3.5.43",
+    "vue-tsc": "3.3.14"
+  }
+}

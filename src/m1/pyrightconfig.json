@@ -1,0 +1,7 @@
+{
+  "include": ["scripts", "tests", "quality"],
+  "exclude": ["**/node_modules", "**/__pycache__", ".artifacts"],
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "standard",
+  "reportUnnecessaryTypeIgnoreComment": "error"
+}

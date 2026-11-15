@@ -1,14 +1,14 @@
 # MVP 决定承接与工作记录
 
-> **版本**：v0.102<br>
+> **版本**：v0.105<br>
 > **文档性质**：新MVP目录的决定、待决和变更登记<br>
 > **状态**：已进入小增量工程实现；进度与待确认项见实施计划<br>
 > **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；已推进至E01-02工程实现；未修改产品规则或历史原型<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：小增量规则见§101；E01-02确认与交付见§106<br>
+> **评审记录**：小增量规则见§101；编程规范与整改见§107；日志格式补齐见§108；规范完善与重新整改见§109<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.101 → v0.102，登记E01-02版本、资源确认及交付，见§106<br>
+> **修订说明**：v0.104 → v0.105，登记业界规范与可读性整改；不推进E01-03，见§109<br>
 
 ---
 
@@ -3207,3 +3207,60 @@ M1-DEC-086：用户确认M1继续用schema划分模块数据，数据库拆分�
 | DECISIONS.md | v0.101 → v0.102 |
 | database/Temporal.md | v0.1 → v0.2 |
 | database/Temporal_Visibility.md | v0.1 → v0.2 |
+
+## 107. 编程规范、自动检查与已有增量整改
+
+2026-11-15，用户确认先落实编程规范和自动检查，整改E01-01/02、同步文档并自检后提交评审，暂不推进E01-03。
+
+- 编程规范统一维护通用写法、Python、Vue/TS、脚本、配置、日志、异常、测试和例外；目录及业务合同仍归已有设计。
+- 采用Ruff＋Pyright、ESLint/Vue/TS＋Prettier＋vue-tsc、ShellCheck＋shfmt及YAML/Helm检查；工具固定版本，检查不自动升级或改文件。
+- `quality/`仅存开发检查工具和规则，独立锁定；不建立后端/前端应用，不把检查工具的运行版本当作全部应用依赖已确认。
+- 本轮用正反样例证明检查有效；正式模块/客户端不存在的检查明确标为待接入。E01-03须接入实际源码，不能用规则样例代替产品实现验证。
+- 既有脚本、测试和普通配置按规范整改；业务行为、组件版本和资源配置保持。自有Chart增加values字段类型校验，不修改官方Chart或数据库数据。
+
+规范见[编程规范](m1/engineering/Coding_Standard.md)，工具、复核与证据见[检查说明](../../src/m1/quality/README.md)。进度归实施计划；检查通过后仍待用户评审。
+
+| 文档 | 版本 |
+| :--- | :--- |
+| Coding_Standard.md | 新增v0.1 |
+| m1/engineering/Source_Organization.md | v0.3 → v0.4 |
+| m1/engineering/Client_Design.md | v0.33 → v0.34 |
+| m1/engineering/Infrastructure_and_Deployment_Design.md | v0.44 → v0.45 |
+| m1/engineering/Delivery_Plan.md | v0.62 → v0.63 |
+| m1/engineering/README.md | v0.85 → v0.86 |
+| m1/README.md | v0.76 → v0.77 |
+| README.md | v0.97 → v0.98 |
+| DECISIONS.md | v0.102 → v0.103 |
+
+## 108. 统一应用日志格式与示例
+
+2026-11-15，用户确认把统一日志格式、字段说明和正常／异常示例补入相关文档，注意升版与一致性，暂不推进E01-03。
+
+- 公共运行§6.1唯一维护应用日志合同：UTF-8单行JSON、必填字段、按关联填写的标识、错误与重试字段、正常和异常示例。
+- 编程规范与基础设施只引用该合同。API／Worker遵循统一格式，PostgreSQL／Temporal／NATS保留原生容器日志。
+- 不记录凭据及完整学生正文，不以日志替代事实事件。本轮不实现日志封装、不改代码或部署。
+
+| 文档 | 版本 |
+| :--- | :--- |
+| m1/engineering/System_Foundation_Design.md | v0.49 → v0.50 |
+| m1/engineering/Coding_Standard.md | v0.1 → v0.2 |
+| m1/engineering/Infrastructure_and_Deployment_Design.md | v0.45 → v0.46 |
+| m1/engineering/README.md | v0.86 → v0.87 |
+| DECISIONS.md | v0.103 → v0.104 |
+
+## 109. 业界编程规范与可读性整改
+
+2026-11-15，用户确认以业界规范加项目补充完善编程规范，重新整改E01-01/02脚本和测试，重点检查分段、换行、注释及可读性，不能仅以工具通过交付；暂不推进E01-03。
+
+- 采用PEP 8／257、Google Shell与TS/JS规范、Vue官方指南；明确100字符行宽、解释器、注释语言、Vue导出及生成物等项目取舍。
+- 补齐可读性、函数文档、错误／资源处理、测试组织和逐文件人工评审门槛；工具只承担能够自动检查的部分。
+- 整理脚本的参数、校验、执行及结果段落；测试增加阶段说明、清理边界及可单独检查的命令夹具。增加部署入口的失败停止与目标透传回归。
+- 不改组件版本、资源配置、业务合同或日志封装；交付及review证据归检查说明和实施计划。
+
+| 文档 | 版本 |
+| :--- | :--- |
+| m1/engineering/Coding_Standard.md | v0.2 → v0.3 |
+| m1/engineering/Source_Organization.md | v0.4 → v0.5 |
+| m1/engineering/Delivery_Plan.md | v0.63 → v0.64 |
+| m1/engineering/README.md | v0.87 → v0.88 |
+| DECISIONS.md | v0.104 → v0.105 |

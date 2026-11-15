@@ -2,6 +2,8 @@
 
 仅部署 PostgreSQL、Temporal、NATS JetStream 和共享文件卷。应用、前端、业务表、业务消息订阅及 AI 均不在本次范围。版本与制品 SHA-256 见[清单](../../components/manifest.yaml)。
 
+编程规范整改及本轮回归见[自检记录](../../../quality/README.md#本轮自检)。本轮不改变组件版本、资源配额或部署目标。
+
 ## 配置与边界
 
 | 组件 | 本次部署 |

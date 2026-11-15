@@ -1,0 +1,5 @@
+# Development checks only; this is not the backend runtime dependency lock.
+pathspec==1.1.1
+PyYAML==6.0.3
+ruff==0.17.5
+yamllint==1.38.0
