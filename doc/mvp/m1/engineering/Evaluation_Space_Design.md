@@ -1,11 +1,11 @@
 # M1 Evaluation Space 设计
 
-> **版本**：v0.24<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **版本**：v0.25<br>
+> **状态**：完整工程组织与OpenAPI修订稿待审；未创建源码、未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.23 → v0.24，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **修订说明**：v0.24 → v0.25，同步完整工程目录、模块依赖及OpenAPI使用；见MVP决定登记§97<br>
 
 本文设计评价定义、Evidence形成、Belief更新和个人目标达成计算，明确语义解释与确定性计算怎样衔接。学习目标定义归产品业务，原始交互事实及当题判题反馈归Interaction，Evaluation不直接控制教学；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -24,6 +24,8 @@
 两个AI Operation在原Run内复用目标计算函数，不为确定性计算创建子Operation。目标采用变化则由普通`reassess_target`处理，保留本次受理、结果及失败记录，不创建AI OperationRun；两类生产处理都可发布`goal_result`，公共结果关联不能限定为AI运行身份。
 
 **事件事实源。** 取材、解释、Evidence、概率修订及目标结果分别以完整事件保存。已有算法、资格和顺序不变；保存先事件后投影，重建不再调用AI或计算概率。字段及投影登记只在[事件正文合同](contracts/Event_Facts.md)维护；本稿中的“保存业务对象”均指共同短事务内由事件生成投影。
+
+**源码落点。** `server/src/deermind/spaces/evaluation/`承载definitions、evidence、belief、goals、processing及两项operations；belief数值函数保持无I/O。公开合同、私有存储、投影及依赖规则见[源码组织§3—4](Source_Organization.md#3-后端源码)；HTTP按[OpenAPI合同](API_and_Message_Design.md#7-openapi与可执行合同)导出，本文继续维护业务行为。
 
 ## 1. Claim、方法判据与评价方面
 
@@ -730,3 +732,5 @@ condition_facts保存start_ref、end_ref、两端时间、elapsed_seconds及know
 本轮修订（v0.23，2026-11-15）：区分目标身份与评价依据，清理分页、查询和事件字段的过期待定表述。见MVP决定登记§95。
 
 本轮修订（v0.24，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。
+
+本轮修订（v0.25，2026-11-15）：同步工程目录、职责依赖、Vue客户端及OpenAPI生成边界。仅文档修订，见MVP决定登记§97。

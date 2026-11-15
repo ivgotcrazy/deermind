@@ -1,14 +1,14 @@
 # MVP 产品迭代与文档入口
 
-> **版本**：v0.91<br>
+> **版本**：v0.92<br>
 > **文档性质**：当前MVP目录、阅读顺序与维护约定<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **状态**：完整工程组织与OpenAPI修订稿待审；未创建源码、未编码<br>
 > **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；本轮仅修订文档，历史原型与证据保留<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：本轮事件事实源修订与自检见MVP决定登记§96；待用户审阅<br>
+> **评审记录**：本轮目录与OpenAPI修订、自检见MVP决定登记§97；待用户审阅<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.90 → v0.91，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **修订说明**：v0.91 → v0.92，同步完整工程目录、模块依赖及OpenAPI使用；见MVP决定登记§97<br>
 
 ---
 
@@ -18,7 +18,7 @@
 
 此前接口修订见[API与消息设计](m1/engineering/API_and_Message_Design.md)及相关合同分册：明确目标身份与修订，统一收据、错误和输入限额，补齐读取口径。模块保留流程，数据库分册维护表结构；修订稿待审阅，限额候选仍待确认，未编码。
 
-本轮交付：[事件事实源与业务投影修订](m1/engineering/contracts/Event_Facts.md)。事件保存完整事实，生产者同事务生成查询数据，消费者按订阅加工；文档待审，未改代码和原型。
+此前交付：[事件事实源与业务投影修订](m1/engineering/contracts/Event_Facts.md)。事件保存完整事实，生产者同事务生成查询数据，消费者按订阅加工；文档待审，未改代码和原型。
 
 ## 1. 目录与当前阅读顺序
 
@@ -43,7 +43,7 @@ doc/mvp/
     └── 2026-11-11-before-swdd/    原七份M1工程文件、原文快照与清单
 ```
 
-本轮先读[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)、[九份文档分工](m1/engineering/README.md#1-文档分工)、[总体设计](m1/engineering/System_Design.md)及[本批决定与变更](DECISIONS.md#96-事件唯一事实源与同步投影)。产品输入按[M1入口](m1/README.md)、[PRD v0.29](m1/PRD.md)、[内容规格 v0.27](m1/design/Content_and_Model_Reference.md)、[交互规格 v0.26](m1/design/Interaction_Design.md)及[验证计划 v0.10](m1/validation/Validation_Plan.md)查阅。Domain合同为[v1.7](../concept-design/DeerMind_Domain_Space_Design_v1.7.md)，Evaluation为[v1.11](../concept-design/DeerMind_Evaluation_Space_Design_v1.11.md)，AI执行原则见[AI Native架构原则 v0.7](../top/DeerMind_AI_Native_Architecture_Principles_v0.7.md)。
+本轮先读[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)、[九份文档分工](m1/engineering/README.md#1-文档分工)、[总体设计](m1/engineering/System_Design.md)及[本批决定与变更](DECISIONS.md#97-完整工程目录与openapi开发合同)。产品输入按[M1入口](m1/README.md)、[PRD v0.29](m1/PRD.md)、[内容规格 v0.27](m1/design/Content_and_Model_Reference.md)、[交互规格 v0.26](m1/design/Interaction_Design.md)及[验证计划 v0.10](m1/validation/Validation_Plan.md)查阅。Domain合同为[v1.7](../concept-design/DeerMind_Domain_Space_Design_v1.7.md)，Evaluation为[v1.11](../concept-design/DeerMind_Evaluation_Space_Design_v1.11.md)，AI执行原则见[AI Native架构原则 v0.7](../top/DeerMind_AI_Native_Architecture_Principles_v0.7.md)。
 
 此前模型、活动、教材、学生及评价的决定和资产继续由[DECISIONS](DECISIONS.md)及[M1产品交接检查](m1/README.md#6-主流程闭环检查2026-11-09)索引。本批不重写历史结论，总体设计首稿不代表产品验收或全部工程设计完成。
 
@@ -135,3 +135,5 @@ M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工�
 本轮修订（v0.90，2026-11-15）：落实API与数据库评审，统一相关文档口径。见MVP决定登记§95。
 
 本轮修订（v0.91，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。
+
+本轮修订（v0.92，2026-11-15）：同步工程目录、职责依赖、Vue客户端及OpenAPI生成边界。仅文档修订，见MVP决定登记§97。

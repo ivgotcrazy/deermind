@@ -1,17 +1,19 @@
 # M1 Domain Space 设计
 
-> **版本**：v0.20<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **版本**：v0.21<br>
+> **状态**：完整工程组织与OpenAPI修订稿待审；未创建源码、未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.19 → v0.20，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **修订说明**：v0.20 → v0.21，同步完整工程目录、模块依赖及OpenAPI使用；见MVP决定登记§97<br>
 
 本文维护可复用领域内容及其业务操作，不保存学生作答、个人接触史或 Belief。依据为 [PRD R04](../PRD.md#34-维护领域处理入库并关联章节m1-r04)、[R07](../PRD.md#37-准备题目和参考m1-r07)与[内容规格§3.2–3.3](../design/Content_and_Model_Reference.md#32-领域对象与字段)；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
 入库受理和供题按Domain自己的业务合同执行并发布事实事件，公开结果保留来源引用。Product或Interaction是否等待、采用什么期限，不改变Domain的处理义务和执行预算；它们结束等待不自动取消Domain任务。消费方通过底座订阅匹配及处理自己的超时，见[总体§7.2.1三](System_Design.md#721-已确认的总体选择)。
 
 **事件事实源。** 定义版本、题面及题内参考、归类候选、入库结果和KC路径先成为完整事件，再同事务生成Domain版本及关系索引。查询表保留原ObjectRef和约束；事件保存历史正文。字段及投影登记只在[事件正文合同](contracts/Event_Facts.md)维护；本稿中的“保存业务对象”均指共同短事务内由事件生成投影。
+
+**源码落点。** `server/src/deermind/spaces/domain/`承载definitions、dependencies、intake、supply及三项operations。公开合同、私有存储、投影及依赖规则见[源码组织§3—4](Source_Organization.md#3-后端源码)；HTTP按[OpenAPI合同](API_and_Message_Design.md#7-openapi与可执行合同)导出，本文继续维护业务行为。
 
 ## 1. 领域对象、身份与关系
 
@@ -651,3 +653,5 @@ C06  relation={subject: point_1, predicate: inside, object: circle_1,
 本轮修订（v0.19，2026-11-15）：集中API与消息传输合同，模块保留业务语义和处理规则；字段与入口待审，未编码。见[MVP决定登记§94](../../DECISIONS.md#94-api与消息设计分册及唯一维护位置)。
 
 本轮修订（v0.20，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。
+
+本轮修订（v0.21，2026-11-15）：同步工程目录、职责依赖、Vue客户端及OpenAPI生成边界。仅文档修订，见MVP决定登记§97。

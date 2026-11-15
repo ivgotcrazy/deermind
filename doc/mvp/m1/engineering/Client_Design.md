@@ -1,11 +1,11 @@
 # M1 客户端设计
 
-> **版本**：v0.27<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **版本**：v0.28<br>
+> **状态**：完整工程组织与OpenAPI修订稿待审；未创建源码、未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.26 → v0.27，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **修订说明**：v0.27 → v0.28，同步完整工程目录、模块依赖及OpenAPI使用；见MVP决定登记§97<br>
 
 本文设计学生与管理员Web客户端的程序组织、交互状态和后端接入，两端通过电脑浏览器验收，产品流程以PRD及已确认原型为输入。客户端不自行计算Belief或决定核心活动规则，前端采用Vue 3＋TypeScript＋Vite；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。M1不承担原生安装包、专门平板适配或学习用时统计与提醒。
 
@@ -17,11 +17,11 @@
 
 前端采用Vue 3＋TypeScript＋Vite，见[登记§61](../../DECISIONS.md#61-m1代码组织与前后端框架)。在同一仓库的`src/m1/clients/`维护一个前端工程，学生和管理员分别设入口、页面及状态，共享内容渲染和基础组件；顶层组织见[总体§5.1](System_Design.md#51-已确认的源码组织)。入口分开不代替后端权限校验。
 
-当前原型采用同类技术，可逐项复用适用组件；模拟响应、硬编码概率和仅用于演示的状态留在原型。正式前端按已确认业务合同接入后端。框架的具体版本、路由与状态管理库、构建发布配置，以及支持的浏览器版本和窗口条件后续审阅，本轮不增加手机和平板适配。
+当前原型采用同类技术，可逐项复用适用组件；模拟响应、硬编码概率和仅用于演示的状态留在原型。正式前端按已确认业务合同接入后端。框架具体版本、路由/状态库及浏览器验收条件继续接收；目录、两入口构建和OpenAPI接线见§2，本轮不增加手机和平板适配。
 
 ## 2. 页面、组件与状态组织
 
-沿用学生聊天＋教材单页和管理员现有页面，不按每个Space另建前端应用。工程目录按总体既定src/m1/clients组织，组件按以下责任拆分：
+沿用学生聊天＋教材单页和管理员现有页面，不按每个Space另建前端应用。工程目录按总体既定src/m1/clients组织，完整树见§2.1；组件按以下责任拆分：
 
 | 单元 | 唯一职责 |
 | --- | --- |
@@ -33,6 +33,119 @@
 | ContentRenderer | 两端共用文字、公式、图表及答题区渲染，合同见§3.1 |
 
 学生活动目录只定位消息，教材浏览只改变展示状态。管理员解析候选、领域入库和章节关联分别持有各自收据。是否使用独立状态管理库留在前端依赖评审；不为上述单元默认增加后端服务。
+
+### 2.1 Vue工程目录
+
+以下路径相对`src/m1/clients/`。一个工程构建管理员与学生两个入口；业务功能按使用场景组织，不按后端数据库表生成页面。Vue官方提供TypeScript/Vite工程建议，但不规定唯一业务目录；本树是DeerMind的组织约定。
+
+```text
+clients/
+├── package.json                  # 两端共用依赖、构建和检查命令
+├── package-lock.json             # 沿用npm工具链时的唯一前端锁文件
+├── vite.config.ts                # 两个HTML入口及开发代理
+├── tsconfig.json
+├── tsconfig.app.json             # Vue/浏览器代码，strict
+├── tsconfig.node.json            # 构建配置与Node工具
+├── env.d.ts
+├── .env.example                  # 仅非秘密示例，不含可用凭据
+├── admin/index.html              # /admin/构建入口
+├── student/index.html            # /student/构建入口
+├── public/                       # 无需打包处理的公共静态文件
+├── src/
+│   ├── admin/
+│   │   ├── main.ts
+│   │   ├── App.vue
+│   │   ├── layouts/              # 管理员框架、导航与页面容器
+│   │   ├── router/               # 管理员路由表及入口守卫
+│   │   └── features/
+│   │       ├── materials/        # 教材助手、候选核对和章节关联
+│   │       ├── domain/           # Domain对象及待入库处理
+│   │       ├── evaluation/       # Claim、方法判据与评价方面
+│   │       ├── targets/          # 学习目标定义及应用
+│   │       ├── interaction/      # 四类活动配置
+│   │       └── learning-spaces/  # 教材、目标结果与空间事件追溯
+│   ├── student/
+│   │   ├── main.ts
+│   │   ├── App.vue
+│   │   ├── layouts/              # 聊天＋教材＋活动目录单页容器
+│   │   ├── router/               # 入口及空间定位，不新增教学/教材菜单
+│   │   └── features/
+│   │       ├── learning-space/   # 选用、进入、三栏协调与服务端状态
+│   │       ├── chat/             # 富文本、题目卡片、答题区、草稿与停止
+│   │       ├── activity-tree/    # 展开子活动、定位历史与当前路径
+│   │       └── textbook/         # 目录、书页、浏览与明确引用
+│   └── shared/
+│       ├── api/
+│       │   ├── generated/       # OpenAPI生成的HTTP客户端与类型
+│       │   ├── client.ts        # 同源、Cookie、当前会话头及取消控制
+│       │   └── errors.ts        # 共同错误解释；不把错误当空列表
+│       ├── realtime/
+│       │   ├── generated/       # 公开WS消息类型；复用已有共用类型
+│       │   ├── connection.ts    # 单标签页连接、重连及watch
+│       │   └── request-tracker.ts # 请求身份、受理不明及补读
+│       ├── auth/                # 登录组件、身份代次及会话状态
+│       ├── content/
+│       │   ├── ContentRenderer.vue
+│       │   ├── blocks/          # 文本、公式、表格、图形和答题空白
+│       │   ├── adapters/        # 公开结构到渲染输入，不重写题目语义
+│       │   └── types.ts         # 复用生成的RichContent等类型
+│       ├── ui/                  # 按钮、弹框、列表、空态等基础组件
+│       ├── composables/         # useXxx，可复用且不含特定业务决策
+│       ├── assets/              # 经Vite处理的图标、字体及样式资源
+│       └── styles/              # 两端共用样式变量和基础样式
+└── tests/
+    ├── unit/                    # 按src功能对应组织
+    ├── components/
+    └── fixtures/                # 小型HTTP/WS与内容样例
+```
+
+测试框架配置文件在工具接收后加入`clients/`，浏览器E2E统一放工程根`tests/e2e/`，不在两个位置重复维护。构建结果`dist/`、缓存、测试截图与录像不入Git。普通素材可放assets/public；教材原件和学生附件通过授权接口读取，不进入前端包。
+
+### 2.2 业务功能与Vue组件
+
+以`admin/features/materials/`为例：
+
+```text
+materials/
+├── pages/                       # 路由页面与页面级装配
+├── components/                  # 教材列表、助手、候选卡片等专用组件
+├── composables/                 # useMaterialAssistant等交互流程
+├── state.ts                     # 本功能的响应式状态与清理
+├── api.ts                       # 调用生成客户端并映射视图
+├── types.ts                     # 仅本地视图类型，不复制HTTP DTO
+└── index.ts                     # 有跨功能复用需求时才提供公开出口
+```
+
+组件采用Vue单文件组件、Composition API及`<script setup lang="ts">`，props/emits使用明确类型。页面组合业务组件；组件通过props/emits交互，复杂异步流程放composable。状态仅本组件使用时留在组件，不为所有字段建全局store。跨功能只调用明确出口；管理员和学生不互相导入实现，确实复用的能力提升到shared。
+
+按[Vue TypeScript建议](https://vuejs.org/guide/typescript/overview.html)使用`vue-tsc`独立检查；Vite构建成功不代表类型通过。路由与全局状态库的具体接线仍待依赖评审；若采用Vue Router/Pinia，分别落入既定router和功能状态位置，不额外建立第二套状态源。组件库、公式和图形渲染库版本保持原待定状态。
+
+### 2.3 状态所有权与生命周期
+
+| 状态 | 位置 | 更新和清理 |
+| --- | --- | --- |
+| 登录身份与auth_epoch | shared/auth | 会话核验后更新；退出/换账号清空受保护视图和旧请求影响 |
+| WebSocket与受理跟踪 | shared/realtime | 每标签页一份连接；未知受理查原收据，不自动重发写请求 |
+| 服务端业务视图 | 各feature/state或composable | 按账号、空间/教材和结果依据保存；晚到旧响应不覆盖新视图 |
+| 输入草稿 | chat或materials功能 | 按账号和资源隔离；忙时保留；退出和换账号按§5清理 |
+| 展开、选中、历史定位 | 所属组件或空间页面 | 不改变活动运行状态，不将浏览书页当成聊天范围 |
+| 共享内容渲染输入 | shared/content的props | 只渲染服务端已授权内容，不自行补答案或计算目标达成 |
+
+`shared`不维护全部业务的巨型store。管理员教材助手与学生聊天分别维护各自收据和草稿，只复用通信机制。页面离开释放watch、AbortController、定时补读及Object URL；不因此取消已受理后台工作。重新挂载从服务端视图恢复，不能仅凭浏览器缓存恢复活动或概率。
+
+### 2.4 HTTP与WebSocket接线
+
+组件→功能composable→功能api.ts→shared/api/client.ts配置的生成客户端；生成代码不手改。完整OpenAPI约定见[API§7](API_and_Message_Design.md#7-openapi与可执行合同)。传输DTO复用生成类型，本地types.ts只表达UI状态；将未知JSON强制断言成类型不能替代接口与消息校验。
+
+HTTP生成客户端负责普通请求的序列化；当前会话、CSRF、统一错误和AbortSignal由手写适配注入。受理不明按既有RequestTracker查询，不能增加通用POST自动重试。WS的command/changed/error由其公开版本Schema生成类型，HTTP与WS共用业务输入类型；内部NATS信封、私有FactRecord和后台执行权限不进入浏览器生成目录。运行时校验WS消息的必要字段和版本，不信任TypeScript类型断言。
+
+服务器通知先经shared/realtime，再由所属功能按权限补读视图。教材修正、活动动作和评价判断仍由服务端作出。页面上的隐藏和前端路由守卫只是交互限制，服务端逐次授权。
+
+### 2.5 两入口构建与浏览器测试
+
+Vite显式构建`admin/index.html`与`student/index.html`，各自引用对应main.ts；开发代理和正式部署统一使用`/api/m1`与`/ws`。同一镜像提供两个入口，前端依赖和共享资源保持同版。路由刷新回退应限定到所属入口，API错误不得被静态页面回退吞掉。依据[Vite多页面构建](https://vite.dev/guide/build.html#multi-page-app)。具体路由模式沿接线评审确认。
+
+测试分为纯函数/composable、组件、浏览器主流程，参照[Vue测试指南](https://vuejs.org/guide/scaling-up/testing.html)。重点检查公式图表原义、先关检测轮再提示、草稿与停止、账号切换、通知遗漏补读和目标→Evidence→原始事件追溯。各层路径、环境与实际结果归[源码组织§7](Source_Organization.md#7-测试目录与执行边界)，不以组件mock测试冒充真实后端验收。
 
 ## 3. 学生对话与多模态交互
 
@@ -247,3 +360,5 @@ WS超大帧、协议错误、慢连接或服务端重启均可能关闭连接，
 本轮修订（v0.26，2026-11-15）：明确目标与Evidence读取入口，统一收据补查、错误读取和输入预检。见MVP决定登记§95。
 
 本轮修订（v0.27，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。
+
+本轮修订（v0.28，2026-11-15）：同步工程目录、职责依赖、Vue客户端及OpenAPI生成边界。仅文档修订，见MVP决定登记§97。

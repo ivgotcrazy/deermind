@@ -1,14 +1,14 @@
 # MVP 决定承接与工作记录
 
-> **版本**：v0.92<br>
+> **版本**：v0.93<br>
 > **文档性质**：新MVP目录的决定、待决和变更登记<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **状态**：完整工程组织与OpenAPI修订稿待审；未创建源码、未编码<br>
 > **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；本轮仅修订文档，历史原型与证据保留<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：本轮事件事实源修订与自检见MVP决定登记§96；待用户审阅<br>
+> **评审记录**：本轮目录与OpenAPI修订、自检见MVP决定登记§97；待用户审阅<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.91 → v0.92，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **修订说明**：v0.92 → v0.93，同步完整工程目录、模块依赖及OpenAPI使用；见MVP决定登记§97<br>
 
 ---
 
@@ -2947,3 +2947,45 @@ M1-DEC-086：用户确认M1继续用schema划分模块数据，数据库拆分�
 复核已修正原文读取仍依赖业务表、投影遗漏已作出决定、订阅首次启用漏接边界，以及当前版本与历史批次混用。生产者追加与投影共同提交、消费者防重与扫描进度、受控重建不重复业务副作用三条路径均有对应合同和实施验收项。
 
 未修改原型或产品代码，未执行DDL、真实模型调用、消息联调或恢复试验。本文静态检查不代表运行正确性；实施验收见事件正文§5和实施计划“事件事实源修订的实现接收”。配置候选和其他原有未决项保持原状态，下一步由用户审阅本轮修订。
+
+## 97. 完整工程目录与OpenAPI开发合同
+
+- **编号**：M1-DEC-090
+- **日期**：2026-11-15
+- **用户确认**：沿已认可目录方案完善工程设计，完整展开后端、Vue 3＋TypeScript客户端、测试和部署；明确职责依赖及OpenAPI使用。仅改文档，不创建源码或编码。
+- **工程边界**：正式工程保留src/m1；后端server/src/deermind采用可安装的src布局，API/共享Worker共用实现；入口、装配、产品、Space、底座和技术适配分别组织。后续阶段演进本工程，不复制新工程。
+- **客户端**：一个Vue＋TypeScript＋Vite工程、admin/student两个入口，按业务功能组织组件和状态，共享通信、身份与内容渲染。公开类型和客户端由合同生成；业务状态仍以服务端为准。
+- **合同与数据**：HTTP采用OpenAPI，Pydantic DTO与FastAPI路由生成；WS和内部事件各自有版本Schema。表映射归模块、业务迁移单链，事件管理及同步投影边界不变。
+- **工程资产**：补齐安装包、镜像、Helm、环境、发布清单、薄脚本和CI目录；分开单元、合同、接线、恢复、浏览器与语义测试。现有技术选型、业务流程、表字段、接口路径及Operation目录不变。
+- **未决边界**：Python锁定工具、路由/状态库、生成器、测试工具版本、CI平台及原有参数候选仍按接线评审确认；详细文件组织为本轮待审稿，不以目录出现名称替代工具批准。
+- **交付**：[源码分册](m1/engineering/Source_Organization.md)、[客户端§2](m1/engineering/Client_Design.md#2-页面组件与状态组织)、[API§7](m1/engineering/API_and_Message_Design.md#7-openapi与可执行合同)。总体、模块、数据库、部署、计划与导航同步引用唯一维护位置。
+
+### 97.1 升版
+
+| 文档 | 版本 |
+| --- | --- |
+| `doc/mvp/m1/engineering/System_Design.md` | v0.51 → v0.52 |
+| `doc/mvp/m1/engineering/Client_Design.md` | v0.27 → v0.28 |
+| `doc/mvp/m1/engineering/API_and_Message_Design.md` | v0.3 → v0.4 |
+| `doc/mvp/m1/engineering/Database_Design.md` | v0.4 → v0.5 |
+| `doc/mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.39 → v0.40 |
+| `doc/mvp/m1/engineering/Delivery_Plan.md` | v0.52 → v0.53 |
+| `doc/mvp/m1/engineering/System_Foundation_Design.md` | v0.47 → v0.48 |
+| `doc/mvp/m1/engineering/AI_Foundation_Design.md` | v0.27 → v0.28 |
+| `doc/mvp/m1/engineering/Domain_Space_Design.md` | v0.20 → v0.21 |
+| `doc/mvp/m1/engineering/Product_Application_Design.md` | v0.30 → v0.31 |
+| `doc/mvp/m1/engineering/Interaction_Space_Design.md` | v0.26 → v0.27 |
+| `doc/mvp/m1/engineering/Evaluation_Space_Design.md` | v0.24 → v0.25 |
+| `doc/mvp/m1/engineering/README.md` | v0.75 → v0.76 |
+| `doc/mvp/DECISIONS.md` | v0.92 → v0.93 |
+| `doc/mvp/README.md` | v0.91 → v0.92 |
+| `doc/mvp/m1/README.md` | v0.70 → v0.71 |
+| `doc/mvp/m1/engineering/Source_Organization.md` | 新增 v0.1 |
+
+### 97.2 自检
+
+17份文档完成静态复核：本地链接和锚点有效，版本与修订登记一致；新增依赖图已渲染并查看。九项AI Operation、事件目录和普通处理目录保持原定义，历史决定正文未改写，数据库与接口字段分册未改动。
+
+复核已清理总体中的旧源码路径与独立识别目录，统一README当前批次、源码唯一维护位置和OpenAPI生成口径。前后端依赖、表映射与迁移、测试分层、发布资产均有明确归属；未决工具及版本继续标为待确认。
+
+未创建src/m1、源码、锁文件、Schema、测试或部署脚本；未运行接口生成、编译、工程测试或真实服务。文档检查不代表实现已通过，下一步由用户审阅本轮详细稿。

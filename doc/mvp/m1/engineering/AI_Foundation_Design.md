@@ -1,17 +1,19 @@
 # M1 AI 底座设计
 
-> **版本**：v0.27<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **版本**：v0.28<br>
+> **状态**：完整工程组织与OpenAPI修订稿待审；未创建源码、未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.26 → v0.27，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **修订说明**：v0.27 → v0.28，同步完整工程目录、模块依赖及OpenAPI使用；见MVP决定登记§97<br>
 
 本文设计各业务和Space共用的模型调用、工具循环及通用材料处理能力。业务Operation决定取材、组装上下文和保存记忆；底座按调用方要求执行，代码不内置学习空间、活动或题目等业务概念。职责以[总体§3.4](System_Design.md#34-agent上下文和记忆)为准；持久任务生命周期归公共运行底座，共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
 执行框架采用Pydantic AI，需要持久恢复的AI工作通过其[官方Temporal集成](https://pydantic.dev/docs/ai/capabilities/durable_execution/temporal/)运行。框架承接模型、工具调用及结构化输出；上下文与记忆逻辑由所属Operation实现；共用工具授权、预算和候选交接按本文接线。Operation以AI业务目标为边界，可包含模型调用和确定性步骤，不等同于一次Agent运行。普通保存、查询及确定性派生无需Pydantic AI；AI使用的普通工具函数也不因此成为Operation。组件分工以[总体§6.1](System_Design.md#61-已定技术与待选方案)为准。
 
 **事件事实源。** AI工作配置、实际输入输出、工具调用及其已知结果记录到事件及固定附件；调用表由其投影。密钥、隐藏思考不记录；外部调用结果未知时明确保留unknown，不补造成功。字段及投影登记只在[事件正文合同](contracts/Event_Facts.md)维护；本稿中的“保存业务对象”均指共同短事务内由事件生成投影。
+
+**源码落点。** `server/src/deermind/foundation/ai/`承载configuration、execution、tools、context及budgets；模型/框架适配由infrastructure提供，业务取材与Prompt归Operation。公开合同、私有存储、投影及依赖规则见[源码组织§3—4](Source_Organization.md#3-后端源码)；HTTP按[OpenAPI合同](API_and_Message_Design.md#7-openapi与可执行合同)导出，本文继续维护业务行为。
 
 ## 1. AI任务协议与运行边界
 
@@ -463,3 +465,5 @@ AI调用及已知请求/工具结果通过AIConfigurationPinned、AICallChanged�
 本轮修订（v0.26，2026-11-15）：物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。
 
 本轮修订（v0.27，2026-11-15）：统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。
+
+本轮修订（v0.28，2026-11-15）：同步工程目录、职责依赖、Vue客户端及OpenAPI生成边界。仅文档修订，见MVP决定登记§97。
