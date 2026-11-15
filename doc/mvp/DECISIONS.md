@@ -1,14 +1,14 @@
 # MVP 决定承接与工作记录
 
-> **版本**：v0.76<br>
+> **版本**：v0.87<br>
 > **文档性质**：新MVP目录的决定、待决和变更登记<br>
-> **状态**：文档修订待用户审阅；本轮未修改原型或实现真实服务<br>
+> **状态**：主流程合同检查及修正稿待用户审阅；未编码<br>
 > **上游依据与基线**：M1 PRD v0.28、内容规格v0.26、交互规格v0.25及本轮用户决定；本轮仅修订文档，历史原型与证据保留<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：服务端登录会话及同浏览器共用账号已确认；接线细则待审，自检见登记§80<br>
+> **评审记录**：本批静态自检见登记§91；配置候选仍待确认<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.75 → v0.76，登记登录边界、授权与通信详细稿及自检；见§80<br>
+> **修订说明**：v0.86 → v0.87，登记主流程合同检查与交接修正，未新增产品取舍或参数批准；见MVP决定登记§91<br>
 
 ---
 
@@ -2318,3 +2318,436 @@ Evaluation通知只安排普通顺序扫描，选中源后才受理AI评价；�
 静态走查覆盖登录／重置、换账号与迟到响应、后台执行授权、收据丢失、通知遗漏、分页补取及停止；补清提交收据与执行状态的区别。未运行认证、网络、数据库或浏览器业务测试，不据此宣称实现通过。
 
 下一批细化基础设施的本地／Kubernetes启动、存储及Schema迁移、配置与备份恢复。数值、技术取舍先形成方案并审阅；M1业务编码未开始。
+
+## 81. 存储、部署与整套备份恢复
+
+**工作编号：M1-DEC-074。** 2026-11-15，继续模块详细设计；不编码、不改原型、不运行服务验证。
+
+### 81.1 已确认与本批交付
+
+用户确认三项选择：SQLAlchemy 2＋psycopg 3、Alembic统一迁移，不删库重建；业务库、Temporal执行库和查询库共用PG实例但分库分账号；维护窗口暂停服务，四类数据整批备份、整批恢复。
+
+本批补数据库连接／权限、文件与上传收据、同节点挂载、配置秘密、初始化及升级、运行检查、整套备份及恢复步骤。表名、端口和步骤为待审设计；没有将schema分区宣称为进程级安全隔离，也没有将备份存在宣称为已验证可恢复。
+
+剩余决定集中在组件与SDK版本、资源及有限参数、模型服务与大载荷、备份目的地／频率／保留和运维接收指标。9项AI Operation和31项普通入口不变；文件技术接口不新增AI能力。
+
+### 81.2 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.25 → v0.26 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.32 → v0.33 |
+| `mvp/m1/engineering/Domain_Space_Design.md` | v0.13 → v0.14 |
+| `mvp/m1/engineering/Product_Application_Design.md` | v0.20 → v0.21 |
+| `mvp/m1/engineering/Client_Design.md` | v0.20 → v0.21 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.37 → v0.38 |
+| `mvp/m1/engineering/README.md` | v0.59 → v0.60 |
+| `mvp/m1/README.md` | v0.54 → v0.55 |
+| `mvp/README.md` | v0.75 → v0.76 |
+| `mvp/DECISIONS.md` | v0.76 → v0.77 |
+| `mvp/m1/engineering/System_Design.md` | v0.42 → v0.43 |
+
+### 81.3 自检与后续
+
+已检查11份修改文件逐份升版、修订记录及当前版本引用；674处本地链接、500处锚点有效，历史决定正文未改。9项AI Operation与31项普通入口保持。两张部署／恢复Mermaid图已渲染并查看，未修改原型或截图。
+
+静态走查补齐上传租约与旧尝试拒绝、文件先保存后引用、同库事务权限、迁移失败停止发布、备份四类数据同批次核对及恢复授权。运行故障、数据回档和旧登录失效分别处理；备份频率、资源与SDK等未决保持明确。没有执行上传、数据库、Kubernetes或恢复测试，实际验证留实现阶段。
+
+下一步先关闭模型／SDK和教材大载荷的接线选择，再整理有限参数与发布清单、做模块合同对照。需要用户决定的取舍单独提出，其他设计直接推进；未进入业务编码。
+
+## 82. 模型接线与运行载荷外置
+
+**工作编号：M1-DEC-075。** 2026-11-15，继续模块详细设计；不编码、不改原型、不调用真实模型验证。
+
+### 82.1 已确认与本批交付
+
+用户确认采用Temporal PayloadCodec接现有文件存储。大载荷先保存完整字节，再在执行历史中登记引用；不采用预览版ExternalStorage，不增加存储服务。编解码细则为本批待审设计，不把“方案确认”记为运行验证通过。
+
+AI底座补SDK登记、配置装载、图文材料、模型可见出处及恢复位置；基础设施补载荷格式、写入顺序、技术读取、保留与整套备份；公共运行补业务代码进入前的解码故障。材料范围仍由Operation决定，Codec不理解教材和学习活动，不替代业务取证、采用或提交。
+
+历史教材试验所用模型只作为接入候选依据；具体供应商／型号、依赖锁定版本、外置和解码预算等仍待确认。9项AI Operation及31项普通入口不变，未改产品规格或历史试验证据。
+
+### 82.2 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/AI_Foundation_Design.md` | v0.17 → v0.18 |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.26 → v0.27 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.33 → v0.34 |
+| `mvp/m1/engineering/Product_Application_Design.md` | v0.21 → v0.22 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.38 → v0.39 |
+| `mvp/m1/engineering/README.md` | v0.60 → v0.61 |
+| `mvp/m1/README.md` | v0.55 → v0.56 |
+| `mvp/README.md` | v0.76 → v0.77 |
+| `mvp/DECISIONS.md` | v0.77 → v0.78 |
+
+### 82.3 自检与后续
+
+已检查9份文件逐份升版、修订记录和当前版本索引；560处本地链接、387处锚点有效，既有决定正文未改。目录仍为9项AI Operation、31项普通入口。新增载荷时序图已渲染并查看，整套恢复图复查通过；图号按文内顺序整理。
+
+静态走查覆盖初始材料／工具补取、当前授权、模型结果保存前后中断、文件就绪但历史未提交、缺失／损坏载荷及整批恢复。补清技术解码与业务取材的授权区别；解码故障不能伪装为模型拒答或新的生成。没有执行SDK、文件、数据库或模型测试，运行验证留实现阶段。
+
+下一步横向核对模块合同，收束路由前调用与澄清接续，再形成模型／组件版本和有限配置清单；未进入业务编码。
+
+## 83. 固定入口与跨模块合同核对
+
+**工作编号：M1-DEC-076。** 2026-11-15，继续模块详细设计；只改工程文档及入口，不编码、不改原型、不执行运行测试。
+
+### 83.1 本轮确认
+
+1. M1现有入口直接派发。教材聊天交教材助手，学生聊天交学习助手，事件交已登记处理器。讲解、求助或检测意图由学习助手内部判断，不在前面再调用一次AI选择Operation；未来确有通用入口再设计语义路由。本决定收窄§52的M1实施范围，保留公共运行负责路由的归属。
+2. 聊天内要求检测，沿handle_input同一Execution、执行尝试、收据和预算，复用prepare_detection的准备实现。明确检测或接受检测建议可独立派发prepare_detection；两条路径都先准备题单、由学生确认后开轮。
+
+澄清由所属业务保存为正式提问，本次处理结束并释放入口；学生补充是引用问题的新输入。配置在原工作受理时包含可能使用的检测规划用途，不因内部转入准备另调度或刷新模型配置。
+
+### 83.2 合同修补及边界
+
+- Domain对可信教材提交整批接收或业务拒收，均保存intake_receipt；新增DomainIntakeRejected事件。教材据outcome结束等待，技术失败不冒充业务拒绝。拒收不留半批待办，修正后须明确新提交。
+- 公共结果绑定生产Execution和有效attempt；自动重试沿用attempt，重试耗尽且获准恢复才创建新attempt。Evaluation与公共运行口径一致。
+- 总体求助图改为固定派发、业务内判断、先结束检测轮再提示；输出通知只提示引用，浏览器经授权读取正式内容。
+- 五条流程的合同核对及后续接收案例归Delivery Plan§2.4。仍为9项AI Operation、31项普通入口；不新增路由Agent、管理页面或业务能力。
+
+上述接线细则为本批待审设计，不把文字闭环记为实现验证通过。具体模型、SDK版本、预算、存储限额和部署配置仍待提出与确认。
+
+### 83.3 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/System_Design.md` | v0.43 → v0.44 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.34 → v0.35 |
+| `mvp/m1/engineering/AI_Foundation_Design.md` | v0.18 → v0.19 |
+| `mvp/m1/engineering/Domain_Space_Design.md` | v0.14 → v0.15 |
+| `mvp/m1/engineering/Interaction_Space_Design.md` | v0.19 → v0.20 |
+| `mvp/m1/engineering/Evaluation_Space_Design.md` | v0.17 → v0.18 |
+| `mvp/m1/engineering/Product_Application_Design.md` | v0.22 → v0.23 |
+| `mvp/m1/engineering/Client_Design.md` | v0.21 → v0.22 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.39 → v0.40 |
+| `mvp/m1/engineering/README.md` | v0.61 → v0.62 |
+| `mvp/m1/README.md` | v0.56 → v0.57 |
+| `mvp/README.md` | v0.77 → v0.78 |
+| `mvp/DECISIONS.md` | v0.78 → v0.79 |
+
+### 83.4 自检与后续
+
+已检查13份文件逐份升版及当前版本索引；733处本地链接、555处锚点有效。既有决定正文未改，目录保持9项AI Operation、31项普通入口；新增领域拒收事件已登记。
+
+已逐项核对固定入口、聊天内检测的配置／停止／恢复、澄清的新输入、领域接收／拒收／技术失败及评价尝试身份；重绘并查看求助时序图，修正取材所有者和上下文组装责任。文档差异及空白检查通过；未执行服务、模型、数据库或浏览器业务测试。
+
+下一步提出模型／组件版本和有限配置清单，按模块明确建议值、依据与需确认项。保持工程设计阶段，不自动进入业务编码。
+
+## 84. 首轮模型、本机环境与可切换部署
+
+**工作编号：M1-DEC-077。** 2026-11-15，继续工程配置设计。本轮只读检查本机条件、核对公开依赖资料并修订文档，不安装、编码或修改原型。
+
+### 84.1 已确认决定
+
+1. 首轮沿用DeepSeek Flash（deepseek-flash）。教材、教学、评价分别配置，Domain保持独立用途；初期可以绑定同一模型。历史教材样例不代表教学、评价或整册提取质量已通过。
+2. 先用本机WSL做低并发功能测试；新建Ubuntu 24.04发行版，运行单节点K3s，保留旧Ubuntu 20.04环境。环境选择不构成安装授权或100人容量验收。
+3. 部署采用薄脚本＋Helm；每次显式指定kubeconfig、context、namespace、release和环境配置。同一入口可部署本机或远程集群，不改全局默认集群，不自动迁移旧数据。
+
+### 84.2 交付与待审范围
+
+| 内容 | 维护位置与状态 |
+| --- | --- |
+| 模型用途、DeepSeek适配及结构输出 | [AI底座§2.4](m1/engineering/AI_Foundation_Design.md#24-首轮模型与接线候选)；模型已确认，协议、thinking、修正次数和输出限额是候选 |
+| 本机条件 | [基础设施§1.1](m1/engineering/Infrastructure_and_Deployment_Design.md#11-本机wsl测试与适用范围)；8逻辑CPU、约16GiB主机内存，当前WSL约8GiB，D盘约72GiB可用。虚拟盘容量不代替物理容量 |
+| 组件及SDK版本 | [基础设施§5.5](m1/engineering/Infrastructure_and_Deployment_Design.md#55-依赖版本候选)；已核对发布资料，未批准依赖锁，未做安装或兼容测试 |
+| 部署入口与载荷限额 | [基础设施§5.6](m1/engineering/Infrastructure_and_Deployment_Design.md#56-可切换集群的部署入口)；部署方式已确认，Codec阈值、Chart、资源及容量待审 |
+| 调用与连接参数 | [公共运行§3.5](m1/engineering/System_Foundation_Design.md#35-首轮调用与连接参数建议)；有限候选值，不是已批准SLA或Operation总预算 |
+| 审阅与实施顺序 | [实施计划§2.5](m1/engineering/Delivery_Plan.md#25-本批候选与接收顺序)；先审候选，再补资源及总预算，真实验证留实施阶段 |
+
+基础设施原有重复§2.5已整理：PVC装配仍为§2.5，Temporal载荷外置改为§2.6并保留旧锚点；当前引用同步，历史决定不改。9项AI Operation和31项普通入口不变。
+
+### 84.3 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/System_Design.md` | v0.44 → v0.45 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.35 → v0.36 |
+| `mvp/m1/engineering/AI_Foundation_Design.md` | v0.19 → v0.20 |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.27 → v0.28 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.40 → v0.41 |
+| `mvp/m1/engineering/README.md` | v0.62 → v0.63 |
+| `mvp/m1/README.md` | v0.57 → v0.58 |
+| `mvp/README.md` | v0.78 → v0.79 |
+| `mvp/DECISIONS.md` | v0.79 → v0.80 |
+
+### 84.4 自检与下一步
+
+已核对9份文档逐份升版、修订记录和当前版本索引；640处本地链接、468处锚点有效。历史决定正文保持不变，目录仍为9项AI Operation、31项普通入口；文档差异与空白检查通过。
+
+走查区分已确认选择、待审参数和实现验证；修正总体中模型仍未选定及迁移工具未定的过期表述。没有执行模型、SDK、数据库、部署或浏览器业务测试。
+
+下一步审阅依赖版本和首轮调用参数；确认后补齐Chart、资源、存储容量和各Operation总预算。安装及业务编码仍待后续实施，不因本文完成自动启动。
+
+## 85. 本机部署包与资源预算草案
+
+**工作编号：M1-DEC-078。** 2026-11-15，继续工程设计；未安装组件、修改原型或编码。
+
+### 85.1 本批交付与状态
+
+[基础设施§5.7](m1/engineering/Infrastructure_and_Deployment_Design.md#57-本机部署配置草案)给出Helm／Chart组合、启用项、CPU／内存、连接池和磁盘预算。方案适用本机低并发功能接线，均待用户审阅，不作为已批准容量或性能指标。
+
+- 核对Temporal Chart 1.8.0与Server 1.32.2、NATS Chart 2.15.2；候选采用Helm 4.3.2。PG候选由17.11改为11月12日发布的17.12；未更改已安装环境或锁文件。
+- 9个常驻容器的内存request合计1952Mi、limit合计4928Mi；另列系统、临时Job和构建消耗。连接总量和宿主磁盘分别计算，不用PVC声明或WSL虚拟上限代替物理容量。
+- 新增范围为配置设计，不改变Space、Operation或事件目录。Temporal与NATS默认管理组件的裁剪、PG单实例模板、分片数及资源参数均为建议。
+- 用户确认DeepSeek Flash走标准Chat Completions，以结构化输出工具返回；关闭thinking、temperature=0、单次输出上限8192 tokens，格式错误最多修正一次。
+- 用户确认单次HTTP请求最多90秒、连接最多10秒、SDK重试0次；Temporal最多2次尝试，StartToClose 120秒、ScheduleToClose 250秒，仍受工作剩余期限约束。
+- 重试间隔、收尾预留、数据库／浏览器参数、用途总预算及本节部署资源仍待审；不将两项确认扩大为接受全部候选。
+
+### 85.2 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.28 → v0.29 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.41 → v0.42 |
+| `mvp/m1/engineering/README.md` | v0.63 → v0.64 |
+| `mvp/m1/README.md` | v0.58 → v0.59 |
+| `mvp/README.md` | v0.79 → v0.80 |
+| `mvp/DECISIONS.md` | v0.80 → v0.81 |
+| `mvp/m1/engineering/AI_Foundation_Design.md` | v0.20 → v0.21 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.36 → v0.37 |
+
+### 85.3 自检与后续
+
+已核对8份文件升版、修订记录、当前版本索引和候选状态；529处本地链接、359处锚点有效。历史决定正文未变，目录保持9项AI Operation及31项普通入口；差异与空白检查通过。
+
+静态复核CPU／内存及连接合计、共享WSL资源、物理磁盘与PVC声明的区别、重复Schema迁移和NATS配置生效方式。公共运行的调用参数节由重复的§3.5整理为§3.6，保留历史锚点并同步当前引用。未运行Chart渲染、安装、模型或业务测试。
+
+下一步按已定调用上限补9项AI能力的工作总预算、消费方等待及消息交接限额；部署资源同步审阅。保持设计阶段，部署实施另行推进。
+
+## 86. 工作预算、恢复计时与交接限额
+
+**工作编号：M1-DEC-079。** 2026-11-15，继续详细设计；未安装、未编码或修改原型。
+
+### 86.1 已确认决定
+
+用户确认：失败后获准恢复时，给剩余步骤重新分配有限时限；原工作身份、配置、已用调用次数和用量继续保留。自动重试仍受本次原时限约束。额度已用完且需要新调用时明确提示，增加额度需另行批准，不能靠反复重试清零。
+
+公共运行按ExecutionAttempt保存新期限，同一恢复命令重发不再续期；AI底座沿Execution累计记账。仅剩已存候选提交时不重复调用模型。原Wait已超时或取消，恢复工作不自动重开等待，继续遵守此前消费方边界。
+
+### 86.2 本批交付与待审范围
+
+- [AI底座§3.4](m1/engineering/AI_Foundation_Design.md#34-九项工作预算草案)：9项工作的计量范围、次数及执行时限建议。教材按授权页数、供题按题量和方法、评价按获准Task与方法组合核算；内部流程共享额度。
+- [公共运行§3.7](m1/engineering/System_Foundation_Design.md#37-工作时限与消费方等待)：区分工作期限、供题／评价等待、顺序评价及人工确认；提出消费方最多300秒的待审建议。
+- [基础设施§4.2](m1/engineering/Infrastructure_and_Deployment_Design.md#42-消息交接参数草案)：提出承接、确认、重投、租约和技术核对参数。AI失败不靠MQ重投事实；投递耗尽通知的持久采集及缺失核对仍须确认。
+
+本批数值是配置候选，不是已批准默认值或性能承诺。单次输入token、附件容量、消息流保留与部署配置尚未全部确定。本轮没有新增Operation、事件类型或页面。
+
+### 86.3 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/AI_Foundation_Design.md` | v0.21 → v0.22 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.37 → v0.38 |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.29 → v0.30 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.42 → v0.43 |
+| `mvp/m1/engineering/README.md` | v0.64 → v0.65 |
+| `mvp/m1/README.md` | v0.59 → v0.60 |
+| `mvp/README.md` | v0.80 → v0.81 |
+| `mvp/DECISIONS.md` | v0.81 → v0.82 |
+
+### 86.4 自检与下一步
+
+已核对8份文件升版、修订记录和当前版本索引；537处本地链接、367处锚点有效，编号无重复。历史决定正文保持不变；目录仍为9项AI Operation、31项普通入口。
+
+逐项核对自动重试／授权恢复、过期Wait、聊天内检测、整册分段、顺序评价及MQ承接边界；已确认规则与待审数值分开。差异与空白检查通过；没有运行模型、SDK、数据库、部署或业务测试。
+
+下一步审阅工作预算与交接候选，补单次输入／附件容量、消息流和失败通知保存配置；继续详细设计，不自动进入安装和编码。
+
+## 87. 材料容量、投递副本与执行历史保留
+
+**工作编号：M1-DEC-080。** 2026-11-15，继续详细设计；只读取既有试验记录及官方资料，未运行新试验、安装或编码。
+
+### 87.1 已确认决定
+
+- 消息队列保存投递副本。所有应接收模块可靠接住后清理；未接住的保留，满额报错，不删旧腾空间。正式事件、聊天、教材文件不受影响。
+- Temporal已关闭执行的过程记录保留30天，再由Temporal清理。正式结果、事件、已保存Step及文件继续保留；之后可从已存步骤发起获准恢复，不能再承诺查看或重放旧执行的完整内部过程。
+
+配置修改不影响原件及业务记录的只增留痕规则。运行载荷文件也不因Temporal历史到期而自动删除，仍遵守引用及备份保护。
+
+### 87.2 本批交付及待审范围
+
+[AI§4.4](m1/engineering/AI_Foundation_Design.md#44-单次输入与结果容量草案)提出单次输入32768 tokens、4张图／16MiB、序列化请求32MiB等候选；整册按覆盖清单拆批，不能删图或截断公式凑容量。[基础设施§2.3.1](m1/engineering/Infrastructure_and_Deployment_Design.md#231-上传容量建议)另列原件上传范围，不混成单次模型限制。所有新增容量数字仍待用户审阅。
+
+[公共运行§4.6](m1/engineering/System_Foundation_Design.md#46-投递保留失败发现与重送)定义订阅快照、接收记录核对和授权重送；[基础设施§4.3](m1/engineering/Infrastructure_and_Deployment_Design.md#43-消息流与接收方装配)用InterestPolicy、DiscardNew及无自动过期落实保留边界。命名、容量及具体账号装配仍待审，失败通知不作为唯一账本；故障恢复不新增业务事实、不重做已受理工作。
+
+[历史保留](m1/engineering/Infrastructure_and_Deployment_Design.md#64-保留增长与时间)明确30天仅针对Temporal关闭执行；旧历史不存在不证明业务没执行。正式收据和Step是恢复依据，未能确定旧状态时保留故障，不能擅自重跑。
+
+### 87.3 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/AI_Foundation_Design.md` | v0.22 → v0.23 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.38 → v0.39 |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.30 → v0.31 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.43 → v0.44 |
+| `mvp/m1/engineering/README.md` | v0.65 → v0.66 |
+| `mvp/m1/README.md` | v0.60 → v0.61 |
+| `mvp/README.md` | v0.81 → v0.82 |
+| `mvp/DECISIONS.md` | v0.82 → v0.83 |
+
+### 87.4 自检与下一步
+
+已核对8份文件逐份升版、修订记录及当前版本索引；542处本地链接、371处锚点有效，编号无重复。历史决定正文不变，目录保持9项AI Operation及31项普通入口。
+
+走查整册上传／单次取材、跨页来源、订阅缺失、队列满额、失败通知遗漏、重投防重和历史到期恢复；新增订阅者不因重送旧事件而处理历史。差异与空白检查通过。只读取既有四例元数据及官方文档，未运行模型、数据库、SDK、部署或业务测试。
+
+下一步集中审阅已有调用、容量、部署和消息配置，补日志保存、剩余入口限制及接线配置；保持设计阶段，不自动进入实施。
+
+## 88. Pod日志与后续设计范围
+
+**工作编号：M1-DEC-081。** 2026-11-15，仅修订工程文档与索引，未安装、未编码、未改原型。
+
+### 88.1 用户决定与执行边界
+
+- M1只在Pod中打印日志，不引入Fluent Bit或其他日志采集器，后续统一考虑可观测性建设。
+- 普通日志保留14天或总量2GiB，任一上限到达清理最旧日志；正式事件、聊天、结果及教材文件不受影响。
+
+两项结合执行：现在输出stdout／stderr，集中采集与保留机制后置；14天／2GiB是已确认的清理规则，不是当前Pod日志的保留保证。必要字段、可读错误、正式事件和执行记录继续保留。NATS投递失败通知的可靠承接属于事件交接，不因取消日志采集而删除。
+
+### 88.2 交付与后续范围
+
+[总体§6.7](m1/engineering/System_Design.md#67-已确认的日志与事件记录)、[公共运行§6.1](m1/engineering/System_Foundation_Design.md#61-必记日志与存储)与[基础设施§6.1／6.4](m1/engineering/Infrastructure_and_Deployment_Design.md#61-日志事件及运行检查)统一日志边界，移除集中采集作为M1前置的要求。基础设施说明节点轮转及Pod生命周期的限制，不增加采集器、日志卷或清理任务。
+
+后续按[实施计划§2.6](m1/engineering/Delivery_Plan.md#26-剩余设计与审阅顺序)补Worker与队列接线、入口限额，随后做主流程合同检查并集中审阅已有配置候选。保留规则之外，本批没有批准新的参数，也不进入安装或编码。
+
+### 88.3 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/System_Design.md` | v0.45 → v0.46 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.39 → v0.40 |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.31 → v0.32 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.44 → v0.45 |
+| `mvp/m1/engineering/README.md` | v0.66 → v0.67 |
+| `mvp/m1/README.md` | v0.61 → v0.62 |
+| `mvp/README.md` | v0.82 → v0.83 |
+| `mvp/DECISIONS.md` | v0.83 → v0.84 |
+
+### 88.4 自检与下一步
+
+已核对8份文档逐份升版、修订记录与工程版本索引；637处本地链接、467处锚点有效，编号无重复。历史决定及既有修订记录保留，目录仍为9项AI Operation和31项普通入口。
+
+复核日志输出、后置保留、正式事件、NATS失败记录与恢复依据的边界，去除集中采集前置要求。差异和空白检查通过；仅做文档静态检查，未运行模型、业务、部署或浏览器测试。
+
+下一步先补Worker与队列装配，再补入口限额，随后按实施计划§2.6集中检查和审阅；本轮不新增运行组件。
+
+## 89. 共享Worker与执行队列接线
+
+**工作编号：M1-DEC-082。** 2026-11-15，继续详细设计；核对当前合同与官方接线资料，未安装、未编码或运行SDK验证。
+
+### 89.1 已确认决定
+
+M1先用一个应用Worker进程和一条共享Temporal逻辑执行队列，承接各模块AI工作和普通后台工作。工作可以并行但共用资源，教材、教学、评价不各建一套Worker。各模块职责和数据所有权保留，未来需要时再讨论拆分。
+
+共享队列不替代Interaction的同空间输入占用或Evaluation的顺序游标。NATS仍负责事件投递，Temporal仍负责持久执行；公共运行受理派发，业务Workflow组织自己的步骤和等待。
+
+### 89.2 本批交付与待审范围
+
+- [公共运行§3.3.1](m1/engineering/System_Foundation_Design.md#331-入口与worker注册对应)：列明9项AI能力、2项普通后台handler及原Workflow接续；其他普通入口不逐个包装Workflow。
+- [AI底座§2.3.1](m1/engineering/AI_Foundation_Design.md#231-共享worker的ai注册)：注册Agent、工具和内部用途，聊天内检测沿原工作；每次调用的上下文和授权分开。
+- [基础设施§4.4](m1/engineering/Infrastructure_and_Deployment_Design.md#44-共享worker与temporal队列)：namespace／队列、API／Relay／Worker装配图、启动检查及兼容恢复；按既有维护流程升级。
+
+业务Workflow沿entry_ref命名、namespace／队列物理名称为本批接线建议，待用户审阅；并发及其他有限参数未因共享Worker获准而自动确定。SDK实际注册及重放验证留实现阶段，不新建Agent服务、额外日志组件或产品入口。
+
+### 89.3 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/System_Design.md` | v0.46 → v0.47 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.40 → v0.41 |
+| `mvp/m1/engineering/AI_Foundation_Design.md` | v0.23 → v0.24 |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.32 → v0.33 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.45 → v0.46 |
+| `mvp/m1/engineering/README.md` | v0.67 → v0.68 |
+| `mvp/m1/README.md` | v0.62 → v0.63 |
+| `mvp/README.md` | v0.83 → v0.84 |
+| `mvp/DECISIONS.md` | v0.84 → v0.85 |
+
+### 89.4 自检与下一步
+
+已核对9份文档逐份升版、修订记录及当前版本索引；668处本地链接、496处锚点有效，编号无重复。新增Worker映射与既有9项AI目录逐项一致，31项普通入口未增删。历史决定、修订记录和原型保持不变。
+
+静态走查入口派发、普通handler、聊天内检测、原Workflow接续、同空间顺序、注册兼容及恢复；区分已确认部署边界与待审名称／限额。差异与空白检查通过；未运行Temporal、SDK、模型、部署或业务测试。
+
+下一步集中列出Worker并发、登录、WS、上传和连接限额建议，随后做主流程合同检查；未确认的数字仍保留待审，不转为编码默认值。
+
+## 90. 入口执行限额与参数组合检查
+
+**工作编号：M1-DEC-083。** 2026-11-15，继续详细设计；本批只有参数建议，没有新增已批准数值，未安装、未编码或修改原型。
+
+### 90.1 本批交付
+
+[基础设施§4.5](m1/engineering/Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)集中Worker并发、登录、WS、普通API、业务PG及上传参数；Product、公共运行和Client引用同一份表。建议包括Activity并发4、登录固定24小时、普通请求30秒及单次上传20分钟等，全部待用户审阅，不作为实现默认值。
+
+[§4.6](m1/engineering/Infrastructure_and_Deployment_Design.md#46-参数组合检查)核对执行器、连接池、SQL与上层期限、心跳与代理、上传租约及恢复身份。内存与运行效果留实现阶段测量，不以数值有限宣称容量已验证。普通请求超时不套到上传；浏览器断线不取消已受理工作；确认状态与候选明确分开。
+
+### 90.2 边界与后续
+
+已确认的一个共享Worker、账号会话、单次模型调用上限、分层重试及日志后置继续有效。临时文件删除和未批准的配置不自动启用，不新增账号平台、排队优先级或原型页面。
+
+参数方案已形成审阅输入。下一步按实施计划§2.6检查主流程合同，再集中审阅已有版本、资源、预算和限额建议；真实试用的维护人员、备份与恢复指标按原节点确认。
+
+### 90.3 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/Infrastructure_and_Deployment_Design.md` | v0.33 → v0.34 |
+| `mvp/m1/engineering/System_Foundation_Design.md` | v0.41 → v0.42 |
+| `mvp/m1/engineering/Product_Application_Design.md` | v0.23 → v0.24 |
+| `mvp/m1/engineering/Client_Design.md` | v0.22 → v0.23 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.46 → v0.47 |
+| `mvp/m1/engineering/README.md` | v0.68 → v0.69 |
+| `mvp/m1/README.md` | v0.63 → v0.64 |
+| `mvp/README.md` | v0.84 → v0.85 |
+| `mvp/DECISIONS.md` | v0.85 → v0.86 |
+
+### 90.4 自检
+
+已核对9份文档逐份升版、修订记录和版本索引；585处本地链接、414处锚点有效，编号无重复，9项AI Operation和31项普通入口未增删。历史决定、原型和产品输入保持不变。
+
+静态核对SQL总期限、心跳与代理、上传租约、Worker执行器及恢复身份；修正一处数据库超时的旧引用。差异与空白检查通过。未运行模型、SDK、浏览器、数据库或部署测试；数值可用性与资源峰值留实现阶段验证。
+
+## 91. 主流程合同检查与交接修正
+
+**工作编号：M1-DEC-084。** 2026-11-15，按用户“继续”完成详细设计的主流程静态检查。沿用已确认产品及架构规则；本批没有新增产品取舍、参数批准或实现验证。
+
+### 91.1 检查结果与修正
+
+[实施计划§2.7](m1/engineering/Delivery_Plan.md#27-主流程合同检查)记录教材解析、领域入库、章节与目标应用、学生进入、讲解答疑、检测、评价和主动任务的交接。
+
+| 发现 | 修正及唯一维护位置 |
+| --- | --- |
+| Domain支持三种供题用途，Interaction原接续只写检测 | Interaction§3.11／6.3按example、practice、assessment回原步骤；Domain§5.2和Client§3.2对齐，不新增Operation |
+| 等待到期的业务收尾仍写“后续细化” | Interaction§6.3按供题、掌握状态、目标结果说明收尾，保存后才释放输入；不取消生产方、不自动重启旧等待 |
+| 主动检查触发只在模块正文，事件目录不全 | 工程入口§6.1登记活动结束、两类评价通知；Interaction先校验触发资格，再按同依据去重，不增加离线检测 |
+| 顺序评价图容易读成先解释后排队 | Evaluation§6.6图2改为先按来源顺序选中本次评价，再取材解释；算法与顺序合同不变 |
+| 仍有已展开内容的“待细化／待确认”旧句 | Evaluation引用已有存储、读取和服务端时间；Product查询引用集中分页候选，仍不批准数值 |
+
+### 91.2 边界与下一步
+
+上述路径未发现必须增加架构组件才能闭合的环节；这是限定范围的文档检查结论，不宣布整体无缺陷。正式事件和消息分存、9项AI能力、普通入口、同空间串行、评价顺序、原工作恢复及资源不足处理均保留。
+
+下一步集中审阅已有依赖／部署候选、模型工作与材料预算、入口限额。未确认值不进入实现。模型质量、概率效果、故障恢复和资源容量在E01—E07验证；备份目的地、维护责任及恢复指标按原接收节点确认。原型和产品输入未修改。
+
+### 91.3 修改清单
+
+| 文件（相对doc） | 版本变化 |
+| --- | --- |
+| `mvp/m1/engineering/Domain_Space_Design.md` | v0.15 → v0.16 |
+| `mvp/m1/engineering/Interaction_Space_Design.md` | v0.20 → v0.21 |
+| `mvp/m1/engineering/Evaluation_Space_Design.md` | v0.18 → v0.19 |
+| `mvp/m1/engineering/Product_Application_Design.md` | v0.24 → v0.25 |
+| `mvp/m1/engineering/Client_Design.md` | v0.23 → v0.24 |
+| `mvp/m1/engineering/Delivery_Plan.md` | v0.47 → v0.48 |
+| `mvp/m1/engineering/README.md` | v0.69 → v0.70 |
+| `mvp/m1/README.md` | v0.64 → v0.65 |
+| `mvp/README.md` | v0.85 → v0.86 |
+| `mvp/DECISIONS.md` | v0.86 → v0.87 |
+
+### 91.4 自检
+
+已核对10份文档逐份升版、现行版本索引及修订记录；600处本地链接、427处锚点有效，编号无重复。9项AI Operation及31项普通入口未增删，历史决定和原型保持不变。
+
+对照检查供题三用途、结果早到／迟到、超时／停止竞争、主动触发资格及顺序评价图文；对应实现接收案例已补入Interaction§7.4。差异与空白检查通过。未运行代码、模型、浏览器或部署测试，所有参数候选仍待确认。

@@ -1,11 +1,11 @@
 # M1 Domain Space 设计
 
-> **版本**：v0.13<br>
-> **状态**：Domain对象、入库、存储与接口详细设计待用户审阅；未编码或运行验证<br>
+> **版本**：v0.16<br>
+> **状态**：主流程合同检查及修正稿待用户审阅；未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.12 → v0.13，补Evaluation定义保存的精确引用保护调用方；见MVP决定登记§74<br>
+> **修订说明**：v0.15 → v0.16，对齐例题、练习和检测供题的消费路径；见MVP决定登记§91<br>
 
 本文维护可复用领域内容及其业务操作，不保存学生作答、个人接触史或 Belief。依据为 [PRD R04](../PRD.md#34-维护领域处理入库并关联章节m1-r04)、[R07](../PRD.md#37-准备题目和参考m1-r07)与[内容规格§3.2–3.3](../design/Content_and_Model_Reference.md#32-领域对象与字段)；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -134,9 +134,14 @@ AI输出只是一份候选。表达不了的内容、疑似漏图、条件冲突
 
 1. 校验请求事件和资源范围，按intake_request_id读取Product固定提交及父题绑定，再读取已采用且当前仍有效的不可变候选；事件和提交不一致、未采用或过时来源不进入待办。
 2. 按题目与其解法建立 `group_ref`，KC 独立成组；解法父题可在本批、已有待办或已入库记录中，无法定位则返回 `missing_parent`。已有待办／实例绑定须与该父题候选的入库来源映射一致，不能只凭同名或客户端给了实例ID就认可。尚无映射时先将父题提交并完成新建／复用题目，不能把另一道题当作该解法的父题。
-3. 同次提交保存整批待办与 `DomainIntakeReceived`，发布 `producer=domain, result_kind=intake_receipt`。回执为 `intake_request_id, items[{candidate_ref,intake_item_ref,group_ref,state}]`；这里只接收，不创建定义、实例或章节关联。
+3. 全部候选可受理时，同事务保存整批待办、接收决定、`DomainIntakeReceived`及`intake_receipt`结果。这里只接收，不创建定义、实例或章节关联。
+4. 可信提交中存在已失效来源、无法对应的父题等确定业务缺口时，整批拒绝；同事务保存拒绝决定、`DomainIntakeRejected`及同类结果，不创建部分待办。数据库／来源服务故障走技术失败，不伪装业务拒绝。
 
-事件重复时先授权，再读取原受理记录；已提交回执不因来源后来变化而重做受理。新提交中，同领域、同已采用候选已有待办／终态结果时回传已有映射，避免重复排队。尚未完成的入库仍须检查当前来源。读取来源故障保留受理依据重试，不产生半批回执。**验收例：** 只提交题目可进入待办；另提交解法时可定位此前题目，不要求一起导入。
+`intake_receipt`的键为原提交事件的`(scope_id,trigger_event_id,domain,intake_receipt)`，scope_id仍是教材导入范围。载荷统一为`intake_request_id,outcome,items[],issues[]`：received时items覆盖本次全部候选、issues为空；rejected时items为空、issues定位候选与原因（如source_invalid、missing_parent）。两者都是处理已完成，公共read_result均返回available；成功交接不等于内容被接受或已入库。结果由本次普通handler的execution_id生产，受理和正式决定分开。
+
+订阅校验拒绝伪造事件、未知合同或越权输入时，不发布可读取的业务回执；由底座记录交接失败。只有确认来自Product的原提交且有权处理其范围，才进入上述接收／业务拒绝流程。已保存拒绝决定不在原提交上改为成功；管理员补齐来源或父题后明确提交新请求，原决定保留。
+
+事件重复时先授权，再读取原受理记录；已提交的接收或拒绝回执不因来源后来变化而重做处理。新提交中，同领域、同已采用候选已有待办行或入库实例时回传已有映射，避免重复排队；此前整批拒绝没有创建映射，不阻止补齐条件后以新请求重新核对。尚未完成的入库仍须检查当前来源。读取来源故障保留受理依据重试，不产生半批回执。**验收例：** 只提交题目可进入待办；另提交解法时可定位此前题目，不要求一起导入。
 
 同操作接收 `MaterialCandidatesAdopted|MaterialImportDeleted` 的来源失效分支：输入为事件中的导入身份、被替代／删除的来源及受影响提交引用。只将仍为`pending`的行标为`source_invalid`并追加`DomainIntakeSourceInvalidated`，不改已完成、已放弃或已失效结果，不覆盖已入库对象；不发布新的`intake_receipt`。处理待办前仍查询教材公开有效性，不能依靠通知恰好先到。
 
@@ -327,7 +332,7 @@ Domain的内容准备负责这项检查，管理员在维护定义时确认，Ag
 
 提交保存 `DomainTaskSupplyCompleted`，按请求事件发布 `producer=domain,result_kind=task_supply`。载荷为 `supply_batch_ref, items[{task_instance_ref,content_ref,reference_solution_refs[],matched_method_refs[],use_check_ref}], unfilled[{condition,reason}]`；无合格题时记录空批及原因，作为本次供题事实发布；不因消费方等待到期提前伪造空批。检查通过、保存成功后方可交付，无须管理员逐题批准。
 
-成功结果同键只发布一次；重试不追加第二批实例。Interaction取回后核对活动仍有效、条件未变及题面是否刚被展示，保存计划并返回题单摘要。学生确认当前计划后，Interaction才建立首轮及出题事件；题目就绪或晚到都不自动开始检测。**验收例：** 现有题都展示过答案时生成新题；生成检查失败且无替代时返回缺口，不能把旧题当新独立证据。
+成功结果同键只发布一次；重试不追加第二批实例。Interaction取回后核对活动仍有效、条件未变及接触事实，再按原请求用途使用：example／practice进入[教学例题或练习](Interaction_Space_Design.md#311-讲解例题与形成性练习的供题)，assessment保存计划并返回题单摘要。检测须经学生确认当前计划才建立首轮；题目就绪或晚到都不自动开测。**验收例：** 现有题都展示过答案时生成新题；生成检查失败且无替代时返回缺口，不能把旧题当新独立证据。
 
 ### 5.3 `domain.classify_instance`
 
@@ -419,7 +424,7 @@ Domain使用下面九类表。表名、字段和索引是本批详细设计；�
 | `object_identity` | `object_id, kind, domain_id?, head_version, catalog_revision?` | PK `object_id`；`kind`限定五类。根Domain无`domain_id`，其`catalog_revision`必填；成员反之。类型、归属不变，仅更新头版本；目录修订是运行计数，不是Domain内容版本 |
 | `object_version` | `object_id, version, content_schema_version, content:jsonb, is_deleted, created_at, created_by, change_note` | PK `(object_id,version)`，FK身份；只INSERT／SELECT。完整保存§1.2载荷，修改和软删除均追加快照 |
 | `object_reference` | `owner_id, owner_version, path, relation_kind, target_id, target_version` | PK `(owner_id,owner_version,path)`；两端FK精确版本，禁止级联删除。由快照派生并同事务插入，不对外提供独立编辑入口 |
-| `intake_submission` | `submission_id, trigger_event_id, domain_id, product_submission_ref, input_artifact_id, item_refs:jsonb, received_event_id, created_at` | PK `submission_id`，UNIQUE `trigger_event_id`；记录整批受理与实际待办映射，只追加；同候选可以被多个提交引用同一待办 |
+| `intake_submission` | `submission_id, trigger_event_id, domain_id, product_submission_ref, input_artifact_id, outcome, item_refs:jsonb, issues:jsonb, decision_event_id, created_at` | PK `submission_id`，UNIQUE `trigger_event_id`；outcome为received／rejected，只追加；拒绝时item_refs为空且issues非空。接收时记录完整待办映射；同候选可被多个提交引用同一待办 |
 | `intake_item` | `item_id, domain_id, candidate_key, source_ref:jsonb, input_artifact_id, kind, group_id, parent_item_id?, parent_instance_ref?, state, revision, result:jsonb?, processed_request_ref?` | PK `item_id`，UNIQUE `(domain_id,candidate_key)`；父题待办FK本表。来源、内容及类型不改；处理状态按§6.4转移，终态结果固定 |
 | `artifact` | `artifact_id, domain_id, kind, input_ref?, definition_refs:jsonb, payload:jsonb, rule_ref?, model_call_ref?, command_ref?, created_at` | PK `artifact_id`；只追加。`kind`限定`input`、`definition_candidate`、`classification_check`、`use_check`、`readiness_check`。各类载荷分别校验，不能当任意JSON仓库 |
 | `kc_test_path` | `confirmation_id, kc_ref, task_ref, solution_ref, basis_artifact_id, confirmed_by, confirmed_at` | PK `confirmation_id`；三类引用分别存对象ID／版本并FK版本表，`basis_artifact_id`指向含观察要求和边界的输入记录。追加确认，不覆盖旧版本确认 |
@@ -436,7 +441,7 @@ Domain使用下面九类表。表名、字段和索引是本批详细设计；�
 
 必要索引为：身份的`(domain_id,kind,object_id)`；引用的`(target_id,target_version,relation_kind)`；待办的`(domain_id,state,item_id)`、`parent_item_id`；产物的`(domain_id,kind,artifact_id)`；供题的`(scope_id,batch_id)`，以及上述主键／唯一索引。名称子串先在已限领域和类型的结果中筛选；M1不增加全JSON GIN、向量库或独立搜索服务。容量与查询性能在实现时检验。
 
-表结构依据PostgreSQL的[JSONB](https://www.postgresql.org/docs/current/datatype-json.html)与[外键约束](https://www.postgresql.org/docs/current/ddl-constraints.html)能力设计。M1不开放物理删除；模块运行凭据不向不可变版本、产物、确认或批次授予UPDATE／DELETE权限。迁移使用单独受控权限，迁移工具与全局兼容协议仍由基础设施详细设计确认。
+表结构依据PostgreSQL的[JSONB](https://www.postgresql.org/docs/current/datatype-json.html)与[外键约束](https://www.postgresql.org/docs/current/ddl-constraints.html)能力设计。M1不开放物理删除；模块运行凭据不向不可变版本、产物、确认或批次授予UPDATE／DELETE权限。迁移使用单独受控权限，按[基础设施§5.3](Infrastructure_and_Deployment_Design.md#53-schema迁移与版本兼容)统一执行Alembic脚本；技术Schema升级不覆盖正式领域内容版本。
 
 ### 6.3 设计范围与后续承接
 
@@ -446,7 +451,7 @@ Domain使用下面九类表。表名、字段和索引是本批详细设计；�
 | --- | --- |
 | 公共事务适配、受理派发、事件待发与NATS／Temporal交接的实现合同 | 公共运行和基础设施详细设计；遵守§6.5共同提交，编码前确定连接／恢复实现，不在Domain另做调度器 |
 | 教材物理表和读取／来源锁实现 | Product§3.6.1／§3.7已给出设计稿，公共运行与基础设施继续落实事务装配；实现不能退回远程查询后直接保存 |
-| 数据库驱动／ORM、迁移工具、全局时间与协议升级 | 基础设施及公共运行设计，按总体§7.2.3确认；本批没有据此默选工具、时限或事件协议版本 |
+| 数据库连接、迁移与兼容 | 基础设施§2.2／5.3已形成SQLAlchemy＋psycopg及Alembic接线稿；具体版本、时限和升级接收待审，Domain不自行建表或另开连接提交 |
 | Schema代码、提示模板、渲染器、结构检查器及四例复验 | 实现阶段按§7执行；本阶段不做代码验证，非架构问题允许修订详细设计后继续实现 |
 | 未覆盖的数学符号、复杂表格与图形 | Domain内容协议与客户端共同补充；表达不了先留缺口，不静默丢失 |
 | 真实语义准确率、整册准备和并发／恢复效果 | 实现后按验证计划取证，不用设计案例或mock结果替代 |
@@ -624,7 +629,7 @@ Domain返回的`content_ref`分两种：对象内容为`{owner:"domain",object_r
 | `guard_references` | Product章节／目标保存、确认应用；Evaluation定义保存 → Domain | `access_context,transaction_context,domain_id,task_ref,method_refs[]` → 已核对的精确Task／方法及去重KC引用，或invalid_reference；同库短事务内锁Domain根FOR SHARE，核对对象未软删除、方法属于该Task版本及关系目标有效；不写Domain、不自行提交 |
 | `read_intake_result` | Product → Domain | 提交／待办引用 → 来源与精确对象、参考、检查映射；不替Product保存章节采用 |
 | `domain.supply_task`结果读取 | Interaction → 底座及Domain | 先按触发事件读取`task_supply`结果，再按批次引用授权读Domain内容；不从通知直接取题面展示 |
-| `DomainIntakeRequested` | Product → Domain普通处理 | 事件信封提供来源引用；按§2.2固定读取，最终受理也执行来源保护和整批事务，成功发`DomainIntakeReceived`及`intake_receipt` |
+| `DomainIntakeRequested` | Product → Domain普通处理 | 事件信封提供来源引用；按§2.2固定读取，最终受理也执行来源保护和整批事务，完成发`DomainIntakeReceived`或`DomainIntakeRejected`及同键`intake_receipt`；技术失败不发布业务决定 |
 | `MaterialCandidatesAdopted`／`MaterialImportDeleted` | Product → Domain普通处理 | 引用失效来源；只更新未处理待办。重复事件无新状态变化便不再产生失效事件；入库仍以事务内来源检查为准 |
 | `TaskSupplyRequested` | Interaction → Domain AI能力 | 固定用途、Task／方法、接触事实 → §5.2统一供题；成功发`DomainTaskSupplyCompleted`及`task_supply`，不存在浏览器直接启动此事件的公共入口 |
 
@@ -707,3 +712,9 @@ C06  relation={subject: point_1, predicate: inside, object: circle_1,
 本轮修订（v0.12，2026-11-15）：补课程检查的精确取材和目标／应用保存的引用保护；不在检查时供题或修改Domain，见MVP决定登记§73。
 
 本轮修订（v0.13，2026-11-15）：补Evaluation定义保存的精确引用保护调用方；本批只修订文档，见MVP决定登记§74。
+
+本轮修订（v0.14，2026-11-15）：对齐已选数据库工具及不可变版本迁移约束。仅修订文档，见MVP决定登记§81。
+
+本轮修订（v0.15，2026-11-15）：补领域整批拒收、终态回执和重复提交边界。仅修订文档，见MVP决定登记§83。
+
+本轮修订（v0.16，2026-11-15）：对齐例题、练习和检测供题的消费路径。仅修订文档，见MVP决定登记§91。

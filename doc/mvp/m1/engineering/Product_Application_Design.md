@@ -1,11 +1,11 @@
 # M1 产品业务设计
 
-> **版本**：v0.20<br>
-> **状态**：文档修订待用户审阅；本轮未修改原型或实现真实服务<br>
+> **版本**：v0.25<br>
+> **状态**：主流程合同检查及修正稿待用户审阅；未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.19 → v0.20，细化预置账号、登录会话、凭据重置和授权来源；见MVP决定登记§80<br>
+> **修订说明**：v0.24 → v0.25，对齐已集中维护的查询分页参数引用；见MVP决定登记§91<br>
 
 本文设计教材准备、学习目标、学习空间和账号关系等产品业务，说明这些业务如何调用核心Space。教材助手归本模块管理，个人能力与目标达成计算仍由Evaluation负责；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。学习用时统计与提醒后置，不作为M1模块或验收条件。
 
@@ -30,7 +30,7 @@
 | `ID`、`Ref`、`Revision` | 非空不透明标识；`Ref`固定对象与采用依据 | 不用标题或数组位置当身份；空值须由下文显式允许 |
 | `AccountInput` | `login_identifier:string, display_name:string`；学生另需`guardian:{existing_ref:Ref? , verified_identity_ref:Ref}, verification_ref:Ref` | guardian无existing_ref时按已核实身份建立必要监护记录，不开通家长应用。凭据使用`CredentialProof`／`CredentialReset`受保护对象，格式由认证设计确定，不入普通事件 |
 | `ConfirmationInput` | `student_id:ID, kind:enum, notice_ref:Ref, decision:enum, occurred_at:timestamp, source_ref:Ref` | kind为`guardian_consent`／`student_assent`；decision为`accepted`／`declined`／`pending`，分别表示同意／未同意／待确认，不把缺值当同意 |
-| `MaterialInput` | `domain_ref:Ref, title:string, source:string, files:FileReceipt[]`非空；`edition:string?` | FileReceipt含`storage_ref:Ref, type:pdf|jpg|png, original_name:string, order:int`；文件内分页保留顺序，版权页未知如实留空 |
+| `MaterialInput` | `domain_ref:Ref, title:string, source:string, files:MaterialFile[]`非空；`edition:string?` | MaterialFile含`receipt:FileReceipt, original_name:string, order:int`；收据固定文件引用、真实媒体类型、大小和hash，见基础设施§2.3；文件内分页保留顺序，版权页未知如实留空 |
 | `MaterialSelection` | `import_id:ID, scope:batch|chapter|content, basis_revision:Revision, source_refs:Ref[]` | chapter／content需对应对象引用；引用按本次明确请求确定，浏览位置不能自动替代选区 |
 | `CandidateRef` | `candidate_id:ID, candidate_revision:Revision, basis_revision:Revision` | 内容为KC／TaskInstance及题内参考解法候选；图表和公式随所属元素，参考解法必须归属于题目；结构语义见[内容规格§3.1](../design/Content_and_Model_Reference.md#31-提取什么以及怎样保存图表和来源) |
 | `GoalItem` | §4.2.1定义 | 目标内条目，不是独立“学习要求”实体；Claim按精确Task版本核对 |
@@ -106,9 +106,9 @@
 | credentials | account_id唯一、password_hash、credential_revision、changed_at；仅认证适配读取摘要 |
 | auth_sessions | session_id、唯一token_hash、account_id、credential_revision、created_at、expires_at、revoked_at、csrf_token；session_id只用于诊断，不可代替Cookie登录 |
 
-csrf_token是会话绑定的防伪值，不是登录凭据；作为受限字段保存，仅通过已认证的会话查询返回，不能写日志。后台会话记录与账号身份均归Product；底座通过认证端口核验，不直接读凭据表。M1采用固定到期时间，不因WebSocket心跳无限续期；时限、密码长度和失败限流数值在部署配置评审确认，缺值不得默认无限。
+csrf_token是会话绑定的防伪值，不是登录凭据；作为受限字段保存，仅通过已认证的会话查询返回，不能写日志。后台会话记录与账号身份均归Product；底座通过认证端口核验，不直接读凭据表。M1采用固定到期时间，不因WebSocket心跳无限续期；时限、密码长度、散列成本和尝试限额统一见[基础设施§4.5 A01–A04](Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)，仍待审，缺值不得默认无限。
 
-登录过程：检查来源及请求格式→执行有限登录尝试控制→读取账号和密码修订→事务外校验密码→短事务重查账号及凭据修订→生成会话并登记安全记录→提交后设置Cookie。密码重置先完成时，旧密码验证结果不得建立新会话。未知账号也走受控等价校验，错误只返回“账号或密码不正确”；不记录密码或整段登录请求。
+登录过程：检查来源及请求格式→执行有限登录尝试控制→读取账号和密码修订→事务外校验密码→短事务重查账号及凭据修订→生成会话并登记安全记录→提交后设置Cookie。密码重置先完成时，旧密码验证结果不得建立新会话。未知账号也走受控等价校验，错误只返回“账号或密码不正确”；不记录密码或整段登录请求。登录限额由Product按登录标识及可信来源执行；临时限流不改账号状态，服务过载不记成密码错误。成功登录及重置不能让并发旧校验建立过期会话。
 
 同一浏览器切换账号时，成功登录事务撤销请求携带的旧会话，再设置新Cookie；其他浏览器的会话不因这次切换失效。账号数据、草稿及已受理工作不迁给新账号，客户端处理见[Client§5](Client_Design.md#5-网络异步结果与展示回执)。
 
@@ -154,7 +154,9 @@ csrf_token是会话绑定的防伪值，不是登录凭据；作为受限字段�
 2. 保存已成功接收的原件及页序；PDF内部分页，保留文件内页与印刷页码的区别，不猜版次。
 3. 建立或补充同一导入记录及`MaterialReceived`事件；失败文件单列，已有内容可继续使用。
 
-**恢复与验收。** 同请求、同文件收据不重复追加；部分上传失败按原导入继续接收，删除中的导入拒绝新材料。验证整批PDF／图片、未选领域、补页及重试保留已收部分。文件大小／数量上限与上传协议待基础设施设计，不在此编造数值。
+**恢复与验收。** 同请求、同文件收据不重复追加；部分上传失败按原导入继续接收，删除中的导入拒绝新材料。验证整批PDF／图片、未选领域、补页及重试保留已收部分。上传与收据按[基础设施§2.3](Infrastructure_and_Deployment_Design.md#23-文件对象与上传合同)接线；大小／数量上限仍在接线前确认。
+
+上传登记先调用Product的用途校验，核对必选Domain、现有导入归属及管理员权限；没有Domain不发教材上传授权。接收时复核准备上传与本次教材的Domain相同。
 
 文件收据须经存储适配核实上传完成、访问权限及实际类型；浏览器给出的文件名不是有效收据。原文件字节不被后续识别覆盖，原件定位使用固定文件引用与文件内页号；印刷页码为可为空的内容信息。PDF转页图属于文件准备，不等于OCR或语义提取。补充文件追加新的原件身份；“用这张替代上一张”的含义由助手提出候选并经采用确认，不直接改写旧原件。
 
@@ -248,6 +250,8 @@ sequenceDiagram
 | `read_material_history` | 同一导入内指定消息、候选和决定的原文；按用途限定范围，不给其他教材全量历史 |
 | `store_material_work` | 保存本轮工作草稿或候选建议；Product检查来源、结构、执行归属和范围，不改变当前采用、Domain或章节关联 |
 
+页图工具通过[AI底座§4.2](AI_Foundation_Design.md#42-图像和持久载荷)返回带可见来源标签的图文；只返回文件ID不能代替模型实际看图。初始材料和工具补取都登记固定来源及hash；分段由本Operation决定，SDK载荷外置不改变内容范围、候选采用或入库资格。
+
 这些工具是本Operation内部能力，不新增AI Operation。最终发布候选由程序执行§3.4.3检查；工具保存草稿不等于已向管理员交付候选。助手无权调用采用、删除导入、提交Domain或保存章节关联的写入口。
 
 #### 3.4.3 Agent输出与程序接收
@@ -306,15 +310,15 @@ Product的最小工作记忆是结构化工作记录：本轮范围、已处理�
 
 1. 核对所选内容均已采用且来源有效；KC、题目、解法分别选择。选解法必须定位同一道父题：本批同时提交、此前已有有效待办，或准确引用已入库题目版本。父题待入库时只允许解法进入待办，不能提前完成关联；父题均未登记则先提交题目，不能偷偷附带其他内容。
 2. 保存按来源修订固定的提交包，追加`DomainIntakeRequested`事件；Domain的`domain.receive_intake`订阅创建待办，Product不直接写其模板或实例。
-3. 产品业务以本次固定触发事件对应的`intake_receipt`等待Domain受理，期限交底座执行。取得对应待办引用及完整候选映射后才确认受理完成；等待到期显示“已提交，尚未确认领域受理”，保留原提交并允许查询，不能显示入库失败或新建一批请求。
+3. 产品业务以本次固定触发事件对应的`intake_receipt`等待Domain受理，期限交底座执行。结果available后检查outcome：received且映射覆盖全部候选才标接收完成；rejected则记录issues并结束本次等待，不继续假等待办。等待到期显示“已提交，尚未确认领域受理”，保留原提交并允许查询，不能显示入库失败或新建一批请求。
 
 **恢复与验收。** 同一来源修订的重复提交复用待办／已有入库引用；确认原事件未投递时可按底座保障重投，不再生成提交包；仅等待超时不能证明Domain未受理，也不触发新的入库请求。来源已替代不得继续入库，需提交新内容。验证只选题不带解法、缺父题被挡、重复投递只建一次待办。
 
 Domain返回本次新建／复用对象的精确版本、来源映射和检查引用。新增出处记入入库结果，不要求复用对象为此修改内容或升版。Product不能把“定义已创建”“题目已关联”或“参考已追加”当成章节采用成功，章节关系仍由§4.1明确保存。Domain入库、失败与恢复的唯一规则见[Domain§2](Domain_Space_Design.md#2-定义维护与教材内容入库)。
 
-提交记录只维护`submitted|received|rejected`：submitted为请求已共同保存并等待受理；received为取得Domain明确收据；rejected为取得Domain明确业务拒绝。投递／执行故障和本方等待到期另记`delivery_state`／`wait_state`，不把消息迟到当业务拒绝。Domain待办后续的入库、放弃或失效通过其授权查询读取，Product不复制一套待办状态机。消息重复或乱序按trigger_event_id关联同一提交；迟到的受理结果仍可登记，但不把已失效来源改回有效。程序核对结果覆盖本次候选，不能把其他提交的成功通知填入本批。
+提交记录只维护`submitted|received|rejected`：submitted为请求已共同保存并等待受理；received为取得outcome=received的完整待办映射；rejected为取得outcome=rejected及具体原因。投递／执行故障和本方等待到期另记`delivery_state`／`wait_state`，不把消息迟到当业务拒绝。Domain待办后续的入库、放弃或失效通过其授权查询读取，Product不复制一套待办状态机。消息重复或乱序按trigger_event_id关联同一提交；迟到的受理结果仍可登记，但不把已失效来源改回有效。程序核对结果覆盖本次候选，不能把其他提交的成功通知填入本批。
 
-delivery_state是底座投递／执行结果的只读投影，不在Product自建发送队列或重试计数；wait_state为`waiting|timed_out|closed`，按本消费方等待决定变化。收到明确成功／业务拒绝后关闭等待；底座技术失败只关闭本次等待并展示恢复条件，不推导领域业务拒绝。具体公共失败载荷随底座详细设计接线。
+delivery_state是底座投递／执行结果的只读投影，不在Product自建发送队列或重试计数；wait_state为`waiting|timed_out|closed`，按本消费方等待决定变化。收到明确成功／业务拒绝后关闭等待；底座技术失败只关闭本次等待并展示恢复条件，不推导领域业务拒绝。公共技术失败读取原执行／交接及失败引用，见公共运行§4.3—4.5；业务拒绝的唯一载荷见Domain§2.2。补齐内容后由管理员明确新提交，不借技术重试翻转原拒绝。
 
 ### 3.6.1 教材来源读取与提交保护
 
@@ -336,7 +340,7 @@ Domain持有已入库内容的结构化副本，Product继续拥有原件、采�
 
 ### 3.7 教材持久化与状态
 
-以下为`product` schema内的表设计；ID为程序生成的不透明身份，修订为递增正整数，时间沿公共时间合同，不另定时区。JSON字段承载本文已定义的类型，未知不记空成功。表名和字段为待审详细稿，驱动及迁移工具仍由基础设施确认；本节不实现建表。
+以下为`product` schema内的表设计；ID为程序生成的不透明身份，修订为递增正整数，时间沿公共时间合同，不另定时区。JSON字段承载本文已定义的类型，未知不记空成功。表名和字段为待审详细稿，连接和迁移采用基础设施§2.2／5.3已选工具；具体版本及脚本仍需接收，本节不实现建表。
 
 | 表／主键 | 主要字段及索引 | 可变边界 |
 | --- | --- | --- |
@@ -605,7 +609,7 @@ Evaluation按自己的§2.2生成有限候选Task清单；Product提供采用事
 | `space_events`／`activity_trace` | 空间ID；可选活动／事件类型／时间范围 | 经事件与Interaction公开读取取得原始事实、轮次、步骤及运行依据；学生只见允许本人查看内容 |
 
 1. 校验kind与必需定位，先做所有权及字段权限过滤，再查询，不能先读全部后在客户端隐藏。
-2. 调用所属模块公开读取，固定所用采用／结果引用；列表以稳定顺序和游标返回，具体分页上限待接口设计。
+2. 调用所属模块公开读取，固定所用采用／结果引用；列表以稳定顺序和游标返回，页量和字节上限沿基础设施§4.5 H02候选，确认前不转为默认值。
 3. 区分空列表、未知判断、处理中和读取失败；只有全部成功的部分可标为完成，不拼接跨空间个人状态。
 
 **恢复与验收。** 读取故障可以重读，无写入去重要求；无权限、对象不存在与参数非法分别返回受保护错误。验证领域筛选、本人空间隔离、目标→Evidence→事件追溯及无数据不显示零掌握率。关闭窗口或历史浏览不触发新活动。
@@ -703,7 +707,7 @@ confirm的请求示例（示意ID，首次应用）：
 
 | 交接事件 | 最小业务载荷（共用事件信封不重复） | 接收结果与边界 |
 | --- | --- | --- |
-| `DomainIntakeRequested` | `scope_id`为导入资源全局身份；`domain_id:ID, intake_request_id:ID, candidate_refs:Ref[]`均指向已采用不可变内容；类别、父题关系及来源经§3.6.1公开读取 | Domain负责受理和待办；`producer=domain, result_kind=intake_receipt`返回候选与待办／分组映射，失败保留原提交等待恢复，不自动入库 |
+| `DomainIntakeRequested` | `scope_id`为导入资源全局身份；`domain_id:ID, intake_request_id:ID, candidate_refs:Ref[]`均指向已采用不可变内容；类别、父题关系及来源经§3.6.1公开读取 | Domain负责受理和待办；`intake_receipt`返回received及完整映射，或rejected及原因；技术失败保留原提交恢复，不当业务拒绝、不自动入库 |
 | `MaterialCandidatesAdopted`／`MaterialImportDeleted` | 导入ID、替代／删除前后来源引用、受影响待入库提交引用 | Domain使尚未入库的过时来源不可继续；入库时仍复核来源有效性，防止通知延迟造成误入库 |
 | `LearningTargetApplied` | `scope_id, adoption_ref, target_basis_ref, applied_at, previous_target_basis_ref?, application_ref, cause_ref`；依据通过§5.2.1读取，cause_ref为原请求／事实引用 | 首次空间建立或目标依据变化时触发Evaluation目标对照；不更新概率或重算旧作答 |
 | `LearningSpaceEntered` | `scope_id, adoption_ref, application_ref, target_basis_ref, request_ref`；entry_ref即事件引用，发生时间沿共用信封 | Interaction核对主动任务；实际进入才产生，同请求不重复，重连／查询不产生 |
@@ -752,3 +756,13 @@ confirm的请求示例（示意ID，首次应用）：
 本轮修订（v0.19，2026-11-15）：补教材助手失败释放与原请求恢复接线。仅修订文档，见MVP决定登记§78。
 
 本轮修订（v0.20，2026-11-15）：细化预置账号、登录会话、凭据重置和授权来源。仅修订文档，见MVP决定登记§80。
+
+本轮修订（v0.21，2026-11-15）：补教材上传授权、文件收据及数据库迁移交接。仅修订文档，见MVP决定登记§81。
+
+本轮修订（v0.22，2026-11-15）：对齐教材页图工具的来源、模型可见输入与载荷边界。仅修订文档，见MVP决定登记§82。
+
+本轮修订（v0.23，2026-11-15）：接通领域接收及拒收结果，分开业务拒收与技术失败。仅修订文档，见MVP决定登记§83。
+
+本轮修订（v0.24，2026-11-15）：引用登录候选参数，区分限流、认证失败与后台执行。仅修订文档，见MVP决定登记§90。
+
+本轮修订（v0.25，2026-11-15）：对齐已集中维护的查询分页参数引用。仅修订文档，见MVP决定登记§91。

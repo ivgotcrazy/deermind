@@ -1,20 +1,20 @@
 # MVP 产品迭代与文档入口
 
-> **版本**：v0.75<br>
+> **版本**：v0.86<br>
 > **文档性质**：当前MVP目录、阅读顺序与维护约定<br>
-> **状态**：文档修订待用户审阅；本轮未修改原型或实现真实服务<br>
+> **状态**：主流程合同检查及修正稿待用户审阅；未编码<br>
 > **上游依据与基线**：M1 PRD v0.28、内容规格v0.26、交互规格v0.25及本轮用户决定；本轮仅修订文档，历史原型与证据保留<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
-> **评审记录**：服务端登录会话及同浏览器共用账号已确认；接线细则待审，自检见登记§80<br>
+> **评审记录**：本批静态自检见登记§91；配置候选仍待确认<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.74 → v0.75，同步登录授权与浏览器通信详细设计交付；见MVP决定登记§80<br>
+> **修订说明**：v0.85 → v0.86，同步主流程检查结论、审阅入口及现行版本；见MVP决定登记§91<br>
 
 ---
 
-此前模型、原型与合同调整见[变更清单](m1/design/Domain_Model_Revision_Checklist.md)和[决定登记§68](DECISIONS.md#68-domain模型修订与m1原型同步)；当前详细设计批次见决定登记§80。
+此前模型、原型与合同调整见[变更清单](m1/design/Domain_Model_Revision_Checklist.md)和[决定登记§68](DECISIONS.md#68-domain模型修订与m1原型同步)；当前详细设计批次见[决定登记§91](DECISIONS.md#91-主流程合同检查与交接修正)。
 
-当前已进入[模块详细设计](m1/engineering/README.md)。本批审阅最小登录、后台执行授权与浏览器通信恢复；服务端登录会话及同浏览器共用账号已确认。细则待审，未改原型、未编码。
+当前已进入[模块详细设计](m1/engineering/README.md)。[主流程检查](m1/engineering/Delivery_Plan.md#27-主流程合同检查)已形成修正稿，下一步集中审阅版本、资源和参数候选；不把文档核对当作运行验证，未安装、未改原型、未编码。
 
 ## 1. 目录与当前阅读顺序
 
@@ -37,7 +37,7 @@ doc/mvp/
     └── 2026-11-11-before-swdd/    原七份M1工程文件、原文快照与清单
 ```
 
-本轮先读[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)、[九份文档分工](m1/engineering/README.md#1-文档分工)、[总体设计](m1/engineering/System_Design.md)及[本批决定与变更](DECISIONS.md#78-公共运行交接执行尝试与等待恢复)。产品输入按[M1入口](m1/README.md)、[PRD v0.28](m1/PRD.md)、[内容规格 v0.26](m1/design/Content_and_Model_Reference.md)、[交互规格 v0.25](m1/design/Interaction_Design.md)及[验证计划 v0.9](m1/validation/Validation_Plan.md)查阅。Domain合同为[v1.7](../concept-design/DeerMind_Domain_Space_Design_v1.7.md)，Evaluation为[v1.11](../concept-design/DeerMind_Evaluation_Space_Design_v1.11.md)，AI执行原则见[AI Native架构原则 v0.7](../top/DeerMind_AI_Native_Architecture_Principles_v0.7.md)。
+本轮先读[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)、[九份文档分工](m1/engineering/README.md#1-文档分工)、[总体设计](m1/engineering/System_Design.md)及[本批决定与变更](DECISIONS.md#85-本机部署包与资源预算草案)。产品输入按[M1入口](m1/README.md)、[PRD v0.28](m1/PRD.md)、[内容规格 v0.26](m1/design/Content_and_Model_Reference.md)、[交互规格 v0.25](m1/design/Interaction_Design.md)及[验证计划 v0.9](m1/validation/Validation_Plan.md)查阅。Domain合同为[v1.7](../concept-design/DeerMind_Domain_Space_Design_v1.7.md)，Evaluation为[v1.11](../concept-design/DeerMind_Evaluation_Space_Design_v1.11.md)，AI执行原则见[AI Native架构原则 v0.7](../top/DeerMind_AI_Native_Architecture_Principles_v0.7.md)。
 
 此前模型、活动、教材、学生及评价的决定和资产继续由[DECISIONS](DECISIONS.md)及[M1产品交接检查](m1/README.md#6-主流程闭环检查2026-11-09)索引。本批不重写历史结论，总体设计首稿不代表产品验收或全部工程设计完成。
 
@@ -61,7 +61,7 @@ M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工�
 | 验证计划与报告 | `m1/validation/`：测量方法、样本、配置、停止条件；实际结果另成报告 | 计划在运行前形成；有真实执行后才建立结果报告 |
 | 决定与待决 | `DECISIONS.md`：承接、变更、未决、阶段评审及版本记录 | 随需求推进维护；不另复制PRD正文 |
 
-文件不必一开始全部创建。design已承接领域、教材、评估、目标与Interaction的产品规则，原型及截图表达已确认交互，真实评价链尚未完成。engineering按SwDD推进模块详细设计，本批补Interaction事实记录及提交稿，下一批补活动配置执行、上下文／记忆和主动任务；原型未修改。validation已有有限真实提取试验，结果按原报告保留，不据本稿改判。PRD、详细规格和原型共同表达产品设计，工程设计定义实现机制；现行Task／Solution模型及旧资产边界见决定登记§68—69。
+文件不必一开始全部创建。design已承接领域、教材、评估、目标与Interaction的产品规则，原型及截图表达已确认交互，真实评价链尚未完成。engineering按SwDD推进模块详细设计，当前补剩余接线并收束配置审阅，见实施计划§2.6；原型未修改。validation已有有限真实提取试验，结果按原报告保留，不据本稿改判。PRD、详细规格和原型共同表达产品设计，工程设计定义实现机制；现行Task／Solution模型及旧资产边界见决定登记§68—69。
 
 ## 4. 历史与资产的使用规则
 
@@ -97,3 +97,25 @@ M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工�
 本轮修订（v0.74，2026-11-15）：同步AI底座详细设计交付与后续顺序。仅修订文档，见MVP决定登记§79。
 
 本轮修订（v0.75，2026-11-15）：同步登录授权与浏览器通信详细设计交付。仅修订文档，见MVP决定登记§80。
+
+本轮修订（v0.76，2026-11-15）：同步存储部署、迁移与备份恢复详细稿及后续事项。仅修订文档，见MVP决定登记§81。
+
+本轮修订（v0.77，2026-11-15）：同步本批模型接线交付、决定和后续顺序。仅修订文档，见MVP决定登记§82。
+
+本轮修订（v0.78，2026-11-15）：更新本批合同审阅入口、版本和后续顺序。仅修订文档，见MVP决定登记§83。
+
+本轮修订（v0.79，2026-11-15）：同步首轮模型、测试环境、部署入口和候选审阅顺序。仅修订文档，见MVP决定登记§84。
+
+本轮修订（v0.80，2026-11-15）：更新部署草案审阅入口、当前版本和后续计划。仅修订文档，见MVP决定登记§85。
+
+本轮修订（v0.81，2026-11-15）：同步恢复决定、预算草案入口及当前工程版本。仅修订文档，见MVP决定登记§86。
+
+本轮修订（v0.82，2026-11-15）：同步材料容量与保留决定、审阅入口及当前工程版本。仅修订文档，见MVP决定登记§87。
+
+本轮修订（v0.83，2026-11-15）：同步日志简化及当前详细设计进度。仅修订文档，见MVP决定登记§88。
+
+本轮修订（v0.84，2026-11-15）：同步共享Worker决定与当前设计进度。仅修订文档，见MVP决定登记§89。
+
+本轮修订（v0.85，2026-11-15）：同步详细设计参数交付与审阅状态。仅修订文档，见MVP决定登记§90。
+
+本轮修订（v0.86，2026-11-15）：同步主流程检查结论、审阅入口及现行版本。仅修订文档，见MVP决定登记§91。

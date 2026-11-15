@@ -1,17 +1,17 @@
 # M1 系统底座设计
 
-> **版本**：v0.32<br>
-> **状态**：运行交接与恢复详细稿待审；参数及其余接线继续细化，未编码<br>
+> **版本**：v0.42<br>
+> **状态**：入口与执行参数候选已集中，待用户审阅；未编码<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-15<br>
-> **修订说明**：v0.31 → v0.32，细化授权上下文、WebSocket信封及断线补取；见MVP决定登记§80<br>
+> **修订说明**：v0.41 → v0.42，统一引用入口参数表，区分连接超时与后台执行期限；见MVP决定登记§90<br>
 
 本文设计接入、路由、派发、运行保障、全局事件和输出回传等共用机制，为业务模块、核心Space及AI底座提供基础接口。事件含义、业务先后关系和状态判断由调用方定义，本文件不建立中央教学或评价决策器；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
-已确认采用NATS JetStream投递业务事件，Temporal承接持久执行、等待和恢复，PostgreSQL保存业务记录及正式事件。公共运行底座维护授权、路由、事件与执行及回传关联，提供技术重复识别；业务重复由所属Space判断。Pydantic AI属于AI底座，可供公共路由和业务Operation调用。组件总览见[总体§6.1](System_Design.md#61-已定技术与待选方案)。
+已确认采用NATS JetStream投递业务事件，Temporal承接持久执行、等待和恢复，PostgreSQL保存业务记录及正式事件。公共运行底座维护授权、路由、事件与执行及回传关联，提供技术重复识别；业务重复由所属Space判断。Pydantic AI属于AI底座，供业务Operation调用；M1现有入口直接派发，不在公共路由另调模型。组件总览见[总体§6.1](System_Design.md#61-已定技术与待选方案)。
 
-本批细化认证接入、授权上下文及浏览器通知／补取；已有执行、等待和恢复边界保持。用户确认服务端登录会话和同浏览器共用账号；字段与接线为待审稿。底座不另建业务任务队列或替代Temporal的调度引擎。
+本批补共享Worker的入口登记与恢复接线；投递保留、恢复计时、认证及业务权限沿已定合同。底座不另建业务任务队列或替代Temporal的调度引擎。
 
 ## 1. 共用合同与调用边界
 
@@ -32,11 +32,13 @@
 
 | 记录 | 必要字段 | 可变性与用途 |
 | --- | --- | --- |
-| 预期结果登记 | `result_key`、生产处理引用（字段待定）、`accepted_at` | 同一键只绑定一次生产处理；用于区分未受理与已受理 |
+| 预期结果登记 | `result_key`、`execution_id`、`accepted_at` | 同一键只绑定一次生产处理；用于区分未受理与已受理 |
 | 执行尝试记录 | `result_key`、`attempt_id`、发生时间、尝试状态、可选 `failure_ref` | 受理、执行和失败分别留痕；新尝试使用新 `attempt_id`，不覆盖旧错误记录 |
-| 已发布结果 | `result_key`、`result_ref`、生产处理引用（字段待定）、`published_at`、生产方载荷 | `result_ref` 指向不可变批结果；每个键只能有一个成功发布结果 |
+| 已发布结果 | `result_key`、`result_ref`、`execution_id`、`published_at`、生产方载荷 | `result_ref` 指向不可变批结果；每个键只能有一个成功发布结果 |
 
-`attempt_id` 标识一次技术执行，不是新题、新证据或新学习机会。生产方决定哪些条目形成了业务结果；底座只校验身份、权限、发布唯一性和读取可见性。`no_evidence`、`unchanged` 是成功处理后的业务结果，可以发布；生产操作的执行超时、服务不可用等技术失败只写尝试记录，不能占用成功结果位置。
+M1公共结果的生产者均有Execution：Domain入库接收与独立目标对照为handler，供题及证据解释为ai_operation；解释流程内部的目标结果沿原Execution发布。预期结果登记绑定execution_id，发布携带该执行的有效attempt_id；普通同步API收据不借用此表伪造Execution。跨尝试保持execution_id与结果键不变。
+
+`attempt_id` 标识一次执行尝试，不是一次Activity重试、新题、新证据或新学习机会。生产方决定哪些条目形成了业务结果；底座只校验身份、权限、发布唯一性和读取可见性。`no_evidence`、`unchanged`及领域业务`rejected`均是处理完成后的业务结果，可以发布；生产操作的执行超时、服务不可用等技术失败只写尝试记录，不能占用成功结果位置。
 
 ### 1.2 公开操作
 
@@ -48,7 +50,7 @@
 | `read_publication`：获授权的业务模块或 Space | `scope_id`、`publication_type`、可选 `publication_ref` | 本轮类型为 `learner_mastery_state`。指定引用读该份发布内容，省略引用读最新已发布内容；有结果返回 `available(publication_ref, payload)`，无发布返回 `not_found`。越权与读取故障分别返回 `forbidden`、`temporarily_unavailable` |
 | `register_wait`：事件消费方 | §3.1的归属、条件、期限及命中／超时处理约定 | 底座保存并执行本方等待，按命中或到期唤醒对应入口；登记不启动或约束生产任务，不要求生产方先登记预期结果 |
 | `cancel_wait`：等待记录所有者 | `wait_id` | 成功或重复取消返回 `cancelled`；接续已提交返回 `already_completed`，不回滚已发生的业务动作；不存在或越权分别返回 `not_found`、`forbidden` |
-| `publish_result`：注册的结果生产方 | `result_key`、`attempt_id`、生产处理引用（字段待定）、拟发布的不可变结果引用及载荷 | 首次提交返回已发布 `result_ref`；同键同引用的重试返回原引用；同键不同引用返回 `result_conflict`。未受理、引用无效、越权或提交故障不得产生可见的半成品 |
+| `publish_result`：注册的结果生产方 | `result_key`、`attempt_id`、`execution_id`、拟发布的不可变结果引用及载荷 | 首次提交返回已发布 `result_ref`；同键同引用的重试返回原引用；同键不同引用返回 `result_conflict`。未受理、引用无效、越权或提交故障不得产生可见的半成品 |
 
 `read_result` 只查询已经登记或发布的状态，不启动评价、不修补结果。返回状态按以下顺序确定：
 
@@ -106,16 +108,25 @@ Operation是一项AI业务能力；Step是能力内部需要保留结果、重�
 
 ### 1.5 接入路由、上下文与派发
 
-路由函数归公共运行底座，登记入口区分普通处理器和AI Operation。确定的API或消息直接进入所属普通处理器；需要AI业务能力时选择预定义Operation。LLM只能在获准的AI候选中辅助判断，不能创造处理器、扩充权限或绕过业务校验。总体成功路径见[求助时序](System_Design.md#45-从求助请求到前端回显)。
+用户确认M1现有入口直接派发，不在入口前另调LLM选择Operation。路由函数仍归公共运行，负责查登记和授权派发；学生表达的讲解、求助或检测含义归handle_input内部判断。教材纠错意图归教材助手。以后新增无法明确归属的通用入口，再设计语义路由，本期不留一个必须实现的空路由Agent。
 
-1. 接收已认证请求，核对资源访问范围，保留稳定请求身份及原文。自然语言请求不要求客户端知道Operation名；执行输入在确定目标后建立，不是前端聊天消息Schema。
-2. 已登记入口足以确定目标时，直接调用普通处理器或派发AI Operation，包括可由入口确定归属的文字请求。只有需要语义判断时，才限制允许候选，通过授权查询取得必要事实并调用AI底座中的LLM；不直接读Space私有表或把当前浏览章节当作聊天范围。
-3. 意图或必要业务信息不足时询问用户，补足前不派发猜测目标。目标明确后，校验登记、权限和必要输入，再按声明准备启动材料、保存路由决定、运行输入及回传关联。权限拒绝、非法候选和模型调用故障按相应错误处理，不写成用户意图不清。
-4. AI Operation交Temporal调度，由Worker执行所属业务代码；普通查询、保存和消息处理按登记入口执行。普通后台任务使用§3.3的handler执行登记，不强制经过AI框架。
+入口登记由程序维护：`entry_code,transport,request_schema_ref,owner,admission_handler_ref,target_entry_ref,execution_kind,authorization_policy_ref`。target_entry_ref来自工程入口§5／7目录；客户端只发送已公开entry_code及业务参数，不能自填Operation名、模型或Worker队列。普通入口后续是否安排AI由所有者决定，不由前端猜测。
 
-明确入口直接派发、需要语义判断才调用LLM、拿不准先询问的顺序已确认。入口登记、候选筛选、必要信息检查、澄清答复的关联与接续仍待详细设计；本轮不增加向量索引、决策模型或新的路由接口。
+| M1入口 | 公共映射与所有者处理 |
+| --- | --- |
+| 学生自然输入 | Interaction校验空间、busy和请求身份，保存输入并登记handle_input；意图不清在该Operation内澄清 |
+| 教材助手输入 | Product校验导入、来源与busy，保存输入并登记converse_material_assistant |
+| 明确检测动作／接受检测建议 | Interaction核对必要参数及活动衔接，登记prepare_detection；聊天内转检测复用该准备流程，见Interaction§4.1 |
+| Domain定义提取／归类命令 | 按对应管理入口及权限登记extract_template／classify_instance；正式保存仍经Domain校验 |
+| 业务事件 | 依订阅登记进入普通处理、AI能力或等待适配；Evaluation先顺序扫描，不能按通知顺序直接启动评价 |
+| 普通管理、查询、作答与控制 | 进入已登记普通处理器；需要后续AI时，由所有者保存其派发依据 |
 
-底座按登记声明准备路由与启动所需材料；目标Operation在运行中决定业务取材、上下文组装及记忆保存，并核对状态变化。AI底座只提供通用调用与工具能力，见[AI底座§4](AI_Foundation_Design.md#4-contextassembler与取材合同)。路由发生在目标Operation启动前；它自己的运行位置、超时和失败恢复方式待定，不默认启动一个业务Operation来选择另一个Operation。
+1. 公共运行校验登录／内部身份、入口登记和请求Schema，拒绝未知入口，不猜测替代目标。
+2. 调用所有者受理适配，核验资源、当前业务条件与防重。需要后台工作时，输入、占用、Execution、授权和待派发记录同事务保存；提交后才返回收据。
+3. Relay按固定入口与执行身份派发，Worker运行所有者代码。已受理输入的后续取材、语义理解和提交仍由Operation负责。
+4. 无权、busy、非法参数与技术故障分别返回；已明确的文字输入无需先完整理解才可受理。缺教学范围等语义信息时，由已受理Operation保存澄清消息并结束本次工作。
+
+底座只按登记处理启动引用，不扫描聊天或生成业务摘要。路由不执行学习助手来“试选”另一个Operation，也不在每个业务步骤之间重新决策。接口接线见§5.3，AI边界见[AI底座§1.1](AI_Foundation_Design.md#11-路由调用与业务调用)。
 
 ### 1.6 Operation执行与输出回传
 
@@ -187,7 +198,7 @@ Evaluation按源事件顺序自行选择下一个处理对象；底座只提供�
 | space_event_seq、时间字段 | 序号、§2.3字段／按适用填写 | 学习空间事件必有序号；其他归属不伪造空间序号；记录时间不改写发生时间 |
 | payload | 对象／是 | 按event_type及schema_version校验；只保存该事实必需内容和不可变引用 |
 
-event_id相同且事实内容相同返回原事件，内容不同返回identity_conflict。通知和重试不能新建第二个事件身份。版本不识别时保留失败及原始传输引用，不按最新版猜读；兼容升级与存量迁移在部署设计确认。
+event_id相同且事实内容相同返回原事件，内容不同返回identity_conflict。通知和重试不能新建第二个事件身份。版本不识别时保留失败及原始传输引用，不按最新版猜读；旧解码器与执行兼容按[基础设施§5.3](Infrastructure_and_Deployment_Design.md#53-schema迁移与版本兼容)接收，正式事件不改写。
 
 订阅由消费模块提供，装配层登记，不向管理员开放流程编程。每项包含subscriber_id、event_types、handler_ref、handler_revision、授权范围、受理适配器及成功／失败处理器。筛选是已登记类型和等值归属，不执行事件携带的函数或脚本。等待命中／超时入口单独按§3.1登记。
 
@@ -238,7 +249,7 @@ probe需要调用所有者的只读数据库适配器时复用事务连接，只
 | 身份 | 与Temporal的映射 |
 | --- | --- |
 | Execution | 公共技术执行记录，kind=ai_operation／handler；owner、entry_ref、scope及固定input_ref创建后不变。AI工作对外称OperationRun，其ID就是execution_id，另持固定ai_config_ref；普通后台处理没有Operation身份或AI配置 |
-| ExecutionAttempt | execution_id、attempt_id、ordinal、状态、失败及前次尝试引用；同一工作最多一个有效尝试。每次获准恢复追加一行 |
+| ExecutionAttempt | execution_id、attempt_id、ordinal、accepted_at、deadline_at、状态、失败及前次尝试引用；同一工作最多一个有效尝试。每次获准恢复追加一行并保存有限新期限，额度及消耗仍归原Execution |
 | Workflow | 每个ExecutionAttempt对应一个Workflow ID：dm/{execution_id}/{attempt_id}；Temporal Run ID另记，不能拿它作为业务防重键 |
 | Step | key=(execution_id,step_name,occurrence_key)；固定input_hash、output_ref及提交收据。跨恢复尝试保持key；真正的新候选使用新的occurrence_key |
 | Activity／AI内部调用 | I/O和副作用放Activity；一个业务Step可调用多个Activity。Activity attempt与模型call_id分别留痕，不混用ExecutionAttempt.attempt_id |
@@ -266,9 +277,42 @@ Workflow输入仅带execution_ref、attempt_id、固定输入、实现合同及�
 
 公共接口为accept_operation、read_operation_run、retry_operation_run、cancel_operation_run及内部resume_operation；普通后台使用同一Execution仓储的accept_handler适配，不扩充AI Operation目录。受理输入含entry_ref、scope、input_ref、稳定request_id／trigger_event_id和授权来源；返回execution_ref、状态及已保存结果引用。同键异内容拒绝identity_conflict，重试不能借新请求重做原业务。
 
+Temporal Client／Worker统一装配Pydantic AI序列化与已确认的PayloadCodec。模型、工具和材料Activity可能产生大载荷，按[基础设施§2.6](Infrastructure_and_Deployment_Design.md#26-temporal载荷外置)外置；业务Workflow仍只编排，不自行读写载荷文件。技术历史、业务Step和正式事件分开保存，Codec不承担业务幂等。
+
+### 3.3.1 入口与Worker注册对应
+
+用户确认M1共用一个应用Worker进程及一条Temporal逻辑队列。下表给出接线稿：建议业务Workflow类型名沿用entry_ref，类别由登记区分。实例仍使用§3.3的Workflow ID；学生、空间和模型配置不产生新的注册类型。
+
+| entry_ref／建议Workflow类型名 | 执行内容与复用 |
+| --- | --- |
+| `product.converse_material_assistant` | 教材对话、解析和候选修正；一次消息一个已受理工作，整册内部拆批 |
+| `domain.extract_template` | 从题目或解法提取定义候选，正式采用另走普通入口 |
+| `domain.supply_task` | 统一查找、生成、检查及保存可用题，完成后发布供题结果 |
+| `domain.classify_instance` | 归类并保存检查结论，不替代实例保存入口的校验 |
+| `interaction.handle_input` | 学习交流及当题反馈；聊天内检测准备复用内部流程，仍属同一Execution |
+| `interaction.prepare_detection` | 明确检测入口的题单准备；学生确认后才由普通控制入口开测 |
+| `interaction.check_proactive_task` | 检查并保存任务建议，不自动开始活动 |
+| `evaluation.evaluate_submission` | 解释作答、形成Evidence并执行确定性更新；先满足同空间评价顺序 |
+| `evaluation.apply_learning_opportunity` | 核对教学机会并执行学习转移；沿同一评价顺序处理 |
+
+上述9项是AI Operation。其他入口按以下方式接线，不能因为进入Worker就改成AI能力。
+
+| 普通处理 | 接线 |
+| --- | --- |
+| `domain.receive_intake` | 普通handler Workflow，类型名建议同entry_ref；包括来源失效分支，结果与恢复沿Domain合同 |
+| `evaluation.reassess_target` | 普通handler Workflow，类型名建议同entry_ref；只派生目标，不调用模型或更新概率 |
+| `interaction.continue_after_result` | 唤醒既有Wait及原Workflow，由原Workflow调用消费方接续处理；不另建同源Workflow |
+| 其余普通入口 | API直接执行所属模块处理；Worker内部复用同一所有者函数或Activity。入口后续需要AI时按既有合同另行受理，不能把所有查询／保存都包装成Workflow |
+
+Evaluation只在所属模块允许开始后派发本次评价；不能用队列取出顺序替代其游标。同空间Interaction仍按输入占用处理，等待结果时不受理下一条消息。Workflow挂起不占正在执行的Activity槽位，也不长期持有数据库连接；缓存和持久记录仍占资源。
+
+**注册与恢复。** 公共运行按既有entry登记装配Workflow类型、实现合同、输入Schema及队列配置引用；业务模块提供Workflow和所有者Activity，AI底座补模型／工具活动。API和Worker使用同一份发布登记，缺失或冲突时不开放相关入口，不交给模型补名称。新尝试沿原实现合同读取Step和候选，使用兼容登记；改变队列名不是恢复步骤。无法装载原合同则保留失败记录，不能调用同名但含义不同的实现。
+
+Result通知按原Wait绑定的Workflow ID和attempt发Signal，不重新选Operation、不另发一份“接续任务”。原Workflow已关闭时沿既有迟到规则处理。NATS负责事实投递，Temporal负责执行调度，两者不共用业务队列或消息确认。
+
 ### 3.4 分层重试与全局协调
 
-业务、调度和调用层各管自己的重试。传入执行预算包含deadline_at、可用调用／用量上限及已用量引用；下层获得剩余预算，不在每次重试重置。具体数值在模型和部署接线评审确认；AI层字段、调用记账及失败分类由[AI底座§3.3](AI_Foundation_Design.md#33-执行预算与重试接线)维护。
+业务、调度和调用层各管自己的重试。传入预算包含本ExecutionAttempt的deadline_at及原Execution的额度、已用量引用。自动重试沿本次剩余时间；失败后获准恢复才建立新尝试、重新给有限时间，次数和用量不清零。新期限不恢复已超时／取消的Wait，也不恢复旧业务提交资格。预算字段与9项建议值见[AI底座§3.3—3.4](AI_Foundation_Design.md#33-执行预算与重试接线)。
 
 | 层 | 重试对象 | 何时交回 |
 | --- | --- | --- |
@@ -288,6 +332,43 @@ Workflow输入仅带execution_ref、attempt_id、固定输入、实现合同及�
 保持检测在学生再次进入学习空间时检查，离线期间不运行后台保持检查或提醒。暂缓后的再次提示同样以重新进入空间为前提；拒绝后须有新依据。活动结束和评价完成是事件触发，不新增周期扫描。
 
 执行超时、重试间隔及等待期限仍属于运行保障。上述简化不取消技术计时，也不限制已受理的教材解析、评价等后台工作继续执行。
+
+<a id="35-首轮调用与连接参数建议"></a>
+
+### 3.6 首轮调用与连接参数建议
+
+用户已确认单次模型请求和Activity尝试上限；其余候选如下表标注。它们是接线起点，不是SLA或容量结论。各工作仍须配置有限总预算，本文不改变§3.4的分层责任。
+
+| 项目／状态 | 值与边界 | 理由 |
+| --- | --- | --- |
+| 单次模型HTTP请求／已确认 | 总时长90秒，其中连接最多10秒；供应商SDK重试0次 | 延续教材试验90秒上限；防止底层隐式重试叠加 |
+| 模型Activity／已确认 | 最多2次尝试（含首次）；StartToClose 120秒、ScheduleToClose 250秒 | 单次120秒包含请求和技术收尾；两次及间隔在250秒内，调度等待也占此上限 |
+| 工作收尾预留／待确认 | 30秒 | 提交结果、失败记录及释放入口；预留不是无限等待锁 |
+| 数据库短请求／待确认 | 统一见[基础设施§4.5 D01](Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议) | 锁等待计入语句预算；冲突失败沿原请求恢复，不持锁等待AI |
+| 浏览器连接／待确认 | 统一见基础设施§4.5的S01–S07 | 断连只影响通知，HTTP补查正式结果；不作为后台工作超时 |
+
+重试间隔仍建议2秒，待确认；不因尝试上限获准而默认所有参数都已确认。执行前按剩余工作期限收紧Activity预算；没有足够时间就停止新增I/O，不能为了用完2次尝试而越过上层期限。250秒包含调度时间，不能保证繁忙时一定完成两次尝试。这里的自动尝试不创建新ExecutionAttempt；获准恢复使用新期限、原累计额度和已保存步骤。
+
+外部Domain供题、Evaluation结果的等待期限由消费方单独提出，不套用HTTP的90秒。教材多批处理和聊天内检测准备必须分别核算总期限；本批未批准这些业务数值。参数经确认后写入发布配置，未确认前不作为默认值。
+
+### 3.7 工作时限与消费方等待
+
+工作时限、消费方等待、模型请求和消息确认分别计时。建议消费方等待最多300秒，并为后续处理保留时间；这是待审配置，不要求生产方也在300秒内结束。
+
+| 场景 | 计时起点与到期处理 |
+| --- | --- |
+| 一次AI工作 | ExecutionAttempt受理即计时，启动交接及Temporal排队均占时间。Workflow启动晚了只拿剩余时间，不能从Worker开始再领整份期限 |
+| 检测准备等Domain供题 | 从首组供题请求及Wait登记时计时，所有组共享本次准备的等待窗口；建议最多300秒，且不超过父工作剩余期限减后续处理及收尾预留 |
+| 讲解确需等新掌握结果 | Interaction自行登记Wait，建议最多300秒；到期先查结果，再按活动规则结束等待，不能据此判学生不会 |
+| 主动任务遇到评价尚未完成 | 保存待结果原因并结束本次检查；后续评价事件可重新检查，不占住一次AI执行无限等待 |
+| Evaluation等前一来源 | 属于顺序进度等待，未受理下一项AI工作，不消耗其模型预算；前序最终失败按Evaluation§6.7暂停后续更新 |
+| 题单确认、教材候选采用 | 当前工作先结束，用户以后确认是另一条请求；不保留长时Workflow等人工决定 |
+
+供题Wait到期时，Interaction只使用已取得且满足条件的结果，按既定合同说明缺口；没有可用题则暂不能检测。Domain继续保存自己的结果，迟到结果不自动开测。900秒的聊天／准备建议时限至少要覆盖规划、300秒等待和结果保存；多组请求不能逐组再领取300秒。
+
+开始等待前，Operation按所需剩余步骤预留时间；下层调用按当前余量收紧。到期补查也使用预留期限。生产方未完成、读取失败、没有合格内容分别记录，不能都写成“学生未达标”。具体规则沿§3.2及§4.2。
+
+授权恢复先读取旧Wait的已决定状态：超时／取消则处理原结论，不能清空状态再等一轮；仍有效才绑定新尝试，原Wait截止时间不变。确需再次等待须由消费方发起新的业务请求，并保留原因。恢复运行期限不等于延长所有业务条件。
 
 ## 4. 可靠交接与提交控制
 
@@ -317,7 +398,7 @@ Interaction的输入受理、消息、活动／轮和事件按[§7.2](Interactio
 
 底座在提交后发送NATS消息或安排Temporal接续；进程在发送前退出，持久待发依据仍可恢复。`publish_result`在此阶段表示登记结果与待发通知，不能在未提交的事务内先发送成功消息。NATS与Temporal不参加PostgreSQL事务，按§4.4的持久交接记录补发、确认和去重。
 
-数据库适配包、连接生命周期与运行凭据由基础设施装配；本批不选ORM或驱动。来源锁、对象版本和业务防重键分别由所有者合同定义，底座不另建一套领域锁或教材状态。跨库／跨服务原子事务不在M1实现范围。
+数据库适配按[基础设施§2.2](Infrastructure_and_Deployment_Design.md#22-数据库连接与短事务)使用已确认的SQLAlchemy 2＋psycopg 3；迁移由独立部署步骤执行，运行凭据不持有DDL权限。来源锁、对象版本和业务防重键分别由所有者合同定义，底座不另建一套领域锁或教材状态。跨库／跨服务原子事务不在M1实现范围。
 
 ### 4.2 登记等待与发布的交错
 
@@ -359,7 +440,7 @@ PostgreSQL业务结果、已处理依据与待发事件共同保存，底座对�
 用户已确认：消费适配可靠保存事件受理及后续执行安排后就确认收到，不等AI完成。确认前交接失败归底座；确认后执行失败归所有者。处理器不在NATS回调里运行整段AI流程。
 
 1. **请求受理。** 所有者校验并保存固定输入／忙闲占用，底座同事务登记Execution、首个尝试和start待发项；普通短保存只保存业务收据和事件。提交成功才返回202／收据。
-2. **发布事件。** 业务结果、正式事件和publish待发项共同提交。Relay短租约取得待发项，事务外用event_id作Nats-Msg-Id发布，收到PubAck才标记送达。未知结果仍发同一ID；去重窗口过后仍靠消费受理唯一键防重。
+2. **发布事件。** 业务结果、正式事件和publish待发项共同提交，底座固定本次订阅登记及应接收方。Relay短租约取得待发项，事务外用稳定投递ID作Nats-Msg-Id发布，收到PubAck后保存stream和sequence；首次投递ID可取event_id。未知结果重发同一投递ID，正式事件身份始终不变，授权重投见§4.6。
 3. **订阅受理。** 消费适配核验正式事件及登记订阅，短事务保存唯一(subscriber_id,event_id)的Receipt，并调用消费方受理适配器保存业务接收依据及普通处理、AI执行或恢复的派发依据；提交后Ack。崩溃未Ack可重投，原Receipt返回原承接引用，不再安排第二份业务。
 4. **启动执行。** Relay按固定Workflow ID调用Temporal。启动响应丢失时查原ID，匹配原执行输入才标交接完成；并发重复启动只认已有执行，不换ID绕开。NATS不承载Workflow任务队列。
 5. **事件唤醒。** 等待桥受理事件后保存与Wait关联的signal待发项，Ack后向其当前有效尝试发Signal；Signal确认丢失可重发。Signal本身不提交业务，真正结果仍由probe读取。
@@ -399,13 +480,15 @@ Workflow捕获已结束重试的错误后，调用所有者finalize_failure适�
 
 异常退出、Workflow超时或程序错误可能绕过正常收尾。技术核对器检查未收尾Execution与Temporal执行状态；确认本尝试已经结束或停止后才调用相同收尾。查不到／服务不可用只标核对失败，不凭一段时间无日志把工作判死。核对周期及运行期限在部署参数评审确认，不能依赖Temporal对程序错误无限重试而永久占用学生入口。
 
+载荷解码失败可能发生在业务Workflow或Activity进入之前，不能指望Operation捕获后返回AI错误。SDK适配记录decode阶段、载荷引用和可取得的执行身份；技术核对器显示恢复故障，不把它当模型拒答。历史仍可修复时保留原尝试；原执行已终止、达到已配置执行期限或获准停止后，才走本节失败／取消收尾。文件暂不可读不证明业务未提交，不能直接释放入口并另起一份工作。
+
 启动交接耗尽且已确认本尝试未启动时，同样调用所有者失败收尾，避免输入永久忙碌。启动结果不明则继续核对，不能一边放行新尝试、一边任由旧启动成功。学生停止仍先废止原提交令牌；即使旧启动随后成功，其业务提交也会被拒绝。
 
 | 命令／情况 | 保存及执行 |
 | --- | --- |
 | 停止回复 | 所有者先在业务锁内废止提交令牌，保存已提交结果和停止收据；同事务登记cancel命令。再尽力取消Temporal／外部调用，迟到输出不能提交 |
 | Workflow已完成但回应丢失 | 读取原收据；不新建尝试、不撤销已提交回复 |
-| 授权重试failed | 所有者先核对原输入仍适用、无其他推进请求及已完成部分；锁定Execution追加attempt，记录新启动命令。相同retry_request_id复用，不能并行恢复 |
+| 授权重试failed | 所有者核对输入、业务位置及已完成部分，提出剩余步骤和有限时长；底座检查累计用量，锁定Execution追加带新deadline_at的attempt和启动命令。相同retry_request_id返回同一尝试及期限，不反复续时 |
 | 旧尝试迟到 | 所有副作用核对active_attempt_id及所有者令牌；旧尝试可留技术结果，不写当前业务状态 |
 | 输入需修改或已cancelled | 原请求不重试；说明原因。学生明确的新请求另受理，不伪装为技术恢复 |
 | 发布／启动／Signal重试耗尽 | 保留交接exhausted和原执行引用，写可检索失败；维护人员获授权后重送原交接，不造新事实或绕开业务失败 |
@@ -413,6 +496,21 @@ Workflow捕获已结束重试的错误后，调用所有者finalize_failure适�
 Evaluation失败按既有合同暂停同空间后续更新，Interaction仍可处理不依赖它的交流；Interaction／教材助手失败则按各自原请求释放忙闲。底座只调用登记的所有者收尾，不擅自决定学生达标、取消课程或重做题目。
 
 普通运维接口read_execution、retry_execution及read_handoffs／retry_handoff接受执行或交接引用、稳定命令ID和原因，按管理员／内部维护身份授权；学生只能经所属业务入口操作自己的请求。M1不增加运维页面。恢复责任人和错误保留期限在部署交付前确认。
+
+### 4.6 投递保留、失败发现与重送
+
+用户已确认：队列副本等所有应接收方可靠接住后清理；尚未接住的不按时间删除，容量满则拒绝新投递。正式事件、聊天及原件不随队列清理。JetStream的装配见基础设施§4.3，业务生产方不查询消费者进度。
+
+1. 底座追加publish待发项时，按登记的事件类型和归属条件固定subscription_revision及expected_subscriber_ids。无订阅的纯留痕事件只保存PG，不制造投递失败。订阅变更不追补历史，也不能让旧事件的未完成接收方凭空消失。
+2. Relay发布前核对相应durable consumer已存在且过滤条件一致。暂停进程不删除消费者；部署缺项则保留待发记录并报配置错误，不先发给一个没有接收方的Interest stream。
+3. 消费方保存Receipt及后续安排后才Ack。按既有拒绝合同，不可处理消息须先持久保存明确拒绝及原因，再终止投递。所有应接收方已有上述处置记录，才算投递处置完毕；拒绝仍须可查，不等于业务成功。PubAck只证明NATS接收，不证明消费方已接住。
+4. 投递耗尽通知先持久采集，再按stream／sequence定位event_id及subscriber_id；保存delivery_failure。通知是线索，底座仍查Receipt。已接收但Ack丢失只补确认，不重做业务。
+5. 技术核对器比较发布记录中的应接收方与Receipt。超出已配置交接窗口却缺收据，记“待核对”，再查NATS消费者和原消息；确认投递耗尽、消费者缺失或传输丢失才标相应故障。服务暂不可读仍记未知，不把未收到通知当作没有故障。
+6. 获准重送指定事件时，保留event_id和原订阅快照，追加带授权原因的新投递记录及固定投递ID；本轮网络重试继续用该ID。收到旧事件却不在原应接收清单中的新订阅者仅确认忽略，不调用业务。已经接收的模块按(subscriber_id,event_id)返回原Receipt，不再启动业务。先保存新投递记录，不删除旧副本后再发送；必要时待全部应接收方已有持久处置记录后，维护命令才清理耗尽的旧副本。
+
+不同投递ID只用于区分授权重送，避免原消息已耗尽时仍被传输去重拦住；它不是新的业务事件。重发不能绕过来源失效、权限收紧或原业务失败。AI处理已失败但事件早已接住时，仍走原Execution的恢复，不能用重投事件代替。
+
+NATS临时故障不回滚已经保存的事实；待发及失败按原身份可查询。历史若缺少订阅快照或无法核实原传输状态，交维护人员核对，不猜测接收方或默认重放所有历史。
 
 ## 5. 授权执行与访问隔离
 
@@ -515,7 +613,7 @@ not_found只表示该时刻没有可读的持久收据，不能证明正在网�
 1. 重新核验当前账号并建立WS；登录失效先登录，同账号继续补读，换账号则隔离旧请求和缓存。
 2. 重新登记当前资源watch，收到watch_ready后查询正式当前视图、消息游标及未知请求收据。先订阅再读，查询期间的changed合并为一次待刷新标记，查询完成后补读，避免订阅空档。
 3. 消息使用所有者message_seq／seq分页；取本次上界并逐页读完，再推进本地游标。空间事件另用space_event_seq，不能互换。活动和目标按当前正式修订／依据读取，旧HTTP响应不能覆盖新结果。
-4. 页面可见且有watch时，按有限同步周期补读当前视图；有未完成请求时同时补查其收据。恢复焦点、重连及resync_required立即补读。此周期只读，不产生再次进入空间或保持检测事件；具体频率在部署接线确认。
+4. 页面可见且有watch时，按有限同步周期补读当前视图；有未完成请求时同时补查其收据。恢复焦点、重连及resync_required立即补读。此周期只读，不产生再次进入空间或保持检测事件；频率及失败退避候选见基础设施§4.5，同资源只允许一次在途补读。
 
 队列满或慢客户端不能让内存无限积压：合并同资源刷新提示，仍超限则关闭连接并提示重连。若receipt未送达，也由原request_id补查。NATS实时连接恢复时要求全部本地watch重新同步；无通知不代表结果未完成。
 
@@ -549,29 +647,31 @@ sequenceDiagram
 
 M1按[总体§6.7](System_Design.md#67-已确认的日志与事件记录)以日志和事件实现追溯。公共运行负责通用日志及关联能力，所属模块补充普通处理和AI Operation的业务过程及结果，AI底座补充模型与工具调用记录；不让公共底座猜测业务含义。
 
-日志字段与记录点见§6.1；执行耗时、调用用量和超时记录不当作学生学习时长。采集适配、保留及检查频率由基础设施继续细化，不增加监控后台。
+日志字段与记录点见§6.1；执行耗时、调用用量和超时记录不当作学生学习时长。M1在Pod中输出日志，集中采集与保留机制后置，见[基础设施§6.1](Infrastructure_and_Deployment_Design.md#61-日志事件及运行检查)。
 
 公共运行负责定义事件时间语义、公共事件／执行合同的兼容要求，并向基础设施的检查流程提供交接和执行失败记录。时钟方案、保留策略、运维检查与责任人均按[总体§7.2.3](System_Design.md#723-详细设计事项的责任与确认时点)提出并确认；不新增监控页面或默认告警阈值。
 
 ### 6.1 必记日志与存储
 
-日志记录：受理／拒绝、派发及确认、订阅承接、尝试开始／结束、步骤复用／提交、等待登记／决定／接续、取消、重试耗尽及人工恢复。每条包含UTC时间、级别、component、action、outcome、简短说明和适用的scope_id、request_id、event_id、execution_id、attempt_id、step_key、wait_id、handoff_id；没有的字段不伪造。错误另含error_code、retry_state和来源引用。
+日志记录：受理／拒绝、派发及确认、订阅承接、尝试开始／结束、步骤复用／提交、等待登记／决定／接续、取消、重试耗尽及人工恢复。每条包含UTC时间、级别、component、action、outcome、简短说明和适用的scope_id、request_id、event_id、`execution_id`、attempt_id、step_key、wait_id、handoff_id；没有的字段不伪造。错误另含error_code、retry_state和来源引用。
 
-说明应能直接读懂，例如“等待本轮评价已到期，未取得可用结果；原评价继续运行”，不能只写timeout堆栈。日志不默认复制聊天／题面全文、完整Prompt或凭据；沿引用授权查原文。正式空间事件、传输记录和日志分别保存，重发日志不新增学生事实。
+说明应能直接读懂，例如“等待本轮评价已到期，未取得可用结果；原评价继续运行”，不能只写timeout堆栈。日志不默认复制聊天／题面全文、完整Prompt或凭据；沿引用授权查原文。正式空间事件、传输记录和日志分别保存，重发日志不新增学生事实。应用日志以结构化JSON写stdout／stderr，不增加日志文件表或日志采集任务。日志不可用不等于业务未发生，恢复仍查持久事件、收据与Step。
 
 | runtime表组 | 唯一性及主要查询 |
 | --- | --- |
+| file_objects、file_uploads | 由infrastructure/files仓储维护技术登记；文件身份、上传状态及hash见基础设施§2.3；业务授权与采用引用仍归所有者 |
 | events、scope_event_heads | event_id唯一；学习空间(scope_id,space_event_seq)唯一；索引scope＋type＋序号、correlation_id、causation_event_id及subject引用 |
 | execution_authorizations | execution_id唯一；固定发起者、owner／entry、资源和动作范围、授权依据，不保存登录秘密；与受理共同提交，读取时仍检查当前权限 |
 | executions、execution_attempts、step_results | 受理键含owner、entry、scope及原请求／事件；(execution_id,attempt_id)、Step key唯一；索引当前状态及待收尾尝试 |
-| handoffs、handoff_attempts | (kind,logical_key)唯一；kind为publish／start／signal／cancel；索引state及next_attempt_at。状态pending／leased／delivered／exhausted，重送保留尝试历史 |
+| handoffs、handoff_attempts | (kind,logical_key)唯一；kind为publish／start／signal／cancel；索引state及next_attempt_at。状态pending／leased／delivered／exhausted；publish另存订阅快照、投递ID、stream／sequence，重送留新尝试及授权引用 |
+| delivery_failures | 按投递引用、subscriber_id及失败来源防重；保存待核对／已确认原因和处理引用，索引事件、订阅者及未解决项；不混入业务评价结果 |
 | subscription_receipts | (subscriber_id,event_id)唯一；绑定处理合同版本及承接引用；解析不支持单列rejected并保留失败，不当作成功业务 |
 | waits、wait_handling | wait_id及(execution_id,step_key,condition_hash)唯一；索引owner／resolution／deadline；一份resume_action_id最多一次业务提交 |
 | expected_results、result_attempts、published_results | result_key唯一；发布引用不可变；执行错误保留尝试，成功结果不被旧失败覆盖 |
 
-handoff租约只避免多Relay同时发送，不授予业务执行权；租约过期允许重送相同交接。读取命令状态不扫描所有Space私表；原始内容归所属模块。表结构迁移、保留期限和灾难恢复仍由基础设施设计关闭，不擅自清理被引用记录。
+handoff租约只避免多Relay同时发送，不授予业务执行权；租约过期允许重送相同交接。读取命令状态不扫描所有Space私表；原始内容归所属模块。表结构迁移及整套恢复见[基础设施§5—6](Infrastructure_and_Deployment_Design.md#5-配置部署与启动)；保留期限待确认，不擅自清理被引用记录。
 
-logical_key分别取event_id、attempt_id、(wait_id,event_id,target_attempt_id)和(cancel_request_id,target_attempt_id)。恢复后向新尝试唤醒使用新目标绑定；旧Signal不启动已结束Workflow，新尝试仍先probe原Wait。
+logical_key分别取(event_id,redelivery_ref)、attempt_id、(wait_id,event_id,target_attempt_id)和(cancel_request_id,target_attempt_id)。首次publish的redelivery_ref为空；获准重送取固定维护命令引用，普通重试不生成新值。恢复后向新尝试唤醒使用新目标绑定；旧Signal不启动已结束Workflow，新尝试仍先probe原Wait。
 
 ## 7. 存储合同与可靠性验证
 
@@ -609,8 +709,8 @@ logical_key分别取event_id、attempt_id、(wait_id,event_id,target_attempt_id)
 | --- | --- |
 | 调用与重试限额 | AI底座提出用途预算；基础设施提出运行和交接参数；使用前确认有限次数、总期限和资源边界 |
 | 身份及运维授权 | 登录及受限执行见§5；会话时限、限流和维护凭据的实际装配在认证实现前确认 |
-| 路由登记及澄清 | 公共运行与AI底座细化候选协议、原始输入与澄清接续；通用入口实现前审阅，不影响已明确入口直接派发 |
-| 输出与重连 | §5.3—5.5及Client§5已有协议稿；心跳、同步周期、帧限额和代理配置在接线前确认 |
+| 入口接线 | §1.5固定映射与所有者受理；语义澄清沿业务消息，M1不另实现入口AI路由。对应入口实现时核对授权、幂等与busy |
+| 输出与重连 | §5.3—5.5及Client§5维护协议；基础设施§4.5统一候选，§4.6检查组合，接线前确认 |
 | SDK与部署 | AI底座固定Pydantic AI／Temporal版本及注册适配；基础设施定义实际队列、subject、迁移、保留、技术核对周期和备份；部署前确认 |
 
 本批表组见§6.1；Temporal内部表由其管理，业务模块不直接读取，NATS保留策略不决定正式事件能否删除。不增选型PoC，数据库、事件、执行及语义验证在实现阶段开展。
@@ -623,7 +723,7 @@ logical_key分别取event_id、attempt_id、(wait_id,event_id,target_attempt_id)
 - [Temporal错误与Activity重试](https://docs.temporal.io/develop/python/best-practices/error-handling)：Activity可能重复，业务提交仍需稳定键；Workflow程序错误与执行失败须分别收尾。
 - [NATS显式确认及拉取消费](https://docs.nats.io/learn/jetstream/pull-consumers)和[去重标识](https://docs.nats.io/learn/jetstream/advanced-publishing)：投递去重有范围，不能代替持久Receipt和业务唯一约束。
 
-实现接收须覆盖：PG提交后未启动即退出、PubAck／Ack丢失、重复启动、Ack后业务最终失败、无订阅者的纯留痕事件、通知早于Wait、到期补查、取消与接续竞争、恢复尝试遇到旧输出、Workflow异常未收尾、评价通知乱序。核对执行身份、业务写入次数和可查询失败，不只检查进程是否重启。数字参数未确认前不宣称恢复时限或运行成本达标。
+实现接收须覆盖：PG提交后未启动即退出、PubAck／Ack丢失、重复启动、Ack后业务最终失败、无订阅者的纯留痕事件、通知早于Wait、到期补查、取消与接续竞争、恢复尝试遇到旧输出、Workflow异常未收尾、评价通知乱序。核对执行身份、业务写入次数和可查询失败，不只检查进程是否重启。新增检查：原期限已过后获准恢复可执行未完成步骤，累计消耗不重置；同一恢复命令重复提交不续期；旧Wait超时不重开；模型额度耗尽但候选已保存时只补提交。补充接收：消费者缺失禁止发布；进程暂停保留durable；队列满不淘汰未接住事件；耗尽通知丢失仍可发现缺收据；重送不重做已接收业务。数字参数未确认前不宣称恢复时限或运行成本达标。
 
 ## 修订记录
 
@@ -667,3 +767,23 @@ logical_key分别取event_id、attempt_id、(wait_id,event_id,target_attempt_id)
 本轮修订（v0.31，2026-11-15）：受理时固定AI配置，衔接调用预算和候选复用。仅修订文档，见MVP决定登记§79。
 
 本轮修订（v0.32，2026-11-15）：细化授权上下文、WebSocket信封及断线补取。仅修订文档，见MVP决定登记§80。
+
+本轮修订（v0.33，2026-11-15）：对齐数据库事务装配、文件技术登记、兼容和恢复边界。仅修订文档，见MVP决定登记§81。
+
+本轮修订（v0.34，2026-11-15）：补转换器装配及业务进入前的解码故障收尾。仅修订文档，见MVP决定登记§82。
+
+本轮修订（v0.35，2026-11-15）：补固定入口登记、受理顺序和公共结果生产身份。仅修订文档，见MVP决定登记§83。
+
+本轮修订（v0.36，2026-11-15）：提出有限调用、重试及连接参数候选，保留总预算约束。仅修订文档，见MVP决定登记§84。
+
+本轮修订（v0.37，2026-11-15）：确认单次调用与Activity尝试上限，其余参数分别标明待审。仅修订文档，见MVP决定登记§85。
+
+本轮修订（v0.38，2026-11-15）：落实恢复新期限和原用量，补消费方等待口径及参数草案。仅修订文档，见MVP决定登记§86。
+
+本轮修订（v0.39，2026-11-15）：补投递副本保留、接收记录核对及授权重送，不重复业务执行。仅修订文档，见MVP决定登记§87。
+
+本轮修订（v0.40，2026-11-15）：落实日志仅写标准输出，恢复仍以持久事件、收据与Step为准。仅修订文档，见MVP决定登记§88。
+
+本轮修订（v0.41，2026-11-15）：补9项AI能力、普通handler与既有接续的Worker注册映射。仅修订文档，见MVP决定登记§89。
+
+本轮修订（v0.42，2026-11-15）：统一引用入口参数表，区分连接超时与后台执行期限。仅修订文档，见MVP决定登记§90。
