@@ -1,12 +1,12 @@
 # deermind 数据库：公共运行及文件登记数据字典
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.4 → v0.5，新增事实附件类别，登记E01-06文件表接线<br>
+> **修订说明**：v0.5 → v0.6，增加重建维护记录字段、关系及权限，接线扫描进度表<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **19 张表、194 个列定义**。处理流程、接口和业务载荷由[System_Foundation_Design.md](../System_Foundation_Design.md) §2—6；文件由基础设施§2维护维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **20 张表、207 个列定义**。处理流程、接口和业务载荷由[System_Foundation_Design.md](../System_Foundation_Design.md) §2—6；文件由基础设施§2维护维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
@@ -31,6 +31,7 @@
 | [published_results](#17-runtimepublished_results) | 生产方正式发布的不可变结果 |
 | [projection_receipts](#18-runtimeprojection_receipts) | 同投影代次的事件应用收据 |
 | [projection_offsets](#19-runtimeprojection_offsets) | 按范围连续补读及接续位置 |
+| [projection_rebuilds](#20-runtimeprojection_rebuilds) | 固定维护范围、实现版本、副本和结果 |
 
 图中实体前缀是schema；实线为列外键，虚线为复合键或受程序校验的固定引用。图按“可有多条引用”展示；一对一关系的UQ/PK以表下注明为准，不能忽略唯一约束。跨schema关系在总册集中列出。
 
@@ -113,6 +114,13 @@ erDiagram
         text scope_kind PK
         uuid scope_id PK
     }
+    runtime__projection_rebuilds {
+        uuid rebuild_id PK
+        text projector_id UK
+        bigint generation UK
+        uuid result_event_id FK
+    }
+    runtime__events |o--o{ runtime__projection_rebuilds : "result_event_id"
     runtime__events ||--o{ runtime__projection_receipts : "event_id"
     runtime__events |o--o{ runtime__events : "causation_event_id"
     runtime__events |o--o{ runtime__waits : "matched_event_ref"
@@ -581,9 +589,35 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_obj
 | `error` | `jsonb` | 是 | 无 | code、message、event_id；blocked必填，不含秘密 |
 | `updated_at` | `timestamptz` | 否 | 无 | 服务端进度时间 |
 
-约束与关系：同代次的Schema及投影实现固定；失败不推进scanned_through_seq。业务写入时的投影收据不直接推进扫描位置，防止越过其他事件。
+约束与关系：generation≥1；0≤scanned_through_seq≤history_upper_seq；state=blocked当且仅当error非空。同代次的Schema及投影实现固定；失败不推进scanned_through_seq。业务写入时的投影收据不直接推进扫描位置，防止越过其他事件。
 
 查询索引：主键；projector_id,generation,state。
+
+## 20. `runtime.projection_rebuilds`
+
+受控重建的维护记录，属于C类控制数据，不是业务事实或业务投影。E01-08与§19由迁移`0004_projection_rebuilds`建立；仅维护账号读写，普通应用账号无权限。
+
+主键：`rebuild_id`。写入方式：创建后范围、代次和实现摘要固定；状态及完成结果可更新。
+
+| 字段 | PostgreSQL 类型 | 可空 | 默认值 | 定义、约束与引用 |
+| :--- | :--- | :--- | :--- | :--- |
+| `rebuild_id` | `uuid` | 否 | 无 | 操作人预分配的稳定维护身份，续做沿用 |
+| `projector_id` | `text` | 否 | 无 | 程序登记的投影器；与generation组成唯一键 |
+| `generation` | `bigint` | 否 | 无 | >1；在线代次1保留，不用于维护副本 |
+| `implementation_digest` | `text` | 否 | 无 | 64位小写十六进制SHA-256；覆盖装配定义、转换和重建校验代码 |
+| `scope_bounds` | `jsonb` | 否 | 无 | 非空数组，每项scope_kind、scope_id、upper_seq；范围唯一且按身份排序，上界由程序读取 |
+| `stage_relation` | `text` | 否 | 无 | 唯一；程序生成runtime.rebuild_加rebuild_id的32位hex，不接受自选表名 |
+| `operator_id` | `text` | 否 | 无 | 非空维护操作人标识；不代替数据库身份授权 |
+| `authorization_ref` | `text` | 否 | 无 | 非空维护批准依据；续做须与原记录一致，不保存凭据 |
+| `state` | `text` | 否 | 无 | building、completed、failed |
+| `result_event_id` | `uuid` | 是 | 无 | FK → runtime.events.event_id；非building时必填，对应唯一维护结果事实 |
+| `error` | `jsonb` | 是 | 无 | 仅failed时非空；code、message；只记错误类别，不含正文、SQL参数或秘密 |
+| `created_at` | `timestamptz` | 否 | 无 | 服务端创建时间，UTC |
+| `updated_at` | `timestamptz` | 否 | 无 | 服务端维护状态更新时间，UTC；逐事件进度见§19 |
+
+约束与关系：UNIQUE(projector_id,generation)、UNIQUE(stage_relation)；building当且仅当result_event_id为空；failed当且仅当error非空。每个scope_bound对应同投影器、同代次的§19记录，由程序在同事务建立；JSON范围、授权和实现摘要在继续执行前核对。
+
+查询索引：主键、上述唯一键及(state,created_at)。临时副本沿目标投影表结构生成，无应用账号权限；成功替换时同事务删除该副本，失败或中断时保留。副本不计入规划表数量，不新增业务字段，不承担事实或控制恢复。
 
 ## 修订记录
 
@@ -594,3 +628,4 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_obj
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.4 | 2026-11-16 | 同步E01-05接线范围；保留既定字段与记录矩阵 |
 | v0.5 | 2026-11-16 | 新增事实附件类别，登记E01-06文件表接线 |
+| v0.6 | 2026-11-16 | 增加重建维护记录字段、关系及权限，接线扫描进度表 |

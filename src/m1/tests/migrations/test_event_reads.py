@@ -402,6 +402,10 @@ class EventReadTests(DatabaseTestCase):
         )
         ref = EventPartRef(event_id=event_id, record_id="account", path="")
         result = await reader.read_event_facts(authorized, [ref], purpose="projection_rebuild")
+        restored = await reader.read_projection_event(authorized, event_id)
+        self.assertEqual(restored.draft.event_id, event_id)
+        self.assertEqual(restored.draft.scope_id, identity)
+        self.assertEqual(restored.payload.records[0].record_type, "product.accounts")
         self.assertEqual(
             OBJECT.validate_python(items(result)[0]["content"], strict=True)["display_name"], "账号"
         )

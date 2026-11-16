@@ -4,13 +4,14 @@ from deermind.foundation.system.events.query import EventReader
 from deermind.foundation.system.events.reading import ReadHandler
 from deermind.foundation.system.events.store import EventStore
 from deermind.foundation.system.files.ports import FileStorage
+from deermind.foundation.system.projections.contracts import REBUILD_FINISHED
 from deermind.infrastructure.files.records import FILE_READ_POLICY, FILE_REGISTRATION
 from deermind.product.accounts.facts import ACCOUNT_READ_POLICY, ACCOUNT_REGISTRATION
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 
 def event_store() -> EventStore:
-    return EventStore([ACCOUNT_REGISTRATION, FILE_REGISTRATION])
+    return EventStore([ACCOUNT_REGISTRATION, FILE_REGISTRATION, REBUILD_FINISHED])
 
 
 def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) -> EventReader:
@@ -18,7 +19,7 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
     return EventReader(
         engine,
         files,
-        [ACCOUNT_REGISTRATION, FILE_REGISTRATION],
+        [ACCOUNT_REGISTRATION, FILE_REGISTRATION, REBUILD_FINISHED],
         [
             ReadHandler("runtime.projection_read", "runtime", "projection_rebuild"),
             ReadHandler("runtime.file_review", "runtime", "execution_support"),

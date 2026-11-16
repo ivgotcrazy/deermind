@@ -9,8 +9,10 @@ from collections.abc import Sequence
 from uuid import UUID
 
 from deermind.foundation.system.events.contracts import (
+    EventDraft,
     EventRegistration,
     InlineContent,
+    StoredEvent,
 )
 from deermind.foundation.system.events.reading import (
     FACT_READ_LIMIT,
@@ -493,3 +495,59 @@ class EventReader:
             )
             self._response({"items": items})
         return {"items": items}
+
+    async def read_projection_event(self, access: ReadAccess, identity: UUID) -> StoredEvent:
+        """维护重建取得完整已校验事件；沿用授权和读取限额，不接受裁剪后的正文。"""
+        self._access(access, "projection_rebuild")
+        event = await self._event(access, identity)
+        self._grant(access, event)
+        registration = self._events[(event.event_type, event.schema_version)]
+        if registration.producer != event.producer or registration.scope_kind != event.scope_kind:
+            raise ValueError("Stored event does not match its registration")
+        wire = registration.payload_model.model_validate_json(canonical_json(event.payload))
+        refs = [EventPartRef(event_id=identity, record_id=None, path="")]
+        refs.extend(
+            EventPartRef(event_id=identity, record_id=record.record_id, path="")
+            for record in wire.records
+        )
+        response = await self.read_event_facts(access, refs, purpose="projection_rebuild")
+        items = TypeAdapter(list[dict[str, JsonValue]]).validate_python(response["items"])
+        if any(
+            item["visibility"] != "complete" or item["completeness"] != "complete" for item in items
+        ):
+            raise PermissionError("Projection requires complete action and record bodies")
+        body = JSON_OBJECT.validate_python(items[0]["content"], strict=True)
+        body["records"] = [
+            record.model_copy(
+                update={
+                    "content": InlineContent(
+                        storage="inline",
+                        value=JSON_OBJECT.validate_python(item["content"], strict=True),
+                    )
+                }
+            ).model_dump(mode="json")
+            for record, item in zip(wire.records, items[1:], strict=True)
+        ]
+        draft = EventDraft(
+            event_id=event.event_id,
+            event_type=event.event_type,
+            schema_version=event.schema_version,
+            scope_kind=event.scope_kind,
+            scope_id=event.scope_id,
+            owner_ref=event.owner_ref,
+            payload=body,
+            source_request_id=event.source_request_id,
+            causation_event_id=event.causation_event_id,
+            subject_refs=tuple(event.subject_refs),
+            source_execution_ref=event.source_execution_ref,
+        )
+        payload = registration.payload_model.model_validate_json(canonical_json(body))
+        registration.validate(draft, payload)
+        return StoredEvent(
+            draft,
+            event.commit_id,
+            event.correlation_id,
+            event.scope_event_seq,
+            event.recorded_at,
+            payload,
+        )

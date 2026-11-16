@@ -85,9 +85,14 @@ def validate_account(draft: EventDraft, payload: EventPayload) -> None:
         raise ValueError("Account event scope or owner does not match its fact")
 
 
+def account_values(event: StoredEvent) -> dict[str, object]:
+    """在线保存与维护重建共用转换，保留原身份、时间及来源。"""
+    fact = account_content(event.payload)
+    return {**fact.model_dump(), "source_event_id": event.draft.event_id}
+
+
 async def project_account(connection: AsyncConnection, event: StoredEvent) -> None:
     """只从事实正文生成投影；不生成身份、时间，不反查旧业务正文。"""
-    fact = account_content(event.payload)
     await connection.execute(
         text(
             "INSERT INTO product.accounts "
@@ -96,7 +101,7 @@ async def project_account(connection: AsyncConnection, event: StoredEvent) -> No
             "VALUES (:account_id, :login_identifier, :display_name, :role, :status, :revision, "
             ":created_at, :source_event_id)"
         ),
-        {**fact.model_dump(), "source_event_id": event.draft.event_id},
+        account_values(event),
     )
 
 

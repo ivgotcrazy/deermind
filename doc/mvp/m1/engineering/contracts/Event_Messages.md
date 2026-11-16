@@ -1,15 +1,15 @@
 # M1 事件与消息载荷
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.4 → v0.5，登记FileReceived、完整DTO附件及E01-06实现范围<br>
+> **修订说明**：v0.5 → v0.6，接线ProjectionRebuildFinished维护结果，不增加业务事件<br>
 
 本分册是事件信封、类型化动作字段与通知结构的唯一字段定义；完整事实正文及投影登记见[事件正文合同](Event_Facts.md)。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
 
-E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileReceived及完整DTO附件，事件引用不代替正文校验；其余类型按所属增量实施。既有事实保存见[E01-05](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，文件与附件见[E01-06](../../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)，进度以[实施计划](../Delivery_Plan.md)为准。
+E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileReceived及完整DTO附件，事件引用不代替正文校验；E01-08新增维护结果ProjectionRebuildFinished（records为空，仅一次完成或明确失败留痕）；其余类型按所属增量实施。既有事实保存见[E01-05](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，文件与附件见[E01-06](../../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)，进度以[实施计划](../Delivery_Plan.md)为准。
 
 ## 1. 正式事件信封 v2
 
@@ -863,7 +863,7 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
 | `FileReceived` | runtime / file | 文件完整保存且校验通过 | 文件身份、媒体、字节数、hash和非秘密存储定位 |
 | `ProjectionRebuildFinished` | runtime / maintenance | 维护重建完成或明确失败 | 范围、代次、固定上界、检查结果或错误 |
 
-共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过正文合同§3登记Schema校验。仅TrialAccountSaved初始账号及FileReceived子集已接线，其余类型尚未编码或部署；既有schema_version编号保留，不宣称执行过历史数据迁移。
+共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过正文合同§3登记Schema校验。TrialAccountSaved初始账号、FileReceived及ProjectionRebuildFinished已接线，其余类型尚未编码或部署；既有schema_version编号保留，不宣称执行过历史数据迁移。
 
 | 类型 | outcome允许值 | 额外字段 |
 | --- | --- | --- |
@@ -1019,3 +1019,4 @@ runtime运行留痕的records使用固定DTO，逐事件数量及条件见正文
 | v0.3 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |
 | v0.4 | 2026-11-16 | 同步E01-05接线范围；保留既定字段与记录矩阵 |
 | v0.5 | 2026-11-16 | 登记FileReceived、完整DTO附件及E01-06实现范围 |
+| v0.6 | 2026-11-16 | 接线ProjectionRebuildFinished维护结果，不增加业务事件 |

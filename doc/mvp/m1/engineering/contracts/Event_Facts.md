@@ -1,15 +1,15 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.4 → v0.5，补齐E01-07字段授权、附件读取及错误边界<br>
+> **修订说明**：v0.5 → v0.6，补齐首批账号重建、固定维护记录和失败边界<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
-E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileReceived及完整DTO附件，事件引用不代替正文校验；其余类型按所属增量实施。既有事实保存见[E01-05](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，文件与附件见[E01-06](../../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)，授权查询见[E01-07](../../../../../src/m1/deploy/environments/local-wsl/E01-07-reads.md)，进度以[实施计划](../Delivery_Plan.md)为准。
+E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileReceived及完整DTO附件，事件引用不代替正文校验；E01-08接线初始账号受控重建及维护结果；其余类型按所属增量实施。既有事实保存见[E01-05](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，文件与附件见[E01-06](../../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)，授权查询见[E01-07](../../../../../src/m1/deploy/environments/local-wsl/E01-07-reads.md)，进度以[实施计划](../Delivery_Plan.md)为准。
 
 ## 1. 事实边界
 
@@ -302,7 +302,9 @@ M1只提供受控维护重建，不新增管理页面。先按§3.2校验事件�
 | 候选采用/拒绝/替代后重建 | 决定及状态完全一致；不退回pending，不伪造管理员操作 |
 | 消息引用自己的业务ID | 空查询库也能凭事件创建原ID；不用投影存在性校验原始事实 |
 
-以上为实现验收条件，本轮只做文档检查。设计采用事件存储与查询投影的分工；参考[Event Sourcing模式](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)与[重放的外部副作用边界](https://martinfowler.com/eaaDev/EventSourcing.html#ExternalUpdates)。不引入独立事件数据库或新的消息系统。
+E01-08已接线初始账号单行投影：原记录的范围、上界及实现摘要固定，隔离副本逐事件提交检查点；中断可续做，参数变化拒绝。核对通过才原子替换正式行及在线收据/进度，追加唯一维护结果；明确失败保留旧数据，修复后另建代次。维护记录及临时副本不是另一份事实源。详情见[公共运行§2.6](../System_Foundation_Design.md#26-历史补读实时接续与重建)及[E01-08](../../../../../src/m1/deploy/environments/local-wsl/E01-08-rebuild.md)。
+
+上表其余业务验收条件随对应增量实施，不以本轮账号测试宣称已完成。设计采用事件存储与查询投影的分工；参考[Event Sourcing模式](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)与[重放的外部副作用边界](https://martinfowler.com/eaaDev/EventSourcing.html#ExternalUpdates)。不引入独立事件数据库或新的消息系统。
 
 ## 修订记录
 
@@ -313,3 +315,4 @@ M1只提供受控维护重建，不新增管理页面。先按§3.2校验事件�
 | v0.3 | 2026-11-16 | 同步E01-05接线范围；保留既定字段与记录矩阵 |
 | v0.4 | 2026-11-16 | 登记FileReceived、完整DTO附件及E01-06实现范围 |
 | v0.5 | 2026-11-16 | 补齐E01-07字段授权、附件读取及错误边界 |
+| v0.6 | 2026-11-16 | 补齐首批账号重建、固定维护记录和失败边界 |

@@ -22,6 +22,7 @@ deermind-api = "deermind.entrypoints.api.app:main"
 deermind-worker = "deermind.entrypoints.worker.main:main"
 deermind-probe = "deermind.entrypoints.maintenance.probe:main"
 deermind-database = "deermind.entrypoints.maintenance.database:main"
+deermind-rebuild = "deermind.entrypoints.maintenance.rebuild:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/deermind"]

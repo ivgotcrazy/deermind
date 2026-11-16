@@ -11,13 +11,13 @@ from alembic.migration import MigrationContext
 from alembic.script import ScriptDirectory
 from deermind.bootstrap.database import DatabaseSettings
 from deermind.foundation.system.logging import configure_logging
-from deermind.infrastructure.database.connection import EXPECTED_REVISION
+from deermind.infrastructure.database.connection import EXPECTED_REVISION, MAINTENANCE_LOCK
 from sqlalchemy import URL, create_engine, text
 from sqlalchemy.pool import NullPool
 
 LOGGER = logging.getLogger("runtime")
 # 同一业务库共用部署锁；提交、回滚或断连后释放。
-MIGRATION_LOCK = 47001004
+MIGRATION_LOCK = MAINTENANCE_LOCK
 
 
 def migration_config() -> Config:

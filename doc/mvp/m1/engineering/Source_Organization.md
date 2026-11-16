@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.10<br>
-> **状态**：E01-07内部授权读取接线已加入；进度见实施计划<br>
+> **版本**：v0.11<br>
+> **状态**：E01-08受控重建接线已加入；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.9 → v0.10，补齐E01-07读取合同、查询实现和授权测试位置<br>
+> **修订说明**：v0.10 → v0.11，登记重建合同、实现、白名单装配及维护测试位置<br>
 
 ## 1. 范围与维护位置
 
@@ -290,6 +290,12 @@ server/migrations/
 
 `server/tests/test_event_pointers.py`验证指针规则；`tests/migrations/event_read_fixture.py`提供隔离的业务授权夹具，`test_event_reads.py`通过`test.sh reads`验证构建包和真实PG。不新增表或迁移，正式浏览器入口随登录及业务功能实施。
 
+### 6.5 E01-08实际接线
+
+`foundation/system/projections/contracts.py`登记维护记录及结果Schema；`rebuild.py`负责固定上界、隔离副本、检查点、原子替换和失败留痕。`bootstrap/projections.py`只装配已有账号投影与代码摘要，业务转换仍在`product/accounts/facts.py`，底座不反向导入Product。
+
+`entrypoints/maintenance/rebuild.py`提供prepare/resume/status三个维护动作，安装命令为deermind-rebuild；`0004_projection_rebuilds`追加控制表。`test_projection_rebuild.py`经`test.sh rebuild`验证构建包与真实PG；不新增API、Agent工具或未实现业务占位。
+
 ## 7. 测试目录与执行边界
 
 ```text
@@ -422,3 +428,4 @@ Helm沿[官方Chart文件结构](https://helm.sh/docs/topics/charts/)组织。�
 | v0.8 | 2026-11-16 | 登记E01-05事件登记、所有者投影和收据代码位置 |
 | v0.9 | 2026-11-16 | 补齐E01-06文件端口、适配、附件准备及测试位置 |
 | v0.10 | 2026-11-16 | 补齐E01-07读取合同、查询实现和授权测试位置 |
+| v0.11 | 2026-11-16 | 登记重建合同、实现、白名单装配及维护测试位置 |

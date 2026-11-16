@@ -3,7 +3,9 @@
 from sqlalchemy import URL, text
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
-EXPECTED_REVISION = "0003_file_objects"
+EXPECTED_REVISION = "0004_projection_rebuilds"
+# 迁移及投影维护互斥；普通业务不取得此锁。
+MAINTENANCE_LOCK = 47001004
 SCHEMAS = ("product", "domain", "interaction", "evaluation", "runtime", "ai")
 
 
