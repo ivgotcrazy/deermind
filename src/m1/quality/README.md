@@ -156,3 +156,7 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 ## E01-14等待接续验证
 
 `test.sh waits`沿用execution组的显式集群、Secret、构建镜像及Temporal参数，在随机库和独立队列验证结果原子保存、早到/重复/迟到通知、到期补查、恢复不续期、接续并发和Worker重启。等待的业务条件由隔离所有者适配器提供，不调用模型或正式教学。结果见[E01-14交付](../deploy/environments/local-wsl/E01-14-waits.md)。
+
+## E01-15受控模型验证
+
+`test.sh ai`沿用execution组的显式集群、镜像和Temporal参数，使用随机数据库和独立Worker队列；默认全部使用模型替身，真实调用用例明确跳过。真实测试须显式设置`M1_LIVE_AI=1`、模型环境变量和`M1_AI_EVIDENCE_DIR`，只运行`test_ai_live.py`；累计账本不得删除或重置，超出批准额度停止。结果见[E01-15交付](../deploy/environments/local-wsl/E01-15-ai.md)。

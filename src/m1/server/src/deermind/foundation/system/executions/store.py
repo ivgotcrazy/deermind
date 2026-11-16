@@ -234,7 +234,8 @@ async def accept(
         await check(connection, registry, saved, "read")
         return saved
 
-    identity = uuid4()
+    # AI配置表以execution_id为主键；受理方预分配此身份并在同一事务固定配置。
+    identity = ai_config_ref if ai_config_ref is not None else uuid4()
     now = await connection.scalar(text("SELECT clock_timestamp()"))
     saved = Execution(
         execution_id=identity,

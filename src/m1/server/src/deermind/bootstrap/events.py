@@ -1,6 +1,8 @@
 """汇总已实施事件格式和读取授权；尚未实现的登记不会被静默接受。"""
 
 from deermind.bootstrap.messaging import subscriptions
+from deermind.foundation.ai.facts import READ_POLICIES as AI_READ_POLICIES
+from deermind.foundation.ai.facts import REGISTRATIONS as AI_REGISTRATIONS
 from deermind.foundation.system.delivery.facts import DELIVERY_READ_POLICY, DELIVERY_REGISTRATION
 from deermind.foundation.system.delivery.outbox import Outbox
 from deermind.foundation.system.events.query import EventReader
@@ -39,6 +41,7 @@ def event_store() -> EventStore:
             DELIVERY_REGISTRATION,
             EXECUTION_REGISTRATION,
             WAIT_REGISTRATION,
+            *AI_REGISTRATIONS,
         ],
         arrange_delivery=Outbox(subscriptions()).arrange,
     )
@@ -60,6 +63,7 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
             DELIVERY_REGISTRATION,
             EXECUTION_REGISTRATION,
             WAIT_REGISTRATION,
+            *AI_REGISTRATIONS,
         ],
         [
             ReadHandler("product.account_rebuild", "product", "projection_rebuild"),
@@ -67,6 +71,7 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
             ReadHandler("product.usage_receipt", "product", "execution_support"),
             ReadHandler("runtime.delivery_review", "runtime", "execution_support"),
             ReadHandler("runtime.execution_review", "runtime", "execution_support"),
+            ReadHandler("ai.call_review", "ai", "execution_support"),
         ],
         [
             ACCOUNT_READ_POLICY,
@@ -78,6 +83,7 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
             DELIVERY_READ_POLICY,
             EXECUTION_READ_POLICY,
             WAIT_READ_POLICY,
+            *AI_READ_POLICIES,
         ],
         cursor_key=cursor_key,
     )

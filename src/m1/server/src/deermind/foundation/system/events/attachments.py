@@ -3,6 +3,7 @@
 import asyncio
 import hashlib
 import io
+import json
 from dataclasses import replace
 from datetime import UTC, datetime
 from uuid import uuid4
@@ -25,6 +26,7 @@ from deermind.infrastructure.files.records import (
     FileReceived,
     project_file,
 )
+from pydantic import JsonValue, TypeAdapter
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -37,6 +39,49 @@ class FactAttachments:
         self.engine = engine
         self.files = files
         self._file_events = EventStore([FILE_REGISTRATION])
+
+    async def save_json(
+        self,
+        content: dict[str, JsonValue],
+        *,
+        actor: Ref,
+        source: Ref,
+        artifact_key: str,
+        max_bytes: int,
+    ) -> Ref:
+        """为已授权所有者保存固定JSON附件；只返回身份，不授予读取权限。"""
+        encoded = canonical_json(content).encode("utf-8")
+        if max_bytes <= 0 or len(encoded) > max_bytes:
+            raise ValueError("Fact attachment exceeds its limit")
+        file = await self._save(encoded, actor, source, artifact_key)
+        return Ref(owner="runtime", type="file", id=str(file.file_id))
+
+    async def read_json(
+        self, reference: Ref, *, source: Ref, max_bytes: int
+    ) -> dict[str, JsonValue]:
+        """调用者先核验业务权限；这里只允许同一所有者的完整附件，校验hash后解码。"""
+        if reference.owner != "runtime" or reference.type != "file" or max_bytes <= 0:
+            raise ValueError("Expected a bounded fact attachment read")
+        async with self.engine.connect() as connection:
+            row = (
+                (
+                    await connection.execute(
+                        text("SELECT * FROM runtime.file_objects WHERE file_id=CAST(:id AS uuid)"),
+                        {"id": reference.id},
+                    )
+                )
+                .mappings()
+                .one()
+            )
+        file = FileObject.model_validate_json(json.dumps(dict(row), default=str))
+        if (
+            file.source_refs != [source]
+            or file.category != "fact"
+            or file.backend != self.files.backend
+        ):
+            raise PermissionError("Attachment belongs to another owner or backend")
+        content = await asyncio.to_thread(self.files.read, file.bytes_ref(), max_bytes=max_bytes)
+        return TypeAdapter(dict[str, JsonValue]).validate_json(content, strict=True)
 
     async def prepare(
         self,

@@ -19,6 +19,7 @@ from deermind.infrastructure.nats.connection import MessagingSettings, connect
 from deermind.infrastructure.temporal.executions import Lifecycle, Transport
 from deermind.infrastructure.temporal.relay import run_relay
 from deermind.infrastructure.temporal.waits import Activities, run_reconciler
+from pydantic_ai.durable_exec.temporal import PydanticAIPlugin
 from sqlalchemy.ext.asyncio import AsyncEngine
 from temporalio.api.workflowservice.v1 import DescribeNamespaceRequest
 from temporalio.client import Client
@@ -42,6 +43,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
         client = await Client.connect(
             settings.temporal_address,
             namespace=settings.temporal_namespace,
+            plugins=[PydanticAIPlugin()],
         )
         await client.workflow_service.describe_namespace(
             DescribeNamespaceRequest(namespace=settings.temporal_namespace),

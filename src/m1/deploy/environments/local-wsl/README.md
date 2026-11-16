@@ -21,6 +21,8 @@
 | E01-13 | 后台工作、步骤保存与执行恢复 | [E01-13-execution.md](E01-13-execution.md) |
 | E01-14 | 结果登记、等待及通知接续 | [E01-14-waits.md](E01-14-waits.md) |
 
+| E01-15 | 受控模型调用、授权工具及结构化候选 | [E01-15-ai.md](E01-15-ai.md) |
+
 ## 查阅规则
 
 - 文件命名统一为`EXX-XX-主题.md`，编号与[实施计划](../../../../../doc/mvp/m1/engineering/Delivery_Plan.md#13-e01基础运行)一致。
