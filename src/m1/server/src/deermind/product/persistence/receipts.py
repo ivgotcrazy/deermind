@@ -6,13 +6,10 @@ from uuid import UUID, uuid4
 
 from deermind.foundation.system.events.contracts import Ref
 from deermind.foundation.system.events.store import canonical_json
+from deermind.product.public.errors import RequestConflict as RequestConflict
 from pydantic import JsonValue
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
-
-
-class RequestConflict(ValueError):
-    """同一请求身份携带不同输入，不能当作技术重试。"""
 
 
 @dataclass(frozen=True)

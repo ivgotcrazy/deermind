@@ -12,7 +12,7 @@ from deermind.foundation.system.projections import contracts as projection_contr
 from deermind.foundation.system.projections import rebuild
 from deermind.foundation.system.projections.contracts import RebuildSpec
 from deermind.foundation.system.projections.rebuild import ProjectionRebuilder
-from deermind.product.accounts import auth_facts, facts
+from deermind.product.accounts import auth_facts, facts, recovery_facts, usage_events, usage_facts
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 
@@ -22,6 +22,9 @@ def account_rebuilder(engine: AsyncEngine, files: FileStorage) -> ProjectionRebu
     for module in (
         facts,
         auth_facts,
+        usage_events,
+        usage_facts,
+        recovery_facts,
         contracts,
         query,
         reading,
@@ -58,6 +61,6 @@ def account_rebuilder(engine: AsyncEngine, files: FileStorage) -> ProjectionRebu
 
 def account_projection(event: StoredEvent) -> dict[str, object] | None:
     """审计事实已由登记Schema校验，不从历史登录恢复有效会话。"""
-    if event.draft.event_type in {"AccountSignedIn", "AccountSignedOut"}:
+    if event.draft.event_type != "TrialAccountSaved":
         return None
     return facts.account_values(event)

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useSession } from './session';
+import UsageConfirmation from './UsageConfirmation.vue';
 
 defineProps<{ role: 'student' | 'admin' }>();
 const { session, phase, busy, error, refresh, signIn, signOut } = useSession();
@@ -60,9 +61,13 @@ async function submit() {
         <p>当前账号{{ session.account.role === 'admin' ? '属于管理端' : '属于学生端' }}。</p>
         <a :href="session.account.role === 'admin' ? '/admin/' : '/student/'">前往对应入口</a>
       </template>
-      <template v-else-if="session.account.usage_gaps.length">
-        <p v-for="gap in session.account.usage_gaps" :key="gap.code">{{ gap.message }}</p>
-      </template>
+      <UsageConfirmation
+        v-else-if="role === 'student' && session.account.usage_gaps.length"
+        :key="session.session_id"
+        :session-id="session.session_id"
+        :csrf-token="session.csrf_token"
+        @changed="refresh()"
+      />
       <slot v-else :key="session.session_id" />
     </template>
   </section>

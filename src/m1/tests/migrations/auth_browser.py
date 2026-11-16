@@ -7,6 +7,7 @@
 import asyncio
 import os
 import tempfile
+from collections.abc import Awaitable, Callable
 from pathlib import Path
 from uuid import uuid4
 
@@ -52,12 +53,12 @@ async def seed(fixture: DatabaseTestCase) -> None:
         await engine.dispose()
 
 
-def main() -> None:
+def main(seed_accounts: Callable[[DatabaseTestCase], Awaitable[None]] = seed) -> None:
     fixture = DatabaseTestCase()
     try:
         fixture.setUp()
         upgrade(fixture.migrator)
-        asyncio.run(seed(fixture))
+        asyncio.run(seed_accounts(fixture))
         with tempfile.TemporaryDirectory() as directory:
             os.environ.update(
                 {

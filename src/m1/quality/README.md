@@ -136,3 +136,7 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 `test.sh auth`沿用数据库组的显式目标、Secret及镜像参数，在随机测试库验证登录、并发限制、限流、会话、事实原子性及认证审计重建。`test.sh application`另要求`M1_AUTH_TEST_ORIGIN`，核对实际代理的认证路径及2MiB拒绝；本机使用`http://127.0.0.1:5184`。
 
 修改HTTP合同后，先用`server/.venv/bin/python scripts/export-openapi.py`导出，再在clients执行`npm run generate:api`。`check.sh`核对导出与生成类型无漂移，不手改生成文件。生成工具仅参与开发/构建，不增加运行服务。浏览器夹具、结果及人工review见[登录交付](../deploy/environments/local-wsl/E01-09-auth.md)。
+
+## E01-10账号使用验证
+
+`test.sh usage`沿用数据库组显式目标和镜像，在隔离测试库验证开户、确认、防重、权限、资料更新及密码恢复；包含真实终端管理命令，密码不进入argv。浏览器夹具为`tests/migrations/usage_browser.py`，只使用合成账号。结果见[E01-10交付](../deploy/environments/local-wsl/E01-10-account-usage.md)。

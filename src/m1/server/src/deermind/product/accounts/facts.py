@@ -1,4 +1,4 @@
-"""首个账号事实的固定正文和投影；凭据及登录不属于本增量。"""
+"""账号及监护事实的固定正文和投影；凭据不进入事实。"""
 
 from datetime import datetime, timedelta
 from typing import Annotated, Literal
@@ -16,6 +16,13 @@ from deermind.foundation.system.events.contracts import (
 )
 from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.foundation.system.events.store import canonical_json
+from deermind.product.accounts.usage_events import decode, project_usage
+from deermind.product.accounts.usage_facts import (
+    USAGE_RECORDS,
+    ConditionsFact,
+    GuardianFact,
+    RelationFact,
+)
 from pydantic import Field, field_validator
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
@@ -48,7 +55,7 @@ class AccountFact(FactModel):
 
 
 class AccountSaved(EventPayload):
-    """E01-05仅接线bootstrap_admin子集，其他动作在账号增量实现。"""
+    """账号创建与资料更新的完整快照。"""
 
     account_id: UUID
     action: Literal["bootstrap_admin", "create_student", "update_student"]
@@ -58,29 +65,59 @@ class AccountSaved(EventPayload):
 
 def account_content(payload: EventPayload) -> AccountFact:
     """按事件记录矩阵校验数量、类型、版本，再解码完整正文。"""
-    if not isinstance(payload, AccountSaved) or payload.relation_refs or len(payload.records) != 1:
-        raise ValueError("Initial administrator requires exactly one account and no relations")
-    record = payload.records[0]
-    if record.record_type != "product.accounts" or record.schema_version != 1:
-        raise ValueError("Unsupported account fact record")
+    if not isinstance(payload, AccountSaved):
+        raise ValueError("Expected account fact")
+    accounts = [r for r in payload.records if r.record_type == "product.accounts"]
+    if len(accounts) != 1 or accounts[0].schema_version != 1:
+        raise ValueError("Exactly one account record is required")
+    record = accounts[0]
     if not isinstance(record.content, InlineContent):
         raise ValueError("Account projection requires decoded content")
     fact = AccountFact.model_validate_json(canonical_json(record.content.value))
-    if (
-        payload.action != "bootstrap_admin"
-        or fact.role != "admin"
-        or fact.status != "active"
-        or fact.revision != 1
-    ):
-        raise ValueError("Only an initial administrator fact is implemented in this increment")
     if fact.account_id != payload.account_id or fact.revision != payload.account_revision:
         raise ValueError("Account fact identity does not match event payload")
+    if payload.action == "bootstrap_admin":
+        if (
+            fact.role != "admin"
+            or fact.status != "active"
+            or fact.revision != 1
+            or len(payload.records) != 1
+            or payload.relation_refs
+        ):
+            raise ValueError("Initial administrator requires one active account and no relations")
+    else:
+        if fact.role != "student" or (payload.action == "create_student" and fact.revision != 1):
+            raise ValueError("Only student account management is allowed")
+        conditions = 0
+        relations: list[Ref] = []
+        for item in payload.records:
+            if item is record:
+                continue
+            related = decode(item)
+            if isinstance(related, ConditionsFact):
+                conditions += 1
+                if related.student_id != fact.account_id:
+                    raise ValueError("Conditions belong to another student")
+            elif isinstance(related, RelationFact):
+                if related.student_id != fact.account_id:
+                    raise ValueError("Relationship belongs to another student")
+                relations.append(
+                    Ref(owner="product", type="guardian_relation", id=str(related.relation_id))
+                )
+            elif not isinstance(related, GuardianFact):
+                raise ValueError("Account save cannot contain a confirmation")
+        if conditions != 1 or relations != payload.relation_refs:
+            raise ValueError(
+                "Account save requires conditions and matching relationship references"
+            )
     return fact
 
 
 def validate_account(draft: EventDraft, payload: EventPayload) -> None:
     fact = account_content(payload)
-    expected_owner = Ref(owner="product", type="account", id=str(fact.account_id), revision=1)
+    expected_owner = Ref(
+        owner="product", type="account", id=str(fact.account_id), revision=fact.revision
+    )
     if draft.scope_id != fact.account_id or draft.owner_ref != expected_owner:
         raise ValueError("Account event scope or owner does not match its fact")
 
@@ -99,10 +136,14 @@ async def project_account(connection: AsyncConnection, event: StoredEvent) -> No
             "(account_id, login_identifier, display_name, role, status, revision, "
             "created_at, source_event_id) "
             "VALUES (:account_id, :login_identifier, :display_name, :role, :status, :revision, "
-            ":created_at, :source_event_id)"
+            ":created_at, :source_event_id) ON CONFLICT (account_id) DO UPDATE SET "
+            "login_identifier=EXCLUDED.login_identifier,display_name=EXCLUDED.display_name,"
+            "status=EXCLUDED.status,revision=EXCLUDED.revision,source_event_id=EXCLUDED.source_event_id"
         ),
         account_values(event),
     )
+
+    await project_usage(connection, event)
 
 
 ACCOUNT_REGISTRATION = EventRegistration(
@@ -114,7 +155,7 @@ ACCOUNT_REGISTRATION = EventRegistration(
     validate=validate_account,
     projector_id="product.accounts.v1",
     project=project_account,
-    record_models={("product.accounts", 1): AccountFact},
+    record_models={("product.accounts", 1): AccountFact, **USAGE_RECORDS},
 )
 
 
@@ -123,7 +164,7 @@ def account_maintenance(access: ReadAccess, event: EventFact) -> ReadGrant | Non
     if access.maintenance_ref is None:
         return None
     return ReadGrant(
-        {("product.accounts", 1): None},
+        {("product.accounts", 1): None, **dict.fromkeys(USAGE_RECORDS)},
         frozenset(
             {
                 "account_id",

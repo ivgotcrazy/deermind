@@ -284,7 +284,15 @@ class ProjectionRebuilder:
         async with self.engine.begin() as connection:
             if values is not None:
                 await connection.execute(
-                    text(f"INSERT INTO {job.stage_relation} ({columns}) VALUES ({parameters})"),
+                    text(
+                        f"INSERT INTO {job.stage_relation} ({columns}) VALUES ({parameters}) "
+                        f"ON CONFLICT ({self.spec.key}) DO UPDATE SET "
+                        + ",".join(
+                            f"{column}=EXCLUDED.{column}"
+                            for column in self.spec.columns
+                            if column != self.spec.key
+                        )
+                    ),
                     values,
                 )
             await connection.execute(

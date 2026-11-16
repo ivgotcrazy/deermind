@@ -5,19 +5,23 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 import uvicorn
+from deermind.bootstrap.accounts import configure_usage
 from deermind.bootstrap.authentication import configure_authentication
 from deermind.bootstrap.database import database_lifespan
 from deermind.bootstrap.settings import Settings
-from deermind.entrypoints.api.auth import authentication_error, router
+from deermind.entrypoints.api.auth import authentication_error, router, safe_error
 from deermind.entrypoints.api.body_limit import RequestBodyLimit
+from deermind.entrypoints.api.usage import router as usage_router
 from deermind.foundation.system.logging import configure_logging
 from deermind.infrastructure.database.connection import DatabaseNotReady, check_database
 from deermind.infrastructure.files.check import check_storage
 from deermind.product.public.authentication import AuthError
-from fastapi import FastAPI, HTTPException
+from deermind.product.public.errors import RequestConflict
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 LOGGER = logging.getLogger("runtime")
 
@@ -40,6 +44,7 @@ def create_app() -> FastAPI:
             async with database_lifespan() as engine:
                 app.state.database = engine
                 app.state.auth, app.state.auth_config = await configure_authentication(engine)
+                app.state.usage = configure_usage(engine, settings.files_root)
                 LOGGER.info(
                     "API 已启动，数据库版本及共享文件目录检查通过",
                     extra={"action": "api_started", "outcome": "success"},
@@ -56,6 +61,15 @@ def create_app() -> FastAPI:
     app = FastAPI(title="DeerMind M1", version="0.1.0", lifespan=lifespan)
 
     app.include_router(router)
+    app.include_router(usage_router)
+
+    async def conflict(request: Request, error: Exception) -> JSONResponse:
+        return safe_error(
+            AuthError(409, "request_conflict", "请求已处理或内容冲突，请刷新后重试。")
+        )
+
+    app.add_exception_handler(RequestConflict, conflict)
+    app.add_exception_handler(IntegrityError, conflict)
     app.add_middleware(RequestBodyLimit)
     app.add_exception_handler(AuthError, authentication_error)
     app.add_exception_handler(RequestValidationError, authentication_error)

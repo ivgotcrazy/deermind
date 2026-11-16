@@ -1,11 +1,11 @@
 # M1 事件与消息载荷
 
-> **版本**：v0.6<br>
+> **版本**：v0.7<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.5 → v0.6，接线ProjectionRebuildFinished维护结果，不增加业务事件<br>
+> **修订说明**：v0.6 → v0.7，落实账号及首次确认事件，固定告知正文与读取用途<br>
 
 本分册是事件信封、类型化动作字段与通知结构的唯一字段定义；完整事实正文及投影登记见[事件正文合同](Event_Facts.md)。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
 
@@ -18,7 +18,7 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileRece
 | `event_id` | ID | 是 | 程序分配；同事实重投不改 |
 | `commit_id` | ID | 是 | 同一数据库提交的事件共用身份；事务重试沿用，不等于请求或Execution身份 |
 | `event_type` | 登记事件名 | 是 | 下文精确名称，大小写敏感 |
-| `schema_version` | int | 是；原47类升至2，新登记类型为1 | 该类型payload版本，不是Domain内容版本 |
+| `schema_version` | int | 是；设计升版及已接线版本见§3开头 | 该类型payload版本，不是Domain内容版本 |
 | `producer` | product/domain/interaction/evaluation等已登记模块 | 是 | 由受权保存者确定 |
 | `scope_kind` | string | 是 | 登记资源种类，见各事件归属 |
 | `scope_id` | ID | 是 | 对应范围身份；空间事件必须是真实学习空间 |
@@ -62,7 +62,7 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileRece
 
 ## 3. 逐类型业务载荷
 
-§3、§4原47类事件的schema_version统一为2，新增records及各范围序号；旧解码器保留。§4.1新类型为1。每类payload均必须有records:FactRecord[]，其字段及逐类型正文约束见[正文合同§2—3](Event_Facts.md#2-正文结构)。以下字段表列其余字段，不重复records。每个事件允许和必须携带的正文、数量、条件唯一维护在[正文§3.2](Event_Facts.md#32-事件携带记录与条件)；payload引用不等于需要重复携带该对象正文。Ref可标识本事件新建的业务对象或既有对象，不能据此证明投影行已存在；原文来源使用EventPartRef。对象ID须与records中的主键及版本相符，重建保留原ID。确切形状沿[总册§3](../API_and_Message_Design.md#3-共用类型与字段规则)。列表允许空时必须表示确认无项，未知以缺口/限制表达。时间、账号及源请求由信封保留，不因正文省略而丢失追溯。
+§3、§4原47类事件采用设计版本2，新增records及各范围序号；已接线的TrialAccountSaved、AccountSignedIn保留既有版本1，不改写事实或虚构迁移。本轮首次接线的UsageConfirmationRecorded、AccountRecovered采用版本2，正文DTO仍为版本1；事件版本与正文版本分别校验。§4.1新类型为1。每类payload均必须有records:FactRecord[]，其字段及逐类型正文约束见[正文合同§2—3](Event_Facts.md#2-正文结构)。以下字段表列其余字段，不重复records。每个事件允许和必须携带的正文、数量、条件唯一维护在[正文§3.2](Event_Facts.md#32-事件携带记录与条件)；payload引用不等于需要重复携带该对象正文。Ref可标识本事件新建的业务对象或既有对象，不能据此证明投影行已存在；原文来源使用EventPartRef。对象ID须与records中的主键及版本相符，重建保留原ID。确切形状沿[总册§3](../API_and_Message_Design.md#3-共用类型与字段规则)。列表允许空时必须表示确认无项，未知以缺口/限制表达。时间、账号及源请求由信封保留，不因正文省略而丢失追溯。
 
 <a id="domainintakerequested"></a>
 ### 3.1 `DomainIntakeRequested`
@@ -732,6 +732,7 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 | `student_id` | ID | 是 | 已核实学生身份 |
 | `confirmation_ref` | Ref | 是 | 实际使用确认记录 |
 | `usage_conditions_ref` | Ref | 是 | 程序计算的使用条件 |
+| `notice_text` | string | 是 | 当时告知全文；E01-10使用合成测试告知，不依赖未来文件内容反查 |
 
 <a id="accountsignedin"></a>
 ### 4.3 `AccountSignedIn`
@@ -863,7 +864,7 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
 | `FileReceived` | runtime / file | 文件完整保存且校验通过 | 文件身份、媒体、字节数、hash和非秘密存储定位 |
 | `ProjectionRebuildFinished` | runtime / maintenance | 维护重建完成或明确失败 | 范围、代次、固定上界、检查结果或错误 |
 
-共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过正文合同§3登记Schema校验。TrialAccountSaved初始账号、FileReceived及ProjectionRebuildFinished已接线，其余类型尚未编码或部署；既有schema_version编号保留，不宣称执行过历史数据迁移。
+共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过正文合同§3登记Schema校验。本轮累计已接线TrialAccountSaved（管理员/学生开户及资料更新）、UsageConfirmationRecorded、AccountRecovered、AccountSignedIn、AccountSignedOut、FileReceived和ProjectionRebuildFinished；其余类型未实现。事件版本沿§3登记，不宣称执行过历史数据迁移。
 
 | 类型 | outcome允许值 | 额外字段 |
 | --- | --- | --- |
@@ -1020,3 +1021,4 @@ runtime运行留痕的records使用固定DTO，逐事件数量及条件见正文
 | v0.4 | 2026-11-16 | 同步E01-05接线范围；保留既定字段与记录矩阵 |
 | v0.5 | 2026-11-16 | 登记FileReceived、完整DTO附件及E01-06实现范围 |
 | v0.6 | 2026-11-16 | 接线ProjectionRebuildFinished维护结果，不增加业务事件 |
+| v0.7 | 2026-11-16 | 落实账号及首次确认事件，固定告知正文与读取用途 |

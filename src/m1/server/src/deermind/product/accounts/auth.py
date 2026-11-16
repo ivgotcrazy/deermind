@@ -33,18 +33,21 @@ def digest(value: str) -> str:
 
 
 def account_view(row: RowMapping) -> AccountView:
-    # E01-10尚未接线确认记录；学生一律不推定可以进入真实学习。
-    gaps = (
-        []
-        if row["role"] == "admin"
-        else [
-            UsageGap(
-                code="usage_confirmation_required",
-                path="account",
-                message="监护及使用确认尚未完成，暂不能进入学习。",
-            )
-        ]
-    )
+    gaps = []
+    if row["role"] == "student":
+        reasons = row.get("usage_reasons")
+        if row.get("eligibility") == "allowed":
+            gaps = []
+        elif reasons:
+            gaps = [UsageGap.model_validate(item) for item in reasons]
+        else:
+            gaps = [
+                UsageGap(
+                    code="usage_confirmation_required",
+                    path="account",
+                    message="监护及使用确认尚未完成，暂不能进入学习。",
+                )
+            ]
     return AccountView.model_validate(
         {
             "account_id": row["account_id"],
@@ -268,9 +271,12 @@ class AuthService:
                 (
                     await connection.execute(
                         text(
-                            "SELECT a.*,c.credential_revision,c.password_hash FROM "
+                            "SELECT a.*,c.credential_revision,c.password_hash,u.eligibility, "
+                            "u.reasons AS usage_reasons FROM "
                             "product.accounts a "
-                            "JOIN product.credentials c USING(account_id) WHERE account_id=:id"
+                            "JOIN product.credentials c USING(account_id) "
+                            "LEFT JOIN product.usage_conditions u "
+                            "ON u.student_id=a.account_id WHERE a.account_id=:id"
                         ),
                         {"id": original["account_id"]},
                     )
@@ -338,10 +344,12 @@ class AuthService:
                         text(
                             "SELECT "
                             "a.account_id,a.display_name,a.role,s.session_id,"
-                            "s.csrf_token,s.expires_at "
+                            "s.csrf_token,s.expires_at,u.eligibility,u.reasons AS usage_reasons "
                             "FROM product.auth_sessions s JOIN product.accounts a "
                             "USING(account_id) "
-                            "JOIN product.credentials c USING(account_id) WHERE s.token_hash=:hash "
+                            "JOIN product.credentials c USING(account_id) "
+                            "LEFT JOIN product.usage_conditions u "
+                            "ON u.student_id=a.account_id WHERE s.token_hash=:hash "
                             "AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() "
                             "AND a.status='active' AND s.credential_revision=c.credential_revision"
                         ),

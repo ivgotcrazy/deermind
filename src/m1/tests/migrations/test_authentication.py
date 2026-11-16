@@ -209,9 +209,7 @@ class AuthenticationTests(DatabaseTestCase):
                 )
             async with service.engine.begin() as connection:
                 with self.assertRaises(DBAPIError):
-                    await connection.execute(
-                        text("UPDATE product.credentials SET password_hash='changed'")
-                    )
+                    await connection.execute(text("UPDATE product.accounts SET role='admin'"))
 
         asyncio.run(self.execute(scenario))
 

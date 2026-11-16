@@ -55,6 +55,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/m1/usage-conditions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Conditions */
+        get: operations["product_usage_conditions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/m1/usage-confirmations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm */
+        post: operations["product_record_usage_confirmation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health/live": {
         parameters: {
             query?: never;
@@ -110,6 +144,58 @@ export interface components {
             /** Usage Gaps */
             usage_gaps: components["schemas"]["UsageGap"][];
         };
+        /** ConfirmUsageRequest */
+        ConfirmUsageRequest: {
+            confirmation: components["schemas"]["ConfirmationInput"];
+            /** Expected Revision */
+            expected_revision: number;
+            /**
+             * Request Id
+             * Format: uuid
+             */
+            request_id: string;
+        };
+        /** ConfirmUsageResponse */
+        ConfirmUsageResponse: {
+            /**
+             * Request Ref
+             * Format: uuid
+             */
+            request_ref: string;
+            result: components["schemas"]["ConfirmationResult"];
+        };
+        /** ConfirmationInput */
+        ConfirmationInput: {
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "accepted" | "declined" | "pending";
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "guardian_consent" | "student_assent";
+            notice_ref: components["schemas"]["Ref"];
+            /** Occurred At */
+            occurred_at?: string | null;
+            source_ref: components["schemas"]["Ref"];
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+        };
+        /** ConfirmationResult */
+        ConfirmationResult: {
+            /** Allowed */
+            allowed: boolean;
+            /** Conditions Revision */
+            conditions_revision: number;
+            confirmation_ref: components["schemas"]["Ref"];
+            /** Gaps */
+            gaps: components["schemas"]["UsageGap"][];
+        };
         /** ErrorDetail */
         ErrorDetail: {
             /** Code */
@@ -134,6 +220,21 @@ export interface components {
         Health: {
             /** Status */
             status: string;
+        };
+        /** Ref */
+        Ref: {
+            /** Id */
+            id: string;
+            /** Owner */
+            owner: string;
+            /** Path */
+            path?: string | null;
+            /** Revision */
+            revision?: number | null;
+            /** Type */
+            type: string;
+            /** Version */
+            version?: number | null;
         };
         /**
          * SessionView
@@ -200,6 +301,26 @@ export interface components {
             message: string;
             /** Path */
             path: string;
+        };
+        /** UsageView */
+        UsageView: {
+            /** Allowed */
+            allowed: boolean;
+            /** Can Confirm */
+            can_confirm: boolean;
+            /** Gaps */
+            gaps: components["schemas"]["UsageGap"][];
+            notice_ref: components["schemas"]["Ref"];
+            /** Notice Text */
+            notice_text: string;
+            /** Revision */
+            revision: number;
+            source_ref: components["schemas"]["Ref"];
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
         };
     };
     responses: never;
@@ -414,6 +535,194 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SignOutResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Client Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    product_usage_conditions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsageView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Client Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    product_record_usage_confirmation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmUsageRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConfirmUsageResponse"];
                 };
             };
             /** @description Bad Request */
