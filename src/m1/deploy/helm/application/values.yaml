@@ -1,6 +1,10 @@
 images:
   server: ''
   client: ''
+auth:
+  origins: []
+  localHttp: false
+  trustedProxies: []
 initializeNamespace: false
 nodeSelector: {}
 filesClaim: ''

@@ -9,13 +9,16 @@
   },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "vite build"
+    "build": "vite build",
+    "generate:api": "openapi-typescript ../contracts/generated/http/openapi.json -o ../contracts/generated/http/schema.d.ts",
+    "check:api": "openapi-typescript ../contracts/generated/http/openapi.json -o ../contracts/generated/http/schema.d.ts --check"
   },
   "dependencies": {
     "vue": "3.5.43"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "6.0.9",
+    "openapi-typescript": "7.13.0",
     "typescript": "5.9.3",
     "vite": "7.3.7"
   }

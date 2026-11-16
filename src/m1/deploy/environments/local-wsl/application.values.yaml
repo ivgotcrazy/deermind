@@ -1,6 +1,6 @@
 images:
-  server: deermind/server:e01-08-r1
-  client: deermind/client:e01-03-r2
+  server: deermind/server:e01-09-r4
+  client: deermind/client:e01-09-r4
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
 filesClaim: deermind-files
@@ -13,3 +13,10 @@ temporal:
   address: deermind-temporal-frontend:7233
   namespace: dm-local-wsl
   taskQueue: dm.local-wsl.application
+
+auth:
+  origins:
+    - http://127.0.0.1:5184
+    - http://localhost:5184
+  localHttp: true
+  trustedProxies: [10.42.0.0/24]

@@ -1,10 +1,10 @@
 # M1 数据库设计
 
-> **版本**：v0.11<br>
-> **状态**：E01-08重建维护表及扫描进度表已接入；进度见实施计划，113张规划表按需迁移<br>
+> **版本**：v0.12<br>
+> **状态**：E01-09认证迁移已部署并通过隔离库测试；进度见实施计划，114张规划表按需迁移<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.10 → v0.11，接线E01-08两张维护表，规划总数调整为113张<br>
+> **修订说明**：v0.11 → v0.12，登记E01-09认证三表及新增限流控制表，规划共114表<br>
 
 **一个PostgreSQL实例，三个数据库。** `deermind`保存业务与应用运行数据；`temporal`、`temporal_visibility`由Temporal管理。业务库内部按责任划分schema，schema不是独立数据库，也不等于独立服务。
 
@@ -16,7 +16,7 @@
 
 | 数据库 | 内容 | 表数 | 管理方与账号边界 | 字段字典 |
 | --- | --- | --- | --- | --- |
-| `deermind` | 业务、事件、运行、文件元数据及AI调用 | 113 | 各模块维护各自schema；运行账号与迁移账号分开 | 本册§2及六个分册 |
+| `deermind` | 业务、事件、运行、文件元数据及AI调用 | 114 | 各模块维护各自schema；运行账号与迁移账号分开 | 本册§2及六个分册 |
 | `temporal` | Workflow历史、执行、任务队列及组件元数据 | 40 | Temporal专用账号，官方Schema工具升级 | [执行库](database/Temporal.md) |
 | `temporal_visibility` | Workflow检索视图及Schema记录 | 3 | Temporal查询库专用账号，官方工具升级 | [查询库](database/Temporal_Visibility.md) |
 
@@ -45,7 +45,7 @@ NATS、教材原件、派生图片和大载荷不是SQL表。文件字节经隔�
 
 | schema | 表数 / 列数 | 内容与完整字典 |
 | --- | --- | --- |
-| `product` | 28 / 246 | [产品业务](database/Business_Product.md) |
+| `product` | 29 / 251 | [产品业务](database/Business_Product.md) |
 | `domain` | 9 / 91 | [领域空间](database/Business_Domain.md) |
 | `interaction` | 35 / 306 | [交互空间](database/Business_Interaction.md) |
 | `evaluation` | 13 / 127 | [评估空间](database/Business_Evaluation.md) |
@@ -240,6 +240,7 @@ P为事件正文的业务投影，D为由事实生成的当前索引，C为运�
 | [product.accounts](database/Business_Product.md#1-productaccounts) | P | 完整正文及产生事件见事件正文§3 |
 | [product.credentials](database/Business_Product.md#2-productcredentials) | C | 沿原模块恢复；不重放业务副作用 |
 | [product.auth_sessions](database/Business_Product.md#3-productauth_sessions) | C | 沿原模块恢复；不重放业务副作用 |
+| [product.login_attempts](database/Business_Product.md#29-productlogin_attempts) | C | 当前限流控制；重建不恢复登录或重放尝试 |
 | [product.guardian_records](database/Business_Product.md#4-productguardian_records) | P | 完整正文及产生事件见事件正文§3 |
 | [product.student_guardian_relations](database/Business_Product.md#5-productstudent_guardian_relations) | P | 完整正文及产生事件见事件正文§3 |
 | [product.usage_confirmations](database/Business_Product.md#6-productusage_confirmations) | P | 完整正文及产生事件见事件正文§3 |
@@ -313,7 +314,7 @@ P为事件正文的业务投影，D为由事实生成的当前索引，C为运�
 
 ### 5.2 E01-05实施范围
 
-`0002_atomic_facts`依赖首个revision，建立runtime.events、runtime.scope_event_heads、runtime.projection_receipts、product.accounts及product.command_receipt。字段沿各分册；应用仅获当前需要的列/表权限，事件及投影收据不可改删。E01-05完成时总计6张表（含迁移表），不等于113张规划表全部落库。
+`0002_atomic_facts`依赖首个revision，建立runtime.events、runtime.scope_event_heads、runtime.projection_receipts、product.accounts及product.command_receipt。字段沿各分册；应用仅获当前需要的列/表权限，事件及投影收据不可改删。E01-05完成时总计6张表（含迁移表），不等于114张规划表全部落库。
 
 首个生产者保存已有合同中的初始账号事实，不开放登录/开户API。共同事务、幂等和失败验证见[事实保存交付](../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)。
 
@@ -323,9 +324,13 @@ P为事件正文的业务投影，D为由事实生成的当前索引，C为运�
 
 ### 5.4 E01-08重建维护接线
 
-迁移`0004_projection_rebuilds`只追加runtime.projection_offsets与runtime.projection_rebuilds，字段及关系见[运行分册§19—20](database/Business_Runtime.md#19-runtimeprojection_offsets)。当前落库9张表（含alembic_version）；规划总数113张，其中新增维护记录1张。按次生成的隔离副本不计入规划表数。
+迁移`0004_projection_rebuilds`只追加runtime.projection_offsets与runtime.projection_rebuilds，字段及关系见[运行分册§19—20](database/Business_Runtime.md#19-runtimeprojection_offsets)。E01-08落库9张表（含alembic_version）；规划总数113张，其中新增维护记录1张。按次生成的隔离副本不计入规划表数。
 
 维护账号独占迁移/重建锁；正式查询行、在线收据和进度、维护结果事件及记录一起提交。失败保留旧查询数据与隔离副本。应用账号不能读写维护表或副本，旧迁移不改写；行为及限制见[公共运行§2.6](System_Foundation_Design.md#26-历史补读实时接续与重建)。
+
+### 5.5 E01-09认证迁移
+
+`0005_auth_sessions`追加既定credentials、auth_sessions及已确认的login_attempts。升级后共有12张表（含alembic_version）；规划总数114张。凭据、会话、限流属于控制数据，不进入事实投影重建。应用只读密码散列；会话仅允许新增与撤销，限流仅允许新增与写入结果。部署状态以实施计划为准。
 
 ## 6. 自检与审阅范围
 
@@ -352,3 +357,4 @@ P为事件正文的业务投影，D为由事实生成的当前索引，C为运�
 | v0.9 | 2026-11-16 | 登记E01-05五张表及原子保存迁移，字段继续由分册维护 |
 | v0.10 | 2026-11-16 | 登记E01-06文件登记迁移与附件类别 |
 | v0.11 | 2026-11-16 | 接线E01-08两张维护表，规划总数调整为113张 |
+| v0.12 | 2026-11-16 | 登记E01-09认证三表及新增限流控制表，规划共114表 |

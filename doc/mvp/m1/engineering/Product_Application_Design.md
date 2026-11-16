@@ -1,11 +1,11 @@
 # M1 产品业务设计
 
-> **版本**：v0.32<br>
-> **状态**：事件合同评审修订稿；容量与保留候选待确认，未编码<br>
+> **版本**：v0.33<br>
+> **状态**：登录与账号事实已按增量接线；其他能力及待确认项见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-15<br>
-> **修订说明**：v0.31 → v0.32，补正文、投影矩阵、状态及读取授权；容量候选待审，见MVP决定登记§98<br>
+> **更新日期**：2026-11-16<br>
+> **修订说明**：v0.32 → v0.33，落实E01-09登录参数、持久限流、来源检查及认证原子保存<br>
 
 本文设计教材准备、学习目标、学习空间和账号关系等产品业务，说明这些业务如何调用核心Space。教材助手归本模块管理，个人能力与目标达成计算仍由Evaluation负责；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。学习用时统计与提醒后置，不作为M1模块或验收条件。
 
@@ -102,13 +102,17 @@
 
 用户确认同一浏览器配置的标签页共用一个当前账号。两种角色同时测试使用不同浏览器或浏览器配置；学生／管理员入口不各存一套登录凭据。这里的登录会话只用于认证，与学习空间的一条持续对话无关。
 
-密码采用成熟库校验的Argon2id摘要，盐由库生成，数据库不存明文或可逆密码。接线草案采用pwdlib，版本和参数在依赖配置评审确认；参考[FastAPI密码散列](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/#password-hashing)及[OWASP密码存储](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)，不继承该教程的JWT方案。
+密码采用成熟库校验的Argon2id摘要，盐由库生成，数据库不存明文或可逆密码。已确认采用pwdlib[argon2] 0.4.2；传递依赖锁定于server/uv.lock；参考[FastAPI密码散列](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/#password-hashing)及[OWASP密码存储](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)，不继承该教程的JWT方案。
 
 登录成功后生成密码学安全的随机session_token，数据库仅保存其hash及会话记录。浏览器通过HttpOnly、Secure、SameSite=Lax、Path=/且不带Domain的`__Host-dm_session` Cookie携带token；不向JavaScript或localStorage返回token。开发环境使用受控本地代理和独立配置，不能将生产Cookie的保护选项随意关闭。[会话保护依据](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)。
 
-csrf_token是会话绑定的防伪值，不是登录凭据；作为受限字段保存，仅通过已认证的会话查询返回，不能写日志。后台会话记录与账号身份均归Product；底座通过认证端口核验，不直接读凭据表。M1采用固定到期时间，不因WebSocket心跳无限续期；时限、密码长度、散列成本和尝试限额统一见[基础设施§4.5 A01–A04](Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)，仍待审，缺值不得默认无限。
+csrf_token是会话绑定的防伪值，不是登录凭据；作为受限字段保存，仅通过已认证的会话查询返回，不能写日志。后台会话记录与账号身份均归Product；底座通过认证端口核验，不直接读凭据表。M1采用固定到期时间，不因WebSocket心跳无限续期；时限、密码长度、散列成本和尝试限额统一见[基础设施§4.5 A01–A04](Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)，A01—A04已确认，缺值不得默认无限。
+
+本机HTTP例外仅接受localhost/127.0.0.1的显式Origin，Cookie名dm_session_local；其他环境强制HTTPS Origin及Secure Cookie。部署提供M1_AUTH_ORIGINS、M1_AUTH_LOCAL_HTTP和可信代理网段；不信任浏览器传入的来源IP。代理覆盖X-Real-IP，应用只在直连地址属于配置的代理网段时采用该头。
 
 登录过程：检查来源及请求格式→执行有限登录尝试控制→读取账号和密码修订→事务外校验密码→短事务重查账号及凭据修订→生成会话并登记安全记录→提交后设置Cookie。密码重置先完成时，旧密码验证结果不得建立新会话。未知账号也走受控等价校验，错误只返回“账号或密码不正确”；不记录密码或整段登录请求。登录限额由Product按登录标识及可信来源执行；临时限流不改账号状态，服务过载不记成密码错误。成功登录及重置不能让并发旧校验建立过期会话。
+
+限流采用[login_attempts](database/Business_Product.md#29-productlogin_attempts)，数据库检查与占位原子完成；密码散列在事务外，API同时最多两个校验任务，断开请求不提前释放仍在执行的散列槽位。会话保存前按账号ID顺序锁定账号事件头，再复核状态和密码修订；成功会话与AccountSignedIn共同提交。账号切换时旧会话撤销与AccountSignedOut在同一事务内完成。事件只含账号和会话身份，不含token、密码、散列或csrf_token。重建消费这些审计事实但不恢复登录。
 
 同一浏览器切换账号时，成功登录事务撤销请求携带的旧会话，再设置新Cookie；其他浏览器的会话不因这次切换失效。账号数据、草稿及已受理工作不迁给新账号，客户端处理见[Client§5](Client_Design.md#5-网络异步结果与展示回执)。
 
@@ -133,7 +137,7 @@ csrf_token是会话绑定的防伪值，不是登录凭据；作为受限字段�
 
 普通浏览器API请求另带X-Expected-Session，值为页面已核验的session_id；它不是凭据。服务端先认证Cookie，再比较该ID，身份已切换则返回session_changed，不按新账号继续执行旧页面的请求。GET /auth/session及登录入口不带此预期，用于取得当前身份；客户端收到不匹配后清空旧视图并重新核验。私有读取返回前复查会话有效性，响应禁止缓存。
 
-认证身份只来自上述服务端校验。登录请求限定同源JSON及精确Origin；已登录的写请求另携带会话csrf_token，GET不产生业务写入。WebSocket首帧验证同一csrf_token，避免只靠浏览器自动携带Cookie建立可写连接。Origin必须精确匹配受控列表，不接受通配或缺失Origin的浏览器入口；开发来源单独配置。[WebSocket安全依据](https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html)。
+认证身份只来自上述服务端校验。登录请求限定同源JSON及精确Origin；已登录的写请求另携带会话csrf_token，GET不产生业务写入。WebSocket首帧验证同一csrf_token，避免只靠浏览器自动携带Cookie建立可写连接。写请求Origin必须精确匹配受控列表，不接受通配或缺失Origin；同源GET可能没有Origin，此时仍核对Host并拒绝跨站Fetch Metadata；开发来源单独配置。[WebSocket安全依据](https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html)。
 
 缺少必要确认的学生可以登录、查看自己的确认状态和提交本人意愿；不能提交真实学习输入、取用学习内容或建立学习活动。初始化、后台内容准备和合成案例不因此被阻止。401表示需登录，403表示身份有效但不允许操作，服务故障不伪装成密码错误。
 
@@ -678,3 +682,4 @@ Evaluation按[§6.4](Evaluation_Space_Design.md#64-目标结果存储与原子�
 | v0.30 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.31 | 2026-11-15 | 同步工程目录、职责依赖、Vue客户端及OpenAPI生成边界。仅文档修订，见MVP决定登记§97。 |
 | v0.32 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |
+| v0.33 | 2026-11-16 | 落实E01-09登录参数、持久限流、来源检查及认证原子保存 |

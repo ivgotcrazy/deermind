@@ -100,6 +100,8 @@ check_client() {
     return 1
   fi
 
+  server/.venv/bin/python scripts/export-openapi.py --check
+  npm --prefix clients run check:api
   eslint --config quality/eslint.config.mjs clients --max-warnings 0
   vue-tsc --project clients/tsconfig.json
 }

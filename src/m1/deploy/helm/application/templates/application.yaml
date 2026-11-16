@@ -38,6 +38,14 @@ spec:
             capabilities:
               drop: ["ALL"]
           env:
+            {{- if eq $component "api" }}
+            - name: M1_AUTH_ORIGINS
+              value: {{ join "," $root.Values.auth.origins | quote }}
+            - name: M1_AUTH_LOCAL_HTTP
+              value: {{ $root.Values.auth.localHttp | quote }}
+            - name: M1_AUTH_TRUSTED_PROXIES
+              value: {{ join "," $root.Values.auth.trustedProxies | quote }}
+            {{- end }}
             - name: M1_DB_HOST
               value: {{ $root.Values.database.host | quote }}
             - name: M1_DB_PORT

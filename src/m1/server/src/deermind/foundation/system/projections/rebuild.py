@@ -188,8 +188,10 @@ class ProjectionRebuilder:
             maintenance_ref=str(job.rebuild_id),
         )
 
-    def _values(self, event: StoredEvent) -> dict[str, object]:
+    def _values(self, event: StoredEvent) -> dict[str, object] | None:
         values = self.spec.values(event)
+        if values is None:
+            return None
         if (
             set(values) != set(self.spec.columns)
             or values[self.spec.key] != event.draft.scope_id
@@ -280,9 +282,11 @@ class ProjectionRebuilder:
         columns = ",".join(self.spec.columns)
         parameters = ",".join(":" + column for column in self.spec.columns)
         async with self.engine.begin() as connection:
-            await connection.execute(
-                text(f"INSERT INTO {job.stage_relation} ({columns}) VALUES ({parameters})"), values
-            )
+            if values is not None:
+                await connection.execute(
+                    text(f"INSERT INTO {job.stage_relation} ({columns}) VALUES ({parameters})"),
+                    values,
+                )
             await connection.execute(
                 text(
                     "INSERT INTO "
@@ -324,7 +328,7 @@ class ProjectionRebuilder:
             ),
             {"projector": job.projector_id, "generation": job.generation},
         )
-        if len(rows) != expected or receipts != expected:
+        if len(rows) != len(job.scope_bounds) or receipts != expected:
             raise ValueError("Staged rows and receipts do not cover the fixed source range")
         covered = await gate.scalar(
             text(
@@ -334,7 +338,7 @@ class ProjectionRebuilder:
             ),
             {"projector": job.projector_id, "generation": job.generation},
         )
-        if covered != expected:
+        if covered != len(rows):
             raise ValueError("Receipts do not match the staged source events")
         for bound in job.scope_bounds:
             progress = (

@@ -1,12 +1,12 @@
 # deermind 数据库：产品业务数据字典
 
-> **版本**：v0.6<br>
+> **版本**：v0.7<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.5 → v0.6，同步E01-05接线范围；保留既定字段与记录矩阵<br>
+> **修订说明**：v0.6 → v0.7，增加已确认的登录尝试控制表，明确会话约束及限流索引<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **28 张表、246 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **29 张表、251 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
@@ -15,6 +15,7 @@
 | [accounts](#1-productaccounts) | 预置账号与固定角色 |
 | [credentials](#2-productcredentials) | 密码验证资料 |
 | [auth_sessions](#3-productauth_sessions) | 可撤销的浏览器登录会话 |
+| [login_attempts](#29-productlogin_attempts) | 持久登录限流控制记录 |
 | [guardian_records](#4-productguardian_records) | 最小监护人登记，不建立家长端账号 |
 | [student_guardian_relations](#5-productstudent_guardian_relations) | 监护关系的历次登记 |
 | [usage_confirmations](#6-productusage_confirmations) | 监护人同意及学生知情记录 |
@@ -41,12 +42,17 @@
 | [learning_space](#27-productlearning_space) | 一个学生的教材和目标组合 |
 | [space_adoption](#28-productspace_adoption) | 空间的历次课程采用 |
 
+login_attempts按账号标识和来源摘要计数，须覆盖未知账号，故不关联accounts外键。
+
 图中实体前缀是schema；实线为列外键，虚线为复合键或受程序校验的固定引用。图按“可有多条引用”展示；一对一关系的UQ/PK以表下注明为准，不能忽略唯一约束。跨schema关系在总册集中列出。
 
 ```mermaid
 erDiagram
     product__accounts {
         uuid account_id PK
+    }
+    product__login_attempts {
+        uuid attempt_id PK
     }
     product__credentials {
         uuid account_id PK
@@ -245,7 +251,7 @@ E01-05仅接线初始账号的内联事实、生产者投影及收据；其余�
 | `expires_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `revoked_at` | `timestamptz` | 是 | 无 | 撤销时间；未撤销为空 |
 
-约束与关系：UQ(token_hash)；expires_at > created_at。
+约束与关系：UQ(token_hash)；expires_at > created_at；credential_revision >= 1。token_hash为随机token的SHA-256；原token不落库。
 
 查询索引：account_id, revoked_at；expires_at。
 
@@ -869,6 +875,24 @@ E01-05仅接线初始账号的内联事实、生产者投影及收据；其余�
 
 查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
+## 29. `product.login_attempts`
+
+数据性质：C类认证控制记录。用于跨重启限流，不生成业务正文投影、不从历史事件恢复登录，也不存原始账号、IP或密码。限额引用基础设施§4.5 A04。
+
+主键：`(attempt_id)`。写入方式：受理校验时追加pending；校验完成后仅修改outcome。
+
+| 字段 | PostgreSQL 类型 | 可空 | 默认值 | 定义、约束与引用 |
+| --- | --- | --- | --- | --- |
+| `attempt_id` | `uuid` | 否 | 无 | 服务端分配的单次登录尝试身份；主键 |
+| `login_digest` | `text` | 否 | 无 | trim/casefold后登录标识的SHA-256；64位小写十六进制；不是不可逆匿名保证 |
+| `source_digest` | `text` | 否 | 无 | 可信来源IP规范表示的SHA-256；64位小写十六进制 |
+| `admitted_at` | `timestamptz` | 否 | 无 | 数据库确认受理时刻；UTC |
+| `outcome` | `text` | 否 | 无 | pending/success/invalid/unavailable；校验中先占额度，服务故障不算密码错误 |
+
+约束与关系：两个摘要符合`^[0-9a-f]{64}$`；outcome受CHECK约束。未知账号也登记，不设accounts外键。账号限额统计pending与invalid，IP限额统计已受理尝试；拒绝受理不继续追加记录。进程中断留下pending，最多影响当前15分钟窗口。当前不自动物理清理，后续保留方案另行确认。
+
+查询索引：`(login_digest,admitted_at)`及`(source_digest,admitted_at)`。限额检查与追加在按稳定顺序取得的事务咨询锁内执行。应用仅SELECT/INSERT及UPDATE(outcome)，不可修改身份、时间或删除记录。
+
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
@@ -879,3 +903,4 @@ E01-05仅接线初始账号的内联事实、生产者投影及收据；其余�
 | v0.4 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.5 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |
 | v0.6 | 2026-11-16 | 同步E01-05接线范围；保留既定字段与记录矩阵 |
+| v0.7 | 2026-11-16 | 增加已确认的登录尝试控制表，明确会话约束及限流索引 |

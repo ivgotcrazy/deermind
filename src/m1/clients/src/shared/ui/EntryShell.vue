@@ -15,7 +15,7 @@ defineProps<{
     <main>
       <h1>{{ title }}</h1>
       <slot />
-      <p class="entry-note">当前仅开放启动页。</p>
+      <p class="entry-note">当前开放账号登录，学习功能按后续增量接入。</p>
     </main>
   </div>
 </template>

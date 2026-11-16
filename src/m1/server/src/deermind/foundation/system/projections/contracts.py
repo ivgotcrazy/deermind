@@ -43,7 +43,7 @@ class RebuildJob(FactModel):
 
 @dataclass(frozen=True)
 class RebuildSpec:
-    """程序白名单：本轮每个事实生成一行，不接受任意表、SQL或回调。"""
+    """程序白名单：本轮业务事实生成一行，审计事实只推进扫描，不接受任意表、SQL或回调。"""
 
     projector_id: str
     scope_kind: str
@@ -51,7 +51,7 @@ class RebuildSpec:
     key: str
     columns: tuple[str, ...]
     implementation_digest: str
-    values: Callable[[StoredEvent], dict[str, object]]
+    values: Callable[[StoredEvent], dict[str, object] | None]
 
 
 class CheckIssue(FactModel):

@@ -5,12 +5,17 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 import uvicorn
+from deermind.bootstrap.authentication import configure_authentication
 from deermind.bootstrap.database import database_lifespan
 from deermind.bootstrap.settings import Settings
+from deermind.entrypoints.api.auth import authentication_error, router
+from deermind.entrypoints.api.body_limit import RequestBodyLimit
 from deermind.foundation.system.logging import configure_logging
 from deermind.infrastructure.database.connection import DatabaseNotReady, check_database
 from deermind.infrastructure.files.check import check_storage
+from deermind.product.public.authentication import AuthError
 from fastapi import FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -34,6 +39,7 @@ def create_app() -> FastAPI:
         try:
             async with database_lifespan() as engine:
                 app.state.database = engine
+                app.state.auth, app.state.auth_config = await configure_authentication(engine)
                 LOGGER.info(
                     "API 已启动，数据库版本及共享文件目录检查通过",
                     extra={"action": "api_started", "outcome": "success"},
@@ -48,6 +54,12 @@ def create_app() -> FastAPI:
         LOGGER.info("API 已停止", extra={"action": "api_stopped", "outcome": "success"})
 
     app = FastAPI(title="DeerMind M1", version="0.1.0", lifespan=lifespan)
+
+    app.include_router(router)
+    app.add_middleware(RequestBodyLimit)
+    app.add_exception_handler(AuthError, authentication_error)
+    app.add_exception_handler(RequestValidationError, authentication_error)
+    app.add_exception_handler(SQLAlchemyError, authentication_error)
 
     @app.get("/health/live", response_model=Health, operation_id="health_live")
     def live() -> Health:
@@ -84,4 +96,5 @@ def main() -> None:
         port=8000,
         log_config=None,
         access_log=False,
+        proxy_headers=False,
     )

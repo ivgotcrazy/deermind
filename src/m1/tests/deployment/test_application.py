@@ -12,6 +12,7 @@ import tempfile
 import time
 import unittest
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -134,6 +135,30 @@ class ApplicationTests(unittest.TestCase):
                     self.assertNotIn("/src/", html)
                 with urllib.request.urlopen(base + "/api/health/ready", timeout=5) as response:
                     self.assertEqual(json.load(response), {"status": "ok"})
+                # 使用已批准的浏览器来源，核对代理保留完整API路径及Host端口。
+                origin = os.environ["M1_AUTH_TEST_ORIGIN"]
+                headers = {"Host": urllib.parse.urlsplit(origin).netloc, "Origin": origin}
+                query = urllib.request.Request(base + "/api/m1/auth/session", headers=headers)
+                with self.assertRaises(urllib.error.HTTPError) as anonymous:
+                    urllib.request.urlopen(query, timeout=5)
+                self.assertEqual(anonymous.exception.code, 401)
+                self.assertEqual(json.load(anonymous.exception)["error"]["code"], "unauthenticated")
+                self.assertEqual(anonymous.exception.headers["Cache-Control"], "no-store")
+                oversized = urllib.request.Request(
+                    base + "/api/m1/auth/sign-in",
+                    data=b"",
+                    headers={
+                        **headers,
+                        "Content-Type": "application/json",
+                        "Content-Length": str(2 * 1024 * 1024 + 1),
+                    },
+                )
+                with self.assertRaises(urllib.error.HTTPError) as too_large:
+                    urllib.request.urlopen(oversized, timeout=5)
+                self.assertEqual(too_large.exception.code, 413)
+                self.assertEqual(
+                    json.load(too_large.exception)["error"]["code"], "payload_too_large"
+                )
                 with self.assertRaises(urllib.error.HTTPError) as missing:
                     urllib.request.urlopen(base + "/assets/missing.js", timeout=5)
                 self.assertEqual(missing.exception.code, 404)

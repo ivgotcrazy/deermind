@@ -130,3 +130,9 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 ## E01-08受控重建接入
 
 `test.sh rebuild`沿用数据库目标、Secret及镜像配置，只在随机测试库验证隔离重建、断点恢复、重复代次、来源变化、损坏正文和失败回滚。独立进程执行维护CLI，普通应用账号、未停写和并发维护均拒绝；测试清理只涉及本次资源。结果及限制见[重建交付](../deploy/environments/local-wsl/E01-08-rebuild.md)。
+
+## E01-09认证与生成类型接入
+
+`test.sh auth`沿用数据库组的显式目标、Secret及镜像参数，在随机测试库验证登录、并发限制、限流、会话、事实原子性及认证审计重建。`test.sh application`另要求`M1_AUTH_TEST_ORIGIN`，核对实际代理的认证路径及2MiB拒绝；本机使用`http://127.0.0.1:5184`。
+
+修改HTTP合同后，先用`server/.venv/bin/python scripts/export-openapi.py`导出，再在clients执行`npm run generate:api`。`check.sh`核对导出与生成类型无漂移，不手改生成文件。生成工具仅参与开发/构建，不增加运行服务。浏览器夹具、结果及人工review见[登录交付](../deploy/environments/local-wsl/E01-09-auth.md)。

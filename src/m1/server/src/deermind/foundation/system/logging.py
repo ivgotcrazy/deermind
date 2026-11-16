@@ -23,7 +23,7 @@ class JsonFormatter(logging.Formatter):
             ),
             "message": record.getMessage(),
         }
-        for key in ("error_code", "execution_id", "duration_ms"):
+        for key in ("error_code", "request_id", "execution_id", "duration_ms"):
             if hasattr(record, key):
                 result[key] = getattr(record, key)
         if record.levelno >= logging.ERROR and "error_code" not in result:
