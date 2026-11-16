@@ -3,6 +3,7 @@
 from concurrent.futures import ThreadPoolExecutor
 
 from deermind.bootstrap.settings import Settings
+from deermind.infrastructure.temporal.executions import Lifecycle
 from deermind.infrastructure.temporal.probe import StorageProbe
 from deermind.infrastructure.temporal.probe_activity import ProbeActivity
 from temporalio.client import Client
@@ -14,13 +15,15 @@ def create_worker(
     settings: Settings,
     workflow_executor: ThreadPoolExecutor,
     activity_executor: ThreadPoolExecutor,
+    lifecycle: Lifecycle | None = None,
 ) -> Worker:
-    """Register only the startup probe; business registration arrives with its increment."""
+    """注册探测及公共生命周期；业务Workflow随所属增量接线。"""
     return Worker(
         client,
         task_queue=settings.task_queue,
         workflows=[StorageProbe],
-        activities=[ProbeActivity(settings.files_root).reply],
+        activities=[ProbeActivity(settings.files_root).reply]
+        + ([lifecycle.started, lifecycle.completed, lifecycle.failed] if lifecycle else []),
         max_concurrent_workflow_tasks=2,
         max_concurrent_activities=4,
         max_cached_workflows=8,

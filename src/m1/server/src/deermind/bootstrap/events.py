@@ -6,6 +6,10 @@ from deermind.foundation.system.delivery.outbox import Outbox
 from deermind.foundation.system.events.query import EventReader
 from deermind.foundation.system.events.reading import ReadHandler
 from deermind.foundation.system.events.store import EventStore
+from deermind.foundation.system.executions.facts import (
+    EXECUTION_READ_POLICY,
+    EXECUTION_REGISTRATION,
+)
 from deermind.foundation.system.files.ports import FileStorage
 from deermind.foundation.system.projections.contracts import REBUILD_FINISHED
 from deermind.infrastructure.files.records import FILE_READ_POLICY, FILE_REGISTRATION
@@ -31,6 +35,7 @@ def event_store() -> EventStore:
             USAGE_CONFIRMED,
             RECOVERED,
             DELIVERY_REGISTRATION,
+            EXECUTION_REGISTRATION,
         ],
         arrange_delivery=Outbox(subscriptions()).arrange,
     )
@@ -50,12 +55,14 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
             USAGE_CONFIRMED,
             RECOVERED,
             DELIVERY_REGISTRATION,
+            EXECUTION_REGISTRATION,
         ],
         [
             ReadHandler("runtime.projection_read", "runtime", "projection_rebuild"),
             ReadHandler("runtime.file_review", "runtime", "execution_support"),
             ReadHandler("product.usage_receipt", "product", "execution_support"),
             ReadHandler("runtime.delivery_review", "runtime", "execution_support"),
+            ReadHandler("runtime.execution_review", "runtime", "execution_support"),
         ],
         [
             ACCOUNT_READ_POLICY,
@@ -65,6 +72,7 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
             USAGE_RECEIPT_POLICY,
             RECOVERY_READ_POLICY,
             DELIVERY_READ_POLICY,
+            EXECUTION_READ_POLICY,
         ],
         cursor_key=cursor_key,
     )

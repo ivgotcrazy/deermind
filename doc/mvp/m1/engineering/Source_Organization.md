@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.12<br>
+> **版本**：v0.13<br>
 > **状态**：代码按已批准目录逐增量接线；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.11 → v0.12，登记E01-12交接底座、NATS适配及验证入口<br>
+> **修订说明**：v0.12 → v0.13，登记执行仓储、Temporal适配和隔离故障验证入口<br>
 
 ## 1. 范围与维护位置
 
@@ -420,6 +420,8 @@ Helm沿[官方Chart文件结构](https://helm.sh/docs/topics/charts/)组织。�
 
 Worker只绑定已初始化的消息资源。`entrypoints/maintenance/messaging.py`提供初始化和获准重送；`scripts/prepare-messaging-secret.py`在显式集群中补齐维护/应用凭据。`test.sh delivery`通过构建镜像、随机PG库及随机NATS流验证，不登记假的生产业务订阅。
 
+E01-13实际新增`foundation/system/executions/`（工作、尝试、授权、Step和控制事实）及`infrastructure/temporal/executions.py`、`relay.py`（远程派发和核对）；装配在`bootstrap/executions.py`和既有共享Worker。`tests/migrations/test_execution.py`及`execution_worker.py`只用于随机隔离库和测试队列，正式登记不导入测试Workflow。
+
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
@@ -436,3 +438,4 @@ Worker只绑定已初始化的消息资源。`entrypoints/maintenance/messaging.
 | v0.10 | 2026-11-16 | 补齐E01-07读取合同、查询实现和授权测试位置 |
 | v0.11 | 2026-11-16 | 登记重建合同、实现、白名单装配及维护测试位置 |
 | v0.12 | 2026-11-16 | 登记E01-12交接底座、NATS适配及测试入口 |
+| v0.13 | 2026-11-16 | 登记执行仓储、Temporal适配和隔离故障验证入口 |

@@ -1,16 +1,16 @@
 # M1 数据库设计
 
-> **版本**：v0.14<br>
-> **状态**：E01-12增加既定事件交接四表；部署与验证状态见实施计划，114张规划表按需迁移<br>
+> **版本**：v0.15<br>
+> **状态**：E01-13增加既定执行四表；部署与验证状态见实施计划，114张规划表按需迁移<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.13 → v0.14，登记E01-12交接四表迁移，规划表总数不变<br>
+> **修订说明**：v0.14 → v0.15，登记0008执行四表迁移，规划表总数不变<br>
 
 **一个PostgreSQL实例，三个数据库。** `deermind`保存业务与应用运行数据；`temporal`、`temporal_visibility`由Temporal管理。业务库内部按责任划分schema，schema不是独立数据库，也不等于独立服务。
 
 模块文档维护接口、业务载荷、读写流程和事务边界；数据库分册维护表、物理字段、约束、索引及表关系；本册维护分库总览、公共存储规则和导航。模块通过链接引用分册，不再复制物理表定义。
 
-用户确认M1继续采用同库分schema，数据库拆分留后续阶段；本轮沿用共同短事务并明确先追加事件、再同步投影，不增加拆库设计。字段稿仍待审阅。E01-02已建立三个数据库及隔离账号，并运行官方Temporal Schema工具；E01-04交付六个模块schema与迁移记录表；E01-05增加五张事实、投影及收据表；E01-06增加runtime.file_objects；E01-08增加projection_offsets与projection_rebuilds；其余规划表按所属增量迁移。实际部署及验证见[迁移交付](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)。
+用户确认M1继续采用同库分schema，数据库拆分留后续阶段；本轮沿用共同短事务并明确先追加事件、再同步投影，不增加拆库设计。字段稿仍待审阅。E01-02已建立三个数据库及隔离账号，并运行官方Temporal Schema工具；E01-04交付六个模块schema与迁移记录表；E01-05增加五张事实、投影及收据表；E01-06增加runtime.file_objects；E01-08增加projection_offsets与projection_rebuilds；E01-13以0008_execution增加executions、execution_authorizations、execution_attempts、step_results；其余规划表按所属增量迁移。实际部署及验证见[迁移交付](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)。
 
 ## 1. 库与账号
 
@@ -346,6 +346,8 @@ E01-10的`0006_account_usage`追加既定guardian_records、student_guardian_rel
 
 E01-12的`0007_event_delivery`接线既定handoffs、handoff_attempts、subscription_receipts及delivery_failures；实际20张表（含alembic_version），规划114张不变。应用不得删除交接历史或改写收据；发布身份固定，状态列按最小授权更新。字段、唯一键及索引见[Runtime数据字典§9—12](database/Business_Runtime.md#9-runtimehandoffs)，交付见[E01-12](../../../../src/m1/deploy/environments/local-wsl/E01-12-event-delivery.md)。
 
+E01-13的`0008_execution`增加既定执行四表，当前实际24张表（含alembic_version）；字段和归属外键见[Runtime§5—8](database/Business_Runtime.md#5-runtimeexecution_authorizations)，接线及证据见[E01-13](../../../../src/m1/deploy/environments/local-wsl/E01-13-execution.md)。
+
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
@@ -364,3 +366,4 @@ E01-12的`0007_event_delivery`接线既定handoffs、handoff_attempts、subscrip
 | v0.12 | 2026-11-16 | 登记E01-09认证三表及新增限流控制表，规划共114表 |
 | v0.13 | 2026-11-16 | 登记E01-10既定四表迁移；规划总数不变 |
 | v0.14 | 2026-11-16 | 登记E01-12交接四表迁移，规划表总数不变 |
+| v0.15 | 2026-11-16 | 登记0008执行四表迁移，规划表总数不变 |

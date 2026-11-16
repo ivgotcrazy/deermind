@@ -1,10 +1,10 @@
 # deermind 数据库：公共运行及文件登记数据字典
 
-> **版本**：v0.7<br>
+> **版本**：v0.8<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.6 → v0.7，接线四张交接控制表，明确投递身份及收据约束<br>
+> **修订说明**：v0.7 → v0.8，接线四张既定执行表，补当前尝试和步骤归属约束<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **20 张表、207 个列定义**。处理流程、接口和业务载荷由[System_Foundation_Design.md](../System_Foundation_Design.md) §2—6；文件由基础设施§2维护维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -253,6 +253,8 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_obj
 
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
+E01-13以`0008_execution`接线下列§5—8四张既定表。当前尝试及Step完成尝试通过`(execution_id,attempt_id)`组合外键限制为本工作；授权、Step仅追加，应用账号仅获执行状态和终态引用等指定列的更新权。处理顺序见公共运行§4.8。
+
 ## 5. `runtime.execution_authorizations`
 
 一次受理工作的授权依据。
@@ -299,7 +301,7 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_obj
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `updated_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 
-约束与关系：UQ(owner,entry_ref,scope_id,acceptance_key)；输入不随恢复替换；kind=ai_operation必须有ai_config_ref，handler必须为空；同工作最多一个有效尝试。
+约束与关系：UQ(owner,entry_ref,scope_id,acceptance_key)；输入不随恢复替换；kind=ai_operation必须有ai_config_ref，handler必须为空；同工作最多一个有效尝试；(execution_id,active_attempt_id)组合外键指向同一工作。
 
 查询索引：主键及受理唯一键；(state,updated_at)。
 
@@ -324,7 +326,7 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_obj
 | `failure_ref` | `jsonb` | 是 | 无 | 失败依据；Ref，见总册§3 |
 | `finished_at` | `timestamptz` | 是 | 无 | 结束时间；未结束为空 |
 
-约束与关系：UQ(execution_id,attempt_no)；UQ(workflow_id)；部分UQ(execution_id,retry_request_id)；恢复给新有限期限但累计用量不清零。
+约束与关系：UQ(execution_id,attempt_no)；UQ(execution_id,attempt_id)供归属外键引用；UQ(workflow_id)；部分UQ(execution_id,retry_request_id)，仅非空值参加；attempt_no≥1、deadline_at>accepted_at；恢复给新有限期限但累计用量不清零。
 
 查询索引：主键及上述唯一键；(state,finished_at)；execution_id。
 
@@ -345,7 +347,7 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_obj
 | `completed_by_attempt` | `uuid` | 否 | 无 | 实际完成尝试；FK → `runtime.execution_attempts.attempt_id` |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 
-约束与关系：同键异输入拒绝；只有已成功固定的结果才复用。
+约束与关系：同键异输入拒绝；input_hash为64位小写十六进制；(execution_id,completed_by_attempt)组合外键指向同一工作。只有已成功固定的结果才复用。
 
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
@@ -632,3 +634,4 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 | v0.5 | 2026-11-16 | 新增事实附件类别，登记E01-06文件表接线 |
 | v0.6 | 2026-11-16 | 增加重建维护记录字段、关系及权限，接线扫描进度表 |
 | v0.7 | 2026-11-16 | 接线四张交接控制表，明确投递身份及收据约束 |
+| v0.8 | 2026-11-16 | 接线四张既定执行表，补当前尝试和步骤归属约束 |

@@ -1,11 +1,11 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.8<br>
+> **版本**：v0.9<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.7 → v0.8，登记DeliveryStateChanged控制快照及不参与重建的边界<br>
+> **修订说明**：v0.8 → v0.9，接线ExecutionStateChanged控制快照，不参与业务投影重建<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
@@ -263,6 +263,8 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 
 E01-12已接线DeliveryStateChanged，投递控制快照只用于核对；原子安排与原事实共用commit_id，承接收据与后续安排同事务保存。它不登记业务重建投影，也不能订阅自身。
 
+E01-13接线ExecutionStateChanged：每次一份execution，尝试变化时携带一份attempt；progress_saved携带本次首次保存的一个Step，不复制既有Step。状态、所有者业务收尾与事实同事务；仅维护授权读取，不能据此重建或再次派发。
+
 控制事件的记录只用于核对，不按表名自动恢复控制表；H条目即使同名也不取得P投影权限。ExecutionStateChanged的progress_saved记录新Step检查点；DeliveryStateChanged的accepted/rejected/ignored记录真实承接结论，不把已可靠接住当作业务成功。
 
 ### 3.3 业务状态与执行状态
@@ -322,3 +324,4 @@ E01-08已接线初始账号单行投影：原记录的范围、上界及实现�
 | v0.6 | 2026-11-16 | 补齐首批账号重建、固定维护记录和失败边界 |
 | v0.7 | 2026-11-16 | 登记使用确认投影及收据读取；账号资料重建保留原身份 |
 | v0.8 | 2026-11-16 | 登记DeliveryStateChanged控制快照及不参与重建的边界 |
+| v0.9 | 2026-11-16 | 接线ExecutionStateChanged控制快照，不参与业务投影重建 |

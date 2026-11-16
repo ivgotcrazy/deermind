@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from deermind.bootstrap.database import database_lifespan
+from deermind.bootstrap.executions import limits, registry
 from deermind.bootstrap.messaging import subscriptions
 from deermind.bootstrap.services import create_worker
 from deermind.bootstrap.settings import Settings
@@ -14,6 +15,8 @@ from deermind.foundation.system.logging import configure_logging
 from deermind.infrastructure.files.check import check_storage
 from deermind.infrastructure.nats.bridge import run_bridge
 from deermind.infrastructure.nats.connection import MessagingSettings, connect
+from deermind.infrastructure.temporal.executions import Lifecycle, Transport
+from deermind.infrastructure.temporal.relay import run_relay
 from sqlalchemy.ext.asyncio import AsyncEngine
 from temporalio.api.workflowservice.v1 import DescribeNamespaceRequest
 from temporalio.client import Client
@@ -49,7 +52,9 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
 
     # Blocking file I/O runs in the activity pool, not on the asyncio loop.
     with ThreadPoolExecutor(2) as workflow_executor, ThreadPoolExecutor(4) as activity_executor:
-        worker = create_worker(client, settings, workflow_executor, activity_executor)
+        entries, execution_limits = registry(), limits()
+        lifecycle = Lifecycle(engine, entries, execution_limits)
+        worker = create_worker(client, settings, workflow_executor, activity_executor, lifecycle)
         try:
             async with worker, connect(MessagingSettings.from_environment()) as transport:
                 await transport.check_stream(failure=False)
@@ -61,7 +66,11 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
                     "Worker 已启动，等待共享队列任务",
                     extra={"action": "worker_started", "outcome": "success"},
                 )
-                await run_bridge(engine, transport, subscriptions(), stopped)
+                async with asyncio.TaskGroup() as tasks:
+                    tasks.create_task(run_bridge(engine, transport, subscriptions(), stopped))
+                    tasks.create_task(
+                        run_relay(engine, entries, Transport(client, execution_limits), stopped)
+                    )
         finally:
             READY_FILE.unlink(missing_ok=True)
     LOGGER.info("Worker 已停止", extra={"action": "worker_stopped", "outcome": "success"})
