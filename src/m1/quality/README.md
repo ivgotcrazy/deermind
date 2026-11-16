@@ -140,3 +140,7 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 ## E01-10账号使用验证
 
 `test.sh usage`沿用数据库组显式目标和镜像，在隔离测试库验证开户、确认、防重、权限、资料更新及密码恢复；包含真实终端管理命令，密码不进入argv。浏览器夹具为`tests/migrations/usage_browser.py`，只使用合成账号。结果见[E01-10交付](../deploy/environments/local-wsl/E01-10-account-usage.md)。
+
+## E01-11公共收据与接口验证
+
+`test.sh receipts`使用相同显式集群、Secret和构建镜像参数，在随机数据库验证原请求查询、不重新写入、同键冲突及身份隔离。API错误与响应合同用例进入local组；浏览器通过真实API故障注入验证回执丢失和原请求重试。公共收据只注册已实现的本人使用确认；不测试尚未接入的后台受理或WebSocket。结果见[E01-11交付](../deploy/environments/local-wsl/E01-11-request-receipts.md)。

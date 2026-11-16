@@ -1,9 +1,9 @@
 """认证HTTP入口：同源检查、Cookie及安全错误；业务会话归Product。"""
 
-import logging
 from ipaddress import ip_address
 from urllib.parse import urlsplit
 
+from deermind.entrypoints.api.errors import ERRORS
 from deermind.product.public.auth_config import AuthConfig
 from deermind.product.public.authentication import (
     Authentication,
@@ -14,63 +14,8 @@ from deermind.product.public.authentication import (
     SignOutResponse,
 )
 from fastapi import APIRouter, Request, Response
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ConfigDict
 
-LOGGER = logging.getLogger("product.auth")
 router = APIRouter(prefix="/api/m1/auth", tags=["authentication"])
-
-
-class ErrorDetail(BaseModel):
-    code: str
-    message: str
-    issues: list[dict[str, str]]
-    retryable: bool
-
-
-class ErrorResponse(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    error: ErrorDetail
-
-
-ERRORS: dict[int | str, dict[str, object]] = {
-    code: {"model": ErrorResponse} for code in (400, 401, 403, 409, 413, 429, 503)
-}
-ERRORS["4XX"] = {"model": ErrorResponse}  # 覆盖FastAPI默认422，校验失败统一返回400。
-
-
-def safe_error(error: AuthError) -> JSONResponse:
-    headers = {"Cache-Control": "no-store"}
-    if error.retry_after is not None:
-        headers["Retry-After"] = str(error.retry_after)
-    body = ErrorResponse(
-        error=ErrorDetail(
-            code=error.code,
-            message=error.message,
-            issues=[],
-            retryable=error.status in {429, 503},
-        )
-    )
-    return JSONResponse(body.model_dump(), status_code=error.status, headers=headers)
-
-
-async def authentication_error(request: Request, error: Exception) -> JSONResponse:
-    if isinstance(error, AuthError):
-        return safe_error(error)
-    if isinstance(error, RequestValidationError):
-        # FastAPI默认错误带input，不能将密码或多余的敏感字段反射回去。
-        return safe_error(AuthError(400, "invalid_request", "请求格式不正确。"))
-    LOGGER.error(
-        "认证存储暂不可用",
-        exc_info=True,
-        extra={
-            "action": "authentication",
-            "outcome": "failed",
-            "error_code": "AUTH_STORAGE_UNAVAILABLE",
-        },
-    )
-    return safe_error(AuthError(503, "temporarily_unavailable", "服务暂不可用，请稍后重试。"))
 
 
 def access(request: Request, *, writing: bool = False) -> tuple[Authentication, AuthConfig]:

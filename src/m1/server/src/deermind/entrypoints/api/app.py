@@ -9,19 +9,22 @@ from deermind.bootstrap.accounts import configure_usage
 from deermind.bootstrap.authentication import configure_authentication
 from deermind.bootstrap.database import database_lifespan
 from deermind.bootstrap.settings import Settings
-from deermind.entrypoints.api.auth import authentication_error, router, safe_error
+from deermind.entrypoints.api.auth import router
 from deermind.entrypoints.api.body_limit import RequestBodyLimit
+from deermind.entrypoints.api.errors import api_error
+from deermind.entrypoints.api.receipts import router as receipts_router
 from deermind.entrypoints.api.usage import router as usage_router
 from deermind.foundation.system.logging import configure_logging
+from deermind.foundation.system.public.errors import RequestError
+from deermind.foundation.system.requests import RequestReceipts
 from deermind.infrastructure.database.connection import DatabaseNotReady, check_database
 from deermind.infrastructure.files.check import check_storage
-from deermind.product.public.authentication import AuthError
 from deermind.product.public.errors import RequestConflict
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 LOGGER = logging.getLogger("runtime")
 
@@ -45,6 +48,14 @@ def create_app() -> FastAPI:
                 app.state.database = engine
                 app.state.auth, app.state.auth_config = await configure_authentication(engine)
                 app.state.usage = configure_usage(engine, settings.files_root)
+                app.state.receipts = RequestReceipts(
+                    {
+                        (
+                            "product.record_usage_confirmation",
+                            "account",
+                        ): app.state.usage.read_receipt,
+                    }
+                )
                 LOGGER.info(
                     "API 已启动，数据库版本及共享文件目录检查通过",
                     extra={"action": "api_started", "outcome": "success"},
@@ -63,17 +74,18 @@ def create_app() -> FastAPI:
     app.include_router(router)
     app.include_router(usage_router)
 
-    async def conflict(request: Request, error: Exception) -> JSONResponse:
-        return safe_error(
-            AuthError(409, "request_conflict", "请求已处理或内容冲突，请刷新后重试。")
-        )
-
-    app.add_exception_handler(RequestConflict, conflict)
-    app.add_exception_handler(IntegrityError, conflict)
+    app.include_router(receipts_router)
     app.add_middleware(RequestBodyLimit)
-    app.add_exception_handler(AuthError, authentication_error)
-    app.add_exception_handler(RequestValidationError, authentication_error)
-    app.add_exception_handler(SQLAlchemyError, authentication_error)
+    for error_type in (
+        RequestError,
+        RequestConflict,
+        IntegrityError,
+        RequestValidationError,
+        SQLAlchemyError,
+        StarletteHTTPException,
+        Exception,
+    ):
+        app.add_exception_handler(error_type, api_error)
 
     @app.get("/health/live", response_model=Health, operation_id="health_live")
     def live() -> Health:

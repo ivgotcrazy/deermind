@@ -1,6 +1,6 @@
 """在JSON解析前限制HTTP正文；同时检查声明长度与实际分块字节。"""
 
-from deermind.entrypoints.api.auth import safe_error
+from deermind.entrypoints.api.errors import safe_error
 from deermind.product.public.authentication import AuthError
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 

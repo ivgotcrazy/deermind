@@ -6,6 +6,7 @@ from deermind.foundation.system.events.contracts import Ref
 from deermind.foundation.system.events.query import EventReader
 from deermind.foundation.system.events.reading import EventPartRef, ReadAccess
 from deermind.foundation.system.events.store import EventStore, canonical_json
+from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.accounts.conditions import derive_conditions
 from deermind.product.accounts.save import canonical_actor
 from deermind.product.accounts.transactions import (
@@ -16,7 +17,7 @@ from deermind.product.accounts.transactions import (
 )
 from deermind.product.accounts.usage_events import UsageConfirmed, record
 from deermind.product.accounts.usage_facts import ConditionsFact, ConfirmationFact
-from deermind.product.persistence.receipts import claim_request, complete_request
+from deermind.product.persistence.receipts import Receipt, claim_request, complete_request
 from deermind.product.public.authentication import AuthError, SessionView
 from deermind.product.public.notice import TEST_NOTICE, TEST_NOTICE_TEXT, assent_source
 from deermind.product.public.usage import (
@@ -196,16 +197,82 @@ class AccountUsage:
                 receipt = await complete_request(
                     connection, receipt, Ref(owner="runtime", type="event", id=str(event_id))
                 )
+        return await self._saved_result(
+            session.account.account_id, session.session_id, student, receipt
+        )
+
+    async def read_receipt(
+        self, principal: UUID, session: UUID, query: ReceiptQuery
+    ) -> ReceiptView[ConfirmationResult]:
+        """仅本人原请求；每次重新授权，不读取当前条件冒充原请求结果。"""
+        if query.resource_id != principal:
+            raise AuthError(404, "not_found", "没有可读取的请求。")
+        try:
+            request_id = str(UUID(query.request_id))
+        except ValueError as error:
+            raise AuthError(400, "invalid_request", "请求编号不正确。") from error
+        async with self.engine.connect() as connection:
+            role = await connection.scalar(
+                text(
+                    "SELECT a.role FROM product.auth_sessions s "
+                    "JOIN product.accounts a USING(account_id) "
+                    "JOIN product.credentials c USING(account_id) "
+                    "WHERE s.session_id=:session AND a.account_id=:account "
+                    "AND a.status='active' AND s.revoked_at IS NULL "
+                    "AND s.expires_at>clock_timestamp() "
+                    "AND s.credential_revision=c.credential_revision"
+                ),
+                {"session": session, "account": principal},
+            )
+            if role != "student":
+                raise AuthError(404, "not_found", "没有可读取的请求。")
+            row = (
+                (
+                    await connection.execute(
+                        text(
+                            "SELECT request_ref,state,result_ref FROM product.command_receipt "
+                            "WHERE principal_id=:principal AND action='record_usage_confirmation' "
+                            "AND scope_id=:scope AND request_id=:request"
+                        ),
+                        {
+                            "principal": canonical_actor(
+                                Ref(owner="product", type="account", id=str(principal))
+                            ),
+                            "scope": str(query.resource_id),
+                            "request": request_id,
+                        },
+                    )
+                )
+                .mappings()
+                .one_or_none()
+            )
+        if row is None:
+            return ReceiptView(receipt_state="not_found")
+        if row["state"] != "completed" or row["result_ref"] is None:
+            raise RuntimeError("Incomplete synchronous confirmation receipt")
+        receipt = Receipt(row["request_ref"], Ref.model_validate(row["result_ref"]))
+        original = await self._saved_result(principal, session, query.resource_id, receipt)
+        return ReceiptView(
+            receipt_state="completed",
+            receipt_ref=receipt.request_ref,
+            business_state="completed",
+            result=original.result,
+            result_refs=[original.result.confirmation_ref],
+        )
+
+    async def _saved_result(
+        self, principal: UUID, session: UUID, student: UUID, receipt: Receipt
+    ) -> ConfirmUsageResponse:
         if receipt.result_ref is None:
             raise RuntimeError("Confirmation receipt has no result")
         # 重复提交读取原事件的快照，不把后来变化的条件伪装为原请求结果。
         facts = await self.reader.read_event_facts(
             ReadAccess(
-                principal_id=str(session.account.account_id),
+                principal_id=str(principal),
                 handler_id="product.usage_receipt",
                 module="product",
                 purpose="execution_support",
-                authorization_ref=str(session.session_id),
+                authorization_ref=str(session),
                 scopes=frozenset({("account", student)}),
                 execution_ref=receipt.request_ref,
             ),

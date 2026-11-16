@@ -1,6 +1,6 @@
 images:
-  server: deermind/server:e01-10-r2
-  client: deermind/client:e01-10-r2
+  server: deermind/server:e01-11-r1
+  client: deermind/client:e01-11-r1
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
 filesClaim: deermind-files

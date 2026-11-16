@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Literal, Protocol
 from uuid import UUID
 
+from deermind.foundation.system.public.errors import RequestError
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
 
@@ -56,17 +57,8 @@ class SignOutResponse(AuthModel):
     signed_out: Literal[True] = True
 
 
-class AuthError(Exception):
-    """可展示的认证错误；不携带密码、数据库参数或原始异常。"""
-
-    def __init__(
-        self, status: int, code: str, message: str, retry_after: int | None = None
-    ) -> None:
-        super().__init__(message)
-        self.status = status
-        self.code = code
-        self.message = message
-        self.retry_after = retry_after
+class AuthError(RequestError):
+    """认证使用统一可展示错误，保留业务调用名称。"""
 
 
 @dataclass(frozen=True)

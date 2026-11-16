@@ -18,11 +18,11 @@ def main() -> int:
     """核对目标，运行临时测试Pod；任一步失败均返回非零并清理本次Pod。"""
     group = sys.argv[1] if len(sys.argv) == 2 else "database"
     if (
-        group not in {"database", "facts", "files", "reads", "rebuild", "auth", "usage"}
+        group not in {"database", "facts", "files", "reads", "rebuild", "auth", "usage", "receipts"}
         or len(sys.argv) > 2
     ):
         raise ValueError(
-            "Expected database, facts, files, reads, rebuild, auth or usage test group"
+            "Expected database, facts, files, reads, rebuild, auth, usage or receipts test group"
         )
     target = [
         "kubectl",
@@ -129,6 +129,7 @@ def main() -> int:
             "rebuild": "test_projection_rebuild.py",
             "auth": "test_authentication.py",
             "usage": "test_account_usage.py",
+            "receipts": "test_receipts.py",
         }[group]
         # 将测试文件放进临时目录；生产包仍只从镜像读取，不挂载源码。
         driver = """

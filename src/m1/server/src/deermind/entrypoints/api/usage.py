@@ -2,7 +2,8 @@
 
 import secrets
 
-from deermind.entrypoints.api.auth import ERRORS, access
+from deermind.entrypoints.api.auth import access
+from deermind.entrypoints.api.errors import ERRORS
 from deermind.product.public.authentication import AuthError
 from deermind.product.public.usage import (
     ConfirmUsageRequest,

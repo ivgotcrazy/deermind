@@ -1,0 +1,83 @@
+"""公共错误和响应合同验证；通过真实ASGI入口，不启动数据库或模型。"""
+
+import json
+import unittest
+
+from deermind.entrypoints.api.app import create_app
+from deermind.entrypoints.api.errors import api_error
+from deermind.foundation.system.public.errors import ErrorResponse, RequestError
+from fastapi import Request
+from pydantic import BaseModel
+from sqlalchemy.exc import OperationalError
+from starlette.types import Message
+
+
+class ApiContractTests(unittest.IsolatedAsyncioTestCase):
+    async def test_unknown_route_and_invalid_response_use_safe_envelope(self) -> None:
+        app = create_app()
+
+        class Declared(BaseModel):
+            count: int
+
+        @app.get("/test-invalid", response_model=Declared)
+        def invalid() -> dict[str, str]:
+            return {"count": "private-output-must-not-leak"}
+
+        for path, expected in (("/unknown", 404), ("/test-invalid", 500)):
+            messages: list[Message] = []
+
+            async def receive() -> Message:
+                return {"type": "http.request", "body": b"", "more_body": False}
+
+            async def send(message: Message, sink: list[Message] = messages) -> None:
+                sink.append(message)
+
+            try:
+                await app(
+                    {
+                        "type": "http",
+                        "method": "GET",
+                        "path": path,
+                        "raw_path": path.encode(),
+                        "query_string": b"",
+                        "headers": [],
+                        "scheme": "http",
+                        "server": ("localhost", 80),
+                    },
+                    receive,
+                    send,
+                )
+            except Exception:
+                # ServerErrorMiddleware发送500后仍向服务器报告异常。
+                if not any(m.get("status") == 500 for m in messages):
+                    raise
+            self.assertEqual(messages[0]["status"], expected)
+            body = b"".join(m.get("body", b"") for m in messages)
+            ErrorResponse.model_validate_json(body)
+            self.assertNotIn(b"private-output", body)
+            self.assertIn((b"cache-control", b"no-store"), messages[0]["headers"])
+
+    async def test_storage_failure_is_not_not_found(self) -> None:
+        request = Request({"type": "http"})
+        response = await api_error(request, OperationalError("secret SQL", {}, Exception("secret")))
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(
+            json.loads(bytes(response.body))["error"]["code"], "temporarily_unavailable"
+        )
+        self.assertNotIn(b"secret", bytes(response.body))
+        limited = await api_error(request, RequestError(429, "rate_limited", "稍后重试", 30))
+        self.assertEqual(limited.headers["Retry-After"], "30")
+
+    def test_business_routes_declare_common_error_and_exact_receipt_result(self) -> None:
+        schema = create_app().openapi()
+        for path, verbs in schema["paths"].items():
+            if not path.startswith("/api/m1/"):
+                continue
+            for operation in verbs.values():
+                self.assertIn("500", operation["responses"])
+                self.assertIn("404", operation["responses"])
+                self.assertNotIn("422", operation["responses"])
+        receipt = schema["paths"]["/api/m1/requests/receipt"]["get"]["responses"]["200"]
+        self.assertIn(
+            "ConfirmationResult", receipt["content"]["application/json"]["schema"]["$ref"]
+        )

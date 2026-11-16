@@ -5,6 +5,7 @@ from typing import Literal, Protocol
 from uuid import UUID
 
 from deermind.foundation.system.events.contracts import Ref
+from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.public.authentication import AuthModel, SessionView, UsageGap
 from pydantic import Field
 
@@ -48,6 +49,10 @@ class ConfirmUsageResponse(AuthModel):
 
 
 class UsageService(Protocol):
+    async def read_receipt(
+        self, principal: UUID, session: UUID, query: ReceiptQuery
+    ) -> ReceiptView[ConfirmationResult]: ...
+
     async def view(self, session: SessionView) -> UsageView: ...
     async def confirm(
         self, session: SessionView, body: ConfirmUsageRequest

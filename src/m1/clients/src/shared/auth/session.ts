@@ -1,23 +1,10 @@
 /** 只在内存保存身份；Cookie由服务端维护，旧身份响应不得恢复页面。 */
 import { onBeforeUnmount, onMounted, readonly, ref } from 'vue';
+import { ApiError, get, post } from '../api/http';
 import type { components } from '../../../../contracts/generated/http/schema';
 
 type Session = components['schemas']['SessionView'];
 type Phase = 'checking' | 'anonymous' | 'authenticated' | 'unavailable';
-
-async function failure(response: Response): Promise<string> {
-  const body: unknown = await response.json().catch(() => null);
-  const message = body && typeof body === 'object' && 'error' in body ? body.error : null;
-  if (
-    message &&
-    typeof message === 'object' &&
-    'message' in message &&
-    typeof message.message === 'string'
-  ) {
-    return message.message;
-  }
-  return '请求未完成，请稍后重试。';
-}
 
 export function useSession() {
   const session = ref<Session | null>(null);
@@ -45,32 +32,20 @@ export function useSession() {
     const current = epoch;
     read = new AbortController();
     try {
-      const response = await fetch('/api/m1/auth/session', {
-        credentials: 'same-origin',
-        cache: 'no-store',
-        signal: read.signal,
-      });
-      const value: Session | null = response.ok ? await response.json() : null;
-      const message = !response.ok && response.status !== 401 ? await failure(response) : '';
+      const value = await get('/api/m1/auth/session', { signal: read.signal });
       if (disposed || current !== epoch) return;
-      if (response.status === 401) {
-        phase.value = 'anonymous';
-      } else if (value) {
-        session.value = value;
-        phase.value = 'authenticated';
-        // 计时器只触发重新读取，是否过期最终以服务端为准。
-        expiry = setTimeout(
-          () => void refresh(),
-          Math.max(1000, Date.parse(value.expires_at) - Date.now()),
-        );
-      } else {
-        phase.value = 'unavailable';
-        error.value = message;
-      }
-    } catch {
+      session.value = value;
+      phase.value = 'authenticated';
+      // 计时器只触发重新读取，是否过期最终以服务端为准。
+      expiry = setTimeout(
+        () => void refresh(),
+        Math.max(1000, Date.parse(value.expires_at) - Date.now()),
+      );
+    } catch (cause) {
       if (disposed || current !== epoch) return;
-      phase.value = 'unavailable';
-      error.value = '暂时无法确认登录状态，请检查连接后重试。';
+      phase.value = cause instanceof ApiError && cause.status === 401 ? 'anonymous' : 'unavailable';
+      if (phase.value !== 'anonymous')
+        error.value = cause instanceof Error ? cause.message : '暂时无法确认登录状态。';
     }
   }
 
@@ -88,7 +63,10 @@ export function useSession() {
     }
   }
 
-  async function mutate(path: 'sign-in' | 'sign-out', payload: object) {
+  async function mutate(
+    path: 'sign-in' | 'sign-out',
+    payload?: components['schemas']['SignInRequest'],
+  ) {
     if (busy.value) return;
     const previous = session.value;
     busy.value = true;
@@ -97,21 +75,14 @@ export function useSession() {
       clear();
       announce('changing');
       try {
-        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-        if (path === 'sign-out' && previous) {
-          headers['X-Expected-Session'] = previous.session_id;
-          headers['X-CSRF-Token'] = previous.csrf_token;
-        }
-        const response = await fetch(`/api/m1/auth/${path}`, {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers,
-          body: JSON.stringify(payload),
-        });
-        if (!response.ok) error.value = await failure(response);
-      } catch {
-        // 写请求不自动重发；重新读取服务端，处理“已保存但响应丢失”。
-        error.value = '连接中断；页面将以服务端返回的登录状态为准。';
+        if (path === 'sign-in' && payload) await post('/api/m1/auth/sign-in', payload);
+        else await post('/api/m1/auth/sign-out', undefined, { session: previous ?? undefined });
+      } catch (cause) {
+        // 登录不使用业务收据；不重发凭据，重新读取当前会话。
+        error.value =
+          cause instanceof ApiError
+            ? cause.message
+            : '连接中断；页面将以服务端返回的登录状态为准。';
       } finally {
         announce('changed');
         await refresh(true);
@@ -168,6 +139,6 @@ export function useSession() {
     refresh,
     signIn: (login: string, password: string) =>
       mutate('sign-in', { login_identifier: login, password }),
-    signOut: () => mutate('sign-out', {}),
+    signOut: () => mutate('sign-out'),
   };
 }
