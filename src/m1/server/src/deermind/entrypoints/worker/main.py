@@ -11,12 +11,14 @@ from deermind.bootstrap.executions import limits, registry
 from deermind.bootstrap.messaging import subscriptions
 from deermind.bootstrap.services import create_worker
 from deermind.bootstrap.settings import Settings
+from deermind.bootstrap.waits import waits
 from deermind.foundation.system.logging import configure_logging
 from deermind.infrastructure.files.check import check_storage
 from deermind.infrastructure.nats.bridge import run_bridge
 from deermind.infrastructure.nats.connection import MessagingSettings, connect
 from deermind.infrastructure.temporal.executions import Lifecycle, Transport
 from deermind.infrastructure.temporal.relay import run_relay
+from deermind.infrastructure.temporal.waits import Activities, run_reconciler
 from sqlalchemy.ext.asyncio import AsyncEngine
 from temporalio.api.workflowservice.v1 import DescribeNamespaceRequest
 from temporalio.client import Client
@@ -54,7 +56,13 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
     with ThreadPoolExecutor(2) as workflow_executor, ThreadPoolExecutor(4) as activity_executor:
         entries, execution_limits = registry(), limits()
         lifecycle = Lifecycle(engine, entries, execution_limits)
-        worker = create_worker(client, settings, workflow_executor, activity_executor, lifecycle)
+        waiting = waits()
+        wait_activities = Activities(
+            engine, waiting, timeout_seconds=execution_limits.finalize_seconds
+        )
+        worker = create_worker(
+            client, settings, workflow_executor, activity_executor, lifecycle, wait_activities
+        )
         try:
             async with worker, connect(MessagingSettings.from_environment()) as transport:
                 await transport.check_stream(failure=False)
@@ -70,6 +78,15 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
                     tasks.create_task(run_bridge(engine, transport, subscriptions(), stopped))
                     tasks.create_task(
                         run_relay(engine, entries, Transport(client, execution_limits), stopped)
+                    )
+                    tasks.create_task(
+                        run_reconciler(
+                            engine,
+                            waiting,
+                            stopped,
+                            interval=execution_limits.reconcile_seconds,
+                            timeout_seconds=execution_limits.finalize_seconds,
+                        )
                     )
         finally:
             READY_FILE.unlink(missing_ok=True)

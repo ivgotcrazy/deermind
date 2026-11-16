@@ -1,10 +1,10 @@
 # deermind 数据库：公共运行及文件登记数据字典
 
-> **版本**：v0.9<br>
+> **版本**：v0.10<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.8 → v0.9，增加业务副本映射，保留旧维护记录并明确实际应用收据<br>
+> **修订说明**：v0.9 → v0.10，登记0010结果与等待五表、约束及Signal补查键<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **20 张表、207 个列定义**。处理流程、接口和业务载荷由[System_Foundation_Design.md](../System_Foundation_Design.md) §2—6；文件由基础设施§2维护维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -144,6 +144,7 @@ erDiagram
     runtime__executions ||--o| runtime__execution_authorizations : "execution_id"
     runtime__expected_results ||..o{ runtime__published_results : "ResultKey"
     runtime__expected_results ||..o{ runtime__result_attempts : "ResultKey"
+    runtime__result_attempts ||..o{ runtime__published_results : "ResultKey + attempt_id"
     runtime__file_objects |o--o{ runtime__file_uploads : "file_id"
     runtime__handoffs ||--o{ runtime__delivery_failures : "handoff_id"
     runtime__handoffs ||--o{ runtime__handoff_attempts : "handoff_id"
@@ -361,9 +362,9 @@ E01-13以`0008_execution`接线下列§5—8四张既定表。当前尝试及Ste
 | --- | --- | --- | --- | --- |
 | `handoff_id` | `uuid` | 否 | 无 | 交接身份；主键组成字段 |
 | `kind` | `text` | 否 | 无 | publish、start、signal、cancel |
-| `logical_key` | `text` | 否 | 无 | publish=(event_id,redelivery_ref)，start=attempt_id，signal=(wait_id,event_id,target_attempt_id)，cancel=(cancel_request_id,target_attempt_id)；初次redelivery_ref为空，获准重送取固定维护命令引用 |
+| `logical_key` | `text` | 否 | 无 | publish=(event_id,redelivery_ref)，start=attempt_id，signal=(wait_id,target_attempt_id,reason)，reason为event_id或固定reconcile:resolution，cancel=(cancel_request_id,target_attempt_id)；初次redelivery_ref为空，获准重送取固定维护命令引用 |
 | `source_ref` | `jsonb` | 否 | 无 | 事件、执行尝试、wait或cancel请求；Ref，见总册§3 |
-| `payload` | `jsonb` | 否 | 无 | 已登记交接参数：publish事件引用；start尝试；signal等待/事件/目标尝试；cancel目标尝试 |
+| `payload` | `jsonb` | 否 | 无 | 已登记交接参数：publish事件引用；start尝试；signal固定Workflow及等待/目标尝试，事件或补查原因保存在logical_key；cancel目标尝试 |
 | `state` | `text` | 否 | 无 | 枚举：pending、leased、delivered、exhausted |
 | `next_attempt_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `lease_owner` | `text` | 是 | 无 | 短租约持有者；未租用为空 |
@@ -445,6 +446,8 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
+E01-14通过`0010_waits_results`接线§13—17，字段数量不变。实际验证与限制见[交付记录](../../../../../src/m1/deploy/environments/local-wsl/E01-14-waits.md)。
+
 ## 13. `runtime.waits`
 
 消费方定义的等待条件。
@@ -470,7 +473,7 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `resolved_at` | `timestamptz` | 是 | 无 | 等待决议时间 |
 
-约束与关系：UQ(execution_id,step_key,condition_hash)；到期先查持久结果；超时不取消生产方。
+约束与关系：UQ(execution_id,step_key,condition_hash)、UQ(resume_action_id)、UQ(wait_id,resume_action_id)；condition_hash为64位小写十六进制；deadline_at>created_at。pending当且仅当resolved_at为空；matched当且仅当matched_event_ref非空。应用只能更新决议字段，不能改条件、截止点或删除记录。到期先查结果；超时不取消生产方。
 
 查询索引：主键及等待唯一键；(resolution,deadline_at)；(execution_id,resolution)。
 
@@ -489,7 +492,7 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 | `failure_ref` | `jsonb` | 是 | 无 | 收尾失败；Ref，见总册§3 |
 | `updated_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 
-约束与关系：UQ(resume_action_id)；等待决议和业务处理结果分开；一次接续最多一次业务提交。
+约束与关系：UQ(resume_action_id)；组合FK(wait_id,resume_action_id)→waits，避免接续错配。committed当且仅当handling_receipt_ref非空；failed当且仅当failure_ref非空。等待决定和处理结果分开，一次接续最多一次业务提交。
 
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
@@ -508,9 +511,9 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 | `execution_id` | `uuid` | 否 | 无 | 生产工作；FK → `runtime.executions.execution_id` |
 | `accepted_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 
-约束与关系：同结果键绑定同一稳定Execution；不包含消费方期限。
+约束与关系：同结果键绑定同一稳定Execution；UQ(ResultKey,execution_id)供发布结果校验归属。不包含消费方期限；应用只能追加和读取。
 
-查询索引：主键及上述唯一键；其他索引遵循总册§3。
+查询索引：主键及上述唯一键；execution_id。
 
 ## 16. `runtime.result_attempts`
 
@@ -530,7 +533,7 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `finished_at` | `timestamptz` | 是 | 无 | 未结束为空 |
 
-约束与关系：复合FK(ResultKey)→expected_results；旧失败不得覆盖已成功发布结果。
+约束与关系：复合FK(ResultKey)→expected_results；pending当且仅当finished_at为空。失败／取消只结束当前未发布尝试，恢复为未完成结果追加新attempt；旧失败不得覆盖已成功发布结果。
 
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
@@ -554,7 +557,7 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 | `event_id` | `uuid` | 否 | 无 | 发布结果通知；FK → `runtime.events.event_id` |
 | `published_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 
-约束与关系：复合FK(ResultKey)→expected_results；发布先保存，通知只是提示读取；execution_id须等于expected_results绑定值，attempt_id属于此执行；result_ref定位此固定批，不指向可变当前头。
+约束与关系：组合FK(ResultKey,execution_id)→expected_results、FK(execution_id,attempt_id)→execution_attempts、FK(ResultKey,attempt_id)→result_attempts。发布先保存，通知只是提示读取；result_ref定位固定批，不指向可变当前头。应用只能追加和读取，不可覆盖或删除。
 
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
@@ -637,3 +640,4 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 | v0.7 | 2026-11-16 | 接线四张交接控制表，明确投递身份及收据约束 |
 | v0.8 | 2026-11-16 | 接线四张既定执行表，补当前尝试和步骤归属约束 |
 | v0.9 | 2026-11-16 | 增加业务副本映射，保留旧维护记录并明确实际应用收据 |
+| v0.10 | 2026-11-16 | 登记0010结果与等待五表、约束及Signal补查键 |

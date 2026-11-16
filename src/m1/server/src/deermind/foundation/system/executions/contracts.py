@@ -81,13 +81,14 @@ class RunInput(FactModel):
 
 
 class Dispatch(BaseModel):
-    """固定启动或取消命令；登记的Workflow和队列不由外部请求选择。"""
+    """固定启动、取消或唤醒命令；Workflow和队列不由外部请求选择。"""
 
     model_config = ConfigDict(extra="forbid")
     run: RunInput
     workflow_id: str
     workflow_type: str
     task_queue: str
+    wait_id: UUID | None = None
 
 
 class Limits(BaseModel):

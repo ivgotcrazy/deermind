@@ -49,10 +49,12 @@ class StartupTests(unittest.IsolatedAsyncioTestCase):
 
     def test_logs_are_single_line_json(self) -> None:
         record = logging.LogRecord("runtime", logging.INFO, __file__, 1, "完成\n测试", (), None)
+        record.wait_id = "test-wait"
         line = JsonFormatter().format(record)
         self.assertNotIn("\n", line)
         payload = json.loads(line)
         self.assertEqual(payload["message"], "完成\n测试")
+        self.assertEqual(payload["wait_id"], "test-wait")
         self.assertTrue(payload["timestamp"].endswith("Z"))
 
     async def test_api_requires_usable_storage(self) -> None:

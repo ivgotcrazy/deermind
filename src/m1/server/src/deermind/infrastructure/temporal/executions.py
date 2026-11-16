@@ -47,6 +47,28 @@ class Transport:
                 raise ValueError("Workflow identity has different saved input") from None
             return description.run_id
 
+    async def signal(self, command: Dispatch) -> None:
+        """只通知已经存在的指定执行；未知ID按交接失败重试，绝不顺手启动。"""
+        if command.wait_id is None:
+            raise ValueError("Signal must identify its wait")
+        handle = self.client.get_workflow_handle(command.workflow_id)
+        description = await handle.describe(
+            rpc_timeout=timedelta(seconds=self.limits.request_seconds)
+        )
+        if (
+            await description.memo_value("deermind_input", type_hint=str)
+            != command.run.model_dump_json()
+        ):
+            raise ValueError("Signal input differs from the original work")
+        if description.status == WorkflowExecutionStatus.RUNNING:
+            await self.client.get_workflow_handle(
+                command.workflow_id, run_id=description.run_id
+            ).signal(
+                "runtime.wait_changed",
+                str(command.wait_id),
+                rpc_timeout=timedelta(seconds=self.limits.request_seconds),
+            )
+
     async def cancel(self, command: Dispatch) -> None:
         handle = self.client.get_workflow_handle(command.workflow_id)
         description = await handle.describe(

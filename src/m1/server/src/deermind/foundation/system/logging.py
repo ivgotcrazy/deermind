@@ -32,6 +32,7 @@ class JsonFormatter(logging.Formatter):
             "scope_id",
             "subscriber_id",
             "handoff_id",
+            "wait_id",
         ):
             if hasattr(record, key):
                 result[key] = getattr(record, key)

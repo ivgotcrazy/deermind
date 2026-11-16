@@ -54,6 +54,8 @@ async def dispatch_one(engine: AsyncEngine, registry: Registry, transport: Trans
         async with asyncio.timeout(min(transport.limits.request_seconds, max(0, remaining))):
             if lease.kind == "start" and needed:
                 run_id = await transport.start(lease.command)
+            elif lease.kind == "signal" and needed:
+                await transport.signal(lease.command)
             elif lease.kind == "cancel":
                 try:
                     await transport.cancel(lease.command)

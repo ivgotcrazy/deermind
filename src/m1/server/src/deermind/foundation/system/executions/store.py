@@ -15,6 +15,7 @@ from deermind.foundation.system.executions.contracts import (
     State,
 )
 from deermind.foundation.system.executions.facts import record_change
+from deermind.foundation.system.waits.facts import cancel_execution
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
 
@@ -175,6 +176,19 @@ async def new_attempt(
         ),
         {"attempt": identity, "id": execution.execution_id},
     )
+    # 结果身份不变，恢复只追加本次生产尝试；已有成功结果不重复生产。
+    await connection.execute(
+        text(
+            "INSERT INTO runtime.result_attempts "
+            "(scope_id,trigger_event_id,producer,result_kind,attempt_id,outcome,created_at) "
+            "SELECT r.scope_id,r.trigger_event_id,r.producer,r.result_kind,:attempt,'pending',"
+            "clock_timestamp() FROM runtime.expected_results r WHERE r.execution_id=:id "
+            "AND NOT EXISTS (SELECT 1 FROM runtime.published_results p WHERE "
+            "(p.scope_id,p.trigger_event_id,p.producer,p.result_kind)="
+            "(r.scope_id,r.trigger_event_id,r.producer,r.result_kind))"
+        ),
+        {"attempt": identity, "id": execution.execution_id},
+    )
     return await attempt(connection, identity)
 
 
@@ -312,8 +326,29 @@ async def close(
     """持工作锁时调用；业务收尾失败则整次回滚，不能只保存公共完成状态。"""
     if state not in {"completed", "failed", "cancelled"}:
         raise ValueError("A terminal state is required")
+    if state == "cancelled":
+        await cancel_execution(connection, execution.execution_id, actor)
     await registry.resolve(execution).finalize(
         connection, execution, state, result_ref or failure_ref
+    )
+    if state == "completed" and await connection.scalar(
+        text(
+            "SELECT EXISTS (SELECT 1 FROM runtime.result_attempts "
+            "WHERE attempt_id=:id AND outcome='pending')"
+        ),
+        {"id": execution.active_attempt_id},
+    ):
+        raise ValueError("Expected results must be published before completion")
+    await connection.execute(
+        text(
+            "UPDATE runtime.result_attempts SET outcome=:state,failure_ref=CAST(:failure AS jsonb),"
+            "finished_at=clock_timestamp() WHERE attempt_id=:id AND outcome='pending'"
+        ),
+        {
+            "state": state,
+            "id": execution.active_attempt_id,
+            "failure": failure_ref.model_dump_json() if failure_ref else None,
+        },
     )
     await connection.execute(
         text(

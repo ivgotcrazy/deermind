@@ -12,6 +12,8 @@ from deermind.foundation.system.executions.facts import (
 )
 from deermind.foundation.system.files.ports import FileStorage
 from deermind.foundation.system.projections.contracts import REBUILD_FINISHED
+from deermind.foundation.system.waits.facts import READ_POLICY as WAIT_READ_POLICY
+from deermind.foundation.system.waits.facts import REGISTRATION as WAIT_REGISTRATION
 from deermind.infrastructure.files.records import FILE_READ_POLICY, FILE_REGISTRATION
 from deermind.product.accounts.auth_facts import AUTH_READ_POLICIES, SIGNED_IN, SIGNED_OUT
 from deermind.product.accounts.facts import ACCOUNT_READ_POLICY, ACCOUNT_REGISTRATION
@@ -36,6 +38,7 @@ def event_store() -> EventStore:
             RECOVERED,
             DELIVERY_REGISTRATION,
             EXECUTION_REGISTRATION,
+            WAIT_REGISTRATION,
         ],
         arrange_delivery=Outbox(subscriptions()).arrange,
     )
@@ -56,6 +59,7 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
             RECOVERED,
             DELIVERY_REGISTRATION,
             EXECUTION_REGISTRATION,
+            WAIT_REGISTRATION,
         ],
         [
             ReadHandler("product.account_rebuild", "product", "projection_rebuild"),
@@ -73,6 +77,7 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
             RECOVERY_READ_POLICY,
             DELIVERY_READ_POLICY,
             EXECUTION_READ_POLICY,
+            WAIT_READ_POLICY,
         ],
         cursor_key=cursor_key,
     )

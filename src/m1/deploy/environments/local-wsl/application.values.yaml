@@ -1,5 +1,5 @@
 images:
-  server: deermind/server:e01-08-ownership-r1
+  server: deermind/server:e01-14-r4
   client: deermind/client:e01-11-r1
 nodeSelector:
   kubernetes.io/hostname: deermind-m1

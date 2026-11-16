@@ -6,6 +6,7 @@ from deermind.bootstrap.settings import Settings
 from deermind.infrastructure.temporal.executions import Lifecycle
 from deermind.infrastructure.temporal.probe import StorageProbe
 from deermind.infrastructure.temporal.probe_activity import ProbeActivity
+from deermind.infrastructure.temporal.waits import Activities as WaitActivities
 from temporalio.client import Client
 from temporalio.worker import PollerBehaviorSimpleMaximum, Worker
 
@@ -16,6 +17,7 @@ def create_worker(
     workflow_executor: ThreadPoolExecutor,
     activity_executor: ThreadPoolExecutor,
     lifecycle: Lifecycle | None = None,
+    waits: WaitActivities | None = None,
 ) -> Worker:
     """注册探测及公共生命周期；业务Workflow随所属增量接线。"""
     return Worker(
@@ -23,7 +25,8 @@ def create_worker(
         task_queue=settings.task_queue,
         workflows=[StorageProbe],
         activities=[ProbeActivity(settings.files_root).reply]
-        + ([lifecycle.started, lifecycle.completed, lifecycle.failed] if lifecycle else []),
+        + ([lifecycle.started, lifecycle.completed, lifecycle.failed] if lifecycle else [])
+        + ([waits.probe, waits.handle] if waits else []),
         max_concurrent_workflow_tasks=2,
         max_concurrent_activities=4,
         max_cached_workflows=8,

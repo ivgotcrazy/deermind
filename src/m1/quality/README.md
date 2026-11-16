@@ -152,3 +152,7 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 ## E01-13执行恢复验证
 
 `test.sh execution`沿用数据库组的显式目标、Secret和构建镜像参数，另需`M1_TEST_TEMPORAL_ADDRESS`和`M1_TEST_TEMPORAL_NAMESPACE`。每例使用随机测试库和独立测试队列；Worker子进程可强制终止，不重启正式Worker。覆盖启动回执丢失、稳定Step、停止迟到、失败恢复、结束核对及服务不可用；测试结束清理本例资源。结果见[E01-13交付](../deploy/environments/local-wsl/E01-13-execution.md)。
+
+## E01-14等待接续验证
+
+`test.sh waits`沿用execution组的显式集群、Secret、构建镜像及Temporal参数，在随机库和独立队列验证结果原子保存、早到/重复/迟到通知、到期补查、恢复不续期、接续并发和Worker重启。等待的业务条件由隔离所有者适配器提供，不调用模型或正式教学。结果见[E01-14交付](../deploy/environments/local-wsl/E01-14-waits.md)。

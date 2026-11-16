@@ -30,12 +30,13 @@ def main() -> int:
             "receipts",
             "delivery",
             "execution",
+            "waits",
         }
         or len(sys.argv) > 2
     ):
         raise ValueError(
             "Expected database, facts, files, reads, rebuild, "
-            "auth, usage, receipts, delivery or execution test group"
+            "auth, usage, receipts, delivery, execution or waits test group"
         )
     target = [
         "kubectl",
@@ -92,7 +93,7 @@ def main() -> int:
                 },
             ]
         )
-    if group == "execution":
+    if group in {"execution", "waits"}:
         environment.extend(
             {"name": name, "value": os.environ[name]}
             for name in ("M1_TEST_TEMPORAL_ADDRESS", "M1_TEST_TEMPORAL_NAMESPACE")
@@ -165,6 +166,7 @@ def main() -> int:
             "receipts": "test_receipts.py",
             "delivery": "test_event_delivery.py",
             "execution": "test_execution.py",
+            "waits": "test_waits.py",
         }[group]
         # 将测试文件放进临时目录；生产包仍只从镜像读取，不挂载源码。
         driver = """

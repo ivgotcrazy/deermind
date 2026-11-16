@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 @dataclass(frozen=True)
 class Lease:
     handoff_id: UUID
-    kind: Literal["start", "cancel"]
+    kind: Literal["start", "cancel", "signal"]
     owner: str
     attempt_no: int
     deadline: datetime
@@ -29,7 +29,8 @@ async def claim(engine: AsyncEngine, limits: Limits) -> Lease | None:
             (
                 await connection.execute(
                     text(
-                        "SELECT * FROM runtime.handoffs WHERE kind IN ('start','cancel') AND "
+                        "SELECT * FROM runtime.handoffs "
+                        "WHERE kind IN ('start','cancel','signal') AND "
                         "((state='pending' AND next_attempt_at<=clock_timestamp()) OR "
                         "(state='leased' AND lease_until<=clock_timestamp())) "
                         "ORDER BY next_attempt_at,handoff_id FOR UPDATE SKIP LOCKED LIMIT 1"
