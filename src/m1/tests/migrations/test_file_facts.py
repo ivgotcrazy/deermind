@@ -17,6 +17,7 @@ from deermind.foundation.system.events.contracts import EventDraft, ProducerAcce
 from deermind.foundation.system.events.store import canonical_json
 from deermind.infrastructure.database.connection import application_engine
 from deermind.infrastructure.files.local import LocalFiles
+from deermind.product.accounts.projections import apply_account_events
 from deermind.product.persistence.receipts import claim_request, complete_request
 from pydantic import JsonValue
 from sqlalchemy import text
@@ -92,7 +93,7 @@ class FileFactsTests(DatabaseTestCase):
                 )
                 if receipt.result_ref is not None:
                     return
-                await store.append_and_project(
+                events = await store.append(
                     connection,
                     self.access,
                     prepared,
@@ -100,6 +101,7 @@ class FileFactsTests(DatabaseTestCase):
                     correlation_id=uuid4(),
                     expected_seq={("account", self.identity): 0},
                 )
+                await apply_account_events(connection, events)
                 if fail:
                     raise RuntimeError("Fail after producer projection")
                 await complete_request(connection, receipt, draft.owner_ref)
@@ -240,7 +242,7 @@ class FileFactsTests(DatabaseTestCase):
                 forged = replace(prepared, drafts=(replace(prepared.drafts[0], event_id=uuid4()),))
                 with self.assertRaisesRegex(ValueError, "not registered"):
                     async with engine.begin() as connection:
-                        await store.append_and_project(
+                        events = await store.append(
                             connection,
                             self.access,
                             forged,
@@ -248,6 +250,7 @@ class FileFactsTests(DatabaseTestCase):
                             correlation_id=uuid4(),
                             expected_seq={("account", self.identity): 0},
                         )
+                        await apply_account_events(connection, events)
             finally:
                 await engine.dispose()
 
@@ -268,7 +271,7 @@ class FileFactsTests(DatabaseTestCase):
                 forged = replace(prepared, drafts=(replace(prepared.drafts[0], payload=changed),))
                 with self.assertRaisesRegex(ValueError, "inline content changed"):
                     async with engine.begin() as connection:
-                        await store.append_and_project(
+                        events = await store.append(
                             connection,
                             self.access,
                             forged,
@@ -276,6 +279,7 @@ class FileFactsTests(DatabaseTestCase):
                             correlation_id=uuid4(),
                             expected_seq={("account", self.identity): 0},
                         )
+                        await apply_account_events(connection, events)
             finally:
                 await engine.dispose()
 

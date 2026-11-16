@@ -197,9 +197,7 @@ class AuthenticationTests(DatabaseTestCase):
     def test_event_failure_rolls_back_session_and_old_revocation(self) -> None:
         async def scenario(service: AuthService) -> None:
             login = await service.sign_in("alpha", PASSWORD, "127.0.0.1", None)
-            with patch.object(
-                service.store, "append_and_project", side_effect=RuntimeError("test")
-            ):
+            with patch.object(service.store, "append", side_effect=RuntimeError("test")):
                 with self.assertRaises(RuntimeError):
                     await service.sign_in("beta", PASSWORD, "127.0.0.1", login.token)
             self.assertEqual(await service.session(login.token), login.view)

@@ -95,7 +95,7 @@ class DeliveryTests(DatabaseTestCase):
             created_at=datetime.now(UTC),
         )
         scope = ("account", self.scope_id)
-        await self.store.append_and_project(
+        await self.store.append(
             connection,
             ProducerAccess(
                 "product", Ref(owner="runtime", type="service", id="test"), frozenset({scope})

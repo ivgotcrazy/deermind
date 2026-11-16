@@ -1,11 +1,11 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.9<br>
+> **版本**：v0.10<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.8 → v0.9，接线ExecutionStateChanged控制快照，不参与业务投影重建<br>
+> **修订说明**：v0.9 → v0.10，明确事件与业务生成器解耦、真实应用收据和重建覆盖边界<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
@@ -13,7 +13,7 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileRece
 
 ## 1. 事实边界
 
-事件及其不可变附件是历史事实的唯一来源。消息、教材候选、定义版本、活动、Evidence、Belief和目标结果是这些事实的业务投影；其当前索引可更新，原事件不能改写。业务模块仍拥有语义和校验权；底座只执行已登记的事件与投影机制。事件记录的是“当时接收、提供、判断或保存了什么”，不把AI结论当作永远正确的知识。
+事件及其不可变附件是历史事实的唯一来源。消息、教材候选、定义版本、活动、Evidence、Belief和目标结果是这些事实的业务投影；其当前索引可更新，原事件不能改写。业务模块拥有投影转换、写入和校验；底座只保存、查询、投递事件并提供通用控制记录。事件记录的是“当时接收、提供、判断或保存了什么”，不把AI结论当作永远正确的知识。
 
 以下均须留痕：业务输入与正式输出、版本和采用变化、活动及检测轮变化、评价结果，以及工作受理、停止、失败、恢复、模型和工具请求结果。轮询、心跳、每个token、内部函数调用只记必要日志。写数据库前就被拒绝的传输包、服务完全不可用时的故障不能声称已经形成正式事件；恢复后只补记已核实的故障事实，不伪造发生时间。
 
@@ -40,7 +40,7 @@ ArtifactValue沿数据库总册§3。文件先完整保存并核验hash，再把
 
 §3逐项登记的是固定业务快照DTO。其v1字段精确采用链接表的全部业务列，排除source_event_id，以及product.material_import.active_request_ref和next_message_seq；后两项分别是运行占用和可重算消息序号，不属于历史正文；各主键、版本、时间与可空约束保留。uuid/text映射string，bigint映射integer，boolean映射boolean，timestamptz映射UTC Timestamp，date映射YYYY-MM-DD字符串，数值映射有限JSON number，JSONB沿字段注明的业务Schema。所有字段都显式给出，SQL NULL映射JSON null；不依赖数据库默认值补全历史。
 
-这是本次字段定义的复用，**不是运行时读取表生成事件，也不是允许事件执行任意表更新**。写入前由所有者构造并校验DTO，事件保存后由登记的投影器映射业务表。后续数据库列变更不会自动改变已登记DTO；需单独升正文Schema版本并保留旧解码器。业务数据不经事件API直接写入。
+这是本次字段定义的复用，**不是运行时读取表生成事件，也不是允许事件执行任意表更新**。写入前由所有者构造并校验DTO，事件保存后由所属业务的生成器映射查询表。后续数据库列变更不会自动改变已登记DTO；需单独升正文Schema版本并保留旧解码器。业务数据不经事件API直接写入。
 
 消息parts、教材消息body及提交answer保存完整正文；学生输入和消息允许重复保存文字，聊天转作答也保留本次完整answer。图片等按其Schema保留不可变附件引用。大DTO可整体放入FactRecord.content.file，读取文件后仍须得到同一个完整DTO；不在表的parts里塞入另一种未定义类型。
 
@@ -62,7 +62,7 @@ purpose由已登记处理器设置，不接受浏览器或模型自行指定。�
 | learning_context | Interaction Operation | 本Space已授权正文；domain.{object_version,supply_batch}；product.{space_adoption,target_basis,course_application,chapter_association,material_chapter,material_source}；evaluation.{claim_version,mastery_snapshot,goal_evaluation}公开字段 | 依本次活动和采用范围；本Space私有context_bundles/memory_revisions仅本用途；参考可读与可展示分别判断；不读Evaluation私有解释 |
 | evaluation_basis | Evaluation处理器/Operation | interaction.{inputs,messages,submissions,task_uses,activities,activity_revisions,detection_plans,plan_revisions,plan_progress,detection_rounds,round_revisions,help_facts,answer_feedback,teaching_opportunities,opportunity_closures,presentations}；domain.object_version；product.{space_adoption,target_basis,course_application}；本Space评价正文 | 必须绑定来源事件和获准Task范围；不读未提交草稿、Interaction Context/Memory及AI完整请求 |
 | execution_support | runtime/AI的授权执行或维护处理器 | 指定执行的AI配置、调用、请求、工具、候选及runtime历史核对记录；已获准的业务输入/步骤片段 | 必须有execution/attempt或维护授权；技术身份不开放任意学生资料；不含密钥 |
-| projection_rebuild | 受控维护命令 | 获准范围内登记投影必需的完整DTO、来源和附件 | 固定上界/投影器/代次；不开放给浏览器或Agent工具，不调用模型、通知或业务任务 |
+| projection_rebuild | 所属业务的受控维护处理器 | 获准范围内该业务投影必需的完整DTO、来源和附件 | 固定上界/投影器/代次；当前账号为product.account_rebuild；不开放给浏览器或Agent工具，不调用模型、通知或业务任务 |
 
 花括号为精确record_type后缀集合；“本Space正文”仅指§3中该所有者已登记类型，不包含其他模块。四类配置指blueprint_revisions、rule_revisions、strategy_revisions、binding_revisions。业务所有者仍要逐字段收窄；模块在白名单不表示其所有学生数据可读。
 
@@ -279,9 +279,11 @@ E01-13接线ExecutionStateChanged：每次一份execution，尝试变化时携�
 
 不设“P表中间态可以不记事件”的通用例外。其他业务中间态若影响后续决策，仍须登记事实；锁、租约、占用和技术检查点由控制恢复合同处理。查询响应可以组合两类状态，但不能把运行控制变化冒充新业务结论。
 
-E01-10接线TrialAccountSaved的学生创建和基本资料更新，UsageConfirmationRecorded带confirmation与conditions完整正文。Product的`product.usage_receipt`处理器只在核对请求收据归属后，通过execution_support读取同一correlation_id下的这两类记录；不向浏览器开放任意账号事件。告知全文在事件元数据中固定。账号重建按范围顺序应用资料快照、保留最后一版，跳过确认及密码恢复审计，不恢复凭据或有效会话。当前维护命令白名单仍为accounts；新增四表的事实及在线投影已登记，不将这次验证声称为四表维护替换命令验收。
+E01-10接线TrialAccountSaved的学生创建和基本资料更新，UsageConfirmationRecorded带confirmation与conditions完整正文。Product的`product.usage_receipt`处理器只在核对请求收据归属后，通过execution_support读取同一correlation_id下的这两类记录；不向浏览器开放任意账号事件。告知全文在事件元数据中固定。当前账号重建包含使用确认及使用条件，按范围顺序保留最新快照；密码恢复、登录等审计只扫描，不恢复凭据或有效会话。五表覆盖和共享监护人边界见§5及Product§2.8。
 
 ## 4. 写入与消费
+
+事件登记与投影登记相互独立。业务决定采用哪些事件、生成哪些表及各行关系，允许一对多、多对一和多对多。生产者直接调用、订阅处理与历史重建复用业务自己的确定性生成器。底座只保存和交付事实，不按record_type或投影声明操作业务表。
 
 生产者：事务外完成AI和文件准备 → 按既定锁序检查条件 → 追加完整事件 → 同事务投影本模块业务对象及投影收据 → 保存命令收据、结果和待发安排 → 提交 → 返回/通知。失败整笔回滚；同一命令重试取得原收据，不新增第二件事实。
 
@@ -291,7 +293,7 @@ E01-10接线TrialAccountSaved的学生创建和基本资料更新，UsageConfirm
 
 ## 5. 重建与验收
 
-M1只提供受控维护重建，不新增管理页面。先按§3.2校验事件必需记录及条件，缺一条也不得把事件标为已投影。维护窗口停止相关写入，固定各范围上界；在线代次为1，重建使用独立代次，完成时按公共运行§2.6原子接回在线收据和进度；在临时关系中按登记Schema和确定性投影器重建，先从事件的登记正文建立业务身份/版本到来源事件的索引，再按因果依赖与范围序号生成，最后按既定FK顺序整体替换查询数据。临时索引属于本次重建，不增加另一份事实源。保留原业务ID、时间、版本、概率及依据，不产生新业务事件、通知、模型调用、工具副作用或待办。仅追加一次维护结果留痕；失败保留旧查询数据。
+M1只提供受控维护重建，不新增管理页面。业务生成器先按§3.2校验事件必需记录及条件，缺一条也不得把该生成器登记为已应用。没有采用的事件可推进扫描位置，但不产生投影完成收据；事件本身也不强制要求有投影。维护窗口停止相关写入，固定各范围上界；在线代次为1，重建使用独立代次，完成时按公共运行§2.6原子接回在线收据和进度；在临时关系中按登记Schema和确定性投影器重建，先从事件的登记正文建立业务身份/版本到来源事件的索引，再按因果依赖与范围序号生成，最后按既定FK顺序整体替换查询数据。临时索引属于本次重建，不增加另一份事实源。保留原业务ID、时间、版本、概率及依据，不产生新业务事件、通知、模型调用、工具副作用或待办。仅追加一次维护结果留痕；失败保留旧查询数据。
 
 事件及附件缺失、Schema不支持、来源闭包不完整、同键异文均中止重建并报告范围；不能猜测补全。运行控制数据不属于替换集合；material_import.active_request_ref保持运行恢复的决定，next_message_seq从已记录消息序号重算，不恢复成历史忙碌状态。其恢复另按Execution/Attempt/Step、Wait及整批备份合同执行。
 
@@ -308,9 +310,11 @@ M1只提供受控维护重建，不新增管理页面。先按§3.2校验事件�
 | 候选采用/拒绝/替代后重建 | 决定及状态完全一致；不退回pending，不伪造管理员操作 |
 | 消息引用自己的业务ID | 空查询库也能凭事件创建原ID；不用投影存在性校验原始事实 |
 
-E01-08已接线初始账号单行投影：原记录的范围、上界及实现摘要固定，隔离副本逐事件提交检查点；中断可续做，参数变化拒绝。核对通过才原子替换正式行及在线收据/进度，追加唯一维护结果；明确失败保留旧数据，修复后另建代次。维护记录及临时副本不是另一份事实源。详情见[公共运行§2.6](../System_Foundation_Design.md#26-历史补读实时接续与重建)及[E01-08](../../../../../src/m1/deploy/environments/local-wsl/E01-08-rebuild.md)。
+E01-08首次仅接线初始账号单行投影（历史范围）：原记录的范围、上界及实现摘要固定，隔离副本逐事件提交检查点；中断可续做，参数变化拒绝。核对通过才原子替换正式行及在线收据/进度，追加唯一维护结果；明确失败保留旧数据，修复后另建代次。维护记录及临时副本不是另一份事实源。详情见[公共运行§2.6](../System_Foundation_Design.md#26-历史补读实时接续与重建)及[E01-08](../../../../../src/m1/deploy/environments/local-wsl/E01-08-rebuild.md)。
 
 上表其余业务验收条件随对应增量实施，不以本轮账号测试宣称已完成。设计采用事件存储与查询投影的分工；参考[Event Sourcing模式](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)与[重放的外部副作用边界](https://martinfowler.com/eaaDev/EventSourcing.html#ExternalUpdates)。不引入独立事件数据库或新的消息系统。
+
+当前账号接线已补修为`product.account_views.v2`：一份生成器处理账号与使用确认事实，生成账号、监护人、关系、确认和当前条件五表。底座不执行这些表的生成或重建，业务校验与替换范围见[Product§2.8](../Product_Application_Design.md#28-账号业务投影与维护重建)。旧单表结果不被重新解释为五表完成。既有事件Schema、正文和引用不因生成器调整而改写。
 
 ## 修订记录
 
@@ -325,3 +329,4 @@ E01-08已接线初始账号单行投影：原记录的范围、上界及实现�
 | v0.7 | 2026-11-16 | 登记使用确认投影及收据读取；账号资料重建保留原身份 |
 | v0.8 | 2026-11-16 | 登记DeliveryStateChanged控制快照及不参与重建的边界 |
 | v0.9 | 2026-11-16 | 接线ExecutionStateChanged控制快照，不参与业务投影重建 |
+| v0.10 | 2026-11-16 | 明确事件与业务生成器解耦、真实应用收据和重建覆盖边界 |

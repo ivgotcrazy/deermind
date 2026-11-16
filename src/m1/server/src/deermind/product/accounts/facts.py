@@ -16,7 +16,7 @@ from deermind.foundation.system.events.contracts import (
 )
 from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.foundation.system.events.store import canonical_json
-from deermind.product.accounts.usage_events import decode, project_usage
+from deermind.product.accounts.usage_events import decode
 from deermind.product.accounts.usage_facts import (
     USAGE_RECORDS,
     ConditionsFact,
@@ -24,8 +24,6 @@ from deermind.product.accounts.usage_facts import (
     RelationFact,
 )
 from pydantic import Field, field_validator
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncConnection
 
 
 class AccountFact(FactModel):
@@ -128,24 +126,6 @@ def account_values(event: StoredEvent) -> dict[str, object]:
     return {**fact.model_dump(), "source_event_id": event.draft.event_id}
 
 
-async def project_account(connection: AsyncConnection, event: StoredEvent) -> None:
-    """只从事实正文生成投影；不生成身份、时间，不反查旧业务正文。"""
-    await connection.execute(
-        text(
-            "INSERT INTO product.accounts "
-            "(account_id, login_identifier, display_name, role, status, revision, "
-            "created_at, source_event_id) "
-            "VALUES (:account_id, :login_identifier, :display_name, :role, :status, :revision, "
-            ":created_at, :source_event_id) ON CONFLICT (account_id) DO UPDATE SET "
-            "login_identifier=EXCLUDED.login_identifier,display_name=EXCLUDED.display_name,"
-            "status=EXCLUDED.status,revision=EXCLUDED.revision,source_event_id=EXCLUDED.source_event_id"
-        ),
-        account_values(event),
-    )
-
-    await project_usage(connection, event)
-
-
 ACCOUNT_REGISTRATION = EventRegistration(
     event_type="TrialAccountSaved",
     schema_version=1,
@@ -153,8 +133,6 @@ ACCOUNT_REGISTRATION = EventRegistration(
     scope_kind="account",
     payload_model=AccountSaved,
     validate=validate_account,
-    projector_id="product.accounts.v1",
-    project=project_account,
     record_models={("product.accounts", 1): AccountFact, **USAGE_RECORDS},
 )
 
@@ -180,7 +158,7 @@ def account_maintenance(access: ReadAccess, event: EventFact) -> ReadGrant | Non
 ACCOUNT_READ_POLICY = ReadPolicy(
     "TrialAccountSaved",
     1,
-    "runtime",
+    "product",
     "projection_rebuild",
     account_maintenance,
 )

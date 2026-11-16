@@ -19,7 +19,12 @@ from deermind.foundation.system.events.contracts import (
 )
 from deermind.foundation.system.events.store import EventStore, canonical_json
 from deermind.foundation.system.files.ports import FileStorage
-from deermind.infrastructure.files.records import FILE_REGISTRATION, FileObject, FileReceived
+from deermind.infrastructure.files.records import (
+    FILE_REGISTRATION,
+    FileObject,
+    FileReceived,
+    project_file,
+)
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -145,7 +150,7 @@ class FactAttachments:
         )
         try:
             async with self.engine.begin() as connection:
-                await self._file_events.append_and_project(
+                events = await self._file_events.append(
                     connection,
                     ProducerAccess("runtime", actor, frozenset({("file", file.file_id)})),
                     [
@@ -165,6 +170,7 @@ class FactAttachments:
                     correlation_id=file.file_id,
                     expected_seq={("file", file.file_id): 0},
                 )
+                await project_file(connection, events[0])
         except IntegrityError:
             # 同产物并发保存只认已提交的一份登记；失败尝试的文件不覆盖它。
             existing = await self._find(artifact_key)

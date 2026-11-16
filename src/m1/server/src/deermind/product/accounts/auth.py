@@ -224,7 +224,7 @@ class AuthService:
         )
         if seq is None:
             raise RuntimeError("Account has no source facts")
-        await self.store.append_and_project(
+        await self.store.append(
             connection,
             ProducerAccess("product", owner, frozenset({("account", account)})),
             [

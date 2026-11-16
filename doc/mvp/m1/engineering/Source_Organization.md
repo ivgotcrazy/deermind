@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.13<br>
+> **版本**：v0.14<br>
 > **状态**：代码按已批准目录逐增量接线；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.12 → v0.13，登记执行仓储、Temporal适配和隔离故障验证入口<br>
+> **修订说明**：v0.13 → v0.14，将账号投影和重建归还业务，底座仅保存通用控制记录<br>
 
 ## 1. 范围与维护位置
 
@@ -152,7 +152,7 @@ foundation/
 ├── system/
 │   ├── public/                 # 通用信封、授权、事件和执行端口
 │   ├── events/                 # 追加、授权读取、序号及Schema登记
-│   ├── projections/            # 应用收据、扫描进度、受控重建机制
+│   ├── projections/            # 通用应用收据、扫描进度和维护记录；无业务表SQL
 │   ├── executions/             # Execution、Attempt、Step与受理
 │   ├── waits/                  # 条件匹配、期限、唤醒及超时
 │   ├── delivery/               # 待发、订阅承接、Relay及失败记录
@@ -196,7 +196,7 @@ entrypoints/
 └── maintenance/main.py         # 迁移、初始化、重建等受控命令
 ```
 
-底座只提供机制。事件payload和业务投影函数由各所有者注册；AI取材与记忆内容由Operation决定。对象存储在文件端口后续扩展，不先编写未启用适配；不保留`recognition/`或独立OCR入口。
+底座只提供机制。各所有者提供事件payload合同，由装配层登记；业务投影函数由所有者直接调用或接入自己的订阅处理器，不注册给事件保存器。AI取材与记忆内容由Operation决定。对象存储在文件端口后续扩展，不先编写未启用适配；不保留`recognition/`或独立OCR入口。
 
 HTTP路由调用已装配的公开服务；公共运行按明确入口派发AI工作。Worker启动时汇总业务Workflow、步骤与AI持久适配；注册冲突、遗漏或不兼容直接拒绝启动。API和Worker使用同一后端包与镜像，启动命令不同；维护命令使用同版包及独立维护授权。API启动和导出OpenAPI均不得自动执行迁移。
 
@@ -274,13 +274,13 @@ server/migrations/
 
 ### 6.2 E01-05落地
 
-`foundation/system/events/`维护通用登记、批次校验、序号分配和事实保存；不导入Product或Space。`product/accounts/facts.py`将首个固定正文Schema、记录矩阵及其确定性投影放在同一功能文件；`product/accounts/save.py`拥有短事务，`product/persistence/receipts.py`维护普通命令防重。`bootstrap/events.py`汇总登记，业务模块不反向导入装配层。
+`foundation/system/events/`维护通用登记、批次校验、序号分配和事实保存；不导入Product或Space。`product/accounts/facts.py`维护账号正文Schema和记录矩阵，`accounts/projections.py`维护业务生成器；`product/accounts/save.py`拥有短事务，`product/persistence/receipts.py`维护普通命令防重。`bootstrap/events.py`汇总登记，业务模块不反向导入装配层。
 
 本批用SQLAlchemy连接执行显式SQL，尚无ORM表映射，不为凑目录添加空metadata。迁移`0002_atomic_facts`固定历史DDL，不导入可变业务模型。`tests/migrations/test_atomic_facts.py`在已构建包与随机PG测试库中验证，`test.sh facts`是显式集群入口。
 
 ### 6.3 E01-06落地
 
-`foundation/system/files/ports.py`定义字节存储端口；`infrastructure/files/local.py`处理local/PVC，`records.py`维护文件登记Schema和确定性写入。`foundation/system/events/attachments.py`负责事务外附件准备及FileReceived接线；事件保存器保留外置引用并向投影器提供完整DTO。
+`foundation/system/files/ports.py`定义字节存储端口；`infrastructure/files/local.py`处理local/PVC，`records.py`维护文件登记Schema和确定性写入。`foundation/system/events/attachments.py`负责事务外附件准备及FileReceived接线；事件保存器保留外置引用并向调用方返回完整DTO；业务显式交给自己的生成器。文件登记由文件服务显式写入，不通过事件注册回调。
 
 迁移`0003_file_objects`独立追加，不改旧DDL；`server/tests/test_files.py`验证文件失败边界，`tests/migrations/test_file_facts.py`经`test.sh files`验证真实PG与PVC。浏览器授权读取、上传租约和Codec不提前建空模块。
 
@@ -292,9 +292,11 @@ server/migrations/
 
 ### 6.5 E01-08实际接线
 
-`foundation/system/projections/contracts.py`登记维护记录及结果Schema；`rebuild.py`负责固定上界、隔离副本、检查点、原子替换和失败留痕。`bootstrap/projections.py`只装配已有账号投影与代码摘要，业务转换仍在`product/accounts/facts.py`，底座不反向导入Product。
+`foundation/system/projections/contracts.py`登记维护记录及结果Schema，`receipts.py`只处理通用防重，`records.py`只维护扫描和重建任务记录；移除原底座rebuild.py。`product/accounts/projections.py`拥有账号五表转换及写入，`accounts/rebuild.py`拥有副本、业务核对及替换。`bootstrap/projections.py`仅装配维护入口和实现摘要。各Space后续按自己的业务实现生成器，不复制底座账号重建规则。
 
-`entrypoints/maintenance/rebuild.py`提供prepare/resume/status三个维护动作，安装命令为deermind-rebuild；`0004_projection_rebuilds`追加控制表。`test_projection_rebuild.py`经`test.sh rebuild`验证构建包与真实PG；不新增API、Agent工具或未实现业务占位。
+`entrypoints/maintenance/rebuild.py`提供prepare/resume/status三个维护动作，安装命令为deermind-rebuild，调用业务维护入口；`0004_projection_rebuilds`追加控制表。不新增API、Agent工具或未实现业务占位。
+
+新增迁移`0009_projection_ownership`保留旧记录；真实多行、多表及故障测试仍由`test.sh rebuild`运行，夹具在`tests/migrations/account_projection_fixture.py`。变更没有引入新服务或依赖。
 
 ## 7. 测试目录与执行边界
 
@@ -439,3 +441,4 @@ E01-13实际新增`foundation/system/executions/`（工作、尝试、授权、S
 | v0.11 | 2026-11-16 | 登记重建合同、实现、白名单装配及维护测试位置 |
 | v0.12 | 2026-11-16 | 登记E01-12交接底座、NATS适配及测试入口 |
 | v0.13 | 2026-11-16 | 登记执行仓储、Temporal适配和隔离故障验证入口 |
+| v0.14 | 2026-11-16 | 将账号投影和重建归还业务，底座仅保存通用控制记录 |

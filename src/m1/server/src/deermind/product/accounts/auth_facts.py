@@ -8,10 +8,8 @@ from deermind.foundation.system.events.contracts import (
     EventPayload,
     EventRegistration,
     Ref,
-    StoredEvent,
 )
 from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
-from sqlalchemy.ext.asyncio import AsyncConnection
 
 
 class AccountSignedIn(EventPayload):
@@ -38,10 +36,6 @@ def validate_auth_fact(draft: EventDraft, payload: EventPayload) -> None:
         raise ValueError("Authentication subject differs from its owner")
 
 
-async def record_only(connection: AsyncConnection, event: StoredEvent) -> None:
-    """认证事件仅留痕；查询重建不能据此创建或恢复可用登录。"""
-
-
 SIGNED_IN = EventRegistration(
     event_type="AccountSignedIn",
     schema_version=1,
@@ -49,8 +43,6 @@ SIGNED_IN = EventRegistration(
     scope_kind="account",
     payload_model=AccountSignedIn,
     validate=validate_auth_fact,
-    projector_id="product.auth_audit.v1",
-    project=record_only,
 )
 
 SIGNED_OUT = EventRegistration(
@@ -60,8 +52,6 @@ SIGNED_OUT = EventRegistration(
     scope_kind="account",
     payload_model=AccountSignedOut,
     validate=validate_auth_fact,
-    projector_id="product.auth_audit.v1",
-    project=record_only,
 )
 
 
@@ -76,6 +66,6 @@ def maintenance_read(access: ReadAccess, event: EventFact) -> ReadGrant | None:
 
 
 AUTH_READ_POLICIES = [
-    ReadPolicy(event, 1, "runtime", "projection_rebuild", maintenance_read)
+    ReadPolicy(event, 1, "product", "projection_rebuild", maintenance_read)
     for event in ("AccountSignedIn", "AccountSignedOut")
 ]

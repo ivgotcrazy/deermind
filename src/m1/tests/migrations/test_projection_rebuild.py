@@ -13,15 +13,17 @@ from pathlib import Path
 from unittest.mock import patch
 from uuid import UUID, uuid4
 
+from account_projection_fixture import student_facts
 from deermind.bootstrap.events import event_store
 from deermind.bootstrap.projections import account_rebuilder
 from deermind.entrypoints.maintenance.database import upgrade
 from deermind.foundation.system.events.attachments import FactAttachments
 from deermind.foundation.system.events.contracts import EventDraft, ProducerAccess, Ref
-from deermind.foundation.system.projections.rebuild import ProjectionRebuilder
 from deermind.infrastructure.database.connection import MAINTENANCE_LOCK, application_engine
 from deermind.infrastructure.files.local import LocalFiles
 from deermind.product.accounts.facts import AccountFact
+from deermind.product.accounts.projections import TABLES, apply_account_events, stage_tables
+from deermind.product.accounts.rebuild import AccountRebuilder
 from deermind.product.accounts.save import save_initial_account
 from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
@@ -108,7 +110,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
         store = event_store()
         prepared = await FactAttachments(app, self.files).prepare(store, access, (draft,))
         async with app.begin() as connection:
-            await store.append_and_project(
+            events = await store.append(
                 connection,
                 access,
                 prepared,
@@ -116,6 +118,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
                 correlation_id=uuid4(),
                 expected_seq={("account", identity): 0},
             )
+            await apply_account_events(connection, events)
         return identity
 
     def rows(self, table: str) -> list[dict[str, object]]:
@@ -126,7 +129,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
             ]
 
     async def prepare(
-        self, service: ProjectionRebuilder, scopes: list[UUID], generation: int = 2
+        self, service: AccountRebuilder, scopes: list[UUID], generation: int = 2
     ) -> UUID:
         identity = uuid4()
         await service.prepare(
@@ -135,7 +138,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
         return identity
 
     async def resume(
-        self, service: ProjectionRebuilder, identity: UUID, limit: int | None = None
+        self, service: AccountRebuilder, identity: UUID, limit: int | None = None
     ) -> str:
         result = await service.resume(
             identity, operator=self.operator, authorization=self.authorization, max_events=limit
@@ -181,7 +184,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
         online = [
             r
             for r in receipts
-            if r["projector_id"] == "product.accounts.v1" and r["generation"] == 1
+            if r["projector_id"] == "product.account_views.v2" and r["generation"] == 1
         ]
         self.assertEqual(len(online), 3)
         self.assertTrue(
@@ -309,7 +312,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
             await service.prepare(
                 identity, 2, [outside], operator=self.operator, authorization=self.authorization
             )
-        incompatible = ProjectionRebuilder(
+        incompatible = AccountRebuilder(
             maintenance, service.reader, replace(service.spec, implementation_digest="0" * 64)
         )
         with self.assertRaises(ValueError):
@@ -487,7 +490,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
         receipts = self.rows("runtime.projection_receipts")
         self.assertFalse(
             any(
-                r["generation"] == 1 and r["projector_id"] == "product.accounts.v1"
+                r["generation"] == 1 and r["projector_id"] == "product.account_views.v2"
                 for r in receipts
             )
         )
@@ -497,3 +500,146 @@ class ProjectionRebuildTests(DatabaseTestCase):
         ]
         self.assertEqual(len(results), 1)
         self.assertEqual(json.loads(json.dumps(results[0]["payload"]))["outcome"], "failed")
+
+    def test_full_account_history_restores_many_rows_and_current_conditions(self) -> None:
+        """同范围多事件、多表、多行均恢复；共享监护人及范围外账号保持有效。"""
+        asyncio.run(self.execute(self.full_history))
+
+    async def full_history(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
+        selected, events = await student_facts(app)
+        guardian = self.rows("product.guardian_records")[0]["guardian_id"]
+        assert isinstance(guardian, UUID)
+        outside, _ = await student_facts(app, guardian=guardian)
+        expected = {table.name: self.rows(table.name) for table in TABLES}
+        # 重复交付不重写条件，也不重复插入两段关系或确认。
+        async with app.begin() as connection:
+            await apply_account_events(connection, events)
+        for table in TABLES:
+            self.assertCountEqual(self.rows(table.name), expected[table.name])
+        with self.engine.begin() as connection:
+            connection.execute(
+                text("DELETE FROM product.usage_conditions WHERE student_id=:id"), {"id": selected}
+            )
+            connection.execute(
+                text("DELETE FROM product.usage_confirmations WHERE student_id=:id"),
+                {"id": selected},
+            )
+            connection.execute(
+                text("DELETE FROM product.student_guardian_relations WHERE student_id=:id"),
+                {"id": selected},
+            )
+            connection.execute(
+                text("UPDATE product.accounts SET display_name='broken' WHERE account_id=:id"),
+                {"id": selected},
+            )
+        service = account_rebuilder(maintenance, self.files)
+        identity = await self.prepare(service, [selected])
+        self.assertEqual(await self.resume(service, identity, 1), "building")
+        self.assertEqual(
+            len(self.rows(stage_tables(identity)["product.student_guardian_relations"])), 2
+        )
+        self.assertEqual(await self.resume(service, identity), "completed")
+        for table in TABLES:
+            self.assertCountEqual(self.rows(table.name), expected[table.name])
+        conditions = {r["student_id"]: r for r in self.rows("product.usage_conditions")}
+        self.assertEqual(conditions[selected]["revision"], 3)
+        self.assertEqual(conditions[outside]["eligibility"], "allowed")
+        # 另一学生的依赖事实不在本次范围时，必须拒绝而不是偷偷跨范围读写。
+        incomplete = await self.prepare(service, [outside], 3)
+        self.assertEqual(await self.resume(service, incomplete), "failed")
+        for table in TABLES:
+            self.assertCountEqual(self.rows(table.name), expected[table.name])
+
+    def test_event_save_does_not_apply_business_projection(self) -> None:
+        """事件可先独立保存；消费方直接调用同一业务生成器才生成查询数据。"""
+        asyncio.run(self.execute(self.explicit_projection))
+
+    async def explicit_projection(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
+        selected, events = await student_facts(app, project=False)
+        self.assertEqual(len(self.rows("runtime.events")), 3)
+        self.assertEqual(self.rows("runtime.projection_receipts"), [])
+        for table in TABLES:
+            self.assertEqual(self.rows(table.name), [])
+        # 这是业务订阅处理器的事务；不改变底座的可靠交接/Ack规则。
+        async with app.begin() as connection:
+            await apply_account_events(connection, events)
+        before = {t.name: self.rows(t.name) for t in TABLES}
+        service = account_rebuilder(maintenance, self.files)
+        identity = await self.prepare(service, [selected])
+        self.assertEqual(await self.resume(service, identity), "completed")
+        for table in TABLES:
+            self.assertCountEqual(self.rows(table.name), before[table.name])
+
+    def test_multitable_failure_rolls_back_all_rows_and_receipts(self) -> None:
+        asyncio.run(self.execute(self.multitable_failure))
+
+    async def multitable_failure(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
+        with self.engine.begin() as connection:
+            connection.execute(text("ALTER TABLE product.usage_conditions ADD CHECK (revision<1)"))
+        with self.assertRaises(DBAPIError):
+            await student_facts(app)
+        self.assertEqual(self.rows("runtime.events"), [])
+        self.assertEqual(self.rows("runtime.projection_receipts"), [])
+        for table in TABLES:
+            self.assertEqual(self.rows(table.name), [])
+
+    def test_extra_owned_rows_removed_but_controls_preserved(self) -> None:
+        asyncio.run(self.execute(self.extra_owned_rows))
+
+    async def extra_owned_rows(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
+        selected, _ = await student_facts(app)
+        before = {t.name: self.rows(t.name) for t in TABLES}
+        with self.engine.begin() as connection:
+            connection.execute(
+                text("""
+                INSERT INTO product.usage_confirmations
+                SELECT :id,student_id,kind,notice_ref,decision,source_ref,actor_ref,
+                       occurred_at,created_at,source_event_id
+                FROM product.usage_confirmations LIMIT 1
+            """),
+                {"id": uuid4()},
+            )
+        service = account_rebuilder(maintenance, self.files)
+        identity = await self.prepare(service, [selected])
+        self.assertEqual(await self.resume(service, identity), "completed")
+        for table in TABLES:
+            self.assertCountEqual(self.rows(table.name), before[table.name])
+
+    def test_temporary_connection_failure_can_resume_same_generation(self) -> None:
+        asyncio.run(self.execute(self.temporary_failure))
+
+    async def temporary_failure(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
+        selected = await self.seed(app)
+        service = account_rebuilder(maintenance, self.files)
+        identity = await self.prepare(service, [selected])
+        with patch.object(
+            service.reader, "read_projection_event", side_effect=ConnectionError("temporary")
+        ):
+            with self.assertRaises(ConnectionError):
+                await self.resume(service, identity)
+        self.assertEqual(self.rows("runtime.projection_rebuilds")[0]["state"], "building")
+        self.assertEqual(await self.resume(service, identity), "completed")
+
+    def test_legacy_rebuild_remains_readable_but_cannot_resume(self) -> None:
+        asyncio.run(self.execute(self.legacy_record))
+
+    async def legacy_record(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
+        selected = await self.seed(app)
+        service = account_rebuilder(maintenance, self.files)
+        identity = await self.prepare(service, [selected])
+        with self.engine.begin() as connection:
+            connection.execute(
+                text("""
+                UPDATE runtime.projection_rebuilds
+                SET projector_id='product.accounts.v1',target_relations='{}'::jsonb
+                WHERE rebuild_id=:id
+            """),
+                {"id": identity},
+            )
+        old = await service.status(
+            identity, operator=self.operator, authorization=self.authorization
+        )
+        self.assertEqual(old.projector_id, "product.accounts.v1")
+        with self.assertRaisesRegex(ValueError, "Legacy"):
+            await self.resume(service, identity)
+        self.assertEqual(self.rows("runtime.projection_rebuilds")[0]["state"], "building")

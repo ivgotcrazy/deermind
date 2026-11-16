@@ -1,11 +1,13 @@
 # M1 工程设计
 
-> **版本**：v0.99<br>
+> **版本**：v0.100<br>
 > **状态**：已进入小增量工程实现；进度及待确认项见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.98 → v0.99，登记E01-13执行恢复、部署与验证入口<br>
+> **修订说明**：v0.99 → v0.100，登记业务拥有投影与重建的补修入口<br>
+
+当前补修E01-08：事件保存与业务生成器解耦，账号五表重建由Product维护，底座只保留通用控制记录。范围、验证与评审见[补修记录](../../../../src/m1/deploy/environments/local-wsl/E01-08-ownership.md)和[实施计划](Delivery_Plan.md)。
 
 工程设计把M1产品规则落实为实现方案。[实施计划](Delivery_Plan.md)保留E01—E07里程碑，并逐项列出可验证的小增量；依赖、交付物、场景、预期和进度集中维护。每项验证通过后单独提交用户评审，评审通过才标完成。事件合同、容量候选及源码/OpenAPI设计继续作为输入。目录见[源码组织](Source_Organization.md)，公开字段见[API与消息总册](API_and_Message_Design.md)，物理定义见数据库分册；已推进至E01-13，[执行恢复实施记录](../../../../src/m1/deploy/environments/local-wsl/E01-13-execution.md)记录派发、停止、恢复及真实故障验证；[事件交接](../../../../src/m1/deploy/environments/local-wsl/E01-12-event-delivery.md)记录原子发布安排、订阅收据、失败及重送验证；[收据交付](../../../../src/m1/deploy/environments/local-wsl/E01-11-request-receipts.md)记录原请求补读、统一错误、客户端恢复及验证；[账号交付](../../../../src/m1/deploy/environments/local-wsl/E01-10-account-usage.md)记录管理命令、首次确认及恢复验证；[登录交付](../../../../src/m1/deploy/environments/local-wsl/E01-09-auth.md)记录认证、浏览器隔离及部署验证；[重建交付](../../../../src/m1/deploy/environments/local-wsl/E01-08-rebuild.md)记录维护命令、隔离重建及失败检查；[查询交付](../../../../src/m1/deploy/environments/local-wsl/E01-07-reads.md)记录内部授权、分页和正文读取；[文件交付](../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)记录字节保存、附件及引用校验；[原子保存交付](../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)记录首个事实、投影、收据闭环；[迁移交付](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)记录首批结构、命令和验证；[应用交付说明](../../../../src/m1/deploy/environments/local-wsl/E01-03-application.md)记录骨架、构建、测试和限制，业务功能仍按后续增量实现。
 
@@ -338,3 +340,4 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | v0.97 | 2026-11-16 | 增加E01-11公共收据、错误和客户端交付入口 |
 | v0.98 | 2026-11-16 | 增加E01-12事件交接及故障恢复复核入口 |
 | v0.99 | 2026-11-16 | 登记E01-13执行恢复、部署与验证入口 |
+| v0.100 | 2026-11-16 | 登记业务拥有投影与重建的补修入口 |

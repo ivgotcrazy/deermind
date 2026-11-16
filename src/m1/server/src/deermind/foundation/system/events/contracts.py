@@ -1,13 +1,12 @@
 """事件保存的内部合同；只接受程序登记的类型，不接受任意表名或SQL。"""
 
-from collections.abc import Awaitable, Callable, Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
-from sqlalchemy.ext.asyncio import AsyncConnection
 
 NonEmpty = Annotated[str, Field(min_length=1)]
 INLINE_LIMIT = 32 * 1024
@@ -108,7 +107,7 @@ class StoredEvent:
 
 @dataclass(frozen=True)
 class EventRegistration:
-    """所有者提供校验和确定性投影；底座不导入业务模块。"""
+    """所有者提供事件正文校验；事件类型不绑定投影器。"""
 
     event_type: str
     schema_version: int
@@ -116,8 +115,6 @@ class EventRegistration:
     scope_kind: str
     payload_model: type[EventPayload]
     validate: Callable[[EventDraft, EventPayload], None]
-    projector_id: str
-    project: Callable[[AsyncConnection, StoredEvent], Awaitable[None]]
     record_models: Mapping[tuple[str, int], type[FactModel]] = field(
         default_factory=lambda: dict[tuple[str, int], type[FactModel]]()
     )

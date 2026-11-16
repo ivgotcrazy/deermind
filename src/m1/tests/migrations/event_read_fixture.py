@@ -6,7 +6,6 @@ from deermind.foundation.system.events.contracts import (
     EventRegistration,
     FactModel,
     InlineContent,
-    StoredEvent,
 )
 from deermind.foundation.system.events.reading import (
     EventFact,
@@ -17,7 +16,6 @@ from deermind.foundation.system.events.reading import (
     ReadPolicy,
 )
 from deermind.foundation.system.events.store import canonical_json
-from sqlalchemy.ext.asyncio import AsyncConnection
 
 
 class TestMessage(FactModel):
@@ -44,10 +42,6 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
     TestMessage.model_validate_json(canonical_json(record.content.value))
 
 
-async def project(connection: AsyncConnection, event: StoredEvent) -> None:
-    """查询测试不创建尚未实施的业务表；只由事件底座保存其测试事实和收据。"""
-
-
 REGISTRATIONS = tuple(
     EventRegistration(
         event_type=kind,
@@ -56,8 +50,6 @@ REGISTRATIONS = tuple(
         scope_kind="learning_space",
         payload_model=TestPayload,
         validate=validate,
-        projector_id="test.messages.v1",
-        project=project,
         record_models={("test.messages", 1): TestMessage},
     )
     for kind in ("TestChatRecorded", "TestPrivateRecorded")

@@ -121,7 +121,7 @@ class EventReadTests(DatabaseTestCase):
                 ),
                 {"scope": scope},
             )
-            await store.append_and_project(
+            await store.append(
                 connection,
                 access,
                 prepared,
@@ -393,8 +393,8 @@ class EventReadTests(DatabaseTestCase):
         reader = event_reader(engine, self.files, cursor_key=b"fixed-test-signing-key-not-a-secret")
         authorized = ReadAccess(
             "operator",
-            "runtime.projection_read",
-            "runtime",
+            "product.account_rebuild",
+            "product",
             "projection_rebuild",
             "approved-maintenance",
             frozenset({("account", identity)}),

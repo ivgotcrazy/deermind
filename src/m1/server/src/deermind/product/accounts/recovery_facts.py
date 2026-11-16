@@ -9,7 +9,6 @@ from deermind.foundation.system.events.contracts import (
     Ref,
 )
 from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
-from deermind.product.accounts.auth_facts import record_only
 from pydantic import Field
 
 
@@ -36,8 +35,6 @@ RECOVERED = EventRegistration(
     "account",
     AccountRecovered,
     validate_recovery,
-    "product.auth_audit.v1",
-    record_only,
 )
 
 
@@ -50,5 +47,5 @@ def recovery_read(access: ReadAccess, event: EventFact) -> ReadGrant | None:
 
 
 RECOVERY_READ_POLICY = ReadPolicy(
-    "AccountRecovered", 2, "runtime", "projection_rebuild", recovery_read
+    "AccountRecovered", 2, "product", "projection_rebuild", recovery_read
 )

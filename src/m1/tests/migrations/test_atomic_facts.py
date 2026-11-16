@@ -19,7 +19,8 @@ from deermind.foundation.system.events.contracts import (
 )
 from deermind.foundation.system.events.store import EventStore
 from deermind.infrastructure.database.connection import application_engine
-from deermind.product.accounts.facts import ACCOUNT_REGISTRATION, AccountFact, project_account
+from deermind.product.accounts.facts import AccountFact
+from deermind.product.accounts.projections import apply_account_events
 from deermind.product.accounts.save import save_initial_account
 from deermind.product.persistence.receipts import Receipt, RequestConflict
 from sqlalchemy import text
@@ -107,7 +108,7 @@ class AtomicFactsTests(DatabaseTestCase):
         engine = application_engine(self.app)
         try:
             async with engine.begin() as connection:
-                await event_store().append_and_project(
+                events = await event_store().append(
                     connection,
                     access or self.access,
                     drafts,
@@ -115,6 +116,7 @@ class AtomicFactsTests(DatabaseTestCase):
                     correlation_id=uuid4(),
                     expected_seq={(d.scope_kind, d.scope_id): 0 for d in drafts},
                 )
+                await apply_account_events(connection, events)
         finally:
             await engine.dispose()
 
@@ -156,13 +158,13 @@ class AtomicFactsTests(DatabaseTestCase):
     def test_projection_failure_rolls_back_and_retry(self) -> None:
         """先实际插入账号再抛错，五张表均不得留下记录或序号缺口。"""
 
-        async def broken(connection: AsyncConnection, event: StoredEvent) -> None:
-            await project_account(connection, event)
+        async def broken(connection: AsyncConnection, events: list[StoredEvent]) -> None:
+            await apply_account_events(connection, events)
             raise RuntimeError("Injected projection failure")
 
-        broken_store = EventStore([replace(ACCOUNT_REGISTRATION, project=broken)])
-        with self.assertRaisesRegex(RuntimeError, "Injected"):
-            asyncio.run(self.save(broken_store))
+        with patch("deermind.product.accounts.save.apply_account_events", side_effect=broken):
+            with self.assertRaisesRegex(RuntimeError, "Injected"):
+                asyncio.run(self.save())
         self.assertEqual(self.counts(), [0, 0, 0, 0, 0])
         asyncio.run(self.save())
         self.assertEqual(self.counts(), [1, 1, 1, 1, 1])

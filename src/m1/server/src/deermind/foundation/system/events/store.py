@@ -1,4 +1,4 @@
-"""追加事实并应用已登记的生产者投影；提交和回滚由外层用例负责。"""
+"""只追加事实及可靠投递安排；业务投影和共同提交由外层用例负责。"""
 
 import hashlib
 import json
@@ -48,7 +48,7 @@ class EventStore:
                 raise ValueError("Duplicate event registration")
             self._registry[key] = registration
 
-    async def append_and_project(
+    async def append(
         self,
         connection: AsyncConnection,
         access: ProducerAccess,
@@ -60,7 +60,7 @@ class EventStore:
     ) -> list[StoredEvent]:
         """先校验整批，再按固定顺序锁序号头；任何异常必须由外层回滚。
 
-        调用前取得业务锁。投影只处理已保护或本次新建的对象，不取新业务锁。
+        调用前取得业务锁。本方法不调用业务投影器；调用者随后在同一事务应用自己的投影。
         此入口不发送通知、不调用AI、不推进订阅扫描游标。
         """
         if not connection.in_transaction() or not drafts:
@@ -114,7 +114,7 @@ class EventStore:
             sequences[kind, scope_id] = current
 
         stored: list[StoredEvent] = []
-        for draft, (registration, payload) in zip(drafts, validated, strict=True):
+        for draft, (_registration, payload) in zip(drafts, validated, strict=True):
             scope = (draft.scope_kind, draft.scope_id)
             sequences[scope] += 1
             # clock_timestamp取当前记录时点，不取事务启动时间。
@@ -125,15 +125,6 @@ class EventStore:
                 draft, commit_id, correlation_id, sequences[scope], recorded_at, payload
             )
             await self._insert(connection, access, event)
-            await registration.project(connection, event)
-            await connection.execute(
-                text(
-                    "INSERT INTO runtime.projection_receipts "
-                    "(projector_id, generation, event_id, applied_at) "
-                    "VALUES (:projector, 1, :event, clock_timestamp())"
-                ),
-                {"projector": registration.projector_id, "event": draft.event_id},
-            )
             stored.append(event)
 
         for (kind, scope_id), sequence in sequences.items():

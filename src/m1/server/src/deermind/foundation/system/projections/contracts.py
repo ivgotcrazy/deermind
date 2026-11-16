@@ -1,7 +1,5 @@
-"""重建只登记确定性行转换；执行身份和副本位置不能由业务输入指定。"""
+"""通用维护记录和结果事件；副本元数据由所属业务解释。"""
 
-from collections.abc import Callable
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
@@ -13,10 +11,8 @@ from deermind.foundation.system.events.contracts import (
     FactModel,
     NonEmpty,
     Ref,
-    StoredEvent,
 )
 from pydantic import Field, JsonValue
-from sqlalchemy.ext.asyncio import AsyncConnection
 
 
 class ScopeBound(FactModel):
@@ -32,6 +28,7 @@ class RebuildJob(FactModel):
     implementation_digest: str
     scope_bounds: list[ScopeBound]
     stage_relation: NonEmpty
+    target_relations: dict[str, str]
     operator_id: NonEmpty
     authorization_ref: NonEmpty
     state: Literal["building", "completed", "failed"]
@@ -39,19 +36,6 @@ class RebuildJob(FactModel):
     error: dict[str, JsonValue] | None
     created_at: datetime
     updated_at: datetime
-
-
-@dataclass(frozen=True)
-class RebuildSpec:
-    """程序白名单：本轮业务事实生成一行，审计事实只推进扫描，不接受任意表、SQL或回调。"""
-
-    projector_id: str
-    scope_kind: str
-    target: str
-    key: str
-    columns: tuple[str, ...]
-    implementation_digest: str
-    values: Callable[[StoredEvent], dict[str, object] | None]
 
 
 class CheckIssue(FactModel):
@@ -84,10 +68,6 @@ def validate_finished(draft: EventDraft, payload: EventPayload) -> None:
         raise ValueError("Invalid projection maintenance result")
 
 
-async def no_business_projection(connection: AsyncConnection, event: StoredEvent) -> None:
-    """维护结果只有事实，不创建业务查询行、通知或执行工作。"""
-
-
 REBUILD_FINISHED = EventRegistration(
     event_type="ProjectionRebuildFinished",
     schema_version=1,
@@ -95,6 +75,4 @@ REBUILD_FINISHED = EventRegistration(
     scope_kind="maintenance",
     payload_model=RebuildFinished,
     validate=validate_finished,
-    projector_id="runtime.maintenance.v1",
-    project=no_business_projection,
 )

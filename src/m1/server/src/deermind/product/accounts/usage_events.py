@@ -10,7 +10,6 @@ from deermind.foundation.system.events.contracts import (
     FactRecord,
     InlineContent,
     Ref,
-    StoredEvent,
 )
 from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.foundation.system.events.store import canonical_json
@@ -18,11 +17,7 @@ from deermind.product.accounts.usage_facts import (
     USAGE_RECORDS,
     ConditionsFact,
     ConfirmationFact,
-    GuardianFact,
-    RelationFact,
 )
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncConnection
 
 
 def record(name: str, kind: str, fact: FactModel) -> FactRecord:
@@ -39,48 +34,6 @@ def decode(record: FactRecord) -> FactModel:
     if model is None or not isinstance(record.content, InlineContent):
         raise ValueError("Unsupported or undecoded usage record")
     return model.model_validate_json(canonical_json(record.content.value))
-
-
-async def project_usage(connection: AsyncConnection, event: StoredEvent) -> None:
-    """SQL标识符只来自程序登记的模型；JSON字段显式编码，绝不接受外来表名。"""
-    keys = {
-        GuardianFact: "guardian_id",
-        RelationFact: "relation_id",
-        ConfirmationFact: "confirmation_id",
-        ConditionsFact: "student_id",
-    }
-    json_fields = {
-        "verified_identity_ref",
-        "verification_ref",
-        "actor_ref",
-        "notice_ref",
-        "source_ref",
-        "confirmation_refs",
-        "reasons",
-    }
-    for item in event.payload.records:
-        if (item.record_type, item.schema_version) not in USAGE_RECORDS:
-            continue
-        fact = decode(item)
-        values: dict[str, object] = fact.model_dump()
-        serialized = fact.model_dump(mode="json")
-        for field in json_fields & values.keys():
-            values[field] = canonical_json(serialized[field])
-        values["source_event_id"] = event.draft.event_id
-        columns = ",".join(values)
-        parameters = ",".join(
-            f"CAST(:{key} AS jsonb)" if key in json_fields else f":{key}" for key in values
-        )
-        conflict = ""
-        if isinstance(fact, ConditionsFact):
-            assignments = ",".join(f"{key}=EXCLUDED.{key}" for key in values if key != "student_id")
-            conflict = f" ON CONFLICT (student_id) DO UPDATE SET {assignments}"
-        elif type(fact) not in keys:
-            raise ValueError("Unregistered usage projection")
-        await connection.execute(
-            text(f"INSERT INTO {item.record_type} ({columns}) VALUES ({parameters}){conflict}"),
-            values,
-        )
 
 
 class UsageConfirmed(EventPayload):
@@ -126,8 +79,6 @@ USAGE_CONFIRMED = EventRegistration(
     "account",
     UsageConfirmed,
     validate_usage,
-    "product.usage.v1",
-    project_usage,
     USAGE_RECORDS,
 )
 
@@ -143,7 +94,7 @@ def usage_read(access: ReadAccess, event: EventFact) -> ReadGrant | None:
 
 
 USAGE_READ_POLICY = ReadPolicy(
-    "UsageConfirmationRecorded", 2, "runtime", "projection_rebuild", usage_read
+    "UsageConfirmationRecorded", 2, "product", "projection_rebuild", usage_read
 )
 
 

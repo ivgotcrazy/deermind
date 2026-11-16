@@ -1,4 +1,4 @@
-"""汇总已实施事件及投影；尚未实现的登记不会被静默接受。"""
+"""汇总已实施事件格式和读取授权；尚未实现的登记不会被静默接受。"""
 
 from deermind.bootstrap.messaging import subscriptions
 from deermind.foundation.system.delivery.facts import DELIVERY_READ_POLICY, DELIVERY_REGISTRATION
@@ -58,7 +58,7 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
             EXECUTION_REGISTRATION,
         ],
         [
-            ReadHandler("runtime.projection_read", "runtime", "projection_rebuild"),
+            ReadHandler("product.account_rebuild", "product", "projection_rebuild"),
             ReadHandler("runtime.file_review", "runtime", "execution_support"),
             ReadHandler("product.usage_receipt", "product", "execution_support"),
             ReadHandler("runtime.delivery_review", "runtime", "execution_support"),

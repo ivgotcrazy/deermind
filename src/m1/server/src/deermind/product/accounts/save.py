@@ -12,6 +12,7 @@ from deermind.foundation.system.events.contracts import (
 )
 from deermind.foundation.system.events.store import EventStore, canonical_json
 from deermind.product.accounts.facts import AccountFact, AccountSaved
+from deermind.product.accounts.projections import apply_account_events
 from deermind.product.persistence.receipts import Receipt, claim_request, complete_request
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -76,7 +77,7 @@ async def save_initial_account(
                 )
             ],
         )
-        await store.append_and_project(
+        events = await store.append(
             connection,
             access,
             [
@@ -95,6 +96,7 @@ async def save_initial_account(
             correlation_id=receipt.request_ref,
             expected_seq={("account", account_id): 0},
         )
+        await apply_account_events(connection, events)
         result = await complete_request(connection, receipt, owner)
     return result
 

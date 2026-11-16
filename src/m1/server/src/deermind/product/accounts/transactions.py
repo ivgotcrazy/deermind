@@ -10,6 +10,7 @@ from deermind.foundation.system.events.contracts import (
     Ref,
 )
 from deermind.foundation.system.events.store import EventStore
+from deermind.product.accounts.projections import apply_account_events
 from deermind.product.public.authentication import AuthError, SessionView
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
@@ -71,7 +72,7 @@ async def append_account_event(
         {"id": account},
     )
     identity = uuid4()
-    await store.append_and_project(
+    events = await store.append(
         connection,
         ProducerAccess("product", actor, frozenset({("account", account)})),
         [
@@ -90,4 +91,5 @@ async def append_account_event(
         correlation_id=receipt_id,
         expected_seq={("account", account): seq or 0},
     )
+    await apply_account_events(connection, events)
     return identity

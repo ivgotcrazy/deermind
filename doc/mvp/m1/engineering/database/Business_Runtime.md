@@ -1,10 +1,10 @@
 # deermind 数据库：公共运行及文件登记数据字典
 
-> **版本**：v0.8<br>
+> **版本**：v0.9<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.7 → v0.8，接线四张既定执行表，补当前尝试和步骤归属约束<br>
+> **修订说明**：v0.8 → v0.9，增加业务副本映射，保留旧维护记录并明确实际应用收据<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **20 张表、207 个列定义**。处理流程、接口和业务载荷由[System_Foundation_Design.md](../System_Foundation_Design.md) §2—6；文件由基础设施§2维护维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -562,11 +562,11 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 
 一次事件对某投影代次已经完整应用的收据。
 
-主键：`(projector_id,generation,event_id)`。写入方式：只追加；与该投影的数据变更同事务。
+主键：`(projector_id,generation,event_id)`。写入方式：只追加；与该投影的数据变更同事务。只记录实际采用并完成的事件，不以扫描或消息接收代替投影完成。
 
 | 字段 | PostgreSQL 类型 | 可空 | 默认值 | 定义、约束与引用 |
 | --- | --- | --- | --- | --- |
-| `projector_id` | `text` | 否 | 无 | 程序登记投影器；主键组成字段 |
+| `projector_id` | `text` | 否 | 无 | 业务登记投影器；主键组成字段 |
 | `generation` | `bigint` | 否 | 无 | 在线固定1；受控重建使用>1的代次；主键组成字段 |
 | `event_id` | `uuid` | 否 | 无 | FK → runtime.events.event_id；主键组成字段 |
 | `applied_at` | `timestamptz` | 否 | 无 | 本代次完成投影的服务端时间；不是业务发生时间 |
@@ -599,7 +599,7 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 
 ## 20. `runtime.projection_rebuilds`
 
-受控重建的维护记录，属于C类控制数据，不是业务事实或业务投影。E01-08与§19由迁移`0004_projection_rebuilds`建立；仅维护账号读写，普通应用账号无权限。
+受控重建的维护记录，属于C类控制数据，不是业务事实或业务投影。E01-08与§19由迁移`0004_projection_rebuilds`建立；仅维护数据库账号读写，普通应用账号无权限。迁移`0009_projection_ownership`增加target_relations；旧记录、代次和结果保留。
 
 主键：`rebuild_id`。写入方式：创建后范围、代次和实现摘要固定；状态及完成结果可更新。
 
@@ -610,7 +610,8 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 | `generation` | `bigint` | 否 | 无 | >1；在线代次1保留，不用于维护副本 |
 | `implementation_digest` | `text` | 否 | 无 | 64位小写十六进制SHA-256；覆盖装配定义、转换和重建校验代码 |
 | `scope_bounds` | `jsonb` | 否 | 无 | 非空数组，每项scope_kind、scope_id、upper_seq；范围唯一且按身份排序，上界由程序读取 |
-| `stage_relation` | `text` | 否 | 无 | 唯一；程序生成runtime.rebuild_加rebuild_id的32位hex，不接受自选表名 |
+| `stage_relation` | `text` | 否 | 无 | 唯一；保留旧单表名称。新账号维护为五表映射中的accounts副本；所属业务校验，不接受外部表名 |
+| `target_relations` | `jsonb` | 否 | `{}` | 对象；业务目标到隔离副本的映射，底座只保存不解释。空对象表示旧单表维护，不允许按新实现续做 |
 | `operator_id` | `text` | 否 | 无 | 非空维护操作人标识；不代替数据库身份授权 |
 | `authorization_ref` | `text` | 否 | 无 | 非空维护批准依据；续做须与原记录一致，不保存凭据 |
 | `state` | `text` | 否 | 无 | building、completed、failed |
@@ -619,7 +620,7 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 | `created_at` | `timestamptz` | 否 | 无 | 服务端创建时间，UTC |
 | `updated_at` | `timestamptz` | 否 | 无 | 服务端维护状态更新时间，UTC；逐事件进度见§19 |
 
-约束与关系：UNIQUE(projector_id,generation)、UNIQUE(stage_relation)；building当且仅当result_event_id为空；failed当且仅当error非空。每个scope_bound对应同投影器、同代次的§19记录，由程序在同事务建立；JSON范围、授权和实现摘要在继续执行前核对。
+约束与关系：UNIQUE(projector_id,generation)、UNIQUE(stage_relation)；building当且仅当result_event_id为空；failed当且仅当error非空。每个scope_bound对应同投影器、同代次的§19记录，由程序在同事务建立；JSON范围、授权和实现摘要在继续执行前核对。业务另外核对完整副本映射与固定实现一致；新账号副本使用product.rb_加32位UUID及表名后缀，名称不超过PG标识符上限。
 
 查询索引：主键、上述唯一键及(state,created_at)。临时副本沿目标投影表结构生成，无应用账号权限；成功替换时同事务删除该副本，失败或中断时保留。副本不计入规划表数量，不新增业务字段，不承担事实或控制恢复。
 
@@ -635,3 +636,4 @@ E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字�
 | v0.6 | 2026-11-16 | 增加重建维护记录字段、关系及权限，接线扫描进度表 |
 | v0.7 | 2026-11-16 | 接线四张交接控制表，明确投递身份及收据约束 |
 | v0.8 | 2026-11-16 | 接线四张既定执行表，补当前尝试和步骤归属约束 |
+| v0.9 | 2026-11-16 | 增加业务副本映射，保留旧维护记录并明确实际应用收据 |

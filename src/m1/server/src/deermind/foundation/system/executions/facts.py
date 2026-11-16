@@ -13,7 +13,6 @@ from deermind.foundation.system.events.contracts import (
     InlineContent,
     ProducerAccess,
     Ref,
-    StoredEvent,
 )
 from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.foundation.system.events.store import EventStore
@@ -58,10 +57,6 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         raise ValueError("Step checkpoint must contain its saved step")
 
 
-async def no_projection(connection: AsyncConnection, event: StoredEvent) -> None:
-    """控制快照仅供核对，重建不会再次派发工作。"""
-
-
 EXECUTION_REGISTRATION = EventRegistration(
     "ExecutionStateChanged",
     1,
@@ -69,8 +64,6 @@ EXECUTION_REGISTRATION = EventRegistration(
     "execution",
     ExecutionStateChanged,
     validate,
-    "runtime.execution_history.v1",
-    no_projection,
     {(name, 1): model for name, model in MODELS.items()},
 )
 
@@ -117,7 +110,7 @@ async def record_change(
     payload = ExecutionStateChanged(
         subject_ref=owner, outcome=outcome, reason_code=reason, records=records
     )
-    await EventStore([EXECUTION_REGISTRATION]).append_and_project(
+    await EventStore([EXECUTION_REGISTRATION]).append(
         connection,
         ProducerAccess("runtime", actor, frozenset({scope})),
         [

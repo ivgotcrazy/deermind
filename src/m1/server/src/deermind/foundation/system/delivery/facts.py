@@ -19,7 +19,6 @@ from deermind.foundation.system.events.contracts import (
     InlineContent,
     ProducerAccess,
     Ref,
-    StoredEvent,
 )
 from deermind.foundation.system.events.reading import (
     EventFact,
@@ -77,10 +76,6 @@ def validate_delivery(draft: EventDraft, payload: EventPayload) -> None:
         raise ValueError("Acceptance fact requires a receipt")
 
 
-async def no_projection(connection: AsyncConnection, event: StoredEvent) -> None:
-    """H类事实仅供核对；控制数据由本次事务保存，重建不能再次创建工作。"""
-
-
 DELIVERY_REGISTRATION = EventRegistration(
     "DeliveryStateChanged",
     1,
@@ -88,8 +83,6 @@ DELIVERY_REGISTRATION = EventRegistration(
     "event_delivery",
     DeliveryStateChanged,
     validate_delivery,
-    "runtime.delivery_history.v1",
-    no_projection,
     {(name, 1): model for name, model in MODELS.items()},
 )
 
@@ -172,7 +165,7 @@ async def record_change(
         ),
         {"kind": scope[0], "id": handoff_id},
     )
-    await EventStore([DELIVERY_REGISTRATION]).append_and_project(
+    await EventStore([DELIVERY_REGISTRATION]).append(
         connection,
         ProducerAccess(
             "runtime",

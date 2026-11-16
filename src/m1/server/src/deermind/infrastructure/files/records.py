@@ -101,8 +101,6 @@ FILE_REGISTRATION = EventRegistration(
     scope_kind="file",
     payload_model=FileReceived,
     validate=validate_file,
-    projector_id="runtime.file_objects.v1",
-    project=project_file,
     record_models={("runtime.file_objects", 1): FileObject},
 )
 
