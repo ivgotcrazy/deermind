@@ -7,10 +7,14 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from deermind.bootstrap.database import database_lifespan
+from deermind.bootstrap.messaging import subscriptions
 from deermind.bootstrap.services import create_worker
 from deermind.bootstrap.settings import Settings
 from deermind.foundation.system.logging import configure_logging
 from deermind.infrastructure.files.check import check_storage
+from deermind.infrastructure.nats.bridge import run_bridge
+from deermind.infrastructure.nats.connection import MessagingSettings, connect
+from sqlalchemy.ext.asyncio import AsyncEngine
 from temporalio.api.workflowservice.v1 import DescribeNamespaceRequest
 from temporalio.client import Client
 
@@ -23,11 +27,11 @@ async def run() -> None:
     READY_FILE.unlink(missing_ok=True)
     settings = Settings.from_environment()
     check_storage(settings.files_root, require_mount=settings.files_backend == "pvc")
-    async with database_lifespan():
-        await serve(settings)
+    async with database_lifespan() as engine:
+        await serve(settings, engine)
 
 
-async def serve(settings: Settings) -> None:
+async def serve(settings: Settings, engine: AsyncEngine) -> None:
     """数据库版本检查通过后，才连接Temporal并拉取任务。"""
     async with asyncio.timeout(15):
         client = await Client.connect(
@@ -47,13 +51,17 @@ async def serve(settings: Settings) -> None:
     with ThreadPoolExecutor(2) as workflow_executor, ThreadPoolExecutor(4) as activity_executor:
         worker = create_worker(client, settings, workflow_executor, activity_executor)
         try:
-            async with worker:
+            async with worker, connect(MessagingSettings.from_environment()) as transport:
+                await transport.check_stream(failure=False)
+                await transport.check_stream(failure=True)
+                # 初始化由维护入口完成；运行账号只绑定，不得建删消息资源。
+                await transport.js.consumer_info(transport.settings.failures, "failure_collector")
                 READY_FILE.touch()
                 LOGGER.info(
                     "Worker 已启动，等待共享队列任务",
                     extra={"action": "worker_started", "outcome": "success"},
                 )
-                await stopped.wait()
+                await run_bridge(engine, transport, subscriptions(), stopped)
         finally:
             READY_FILE.unlink(missing_ok=True)
     LOGGER.info("Worker 已停止", extra={"action": "worker_stopped", "outcome": "success"})

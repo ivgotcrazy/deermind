@@ -11,7 +11,26 @@ config:
       enabled: false
   merge:
     authorization:
-      token: << $NATS_TOKEN >>
+      users:
+        - user: maintenance
+          password: << $NATS_MAINTENANCE_PASSWORD >>
+        - user: application
+          password: << $NATS_APP_PASSWORD >>
+          permissions:
+            publish:
+              allow:
+                - dm.local-wsl.event.*
+                - $JS.API.STREAM.INFO.DM_LOCAL_WSL_EVENTS
+                - $JS.API.STREAM.INFO.DM_LOCAL_WSL_DELIVERY_FAILURES
+                - $JS.API.STREAM.MSG.GET.DM_LOCAL_WSL_EVENTS
+                - $JS.API.CONSUMER.INFO.DM_LOCAL_WSL_EVENTS.*
+                - $JS.API.CONSUMER.INFO.DM_LOCAL_WSL_DELIVERY_FAILURES.failure_collector
+                - $JS.API.CONSUMER.MSG.NEXT.DM_LOCAL_WSL_EVENTS.*
+                - $JS.API.CONSUMER.MSG.NEXT.DM_LOCAL_WSL_DELIVERY_FAILURES.failure_collector
+                - $JS.ACK.DM_LOCAL_WSL_EVENTS.>
+                - $JS.ACK.DM_LOCAL_WSL_DELIVERY_FAILURES.>
+            subscribe:
+              allow: ['_INBOX.>']
 container:
   image:
     repository: docker.io/library/nats
@@ -19,9 +38,12 @@ container:
     digest: sha256:558394a23dd3c36f2d3a64b51865fd09908010e80a542cea5e75c2af543ed62a
     pullPolicy: IfNotPresent
   env:
-    NATS_TOKEN:
+    NATS_MAINTENANCE_PASSWORD:
       valueFrom:
-        secretKeyRef: { name: deermind-nats, key: token }
+        secretKeyRef: { name: deermind-nats, key: maintenance-password }
+    NATS_APP_PASSWORD:
+      valueFrom:
+        secretKeyRef: { name: deermind-nats, key: app-password }
   resources:
     requests: { cpu: 100m, memory: 128Mi }
     limits: { cpu: 500m, memory: 256Mi }

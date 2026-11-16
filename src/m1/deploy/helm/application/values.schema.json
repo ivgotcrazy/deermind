@@ -1,7 +1,16 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["images", "filesClaim", "temporal", "nodeSelector", "resources", "database", "auth"],
+  "required": [
+    "images",
+    "filesClaim",
+    "temporal",
+    "nodeSelector",
+    "resources",
+    "database",
+    "auth",
+    "messaging"
+  ],
   "properties": {
     "images": {
       "type": "object",
@@ -141,6 +150,25 @@
           }
         }
       }
+    },
+    "messaging": {
+      "type": "object",
+      "required": ["address", "deployment", "existingSecret"],
+      "properties": {
+        "address": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deployment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "existingSecret": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

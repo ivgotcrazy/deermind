@@ -1,19 +1,19 @@
 # M1 工程设计
 
-> **版本**：v0.97<br>
+> **版本**：v0.98<br>
 > **状态**：已进入小增量工程实现；进度及待确认项见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.96 → v0.97，登记E01-11公共收据、统一错误与生成类型客户端<br>
+> **修订说明**：v0.97 → v0.98，增加E01-12事件交接及故障恢复复核入口<br>
 
-工程设计把M1产品规则落实为实现方案。[实施计划](Delivery_Plan.md)保留E01—E07里程碑，并逐项列出可验证的小增量；依赖、交付物、场景、预期和进度集中维护。每项验证通过后单独提交用户评审，评审通过才标完成。事件合同、容量候选及源码/OpenAPI设计继续作为输入。目录见[源码组织](Source_Organization.md)，公开字段见[API与消息总册](API_and_Message_Design.md)，物理定义见数据库分册；已推进至E01-11，[收据交付](../../../../src/m1/deploy/environments/local-wsl/E01-11-request-receipts.md)记录原请求补读、统一错误、客户端恢复及验证；[账号交付](../../../../src/m1/deploy/environments/local-wsl/E01-10-account-usage.md)记录管理命令、首次确认及恢复验证；[登录交付](../../../../src/m1/deploy/environments/local-wsl/E01-09-auth.md)记录认证、浏览器隔离及部署验证；[重建交付](../../../../src/m1/deploy/environments/local-wsl/E01-08-rebuild.md)记录维护命令、隔离重建及失败检查；[查询交付](../../../../src/m1/deploy/environments/local-wsl/E01-07-reads.md)记录内部授权、分页和正文读取；[文件交付](../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)记录字节保存、附件及引用校验；[原子保存交付](../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)记录首个事实、投影、收据闭环；[迁移交付](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)记录首批结构、命令和验证；[应用交付说明](../../../../src/m1/deploy/environments/local-wsl/E01-03-application.md)记录骨架、构建、测试和限制，业务功能仍按后续增量实现。
+工程设计把M1产品规则落实为实现方案。[实施计划](Delivery_Plan.md)保留E01—E07里程碑，并逐项列出可验证的小增量；依赖、交付物、场景、预期和进度集中维护。每项验证通过后单独提交用户评审，评审通过才标完成。事件合同、容量候选及源码/OpenAPI设计继续作为输入。目录见[源码组织](Source_Organization.md)，公开字段见[API与消息总册](API_and_Message_Design.md)，物理定义见数据库分册；已推进至E01-12，[事件交接](../../../../src/m1/deploy/environments/local-wsl/E01-12-event-delivery.md)记录原子发布安排、订阅收据、失败及重送验证；[收据交付](../../../../src/m1/deploy/environments/local-wsl/E01-11-request-receipts.md)记录原请求补读、统一错误、客户端恢复及验证；[账号交付](../../../../src/m1/deploy/environments/local-wsl/E01-10-account-usage.md)记录管理命令、首次确认及恢复验证；[登录交付](../../../../src/m1/deploy/environments/local-wsl/E01-09-auth.md)记录认证、浏览器隔离及部署验证；[重建交付](../../../../src/m1/deploy/environments/local-wsl/E01-08-rebuild.md)记录维护命令、隔离重建及失败检查；[查询交付](../../../../src/m1/deploy/environments/local-wsl/E01-07-reads.md)记录内部授权、分页和正文读取；[文件交付](../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)记录字节保存、附件及引用校验；[原子保存交付](../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)记录首个事实、投影、收据闭环；[迁移交付](../../../../src/m1/deploy/environments/local-wsl/E01-04-database.md)记录首批结构、命令和验证；[应用交付说明](../../../../src/m1/deploy/environments/local-wsl/E01-03-application.md)记录骨架、构建、测试和限制，业务功能仍按后续增量实现。
 
 Operation仅封装AI业务能力，普通业务入口另列于[§7](#7-普通业务处理目录)；本批仍为9项AI Operation，不因新增字段或保存检查扩充目录。详细设计直接形成可审阅文稿，用户review后再处理意见；不以逐条对话或先写验证代码作为推进前置。影响架构的风险单独提出，其他验证留实现阶段，见[登记§70](../../DECISIONS.md#70-domain详细设计对象内容与入库)。
 
 正式前端采用Vue 3＋TypeScript＋Vite、shadcn-vue及Tailwind CSS，先落实工程结构和业务接线，视觉与交互优化后置。旧原型与本次样板仅供参考，样板未获界面验收；见[客户端§1.1](Client_Design.md#11-视觉设计与样板评审)及实施计划Q11—Q12。
 
-编码、脚本及配置统一遵循[编程规范](Coding_Standard.md)，通过`src/m1/scripts/check.sh`及`test.sh`检查。工具检查后仍逐文件review可读性和失败边界；本轮沿用已确认规范实现E01-11。
+编码、脚本及配置统一遵循[编程规范](Coding_Standard.md)，通过`src/m1/scripts/check.sh`及`test.sh`检查。工具检查后仍逐文件review可读性和失败边界；本轮沿用已确认规范实现E01-12。
 
 当前版本以各文档头部及[本轮决定登记](../../DECISIONS.md#117-e01-10最小账号使用)为准；不在此重复维护第二份版本清单。
 
@@ -336,3 +336,4 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | v0.95 | 2026-11-16 | 登记E01-09登录、生成类型与自检入口 |
 | v0.96 | 2026-11-16 | 增加E01-10账号维护与首次确认交付入口 |
 | v0.97 | 2026-11-16 | 增加E01-11公共收据、错误和客户端交付入口 |
+| v0.98 | 2026-11-16 | 增加E01-12事件交接及故障恢复复核入口 |

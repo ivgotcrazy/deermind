@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.11<br>
-> **状态**：E01-08受控重建接线已加入；进度见实施计划<br>
+> **版本**：v0.12<br>
+> **状态**：代码按已批准目录逐增量接线；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.10 → v0.11，登记重建合同、实现、白名单装配及维护测试位置<br>
+> **修订说明**：v0.11 → v0.12，登记E01-12交接底座、NATS适配及验证入口<br>
 
 ## 1. 范围与维护位置
 
@@ -414,6 +414,12 @@ Helm沿[官方Chart文件结构](https://helm.sh/docs/topics/charts/)组织。�
 
 资料于2026-11-15核对。目录及模块细分是结合DeerMind合同作出的项目设计，不宣称官方规定唯一目录模板。
 
+### E01-12事件交接接线
+
+`foundation/system/delivery/`维护固定通知/收据合同、原子发布安排、承接去重、失败留痕及受控重送；`infrastructure/nats/`封装SDK、资源核对和Worker桥接循环。`bootstrap/messaging.py`登记当前业务订阅，`bootstrap/events.py`接入生产者发布安排；底座不导入业务模块。
+
+Worker只绑定已初始化的消息资源。`entrypoints/maintenance/messaging.py`提供初始化和获准重送；`scripts/prepare-messaging-secret.py`在显式集群中补齐维护/应用凭据。`test.sh delivery`通过构建镜像、随机PG库及随机NATS流验证，不登记假的生产业务订阅。
+
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
@@ -429,3 +435,4 @@ Helm沿[官方Chart文件结构](https://helm.sh/docs/topics/charts/)组织。�
 | v0.9 | 2026-11-16 | 补齐E01-06文件端口、适配、附件准备及测试位置 |
 | v0.10 | 2026-11-16 | 补齐E01-07读取合同、查询实现和授权测试位置 |
 | v0.11 | 2026-11-16 | 登记重建合同、实现、白名单装配及维护测试位置 |
+| v0.12 | 2026-11-16 | 登记E01-12交接底座、NATS适配及测试入口 |

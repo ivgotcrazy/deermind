@@ -1,10 +1,10 @@
 # deermind 数据库：公共运行及文件登记数据字典
 
-> **版本**：v0.6<br>
+> **版本**：v0.7<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.5 → v0.6，增加重建维护记录字段、关系及权限，接线扫描进度表<br>
+> **修订说明**：v0.6 → v0.7，接线四张交接控制表，明确投递身份及收据约束<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **20 张表、207 个列定义**。处理流程、接口和业务载荷由[System_Foundation_Design.md](../System_Foundation_Design.md) §2—6；文件由基础设施§2维护维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -376,7 +376,9 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_obj
 
 约束与关系：UQ(kind,logical_key)；PubAck仅表示队列接收；publish重送新投递身份但沿用event_id。
 
-查询索引：state,next_attempt_at；kind,source_ref。
+查询索引：state,next_attempt_at；kind,source_ref；publish的delivery_id唯一索引，用于按通知身份查回原安排。
+
+E01-12接线本表及§10—12。publish的payload保存固定DeliveryNotice字段及内部handoff_id，网络不发送内部handoff_id；subscription_snapshot保存subscriber_id→handler_revision映射。应用可更新租约、状态、发布回执及最近故障引用，不能改固定来源、投递身份、输入和接收范围。
 
 ## 10. `runtime.handoff_attempts`
 
@@ -437,7 +439,7 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_obj
 | `error` | `jsonb` | 是 | 无 | 拒绝原因；正常为空 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 
-约束与关系：收据与后续安排同提交后才Ack；accepted不等于业务完成。
+约束与关系：收据与后续安排同提交后才Ack；accepted不等于业务完成。E01-12的accepted必须带非空安排引用；仅rejected带错误。应用可追加、查询收据，不可修改或删除。
 
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
@@ -629,3 +631,4 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_obj
 | v0.4 | 2026-11-16 | 同步E01-05接线范围；保留既定字段与记录矩阵 |
 | v0.5 | 2026-11-16 | 新增事实附件类别，登记E01-06文件表接线 |
 | v0.6 | 2026-11-16 | 增加重建维护记录字段、关系及权限，接线扫描进度表 |
+| v0.7 | 2026-11-16 | 接线四张交接控制表，明确投递身份及收据约束 |

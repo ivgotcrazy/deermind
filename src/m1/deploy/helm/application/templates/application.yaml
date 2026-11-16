@@ -38,6 +38,19 @@ spec:
             capabilities:
               drop: ["ALL"]
           env:
+            {{- if eq $component "worker" }}
+            - name: M1_NATS_ADDRESS
+              value: {{ required "NATS address is required" $root.Values.messaging.address | quote }}
+            - name: M1_NATS_DEPLOYMENT
+              value: {{ required "NATS deployment is required" $root.Values.messaging.deployment | quote }}
+            - name: M1_NATS_USER
+              value: application
+            - name: M1_NATS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "NATS secret is required" $root.Values.messaging.existingSecret | quote }}
+                  key: app-password
+            {{- end }}
             {{- if eq $component "api" }}
             - name: M1_AUTH_ORIGINS
               value: {{ join "," $root.Values.auth.origins | quote }}

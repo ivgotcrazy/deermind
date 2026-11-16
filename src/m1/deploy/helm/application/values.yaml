@@ -17,6 +17,10 @@ temporal:
   address: ''
   namespace: ''
   taskQueue: ''
+messaging:
+  address: ''
+  deployment: ''
+  existingSecret: ''
 resources:
   api:
     requests: { cpu: 250m, memory: 256Mi }

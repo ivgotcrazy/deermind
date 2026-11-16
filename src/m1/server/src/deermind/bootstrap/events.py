@@ -1,5 +1,8 @@
 """汇总已实施事件及投影；尚未实现的登记不会被静默接受。"""
 
+from deermind.bootstrap.messaging import subscriptions
+from deermind.foundation.system.delivery.facts import DELIVERY_READ_POLICY, DELIVERY_REGISTRATION
+from deermind.foundation.system.delivery.outbox import Outbox
 from deermind.foundation.system.events.query import EventReader
 from deermind.foundation.system.events.reading import ReadHandler
 from deermind.foundation.system.events.store import EventStore
@@ -27,7 +30,9 @@ def event_store() -> EventStore:
             SIGNED_OUT,
             USAGE_CONFIRMED,
             RECOVERED,
-        ]
+            DELIVERY_REGISTRATION,
+        ],
+        arrange_delivery=Outbox(subscriptions()).arrange,
     )
 
 
@@ -44,11 +49,13 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
             SIGNED_OUT,
             USAGE_CONFIRMED,
             RECOVERED,
+            DELIVERY_REGISTRATION,
         ],
         [
             ReadHandler("runtime.projection_read", "runtime", "projection_rebuild"),
             ReadHandler("runtime.file_review", "runtime", "execution_support"),
             ReadHandler("product.usage_receipt", "product", "execution_support"),
+            ReadHandler("runtime.delivery_review", "runtime", "execution_support"),
         ],
         [
             ACCOUNT_READ_POLICY,
@@ -57,6 +64,7 @@ def event_reader(engine: AsyncEngine, files: FileStorage, *, cursor_key: bytes) 
             USAGE_READ_POLICY,
             USAGE_RECEIPT_POLICY,
             RECOVERY_READ_POLICY,
+            DELIVERY_READ_POLICY,
         ],
         cursor_key=cursor_key,
     )

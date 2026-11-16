@@ -16,6 +16,7 @@ dependencies = [
   "psycopg[binary]==3.3.9",
   "alembic==1.20.1",
   "pwdlib[argon2]==0.4.2",
+  "nats-py==2.16.0",
 ]
 
 [project.scripts]
@@ -24,6 +25,7 @@ deermind-worker = "deermind.entrypoints.worker.main:main"
 deermind-probe = "deermind.entrypoints.maintenance.probe:main"
 deermind-database = "deermind.entrypoints.maintenance.database:main"
 deermind-rebuild = "deermind.entrypoints.maintenance.rebuild:main"
+deermind-messaging = "deermind.entrypoints.maintenance.messaging:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/deermind"]

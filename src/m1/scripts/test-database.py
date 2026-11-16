@@ -18,11 +18,23 @@ def main() -> int:
     """核对目标，运行临时测试Pod；任一步失败均返回非零并清理本次Pod。"""
     group = sys.argv[1] if len(sys.argv) == 2 else "database"
     if (
-        group not in {"database", "facts", "files", "reads", "rebuild", "auth", "usage", "receipts"}
+        group
+        not in {
+            "database",
+            "facts",
+            "files",
+            "reads",
+            "rebuild",
+            "auth",
+            "usage",
+            "receipts",
+            "delivery",
+        }
         or len(sys.argv) > 2
     ):
         raise ValueError(
-            "Expected database, facts, files, reads, rebuild, auth, usage or receipts test group"
+            "Expected database, facts, files, reads, rebuild, "
+            "auth, usage, receipts or delivery test group"
         )
     target = [
         "kubectl",
@@ -63,6 +75,21 @@ def main() -> int:
                     "secretKeyRef": {"name": os.environ["M1_DATABASE_SECRET"], "key": key},
                 },
             }
+        )
+    if group == "delivery":
+        environment.extend(
+            [
+                {"name": "M1_TEST_NATS_ADDRESS", "value": os.environ["M1_TEST_NATS_ADDRESS"]},
+                {
+                    "name": "M1_TEST_NATS_PASSWORD",
+                    "valueFrom": {
+                        "secretKeyRef": {
+                            "name": os.environ["M1_MESSAGING_SECRET"],
+                            "key": "maintenance-password",
+                        }
+                    },
+                },
+            ]
         )
     pod = {
         "apiVersion": "v1",
@@ -130,6 +157,7 @@ def main() -> int:
             "auth": "test_authentication.py",
             "usage": "test_account_usage.py",
             "receipts": "test_receipts.py",
+            "delivery": "test_event_delivery.py",
         }[group]
         # 将测试文件放进临时目录；生产包仍只从镜像读取，不挂载源码。
         driver = """

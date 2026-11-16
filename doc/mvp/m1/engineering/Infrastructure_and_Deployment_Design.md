@@ -1,11 +1,11 @@
 # M1 基础设施与部署设计
 
-> **版本**：v0.53<br>
+> **版本**：v0.54<br>
 > **状态**：基础组件与应用按增量接线；实际进度与待确认项见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.52 → v0.53，确认登录参数、pwdlib及本机HTTP例外；其余候选保持原状态<br>
+> **修订说明**：v0.53 → v0.54，确认nats-py、事件交接限额、消息资源及凭据分离<br>
 
 本文确定计算资源、存储、外部服务连接、网络和部署运维的实现方式，将总体架构落实为可启动和可恢复的运行环境。业务字段及规则留在所属模块，本文维护技术适配和运行配置；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -257,7 +257,7 @@ API与Worker加载同一修订的用途／工具登记，核对适配器、所�
 
 Operation业务步骤归所属模块，公共底座的接入、路由、输出适配是API／Worker共用代码，不据此新增中央业务编排服务。浏览器只连接API，由API回传进度与结果。订阅承接、Workflow启动和Signal交接采用[公共运行§4.4](System_Foundation_Design.md#44-受理投递与执行交接)，失败收尾见§4.5；WebSocket接线已有公共运行§5详细稿；数值限额及部署配置仍待审。
 
-保持检查仅在学生再次进入空间时触发，不部署离线保持检查定时作业。Relay补发和未收尾执行的技术核对可随Worker部署；它们只处理交接和运行记录，不安排学生学习。NATS消费者采用持久订阅及显式Ack；确认发生在业务受理与后续安排共同保存之后，不等待LLM。重复交接靠稳定ID防重，具体subject、Task Queue、租约及重试限额随部署配置审阅。
+保持检查仅在学生再次进入空间时触发，不部署离线保持检查定时作业。Relay补发和未收尾执行的技术核对可随Worker部署；它们只处理交接和运行记录，不安排学生学习。NATS消费者采用持久订阅及显式Ack；确认发生在业务受理与后续安排共同保存之后，不等待LLM。重复交接靠稳定ID防重，Task Queue沿E01-03确认值，事件subject、租约及重试限额沿E01-12确认值；其他交接仍随对应增量审阅。
 
 ### 4.1 浏览器接入装配
 
@@ -269,9 +269,9 @@ Operation业务步骤归所属模块，公共底座的接入、路由、输出�
 
 auth_sessions位于业务PG，API重启后凭有效Cookie查回会话；进程内缓存不作为唯一认证来源。浏览器请求和输出均通过会话认证；内部调用使用执行授权，不能要求后台携Cookie。日志隐藏Cookie、CSRF、密码和完整帧正文。部署维护凭据与模型密钥分别配置，不授予浏览器Worker／NATS／Temporal访问权。
 
-### 4.2 消息交接参数草案
+### 4.2 消息交接参数
 
-以下为**待确认的接线值**，只约束事件承接和技术交接，不约束AI业务完成。交接顺序、失败责任沿公共运行§4.4—4.5。
+E01-12已确认事件承接、发布、租约及30秒核对参数；Temporal启动／Signal／取消仍由对应执行增量接线。下表只约束技术交接，不约束AI业务完成。交接顺序、失败责任沿公共运行§4.4—4.5。
 
 | 环节 | 建议参数 | 到上限后的处理 |
 | --- | --- | --- |
@@ -279,11 +279,11 @@ auth_sessions位于业务PG，API重启后凭有效Cookie查回会话；进程�
 | NATS重投间隔 | 本轮不设置BackOff；使用AckWait及明确的延迟NAK | 避免BackOff覆盖AckWait，或无延迟NAK造成密集重投 |
 | 发布／启动／Signal／取消交接 | 单次外部请求5秒；每轮最多5次，间隔2、5、10、20秒，总限90秒 | 沿原交接身份留exhausted；已启动状态不明继续核对，不另起业务、不自动重置次数 |
 | Relay租约 | 30秒；每次外部请求后写结果并释放，本轮间隔通过next_attempt_at记录 | 租约失效允许重新检查同一交接，旧持有者不能覆盖新状态 |
-| 技术核对 | 建议30秒一次，读取未交接／未收尾的技术记录 | 查不到服务先记录核对失败，不能据此放开学生入口或重建任务 |
+| 事件交接核对 | E01-12已确认每30秒一次；发布成功后经过5×30秒仍缺接收收据，再记录待核对 | 查不到服务先记录核对失败，不重做业务；未收尾执行的核对留E01-13 |
 
 20秒承接上限包含读取、身份检查和数据库提交；短语句／锁等待仍受§4.5 D01已确认的业务SQL约束，不能因执行多条SQL绕过总限。每个订阅者独立承接，MaxAckPending=1只限制交接，不限制已受理AI工作的并发。5次外部请求及4段间隔共62秒，90秒为该轮等待和记账留余量；进程停机可能使实际交接更迟，不能当作恢复SLA。
 
-JetStream达到MaxDeliver后不会自动建立死信队列。失败通知持久采集和消息流装配见§4.3；通知缺失时按公共运行§4.6核对发布记录和Receipt，不能只依赖进程内订阅。获准修复后只重送指定事件并沿原Receipt去重；已经接住但AI失败的工作交Temporal恢复，不重新投递业务事件。上述语义依据[NATS确认与重投文档](https://docs.nats.io/learn/jetstream/acknowledgment)，于2026-11-15核对；数值是本项目建议。
+JetStream达到MaxDeliver后不会自动建立死信队列。失败通知持久采集和消息流装配见§4.3；通知缺失时按公共运行§4.6核对发布记录和Receipt，不能只依赖进程内订阅。获准修复后只重送指定事件并沿原Receipt去重；已经接住但AI失败的工作交Temporal恢复，不重新投递业务事件。上述语义依据[NATS确认与重投文档](https://docs.nats.io/learn/jetstream/acknowledgment)，于2026-11-15核对；事件交接数值已在E01-12确认。
 
 工作时限短于交接预算时取剩余时间；没有成功启动且已确认原尝试终止，才按公共运行失败收尾释放入口。部署把AI工作预算、Wait和消息交接配置分别装配，不用AckWait表示“等待模型回答”。
 
@@ -291,19 +291,19 @@ JetStream达到MaxDeliver后不会自动建立死信队列。失败通知持久�
 
 用户已确认投递副本的清理边界；采用InterestPolicy落实“所有匹配消费者确认后清理”。同时使用DiscardNew、MaxAge=0，不设置消息TTL，避免未接住的副本因过期或容量压力被删除。原件与正式事实保留在业务存储，NATS不承担历史查询。[NATS保留策略](https://docs.nats.io/learn/jetstream/retention-policies)及[容量限制](https://docs.nats.io/learn/jetstream/shaping-the-stream)，2026-11-15核对。
 
-| 项目 | 装配草案 | 状态 |
+| 项目 | 装配配置 | 状态 |
 | --- | --- | --- |
-| 业务stream | `<prefix>_EVENTS`，file存储，InterestPolicy；subject为`dm.<deployment_key>.event.<event_type>` | 命名待审；事件类型取工程目录，不含学生姓名或正文 |
+| 业务stream | `<prefix>_EVENTS`，file存储，InterestPolicy；subject为`dm.<deployment_key>.event.<event_type>` | E01-12确认local-wsl，prefix为DM_LOCAL_WSL；事件类型取工程目录，不含学生姓名或正文 |
 | 业务consumer | 每个subscriber_id一个durable，过滤其已登记事件；进程副本共用；显式Ack，断开不删consumer | 沿已定订阅边界 |
-| 失败通知stream | `<prefix>_DELIVERY_FAILURES`，file＋InterestPolicy；仅接业务stream的MAX_DELIVERIES及MSG_TERMINATED通知，配固定采集consumer | 待审装配；不采集自身失败形成递归 |
-| 容量 | 业务768MiB、失败通知32MiB；单条信封64KiB | 待审值；800MiB低于既有1GiB文件存储候选，仍须核对物理开销 |
+| 失败通知stream | `<prefix>_DELIVERY_FAILURES`，file＋InterestPolicy；仅接业务stream的MAX_DELIVERIES及MSG_TERMINATED通知，配固定采集consumer | E01-12已确认；固定failure_collector，不采集自身失败形成递归 |
+| 容量 | 业务768MiB、失败通知32MiB；单条信封64KiB | E01-12已确认测试配置；800MiB低于既有1GiB消息文件限额，物理开销仍受2GiB卷约束 |
 | 清理 | 各自所需consumer已可靠接收后清理；无自动过期、无删旧腾空间 | 已确认；满额保留PG待发记录，按原身份报错和恢复 |
 
 InterestPolicy在没有匹配consumer时可能立即移除消息，因此初始化先建失败通知stream及collector，再建业务stream和全部durable，核对订阅后才开放发布／消费。应用账号无删除stream／consumer权限；升级不通过删建消费者重置位置。需要改变过滤条件时先暂停相关发布并处理既有积压，不静默缩小旧消息的接收范围。
 
 collector保存技术失败记录后才确认，不生成新的学习空间事实。通知提供stream、consumer和stream_seq；用发布回执或仍保留的原消息关联event_id，关联不了则保留未定位故障。通知流满额、采集异常或通知遗漏仍可通过公共运行的收据核对发现，不能把advisory当作唯一可靠账本。[失败通知字段](https://docs.nats.io/reference/jetstream/advisory/max-deliver)。
 
-部署同时核对本环境的stream、consumer、账号权限与prefix，连接到共享NATS时使用隔离账号／命名范围，不订阅其他部署的通知。具体账号装配及这些配置值在E01接线前审阅。M1不新增消息管理页面或第二套业务调度器。
+部署同时核对本环境的stream、consumer、账号权限与prefix，连接到共享NATS时使用隔离账号／命名范围，不订阅其他部署的通知。E01-12采用独立maintenance/application凭据，由Secret注入；应用只获本环境发布、查询、拉取及确认权限，无建删消息资源权限。`prepare-messaging-secret.py`保留已有密码，仅补缺项；初始化使用独立维护入口，资源不一致即拒绝，不覆盖或删建。M1不新增消息管理页面或第二套业务调度器。
 
 ### 4.4 共享Worker与Temporal队列
 
@@ -485,7 +485,7 @@ K3s、PostgreSQL 17.12、Temporal Server/admin-tools 1.32.2、NATS Server 2.15.3
 | SQLAlchemy／psycopg／Alembic | 2.1.8／3.3.9／1.20.1 | [SQLAlchemy](https://pypi.org/project/sqlalchemy/2.1.8/)、[psycopg](https://pypi.org/project/psycopg/3.3.9/)、[Alembic](https://pypi.org/project/alembic/1.20.1/)；沿已选工具，安装制品与传递依赖一起锁定 |
 | PostgreSQL | 17.12 | 复核[11月12日补丁发布](https://www.postgresql.org/docs/release/17.12/)，17.12已按E01-02确认。Temporal的PG Visibility见[官方说明](https://docs.temporal.io/self-hosted-guide/visibility) |
 | Temporal Server | 1.32.2 | [官方发布](https://github.com/temporalio/temporal/releases/tag/v1.32.2)；Server/admin-tools已确认；Schema工具和部署Chart必须匹配，不能用同号推断Python SDK版本 |
-| NATS Server／Python客户端 | 2.15.3／nats-py 2.16.0 | [服务发布](https://github.com/nats-io/nats-server/releases/tag/v2.15.3)、[客户端](https://pypi.org/project/nats-py/2.16.0/)；Server已确认，Python客户端仍待确认；启用JetStream，客户端版本号无需与服务相同 |
+| NATS Server／Python客户端 | 2.15.3／nats-py 2.16.0 | [服务发布](https://github.com/nats-io/nats-server/releases/tag/v2.15.3)、[客户端](https://pypi.org/project/nats-py/2.16.0/)；Server已确认，Python客户端在E01-12确认并锁定；启用JetStream，客户端版本号无需与服务相同 |
 | 本机K3s | v1.37.2+k3s1 | E01-01已确认并安装；固定发布，不自动追随stable。来源与hash见[实现清单](../../../../src/m1/deploy/components/manifest.yaml)，远程集群不要求同为K3s |
 | Node.js | 24.22.3 LTS | [发布索引](https://nodejs.org/dist/index.json)与[支持状态](https://nodejs.org/en/about/previous-releases)；用于前端构建，浏览器运行不依赖Node服务 |
 | Vue／TypeScript／Vite | 3.5.43／5.9.3／7.3.7 | 来自现有[原型package.json](../prototype/package.json)的候选；只复用构建起点，不复制mock业务。已在E01-03生成正式锁文件，随应用增量评审 |
@@ -783,3 +783,4 @@ E01-01/02与E01-03应用骨架已实施；E01-04迁移交付见[数据库实施]
 | v0.51 | 2026-11-16 | 登记E01-07分页、响应及事实正文读取上限 |
 | v0.52 | 2026-11-16 | 登记E01-08维护账号、显式命令及迁移部署边界 |
 | v0.53 | 2026-11-16 | 确认登录参数、pwdlib及本机HTTP例外；其余候选保持原状态 |
+| v0.54 | 2026-11-16 | 确认nats-py、事件交接限额、消息资源及凭据分离 |

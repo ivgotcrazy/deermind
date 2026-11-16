@@ -1,10 +1,10 @@
 # M1 数据库设计
 
-> **版本**：v0.13<br>
-> **状态**：E01-10增加既定监护及使用确认四表；部署与验证状态见实施计划，114张规划表按需迁移<br>
+> **版本**：v0.14<br>
+> **状态**：E01-12增加既定事件交接四表；部署与验证状态见实施计划，114张规划表按需迁移<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.12 → v0.13，登记E01-10既定四表迁移；规划总数不变<br>
+> **修订说明**：v0.13 → v0.14，登记E01-12交接四表迁移，规划表总数不变<br>
 
 **一个PostgreSQL实例，三个数据库。** `deermind`保存业务与应用运行数据；`temporal`、`temporal_visibility`由Temporal管理。业务库内部按责任划分schema，schema不是独立数据库，也不等于独立服务。
 
@@ -344,6 +344,8 @@ E01-10的`0006_account_usage`追加既定guardian_records、student_guardian_rel
 
 实现阶段从本稿编写迁移，并核对精确JSON Schema、约束和回滚行为；不能用“实现再定”遗漏本册已列的字段。索引性能和容量用真实运行验证；不以文档静态检查替代工程验证。
 
+E01-12的`0007_event_delivery`接线既定handoffs、handoff_attempts、subscription_receipts及delivery_failures；实际20张表（含alembic_version），规划114张不变。应用不得删除交接历史或改写收据；发布身份固定，状态列按最小授权更新。字段、唯一键及索引见[Runtime数据字典§9—12](database/Business_Runtime.md#9-runtimehandoffs)，交付见[E01-12](../../../../src/m1/deploy/environments/local-wsl/E01-12-event-delivery.md)。
+
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
@@ -361,3 +363,4 @@ E01-10的`0006_account_usage`追加既定guardian_records、student_guardian_rel
 | v0.11 | 2026-11-16 | 接线E01-08两张维护表，规划总数调整为113张 |
 | v0.12 | 2026-11-16 | 登记E01-09认证三表及新增限流控制表，规划共114表 |
 | v0.13 | 2026-11-16 | 登记E01-10既定四表迁移；规划总数不变 |
+| v0.14 | 2026-11-16 | 登记E01-12交接四表迁移，规划表总数不变 |

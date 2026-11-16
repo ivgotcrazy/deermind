@@ -144,3 +144,7 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 ## E01-11公共收据与接口验证
 
 `test.sh receipts`使用相同显式集群、Secret和构建镜像参数，在随机数据库验证原请求查询、不重新写入、同键冲突及身份隔离。API错误与响应合同用例进入local组；浏览器通过真实API故障注入验证回执丢失和原请求重试。公共收据只注册已实现的本人使用确认；不测试尚未接入的后台受理或WebSocket。结果见[E01-11交付](../deploy/environments/local-wsl/E01-11-request-receipts.md)。
+
+## E01-12事件交接验证
+
+`test.sh delivery`沿用数据库组参数，另需`M1_TEST_NATS_ADDRESS`和`M1_MESSAGING_SECRET`。临时测试Pod通过Secret取得维护密码；每例只创建并删除随机测试库、消息流。验证提交回滚、重复承接、PubAck丢失、承接后未Ack、订阅缺失、重投耗尽、拒绝及受控重送。`test.sh local`包含通知Schema、登记边界、凭据及日志检查；应用凭据的管理禁止项另做实际集群验证。结果及边界见[E01-12交付](../deploy/environments/local-wsl/E01-12-event-delivery.md)。

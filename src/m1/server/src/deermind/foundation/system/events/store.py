@@ -2,7 +2,7 @@
 
 import hashlib
 import json
-from collections.abc import Mapping, Sequence
+from collections.abc import Awaitable, Callable, Mapping, Sequence
 from dataclasses import replace
 from datetime import datetime
 from uuid import UUID
@@ -34,7 +34,13 @@ def canonical_json(value: object) -> str:
 class EventStore:
     """由装配层登记白名单；每次保存使用调用方已开启的同一事务。"""
 
-    def __init__(self, registrations: Sequence[EventRegistration]) -> None:
+    def __init__(
+        self,
+        registrations: Sequence[EventRegistration],
+        *,
+        arrange_delivery: Callable[[AsyncConnection, StoredEvent], Awaitable[None]] | None = None,
+    ) -> None:
+        self._arrange_delivery = arrange_delivery
         self._registry: dict[tuple[str, int], EventRegistration] = {}
         for registration in registrations:
             key = (registration.event_type, registration.schema_version)
@@ -138,6 +144,9 @@ class EventStore:
                 ),
                 {"kind": kind, "id": scope_id, "seq": sequence},
             )
+        if self._arrange_delivery is not None:
+            for event in stored:
+                await self._arrange_delivery(connection, event)
         return stored
 
     def validate_inline(

@@ -1,15 +1,15 @@
 # M1 事件与消息载荷
 
-> **版本**：v0.7<br>
+> **版本**：v0.8<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-16<br>
-> **修订说明**：v0.6 → v0.7，落实账号及首次确认事件，固定告知正文与读取用途<br>
+> **修订说明**：v0.7 → v0.8，接线既定DeliveryNotice及DeliveryStateChanged，固定正式事实核验<br>
 
 本分册是事件信封、类型化动作字段与通知结构的唯一字段定义；完整事实正文及投影登记见[事件正文合同](Event_Facts.md)。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
 
-E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileReceived及完整DTO附件，事件引用不代替正文校验；E01-08新增维护结果ProjectionRebuildFinished（records为空，仅一次完成或明确失败留痕）；其余类型按所属增量实施。既有事实保存见[E01-05](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，文件与附件见[E01-06](../../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)，进度以[实施计划](../Delivery_Plan.md)为准。
+E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileReceived及完整DTO附件，事件引用不代替正文校验；E01-08新增维护结果ProjectionRebuildFinished（records为空，仅一次完成或明确失败留痕）；E01-12新增DeliveryStateChanged及既定DeliveryNotice传输副本；其余类型按所属增量实施。既有事实保存见[E01-05](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，文件与附件见[E01-06](../../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)，进度以[实施计划](../Delivery_Plan.md)为准。
 
 ## 1. 正式事件信封 v2
 
@@ -43,7 +43,7 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileRece
 
 ## 2. NATS 交接与订阅
 
-正式事件保存在数据库；JetStream只保存投递副本。subject沿基础设施已有候选`dm.<deployment_key>.event.<event_type>`，不带学生姓名、题面或消息正文。subject、durable名称仍由原配置候选审批，不由各Space自行命名。
+正式事件保存在数据库；JetStream只保存投递副本。subject沿E01-12已确认配置`dm.<deployment_key>.event.<event_type>`，不带学生姓名、题面或消息正文。本机采用local-wsl隔离命名，durable取程序登记的subscriber_id；不由请求方临时命名。
 
 | DeliveryNotice字段 | 类型/必填 | 含义 |
 | --- | --- | --- |
@@ -864,7 +864,7 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
 | `FileReceived` | runtime / file | 文件完整保存且校验通过 | 文件身份、媒体、字节数、hash和非秘密存储定位 |
 | `ProjectionRebuildFinished` | runtime / maintenance | 维护重建完成或明确失败 | 范围、代次、固定上界、检查结果或错误 |
 
-共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过正文合同§3登记Schema校验。本轮累计已接线TrialAccountSaved（管理员/学生开户及资料更新）、UsageConfirmationRecorded、AccountRecovered、AccountSignedIn、AccountSignedOut、FileReceived和ProjectionRebuildFinished；其余类型未实现。事件版本沿§3登记，不宣称执行过历史数据迁移。
+共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过正文合同§3登记Schema校验。本轮累计已接线TrialAccountSaved（管理员/学生开户及资料更新）、UsageConfirmationRecorded、AccountRecovered、AccountSignedIn、AccountSignedOut、FileReceived、ProjectionRebuildFinished和DeliveryStateChanged；其余类型未实现。事件版本沿§3登记，不宣称执行过历史数据迁移。
 
 | 类型 | outcome允许值 | 额外字段 |
 | --- | --- | --- |
@@ -1022,3 +1022,4 @@ runtime运行留痕的records使用固定DTO，逐事件数量及条件见正文
 | v0.5 | 2026-11-16 | 登记FileReceived、完整DTO附件及E01-06实现范围 |
 | v0.6 | 2026-11-16 | 接线ProjectionRebuildFinished维护结果，不增加业务事件 |
 | v0.7 | 2026-11-16 | 落实账号及首次确认事件，固定告知正文与读取用途 |
+| v0.8 | 2026-11-16 | 接线既定DeliveryNotice及DeliveryStateChanged，固定正式事实核验 |

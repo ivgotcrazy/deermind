@@ -1,5 +1,5 @@
 images:
-  server: deermind/server:e01-11-r1
+  server: deermind/server:e01-12-r4
   client: deermind/client:e01-11-r1
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
@@ -13,6 +13,10 @@ temporal:
   address: deermind-temporal-frontend:7233
   namespace: dm-local-wsl
   taskQueue: dm.local-wsl.application
+messaging:
+  address: nats://deermind-nats:4222
+  deployment: local-wsl
+  existingSecret: deermind-nats
 
 auth:
   origins:

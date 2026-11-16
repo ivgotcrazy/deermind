@@ -27,7 +27,7 @@ ENABLED = os.environ.get("M1_COMPONENT_TESTS") == "1"
 JsonObject = dict[str, Any]
 
 
-def nats_request(port: int, token: str, subject: str, body: Mapping[str, object]) -> JsonObject:
+def nats_request(port: int, password: str, subject: str, body: Mapping[str, object]) -> JsonObject:
     """通过本地转发端口发送一次 NATS 请求，返回解码后的响应。
 
     仅实现本组探测需要的协议，不替代正式客户端。鉴权拒绝、连接关闭、
@@ -38,10 +38,14 @@ def nats_request(port: int, token: str, subject: str, body: Mapping[str, object]
             if not wire.readline().startswith(b"INFO "):
                 raise RuntimeError("Missing NATS greeting")
 
-            # 独立回复 inbox 避免并行探测混淆；token 只写入连接，不打印。
+            # 独立回复 inbox 避免并行探测混淆；维护密码只写入连接，不打印。
             inbox = "_INBOX.e0102." + uuid.uuid4().hex
             payload = json.dumps(body).encode()
-            wire.write(b"CONNECT " + json.dumps({"auth_token": token}).encode() + b"\r\n")
+            wire.write(
+                b"CONNECT "
+                + json.dumps({"user": "maintenance", "pass": password}).encode()
+                + b"\r\n"
+            )
             wire.write(f"SUB {inbox} 1\r\n".encode())
             wire.write(f"PUB {subject} {inbox} {len(payload)}\r\n".encode() + payload + b"\r\n")
 
@@ -200,8 +204,10 @@ class ComponentsTests(unittest.TestCase):
         cls.passwords = json.loads(cls.kube("get", "secret", "deermind-postgres", "-o", "json"))[
             "data"
         ]
-        cls.token = base64.b64decode(
-            json.loads(cls.kube("get", "secret", "deermind-nats", "-o", "json"))["data"]["token"]
+        cls.nats_password = base64.b64decode(
+            json.loads(cls.kube("get", "secret", "deermind-nats", "-o", "json"))["data"][
+                "maintenance-password"
+            ]
         ).decode()
 
         image = (
@@ -435,7 +441,7 @@ class ComponentsTests(unittest.TestCase):
                 nats_request(port, "deliberately-wrong", "$JS.API.INFO", {})
             nats_request(
                 port,
-                self.token,
+                self.nats_password,
                 "$JS.API.STREAM.CREATE." + stream,
                 {
                     "name": stream,
@@ -446,7 +452,7 @@ class ComponentsTests(unittest.TestCase):
                     "max_msgs": 10,
                 },
             )
-            ack = nats_request(port, self.token, subject, {"marker": self.run_id})
+            ack = nats_request(port, self.nats_password, subject, {"marker": self.run_id})
             self.assertEqual(ack["seq"], 1)
 
         # 写入确认与重启后读取使用不同连接，证明消息来自持久卷。
@@ -456,13 +462,13 @@ class ComponentsTests(unittest.TestCase):
         with self.nats_port() as port:
             try:
                 result = nats_request(
-                    port, self.token, "$JS.API.STREAM.MSG.GET." + stream, {"seq": 1}
+                    port, self.nats_password, "$JS.API.STREAM.MSG.GET." + stream, {"seq": 1}
                 )
                 self.assertEqual(
                     json.loads(base64.b64decode(result["message"]["data"])), {"marker": self.run_id}
                 )
             finally:
-                nats_request(port, self.token, "$JS.API.STREAM.DELETE." + stream, {})
+                nats_request(port, self.nats_password, "$JS.API.STREAM.DELETE." + stream, {})
 
     def test_03_temporal_keeps_workflow_after_restart(self) -> None:
         """确认无应用 Worker 时，等待中的测试工作流仍可在重启后查询。"""
