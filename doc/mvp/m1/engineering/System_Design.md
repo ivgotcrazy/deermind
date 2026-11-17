@@ -1,11 +1,11 @@
 # M1 系统总体设计
 
-> **版本**：v0.59<br>
+> **版本**：v0.60<br>
 > **状态**：已按小增量开始工程实施；进度及待确认项见实施计划，总体架构不变<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-16<br>
-> **修订说明**：v0.58 → v0.59，明确投影生成及重建归业务，底座不定义转换或操作业务表<br>
+> **更新日期**：2026-11-17<br>
+> **修订说明**：v0.59 → v0.60，明确独立抽象层及底座与技术适配互不导入实现<br>
 
 M1采用**一个代码仓库、一套模块化后端，API与Worker分别运行**；后端使用Python＋FastAPI，前端使用Vue 3＋TypeScript＋Vite，见[登记§61](../../DECISIONS.md#61-m1代码组织与前后端框架)。产品业务与核心Space分别组织代码；AI底座提供模型、工具及上下文处理的通用能力，公共运行底座负责接入、路由、派发、运行保障、事件和输出回传。Space边界是代码与数据所有权边界，M1不按Space分别部署微服务。
 
@@ -87,7 +87,7 @@ flowchart LR
 
 ### 3.1 分层与允许依赖
 
-**图2：后端代码依赖。** 实线指向允许使用的公开合同，不表示跨空间同步启动加工。各Space通过公共事件与结果合同协作；技术适配器实现上层端口。客户端入口和依赖装配未画入本图。
+**图2：后端代码依赖。** 实线指向允许使用的公开合同，不表示跨空间同步启动加工。各Space通过公共事件与结果合同协作；技术适配器与底座实现共同依赖独立抽象合同。客户端入口和依赖装配未画入本图。
 
 ```mermaid
 flowchart TB
@@ -113,10 +113,12 @@ flowchart TB
   P -->|"任务、事件与授权"| SYS
   AI -->|"执行记录与预算约束"| SYS
   SYS -->|"路由所需AI能力"| AI
-  T["技术支撑适配器<br/>数据库、文件、模型、识别"] -.->|"实现底座端口"| BASE
+  C["独立抽象层<br/>接口、数据与格式约束"]
+  BASE -->|"依赖合同"| C
+  T["技术支撑适配器<br/>数据库、文件、模型"] -->|"依赖合同"| C
 ```
 
-技术适配器也实现产品业务和各Space的存储端口，图中省略这些重复连线；业务存储并非全部经底座代理。核心到共用底座的连线只代表M1三个模块，Evolution仅标规划位置。AI与公共运行之间的箭头表示所需公开能力，具体装配与模块内部依赖按A02在详细设计讨论，不据此建立循环导入。
+跨层接口归独立抽象目录，装配层注入技术实现；底座与技术适配不互相导入实现。业务存储并非全部经底座代理。核心到共用底座的连线只代表M1三个模块，Evolution仅标规划位置。AI与公共运行之间的箭头表示所需公开能力，具体装配与模块内部依赖按A02在详细设计讨论，不据此建立循环导入。
 
 已有内容或已发布结果可通过授权短查询读取。跨Space需要新加工结果时，提交事件，由接收方创建自己的工作，再发布结果通知；调用方保存依赖并释放执行资源。Interaction不调用Evaluation的计算入口，Evaluation不回调教学逻辑。按用途和接触条件供题统一通过异步`domain.supply_task`，无论最终使用已有题还是生成新题；直接读取既定题面或参考仍是短查询，不触发供题判定。
 
@@ -602,9 +604,9 @@ sequenceDiagram
 
 ### 5.1 已确认的源码组织
 
-正式工程位于`src/m1/`，后端Python＋FastAPI，客户端Vue 3＋TypeScript＋Vite。API和一个共享Worker共用后端包、分别启动；前端一个工程、管理员与学生两个入口。目录方向及OpenAPI使用已确认，完整展开见[源码与工程资产组织](Source_Organization.md)，本轮未创建源码。
+正式工程位于`src/m1/`，后端Python＋FastAPI，客户端Vue 3＋TypeScript＋Vite。API和一个共享Worker共用后端包、分别启动；前端一个工程、管理员与学生两个入口。目录方向及OpenAPI使用已确认，完整展开见[源码与工程资产组织](Source_Organization.md)，实际交付状态见实施计划。
 
-后端采用`server/src/deermind/`：product承载产品业务，spaces承载Domain/Interaction/Evaluation，foundation承载AI和公共运行，infrastructure提供技术适配，bootstrap绑定实现，entrypoints提供API/Worker/维护入口。定义与运行在各模块内部区分，Operation归业务模块，Worker只承载执行。Evolution和独立OCR不建占位。
+后端采用`server/src/deermind/`：product承载产品业务，spaces承载Domain/Interaction/Evaluation，abstractions承载独立跨层合同，foundation承载AI和公共运行，infrastructure提供技术适配，bootstrap绑定实现，entrypoints提供API/Worker/维护入口。定义与运行在各模块内部区分，Operation归业务模块，Worker只承载执行。Evolution和独立OCR不建占位。
 
 工程还包含clients、contracts/generated、tests、deploy、scripts和ci。模块表映射归所属persistence，业务Alembic是一条发布链；HTTP合同由Pydantic与FastAPI导出OpenAPI，WS/事件使用各自版本Schema。源码依赖、生成规则和客户端详细结构分别见[组织§4](Source_Organization.md#4-模块依赖与装配)、[API§7](API_and_Message_Design.md#7-openapi与可执行合同)、[客户端§2](Client_Design.md#2-页面组件与状态组织)。模块不得穿透私有存储；公开查询与异步加工的边界保留。
 
@@ -1117,3 +1119,4 @@ V01–V08仍待实现验证。消息／事件分存须证明聊天能读原文�
 | v0.56 | 2026-11-15 | 前端优先落实工程结构，视觉体验打磨后置，样板不再作为开工门槛 |
 | v0.57 | 2026-11-15 | 同步E01-01进入工程实现；仅更新状态入口，不改变总体合同 |
 | v0.59 | 2026-11-16 | 明确投影生成及重建归业务，底座不定义转换或操作业务表 |
+| v0.60 | 2026-11-17 | 明确独立抽象层及底座与技术适配互不导入实现 |

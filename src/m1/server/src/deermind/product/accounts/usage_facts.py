@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import FactModel, NonEmpty, Ref
+from deermind.abstractions.events import FactModel, NonEmpty, Ref
 from pydantic import Field
 
 Revision = Annotated[int, Field(ge=1)]

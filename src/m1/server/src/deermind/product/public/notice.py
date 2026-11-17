@@ -1,6 +1,6 @@
 """E01-10测试告知；只能用于合成账号，不能据此接收真实学生。"""
 
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.events import Ref
 
 TEST_NOTICE = Ref(owner="product", type="usage_notice", id="synthetic-account-test", revision=1)
 TEST_NOTICE_TEXT = (

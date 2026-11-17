@@ -11,10 +11,10 @@ from collections.abc import Awaitable, Callable
 from pathlib import Path
 from uuid import UUID, uuid4
 
+from deermind.abstractions.events import Ref
 from deermind.bootstrap.accounts import configure_account_management, configure_usage
 from deermind.bootstrap.projections import account_rebuilder
 from deermind.entrypoints.maintenance.database import upgrade
-from deermind.foundation.system.events.contracts import Ref
 from deermind.infrastructure.database.connection import application_engine
 from deermind.infrastructure.files.local import LocalFiles
 from deermind.product.accounts.auth import AuthService

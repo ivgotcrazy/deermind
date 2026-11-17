@@ -10,16 +10,12 @@ from pathlib import Path
 from unittest.mock import patch
 from uuid import UUID, uuid4
 
+from deermind.abstractions.event_reading import EventFilter, EventPartRef, ReadAccess
+from deermind.abstractions.events import EventDraft, ProducerAccess, Ref
 from deermind.bootstrap.events import event_reader
 from deermind.entrypoints.maintenance.database import upgrade
 from deermind.foundation.system.events.attachments import FactAttachments
-from deermind.foundation.system.events.contracts import EventDraft, ProducerAccess, Ref
 from deermind.foundation.system.events.query import EventReader
-from deermind.foundation.system.events.reading import (
-    EventFilter,
-    EventPartRef,
-    ReadAccess,
-)
 from deermind.foundation.system.events.store import EventStore
 from deermind.infrastructure.database.connection import application_engine
 from deermind.infrastructure.files.local import LocalFiles

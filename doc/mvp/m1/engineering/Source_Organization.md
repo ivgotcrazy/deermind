@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.14<br>
+> **版本**：v0.15<br>
 > **状态**：代码按已批准目录逐增量接线；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-16<br>
-> **修订说明**：v0.13 → v0.14，将账号投影和重建归还业务，底座仅保存通用控制记录<br>
+> **更新日期**：2026-11-17<br>
+> **修订说明**：v0.14 → v0.15，落实独立抽象层、实现迁移、装配与禁止依赖规则<br>
 
 ## 1. 范围与维护位置
 
@@ -148,53 +148,39 @@ Prompt、AI输出Schema和语义样例由业务所有者维护。已应用的蓝
 ### 3.3 底座、适配与入口
 
 ```text
-foundation/
-├── system/
-│   ├── public/                 # 通用信封、授权、事件和执行端口
-│   ├── events/                 # 追加、授权读取、序号及Schema登记
-│   ├── projections/            # 通用应用收据、扫描进度和维护记录；无业务表SQL
-│   ├── executions/             # Execution、Attempt、Step与受理
-│   ├── waits/                  # 条件匹配、期限、唤醒及超时
-│   ├── delivery/               # 待发、订阅承接、Relay及失败记录
-│   ├── realtime/               # WS协议、watch与结果通知
-│   ├── files/                  # 文件身份、固定附件与授权访问端口
-│   ├── authz/                  # 通用执行授权，不定义学生业务权限
-│   ├── logging/                # 结构化Pod日志
-│   ├── persistence/            # runtime schema
-│   └── ports/                  # PG、消息、执行与文件适配协议
-└── ai/
-    ├── public/
-    ├── configuration/          # 用途、模型配置与受理快照
-    ├── execution/              # 有预算的AI任务及候选交接
-    ├── tools/                  # 工具注册、授权、执行与结果记录
-    ├── context/                # 通用材料包装与大小检查
-    ├── budgets/                # 调用与用量累计
-    ├── persistence/            # ai schema
-    └── ports/
-infrastructure/
-├── postgres/                   # engine、连接、session与短事务上下文
-├── files/                      # 本地磁盘/PVC文件系统适配
-├── nats/                       # JetStream连接及投递适配
-├── temporal/                   # Client、Worker注册、Codec及执行接线
-├── pydantic_ai/                # 已定Agent框架及持久集成适配
-├── model_providers/            # 模型API协议适配
-└── credentials/                # 当前有效凭据读取
-bootstrap/
-├── settings.py                 # 配置载入、类型检查及缺项拒绝
-├── services.py                 # 公开服务和私有实现的绑定
-├── registries.py               # Operation、普通处理、事件、投影及工具登记
-├── transactions.py             # 注入同库短事务；不写业务表
-└── metadata.py                 # 汇总六个schema的表元数据，供迁移使用
-entrypoints/
-├── api/
-│   ├── app.py                  # FastAPI工厂与生命周期
-│   ├── routes/                 # product/domain/interaction/evaluation/runtime
-│   ├── websocket.py            # WS接入；业务动作仍走登记处理器
-│   ├── dependencies.py         # 身份、授权上下文及已装配服务
-│   └── errors.py               # 共同错误外壳与状态码映射
-├── worker/main.py              # 一个共享Worker及受控Relay生命周期
-└── maintenance/main.py         # 迁移、初始化、重建等受控命令
+deermind/
+├── abstractions/               # 独立跨层合同；不导入项目实现
+│   ├── events.py               # 引用、事件信封、完整正文及登记类型
+│   ├── event_reading.py         # 授权取材、过滤与片段引用
+│   ├── encoding.py             # 确定性JSON编码
+│   ├── hashing.py              # 同一编码下的内容摘要
+│   ├── files.py                # 文件字节端口
+│   ├── file_records.py         # 文件元数据与登记正文
+│   ├── delivery.py             # 传输、订阅描述及确认合同
+│   ├── executions.py           # 执行身份、远程控制及生命周期接口
+│   ├── waits.py                # 等待数据及事务服务接口
+│   └── ai/                     # 输入输出、请求账本数据及调用/工具接口
+├── foundation/
+│   ├── system/
+│   │   ├── events/             # 事件保存、授权读取、附件协调
+│   │   ├── files/              # 文件登记、校验及自身投影
+│   │   ├── delivery/           # 待发、承接、收据核对与失败记录
+│   │   ├── executions/         # 工作生命周期、派发与结束核对
+│   │   ├── waits/              # 等待、接续事务与补查
+│   │   ├── projections/        # 通用收据及维护记录；无业务投影
+│   │   └── public/             # 当前HTTP错误和收据映射
+│   └── ai/                     # 预算、授权、工具、候选及AI事实投影
+├── infrastructure/
+│   ├── database/               # Engine、版本和维护锁配置
+│   ├── files/                  # local/PVC字节存取及挂载检查
+│   ├── nats/                   # SDK发布、接收、确认和资源检查
+│   ├── temporal/               # SDK控制、Activity外壳与持久等待
+│   └── ai/                     # Pydantic AI、模型协议和Temporal集成
+├── bootstrap/                  # 配置、登记、实现绑定；runtime.py装配Activity服务
+└── entrypoints/                # API、Worker、维护命令
 ```
+
+本树列出本轮已接线的跨层组织。其余业务功能按所属增量建立，不创建空端口目录。
 
 底座只提供机制。各所有者提供事件payload合同，由装配层登记；业务投影函数由所有者直接调用或接入自己的订阅处理器，不注册给事件保存器。AI取材与记忆内容由Operation决定。对象存储在文件端口后续扩展，不先编写未启用适配；不保留`recognition/`或独立OCR入口。
 
@@ -208,26 +194,29 @@ flowchart TB
     B --> M["product / spaces<br/>业务实现"]
     B --> F["foundation<br/>通用机制"]
     B --> I["infrastructure<br/>技术适配"]
-    M --> P["公开合同与所需端口"]
+    M --> P["abstractions<br/>独立跨层合同"]
     F --> P
     I --> P
 ```
 
-图1：箭头表示代码使用或装配依赖，不表示运行时消息流。端口仍位于所属模块的`public/`或`ports/`，不是另建中央“全部模型”包。运行时通过注入的实现调用；基础设施可以实现端口，但通用底座不反向导入业务实现。
+图1：箭头表示源码依赖。Foundation与Infrastructure均依赖`deermind/abstractions/`，两层实现不互相导入。Bootstrap同时认识两边实现并注入；运行时可以通过接口调用或回调，不能穿透到对方存储与内部属性。抽象定义不属于任一实现层。
+
+抽象目录只放Protocol、必要DTO/错误、无副作用的格式校验及编解码。允许标准库和Pydantic，禁止项目实现、SQLAlchemy、Temporal、NATS和模型SDK。Registry、数据库事务回调及权限执行留在所属实现；不要整体搬迁含实现的`contracts.py`。合同内部不得循环引用。
 
 | 代码位置 | 允许依赖 | 检查拒绝 |
 | --- | --- | --- |
 | entrypoints | bootstrap、模块public及协议适配 | 路由直接SQL、计算Belief、组织Agent业务步骤 |
 | bootstrap | 所有待装配实现与登记；metadata只加载表定义 | 装配时创建业务事实、调用LLM、连接隐式默认集群 |
 | product / spaces | 本模块实现、底座公开合同、已登记的跨模块公开合同 | 导入其他模块persistence、访问其私有表或直接启动其AI流程 |
-| foundation | 自身实现、通用端口与公开底座合同 | 导入Task、活动、Claim等业务实现决定流程 |
-| infrastructure | 技术SDK及所实现端口 | 教学策略、评价阈值、章节关联等业务判断 |
+| abstractions | 标准库、Pydantic及本层合同 | 导入项目实现、技术SDK或执行I/O |
+| foundation | 本层实现、独立抽象；内部持久化使用已定数据库库 | 导入infrastructure、业务实现、装配或入口 |
+| infrastructure | 本层技术实现、SDK及独立抽象 | 导入foundation、业务模块、装配或入口；决定业务规则 |
 | projections | 本模块确定性转换及存储；通用投影上下文 | 模型调用、网络、发送通知、安排历史工作 |
 | clients/shared | 自身、生成合同和前端基础库 | 导入admin或student功能、嵌入掌握计算 |
 
 跨模块读取和同库提交协作仍由[总体授权矩阵](System_Design.md#661-最小调用授权矩阵)限制。源码中能导入公开DTO不等于有权读数据：Evaluation只能按获准范围取事件原文；Domain入库通过Product来源保护端口；目标提交通过Product采用保护端口。需异步加工的协作经事件和等待，不以注入端口绕过确认的异步边界。
 
-跨模块端口放在请求方，装配层以提供方公开服务绑定；公开合同不得导入对方实现。共享内容结构由Domain公开合同提供，通用底座把材料视为受约束数据，不因此理解数学语义。依赖检查按模块白名单执行，禁止通过动态导入或SQL绕过。当前直接导入检查已用正反样例验证；E01-03已接入正式路径，并补入口访问和反向依赖拒绝；后续业务路径出现时补相应用例。静态导入检查不代替运行时权限与私表访问测试。
+跨层接口统一放独立抽象目录，由装配层绑定；模块内部数据结构不因此全部集中。跨Space业务公开合同仍由业务所有者维护，公开合同不得导入对方实现。共享内容结构由Domain公开合同提供，通用底座把材料视为受约束数据，不因此理解数学语义。依赖检查按模块白名单执行，禁止通过动态导入或SQL绕过。当前直接导入检查已用正反样例验证；E01-03已接入正式路径，并补入口访问和反向依赖拒绝；后续业务路径出现时补相应用例。静态导入检查不代替运行时权限与私表访问测试。
 
 ## 5. 客户端与生成合同
 
@@ -280,7 +269,7 @@ server/migrations/
 
 ### 6.3 E01-06落地
 
-`foundation/system/files/ports.py`定义字节存储端口；`infrastructure/files/local.py`处理local/PVC，`records.py`维护文件登记Schema和确定性写入。`foundation/system/events/attachments.py`负责事务外附件准备及FileReceived接线；事件保存器保留外置引用并向调用方返回完整DTO；业务显式交给自己的生成器。文件登记由文件服务显式写入，不通过事件注册回调。
+`abstractions/files.py`定义字节存储端口，`file_records.py`定义登记数据；`infrastructure/files/local.py`处理local/PVC，`foundation/system/files/records.py`维护文件登记校验和自身投影。`foundation/system/events/attachments.py`负责事务外附件准备及FileReceived接线；事件保存器保留外置引用并向调用方返回完整DTO；业务显式交给自己的生成器。文件登记由文件服务显式写入，不通过事件注册回调。
 
 迁移`0003_file_objects`独立追加，不改旧DDL；`server/tests/test_files.py`验证文件失败边界，`tests/migrations/test_file_facts.py`经`test.sh files`验证真实PG与PVC。浏览器授权读取、上传租约和Codec不提前建空模块。
 
@@ -418,11 +407,11 @@ Helm沿[官方Chart文件结构](https://helm.sh/docs/topics/charts/)组织。�
 
 ### E01-12事件交接接线
 
-`foundation/system/delivery/`维护固定通知/收据合同、原子发布安排、承接去重、失败留痕及受控重送；`infrastructure/nats/`封装SDK、资源核对和Worker桥接循环。`bootstrap/messaging.py`登记当前业务订阅，`bootstrap/events.py`接入生产者发布安排；底座不导入业务模块。
+`foundation/system/delivery/`维护固定通知/收据合同、原子发布安排、承接去重、失败留痕及受控重送；`infrastructure/nats/`封装SDK及资源核对；Worker桥接流程归`foundation/system/delivery/bridge.py`，通过独立传输接口收发。`bootstrap/messaging.py`登记当前业务订阅，`bootstrap/events.py`接入生产者发布安排；底座不导入业务模块。
 
 Worker只绑定已初始化的消息资源。`entrypoints/maintenance/messaging.py`提供初始化和获准重送；`scripts/prepare-messaging-secret.py`在显式集群中补齐维护/应用凭据。`test.sh delivery`通过构建镜像、随机PG库及随机NATS流验证，不登记假的生产业务订阅。
 
-E01-13实际新增`foundation/system/executions/`（工作、尝试、授权、Step和控制事实）及`infrastructure/temporal/executions.py`、`relay.py`（远程派发和核对）；装配在`bootstrap/executions.py`和既有共享Worker。`tests/migrations/test_execution.py`及`execution_worker.py`只用于随机隔离库和测试队列，正式登记不导入测试Workflow。
+E01-13实际新增`foundation/system/executions/`（工作、尝试、授权、Step和控制事实）及`infrastructure/temporal/executions.py`（SDK控制和Activity外壳）、`foundation/system/executions/relay.py`（派发和核对）；装配在`bootstrap/executions.py`和既有共享Worker。`tests/migrations/test_execution.py`及`execution_worker.py`只用于随机隔离库和测试队列，正式登记不导入测试Workflow。
 
 ## 修订记录
 
@@ -442,3 +431,4 @@ E01-13实际新增`foundation/system/executions/`（工作、尝试、授权、S
 | v0.12 | 2026-11-16 | 登记E01-12交接底座、NATS适配及测试入口 |
 | v0.13 | 2026-11-16 | 登记执行仓储、Temporal适配和隔离故障验证入口 |
 | v0.14 | 2026-11-16 | 将账号投影和重建归还业务，底座仅保存通用控制记录 |
+| v0.15 | 2026-11-17 | 落实独立抽象层、实现迁移、装配与禁止依赖规则 |

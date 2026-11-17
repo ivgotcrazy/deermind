@@ -6,8 +6,9 @@ from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import FactModel, Ref
 from pydantic import JsonValue
+
+from deermind.abstractions.events import FactModel, Ref
 
 PAGE_DEFAULT = 50
 PAGE_MAX = 100

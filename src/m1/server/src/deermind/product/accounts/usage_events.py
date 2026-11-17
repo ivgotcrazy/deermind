@@ -2,7 +2,9 @@
 
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import (
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
+from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
     EventRegistration,
@@ -11,8 +13,6 @@ from deermind.foundation.system.events.contracts import (
     InlineContent,
     Ref,
 )
-from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
-from deermind.foundation.system.events.store import canonical_json
 from deermind.product.accounts.usage_facts import (
     USAGE_RECORDS,
     ConditionsFact,

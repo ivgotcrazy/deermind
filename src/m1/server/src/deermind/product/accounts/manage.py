@@ -3,7 +3,7 @@
 import asyncio
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.events import Ref
 from deermind.foundation.system.events.store import EventStore
 from deermind.product.accounts.auth import AuthService
 from deermind.product.accounts.conditions import derive_conditions

@@ -1,15 +1,26 @@
 """只绑定既有持久订阅；创建和调整消息资源由独立维护入口执行。"""
 
 import asyncio
+import json
 import logging
 import os
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Sequence
 from contextlib import asynccontextmanager
+from typing import Literal
 
-from deermind.foundation.system.delivery.contracts import EventNotice, SubscriptionRegistry
+from deermind.abstractions.delivery import (
+    DeliveryAdvisory,
+    DeliveryUnavailable,
+    EventNotice,
+    IncomingMessage,
+    SubscriptionSpec,
+)
+from deermind.abstractions.events import Ref
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
 from nats.aio.client import Client
+from nats.aio.msg import Msg
+from nats.errors import TimeoutError as NatsTimeout
 from nats.js.api import (
     AckPolicy,
     ConsumerConfig,
@@ -130,7 +141,7 @@ class JetStream:
             else None,
         )
 
-    async def initialize(self, registry: SubscriptionRegistry) -> None:
+    async def initialize(self, subscriptions: Sequence[SubscriptionSpec]) -> None:
         """仅维护凭据使用；已有资源只核对，不覆盖或删除不一致配置。"""
         for failure in (True, False):
             expected = self.stream_config(failure=failure)
@@ -145,7 +156,7 @@ class JetStream:
                 await self._create_consumer(
                     self.settings.failures, self.consumer_config("failure_collector", None)
                 )
-        for item in registry.items:
+        for item in subscriptions:
             await self._create_consumer(
                 self.settings.stream, self.consumer_config(item.subscriber_id, item.event_types)
             )
@@ -191,21 +202,14 @@ class JetStream:
         if set(actual.subjects or []) != set(expected.subjects or []):
             raise ValueError("Stream subject mismatch")
 
-    async def check_subscribers(
-        self, notice: EventNotice, expected: dict[str, str], registry: SubscriptionRegistry
-    ) -> None:
-        current = {item.subscriber_id: item for item in registry.items}
-        for name, revision in expected.items():
-            item = current.get(name)
-            if (
-                item is None
-                or item.revision != revision
-                or item not in registry.matching(notice.event_type, notice.scope_kind)
-            ):
-                raise ValueError("Expected subscriber is not registered")
-            await self._check_consumer(
-                self.settings.stream, self.consumer_config(name, item.event_types)
-            )
+    async def check_subscribers(self, subscriptions: Sequence[SubscriptionSpec]) -> None:
+        try:
+            for item in subscriptions:
+                await self._check_consumer(
+                    self.settings.stream, self.consumer_config(item.subscriber_id, item.event_types)
+                )
+        except NotFoundError as error:
+            raise DeliveryUnavailable("Registered consumer is absent") from error
 
     async def publish(self, notice: EventNotice) -> tuple[str, int]:
         body = notice.model_dump_json(exclude={"handoff_id"}).encode("utf-8")
@@ -220,3 +224,82 @@ class JetStream:
         if receipt.stream != self.settings.stream:
             raise ValueError("Publish receipt belongs to a different stream")
         return receipt.stream, receipt.seq
+
+    @asynccontextmanager
+    async def receive(
+        self, subscriber: str, *, failure: bool = False
+    ) -> AsyncGenerator[IncomingMessage | None]:
+        consumer = await self.js.pull_subscribe_bind(
+            stream=self.settings.failures if failure else self.settings.stream, durable=subscriber
+        )
+        try:
+            try:
+                messages = await consumer.fetch(batch=1, timeout=1)
+            except (TimeoutError, NatsTimeout):
+                yield None
+            else:
+                yield NatsMessage(messages[0])
+        finally:
+            # 释放本地订阅，不删除服务端持久消费者。
+            await consumer.unsubscribe()
+
+    def matches(self, message: IncomingMessage, event_type: str) -> bool:
+        return message.subject == self.settings.subject(event_type)
+
+    def advisory(self, message: IncomingMessage) -> DeliveryAdvisory:
+        data = json.loads(message.data)
+        stream, sequence, subscriber = (
+            data.get("stream"),
+            data.get("stream_seq"),
+            data.get("consumer"),
+        )
+        if (
+            stream != self.settings.stream
+            or type(sequence) is not int
+            or not isinstance(subscriber, str)
+        ):
+            raise ValueError("Unrecognized failure advisory")
+        return DeliveryAdvisory(
+            stream,
+            sequence,
+            subscriber,
+            "delivery_exhausted" if ".MAX_DELIVERIES." in message.subject else "rejected",
+            Ref(owner="runtime", type="nats_advisory", id=str(data.get("id", sequence))),
+        )
+
+    async def delivery_status(
+        self, subscriber: str, sequence: int | None
+    ) -> Literal["unknown", "consumer_missing", "transport_lost"]:
+        try:
+            await self.js.consumer_info(self.settings.stream, subscriber)
+        except NotFoundError:
+            return "consumer_missing"
+        try:
+            await self.js.get_msg(self.settings.stream, seq=sequence)
+        except NotFoundError:
+            return "transport_lost"
+        return "unknown"
+
+
+class NatsMessage:
+    """SDK消息确认的最小适配；不接触业务收据。"""
+
+    def __init__(self, message: Msg) -> None:
+        self.message = message
+
+    @property
+    def data(self) -> bytes:
+        return self.message.data
+
+    @property
+    def subject(self) -> str:
+        return self.message.subject
+
+    async def retry(self) -> None:
+        await self.message.nak(delay=30)
+
+    async def reject(self) -> None:
+        await self.message.term()
+
+    async def acknowledge(self) -> None:
+        await self.message.ack_sync(timeout=5)

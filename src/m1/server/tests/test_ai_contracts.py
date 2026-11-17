@@ -5,12 +5,13 @@ import unittest
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from deermind.foundation.ai.contracts import Budget, ExecutionConfig, ModelProfile, PurposeBinding
-from deermind.foundation.ai.execution import AIRejected
+from deermind.abstractions.ai.calls import AIRejected
+from deermind.abstractions.ai.contracts import Budget, ExecutionConfig, ModelProfile, PurposeBinding
+from deermind.abstractions.ai.requests import ModelRequestFact
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import EventDraft, FactRecord, InlineContent, Ref
 from deermind.foundation.ai.facts import AIEvent, validate
-from deermind.foundation.ai.records import ConfigurationFact, ModelRequestFact
-from deermind.foundation.system.events.contracts import EventDraft, FactRecord, InlineContent, Ref
-from deermind.foundation.system.events.store import canonical_json
+from deermind.foundation.ai.records import ConfigurationFact
 from deermind.infrastructure.ai.models import checked_response
 from pydantic import ValidationError
 from pydantic_ai.messages import ModelResponse, ToolCallPart

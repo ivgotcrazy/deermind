@@ -4,9 +4,10 @@ from typing import Annotated, Literal
 from urllib.parse import urlsplit
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import FactModel, NonEmpty, Ref
-from deermind.foundation.system.executions.contracts import RunInput
 from pydantic import Field, model_validator
+
+from deermind.abstractions.events import FactModel, NonEmpty, Ref
+from deermind.abstractions.executions import RunInput
 
 Positive = Annotated[int, Field(gt=0)]
 NonNegative = Annotated[int, Field(ge=0)]

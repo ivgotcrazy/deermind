@@ -6,8 +6,9 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
-from quality.check_boundaries import inspect_imports
+from quality.check_boundaries import abstraction_cycles, inspect_imports
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -122,8 +123,66 @@ class QualityTests(unittest.TestCase):
 
     def test_python_module_boundaries(self) -> None:
         cases = [
-            ("deermind.infrastructure.files.store", "import deermind.product.ports", False),
-            ("deermind.infrastructure.files.store", "import deermind.product.public", False),
+            ("deermind.foundation", "from deermind.infrastructure import files", True),
+            ("deermind.infrastructure", "from deermind.foundation import ai", True),
+            (
+                "deermind.foundation.ai.execution",
+                "from deermind.abstractions.ai.calls import CallService",
+                False,
+            ),
+            (
+                "deermind.infrastructure.ai.models",
+                "from deermind.abstractions.ai.calls import CallService",
+                False,
+            ),
+            (
+                "deermind.foundation.files",
+                "import deermind.infrastructure.files.local as local",
+                True,
+            ),
+            (
+                "deermind.infrastructure.ai.models",
+                "from deermind.foundation.ai.execution import Calls",
+                True,
+            ),
+            ("deermind.abstractions.files", "from deermind.foundation.system import files", True),
+            (
+                "deermind.abstractions.files",
+                "from deermind.infrastructure.files import local",
+                True,
+            ),
+            ("deermind.abstractions.files", "from deermind.bootstrap import services", True),
+            ("deermind.abstractions.files", "from deermind.product.public import Account", True),
+            (
+                "deermind.abstractions.files",
+                "from sqlalchemy.ext.asyncio import AsyncConnection",
+                True,
+            ),
+            ("deermind.abstractions.files", "from pydantic import BaseModel", False),
+            (
+                "deermind.infrastructure.ai.models",
+                "from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n"
+                " from deermind.foundation.ai.execution import Calls",
+                True,
+            ),
+            (
+                "deermind.infrastructure.ai.models",
+                "from ...foundation.ai.execution import Calls",
+                True,
+            ),
+            (
+                "deermind.infrastructure.ai.models",
+                "from importlib import import_module as load\n"
+                "load('deermind.foundation.ai.execution')",
+                True,
+            ),
+            (
+                "deermind.infrastructure.ai.models",
+                "import importlib as loader\nloader.import_module(name)",
+                True,
+            ),
+            ("deermind.infrastructure.files.store", "import deermind.product.ports", True),
+            ("deermind.infrastructure.files.store", "import deermind.product.public", True),
             ("deermind.entrypoints.api.routes", "import deermind.product.persistence", True),
             ("deermind.infrastructure.files.store", "import deermind.bootstrap.settings", True),
             ("deermind.product.targets.save", "import deermind.entrypoints.api", True),
@@ -147,6 +206,14 @@ class QualityTests(unittest.TestCase):
         for module, source, rejected in cases:
             with self.subTest(module=module, source=source):
                 self.assertEqual(bool(inspect_imports(module, source)), rejected)
+
+    def test_abstraction_cycles(self) -> None:
+        first = self.write("deermind/abstractions/first.py", "from .second import value\n")
+        second = self.write("deermind/abstractions/second.py", "value = 1\n")
+        with patch("quality.check_boundaries.SOURCE", self.directory):
+            self.assertEqual(abstraction_cycles([first, second]), [])
+            second.write_text("from .first import value\n", encoding="utf-8")
+            self.assertTrue(abstraction_cycles([first, second]))
 
 
 if __name__ == "__main__":

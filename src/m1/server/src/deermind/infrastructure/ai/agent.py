@@ -4,10 +4,10 @@ from dataclasses import dataclass
 from datetime import timedelta
 from typing import Any
 
-from deermind.foundation.ai.contracts import CallHandle
-from deermind.foundation.ai.execution import AIRejected, Calls
-from deermind.foundation.ai.tools import Tools
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.ai.calls import AIRejected, CallService
+from deermind.abstractions.ai.contracts import CallHandle
+from deermind.abstractions.ai.tools import ToolService
+from deermind.abstractions.events import Ref
 from deermind.infrastructure.ai.models import (
     ControlledModel,
     ModelFactory,
@@ -63,13 +63,15 @@ class ToolContext(TemporalRunContext[CallHandle]):
         return result
 
 
-def authorized_tools(tools: Tools) -> FunctionToolset[CallHandle]:
+def authorized_tools(tools: ToolService) -> FunctionToolset[CallHandle]:
     """使用官方可持久执行的FunctionToolset，每个工具独立落到Activity。"""
+
+    descriptions = {tool.name: tool for tool in tools.descriptions()}
 
     async def prepare(
         ctx: RunContext[CallHandle], definition: ToolDefinition
     ) -> ToolDefinition | None:
-        reference = tools.tools[definition.name].reference
+        reference = descriptions[definition.name].reference
         if reference in ctx.deps.binding.tool_refs and reference in ctx.deps.input.tool_grants:
             return definition
         return None
@@ -94,7 +96,7 @@ def authorized_tools(tools: Tools) -> FunctionToolset[CallHandle]:
             raise ApplicationError(code, type="AIToolRejected", non_retryable=True) from None
 
     toolset = FunctionToolset[CallHandle](id="deermind_authorized_tools", max_retries=0)
-    for registered in tools.tools.values():
+    for registered in descriptions.values():
         tool = Tool[CallHandle].from_schema(
             invoke,
             registered.name,
@@ -110,8 +112,8 @@ def authorized_tools(tools: Tools) -> FunctionToolset[CallHandle]:
 
 def build_agent(
     purpose: Purpose,
-    calls: Calls,
-    tools: Tools,
+    calls: CallService,
+    tools: ToolService,
     credentials: SecretReader,
     *,
     factory: ModelFactory = provider_model,

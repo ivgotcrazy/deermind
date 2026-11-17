@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from typing import Literal
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.events.contracts import EventDraft, ProducerAccess, Ref
+from deermind.abstractions.events import EventDraft, ProducerAccess, Ref
 from deermind.foundation.system.events.store import EventStore
 from deermind.product.accounts.auth_facts import SIGNED_IN, SIGNED_OUT
 from deermind.product.public.authentication import (

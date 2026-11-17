@@ -5,8 +5,8 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import StoredEvent
-from deermind.foundation.system.events.store import canonical_json
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import StoredEvent
 from deermind.foundation.system.projections.receipts import application
 from deermind.product.accounts.facts import AccountFact, account_values
 from deermind.product.accounts.usage_events import decode

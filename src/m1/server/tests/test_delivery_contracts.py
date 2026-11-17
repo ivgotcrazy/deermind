@@ -5,13 +5,8 @@ import logging
 import unittest
 from uuid import uuid4
 
-from deermind.foundation.system.delivery.contracts import (
-    Acceptance,
-    DeliveryNotice,
-    EventNotice,
-    Subscription,
-    SubscriptionRegistry,
-)
+from deermind.abstractions.delivery import Acceptance, DeliveryNotice, EventNotice
+from deermind.foundation.system.delivery.contracts import Subscription, SubscriptionRegistry
 from deermind.foundation.system.logging import JsonFormatter
 from deermind.infrastructure.nats.connection import MessagingSettings
 from pydantic import SecretStr, ValidationError

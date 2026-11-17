@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import BinaryIO, Literal
 from uuid import uuid4
 
-from deermind.foundation.system.files.ports import FileBytes
+from deermind.abstractions.files import FileBytes
 
 
 class LocalFiles:

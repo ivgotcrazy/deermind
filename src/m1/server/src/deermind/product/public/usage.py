@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Literal, Protocol
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.events import Ref
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.public.authentication import AuthModel, SessionView, UsageGap
 from pydantic import Field

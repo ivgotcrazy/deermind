@@ -2,7 +2,7 @@
 
 import unittest
 
-from deermind.foundation.system.events.reading import fragment, pointer_parts
+from deermind.abstractions.event_reading import fragment, pointer_parts
 from pydantic import JsonValue
 
 

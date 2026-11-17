@@ -4,13 +4,8 @@ import asyncio
 import json
 from uuid import uuid4
 
-from deermind.foundation.system.delivery.contracts import (
-    Acceptance,
-    DeliveryNotice,
-    Handoff,
-    Subscription,
-    SubscriptionReceipt,
-)
+from deermind.abstractions.delivery import Acceptance, DeliveryNotice, Handoff, SubscriptionReceipt
+from deermind.foundation.system.delivery.contracts import Subscription
 from deermind.foundation.system.delivery.facts import record_change
 from deermind.foundation.system.delivery.outbox import mark_failure
 from sqlalchemy import text

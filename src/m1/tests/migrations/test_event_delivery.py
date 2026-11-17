@@ -10,26 +10,25 @@ from datetime import UTC, datetime
 from unittest.mock import patch
 from uuid import uuid4
 
+from deermind.abstractions.delivery import Acceptance, DeliveryNotice, EventNotice
+from deermind.abstractions.events import EventDraft, ProducerAccess, Ref
 from deermind.entrypoints.maintenance.database import upgrade
-from deermind.foundation.system.delivery.consumer import accept
-from deermind.foundation.system.delivery.contracts import (
-    Acceptance,
-    DeliveryNotice,
-    EventNotice,
-    Subscription,
-    SubscriptionRegistry,
-)
-from deermind.foundation.system.delivery.outbox import Outbox, claim, finish
-from deermind.foundation.system.delivery.recovery import redeliver
-from deermind.foundation.system.events.contracts import EventDraft, ProducerAccess, Ref
-from deermind.foundation.system.events.store import EventStore
-from deermind.infrastructure.database.connection import application_engine
-from deermind.infrastructure.nats.bridge import (
+from deermind.foundation.system.delivery.bridge import (
     collect_one,
     consume_one,
     publish_one,
     reconcile,
 )
+from deermind.foundation.system.delivery.consumer import accept
+from deermind.foundation.system.delivery.contracts import (
+    Subscription,
+    SubscriptionRegistry,
+    specifications,
+)
+from deermind.foundation.system.delivery.outbox import Outbox, claim, finish
+from deermind.foundation.system.delivery.recovery import redeliver
+from deermind.foundation.system.events.store import EventStore
+from deermind.infrastructure.database.connection import application_engine
 from deermind.infrastructure.nats.connection import JetStream, MessagingSettings, connect
 from deermind.product.accounts.facts import ACCOUNT_REGISTRATION, AccountFact
 from nats.js.api import StreamConfig
@@ -168,7 +167,7 @@ class DeliveryTests(DatabaseTestCase):
 
             with patch.object(transport, "stream_config", side_effect=test_config):
                 try:
-                    await transport.initialize(self.registry)
+                    await transport.initialize(specifications(self.registry))
                     yield transport
                 finally:
                     for stream in (settings.stream, settings.failures):
@@ -486,7 +485,7 @@ class DeliveryTests(DatabaseTestCase):
                 self.assertEqual(
                     (await transport.js.stream_info(transport.settings.stream)).state.messages, 0
                 )
-                await transport.initialize(self.registry)
+                await transport.initialize(specifications(self.registry))
                 with self.engine.begin() as connection:
                     connection.execute(
                         text("UPDATE runtime.handoffs SET next_attempt_at=clock_timestamp()")

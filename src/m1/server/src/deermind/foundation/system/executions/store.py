@@ -4,16 +4,9 @@ import json
 from datetime import timedelta
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.events.contracts import Ref
-from deermind.foundation.system.executions.contracts import (
-    Attempt,
-    Authorization,
-    Caller,
-    Execution,
-    Registry,
-    RunInput,
-    State,
-)
+from deermind.abstractions.events import Ref
+from deermind.abstractions.executions import Attempt, Authorization, Execution, RunInput, State
+from deermind.foundation.system.executions.contracts import Caller, Registry
 from deermind.foundation.system.executions.facts import record_change
 from deermind.foundation.system.waits.facts import cancel_execution
 from sqlalchemy import text

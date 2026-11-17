@@ -1,15 +1,12 @@
 """AI事实与投影的共同保存；所有者持工作锁，模型和文件I/O均在事务外。"""
 
-import hashlib
 import json
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from deermind.foundation.ai.contracts import ExecutionConfig
-from deermind.foundation.ai.facts import REGISTRATIONS, AIEvent
-from deermind.foundation.ai.projections import KEYS, apply_ai_events
-from deermind.foundation.ai.records import ConfigurationFact
-from deermind.foundation.system.events.contracts import (
+from deermind.abstractions.ai.contracts import ExecutionConfig
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import (
     INLINE_LIMIT,
     EventDraft,
     FactModel,
@@ -18,14 +15,14 @@ from deermind.foundation.system.events.contracts import (
     ProducerAccess,
     Ref,
 )
-from deermind.foundation.system.events.store import EventStore, canonical_json
-from deermind.foundation.system.executions.contracts import Execution
+from deermind.abstractions.executions import Execution
+from deermind.abstractions.hashing import digest
+from deermind.foundation.ai.facts import REGISTRATIONS, AIEvent
+from deermind.foundation.ai.projections import KEYS, apply_ai_events
+from deermind.foundation.ai.records import ConfigurationFact
+from deermind.foundation.system.events.store import EventStore
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
-
-
-def digest(value: object) -> str:
-    return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
 async def now(connection: AsyncConnection) -> datetime:

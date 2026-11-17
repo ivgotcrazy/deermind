@@ -1,13 +1,7 @@
 """只供授权查询测试的事件Schema，不登记为正式Interaction业务事件。"""
 
-from deermind.foundation.system.events.contracts import (
-    EventDraft,
-    EventPayload,
-    EventRegistration,
-    FactModel,
-    InlineContent,
-)
-from deermind.foundation.system.events.reading import (
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.event_reading import (
     EventFact,
     EventPartRef,
     ReadAccess,
@@ -15,7 +9,13 @@ from deermind.foundation.system.events.reading import (
     ReadHandler,
     ReadPolicy,
 )
-from deermind.foundation.system.events.store import canonical_json
+from deermind.abstractions.events import (
+    EventDraft,
+    EventPayload,
+    EventRegistration,
+    FactModel,
+    InlineContent,
+)
 
 
 class TestMessage(FactModel):

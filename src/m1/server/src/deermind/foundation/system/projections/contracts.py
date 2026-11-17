@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import (
+from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
     EventRegistration,

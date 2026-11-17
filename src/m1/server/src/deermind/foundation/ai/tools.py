@@ -5,22 +5,18 @@ from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
 from typing import Literal
 
+from deermind.abstractions.ai.calls import AIRejected
+from deermind.abstractions.ai.contracts import CallHandle
+from deermind.abstractions.ai.tools import ToolDescription, ToolResult
+from deermind.abstractions.events import Ref
+from deermind.abstractions.hashing import digest
 from deermind.foundation.ai import store
-from deermind.foundation.ai.contracts import CallHandle
-from deermind.foundation.ai.execution import AIRejected, Calls
+from deermind.foundation.ai.execution import Calls
 from deermind.foundation.ai.records import ToolActionFact
-from deermind.foundation.system.events.contracts import FactModel, Ref
 from deermind.foundation.system.executions import store as executions
 from pydantic import BaseModel, JsonValue, ValidationError
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
-
-
-class ToolResult(FactModel):
-    status: Literal["ok", "not_found", "invalid_arguments", "source_changed"]
-    data: dict[str, JsonValue]
-    source_refs: list[Ref]
-    owner_receipt_ref: Ref | None
 
 
 @dataclass(frozen=True)
@@ -44,6 +40,13 @@ class Tools:
         if len(self.tools) != len(tools) or any(tool.timeout_seconds <= 0 for tool in tools):
             raise ValueError("Tools require unique names and finite deadlines")
 
+    def descriptions(self) -> tuple[ToolDescription, ...]:
+        """只返回工具公开描述；事务校验和调用函数不交给SDK。"""
+        return tuple(
+            ToolDescription(t.reference, t.name, t.description, t.parameters)
+            for t in self.tools.values()
+        )
+
     async def invoke(
         self,
         handle: CallHandle,
@@ -61,7 +64,7 @@ class Tools:
             parameters,
             actor=source,
             source=source,
-            artifact_key=f"ai-tool-input:{action_key}:{store.digest(parameters)}",
+            artifact_key=f"ai-tool-input:{action_key}:{digest(parameters)}",
             max_bytes=handle.budget.max_input_bytes,
         )
         tool = self.tools.get(name)

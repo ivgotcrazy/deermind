@@ -4,8 +4,9 @@ from collections.abc import AsyncGenerator, Sequence
 from contextlib import asynccontextmanager
 from uuid import NAMESPACE_URL, UUID, uuid4, uuid5
 
-from deermind.foundation.system.events.contracts import EventDraft, ProducerAccess, Ref, StoredEvent
-from deermind.foundation.system.events.store import EventStore, canonical_json
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import EventDraft, ProducerAccess, Ref, StoredEvent
+from deermind.foundation.system.events.store import EventStore
 from deermind.foundation.system.projections.contracts import (
     REBUILD_FINISHED,
     CheckIssue,
@@ -13,7 +14,6 @@ from deermind.foundation.system.projections.contracts import (
     RebuildJob,
     ScopeBound,
 )
-from deermind.infrastructure.database.connection import EXPECTED_REVISION, MAINTENANCE_LOCK
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
@@ -21,8 +21,12 @@ from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 class ProjectionRecords:
     """维护授权、固定上界、进度和结果；不调用生成器，不解释副本元数据。"""
 
-    def __init__(self, engine: AsyncEngine) -> None:
+    def __init__(
+        self, engine: AsyncEngine, *, expected_revision: str, maintenance_lock: int
+    ) -> None:
         self.engine = engine
+        self.expected_revision = expected_revision
+        self.maintenance_lock = maintenance_lock
 
     @asynccontextmanager
     async def guard(self) -> AsyncGenerator[AsyncConnection]:
@@ -33,10 +37,10 @@ class ProjectionRecords:
             revision = await connection.scalar(
                 text("SELECT version_num FROM public.alembic_version")
             )
-            if revision != EXPECTED_REVISION:
+            if revision != self.expected_revision:
                 raise RuntimeError("Database revision differs from the maintenance package")
             if not await connection.scalar(
-                text("SELECT pg_try_advisory_xact_lock(:key)"), {"key": MAINTENANCE_LOCK}
+                text("SELECT pg_try_advisory_xact_lock(:key)"), {"key": self.maintenance_lock}
             ):
                 raise RuntimeError("Another migration or projection maintenance is running")
             await connection.execute(text("SET LOCAL lock_timeout='3s'"))

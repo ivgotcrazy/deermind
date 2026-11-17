@@ -2,10 +2,11 @@
 
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.event_reading import EventPartRef, ReadAccess
+from deermind.abstractions.events import Ref
 from deermind.foundation.system.events.query import EventReader
-from deermind.foundation.system.events.reading import EventPartRef, ReadAccess
-from deermind.foundation.system.events.store import EventStore, canonical_json
+from deermind.foundation.system.events.store import EventStore
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.accounts.conditions import derive_conditions
 from deermind.product.accounts.save import canonical_actor

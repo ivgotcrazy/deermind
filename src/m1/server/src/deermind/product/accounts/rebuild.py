@@ -6,9 +6,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import StoredEvent
+from deermind.abstractions.event_reading import ReadAccess
+from deermind.abstractions.events import StoredEvent
 from deermind.foundation.system.events.query import EventReader
-from deermind.foundation.system.events.reading import ReadAccess
 from deermind.foundation.system.projections.contracts import CheckIssue, RebuildJob
 from deermind.foundation.system.projections.records import ProjectionRecords
 from deermind.product.accounts.projections import (
@@ -34,9 +34,15 @@ class AccountRebuildSpec:
 class AccountRebuilder:
     """生成和校验均归账号业务；底座只提供事件读取及维护控制记录。"""
 
-    def __init__(self, engine: AsyncEngine, reader: EventReader, spec: AccountRebuildSpec) -> None:
+    def __init__(
+        self,
+        engine: AsyncEngine,
+        reader: EventReader,
+        spec: AccountRebuildSpec,
+        records: ProjectionRecords,
+    ) -> None:
         self.engine, self.reader, self.spec = engine, reader, spec
-        self.records = ProjectionRecords(engine)
+        self.records = records
 
     @staticmethod
     def stage_name(identity: UUID) -> str:

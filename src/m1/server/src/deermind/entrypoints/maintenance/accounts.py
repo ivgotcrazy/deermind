@@ -8,9 +8,9 @@ import sys
 from pathlib import Path
 from uuid import UUID
 
+from deermind.abstractions.events import Ref
 from deermind.bootstrap.accounts import configure_account_management, configure_usage
 from deermind.bootstrap.database import DatabaseSettings
-from deermind.foundation.system.events.contracts import Ref
 from deermind.foundation.system.logging import configure_logging
 from deermind.infrastructure.database.connection import application_engine
 from deermind.product.public.authentication import AuthError

@@ -3,12 +3,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.events.contracts import (
-    EventDraft,
-    EventPayload,
-    ProducerAccess,
-    Ref,
-)
+from deermind.abstractions.events import EventDraft, EventPayload, ProducerAccess, Ref
 from deermind.foundation.system.events.store import EventStore
 from deermind.product.accounts.projections import apply_account_events
 from deermind.product.public.authentication import AuthError, SessionView

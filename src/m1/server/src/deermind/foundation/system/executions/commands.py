@@ -2,9 +2,10 @@
 
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.events import Ref
+from deermind.abstractions.executions import Execution, RunInput
 from deermind.foundation.system.executions import store
-from deermind.foundation.system.executions.contracts import Caller, Execution, Registry, RunInput
+from deermind.foundation.system.executions.contracts import Caller, Registry
 from deermind.foundation.system.executions.facts import record_change
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection

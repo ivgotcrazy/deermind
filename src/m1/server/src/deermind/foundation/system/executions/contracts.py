@@ -2,123 +2,12 @@
 
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
-from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import FactModel, Ref
-from pydantic import BaseModel, ConfigDict, Field, JsonValue
+from deermind.abstractions.events import Ref
+from deermind.abstractions.executions import Authorization, Execution, State
 from sqlalchemy.ext.asyncio import AsyncConnection
-
-State = Literal["ready", "running", "waiting", "completed", "failed", "cancelled"]
-
-
-class Execution(FactModel):
-    execution_id: UUID
-    kind: Literal["ai_operation", "handler"]
-    owner: str
-    entry_ref: str
-    scope_kind: str
-    implementation_ref: Ref
-    ai_config_ref: UUID | None
-    scope_id: UUID
-    acceptance_key: str
-    input_ref: Ref
-    active_attempt_id: UUID | None
-    state: State
-    result_ref: Ref | None
-    failure_ref: Ref | None
-    created_at: datetime
-    updated_at: datetime
-
-
-class Attempt(FactModel):
-    attempt_id: UUID
-    execution_id: UUID
-    attempt_no: int
-    retry_request_id: str | None
-    previous_attempt_id: UUID | None
-    workflow_id: str
-    temporal_run_id: str | None
-    accepted_at: datetime
-    deadline_at: datetime
-    state: State
-    failure_ref: Ref | None
-    finished_at: datetime | None
-
-
-class Authorization(FactModel):
-    execution_id: UUID
-    initiator_ref: Ref
-    owner: str
-    entry: str
-    resource_scope: dict[str, JsonValue]
-    allowed_actions: list[str]
-    basis_refs: list[Ref]
-    created_at: datetime
-
-
-class StepResult(FactModel):
-    execution_id: UUID
-    step_name: str
-    occurrence_key: str
-    input_hash: str
-    output_ref: Ref
-    owner_receipt_ref: Ref | None
-    completed_by_attempt: UUID
-    created_at: datetime
-
-
-class RunInput(FactModel):
-    """Workflow只带固定引用，原始正文由所有者按权限读取。"""
-
-    execution_id: UUID
-    attempt_id: UUID
-    input_ref: Ref
-    implementation_ref: Ref
-    ai_config_ref: UUID | None
-    deadline_at: datetime
-
-
-class Dispatch(BaseModel):
-    """固定启动、取消或唤醒命令；Workflow和队列不由外部请求选择。"""
-
-    model_config = ConfigDict(extra="forbid")
-    run: RunInput
-    workflow_id: str
-    workflow_type: str
-    task_queue: str
-    wait_id: UUID | None = None
-
-
-class Limits(BaseModel):
-    """执行接线的有限上限，由装配层按已确认值显式提供。"""
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-    request_seconds: int = Field(gt=0)
-    attempts: int = Field(gt=0)
-    budget_seconds: int = Field(gt=0)
-    lease_seconds: int = Field(gt=0)
-    reconcile_seconds: int = Field(gt=0)
-    finalize_seconds: int = Field(gt=0)
-
-
-@dataclass(frozen=True)
-class Caller:
-    """由已认证入口或维护命令构造；不是浏览器可自报的授权。"""
-
-    actor: Ref
-    owner: str
-    scopes: frozenset[tuple[str, UUID]]
-    actions: frozenset[str]
-
-    def require(self, execution: Execution, action: str) -> None:
-        if (
-            execution.owner != self.owner
-            or (execution.scope_kind, execution.scope_id) not in self.scopes
-            or action not in self.actions
-        ):
-            raise PermissionError("Execution access denied")
 
 
 @dataclass(frozen=True)
@@ -162,3 +51,21 @@ class Registry:
         ):
             raise ValueError("Execution implementation is unavailable or incompatible")
         return entry
+
+
+@dataclass(frozen=True)
+class Caller:
+    """由已认证入口或维护命令构造；不是浏览器可自报的授权。"""
+
+    actor: Ref
+    owner: str
+    scopes: frozenset[tuple[str, UUID]]
+    actions: frozenset[str]
+
+    def require(self, execution: Execution, action: str) -> None:
+        if (
+            execution.owner != self.owner
+            or (execution.scope_kind, execution.scope_id) not in self.scopes
+            or action not in self.actions
+        ):
+            raise PermissionError("Execution access denied")

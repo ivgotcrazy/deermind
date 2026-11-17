@@ -3,7 +3,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.events import Ref
 from deermind.product.accounts.usage_facts import (
     ConditionsFact,
     ConfirmationFact,

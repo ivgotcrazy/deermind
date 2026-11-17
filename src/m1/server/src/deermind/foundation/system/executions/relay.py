@@ -3,17 +3,15 @@
 import asyncio
 import json
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.events import Ref
+from deermind.abstractions.executions import Dispatch, ExecutionNotFound, ExecutionTransport
 from deermind.foundation.system.executions import commands, dispatch, store
-from deermind.foundation.system.executions.contracts import Dispatch, Registry
-from deermind.infrastructure.temporal.executions import Transport
+from deermind.foundation.system.executions.contracts import Registry
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
-from temporalio.client import WorkflowExecutionStatus
-from temporalio.service import RPCError, RPCStatusCode
 
 LOGGER = logging.getLogger("runtime")
 
@@ -42,7 +40,9 @@ async def validate(engine: AsyncEngine, registry: Registry, command: Dispatch) -
         }
 
 
-async def dispatch_one(engine: AsyncEngine, registry: Registry, transport: Transport) -> bool:
+async def dispatch_one(
+    engine: AsyncEngine, registry: Registry, transport: ExecutionTransport
+) -> bool:
     """交接不等整项工作；停止资格已在PG落定，取消网络失败也不允许旧结果写入。"""
     lease = await dispatch.claim(engine, transport.limits)
     if lease is None:
@@ -59,9 +59,7 @@ async def dispatch_one(engine: AsyncEngine, registry: Registry, transport: Trans
             elif lease.kind == "cancel":
                 try:
                     await transport.cancel(lease.command)
-                except RPCError as error:
-                    if error.status != RPCStatusCode.NOT_FOUND:
-                        raise
+                except ExecutionNotFound:
                     # 未启动的取消不能当成已送达：等启动交接落定后再查。
                     async with engine.connect() as connection:
                         start_state = await connection.scalar(
@@ -90,7 +88,10 @@ async def dispatch_one(engine: AsyncEngine, registry: Registry, transport: Trans
 
 
 async def reconcile(
-    engine: AsyncEngine, registry: Registry, transport: Transport, after: UUID | None = None
+    engine: AsyncEngine,
+    registry: Registry,
+    transport: ExecutionTransport,
+    after: UUID | None = None,
 ) -> UUID | None:
     """只按服务端结束状态收尾；失联或历史缺失留故障，不凭无响应判死。"""
     async with engine.connect() as connection:
@@ -119,11 +120,9 @@ async def reconcile(
             await validate(engine, registry, command)
             failure_code = None
             try:
-                description = await transport.client.get_workflow_handle(
-                    command.workflow_id
-                ).describe(rpc_timeout=timedelta(seconds=transport.limits.request_seconds))
-            except RPCError as error:
-                if error.status != RPCStatusCode.NOT_FOUND or row["temporal_run_id"] is not None:
+                running = await transport.running(command)
+            except ExecutionNotFound:
+                if row["temporal_run_id"] is not None:
                     raise
                 if row["dispatch_state"] == "exhausted" or (
                     command.run.deadline_at <= datetime.now(UTC)
@@ -131,12 +130,7 @@ async def reconcile(
                 ):
                     failure_code = "START_NOT_FOUND"
             else:
-                if (
-                    await description.memo_value("deermind_input", type_hint=str)
-                    != command.run.model_dump_json()
-                ):
-                    raise ValueError("Workflow input differs from the saved work")
-                if description.status != WorkflowExecutionStatus.RUNNING:
+                if not running:
                     # 正常业务完成必须先保存正式结果；仅Workflow关闭不能凭空生成结果。
                     failure_code = "WORKFLOW_CLOSED_WITHOUT_RESULT"
             if failure_code:
@@ -172,7 +166,7 @@ async def reconcile(
 async def run_relay(
     engine: AsyncEngine,
     registry: Registry,
-    transport: Transport,
+    transport: ExecutionTransport,
     stopped: asyncio.Event,
 ) -> None:
     """同一Worker内的两个独立循环；退出保留所有持久安排。"""

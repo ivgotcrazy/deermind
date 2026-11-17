@@ -8,15 +8,9 @@ from datetime import UTC, datetime
 from unittest.mock import patch
 from uuid import UUID, uuid4
 
+from deermind.abstractions.events import EventConflict, EventDraft, ProducerAccess, Ref, StoredEvent
 from deermind.bootstrap.events import event_store
 from deermind.entrypoints.maintenance.database import upgrade
-from deermind.foundation.system.events.contracts import (
-    EventConflict,
-    EventDraft,
-    ProducerAccess,
-    Ref,
-    StoredEvent,
-)
 from deermind.foundation.system.events.store import EventStore
 from deermind.infrastructure.database.connection import application_engine
 from deermind.product.accounts.facts import AccountFact

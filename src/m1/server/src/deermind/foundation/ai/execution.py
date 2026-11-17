@@ -2,25 +2,20 @@
 
 from uuid import UUID, uuid4
 
+from deermind.abstractions.ai.calls import AIRejected
+from deermind.abstractions.ai.contracts import CallHandle, CallInput
+from deermind.abstractions.ai.requests import ModelRequestFact
+from deermind.abstractions.events import Ref
+from deermind.abstractions.executions import Execution
+from deermind.abstractions.hashing import digest
 from deermind.foundation.ai import store
-from deermind.foundation.ai.contracts import CallHandle, CallInput
-from deermind.foundation.ai.records import (
-    CallAttemptFact,
-    CallFact,
-    CandidateFact,
-    ModelRequestFact,
-)
+from deermind.foundation.ai.records import CallAttemptFact, CallFact, CandidateFact
 from deermind.foundation.system.events.attachments import FactAttachments
-from deermind.foundation.system.events.contracts import Ref
 from deermind.foundation.system.executions import store as executions
-from deermind.foundation.system.executions.contracts import Execution, Registry
+from deermind.foundation.system.executions.contracts import Registry
 from pydantic import JsonValue
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
-
-
-class AIRejected(ValueError):
-    """只携带固定错误码，不向日志或Temporal错误复制模型材料和密钥。"""
 
 
 class Calls:
@@ -45,7 +40,7 @@ class Calls:
             raise AIRejected("forbidden")
         # 尝试号和新恢复时限不属于固定输入；其他字段变化必须使用新的调用键。
         body = incoming.model_dump(mode="json", exclude={"run"})
-        input_hash = store.digest({"input": body, "binding": binding.model_dump(mode="json")})
+        input_hash = digest({"input": body, "binding": binding.model_dump(mode="json")})
         source = Ref(owner="ai", type="execution", id=str(execution.execution_id))
         reference = await self.attachments.save_json(
             body,
@@ -218,7 +213,7 @@ class Calls:
             or attempt.execution_attempt_id != handle.input.run.attempt_id
         ):
             raise AIRejected("forbidden")
-        expected = store.digest(
+        expected = digest(
             {
                 "input": handle.input.model_dump(mode="json", exclude={"run"}),
                 "binding": handle.binding.model_dump(mode="json"),
@@ -463,13 +458,13 @@ class Calls:
             content,
             actor=source,
             source=source,
-            artifact_key=f"ai-candidate:{handle.call_id}:{store.digest(content)}",
+            artifact_key=f"ai-candidate:{handle.call_id}:{digest(content)}",
             max_bytes=handle.budget.max_result_bytes,
         )
         artifact: dict[str, JsonValue] = {
             "storage": "file",
             "file_id": reference.id,
-            "sha256": store.digest(content),
+            "sha256": digest(content),
             "media_type": "application/json",
         }
         async with self.engine.begin() as connection:
@@ -481,7 +476,7 @@ class Calls:
                     CandidateFact,
                     {"candidate_id": call.candidate_ref},
                 )
-                if existing is None or existing.content_hash != store.digest(content):
+                if existing is None or existing.content_hash != digest(content):
                     raise AIRejected("input_conflict")
                 return call.candidate_ref
             if call.state != "running":
@@ -493,7 +488,7 @@ class Calls:
                 call_id=call.call_id,
                 schema_ref=call.schema_ref,
                 content=artifact,
-                content_hash=store.digest(content),
+                content_hash=digest(content),
                 material_refs=handle.input.material_refs,
                 tool_refs=[
                     Ref(owner="ai", type="tool_action", id=row)
@@ -599,3 +594,22 @@ class Calls:
                 ],
                 reason=error_code,
             )
+
+    async def save_material(
+        self,
+        content: dict[str, JsonValue],
+        *,
+        actor: Ref,
+        source: Ref,
+        artifact_key: str,
+        max_bytes: int,
+    ) -> Ref:
+        """适配器提交请求或响应材料，不暴露附件实现。"""
+        return await self.attachments.save_json(
+            content, actor=actor, source=source, artifact_key=artifact_key, max_bytes=max_bytes
+        )
+
+    async def read_material(
+        self, reference: Ref, *, source: Ref, max_bytes: int
+    ) -> dict[str, JsonValue]:
+        return await self.attachments.read_json(reference, source=source, max_bytes=max_bytes)

@@ -4,8 +4,8 @@ import unittest
 from ipaddress import ip_network
 from uuid import uuid4
 
+from deermind.abstractions.events import EventDraft, Ref
 from deermind.entrypoints.api.auth import source_address
-from deermind.foundation.system.events.contracts import EventDraft, Ref
 from deermind.product.accounts.auth_facts import AccountSignedIn, validate_auth_fact
 from deermind.product.public.auth_config import AuthConfig
 from deermind.product.public.authentication import SignInRequest

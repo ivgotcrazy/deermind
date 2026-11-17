@@ -5,9 +5,9 @@ from collections.abc import Mapping
 from datetime import timedelta
 from uuid import UUID
 
-from deermind.foundation.ai.contracts import CallHandle, CallInput
-from deermind.foundation.ai.execution import AIRejected, Calls
-from deermind.foundation.system.events.store import canonical_json
+from deermind.abstractions.ai.calls import AIRejected, CallService
+from deermind.abstractions.ai.contracts import CallHandle, CallInput
+from deermind.abstractions.encoding import canonical_json
 from pydantic import BaseModel, JsonValue, TypeAdapter
 from pydantic_ai import Agent
 from pydantic_ai.usage import UsageLimits
@@ -19,7 +19,7 @@ from temporalio.exceptions import ApplicationError
 class Activities:
     """短步骤只操作持久状态，不把整个Agent循环塞进Activity。"""
 
-    def __init__(self, calls: Calls, schemas: Mapping[str, type[BaseModel]]) -> None:
+    def __init__(self, calls: CallService, schemas: Mapping[str, type[BaseModel]]) -> None:
         self.calls = calls
         self.schemas = schemas
 

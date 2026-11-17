@@ -6,19 +6,20 @@ import signal
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from deermind.bootstrap import runtime
 from deermind.bootstrap.database import database_lifespan
 from deermind.bootstrap.executions import limits, registry
 from deermind.bootstrap.messaging import subscriptions
 from deermind.bootstrap.services import create_worker
 from deermind.bootstrap.settings import Settings
 from deermind.bootstrap.waits import waits
+from deermind.foundation.system.delivery.bridge import run_bridge
+from deermind.foundation.system.executions.relay import run_relay
 from deermind.foundation.system.logging import configure_logging
+from deermind.foundation.system.waits.reconcile import run_reconciler
 from deermind.infrastructure.files.check import check_storage
-from deermind.infrastructure.nats.bridge import run_bridge
 from deermind.infrastructure.nats.connection import MessagingSettings, connect
-from deermind.infrastructure.temporal.executions import Lifecycle, Transport
-from deermind.infrastructure.temporal.relay import run_relay
-from deermind.infrastructure.temporal.waits import Activities, run_reconciler
+from deermind.infrastructure.temporal.executions import Transport
 from pydantic_ai.durable_exec.temporal import PydanticAIPlugin
 from sqlalchemy.ext.asyncio import AsyncEngine
 from temporalio.api.workflowservice.v1 import DescribeNamespaceRequest
@@ -57,9 +58,9 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
     # Blocking file I/O runs in the activity pool, not on the asyncio loop.
     with ThreadPoolExecutor(2) as workflow_executor, ThreadPoolExecutor(4) as activity_executor:
         entries, execution_limits = registry(), limits()
-        lifecycle = Lifecycle(engine, entries, execution_limits)
+        lifecycle = runtime.lifecycle(engine, entries, execution_limits)
         waiting = waits()
-        wait_activities = Activities(
+        wait_activities = runtime.wait_activities(
             engine, waiting, timeout_seconds=execution_limits.finalize_seconds
         )
         worker = create_worker(

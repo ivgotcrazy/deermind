@@ -3,8 +3,7 @@
 from typing import ClassVar
 from uuid import uuid4
 
-from deermind.foundation.ai import store as ai_store
-from deermind.foundation.ai.contracts import (
+from deermind.abstractions.ai.contracts import (
     Budget,
     CallHandle,
     CallInput,
@@ -12,20 +11,15 @@ from deermind.foundation.ai.contracts import (
     ModelProfile,
     PurposeBinding,
 )
+from deermind.abstractions.ai.tools import ToolResult
+from deermind.abstractions.events import FactModel, Ref
+from deermind.abstractions.executions import Authorization, Execution, RunInput, State
+from deermind.foundation.ai import store as ai_store
 from deermind.foundation.ai.execution import Calls
-from deermind.foundation.ai.tools import Tool, ToolResult, Tools
+from deermind.foundation.ai.tools import Tool, Tools
 from deermind.foundation.system.events.attachments import FactAttachments
-from deermind.foundation.system.events.contracts import FactModel, Ref
 from deermind.foundation.system.executions import commands, store
-from deermind.foundation.system.executions.contracts import (
-    Authorization,
-    Caller,
-    Entry,
-    Execution,
-    Registry,
-    RunInput,
-    State,
-)
+from deermind.foundation.system.executions.contracts import Caller, Entry, Registry
 from deermind.infrastructure.ai.agent import Purpose
 from deermind.infrastructure.ai.execution import execute_ai_task
 from deermind.infrastructure.files.local import LocalFiles

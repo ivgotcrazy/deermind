@@ -7,7 +7,8 @@ from dataclasses import replace
 from datetime import datetime
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import (
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import (
     EVENT_LIMIT,
     INLINE_LIMIT,
     EventConflict,
@@ -22,13 +23,6 @@ from deermind.foundation.system.events.contracts import (
 )
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
-
-
-def canonical_json(value: object) -> str:
-    """固定UTF-8 JSON编码：键排序、无空白、拒绝非有限数；不改变数组顺序。"""
-    return json.dumps(
-        value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False
-    )
 
 
 class EventStore:

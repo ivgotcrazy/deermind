@@ -5,9 +5,10 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.delivery.contracts import EventNotice, Handoff, SubscriptionRegistry
+from deermind.abstractions.delivery import EventNotice, Handoff
+from deermind.abstractions.events import Ref, StoredEvent
+from deermind.foundation.system.delivery.contracts import SubscriptionRegistry
 from deermind.foundation.system.delivery.facts import record_change
-from deermind.foundation.system.events.contracts import Ref, StoredEvent
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 

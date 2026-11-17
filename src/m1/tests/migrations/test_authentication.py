@@ -9,11 +9,11 @@ from pathlib import Path
 from unittest.mock import patch
 from uuid import uuid4
 
+from deermind.abstractions.events import ProducerAccess, Ref
 from deermind.bootstrap.events import event_store
 from deermind.bootstrap.projections import account_rebuilder
 from deermind.entrypoints.api.app import create_app
 from deermind.entrypoints.maintenance.database import upgrade
-from deermind.foundation.system.events.contracts import ProducerAccess, Ref
 from deermind.infrastructure.database.connection import application_engine
 from deermind.infrastructure.files.local import LocalFiles
 from deermind.product.accounts.auth import AuthError, AuthService

@@ -3,7 +3,7 @@
 from typing import Literal
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.events import Ref
 from deermind.foundation.system.public.errors import ErrorDetail
 from pydantic import BaseModel, ConfigDict, Field
 

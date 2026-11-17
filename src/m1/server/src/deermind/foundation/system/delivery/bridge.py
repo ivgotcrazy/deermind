@@ -6,27 +6,24 @@ import logging
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from deermind.foundation.system.delivery.consumer import accept
-from deermind.foundation.system.delivery.contracts import (
+from deermind.abstractions.delivery import (
     DeliveryNotice,
+    DeliveryUnavailable,
     Handoff,
-    Subscription,
-    SubscriptionRegistry,
+    MessageTransport,
+    SubscriptionSpec,
 )
+from deermind.foundation.system.delivery.consumer import accept
+from deermind.foundation.system.delivery.contracts import Subscription, SubscriptionRegistry
 from deermind.foundation.system.delivery.outbox import claim, finish, mark_failure
-from deermind.foundation.system.events.contracts import Ref
-from deermind.infrastructure.nats.connection import JetStream
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
-
-from nats.errors import TimeoutError as NatsTimeout
-from nats.js.errors import NotFoundError
 
 LOGGER = logging.getLogger("runtime")
 
 
 async def publish_one(
-    engine: AsyncEngine, transport: JetStream, registry: SubscriptionRegistry
+    engine: AsyncEngine, transport: MessageTransport, registry: SubscriptionRegistry
 ) -> bool:
     """无工作返回False；失联结果未知时使用同一投递身份补发。"""
     lease = await claim(engine, str(uuid4()))
@@ -35,14 +32,28 @@ async def publish_one(
     try:
         remaining = (lease.deadline - datetime.now(UTC)).total_seconds()
         async with asyncio.timeout(min(5, max(0, remaining))):
-            await transport.check_subscribers(
-                lease.handoff.payload, lease.handoff.subscription_snapshot, registry
-            )
+            registered = {
+                item.subscriber_id: item
+                for item in registry.matching(
+                    lease.handoff.payload.event_type, lease.handoff.payload.scope_kind
+                )
+            }
+            required: list[SubscriptionSpec] = []
+            for name, revision in lease.handoff.subscription_snapshot.items():
+                item = registered.get(name)
+                if item is None or item.revision != revision:
+                    raise ValueError("Expected subscriber is not registered")
+                required.append(
+                    SubscriptionSpec(
+                        item.subscriber_id, item.revision, item.event_types, item.scope_kinds
+                    )
+                )
+            await transport.check_subscribers(required)
             stream, sequence = await transport.publish(lease.handoff.payload)
     except Exception as error:
         code = (
             "SUBSCRIBER_UNAVAILABLE"
-            if isinstance(error, (ValueError, NotFoundError))
+            if isinstance(error, (ValueError, DeliveryUnavailable))
             else "PUBLISH_UNKNOWN"
         )
         current = await finish(engine, lease, error_code=code)
@@ -76,23 +87,17 @@ async def publish_one(
 
 
 async def consume_one(
-    engine: AsyncEngine, transport: JetStream, subscription: Subscription
+    engine: AsyncEngine, transport: MessageTransport, subscription: Subscription
 ) -> bool:
     """收据提交后Ack；处理失败仅延期投递，不把队列当作业务重试器。"""
-    consumer = await transport.js.pull_subscribe_bind(
-        stream=transport.settings.stream, durable=subscription.subscriber_id
-    )
-    try:
-        try:
-            messages = await consumer.fetch(batch=1, timeout=1)
-        except (TimeoutError, NatsTimeout):
+    async with transport.receive(subscription.subscriber_id) as message:
+        if message is None:
             return False
-        message = messages[0]
         try:
             if len(message.data) > 64 * 1024:
                 raise ValueError("Event notice exceeds 64KiB")
             notice = DeliveryNotice.model_validate_json(message.data)
-            if message.subject != transport.settings.subject(notice.event_type):
+            if not transport.matches(message, notice.event_type):
                 raise ValueError("Notification subject mismatch")
             receipt = await accept(engine, subscription, notice)
         except Exception:
@@ -104,12 +109,12 @@ async def consume_one(
                     "error_code": "ACCEPT_NOT_COMMITTED",
                 },
             )
-            await message.nak(delay=30)
+            await message.retry()
             return True
         if receipt.disposition == "rejected":
-            await message.term()
+            await message.reject()
         else:
-            await message.ack_sync(timeout=5)
+            await message.acknowledge()
         LOGGER.info(
             "事件承接已保存并确认",
             extra={
@@ -125,32 +130,15 @@ async def consume_one(
             },
         )
         return True
-    finally:
-        # 只释放本地inbox，不删除服务端持久消费者。
-        await consumer.unsubscribe()
 
 
-async def collect_one(engine: AsyncEngine, transport: JetStream) -> bool:
+async def collect_one(engine: AsyncEngine, transport: MessageTransport) -> bool:
     """未能关联的失败通知留在队列；故障行保存后才确认收到。"""
-    consumer = await transport.js.pull_subscribe_bind(
-        stream=transport.settings.failures, durable="failure_collector"
-    )
-    try:
-        try:
-            messages = await consumer.fetch(batch=1, timeout=1)
-        except (TimeoutError, NatsTimeout):
+    async with transport.receive("failure_collector", failure=True) as message:
+        if message is None:
             return False
-        message = messages[0]
-        data = json.loads(message.data)
-        stream = data.get("stream")
-        sequence = data.get("stream_seq")
-        subscriber = data.get("consumer")
-        if (
-            stream != transport.settings.stream
-            or type(sequence) is not int
-            or not isinstance(subscriber, str)
-        ):
-            raise ValueError("Unrecognized failure advisory")
+        advisory = transport.advisory(message)
+        stream, sequence, subscriber = advisory.stream, advisory.sequence, advisory.subscriber
         async with engine.begin() as connection:
             row = (
                 (
@@ -168,7 +156,7 @@ async def collect_one(engine: AsyncEngine, transport: JetStream) -> bool:
             )
             if row is None:
                 # 发布成功但确认尚未落库时等待补发落定，不凭通知猜事件身份。
-                await message.nak(delay=30)
+                await message.retry()
                 return True
             handoff = Handoff.model_validate_json(json.dumps(dict(row), default=str))
             if subscriber not in handoff.subscription_snapshot:
@@ -181,24 +169,20 @@ async def collect_one(engine: AsyncEngine, transport: JetStream) -> bool:
                 {"subscriber": subscriber, "event": handoff.payload.event_id},
             )
             if receipt is None:
-                kind = "delivery_exhausted" if ".MAX_DELIVERIES." in message.subject else "rejected"
+                kind = advisory.kind
                 await mark_failure(
                     connection,
                     handoff,
                     kind,
                     "DELIVERY_ADVISORY",
                     subscriber=subscriber,
-                    basis=Ref(
-                        owner="runtime", type="nats_advisory", id=str(data.get("id", sequence))
-                    ),
+                    basis=advisory.reference,
                 )
-        await message.ack_sync(timeout=5)
+        await message.acknowledge()
         return True
-    finally:
-        await consumer.unsubscribe()
 
 
-async def reconcile(engine: AsyncEngine, transport: JetStream) -> None:
+async def reconcile(engine: AsyncEngine, transport: MessageTransport) -> None:
     """查收据及消息元数据，发现未接住的情况留痕；不擅自补送业务。"""
     async with engine.connect() as connection:
         rows = (
@@ -228,18 +212,7 @@ async def reconcile(engine: AsyncEngine, transport: JetStream) -> None:
     for row in rows:
         handoff = Handoff.model_validate_json(json.dumps(dict(row), default=str))
         for subscriber in handoff.subscription_snapshot:
-            kind = "unknown"
-            try:
-                await transport.js.consumer_info(transport.settings.stream, subscriber)
-            except NotFoundError:
-                kind = "consumer_missing"
-            else:
-                try:
-                    await transport.js.get_msg(
-                        transport.settings.stream, seq=handoff.stream_sequence
-                    )
-                except NotFoundError:
-                    kind = "transport_lost"
+            kind = await transport.delivery_status(subscriber, handoff.stream_sequence)
             async with engine.begin() as connection:
                 await connection.execute(
                     text("SELECT handoff_id FROM runtime.handoffs WHERE handoff_id=:id FOR UPDATE"),
@@ -260,7 +233,7 @@ async def reconcile(engine: AsyncEngine, transport: JetStream) -> None:
 
 async def run_bridge(
     engine: AsyncEngine,
-    transport: JetStream,
+    transport: MessageTransport,
     registry: SubscriptionRegistry,
     stopped: asyncio.Event,
 ) -> None:

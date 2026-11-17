@@ -10,11 +10,11 @@ from pathlib import Path
 from unittest.mock import patch
 from uuid import uuid4
 
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import EventDraft, ProducerAccess, Ref
 from deermind.bootstrap.events import event_store
 from deermind.entrypoints.maintenance.database import upgrade
 from deermind.foundation.system.events.attachments import FactAttachments
-from deermind.foundation.system.events.contracts import EventDraft, ProducerAccess, Ref
-from deermind.foundation.system.events.store import canonical_json
 from deermind.infrastructure.database.connection import application_engine
 from deermind.infrastructure.files.local import LocalFiles
 from deermind.product.accounts.projections import apply_account_events

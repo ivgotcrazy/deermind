@@ -8,11 +8,11 @@ from dataclasses import replace
 from typing import Any
 
 import httpx2
-from deermind.foundation.ai import store
-from deermind.foundation.ai.contracts import CallHandle, ModelProfile
-from deermind.foundation.ai.execution import AIRejected, Calls
-from deermind.foundation.system.events.contracts import Ref
-from deermind.foundation.system.events.store import canonical_json
+from deermind.abstractions.ai.calls import AIRejected, CallService
+from deermind.abstractions.ai.contracts import CallHandle, ModelProfile
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import Ref
+from deermind.abstractions.hashing import digest
 from openai import AsyncOpenAI
 from pydantic import JsonValue, TypeAdapter
 from pydantic_ai.messages import (
@@ -56,7 +56,7 @@ class ControlledModel(Model[None]):
     def __init__(
         self,
         handle: CallHandle,
-        calls: Calls,
+        calls: CallService,
         credentials: SecretReader,
         *,
         factory: ModelFactory = provider_model,
@@ -121,18 +121,18 @@ class ControlledModel(Model[None]):
             )
         )
         source = Ref(owner="ai", type="execution", id=str(handle.input.run.execution_id))
-        request_ref = await self.calls.attachments.save_json(
+        request_ref = await self.calls.save_material(
             body,
             actor=source,
             source=source,
-            artifact_key=f"ai-request:{handle.call_id}:{handle.attempt_id}:{ordinal}:{transport}:{store.digest(body)}",
+            artifact_key=f"ai-request:{handle.call_id}:{handle.attempt_id}:{ordinal}:{transport}:{digest(body)}",
             max_bytes=handle.budget.max_input_bytes,
         )
         saved = await self.calls.reserve(
             handle, ordinal, transport, request_ref, estimate, repair=repair
         )
         if saved.outcome == "success" and saved.response_ref is not None:
-            previous = await self.calls.attachments.read_json(
+            previous = await self.calls.read_material(
                 saved.response_ref, source=source, max_bytes=handle.budget.max_result_bytes
             )
             return checked_response(
@@ -178,7 +178,7 @@ class ControlledModel(Model[None]):
             content = TypeAdapter(dict[str, JsonValue]).validate_python(
                 TypeAdapter(ModelResponse).dump_python(response, mode="json")
             )
-            response_ref = await self.calls.attachments.save_json(
+            response_ref = await self.calls.save_material(
                 content,
                 actor=source,
                 source=source,

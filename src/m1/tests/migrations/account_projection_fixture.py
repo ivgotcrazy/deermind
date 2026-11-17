@@ -3,8 +3,8 @@
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
+from deermind.abstractions.events import EventDraft, ProducerAccess, Ref, StoredEvent
 from deermind.bootstrap.events import event_store
-from deermind.foundation.system.events.contracts import EventDraft, ProducerAccess, Ref, StoredEvent
 from deermind.product.accounts.facts import AccountFact, AccountSaved
 from deermind.product.accounts.projections import apply_account_events
 from deermind.product.accounts.usage_events import UsageConfirmed, record

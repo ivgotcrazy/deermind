@@ -4,7 +4,7 @@ import unittest
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.events import Ref
 from deermind.product.accounts.conditions import derive_conditions
 from deermind.product.accounts.usage_facts import ConditionsFact, ConfirmationFact
 

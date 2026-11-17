@@ -5,16 +5,11 @@ from collections import Counter
 from typing import Literal
 from uuid import UUID
 
-from deermind.foundation.ai.contracts import ExecutionConfig
-from deermind.foundation.ai.records import (
-    CallAttemptFact,
-    CallFact,
-    CandidateFact,
-    ConfigurationFact,
-    ModelRequestFact,
-    ToolActionFact,
-)
-from deermind.foundation.system.events.contracts import (
+from deermind.abstractions.ai.contracts import ExecutionConfig
+from deermind.abstractions.ai.requests import ModelRequestFact
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
+from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
     EventRegistration,
@@ -24,8 +19,13 @@ from deermind.foundation.system.events.contracts import (
     InlineContent,
     Ref,
 )
-from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
-from deermind.foundation.system.events.store import canonical_json
+from deermind.foundation.ai.records import (
+    CallAttemptFact,
+    CallFact,
+    CandidateFact,
+    ConfigurationFact,
+    ToolActionFact,
+)
 from pydantic import TypeAdapter
 
 MODELS: dict[str, type[FactModel]] = {

@@ -11,9 +11,9 @@ from typing import Any
 from uuid import uuid4
 
 from ai_fixture import AIWorkflow, Fixture, Output
+from deermind.abstractions.ai.contracts import ModelProfile
+from deermind.abstractions.events import Ref
 from deermind.entrypoints.maintenance.database import upgrade
-from deermind.foundation.ai.contracts import ModelProfile
-from deermind.foundation.system.events.contracts import Ref
 from deermind.infrastructure.ai.agent import build_agent
 from deermind.infrastructure.ai.execution import Activities
 from deermind.infrastructure.ai.models import provider_model

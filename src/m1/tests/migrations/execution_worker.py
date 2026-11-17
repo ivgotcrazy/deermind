@@ -6,19 +6,13 @@ from datetime import timedelta
 from typing import TypedDict
 from uuid import UUID, uuid4
 
+from deermind.abstractions.events import Ref
+from deermind.abstractions.executions import Authorization, Execution, RunInput, State
+from deermind.bootstrap import runtime
 from deermind.bootstrap.executions import limits
-from deermind.foundation.system.events.contracts import Ref
 from deermind.foundation.system.executions import steps
-from deermind.foundation.system.executions.contracts import (
-    Authorization,
-    Entry,
-    Execution,
-    Registry,
-    RunInput,
-    State,
-)
+from deermind.foundation.system.executions.contracts import Entry, Registry
 from deermind.infrastructure.database.connection import application_engine
-from deermind.infrastructure.temporal.executions import Lifecycle
 from sqlalchemy import URL, text
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 from temporalio import activity, workflow
@@ -170,7 +164,7 @@ async def serve(database: str, scope: UUID, queue: str) -> None:
         os.environ["M1_TEST_TEMPORAL_ADDRESS"], namespace=os.environ["M1_TEST_TEMPORAL_NAMESPACE"]
     )
     entries = registry(scope, queue)
-    lifecycle = Lifecycle(engine, entries, limits())
+    lifecycle = runtime.lifecycle(engine, entries, limits())
     actions = TestActivities(engine, entries)
     try:
         async with Worker(

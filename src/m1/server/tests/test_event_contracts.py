@@ -4,9 +4,10 @@ import json
 import unittest
 from uuid import uuid4
 
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import Ref
 from deermind.bootstrap.events import event_store
-from deermind.foundation.system.events.contracts import Ref
-from deermind.foundation.system.events.store import EventStore, canonical_json
+from deermind.foundation.system.events.store import EventStore
 from deermind.product.accounts.facts import ACCOUNT_REGISTRATION, AccountFact
 from pydantic import ValidationError
 

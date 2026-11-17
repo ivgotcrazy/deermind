@@ -8,7 +8,8 @@ from dataclasses import replace
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from deermind.foundation.system.events.contracts import (
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import (
     INLINE_LIMIT,
     EventDraft,
     FactRecord,
@@ -18,14 +19,10 @@ from deermind.foundation.system.events.contracts import (
     ProducerAccess,
     Ref,
 )
-from deermind.foundation.system.events.store import EventStore, canonical_json
-from deermind.foundation.system.files.ports import FileStorage
-from deermind.infrastructure.files.records import (
-    FILE_REGISTRATION,
-    FileObject,
-    FileReceived,
-    project_file,
-)
+from deermind.abstractions.file_records import FileObject, FileReceived
+from deermind.abstractions.files import FileStorage
+from deermind.foundation.system.events.store import EventStore
+from deermind.foundation.system.files.records import FILE_REGISTRATION, project_file
 from pydantic import JsonValue, TypeAdapter
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError

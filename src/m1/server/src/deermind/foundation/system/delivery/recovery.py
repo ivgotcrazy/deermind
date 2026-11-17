@@ -3,9 +3,9 @@
 import json
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.delivery.contracts import Handoff
+from deermind.abstractions.delivery import Handoff
+from deermind.abstractions.events import Ref
 from deermind.foundation.system.delivery.facts import record_change
-from deermind.foundation.system.events.contracts import Ref
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 

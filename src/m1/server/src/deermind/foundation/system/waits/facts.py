@@ -4,7 +4,8 @@ import json
 from typing import Literal
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.events.contracts import (
+from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
+from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
     EventRegistration,
@@ -13,9 +14,8 @@ from deermind.foundation.system.events.contracts import (
     ProducerAccess,
     Ref,
 )
-from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
+from deermind.abstractions.waits import Handling, Wait
 from deermind.foundation.system.events.store import EventStore
-from deermind.foundation.system.waits.contracts import Handling, Wait
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
 

@@ -1,50 +1,18 @@
 """不可变文件登记及FileReceived的完整正文；不承接教材或AI业务。"""
 
-from datetime import datetime
-from typing import Annotated, Literal
-from uuid import UUID
-
-from deermind.foundation.system.events.contracts import (
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
+from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
     EventRegistration,
-    FactModel,
     InlineContent,
-    NonEmpty,
     Ref,
     StoredEvent,
 )
-from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
-from deermind.foundation.system.events.store import canonical_json
-from deermind.foundation.system.files.ports import FileBytes
-from pydantic import Field
+from deermind.abstractions.file_records import FileObject, FileReceived
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
-
-
-class FileObject(FactModel):
-    file_id: UUID
-    backend: Literal["local", "pvc", "object"]
-    storage_key: NonEmpty
-    media_type: NonEmpty
-    byte_size: Annotated[int, Field(ge=0)]
-    sha256: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
-    category: Literal[
-        "original", "page", "render", "ai_material", "ai_candidate", "sdk_payload", "fact"
-    ]
-    artifact_key: NonEmpty | None
-    source_refs: list[Ref]
-    transform_ref: Ref | None
-    created_at: datetime
-
-    def bytes_ref(self) -> FileBytes:
-        return FileBytes(self.file_id, self.storage_key, self.byte_size, self.sha256)
-
-
-class FileReceived(EventPayload):
-    subject_ref: Ref
-    outcome: Literal["recorded"]
-    reason_code: None
 
 
 def file_content(payload: EventPayload) -> FileObject:

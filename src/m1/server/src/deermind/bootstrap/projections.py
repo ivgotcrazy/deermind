@@ -4,11 +4,14 @@ import hashlib
 import secrets
 from pathlib import Path
 
+from deermind.abstractions import event_reading as reading
+from deermind.abstractions import events as contracts
+from deermind.abstractions.files import FileStorage
 from deermind.bootstrap.events import event_reader
-from deermind.foundation.system.events import contracts, query, reading, store
-from deermind.foundation.system.files.ports import FileStorage
+from deermind.foundation.system.events import query, store
 from deermind.foundation.system.projections import contracts as maintenance_contracts
 from deermind.foundation.system.projections import receipts, records
+from deermind.infrastructure.database.connection import EXPECTED_REVISION, MAINTENANCE_LOCK
 from deermind.product.accounts import (
     auth_facts,
     facts,
@@ -46,4 +49,7 @@ def account_rebuilder(engine: AsyncEngine, files: FileStorage) -> AccountRebuild
         digest.update(module.__name__.encode())
         digest.update(Path(module.__file__).read_bytes())
     reader = event_reader(engine, files, cursor_key=secrets.token_bytes(32))
-    return AccountRebuilder(engine, reader, AccountRebuildSpec(digest.hexdigest()))
+    maintenance = records.ProjectionRecords(
+        engine, expected_revision=EXPECTED_REVISION, maintenance_lock=MAINTENANCE_LOCK
+    )
+    return AccountRebuilder(engine, reader, AccountRebuildSpec(digest.hexdigest()), maintenance)

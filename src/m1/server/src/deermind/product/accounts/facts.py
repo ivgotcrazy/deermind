@@ -4,7 +4,9 @@ from datetime import datetime, timedelta
 from typing import Annotated, Literal
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import (
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
+from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
     EventRegistration,
@@ -14,8 +16,6 @@ from deermind.foundation.system.events.contracts import (
     Ref,
     StoredEvent,
 )
-from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
-from deermind.foundation.system.events.store import canonical_json
 from deermind.product.accounts.usage_events import decode
 from deermind.product.accounts.usage_facts import (
     USAGE_RECORDS,

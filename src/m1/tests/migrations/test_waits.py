@@ -7,17 +7,18 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
+from deermind.abstractions.delivery import EventNotice
+from deermind.abstractions.executions import RunInput
+from deermind.abstractions.waits import Wait
+from deermind.bootstrap import runtime
 from deermind.bootstrap.executions import limits
 from deermind.entrypoints.maintenance.database import upgrade
-from deermind.foundation.system.delivery.contracts import EventNotice
 from deermind.foundation.system.executions import commands, store
-from deermind.foundation.system.executions.contracts import RunInput
+from deermind.foundation.system.executions.relay import dispatch_one
 from deermind.foundation.system.waits import facts, notifications
-from deermind.foundation.system.waits.contracts import Wait
+from deermind.foundation.system.waits.reconcile import reconcile
 from deermind.infrastructure.database.connection import application_engine
-from deermind.infrastructure.temporal.executions import Lifecycle, Transport
-from deermind.infrastructure.temporal.relay import dispatch_one
-from deermind.infrastructure.temporal.waits import Activities, reconcile
+from deermind.infrastructure.temporal.executions import Transport
 from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -483,8 +484,8 @@ class WaitTests(DatabaseTestCase):
                         text("UPDATE runtime.handoffs SET state='delivered' WHERE logical_key=:id"),
                         {"id": str(producer.attempt_id)},
                     )
-                lifecycle = Lifecycle(engine, f.entries, limits())
-                actions = Activities(engine, f.waits, timeout_seconds=30)
+                lifecycle = runtime.lifecycle(engine, f.entries, limits())
+                actions = runtime.wait_activities(engine, f.waits, timeout_seconds=30)
                 finder = FindWait(engine)
 
                 def worker() -> Worker:

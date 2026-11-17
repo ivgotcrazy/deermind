@@ -1,6 +1,7 @@
 """装配已实施业务入口和本轮确认的执行限额；不注册未来Operation占位。"""
 
-from deermind.foundation.system.executions.contracts import Limits, Registry
+from deermind.abstractions.executions import Limits
+from deermind.foundation.system.executions.contracts import Registry
 
 
 def registry() -> Registry:

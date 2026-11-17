@@ -10,10 +10,10 @@ from unittest.mock import patch
 from uuid import uuid4
 
 from ai_fixture import AIWorkflow, Fixture, Output
+from deermind.abstractions.ai.calls import AIRejected
+from deermind.abstractions.ai.contracts import ModelProfile
 from deermind.entrypoints.maintenance.database import upgrade
 from deermind.foundation.ai import store as ai_store
-from deermind.foundation.ai.contracts import ModelProfile
-from deermind.foundation.ai.execution import AIRejected
 from deermind.foundation.ai.records import CandidateFact
 from deermind.foundation.system.executions import commands
 from deermind.foundation.system.executions import store as executions

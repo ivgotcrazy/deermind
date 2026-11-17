@@ -4,10 +4,11 @@ import hashlib
 import json
 from collections.abc import Awaitable, Callable
 
-from deermind.foundation.system.events.contracts import Ref
-from deermind.foundation.system.events.store import canonical_json
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import Ref
+from deermind.abstractions.executions import RunInput, StepResult
 from deermind.foundation.system.executions import store
-from deermind.foundation.system.executions.contracts import Registry, RunInput, StepResult
+from deermind.foundation.system.executions.contracts import Registry
 from deermind.foundation.system.executions.facts import record_change
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection

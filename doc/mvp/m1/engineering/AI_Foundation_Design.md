@@ -1,11 +1,11 @@
 # M1 AI 底座设计
 
-> **版本**：v0.30<br>
+> **版本**：v0.31<br>
 > **状态**：E01-15已进入实现及自检；进度以实施计划为准<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-16<br>
-> **修订说明**：v0.29 → v0.30，落实E01-15受控调用、官方Temporal集成和本轮测试额度<br>
+> **更新日期**：2026-11-17<br>
+> **修订说明**：v0.30 → v0.31，同步AI服务接口、工具描述及SDK适配边界<br>
 
 本文设计各业务和Space共用的模型调用、工具循环及通用材料处理能力。业务Operation决定取材、组装上下文和保存记忆；底座按调用方要求执行，代码不内置学习空间、活动或题目等业务概念。职责以[总体§3.4](System_Design.md#34-agent上下文和记忆)为准；持久任务生命周期归公共运行底座，共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -14,6 +14,8 @@
 **事件事实源。** AI工作配置、实际输入输出、工具调用及其已知结果记录到事件及固定附件；调用表由其投影。密钥、隐藏思考不记录；外部调用结果未知时明确保留unknown，不补造成功。字段及投影登记只在[事件正文合同](contracts/Event_Facts.md)维护；本稿中的“保存业务对象”均指共同短事务内由事件生成投影。
 
 **源码落点。** `server/src/deermind/foundation/ai/`承载configuration、execution、tools、context及budgets；模型/框架适配由infrastructure提供，业务取材与Prompt归Operation。公开合同、私有存储、投影及依赖规则见[源码组织§3—4](Source_Organization.md#3-后端源码)；HTTP按[OpenAPI合同](API_and_Message_Design.md#7-openapi与可执行合同)导出，本文继续维护业务行为。
+
+跨层调用使用独立`abstractions/ai/`合同，目录和依赖规则见[源码组织§4](Source_Organization.md#4-模块依赖与装配)。SDK适配只通过CallService申请调用、保存材料、预约和结算、保存候选，通过ToolService取得公开描述并调用工具；不读取Calls的engine、attachments或Tools的内部注册表。权限、预算、幂等与事实保存仍归AI底座。官方Temporal集成及模型消息编码归技术适配；接口不暴露SDK对象。
 
 ## 1. AI任务协议与运行边界
 
@@ -468,3 +470,4 @@ Worker使用官方`PydanticAIPlugin`、`TemporalDurability`与`FunctionToolset`�
 | v0.28 | 2026-11-15 | 同步工程目录、职责依赖、Vue客户端及OpenAPI生成边界。仅文档修订，见MVP决定登记§97。 |
 | v0.29 | 2026-11-15 | 更新实施计划量化验收及验证章节引用，未改本模块合同。见MVP决定登记§99。 |
 | v0.30 | 2026-11-16 | 落实E01-15受控调用、官方Temporal集成和本轮测试额度 |
+| v0.31 | 2026-11-17 | 同步AI服务接口、工具描述及SDK适配边界 |

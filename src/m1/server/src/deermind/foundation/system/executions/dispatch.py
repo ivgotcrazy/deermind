@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 from typing import Literal
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.events.contracts import Ref
-from deermind.foundation.system.executions.contracts import Dispatch, Limits
+from deermind.abstractions.events import Ref
+from deermind.abstractions.executions import Dispatch, Limits
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 

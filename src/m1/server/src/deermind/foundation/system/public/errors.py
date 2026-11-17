@@ -1,6 +1,6 @@
 """HTTP与消息共用的安全错误；不得携带原请求、凭据或内部异常。"""
 
-from deermind.foundation.system.events.contracts import Ref
+from deermind.abstractions.events import Ref
 from pydantic import BaseModel, ConfigDict
 
 

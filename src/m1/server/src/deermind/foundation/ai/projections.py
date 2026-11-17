@@ -2,9 +2,9 @@
 
 from collections.abc import Sequence
 
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import StoredEvent
 from deermind.foundation.ai.facts import MATRIX, MODELS, decode
-from deermind.foundation.system.events.contracts import StoredEvent
-from deermind.foundation.system.events.store import canonical_json
 from deermind.foundation.system.projections.receipts import application
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection

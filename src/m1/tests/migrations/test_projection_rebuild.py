@@ -14,11 +14,11 @@ from unittest.mock import patch
 from uuid import UUID, uuid4
 
 from account_projection_fixture import student_facts
+from deermind.abstractions.events import EventDraft, ProducerAccess, Ref
 from deermind.bootstrap.events import event_store
 from deermind.bootstrap.projections import account_rebuilder
 from deermind.entrypoints.maintenance.database import upgrade
 from deermind.foundation.system.events.attachments import FactAttachments
-from deermind.foundation.system.events.contracts import EventDraft, ProducerAccess, Ref
 from deermind.infrastructure.database.connection import MAINTENANCE_LOCK, application_engine
 from deermind.infrastructure.files.local import LocalFiles
 from deermind.product.accounts.facts import AccountFact
@@ -313,7 +313,10 @@ class ProjectionRebuildTests(DatabaseTestCase):
                 identity, 2, [outside], operator=self.operator, authorization=self.authorization
             )
         incompatible = AccountRebuilder(
-            maintenance, service.reader, replace(service.spec, implementation_digest="0" * 64)
+            maintenance,
+            service.reader,
+            replace(service.spec, implementation_digest="0" * 64),
+            service.records,
         )
         with self.assertRaises(ValueError):
             await self.resume(incompatible, identity)

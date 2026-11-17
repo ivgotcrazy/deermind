@@ -3,13 +3,8 @@
 from typing import Literal
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import (
-    EventDraft,
-    EventPayload,
-    EventRegistration,
-    Ref,
-)
-from deermind.foundation.system.events.reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
+from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
+from deermind.abstractions.events import EventDraft, EventPayload, EventRegistration, Ref
 
 
 class AccountSignedIn(EventPayload):

@@ -6,6 +6,7 @@ from uuid import UUID
 
 from deermind.bootstrap.database import DatabaseSettings
 from deermind.bootstrap.messaging import subscriptions
+from deermind.foundation.system.delivery.contracts import specifications
 from deermind.foundation.system.delivery.recovery import redeliver
 from deermind.foundation.system.logging import configure_logging
 from deermind.infrastructure.nats.connection import MessagingSettings, connect
@@ -15,7 +16,7 @@ from sqlalchemy.pool import NullPool
 
 async def initialize() -> None:
     async with connect(MessagingSettings.from_environment()) as transport:
-        await transport.initialize(subscriptions())
+        await transport.initialize(specifications(subscriptions()))
 
 
 def main() -> None:

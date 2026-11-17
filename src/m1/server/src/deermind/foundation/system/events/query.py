@@ -8,13 +8,8 @@ import json
 from collections.abc import Sequence
 from uuid import UUID
 
-from deermind.foundation.system.events.contracts import (
-    EventDraft,
-    EventRegistration,
-    InlineContent,
-    StoredEvent,
-)
-from deermind.foundation.system.events.reading import (
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.event_reading import (
     FACT_READ_LIMIT,
     PAGE_DEFAULT,
     PAGE_MAX,
@@ -29,9 +24,9 @@ from deermind.foundation.system.events.reading import (
     fragment,
     pointer_parts,
 )
-from deermind.foundation.system.events.store import canonical_json
-from deermind.foundation.system.files.ports import FileStorage
-from deermind.infrastructure.files.records import FileObject
+from deermind.abstractions.events import EventDraft, EventRegistration, InlineContent, StoredEvent
+from deermind.abstractions.file_records import FileObject
+from deermind.abstractions.files import FileStorage
 from pydantic import JsonValue, TypeAdapter
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine

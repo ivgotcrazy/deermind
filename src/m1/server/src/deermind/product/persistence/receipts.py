@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from hashlib import sha256
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.events.contracts import Ref
-from deermind.foundation.system.events.store import canonical_json
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import Ref
 from deermind.product.public.errors import RequestConflict as RequestConflict
 from pydantic import JsonValue
 from sqlalchemy import text

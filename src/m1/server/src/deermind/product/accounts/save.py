@@ -3,14 +3,9 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from deermind.foundation.system.events.contracts import (
-    EventDraft,
-    FactRecord,
-    InlineContent,
-    ProducerAccess,
-    Ref,
-)
-from deermind.foundation.system.events.store import EventStore, canonical_json
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.events import EventDraft, FactRecord, InlineContent, ProducerAccess, Ref
+from deermind.foundation.system.events.store import EventStore
 from deermind.product.accounts.facts import AccountFact, AccountSaved
 from deermind.product.accounts.projections import apply_account_events
 from deermind.product.persistence.receipts import Receipt, claim_request, complete_request
