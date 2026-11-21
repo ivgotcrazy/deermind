@@ -310,11 +310,8 @@ class AccountUsageTests(DatabaseTestCase):
             try:
                 rebuilder = account_rebuilder(maintenance, LocalFiles(directory, backend="local"))
                 # 与E01-08相同受控维护入口，在测试库中重建一个账号。
-                job = await rebuilder.prepare(
+                restored = await rebuilder.rebuild(
                     uuid4(), 2, [student], operator="usage-test", authorization="test-maintenance"
-                )
-                restored = await rebuilder.resume(
-                    job.rebuild_id, operator="usage-test", authorization="test-maintenance"
                 )
                 self.assertEqual(restored.state, "completed")
             finally:

@@ -26,7 +26,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 
 def account_rebuilder(engine: AsyncEngine, files: FileStorage) -> AccountRebuilder:
-    """实现变化不能续用旧副本；副本和表范围由账号业务维护。"""
+    """记录本批实现摘要；副本和表范围由账号业务维护。"""
     digest = hashlib.sha256(Path(__file__).read_bytes())
     for module in (
         facts,
@@ -52,4 +52,4 @@ def account_rebuilder(engine: AsyncEngine, files: FileStorage) -> AccountRebuild
     maintenance = records.ProjectionRecords(
         engine, expected_revision=EXPECTED_REVISION, maintenance_lock=MAINTENANCE_LOCK
     )
-    return AccountRebuilder(engine, reader, AccountRebuildSpec(digest.hexdigest()), maintenance)
+    return AccountRebuilder(reader, AccountRebuildSpec(digest.hexdigest()), maintenance)

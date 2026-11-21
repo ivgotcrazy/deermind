@@ -338,15 +338,12 @@ class AuthenticationTests(DatabaseTestCase):
                     rebuilder = account_rebuilder(
                         maintenance, LocalFiles(Path(directory), backend="local")
                     )
-                    job = await rebuilder.prepare(
+                    job = await rebuilder.rebuild(
                         uuid4(),
                         2,
                         [login.view.account.account_id],
                         operator="test",
                         authorization="test",
-                    )
-                    job = await rebuilder.resume(
-                        job.rebuild_id, operator="test", authorization="test"
                     )
                     self.assertEqual(job.state, "completed")
                 with self.assertRaises(AuthError):

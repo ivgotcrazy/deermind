@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from uuid import NAMESPACE_URL, UUID, uuid4, uuid5
 
 from deermind.abstractions.encoding import canonical_json
-from deermind.abstractions.events import EventDraft, ProducerAccess, Ref, StoredEvent
+from deermind.abstractions.events import EventDraft, ProducerAccess, Ref
 from deermind.foundation.system.events.store import EventStore
 from deermind.foundation.system.projections.contracts import (
     REBUILD_FINISHED,
@@ -19,7 +19,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
 
 class ProjectionRecords:
-    """维护授权、固定上界、进度和结果；不调用生成器，不解释副本元数据。"""
+    """维护授权、固定上界和批次结果；不调用生成器，不解释副本元数据。"""
 
     def __init__(
         self, engine: AsyncEngine, *, expected_revision: str, maintenance_lock: int
@@ -101,42 +101,6 @@ class ProjectionRecords:
                 "created": job.created_at,
             },
         )
-        for bound in job.scope_bounds:
-            await connection.execute(
-                text(
-                    "INSERT INTO runtime.projection_offsets "
-                    "(projector_id,generation,scope_kind,scope_id,history_upper_seq,"
-                    "state,updated_at) VALUES (:projector,:generation,:kind,:scope,"
-                    ":upper,'catching_up',clock_timestamp())"
-                ),
-                {
-                    "projector": job.projector_id,
-                    "generation": job.generation,
-                    "kind": bound.scope_kind,
-                    "scope": bound.scope_id,
-                    "upper": bound.upper_seq,
-                },
-            )
-
-    async def position(
-        self, connection: AsyncConnection, job: RebuildJob, bound: ScopeBound
-    ) -> int:
-        value = await connection.scalar(
-            text(
-                "SELECT scanned_through_seq FROM runtime.projection_offsets WHERE "
-                "projector_id=:projector AND generation=:generation "
-                "AND scope_kind=:kind AND scope_id=:scope"
-            ),
-            {
-                "projector": job.projector_id,
-                "generation": job.generation,
-                "kind": bound.scope_kind,
-                "scope": bound.scope_id,
-            },
-        )
-        if not isinstance(value, int):
-            raise ValueError("Rebuild progress is missing")
-        return value
 
     async def event_id(self, connection: AsyncConnection, bound: ScopeBound, sequence: int) -> UUID:
         if not 1 <= sequence <= bound.upper_seq:
@@ -151,28 +115,6 @@ class ProjectionRecords:
         if not isinstance(identity, UUID):
             raise ValueError("A source sequence is missing")
         return identity
-
-    async def advance(
-        self, connection: AsyncConnection, job: RebuildJob, event: StoredEvent, previous: int
-    ) -> None:
-        result = await connection.execute(
-            text(
-                "UPDATE runtime.projection_offsets SET scanned_through_seq=:next,"
-                "updated_at=clock_timestamp() "
-                "WHERE projector_id=:projector AND generation=:generation AND scope_kind=:kind "
-                "AND scope_id=:scope AND scanned_through_seq=:previous AND state='catching_up'"
-            ),
-            {
-                "projector": job.projector_id,
-                "generation": job.generation,
-                "kind": event.draft.scope_kind,
-                "scope": event.draft.scope_id,
-                "previous": previous,
-                "next": event.scope_event_seq,
-            },
-        )
-        if result.rowcount != 1:
-            raise ValueError("Projection progress no longer matches its checkpoint")
 
     async def applied(self, connection: AsyncConnection, job: RebuildJob) -> set[UUID]:
         return set(
@@ -199,6 +141,24 @@ class ProjectionRecords:
             ),
             parameters,
         )
+        # 只登记校验通过的完整范围；不持久化逐事件的维护断点。
+        await connection.execute(
+            text(
+                "INSERT INTO runtime.projection_offsets "
+                "(projector_id,generation,scope_kind,scope_id,scanned_through_seq,"
+                "history_upper_seq,state,updated_at) VALUES (:projector,:generation,:kind,:scope,"
+                ":upper,:upper,'completed',clock_timestamp())"
+            ),
+            [
+                {
+                    **parameters,
+                    "kind": bound.scope_kind,
+                    "scope": bound.scope_id,
+                    "upper": bound.upper_seq,
+                }
+                for bound in job.scope_bounds
+            ],
+        )
         await connection.execute(
             text(
                 "INSERT INTO runtime.projection_offsets "
@@ -213,32 +173,7 @@ class ProjectionRecords:
             ),
             parameters,
         )
-        await connection.execute(
-            text(
-                "UPDATE runtime.projection_offsets SET state='completed',"
-                "updated_at=clock_timestamp() "
-                "WHERE projector_id=:projector AND generation=:generation"
-            ),
-            parameters,
-        )
         await self.result(connection, job, "completed", None, checks=checks)
-
-    async def fail(self, gate: AsyncConnection, job: RebuildJob, error_type: str) -> None:
-        await gate.execute(
-            text(
-                "UPDATE runtime.projection_offsets SET state='blocked',error=CAST(:error AS jsonb),"
-                "updated_at=clock_timestamp() WHERE projector_id=:projector AND "
-                "generation=:generation"
-            ),
-            {
-                "projector": job.projector_id,
-                "generation": job.generation,
-                "error": canonical_json(
-                    {"code": "REBUILD_FAILED", "message": error_type, "event_id": None}
-                ),
-            },
-        )
-        await self.result(gate, job, "failed", error_type)
 
     async def result(
         self,

@@ -7,7 +7,6 @@ from datetime import datetime
 from uuid import UUID
 
 from deermind.abstractions.event_reading import ReadAccess
-from deermind.abstractions.events import StoredEvent
 from deermind.foundation.system.events.query import EventReader
 from deermind.foundation.system.projections.contracts import CheckIssue, RebuildJob
 from deermind.foundation.system.projections.records import ProjectionRecords
@@ -21,9 +20,7 @@ from deermind.product.accounts.projections import (
 )
 from deermind.product.accounts.usage_facts import ConditionsFact
 from sqlalchemy import text
-from sqlalchemy.exc import DBAPIError
-from sqlalchemy.exc import TimeoutError as PoolTimeout
-from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
+from sqlalchemy.ext.asyncio import AsyncConnection
 
 
 @dataclass(frozen=True)
@@ -36,12 +33,11 @@ class AccountRebuilder:
 
     def __init__(
         self,
-        engine: AsyncEngine,
         reader: EventReader,
         spec: AccountRebuildSpec,
         records: ProjectionRecords,
     ) -> None:
-        self.engine, self.reader, self.spec = engine, reader, spec
+        self.reader, self.spec = reader, spec
         self.records = records
 
     @staticmethod
@@ -64,17 +60,7 @@ class AccountRebuilder:
             raise PermissionError("Rebuild is not available to this maintenance request")
         return job
 
-    def _current(self, job: RebuildJob) -> None:
-        if (
-            job.projector_id != PROJECTOR_ID
-            or job.implementation_digest != self.spec.implementation_digest
-            or job.target_relations != stage_tables(job.rebuild_id)
-            or job.stage_relation != self.stage_name(job.rebuild_id)
-            or any(bound.scope_kind != "account" for bound in job.scope_bounds)
-        ):
-            raise ValueError("Legacy or changed rebuild cannot resume; prepare a new generation")
-
-    async def prepare(
+    async def rebuild(
         self,
         identity: UUID,
         generation: int,
@@ -83,7 +69,7 @@ class AccountRebuilder:
         operator: str,
         authorization: str,
     ) -> RebuildJob:
-        """明确授权范围，重复请求沿原记录；不清理或转换旧维护记录。"""
+        """按完整范围重建；重发相同请求只查结果，重做须使用新身份和代次。"""
         if (
             type(generation) is not int
             or generation <= 1
@@ -99,12 +85,15 @@ class AccountRebuilder:
         async with self._guard() as gate:
             existing = await self.records.get(gate, identity, operator, authorization)
             if existing:
-                self._current(existing)
                 if (
-                    existing.generation != generation
+                    existing.projector_id != PROJECTOR_ID
+                    or existing.generation != generation
+                    or any(b.scope_kind != "account" for b in existing.scope_bounds)
                     or [b.scope_id for b in existing.scope_bounds] != scopes
                 ):
                     raise ValueError("Existing rebuild parameters cannot be changed")
+                if existing.state == "building":
+                    raise ValueError("Legacy unfinished rebuild; use a new identity and generation")
                 return existing
             bounds = await self.records.bounds(gate, "account", scopes)
             now = await gate.scalar(text("SELECT clock_timestamp()"))
@@ -127,16 +116,18 @@ class AccountRebuilder:
                 created_at=now,
                 updated_at=now,
             )
-            for table in TABLES:
-                # LIKE不复制外键；完整的业务关联在_verify核对，正式替换仍受真实外键约束。
-                await gate.execute(
-                    text(f"CREATE TABLE {targets[table.name]} (LIKE {table.name} INCLUDING ALL)")
-                )
-                await gate.execute(
-                    text(f"REVOKE ALL ON {targets[table.name]} FROM deermind_app, PUBLIC")
-                )
             await self.records.create(gate, job)
-            return job
+            try:
+                # 副本、生成收据、正式替换与成功事件一起回滚，外层可单独保存失败结果。
+                async with gate.begin_nested():
+                    await self._build(gate, job)
+                    await self._verify(gate, job)
+                    await self._finish(gate, job)
+            except Exception as error:
+                if gate.invalidated:
+                    raise
+                await self.records.result(gate, job, "failed", type(error).__name__)
+            return await self._job(gate, identity, operator, authorization)
 
     async def status(self, identity: UUID, *, operator: str, authorization: str) -> RebuildJob:
         async with self.records.guard() as gate:
@@ -153,71 +144,30 @@ class AccountRebuilder:
             maintenance_ref=str(job.rebuild_id),
         )
 
-    async def resume(
-        self, identity: UUID, *, operator: str, authorization: str, max_events: int | None = None
-    ) -> RebuildJob:
-        """临时连接/锁故障保留断点；事实或完整性错误记失败，正式表不变。"""
-        if max_events is not None and (type(max_events) is not int or max_events < 1):
-            raise ValueError("max_events must be a positive integer")
-        async with self._guard() as gate:
-            job = await self._job(gate, identity, operator, authorization)
-            # 旧结果可查，但不得被当作五表重建结果或继续执行。
-            self._current(job)
-            if job.state != "building":
-                return job
-            bounds = await self.records.bounds(
-                gate, "account", [b.scope_id for b in job.scope_bounds]
-            )
-            if bounds != job.scope_bounds:
-                raise ValueError("Source facts changed; prepare a new rebuild generation")
-            try:
-                processed = 0
-                for bound in job.scope_bounds:
-                    previous = await self.records.position(gate, job, bound)
-                    while previous < bound.upper_seq:
-                        event_id = await self.records.event_id(gate, bound, previous + 1)
-                        event = await self.reader.read_projection_event(self._access(job), event_id)
-                        await self._checkpoint(job, event, previous)
-                        previous += 1
-                        processed += 1
-                        if max_events is not None and processed >= max_events:
-                            return await self._job(gate, identity, operator, authorization)
-                async with gate.begin_nested():
-                    await self._verify(gate, job)
-                    await self._finish(gate, job)
-            except (PoolTimeout, TimeoutError, ConnectionError):
-                raise
-            except DBAPIError as error:
-                code = getattr(error.orig, "sqlstate", "") or ""
-                if (
-                    error.connection_invalidated
-                    or code[:2] in {"08", "40", "53", "57", "58"}
-                    or code == "55P03"
-                ):
-                    raise
-                await self.records.fail(gate, job, type(error).__name__)
-            except (ValueError, OSError) as error:
-                await self.records.fail(gate, job, type(error).__name__)
-            return await self._job(gate, identity, operator, authorization)
-
-    async def _checkpoint(self, job: RebuildJob, event: StoredEvent, previous: int) -> None:
-        async with self.engine.begin() as connection:
-            await apply_account_events(
-                connection, [event], generation=job.generation, targets=job.target_relations
-            )
-            # 未被本生成器采用的事件只推进扫描位置，不冒充投影已应用。
-            await self.records.advance(connection, job, event, previous)
+    async def _build(self, gate: AsyncConnection, job: RebuildJob) -> None:
+        """副本只在本次事务内存在；正式外键约束仍在发布时检查。"""
+        for table in TABLES:
+            target = job.target_relations[table.name]
+            await gate.execute(text(f"CREATE TABLE {target} (LIKE {table.name} INCLUDING ALL)"))
+            await gate.execute(text(f"REVOKE ALL ON {target} FROM deermind_app, PUBLIC"))
+        access = self._access(job)
+        for bound in job.scope_bounds:
+            for sequence in range(1, bound.upper_seq + 1):
+                event_id = await self.records.event_id(gate, bound, sequence)
+                event = await self.reader.read_projection_event(access, event_id)
+                await apply_account_events(
+                    gate, [event], generation=job.generation, targets=job.target_relations
+                )
 
     async def _verify(self, gate: AsyncConnection, job: RebuildJob) -> None:
         """按完整历史推导应有行集合，再逐表比较；防止漏行、多行和旧快照伪装最新值。"""
         expected: dict[str, dict[object, dict[str, object]]] = {t.name: {} for t in TABLES}
         applied: set[UUID] = set()
+        access = self._access(job)
         for bound in job.scope_bounds:
-            if await self.records.position(gate, job, bound) != bound.upper_seq:
-                raise ValueError("Progress does not cover the fixed source range")
             for sequence in range(1, bound.upper_seq + 1):
                 event_id = await self.records.event_id(gate, bound, sequence)
-                event = await self.reader.read_projection_event(self._access(job), event_id)
+                event = await self.reader.read_projection_event(access, event_id)
                 if event.draft.event_type not in EVENT_TYPES:
                     continue
                 applied.add(event_id)
@@ -325,7 +275,7 @@ class AccountRebuilder:
                 CheckIssue(
                     code="SOURCE_MATCH",
                     path="account_views",
-                    message="账号、监护关系、确认及当前使用条件的行集合、来源和进度核对通过",
+                    message="账号、监护关系、确认及当前使用条件的行集合、来源和覆盖范围核对通过",
                 )
             ],
         )

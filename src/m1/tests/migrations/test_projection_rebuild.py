@@ -7,7 +7,6 @@ import subprocess
 import sys
 import tempfile
 from collections.abc import Awaitable, Callable
-from dataclasses import replace
 from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import patch
@@ -19,15 +18,16 @@ from deermind.bootstrap.events import event_store
 from deermind.bootstrap.projections import account_rebuilder
 from deermind.entrypoints.maintenance.database import upgrade
 from deermind.foundation.system.events.attachments import FactAttachments
+from deermind.foundation.system.projections.contracts import CheckIssue, RebuildJob
 from deermind.infrastructure.database.connection import MAINTENANCE_LOCK, application_engine
 from deermind.infrastructure.files.local import LocalFiles
 from deermind.product.accounts.facts import AccountFact
-from deermind.product.accounts.projections import TABLES, apply_account_events, stage_tables
+from deermind.product.accounts.projections import TABLES, apply_account_events
 from deermind.product.accounts.rebuild import AccountRebuilder
 from deermind.product.accounts.save import save_initial_account
 from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, create_async_engine
 from sqlalchemy.pool import NullPool
 from test_database import DatabaseTestCase
 
@@ -128,22 +128,29 @@ class ProjectionRebuildTests(DatabaseTestCase):
                 dict(row) for row in connection.execute(text(f"SELECT * FROM {table}")).mappings()
             ]
 
-    async def prepare(
-        self, service: AccountRebuilder, scopes: list[UUID], generation: int = 2
-    ) -> UUID:
-        identity = uuid4()
-        await service.prepare(
-            identity, generation, scopes, operator=self.operator, authorization=self.authorization
+    async def rebuild(
+        self,
+        service: AccountRebuilder,
+        scopes: list[UUID],
+        generation: int = 2,
+        *,
+        identity: UUID | None = None,
+    ) -> RebuildJob:
+        return await service.rebuild(
+            identity or uuid4(),
+            generation,
+            scopes,
+            operator=self.operator,
+            authorization=self.authorization,
         )
-        return identity
 
-    async def resume(
-        self, service: AccountRebuilder, identity: UUID, limit: int | None = None
-    ) -> str:
-        result = await service.resume(
-            identity, operator=self.operator, authorization=self.authorization, max_events=limit
-        )
-        return result.state
+    def assert_no_copy(self, service: AccountRebuilder, identity: UUID) -> None:
+        with self.engine.connect() as connection:
+            self.assertIsNone(
+                connection.scalar(
+                    text("SELECT to_regclass(:name)"), {"name": service.stage_name(identity)}
+                )
+            )
 
     def test_deleted_projection_restored_and_repeated_generations_are_safe(self) -> None:
         asyncio.run(self.execute(self.round_trip))
@@ -156,29 +163,20 @@ class ProjectionRebuildTests(DatabaseTestCase):
         with self.engine.begin() as connection:
             connection.execute(text("DELETE FROM product.accounts"))
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, scopes)
-        self.assertEqual(await self.resume(service, identity, 1), "building")
-        self.assertEqual(self.rows("product.accounts"), [])
-        self.assertEqual(len(self.rows(service.stage_name(identity))), 1)
-        # 新装配不携带上次内存状态；依靠持久副本和进度继续。
-        service = account_rebuilder(maintenance, self.files)
-        self.assertEqual(await self.resume(service, identity), "completed")
+        job = await self.rebuild(service, scopes)
+        self.assertEqual(job.state, "completed")
         self.assertCountEqual(self.rows("product.accounts"), before)
         self.assertEqual(self.rows("product.command_receipt"), requests)
-        self.assertEqual(await self.resume(service, identity), "completed")
+        self.assertEqual(
+            await self.rebuild(service, list(reversed(scopes)), identity=job.rebuild_id), job
+        )
         events = self.rows("runtime.events")
         self.assertCountEqual(
             [e for e in events if e["event_type"] == "TrialAccountSaved"], original_events
         )
         self.assertEqual(len(events), len(original_events) + 1)
-        with self.engine.connect() as connection:
-            self.assertIsNone(
-                connection.scalar(
-                    text("SELECT to_regclass(:name)"), {"name": service.stage_name(identity)}
-                )
-            )
-        again = await self.prepare(service, scopes, 3)
-        self.assertEqual(await self.resume(service, again), "completed")
+        self.assert_no_copy(service, job.rebuild_id)
+        self.assertEqual((await self.rebuild(service, scopes, 3)).state, "completed")
         self.assertCountEqual(self.rows("product.accounts"), before)
         receipts = self.rows("runtime.projection_receipts")
         online = [
@@ -199,31 +197,37 @@ class ProjectionRebuildTests(DatabaseTestCase):
             {"TrialAccountSaved", "ProjectionRebuildFinished"},
         )
 
-    def test_interruption_keeps_committed_checkpoint(self) -> None:
+    def test_interruption_rolls_back_publication_and_new_run_restarts(self) -> None:
         asyncio.run(self.execute(self.interruption))
 
     async def interruption(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
-        scopes = [await self.seed(app) for _ in range(2)]
+        scope = await self.seed(app)
         before = self.rows("product.accounts")
+        with self.engine.begin() as connection:
+            connection.execute(text("DELETE FROM product.accounts"))
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, scopes)
+        identity = uuid4()
+        publish = service.records.publish
 
-        async def stop(*args: object, **kwargs: object) -> None:
+        async def interrupt_after_writes(
+            gate: AsyncConnection, job: RebuildJob, checks: list[CheckIssue]
+        ) -> None:
+            await publish(gate, job, checks)
             raise InterruptedMaintenance()
 
-        # 在真正提交一个检查点之后中断，不模拟“未提交也成功”的假恢复。
+        # 正式替换和成功事件都已写入，但事务尚未提交。
         with (
-            patch.object(service, "_verify", side_effect=stop),
+            patch.object(service.records, "publish", side_effect=interrupt_after_writes),
             self.assertRaises(InterruptedMaintenance),
         ):
-            await self.resume(service, identity)
+            await self.rebuild(service, [scope], identity=identity)
+        self.assertEqual(self.rows("product.accounts"), [])
+        self.assertEqual(self.rows("runtime.projection_rebuilds"), [])
+        self.assertEqual(self.rows("runtime.projection_offsets"), [])
+        self.assertEqual(len(self.rows("runtime.events")), 1)
+        self.assert_no_copy(service, identity)
+        self.assertEqual((await self.rebuild(service, [scope], 3)).state, "completed")
         self.assertEqual(self.rows("product.accounts"), before)
-        self.assertEqual(len(self.rows(service.stage_name(identity))), 2)
-        service = account_rebuilder(maintenance, self.files)
-        with patch.object(
-            service, "_checkpoint", side_effect=AssertionError("checkpoint must not replay")
-        ):
-            self.assertEqual(await self.resume(service, identity), "completed")
 
     def test_corrupted_stage_fails_without_replacing_online_rows(self) -> None:
         asyncio.run(self.execute(self.corrupt_stage))
@@ -232,31 +236,29 @@ class ProjectionRebuildTests(DatabaseTestCase):
         scope = await self.seed(app)
         before = self.rows("product.accounts")
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [scope])
-        await self.resume(service, identity, 1)
-        with self.engine.begin() as connection:
-            connection.execute(
-                text(f"UPDATE {service.stage_name(identity)} SET display_name='wrong'")
-            )
-        self.assertEqual(await self.resume(service, identity), "failed")
+        applied = service.records.applied
+
+        async def corrupt(gate: AsyncConnection, job: RebuildJob) -> set[UUID]:
+            stage = service.stage_name(job.rebuild_id)
+            await gate.execute(text(f"UPDATE {stage} SET display_name='wrong'"))
+            return await applied(gate, job)
+
+        with patch.object(service.records, "applied", side_effect=corrupt):
+            failed = await self.rebuild(service, [scope])
+        self.assertEqual(failed.state, "failed")
+        self.assert_no_copy(service, failed.rebuild_id)
         self.assertEqual(self.rows("product.accounts"), before)
-        self.assertEqual(await self.resume(service, identity), "failed")
-        events = [
-            e for e in self.rows("runtime.events") if e["event_type"] == "ProjectionRebuildFinished"
-        ]
-        self.assertEqual(len(events), 1)
-        self.assertEqual(events[0]["scope_id"], identity)
-        new = await self.prepare(service, [scope], 3)
-        self.assertEqual(await self.resume(service, new), "completed")
+        self.assertEqual(await self.rebuild(service, [scope], identity=failed.rebuild_id), failed)
+        self.assertEqual(len(self.rows("runtime.events")), 2)
+        self.assertEqual((await self.rebuild(service, [scope], 3)).state, "completed")
 
-    def test_checkpoint_failure_rolls_back_stage_receipt_and_progress(self) -> None:
-        asyncio.run(self.execute(self.checkpoint_failure))
+    def test_generation_failure_rolls_back_copy_and_receipts(self) -> None:
+        asyncio.run(self.execute(self.generation_failure))
 
-    async def checkpoint_failure(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
+    async def generation_failure(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
         scope = await self.seed(app)
         before = self.rows("product.accounts")
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [scope])
         with self.engine.begin() as connection:
             connection.execute(
                 text("""
@@ -272,12 +274,13 @@ class ProjectionRebuildTests(DatabaseTestCase):
                 FOR EACH ROW EXECUTE FUNCTION runtime.fail_rebuild_receipt()
             """)
             )
-        self.assertEqual(await self.resume(service, identity), "failed")
-        self.assertEqual(self.rows(service.stage_name(identity)), [])
+        job = await self.rebuild(service, [scope])
+        self.assertEqual(job.state, "failed")
+        self.assert_no_copy(service, job.rebuild_id)
         self.assertFalse(
             any(r["generation"] == 2 for r in self.rows("runtime.projection_receipts"))
         )
-        self.assertEqual(self.rows("runtime.projection_offsets")[0]["scanned_through_seq"], 0)
+        self.assertEqual(self.rows("runtime.projection_offsets"), [])
         self.assertEqual(self.rows("product.accounts"), before)
 
     def test_final_constraint_failure_preserves_all_online_data(self) -> None:
@@ -296,48 +299,42 @@ class ProjectionRebuildTests(DatabaseTestCase):
             )
         before = self.rows("product.accounts")
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [target])
-        self.assertEqual(await self.resume(service, identity), "failed")
+        job = await self.rebuild(service, [target])
+        self.assertEqual(job.state, "failed")
         self.assertCountEqual(self.rows("product.accounts"), before)
         self.assertFalse(any(r["generation"] == 1 for r in self.rows("runtime.projection_offsets")))
 
-    def test_scope_and_implementation_cannot_change_on_resume(self) -> None:
+    def test_saved_result_requires_same_parameters_and_authorization(self) -> None:
         asyncio.run(self.execute(self.fixed_parameters))
 
     async def fixed_parameters(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
         target, outside = await self.seed(app), await self.seed(app)
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [target])
+        job = await self.rebuild(service, [target])
         with self.assertRaises(ValueError):
-            await service.prepare(
-                identity, 2, [outside], operator=self.operator, authorization=self.authorization
-            )
-        incompatible = AccountRebuilder(
-            maintenance,
-            service.reader,
-            replace(service.spec, implementation_digest="0" * 64),
-            service.records,
-        )
-        with self.assertRaises(ValueError):
-            await self.resume(incompatible, identity)
+            await self.rebuild(service, [outside], identity=job.rebuild_id)
         with self.assertRaises(PermissionError):
-            await service.resume(identity, operator="other", authorization=self.authorization)
-        self.assertEqual(self.rows("runtime.projection_rebuilds")[0]["state"], "building")
-        self.assertEqual(len(self.rows("runtime.events")), 2)
+            await service.status(job.rebuild_id, operator="other", authorization=self.authorization)
+        self.assertEqual(
+            await service.status(
+                job.rebuild_id, operator=self.operator, authorization=self.authorization
+            ),
+            job,
+        )
+        self.assertEqual(len(self.rows("runtime.events")), 3)
 
-    def test_changed_source_upper_is_rejected(self) -> None:
-        asyncio.run(self.execute(self.changed_upper))
+    def test_missing_source_event_fails_without_publication(self) -> None:
+        asyncio.run(self.execute(self.missing_source))
 
-    async def changed_upper(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
+    async def missing_source(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
         scope = await self.seed(app)
-        service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [scope])
-        # 故障注入只改测试库控制头；证明断点续做不接受新的来源上界。
         with self.engine.begin() as connection:
             connection.execute(text("UPDATE runtime.scope_event_heads SET last_seq=last_seq+1"))
-        with self.assertRaises(ValueError):
-            await self.resume(service, identity)
-        self.assertEqual(self.rows(service.stage_name(identity)), [])
+        service = account_rebuilder(maintenance, self.files)
+        job = await self.rebuild(service, [scope])
+        self.assertEqual(job.state, "failed")
+        self.assert_no_copy(service, job.rebuild_id)
+        self.assertEqual(self.rows("runtime.projection_offsets"), [])
 
     def test_application_identity_and_competing_maintenance_are_rejected(self) -> None:
         asyncio.run(self.execute(self.permissions))
@@ -346,7 +343,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
         scope = await self.seed(app)
         unprivileged = account_rebuilder(app, self.files)
         with self.assertRaises(PermissionError):
-            await self.prepare(unprivileged, [scope])
+            await self.rebuild(unprivileged, [scope])
         for table in ("runtime.projection_rebuilds", "runtime.projection_offsets"):
             with self.assertRaises(DBAPIError):
                 async with app.begin() as connection:
@@ -357,7 +354,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
                 text("SELECT pg_advisory_xact_lock(:key)"), {"key": MAINTENANCE_LOCK}
             )
             with self.assertRaises(RuntimeError):
-                await self.prepare(service, [scope])
+                await self.rebuild(service, [scope])
         self.assertEqual(self.rows("runtime.projection_rebuilds"), [])
 
     def test_broken_fact_attachment_fails_without_empty_projection(self) -> None:
@@ -372,15 +369,14 @@ class ProjectionRebuildTests(DatabaseTestCase):
         path.chmod(0o600)
         path.write_bytes(b"!" + original[1:])
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [scope])
-        self.assertEqual(await self.resume(service, identity), "failed")
+        job = await self.rebuild(service, [scope])
+        self.assertEqual(job.state, "failed")
         self.assertEqual(self.rows("product.accounts"), before)
         self.assertEqual(self.rows("runtime.file_objects"), file_rows)
         path.write_bytes(original)
-        retry = await self.prepare(service, [scope], 3)
-        self.assertEqual(await self.resume(service, retry), "completed")
+        self.assertEqual((await self.rebuild(service, [scope], 3)).state, "completed")
 
-    def test_cli_requires_maintenance_and_resumes_in_new_process(self) -> None:
+    def test_cli_requires_maintenance_and_status_reads_committed_result(self) -> None:
         scopes: list[UUID] = []
 
         async def seed_one(app: AsyncEngine, maintenance: AsyncEngine) -> None:
@@ -415,9 +411,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
         self.assertNotEqual(rejected.returncode, 0)
         record: dict[str, object] = {}
         for action, extra in (
-            ("prepare", ["--generation", "2", "--scope", str(scopes[0])]),
-            ("resume", ["--max-events", "1"]),
-            ("resume", []),
+            ("run", ["--generation", "2", "--scope", str(scopes[0])]),
             ("status", []),
         ):
             result = subprocess.run(
@@ -430,7 +424,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             record = json.loads(result.stdout.strip().splitlines()[-1])
             self.assertEqual(record["rebuild_id"], str(identity))
-        self.assertEqual(record["state"], "completed")
+            self.assertEqual(record["state"], "completed")
 
     def test_active_writer_blocks_maintenance_without_waiting(self) -> None:
         asyncio.run(self.execute(self.active_writer))
@@ -441,7 +435,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
         with self.engine.begin() as connection:
             connection.execute(text("LOCK TABLE runtime.events IN ROW EXCLUSIVE MODE"))
             with self.assertRaises(DBAPIError):
-                await self.prepare(service, [scope])
+                await self.rebuild(service, [scope])
         self.assertEqual(self.rows("runtime.projection_rebuilds"), [])
 
     def test_selected_scope_does_not_overwrite_other_accounts(self) -> None:
@@ -452,11 +446,10 @@ class ProjectionRebuildTests(DatabaseTestCase):
         with self.engine.begin() as connection:
             connection.execute(text("UPDATE product.accounts SET display_name='query-copy'"))
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [target])
-        with self.assertRaises(DBAPIError):
-            async with app.begin() as connection:
-                await connection.execute(text(f"SELECT * FROM {service.stage_name(identity)}"))
-        self.assertEqual(await self.resume(service, identity), "completed")
+        self.assertEqual((await self.rebuild(service, [target])).state, "completed")
+        # 第二批出错不能改第一批已提交的结果，也不能发布第二批。
+        with patch.object(service, "_verify", side_effect=ValueError("batch failed")):
+            self.assertEqual((await self.rebuild(service, [outside], 3)).state, "failed")
         rows = {row["account_id"]: row for row in self.rows("product.accounts")}
         self.assertEqual(rows[target]["display_name"], "原始账号")
         self.assertEqual(rows[outside]["display_name"], "query-copy")
@@ -486,8 +479,8 @@ class ProjectionRebuildTests(DatabaseTestCase):
             """)
             )
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [scope])
-        self.assertEqual(await self.resume(service, identity), "failed")
+        job = await self.rebuild(service, [scope])
+        self.assertEqual(job.state, "failed")
         self.assertEqual(self.rows("product.accounts"), [])
         self.assertFalse(any(r["generation"] == 1 for r in self.rows("runtime.projection_offsets")))
         receipts = self.rows("runtime.projection_receipts")
@@ -497,7 +490,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
                 for r in receipts
             )
         )
-        self.assertEqual(len(self.rows(service.stage_name(identity))), 1)
+        self.assert_no_copy(service, job.rebuild_id)
         results = [
             e for e in self.rows("runtime.events") if e["event_type"] == "ProjectionRebuildFinished"
         ]
@@ -536,20 +529,14 @@ class ProjectionRebuildTests(DatabaseTestCase):
                 {"id": selected},
             )
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [selected])
-        self.assertEqual(await self.resume(service, identity, 1), "building")
-        self.assertEqual(
-            len(self.rows(stage_tables(identity)["product.student_guardian_relations"])), 2
-        )
-        self.assertEqual(await self.resume(service, identity), "completed")
+        self.assertEqual((await self.rebuild(service, [selected])).state, "completed")
         for table in TABLES:
             self.assertCountEqual(self.rows(table.name), expected[table.name])
         conditions = {r["student_id"]: r for r in self.rows("product.usage_conditions")}
         self.assertEqual(conditions[selected]["revision"], 3)
         self.assertEqual(conditions[outside]["eligibility"], "allowed")
         # 另一学生的依赖事实不在本次范围时，必须拒绝而不是偷偷跨范围读写。
-        incomplete = await self.prepare(service, [outside], 3)
-        self.assertEqual(await self.resume(service, incomplete), "failed")
+        self.assertEqual((await self.rebuild(service, [outside], 3)).state, "failed")
         for table in TABLES:
             self.assertCountEqual(self.rows(table.name), expected[table.name])
 
@@ -568,8 +555,8 @@ class ProjectionRebuildTests(DatabaseTestCase):
             await apply_account_events(connection, events)
         before = {t.name: self.rows(t.name) for t in TABLES}
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [selected])
-        self.assertEqual(await self.resume(service, identity), "completed")
+        job = await self.rebuild(service, [selected])
+        self.assertEqual(job.state, "completed")
         for table in TABLES:
             self.assertCountEqual(self.rows(table.name), before[table.name])
 
@@ -603,46 +590,44 @@ class ProjectionRebuildTests(DatabaseTestCase):
                 {"id": uuid4()},
             )
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [selected])
-        self.assertEqual(await self.resume(service, identity), "completed")
+        job = await self.rebuild(service, [selected])
+        self.assertEqual(job.state, "completed")
         for table in TABLES:
             self.assertCountEqual(self.rows(table.name), before[table.name])
 
-    def test_temporary_connection_failure_can_resume_same_generation(self) -> None:
+    def test_read_failure_then_new_batch_completes(self) -> None:
         asyncio.run(self.execute(self.temporary_failure))
 
     async def temporary_failure(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
         selected = await self.seed(app)
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [selected])
         with patch.object(
             service.reader, "read_projection_event", side_effect=ConnectionError("temporary")
         ):
-            with self.assertRaises(ConnectionError):
-                await self.resume(service, identity)
-        self.assertEqual(self.rows("runtime.projection_rebuilds")[0]["state"], "building")
-        self.assertEqual(await self.resume(service, identity), "completed")
+            failed = await self.rebuild(service, [selected])
+        self.assertEqual(failed.state, "failed")
+        self.assert_no_copy(service, failed.rebuild_id)
+        self.assertEqual((await self.rebuild(service, [selected], 3)).state, "completed")
 
-    def test_legacy_rebuild_remains_readable_but_cannot_resume(self) -> None:
+    def test_legacy_unfinished_record_remains_readable(self) -> None:
         asyncio.run(self.execute(self.legacy_record))
 
     async def legacy_record(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
         selected = await self.seed(app)
         service = account_rebuilder(maintenance, self.files)
-        identity = await self.prepare(service, [selected])
+        job = await self.rebuild(service, [selected])
         with self.engine.begin() as connection:
             connection.execute(
                 text("""
                 UPDATE runtime.projection_rebuilds
-                SET projector_id='product.accounts.v1',target_relations='{}'::jsonb
+                SET state='building',result_event_id=NULL
                 WHERE rebuild_id=:id
-            """),
-                {"id": identity},
+                """),
+                {"id": job.rebuild_id},
             )
         old = await service.status(
-            identity, operator=self.operator, authorization=self.authorization
+            job.rebuild_id, operator=self.operator, authorization=self.authorization
         )
-        self.assertEqual(old.projector_id, "product.accounts.v1")
-        with self.assertRaisesRegex(ValueError, "Legacy"):
-            await self.resume(service, identity)
-        self.assertEqual(self.rows("runtime.projection_rebuilds")[0]["state"], "building")
+        self.assertEqual(old.state, "building")
+        with self.assertRaisesRegex(ValueError, "Legacy unfinished"):
+            await self.rebuild(service, [selected], identity=job.rebuild_id)

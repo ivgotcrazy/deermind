@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.15<br>
+> **版本**：v0.16<br>
 > **状态**：代码按已批准目录逐增量接线；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-17<br>
-> **修订说明**：v0.14 → v0.15，落实独立抽象层、实现迁移、装配与禁止依赖规则<br>
+> **更新日期**：2026-11-22<br>
+> **修订说明**：v0.15 → v0.16，更新单批重建入口与记录职责<br>
 
 ## 1. 范围与维护位置
 
@@ -281,9 +281,9 @@ server/migrations/
 
 ### 6.5 E01-08实际接线
 
-`foundation/system/projections/contracts.py`登记维护记录及结果Schema，`receipts.py`只处理通用防重，`records.py`只维护扫描和重建任务记录；移除原底座rebuild.py。`product/accounts/projections.py`拥有账号五表转换及写入，`accounts/rebuild.py`拥有副本、业务核对及替换。`bootstrap/projections.py`仅装配维护入口和实现摘要。各Space后续按自己的业务实现生成器，不复制底座账号重建规则。
+`foundation/system/projections/contracts.py`登记维护记录及结果Schema，`receipts.py`只处理通用防重，`records.py`只维护批次结果和扫描覆盖记录；移除原底座rebuild.py。`product/accounts/projections.py`拥有账号五表转换及写入，`accounts/rebuild.py`拥有副本、业务核对及替换。`bootstrap/projections.py`仅装配维护入口和实现摘要。各Space后续按自己的业务实现生成器，不复制底座账号重建规则。
 
-`entrypoints/maintenance/rebuild.py`提供prepare/resume/status三个维护动作，安装命令为deermind-rebuild，调用业务维护入口；`0004_projection_rebuilds`追加控制表。不新增API、Agent工具或未实现业务占位。
+`entrypoints/maintenance/rebuild.py`提供run/status两个维护动作，安装命令为deermind-rebuild，调用业务维护入口；`0004_projection_rebuilds`追加控制表。不新增API、Agent工具或未实现业务占位。
 
 新增迁移`0009_projection_ownership`保留旧记录；真实多行、多表及故障测试仍由`test.sh rebuild`运行，夹具在`tests/migrations/account_projection_fixture.py`。变更没有引入新服务或依赖。
 
@@ -432,3 +432,4 @@ E01-13实际新增`foundation/system/executions/`（工作、尝试、授权、S
 | v0.13 | 2026-11-16 | 登记执行仓储、Temporal适配和隔离故障验证入口 |
 | v0.14 | 2026-11-16 | 将账号投影和重建归还业务，底座仅保存通用控制记录 |
 | v0.15 | 2026-11-17 | 落实独立抽象层、实现迁移、装配与禁止依赖规则 |
+| v0.16 | 2026-11-22 | 更新单批重建入口与记录职责 |

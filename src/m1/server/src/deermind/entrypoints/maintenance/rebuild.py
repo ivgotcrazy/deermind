@@ -32,22 +32,13 @@ async def run(args: argparse.Namespace) -> int:
     )
     try:
         service = account_rebuilder(engine, files)
-        if args.action == "prepare":
-            if args.generation is None or not args.scope:
-                raise ValueError("Prepare requires generation and explicit scopes")
-            job = await service.prepare(
+        if args.action == "run":
+            job = await service.rebuild(
                 args.rebuild_id,
                 args.generation,
                 args.scope,
                 operator=args.operator,
                 authorization=args.authorization,
-            )
-        elif args.action == "resume":
-            job = await service.resume(
-                args.rebuild_id,
-                operator=args.operator,
-                authorization=args.authorization,
-                max_events=args.max_events,
             )
         else:
             job = await service.status(
@@ -60,26 +51,25 @@ async def run(args: argparse.Namespace) -> int:
             extra={"action": "projection_rebuild", "outcome": job.state},
         )
         print(job.model_dump_json())
-        return 1 if job.state == "failed" else 0
+        return 0 if job.state == "completed" else 1
     finally:
         await engine.dispose()
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Rebuild the registered account query projection")
-    parser.add_argument("action", choices=["prepare", "resume", "status"])
+    parser.add_argument("action", choices=["run", "status"])
     parser.add_argument("--rebuild-id", type=UUID, required=True)
     parser.add_argument("--operator", required=True)
     parser.add_argument("--authorization", required=True)
     parser.add_argument("--maintenance-confirmed", action="store_true", required=True)
     parser.add_argument("--generation", type=int)
     parser.add_argument("--scope", type=UUID, action="append")
-    parser.add_argument("--max-events", type=int)
     args = parser.parse_args()
-    if args.action != "prepare" and (args.generation is not None or args.scope):
-        parser.error("Resume/status use the stored scope; do not provide a new scope or generation")
-    if args.action != "resume" and args.max_events is not None:
-        parser.error("max-events only applies to resume")
+    if args.action == "run" and (args.generation is None or not args.scope):
+        parser.error("Run requires generation and explicit scopes")
+    if args.action == "status" and (args.generation is not None or args.scope):
+        parser.error("Status only needs the stored rebuild identity")
     configure_logging()
     try:
         result = asyncio.run(run(args))
