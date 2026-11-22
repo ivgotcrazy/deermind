@@ -3,10 +3,10 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { ApiError } from '../../../shared/api/http';
 import RichContent from '../../../shared/content/RichContent.vue';
 import { createDomain, listDomains, readCreateReceipt, readDomain } from './api';
-import type { DomainRow, DomainSession, DomainView } from './api';
+import type { DomainRow, DomainSession, DomainView, MemberKind } from './api';
 import { clearCreateDraft, readCreateDraft, saveCreateDraft } from './draft';
 import type { CreateDraft } from './draft';
-import KnowledgeComponents from './KnowledgeComponents.vue';
+import DomainMembers from './DomainMembers.vue';
 
 const { session } = defineProps<{ session: DomainSession }>();
 const lifecycle = new AbortController();
@@ -16,6 +16,7 @@ const rows = ref<DomainRow[] | null>(null);
 const filter = ref('');
 const listError = ref('');
 const selected = ref('');
+const memberKind = ref<MemberKind>('kc');
 const detail = ref<DomainView | null>(null);
 const detailError = ref('');
 let detailRead: AbortController | undefined;
@@ -242,7 +243,30 @@ onBeforeUnmount(() => {
           <h3>说明</h3>
           <RichContent :content="detail.content.description" />
         </section>
-        <KnowledgeComponents :key="selected" :domain-id="selected" :session="session" />
+        <nav class="member-navigation" aria-label="领域对象">
+          <button
+            type="button"
+            class="secondary"
+            :aria-pressed="memberKind === 'kc'"
+            @click="memberKind = 'kc'"
+          >
+            知识成分
+          </button>
+          <button
+            type="button"
+            class="secondary"
+            :aria-pressed="memberKind === 'task'"
+            @click="memberKind = 'task'"
+          >
+            任务
+          </button>
+        </nav>
+        <DomainMembers
+          :key="`${selected}:${memberKind}`"
+          :kind="memberKind"
+          :domain-id="selected"
+          :session="session"
+        />
       </div>
       <div v-else-if="detailError" class="feedback">
         <p role="alert">{{ detailError }}</p>
@@ -293,6 +317,15 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.member-navigation {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.member-navigation button[aria-pressed='true'] {
+  border-color: #28513c;
+  background: #e6eee7;
+}
 .domain-workspace {
   margin-top: 1rem;
   padding-top: 1.25rem;

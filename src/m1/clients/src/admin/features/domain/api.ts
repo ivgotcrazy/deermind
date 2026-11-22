@@ -20,7 +20,7 @@ export async function readDomain(domainId: string, session: Session, signal: Abo
     session,
     signal,
   });
-  if ('definition' in object.content) throw new Error('收到无效领域详情。');
+  if (object.object_ref.kind !== 'domain') throw new Error('收到无效领域详情。');
   return object as components['schemas']['DomainView'];
 }
 
@@ -62,8 +62,9 @@ export function readDefinitionReceipt(requestId: string, session: Session, signa
   });
 }
 
-export function listKnowledge(
+export function listMembers(
   domainId: string,
+  kind: MemberKind,
   session: Session,
   signal: AbortSignal,
   name: string,
@@ -71,15 +72,16 @@ export function listKnowledge(
 ) {
   return get('/api/m1/domains/{domain_id}/objects', {
     params: { domain_id: domainId },
-    query: { name, cursor },
+    query: { kinds: [kind], name, cursor },
     session,
     signal,
   });
 }
 
-export async function readKnowledge(
+export async function readMember(
   domainId: string,
   objectId: string,
+  kind: MemberKind,
   session: Session,
   signal: AbortSignal,
   version?: number,
@@ -90,22 +92,26 @@ export async function readKnowledge(
     session,
     signal,
   });
-  if (!('definition' in object.content)) throw new Error('收到无效知识成分详情。');
-  return object as components['schemas']['KnowledgeView'];
+  if (object.object_ref.kind !== kind) throw new Error('收到无效领域对象详情。');
+  return object as MemberView;
 }
 
-export function saveKnowledge(body: KnowledgeRequest, session: Session, signal: AbortSignal) {
+export function saveMember(body: MemberRequest, session: Session, signal: AbortSignal) {
   return post('/api/m1/domain-definitions', body, { session, signal });
 }
 
-export type KnowledgeRequest =
+export type MemberRequest =
   | components['schemas']['CreateKnowledgeRequest']
   | components['schemas']['UpdateKnowledgeRequest']
-  | components['schemas']['DeleteKnowledgeRequest'];
-export type KnowledgeRef = components['schemas']['KnowledgeRef'];
-export type KnowledgeContent = components['schemas']['KnowledgeComponent-Input'];
-export type KnowledgeRow = components['schemas']['KnowledgeRow'];
-export type KnowledgeView = Awaited<ReturnType<typeof readKnowledge>>;
+  | components['schemas']['DeleteKnowledgeRequest']
+  | components['schemas']['CreateTaskRequest']
+  | components['schemas']['UpdateTaskRequest']
+  | components['schemas']['DeleteTaskRequest'];
+export type MemberRef = components['schemas']['MemberRef'];
+export type MemberKind = MemberRef['kind'];
+export type MemberRow = components['schemas']['MemberRow'];
+export type MemberView = components['schemas']['KnowledgeView'] | components['schemas']['TaskView'];
+export type TaskParameter = components['schemas']['TaskParameter'];
 export type DomainView = Awaited<ReturnType<typeof readDomain>>;
 export type DomainRow = Awaited<ReturnType<typeof listDomains>>['items'][number];
 export type DomainSession = Parameters<typeof listDomains>[0];

@@ -405,6 +405,23 @@ export interface components {
             object_kind: "kc";
             request_id: components["schemas"]["RequestId"];
         };
+        /** CreateTaskRequest */
+        CreateTaskRequest: {
+            /**
+             * Action
+             * @constant
+             */
+            action: "create";
+            change_note: components["schemas"]["NonBlank"];
+            definition: components["schemas"]["TaskDefinition-Input"];
+            domain_id: components["schemas"]["JsonUuid"];
+            /**
+             * Object Kind
+             * @constant
+             */
+            object_kind: "task";
+            request_id: components["schemas"]["RequestId"];
+        };
         DataCell: components["schemas"]["ProvidedCell"] | components["schemas"]["MissingCell"];
         /** DataColumn */
         DataColumn: {
@@ -455,6 +472,23 @@ export interface components {
              */
             object_kind: "kc";
             object_ref: components["schemas"]["KnowledgeRef"];
+            request_id: components["schemas"]["RequestId"];
+        };
+        /** DeleteTaskRequest */
+        DeleteTaskRequest: {
+            /**
+             * Action
+             * @constant
+             */
+            action: "soft_delete";
+            change_note: components["schemas"]["NonBlank"];
+            expected_version: components["schemas"]["Version"];
+            /**
+             * Object Kind
+             * @constant
+             */
+            object_kind: "task";
+            object_ref: components["schemas"]["TaskRef"];
             request_id: components["schemas"]["RequestId"];
         };
         /** Diagram */
@@ -722,15 +756,6 @@ export interface components {
         KnowledgeDetail: {
             object: components["schemas"]["KnowledgeView"];
         };
-        /** KnowledgeList */
-        KnowledgeList: {
-            /** Items */
-            items: components["schemas"]["KnowledgeRow"][];
-            /** Next Cursor */
-            next_cursor: string | null;
-            /** Read Token */
-            read_token: string;
-        };
         /** KnowledgeRef */
         KnowledgeRef: {
             /**
@@ -740,19 +765,6 @@ export interface components {
             kind: "kc";
             object_id: components["schemas"]["JsonUuid"];
             version: components["schemas"]["Version"];
-        };
-        /** KnowledgeRow */
-        KnowledgeRow: {
-            /** Is Deleted */
-            is_deleted: boolean;
-            /** Name */
-            name: string;
-            object_ref: components["schemas"]["KnowledgeRef"];
-            /**
-             * Source Event Id
-             * Format: uuid
-             */
-            source_event_id: string;
         };
         /** KnowledgeView */
         KnowledgeView: {
@@ -926,6 +938,31 @@ export interface components {
              */
             op: "symbol";
         };
+        /** @enum {string} */
+        MemberKind: "kc" | "task";
+        /** MemberList */
+        MemberList: {
+            /** Items */
+            items: components["schemas"]["MemberRow"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+            /** Read Token */
+            read_token: string;
+        };
+        MemberRef: components["schemas"]["KnowledgeRef"] | components["schemas"]["TaskRef"];
+        /** MemberRow */
+        MemberRow: {
+            /** Is Deleted */
+            is_deleted: boolean;
+            /** Name */
+            name: string;
+            object_ref: components["schemas"]["MemberRef"];
+            /**
+             * Source Event Id
+             * Format: uuid
+             */
+            source_event_id: string;
+        };
         /** MissingCell */
         MissingCell: {
             /**
@@ -935,6 +972,7 @@ export interface components {
             state: "response_blank" | "source_missing" | "unreadable";
         };
         NonBlank: string;
+        ObjectDetail: components["schemas"]["DomainDetail"] | components["schemas"]["KnowledgeDetail"] | components["schemas"]["TaskDetail"];
         /** Paragraph */
         "Paragraph-Input": {
             /** Spans */
@@ -1086,7 +1124,14 @@ export interface components {
             gaps?: components["schemas"]["Issue"][];
             object_ref: components["schemas"]["KnowledgeRef"];
         };
-        SaveResult: components["schemas"]["CreateDomainResult"] | components["schemas"]["SaveKnowledgeResult"];
+        SaveResult: components["schemas"]["CreateDomainResult"] | components["schemas"]["SaveKnowledgeResult"] | components["schemas"]["SaveTaskResult"];
+        /** SaveTaskResult */
+        SaveTaskResult: {
+            content_ref: components["schemas"]["TaskContentRef"];
+            /** Gaps */
+            gaps: components["schemas"]["Issue"][];
+            object_ref: components["schemas"]["TaskRef"];
+        };
         /**
          * SessionView
          * @description session_id是诊断身份；浏览器登录秘密只通过HttpOnly Cookie传递。
@@ -1179,6 +1224,88 @@ export interface components {
              */
             type: "table";
         };
+        /** TaskContentRef */
+        TaskContentRef: {
+            object_ref: components["schemas"]["TaskRef"];
+            /**
+             * Owner
+             * @default domain
+             * @constant
+             */
+            owner: "domain";
+            /**
+             * Path
+             * @default
+             * @constant
+             */
+            path: "";
+        };
+        /**
+         * TaskDefinition
+         * @description 可保存未填齐的定义；就绪要求与个人评价独立。
+         */
+        "TaskDefinition-Input": {
+            applicability?: components["schemas"]["RichContent-Input"] | null;
+            boundaries?: components["schemas"]["RichContent-Input"] | null;
+            completion_conditions?: components["schemas"]["RichContent-Input"] | null;
+            expected_output?: components["schemas"]["RichContent-Input"] | null;
+            name: components["schemas"]["NonBlank"];
+            /** Parameters */
+            parameters?: components["schemas"]["TaskParameter"][];
+            responsibility?: components["schemas"]["RichContent-Input"] | null;
+        };
+        /**
+         * TaskDefinition
+         * @description 可保存未填齐的定义；就绪要求与个人评价独立。
+         */
+        "TaskDefinition-Output": {
+            applicability?: components["schemas"]["RichContent-Output"] | null;
+            boundaries?: components["schemas"]["RichContent-Output"] | null;
+            completion_conditions?: components["schemas"]["RichContent-Output"] | null;
+            expected_output?: components["schemas"]["RichContent-Output"] | null;
+            name: components["schemas"]["NonBlank"];
+            /** Parameters */
+            parameters?: components["schemas"]["TaskParameter"][];
+            responsibility?: components["schemas"]["RichContent-Output"] | null;
+        };
+        /** TaskDetail */
+        TaskDetail: {
+            object: components["schemas"]["TaskView"];
+        };
+        /** TaskParameter */
+        TaskParameter: {
+            constraints: components["schemas"]["NonBlank"];
+            meaning: components["schemas"]["NonBlank"];
+            name: components["schemas"]["NonBlank"];
+            type: components["schemas"]["NonBlank"];
+        };
+        /** TaskRef */
+        TaskRef: {
+            /**
+             * Kind
+             * @constant
+             */
+            kind: "task";
+            object_id: components["schemas"]["JsonUuid"];
+            version: components["schemas"]["Version"];
+        };
+        /** TaskView */
+        TaskView: {
+            content: components["schemas"]["TaskDefinition-Output"];
+            content_ref: components["schemas"]["TaskContentRef"];
+            /** Gaps */
+            gaps: components["schemas"]["Issue"][];
+            /** Is Identity Deleted */
+            is_identity_deleted: boolean;
+            object_ref: components["schemas"]["TaskRef"];
+            /**
+             * Source Event Id
+             * Format: uuid
+             */
+            source_event_id: string;
+            /** Source Refs */
+            source_refs?: components["schemas"]["Ref"][];
+        };
         /** TextSpan */
         TextSpan: {
             /** Text */
@@ -1205,6 +1332,24 @@ export interface components {
              */
             object_kind: "kc";
             object_ref: components["schemas"]["KnowledgeRef"];
+            request_id: components["schemas"]["RequestId"];
+        };
+        /** UpdateTaskRequest */
+        UpdateTaskRequest: {
+            /**
+             * Action
+             * @constant
+             */
+            action: "update";
+            change_note: components["schemas"]["NonBlank"];
+            definition: components["schemas"]["TaskDefinition-Input"];
+            expected_version: components["schemas"]["Version"];
+            /**
+             * Object Kind
+             * @constant
+             */
+            object_kind: "task";
+            object_ref: components["schemas"]["TaskRef"];
             request_id: components["schemas"]["RequestId"];
         };
         /**
@@ -1622,7 +1767,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateDomainRequest"] | components["schemas"]["CreateKnowledgeRequest"] | components["schemas"]["UpdateKnowledgeRequest"] | components["schemas"]["DeleteKnowledgeRequest"];
+                "application/json": components["schemas"]["CreateDomainRequest"] | components["schemas"]["CreateKnowledgeRequest"] | components["schemas"]["UpdateKnowledgeRequest"] | components["schemas"]["DeleteKnowledgeRequest"] | components["schemas"]["CreateTaskRequest"] | components["schemas"]["UpdateTaskRequest"] | components["schemas"]["DeleteTaskRequest"];
             };
         };
         responses: {
@@ -1860,7 +2005,7 @@ export interface operations {
     domain_object_list: {
         parameters: {
             query?: {
-                kinds?: "kc"[] | null;
+                kinds?: components["schemas"]["MemberKind"][] | null;
                 name?: string;
                 cursor?: string | null;
                 limit?: number;
@@ -1881,7 +2026,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["KnowledgeList"];
+                    "application/json": components["schemas"]["MemberList"];
                 };
             };
             /** @description Bad Request */
@@ -2007,7 +2152,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DomainDetail"] | components["schemas"]["KnowledgeDetail"];
+                    "application/json": components["schemas"]["ObjectDetail"];
                 };
             };
             /** @description Bad Request */

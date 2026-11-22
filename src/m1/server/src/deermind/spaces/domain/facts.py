@@ -21,6 +21,7 @@ from deermind.spaces.domain.public import (
     KnowledgeComponent,
     NonBlank,
     ObjectRef,
+    TaskDefinition,
     Version,
 )
 
@@ -35,7 +36,7 @@ class DomainVersion(FactModel):
     object_id: UUID
     version: Version
     content_schema_version: Literal[1]
-    content: DomainDefinition | KnowledgeComponent
+    content: DomainDefinition | KnowledgeComponent | TaskDefinition
     is_deleted: bool
     created_at: datetime
     created_by: Ref
@@ -100,8 +101,10 @@ def validate_saved(draft: EventDraft, payload: EventPayload) -> None:
             or payload.action != "create"
         ):
             raise ValueError("Invalid Domain root definition")
-    elif not isinstance(value.content, KnowledgeComponent) or draft.scope_id == ref.object_id:
-        raise ValueError("Invalid knowledge component definition")
+    elif draft.scope_id == ref.object_id or (
+        not isinstance(value.content, KnowledgeComponent if ref.kind == "kc" else TaskDefinition)
+    ):
+        raise ValueError("Invalid member definition")
 
     previous = payload.previous_ref
     if payload.action == "create":

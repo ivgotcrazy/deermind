@@ -34,6 +34,7 @@ type NonBlank = Annotated[str, StringConstraints(strip_whitespace=True, min_leng
 type RequestId = Annotated[str, Field(min_length=1, max_length=128)]
 type Version = Annotated[int, Field(ge=1, le=2**63 - 1)]
 type JsonUuid = Annotated[UUID, Field(strict=False)]
+type MemberKind = Literal["kc", "task"]
 
 
 class DomainRef(FactModel):
@@ -48,7 +49,14 @@ class KnowledgeRef(FactModel):
     version: Version
 
 
-type ObjectRef = DomainRef | KnowledgeRef
+class TaskRef(FactModel):
+    kind: Literal["task"]
+    object_id: JsonUuid
+    version: Version
+
+
+type MemberRef = KnowledgeRef | TaskRef
+type ObjectRef = DomainRef | MemberRef
 
 
 def definition_content(content: RichContent | None, title: str) -> RichContent | None:
@@ -91,6 +99,63 @@ class KnowledgeComponent(FactModel):
         return definition_content(content, cls.__name__)
 
 
+class TaskParameter(FactModel):
+    name: NonBlank
+    meaning: NonBlank
+    type: NonBlank
+    constraints: NonBlank
+
+
+class TaskDefinition(FactModel):
+    """可保存未填齐的定义；就绪要求与个人评价独立。"""
+
+    name: NonBlank
+    responsibility: RichContent | None = None
+    expected_output: RichContent | None = None
+    completion_conditions: RichContent | None = None
+    applicability: RichContent | None = None
+    boundaries: RichContent | None = None
+    parameters: list[TaskParameter] = Field(default_factory=list[TaskParameter])
+
+    @field_validator(
+        "responsibility", "expected_output", "completion_conditions", "applicability", "boundaries"
+    )
+    @classmethod
+    def validate_content(cls, content: RichContent | None) -> RichContent | None:
+        if content is not None and not any(
+            block.type != "paragraph"
+            or any(span.type != "text" or span.text.strip() for span in block.payload.spans)
+            for block in content.blocks
+        ):
+            invalid(cls.__name__, ("blocks",), "请提供正文，未填项请留空。")
+        return definition_content(content, cls.__name__)
+
+    @field_validator("parameters")
+    @classmethod
+    def unique_parameters(cls, parameters: list[TaskParameter]) -> list[TaskParameter]:
+        seen: set[str] = set()
+        for index, parameter in enumerate(parameters):
+            if parameter.name in seen:
+                invalid(cls.__name__, (index, "name"), "参数名称重复。")
+            seen.add(parameter.name)
+        return parameters
+
+
+def task_gaps(content: TaskDefinition) -> list[Issue]:
+    fields = (
+        ("responsibility", content.responsibility, "认知责任"),
+        ("expected_output", content.expected_output, "预期表现"),
+        ("completion_conditions", content.completion_conditions, "完成条件"),
+        ("applicability", content.applicability, "适用条件"),
+        ("boundaries", content.boundaries, "适用边界"),
+    )
+    return [
+        Issue(code="missing_content", path=f"/{field}", message=f"请补充{label}。")
+        for field, value, label in fields
+        if value is None
+    ] + [Issue(code="missing_methods", path="/method_refs", message="尚未关联方法。")]
+
+
 class DomainContentRef(FactModel):
     owner: Literal["domain"] = "domain"
     object_ref: DomainRef
@@ -130,6 +195,31 @@ class DeleteKnowledgeRequest(_KnowledgeRequest):
     expected_version: Version
 
 
+class _TaskRequest(FactModel):
+    request_id: RequestId
+    object_kind: Literal["task"]
+    change_note: NonBlank
+
+
+class CreateTaskRequest(_TaskRequest):
+    action: Literal["create"]
+    domain_id: JsonUuid
+    definition: TaskDefinition
+
+
+class UpdateTaskRequest(_TaskRequest):
+    action: Literal["update"]
+    object_ref: TaskRef
+    expected_version: Version
+    definition: TaskDefinition
+
+
+class DeleteTaskRequest(_TaskRequest):
+    action: Literal["soft_delete"]
+    object_ref: TaskRef
+    expected_version: Version
+
+
 def save_variant(value: object) -> str | None:
     """同时以对象种类和动作定位唯一请求模型。"""
     if isinstance(value, dict):
@@ -146,7 +236,10 @@ type SaveRequest = Annotated[
     Annotated[CreateDomainRequest, Tag("domain.create")]
     | Annotated[CreateKnowledgeRequest, Tag("kc.create")]
     | Annotated[UpdateKnowledgeRequest, Tag("kc.update")]
-    | Annotated[DeleteKnowledgeRequest, Tag("kc.soft_delete")],
+    | Annotated[DeleteKnowledgeRequest, Tag("kc.soft_delete")]
+    | Annotated[CreateTaskRequest, Tag("task.create")]
+    | Annotated[UpdateTaskRequest, Tag("task.update")]
+    | Annotated[DeleteTaskRequest, Tag("task.soft_delete")],
     Discriminator(save_variant),
 ]
 
@@ -169,7 +262,19 @@ class SaveKnowledgeResult(FactModel):
     gaps: list[Issue] = Field(default_factory=list[Issue])
 
 
-type SaveResult = CreateDomainResult | SaveKnowledgeResult
+class TaskContentRef(FactModel):
+    owner: Literal["domain"] = "domain"
+    object_ref: TaskRef
+    path: Literal[""] = ""
+
+
+class SaveTaskResult(FactModel):
+    object_ref: TaskRef
+    content_ref: TaskContentRef
+    gaps: list[Issue]
+
+
+type SaveResult = CreateDomainResult | SaveKnowledgeResult | SaveTaskResult
 
 
 class CreateDomainResponse(FactModel):
@@ -203,15 +308,15 @@ class DomainDetail(FactModel):
     object: DomainView
 
 
-class KnowledgeRow(FactModel):
-    object_ref: KnowledgeRef
+class MemberRow(FactModel):
+    object_ref: MemberRef
     name: str
     is_deleted: bool
     source_event_id: UUID
 
 
-class KnowledgeList(FactModel):
-    items: list[KnowledgeRow]
+class MemberList(FactModel):
+    items: list[MemberRow]
     next_cursor: str | None
     read_token: str
 
@@ -230,14 +335,37 @@ class KnowledgeDetail(FactModel):
     object: KnowledgeView
 
 
+class TaskView(FactModel):
+    object_ref: TaskRef
+    content: TaskDefinition
+    content_ref: TaskContentRef
+    is_identity_deleted: bool
+    source_refs: list[Ref] = Field(default_factory=list[Ref])
+    source_event_id: UUID
+    gaps: list[Issue]
+
+
+class TaskDetail(FactModel):
+    object: TaskView
+
+
+type ObjectDetail = DomainDetail | KnowledgeDetail | TaskDetail
+
+
 class DomainService(Protocol):
     """当前会话由入口核验，应用端口执行领域权限和范围判断。"""
 
     async def list_domains(self, session: SessionView) -> DomainList: ...
 
-    async def list_knowledge(
-        self, session: SessionView, domain_id: UUID, name: str, cursor: str | None, limit: int
-    ) -> KnowledgeList: ...
+    async def list_members(
+        self,
+        session: SessionView,
+        domain_id: UUID,
+        name: str,
+        cursor: str | None,
+        limit: int,
+        kinds: list[MemberKind] | None,
+    ) -> MemberList: ...
 
     async def read_object(
         self,
@@ -245,7 +373,7 @@ class DomainService(Protocol):
         domain_id: UUID,
         object_id: UUID,
         version: int | None = None,
-    ) -> DomainDetail | KnowledgeDetail: ...
+    ) -> ObjectDetail: ...
 
     async def save_definition(
         self, session: SessionView, body: SaveRequest

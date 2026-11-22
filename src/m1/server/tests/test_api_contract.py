@@ -119,5 +119,6 @@ class ApiContractTests(unittest.IsolatedAsyncioTestCase):
             {
                 "#/components/schemas/CreateDomainResult",
                 "#/components/schemas/SaveKnowledgeResult",
+                "#/components/schemas/SaveTaskResult",
             },
         )

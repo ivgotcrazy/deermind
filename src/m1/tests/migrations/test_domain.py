@@ -274,6 +274,137 @@ class DomainTests(DatabaseTestCase):
             self.assertEqual(_save(client, admin, deletion).raise_for_status().json(), removed)
             self.assertEqual(self.persisted_counts(), (4, 6, 6, 6, 6, 2))
 
+    def test_task_conditions_versions_and_separate_cognitive_responsibilities(self) -> None:
+        """解释和计算各有身份；非法条件不保存，修订保留精确版本与原收据。"""
+        with self.api() as client:
+            admin = _login(client, "operator")
+            headers = session_headers(admin)
+            root = _save(client, admin, _body(uuid4(), "路程与速度")).raise_for_status().json()
+            domain_id = root["result"]["object_ref"]["object_id"]
+            catalog = f"{_LIST}/{domain_id}/objects"
+            request_id = uuid4()
+            definition: dict[str, JsonValue] = {
+                "name": "解释匀速路程关系",
+                "responsibility": _content("说明单位时间路程如何累积"),
+                "expected_output": _content("说明速度、时间和路程之间的关系"),
+                "completion_conditions": _content("能解释每个量的意义", with_formula=True),
+                "applicability": _content("速度保持不变，单位相容"),
+                "boundaries": _content("排除变速运动"),
+                "parameters": [
+                    {"name": "t", "meaning": "行进时间", "type": "数值", "constraints": "t > 0"}
+                ],
+            }
+            create: dict[str, JsonValue] = {
+                "request_id": str(request_id),
+                "object_kind": "task",
+                "action": "create",
+                "domain_id": domain_id,
+                "change_note": "定义解释责任",
+                "definition": definition,
+            }
+            invalid_cases: tuple[tuple[str, JsonValue, str], ...] = (
+                ("completion_conditions", _content("  "), "/definition/completion_conditions"),
+                (
+                    "applicability",
+                    {**_content("条件"), "role": "statement"},
+                    "/definition/applicability",
+                ),
+                (
+                    "parameters",
+                    [
+                        {"name": "t", "meaning": "时间", "type": "数值", "constraints": "t > 0"},
+                        {"name": " t ", "meaning": "时刻", "type": "数值", "constraints": "t > 1"},
+                    ],
+                    "/definition/parameters/1/name",
+                ),
+            )
+            for field, value, expected_path in invalid_cases:
+                rejected = _save(
+                    client, admin, {**create, "definition": {**definition, field: value}}
+                )
+                self.assertEqual(rejected.status_code, 400)
+                self.assertTrue(
+                    any(
+                        issue["path"].startswith(expected_path)
+                        for issue in rejected.json()["error"]["issues"]
+                    )
+                )
+            self.assertEqual(self.persisted_counts(), (1,) * 6)
+            explanation = _save(client, admin, create).raise_for_status().json()
+            self.assertEqual(
+                [gap["path"] for gap in explanation["result"]["gaps"]], ["/method_refs"]
+            )
+            ref = explanation["result"]["object_ref"]
+            path = f"{catalog}/{ref['object_id']}"
+            before = client.get(path, headers=headers).raise_for_status().json()["object"]
+            calculation = (
+                _save(
+                    client,
+                    admin,
+                    {
+                        **create,
+                        "request_id": str(uuid4()),
+                        "definition": {
+                            "name": "根据匀速与时间求路程",
+                            "responsibility": _content("根据给定数值计算路程"),
+                        },
+                    },
+                )
+                .raise_for_status()
+                .json()
+            )
+            self.assertNotEqual(calculation["result"]["object_ref"]["object_id"], ref["object_id"])
+            self.assertIn(
+                "/completion_conditions", [g["path"] for g in calculation["result"]["gaps"]]
+            )
+            listing = client.get(catalog, headers=headers, params={"kinds": "task"})
+            self.assertEqual(len(listing.raise_for_status().json()["items"]), 2)
+            knowledge = client.get(catalog, headers=headers, params={"kinds": "kc"})
+            self.assertEqual(knowledge.raise_for_status().json()["items"], [])
+            revision: dict[str, JsonValue] = {
+                "request_id": str(uuid4()),
+                "object_kind": "task",
+                "action": "update",
+                "object_ref": ref,
+                "expected_version": 1,
+                "change_note": "补充适用条件",
+                "definition": {**before["content"], "applicability": _content("全程保持匀速")},
+            }
+            updated = _save(client, admin, revision).raise_for_status().json()
+            current_ref = updated["result"]["object_ref"]
+            self.assertEqual(current_ref["version"], 2)
+            stale = _save(client, admin, {**revision, "request_id": str(uuid4())})
+            self.assertEqual(stale.status_code, 409)
+            self.assertEqual(stale.json()["error"]["code"], "version_conflict")
+            history = client.get(path, headers=headers, params={"version": 1}).raise_for_status()
+            self.assertEqual(history.json()["object"], before)
+            self.assertEqual(
+                _receipt(client, admin, request_id, admin.account.account_id).json()["result"],
+                explanation["result"],
+            )
+            self.assertEqual(_save(client, admin, create).raise_for_status().json(), explanation)
+            removed = (
+                _save(
+                    client,
+                    admin,
+                    {
+                        "request_id": str(uuid4()),
+                        "object_kind": "task",
+                        "action": "soft_delete",
+                        "object_ref": current_ref,
+                        "expected_version": 2,
+                        "change_note": "移除试验定义",
+                    },
+                )
+                .raise_for_status()
+                .json()
+            )
+            self.assertEqual(removed["result"]["object_ref"]["version"], 3)
+            self.assertEqual(client.get(path, headers=headers).status_code, 404)
+            old = client.get(path, headers=headers, params={"version": 1}).raise_for_status().json()
+            self.assertEqual(old["object"], {**before, "is_identity_deleted": True})
+            self.assertEqual(self.persisted_counts(), (3, 5, 5, 5, 5, 1))
+
     def test_create_list_details_replay_and_trace(self) -> None:
         first_request, second_request = uuid4(), uuid4()
         first_body = _body(first_request, "小学数学")

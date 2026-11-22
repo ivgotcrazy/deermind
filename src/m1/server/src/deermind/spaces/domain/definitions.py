@@ -40,7 +40,9 @@ from deermind.spaces.domain.public import (
     CreateDomainResponse,
     CreateDomainResult,
     CreateKnowledgeRequest,
+    CreateTaskRequest,
     DeleteKnowledgeRequest,
+    DeleteTaskRequest,
     DomainContentRef,
     DomainDefinition,
     DomainDetail,
@@ -51,21 +53,35 @@ from deermind.spaces.domain.public import (
     KnowledgeComponent,
     KnowledgeContentRef,
     KnowledgeDetail,
-    KnowledgeList,
     KnowledgeRef,
-    KnowledgeRow,
     KnowledgeView,
+    MemberKind,
+    MemberList,
+    MemberRef,
+    MemberRow,
+    ObjectDetail,
     ObjectRef,
     SaveKnowledgeResult,
     SaveRequest,
     SaveResult,
+    SaveTaskResult,
+    TaskContentRef,
+    TaskDefinition,
+    TaskDetail,
+    TaskRef,
+    TaskView,
     UpdateKnowledgeRequest,
+    UpdateTaskRequest,
+    task_gaps,
 )
 
 _RECEIPT = text(
-    "SELECT receipt_id,input_hash,normalized_input,state,result_ref "
-    "FROM domain.command_receipt WHERE principal_id=:principal AND action=:action "
-    "AND scope_id=:scope AND request_id=:request_id"
+    "SELECT r.receipt_id,r.input_hash,r.normalized_input,r.state,r.result_ref,v.content "
+    "FROM domain.command_receipt r LEFT JOIN domain.object_version v "
+    "ON r.result_ref->>'type'='task' AND v.object_id=CAST(r.result_ref->>'id' AS uuid) "
+    "AND v.version=CAST(r.result_ref->>'version' AS bigint) "
+    "WHERE r.principal_id=:principal AND r.action=:action "
+    "AND r.scope_id=:scope AND r.request_id=:request_id"
 )
 _ROOT = (
     "SELECT i.catalog_revision FROM domain.object_identity i "
@@ -78,7 +94,7 @@ _VERSION = text(
     "JOIN domain.object_version head ON (head.object_id,head.version)=(i.object_id,i.head_version) "
     "JOIN domain.object_version v ON v.object_id=i.object_id "
     "AND v.version=COALESCE(CAST(:version AS bigint),i.head_version) "
-    "WHERE i.object_id=:id AND i.kind IN ('domain','kc') "
+    "WHERE i.object_id=:id AND i.kind IN ('domain','kc','task') "
     "AND (CAST(:version AS bigint) IS NOT NULL OR NOT head.is_deleted)"
 )
 
@@ -98,9 +114,17 @@ def receipt_key(principal_id: UUID, request_id: str) -> dict[str, str]:
     }
 
 
-def save_result(ref: ObjectRef) -> SaveResult:
+def save_result(
+    ref: ObjectRef, content: DomainDefinition | KnowledgeComponent | TaskDefinition | None = None
+) -> SaveResult:
     if isinstance(ref, KnowledgeRef):
         return SaveKnowledgeResult(object_ref=ref, content_ref=KnowledgeContentRef(object_ref=ref))
+    if isinstance(ref, TaskRef):
+        if not isinstance(content, TaskDefinition):
+            raise RuntimeError("A Task receipt must reference its fixed definition")
+        return SaveTaskResult(
+            object_ref=ref, content_ref=TaskContentRef(object_ref=ref), gaps=task_gaps(content)
+        )
     return CreateDomainResult(object_ref=ref, content_ref=DomainContentRef(object_ref=ref))
 
 
@@ -108,13 +132,17 @@ def saved_response(row: RowMapping) -> CreateDomainResponse:
     if row["state"] != "completed":
         raise RuntimeError("A domain save receipt must be committed with its result")
     saved = Ref.model_validate(row["result_ref"])
+    task = None
     if saved.owner == "domain" and saved.type == "domain" and saved.version == 1:
         ref = DomainRef(object_id=UUID(saved.id), version=1)
     elif saved.owner == "domain" and saved.type == "kc" and saved.version is not None:
         ref = KnowledgeRef(kind="kc", object_id=UUID(saved.id), version=saved.version)
+    elif saved.owner == "domain" and saved.type == "task" and saved.version is not None:
+        ref = TaskRef(kind="task", object_id=UUID(saved.id), version=saved.version)
+        task = TaskDefinition.model_validate(row["content"])
     else:
         raise RuntimeError("A domain receipt must reference a saved definition version")
-    return CreateDomainResponse(request_ref=row["receipt_id"], result=save_result(ref))
+    return CreateDomainResponse(request_ref=row["receipt_id"], result=save_result(ref, task))
 
 
 def replay(row: RowMapping, body: str, digest: str) -> CreateDomainResponse:
@@ -227,11 +255,18 @@ class DomainDefinitions:
             ]
         )
 
-    async def list_knowledge(
-        self, session: SessionView, domain_id: UUID, name: str, cursor: str | None, limit: int
-    ) -> KnowledgeList:
+    async def list_members(
+        self,
+        session: SessionView,
+        domain_id: UUID,
+        name: str,
+        cursor: str | None,
+        limit: int,
+        kinds: list[MemberKind] | None,
+    ) -> MemberList:
         actor = administrator(session)
         name = name.strip()
+        selected = sorted(set(kinds or ["kc", "task"]))
         async with self.engine.begin() as connection:
             # 目录基准和列表来自同一快照；后续页不跨目录修订混读。
             await connection.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"))
@@ -239,7 +274,7 @@ class DomainDefinitions:
             if catalog is None:
                 raise RequestError(404, "not_found", "找不到指定领域。")
             token = sha256(
-                canonical_json([str(actor), str(domain_id), name, catalog]).encode()
+                canonical_json([str(actor), str(domain_id), name, selected, catalog]).encode()
             ).hexdigest()
             after = None
             if cursor is not None:
@@ -254,25 +289,36 @@ class DomainDefinitions:
                 (
                     await connection.execute(
                         text(
-                            "SELECT i.object_id,v.version,v.content->>'name' AS name,"
+                            "SELECT i.kind,i.object_id,v.version,v.content->>'name' AS name,"
                             "v.source_event_id "
                             "FROM domain.object_identity i JOIN domain.object_version v "
                             "ON (v.object_id,v.version)=(i.object_id,i.head_version) "
-                            "WHERE i.domain_id=:domain AND i.kind='kc' AND NOT v.is_deleted "
+                            "WHERE i.domain_id=:domain AND i.kind=ANY(CAST(:kinds AS text[])) "
+                            "AND NOT v.is_deleted "
                             "AND strpos(lower(v.content->>'name'),lower(:name))>0 "
                             "AND (CAST(:after AS uuid) IS NULL OR i.object_id>:after) "
                             "ORDER BY i.object_id LIMIT :limit"
                         ),
-                        {"domain": domain_id, "name": name, "after": after, "limit": limit + 1},
+                        {
+                            "domain": domain_id,
+                            "name": name,
+                            "after": after,
+                            "kinds": selected,
+                            "limit": limit + 1,
+                        },
                     )
                 )
                 .mappings()
                 .all()
             )
-        return KnowledgeList(
+        return MemberList(
             items=[
-                KnowledgeRow(
-                    object_ref=KnowledgeRef(
+                MemberRow(
+                    object_ref=TaskRef(
+                        kind="task", object_id=row["object_id"], version=row["version"]
+                    )
+                    if row["kind"] == "task"
+                    else KnowledgeRef(
                         kind="kc", object_id=row["object_id"], version=row["version"]
                     ),
                     name=row["name"],
@@ -291,14 +337,28 @@ class DomainDefinitions:
         domain_id: UUID,
         object_id: UUID,
         version: int | None = None,
-    ) -> DomainDetail | KnowledgeDetail:
+    ) -> ObjectDetail:
         administrator(session)
         async with self.engine.connect() as connection:
             row = await self._version_row(connection, object_id, version)
-        owner = row["domain_id"] if row["kind"] == "kc" else object_id
+        owner = object_id if row["kind"] == "domain" else row["domain_id"]
         if owner != domain_id:
             raise RequestError(404, "not_found", "找不到指定领域对象或版本。")
         value = await self._read_version(row, owner, object_id)
+        if row["kind"] == "task":
+            if not isinstance(value.content, TaskDefinition):
+                raise RuntimeError("A Task must reference its own content model")
+            task_ref = TaskRef(kind="task", object_id=value.object_id, version=value.version)
+            return TaskDetail(
+                object=TaskView(
+                    object_ref=task_ref,
+                    content=value.content,
+                    content_ref=TaskContentRef(object_ref=task_ref),
+                    is_identity_deleted=row["is_deleted"],
+                    source_event_id=row["source_event_id"],
+                    gaps=task_gaps(value.content),
+                )
+            )
         if row["kind"] == "kc":
             if not isinstance(value.content, KnowledgeComponent):
                 raise RuntimeError("A knowledge component must reference its own content model")
@@ -371,7 +431,15 @@ class DomainDefinitions:
             if exists is not None:
                 return replay(exists, normalized, digest)
             created_at = await connection.scalar(text("SELECT clock_timestamp()"))
-            if isinstance(body, UpdateKnowledgeRequest | DeleteKnowledgeRequest):
+            if isinstance(
+                body,
+                (
+                    UpdateKnowledgeRequest,
+                    DeleteKnowledgeRequest,
+                    UpdateTaskRequest,
+                    DeleteTaskRequest,
+                ),
+            ):
                 row = await self._version_row(
                     connection, body.object_ref.object_id, body.object_ref.version
                 )
@@ -386,18 +454,20 @@ class DomainDefinitions:
             ref = KnowledgeRef(kind="kc", object_id=uuid4(), version=1)
             domain_id = body.domain_id
             content = body.definition
+        elif isinstance(body, CreateTaskRequest):
+            ref = TaskRef(kind="task", object_id=uuid4(), version=1)
+            domain_id = body.domain_id
+            content = body.definition
         else:
             assert row is not None
             domain_id = row["domain_id"]
-            if row["kind"] != "kc" or not isinstance(domain_id, UUID):
-                raise RequestError(404, "not_found", "找不到指定知识成分。")
+            if row["kind"] != body.object_ref.kind or not isinstance(domain_id, UUID):
+                raise RequestError(404, "not_found", "找不到指定领域对象。")
             previous = body.object_ref
             if previous.version != body.expected_version:
                 raise RequestError(409, "version_conflict", "编辑版本不一致，请检查原稿。")
-            ref = KnowledgeRef(
-                kind="kc", object_id=previous.object_id, version=previous.version + 1
-            )
-            if isinstance(body, DeleteKnowledgeRequest):
+            ref = previous.model_copy(update={"version": previous.version + 1})
+            if isinstance(body, DeleteKnowledgeRequest | DeleteTaskRequest):
                 content = (await self._read_version(row, domain_id, ref.object_id)).content
             else:
                 content = body.definition
@@ -464,8 +534,8 @@ class DomainDefinitions:
                 existing = (await connection.execute(_RECEIPT, key)).mappings().one()
                 return replay(existing, normalized, digest)
             sequence = 0
-            if isinstance(ref, KnowledgeRef):
-                sequence = await self._lock_knowledge_save(connection, domain_id, previous)
+            if not isinstance(ref, DomainRef):
+                sequence = await self._lock_member_save(connection, domain_id, previous)
             (saved,) = await self.events.append(
                 connection,
                 access,
@@ -486,10 +556,10 @@ class DomainDefinitions:
                     "result": version_ref(ref).model_dump_json(exclude_none=True),
                 },
             )
-        return CreateDomainResponse(request_ref=receipt_id, result=save_result(ref))
+        return CreateDomainResponse(request_ref=receipt_id, result=save_result(ref, content))
 
-    async def _lock_knowledge_save(
-        self, connection: AsyncConnection, domain_id: UUID, previous: KnowledgeRef | None
+    async def _lock_member_save(
+        self, connection: AsyncConnection, domain_id: UUID, previous: MemberRef | None
     ) -> int:
         # 所有领域成员保存先锁所属领域，再核对成员的当前版本。
         root = await connection.scalar(text(_ROOT + " FOR UPDATE OF i"), {"id": domain_id})
@@ -502,13 +572,13 @@ class DomainDefinitions:
                         "SELECT i.head_version,v.is_deleted FROM domain.object_identity i "
                         "JOIN domain.object_version v ON (v.object_id,v.version)="
                         "(i.object_id,i.head_version) WHERE i.object_id=:id "
-                        "AND i.kind='kc' AND i.domain_id=:domain FOR UPDATE OF i"
+                        "AND i.kind=:kind AND i.domain_id=:domain FOR UPDATE OF i"
                     ),
-                    {"id": previous.object_id, "domain": domain_id},
+                    {"id": previous.object_id, "kind": previous.kind, "domain": domain_id},
                 )
             ).one_or_none()
             if head is None or head.is_deleted or head.head_version != previous.version:
-                raise RequestError(409, "version_conflict", "知识成分已变更，请核对最新版本。")
+                raise RequestError(409, "version_conflict", "领域对象已变更，请核对最新版本。")
         sequence = await connection.scalar(
             text(
                 "SELECT last_seq FROM runtime.scope_event_heads "

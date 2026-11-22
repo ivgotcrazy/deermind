@@ -1,7 +1,7 @@
 """管理员领域列表、新建和选中详情的 HTTP 入口。"""
 
 from secrets import compare_digest
-from typing import Annotated, Literal
+from typing import Annotated
 from uuid import UUID
 
 from deermind.entrypoints.api.auth import access
@@ -9,11 +9,11 @@ from deermind.entrypoints.api.errors import ERRORS
 from deermind.product.public.authentication import AuthError, SessionView
 from deermind.spaces.domain.public import (
     CreateDomainResponse,
-    DomainDetail,
     DomainList,
     DomainService,
-    KnowledgeDetail,
-    KnowledgeList,
+    MemberKind,
+    MemberList,
+    ObjectDetail,
     SaveRequest,
 )
 from fastapi import APIRouter, Header, Query, Request, Response
@@ -65,7 +65,7 @@ async def save_definition(
 
 @router.get(
     "/domains/{domain_id}/objects",
-    response_model=KnowledgeList,
+    response_model=MemberList,
     responses=ERRORS,
     operation_id="domain_object_list",
 )
@@ -73,20 +73,20 @@ async def list_objects(
     request: Request,
     response: Response,
     domain_id: UUID,
-    kinds: Annotated[list[Literal["kc"]] | None, Query()] = None,
+    kinds: Annotated[list[MemberKind] | None, Query()] = None,
     name: Annotated[str, Query(max_length=512)] = "",
     cursor: Annotated[str | None, Query(max_length=128)] = None,
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
     expected: ExpectedSession = None,
-) -> KnowledgeList:
+) -> MemberList:
     session = await _session(request, response, expected)
     service: DomainService = request.app.state.domain
-    return await service.list_knowledge(session, domain_id, name, cursor, limit)
+    return await service.list_members(session, domain_id, name, cursor, limit, kinds)
 
 
 @router.get(
     "/domains/{domain_id}/objects/{object_id}",
-    response_model=DomainDetail | KnowledgeDetail,
+    response_model=ObjectDetail,
     responses=ERRORS,
     operation_id="domain_object_detail",
 )
@@ -97,7 +97,7 @@ async def domain_detail(
     object_id: UUID,
     version: Annotated[int | None, Query(ge=1, le=2**63 - 1)] = None,
     expected: ExpectedSession = None,
-) -> DomainDetail | KnowledgeDetail:
+) -> ObjectDetail:
     session = await _session(request, response, expected)
     service: DomainService = request.app.state.domain
     return await service.read_object(session, domain_id, object_id, version)

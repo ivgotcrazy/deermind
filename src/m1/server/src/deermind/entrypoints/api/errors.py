@@ -24,7 +24,7 @@ _CONTENT_FIELDS = frozenset(
     kind category_column series column color axis min max step legend relationship
     stacked slice_colors
     objects object_id shape relations subject predicate object basis layout view_box boxes box
-    points position object_ref
+    points position object_ref meaning constraints
     """.split()
 )
 
@@ -51,7 +51,13 @@ def content_issues(error: RequestValidationError) -> list[Issue]:
     issues: list[Issue] = []
     for item in error.errors():
         location = item["loc"]
-        if len(location) > 1 and location[1] in ("domain.create", "kc.create", "kc.update"):
+        if len(location) > 1 and location[1] in (
+            "domain.create",
+            "kc.create",
+            "kc.update",
+            "task.create",
+            "task.update",
+        ):
             location = (location[0], *location[2:])
         if len(location) < 3 or tuple(location[:2]) != ("body", "definition"):
             continue
@@ -63,6 +69,11 @@ def content_issues(error: RequestValidationError) -> list[Issue]:
             "applicability",
             "examples",
             "non_examples",
+            "responsibility",
+            "expected_output",
+            "completion_conditions",
+            "boundaries",
+            "parameters",
         ):
             continue
         parts = location[3:]
