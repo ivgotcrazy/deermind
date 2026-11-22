@@ -24,6 +24,7 @@
 | E01-15-B | 独立抽象、实现解耦与依赖检查整改 | [E01-15-boundaries.md](E01-15-boundaries.md) |
 | E01-16 | Temporal 载荷外置、重启与故障复核 | [E01-16-payload-codec.md](E01-16-payload-codec.md) |
 | E01-17 | 浏览器实时连接、通知和补读 | [交付与验证](E01-17-realtime.md) |
+| E01-18 | 固定输入到结果的端到端验证与恢复 | [交付与复验](E01-18-foundation-chain.md) |
 
 ## 查阅规则
 

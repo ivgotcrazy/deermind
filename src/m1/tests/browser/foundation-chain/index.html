@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>E01-18 基础链验证</title>
+  </head>
+  <body>
+    <main>
+      <h1>合成输入基础链验证</h1>
+      <form>
+        <label>账号 <input name="login" autocomplete="username" required /></label>
+        <label>
+          密码 <input name="password" type="password" autocomplete="current-password" required />
+        </label>
+        <button>登录</button>
+      </form>
+      <p>实时连接 <output id="socket">idle</output></p>
+      <p>订阅确认 <output id="watch">waiting</output></p>
+      <section data-case="normal">
+        <button disabled>提交普通请求</button>
+        <output class="state">未提交</output>
+        <output class="result"></output>
+      </section>
+      <section data-case="lost">
+        <button disabled>提交断线用例请求</button>
+        <output class="state">未提交</output>
+        <output class="result"></output>
+      </section>
+      <section data-case="worker">
+        <button disabled>提交 Worker 恢复用例请求</button>
+        <output class="state">未提交</output>
+        <output class="result"></output>
+      </section>
+      <section data-case="busy">
+        <button disabled>提交忙时用例请求</button>
+        <output class="state">未提交</output>
+        <output class="result"></output>
+      </section>
+      <p id="failure" role="alert"></p>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
