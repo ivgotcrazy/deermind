@@ -160,3 +160,7 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 ## E01-15受控模型验证
 
 `test.sh ai`沿用execution组的显式集群、镜像和Temporal参数，使用随机数据库和独立Worker队列；默认全部使用模型替身，真实调用用例明确跳过。真实测试须显式设置`M1_LIVE_AI=1`、模型环境变量和`M1_AI_EVIDENCE_DIR`，只运行`test_ai_live.py`；累计账本不得删除或重置，超出批准额度停止。结果见[E01-15交付](../deploy/environments/local-wsl/E01-15-ai.md)。
+
+## E01-16 Temporal 载荷外置验证
+
+`bash scripts/test.sh payload` 沿用数据库组的显式目标、Secret 名称及镜像参数，并要求 `M1_TEST_TEMPORAL_ADDRESS`、`M1_TEST_TEMPORAL_NAMESPACE` 和 `M1_FILES_CLAIM`。场景在临时测试 Pod、随机库、隔离任务队列及 PVC 独立测试目录执行，合成模型返回走官方 Pydantic AI Temporal 集成。重启用例替换测试 Worker 进程。内存用例分别记录客户端及 Worker 进程的峰值 RSS。验收与证据见[E01-16 交付记录](../deploy/environments/local-wsl/E01-16-payload-codec.md#2-复核与证据)。

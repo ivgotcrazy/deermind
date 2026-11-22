@@ -12,6 +12,7 @@ from deermind.bootstrap.executions import limits, registry
 from deermind.bootstrap.messaging import subscriptions
 from deermind.bootstrap.services import create_worker
 from deermind.bootstrap.settings import Settings
+from deermind.bootstrap.temporal import connect_temporal
 from deermind.bootstrap.waits import waits
 from deermind.foundation.system.delivery.bridge import run_bridge
 from deermind.foundation.system.executions.relay import run_relay
@@ -20,10 +21,8 @@ from deermind.foundation.system.waits.reconcile import run_reconciler
 from deermind.infrastructure.files.check import check_storage
 from deermind.infrastructure.nats.connection import MessagingSettings, connect
 from deermind.infrastructure.temporal.executions import Transport
-from pydantic_ai.durable_exec.temporal import PydanticAIPlugin
 from sqlalchemy.ext.asyncio import AsyncEngine
 from temporalio.api.workflowservice.v1 import DescribeNamespaceRequest
-from temporalio.client import Client
 
 LOGGER = logging.getLogger("runtime")
 READY_FILE = Path("/tmp/deermind-worker-ready")
@@ -41,11 +40,7 @@ async def run() -> None:
 async def serve(settings: Settings, engine: AsyncEngine) -> None:
     """数据库版本检查通过后，才连接Temporal并拉取任务。"""
     async with asyncio.timeout(15):
-        client = await Client.connect(
-            settings.temporal_address,
-            namespace=settings.temporal_namespace,
-            plugins=[PydanticAIPlugin()],
-        )
+        client = await connect_temporal(settings, engine)
         await client.workflow_service.describe_namespace(
             DescribeNamespaceRequest(namespace=settings.temporal_namespace),
         )

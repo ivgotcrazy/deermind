@@ -32,12 +32,13 @@ def main() -> int:
             "execution",
             "waits",
             "ai",
+            "payload",
         }
         or len(sys.argv) > 2
     ):
         raise ValueError(
             "Expected database, facts, files, reads, rebuild, "
-            "auth, usage, receipts, delivery, execution, waits or ai test group"
+            "auth, usage, receipts, delivery, execution, waits, ai or payload test group"
         )
     target = [
         "kubectl",
@@ -94,7 +95,7 @@ def main() -> int:
                 },
             ]
         )
-    if group in {"execution", "waits", "ai"}:
+    if group in {"execution", "waits", "ai", "payload"}:
         environment.extend(
             {"name": name, "value": os.environ[name]}
             for name in ("M1_TEST_TEMPORAL_ADDRESS", "M1_TEST_TEMPORAL_NAMESPACE")
@@ -132,7 +133,7 @@ def main() -> int:
             "volumes": [{"name": "tmp", "emptyDir": {}}],
         },
     }
-    if group == "files":
+    if group in {"files", "payload"}:
         environment.append({"name": "M1_TEST_FILES_ROOT", "value": "/data/files"})
         pod["spec"]["volumes"].append(
             {
@@ -146,6 +147,14 @@ def main() -> int:
                 "mountPath": "/data/files",
             }
         )
+    if group == "payload":
+        # 同一测试容器运行调用端和独立Worker子进程，分别采集峰值。
+        pod["spec"]["activeDeadlineSeconds"] = 390
+        pod["spec"]["containers"][0]["command"] = ["sleep", "390"]
+        pod["spec"]["containers"][0]["resources"] = {
+            "requests": {"cpu": "500m", "memory": "512Mi"},
+            "limits": {"cpu": "2000m", "memory": "2Gi"},
+        }
     subprocess.run(
         [*target, "create", "-f", "-"], input=json.dumps(pod), text=True, check=True, timeout=30
     )
@@ -169,6 +178,7 @@ def main() -> int:
             "execution": "test_execution.py",
             "waits": "test_waits.py",
             "ai": "test_ai_*.py",
+            "payload": "test_payload_codec_integration.py",
         }[group]
         # 将测试文件放进临时目录；生产包仍只从镜像读取，不挂载源码。
         driver = """
@@ -192,7 +202,7 @@ with tempfile.TemporaryDirectory() as directory:
                 {path.name: path.read_text(encoding="utf-8") for path in fixtures.glob("*.py")}
             ),
             text=True,
-            timeout=150,
+            timeout=300 if group == "payload" else 150,
         ).returncode
     finally:
         # 只删除本次创建的Pod，不按选择器或命名空间批量删除。

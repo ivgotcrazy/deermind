@@ -6,7 +6,9 @@ import logging
 from datetime import timedelta
 from uuid import uuid4
 
+from deermind.bootstrap.database import database_lifespan
 from deermind.bootstrap.settings import Settings
+from deermind.bootstrap.temporal import connect_temporal
 from deermind.foundation.system.logging import configure_logging
 from deermind.infrastructure.temporal.probe import StorageProbe
 from google.protobuf.duration_pb2 import Duration
@@ -69,14 +71,15 @@ async def probe(client: Client, settings: Settings) -> None:
 async def run(command: str) -> None:
     settings = Settings.from_environment()
     async with asyncio.timeout(45):
-        client = await Client.connect(
-            settings.temporal_address,
-            namespace=settings.temporal_namespace,
-        )
         if command == "init-namespace":
+            client = await Client.connect(
+                settings.temporal_address,
+                namespace=settings.temporal_namespace,
+            )
             await initialize(client, settings)
         else:
-            await probe(client, settings)
+            async with database_lifespan() as engine:
+                await probe(await connect_temporal(settings, engine), settings)
 
 
 def main() -> None:

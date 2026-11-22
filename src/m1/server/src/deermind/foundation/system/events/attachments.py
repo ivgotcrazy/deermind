@@ -3,10 +3,9 @@
 import asyncio
 import hashlib
 import io
-import json
 from dataclasses import replace
 from datetime import UTC, datetime
-from uuid import uuid4
+from uuid import UUID
 
 from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.events import (
@@ -19,12 +18,11 @@ from deermind.abstractions.events import (
     ProducerAccess,
     Ref,
 )
-from deermind.abstractions.file_records import FileObject, FileReceived
+from deermind.abstractions.file_records import FileObject
 from deermind.abstractions.files import FileStorage
 from deermind.foundation.system.events.store import EventStore
-from deermind.foundation.system.files.records import FILE_REGISTRATION, project_file
+from deermind.foundation.system.files.registry import FileRegistry
 from pydantic import JsonValue, TypeAdapter
-from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncEngine
 
@@ -33,9 +31,8 @@ class FactAttachments:
     """由受信业务调用；访问范围先由事件登记校验，不接受浏览器裸file_id读取。"""
 
     def __init__(self, engine: AsyncEngine, files: FileStorage) -> None:
-        self.engine = engine
         self.files = files
-        self._file_events = EventStore([FILE_REGISTRATION])
+        self.registry = FileRegistry(engine)
 
     async def save_json(
         self,
@@ -59,18 +56,9 @@ class FactAttachments:
         """调用者先核验业务权限；这里只允许同一所有者的完整附件，校验hash后解码。"""
         if reference.owner != "runtime" or reference.type != "file" or max_bytes <= 0:
             raise ValueError("Expected a bounded fact attachment read")
-        async with self.engine.connect() as connection:
-            row = (
-                (
-                    await connection.execute(
-                        text("SELECT * FROM runtime.file_objects WHERE file_id=CAST(:id AS uuid)"),
-                        {"id": reference.id},
-                    )
-                )
-                .mappings()
-                .one()
-            )
-        file = FileObject.model_validate_json(json.dumps(dict(row), default=str))
+        file = await self.registry.by_id(UUID(reference.id))
+        if file is None:
+            raise FileNotFoundError("Fact attachment registration is missing")
         if (
             file.source_refs != [source]
             or file.category != "fact"
@@ -122,26 +110,6 @@ class FactAttachments:
             decoded.append(payload.model_dump_json())
         return PreparedEvents(tuple(prepared), tuple(decoded), access)
 
-    async def _find(self, artifact_key: str) -> FileObject | None:
-        async with self.engine.connect() as connection:
-            row = (
-                (
-                    await connection.execute(
-                        text("SELECT * FROM runtime.file_objects WHERE artifact_key=:key"),
-                        {"key": artifact_key},
-                    )
-                )
-                .mappings()
-                .one_or_none()
-            )
-        if row is None:
-            return None
-        # DB JSON中UUID为字符串，用固定JSON模式解码，仍拒绝额外字段。
-        values = dict(row)
-        values["file_id"] = str(values["file_id"])
-        values["created_at"] = values["created_at"].isoformat()
-        return FileObject.model_validate_json(canonical_json(values))
-
     async def _save(
         self,
         content: bytes,
@@ -150,7 +118,7 @@ class FactAttachments:
         artifact_key: str,
     ) -> FileObject:
         digest = hashlib.sha256(content).hexdigest()
-        existing = await self._find(artifact_key)
+        existing = await self.registry.by_artifact(artifact_key)
         if existing is not None:
             return await asyncio.to_thread(self._check_existing, existing, content, digest, source)
 
@@ -176,46 +144,11 @@ class FactAttachments:
             transform_ref=Ref(owner="runtime", type="encoding", id="canonical-json", version=1),
             created_at=datetime.now(UTC),
         )
-        owner = Ref(owner="runtime", type="file", id=str(file.file_id))
-        payload = FileReceived(
-            subject_ref=owner,
-            outcome="recorded",
-            reason_code=None,
-            records=[
-                FactRecord(
-                    record_id="file",
-                    record_type="runtime.file_objects",
-                    schema_version=1,
-                    content=InlineContent(storage="inline", value=file.model_dump(mode="json")),
-                )
-            ],
-        )
         try:
-            async with self.engine.begin() as connection:
-                events = await self._file_events.append(
-                    connection,
-                    ProducerAccess("runtime", actor, frozenset({("file", file.file_id)})),
-                    [
-                        EventDraft(
-                            event_id=uuid4(),
-                            event_type="FileReceived",
-                            schema_version=1,
-                            scope_kind="file",
-                            scope_id=file.file_id,
-                            owner_ref=owner,
-                            payload=payload.model_dump(mode="json"),
-                            source_request_id=artifact_key,
-                            subject_refs=(source,),
-                        )
-                    ],
-                    commit_id=uuid4(),
-                    correlation_id=file.file_id,
-                    expected_seq={("file", file.file_id): 0},
-                )
-                await project_file(connection, events[0])
+            await self.registry.register(file, actor)
         except IntegrityError:
-            # 同产物并发保存只认已提交的一份登记；失败尝试的文件不覆盖它。
-            existing = await self._find(artifact_key)
+            # 并发以已提交登记为准，复用前重新核验。
+            existing = await self.registry.by_artifact(artifact_key)
             if existing is None:
                 raise
             return await asyncio.to_thread(self._check_existing, existing, content, digest, source)
