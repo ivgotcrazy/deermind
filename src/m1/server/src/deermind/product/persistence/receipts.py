@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 
 from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.events import Ref
+from deermind.foundation.system.public.errors import ErrorDetail
 from deermind.product.public.errors import RequestConflict as RequestConflict
 from pydantic import JsonValue
 from sqlalchemy import text
@@ -16,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 class Receipt:
     request_ref: UUID
     result_ref: Ref | None
+    error: ErrorDetail | None = None
 
 
 async def claim_request(
@@ -63,7 +65,7 @@ async def claim_request(
         (
             await connection.execute(
                 text(
-                    "SELECT request_ref, input_digest, normalized_input, state, result_ref "
+                    "SELECT request_ref, input_digest, normalized_input, state, result_ref,error "
                     "FROM product.command_receipt WHERE principal_id=:principal AND action=:action "
                     "AND scope_id=:scope AND request_id=:request FOR UPDATE"
                 ),
@@ -75,6 +77,8 @@ async def claim_request(
     )
     if row["input_digest"] != parameters["digest"] or row["normalized_input"] != normalized_input:
         raise RequestConflict("Request identity was already used with different input")
+    if row["state"] == "failed" and row["error"] is not None:
+        return Receipt(row["request_ref"], None, ErrorDetail.model_validate(row["error"]))
     if row["state"] != "completed" or row["result_ref"] is None:
         raise RequestConflict("Receipt has no completed synchronous result")
     return Receipt(row["request_ref"], Ref.model_validate(row["result_ref"]))
@@ -93,3 +97,17 @@ async def complete_request(connection: AsyncConnection, receipt: Receipt, result
     if completed != receipt.request_ref:
         raise RequestConflict("Receipt is not awaiting completion")
     return Receipt(receipt.request_ref, result)
+
+
+async def reject_request(connection: AsyncConnection, receipt: Receipt, error: ErrorDetail) -> None:
+    """永久的输入错误也保留稳定收据；事务故障仍完整回滚。"""
+    changed = await connection.scalar(
+        text(
+            "UPDATE product.command_receipt SET state='failed',error=CAST(:error AS jsonb),"
+            "updated_at=clock_timestamp() WHERE request_ref=:id AND state='accepted' "
+            "RETURNING request_ref"
+        ),
+        {"id": receipt.request_ref, "error": error.model_dump_json()},
+    )
+    if changed != receipt.request_ref:
+        raise RequestConflict("Receipt is not awaiting a result")

@@ -1,11 +1,11 @@
 # M1 事件与消息载荷
 
-> **版本**：v0.10<br>
+> **版本**：v0.13<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.9 → v0.10，登记 KC 路径确认及依据不足事件<br>
+> **修订说明**：v0.12 → v0.13，对齐固定分析输入、归类、正式入库和章节关联的事件正文<br>
 
 本分册是事件信封、类型化动作字段与通知结构的唯一字段定义；完整事实正文及投影登记见[事件正文合同](Event_Facts.md)。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
 
@@ -71,11 +71,15 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileRece
 
 消费方式：domain.receive_intake。
 
+实施版本为1，订阅者为 `domain_intake`。
+
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `domain_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `intake_request_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `candidate_refs` | CandidateRef[] | 是；非空 | 固定所选已采用内容；类别/父题从提交读取 |
+| `sources` | IntakeSource[] | 是；与candidate_refs逐一对应 | 每项含candidate_ref、指向完整候选记录的candidate_fact（EventPartRef）、adoption_ref |
+| `parent_bindings` | ParentBinding[] | 是；无参考时为空 | 固定每个参考项的父题。parent_candidate_ref、parent_item_ref、task_instance_ref恰选其一 |
 
 本事件固定所提交内容的EventPartRef及来源闭包，不依赖候选业务行取原文；只提交题目允许，单独提交解法须有可定位父题。
 
@@ -86,6 +90,8 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileRece
 
 消费方式：Product读取intake_receipt；等待桥按已登记条件提示。
 
+实施版本为1，订阅者为 `product_intake_result`。收到后由Product登记本模块状态。
+
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `trigger_event_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
@@ -94,6 +100,8 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileRece
 | `receipt_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `result_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `outcome` | 常量received | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `items` | Ref[] | 是 | 已受理待办的有序引用，包含复用项 |
+| `issues` | Issue[] | 是；可空数组 | 受理问题 |
 
 只有可信Product提交才有业务决定；技术失败不发拒绝。事件不表示定义/题目已经入库。
 
@@ -104,6 +112,8 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileRece
 
 消费方式：Product读取intake_receipt；等待桥按已登记条件提示。
 
+实施版本为1，订阅者为 `product_intake_result`。
+
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `trigger_event_id` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
@@ -112,6 +122,8 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06新增FileRece
 | `receipt_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `result_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `outcome` | 常量rejected | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `items` | Ref[] | 是；空数组 | 无受理待办 |
+| `issues` | Issue[] | 是；非空 | 确定的业务拒绝依据 |
 
 只有可信Product提交才有业务决定；技术失败不发拒绝。事件不表示定义/题目已经入库。
 
@@ -409,9 +421,8 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `item_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `source_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `cause_event_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `reason` | string | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `import_id` | ID | 是 | 来源所属的教材导入 |
+| `trigger_event_id` | ID | 是 | 导入失效的原始事件 |
 
 已终结项不反向改状态；重复通知无变化不另发事件。
 
@@ -424,32 +435,27 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `item_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `group_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `action` | add_kc/associate_task/associate_solution/discard | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `result_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `object_refs` | ObjectRef[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `check_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `source_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `domain_id` | ID | 是 | 待办归属的领域，与事件作用域一致 |
+| `request_ref` | ID | 是 | 本次处理收据 |
+| `result` | IntakeActionResult | 是 | 待办修订、处理结果、对象及参考引用、归类依据、受影响待办和组内剩余数量 |
 
-放弃项对象数组可空；组只负责展示组织，不是整组事务。
+放弃时对象引用为空。组供列表展示，每次按明确选择的待办提交。
 
 <a id="domaintemplatecandidateprepared"></a>
 ### 3.22 `DomainTemplateCandidatePrepared`
 
-生产方：`domain`；归属：`domain`。产生条件：Task/Solution定义候选完成。
+`DomainAnalysisInputFixed` 固定教材候选或待校验实例、父题及所选定义。`DomainTemplateCandidatePrepared` 记录 Task／Solution 定义候选。`DomainClassificationPrepared` 记录实例归类结果。这三类事件均由 Domain 生产，作用域为 `domain`，共用下表和一条 `domain.artifact` 正文。
 
 消费方式：管理员查询。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `candidate_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `check_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `source_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `domain_id` | ID | 是 | 分析归属领域 |
+| `request_ref` | ID | 是 | 后台工作对应的请求 |
+| `artifact_ref` | Ref | 是 | 本事件正文中的固定输入、定义候选或检查产物 |
+| `intake_item_ref` | Ref | 是 | 所检查的待办或手动录入输入身份 |
 
-候选不是正式定义，更不是已完成实例归类。
+早期本机数据中的 `DomainInstanceClassificationChecked` 按同一正文读取。当前只写 `DomainClassificationPrepared`。
 
 <a id="domaininstancesaved"></a>
 ### 3.23 `DomainInstanceSaved`
@@ -460,12 +466,11 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `task_instance_ref` | ObjectRef(task_instance) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `previous_ref` | ObjectRef或null | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `task_ref` | ObjectRef(task) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `reference_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `check_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
-| `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `instance_ref` | InstanceRef | 是 | 本次追加的题目实例版本 |
+| `previous_ref` | InstanceRef或null | 是 | 上一题目版本，首次保存为空 |
+| `classification_check_refs` | Ref[] | 是 | 本次保存采用的检查产物 |
+| `action` | create／update／soft_delete | 是 | 实际执行的动作 |
+| `request_ref` | ID | 是 | 本次记录所对应的收据 |
 
 不会产生学生已见题或作答事件。
 
@@ -769,6 +774,7 @@ provided阶段必须有已提交消息；处理阶段为null，不把请求帮�
 | 字段 | 类型 | 必填／缺省 | 含义 |
 | --- | --- | --- | --- |
 | `import_id` | ID | 是 | 本次导入 |
+| `textbook_id` | ID | 是 | 固定教材身份，原收据重放按本事实返回 |
 | `source_refs` | Ref[] | 是 | 已接收文件来源 |
 | `source_revision` | int | 是 | 保存后的来源修订 |
 | `failed` | Issue[] | 是 | 未成功部分及原因，无则[] |
@@ -824,17 +830,13 @@ Product在管理员明确不采用候选且决定已保存时产生；scope_kind
 
 ### 4.10 `ChapterAssociationSaved`
 
-Product完成章节添加、编辑或取消关联时产生；scope_kind=material_import。只供追溯，未应用的修改不直接改变学生目标或个人状态。
+Product完成章节添加、编辑或取消关联时产生，作用域为 `textbook`。章节关联的学生端生效由后续课程应用决定。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `textbook_id` | ID | 是 | 教材 |
 | `chapter_id` | ID | 是 | 章节 |
-| `association_ref` | Ref | 是 | 本次保存关系修订 |
-| `previous_ref` | Ref或null | 是 | 新增为null |
-| `action` | add/update/remove | 是 | 已完成动作 |
-| `task_ref` | ObjectRef(task) | 是 | 实际Task |
-| `method_refs` | ObjectRef(solution)[] | 是 | 该修订采用的方法；取消为[] |
+| `result` | ChapterAssociationResult | 是 | 关系修订、Task版本、采用的方法版本、当前有效标记及汇总KC；取消时方法为空 |
 
 ## 4.1 补齐的事实类型（schema_version=1）
 
@@ -875,7 +877,7 @@ Product完成章节添加、编辑或取消关联时产生；scope_kind=material
 | 类型 | outcome允许值 | 额外字段 |
 | --- | --- | --- |
 | 名称以Prepared/Pinned/Saved/Started/Accepted/Assigned/Received结尾的本节类型 | recorded | 无；仅保留服务端已确认事实 |
-| MaterialIntakeStatusUpdated | received/rejected | source_event_ref:EventPartRef，必填，指Domain接收结果 |
+| MaterialIntakeStatusUpdated | received/rejected | submission_id、domain_event_id、domain_receipt_ref、outcome 必填。Domain事件同时登记为信封的原因 |
 | ApplicationChecked | ready/blocked | 无；完整检查项在正文 |
 | AccountSignedOut | signed_out/invalidated | account_id:ID、session_id:ID，必填；不能包含会话秘密 |
 | InteractionInputCompleted | completed/failed | 无；失败原因不可为空 |
@@ -1031,3 +1033,6 @@ runtime运行留痕的records使用固定DTO，逐事件数量及条件见正文
 | v0.8 | 2026-11-16 | 接线既定DeliveryNotice及DeliveryStateChanged，固定正式事实核验 |
 | v0.9 | 2026-11-16 | 登记ExecutionStateChanged已实现范围，事件类型总数不变 |
 | v0.10 | 2026-11-22 | 登记直接检验路径依据和未确认的留痕 |
+| v0.11 | 2026-11-22 | 补教材接收事件的固定教材身份 |
+| v0.12 | 2026-11-22 | 登记教材提交、领域受理和教材端状态回写 |
+| v0.13 | 2026-11-22 | 对齐固定分析输入、归类、正式入库和章节关联的事件正文 |

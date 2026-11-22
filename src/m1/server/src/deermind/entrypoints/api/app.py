@@ -12,11 +12,24 @@ from deermind.bootstrap.accounts import configure_usage
 from deermind.bootstrap.authentication import configure_authentication
 from deermind.bootstrap.database import database_lifespan
 from deermind.bootstrap.domain import configure_domain
+from deermind.bootstrap.materials import (
+    configure_chapter_associations,
+    configure_domain_analysis,
+    configure_domain_intake,
+    configure_instances,
+    configure_intake_processing,
+    configure_material_adoptions,
+    configure_material_assistant,
+    configure_material_deletion,
+    configure_material_intake,
+    configure_materials,
+)
 from deermind.bootstrap.settings import Settings
 from deermind.entrypoints.api.auth import router
 from deermind.entrypoints.api.body_limit import RequestBodyLimit
 from deermind.entrypoints.api.domain import router as domain_router
 from deermind.entrypoints.api.errors import api_error
+from deermind.entrypoints.api.materials import router as materials_router
 from deermind.entrypoints.api.realtime import Realtime
 from deermind.entrypoints.api.realtime import router as realtime_router
 from deermind.entrypoints.api.receipts import router as receipts_router
@@ -29,8 +42,19 @@ from deermind.infrastructure.database.connection import DatabaseNotReady, check_
 from deermind.infrastructure.files.check import check_storage
 from deermind.infrastructure.nats.connection import MessagingSettings
 from deermind.infrastructure.nats.realtime import ViewNotices
+from deermind.product.public.chapter_associations import CHAPTER_ACTION
 from deermind.product.public.errors import RequestConflict
-from deermind.spaces.domain.public import CONFIRM_PATH_ACTION, SAVE_ACTION
+from deermind.product.public.material_assistant import CONVERSE, DECIDE
+from deermind.product.public.material_intake import SUBMIT_INTAKE
+from deermind.product.public.materials import DELETE_MATERIAL, RECEIVE_MATERIAL
+from deermind.spaces.domain.public import (
+    CLASSIFY,
+    CONFIRM_PATH_ACTION,
+    EXTRACT,
+    PROCESS_INTAKE,
+    SAVE_ACTION,
+    SAVE_INSTANCE,
+)
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel
@@ -90,6 +114,26 @@ def create_app(
                     engine, settings.files_root, backend=settings.files_backend
                 )
                 app.state.domain = domain
+                materials, app.state.uploads = configure_materials(engine, settings, domain)
+                app.state.materials = materials
+                assistant = configure_material_assistant(engine, settings, materials)
+                app.state.material_assistant = assistant
+                deletion = configure_material_deletion(assistant)
+                app.state.material_deletion = deletion
+                chapters = configure_chapter_associations(materials)
+                app.state.chapter_associations = chapters
+                adoptions = configure_material_adoptions(materials)
+                app.state.material_adoptions = adoptions
+                intake = configure_material_intake(materials)
+                app.state.material_intake = intake
+                domain_intake = configure_domain_intake(materials)
+                app.state.domain_intake = domain_intake
+                analysis = configure_domain_analysis(domain_intake, materials, settings)
+                app.state.domain_analysis = analysis
+                processing = configure_intake_processing(analysis)
+                app.state.domain_intake_processing = processing
+                instances = configure_instances(analysis)
+                app.state.domain_instances = instances
                 app.state.receipts = RequestReceipts(
                     {
                         (
@@ -98,6 +142,17 @@ def create_app(
                         ): app.state.usage.read_receipt,
                         (SAVE_ACTION, "account"): domain.read_receipt,
                         (CONFIRM_PATH_ACTION, "domain"): domain.read_path_receipt,
+                        (RECEIVE_MATERIAL, "domain"): materials.read_receipt,
+                        (RECEIVE_MATERIAL, "material_import"): materials.read_receipt,
+                        (CONVERSE, "material_import"): assistant.receipt,
+                        (DECIDE, "material_import"): adoptions.receipt,
+                        (SUBMIT_INTAKE, "material_import"): intake.receipt,
+                        (EXTRACT, "domain"): analysis.receipt,
+                        (CLASSIFY, "domain"): analysis.receipt,
+                        (PROCESS_INTAKE, "domain"): processing.receipt,
+                        (SAVE_INSTANCE, "domain"): instances.receipt,
+                        (DELETE_MATERIAL, "material_import"): deletion.receipt,
+                        (CHAPTER_ACTION, "textbook"): chapters.receipt,
                     }
                 )
                 app.state.realtime = hub
@@ -131,6 +186,7 @@ def create_app(
     app.include_router(router)
     app.include_router(usage_router)
     app.include_router(domain_router)
+    app.include_router(materials_router)
 
     app.include_router(receipts_router)
     app.include_router(realtime_router)

@@ -1,11 +1,11 @@
 # M1 Domain API
 
-> **版本**：v0.9<br>
+> **版本**：v0.11<br>
 > **状态**：设计合同；已实现范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-22<br>
-> **修订说明**：v0.8 → v0.9，登记 E02-06 路径、依据不足及收据<br>
+> **更新日期**：2026-11-23<br>
+> **修订说明**：v0.10 → v0.11，明确题内参考归类的两项结论与依据<br>
 
 共同类型与回执见[总册](../API_and_Message_Design.md)。接口只接受已授权领域及精确对象引用；所有定义/内容结构以[Domain§1](../Domain_Space_Design.md#1-领域对象身份与关系)为唯一来源。API不直接接收数据库行或模型任意生成的ID。
 
@@ -302,6 +302,7 @@ E02-05 接入管理员查询。给定方法时，只返回该任务版本选中�
 | `solution_ref` | ObjectRef(solution) | associate_solution是 | 方法及已入库父题 |
 | `task_instance_ref` | ObjectRef(task_instance) | associate_solution是 | 方法及已入库父题 |
 | `expected_version` | Revision | associate_solution是 | 父题当前版本 |
+| `classification_check_ref` | Ref | associate_task或associate_solution必填 | 已完成的归类产物，与本待办及所选版本一致 |
 | `confirm_add_method` | boolean | 否；false | 需要给Task补方法时明确true |
 | `expected_task_version` | Revision | confirm_add_method=true时是 | Task并发基准 |
 | `confirm_discard_children` | boolean | 否；false | 放弃父题且尚有待办解法时必须true |
@@ -318,7 +319,7 @@ E02-05 接入管理员查询。给定方法时，只返回该任务版本选中�
 | `affected_item_refs` | Ref[] | 是 | 实际影响项 |
 | `group_pending_count` | int | 是 | 剩余待办数；非负 |
 
-处理边界：普通处理200；需AI归类先202，正式入库以Domain收据committed为准。定义先保存而后续关联失败，不撤销已保存定义。
+处理边界：教材入库先从同一交互提交[D11A](#d11a)，再将该检查结果提交D08。D08成功返回200。提取的定义若已由D02单独保存，后续关联失败不撤回定义。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；classification_failed/classification_unresolved；missing_parent；parent_not_linked；confirmation_required；already_processed。
 
@@ -341,6 +342,8 @@ E02-05 接入管理员查询。给定方法时，只返回该任务版本选中�
 ## D09 保存题目实例
 
 `POST /domains/{domain_id}/instances` → `domain.save_instance`。权限：管理员。处理规则：[Domain处理规则](../Domain_Space_Design.md#51-domainsave_instance)。
+
+同路径GET列出现行题目。`GET /domains/{domain_id}/instances/{item_id}?version=n`回读精确版本；省略版本读取当前未移除实例。题面与题内参考由同一题目版本承载。
 
 请求字段（路径字段不重复放入正文）：
 
@@ -480,6 +483,15 @@ E02-05 接入管理员查询。给定方法时，只返回该任务版本选中�
 }
 ```
 
+<a id="d11a"></a>
+## D11A 检查实例归类
+
+`POST /domains/{domain_id}/classification-checks` → `domain.classify_instance`。权限为管理员，返回202及`request_ref,operation_run_id`，按R04读取检查依据。
+
+待入库分支接收`request_id,intake_item_ref,task_ref`，题内参考另给`solution_ref`。管理员确认补方法时给`confirm_add_method=true`。直接维护分支接收`request_id,instance,object_ref?`，固定拟保存正文。程序提供材料与定义的编号表，允许结果matched、mismatch、unresolved。正式保存仍复核来源、版本和内容。
+
+程序列出每项必查的 `candidate_key`。题内参考须分别返回父题对应的 `task` 和参考对应的 `solution`，每键恰好一项。单次检查内定义依据编号唯一，每项仅使用本项的定义依据及本次材料。存在相反证据时标为 `mismatch`，证据不足时标为 `unresolved`。结论与依据须一致，只有所需项均为 `matched` 才能用于正式入库。
+
 <a id="d12"></a>
 ## D12 读取产物
 
@@ -581,3 +593,5 @@ ContentRef只允许所属view已授权的JSON Pointer；图文重排不升对象
 | v0.7 | 2026-11-22 | 登记任务草稿、条件校验、类型筛选和精确版本 |
 | v0.8 | 2026-11-22 | 登记方法、关系定位、知识来源和分方法查询 |
 | v0.9 | 2026-11-22 | 登记 D05 的确认视图及 D10 检查结果、收据与防重 |
+| v0.10 | 2026-11-22 | 登记定义提取、实例归类与后续正式保存的接口 |
+| v0.11 | 2026-11-23 | 明确题内参考归类分别核对父题和参考，补充结论及证据口径 |

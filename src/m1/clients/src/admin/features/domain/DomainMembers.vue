@@ -326,7 +326,7 @@ async function recover() {
     if (
       result.receipt_state === 'completed' &&
       result.result &&
-      'object_ref' in result.result &&
+      'content_ref' in result.result &&
       result.result.object_ref.kind === kind
     ) {
       await saved(result.result.object_ref);

@@ -1,11 +1,11 @@
 # M1 Product API
 
-> **版本**：v0.5<br>
+> **版本**：v0.7<br>
 > **状态**：设计合同；已实施范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-16<br>
-> **修订说明**：v0.4 → v0.5，接线本人使用条件查询与首次确认；管理操作采用命令<br>
+> **更新日期**：2026-11-22<br>
+> **修订说明**：v0.6 → v0.7，登记教材修正、采用、入库提交、章节关联及删除合同<br>
 
 共同类型、认证头、回执和错误见[总册](../API_and_Message_Design.md)。本分册定义前后端载荷；内容提取、采用和应用规则仍由Product负责。
 
@@ -159,6 +159,8 @@
 | `source_revision` | int | 是 | 原件集合修订 |
 
 处理边界：原件先上传；这里只接收合法文件收据，保存成功不启动解析。全部不可接收时422；可接收部分按received/failed明确返回。
+
+原请求收据沿R04，action为`product.receive_material`。新建使用领域ID和`resource_kind=domain`，补充使用导入ID和`resource_kind=material_import`。回读返回最初提交结果。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；缺领域invalid_reference；未完成/越权文件source_unavailable。
 
@@ -331,6 +333,8 @@
 | `items` | TextbookRow[] | 列表是 | 列表不带整册正文 |
 | `next_cursor` | string或null | 列表是 | 续页 |
 | `import` | ImportView | 详情是 | 详情不同时返回items |
+
+ImportView包含textbook、revision、source_revision、content_revision、sources和next_source_cursor。sources每项含来源身份、文件收据、文件名、顺序和文件内页数。详情沿cursor继续读来源，原件使用R07读取。
 
 处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
 
@@ -573,7 +577,8 @@
 | `submission_id` | ID | 是 | 原提交 |
 | `status` | submitted/received/rejected | 是 | Domain明确决定才改变 |
 | `domain_receipt_ref` | Ref或null | 是 | 决定引用 |
-| `items` | IntakeMapping[] | 是 | 按Domain接收结果逐项映射 |
+| `items` | Ref[] | 是 | 按提交顺序的待办引用，包含复用项 |
+| `trigger_event_ref` | ID | 是 | 原提交事件 |
 | `issues` | Issue[] | 是 | 拒绝原因 |
 | `wait_state` | waiting/timed_out/closed | 是 | Product自身等待 |
 | `delivery_state` | Processing | 是 | 底座只读状态 |
@@ -592,6 +597,8 @@
 ## P16 章节关联
 
 `POST /textbooks/{id}/chapters/{chapter_id}/associations` → `product.save_chapter_association`。权限：管理员。处理规则：[Product处理规则](../Product_Application_Design.md#41-productsave_chapter_association添加编辑或取消章节关联)。
+
+同路径的GET返回当前有效关联，支持cursor、limit。每行包含association_ref、task_ref、method_refs和active。写入按教材范围经R04补读。
 
 请求字段（路径字段不重复放入正文）：
 
@@ -1147,3 +1154,5 @@
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.4 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |
 | v0.5 | 2026-11-16 | 接线本人使用条件查询与首次确认；管理操作采用命令 |
+| v0.6 | 2026-11-22 | 登记教材原件清单与原请求恢复字段 |
+| v0.7 | 2026-11-22 | 登记教材候选工作流、领域受理和章节即时保存合同 |

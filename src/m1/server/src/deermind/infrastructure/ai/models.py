@@ -16,14 +16,17 @@ from deermind.abstractions.hashing import digest
 from openai import AsyncOpenAI
 from pydantic import JsonValue, TypeAdapter
 from pydantic_ai.messages import (
+    BinaryContent,
     ModelMessage,
     ModelMessagesTypeAdapter,
     ModelRequest,
+    ModelRequestPart,
     ModelResponse,
     RetryFeedbackPart,
     ThinkingPart,
     ToolCallPart,
     ToolReturnPart,
+    UserPromptPart,
 )
 from pydantic_ai.models import Model, ModelRequestParameters
 from pydantic_ai.models.openai import OpenAIChatModel
@@ -88,7 +91,6 @@ class ControlledModel(Model[None]):
             raise AIRejected("model_io_requires_activity")
         handle = self.handle
         await self.calls.remaining(handle)
-        # 此增量只接短文字；多模态装载与大历史外置在E01-16接入。
         encoded_messages = ModelMessagesTypeAdapter.dump_python(messages, mode="json")
         parameters = TypeAdapter(ModelRequestParameters).dump_python(
             model_request_parameters, mode="json"
@@ -106,8 +108,8 @@ class ControlledModel(Model[None]):
         encoded = canonical_body(body)
         if len(encoded) > handle.budget.max_input_bytes:
             raise AIRejected("required_context_too_large")
-        # 保守预约UTF-8字节数并留消息框架余量，不冒充供应商精确tokenizer或实际计费。
-        estimate = len(encoded) + 256
+        # 图片原始字节仍计入传输大小。DeepSeek 每张图片最多 1024 tokens。
+        estimate = bounded_tokens(body, messages, handle.binding.profile)
         ordinal = sum(isinstance(item, ModelResponse) for item in messages) + 1
         transport = activity.info().attempt if activity.in_activity() else 1
         repair = (
@@ -245,6 +247,39 @@ class ControlledModel(Model[None]):
             ) from None
         assert response is not None
         return checked_response(response, model_request_parameters)
+
+
+def bounded_tokens(
+    body: dict[str, JsonValue], messages: list[ModelMessage], profile: ModelProfile
+) -> int:
+    """分开估算文字与内联图片；真实计费仍依据服务商响应。"""
+    text_messages: list[ModelMessage] = []
+    images = 0
+    for message in messages:
+        if not isinstance(message, ModelRequest):
+            text_messages.append(message)
+            continue
+        parts: list[ModelRequestPart] = []
+        for part in message.parts:
+            if isinstance(part, UserPromptPart) and not isinstance(part.content, str):
+                contents: list[str] = []
+                for item in part.content:
+                    if isinstance(item, str):
+                        contents.append(item)
+                    elif (
+                        isinstance(item, BinaryContent)
+                        and item.media_type in {"image/jpeg", "image/png"}
+                        and profile.base_url.rstrip("/") == "https://api.deepseek.com"
+                    ):
+                        contents.append("[image]")
+                        images += 1
+                    else:
+                        raise AIRejected("unsupported_input")
+                part = replace(part, content=contents)
+            parts.append(part)
+        text_messages.append(replace(message, parts=parts))
+    encoded_text = ModelMessagesTypeAdapter.dump_python(text_messages, mode="json")
+    return len(canonical_body({**body, "messages": encoded_text})) + 256 + 1024 * images
 
 
 def checked_response(response: ModelResponse, parameters: ModelRequestParameters) -> ModelResponse:

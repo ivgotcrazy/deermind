@@ -1,10 +1,13 @@
 """在JSON解析前限制HTTP正文；同时检查声明长度与实际分块字节。"""
 
+import re
+
 from deermind.entrypoints.api.errors import safe_error
 from deermind.product.public.authentication import AuthError
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 HTTP_BODY_LIMIT = 2 * 1024 * 1024
+UPLOAD_PATH = re.compile(r"/api/m1/file-uploads/[0-9a-fA-F-]{36}/content")
 
 
 class RequestBodyLimit:
@@ -24,6 +27,10 @@ class RequestBodyLimit:
             await safe_error(AuthError(400, "invalid_request", "请求长度不正确。"))(
                 scope, receive, send
             )
+            return
+        # 此入口先认证登记，再按声明大小流式检查；其他路径仍执行统一的小正文限制。
+        if scope["method"] == "PUT" and UPLOAD_PATH.fullmatch(scope["path"]):
+            await self.app(scope, receive, send)
             return
         if declared > HTTP_BODY_LIMIT:
             await self.reject(scope, receive, send)

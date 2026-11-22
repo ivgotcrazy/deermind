@@ -1,11 +1,11 @@
 # M1 工程设计
 
-> **版本**：v0.108<br>
+> **版本**：v0.109<br>
 > **状态**：已进入小增量工程实现；进度及待确认项见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.107 → v0.108，登记 KC 检验依据不足事实<br>
+> **修订说明**：v0.108 → v0.109，登记教材入库的固定分析输入及章节关联事实<br>
 
 E01-16 的配置、范围及复核见[载荷交付记录](../../../../src/m1/deploy/environments/local-wsl/E01-16-payload-codec.md)，进度见[实施计划](Delivery_Plan.md)。
 
@@ -188,6 +188,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | `DomainIntakeSourceInvalidated` | Domain确认未入库来源已被替代或删除 | 教材与待办查询来源失效结果；不撤销已入库对象 | [Domain§2.2](Domain_Space_Design.md#22-domainreceive_intake) |
 | `DomainIntakeItemProcessed` | Domain处理入库项 | 教材可查询处理结果及关联对象；不自动建立章节关联 | [Domain§2.3](Domain_Space_Design.md#23-domainprocess_intake) |
 | `DomainTemplateCandidatePrepared` | Domain形成Task／Solution候选 | 管理员核对候选及来源，不等于正式定义已保存 | [Domain§3.2](Domain_Space_Design.md#32-domainextract_template) |
+| `DomainAnalysisInputFixed` | Domain固定题目或解法、父题及所选定义版本 | 后台处理和管理员核验使用同一份输入 | [事件正文](contracts/Event_Messages.md#domaintemplatecandidateprepared) |
 | `DomainInstanceSaved` | Domain保存题目、题内参考及定义关系 | 查询题目、题内参考、Task／Solution及来源；不等于学生已见题 | [Domain§5.1](Domain_Space_Design.md#51-domainsave_instance) |
 | `DomainKCTestPathConfirmed` | Domain确认已有版本的KC直接检验路径 | 查询内容就绪依据；不产生个人评价、不自动改章节关联 | [Domain§4.3](Domain_Space_Design.md#43-kc直接检验路径的准备与确认)、[§6.6](Domain_Space_Design.md#66-http请求响应与分页) |
 | `DomainKCTestPathNotReady` | Domain记录有效引用组合的检验依据不足 | 查询固定版本的问题和不足示例 | [事件正文](contracts/Event_Messages.md#domainkctestpathnotready) |
@@ -350,3 +351,4 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | v0.106 | 2026-11-22 | 统一 E01-08 交付入口 |
 | v0.107 | 2026-11-22 | 登记 E01-16 载荷交付入口 |
 | v0.108 | 2026-11-22 | 登记 KC 检验依据不足事实及查询责任 |
+| v0.109 | 2026-11-22 | 登记教材分析输入及领域和章节事实的追溯入口 |

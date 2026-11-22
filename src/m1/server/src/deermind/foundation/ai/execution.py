@@ -6,7 +6,7 @@ from deermind.abstractions.ai.calls import AIRejected
 from deermind.abstractions.ai.contracts import CallHandle, CallInput
 from deermind.abstractions.ai.requests import ModelRequestFact
 from deermind.abstractions.events import Ref
-from deermind.abstractions.executions import Execution
+from deermind.abstractions.executions import Execution, RunInput
 from deermind.abstractions.hashing import digest
 from deermind.foundation.ai import store
 from deermind.foundation.ai.records import CallAttemptFact, CallFact, CandidateFact
@@ -544,6 +544,30 @@ class Calls:
                 ],
             )
             return candidate.candidate_id
+
+    async def candidate_content(self, run: RunInput, candidate_id: UUID) -> dict[str, JsonValue]:
+        """按受理工作的执行归属读取候选，不允许跨工作取模型结果。"""
+        async with self.engine.begin() as connection:
+            work = await executions.active(connection, self.registry, run, "step")
+            candidate = await store.load(
+                connection, "ai.ai_candidates", CandidateFact, {"candidate_id": candidate_id}
+            )
+            if candidate is None:
+                raise AIRejected("unknown_candidate")
+            call = await store.load(
+                connection, "ai.ai_calls", CallFact, {"call_id": candidate.call_id}
+            )
+            if call is None or call.execution_id != work.execution_id:
+                raise AIRejected("forbidden")
+            config = await store.configuration(connection, work.execution_id)
+        source = Ref(owner="ai", type="execution", id=str(work.execution_id))
+        file = Ref(owner="runtime", type="file", id=str(candidate.content["file_id"]))
+        content = await self.attachments.read_json(
+            file, source=source, max_bytes=config.budget.max_result_bytes
+        )
+        if digest(content) != candidate.content_hash:
+            raise AIRejected("candidate_integrity")
+        return content
 
     async def fail(self, handle: CallHandle, error_code: str) -> None:
         async with self.engine.begin() as connection:

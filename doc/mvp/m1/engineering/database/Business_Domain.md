@@ -1,12 +1,12 @@
 # deermind 数据库：领域空间数据字典
 
-> **版本**：v0.7<br>
+> **版本**：v0.8<br>
 > **状态**：设计合同；迁移覆盖范围见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.6 → v0.7，登记 E02-06 路径与就绪依据的追加投影<br>
+> **修订说明**：v0.7 → v0.8，补齐待入库标题、候选来源及受理映射<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **9 张表、91 个列定义**。处理流程、接口和业务载荷由[Domain_Space_Design.md](../Domain_Space_Design.md) §1、§4.3、§6.2维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **9 张表、92 个列定义**。处理流程、接口和业务载荷由[Domain_Space_Design.md](../Domain_Space_Design.md) §1、§4.3、§6.2维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 迁移 `0012_domain_roots` 建立 §1、§2 和 §9 三张表。E02-03 复用这些表保存 `kc` 身份及版本。迁移 `0013_kc_versions` 授予应用角色更新 `object_identity.head_version`、`catalog_revision` 两列的权限。应用角色对版本表仅可查询和插入。§9 的 `input_artifact_id` 保持为空，外键随 §6 建表补齐。
 
@@ -183,9 +183,10 @@ Domain接收教材来源的固定结论。
 | `item_id` | `uuid` | 否 | 无 | 待办身份；主键组成字段 |
 | `domain_id` | `uuid` | 否 | 无 | 领域；FK → `domain.object_identity.object_id` |
 | `candidate_key` | `text` | 否 | 无 | 由来源所有者、导入、候选ID/修订和采用依据生成；不使用名称或AI相似度 |
-| `source_ref` | `jsonb` | 否 | 无 | Product已采用的内容及原页引用；Ref，见总册§3 |
+| `source_ref` | `jsonb` | 否 | 无 | IntakeSource，含精确候选、候选正文EventPartRef及采用引用 |
 | `input_artifact_id` | `uuid` | 否 | 无 | 固定输入；FK → `domain.artifact.artifact_id` |
 | `kind` | `text` | 否 | 无 | kc、task_instance、reference |
+| `title` | `text` | 否 | 无 | 从固定候选原文取出的非空标题，供待办列表查看 |
 | `group_id` | `uuid` | 否 | 无 | 同次提交分组身份 |
 | `parent_item_id` | `uuid` | 是 | 无 | 同批参考解法对应的题目待办；FK → `domain.intake_item.item_id` |
 | `parent_instance_ref` | `jsonb` | 是 | 无 | 已有题目精确版本；与parent_item二选一；Ref，见总册§3 |
@@ -319,3 +320,4 @@ Domain接收教材来源的固定结论。
 | v0.5 | 2026-11-22 | 登记知识成分版本对三张表的使用和派生指针列授权 |
 | v0.6 | 2026-11-22 | 登记关系索引、精确版本外键和追加权限 |
 | v0.7 | 2026-11-22 | 登记 KC 确认和就绪依据投影，接通原收据依据外键 |
+| v0.8 | 2026-11-22 | 补待入库标题、候选来源及受理映射 |

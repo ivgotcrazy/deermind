@@ -4,13 +4,13 @@ from datetime import datetime
 from typing import Annotated, Literal, Protocol, cast
 from uuid import UUID
 
-from pydantic import Discriminator, Field, StringConstraints, Tag, field_validator
+from pydantic import Discriminator, Field, JsonValue, StringConstraints, Tag, field_validator
 
 from deermind.abstractions.events import FactModel, Ref
 from deermind.foundation.system.public.errors import Issue
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.public.authentication import SessionView
-from deermind.spaces.domain.rich_content import RichContent, invalid
+from deermind.spaces.domain.rich_content import RichContent, SourceRef, invalid
 
 __all__ = [
     "SAVE_ACTION",
@@ -27,6 +27,7 @@ __all__ = [
     "DomainView",
     "NonBlank",
     "RichContent",
+    "SourceRef",
 ]
 
 SAVE_ACTION = "domain.save_definition"
@@ -37,6 +38,47 @@ type RequestId = Annotated[str, Field(min_length=1, max_length=128)]
 type Version = Annotated[int, Field(ge=1, le=2**63 - 1)]
 type JsonUuid = Annotated[UUID, Field(strict=False)]
 type MemberKind = Literal["kc", "task", "solution"]
+type IntakeKind = Literal["kc", "task_instance", "reference"]
+
+
+class IntakeView(FactModel):
+    item_ref: Ref
+    kind: IntakeKind
+    title: str
+    state: Literal["pending", "completed", "removed"]
+    parent_ref: Ref | None
+    result_ref: Ref | None
+
+
+class IntakeList(FactModel):
+    items: list[IntakeView]
+    next_cursor: str | None
+    read_token: str
+
+
+class IntakeDetail(FactModel):
+    item: IntakeView
+
+
+class DomainIntakeQueries(Protocol):
+    async def list_items(
+        self,
+        domain_id: UUID,
+        kind: IntakeKind | None,
+        cursor: str | None,
+        limit: int,
+        reader_id: UUID,
+    ) -> IntakeList: ...
+
+    async def detail(self, domain_id: UUID, item_id: UUID) -> IntakeDetail: ...
+
+    async def find_material_parent(
+        self,
+        domain_id: UUID,
+        import_id: UUID,
+        candidate_id: UUID,
+        revision: int,
+    ) -> IntakeDetail: ...
 
 
 class DomainRef(FactModel):
@@ -263,6 +305,7 @@ class CreateTaskRequest(_TaskRequest):
     action: Literal["create"]
     domain_id: JsonUuid
     definition: TaskDefinition
+    candidate_ref: Ref | None = None
 
 
 class UpdateTaskRequest(_TaskRequest):
@@ -288,6 +331,7 @@ class CreateSolutionRequest(_SolutionRequest):
     action: Literal["create"]
     domain_id: JsonUuid
     definition: SolutionDefinition
+    candidate_ref: Ref | None = None
 
 
 class UpdateSolutionRequest(_SolutionRequest):
@@ -563,3 +607,213 @@ class DomainService(Protocol):
     async def read_path_receipt(
         self, principal_id: UUID, session_id: UUID, query: ReceiptQuery
     ) -> ReceiptView[ConfirmKCPathResult]: ...
+
+
+EXTRACT = "domain.extract_template"
+CLASSIFY = "domain.classify_instance"
+
+type ShortText = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1200)
+]
+type SubjectKind = Literal["task", "solution"]
+
+
+class ExtractDefinition(FactModel):
+    request_id: RequestId
+    intake_item_ref: Ref
+    template_kind: SubjectKind
+    extraction_instruction: ShortText | None = None
+    prior_candidate_ref: Ref | None = None
+
+
+class CheckClassification(FactModel):
+    request_id: RequestId
+    intake_item_ref: Ref
+    task_ref: TaskRef
+    solution_ref: SolutionRef | None = None
+    confirm_add_method: bool = False
+
+
+class AnalysisAcceptance(FactModel):
+    request_ref: UUID
+    operation_run_id: UUID
+
+
+class Finding(FactModel):
+    criterion: ShortText
+    conclusion: ShortText
+    material_locations: list[ShortText] = Field(max_length=12)
+    definition_locations: list[ShortText] = Field(max_length=12)
+
+
+class Assessment(FactModel):
+    candidate_key: ShortText
+    findings: list[Finding] = Field(max_length=12)
+    issues: list[ShortText] = Field(max_length=12)
+    result: Literal["matched", "mismatch", "unresolved"]
+
+
+class DraftDefinition(FactModel):
+    kind: SubjectKind
+    name: ShortText
+    responsibility: ShortText | None = None
+    expected_output: ShortText | None = None
+    completion_conditions: ShortText | None = None
+    boundaries: ShortText | None = None
+    applicability: ShortText | None = None
+    approach: ShortText | None = None
+    rationale: ShortText | None = None
+    key_process: ShortText | None = None
+    evidence: list[ShortText] = Field(max_length=12)
+
+
+class AnalysisOutput(FactModel):
+    draft: DraftDefinition | None
+    results: list[Assessment] = Field(max_length=10)
+    unresolved: list[ShortText] = Field(max_length=12)
+
+
+class AnalysisReceipt(FactModel):
+    candidate_ref: Ref | None
+    check_ref: Ref
+    proposed_definition: dict[str, JsonValue] | None
+    output: AnalysisOutput
+
+
+class AnalysisArtifactView(FactModel):
+    artifact: dict[str, JsonValue]
+
+
+class DomainAnalysisService(Protocol):
+    async def accept(
+        self,
+        domain_id: UUID,
+        principal: UUID,
+        command: "ExtractDefinition | CheckClassification | CheckManualInstance",
+    ) -> AnalysisAcceptance: ...
+
+    async def artifact(self, domain_id: UUID, identity: UUID) -> AnalysisArtifactView: ...
+
+
+PROCESS_INTAKE = "domain.process_intake"
+SAVE_INSTANCE = "domain.save_instance"
+
+
+class InstanceRef(FactModel):
+    kind: Literal["task_instance"] = "task_instance"
+    object_id: JsonUuid
+    version: Version
+
+    def reference(self) -> Ref:
+        return Ref(owner="domain", type=self.kind, id=str(self.object_id), version=self.version)
+
+
+class ReferenceSolution(FactModel):
+    reference_id: JsonUuid
+    solution_ref: SolutionRef
+    content: RichContent
+    origin: Literal["textbook", "system_generated", "admin_authored"]
+    source_refs: list[SourceRef]
+
+
+class TaskInstance(FactModel):
+    title: NonBlank
+    task_ref: TaskRef
+    statement: RichContent
+    answer_basis: RichContent | None
+    reference_solutions: list[ReferenceSolution]
+    source_refs: list[SourceRef]
+
+
+class CheckManualInstance(FactModel):
+    request_id: RequestId
+    instance: TaskInstance
+    object_ref: InstanceRef | None = None
+
+
+class IntakeAction(FactModel):
+    request_id: RequestId
+    expected_revision: Version
+    action: Literal["add_kc", "associate_task", "associate_solution", "discard"]
+    definition: KnowledgeComponent | None = None
+    existing_kc_ref: KnowledgeRef | None = None
+    task_ref: TaskRef | None = None
+    existing_instance_ref: InstanceRef | None = None
+    solution_ref: SolutionRef | None = None
+    task_instance_ref: InstanceRef | None = None
+    expected_version: Version | None = None
+    classification_check_ref: Ref | None = None
+    confirm_add_method: bool = False
+    expected_task_version: Version | None = None
+    confirm_discard_children: bool = False
+
+
+class IntakeActionResult(FactModel):
+    item_ref: Ref
+    state: Literal["added", "associated", "discarded"]
+    object_ref: Ref | None
+    reference_ref: Ref | None
+    check_refs: list[Ref]
+    affected_item_refs: list[Ref]
+    group_pending_count: int
+
+
+class IntakeActionReceipt(FactModel):
+    request_ref: UUID
+    result: IntakeActionResult
+
+
+class InstanceCommand(FactModel):
+    request_id: RequestId
+    action: Literal["create", "update", "soft_delete"]
+    instance: TaskInstance | None = None
+    object_ref: InstanceRef | None = None
+    expected_version: Version | None = None
+    change_note: NonBlank
+    classification_check_ref: Ref | None = None
+
+
+class InstanceView(FactModel):
+    instance_ref: InstanceRef
+    content: TaskInstance
+    is_deleted: bool
+
+
+class InstanceReceipt(FactModel):
+    request_ref: UUID
+    result: InstanceView
+
+
+class InstanceList(FactModel):
+    items: list[InstanceView]
+    next_cursor: str | None
+
+
+class DomainInstanceService(Protocol):
+    async def list_instances(
+        self,
+        domain_id: UUID,
+        cursor: str | None,
+        limit: int,
+    ) -> InstanceList: ...
+
+    async def read(self, domain_id: UUID, identity: UUID, version: int | None) -> InstanceView: ...
+
+    async def save(
+        self,
+        domain_id: UUID,
+        principal: UUID,
+        command: InstanceCommand,
+    ) -> InstanceReceipt: ...
+
+
+class DomainIntakeActions(Protocol):
+    async def process(
+        self,
+        domain_id: UUID,
+        item_id: UUID,
+        principal: UUID,
+        command: IntakeAction,
+    ) -> IntakeActionReceipt: ...
+
+    async def read_parent(self, domain_id: UUID, item_id: UUID) -> InstanceView: ...

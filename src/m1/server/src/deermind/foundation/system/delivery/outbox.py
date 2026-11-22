@@ -21,6 +21,16 @@ class Lease:
     deadline: datetime
 
 
+async def delivery_state(connection: AsyncConnection, event_id: UUID) -> str | None:
+    return await connection.scalar(
+        text(
+            "SELECT state FROM runtime.handoffs WHERE kind='publish' AND delivery_id=:event "
+            "ORDER BY created_at DESC LIMIT 1"
+        ),
+        {"event": event_id},
+    )
+
+
 class Outbox:
     """固定应接收方后再交接；无订阅的审计事实仅保存在数据库。"""
 

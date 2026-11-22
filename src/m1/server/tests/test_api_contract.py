@@ -101,7 +101,9 @@ class ApiContractTests(unittest.IsolatedAsyncioTestCase):
             for operation in verbs.values():
                 self.assertIn("500", operation["responses"])
                 self.assertIn("404", operation["responses"])
-                self.assertNotIn("422", operation["responses"])
+                if "422" in operation["responses"]:
+                    detail = operation["responses"]["422"]["content"]["application/json"]["schema"]
+                    self.assertEqual(detail, {"$ref": "#/components/schemas/ErrorResponse"})
         receipt = schema["paths"]["/api/m1/requests/receipt"]["get"]["responses"]["200"]
         receipt_type = receipt["content"]["application/json"]["schema"]["$ref"].rsplit("/", 1)[-1]
         receipt_properties = schema["components"]["schemas"][receipt_type]["properties"]
@@ -109,8 +111,17 @@ class ApiContractTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(
             {item["$ref"] for item in result_types if "$ref" in item},
             {
+                "#/components/schemas/AdoptedMaterialResult",
+                "#/components/schemas/AnalysisReceipt",
+                "#/components/schemas/ChapterAssociationResult",
                 "#/components/schemas/ConfirmationResult",
                 "#/components/schemas/ConfirmKCPathResult",
+                "#/components/schemas/InstanceView",
+                "#/components/schemas/IntakeActionResult",
+                "#/components/schemas/IntakeSubmissionView",
+                "#/components/schemas/MaterialDeletionResult",
+                "#/components/schemas/MaterialResult",
+                "#/components/schemas/MaterialTurnResult",
                 "#/components/schemas/SaveResult",
             },
         )

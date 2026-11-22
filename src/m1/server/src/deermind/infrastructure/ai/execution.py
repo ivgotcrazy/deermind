@@ -1,7 +1,7 @@
 """AI步骤的持久接线；候选保存独立于模型Activity，业务提交仍由调用方完成。"""
 
 import asyncio
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import timedelta
 from uuid import UUID
 
@@ -10,6 +10,7 @@ from deermind.abstractions.ai.contracts import CallHandle, CallInput
 from deermind.abstractions.encoding import canonical_json
 from pydantic import BaseModel, JsonValue, TypeAdapter
 from pydantic_ai import Agent
+from pydantic_ai.messages import UserContent
 from pydantic_ai.usage import UsageLimits
 from temporalio import activity, workflow
 from temporalio.common import RetryPolicy
@@ -52,7 +53,12 @@ class Activities:
         await self.calls.fail(CallHandle.model_validate_json(handle_json), code)
 
 
-async def execute_ai_task(agent: Agent[CallHandle, BaseModel], incoming: CallInput) -> UUID:
+async def execute_ai_task(
+    agent: Agent[CallHandle, BaseModel],
+    incoming: CallInput,
+    *,
+    user_content: Sequence[UserContent] | None = None,
+) -> UUID:
     """供Operation Workflow调用；复用已存候选，不重问模型，也不直接保存业务结果。"""
     if not workflow.in_workflow():
         raise ValueError("Durable AI execution requires a Workflow")
@@ -74,7 +80,7 @@ async def execute_ai_task(agent: Agent[CallHandle, BaseModel], incoming: CallInp
             raise AIRejected("budget_exhausted")
         async with asyncio.timeout(seconds):
             result = await agent.run(
-                handle.input.prompt,
+                handle.input.prompt if user_content is None else user_content,
                 deps=handle,
                 usage_limits=UsageLimits(
                     request_limit=handle.budget.max_model_requests,

@@ -12,6 +12,16 @@
     "messaging"
   ],
   "properties": {
+    "materialAssistant": {
+      "type": "object",
+      "required": ["enabled", "model", "existingSecret"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "model": { "type": "string", "minLength": 1 },
+        "existingSecret": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
     "images": {
       "type": "object",
       "required": ["server", "client"],

@@ -10,16 +10,22 @@ from unittest.mock import patch
 from uuid import UUID, uuid4
 
 from alembic import command
+from deermind.abstractions.delivery import Acceptance, EventNotice
+from deermind.abstractions.encoding import canonical_json
+from deermind.abstractions.event_reading import EventPartRef
 from deermind.abstractions.events import Ref, StoredEvent
+from deermind.abstractions.material_intake import CandidateRef, IntakeSource
 from deermind.entrypoints.api.app import create_app
 from deermind.entrypoints.maintenance.database import migration_config, upgrade
 from deermind.foundation.system.public.errors import ErrorDetail
 from deermind.product.public.authentication import SessionView
+from deermind.spaces.domain.intake_processing import IntakeProcessing
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from httpx2 import Response
 from pydantic import JsonValue
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncConnection
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 from test_account_usage import PASSWORD
 from test_database import DatabaseTestCase
 from test_realtime_integration import session_headers
@@ -145,6 +151,386 @@ class DomainTests(DatabaseTestCase):
                 )
             ).one()
         return tuple(row)
+
+    def test_material_adoption_checks_only_related_pages(self) -> None:
+        """同一内容基线上的候选可并存，相关变化阻止整批采用。"""
+        textbook, imported, source = uuid4(), uuid4(), uuid4()
+        chapters = [uuid4(), uuid4()]
+        pages = [uuid4(), uuid4()]
+        batches = [uuid4() for _ in range(3)]
+        candidates = [uuid4() for _ in batches]
+        with self.api() as client:
+            admin = _login(client, "operator")
+            root = _save(client, admin, _body(uuid4(), "两章候选采用范围"))
+            domain = root.raise_for_status().json()["result"]["object_ref"]["object_id"]
+            # 预置同一基线的候选。采用请求仍经过真实 HTTP、收据和事件事务。
+            with self.engine.begin() as db:
+                keys = {"book": textbook, "import": imported, "domain": domain, "fact": source}
+                db.execute(
+                    text(
+                        "INSERT INTO product.material_import "
+                        "(import_id,textbook_id,status,revision,source_revision,content_revision,"
+                        "created_at,updated_at,source_event_id) "
+                        "VALUES (:import,:book,'active',1,1,0,now(),now(),:fact)"
+                    ),
+                    keys,
+                )
+                db.execute(
+                    text(
+                        "INSERT INTO product.textbook "
+                        "(textbook_id,domain_id,import_id,metadata,metadata_revision,"
+                        "created_at,source_event_id) "
+                        "VALUES (:book,:domain,:import,'{}',1,now(),:fact)"
+                    ),
+                    keys,
+                )
+                for batch, candidate, section in zip(batches, candidates, (0, 1, 0), strict=True):
+                    turn = uuid4()
+                    chapter, page = chapters[section], pages[section]
+                    db.execute(
+                        text(
+                            "INSERT INTO product.material_turn "
+                            "(request_ref,import_id,input_digest,input,state,created_at,"
+                            "updated_at,source_event_id) "
+                            "VALUES (:turn,:import,repeat('0',64),'{}','completed',now(),now(),"
+                            ":fact)"
+                        ),
+                        {**keys, "turn": turn},
+                    )
+                    db.execute(
+                        text(
+                            "INSERT INTO product.material_candidate_batch "
+                            "VALUES (:batch,1,:turn,CAST(:scope AS jsonb),CAST(:pages AS jsonb),"
+                            "CAST(:writes AS jsonb),jsonb_build_object('complete',true),"
+                            "CAST(:diff AS jsonb),"
+                            "'pending',1,now(),:fact)"
+                        ),
+                        {
+                            **keys,
+                            "batch": batch,
+                            "turn": turn,
+                            "scope": canonical_json(
+                                {"import_id": str(imported), "basis_revision": 0}
+                            ),
+                            "pages": canonical_json([{"source_id": str(page)}]),
+                            "writes": canonical_json(
+                                [{"candidate_id": str(candidate), "action": "add"}]
+                            ),
+                            "diff": canonical_json(
+                                {
+                                    "chapters": [
+                                        {
+                                            "chapter_id": str(chapter),
+                                            "name": f"第{section + 1}章",
+                                            "order": section + 1,
+                                            "source_ids": [str(page)],
+                                        }
+                                    ]
+                                }
+                            ),
+                        },
+                    )
+                    db.execute(
+                        text(
+                            "INSERT INTO product.material_candidate "
+                            "(candidate_id,candidate_revision,batch_id,import_id,local_key,kind,"
+                            "chapter_ref,body,basis_revision,created_at,source_event_id) "
+                            "VALUES (:candidate,1,:batch,:import,'t1','task_instance',"
+                            "CAST(:chapter AS jsonb),'{}',0,now(),:fact)"
+                        ),
+                        {
+                            **keys,
+                            "batch": batch,
+                            "candidate": candidate,
+                            "chapter": canonical_json({"id": str(chapter)}),
+                        },
+                    )
+
+            headers = {"Origin": _ORIGIN, **session_headers(admin)}
+            for batch in batches[:2]:
+                adopted = client.post(
+                    f"/api/m1/material-imports/{imported}/candidate-batches/{batch}/decision",
+                    headers=headers,
+                    json={
+                        "request_id": str(uuid4()),
+                        "decision": "adopt",
+                        "batch_ref": {"batch_id": str(batch), "batch_revision": 1},
+                        "expected_revision": 1,
+                    },
+                )
+                self.assertEqual(adopted.status_code, 200, adopted.text)
+            batch = batches[2]
+            endpoint = f"/api/m1/material-imports/{imported}/candidate-batches/{batch}/decision"
+            decision = {
+                "request_id": str(uuid4()),
+                "decision": "adopt",
+                "batch_ref": {"batch_id": str(batch), "batch_revision": 1},
+                "expected_revision": 1,
+            }
+            stale = client.post(endpoint, headers=headers, json=decision)
+            self.assertEqual(stale.status_code, 409, stale.text)
+            self.assertEqual(stale.json()["error"]["code"], "candidate_basis_changed")
+            declined = client.post(
+                endpoint, headers=headers, json={**decision, "decision": "decline"}
+            )
+            self.assertEqual(declined.status_code, 200, declined.text)
+            self.assertEqual(declined.json()["result"]["content_revision"], 2)
+            with self.engine.connect() as db:
+                current = db.scalars(
+                    text("SELECT candidate_id FROM product.material_content_current")
+                )
+                self.assertEqual(set(current), set(candidates[:2]))
+
+    def test_same_task_can_use_different_methods_in_two_chapters(self) -> None:
+        """同一 Task 的采用按章节生效，取消一章不会改变另一章。"""
+        textbook, imported, source = uuid4(), uuid4(), uuid4()
+        first, second = uuid4(), uuid4()
+        with self.api() as client:
+            admin = _login(client, "operator")
+            root = _save(client, admin, _body(uuid4(), "两章的同一任务"))
+            domain = root.raise_for_status().json()["result"]["object_ref"]["object_id"]
+            methods = [
+                _save(
+                    client,
+                    admin,
+                    {
+                        "request_id": str(uuid4()),
+                        "action": "create",
+                        "object_kind": "solution",
+                        "domain_id": domain,
+                        "definition": {"name": name},
+                        "change_note": "两章可采用不同方法",
+                    },
+                )
+                .raise_for_status()
+                .json()["result"]["object_ref"]
+                for name in ("逐步计算", "合并比例")
+            ]
+            task = (
+                _save(
+                    client,
+                    admin,
+                    {
+                        "request_id": str(uuid4()),
+                        "action": "create",
+                        "object_kind": "task",
+                        "domain_id": domain,
+                        "definition": {"name": "求部分量", "method_refs": methods},
+                        "change_note": "章节采用的固定任务",
+                    },
+                )
+                .raise_for_status()
+                .json()["result"]["object_ref"]
+            )
+            # 两章是隔离库的已采用材料夹具，关联写入通过真实 HTTP 和事实事务。
+            with self.engine.begin() as db:
+                values = {"book": textbook, "import": imported, "domain": domain, "fact": source}
+                db.execute(
+                    text(
+                        "INSERT INTO product.material_import "
+                        "(import_id,textbook_id,status,revision,source_revision,content_revision,"
+                        "created_at,updated_at,source_event_id) "
+                        "VALUES (:import,:book,'active',1,1,1,now(),now(),:fact)"
+                    ),
+                    values,
+                )
+                db.execute(
+                    text(
+                        "INSERT INTO product.textbook "
+                        "(textbook_id,domain_id,import_id,metadata,metadata_revision,"
+                        "created_at,source_event_id) "
+                        "VALUES (:book,:domain,:import,'{}',1,now(),:fact)"
+                    ),
+                    values,
+                )
+                for order, chapter in enumerate((first, second), 1):
+                    db.execute(
+                        text(
+                            "INSERT INTO product.material_chapter "
+                            "(chapter_id,textbook_id,title,sort_order,revision,catalog_basis_ref,"
+                            "updated_at,source_event_id) "
+                            "VALUES (:chapter,:book,:title,:position,1,'{}',now(),:fact)"
+                        ),
+                        {**values, "chapter": chapter, "title": f"第{order}章", "position": order},
+                    )
+
+            headers = {"Origin": _ORIGIN, **session_headers(admin)}
+            paths = [
+                f"/api/m1/textbooks/{textbook}/chapters/{chapter}/associations"
+                for chapter in (first, second)
+            ]
+            relations: list[Ref] = []
+            for path, method in zip(paths, methods, strict=True):
+                saved = (
+                    client.post(
+                        path,
+                        headers=headers,
+                        json={
+                            "request_id": str(uuid4()),
+                            "action": "add",
+                            "task_ref": task,
+                            "method_refs": [method],
+                        },
+                    )
+                    .raise_for_status()
+                    .json()["result"]
+                )
+                relations.append(Ref.model_validate(saved["association_ref"]))
+                self.assertEqual(saved["method_refs"], [method])
+            removed = client.post(
+                paths[0],
+                headers=headers,
+                json={
+                    "request_id": str(uuid4()),
+                    "action": "remove",
+                    "task_ref": task,
+                    "association_id": relations[0].id,
+                    "expected_revision": relations[0].revision,
+                },
+            )
+            self.assertEqual(removed.status_code, 200, removed.text)
+            self.assertEqual(client.get(paths[0], headers=headers).json()["items"], [])
+            remaining = client.get(paths[1], headers=headers).raise_for_status().json()["items"]
+            self.assertEqual(remaining[0]["association_ref"], relations[1].model_dump(mode="json"))
+            self.assertEqual(remaining[0]["method_refs"], [methods[1]])
+
+            # 保存端已经持有教材行锁时，删除须等待这次短事务结束。
+            endpoint = f"/api/m1/material-imports/{imported}/delete"
+            confirmed = {
+                "owner": "product",
+                "type": "deletion_scope",
+                "id": str(imported),
+                "revision": 1,
+            }
+            with ThreadPoolExecutor(1) as worker:
+                with self.engine.begin() as db:
+                    lock = db.scalar(
+                        text(
+                            "SELECT import_id FROM product.material_import "
+                            "WHERE import_id=:id FOR UPDATE"
+                        ),
+                        {"id": imported},
+                    )
+                    self.assertEqual(lock, imported)
+                    deleting = worker.submit(
+                        client.post,
+                        endpoint,
+                        headers=headers,
+                        json={
+                            "request_id": str(uuid4()),
+                            "expected_revision": 1,
+                            "confirmed_scope_ref": confirmed,
+                        },
+                    )
+                    with self.assertRaises(TimeoutError):
+                        deleting.result(timeout=0.2)
+                self.assertEqual(deleting.result(timeout=5).status_code, 200)
+
+            stale = client.post(
+                paths[1],
+                headers=headers,
+                json={
+                    "request_id": str(uuid4()),
+                    "action": "update",
+                    "task_ref": task,
+                    "association_id": relations[1].id,
+                    "expected_revision": 1,
+                    "method_refs": [methods[0]],
+                },
+            )
+            self.assertEqual(stale.status_code, 404, stale.text)
+            domain_definition = client.get(
+                f"{_LIST}/{domain}/objects/{task['object_id']}?version=1", headers=headers
+            )
+            self.assertEqual(domain_definition.status_code, 200, domain_definition.text)
+            self.assert_material_source_invalidated(client, imported, domain)
+
+    def assert_material_source_invalidated(
+        self, client: TestClient, imported: UUID, domain_id: str
+    ) -> None:
+        """固定三个隔离待办，使用真实删除事件检验领域投影及重新接收。"""
+        input_id = uuid4()
+        pending, completed, other = uuid4(), uuid4(), uuid4()
+        with self.engine.begin() as db:
+            payload = db.scalar(
+                text(
+                    "SELECT payload FROM runtime.handoffs WHERE kind='publish' "
+                    "AND payload->>'event_type'='MaterialImportDeleted' "
+                    "AND payload->>'scope_id'=:id"
+                ),
+                {"id": str(imported)},
+            )
+            notice = EventNotice.model_validate_json(canonical_json(payload))
+            db.execute(
+                text(
+                    "INSERT INTO domain.artifact "
+                    "(artifact_id,domain_id,kind,payload,created_at,source_event_id) "
+                    "VALUES (:input,:domain,'input','{}',now(),:event)"
+                ),
+                {"input": input_id, "domain": domain_id, "event": notice.event_id},
+            )
+            for item, origin, state in (
+                (pending, imported, "pending"),
+                (completed, imported, "completed"),
+                (other, uuid4(), "pending"),
+            ):
+                candidate = uuid4()
+                source = IntakeSource(
+                    candidate_ref=CandidateRef(
+                        candidate_id=candidate, candidate_revision=1, basis_revision=1
+                    ),
+                    candidate_fact=EventPartRef(
+                        event_id=notice.event_id, record_id=str(candidate), path=""
+                    ),
+                    adoption_ref=Ref(owner="product", type="material_adoption", id=str(uuid4())),
+                )
+                db.execute(
+                    text(
+                        "INSERT INTO domain.intake_item(item_id,domain_id,candidate_key,source_ref,"
+                        "input_artifact_id,kind,title,group_id,state,revision,created_at,"
+                        "source_event_id) "
+                        "VALUES (:id,:domain,:key,CAST(:source AS jsonb),:input,'kc','验证来源',"
+                        ":id,:state,1,now(),:event)"
+                    ),
+                    {
+                        "id": item,
+                        "domain": domain_id,
+                        "key": f"{origin}:{candidate}:1:1",
+                        "source": source.model_dump_json(),
+                        "input": input_id,
+                        "state": state,
+                        "event": notice.event_id,
+                    },
+                )
+
+        app = client.app
+        portal = client.portal
+        assert isinstance(app, FastAPI) and portal is not None
+        engine: AsyncEngine = app.state.database
+        processing: IntakeProcessing = app.state.domain_intake_processing
+
+        async def deliver() -> Acceptance:
+            async with engine.begin() as connection:
+                return await processing.invalidate_source(connection, notice)
+
+        result = portal.call(deliver)
+        self.assertEqual(result.disposition, "accepted")
+        self.assertEqual([item.id for item in result.arrangement_refs], [str(pending)])
+        self.assertEqual(portal.call(deliver).disposition, "ignored")
+
+        with self.engine.connect() as db:
+            rows = db.execute(
+                text("SELECT item_id,state,revision FROM domain.intake_item WHERE domain_id=:id"),
+                {"id": domain_id},
+            )
+            self.assertEqual(
+                {row.item_id: (row.state, row.revision) for row in rows},
+                {
+                    pending: ("removed", 2),
+                    completed: ("completed", 1),
+                    other: ("pending", 1),
+                },
+            )
 
     def test_knowledge_versions_catalog_and_original_receipt(self) -> None:
         """并行提交同一旧版，仅一个生效；删除后仍保留原文与原收据。"""
@@ -1075,7 +1461,7 @@ class DomainMigrationTests(DatabaseTestCase):
         with self.engine.connect() as connection:
             self.assertEqual(
                 connection.scalar(text("SELECT version_num FROM public.alembic_version")),
-                "0015_kc_test_paths",
+                "0023_material_deletion",
             )
             self.assertEqual(connection.execute(facts).all(), old_events)
             self.assertEqual(connection.execute(accounts).all(), old_accounts)

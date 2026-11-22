@@ -7,7 +7,14 @@ from starlette.types import Message, Receive, Scope, Send
 
 
 class HttpBodyLimitTests(unittest.IsolatedAsyncioTestCase):
-    async def check(self, chunks: list[bytes], length: bytes | None = None) -> tuple[int, int]:
+    async def check(
+        self,
+        chunks: list[bytes],
+        length: bytes | None = None,
+        *,
+        method: str = "POST",
+        path: str = "/api/m1/test",
+    ) -> tuple[int, int]:
         captured: list[Message] = []
         consumed = 0
 
@@ -30,7 +37,12 @@ class HttpBodyLimitTests(unittest.IsolatedAsyncioTestCase):
             captured.append(message)
 
         await RequestBodyLimit(app)(
-            {"type": "http", "headers": [(b"content-length", length)] if length else []},
+            {
+                "type": "http",
+                "method": method,
+                "path": path,
+                "headers": [(b"content-length", length)] if length else [],
+            },
             receive,
             send,
         )
@@ -47,3 +59,12 @@ class HttpBodyLimitTests(unittest.IsolatedAsyncioTestCase):
     async def test_invalid_length_is_rejected(self) -> None:
         self.assertEqual(await self.check([], b"-1"), (400, 0))
         self.assertEqual(await self.check([], b"invalid"), (400, 0))
+
+    async def test_only_registered_binary_route_uses_the_streaming_handler(self) -> None:
+        path = "/api/m1/file-uploads/00000000-0000-4000-8000-000000000000/content"
+        payload = b"x" * (HTTP_BODY_LIMIT + 1)
+        length = str(len(payload)).encode()
+        self.assertEqual(
+            await self.check([payload], length, method="PUT", path=path), (204, len(payload))
+        )
+        self.assertEqual(await self.check([], length, path=path), (413, 0))

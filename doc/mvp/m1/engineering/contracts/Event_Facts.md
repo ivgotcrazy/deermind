@@ -1,11 +1,11 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.13<br>
+> **版本**：v0.15<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.12 → v0.13，登记 KC 路径确认及依据不足的正文<br>
+> **修订说明**：v0.14 → v0.15，登记归类输入、待办处理与题目版本正文<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
@@ -183,8 +183,8 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | 事件类型 | records完整集合与数量 | 必须满足的条件 |
 | --- | --- | --- |
 | `DomainIntakeRequested` | `product.material_intake_submission`[1] | 首次提交；status=submitted，身份等于intake_request_id |
-| `DomainIntakeReceived` | `domain.intake_submission`[1]；`domain.intake_item`[1..n] | 整批接收；每个已接收候选对应一项；不携带Product状态 |
-| `DomainIntakeRejected` | `domain.intake_submission`[1] | 整批拒绝；不生成intake_item |
+| `DomainIntakeReceived` | `domain.artifact`[1]；`domain.intake_submission`[1]；`domain.intake_item`[0..n] | 整批接收。只携带新增待办的正文，已有待办返回原引用。依次投影输入、提交、父题和参考 |
+| `DomainIntakeRejected` | `domain.artifact`[1]；`domain.intake_submission`[1] | 整批拒绝。记录固定输入和拒绝依据 |
 | `MaterialCandidatesAdopted` | `product.material_adoption`[1]；`product.material_candidate_batch`[1]；`product.material_import`[1]；`product.material_chapter`[0..n] | decision=adopt、batch=adopted；chapter精确覆盖本次目录write_set，无目录变化为0 |
 | `MaterialImportDeleted` | `product.material_import`[1] | status=deleted；失效来源列在payload，Domain自行消费并另记事实 |
 | `LearningTargetApplied` | 无 | 通知当前采用改变；采用正文由同批LearningSpaceCreated/AdoptionChanged保存，不再复制 |
@@ -202,7 +202,8 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | `LearningSpaceAdoptionChanged` | `product.learning_space`[1]；`product.space_adoption`[1] | 空间身份不变；追加新采用并保存current_adoption_ref |
 | `DomainDefinitionSaved` | `domain.object_version`[1] | 本次object_ref的新版本；create/update/soft_delete都不覆盖旧版本 |
 | `DomainIntakeSourceInvalidated` | `domain.intake_item`[1] | item_ref的最新有效性快照；不删除已入库定义 |
-| `DomainIntakeItemProcessed` | `domain.intake_item`[1] | item_ref处理结果；新定义/实例分别用对应Saved事件，不夹带重复版本正文 |
+| `DomainIntakeItemProcessed` | `domain.intake_item`[1..n] | 一项正常处理；确认同时移除子项时携带全部受影响项。领域对象另记版本 |
+| `DomainAnalysisInputFixed` | `domain.artifact`[1] | 定义提取或归类的固定输入，含原内容与所选固定定义 |
 | `DomainTemplateCandidatePrepared` | `domain.artifact`[1] | candidate_ref；候选不等于正式定义 |
 | `DomainInstanceSaved` | `domain.object_version`[1] | kind=task_instance；题面及各参考解法包含在本次固定版本中 |
 | `DomainKCTestPathConfirmed` | `domain.artifact`[1]、`domain.kc_test_path`[1] | 固定三版本、任务责任引用及就绪依据一致 |
@@ -230,8 +231,8 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | `MaterialAssistantTurnFinished` | `product.material_message`[0..1]；`product.material_turn`[1]；`product.material_import`[1] | reply_ref非空恰有对应消息，否则为0；turn.state=outcome；候选另由Prepared登记 |
 | `MaterialCandidateDeclined` | `product.material_adoption`[1]；`product.material_candidate_batch`[1]；`product.material_import`[1] | decision=decline、batch=declined；不改当前内容指针 |
 | `ChapterAssociationSaved` | `product.chapter_association`[1] | 新增关系修订；取消仍保存方法为空的修订，不删除历史 |
-| `MaterialCandidatePrepared` | `product.material_candidate_batch`[1..n]；`product.material_candidate`[1..n]；`product.material_import`[1] | 恰一个新pending批；附所有明确被替代旧pending批的superseded快照；候选只属于新批，已采用批不改 |
-| `MaterialIntakeStatusUpdated` | `product.material_intake_submission`[1] | status=received/rejected，与source_event_ref的Domain决定一致 |
+| `MaterialCandidatePrepared` | `product.material_candidate_batch`[1..2]；`product.material_candidate`[0..n]；`product.material_import`[1] | 恰一个新pending批，附明确被替代旧pending批的superseded快照。仅撤下内容或调整目录时可无新候选，已采用批不改 |
+| `MaterialIntakeStatusUpdated` | `product.material_intake_submission`[1] | status=received/rejected，与domain_event_id的Domain决定一致 |
 | `ApplicationChecked` | `product.application_check`[1] | ready/blocked和完整检查项一致 |
 | `AccountSignedOut` | 无 | 只记录失效事实；不从事件重建可用Cookie或登录 |
 | `DomainClassificationPrepared` | `domain.artifact`[1] | 本次归类候选及检查结果 |
@@ -334,3 +335,5 @@ M1只提供受控维护重建，不新增管理页面。业务生成器先按§3
 | v0.11 | 2026-11-22 | 同步按范围重建及失败重做 |
 | v0.12 | 2026-11-22 | 明确业务授权与三种内部读取的边界 |
 | v0.13 | 2026-11-22 | 登记路径确认和依据不足的事件正文组合 |
+| v0.14 | 2026-11-22 | 登记领域受理固定输入、新增待办正文及复用引用 |
+| v0.15 | 2026-11-22 | 登记领域分析固定输入和待办处理组合 |

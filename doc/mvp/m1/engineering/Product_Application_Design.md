@@ -1,11 +1,11 @@
 # M1 产品业务设计
 
-> **版本**：v0.38<br>
+> **版本**：v0.40<br>
 > **状态**：登录与账号事实已按增量接线；其他能力及待确认项见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.37 → v0.38，更新账号重建操作链接<br>
+> **修订说明**：v0.39 → v0.40，登记教材解析、引用修正、采用及来源核对<br>
 
 本文设计教材准备、学习目标、学习空间和账号关系等产品业务，说明这些业务如何调用核心Space。教材助手归本模块管理，个人能力与目标达成计算仍由Evaluation负责；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。学习用时统计与提醒后置，不作为M1模块或验收条件。
 
@@ -189,6 +189,8 @@ csrf_token是会话绑定的防伪值，不是登录凭据；作为受限字段�
 
 首次接收创建教材草稿、一个导入资源及其持续对话；补页沿用同一导入。保存原件不启动整本解析，后续明确的“解析整本”请求可以覆盖全册，管理员不必逐页发送。整册识别的内部拆批见§3.4.4；文件传输和落盘不能占住业务数据库事务。
 
+E02-07接线教材列表、原件清单及下载。原件位置由文件内页号和顺序决定，每页程序分配稳定身份。收据按最初执行的MaterialReceived读取，补页产生新来源修订，已保存的原件身份不变。
+
 ### 3.2 `product.save_material_metadata`：补录教材基本信息
 
 **调用与合同。** 管理员提交`textbook_id, expected_revision, metadata_patch`；patch仅含书名、来源说明、已核实版次／版权页引用，不接收解析内容、Domain替换或章节方法配置。输出新基本信息修订。
@@ -202,6 +204,8 @@ csrf_token是会话绑定的防伪值，不是登录凭据；作为受限字段�
 ### 3.3 `product.delete_material_import`：删除未完成导入
 
 **调用与合同。** 管理员提交`import_id, expected_revision, confirmed_scope_ref`，expected_revision对应导入控制修订revision，确认引用固定界面已说明的原件、候选及执行情况；输出删除收据。已应用教材不能从本入口撤下。
+
+有活动的助手工作时，删除先锁这条运行记录，再锁教材，顺序与助手收尾一致。拿到教材锁后重查修订及工作身份，已变化则请管理员刷新后确认。删除、工作取消和事件登记使用同一短事务。
 
 1. 核对导入未完成、确认范围仍有效，列明领域已入库内容不受影响。
 2. 按§3.6.1锁定导入并复核后，标记该导入不再可操作，追加`MaterialImportDeleted`事件；取消该导入未完成的助手工作及提交等待，晚到结果在提交检查时失效。
@@ -289,13 +293,14 @@ sequenceDiagram
 | --- | --- | --- |
 | `outcome` | `proposal|needs_input|reply`／必需 | proposal至少含一项changes或catalog_changes；needs_input含可回答的问题；reply只用于说明已有内容，不宣称修改成功 |
 | `reply` | string／必需 | 给管理员的简短说明；技术失败由执行层返回，不让模型伪造成功答复 |
-| `changes` | Change数组／proposal必需，可空 | 每项`action=add|replace|retire, local_key, target_ref?, chapter_ref或chapter_key, source_refs[], content?, reason`；chapter_key指本批新目录项，两种章节定位恰一；replace／retire须指向本轮固定目标，add不得覆盖既有身份 |
-| `content` | 候选正文／add、replace必需 | `kind=kc|task_instance|reference`及RichContent；reference须带`parent_key`或固定`parent_ref`，两者恰一 |
-| `catalog_changes` | 目录候选数组／可选 | 每项含action、local_key、target_chapter_ref可空、名称、顺序、页段及理由；新目录用局部key配对，修正用已有引用，程序分配正式章节ID。不能改变章节Task／Solution采用关系 |
+| `changes` | Change数组，可空 | 每项有局部编号、章节编号、标题、正文、理由及`replaces`。`replaces`只能取本轮引用批次中的同类型候选身份，程序据此追加修订 |
+| `content` | RichContent／每项必需 | `kind=kc|task_instance|reference`对应 definition、statement、reference；题内参考使用本批父题的`parent_key`。题目可另有`teaching_aids` |
+| `retire` | 候选ID数组，缺省为空 | 仅在管理员明确希望撤下重复或错误内容时填写，目标限本次引用批次。未列出且未替换的候选保持原状 |
+| `catalog_changes` | 目录候选数组，可空 | 每项给出局部编号、名称、顺序和已提供页；修正沿用同名章节身份。章节题目和方法的采用由独立操作完成 |
 | `coverage` | 页／元素处理清单／proposal必需 | 记录已处理、缺失、读不清和明确不提取的内容及理由；跨页问题须闭合，不以进度100%证明无遗漏 |
 | `issues, questions` | 有定位的问题数组／可空 | 每项含问题位置、原因及对内容完整性的影响；必需图形／条件缺失时不能生成可采用批次 |
 
-`local_key`只用于本批配对。程序分配候选ID、修订、章节ID、父题引用、来源锚点和改动集合；模型返回的官方ID只有在输入白名单中才可引用，不能通过自行编号插入对象。新解析元素新建candidate_id；替代同一元素沿用candidate_id并追加candidate_revision，不覆盖旧正文。绑定新章节和同批父题在保存批次时一次完成，不能先保存悬空参考。模型返回的出处必须落在实际提供的页／内容中；结构校验不能证明语义正确，管理员仍需对照原件核对。
+`local_key`只用于本批配对。程序分配候选、章节、修订及父题引用。新元素取得新身份，替换沿用身份并保存新修订。采用涉及父题时，仍在使用的相关参考须一并核对。模型选择本轮已提供的`source_id`，程序据此填入已登记的文件、校验值和文件内页号；可见印刷页码及区域作为原文定位描述。未知页编号拒绝，语义仍由管理员对照原件核对。
 
 程序按请求范围、已有正文、变更目标及依赖生成`CandidateBatch`：`batch_id, batch_revision, turn_ref, scope, basis_revision, read_set[], write_set[], candidate_refs[], catalog_changes, coverage, issues, diff_summary`。`read_set`记录实际依据的不可变引用；`write_set`列明新增／替代／撤下的目标和前后引用。它们由程序固定，不能仅相信模型声称“未修改其他部分”。新增目标还记录所在章节／页段的占用基准，避免两批相同位置内容同时新增。
 
@@ -712,3 +717,5 @@ Evaluation按[§6.4](Evaluation_Space_Design.md#64-目标结果存储与原子�
 | v0.36 | 2026-11-22 | 按指定范围一次完成重建，失败后从头重做 |
 | v0.37 | 2026-11-22 | 落实回执关联核对和账号投影范围扫描 |
 | v0.38 | 2026-11-22 | 更新账号重建操作链接 |
+| v0.39 | 2026-11-22 | 落实教材上传登记、补页及原件回读的操作边界 |
+| v0.40 | 2026-11-22 | 明确教材对话产物、出处绑定、采用范围和活动中删除的锁序 |

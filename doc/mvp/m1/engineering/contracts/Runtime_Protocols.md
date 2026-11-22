@@ -1,11 +1,11 @@
 # M1 运行接口与 WebSocket 协议
 
-> **版本**：v0.8<br>
+> **版本**：v0.9<br>
 > **状态**：设计合同；已实现范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.7 → v0.8，登记 E02-01 新建领域收据<br>
+> **修订说明**：v0.8 → v0.9，落实教材范围的文件上传、状态查询和原件回读<br>
 
 公共运行只提供通用认证、收据、派发、等待与回传；所有者仍决定业务处理和可展示内容。HTTP路径相对/api/m1，WebSocket /ws使用deermind.v1。底层订阅与发布格式见[事件分册](Event_Messages.md)。
 
@@ -35,6 +35,8 @@
 | `state` | receiving | 是 | 未接收完整字节 |
 
 处理边界：普通登记；相同账号/用途/request_id返回原身份；不创建教材，不调用LLM。公开用途代码是本稿待审映射，不新增附件能力。
+
+E02-07仅接线`material_source`。重查同一登记返回当前UploadView，含state、receipt和error。字节大小必须大于0。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；invalid_reference；payload_too_large。
 
@@ -266,6 +268,8 @@ EventSummaryView包含event_id、event_type、schema_version、scope_kind、scop
 
 处理边界：200是文件字节而非JSON。网关只向已登记所有者派发；所有者核对引用、用途及空间采用，再调用文件适配。不能借题面引用读取参考答案，不能读取Temporal或AI内部载荷。
 
+教材来源参数`owner_ref`用JSON字符串传输，owner=product、type=material_source，view=source。服务检查管理员会话、活跃导入及与storage_ref的精确对应，再校验文件完整性。
+
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；forbidden；not_found；source_unavailable。
 
 请求／查询参数（示意数据）：
@@ -407,3 +411,4 @@ HTTP请求收据中的action采用登记的所有者入口名；WS动作名先�
 | v0.6 | 2026-11-22 | 区分公开事件视图及内部读取合同 |
 | v0.7 | 2026-11-22 | 登记已确认的消息上限与连接恢复顺序 |
 | v0.8 | 2026-11-22 | 登记 E02-01 新建领域收据的原请求、账号范围和结果 |
+| v0.9 | 2026-11-22 | 落实教材范围的文件上传、状态查询和原件回读 |

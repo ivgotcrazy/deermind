@@ -81,6 +81,11 @@ class LocalFiles:
 
     def read(self, file: FileBytes, *, max_bytes: int) -> bytes:
         """按登记长度/hash检查后才返回内容；缺失或损坏不以空内容代替。"""
+        with self.open_verified(file, max_bytes=max_bytes) as source:
+            return source.read()
+
+    def open_verified(self, file: FileBytes, *, max_bytes: int) -> BinaryIO:
+        """按同一个只读文件描述符完成校验和返回，便于流式发送大原件。"""
         if file.storage_key != f"{file.file_id.hex}.blob":
             raise ValueError("File key does not match its identity")
         if file.byte_size < 0 or file.byte_size > max_bytes:
@@ -92,16 +97,25 @@ class LocalFiles:
                 os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK,
                 dir_fd=directory,
             )
-            with os.fdopen(descriptor, "rb") as source:
+            source = os.fdopen(descriptor, "rb")
+            try:
                 metadata = os.fstat(source.fileno())
                 if not stat.S_ISREG(metadata.st_mode) or metadata.st_size != file.byte_size:
                     raise OSError("Stored file size or type is invalid")
-                content = source.read(file.byte_size + 1)
-                if (
-                    len(content) != file.byte_size
-                    or hashlib.sha256(content).hexdigest() != file.sha256
-                ):
+                digest = hashlib.sha256()
+                remaining = file.byte_size
+                while remaining > 0:
+                    chunk = source.read(min(remaining, 1024 * 1024))
+                    if not chunk:
+                        raise OSError("Stored file ended unexpectedly")
+                    digest.update(chunk)
+                    remaining -= len(chunk)
+                if source.read(1) or digest.hexdigest() != file.sha256:
                     raise OSError("Stored file integrity check failed")
-                return content
+                source.seek(0)
+                return source
+            except BaseException:
+                source.close()
+                raise
         finally:
             os.close(directory)

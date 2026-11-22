@@ -153,6 +153,9 @@ def main() -> int:
         )
     if group == "content":
         environment.append({"name": "M1_TEST_CONTENT_OUTPUT", "value": POD_CONTENT_OUTPUT})
+    if group == "domain":
+        # 领域回归会加载完整 API 和领域模型，独立测试容器需要足够内存。
+        pod["spec"]["containers"][0]["resources"]["limits"]["memory"] = "512Mi"
     if group == "payload":
         # 同一测试容器运行调用端和独立Worker子进程，分别采集峰值。
         pod["spec"]["activeDeadlineSeconds"] = 390

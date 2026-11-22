@@ -1,12 +1,12 @@
 # deermind 数据库：产品业务数据字典
 
-> **版本**：v0.8<br>
+> **版本**：v0.10<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
-> **更新日期**：2026-11-16<br>
-> **修订说明**：v0.7 → v0.8，落地监护与使用确认四表；补齐唯一键、索引及写入权限<br>
+> **更新日期**：2026-11-22<br>
+> **修订说明**：v0.9 → v0.10，登记待入库提交的受理结果和查询索引<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **29 张表、251 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **29 张表、253 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
@@ -368,7 +368,7 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | `textbook_id` | `uuid` | 否 | 无 | 教材身份；主键组成字段 |
 | `domain_id` | `uuid` | 否 | 无 | 所属Domain；逻辑引用domain.object_identity |
 | `import_id` | `uuid` | 否 | 无 | 唯一导入资源；FK → `product.material_import.import_id` |
-| `metadata` | `jsonb` | 否 | 无 | Product§3：title、subject、grade、term、edition_note；未知版次明确为空 |
+| `metadata` | `jsonb` | 否 | 无 | Product§3：title、source、edition、copyright_page_ref；未知版次及未指定版权页为null |
 | `metadata_revision` | `bigint` | 否 | 无 | 基本信息修订；正整数 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
@@ -425,7 +425,7 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
-约束与关系：UQ(import_id,file_id)；校正页码追加采用依据，不改原文件。
+约束与关系：UQ(import_id,file_id)、UQ(import_id,source_order)；校正页码追加采用依据，不改原文件。
 
 查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
@@ -626,16 +626,18 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | --- | --- | --- | --- | --- |
 | `submission_id` | `uuid` | 否 | 无 | 提交身份；主键组成字段 |
 | `import_id` | `uuid` | 否 | 无 | 导入；FK → `product.material_import.import_id` |
-| `candidate_refs` | `jsonb` | 否 | '[]'::jsonb | 已采用的精确候选；Ref[]，固定版本；空数组表示没有，不表示未知 |
-| `parent_bindings` | `jsonb` | 否 | 无 | 解法→本批题目或已有TaskInstance的明确绑定 |
+| `candidate_refs` | `jsonb` | 否 | '[]'::jsonb | 已采用的精确候选。CandidateRef[]，固定候选、修订及原内容依据 |
+| `parent_bindings` | `jsonb` | 否 | 无 | 解法绑定本批题目、已有题目待办或题目实例 |
 | `trigger_event_id` | `uuid` | 否 | 无 | 唯一触发事实；逻辑引用 runtime.events.event_id |
 | `status` | `text` | 否 | 无 | submitted、received、rejected |
 | `domain_receipt_ref` | `jsonb` | 是 | 无 | Domain受理收据；Ref，见总册§3 |
 | `wait_state` | `text` | 否 | 无 | waiting、timed_out、closed |
+| `items` | `jsonb` | 否 | '[]'::jsonb | Domain受理返回的待办引用，保留固定修订 |
+| `issues` | `jsonb` | 否 | '[]'::jsonb | 领域业务拒绝依据，含错误码、位置和说明 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
-约束与关系：UQ(trigger_event_id)；接口delivery_state从runtime投递/执行结果投影；本表只保存受理及wait_state，不复制队列或重试状态。
+约束与关系：UQ(trigger_event_id)。接口从底座查询delivery_state，本表保存领域受理结果和wait_state。
 
 查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
@@ -909,3 +911,5 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | v0.6 | 2026-11-16 | 同步E01-05接线范围；保留既定字段与记录矩阵 |
 | v0.7 | 2026-11-16 | 增加已确认的登录尝试控制表，明确会话约束及限流索引 |
 | v0.8 | 2026-11-16 | 落地监护与使用确认四表；补齐唯一键、索引及写入权限 |
+| v0.9 | 2026-11-22 | 落实教材元数据、不可变原件及页序约束 |
+| v0.10 | 2026-11-22 | 登记向 Domain 提交的精确来源、受理结果和查询方式 |

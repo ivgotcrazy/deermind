@@ -8,13 +8,26 @@ from pathlib import Path
 
 from deermind.bootstrap import runtime
 from deermind.bootstrap.database import database_lifespan
-from deermind.bootstrap.executions import limits, registry
+from deermind.bootstrap.domain import configure_domain
+from deermind.bootstrap.domain_operation import PURPOSE, DomainAnalysisActivities
+from deermind.bootstrap.executions import limits
+from deermind.bootstrap.material_operation import material_activities
+from deermind.bootstrap.materials import (
+    configure_domain_analysis,
+    configure_domain_intake,
+    configure_intake_processing,
+    configure_material_assistant,
+    configure_material_intake,
+    configure_materials,
+)
 from deermind.bootstrap.messaging import subscriptions
 from deermind.bootstrap.services import create_worker
 from deermind.bootstrap.settings import Settings
 from deermind.bootstrap.temporal import connect_temporal
 from deermind.bootstrap.waits import waits
+from deermind.foundation.ai.execution import Calls
 from deermind.foundation.system.delivery.bridge import run_bridge
+from deermind.foundation.system.executions.contracts import Registry
 from deermind.foundation.system.executions.relay import run_relay
 from deermind.foundation.system.logging import configure_logging
 from deermind.foundation.system.waits.reconcile import run_reconciler
@@ -52,14 +65,41 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
 
     # Blocking file I/O runs in the activity pool, not on the asyncio loop.
     with ThreadPoolExecutor(2) as workflow_executor, ThreadPoolExecutor(4) as activity_executor:
-        entries, execution_limits = registry(), limits()
+        domain = configure_domain(engine, settings.files_root, backend=settings.files_backend)
+        materials, _uploads = configure_materials(engine, settings, domain)
+        assistant = configure_material_assistant(engine, settings, materials)
+        intake = configure_domain_intake(materials)
+        analysis = configure_domain_analysis(intake, materials, settings)
+        intake_results = configure_material_intake(materials)
+        processing = configure_intake_processing(analysis)
+        subscribers = subscriptions(
+            intake.receive, intake_results.receive_result, processing.invalidate_source
+        )
+        entries = Registry(
+            [*assistant.registry.entries.values(), *analysis.registry.entries.values()]
+        )
+        execution_limits = limits()
+        calls = Calls(engine, entries, materials.attachments)
+        analysis_activities = DomainAnalysisActivities(analysis, calls)
         lifecycle = runtime.lifecycle(engine, entries, execution_limits)
         waiting = waits()
         wait_activities = runtime.wait_activities(
             engine, waiting, timeout_seconds=execution_limits.finalize_seconds
         )
         worker = create_worker(
-            client, settings, workflow_executor, activity_executor, lifecycle, wait_activities
+            client,
+            settings,
+            workflow_executor,
+            activity_executor,
+            lifecycle,
+            wait_activities,
+            [
+                *material_activities(
+                    assistant, calls, {PURPOSE.schema_ref.model_dump_json(): PURPOSE.output}
+                ),
+                analysis_activities.prepare,
+                analysis_activities.finish,
+            ],
         )
         try:
             async with worker, connect(MessagingSettings.from_environment()) as transport:
@@ -73,7 +113,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
                     extra={"action": "worker_started", "outcome": "success"},
                 )
                 async with asyncio.TaskGroup() as tasks:
-                    tasks.create_task(run_bridge(engine, transport, subscriptions(), stopped))
+                    tasks.create_task(run_bridge(engine, transport, subscribers, stopped))
                     tasks.create_task(
                         run_relay(engine, entries, Transport(client, execution_limits), stopped)
                     )

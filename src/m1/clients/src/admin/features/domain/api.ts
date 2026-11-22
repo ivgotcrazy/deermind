@@ -42,7 +42,7 @@ export async function readCreateReceipt(draft: CreateDraft, session: Session, si
   const receipt = await readDefinitionReceipt(draft.request_id, session, signal);
   const result = receipt.result;
   if (receipt.receipt_state === 'completed') {
-    if (!result || !('object_ref' in result) || result.object_ref.kind !== 'domain')
+    if (!result || !('content_ref' in result) || result.object_ref.kind !== 'domain')
       throw new Error('收据缺少新增领域的引用。');
     return { state: 'completed', domainId: result.object_ref.object_id } as const;
   }

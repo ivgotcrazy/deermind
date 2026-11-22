@@ -7,6 +7,8 @@ import type { DomainRow, DomainSession, DomainView, MemberKind } from './api';
 import { clearCreateDraft, readCreateDraft, saveCreateDraft } from './draft';
 import type { CreateDraft } from './draft';
 import DomainMembers from './DomainMembers.vue';
+import DomainIntakeItems from './DomainIntakeItems.vue';
+import DomainInstances from './DomainInstances.vue';
 
 const { session } = defineProps<{ session: DomainSession }>();
 const lifecycle = new AbortController();
@@ -16,7 +18,7 @@ const rows = ref<DomainRow[] | null>(null);
 const filter = ref('');
 const listError = ref('');
 const selected = ref('');
-const memberKind = ref<MemberKind>('kc');
+const memberKind = ref<MemberKind | 'intake' | 'instances'>('kc');
 const detail = ref<DomainView | null>(null);
 const detailError = ref('');
 let detailRead: AbortController | undefined;
@@ -268,8 +270,37 @@ onBeforeUnmount(() => {
           >
             方法
           </button>
+          <button
+            type="button"
+            class="secondary"
+            :aria-pressed="memberKind === 'intake'"
+            @click="memberKind = 'intake'"
+          >
+            待入库内容
+          </button>
+          <button
+            type="button"
+            class="secondary"
+            :aria-pressed="memberKind === 'instances'"
+            @click="memberKind = 'instances'"
+          >
+            题目实例
+          </button>
         </nav>
+        <DomainIntakeItems
+          v-if="memberKind === 'intake'"
+          :key="selected"
+          :domain-id="selected"
+          :session="session"
+        />
+        <DomainInstances
+          v-else-if="memberKind === 'instances'"
+          :key="selected"
+          :domain-id="selected"
+          :session="session"
+        />
         <DomainMembers
+          v-else
           :key="`${selected}:${memberKind}`"
           :kind="memberKind"
           :domain-id="selected"

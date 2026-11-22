@@ -19,7 +19,16 @@ from deermind.product.accounts.recovery_facts import RECOVERED
 from deermind.product.accounts.usage_events import (
     USAGE_CONFIRMED,
 )
+from deermind.product.materials.adoption_facts import REGISTRATIONS as MATERIAL_ADOPTIONS
+from deermind.product.materials.assistant_facts import REGISTRATIONS as MATERIAL_ASSISTANT
+from deermind.product.materials.chapter_associations import REGISTRATION as CHAPTERS
+from deermind.product.materials.deletion import REGISTRATION as MATERIAL_DELETION
+from deermind.product.materials.facts import REGISTRATION as MATERIAL_RECEIVED
+from deermind.product.materials.intake_facts import REGISTRATIONS as MATERIAL_INTAKE
+from deermind.spaces.domain.analysis_facts import REGISTRATIONS as DOMAIN_ANALYSIS
 from deermind.spaces.domain.facts import DOMAIN_SAVED
+from deermind.spaces.domain.instance_facts import REGISTRATIONS as DOMAIN_INSTANCES
+from deermind.spaces.domain.intake import REGISTRATIONS as DOMAIN_INTAKE
 from deermind.spaces.domain.kc_path_facts import PATH_REGISTRATIONS
 from sqlalchemy.ext.asyncio import AsyncEngine
 
@@ -35,6 +44,15 @@ REGISTRATIONS = [
     EXECUTION_REGISTRATION,
     WAIT_REGISTRATION,
     DOMAIN_SAVED,
+    MATERIAL_RECEIVED,
+    *MATERIAL_ASSISTANT,
+    *MATERIAL_ADOPTIONS,
+    CHAPTERS,
+    MATERIAL_DELETION,
+    *MATERIAL_INTAKE,
+    *DOMAIN_INTAKE,
+    *DOMAIN_ANALYSIS,
+    *DOMAIN_INSTANCES,
     *PATH_REGISTRATIONS,
     *AI_REGISTRATIONS,
 ]

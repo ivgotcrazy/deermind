@@ -8,7 +8,7 @@ from deermind.abstractions.file_records import FileObject, FileReceived
 from deermind.foundation.system.events.store import EventStore
 from deermind.foundation.system.files.records import FILE_REGISTRATION, project_file
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
 
 class FileRegistry:
@@ -39,6 +39,18 @@ class FileRegistry:
 
     async def register(self, file: FileObject, actor: Ref) -> None:
         """先追加文件事实，再写同一份文件登记。"""
+        async with self.engine.begin() as connection:
+            await self.register_in(connection, file, actor)
+
+    async def register_in(
+        self,
+        connection: AsyncConnection,
+        file: FileObject,
+        actor: Ref,
+        *,
+        source_request_id: str | None = None,
+    ) -> None:
+        """调用方已持有事务时，文件登记可与上传完成状态一起提交。"""
         owner = Ref(owner="runtime", type="file", id=str(file.file_id))
         payload = FileReceived(
             subject_ref=owner,
@@ -53,25 +65,24 @@ class FileRegistry:
                 )
             ],
         )
-        async with self.engine.begin() as connection:
-            events = await self.events.append(
-                connection,
-                ProducerAccess("runtime", actor, frozenset({("file", file.file_id)})),
-                [
-                    EventDraft(
-                        event_id=uuid4(),
-                        event_type="FileReceived",
-                        schema_version=1,
-                        scope_kind="file",
-                        scope_id=file.file_id,
-                        owner_ref=owner,
-                        payload=payload.model_dump(mode="json"),
-                        source_request_id=file.artifact_key,
-                        subject_refs=tuple(file.source_refs),
-                    )
-                ],
-                commit_id=uuid4(),
-                correlation_id=file.file_id,
-                expected_seq={("file", file.file_id): 0},
-            )
-            await project_file(connection, events[0])
+        events = await self.events.append(
+            connection,
+            ProducerAccess("runtime", actor, frozenset({("file", file.file_id)})),
+            [
+                EventDraft(
+                    event_id=uuid4(),
+                    event_type="FileReceived",
+                    schema_version=1,
+                    scope_kind="file",
+                    scope_id=file.file_id,
+                    owner_ref=owner,
+                    payload=payload.model_dump(mode="json"),
+                    source_request_id=source_request_id or file.artifact_key,
+                    subject_refs=tuple(file.source_refs),
+                )
+            ],
+            commit_id=uuid4(),
+            correlation_id=file.file_id,
+            expected_seq={("file", file.file_id): 0},
+        )
+        await project_file(connection, events[0])

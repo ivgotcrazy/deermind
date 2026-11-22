@@ -1,11 +1,14 @@
 /** 类型来自后端OpenAPI；不自动重发写请求，不在这里推断业务是否完成。 */
 import type { components, paths } from '../../../../contracts/generated/http/schema';
 
-type Method = 'get' | 'post';
+type Method = 'get' | 'post' | 'put';
 type Route<M extends Method> = {
   [P in keyof paths]: paths[P][M] extends { responses: object } ? P : never;
 }[keyof paths];
 type Success<O> = O extends { responses: { 200: { content: { 'application/json': infer R } } } }
+  ? R
+  : never;
+type Accepted<O> = O extends { responses: { 202: { content: { 'application/json': infer R } } } }
   ? R
   : never;
 type Body<O> = O extends { requestBody: { content: { 'application/json': infer B } } }
@@ -26,20 +29,27 @@ export class ApiError extends Error {
   }
 }
 
-async function send<T>(path: string, method: Method, options: Options, body?: unknown): Promise<T> {
+async function send<T>(
+  path: string,
+  method: Method,
+  options: Options,
+  body?: unknown,
+  expectedStatus = 200,
+): Promise<T> {
   const headers: Record<string, string> = {};
   if (options.session) {
     headers['X-Expected-Session'] = options.session.session_id;
-    if (method === 'post') headers['X-CSRF-Token'] = options.session.csrf_token;
+    if (method !== 'get') headers['X-CSRF-Token'] = options.session.csrf_token;
   }
-  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  if (body !== undefined)
+    headers['Content-Type'] = body instanceof File ? body.type : 'application/json';
   const response = await fetch(path, {
     method: method.toUpperCase(),
     credentials: 'same-origin',
     cache: 'no-store',
     headers,
     signal: options.signal,
-    body: body === undefined ? undefined : JSON.stringify(body),
+    body: body instanceof File ? body : body === undefined ? undefined : JSON.stringify(body),
   });
   const value: unknown = await response.json();
   if (!response.ok) {
@@ -56,9 +66,16 @@ async function send<T>(path: string, method: Method, options: Options, body?: un
     }
     throw new Error('服务返回的错误格式不正确，请先查询原请求结果。');
   }
-  // 当前已接线入口均只声明200；202等响应必须随相应增量明确接入。
-  if (response.status !== 200) throw new Error('收到未声明的响应，请先查询原请求结果。');
+  if (response.status !== expectedStatus) throw new Error('收到未声明的响应，请先查询原请求结果。');
   return value as T;
+}
+
+export function putFile<P extends Route<'put'>>(
+  path: P,
+  file: File,
+  options: Options & { params: Params<paths[P]['put']> },
+): Promise<Success<paths[P]['put']>> {
+  return send(resolvePath(path, options.params), 'put', options, file);
 }
 
 function resolvePath(path: string, values?: object): string {
@@ -93,4 +110,12 @@ export function post<P extends Route<'post'>>(
   options: Options & { params?: Params<paths[P]['post']> } = {},
 ): Promise<Success<paths[P]['post']>> {
   return send(resolvePath(path, options.params), 'post', options, body);
+}
+
+export function postAccepted<P extends Route<'post'>>(
+  path: P,
+  body: Body<paths[P]['post']>,
+  options: Options & { params?: Params<paths[P]['post']> } = {},
+): Promise<Accepted<paths[P]['post']>> {
+  return send(resolvePath(path, options.params), 'post', options, body, 202);
 }

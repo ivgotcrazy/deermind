@@ -3,7 +3,7 @@
 from sqlalchemy import URL, text
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
-EXPECTED_REVISION = "0015_kc_test_paths"
+EXPECTED_REVISION = "0023_material_deletion"
 # 迁移及投影维护互斥；普通业务不取得此锁。
 MAINTENANCE_LOCK = 47001004
 SCHEMAS = ("product", "domain", "interaction", "evaluation", "runtime", "ai")

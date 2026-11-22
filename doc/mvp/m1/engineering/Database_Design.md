@@ -1,12 +1,12 @@
 # M1 数据库设计
 
-> **版本**：v0.19<br>
+> **版本**：v0.20<br>
 > **状态**：E01-15接线AI七表；部署与验证见实施计划，114张规划表按需迁移<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.18 → v0.19，同步单批重建的事务边界<br>
+> **修订说明**：v0.19 → v0.20，同步教材和领域入库相关字段<br>
 
-本次由`0011_ai_calls`接线AI数据字典七张既定表；114张规划表不变，实际36张表（含迁移表）。此前结果与等待五表、业务多表副本映射保持。旧迁移、事件和维护结果不改写，详见[AI分册§8](database/Business_AI.md#8-e01-15迁移约束)。
+截至 `0023_material_deletion`，本机业务库实际 57 张表（含迁移表），规划表仍按下文目录维护。教材原件、候选、采用、领域入库和章节关联的字段见各数据分册。
 
 **一个PostgreSQL实例，三个数据库。** `deermind`保存业务与应用运行数据；`temporal`、`temporal_visibility`由Temporal管理。业务库内部按责任划分schema，schema不是独立数据库，也不等于独立服务。
 
@@ -47,8 +47,8 @@ NATS、教材原件、派生图片和大载荷不是SQL表。文件字节经隔�
 
 | schema | 表数 / 列数 | 内容与完整字典 |
 | --- | --- | --- |
-| `product` | 29 / 251 | [产品业务](database/Business_Product.md) |
-| `domain` | 9 / 91 | [领域空间](database/Business_Domain.md) |
+| `product` | 29 / 253 | [产品业务](database/Business_Product.md) |
+| `domain` | 9 / 92 | [领域空间](database/Business_Domain.md) |
 | `interaction` | 35 / 306 | [交互空间](database/Business_Interaction.md) |
 | `evaluation` | 13 / 127 | [评估空间](database/Business_Evaluation.md) |
 | `runtime` | 20 / 207 | [公共运行及文件登记](database/Business_Runtime.md) |
@@ -375,3 +375,4 @@ E01-14通过`0010_waits_results`接线结果与等待五表，当前实际29张�
 | v0.17 | 2026-11-16 | 登记0010结果与等待五表，实际29张表，规划总数不变 |
 | v0.18 | 2026-11-16 | 登记0011 AI调用七表，实际36张表，规划总数不变 |
 | v0.19 | 2026-11-22 | 同步单批重建的事务边界 |
+| v0.20 | 2026-11-22 | 同步教材和领域入库相关字段 |

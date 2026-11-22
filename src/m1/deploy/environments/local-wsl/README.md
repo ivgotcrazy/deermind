@@ -31,6 +31,18 @@
 | E02-04 | 任务定义、条件、草稿及版本 | [任务管理交付与复验](E02-04-task-management.md) |
 | E02-05 | 方法、直接知识和任务先导 | [领域关系交付与复验](E02-05-domain-relationships.md) |
 | E02-06 | KC 直接检验路径、依据及版本 | [KC 路径交付与复验](E02-06-kc-test-paths.md) |
+| E02-07 | 教材上传、补页、收据及原件回读 | [教材原件交付与验证](E02-07-material-receiving.md) |
+| E02-08 | 教材助手首次解析和原页候选 | [首次解析交付与验证](E02-08-first-extraction.md) |
+| E02-09 | 教材助手引用候选和草稿恢复 | [教材纠错交付与验证](E02-09-material-corrections.md) |
+| E02-10 | 教材候选采用、内容回读及收据 | [教材采用交付与验证](E02-10-material-adoption.md) |
+| E02-11 | 教材提交、领域待办及状态回写 | [待入库交付与验证](E02-11-material-intake.md) |
+| E02-12 | 从已采用教材内容提取任务或方法定义 | [定义提取交付与验证](E02-12-domain-definition-extraction.md) |
+| E02-13 | 题目或参考方法归类及依据 | [实例归类交付与验证](E02-13-domain-classification.md) |
+| E02-14 | 领域待办和题目、参考入库 | [入库交付与验证](E02-14-domain-intake-processing.md) |
+| E02-15 | 题目修订、软删除和历史读取 | [实例版本交付与验证](E02-15-instance-versions.md) |
+| E02-16 | 章节采用 Task 与方法 | [章节关联交付与验证](E02-16-chapter-associations.md) |
+| E02-17 | 删除未完成导入、保留事实 | [删除导入交付与验证](E02-17-material-deletion.md) |
+| E02-18 | 四个教材样例端到端回归 | [四例核对与证据](E02-18-representative-regression.md) |
 
 ## 查阅规则
 

@@ -615,6 +615,11 @@ class DomainDefinitions:
                 )
             ],
         )
+        candidate = (
+            body.candidate_ref
+            if isinstance(body, (CreateTaskRequest, CreateSolutionRequest))
+            else None
+        )
         draft = EventDraft(
             event_id=uuid4(),
             event_type=EVENT_TYPE,
@@ -624,6 +629,7 @@ class DomainDefinitions:
             owner_ref=version_ref(ref),
             payload=payload.model_dump(mode="json"),
             source_request_id=body.request_id,
+            subject_refs=(candidate,) if candidate is not None else (),
         )
         try:
             prepared = await self.attachments.prepare(self.events, access, (draft,))
@@ -651,6 +657,21 @@ class DomainDefinitions:
             sequence = 0
             if not isinstance(ref, DomainRef):
                 sequence = await self._lock_member_save(connection, domain_id, previous)
+                if candidate is not None:
+                    if candidate.owner != "domain" or candidate.type != "artifact":
+                        raise RequestError(400, "invalid_reference", "请选择此领域的定义候选。")
+                    proposal = await connection.scalar(
+                        text(
+                            "SELECT payload->'proposed_definition' FROM domain.artifact "
+                            "WHERE domain_id=:domain AND artifact_id=:id "
+                            "AND kind='definition_candidate'"
+                        ),
+                        {"domain": domain_id, "id": UUID(candidate.id)},
+                    )
+                    if proposal != content.model_dump(mode="json"):
+                        raise RequestError(
+                            409, "candidate_basis_changed", "定义与所确认的候选不一致。"
+                        )
                 if body.action != "soft_delete":
                     await validate_relationships(connection, domain_id, ref.object_id, content)
             (saved,) = await self.events.append(

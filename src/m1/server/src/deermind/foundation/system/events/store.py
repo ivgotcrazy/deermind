@@ -25,6 +25,28 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 
+async def lock_scope_sequence(connection: AsyncConnection, kind: str, scope_id: UUID) -> int:
+    """对追加同一范围的生产者统一串行，调用时须已持有业务锁。"""
+    params = {"kind": kind, "id": scope_id}
+    await connection.execute(
+        text(
+            "INSERT INTO runtime.scope_event_heads(scope_kind,scope_id,last_seq) "
+            "VALUES (:kind,:id,0) ON CONFLICT DO NOTHING"
+        ),
+        params,
+    )
+    current = await connection.scalar(
+        text(
+            "SELECT last_seq FROM runtime.scope_event_heads "
+            "WHERE scope_kind=:kind AND scope_id=:id FOR UPDATE"
+        ),
+        params,
+    )
+    if not isinstance(current, int):
+        raise RuntimeError("Missing event sequence")
+    return current
+
+
 class EventStore:
     """由装配层登记白名单；每次保存使用调用方已开启的同一事务。"""
 
@@ -88,21 +110,7 @@ class EventStore:
         # 先锁所有范围，防止多范围提交按不同顺序互相等待。
         sequences: dict[tuple[str, UUID], int] = {}
         for kind, scope_id in sorted(scopes, key=lambda scope: (scope[0], str(scope[1]))):
-            parameters = {"kind": kind, "id": scope_id}
-            await connection.execute(
-                text(
-                    "INSERT INTO runtime.scope_event_heads(scope_kind, scope_id, last_seq) "
-                    "VALUES (:kind, :id, 0) ON CONFLICT DO NOTHING"
-                ),
-                parameters,
-            )
-            current = await connection.scalar(
-                text(
-                    "SELECT last_seq FROM runtime.scope_event_heads "
-                    "WHERE scope_kind=:kind AND scope_id=:id FOR UPDATE"
-                ),
-                parameters,
-            )
+            current = await lock_scope_sequence(connection, kind, scope_id)
             if current != expected_seq[kind, scope_id]:
                 raise EventConflict("Event scope has changed")
             sequences[kind, scope_id] = current

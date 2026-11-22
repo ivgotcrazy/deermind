@@ -1,10 +1,10 @@
 # deermind 数据库：公共运行及文件登记数据字典
 
-> **版本**：v0.12<br>
+> **版本**：v0.13<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.11 → v0.12，同步重建维护记录及扫描位置的写入口径<br>
+> **修订说明**：v0.12 → v0.13，补 E02-07 上传登记、文件类型及页数<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **20 张表、207 个列定义**。处理流程、接口和业务载荷由[System_Foundation_Design.md](../System_Foundation_Design.md) §2—6；文件由基础设施§2维护维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -151,7 +151,7 @@ erDiagram
     runtime__waits ||--o| runtime__wait_handling : "wait_id"
 ```
 
-E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_objects和FileReceived，file_uploads尚未建立；其余类型按所属增量实施。既有事实保存见[E01-05](../../../../../src/m1/deploy/environments/local-wsl/E01-05-facts.md)，文件与附件见[E01-06](../../../../../src/m1/deploy/environments/local-wsl/E01-06-files.md)，进度以[实施计划](../Delivery_Plan.md)为准。
+E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_objects和FileReceived；教材上传自E02-07使用file_uploads。进度见[实施计划](../Delivery_Plan.md)。
 
 ## 1. `runtime.file_objects`
 
@@ -189,18 +189,21 @@ E01-05接线初始账号事实、生产者投影及收据；E01-06接线file_obj
 | `principal_id` | `text` | 否 | 无 | 获准上传者 |
 | `purpose` | `text` | 否 | 无 | 登记用途 |
 | `resource_ref` | `jsonb` | 是 | 无 | 已有导入或受控资源；首次上传可空；Ref，见总册§3 |
+| `domain_ref` | `jsonb` | 否 | 无 | 本次上传的精确Domain版本，由Product复核 |
 | `request_id` | `text` | 否 | 无 | 上传重试键 |
+| `original_name` | `text` | 否 | 无 | 显示名称，收据登记时复核 |
 | `declared_media_type` | `text` | 否 | 无 | 声明类型，仅作检查输入 |
-| `declared_size` | `bigint` | 是 | 无 | 声明大小；未知为空 |
+| `declared_size` | `bigint` | 否 | 无 | 浏览器文件的声明大小，须为正数 |
 | `state` | `text` | 否 | 无 | 枚举：receiving、ready、failed |
 | `write_attempt_id` | `uuid` | 否 | 无 | 当前写入尝试令牌 |
 | `lease_until` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `file_id` | `uuid` | 是 | 无 | 完整写入后的文件；FK → `runtime.file_objects.file_id` |
+| `page_count` | `integer` | 是 | 无 | 核验后所得文件内页数，1至600；仅ready时有值 |
 | `error` | `jsonb` | 是 | 无 | code、message；未失败为空 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `updated_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 
-约束与关系：UQ(principal_id,purpose,request_id)；ready必须有file_id；中断临时文件不算完成。
+约束与关系：UQ(principal_id,purpose,request_id)、UQ(file_id)；仅ready持有file_id和page_count，仅failed持有error。E02-07登记用途为material_source。
 
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
@@ -643,3 +646,4 @@ E01-14通过`0010_waits_results`接线§13—17，字段数量不变。实际验
 | v0.10 | 2026-11-16 | 登记0010结果与等待五表、约束及Signal补查键 |
 | v0.11 | 2026-11-17 | 修正文件登记代码所有权，表结构不变 |
 | v0.12 | 2026-11-22 | 同步重建维护记录及扫描位置的写入口径 |
+| v0.13 | 2026-11-22 | 补 E02-07 上传登记、文件类型及页数 |

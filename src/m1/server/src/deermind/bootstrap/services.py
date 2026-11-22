@@ -1,7 +1,11 @@
 """Explicit worker assembly; the SDK rejects duplicate workflow/activity names."""
 
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
+from typing import Any
 
+from deermind.bootstrap.domain_operation import DomainAnalysisWorkflow
+from deermind.bootstrap.material_operation import MaterialWorkflow
 from deermind.bootstrap.settings import Settings
 from deermind.infrastructure.temporal.executions import Lifecycle
 from deermind.infrastructure.temporal.probe import StorageProbe
@@ -18,15 +22,19 @@ def create_worker(
     activity_executor: ThreadPoolExecutor,
     lifecycle: Lifecycle | None = None,
     waits: WaitActivities | None = None,
+    material: list[Callable[..., Any]] | None = None,
 ) -> Worker:
     """注册探测及公共生命周期；业务Workflow随所属增量接线。"""
     return Worker(
         client,
         task_queue=settings.task_queue,
-        workflows=[StorageProbe],
+        workflows=[StorageProbe, MaterialWorkflow, DomainAnalysisWorkflow]
+        if material
+        else [StorageProbe],
         activities=[ProbeActivity(settings.files_root).reply]
         + ([lifecycle.started, lifecycle.completed, lifecycle.failed] if lifecycle else [])
-        + ([waits.probe, waits.handle] if waits else []),
+        + ([waits.probe, waits.handle] if waits else [])
+        + (material or []),
         max_concurrent_workflow_tasks=2,
         max_concurrent_activities=4,
         max_cached_workflows=8,
