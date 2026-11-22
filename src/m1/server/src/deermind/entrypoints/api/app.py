@@ -1,8 +1,11 @@
 """API健康与启动检查；数据库升级由独立部署Job执行。"""
 
 import logging
-from collections.abc import AsyncGenerator
+import os
+from collections.abc import AsyncGenerator, Mapping
 from contextlib import asynccontextmanager
+from typing import Literal, TypedDict
+from uuid import UUID
 
 import uvicorn
 from deermind.bootstrap.accounts import configure_usage
@@ -12,13 +15,18 @@ from deermind.bootstrap.settings import Settings
 from deermind.entrypoints.api.auth import router
 from deermind.entrypoints.api.body_limit import RequestBodyLimit
 from deermind.entrypoints.api.errors import api_error
+from deermind.entrypoints.api.realtime import Realtime
+from deermind.entrypoints.api.realtime import router as realtime_router
 from deermind.entrypoints.api.receipts import router as receipts_router
 from deermind.entrypoints.api.usage import router as usage_router
+from deermind.foundation.system.events.view_notices import resolve_view_change
 from deermind.foundation.system.logging import configure_logging
 from deermind.foundation.system.public.errors import RequestError
 from deermind.foundation.system.requests import RequestReceipts
 from deermind.infrastructure.database.connection import DatabaseNotReady, check_database
 from deermind.infrastructure.files.check import check_storage
+from deermind.infrastructure.nats.connection import MessagingSettings
+from deermind.infrastructure.nats.realtime import ViewNotices
 from deermind.product.public.errors import RequestConflict
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
@@ -35,8 +43,35 @@ class Health(BaseModel):
     status: str
 
 
-def create_app() -> FastAPI:
+class WebSocketOptions(TypedDict):
+    """固定应用实际使用的 Uvicorn WebSocket 参数。"""
+
+    ws: Literal["websockets"]
+    ws_max_size: int
+    ws_max_queue: int
+    ws_ping_interval: None
+    ws_per_message_deflate: bool
+
+
+def websocket_options() -> WebSocketOptions:
+    """底层限制按完整消息，连接保活由应用 ping 和 pong 维护。"""
+    return {
+        "ws": "websockets",
+        "ws_max_size": 64 * 1024,
+        "ws_max_queue": 8,
+        "ws_ping_interval": None,
+        "ws_per_message_deflate": False,
+    }
+
+
+def create_app(
+    *,
+    realtime: Realtime | None = None,
+    view_routes: Mapping[tuple[str, str], frozenset[str]] | None = None,
+) -> FastAPI:
     """OpenAPI export is offline; required configuration is checked on startup."""
+    hub = realtime or Realtime()
+    routes = dict(view_routes or {})
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
@@ -56,11 +91,24 @@ def create_app() -> FastAPI:
                         ): app.state.usage.read_receipt,
                     }
                 )
+                app.state.realtime = hub
+
+                async def refresh(event_id: UUID) -> None:
+                    change = await resolve_view_change(engine, event_id, routes)
+                    if change:
+                        await hub.notify(change.kind, change.resource_id, change.views)
+
+                messaging = None
+                if "M1_NATS_ADDRESS" in os.environ:
+                    messaging = MessagingSettings.from_environment()
+                notices = ViewNotices(messaging, refresh, hub.resync)
+                app.state.view_notices = notices
                 LOGGER.info(
                     "API 已启动，数据库版本及共享文件目录检查通过",
                     extra={"action": "api_started", "outcome": "success"},
                 )
-                yield
+                async with notices.listen():
+                    yield
         except Exception:
             LOGGER.exception(
                 "API 启动或运行失败，请检查配置与数据库版本",
@@ -75,6 +123,7 @@ def create_app() -> FastAPI:
     app.include_router(usage_router)
 
     app.include_router(receipts_router)
+    app.include_router(realtime_router)
     app.add_middleware(RequestBodyLimit)
     for error_type in (
         RequestError,
@@ -123,4 +172,5 @@ def main() -> None:
         log_config=None,
         access_log=False,
         proxy_headers=False,
+        **websocket_options(),
     )

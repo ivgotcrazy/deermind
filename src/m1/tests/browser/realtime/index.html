@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>E01-17 浏览器验证</title>
+  </head>
+  <body>
+    <main>
+      <h1>实时连接验证</h1>
+      <form>
+        <label>账号 <input name="login" autocomplete="username" required /></label>
+        <label
+          >密码 <input name="password" type="password" autocomplete="current-password" required
+        /></label>
+        <button>登录</button>
+      </form>
+      <p>连接 <output id="socket">idle</output></p>
+      <p>确认状态 <output id="request">未提交</output></p>
+      <p>使用条件 <output id="view">待读取</output></p>
+      <button id="confirm" disabled>确认使用</button>
+      <p id="failure" role="alert"></p>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

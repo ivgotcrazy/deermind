@@ -1,11 +1,11 @@
 # M1 运行接口与 WebSocket 协议
 
-> **版本**：v0.6<br>
+> **版本**：v0.7<br>
 > **状态**：设计合同；已实现范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.5 → v0.6，区分公开事件视图及内部读取合同<br>
+> **修订说明**：v0.6 → v0.7，登记已确认的消息上限与连接恢复顺序<br>
 
 公共运行只提供通用认证、收据、派发、等待与回传；所有者仍决定业务处理和可展示内容。HTTP路径相对/api/m1，WebSocket /ws使用deermind.v1。底层订阅与发布格式见[事件分册](Event_Messages.md)。
 
@@ -316,7 +316,7 @@ EventSummaryView包含event_id、event_type、schema_version、scope_kind、scop
 
 上述六个动作在HTTP和WS使用同一业务大小校验：将输入投影为本册command，计量时frame_id固定取request_id，其余action、resource和payload完整保留；采用无多余空白、不转义非ASCII字符的UTF-8 JSON计量。投影总字节不得超过[基础设施§4.5 S03](../Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)。HTTP仍须符合H02，实际WS消息还须符合S03的传输限制；额外空白或过长frame_id不能绕过传输检查。
 
-超限在受理前拒绝：HTTP返回413，WS返回error.code=payload_too_large、acceptance=not_accepted；无法安全解析超大消息时可关闭连接。客户端保留草稿，文件沿上传接口；不截断正文、不自动改走HTTP。H02、S03数值仍是待审候选。
+超限在受理前拒绝：HTTP返回413，WS返回error.code=payload_too_large、acceptance=not_accepted；无法安全解析超大消息时可关闭连接。客户端保留草稿，文件沿上传接口；不截断正文、不自动改走HTTP。H02 的 2 MiB 和 S03 的 64 KiB 已确认。
 
 watch的最小view登记：learning_space允许conversation、activity_tree、goal、events；material_import允许messages、contents、candidates、intake。所有者校验角色与字段权限；订阅不扩大读取能力。原请求人可以同时取得对应收据变化提示，跨账号后清理旧订阅。浏览器不订阅原始NATS主题。
 
@@ -369,7 +369,7 @@ watch的最小view登记：learning_space允许conversation、activity_tree、go
 }
 ```
 
-连接中断不取消后台工作。重新hello→watch→补读消息/当前状态/原请求；changed可合并或重复，客户端按实体身份/修订合并，不按通知数量新增消息。服务端回复按已定规则检查保存后整条提供，WS不直传未经核对的模型token。
+断线时已受理工作继续处理。重新 hello→ready→watch→watch_ready 后补读正式消息、当前状态和原请求收据。changed可合并或重复，客户端按实体身份/修订合并，不按通知数量新增消息。服务端回复按已定规则检查保存后整条提供，WS不直传未经核对的模型token。
 
 ## 内部运行端口
 
@@ -398,3 +398,4 @@ HTTP请求收据中的action采用登记的所有者入口名；WS动作名先�
 | v0.4 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |
 | v0.5 | 2026-11-16 | 实现R04本人使用确认收据；明确当前登记动作和读取边界 |
 | v0.6 | 2026-11-22 | 区分公开事件视图及内部读取合同 |
+| v0.7 | 2026-11-22 | 登记已确认的消息上限与连接恢复顺序 |

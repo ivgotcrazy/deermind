@@ -6,7 +6,9 @@ import type { components } from '../../../../contracts/generated/http/schema';
 type Session = components['schemas']['SessionView'];
 type Phase = 'checking' | 'anonymous' | 'authenticated' | 'unavailable';
 
-export function useSession() {
+type AuthChange = 'changing' | 'signing-out' | 'changed';
+
+export function useSession(onSignOut?: () => void) {
   const session = ref<Session | null>(null);
   const phase = ref<Phase>('checking');
   const busy = ref(false);
@@ -49,7 +51,7 @@ export function useSession() {
     }
   }
 
-  function announce(state: 'changing' | 'changed') {
+  function announce(state: AuthChange) {
     if (channel) channel.postMessage(state);
     else {
       try {
@@ -73,7 +75,8 @@ export function useSession() {
     error.value = '';
     const execute = async () => {
       clear();
-      announce('changing');
+      if (path === 'sign-out') onSignOut?.();
+      announce(path === 'sign-out' ? 'signing-out' : 'changing');
       try {
         if (path === 'sign-in' && payload) await post('/api/m1/auth/sign-in', payload);
         else await post('/api/m1/auth/sign-out', undefined, { session: previous ?? undefined });
@@ -97,7 +100,8 @@ export function useSession() {
   }
 
   function changed(state: unknown) {
-    if (state === 'changing') clear();
+    if (state === 'changing' || state === 'signing-out') clear();
+    if (state === 'signing-out') onSignOut?.();
     if (state === 'changed') void refresh();
   }
   function storage(event: StorageEvent) {

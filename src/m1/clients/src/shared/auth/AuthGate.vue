@@ -1,10 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onBeforeUnmount, ref, watch } from 'vue';
+import { Realtime } from '../realtime/client';
+import type { RealtimeState } from '../realtime/client';
 import { useSession } from './session';
 import UsageConfirmation from './UsageConfirmation.vue';
 
 defineProps<{ role: 'student' | 'admin' }>();
-const { session, phase, busy, error, refresh, signIn, signOut } = useSession();
+const realtimeState = ref<RealtimeState>('idle');
+const storageUnavailable = ref(false);
+const realtime = new Realtime({
+  onState: (value) => (realtimeState.value = value),
+  onSessionInvalid: () => void refresh(),
+  onStorageUnavailable: () => (storageUnavailable.value = true),
+});
+const { session, phase, busy, error, refresh, signIn, signOut } = useSession(() =>
+  realtime.clearPending(),
+);
+watch(session, (value) => realtime.setSession(value), { flush: 'sync' });
+onBeforeUnmount(() => realtime.dispose());
 const login = ref('');
 const password = ref('');
 
@@ -68,7 +81,15 @@ async function submit() {
         :csrf-token="session.csrf_token"
         @changed="refresh()"
       />
-      <slot v-else :key="session.session_id" />
+      <template v-else>
+        <p v-if="storageUnavailable" role="status">待核对的消息暂存在本页，刷新后可能丢失。</p>
+        <p v-if="realtimeState === 'reconnecting'" role="status">实时连接中断，正在重连…</p>
+        <template v-else-if="realtimeState === 'unavailable'">
+          <p role="status">实时连接暂不可用。</p>
+          <button class="secondary" type="button" @click="realtime.reconnect()">重新连接</button>
+        </template>
+        <slot :key="session.session_id" :realtime="realtime" />
+      </template>
     </template>
   </section>
 </template>

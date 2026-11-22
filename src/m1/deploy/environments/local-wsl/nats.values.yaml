@@ -20,6 +20,7 @@ config:
             publish:
               allow:
                 - dm.local-wsl.event.*
+                - dm.local-wsl.view_changed
                 - $JS.API.STREAM.INFO.DM_LOCAL_WSL_EVENTS
                 - $JS.API.STREAM.INFO.DM_LOCAL_WSL_DELIVERY_FAILURES
                 - $JS.API.STREAM.MSG.GET.DM_LOCAL_WSL_EVENTS
@@ -30,7 +31,7 @@ config:
                 - $JS.ACK.DM_LOCAL_WSL_EVENTS.>
                 - $JS.ACK.DM_LOCAL_WSL_DELIVERY_FAILURES.>
             subscribe:
-              allow: ['_INBOX.>']
+              allow: ['_INBOX.>', dm.local-wsl.view_changed]
 container:
   image:
     repository: docker.io/library/nats

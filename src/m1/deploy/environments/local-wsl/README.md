@@ -23,6 +23,7 @@
 | E01-15 | 受控模型调用、授权工具及结构化候选 | [E01-15-ai.md](E01-15-ai.md) |
 | E01-15-B | 独立抽象、实现解耦与依赖检查整改 | [E01-15-boundaries.md](E01-15-boundaries.md) |
 | E01-16 | Temporal 载荷外置、重启与故障复核 | [E01-16-payload-codec.md](E01-16-payload-codec.md) |
+| E01-17 | 浏览器实时连接、通知和补读 | [交付与验证](E01-17-realtime.md) |
 
 ## 查阅规则
 
