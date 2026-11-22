@@ -11,7 +11,7 @@ type Success<O> = O extends { responses: { 200: { content: { 'application/json':
 type Body<O> = O extends { requestBody: { content: { 'application/json': infer B } } }
   ? B
   : undefined;
-type Query<O> = O extends { parameters: { query: infer Q } } ? Q : never;
+type Query<O> = O extends { parameters: { query?: infer Q } } ? Q : never;
 type Params<O> = O extends { parameters: { path: infer P } } ? P : never;
 type Session = Pick<components['schemas']['SessionView'], 'session_id' | 'csrf_token'>;
 type Options = { session?: Session; signal?: AbortSignal };
@@ -74,7 +74,11 @@ export function get<P extends Route<'get'>>(
   const query = new URLSearchParams();
   if (options.query)
     for (const [key, value] of Object.entries(options.query)) {
-      if (value !== undefined) query.set(key, String(value));
+      if (Array.isArray(value)) {
+        for (const item of value) query.append(key, String(item));
+      } else if (value !== undefined) {
+        query.set(key, String(value));
+      }
     }
   return send(resolved + (query.size ? `?${query}` : ''), 'get', options);
 }

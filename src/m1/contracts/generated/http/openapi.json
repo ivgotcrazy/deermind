@@ -461,7 +461,7 @@
             "type": "string"
           },
           "result": {
-            "$ref": "#/components/schemas/CreateDomainResult"
+            "$ref": "#/components/schemas/SaveResult"
           }
         },
         "required": [
@@ -493,6 +493,43 @@
           "content_ref"
         ],
         "title": "CreateDomainResult",
+        "type": "object"
+      },
+      "CreateKnowledgeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "create",
+            "title": "Action",
+            "type": "string"
+          },
+          "change_note": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/KnowledgeComponent-Input"
+          },
+          "domain_id": {
+            "$ref": "#/components/schemas/JsonUuid"
+          },
+          "object_kind": {
+            "const": "kc",
+            "title": "Object Kind",
+            "type": "string"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "object_kind",
+          "change_note",
+          "action",
+          "domain_id",
+          "definition"
+        ],
+        "title": "CreateKnowledgeRequest",
         "type": "object"
       },
       "DataCell": {
@@ -614,6 +651,43 @@
       "DecimalText": {
         "pattern": "^[+-]?[0-9]+(?:\\.[0-9]+)?$",
         "type": "string"
+      },
+      "DeleteKnowledgeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "soft_delete",
+            "title": "Action",
+            "type": "string"
+          },
+          "change_note": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "expected_version": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "object_kind": {
+            "const": "kc",
+            "title": "Object Kind",
+            "type": "string"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/KnowledgeRef"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "object_kind",
+          "change_note",
+          "action",
+          "object_ref",
+          "expected_version"
+        ],
+        "title": "DeleteKnowledgeRequest",
+        "type": "object"
       },
       "Diagram": {
         "additionalProperties": false,
@@ -1212,6 +1286,260 @@
       "JsonUuid": {
         "format": "uuid",
         "type": "string"
+      },
+      "KnowledgeComponent-Input": {
+        "additionalProperties": false,
+        "description": "含义与适用条件为必填，例子可单独补充。",
+        "properties": {
+          "applicability": {
+            "$ref": "#/components/schemas/RichContent-Input"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/RichContent-Input"
+          },
+          "examples": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "non_examples": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "definition",
+          "applicability"
+        ],
+        "title": "KnowledgeComponent",
+        "type": "object"
+      },
+      "KnowledgeComponent-Output": {
+        "additionalProperties": false,
+        "description": "含义与适用条件为必填，例子可单独补充。",
+        "properties": {
+          "applicability": {
+            "$ref": "#/components/schemas/RichContent-Output"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/RichContent-Output"
+          },
+          "examples": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "non_examples": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "definition",
+          "applicability"
+        ],
+        "title": "KnowledgeComponent",
+        "type": "object"
+      },
+      "KnowledgeContentRef": {
+        "additionalProperties": false,
+        "properties": {
+          "object_ref": {
+            "$ref": "#/components/schemas/KnowledgeRef"
+          },
+          "owner": {
+            "const": "domain",
+            "default": "domain",
+            "title": "Owner",
+            "type": "string"
+          },
+          "path": {
+            "const": "",
+            "default": "",
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_ref"
+        ],
+        "title": "KnowledgeContentRef",
+        "type": "object"
+      },
+      "KnowledgeDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "object": {
+            "$ref": "#/components/schemas/KnowledgeView"
+          }
+        },
+        "required": [
+          "object"
+        ],
+        "title": "KnowledgeDetail",
+        "type": "object"
+      },
+      "KnowledgeList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeRow"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "read_token": {
+            "title": "Read Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor",
+          "read_token"
+        ],
+        "title": "KnowledgeList",
+        "type": "object"
+      },
+      "KnowledgeRef": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "kc",
+            "title": "Kind",
+            "type": "string"
+          },
+          "object_id": {
+            "$ref": "#/components/schemas/JsonUuid"
+          },
+          "version": {
+            "$ref": "#/components/schemas/Version"
+          }
+        },
+        "required": [
+          "kind",
+          "object_id",
+          "version"
+        ],
+        "title": "KnowledgeRef",
+        "type": "object"
+      },
+      "KnowledgeRow": {
+        "additionalProperties": false,
+        "properties": {
+          "is_deleted": {
+            "title": "Is Deleted",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/KnowledgeRef"
+          },
+          "source_event_id": {
+            "format": "uuid",
+            "title": "Source Event Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_ref",
+          "name",
+          "is_deleted",
+          "source_event_id"
+        ],
+        "title": "KnowledgeRow",
+        "type": "object"
+      },
+      "KnowledgeView": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/KnowledgeComponent-Output"
+          },
+          "content_ref": {
+            "$ref": "#/components/schemas/KnowledgeContentRef"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "is_identity_deleted": {
+            "title": "Is Identity Deleted",
+            "type": "boolean"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/KnowledgeRef"
+          },
+          "source_event_id": {
+            "format": "uuid",
+            "title": "Source Event Id",
+            "type": "string"
+          },
+          "source_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "object_ref",
+          "content",
+          "content_ref",
+          "is_identity_deleted",
+          "source_event_id"
+        ],
+        "title": "KnowledgeView",
+        "type": "object"
       },
       "MathBinary-Input": {
         "additionalProperties": false,
@@ -2012,7 +2340,7 @@
                 "$ref": "#/components/schemas/ConfirmationResult"
               },
               {
-                "$ref": "#/components/schemas/CreateDomainResult"
+                "$ref": "#/components/schemas/SaveResult"
               },
               {
                 "type": "null"
@@ -2031,7 +2359,7 @@
         "required": [
           "receipt_state"
         ],
-        "title": "ReceiptView[Union[ConfirmationResult, CreateDomainResult]]",
+        "title": "ReceiptView[Union[ConfirmationResult, SaveResult]]",
         "type": "object"
       },
       "RichContent-Input": {
@@ -2137,6 +2465,40 @@
         ],
         "title": "RichContent",
         "type": "object"
+      },
+      "SaveKnowledgeResult": {
+        "additionalProperties": false,
+        "properties": {
+          "content_ref": {
+            "$ref": "#/components/schemas/KnowledgeContentRef"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/KnowledgeRef"
+          }
+        },
+        "required": [
+          "object_ref",
+          "content_ref"
+        ],
+        "title": "SaveKnowledgeResult",
+        "type": "object"
+      },
+      "SaveResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/CreateDomainResult"
+          },
+          {
+            "$ref": "#/components/schemas/SaveKnowledgeResult"
+          }
+        ]
       },
       "SessionView": {
         "additionalProperties": false,
@@ -2406,6 +2768,47 @@
         "title": "TextSpan",
         "type": "object"
       },
+      "UpdateKnowledgeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "update",
+            "title": "Action",
+            "type": "string"
+          },
+          "change_note": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/KnowledgeComponent-Input"
+          },
+          "expected_version": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "object_kind": {
+            "const": "kc",
+            "title": "Object Kind",
+            "type": "string"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/KnowledgeRef"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "object_kind",
+          "change_note",
+          "action",
+          "object_ref",
+          "expected_version",
+          "definition"
+        ],
+        "title": "UpdateKnowledgeRequest",
+        "type": "object"
+      },
       "UsageGap": {
         "additionalProperties": false,
         "description": "未满足的使用条件；本轮不推定监护和使用确认已完成。",
@@ -2483,6 +2886,7 @@
         "type": "object"
       },
       "Version": {
+        "maximum": 9.223372036854776e+18,
         "minimum": 1.0,
         "type": "integer"
       }
@@ -2938,7 +3342,21 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateDomainRequest"
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateDomainRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateKnowledgeRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/UpdateKnowledgeRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DeleteKnowledgeRequest"
+                  }
+                ],
+                "title": "Body"
               }
             }
           },
@@ -3066,7 +3484,7 @@
             "description": "Service Unavailable"
           }
         },
-        "summary": "Create Domain",
+        "summary": "Save Definition",
         "tags": [
           "domain"
         ]
@@ -3221,6 +3639,225 @@
         ]
       }
     },
+    "/api/m1/domains/{domain_id}/objects": {
+      "get": {
+        "operationId": "domain_object_list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "domain_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Domain Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kinds",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "const": "kc",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kinds"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "List Objects",
+        "tags": [
+          "domain"
+        ]
+      }
+    },
     "/api/m1/domains/{domain_id}/objects/{object_id}": {
       "get": {
         "operationId": "domain_object_detail",
@@ -3285,7 +3922,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DomainDetail"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/DomainDetail"
+                    },
+                    {
+                      "$ref": "#/components/schemas/KnowledgeDetail"
+                    }
+                  ],
+                  "title": "Response Domain Object Detail"
                 }
               }
             },

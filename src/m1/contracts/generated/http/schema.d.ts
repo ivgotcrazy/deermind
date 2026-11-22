@@ -64,7 +64,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create Domain */
+        /** Save Definition */
         post: operations["domain_save_definition"];
         delete?: never;
         options?: never;
@@ -81,6 +81,23 @@ export interface paths {
         };
         /** List Domains */
         get: operations["domain_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/m1/domains/{domain_id}/objects": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Objects */
+        get: operations["domain_object_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -362,7 +379,7 @@ export interface components {
              * Format: uuid
              */
             request_ref: string;
-            result: components["schemas"]["CreateDomainResult"];
+            result: components["schemas"]["SaveResult"];
         };
         /** CreateDomainResult */
         CreateDomainResult: {
@@ -370,6 +387,23 @@ export interface components {
             /** Gaps */
             gaps?: components["schemas"]["Issue"][];
             object_ref: components["schemas"]["DomainRef"];
+        };
+        /** CreateKnowledgeRequest */
+        CreateKnowledgeRequest: {
+            /**
+             * Action
+             * @constant
+             */
+            action: "create";
+            change_note: components["schemas"]["NonBlank"];
+            definition: components["schemas"]["KnowledgeComponent-Input"];
+            domain_id: components["schemas"]["JsonUuid"];
+            /**
+             * Object Kind
+             * @constant
+             */
+            object_kind: "kc";
+            request_id: components["schemas"]["RequestId"];
         };
         DataCell: components["schemas"]["ProvidedCell"] | components["schemas"]["MissingCell"];
         /** DataColumn */
@@ -406,6 +440,23 @@ export interface components {
             rows: components["schemas"]["DataRow"][];
         };
         DecimalText: string;
+        /** DeleteKnowledgeRequest */
+        DeleteKnowledgeRequest: {
+            /**
+             * Action
+             * @constant
+             */
+            action: "soft_delete";
+            change_note: components["schemas"]["NonBlank"];
+            expected_version: components["schemas"]["Version"];
+            /**
+             * Object Kind
+             * @constant
+             */
+            object_kind: "kc";
+            object_ref: components["schemas"]["KnowledgeRef"];
+            request_id: components["schemas"]["RequestId"];
+        };
         /** Diagram */
         Diagram: {
             /** Caption */
@@ -629,6 +680,97 @@ export interface components {
         };
         /** Format: uuid */
         JsonUuid: string;
+        /**
+         * KnowledgeComponent
+         * @description 含义与适用条件为必填，例子可单独补充。
+         */
+        "KnowledgeComponent-Input": {
+            applicability: components["schemas"]["RichContent-Input"];
+            definition: components["schemas"]["RichContent-Input"];
+            examples?: components["schemas"]["RichContent-Input"] | null;
+            name: components["schemas"]["NonBlank"];
+            non_examples?: components["schemas"]["RichContent-Input"] | null;
+        };
+        /**
+         * KnowledgeComponent
+         * @description 含义与适用条件为必填，例子可单独补充。
+         */
+        "KnowledgeComponent-Output": {
+            applicability: components["schemas"]["RichContent-Output"];
+            definition: components["schemas"]["RichContent-Output"];
+            examples?: components["schemas"]["RichContent-Output"] | null;
+            name: components["schemas"]["NonBlank"];
+            non_examples?: components["schemas"]["RichContent-Output"] | null;
+        };
+        /** KnowledgeContentRef */
+        KnowledgeContentRef: {
+            object_ref: components["schemas"]["KnowledgeRef"];
+            /**
+             * Owner
+             * @default domain
+             * @constant
+             */
+            owner: "domain";
+            /**
+             * Path
+             * @default
+             * @constant
+             */
+            path: "";
+        };
+        /** KnowledgeDetail */
+        KnowledgeDetail: {
+            object: components["schemas"]["KnowledgeView"];
+        };
+        /** KnowledgeList */
+        KnowledgeList: {
+            /** Items */
+            items: components["schemas"]["KnowledgeRow"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+            /** Read Token */
+            read_token: string;
+        };
+        /** KnowledgeRef */
+        KnowledgeRef: {
+            /**
+             * Kind
+             * @constant
+             */
+            kind: "kc";
+            object_id: components["schemas"]["JsonUuid"];
+            version: components["schemas"]["Version"];
+        };
+        /** KnowledgeRow */
+        KnowledgeRow: {
+            /** Is Deleted */
+            is_deleted: boolean;
+            /** Name */
+            name: string;
+            object_ref: components["schemas"]["KnowledgeRef"];
+            /**
+             * Source Event Id
+             * Format: uuid
+             */
+            source_event_id: string;
+        };
+        /** KnowledgeView */
+        KnowledgeView: {
+            content: components["schemas"]["KnowledgeComponent-Output"];
+            content_ref: components["schemas"]["KnowledgeContentRef"];
+            /** Gaps */
+            gaps?: components["schemas"]["Issue"][];
+            /** Is Identity Deleted */
+            is_identity_deleted: boolean;
+            object_ref: components["schemas"]["KnowledgeRef"];
+            /**
+             * Source Event Id
+             * Format: uuid
+             */
+            source_event_id: string;
+            /** Source Refs */
+            source_refs?: components["schemas"]["Ref"][];
+        };
         /** MathBinary */
         "MathBinary-Input": {
             /** Args */
@@ -870,7 +1012,7 @@ export interface components {
             version?: number | null;
         };
         RequestId: string;
-        /** ReceiptView[Union[ConfirmationResult, CreateDomainResult]] */
+        /** ReceiptView[Union[ConfirmationResult, SaveResult]] */
         RequestReceipt: {
             /** Allowed Actions */
             allowed_actions?: string[];
@@ -889,7 +1031,7 @@ export interface components {
              */
             receipt_state: "not_found" | "accepted" | "completed" | "rejected";
             /** Result */
-            result?: components["schemas"]["ConfirmationResult"] | components["schemas"]["CreateDomainResult"] | null;
+            result?: components["schemas"]["ConfirmationResult"] | components["schemas"]["SaveResult"] | null;
             /** Result Refs */
             result_refs?: components["schemas"]["Ref"][];
         };
@@ -937,6 +1079,14 @@ export interface components {
             /** Source Refs */
             source_refs: components["schemas"]["SourceRef"][];
         };
+        /** SaveKnowledgeResult */
+        SaveKnowledgeResult: {
+            content_ref: components["schemas"]["KnowledgeContentRef"];
+            /** Gaps */
+            gaps?: components["schemas"]["Issue"][];
+            object_ref: components["schemas"]["KnowledgeRef"];
+        };
+        SaveResult: components["schemas"]["CreateDomainResult"] | components["schemas"]["SaveKnowledgeResult"];
         /**
          * SessionView
          * @description session_id是诊断身份；浏览器登录秘密只通过HttpOnly Cookie传递。
@@ -1038,6 +1188,24 @@ export interface components {
              * @enum {string}
              */
             type: "text";
+        };
+        /** UpdateKnowledgeRequest */
+        UpdateKnowledgeRequest: {
+            /**
+             * Action
+             * @constant
+             */
+            action: "update";
+            change_note: components["schemas"]["NonBlank"];
+            definition: components["schemas"]["KnowledgeComponent-Input"];
+            expected_version: components["schemas"]["Version"];
+            /**
+             * Object Kind
+             * @constant
+             */
+            object_kind: "kc";
+            object_ref: components["schemas"]["KnowledgeRef"];
+            request_id: components["schemas"]["RequestId"];
         };
         /**
          * UsageGap
@@ -1454,7 +1622,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateDomainRequest"];
+                "application/json": components["schemas"]["CreateDomainRequest"] | components["schemas"]["CreateKnowledgeRequest"] | components["schemas"]["UpdateKnowledgeRequest"] | components["schemas"]["DeleteKnowledgeRequest"];
             };
         };
         responses: {
@@ -1689,6 +1857,134 @@ export interface operations {
             };
         };
     };
+    domain_object_list: {
+        parameters: {
+            query?: {
+                kinds?: "kc"[] | null;
+                name?: string;
+                cursor?: string | null;
+                limit?: number;
+            };
+            header?: {
+                "X-Expected-Session"?: string | null;
+            };
+            path: {
+                domain_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KnowledgeList"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Method Not Allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Client Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     domain_object_detail: {
         parameters: {
             query?: {
@@ -1711,7 +2007,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DomainDetail"];
+                    "application/json": components["schemas"]["DomainDetail"] | components["schemas"]["KnowledgeDetail"];
                 };
             };
             /** @description Bad Request */

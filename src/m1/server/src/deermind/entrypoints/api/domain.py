@@ -1,18 +1,20 @@
 """管理员领域列表、新建和选中详情的 HTTP 入口。"""
 
 from secrets import compare_digest
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 from deermind.entrypoints.api.auth import access
 from deermind.entrypoints.api.errors import ERRORS
 from deermind.product.public.authentication import AuthError, SessionView
 from deermind.spaces.domain.public import (
-    CreateDomainRequest,
     CreateDomainResponse,
     DomainDetail,
     DomainList,
     DomainService,
+    KnowledgeDetail,
+    KnowledgeList,
+    SaveRequest,
 )
 from fastapi import APIRouter, Header, Query, Request, Response
 
@@ -47,10 +49,10 @@ async def list_domains(
     responses=ERRORS,
     operation_id="domain_save_definition",
 )
-async def create_domain(
+async def save_definition(
     request: Request,
     response: Response,
-    body: CreateDomainRequest,
+    body: SaveRequest,
     expected: ExpectedSession = None,
     csrf: CsrfToken = None,
 ) -> CreateDomainResponse:
@@ -58,12 +60,33 @@ async def create_domain(
     if csrf is None or not compare_digest(csrf.encode(), session.csrf_token.encode()):
         raise AuthError(403, "forbidden", "请刷新登录状态后重新保存。")
     service: DomainService = request.app.state.domain
-    return await service.create_domain(session, body)
+    return await service.save_definition(session, body)
+
+
+@router.get(
+    "/domains/{domain_id}/objects",
+    response_model=KnowledgeList,
+    responses=ERRORS,
+    operation_id="domain_object_list",
+)
+async def list_objects(
+    request: Request,
+    response: Response,
+    domain_id: UUID,
+    kinds: Annotated[list[Literal["kc"]] | None, Query()] = None,
+    name: Annotated[str, Query(max_length=512)] = "",
+    cursor: Annotated[str | None, Query(max_length=128)] = None,
+    limit: Annotated[int, Query(ge=1, le=100)] = 50,
+    expected: ExpectedSession = None,
+) -> KnowledgeList:
+    session = await _session(request, response, expected)
+    service: DomainService = request.app.state.domain
+    return await service.list_knowledge(session, domain_id, name, cursor, limit)
 
 
 @router.get(
     "/domains/{domain_id}/objects/{object_id}",
-    response_model=DomainDetail,
+    response_model=DomainDetail | KnowledgeDetail,
     responses=ERRORS,
     operation_id="domain_object_detail",
 )
@@ -74,7 +97,7 @@ async def domain_detail(
     object_id: UUID,
     version: Annotated[int | None, Query(ge=1, le=2**63 - 1)] = None,
     expected: ExpectedSession = None,
-) -> DomainDetail:
+) -> DomainDetail | KnowledgeDetail:
     session = await _session(request, response, expected)
     service: DomainService = request.app.state.domain
-    return await service.read_domain(session, domain_id, object_id, version)
+    return await service.read_object(session, domain_id, object_id, version)

@@ -110,6 +110,14 @@ class ApiContractTests(unittest.IsolatedAsyncioTestCase):
             {item["$ref"] for item in result_types if "$ref" in item},
             {
                 "#/components/schemas/ConfirmationResult",
+                "#/components/schemas/SaveResult",
+            },
+        )
+        saves = schema["components"]["schemas"]["SaveResult"]["anyOf"]
+        self.assertEqual(
+            {item["$ref"] for item in saves},
+            {
                 "#/components/schemas/CreateDomainResult",
+                "#/components/schemas/SaveKnowledgeResult",
             },
         )

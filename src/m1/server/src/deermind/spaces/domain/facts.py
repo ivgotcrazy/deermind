@@ -15,7 +15,14 @@ from deermind.abstractions.events import (
     InlineContent,
     Ref,
 )
-from deermind.spaces.domain.public import DomainDefinition, DomainRef, NonBlank
+from deermind.spaces.domain.public import (
+    DomainDefinition,
+    DomainRef,
+    KnowledgeComponent,
+    NonBlank,
+    ObjectRef,
+    Version,
+)
 
 EVENT_TYPE = "DomainDefinitionSaved"
 RECORD_TYPE = "domain.object_version"
@@ -26,10 +33,10 @@ class DomainVersion(FactModel):
     """事件中完整的 object_version v1 记录，生成投影时补来源事件。"""
 
     object_id: UUID
-    version: Literal[1]
+    version: Version
     content_schema_version: Literal[1]
-    content: DomainDefinition
-    is_deleted: Literal[False]
+    content: DomainDefinition | KnowledgeComponent
+    is_deleted: bool
     created_at: datetime
     created_by: Ref
     change_note: NonBlank
@@ -43,16 +50,16 @@ class DomainVersion(FactModel):
 
 
 class DomainSaved(EventPayload):
-    object_ref: DomainRef
-    previous_ref: None
-    action: Literal["create"]
+    object_ref: ObjectRef
+    previous_ref: ObjectRef | None
+    action: Literal["create", "update", "soft_delete"]
     request_ref: UUID
 
 
-def version_ref(object_ref: DomainRef) -> Ref:
+def version_ref(object_ref: ObjectRef) -> Ref:
     return Ref(
         owner="domain",
-        type="domain",
+        type=object_ref.kind,
         id=str(object_ref.object_id),
         version=object_ref.version,
     )
@@ -80,11 +87,35 @@ def version_content(payload: EventPayload) -> DomainVersion:
 
 
 def validate_saved(draft: EventDraft, payload: EventPayload) -> None:
+    if not isinstance(payload, DomainSaved):
+        raise ValueError("Invalid domain save payload")
     value = version_content(payload)
-    if draft.scope_id != value.object_id or draft.owner_ref != version_ref(
-        DomainRef(object_id=value.object_id, version=value.version)
-    ):
+    ref = payload.object_ref
+    if draft.owner_ref != version_ref(ref):
         raise ValueError("Domain save does not match its scope or owner")
+    if isinstance(ref, DomainRef):
+        if (
+            not isinstance(value.content, DomainDefinition)
+            or draft.scope_id != ref.object_id
+            or payload.action != "create"
+        ):
+            raise ValueError("Invalid Domain root definition")
+    elif not isinstance(value.content, KnowledgeComponent) or draft.scope_id == ref.object_id:
+        raise ValueError("Invalid knowledge component definition")
+
+    previous = payload.previous_ref
+    if payload.action == "create":
+        if previous is not None or ref.version != 1:
+            raise ValueError("A new definition must start at version one")
+    elif (
+        previous is None
+        or previous.kind != ref.kind
+        or previous.object_id != ref.object_id
+        or previous.version != ref.version - 1
+    ):
+        raise ValueError("A revision must append to its previous version")
+    if value.is_deleted != (payload.action == "soft_delete"):
+        raise ValueError("The definition action and deletion state disagree")
 
 
 DOMAIN_SAVED = EventRegistration(

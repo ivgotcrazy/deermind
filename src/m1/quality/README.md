@@ -164,3 +164,7 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 ## E01-16 Temporal 载荷外置验证
 
 `bash scripts/test.sh payload` 沿用数据库组的显式目标、Secret 名称及镜像参数，并要求 `M1_TEST_TEMPORAL_ADDRESS`、`M1_TEST_TEMPORAL_NAMESPACE` 和 `M1_FILES_CLAIM`。场景在临时测试 Pod、随机库、隔离任务队列及 PVC 独立测试目录执行，合成模型返回走官方 Pydantic AI Temporal 集成。重启用例替换测试 Worker 进程。内存用例分别记录客户端及 Worker 进程的峰值 RSS。验收与证据见[E01-16 交付记录](../deploy/environments/local-wsl/E01-16-payload-codec.md#2-复核与证据)。
+
+## E02-03 领域与知识成分验证
+
+`bash scripts/test.sh domain` 使用数据库组的显式集群、Secret 和已构建镜像，在随机测试库核对领域根回归、知识成分并发修订、分页续读、软删除与原收据。浏览器用例通过现有管理端入口验证真实保存和内容展示。

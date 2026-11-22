@@ -6,6 +6,7 @@ import { createDomain, listDomains, readCreateReceipt, readDomain } from './api'
 import type { DomainRow, DomainSession, DomainView } from './api';
 import { clearCreateDraft, readCreateDraft, saveCreateDraft } from './draft';
 import type { CreateDraft } from './draft';
+import KnowledgeComponents from './KnowledgeComponents.vue';
 
 const { session } = defineProps<{ session: DomainSession }>();
 const lifecycle = new AbortController();
@@ -56,7 +57,7 @@ async function selectDomain(id: string) {
   try {
     const result = await readDomain(id, session, read.signal);
     if (read.signal.aborted) return;
-    detail.value = result.object;
+    detail.value = result;
     await nextTick();
     heading.value?.focus();
   } catch (error) {
@@ -241,6 +242,7 @@ onBeforeUnmount(() => {
           <h3>说明</h3>
           <RichContent :content="detail.content.description" />
         </section>
+        <KnowledgeComponents :key="selected" :domain-id="selected" :session="session" />
       </div>
       <div v-else-if="detailError" class="feedback">
         <p role="alert">{{ detailError }}</p>

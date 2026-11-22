@@ -51,10 +51,19 @@ def content_issues(error: RequestValidationError) -> list[Issue]:
     issues: list[Issue] = []
     for item in error.errors():
         location = item["loc"]
+        if len(location) > 1 and location[1] in ("domain.create", "kc.create", "kc.update"):
+            location = (location[0], *location[2:])
         if len(location) < 3 or tuple(location[:2]) != ("body", "definition"):
             continue
         field = location[2]
-        if field not in ("coverage", "description"):
+        if field not in (
+            "coverage",
+            "description",
+            "definition",
+            "applicability",
+            "examples",
+            "non_examples",
+        ):
             continue
         parts = location[3:]
         if item["type"] == "extra_forbidden":

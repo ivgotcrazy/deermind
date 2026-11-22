@@ -3,6 +3,7 @@
 import asyncio
 import tempfile
 from collections.abc import Generator
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from datetime import datetime
 from unittest.mock import patch
@@ -37,6 +38,28 @@ def _body(request_id: UUID, name: str) -> dict[str, JsonValue]:
         "action": "create",
         "definition": {"name": name, "coverage": None, "description": None},
         "change_note": "首次登记领域",
+    }
+
+
+def _content(text_value: str, *, with_formula: bool = False) -> dict[str, JsonValue]:
+    spans: list[JsonValue] = [{"type": "text", "text": text_value}]
+    if with_formula:
+        spans.append(
+            {"type": "math", "expression": {"op": "number", "value": "4", "cancel_to": []}}
+        )
+    return {
+        "schema_version": "1",
+        "role": "definition",
+        "blocks": [
+            {
+                "type": "paragraph",
+                "block_id": "p-1",
+                "payload": {"spans": spans},
+                "provenance": {"source_refs": [], "transformation": "generated"},
+            },
+        ],
+        "data_tables": [],
+        "source_refs": [],
     }
 
 
@@ -121,6 +144,135 @@ class DomainTests(DatabaseTestCase):
                 )
             ).one()
         return tuple(row)
+
+    def test_knowledge_versions_catalog_and_original_receipt(self) -> None:
+        """并行提交同一旧版，仅一个生效；删除后仍保留原文与原收据。"""
+        request_id = uuid4()
+        with self.api() as client:
+            admin = _login(client, "operator")
+            headers = session_headers(admin)
+            root = _save(client, admin, _body(uuid4(), "数学")).raise_for_status().json()
+            other = _save(client, admin, _body(uuid4(), "物理")).raise_for_status().json()
+            domain_id, other_id = (
+                item["result"]["object_ref"]["object_id"] for item in (root, other)
+            )
+            catalog = f"{_LIST}/{domain_id}/objects"
+            definition: dict[str, JsonValue] = {
+                "name": "等分",
+                "definition": _content("分母", with_formula=True),
+                "applicability": _content("平均分"),
+            }
+            create: dict[str, JsonValue] = {
+                "request_id": str(request_id),
+                "object_kind": "kc",
+                "action": "create",
+                "domain_id": domain_id,
+                "change_note": "登记",
+                "definition": definition,
+            }
+            invalid: dict[str, JsonValue] = {
+                **create,
+                "definition": {**definition, "applicability": {}},
+            }
+            rejected = _save(client, admin, invalid)
+            self.assertEqual(rejected.status_code, 400)
+            self.assertTrue(
+                any(
+                    issue["path"].startswith("/definition/applicability")
+                    for issue in rejected.json()["error"]["issues"]
+                )
+            )
+            original = _save(client, admin, create).raise_for_status().json()
+            ref = original["result"]["object_ref"]
+            object_id = ref["object_id"]
+            path = f"{catalog}/{object_id}"
+            before = client.get(path, headers=headers).raise_for_status().json()["object"]
+            self.assertEqual(
+                before["content"]["definition"]["blocks"][0]["payload"]["spans"][1],
+                {"type": "math", "expression": {"op": "number", "value": "4", "cancel_to": []}},
+            )
+            self.assertEqual(
+                client.get(f"{_LIST}/{other_id}/objects/{object_id}", headers=headers).status_code,
+                404,
+            )
+            _save(
+                client,
+                admin,
+                {
+                    **create,
+                    "request_id": str(uuid4()),
+                    "definition": {
+                        **before["content"],
+                        "name": "细分",
+                    },
+                },
+            ).raise_for_status()
+            page = (
+                client.get(catalog, headers=headers, params={"limit": 1}).raise_for_status().json()
+            )
+            self.assertTrue(page["next_cursor"])
+            next_page = (
+                client.get(
+                    catalog, headers=headers, params={"cursor": page["next_cursor"], "limit": 1}
+                )
+                .raise_for_status()
+                .json()
+            )
+            self.assertNotEqual(page["items"][0]["object_ref"], next_page["items"][0]["object_ref"])
+            base = {
+                "object_kind": "kc",
+                "action": "update",
+                "object_ref": ref,
+                "expected_version": 1,
+                "change_note": "补充适用条件",
+            }
+
+            def revise(text_value: str) -> Response:
+                return _save(
+                    client,
+                    admin,
+                    {
+                        **base,
+                        "request_id": str(uuid4()),
+                        "definition": {**before["content"], "applicability": _content(text_value)},
+                    },
+                )
+
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                responses = list(pool.map(revise, ("四块", "五块")))
+            self.assertEqual(sorted(response.status_code for response in responses), [200, 409])
+            self.assertEqual(
+                next(r for r in responses if r.status_code == 409).json()["error"]["code"],
+                "version_conflict",
+            )
+            current = client.get(path, headers=headers).raise_for_status().json()["object"]
+            self.assertEqual(current["object_ref"]["version"], 2)
+            self.assertEqual(current["content"]["definition"], before["content"]["definition"])
+            self.assertEqual(
+                client.get(catalog, headers=headers, params={"cursor": page["next_cursor"]}).json()[
+                    "error"
+                ]["code"],
+                "read_range_changed",
+            )
+            deletion = {
+                **base,
+                "request_id": str(uuid4()),
+                "action": "soft_delete",
+                "object_ref": current["object_ref"],
+                "expected_version": 2,
+            }
+            removed = _save(client, admin, deletion).raise_for_status().json()
+            self.assertEqual(removed["result"]["object_ref"]["version"], 3)
+            self.assertEqual(client.get(path, headers=headers).status_code, 404)
+            listing = client.get(catalog, headers=headers).raise_for_status().json()["items"]
+            self.assertEqual([item["name"] for item in listing], ["细分"])
+            history = client.get(path, headers=headers, params={"version": 1}).raise_for_status()
+            self.assertEqual(history.json()["object"], {**before, "is_identity_deleted": True})
+            replay = _receipt(client, admin, request_id, admin.account.account_id)
+            self.assertEqual(replay.raise_for_status().json()["result"], original["result"])
+            self.assertEqual(_save(client, admin, create).raise_for_status().json(), original)
+            self.assertEqual(_save(client, admin, deletion).raise_for_status().json(), removed)
+            self.assertEqual(self.persisted_counts(), (4, 6, 6, 6, 6, 2))
 
     def test_create_list_details_replay_and_trace(self) -> None:
         first_request, second_request = uuid4(), uuid4()
@@ -425,7 +577,7 @@ class DomainMigrationTests(DatabaseTestCase):
         with self.engine.connect() as connection:
             self.assertEqual(
                 connection.scalar(text("SELECT version_num FROM public.alembic_version")),
-                "0012_domain_roots",
+                "0013_kc_versions",
             )
             self.assertEqual(connection.execute(facts).all(), old_events)
             self.assertEqual(connection.execute(accounts).all(), old_accounts)

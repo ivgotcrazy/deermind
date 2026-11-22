@@ -36,12 +36,13 @@ def main() -> int:
             "ai",
             "payload",
             "content",
+            "domain",
         }
         or len(sys.argv) > 2
     ):
         raise ValueError(
             "Expected database, facts, files, reads, rebuild, "
-            "auth, usage, receipts, delivery, execution, waits, ai, payload or content test group"
+            "auth, usage, receipts, delivery, execution, waits, ai, payload, content or domain"
         )
     target = [
         "kubectl",
@@ -185,6 +186,7 @@ def main() -> int:
             "ai": "test_ai_*.py",
             "payload": "test_payload_codec_integration.py",
             "content": "test_rich_content.py",
+            "domain": "test_domain.py",
         }[group]
         inputs = {path.name: path.read_text(encoding="utf-8") for path in fixtures.glob("*.py")}
         if group == "content":
