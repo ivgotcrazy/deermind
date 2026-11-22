@@ -1,11 +1,11 @@
 # M1 Domain API
 
-> **版本**：v0.4<br>
+> **版本**：v0.5<br>
 > **状态**：设计合同；已实现范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.3 → v0.4，登记 E02-01 的领域列表、首版保存、详情和回执<br>
+> **修订说明**：v0.4 → v0.5，E02-02 接入领域说明和覆盖范围的结构化正文<br>
 
 共同类型与回执见[总册](../API_and_Message_Design.md)。接口只接受已授权领域及精确对象引用；所有定义/内容结构以[Domain§1](../Domain_Space_Design.md#1-领域对象身份与关系)为唯一来源。API不直接接收数据库行或模型任意生成的ID。
 
@@ -39,7 +39,7 @@ E02-01 接入 D01、D02、D04 和 D13 的管理员领域根分支。各请求携
 
 处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
 
-E02-01 返回当前未删除的领域根，管理端在列表中按名称查找。各项带首版来源 `source_event_id`。
+列表返回当前未删除的领域根及首版来源 `source_event_id`，管理端按名称查找。说明和覆盖范围通过 D04 读取。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
 
@@ -78,7 +78,9 @@ E02-01 返回当前未删除的领域根，管理端在列表中按名称查找�
 
 处理边界：普通保存200；缺方法可存草稿，但Task直接关联KC等非法关系拒绝。soft_delete保留历史，无物理删除入口。
 
-E02-01 接受 `object_kind=domain`、`action=create`、`definition.name` 和 `change_note`。名称和变更说明去掉首尾空白后须非空，覆盖范围及描述留空。服务端分配领域 ID，将 `DomainDefinitionSaved`、首版、领域头、投影收据和请求收据同事务提交。原请求编号与内容相同时返回原结果，原编号用于不同内容时返回 409。
+当前实现接受 `object_kind=domain`、`action=create`、`definition.name` 和 `change_note`。名称和变更说明去掉首尾空白后须非空。E02-02 接入可选的 `coverage` 和 `description`，两者采用 [RichContent](../Domain_Space_Design.md#14-文字公式图表的统一内容结构) 的 `definition` 用途。直接新建领域时 `source_refs` 为空。非法正文返回 400，`issues[].path` 标出对应字段或内容块。
+
+服务端分配领域 ID，将 `DomainDefinitionSaved`、首版、领域头、投影收据和请求收据同事务提交。原请求编号与内容相同时返回原结果，原编号用于不同内容时返回 409。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；version_conflict；dependency_cycle；invalid_reference。
 
@@ -160,7 +162,7 @@ E02-01 接受 `object_kind=domain`、`action=create`、`definition.name` 和 `ch
 
 处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
 
-E02-01 要求两个路径 ID 均为同一领域根。越界或指定版本不存在返回 404，`source_event_id` 指向详情所读的事实。
+领域根详情要求两个路径 ID 均为同一领域。越界或指定版本不存在返回 404，`source_event_id` 指向详情所读的事实。D04 返回该版本的说明和覆盖范围，用于共用内容渲染。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；invalid_request（实例缺view）；forbidden（请求答案）。
 
@@ -556,3 +558,4 @@ ContentRef只允许所属view已授权的JSON Pointer；图文重排不升对象
 | v0.2 | 2026-11-15 | 将模块收据改为内部投影，浏览器统一查询公共收据。见MVP决定登记§95。 |
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.4 | 2026-11-22 | 登记 E02-01 的领域列表、首版保存、详情、权限和回执 |
+| v0.5 | 2026-11-22 | 接入领域说明、覆盖范围及结构化正文的字段定位 |

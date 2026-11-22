@@ -38,6 +38,200 @@
         "title": "AccountView",
         "type": "object"
       },
+      "BlankSpan": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "type": {
+            "const": "response_blank",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "label"
+        ],
+        "title": "BlankSpan",
+        "type": "object"
+      },
+      "Chart": {
+        "additionalProperties": false,
+        "properties": {
+          "axis": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ChartAxis"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "caption": {
+            "title": "Caption",
+            "type": "string"
+          },
+          "category_column": {
+            "minLength": 1,
+            "title": "Category Column",
+            "type": "string"
+          },
+          "data_ref": {
+            "minLength": 1,
+            "title": "Data Ref",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "bar",
+              "line",
+              "pie"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "legend": {
+            "title": "Legend",
+            "type": "boolean"
+          },
+          "relationship": {
+            "enum": [
+              "independent",
+              "overlapping_populations",
+              "disjoint_parts"
+            ],
+            "title": "Relationship",
+            "type": "string"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/ChartSeries"
+            },
+            "minItems": 1,
+            "title": "Series",
+            "type": "array"
+          },
+          "slice_colors": {
+            "items": {
+              "$ref": "#/components/schemas/Color"
+            },
+            "title": "Slice Colors",
+            "type": "array"
+          },
+          "stacked": {
+            "const": false,
+            "default": false,
+            "title": "Stacked",
+            "type": "boolean"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "caption",
+          "data_ref",
+          "category_column",
+          "series",
+          "axis",
+          "legend",
+          "unit",
+          "relationship"
+        ],
+        "title": "Chart",
+        "type": "object"
+      },
+      "ChartAxis": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "max": {
+            "$ref": "#/components/schemas/DecimalText"
+          },
+          "min": {
+            "$ref": "#/components/schemas/DecimalText"
+          },
+          "step": {
+            "$ref": "#/components/schemas/DecimalText"
+          }
+        },
+        "required": [
+          "min",
+          "max",
+          "step",
+          "label"
+        ],
+        "title": "ChartAxis",
+        "type": "object"
+      },
+      "ChartBlock": {
+        "additionalProperties": false,
+        "properties": {
+          "block_id": {
+            "minLength": 1,
+            "title": "Block Id",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Chart"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "type": {
+            "const": "chart",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "block_id",
+          "provenance",
+          "type",
+          "payload"
+        ],
+        "title": "ChartBlock",
+        "type": "object"
+      },
+      "ChartSeries": {
+        "additionalProperties": false,
+        "properties": {
+          "color": {
+            "$ref": "#/components/schemas/Color"
+          },
+          "column": {
+            "minLength": 1,
+            "title": "Column",
+            "type": "string"
+          },
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "column",
+          "label",
+          "color"
+        ],
+        "title": "ChartSeries",
+        "type": "object"
+      },
+      "Color": {
+        "pattern": "^#[0-9a-fA-F]{6}$",
+        "type": "string"
+      },
       "ConfirmUsageRequest": {
         "additionalProperties": false,
         "properties": {
@@ -167,6 +361,64 @@
         "title": "ConfirmationResult",
         "type": "object"
       },
+      "ContentBlock-Input": {
+        "discriminator": {
+          "mapping": {
+            "chart": "#/components/schemas/ChartBlock",
+            "diagram": "#/components/schemas/DiagramBlock",
+            "math_sequence": "#/components/schemas/MathSequenceBlock-Input",
+            "paragraph": "#/components/schemas/ParagraphBlock-Input",
+            "table": "#/components/schemas/TableBlock"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ParagraphBlock-Input"
+          },
+          {
+            "$ref": "#/components/schemas/MathSequenceBlock-Input"
+          },
+          {
+            "$ref": "#/components/schemas/TableBlock"
+          },
+          {
+            "$ref": "#/components/schemas/ChartBlock"
+          },
+          {
+            "$ref": "#/components/schemas/DiagramBlock"
+          }
+        ]
+      },
+      "ContentBlock-Output": {
+        "discriminator": {
+          "mapping": {
+            "chart": "#/components/schemas/ChartBlock",
+            "diagram": "#/components/schemas/DiagramBlock",
+            "math_sequence": "#/components/schemas/MathSequenceBlock-Output",
+            "paragraph": "#/components/schemas/ParagraphBlock-Output",
+            "table": "#/components/schemas/TableBlock"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ParagraphBlock-Output"
+          },
+          {
+            "$ref": "#/components/schemas/MathSequenceBlock-Output"
+          },
+          {
+            "$ref": "#/components/schemas/TableBlock"
+          },
+          {
+            "$ref": "#/components/schemas/ChartBlock"
+          },
+          {
+            "$ref": "#/components/schemas/DiagramBlock"
+          }
+        ]
+      },
       "CreateDomainRequest": {
         "additionalProperties": false,
         "properties": {
@@ -179,7 +431,7 @@
             "$ref": "#/components/schemas/NonBlank"
           },
           "definition": {
-            "$ref": "#/components/schemas/DomainDefinition"
+            "$ref": "#/components/schemas/DomainDefinition-Input"
           },
           "object_kind": {
             "const": "domain",
@@ -243,6 +495,327 @@
         "title": "CreateDomainResult",
         "type": "object"
       },
+      "DataCell": {
+        "discriminator": {
+          "mapping": {
+            "provided": "#/components/schemas/ProvidedCell",
+            "response_blank": "#/components/schemas/MissingCell",
+            "source_missing": "#/components/schemas/MissingCell",
+            "unreadable": "#/components/schemas/MissingCell"
+          },
+          "propertyName": "state"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ProvidedCell"
+          },
+          {
+            "$ref": "#/components/schemas/MissingCell"
+          }
+        ]
+      },
+      "DataColumn": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "minLength": 1,
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "value_type": {
+            "enum": [
+              "text",
+              "decimal"
+            ],
+            "title": "Value Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "value_type",
+          "unit"
+        ],
+        "title": "DataColumn",
+        "type": "object"
+      },
+      "DataRow": {
+        "additionalProperties": false,
+        "properties": {
+          "cells": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DataCell"
+            },
+            "propertyNames": {
+              "minLength": 1
+            },
+            "title": "Cells",
+            "type": "object"
+          },
+          "row_id": {
+            "minLength": 1,
+            "title": "Row Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "row_id",
+          "cells"
+        ],
+        "title": "DataRow",
+        "type": "object"
+      },
+      "DataTable": {
+        "additionalProperties": false,
+        "properties": {
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/DataColumn"
+            },
+            "minItems": 1,
+            "title": "Columns",
+            "type": "array"
+          },
+          "data_id": {
+            "minLength": 1,
+            "title": "Data Id",
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/DataRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "data_id",
+          "columns",
+          "rows",
+          "provenance"
+        ],
+        "title": "DataTable",
+        "type": "object"
+      },
+      "DecimalText": {
+        "pattern": "^[+-]?[0-9]+(?:\\.[0-9]+)?$",
+        "type": "string"
+      },
+      "Diagram": {
+        "additionalProperties": false,
+        "properties": {
+          "caption": {
+            "title": "Caption",
+            "type": "string"
+          },
+          "layout": {
+            "$ref": "#/components/schemas/DiagramLayout"
+          },
+          "objects": {
+            "items": {
+              "$ref": "#/components/schemas/DiagramObject"
+            },
+            "minItems": 1,
+            "title": "Objects",
+            "type": "array"
+          },
+          "relations": {
+            "items": {
+              "$ref": "#/components/schemas/DiagramRelation"
+            },
+            "title": "Relations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "caption",
+          "objects",
+          "relations",
+          "layout"
+        ],
+        "title": "Diagram",
+        "type": "object"
+      },
+      "DiagramBlock": {
+        "additionalProperties": false,
+        "properties": {
+          "block_id": {
+            "minLength": 1,
+            "title": "Block Id",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Diagram"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "type": {
+            "const": "diagram",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "block_id",
+          "provenance",
+          "type",
+          "payload"
+        ],
+        "title": "DiagramBlock",
+        "type": "object"
+      },
+      "DiagramBox": {
+        "additionalProperties": false,
+        "properties": {
+          "box": {
+            "$ref": "#/components/schemas/Rectangle"
+          },
+          "object_ref": {
+            "minLength": 1,
+            "title": "Object Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_ref",
+          "box"
+        ],
+        "title": "DiagramBox",
+        "type": "object"
+      },
+      "DiagramLayout": {
+        "additionalProperties": false,
+        "properties": {
+          "boxes": {
+            "items": {
+              "$ref": "#/components/schemas/DiagramBox"
+            },
+            "title": "Boxes",
+            "type": "array"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/DiagramPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "view_box": {
+            "$ref": "#/components/schemas/Rectangle"
+          }
+        },
+        "required": [
+          "view_box",
+          "boxes",
+          "points"
+        ],
+        "title": "DiagramLayout",
+        "type": "object"
+      },
+      "DiagramObject": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "default": "",
+            "title": "Label",
+            "type": "string"
+          },
+          "object_id": {
+            "minLength": 1,
+            "title": "Object Id",
+            "type": "string"
+          },
+          "shape": {
+            "$ref": "#/components/schemas/Shape"
+          }
+        },
+        "required": [
+          "object_id",
+          "shape"
+        ],
+        "title": "DiagramObject",
+        "type": "object"
+      },
+      "DiagramPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "object_ref": {
+            "minLength": 1,
+            "title": "Object Ref",
+            "type": "string"
+          },
+          "position": {
+            "$ref": "#/components/schemas/Position"
+          }
+        },
+        "required": [
+          "object_ref",
+          "position"
+        ],
+        "title": "DiagramPoint",
+        "type": "object"
+      },
+      "DiagramRelation": {
+        "additionalProperties": false,
+        "properties": {
+          "basis": {
+            "enum": [
+              "source_text",
+              "source_mark",
+              "visual_observation"
+            ],
+            "title": "Basis",
+            "type": "string"
+          },
+          "object": {
+            "minLength": 1,
+            "title": "Object",
+            "type": "string"
+          },
+          "predicate": {
+            "const": "inside",
+            "title": "Predicate",
+            "type": "string"
+          },
+          "source_refs": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          },
+          "subject": {
+            "minLength": 1,
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "predicate",
+          "subject",
+          "object",
+          "basis",
+          "source_refs"
+        ],
+        "title": "DiagramRelation",
+        "type": "object"
+      },
       "DomainContentRef": {
         "additionalProperties": false,
         "properties": {
@@ -268,17 +841,63 @@
         "title": "DomainContentRef",
         "type": "object"
       },
-      "DomainDefinition": {
+      "DomainDefinition-Input": {
         "additionalProperties": false,
-        "description": "本增量的领域名称及可空的扩展正文。",
+        "description": "拥有名称及可选的说明和覆盖范围。",
         "properties": {
           "coverage": {
-            "title": "Coverage",
-            "type": "null"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "description": {
-            "title": "Description",
-            "type": "null"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "$ref": "#/components/schemas/NonBlank"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "DomainDefinition",
+        "type": "object"
+      },
+      "DomainDefinition-Output": {
+        "additionalProperties": false,
+        "description": "拥有名称及可选的说明和覆盖范围。",
+        "properties": {
+          "coverage": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "name": {
             "$ref": "#/components/schemas/NonBlank"
@@ -382,7 +1001,7 @@
         "additionalProperties": false,
         "properties": {
           "content": {
-            "$ref": "#/components/schemas/DomainDefinition"
+            "$ref": "#/components/schemas/DomainDefinition-Output"
           },
           "content_ref": {
             "$ref": "#/components/schemas/DomainContentRef"
@@ -480,6 +1099,68 @@
         "title": "ErrorResponse",
         "type": "object"
       },
+      "EventPartSource": {
+        "additionalProperties": false,
+        "properties": {
+          "event_id": {
+            "$ref": "#/components/schemas/JsonUuid"
+          },
+          "path": {
+            "pattern": "^(?:/(?:[^/~]|~[01])*)*$",
+            "title": "Path",
+            "type": "string"
+          },
+          "record_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record Id"
+          },
+          "type": {
+            "const": "event_part",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "event_id",
+          "path"
+        ],
+        "title": "EventPartSource",
+        "type": "object"
+      },
+      "FileSource": {
+        "additionalProperties": false,
+        "properties": {
+          "file_id": {
+            "$ref": "#/components/schemas/JsonUuid"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          },
+          "type": {
+            "const": "file",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "file_id",
+          "sha256"
+        ],
+        "title": "FileSource",
+        "type": "object"
+      },
       "Health": {
         "description": "报告就绪状态，不暴露连接配置或数据库内部信息。",
         "properties": {
@@ -528,9 +1209,659 @@
         "title": "Issue",
         "type": "object"
       },
+      "JsonUuid": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "MathBinary-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "args": {
+            "items": {
+              "$ref": "#/components/schemas/MathExpression-Input"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Args",
+            "type": "array"
+          },
+          "op": {
+            "enum": [
+              "add",
+              "subtract",
+              "multiply",
+              "divide",
+              "fraction",
+              "equal"
+            ],
+            "title": "Op",
+            "type": "string"
+          }
+        },
+        "required": [
+          "op",
+          "args"
+        ],
+        "title": "MathBinary",
+        "type": "object"
+      },
+      "MathBinary-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "args": {
+            "items": {
+              "$ref": "#/components/schemas/MathExpression-Output"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Args",
+            "type": "array"
+          },
+          "op": {
+            "enum": [
+              "add",
+              "subtract",
+              "multiply",
+              "divide",
+              "fraction",
+              "equal"
+            ],
+            "title": "Op",
+            "type": "string"
+          }
+        },
+        "required": [
+          "op",
+          "args"
+        ],
+        "title": "MathBinary",
+        "type": "object"
+      },
+      "MathExpression-Input": {
+        "discriminator": {
+          "mapping": {
+            "add": "#/components/schemas/MathBinary-Input",
+            "divide": "#/components/schemas/MathBinary-Input",
+            "equal": "#/components/schemas/MathBinary-Input",
+            "fraction": "#/components/schemas/MathBinary-Input",
+            "group": "#/components/schemas/MathGroup-Input",
+            "multiply": "#/components/schemas/MathBinary-Input",
+            "number": "#/components/schemas/MathNumber",
+            "subtract": "#/components/schemas/MathBinary-Input",
+            "symbol": "#/components/schemas/MathSymbol"
+          },
+          "propertyName": "op"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/MathNumber"
+          },
+          {
+            "$ref": "#/components/schemas/MathSymbol"
+          },
+          {
+            "$ref": "#/components/schemas/MathGroup-Input"
+          },
+          {
+            "$ref": "#/components/schemas/MathBinary-Input"
+          }
+        ]
+      },
+      "MathExpression-Output": {
+        "discriminator": {
+          "mapping": {
+            "add": "#/components/schemas/MathBinary-Output",
+            "divide": "#/components/schemas/MathBinary-Output",
+            "equal": "#/components/schemas/MathBinary-Output",
+            "fraction": "#/components/schemas/MathBinary-Output",
+            "group": "#/components/schemas/MathGroup-Output",
+            "multiply": "#/components/schemas/MathBinary-Output",
+            "number": "#/components/schemas/MathNumber",
+            "subtract": "#/components/schemas/MathBinary-Output",
+            "symbol": "#/components/schemas/MathSymbol"
+          },
+          "propertyName": "op"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/MathNumber"
+          },
+          {
+            "$ref": "#/components/schemas/MathSymbol"
+          },
+          {
+            "$ref": "#/components/schemas/MathGroup-Output"
+          },
+          {
+            "$ref": "#/components/schemas/MathBinary-Output"
+          }
+        ]
+      },
+      "MathGroup-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "args": {
+            "items": {
+              "$ref": "#/components/schemas/MathExpression-Input"
+            },
+            "maxItems": 1,
+            "minItems": 1,
+            "title": "Args",
+            "type": "array"
+          },
+          "op": {
+            "const": "group",
+            "title": "Op",
+            "type": "string"
+          }
+        },
+        "required": [
+          "op",
+          "args"
+        ],
+        "title": "MathGroup",
+        "type": "object"
+      },
+      "MathGroup-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "args": {
+            "items": {
+              "$ref": "#/components/schemas/MathExpression-Output"
+            },
+            "maxItems": 1,
+            "minItems": 1,
+            "title": "Args",
+            "type": "array"
+          },
+          "op": {
+            "const": "group",
+            "title": "Op",
+            "type": "string"
+          }
+        },
+        "required": [
+          "op",
+          "args"
+        ],
+        "title": "MathGroup",
+        "type": "object"
+      },
+      "MathLine-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "expression": {
+            "$ref": "#/components/schemas/MathExpression-Input"
+          },
+          "relation": {
+            "default": "",
+            "enum": [
+              "",
+              "=",
+              "≈",
+              "→"
+            ],
+            "title": "Relation",
+            "type": "string"
+          },
+          "suffix": {
+            "default": "",
+            "title": "Suffix",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expression"
+        ],
+        "title": "MathLine",
+        "type": "object"
+      },
+      "MathLine-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "expression": {
+            "$ref": "#/components/schemas/MathExpression-Output"
+          },
+          "relation": {
+            "default": "",
+            "enum": [
+              "",
+              "=",
+              "≈",
+              "→"
+            ],
+            "title": "Relation",
+            "type": "string"
+          },
+          "suffix": {
+            "default": "",
+            "title": "Suffix",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expression"
+        ],
+        "title": "MathLine",
+        "type": "object"
+      },
+      "MathNumber": {
+        "additionalProperties": false,
+        "properties": {
+          "cancel_to": {
+            "items": {
+              "$ref": "#/components/schemas/DecimalText"
+            },
+            "title": "Cancel To",
+            "type": "array"
+          },
+          "op": {
+            "const": "number",
+            "title": "Op",
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/DecimalText"
+          }
+        },
+        "required": [
+          "op",
+          "value"
+        ],
+        "title": "MathNumber",
+        "type": "object"
+      },
+      "MathSequence-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/MathLine-Input"
+            },
+            "minItems": 1,
+            "title": "Lines",
+            "type": "array"
+          },
+          "purpose": {
+            "enum": [
+              "given_work",
+              "reference_work"
+            ],
+            "title": "Purpose",
+            "type": "string"
+          }
+        },
+        "required": [
+          "purpose",
+          "lines"
+        ],
+        "title": "MathSequence",
+        "type": "object"
+      },
+      "MathSequence-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/MathLine-Output"
+            },
+            "minItems": 1,
+            "title": "Lines",
+            "type": "array"
+          },
+          "purpose": {
+            "enum": [
+              "given_work",
+              "reference_work"
+            ],
+            "title": "Purpose",
+            "type": "string"
+          }
+        },
+        "required": [
+          "purpose",
+          "lines"
+        ],
+        "title": "MathSequence",
+        "type": "object"
+      },
+      "MathSequenceBlock-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "block_id": {
+            "minLength": 1,
+            "title": "Block Id",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/MathSequence-Input"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "type": {
+            "const": "math_sequence",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "block_id",
+          "provenance",
+          "type",
+          "payload"
+        ],
+        "title": "MathSequenceBlock",
+        "type": "object"
+      },
+      "MathSequenceBlock-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "block_id": {
+            "minLength": 1,
+            "title": "Block Id",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/MathSequence-Output"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "type": {
+            "const": "math_sequence",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "block_id",
+          "provenance",
+          "type",
+          "payload"
+        ],
+        "title": "MathSequenceBlock",
+        "type": "object"
+      },
+      "MathSpan-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "expression": {
+            "$ref": "#/components/schemas/MathExpression-Input"
+          },
+          "type": {
+            "const": "math",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "expression"
+        ],
+        "title": "MathSpan",
+        "type": "object"
+      },
+      "MathSpan-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "expression": {
+            "$ref": "#/components/schemas/MathExpression-Output"
+          },
+          "type": {
+            "const": "math",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "expression"
+        ],
+        "title": "MathSpan",
+        "type": "object"
+      },
+      "MathSymbol": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "op": {
+            "const": "symbol",
+            "title": "Op",
+            "type": "string"
+          }
+        },
+        "required": [
+          "op",
+          "name"
+        ],
+        "title": "MathSymbol",
+        "type": "object"
+      },
+      "MissingCell": {
+        "additionalProperties": false,
+        "properties": {
+          "state": {
+            "enum": [
+              "response_blank",
+              "source_missing",
+              "unreadable"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "title": "MissingCell",
+        "type": "object"
+      },
       "NonBlank": {
         "minLength": 1,
         "type": "string"
+      },
+      "Paragraph-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "spans": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "math": "#/components/schemas/MathSpan-Input",
+                  "response_blank": "#/components/schemas/BlankSpan",
+                  "text": "#/components/schemas/TextSpan"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/TextSpan"
+                },
+                {
+                  "$ref": "#/components/schemas/MathSpan-Input"
+                },
+                {
+                  "$ref": "#/components/schemas/BlankSpan"
+                }
+              ]
+            },
+            "title": "Spans",
+            "type": "array"
+          }
+        },
+        "required": [
+          "spans"
+        ],
+        "title": "Paragraph",
+        "type": "object"
+      },
+      "Paragraph-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "spans": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "math": "#/components/schemas/MathSpan-Output",
+                  "response_blank": "#/components/schemas/BlankSpan",
+                  "text": "#/components/schemas/TextSpan"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/TextSpan"
+                },
+                {
+                  "$ref": "#/components/schemas/MathSpan-Output"
+                },
+                {
+                  "$ref": "#/components/schemas/BlankSpan"
+                }
+              ]
+            },
+            "title": "Spans",
+            "type": "array"
+          }
+        },
+        "required": [
+          "spans"
+        ],
+        "title": "Paragraph",
+        "type": "object"
+      },
+      "ParagraphBlock-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "block_id": {
+            "minLength": 1,
+            "title": "Block Id",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Paragraph-Input"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "type": {
+            "const": "paragraph",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "block_id",
+          "provenance",
+          "type",
+          "payload"
+        ],
+        "title": "ParagraphBlock",
+        "type": "object"
+      },
+      "ParagraphBlock-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "block_id": {
+            "minLength": 1,
+            "title": "Block Id",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Paragraph-Output"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "type": {
+            "const": "paragraph",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "block_id",
+          "provenance",
+          "type",
+          "payload"
+        ],
+        "title": "ParagraphBlock",
+        "type": "object"
+      },
+      "Position": {
+        "items": {
+          "type": "number"
+        },
+        "maxItems": 2,
+        "minItems": 2,
+        "type": "array"
+      },
+      "Provenance": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "default": "",
+            "title": "Note",
+            "type": "string"
+          },
+          "source_refs": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          },
+          "transformation": {
+            "enum": [
+              "extracted",
+              "normalized",
+              "derived",
+              "generated"
+            ],
+            "title": "Transformation",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_refs",
+          "transformation"
+        ],
+        "title": "Provenance",
+        "type": "object"
+      },
+      "ProvidedCell": {
+        "additionalProperties": false,
+        "properties": {
+          "state": {
+            "const": "provided",
+            "title": "State",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "value"
+        ],
+        "title": "ProvidedCell",
+        "type": "object"
+      },
+      "Rectangle": {
+        "items": {
+          "type": "number"
+        },
+        "maxItems": 4,
+        "minItems": 4,
+        "type": "array"
       },
       "Ref": {
         "additionalProperties": false,
@@ -703,6 +2034,110 @@
         "title": "ReceiptView[Union[ConfirmationResult, CreateDomainResult]]",
         "type": "object"
       },
+      "RichContent-Input": {
+        "additionalProperties": false,
+        "description": "业务对象中按用途存放的一份正文，图表按局部数据编号引用。",
+        "properties": {
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/ContentBlock-Input"
+            },
+            "title": "Blocks",
+            "type": "array"
+          },
+          "data_tables": {
+            "items": {
+              "$ref": "#/components/schemas/DataTable"
+            },
+            "title": "Data Tables",
+            "type": "array"
+          },
+          "role": {
+            "enum": [
+              "definition",
+              "statement",
+              "reference",
+              "teaching_aid",
+              "derived_view"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "source_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SourceRef"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "schema_version",
+          "role",
+          "blocks",
+          "data_tables",
+          "source_refs"
+        ],
+        "title": "RichContent",
+        "type": "object"
+      },
+      "RichContent-Output": {
+        "additionalProperties": false,
+        "description": "业务对象中按用途存放的一份正文，图表按局部数据编号引用。",
+        "properties": {
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/ContentBlock-Output"
+            },
+            "title": "Blocks",
+            "type": "array"
+          },
+          "data_tables": {
+            "items": {
+              "$ref": "#/components/schemas/DataTable"
+            },
+            "title": "Data Tables",
+            "type": "array"
+          },
+          "role": {
+            "enum": [
+              "definition",
+              "statement",
+              "reference",
+              "teaching_aid",
+              "derived_view"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "source_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SourceRef"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "schema_version",
+          "role",
+          "blocks",
+          "data_tables",
+          "source_refs"
+        ],
+        "title": "RichContent",
+        "type": "object"
+      },
       "SessionView": {
         "additionalProperties": false,
         "description": "session_id是诊断身份；浏览器登录秘密只通过HttpOnly Cookie传递。",
@@ -733,6 +2168,18 @@
         ],
         "title": "SessionView",
         "type": "object"
+      },
+      "Shape": {
+        "enum": [
+          "circle",
+          "ellipse",
+          "triangle",
+          "square",
+          "pentagon",
+          "hexagon",
+          "point"
+        ],
+        "type": "string"
       },
       "SignInRequest": {
         "additionalProperties": false,
@@ -813,6 +2260,150 @@
           }
         },
         "title": "SignOutResponse",
+        "type": "object"
+      },
+      "SourceRef": {
+        "additionalProperties": false,
+        "description": "来源固定到文件与校验值，或固定事件中的一个片段。",
+        "properties": {
+          "file_page": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Page"
+          },
+          "owner": {
+            "minLength": 1,
+            "title": "Owner",
+            "type": "string"
+          },
+          "printed_page": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Printed Page"
+          },
+          "ref": {
+            "discriminator": {
+              "mapping": {
+                "event_part": "#/components/schemas/EventPartSource",
+                "file": "#/components/schemas/FileSource"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/FileSource"
+              },
+              {
+                "$ref": "#/components/schemas/EventPartSource"
+              }
+            ],
+            "title": "Ref"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Rectangle"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_id": {
+            "minLength": 1,
+            "title": "Source Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "owner",
+          "ref"
+        ],
+        "title": "SourceRef",
+        "type": "object"
+      },
+      "Table": {
+        "additionalProperties": false,
+        "properties": {
+          "caption": {
+            "title": "Caption",
+            "type": "string"
+          },
+          "data_ref": {
+            "minLength": 1,
+            "title": "Data Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data_ref",
+          "caption"
+        ],
+        "title": "Table",
+        "type": "object"
+      },
+      "TableBlock": {
+        "additionalProperties": false,
+        "properties": {
+          "block_id": {
+            "minLength": 1,
+            "title": "Block Id",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Table"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "type": {
+            "const": "table",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "block_id",
+          "provenance",
+          "type",
+          "payload"
+        ],
+        "title": "TableBlock",
+        "type": "object"
+      },
+      "TextSpan": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "type": {
+            "const": "text",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "text"
+        ],
+        "title": "TextSpan",
         "type": "object"
       },
       "UsageGap": {

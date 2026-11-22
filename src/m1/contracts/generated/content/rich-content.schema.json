@@ -1,0 +1,1215 @@
+{
+  "$defs": {
+    "BlankSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "type": {
+          "const": "response_blank",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "label"
+      ],
+      "title": "BlankSpan",
+      "type": "object"
+    },
+    "Chart": {
+      "additionalProperties": false,
+      "properties": {
+        "axis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChartAxis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "caption": {
+          "title": "Caption",
+          "type": "string"
+        },
+        "category_column": {
+          "minLength": 1,
+          "title": "Category Column",
+          "type": "string"
+        },
+        "data_ref": {
+          "minLength": 1,
+          "title": "Data Ref",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "bar",
+            "line",
+            "pie"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "legend": {
+          "title": "Legend",
+          "type": "boolean"
+        },
+        "relationship": {
+          "enum": [
+            "independent",
+            "overlapping_populations",
+            "disjoint_parts"
+          ],
+          "title": "Relationship",
+          "type": "string"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/ChartSeries"
+          },
+          "minItems": 1,
+          "title": "Series",
+          "type": "array"
+        },
+        "slice_colors": {
+          "items": {
+            "$ref": "#/$defs/Color"
+          },
+          "title": "Slice Colors",
+          "type": "array"
+        },
+        "stacked": {
+          "const": false,
+          "default": false,
+          "title": "Stacked",
+          "type": "boolean"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "caption",
+        "data_ref",
+        "category_column",
+        "series",
+        "axis",
+        "legend",
+        "unit",
+        "relationship"
+      ],
+      "title": "Chart",
+      "type": "object"
+    },
+    "ChartAxis": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "max": {
+          "$ref": "#/$defs/DecimalText"
+        },
+        "min": {
+          "$ref": "#/$defs/DecimalText"
+        },
+        "step": {
+          "$ref": "#/$defs/DecimalText"
+        }
+      },
+      "required": [
+        "min",
+        "max",
+        "step",
+        "label"
+      ],
+      "title": "ChartAxis",
+      "type": "object"
+    },
+    "ChartBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "minLength": 1,
+          "title": "Block Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/Chart"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "type": {
+          "const": "chart",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_id",
+        "provenance",
+        "type",
+        "payload"
+      ],
+      "title": "ChartBlock",
+      "type": "object"
+    },
+    "ChartSeries": {
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "$ref": "#/$defs/Color"
+        },
+        "column": {
+          "minLength": 1,
+          "title": "Column",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "column",
+        "label",
+        "color"
+      ],
+      "title": "ChartSeries",
+      "type": "object"
+    },
+    "Color": {
+      "pattern": "^#[0-9a-fA-F]{6}$",
+      "type": "string"
+    },
+    "ContentBlock": {
+      "discriminator": {
+        "mapping": {
+          "chart": "#/$defs/ChartBlock",
+          "diagram": "#/$defs/DiagramBlock",
+          "math_sequence": "#/$defs/MathSequenceBlock",
+          "paragraph": "#/$defs/ParagraphBlock",
+          "table": "#/$defs/TableBlock"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ParagraphBlock"
+        },
+        {
+          "$ref": "#/$defs/MathSequenceBlock"
+        },
+        {
+          "$ref": "#/$defs/TableBlock"
+        },
+        {
+          "$ref": "#/$defs/ChartBlock"
+        },
+        {
+          "$ref": "#/$defs/DiagramBlock"
+        }
+      ]
+    },
+    "DataCell": {
+      "discriminator": {
+        "mapping": {
+          "provided": "#/$defs/ProvidedCell",
+          "response_blank": "#/$defs/MissingCell",
+          "source_missing": "#/$defs/MissingCell",
+          "unreadable": "#/$defs/MissingCell"
+        },
+        "propertyName": "state"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ProvidedCell"
+        },
+        {
+          "$ref": "#/$defs/MissingCell"
+        }
+      ]
+    },
+    "DataColumn": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value_type": {
+          "enum": [
+            "text",
+            "decimal"
+          ],
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "value_type",
+        "unit"
+      ],
+      "title": "DataColumn",
+      "type": "object"
+    },
+    "DataRow": {
+      "additionalProperties": false,
+      "properties": {
+        "cells": {
+          "additionalProperties": {
+            "$ref": "#/$defs/DataCell"
+          },
+          "propertyNames": {
+            "minLength": 1
+          },
+          "title": "Cells",
+          "type": "object"
+        },
+        "row_id": {
+          "minLength": 1,
+          "title": "Row Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "row_id",
+        "cells"
+      ],
+      "title": "DataRow",
+      "type": "object"
+    },
+    "DataTable": {
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/DataColumn"
+          },
+          "minItems": 1,
+          "title": "Columns",
+          "type": "array"
+        },
+        "data_id": {
+          "minLength": 1,
+          "title": "Data Id",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/DataRow"
+          },
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "data_id",
+        "columns",
+        "rows",
+        "provenance"
+      ],
+      "title": "DataTable",
+      "type": "object"
+    },
+    "DecimalText": {
+      "pattern": "^[+-]?[0-9]+(?:\\.[0-9]+)?$",
+      "type": "string"
+    },
+    "Diagram": {
+      "additionalProperties": false,
+      "properties": {
+        "caption": {
+          "title": "Caption",
+          "type": "string"
+        },
+        "layout": {
+          "$ref": "#/$defs/DiagramLayout"
+        },
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/DiagramObject"
+          },
+          "minItems": 1,
+          "title": "Objects",
+          "type": "array"
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/DiagramRelation"
+          },
+          "title": "Relations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "caption",
+        "objects",
+        "relations",
+        "layout"
+      ],
+      "title": "Diagram",
+      "type": "object"
+    },
+    "DiagramBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "minLength": 1,
+          "title": "Block Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/Diagram"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "type": {
+          "const": "diagram",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_id",
+        "provenance",
+        "type",
+        "payload"
+      ],
+      "title": "DiagramBlock",
+      "type": "object"
+    },
+    "DiagramBox": {
+      "additionalProperties": false,
+      "properties": {
+        "box": {
+          "$ref": "#/$defs/Rectangle"
+        },
+        "object_ref": {
+          "minLength": 1,
+          "title": "Object Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object_ref",
+        "box"
+      ],
+      "title": "DiagramBox",
+      "type": "object"
+    },
+    "DiagramLayout": {
+      "additionalProperties": false,
+      "properties": {
+        "boxes": {
+          "items": {
+            "$ref": "#/$defs/DiagramBox"
+          },
+          "title": "Boxes",
+          "type": "array"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/DiagramPoint"
+          },
+          "title": "Points",
+          "type": "array"
+        },
+        "view_box": {
+          "$ref": "#/$defs/Rectangle"
+        }
+      },
+      "required": [
+        "view_box",
+        "boxes",
+        "points"
+      ],
+      "title": "DiagramLayout",
+      "type": "object"
+    },
+    "DiagramObject": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "default": "",
+          "title": "Label",
+          "type": "string"
+        },
+        "object_id": {
+          "minLength": 1,
+          "title": "Object Id",
+          "type": "string"
+        },
+        "shape": {
+          "$ref": "#/$defs/Shape"
+        }
+      },
+      "required": [
+        "object_id",
+        "shape"
+      ],
+      "title": "DiagramObject",
+      "type": "object"
+    },
+    "DiagramPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "object_ref": {
+          "minLength": 1,
+          "title": "Object Ref",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        }
+      },
+      "required": [
+        "object_ref",
+        "position"
+      ],
+      "title": "DiagramPoint",
+      "type": "object"
+    },
+    "DiagramRelation": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "enum": [
+            "source_text",
+            "source_mark",
+            "visual_observation"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "object": {
+          "minLength": 1,
+          "title": "Object",
+          "type": "string"
+        },
+        "predicate": {
+          "const": "inside",
+          "title": "Predicate",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "predicate",
+        "subject",
+        "object",
+        "basis",
+        "source_refs"
+      ],
+      "title": "DiagramRelation",
+      "type": "object"
+    },
+    "EventPartSource": {
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "$ref": "#/$defs/JsonUuid"
+        },
+        "path": {
+          "pattern": "^(?:/(?:[^/~]|~[01])*)*$",
+          "title": "Path",
+          "type": "string"
+        },
+        "record_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Record Id"
+        },
+        "type": {
+          "const": "event_part",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "event_id",
+        "path"
+      ],
+      "title": "EventPartSource",
+      "type": "object"
+    },
+    "FileSource": {
+      "additionalProperties": false,
+      "properties": {
+        "file_id": {
+          "$ref": "#/$defs/JsonUuid"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "type": {
+          "const": "file",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "file_id",
+        "sha256"
+      ],
+      "title": "FileSource",
+      "type": "object"
+    },
+    "JsonUuid": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "MathBinary": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "items": {
+            "$ref": "#/$defs/MathExpression"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Args",
+          "type": "array"
+        },
+        "op": {
+          "enum": [
+            "add",
+            "subtract",
+            "multiply",
+            "divide",
+            "fraction",
+            "equal"
+          ],
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "MathBinary",
+      "type": "object"
+    },
+    "MathExpression": {
+      "discriminator": {
+        "mapping": {
+          "add": "#/$defs/MathBinary",
+          "divide": "#/$defs/MathBinary",
+          "equal": "#/$defs/MathBinary",
+          "fraction": "#/$defs/MathBinary",
+          "group": "#/$defs/MathGroup",
+          "multiply": "#/$defs/MathBinary",
+          "number": "#/$defs/MathNumber",
+          "subtract": "#/$defs/MathBinary",
+          "symbol": "#/$defs/MathSymbol"
+        },
+        "propertyName": "op"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MathNumber"
+        },
+        {
+          "$ref": "#/$defs/MathSymbol"
+        },
+        {
+          "$ref": "#/$defs/MathGroup"
+        },
+        {
+          "$ref": "#/$defs/MathBinary"
+        }
+      ]
+    },
+    "MathGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "items": {
+            "$ref": "#/$defs/MathExpression"
+          },
+          "maxItems": 1,
+          "minItems": 1,
+          "title": "Args",
+          "type": "array"
+        },
+        "op": {
+          "const": "group",
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "MathGroup",
+      "type": "object"
+    },
+    "MathLine": {
+      "additionalProperties": false,
+      "properties": {
+        "expression": {
+          "$ref": "#/$defs/MathExpression"
+        },
+        "relation": {
+          "default": "",
+          "enum": [
+            "",
+            "=",
+            "≈",
+            "→"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "suffix": {
+          "default": "",
+          "title": "Suffix",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expression"
+      ],
+      "title": "MathLine",
+      "type": "object"
+    },
+    "MathNumber": {
+      "additionalProperties": false,
+      "properties": {
+        "cancel_to": {
+          "items": {
+            "$ref": "#/$defs/DecimalText"
+          },
+          "title": "Cancel To",
+          "type": "array"
+        },
+        "op": {
+          "const": "number",
+          "title": "Op",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/DecimalText"
+        }
+      },
+      "required": [
+        "op",
+        "value"
+      ],
+      "title": "MathNumber",
+      "type": "object"
+    },
+    "MathSequence": {
+      "additionalProperties": false,
+      "properties": {
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/MathLine"
+          },
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        },
+        "purpose": {
+          "enum": [
+            "given_work",
+            "reference_work"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        }
+      },
+      "required": [
+        "purpose",
+        "lines"
+      ],
+      "title": "MathSequence",
+      "type": "object"
+    },
+    "MathSequenceBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "minLength": 1,
+          "title": "Block Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/MathSequence"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "type": {
+          "const": "math_sequence",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_id",
+        "provenance",
+        "type",
+        "payload"
+      ],
+      "title": "MathSequenceBlock",
+      "type": "object"
+    },
+    "MathSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "expression": {
+          "$ref": "#/$defs/MathExpression"
+        },
+        "type": {
+          "const": "math",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "expression"
+      ],
+      "title": "MathSpan",
+      "type": "object"
+    },
+    "MathSymbol": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "op": {
+          "const": "symbol",
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "name"
+      ],
+      "title": "MathSymbol",
+      "type": "object"
+    },
+    "MissingCell": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "response_blank",
+            "source_missing",
+            "unreadable"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "MissingCell",
+      "type": "object"
+    },
+    "Paragraph": {
+      "additionalProperties": false,
+      "properties": {
+        "spans": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "math": "#/$defs/MathSpan",
+                "response_blank": "#/$defs/BlankSpan",
+                "text": "#/$defs/TextSpan"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/TextSpan"
+              },
+              {
+                "$ref": "#/$defs/MathSpan"
+              },
+              {
+                "$ref": "#/$defs/BlankSpan"
+              }
+            ]
+          },
+          "title": "Spans",
+          "type": "array"
+        }
+      },
+      "required": [
+        "spans"
+      ],
+      "title": "Paragraph",
+      "type": "object"
+    },
+    "ParagraphBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "minLength": 1,
+          "title": "Block Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/Paragraph"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "type": {
+          "const": "paragraph",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_id",
+        "provenance",
+        "type",
+        "payload"
+      ],
+      "title": "ParagraphBlock",
+      "type": "object"
+    },
+    "Position": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "transformation": {
+          "enum": [
+            "extracted",
+            "normalized",
+            "derived",
+            "generated"
+          ],
+          "title": "Transformation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_refs",
+        "transformation"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "ProvidedCell": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "const": "provided",
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "value"
+      ],
+      "title": "ProvidedCell",
+      "type": "object"
+    },
+    "Rectangle": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "type": "array"
+    },
+    "Shape": {
+      "enum": [
+        "circle",
+        "ellipse",
+        "triangle",
+        "square",
+        "pentagon",
+        "hexagon",
+        "point"
+      ],
+      "type": "string"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "description": "来源固定到文件与校验值，或固定事件中的一个片段。",
+      "properties": {
+        "file_page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Page"
+        },
+        "owner": {
+          "minLength": 1,
+          "title": "Owner",
+          "type": "string"
+        },
+        "printed_page": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Printed Page"
+        },
+        "ref": {
+          "discriminator": {
+            "mapping": {
+              "event_part": "#/$defs/EventPartSource",
+              "file": "#/$defs/FileSource"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FileSource"
+            },
+            {
+              "$ref": "#/$defs/EventPartSource"
+            }
+          ],
+          "title": "Ref"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rectangle"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "owner",
+        "ref"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "Table": {
+      "additionalProperties": false,
+      "properties": {
+        "caption": {
+          "title": "Caption",
+          "type": "string"
+        },
+        "data_ref": {
+          "minLength": 1,
+          "title": "Data Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "data_ref",
+        "caption"
+      ],
+      "title": "Table",
+      "type": "object"
+    },
+    "TableBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "minLength": 1,
+          "title": "Block Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/Table"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "type": {
+          "const": "table",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_id",
+        "provenance",
+        "type",
+        "payload"
+      ],
+      "title": "TableBlock",
+      "type": "object"
+    },
+    "TextSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "type": {
+          "const": "text",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "text"
+      ],
+      "title": "TextSpan",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "业务对象中按用途存放的一份正文，图表按局部数据编号引用。",
+  "properties": {
+    "blocks": {
+      "items": {
+        "$ref": "#/$defs/ContentBlock"
+      },
+      "title": "Blocks",
+      "type": "array"
+    },
+    "data_tables": {
+      "items": {
+        "$ref": "#/$defs/DataTable"
+      },
+      "title": "Data Tables",
+      "type": "array"
+    },
+    "role": {
+      "enum": [
+        "definition",
+        "statement",
+        "reference",
+        "teaching_aid",
+        "derived_view"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/SourceRef"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "role",
+    "blocks",
+    "data_tables",
+    "source_refs"
+  ],
+  "title": "RichContent",
+  "type": "object"
+}

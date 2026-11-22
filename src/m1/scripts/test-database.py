@@ -12,6 +12,8 @@ from pathlib import Path
 from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[1]
+CONTENT_CASES = ROOT.parent / "mvp_foundation/m1/content-representation/structure-draft-v0.1/cases"
+POD_CONTENT_OUTPUT = "/tmp/deermind-content-restored.json"
 
 
 def main() -> int:
@@ -33,12 +35,13 @@ def main() -> int:
             "waits",
             "ai",
             "payload",
+            "content",
         }
         or len(sys.argv) > 2
     ):
         raise ValueError(
             "Expected database, facts, files, reads, rebuild, "
-            "auth, usage, receipts, delivery, execution, waits, ai or payload test group"
+            "auth, usage, receipts, delivery, execution, waits, ai, payload or content test group"
         )
     target = [
         "kubectl",
@@ -133,7 +136,7 @@ def main() -> int:
             "volumes": [{"name": "tmp", "emptyDir": {}}],
         },
     }
-    if group in {"files", "payload"}:
+    if group in {"files", "payload", "content"}:
         environment.append({"name": "M1_TEST_FILES_ROOT", "value": "/data/files"})
         pod["spec"]["volumes"].append(
             {
@@ -147,6 +150,8 @@ def main() -> int:
                 "mountPath": "/data/files",
             }
         )
+    if group == "content":
+        environment.append({"name": "M1_TEST_CONTENT_OUTPUT", "value": POD_CONTENT_OUTPUT})
     if group == "payload":
         # 同一测试容器运行调用端和独立Worker子进程，分别采集峰值。
         pod["spec"]["activeDeadlineSeconds"] = 390
@@ -179,7 +184,13 @@ def main() -> int:
             "waits": "test_waits.py",
             "ai": "test_ai_*.py",
             "payload": "test_payload_codec_integration.py",
+            "content": "test_rich_content.py",
         }[group]
+        inputs = {path.name: path.read_text(encoding="utf-8") for path in fixtures.glob("*.py")}
+        if group == "content":
+            # 四个已有结构稿只进临时测试Pod，不复制到镜像或应用数据。
+            for case_file in ("C02.json", "C03.json", "C05.json", "C06.json"):
+                inputs[case_file] = (CONTENT_CASES / case_file).read_text(encoding="utf-8")
         # 将测试文件放进临时目录；生产包仍只从镜像读取，不挂载源码。
         driver = """
 import json
@@ -196,14 +207,23 @@ with tempfile.TemporaryDirectory() as directory:
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     sys.exit(not result.wasSuccessful())
 """
-        return subprocess.run(
+        result = subprocess.run(
             [*target, "exec", "-i", name, "--", "python", "-c", driver, pattern],
-            input=json.dumps(
-                {path.name: path.read_text(encoding="utf-8") for path in fixtures.glob("*.py")}
-            ),
+            input=json.dumps(inputs),
             text=True,
             timeout=300 if group == "payload" else 150,
-        ).returncode
+        )
+        if group == "content" and result.returncode == 0:
+            restored = subprocess.run(
+                [*target, "exec", name, "--", "cat", POD_CONTENT_OUTPUT],
+                capture_output=True,
+                check=True,
+                timeout=30,
+            )
+            output = Path(os.environ["M1_TEST_CONTENT_OUTPUT"])
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_bytes(restored.stdout)
+        return result.returncode
     finally:
         # 只删除本次创建的Pod，不按选择器或命名空间批量删除。
         subprocess.run(

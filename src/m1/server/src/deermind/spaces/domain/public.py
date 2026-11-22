@@ -3,12 +3,30 @@
 from typing import Annotated, Literal, Protocol
 from uuid import UUID
 
-from pydantic import Field, StringConstraints
+from pydantic import Field, StringConstraints, field_validator
 
 from deermind.abstractions.events import FactModel, Ref
 from deermind.foundation.system.public.errors import Issue
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.public.authentication import SessionView
+from deermind.spaces.domain.rich_content import RichContent, invalid
+
+__all__ = [
+    "SAVE_ACTION",
+    "CreateDomainRequest",
+    "CreateDomainResponse",
+    "CreateDomainResult",
+    "DomainContentRef",
+    "DomainDefinition",
+    "DomainDetail",
+    "DomainList",
+    "DomainRef",
+    "DomainRow",
+    "DomainService",
+    "DomainView",
+    "NonBlank",
+    "RichContent",
+]
 
 SAVE_ACTION = "domain.save_definition"
 
@@ -24,11 +42,22 @@ class DomainRef(FactModel):
 
 
 class DomainDefinition(FactModel):
-    """本增量的领域名称及可空的扩展正文。"""
+    """拥有名称及可选的说明和覆盖范围。"""
 
     name: NonBlank
-    coverage: None = None
-    description: None = None
+    coverage: RichContent | None = None
+    description: RichContent | None = None
+
+    @field_validator("coverage", "description")
+    @classmethod
+    def validate_content(cls, content: RichContent | None) -> RichContent | None:
+        if content is None:
+            return None
+        if content.role != "definition":
+            invalid("DomainDefinition", ("role",), "领域说明和覆盖范围只能使用定义正文。")
+        if content.source_refs:
+            invalid("DomainDefinition", ("source_refs",), "此入口暂未提供外部来源授权。")
+        return content
 
 
 class DomainContentRef(FactModel):

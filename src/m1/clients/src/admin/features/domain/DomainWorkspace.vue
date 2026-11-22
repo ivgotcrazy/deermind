@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { ApiError } from '../../../shared/api/http';
+import RichContent from '../../../shared/content/RichContent.vue';
 import { createDomain, listDomains, readCreateReceipt, readDomain } from './api';
 import type { DomainRow, DomainSession, DomainView } from './api';
 import { clearCreateDraft, readCreateDraft, saveCreateDraft } from './draft';
@@ -228,6 +229,18 @@ onBeforeUnmount(() => {
           <dt>领域编号</dt>
           <dd>{{ detail.object_ref.object_id }}</dd>
         </dl>
+        <section v-if="detail.content.coverage" class="domain-reading" data-rich-field="coverage">
+          <h3>范围</h3>
+          <RichContent :content="detail.content.coverage" />
+        </section>
+        <section
+          v-if="detail.content.description"
+          class="domain-reading"
+          data-rich-field="description"
+        >
+          <h3>说明</h3>
+          <RichContent :content="detail.content.description" />
+        </section>
       </div>
       <div v-else-if="detailError" class="feedback">
         <p role="alert">{{ detailError }}</p>
@@ -418,6 +431,19 @@ dl {
 dd {
   margin: 0;
   overflow-wrap: anywhere;
+}
+
+.domain-reading {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.domain-reading h3 {
+  margin: 0 0 0.625rem;
+  color: var(--color-accent);
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 dialog {

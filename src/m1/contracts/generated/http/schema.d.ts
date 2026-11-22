@@ -212,6 +212,79 @@ export interface components {
             /** Usage Gaps */
             usage_gaps: components["schemas"]["UsageGap"][];
         };
+        /** BlankSpan */
+        BlankSpan: {
+            /** Label */
+            label: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "response_blank";
+        };
+        /** Chart */
+        Chart: {
+            axis: components["schemas"]["ChartAxis"] | null;
+            /** Caption */
+            caption: string;
+            /** Category Column */
+            category_column: string;
+            /** Data Ref */
+            data_ref: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "bar" | "line" | "pie";
+            /** Legend */
+            legend: boolean;
+            /**
+             * Relationship
+             * @enum {string}
+             */
+            relationship: "independent" | "overlapping_populations" | "disjoint_parts";
+            /** Series */
+            series: components["schemas"]["ChartSeries"][];
+            /** Slice Colors */
+            slice_colors?: components["schemas"]["Color"][];
+            /**
+             * Stacked
+             * @default false
+             * @constant
+             */
+            stacked: false;
+            /** Unit */
+            unit: string;
+        };
+        /** ChartAxis */
+        ChartAxis: {
+            /** Label */
+            label: string;
+            max: components["schemas"]["DecimalText"];
+            min: components["schemas"]["DecimalText"];
+            step: components["schemas"]["DecimalText"];
+        };
+        /** ChartBlock */
+        ChartBlock: {
+            /** Block Id */
+            block_id: string;
+            payload: components["schemas"]["Chart"];
+            provenance: components["schemas"]["Provenance"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "chart";
+        };
+        /** ChartSeries */
+        ChartSeries: {
+            color: components["schemas"]["Color"];
+            /** Column */
+            column: string;
+            /** Label */
+            label: string;
+        };
+        Color: string;
         /** ConfirmUsageRequest */
         ConfirmUsageRequest: {
             confirmation: components["schemas"]["ConfirmationInput"];
@@ -264,6 +337,8 @@ export interface components {
             /** Gaps */
             gaps: components["schemas"]["UsageGap"][];
         };
+        "ContentBlock-Input": components["schemas"]["ParagraphBlock-Input"] | components["schemas"]["MathSequenceBlock-Input"] | components["schemas"]["TableBlock"] | components["schemas"]["ChartBlock"] | components["schemas"]["DiagramBlock"];
+        "ContentBlock-Output": components["schemas"]["ParagraphBlock-Output"] | components["schemas"]["MathSequenceBlock-Output"] | components["schemas"]["TableBlock"] | components["schemas"]["ChartBlock"] | components["schemas"]["DiagramBlock"];
         /** CreateDomainRequest */
         CreateDomainRequest: {
             /**
@@ -272,7 +347,7 @@ export interface components {
              */
             action: "create";
             change_note: components["schemas"]["NonBlank"];
-            definition: components["schemas"]["DomainDefinition"];
+            definition: components["schemas"]["DomainDefinition-Input"];
             /**
              * Object Kind
              * @constant
@@ -296,6 +371,113 @@ export interface components {
             gaps?: components["schemas"]["Issue"][];
             object_ref: components["schemas"]["DomainRef"];
         };
+        DataCell: components["schemas"]["ProvidedCell"] | components["schemas"]["MissingCell"];
+        /** DataColumn */
+        DataColumn: {
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Unit */
+            unit: string;
+            /**
+             * Value Type
+             * @enum {string}
+             */
+            value_type: "text" | "decimal";
+        };
+        /** DataRow */
+        DataRow: {
+            /** Cells */
+            cells: {
+                [key: string]: components["schemas"]["DataCell"];
+            };
+            /** Row Id */
+            row_id: string;
+        };
+        /** DataTable */
+        DataTable: {
+            /** Columns */
+            columns: components["schemas"]["DataColumn"][];
+            /** Data Id */
+            data_id: string;
+            provenance: components["schemas"]["Provenance"];
+            /** Rows */
+            rows: components["schemas"]["DataRow"][];
+        };
+        DecimalText: string;
+        /** Diagram */
+        Diagram: {
+            /** Caption */
+            caption: string;
+            layout: components["schemas"]["DiagramLayout"];
+            /** Objects */
+            objects: components["schemas"]["DiagramObject"][];
+            /** Relations */
+            relations: components["schemas"]["DiagramRelation"][];
+        };
+        /** DiagramBlock */
+        DiagramBlock: {
+            /** Block Id */
+            block_id: string;
+            payload: components["schemas"]["Diagram"];
+            provenance: components["schemas"]["Provenance"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "diagram";
+        };
+        /** DiagramBox */
+        DiagramBox: {
+            box: components["schemas"]["Rectangle"];
+            /** Object Ref */
+            object_ref: string;
+        };
+        /** DiagramLayout */
+        DiagramLayout: {
+            /** Boxes */
+            boxes: components["schemas"]["DiagramBox"][];
+            /** Points */
+            points: components["schemas"]["DiagramPoint"][];
+            view_box: components["schemas"]["Rectangle"];
+        };
+        /** DiagramObject */
+        DiagramObject: {
+            /**
+             * Label
+             * @default
+             */
+            label: string;
+            /** Object Id */
+            object_id: string;
+            shape: components["schemas"]["Shape"];
+        };
+        /** DiagramPoint */
+        DiagramPoint: {
+            /** Object Ref */
+            object_ref: string;
+            position: components["schemas"]["Position"];
+        };
+        /** DiagramRelation */
+        DiagramRelation: {
+            /**
+             * Basis
+             * @enum {string}
+             */
+            basis: "source_text" | "source_mark" | "visual_observation";
+            /** Object */
+            object: string;
+            /**
+             * Predicate
+             * @constant
+             */
+            predicate: "inside";
+            /** Source Refs */
+            source_refs: string[];
+            /** Subject */
+            subject: string;
+        };
         /** DomainContentRef */
         DomainContentRef: {
             object_ref: components["schemas"]["DomainRef"];
@@ -314,13 +496,20 @@ export interface components {
         };
         /**
          * DomainDefinition
-         * @description 本增量的领域名称及可空的扩展正文。
+         * @description 拥有名称及可选的说明和覆盖范围。
          */
-        DomainDefinition: {
-            /** Coverage */
-            coverage?: null;
-            /** Description */
-            description?: null;
+        "DomainDefinition-Input": {
+            coverage?: components["schemas"]["RichContent-Input"] | null;
+            description?: components["schemas"]["RichContent-Input"] | null;
+            name: components["schemas"]["NonBlank"];
+        };
+        /**
+         * DomainDefinition
+         * @description 拥有名称及可选的说明和覆盖范围。
+         */
+        "DomainDefinition-Output": {
+            coverage?: components["schemas"]["RichContent-Output"] | null;
+            description?: components["schemas"]["RichContent-Output"] | null;
             name: components["schemas"]["NonBlank"];
         };
         /** DomainDetail */
@@ -364,7 +553,7 @@ export interface components {
         };
         /** DomainView */
         DomainView: {
-            content: components["schemas"]["DomainDefinition"];
+            content: components["schemas"]["DomainDefinition-Output"];
             content_ref: components["schemas"]["DomainContentRef"];
             /** Gaps */
             gaps?: components["schemas"]["Issue"][];
@@ -396,6 +585,30 @@ export interface components {
             /** Request Ref */
             request_ref?: string | null;
         };
+        /** EventPartSource */
+        EventPartSource: {
+            event_id: components["schemas"]["JsonUuid"];
+            /** Path */
+            path: string;
+            /** Record Id */
+            record_id?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "event_part";
+        };
+        /** FileSource */
+        FileSource: {
+            file_id: components["schemas"]["JsonUuid"];
+            /** Sha256 */
+            sha256: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "file";
+        };
         /**
          * Health
          * @description 报告就绪状态，不暴露连接配置或数据库内部信息。
@@ -414,7 +627,233 @@ export interface components {
             path: string;
             related_ref?: components["schemas"]["Ref"] | null;
         };
+        /** Format: uuid */
+        JsonUuid: string;
+        /** MathBinary */
+        "MathBinary-Input": {
+            /** Args */
+            args: components["schemas"]["MathExpression-Input"][];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "add" | "divide" | "equal" | "fraction" | "multiply" | "subtract";
+        };
+        /** MathBinary */
+        "MathBinary-Output": {
+            /** Args */
+            args: components["schemas"]["MathExpression-Output"][];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "add" | "divide" | "equal" | "fraction" | "multiply" | "subtract";
+        };
+        "MathExpression-Input": components["schemas"]["MathNumber"] | components["schemas"]["MathSymbol"] | components["schemas"]["MathGroup-Input"] | components["schemas"]["MathBinary-Input"];
+        "MathExpression-Output": components["schemas"]["MathNumber"] | components["schemas"]["MathSymbol"] | components["schemas"]["MathGroup-Output"] | components["schemas"]["MathBinary-Output"];
+        /** MathGroup */
+        "MathGroup-Input": {
+            /** Args */
+            args: components["schemas"]["MathExpression-Input"][];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "group";
+        };
+        /** MathGroup */
+        "MathGroup-Output": {
+            /** Args */
+            args: components["schemas"]["MathExpression-Output"][];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "group";
+        };
+        /** MathLine */
+        "MathLine-Input": {
+            expression: components["schemas"]["MathExpression-Input"];
+            /**
+             * Relation
+             * @default
+             * @enum {string}
+             */
+            relation: "" | "=" | "≈" | "→";
+            /**
+             * Suffix
+             * @default
+             */
+            suffix: string;
+        };
+        /** MathLine */
+        "MathLine-Output": {
+            expression: components["schemas"]["MathExpression-Output"];
+            /**
+             * Relation
+             * @default
+             * @enum {string}
+             */
+            relation: "" | "=" | "≈" | "→";
+            /**
+             * Suffix
+             * @default
+             */
+            suffix: string;
+        };
+        /** MathNumber */
+        MathNumber: {
+            /** Cancel To */
+            cancel_to?: components["schemas"]["DecimalText"][];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "number";
+            value: components["schemas"]["DecimalText"];
+        };
+        /** MathSequence */
+        "MathSequence-Input": {
+            /** Lines */
+            lines: components["schemas"]["MathLine-Input"][];
+            /**
+             * Purpose
+             * @enum {string}
+             */
+            purpose: "given_work" | "reference_work";
+        };
+        /** MathSequence */
+        "MathSequence-Output": {
+            /** Lines */
+            lines: components["schemas"]["MathLine-Output"][];
+            /**
+             * Purpose
+             * @enum {string}
+             */
+            purpose: "given_work" | "reference_work";
+        };
+        /** MathSequenceBlock */
+        "MathSequenceBlock-Input": {
+            /** Block Id */
+            block_id: string;
+            payload: components["schemas"]["MathSequence-Input"];
+            provenance: components["schemas"]["Provenance"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "math_sequence";
+        };
+        /** MathSequenceBlock */
+        "MathSequenceBlock-Output": {
+            /** Block Id */
+            block_id: string;
+            payload: components["schemas"]["MathSequence-Output"];
+            provenance: components["schemas"]["Provenance"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "math_sequence";
+        };
+        /** MathSpan */
+        "MathSpan-Input": {
+            expression: components["schemas"]["MathExpression-Input"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "math";
+        };
+        /** MathSpan */
+        "MathSpan-Output": {
+            expression: components["schemas"]["MathExpression-Output"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "math";
+        };
+        /** MathSymbol */
+        MathSymbol: {
+            /** Name */
+            name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "symbol";
+        };
+        /** MissingCell */
+        MissingCell: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            state: "response_blank" | "source_missing" | "unreadable";
+        };
         NonBlank: string;
+        /** Paragraph */
+        "Paragraph-Input": {
+            /** Spans */
+            spans: (components["schemas"]["TextSpan"] | components["schemas"]["MathSpan-Input"] | components["schemas"]["BlankSpan"])[];
+        };
+        /** Paragraph */
+        "Paragraph-Output": {
+            /** Spans */
+            spans: (components["schemas"]["TextSpan"] | components["schemas"]["MathSpan-Output"] | components["schemas"]["BlankSpan"])[];
+        };
+        /** ParagraphBlock */
+        "ParagraphBlock-Input": {
+            /** Block Id */
+            block_id: string;
+            payload: components["schemas"]["Paragraph-Input"];
+            provenance: components["schemas"]["Provenance"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "paragraph";
+        };
+        /** ParagraphBlock */
+        "ParagraphBlock-Output": {
+            /** Block Id */
+            block_id: string;
+            payload: components["schemas"]["Paragraph-Output"];
+            provenance: components["schemas"]["Provenance"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "paragraph";
+        };
+        Position: number[];
+        /** Provenance */
+        Provenance: {
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+            /** Source Refs */
+            source_refs: string[];
+            /**
+             * Transformation
+             * @enum {string}
+             */
+            transformation: "extracted" | "normalized" | "derived" | "generated";
+        };
+        /** ProvidedCell */
+        ProvidedCell: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            state: "provided";
+            /** Value */
+            value: string;
+        };
+        Rectangle: number[];
         /** Ref */
         Ref: {
             /** Id */
@@ -455,6 +894,50 @@ export interface components {
             result_refs?: components["schemas"]["Ref"][];
         };
         /**
+         * RichContent
+         * @description 业务对象中按用途存放的一份正文，图表按局部数据编号引用。
+         */
+        "RichContent-Input": {
+            /** Blocks */
+            blocks: components["schemas"]["ContentBlock-Input"][];
+            /** Data Tables */
+            data_tables: components["schemas"]["DataTable"][];
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "definition" | "statement" | "reference" | "teaching_aid" | "derived_view";
+            /**
+             * Schema Version
+             * @constant
+             */
+            schema_version: "1";
+            /** Source Refs */
+            source_refs: components["schemas"]["SourceRef"][];
+        };
+        /**
+         * RichContent
+         * @description 业务对象中按用途存放的一份正文，图表按局部数据编号引用。
+         */
+        "RichContent-Output": {
+            /** Blocks */
+            blocks: components["schemas"]["ContentBlock-Output"][];
+            /** Data Tables */
+            data_tables: components["schemas"]["DataTable"][];
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "definition" | "statement" | "reference" | "teaching_aid" | "derived_view";
+            /**
+             * Schema Version
+             * @constant
+             */
+            schema_version: "1";
+            /** Source Refs */
+            source_refs: components["schemas"]["SourceRef"][];
+        };
+        /**
          * SessionView
          * @description session_id是诊断身份；浏览器登录秘密只通过HttpOnly Cookie传递。
          */
@@ -473,6 +956,8 @@ export interface components {
              */
             session_id: string;
         };
+        /** @enum {string} */
+        Shape: "circle" | "ellipse" | "triangle" | "square" | "pentagon" | "hexagon" | "point";
         /**
          * SignInRequest
          * @description 长度及限额由已确认的部署配置校验；不截断密码。
@@ -507,6 +992,52 @@ export interface components {
              * @constant
              */
             signed_out: true;
+        };
+        /**
+         * SourceRef
+         * @description 来源固定到文件与校验值，或固定事件中的一个片段。
+         */
+        SourceRef: {
+            /** File Page */
+            file_page?: number | null;
+            /** Owner */
+            owner: string;
+            /** Printed Page */
+            printed_page?: string | null;
+            /** Ref */
+            ref: components["schemas"]["FileSource"] | components["schemas"]["EventPartSource"];
+            region?: components["schemas"]["Rectangle"] | null;
+            /** Source Id */
+            source_id: string;
+        };
+        /** Table */
+        Table: {
+            /** Caption */
+            caption: string;
+            /** Data Ref */
+            data_ref: string;
+        };
+        /** TableBlock */
+        TableBlock: {
+            /** Block Id */
+            block_id: string;
+            payload: components["schemas"]["Table"];
+            provenance: components["schemas"]["Provenance"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "table";
+        };
+        /** TextSpan */
+        TextSpan: {
+            /** Text */
+            text: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "text";
         };
         /**
          * UsageGap

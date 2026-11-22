@@ -7,6 +7,7 @@ from deermind.entrypoints.api.app import create_app
 from deermind.entrypoints.api.errors import api_error
 from deermind.foundation.system.public.errors import ErrorResponse, RequestError
 from fastapi import Request
+from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel
 from sqlalchemy.exc import OperationalError
 from starlette.types import Message
@@ -67,6 +68,30 @@ class ApiContractTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn(b"secret", bytes(response.body))
         limited = await api_error(request, RequestError(429, "rate_limited", "稍后重试", 30))
         self.assertEqual(limited.headers["Retry-After"], "30")
+
+    async def test_content_validation_reports_locations_without_input(self) -> None:
+        error = RequestValidationError(
+            [
+                {
+                    "loc": ("body", "definition", "description", "blocks", 0, "chart", "payload"),
+                    "type": "invalid_value",
+                    "input": "private-content",
+                    "msg": "includes private-content",
+                },
+                {
+                    "loc": ("body", "definition", "coverage", "private-key"),
+                    "type": "extra_forbidden",
+                },
+            ]
+        )
+        response = await api_error(Request({"type": "http"}), error)
+        self.assertEqual(response.status_code, 400)
+        parsed = ErrorResponse.model_validate_json(bytes(response.body))
+        self.assertEqual(
+            [issue.path for issue in parsed.error.issues],
+            ["/definition/description/blocks/0/payload", "/definition/coverage"],
+        )
+        self.assertNotIn(b"private-", bytes(response.body))
 
     def test_business_routes_declare_common_error_and_exact_receipt_result(self) -> None:
         schema = create_app().openapi()
