@@ -125,11 +125,11 @@ NATS首次在创建测试流前未收到预期握手；单项复测通过，但�
 
 ## E01-07授权查询接入
 
-`test.sh reads`沿用数据库组的目标、Secret和构建镜像参数，在随机PG测试库及临时文件目录验证字段/来源授权、固定上界分页、连续扫描、附件损坏和读取限额。业务权限使用明确标记的夹具，正式账号维护另测；不接HTTP或登录。JSON Pointer单元测试纳入local组，结果及限制见[查询交付](../deploy/environments/local-wsl/E01-07-reads.md)。
+`test.sh reads`沿用数据库组的目标、Secret和构建镜像参数，在随机 PostgreSQL 测试库及临时文件目录验证范围和请求关联条件、固定上界分页、逐号扫描、片段读取及附件校验。JSON Pointer 单元测试纳入 local 组。最新回归见[读取与重建验证](../deploy/environments/local-wsl/E01-08-rebuild.md#3-验证与限制)。
 
 ## E01-08受控重建接入
 
-`test.sh rebuild`沿用数据库目标、Secret及镜像配置，只在随机测试库验证隔离重建、断点恢复、重复代次、来源变化、损坏正文和失败回滚。独立进程执行维护CLI，普通应用账号、未停写和并发维护均拒绝；测试清理只涉及本次资源。结果及限制见[重建交付](../deploy/environments/local-wsl/E01-08-rebuild.md)。
+`test.sh rebuild`沿用数据库目标、Secret及镜像配置，在随机测试库验证分批隔离、逐号扫描、原子发布、中断回滚和失败后重做。独立进程验证维护 CLI，覆盖普通应用身份、正在写入及并发维护时的拒绝。结果见[重建验证](../deploy/environments/local-wsl/E01-08-rebuild.md#3-验证与限制)。
 
 ## E01-09认证与生成类型接入
 
