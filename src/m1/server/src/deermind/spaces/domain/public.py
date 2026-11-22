@@ -1,5 +1,6 @@
 """领域管理的公开模型和应用端口。"""
 
+from datetime import datetime
 from typing import Annotated, Literal, Protocol, cast
 from uuid import UUID
 
@@ -29,12 +30,13 @@ __all__ = [
 ]
 
 SAVE_ACTION = "domain.save_definition"
+CONFIRM_PATH_ACTION = "domain.confirm_kc_path"
 
 type NonBlank = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 type RequestId = Annotated[str, Field(min_length=1, max_length=128)]
 type Version = Annotated[int, Field(ge=1, le=2**63 - 1)]
 type JsonUuid = Annotated[UUID, Field(strict=False)]
-type MemberKind = Literal["kc", "task"]
+type MemberKind = Literal["kc", "task", "solution"]
 
 
 class DomainRef(FactModel):
@@ -55,7 +57,13 @@ class TaskRef(FactModel):
     version: Version
 
 
-type MemberRef = KnowledgeRef | TaskRef
+class SolutionRef(FactModel):
+    kind: Literal["solution"]
+    object_id: JsonUuid
+    version: Version
+
+
+type MemberRef = KnowledgeRef | TaskRef | SolutionRef
 type ObjectRef = DomainRef | MemberRef
 
 
@@ -106,6 +114,13 @@ class TaskParameter(FactModel):
     constraints: NonBlank
 
 
+class Prerequisite(FactModel):
+    task_ref: TaskRef
+    reason: NonBlank
+    applies_to: Literal["all", "specified"]
+    method_refs: list[SolutionRef] = Field(default_factory=list[SolutionRef])
+
+
 class TaskDefinition(FactModel):
     """可保存未填齐的定义；就绪要求与个人评价独立。"""
 
@@ -116,6 +131,8 @@ class TaskDefinition(FactModel):
     applicability: RichContent | None = None
     boundaries: RichContent | None = None
     parameters: list[TaskParameter] = Field(default_factory=list[TaskParameter])
+    method_refs: list[SolutionRef] = Field(default_factory=list[SolutionRef])
+    prerequisites: list[Prerequisite] = Field(default_factory=list[Prerequisite])
 
     @field_validator(
         "responsibility", "expected_output", "completion_conditions", "applicability", "boundaries"
@@ -149,11 +166,52 @@ def task_gaps(content: TaskDefinition) -> list[Issue]:
         ("applicability", content.applicability, "适用条件"),
         ("boundaries", content.boundaries, "适用边界"),
     )
-    return [
+    gaps = [
         Issue(code="missing_content", path=f"/{field}", message=f"请补充{label}。")
         for field, value, label in fields
         if value is None
-    ] + [Issue(code="missing_methods", path="/method_refs", message="尚未关联方法。")]
+    ]
+    if not content.method_refs:
+        gaps.append(Issue(code="missing_methods", path="/method_refs", message="尚未关联方法。"))
+    return gaps
+
+
+class SolutionDefinition(FactModel):
+    """方法描述本层思路、依据、适用条件和关键过程。"""
+
+    name: NonBlank
+    approach: RichContent | None = None
+    rationale: RichContent | None = None
+    applicability: RichContent | None = None
+    key_process: RichContent | None = None
+    kc_refs: list[KnowledgeRef] = Field(default_factory=list[KnowledgeRef])
+
+    @field_validator("approach", "rationale", "applicability", "key_process")
+    @classmethod
+    def validate_content(cls, content: RichContent | None) -> RichContent | None:
+        if content is not None and not content.blocks:
+            invalid(cls.__name__, ("blocks",), "请提供正文，未填项请留空。")
+        return definition_content(content, cls.__name__)
+
+
+def solution_gaps(content: SolutionDefinition) -> list[Issue]:
+    fields = (
+        ("approach", content.approach, "方法思路"),
+        ("rationale", content.rationale, "方法依据"),
+        ("applicability", content.applicability, "适用条件"),
+        ("key_process", content.key_process, "关键过程"),
+    )
+    gaps = [
+        Issue(code="missing_content", path=f"/{field}", message=f"请补充{label}。")
+        for field, value, label in fields
+        if value is None
+    ]
+    if not content.kc_refs:
+        gaps.append(Issue(code="missing_knowledge", path="/kc_refs", message="尚未关联知识成分。"))
+    return gaps
+
+
+type DefinitionContent = DomainDefinition | KnowledgeComponent | TaskDefinition | SolutionDefinition
 
 
 class DomainContentRef(FactModel):
@@ -220,6 +278,31 @@ class DeleteTaskRequest(_TaskRequest):
     expected_version: Version
 
 
+class _SolutionRequest(FactModel):
+    request_id: RequestId
+    object_kind: Literal["solution"]
+    change_note: NonBlank
+
+
+class CreateSolutionRequest(_SolutionRequest):
+    action: Literal["create"]
+    domain_id: JsonUuid
+    definition: SolutionDefinition
+
+
+class UpdateSolutionRequest(_SolutionRequest):
+    action: Literal["update"]
+    object_ref: SolutionRef
+    expected_version: Version
+    definition: SolutionDefinition
+
+
+class DeleteSolutionRequest(_SolutionRequest):
+    action: Literal["soft_delete"]
+    object_ref: SolutionRef
+    expected_version: Version
+
+
 def save_variant(value: object) -> str | None:
     """同时以对象种类和动作定位唯一请求模型。"""
     if isinstance(value, dict):
@@ -239,7 +322,10 @@ type SaveRequest = Annotated[
     | Annotated[DeleteKnowledgeRequest, Tag("kc.soft_delete")]
     | Annotated[CreateTaskRequest, Tag("task.create")]
     | Annotated[UpdateTaskRequest, Tag("task.update")]
-    | Annotated[DeleteTaskRequest, Tag("task.soft_delete")],
+    | Annotated[DeleteTaskRequest, Tag("task.soft_delete")]
+    | Annotated[CreateSolutionRequest, Tag("solution.create")]
+    | Annotated[UpdateSolutionRequest, Tag("solution.update")]
+    | Annotated[DeleteSolutionRequest, Tag("solution.soft_delete")],
     Discriminator(save_variant),
 ]
 
@@ -274,7 +360,19 @@ class SaveTaskResult(FactModel):
     gaps: list[Issue]
 
 
-type SaveResult = CreateDomainResult | SaveKnowledgeResult | SaveTaskResult
+class SolutionContentRef(FactModel):
+    owner: Literal["domain"] = "domain"
+    object_ref: SolutionRef
+    path: Literal[""] = ""
+
+
+class SaveSolutionResult(FactModel):
+    object_ref: SolutionRef
+    content_ref: SolutionContentRef
+    gaps: list[Issue]
+
+
+type SaveResult = CreateDomainResult | SaveKnowledgeResult | SaveTaskResult | SaveSolutionResult
 
 
 class CreateDomainResponse(FactModel):
@@ -349,7 +447,73 @@ class TaskDetail(FactModel):
     object: TaskView
 
 
-type ObjectDetail = DomainDetail | KnowledgeDetail | TaskDetail
+class SolutionView(FactModel):
+    object_ref: SolutionRef
+    content: SolutionDefinition
+    content_ref: SolutionContentRef
+    is_identity_deleted: bool
+    source_refs: list[Ref] = Field(default_factory=list[Ref])
+    source_event_id: UUID
+    gaps: list[Issue]
+
+
+class SolutionDetail(FactModel):
+    object: SolutionView
+
+
+type ObjectDetail = DomainDetail | KnowledgeDetail | TaskDetail | SolutionDetail
+
+
+class KnowledgeUse(FactModel):
+    method_ref: SolutionRef
+    kc_ref: KnowledgeRef
+
+
+class KnowledgeSources(FactModel):
+    kc_id: UUID
+    uses: list[KnowledgeUse]
+
+
+class ConfirmKCPathRequest(FactModel):
+    request_id: RequestId
+    kc_ref: KnowledgeRef
+    task_ref: TaskRef
+    solution_ref: SolutionRef
+    observable_behavior: NonBlank
+    insufficient_examples: Annotated[list[NonBlank], Field(min_length=1)]
+    not_direct_reason: NonBlank | None = None
+
+
+class ConfirmKCPathResult(FactModel):
+    confirmation_ref: Ref
+
+
+class ConfirmKCPathResponse(FactModel):
+    request_ref: UUID
+    result: ConfirmKCPathResult
+
+
+class KCPathView(FactModel):
+    confirmation_ref: Ref
+    basis_ref: Ref
+    kc_ref: KnowledgeRef
+    task_ref: TaskRef
+    solution_ref: SolutionRef
+    observable_behavior: str
+    insufficient_examples: list[str]
+    confirmed_by: Ref
+    confirmed_at: datetime
+    source_event_id: UUID
+
+
+class TaskDependencies(FactModel):
+    task_ref: TaskRef
+    method_refs: list[SolutionRef]
+    kc_refs: list[KnowledgeRef]
+    kc_sources: list[KnowledgeSources]
+    prerequisites: list[Prerequisite]
+    gaps: list[Issue]
+    kc_test_paths: list[KCPathView]
 
 
 class DomainService(Protocol):
@@ -379,6 +543,23 @@ class DomainService(Protocol):
         self, session: SessionView, body: SaveRequest
     ) -> CreateDomainResponse: ...
 
+    async def read_dependencies(
+        self,
+        session: SessionView,
+        domain_id: UUID,
+        task_id: UUID,
+        version: int,
+        solution_ids: list[UUID] | None,
+    ) -> TaskDependencies: ...
+
     async def read_receipt(
         self, principal_id: UUID, session_id: UUID, query: ReceiptQuery
     ) -> ReceiptView[SaveResult]: ...
+
+    async def confirm_kc_path(
+        self, session: SessionView, domain_id: UUID, body: ConfirmKCPathRequest
+    ) -> ConfirmKCPathResponse: ...
+
+    async def read_path_receipt(
+        self, principal_id: UUID, session_id: UUID, query: ReceiptQuery
+    ) -> ReceiptView[ConfirmKCPathResult]: ...

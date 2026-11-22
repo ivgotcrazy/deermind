@@ -30,7 +30,7 @@ from deermind.infrastructure.files.check import check_storage
 from deermind.infrastructure.nats.connection import MessagingSettings
 from deermind.infrastructure.nats.realtime import ViewNotices
 from deermind.product.public.errors import RequestConflict
-from deermind.spaces.domain.public import SAVE_ACTION
+from deermind.spaces.domain.public import CONFIRM_PATH_ACTION, SAVE_ACTION
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel
@@ -97,6 +97,7 @@ def create_app(
                             "account",
                         ): app.state.usage.read_receipt,
                         (SAVE_ACTION, "account"): domain.read_receipt,
+                        (CONFIRM_PATH_ACTION, "domain"): domain.read_path_receipt,
                     }
                 )
                 app.state.realtime = hub

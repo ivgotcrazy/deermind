@@ -13,6 +13,7 @@ from alembic import command
 from deermind.abstractions.events import Ref, StoredEvent
 from deermind.entrypoints.api.app import create_app
 from deermind.entrypoints.maintenance.database import migration_config, upgrade
+from deermind.foundation.system.public.errors import ErrorDetail
 from deermind.product.public.authentication import SessionView
 from fastapi.testclient import TestClient
 from httpx2 import Response
@@ -405,6 +406,372 @@ class DomainTests(DatabaseTestCase):
             self.assertEqual(old["object"], {**before, "is_identity_deleted": True})
             self.assertEqual(self.persisted_counts(), (3, 5, 5, 5, 5, 1))
 
+    def test_solution_relationships_exact_versions_scope_and_cycles(self) -> None:
+        """固定版本可追溯，全量与方法过滤都不把先导知识纳入。"""
+        with self.api() as client:
+            admin = _login(client, "operator")
+            headers = session_headers(admin)
+            root = _save(client, admin, _body(uuid4(), "分数")).raise_for_status().json()
+            other = _save(client, admin, _body(uuid4(), "另一领域")).raise_for_status().json()
+            domain_id = root["result"]["object_ref"]["object_id"]
+            other_id = other["result"]["object_ref"]["object_id"]
+
+            def create(
+                kind: str, content: dict[str, JsonValue], *, domain: str = domain_id
+            ) -> Response:
+                return _save(
+                    client,
+                    admin,
+                    {
+                        "request_id": str(uuid4()),
+                        "object_kind": kind,
+                        "action": "create",
+                        "domain_id": domain,
+                        "definition": content,
+                        "change_note": "建立定义",
+                    },
+                )
+
+            def revise(
+                kind: str, ref: dict[str, JsonValue], content: dict[str, JsonValue]
+            ) -> Response:
+                return _save(
+                    client,
+                    admin,
+                    {
+                        "request_id": str(uuid4()),
+                        "object_kind": kind,
+                        "action": "update",
+                        "object_ref": ref,
+                        "expected_version": ref["version"],
+                        "definition": content,
+                        "change_note": "修订定义",
+                    },
+                )
+
+            def saved(response: Response) -> dict[str, JsonValue]:
+                self.assertEqual(response.status_code, 200, response.text)
+                return response.json()["result"]["object_ref"]
+
+            knowledge: dict[str, JsonValue] = {
+                "name": "分数的意义",
+                "definition": _content("把整体平均分成若干份"),
+                "applicability": _content("可以确定参照整体"),
+            }
+            kc1 = saved(create("kc", knowledge))
+            kc2 = saved(revise("kc", kc1, {**knowledge, "name": "分数的意义（修订）"}))
+            another = saved(create("kc", {**knowledge, "name": "等量乘法"}))
+            foreign = saved(create("kc", knowledge, domain=other_id))
+            invalid = create("solution", {"name": "跨领域", "kc_refs": [foreign]})
+            self.assertEqual(invalid.status_code, 400)
+            self.assertEqual(invalid.json()["error"]["issues"][0]["path"], "/kc_refs/0")
+            invalid = create("task", {"name": "直接挂KC", "kc_refs": [kc1]})
+            self.assertEqual(invalid.status_code, 400)
+            first = saved(
+                create(
+                    "solution",
+                    {
+                        "name": "先求增加量",
+                        "key_process": _content("求出增加量再相加"),
+                        "kc_refs": [kc1, another],
+                    },
+                )
+            )
+            second = saved(create("solution", {"name": "直接乘新比例", "kc_refs": [kc2]}))
+            prior_kc = saved(create("kc", {**knowledge, "name": "参照整体"}))
+            prior_method = saved(
+                create("solution", {"name": "辨认参照整体", "kc_refs": [prior_kc]})
+            )
+            prior = saved(create("task", {"name": "识别参照整体", "method_refs": [prior_method]}))
+            task1 = saved(create("task", {"name": "增加四分之一"}))
+            link: dict[str, JsonValue] = {
+                "task_ref": prior,
+                "reason": "先辨认参照整体",
+                "applies_to": "specified",
+                "method_refs": [first],
+            }
+            definition: dict[str, JsonValue] = {
+                "name": "增加四分之一",
+                "method_refs": [first, second],
+                "prerequisites": [link],
+            }
+            invalid = revise(
+                "task",
+                task1,
+                {
+                    **definition,
+                    "prerequisites": [{**link, "task_ref": task1}],
+                },
+            )
+            self.assertEqual(invalid.json()["error"]["code"], "dependency_cycle")
+            invalid = revise(
+                "task",
+                task1,
+                {
+                    **definition,
+                    "prerequisites": [{**link, "applies_to": "all"}],
+                },
+            )
+            self.assertEqual(invalid.json()["error"]["code"], "invalid_reference")
+            task2 = saved(revise("task", task1, definition))
+            cycle = revise(
+                "task",
+                prior,
+                {
+                    "name": "识别参照整体",
+                    "prerequisites": [
+                        {"task_ref": task2, "reason": "形成回路", "applies_to": "all"}
+                    ],
+                },
+            )
+            self.assertEqual(cycle.status_code, 400)
+            self.assertEqual(cycle.json()["error"]["code"], "dependency_cycle")
+
+            route = f"{_LIST}/{domain_id}/dependencies"
+            query = {"task_id": str(task2["object_id"]), "version": 2}
+            full = client.get(route, headers=headers, params=query).raise_for_status().json()
+            self.assertEqual(full["method_refs"], [first, second])
+            self.assertCountEqual(full["kc_refs"], [kc1, kc2, another])
+            versions = next(
+                group for group in full["kc_sources"] if group["kc_id"] == kc1["object_id"]
+            )
+            self.assertCountEqual(
+                versions["uses"],
+                [
+                    {"method_ref": first, "kc_ref": kc1},
+                    {"method_ref": second, "kc_ref": kc2},
+                ],
+            )
+            a_only = (
+                client.get(
+                    route,
+                    headers=headers,
+                    params={**query, "solution_ids": str(first["object_id"])},
+                )
+                .raise_for_status()
+                .json()
+            )
+            self.assertCountEqual(a_only["kc_refs"], [kc1, another])
+            self.assertEqual(a_only["prerequisites"], [link])
+            b_only = (
+                client.get(
+                    route,
+                    headers=headers,
+                    params={**query, "solution_ids": str(second["object_id"])},
+                )
+                .raise_for_status()
+                .json()
+            )
+            self.assertEqual(b_only["kc_refs"], [kc2])
+            self.assertEqual(b_only["prerequisites"], [])
+            wrong_method = client.get(
+                route,
+                headers=headers,
+                params={**query, "solution_ids": str(prior_method["object_id"])},
+            )
+            self.assertEqual(wrong_method.json()["error"]["code"], "invalid_reference")
+            original = (
+                client.get(route, headers=headers, params={**query, "version": 1})
+                .raise_for_status()
+                .json()
+            )
+            self.assertEqual(original["method_refs"], [])
+
+            removed = _save(
+                client,
+                admin,
+                {
+                    "request_id": str(uuid4()),
+                    "object_kind": "kc",
+                    "action": "soft_delete",
+                    "object_ref": kc2,
+                    "expected_version": 2,
+                    "change_note": "保留旧引用",
+                },
+            )
+            removed.raise_for_status()
+            invalid = create("solution", {"name": "不能新用已移除的知识", "kc_refs": [kc1]})
+            self.assertEqual(invalid.json()["error"]["code"], "invalid_reference")
+            self.assertEqual(
+                client.get(route, headers=headers, params=query).raise_for_status().json(), full
+            )
+
+        with self.engine.connect() as connection:
+            self.assertEqual(
+                connection.scalar(text("SELECT count(*) FROM domain.object_reference")), 9
+            )
+            self.assertFalse(
+                connection.scalar(
+                    text(
+                        "SELECT has_table_privilege("
+                        "'deermind_app','domain.object_reference','DELETE')"
+                    )
+                )
+            )
+
+    def test_kc_direct_path_records_basis_and_preserves_old_versions(self) -> None:
+        """引用和只代入都无确认，确认固定三版本，原收据和依据可查。"""
+        with self.api() as client:
+            admin = _login(client, "operator")
+            headers = session_headers(admin)
+            root = _save(client, admin, _body(uuid4(), "匀速路程")).raise_for_status().json()
+            root_id = root["result"]["object_ref"]["object_id"]
+            paths_url = f"{_LIST}/{root_id}/kc-test-paths"
+            dependencies_url = f"{_LIST}/{root_id}/dependencies"
+
+            def create(kind: str, content: dict[str, JsonValue]) -> dict[str, JsonValue]:
+                reply = _save(
+                    client,
+                    admin,
+                    {
+                        "request_id": str(uuid4()),
+                        "object_kind": kind,
+                        "action": "create",
+                        "domain_id": root_id,
+                        "definition": content,
+                        "change_note": "登记",
+                    },
+                )
+                self.assertEqual(reply.status_code, 200, reply.text)
+                return reply.json()["result"]["object_ref"]
+
+            def confirm(payload: dict[str, JsonValue]) -> Response:
+                return client.post(paths_url, json=payload, headers={"Origin": _ORIGIN, **headers})
+
+            def states(ref: dict[str, JsonValue], version: int = 1) -> list[JsonValue]:
+                return (
+                    client.get(
+                        dependencies_url,
+                        headers=headers,
+                        params={"task_id": str(ref["object_id"]), "version": version},
+                    )
+                    .raise_for_status()
+                    .json()["kc_test_paths"]
+                )
+
+            def original(request_id: str) -> dict[str, JsonValue]:
+                return (
+                    client.get(
+                        _RECEIPT,
+                        headers=headers,
+                        params={
+                            "action": "domain.confirm_kc_path",
+                            "resource_kind": "domain",
+                            "resource_id": root_id,
+                            "request_id": request_id,
+                        },
+                    )
+                    .raise_for_status()
+                    .json()
+                )
+
+            kc = create(
+                "kc",
+                {
+                    "name": "匀速路程公式为何成立",
+                    "definition": _content("每单位时间经过相同路程"),
+                    "applicability": _content("匀速，单位一致"),
+                },
+            )
+            method = create(
+                "solution",
+                {
+                    "name": "按单位时间累加",
+                    "rationale": _content("同样的量重复相加"),
+                    "applicability": _content("每单位时间经过相同路程"),
+                    "key_process": _content("用重复累加说明乘法"),
+                    "kc_refs": [kc],
+                },
+            )
+            draft_task = create("task", {"name": "只有引用", "method_refs": [method]})
+            complete: dict[str, JsonValue] = {
+                "name": "解释 d=v×t",
+                "method_refs": [method],
+                "responsibility": _content("解释速度的含义及路程怎样累加"),
+                "expected_output": _content("说明每个量的意义"),
+                "completion_conditions": _content("说明匀速条件与单位"),
+            }
+            good = create("task", complete)
+            unassociated = create("task", {**complete, "name": "未采用方法", "method_refs": []})
+            reference: dict[str, JsonValue] = {
+                "kc_ref": kc,
+                "solution_ref": method,
+                "task_ref": good,
+                "observable_behavior": "解释每单位时间的路程怎样累加，并说出匀速条件。",
+                "insufficient_examples": ["只把 3 和 4 代入得 12"],
+            }
+            self.assertEqual(states(good), [])
+            detached = confirm({**reference, "request_id": str(uuid4()), "task_ref": unassociated})
+            self.assertEqual(detached.status_code, 400)
+            self.assertEqual(detached.json()["error"]["code"], "invalid_reference")
+            missing = confirm({**reference, "request_id": str(uuid4()), "task_ref": draft_task})
+            self.assertEqual(missing.status_code, 409)
+            self.assertEqual(missing.json()["error"]["code"], "not_ready")
+            self.assertEqual(states(draft_task), [])
+
+            negative_id = str(uuid4())
+            negative: dict[str, JsonValue] = {
+                **reference,
+                "request_id": negative_id,
+                "not_direct_reason": "当前证据只要求代入，没有直接观察解释责任。",
+            }
+            rejected = confirm(negative)
+            self.assertEqual(rejected.status_code, 409)
+            recovered = original(negative_id)
+            self.assertEqual(recovered["receipt_state"], "rejected")
+            self.assertEqual(
+                ErrorDetail.model_validate(recovered["error"]),
+                ErrorDetail.model_validate(rejected.json()["error"]),
+            )
+            self.assertTrue(recovered["result_refs"])
+            self.assertEqual(confirm(negative).json(), rejected.json())
+            self.assertEqual(states(good), [])
+
+            positive_id = str(uuid4())
+            positive = {**reference, "request_id": positive_id}
+            approved = confirm(positive).raise_for_status().json()
+            self.assertEqual(original(positive_id)["result"], approved["result"])
+            self.assertEqual(confirm(positive).raise_for_status().json(), approved)
+            duplicate = confirm({**positive, "request_id": str(uuid4())}).raise_for_status().json()
+            self.assertEqual(duplicate["result"], approved["result"])
+            snapshot = states(good)
+            self.assertEqual(len(snapshot), 1)
+
+            revised = _save(
+                client,
+                admin,
+                {
+                    "request_id": str(uuid4()),
+                    "object_kind": "task",
+                    "action": "update",
+                    "object_ref": good,
+                    "expected_version": 1,
+                    "definition": {**complete, "name": "解释 d=v×t（修订）"},
+                    "change_note": "核对旧确认保留",
+                },
+            )
+            revised.raise_for_status()
+            self.assertEqual(states(good, 2), [])
+            self.assertEqual(states(good), snapshot)
+
+        with self.engine.connect() as connection:
+            self.assertEqual(connection.scalar(text("SELECT count(*) FROM domain.kc_test_path")), 1)
+            self.assertEqual(connection.scalar(text("SELECT count(*) FROM domain.artifact")), 3)
+            events = connection.execute(
+                text(
+                    "SELECT event_type,jsonb_array_length(payload->'records') FROM runtime.events "
+                    "WHERE event_type IN ('DomainKCTestPathConfirmed','DomainKCTestPathNotReady')"
+                )
+            ).all()
+            self.assertCountEqual(
+                events,
+                [
+                    ("DomainKCTestPathConfirmed", 2),
+                    ("DomainKCTestPathNotReady", 1),
+                    ("DomainKCTestPathNotReady", 1),
+                ],
+            )
+
     def test_create_list_details_replay_and_trace(self) -> None:
         first_request, second_request = uuid4(), uuid4()
         first_body = _body(first_request, "小学数学")
@@ -708,7 +1075,7 @@ class DomainMigrationTests(DatabaseTestCase):
         with self.engine.connect() as connection:
             self.assertEqual(
                 connection.scalar(text("SELECT version_num FROM public.alembic_version")),
-                "0013_kc_versions",
+                "0015_kc_test_paths",
             )
             self.assertEqual(connection.execute(facts).all(), old_events)
             self.assertEqual(connection.execute(accounts).all(), old_accounts)

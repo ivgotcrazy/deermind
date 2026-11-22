@@ -69,10 +69,11 @@ export function listMembers(
   signal: AbortSignal,
   name: string,
   cursor?: string,
+  limit?: number,
 ) {
   return get('/api/m1/domains/{domain_id}/objects', {
     params: { domain_id: domainId },
-    query: { kinds: [kind], name, cursor },
+    query: { kinds: [kind], name, cursor, limit },
     session,
     signal,
   });
@@ -100,18 +101,81 @@ export function saveMember(body: MemberRequest, session: Session, signal: AbortS
   return post('/api/m1/domain-definitions', body, { session, signal });
 }
 
+export function readDependencies(
+  domainId: string,
+  task: TaskRef,
+  session: Session,
+  signal: AbortSignal,
+  solutionId: string,
+) {
+  return get('/api/m1/domains/{domain_id}/dependencies', {
+    params: { domain_id: domainId },
+    query: {
+      task_id: task.object_id,
+      version: task.version,
+      solution_ids: solutionId ? [solutionId] : undefined,
+    },
+    session,
+    signal,
+  });
+}
+
+export function saveKCPath(
+  domainId: string,
+  body: ConfirmKCPathRequest,
+  session: Session,
+  signal: AbortSignal,
+) {
+  return post('/api/m1/domains/{domain_id}/kc-test-paths', body, {
+    params: { domain_id: domainId },
+    session,
+    signal,
+  });
+}
+
+export function readKCPathReceipt(
+  domainId: string,
+  requestId: string,
+  session: Session,
+  signal: AbortSignal,
+) {
+  return get('/api/m1/requests/receipt', {
+    query: {
+      action: 'domain.confirm_kc_path',
+      resource_kind: 'domain',
+      resource_id: domainId,
+      request_id: requestId,
+    },
+    session,
+    signal,
+  });
+}
+
 export type MemberRequest =
   | components['schemas']['CreateKnowledgeRequest']
   | components['schemas']['UpdateKnowledgeRequest']
   | components['schemas']['DeleteKnowledgeRequest']
   | components['schemas']['CreateTaskRequest']
   | components['schemas']['UpdateTaskRequest']
-  | components['schemas']['DeleteTaskRequest'];
+  | components['schemas']['DeleteTaskRequest']
+  | components['schemas']['CreateSolutionRequest']
+  | components['schemas']['UpdateSolutionRequest']
+  | components['schemas']['DeleteSolutionRequest'];
 export type MemberRef = components['schemas']['MemberRef'];
 export type MemberKind = MemberRef['kind'];
 export type MemberRow = components['schemas']['MemberRow'];
-export type MemberView = components['schemas']['KnowledgeView'] | components['schemas']['TaskView'];
+export type MemberView =
+  | components['schemas']['KnowledgeView']
+  | components['schemas']['TaskView']
+  | components['schemas']['SolutionView'];
 export type TaskParameter = components['schemas']['TaskParameter'];
+export type TaskRef = components['schemas']['TaskRef'];
+export type SolutionRef = components['schemas']['SolutionRef'];
+export type KnowledgeRef = components['schemas']['KnowledgeRef'];
+export type Prerequisite = components['schemas']['Prerequisite'];
+export type TaskDependencies = components['schemas']['TaskDependencies'];
+export type ConfirmKCPathRequest = components['schemas']['ConfirmKCPathRequest'];
+export type KnowledgeUse = components['schemas']['KnowledgeUse'];
 export type DomainView = Awaited<ReturnType<typeof readDomain>>;
 export type DomainRow = Awaited<ReturnType<typeof listDomains>>['items'][number];
 export type DomainSession = Parameters<typeof listDomains>[0];

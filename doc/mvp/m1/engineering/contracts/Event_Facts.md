@@ -1,11 +1,11 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.12<br>
+> **版本**：v0.13<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.11 → v0.12，明确业务授权与三种内部读取的边界<br>
+> **修订说明**：v0.12 → v0.13，登记 KC 路径确认及依据不足的正文<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
@@ -205,7 +205,8 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | `DomainIntakeItemProcessed` | `domain.intake_item`[1] | item_ref处理结果；新定义/实例分别用对应Saved事件，不夹带重复版本正文 |
 | `DomainTemplateCandidatePrepared` | `domain.artifact`[1] | candidate_ref；候选不等于正式定义 |
 | `DomainInstanceSaved` | `domain.object_version`[1] | kind=task_instance；题面及各参考解法包含在本次固定版本中 |
-| `DomainKCTestPathConfirmed` | `domain.kc_test_path`[1] | confirmation_ref及其固定KC/Task/Solution引用一致 |
+| `DomainKCTestPathConfirmed` | `domain.artifact`[1]、`domain.kc_test_path`[1] | 固定三版本、任务责任引用及就绪依据一致 |
+| `DomainKCTestPathNotReady` | `domain.artifact`[1] | `kind=readiness_check`，保留固定版本和问题；无确认行 |
 | `ActivityConfigSaved` | `interaction.blueprint_revisions`[0..1]；`interaction.rule_revisions`[0..1]；`interaction.strategy_revisions`[0..1]；`interaction.binding_revisions`[0..1]；`interaction.resolved_configs`[1] | 前四类按config_kind恰选一类一条；config_ref指本次新解析配置 |
 | `DetectionPlanPrepared` | `interaction.detection_plans`[0..1]；`interaction.plan_revisions`[1]；`interaction.plan_progress`[1..n] | 首次含plan；每次含新内容修订及prepared进度；替代旧修订时同时含其superseded进度 |
 | `TaskUseCreated` | `interaction.task_uses`[1] | 本次task_use_ref；同批轮事件仅引用，不再复制正文 |
@@ -332,3 +333,4 @@ M1只提供受控维护重建，不新增管理页面。业务生成器先按§3
 | v0.10 | 2026-11-16 | 明确事件与业务生成器解耦、真实应用收据和重建覆盖边界 |
 | v0.11 | 2026-11-22 | 同步按范围重建及失败重做 |
 | v0.12 | 2026-11-22 | 明确业务授权与三种内部读取的边界 |
+| v0.13 | 2026-11-22 | 登记路径确认和依据不足的事件正文组合 |

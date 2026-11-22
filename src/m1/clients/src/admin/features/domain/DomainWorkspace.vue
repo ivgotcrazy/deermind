@@ -260,6 +260,14 @@ onBeforeUnmount(() => {
           >
             任务
           </button>
+          <button
+            type="button"
+            class="secondary"
+            :aria-pressed="memberKind === 'solution'"
+            @click="memberKind = 'solution'"
+          >
+            方法
+          </button>
         </nav>
         <DomainMembers
           :key="`${selected}:${memberKind}`"

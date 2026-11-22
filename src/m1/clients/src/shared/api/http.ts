@@ -61,16 +61,20 @@ async function send<T>(path: string, method: Method, options: Options, body?: un
   return value as T;
 }
 
-export function get<P extends Route<'get'>>(
-  path: P,
-  options: Options & { query?: Query<paths[P]['get']>; params?: Params<paths[P]['get']> } = {},
-): Promise<Success<paths[P]['get']>> {
-  const params = new Map(Object.entries(options.params ?? {}));
-  const resolved = path.replace(/\{([^}]+)\}/g, (_placeholder, name: string) => {
+function resolvePath(path: string, values?: object): string {
+  const params = new Map(Object.entries(values ?? {}));
+  return path.replace(/\{([^}]+)\}/g, (_placeholder, name: string) => {
     const value = params.get(name);
     if (value === undefined) throw new Error(`请求缺少路径参数 ${name}。`);
     return encodeURIComponent(String(value));
   });
+}
+
+export function get<P extends Route<'get'>>(
+  path: P,
+  options: Options & { query?: Query<paths[P]['get']>; params?: Params<paths[P]['get']> } = {},
+): Promise<Success<paths[P]['get']>> {
+  const resolved = resolvePath(path, options.params);
   const query = new URLSearchParams();
   if (options.query)
     for (const [key, value] of Object.entries(options.query)) {
@@ -86,7 +90,7 @@ export function get<P extends Route<'get'>>(
 export function post<P extends Route<'post'>>(
   path: P,
   body: Body<paths[P]['post']>,
-  options: Options = {},
+  options: Options & { params?: Params<paths[P]['post']> } = {},
 ): Promise<Success<paths[P]['post']>> {
-  return send(path, 'post', options, body);
+  return send(resolvePath(path, options.params), 'post', options, body);
 }

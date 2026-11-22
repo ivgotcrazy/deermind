@@ -20,6 +20,7 @@ from deermind.product.accounts.usage_events import (
     USAGE_CONFIRMED,
 )
 from deermind.spaces.domain.facts import DOMAIN_SAVED
+from deermind.spaces.domain.kc_path_facts import PATH_REGISTRATIONS
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 REGISTRATIONS = [
@@ -34,6 +35,7 @@ REGISTRATIONS = [
     EXECUTION_REGISTRATION,
     WAIT_REGISTRATION,
     DOMAIN_SAVED,
+    *PATH_REGISTRATIONS,
     *AI_REGISTRATIONS,
 ]
 

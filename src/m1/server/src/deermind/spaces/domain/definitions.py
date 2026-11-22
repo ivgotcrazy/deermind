@@ -34,14 +34,21 @@ from deermind.spaces.domain.facts import (
     version_content,
     version_ref,
 )
+from deermind.spaces.domain.kc_paths import KCTestPaths, read_task_paths
 from deermind.spaces.domain.public import (
     SAVE_ACTION,
+    ConfirmKCPathRequest,
+    ConfirmKCPathResponse,
+    ConfirmKCPathResult,
     CreateDomainRequest,
     CreateDomainResponse,
     CreateDomainResult,
     CreateKnowledgeRequest,
+    CreateSolutionRequest,
     CreateTaskRequest,
+    DefinitionContent,
     DeleteKnowledgeRequest,
+    DeleteSolutionRequest,
     DeleteTaskRequest,
     DomainContentRef,
     DomainDefinition,
@@ -61,24 +68,41 @@ from deermind.spaces.domain.public import (
     MemberRow,
     ObjectDetail,
     ObjectRef,
+    Prerequisite,
     SaveKnowledgeResult,
     SaveRequest,
     SaveResult,
+    SaveSolutionResult,
     SaveTaskResult,
+    SolutionContentRef,
+    SolutionDefinition,
+    SolutionDetail,
+    SolutionRef,
+    SolutionView,
     TaskContentRef,
     TaskDefinition,
+    TaskDependencies,
     TaskDetail,
     TaskRef,
     TaskView,
     UpdateKnowledgeRequest,
+    UpdateSolutionRequest,
     UpdateTaskRequest,
+    solution_gaps,
     task_gaps,
+)
+from deermind.spaces.domain.relationships import (
+    apply_references,
+    method_knowledge,
+    relationship_error,
+    validate_relationships,
 )
 
 _RECEIPT = text(
     "SELECT r.receipt_id,r.input_hash,r.normalized_input,r.state,r.result_ref,v.content "
     "FROM domain.command_receipt r LEFT JOIN domain.object_version v "
-    "ON r.result_ref->>'type'='task' AND v.object_id=CAST(r.result_ref->>'id' AS uuid) "
+    "ON r.result_ref->>'type' IN ('task','solution') "
+    "AND v.object_id=CAST(r.result_ref->>'id' AS uuid) "
     "AND v.version=CAST(r.result_ref->>'version' AS bigint) "
     "WHERE r.principal_id=:principal AND r.action=:action "
     "AND r.scope_id=:scope AND r.request_id=:request_id"
@@ -94,7 +118,7 @@ _VERSION = text(
     "JOIN domain.object_version head ON (head.object_id,head.version)=(i.object_id,i.head_version) "
     "JOIN domain.object_version v ON v.object_id=i.object_id "
     "AND v.version=COALESCE(CAST(:version AS bigint),i.head_version) "
-    "WHERE i.object_id=:id AND i.kind IN ('domain','kc','task') "
+    "WHERE i.object_id=:id AND i.kind IN ('domain','kc','task','solution') "
     "AND (CAST(:version AS bigint) IS NOT NULL OR NOT head.is_deleted)"
 )
 
@@ -114,9 +138,7 @@ def receipt_key(principal_id: UUID, request_id: str) -> dict[str, str]:
     }
 
 
-def save_result(
-    ref: ObjectRef, content: DomainDefinition | KnowledgeComponent | TaskDefinition | None = None
-) -> SaveResult:
+def save_result(ref: ObjectRef, content: DefinitionContent | None = None) -> SaveResult:
     if isinstance(ref, KnowledgeRef):
         return SaveKnowledgeResult(object_ref=ref, content_ref=KnowledgeContentRef(object_ref=ref))
     if isinstance(ref, TaskRef):
@@ -125,6 +147,14 @@ def save_result(
         return SaveTaskResult(
             object_ref=ref, content_ref=TaskContentRef(object_ref=ref), gaps=task_gaps(content)
         )
+    if isinstance(ref, SolutionRef):
+        if not isinstance(content, SolutionDefinition):
+            raise RuntimeError("A Solution receipt must reference its fixed definition")
+        return SaveSolutionResult(
+            object_ref=ref,
+            content_ref=SolutionContentRef(object_ref=ref),
+            gaps=solution_gaps(content),
+        )
     return CreateDomainResult(object_ref=ref, content_ref=DomainContentRef(object_ref=ref))
 
 
@@ -132,17 +162,20 @@ def saved_response(row: RowMapping) -> CreateDomainResponse:
     if row["state"] != "completed":
         raise RuntimeError("A domain save receipt must be committed with its result")
     saved = Ref.model_validate(row["result_ref"])
-    task = None
+    content = None
     if saved.owner == "domain" and saved.type == "domain" and saved.version == 1:
         ref = DomainRef(object_id=UUID(saved.id), version=1)
     elif saved.owner == "domain" and saved.type == "kc" and saved.version is not None:
         ref = KnowledgeRef(kind="kc", object_id=UUID(saved.id), version=saved.version)
     elif saved.owner == "domain" and saved.type == "task" and saved.version is not None:
         ref = TaskRef(kind="task", object_id=UUID(saved.id), version=saved.version)
-        task = TaskDefinition.model_validate(row["content"])
+        content = TaskDefinition.model_validate(row["content"])
+    elif saved.owner == "domain" and saved.type == "solution" and saved.version is not None:
+        ref = SolutionRef(kind="solution", object_id=UUID(saved.id), version=saved.version)
+        content = SolutionDefinition.model_validate(row["content"])
     else:
         raise RuntimeError("A domain receipt must reference a saved definition version")
-    return CreateDomainResponse(request_ref=row["receipt_id"], result=save_result(ref, task))
+    return CreateDomainResponse(request_ref=row["receipt_id"], result=save_result(ref, content))
 
 
 def replay(row: RowMapping, body: str, digest: str) -> CreateDomainResponse:
@@ -200,6 +233,7 @@ async def apply_domain_event(connection: AsyncConnection, event: StoredEvent) ->
                 {"id": ref.object_id, "version": ref.version},
             )
         if not root:
+            await apply_references(connection, ref, value.content)
             await connection.execute(
                 text(
                     "UPDATE domain.object_identity SET catalog_revision=catalog_revision+1 "
@@ -223,6 +257,7 @@ class DomainDefinitions:
         self.events = events
         self.reader = reader
         self.attachments = attachments
+        self.kc_paths = KCTestPaths(engine, events, attachments)
 
     async def list_domains(self, session: SessionView) -> DomainList:
         administrator(session)
@@ -266,7 +301,7 @@ class DomainDefinitions:
     ) -> MemberList:
         actor = administrator(session)
         name = name.strip()
-        selected = sorted(set(kinds or ["kc", "task"]))
+        selected = sorted(set(kinds or ["kc", "task", "solution"]))
         async with self.engine.begin() as connection:
             # 目录基准和列表来自同一快照；后续页不跨目录修订混读。
             await connection.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"))
@@ -314,12 +349,14 @@ class DomainDefinitions:
         return MemberList(
             items=[
                 MemberRow(
-                    object_ref=TaskRef(
-                        kind="task", object_id=row["object_id"], version=row["version"]
-                    )
-                    if row["kind"] == "task"
-                    else KnowledgeRef(
-                        kind="kc", object_id=row["object_id"], version=row["version"]
+                    object_ref={"task": TaskRef, "kc": KnowledgeRef, "solution": SolutionRef}[
+                        row["kind"]
+                    ].model_validate(
+                        {
+                            "kind": row["kind"],
+                            "object_id": row["object_id"],
+                            "version": row["version"],
+                        }
                     ),
                     name=row["name"],
                     is_deleted=False,
@@ -345,6 +382,20 @@ class DomainDefinitions:
         if owner != domain_id:
             raise RequestError(404, "not_found", "找不到指定领域对象或版本。")
         value = await self._read_version(row, owner, object_id)
+        if row["kind"] == "solution":
+            if not isinstance(value.content, SolutionDefinition):
+                raise RuntimeError("A Solution must reference its own content model")
+            solution_ref = SolutionRef(kind="solution", object_id=object_id, version=value.version)
+            return SolutionDetail(
+                object=SolutionView(
+                    object_ref=solution_ref,
+                    content=value.content,
+                    content_ref=SolutionContentRef(object_ref=solution_ref),
+                    is_identity_deleted=row["is_deleted"],
+                    source_event_id=row["source_event_id"],
+                    gaps=solution_gaps(value.content),
+                )
+            )
         if row["kind"] == "task":
             if not isinstance(value.content, TaskDefinition):
                 raise RuntimeError("A Task must reference its own content model")
@@ -417,12 +468,70 @@ class DomainDefinitions:
             raise RuntimeError("The domain version projection points to a different fact")
         return value
 
+    async def read_dependencies(
+        self,
+        session: SessionView,
+        domain_id: UUID,
+        task_id: UUID,
+        version: int,
+        solution_ids: list[UUID] | None,
+    ) -> TaskDependencies:
+        detail = await self.read_object(session, domain_id, task_id, version)
+        if not isinstance(detail, TaskDetail):
+            raise RequestError(404, "not_found", "找不到指定任务版本。")
+        task = detail.object
+        methods = task.content.method_refs
+        if solution_ids is not None:
+            chosen = set(solution_ids)
+            if not chosen.issubset(ref.object_id for ref in methods):
+                raise relationship_error("/solution_ids", "只能查询本任务版本直接采用的方法。")
+            methods = [ref for ref in methods if ref.object_id in chosen]
+        selected = {(ref.object_id, ref.version) for ref in methods}
+        prerequisites: list[Prerequisite] = []
+        for link in task.content.prerequisites:
+            if link.applies_to == "all":
+                prerequisites.append(link)
+                continue
+            applicable = [
+                ref for ref in link.method_refs if (ref.object_id, ref.version) in selected
+            ]
+            if applicable:
+                prerequisites.append(link.model_copy(update={"method_refs": applicable}))
+        async with self.engine.connect() as connection:
+            kc_refs, sources = await method_knowledge(connection, methods)
+            paths = await read_task_paths(connection, task.object_ref, methods)
+        return TaskDependencies(
+            task_ref=task.object_ref,
+            method_refs=methods,
+            kc_refs=kc_refs,
+            kc_sources=sources,
+            prerequisites=prerequisites,
+            gaps=task.gaps,
+            kc_test_paths=paths,
+        )
+
+    async def confirm_kc_path(
+        self, session: SessionView, domain_id: UUID, body: ConfirmKCPathRequest
+    ) -> ConfirmKCPathResponse:
+        return await self.kc_paths.confirm(administrator(session), domain_id, body)
+
+    async def read_path_receipt(
+        self, principal_id: UUID, session_id: UUID, query: ReceiptQuery
+    ) -> ReceiptView[ConfirmKCPathResult]:
+        return await self.kc_paths.read_receipt(principal_id, query)
+
     async def save_definition(
         self, session: SessionView, body: SaveRequest
     ) -> CreateDomainResponse:
         actor_id = administrator(session)
         key = receipt_key(actor_id, body.request_id)
-        normalized = canonical_json(body.model_dump(mode="json", exclude={"request_id"}))
+        request = body.model_dump(mode="json", exclude={"request_id"})
+        if isinstance(body, CreateTaskRequest | UpdateTaskRequest):
+            # 空关系与 E02-04 请求等价，旧请求编号仍能取得原结果。
+            for field in ("method_refs", "prerequisites"):
+                if request["definition"][field] == []:
+                    del request["definition"][field]
+        normalized = canonical_json(request)
         digest = sha256(normalized.encode("utf-8")).hexdigest()
         row = None
         async with self.engine.connect() as connection:
@@ -438,6 +547,8 @@ class DomainDefinitions:
                     DeleteKnowledgeRequest,
                     UpdateTaskRequest,
                     DeleteTaskRequest,
+                    UpdateSolutionRequest,
+                    DeleteSolutionRequest,
                 ),
             ):
                 row = await self._version_row(
@@ -458,6 +569,10 @@ class DomainDefinitions:
             ref = TaskRef(kind="task", object_id=uuid4(), version=1)
             domain_id = body.domain_id
             content = body.definition
+        elif isinstance(body, CreateSolutionRequest):
+            ref = SolutionRef(kind="solution", object_id=uuid4(), version=1)
+            domain_id = body.domain_id
+            content = body.definition
         else:
             assert row is not None
             domain_id = row["domain_id"]
@@ -467,7 +582,7 @@ class DomainDefinitions:
             if previous.version != body.expected_version:
                 raise RequestError(409, "version_conflict", "编辑版本不一致，请检查原稿。")
             ref = previous.model_copy(update={"version": previous.version + 1})
-            if isinstance(body, DeleteKnowledgeRequest | DeleteTaskRequest):
+            if isinstance(body, DeleteKnowledgeRequest | DeleteTaskRequest | DeleteSolutionRequest):
                 content = (await self._read_version(row, domain_id, ref.object_id)).content
             else:
                 content = body.definition
@@ -536,6 +651,8 @@ class DomainDefinitions:
             sequence = 0
             if not isinstance(ref, DomainRef):
                 sequence = await self._lock_member_save(connection, domain_id, previous)
+                if body.action != "soft_delete":
+                    await validate_relationships(connection, domain_id, ref.object_id, content)
             (saved,) = await self.events.append(
                 connection,
                 access,

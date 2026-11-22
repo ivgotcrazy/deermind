@@ -8,6 +8,8 @@ from deermind.entrypoints.api.auth import access
 from deermind.entrypoints.api.errors import ERRORS
 from deermind.product.public.authentication import AuthError, SessionView
 from deermind.spaces.domain.public import (
+    ConfirmKCPathRequest,
+    ConfirmKCPathResponse,
     CreateDomainResponse,
     DomainList,
     DomainService,
@@ -15,6 +17,7 @@ from deermind.spaces.domain.public import (
     MemberList,
     ObjectDetail,
     SaveRequest,
+    TaskDependencies,
 )
 from fastapi import APIRouter, Header, Query, Request, Response
 
@@ -82,6 +85,47 @@ async def list_objects(
     session = await _session(request, response, expected)
     service: DomainService = request.app.state.domain
     return await service.list_members(session, domain_id, name, cursor, limit, kinds)
+
+
+@router.get(
+    "/domains/{domain_id}/dependencies",
+    response_model=TaskDependencies,
+    responses=ERRORS,
+    operation_id="domain_query_dependencies",
+)
+async def domain_dependencies(
+    request: Request,
+    response: Response,
+    domain_id: UUID,
+    task_id: Annotated[UUID, Query()],
+    version: Annotated[int, Query(ge=1, le=2**63 - 1)],
+    solution_ids: Annotated[list[UUID] | None, Query()] = None,
+    expected: ExpectedSession = None,
+) -> TaskDependencies:
+    session = await _session(request, response, expected)
+    service: DomainService = request.app.state.domain
+    return await service.read_dependencies(session, domain_id, task_id, version, solution_ids)
+
+
+@router.post(
+    "/domains/{domain_id}/kc-test-paths",
+    response_model=ConfirmKCPathResponse,
+    responses=ERRORS,
+    operation_id="domain_confirm_kc_path",
+)
+async def confirm_kc_path(
+    request: Request,
+    response: Response,
+    domain_id: UUID,
+    body: ConfirmKCPathRequest,
+    expected: ExpectedSession = None,
+    csrf: CsrfToken = None,
+) -> ConfirmKCPathResponse:
+    session = await _session(request, response, expected, writing=True)
+    if csrf is None or not compare_digest(csrf.encode(), session.csrf_token.encode()):
+        raise AuthError(403, "forbidden", "请刷新登录状态后重新保存。")
+    service: DomainService = request.app.state.domain
+    return await service.confirm_kc_path(session, domain_id, body)
 
 
 @router.get(

@@ -2,14 +2,26 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { ApiError } from '../../../shared/api/http';
 import RichContent from '../../../shared/content/RichContent.vue';
-import { listMembers, readDefinitionReceipt, readMember, saveMember } from './api';
+import {
+  listMembers,
+  readDefinitionReceipt,
+  readDependencies,
+  readMember,
+  saveMember,
+} from './api';
+import DomainRelationsEditor from './DomainRelationsEditor.vue';
+import KCPathChecks from './KCPathChecks.vue';
 import type {
   DomainSession,
+  KnowledgeRef,
   MemberKind,
   MemberRef,
   MemberRequest,
   MemberRow,
   MemberView,
+  Prerequisite,
+  SolutionRef,
+  TaskDependencies,
   TaskParameter,
 } from './api';
 import type { RichContent as StoredContent } from '../../../shared/content/types';
@@ -21,7 +33,7 @@ const { domainId, kind, session } = defineProps<{
 }>();
 const signal = new AbortController();
 const storageKey = `deermind-${kind}-pending:${session.account.account_id}:${domainId}`;
-const label = kind === 'kc' ? '知识成分' : '任务';
+const label = { kc: '知识成分', task: '任务', solution: '方法' }[kind];
 const knowledgeFields = [
   ['definition', '含义', true],
   ['applicability', '适用条件', true],
@@ -35,7 +47,13 @@ const taskFields = [
   ['applicability', '适用条件', false],
   ['boundaries', '适用边界', false],
 ] as const;
-const fields = kind === 'kc' ? knowledgeFields : taskFields;
+const solutionFields = [
+  ['approach', '方法思路', false],
+  ['rationale', '方法依据', false],
+  ['applicability', '适用条件', false],
+  ['key_process', '关键过程', false],
+] as const;
+const fields = { kc: knowledgeFields, task: taskFields, solution: solutionFields }[kind];
 type Field = (typeof fields)[number][0];
 
 const mode = ref<'create' | 'update' | 'soft_delete'>('create');
@@ -54,6 +72,15 @@ const name = ref('');
 const note = ref('');
 const draft = ref<Partial<Record<Field, string>>>({});
 const parameters = ref<TaskParameter[]>([]);
+const methods = ref<SolutionRef[]>([]);
+const knowledge = ref<KnowledgeRef[]>([]);
+const prerequisites = ref<Prerequisite[]>([]);
+const catalog = ref<MemberRow[]>([]);
+const catalogBusy = ref(false);
+const catalogError = ref('');
+const dependencies = ref<TaskDependencies>();
+const dependencyBusy = ref(false);
+const solutionFilter = ref('');
 const pending = ref<MemberRequest>();
 const saveBusy = ref(false);
 const saveError = ref('');
@@ -82,6 +109,74 @@ const storedParameters = computed(() => {
   const content = detail.value?.content;
   return content && 'parameters' in content ? (content.parameters ?? []) : [];
 });
+const storedKnowledge = computed(() => {
+  const content = detail.value?.content;
+  return content && 'kc_refs' in content ? (content.kc_refs ?? []) : [];
+});
+const storedMethods = computed(() => {
+  const content = detail.value?.content;
+  return content && 'method_refs' in content ? (content.method_refs ?? []) : [];
+});
+
+function caption(reference: MemberRef) {
+  const row = catalog.value.find((item) => item.object_ref.object_id === reference.object_id);
+  return `${row?.name ?? reference.object_id} · v${reference.version}`;
+}
+
+async function loadCatalog() {
+  if (kind === 'kc' || catalogBusy.value) return;
+  catalogBusy.value = true;
+  catalogError.value = '';
+  // 选择项与本领域目录一致。分页中出现修订时重新打开即可重读。
+  const kinds: MemberKind[] = kind === 'task' ? ['task', 'solution', 'kc'] : ['kc'];
+  try {
+    const sections = await Promise.all(
+      kinds.map(async (targetKind) => {
+        const items: MemberRow[] = [];
+        let next: string | undefined;
+        do {
+          const page = await listMembers(
+            domainId,
+            targetKind,
+            session,
+            signal.signal,
+            '',
+            next,
+            100,
+          );
+          items.push(...page.items);
+          next = page.next_cursor ?? undefined;
+        } while (next);
+        return items;
+      }),
+    );
+    catalog.value = sections.flat();
+  } catch (cause) {
+    if (!signal.signal.aborted)
+      catalogError.value = cause instanceof Error ? cause.message : '关联选项读取失败。';
+  } finally {
+    catalogBusy.value = false;
+  }
+}
+
+async function loadDependencies() {
+  const task = detail.value?.object_ref;
+  if (task?.kind !== 'task') return;
+  const selected = solutionFilter.value;
+  dependencyBusy.value = true;
+  try {
+    const result = await readDependencies(domainId, task, session, signal.signal, selected);
+    if (detail.value?.object_ref === task && solutionFilter.value === selected)
+      dependencies.value = result;
+  } catch (cause) {
+    if (!signal.signal.aborted && detail.value?.object_ref === task) {
+      dependencies.value = undefined;
+      error.value = cause instanceof Error ? cause.message : '关系查询失败。';
+    }
+  } finally {
+    dependencyBusy.value = false;
+  }
+}
 
 function plainText(content: StoredContent | null | undefined): string | null {
   if (!content) return '';
@@ -159,8 +254,11 @@ async function showDetail(objectId: string, version?: number, newest = true) {
   try {
     const result = await readMember(domainId, objectId, kind, session, signal.signal, version);
     detail.value = result;
+    dependencies.value = undefined;
+    solutionFilter.value = '';
     history.value = result.object_ref.version;
     if (newest) head.value = result.object_ref.version;
+    await loadDependencies();
   } catch (cause) {
     if (!signal.signal.aborted)
       error.value = cause instanceof Error ? cause.message : '详情读取失败。';
@@ -181,6 +279,21 @@ function open(modeValue: typeof mode.value) {
     }
     parameters.value =
       modeValue !== 'create' ? storedParameters.value.map((parameter) => ({ ...parameter })) : [];
+    const content = modeValue === 'update' ? detail.value?.content : undefined;
+    methods.value =
+      content && 'method_refs' in content
+        ? (content.method_refs ?? []).map((ref) => ({ ...ref }))
+        : [];
+    knowledge.value =
+      content && 'kc_refs' in content ? (content.kc_refs ?? []).map((ref) => ({ ...ref })) : [];
+    prerequisites.value =
+      content && 'prerequisites' in content
+        ? (content.prerequisites ?? []).map((link) => ({
+            ...link,
+            method_refs: [...(link.method_refs ?? [])],
+          }))
+        : [];
+    if (modeValue !== 'soft_delete') void loadCatalog();
   }
   dialog.value?.showModal();
 }
@@ -263,15 +376,46 @@ function submit() {
   if (mode.value === 'soft_delete') {
     if (current) {
       const deletion = { ...base, action: mode.value, expected_version: current.version } as const;
-      void send(
-        current.kind === 'kc'
-          ? { ...deletion, object_kind: 'kc', object_ref: current }
-          : { ...deletion, object_kind: 'task', object_ref: current },
-      );
+      switch (current.kind) {
+        case 'kc':
+          void send({ ...deletion, object_kind: 'kc', object_ref: current });
+          break;
+        case 'task':
+          void send({ ...deletion, object_kind: 'task', object_ref: current });
+          break;
+        case 'solution':
+          void send({ ...deletion, object_kind: 'solution', object_ref: current });
+          break;
+      }
     }
     return;
   }
   if (!name.value.trim()) return;
+  if (kind === 'solution') {
+    const body = {
+      ...base,
+      object_kind: 'solution',
+      definition: {
+        name: name.value.trim(),
+        approach: contentFor('approach'),
+        rationale: contentFor('rationale'),
+        applicability: contentFor('applicability'),
+        key_process: contentFor('key_process'),
+        kc_refs: knowledge.value,
+      },
+    } as const;
+    if (mode.value === 'create') {
+      void send({ ...body, action: 'create', domain_id: domainId });
+    } else if (current?.kind === 'solution') {
+      void send({
+        ...body,
+        action: 'update',
+        object_ref: current,
+        expected_version: current.version,
+      });
+    }
+    return;
+  }
   if (kind === 'task') {
     const parameterNames = parameters.value.map((parameter) => parameter.name.trim());
     if (new Set(parameterNames).size !== parameterNames.length) {
@@ -289,6 +433,8 @@ function submit() {
         applicability: contentFor('applicability'),
         boundaries: contentFor('boundaries'),
         parameters: parameters.value,
+        method_refs: methods.value,
+        prerequisites: prerequisites.value,
       },
     } as const;
     if (mode.value === 'create') {
@@ -335,6 +481,7 @@ function submit() {
 
 onMounted(() => {
   void loadList();
+  void loadCatalog();
   try {
     const raw = sessionStorage.getItem(storageKey);
     if (raw) {
@@ -413,7 +560,56 @@ onBeforeUnmount(() => signal.abort());
           </template>
         </dl>
       </section>
-      <ul v-if="kind === 'task' && detail.gaps?.length" class="gaps" aria-label="待补齐内容">
+      <section v-if="storedKnowledge.length" class="field">
+        <h5>直接知识成分</h5>
+        <ul class="relation-list">
+          <li v-for="reference in storedKnowledge" :key="reference.object_id">
+            {{ caption(reference) }}
+          </li>
+        </ul>
+      </section>
+      <section v-if="dependencies && !detailBusy" class="field" aria-label="任务关系">
+        <h5>方法与先导</h5>
+        <label v-if="storedMethods.length">
+          查看方法
+          <select v-model="solutionFilter" :disabled="dependencyBusy" @change="loadDependencies">
+            <option value="">全部方法</option>
+            <option
+              v-for="method in storedMethods"
+              :key="method.object_id"
+              :value="method.object_id"
+            >
+              {{ caption(method) }}
+            </option>
+          </select>
+        </label>
+        <ul v-if="dependencies.method_refs.length" class="relation-list" aria-label="采用的方法">
+          <li v-for="method in dependencies.method_refs" :key="method.object_id">
+            {{ caption(method) }}
+          </li>
+        </ul>
+        <KCPathChecks
+          :key="`${dependencies.task_ref.object_id}:v${dependencies.task_ref.version}`"
+          :dependencies="dependencies"
+          :caption="caption"
+          :domain-id="domainId"
+          :session="session"
+          :disabled="dependencyBusy"
+          @changed="loadDependencies"
+        />
+        <section v-if="dependencies.prerequisites.length" class="field">
+          <h5>先导任务</h5>
+          <ul class="relation-list">
+            <li v-for="link in dependencies.prerequisites" :key="link.task_ref.object_id">
+              <strong>{{ caption(link.task_ref) }}</strong> · {{ link.reason }}
+              <small>{{
+                link.applies_to === 'all' ? '全部方法' : link.method_refs?.map(caption).join('、')
+              }}</small>
+            </li>
+          </ul>
+        </section>
+      </section>
+      <ul v-if="detail.gaps?.length" class="gaps" aria-label="待补齐内容">
         <li v-for="gap in detail.gaps" :key="gap.path">{{ gap.message }}</li>
       </ul>
     </section>
@@ -469,6 +665,18 @@ onBeforeUnmount(() => signal.abort());
                 添加参数
               </button>
             </details>
+            <template v-if="kind !== 'kc'">
+              <p v-if="catalogBusy" role="status">正在读取关联选项…</p>
+              <p v-if="catalogError" role="alert">{{ catalogError }}</p>
+              <DomainRelationsEditor
+                v-model:methods="methods"
+                v-model:knowledge="knowledge"
+                v-model:prerequisites="prerequisites"
+                :kind="kind"
+                :catalog="catalog"
+                :owner-id="mode === 'update' ? (detail?.object_ref.object_id ?? null) : null"
+              />
+            </template>
           </template>
           <label>变更原因 <input v-model="note" required /></label>
         </template>
@@ -556,6 +764,18 @@ textarea {
   border-radius: 0.4rem;
   color: inherit;
   background: #fffdf8;
+}
+.reading select {
+  font: inherit;
+  color: inherit;
+  background: #fffdf8;
+  border: 1px solid #d5cdbf;
+  border-radius: 0.4rem;
+  padding: 0.35rem;
+}
+.relation-list {
+  margin: 0;
+  padding-inline-start: 1.4rem;
 }
 button {
   cursor: pointer;

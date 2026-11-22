@@ -232,6 +232,86 @@
         "pattern": "^#[0-9a-fA-F]{6}$",
         "type": "string"
       },
+      "ConfirmKCPathRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "insufficient_examples": {
+            "items": {
+              "$ref": "#/components/schemas/NonBlank"
+            },
+            "minItems": 1,
+            "title": "Insufficient Examples",
+            "type": "array"
+          },
+          "kc_ref": {
+            "$ref": "#/components/schemas/KnowledgeRef"
+          },
+          "not_direct_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NonBlank"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "observable_behavior": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "solution_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "request_id",
+          "kc_ref",
+          "task_ref",
+          "solution_ref",
+          "observable_behavior",
+          "insufficient_examples"
+        ],
+        "title": "ConfirmKCPathRequest",
+        "type": "object"
+      },
+      "ConfirmKCPathResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ConfirmKCPathResult"
+          }
+        },
+        "required": [
+          "request_ref",
+          "result"
+        ],
+        "title": "ConfirmKCPathResponse",
+        "type": "object"
+      },
+      "ConfirmKCPathResult": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmation_ref": {
+            "$ref": "#/components/schemas/Ref"
+          }
+        },
+        "required": [
+          "confirmation_ref"
+        ],
+        "title": "ConfirmKCPathResult",
+        "type": "object"
+      },
       "ConfirmUsageRequest": {
         "additionalProperties": false,
         "properties": {
@@ -532,6 +612,43 @@
         "title": "CreateKnowledgeRequest",
         "type": "object"
       },
+      "CreateSolutionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "create",
+            "title": "Action",
+            "type": "string"
+          },
+          "change_note": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/SolutionDefinition-Input"
+          },
+          "domain_id": {
+            "$ref": "#/components/schemas/JsonUuid"
+          },
+          "object_kind": {
+            "const": "solution",
+            "title": "Object Kind",
+            "type": "string"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "object_kind",
+          "change_note",
+          "action",
+          "domain_id",
+          "definition"
+        ],
+        "title": "CreateSolutionRequest",
+        "type": "object"
+      },
       "CreateTaskRequest": {
         "additionalProperties": false,
         "properties": {
@@ -724,6 +841,43 @@
           "expected_version"
         ],
         "title": "DeleteKnowledgeRequest",
+        "type": "object"
+      },
+      "DeleteSolutionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "soft_delete",
+            "title": "Action",
+            "type": "string"
+          },
+          "change_note": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "expected_version": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "object_kind": {
+            "const": "solution",
+            "title": "Object Kind",
+            "type": "string"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "object_kind",
+          "change_note",
+          "action",
+          "object_ref",
+          "expected_version"
+        ],
+        "title": "DeleteSolutionRequest",
         "type": "object"
       },
       "DeleteTaskRequest": {
@@ -1361,6 +1515,64 @@
         "format": "uuid",
         "type": "string"
       },
+      "KCPathView": {
+        "additionalProperties": false,
+        "properties": {
+          "basis_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "confirmation_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "confirmed_at": {
+            "format": "date-time",
+            "title": "Confirmed At",
+            "type": "string"
+          },
+          "confirmed_by": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "insufficient_examples": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Insufficient Examples",
+            "type": "array"
+          },
+          "kc_ref": {
+            "$ref": "#/components/schemas/KnowledgeRef"
+          },
+          "observable_behavior": {
+            "title": "Observable Behavior",
+            "type": "string"
+          },
+          "solution_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          },
+          "source_event_id": {
+            "format": "uuid",
+            "title": "Source Event Id",
+            "type": "string"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "confirmation_ref",
+          "basis_ref",
+          "kc_ref",
+          "task_ref",
+          "solution_ref",
+          "observable_behavior",
+          "insufficient_examples",
+          "confirmed_by",
+          "confirmed_at",
+          "source_event_id"
+        ],
+        "title": "KCPathView",
+        "type": "object"
+      },
       "KnowledgeComponent-Input": {
         "additionalProperties": false,
         "description": "含义与适用条件为必填，例子可单独补充。",
@@ -1504,6 +1716,46 @@
           "version"
         ],
         "title": "KnowledgeRef",
+        "type": "object"
+      },
+      "KnowledgeSources": {
+        "additionalProperties": false,
+        "properties": {
+          "kc_id": {
+            "format": "uuid",
+            "title": "Kc Id",
+            "type": "string"
+          },
+          "uses": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeUse"
+            },
+            "title": "Uses",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kc_id",
+          "uses"
+        ],
+        "title": "KnowledgeSources",
+        "type": "object"
+      },
+      "KnowledgeUse": {
+        "additionalProperties": false,
+        "properties": {
+          "kc_ref": {
+            "$ref": "#/components/schemas/KnowledgeRef"
+          },
+          "method_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          }
+        },
+        "required": [
+          "method_ref",
+          "kc_ref"
+        ],
+        "title": "KnowledgeUse",
         "type": "object"
       },
       "KnowledgeView": {
@@ -1984,7 +2236,8 @@
       "MemberKind": {
         "enum": [
           "kc",
-          "task"
+          "task",
+          "solution"
         ],
         "type": "string"
       },
@@ -2029,6 +2282,9 @@
           },
           {
             "$ref": "#/components/schemas/TaskRef"
+          },
+          {
+            "$ref": "#/components/schemas/SolutionRef"
           }
         ]
       },
@@ -2094,6 +2350,9 @@
           },
           {
             "$ref": "#/components/schemas/TaskDetail"
+          },
+          {
+            "$ref": "#/components/schemas/SolutionDetail"
           }
         ]
       },
@@ -2232,6 +2491,39 @@
         "maxItems": 2,
         "minItems": 2,
         "type": "array"
+      },
+      "Prerequisite": {
+        "additionalProperties": false,
+        "properties": {
+          "applies_to": {
+            "enum": [
+              "all",
+              "specified"
+            ],
+            "title": "Applies To",
+            "type": "string"
+          },
+          "method_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SolutionRef"
+            },
+            "title": "Method Refs",
+            "type": "array"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "task_ref",
+          "reason",
+          "applies_to"
+        ],
+        "title": "Prerequisite",
+        "type": "object"
       },
       "Provenance": {
         "additionalProperties": false,
@@ -2447,6 +2739,9 @@
                 "$ref": "#/components/schemas/SaveResult"
               },
               {
+                "$ref": "#/components/schemas/ConfirmKCPathResult"
+              },
+              {
                 "type": "null"
               }
             ],
@@ -2463,7 +2758,7 @@
         "required": [
           "receipt_state"
         ],
-        "title": "ReceiptView[Union[ConfirmationResult, SaveResult]]",
+        "title": "ReceiptView[Union[ConfirmationResult, SaveResult, ConfirmKCPathResult]]",
         "type": "object"
       },
       "RichContent-Input": {
@@ -2604,8 +2899,36 @@
           },
           {
             "$ref": "#/components/schemas/SaveTaskResult"
+          },
+          {
+            "$ref": "#/components/schemas/SaveSolutionResult"
           }
         ]
+      },
+      "SaveSolutionResult": {
+        "additionalProperties": false,
+        "properties": {
+          "content_ref": {
+            "$ref": "#/components/schemas/SolutionContentRef"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          }
+        },
+        "required": [
+          "object_ref",
+          "content_ref",
+          "gaps"
+        ],
+        "title": "SaveSolutionResult",
+        "type": "object"
       },
       "SaveTaskResult": {
         "additionalProperties": false,
@@ -2754,6 +3077,236 @@
           }
         },
         "title": "SignOutResponse",
+        "type": "object"
+      },
+      "SolutionContentRef": {
+        "additionalProperties": false,
+        "properties": {
+          "object_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          },
+          "owner": {
+            "const": "domain",
+            "default": "domain",
+            "title": "Owner",
+            "type": "string"
+          },
+          "path": {
+            "const": "",
+            "default": "",
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_ref"
+        ],
+        "title": "SolutionContentRef",
+        "type": "object"
+      },
+      "SolutionDefinition-Input": {
+        "additionalProperties": false,
+        "description": "方法描述本层思路、依据、适用条件和关键过程。",
+        "properties": {
+          "applicability": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approach": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kc_refs": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeRef"
+            },
+            "title": "Kc Refs",
+            "type": "array"
+          },
+          "key_process": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "rationale": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "SolutionDefinition",
+        "type": "object"
+      },
+      "SolutionDefinition-Output": {
+        "additionalProperties": false,
+        "description": "方法描述本层思路、依据、适用条件和关键过程。",
+        "properties": {
+          "applicability": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approach": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kc_refs": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeRef"
+            },
+            "title": "Kc Refs",
+            "type": "array"
+          },
+          "key_process": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "rationale": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "SolutionDefinition",
+        "type": "object"
+      },
+      "SolutionDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "object": {
+            "$ref": "#/components/schemas/SolutionView"
+          }
+        },
+        "required": [
+          "object"
+        ],
+        "title": "SolutionDetail",
+        "type": "object"
+      },
+      "SolutionRef": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "solution",
+            "title": "Kind",
+            "type": "string"
+          },
+          "object_id": {
+            "$ref": "#/components/schemas/JsonUuid"
+          },
+          "version": {
+            "$ref": "#/components/schemas/Version"
+          }
+        },
+        "required": [
+          "kind",
+          "object_id",
+          "version"
+        ],
+        "title": "SolutionRef",
+        "type": "object"
+      },
+      "SolutionView": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/SolutionDefinition-Output"
+          },
+          "content_ref": {
+            "$ref": "#/components/schemas/SolutionContentRef"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "is_identity_deleted": {
+            "title": "Is Identity Deleted",
+            "type": "boolean"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          },
+          "source_event_id": {
+            "format": "uuid",
+            "title": "Source Event Id",
+            "type": "string"
+          },
+          "source_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "object_ref",
+          "content",
+          "content_ref",
+          "is_identity_deleted",
+          "source_event_id",
+          "gaps"
+        ],
+        "title": "SolutionView",
         "type": "object"
       },
       "SourceRef": {
@@ -2949,6 +3502,13 @@
               }
             ]
           },
+          "method_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SolutionRef"
+            },
+            "title": "Method Refs",
+            "type": "array"
+          },
           "name": {
             "$ref": "#/components/schemas/NonBlank"
           },
@@ -2957,6 +3517,13 @@
               "$ref": "#/components/schemas/TaskParameter"
             },
             "title": "Parameters",
+            "type": "array"
+          },
+          "prerequisites": {
+            "items": {
+              "$ref": "#/components/schemas/Prerequisite"
+            },
+            "title": "Prerequisites",
             "type": "array"
           },
           "responsibility": {
@@ -3020,6 +3587,13 @@
               }
             ]
           },
+          "method_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SolutionRef"
+            },
+            "title": "Method Refs",
+            "type": "array"
+          },
           "name": {
             "$ref": "#/components/schemas/NonBlank"
           },
@@ -3028,6 +3602,13 @@
               "$ref": "#/components/schemas/TaskParameter"
             },
             "title": "Parameters",
+            "type": "array"
+          },
+          "prerequisites": {
+            "items": {
+              "$ref": "#/components/schemas/Prerequisite"
+            },
+            "title": "Prerequisites",
             "type": "array"
           },
           "responsibility": {
@@ -3045,6 +3626,67 @@
           "name"
         ],
         "title": "TaskDefinition",
+        "type": "object"
+      },
+      "TaskDependencies": {
+        "additionalProperties": false,
+        "properties": {
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "kc_refs": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeRef"
+            },
+            "title": "Kc Refs",
+            "type": "array"
+          },
+          "kc_sources": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeSources"
+            },
+            "title": "Kc Sources",
+            "type": "array"
+          },
+          "kc_test_paths": {
+            "items": {
+              "$ref": "#/components/schemas/KCPathView"
+            },
+            "title": "Kc Test Paths",
+            "type": "array"
+          },
+          "method_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SolutionRef"
+            },
+            "title": "Method Refs",
+            "type": "array"
+          },
+          "prerequisites": {
+            "items": {
+              "$ref": "#/components/schemas/Prerequisite"
+            },
+            "title": "Prerequisites",
+            "type": "array"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "task_ref",
+          "method_refs",
+          "kc_refs",
+          "kc_sources",
+          "prerequisites",
+          "gaps",
+          "kc_test_paths"
+        ],
+        "title": "TaskDependencies",
         "type": "object"
       },
       "TaskDetail": {
@@ -3214,6 +3856,47 @@
           "definition"
         ],
         "title": "UpdateKnowledgeRequest",
+        "type": "object"
+      },
+      "UpdateSolutionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "update",
+            "title": "Action",
+            "type": "string"
+          },
+          "change_note": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/SolutionDefinition-Input"
+          },
+          "expected_version": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "object_kind": {
+            "const": "solution",
+            "title": "Object Kind",
+            "type": "string"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "object_kind",
+          "change_note",
+          "action",
+          "object_ref",
+          "expected_version",
+          "definition"
+        ],
+        "title": "UpdateSolutionRequest",
         "type": "object"
       },
       "UpdateTaskRequest": {
@@ -3811,6 +4494,15 @@
                   },
                   {
                     "$ref": "#/components/schemas/DeleteTaskRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateSolutionRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/UpdateSolutionRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DeleteSolutionRequest"
                   }
                 ],
                 "title": "Body"
@@ -4091,6 +4783,391 @@
           }
         },
         "summary": "List Domains",
+        "tags": [
+          "domain"
+        ]
+      }
+    },
+    "/api/m1/domains/{domain_id}/dependencies": {
+      "get": {
+        "operationId": "domain_query_dependencies",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "domain_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Domain Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Version",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "solution_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Solution Ids"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDependencies"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Domain Dependencies",
+        "tags": [
+          "domain"
+        ]
+      }
+    },
+    "/api/m1/domains/{domain_id}/kc-test-paths": {
+      "post": {
+        "operationId": "domain_confirm_kc_path",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "domain_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Domain Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmKCPathRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmKCPathResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Confirm Kc Path",
         "tags": [
           "domain"
         ]

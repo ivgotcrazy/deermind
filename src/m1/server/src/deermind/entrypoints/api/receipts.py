@@ -8,11 +8,16 @@ from deermind.foundation.system.public.errors import RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.foundation.system.requests import RequestReceipts
 from deermind.product.public.usage import ConfirmationResult
-from deermind.spaces.domain.public import SAVE_ACTION, SaveResult
+from deermind.spaces.domain.public import (
+    CONFIRM_PATH_ACTION,
+    SAVE_ACTION,
+    ConfirmKCPathResult,
+    SaveResult,
+)
 from fastapi import APIRouter, Header, Query, Request, Response
 
 router = APIRouter(prefix="/api/m1", tags=["requests"])
-type RequestReceipt = ReceiptView[ConfirmationResult | SaveResult]
+type RequestReceipt = ReceiptView[ConfirmationResult | SaveResult | ConfirmKCPathResult]
 
 
 @router.get(
@@ -31,9 +36,11 @@ async def receipt(
     session = await auth.session(request.cookies.get(config.cookie_name), expected)
     if expected is None:
         raise RequestError(403, "forbidden", "请先刷新登录状态。")
-    if query.action == SAVE_ACTION and session.account.role != "admin":
+    if query.action in (SAVE_ACTION, CONFIRM_PATH_ACTION) and session.account.role != "admin":
         raise RequestError(404, "not_found", "找不到请求。")
     readers: RequestReceipts = request.app.state.receipts
     result = await readers.read(session.account.account_id, session.session_id, query)
     response.headers["Cache-Control"] = "no-store"
-    return ReceiptView[ConfirmationResult | SaveResult].model_validate(result.model_dump())
+    return ReceiptView[ConfirmationResult | SaveResult | ConfirmKCPathResult].model_validate(
+        result.model_dump()
+    )

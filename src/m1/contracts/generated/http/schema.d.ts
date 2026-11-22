@@ -89,6 +89,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/m1/domains/{domain_id}/dependencies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Domain Dependencies */
+        get: operations["domain_query_dependencies"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/m1/domains/{domain_id}/kc-test-paths": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm Kc Path */
+        post: operations["domain_confirm_kc_path"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/m1/domains/{domain_id}/objects": {
         parameters: {
             query?: never;
@@ -302,6 +336,30 @@ export interface components {
             label: string;
         };
         Color: string;
+        /** ConfirmKCPathRequest */
+        ConfirmKCPathRequest: {
+            /** Insufficient Examples */
+            insufficient_examples: components["schemas"]["NonBlank"][];
+            kc_ref: components["schemas"]["KnowledgeRef"];
+            not_direct_reason?: components["schemas"]["NonBlank"] | null;
+            observable_behavior: components["schemas"]["NonBlank"];
+            request_id: components["schemas"]["RequestId"];
+            solution_ref: components["schemas"]["SolutionRef"];
+            task_ref: components["schemas"]["TaskRef"];
+        };
+        /** ConfirmKCPathResponse */
+        ConfirmKCPathResponse: {
+            /**
+             * Request Ref
+             * Format: uuid
+             */
+            request_ref: string;
+            result: components["schemas"]["ConfirmKCPathResult"];
+        };
+        /** ConfirmKCPathResult */
+        ConfirmKCPathResult: {
+            confirmation_ref: components["schemas"]["Ref"];
+        };
         /** ConfirmUsageRequest */
         ConfirmUsageRequest: {
             confirmation: components["schemas"]["ConfirmationInput"];
@@ -405,6 +463,23 @@ export interface components {
             object_kind: "kc";
             request_id: components["schemas"]["RequestId"];
         };
+        /** CreateSolutionRequest */
+        CreateSolutionRequest: {
+            /**
+             * Action
+             * @constant
+             */
+            action: "create";
+            change_note: components["schemas"]["NonBlank"];
+            definition: components["schemas"]["SolutionDefinition-Input"];
+            domain_id: components["schemas"]["JsonUuid"];
+            /**
+             * Object Kind
+             * @constant
+             */
+            object_kind: "solution";
+            request_id: components["schemas"]["RequestId"];
+        };
         /** CreateTaskRequest */
         CreateTaskRequest: {
             /**
@@ -472,6 +547,23 @@ export interface components {
              */
             object_kind: "kc";
             object_ref: components["schemas"]["KnowledgeRef"];
+            request_id: components["schemas"]["RequestId"];
+        };
+        /** DeleteSolutionRequest */
+        DeleteSolutionRequest: {
+            /**
+             * Action
+             * @constant
+             */
+            action: "soft_delete";
+            change_note: components["schemas"]["NonBlank"];
+            expected_version: components["schemas"]["Version"];
+            /**
+             * Object Kind
+             * @constant
+             */
+            object_kind: "solution";
+            object_ref: components["schemas"]["SolutionRef"];
             request_id: components["schemas"]["RequestId"];
         };
         /** DeleteTaskRequest */
@@ -714,6 +806,29 @@ export interface components {
         };
         /** Format: uuid */
         JsonUuid: string;
+        /** KCPathView */
+        KCPathView: {
+            basis_ref: components["schemas"]["Ref"];
+            confirmation_ref: components["schemas"]["Ref"];
+            /**
+             * Confirmed At
+             * Format: date-time
+             */
+            confirmed_at: string;
+            confirmed_by: components["schemas"]["Ref"];
+            /** Insufficient Examples */
+            insufficient_examples: string[];
+            kc_ref: components["schemas"]["KnowledgeRef"];
+            /** Observable Behavior */
+            observable_behavior: string;
+            solution_ref: components["schemas"]["SolutionRef"];
+            /**
+             * Source Event Id
+             * Format: uuid
+             */
+            source_event_id: string;
+            task_ref: components["schemas"]["TaskRef"];
+        };
         /**
          * KnowledgeComponent
          * @description 含义与适用条件为必填，例子可单独补充。
@@ -765,6 +880,21 @@ export interface components {
             kind: "kc";
             object_id: components["schemas"]["JsonUuid"];
             version: components["schemas"]["Version"];
+        };
+        /** KnowledgeSources */
+        KnowledgeSources: {
+            /**
+             * Kc Id
+             * Format: uuid
+             */
+            kc_id: string;
+            /** Uses */
+            uses: components["schemas"]["KnowledgeUse"][];
+        };
+        /** KnowledgeUse */
+        KnowledgeUse: {
+            kc_ref: components["schemas"]["KnowledgeRef"];
+            method_ref: components["schemas"]["SolutionRef"];
         };
         /** KnowledgeView */
         KnowledgeView: {
@@ -939,7 +1069,7 @@ export interface components {
             op: "symbol";
         };
         /** @enum {string} */
-        MemberKind: "kc" | "task";
+        MemberKind: "kc" | "task" | "solution";
         /** MemberList */
         MemberList: {
             /** Items */
@@ -949,7 +1079,7 @@ export interface components {
             /** Read Token */
             read_token: string;
         };
-        MemberRef: components["schemas"]["KnowledgeRef"] | components["schemas"]["TaskRef"];
+        MemberRef: components["schemas"]["KnowledgeRef"] | components["schemas"]["TaskRef"] | components["schemas"]["SolutionRef"];
         /** MemberRow */
         MemberRow: {
             /** Is Deleted */
@@ -972,7 +1102,7 @@ export interface components {
             state: "response_blank" | "source_missing" | "unreadable";
         };
         NonBlank: string;
-        ObjectDetail: components["schemas"]["DomainDetail"] | components["schemas"]["KnowledgeDetail"] | components["schemas"]["TaskDetail"];
+        ObjectDetail: components["schemas"]["DomainDetail"] | components["schemas"]["KnowledgeDetail"] | components["schemas"]["TaskDetail"] | components["schemas"]["SolutionDetail"];
         /** Paragraph */
         "Paragraph-Input": {
             /** Spans */
@@ -1008,6 +1138,18 @@ export interface components {
             type: "paragraph";
         };
         Position: number[];
+        /** Prerequisite */
+        Prerequisite: {
+            /**
+             * Applies To
+             * @enum {string}
+             */
+            applies_to: "all" | "specified";
+            /** Method Refs */
+            method_refs?: components["schemas"]["SolutionRef"][];
+            reason: components["schemas"]["NonBlank"];
+            task_ref: components["schemas"]["TaskRef"];
+        };
         /** Provenance */
         Provenance: {
             /**
@@ -1050,7 +1192,7 @@ export interface components {
             version?: number | null;
         };
         RequestId: string;
-        /** ReceiptView[Union[ConfirmationResult, SaveResult]] */
+        /** ReceiptView[Union[ConfirmationResult, SaveResult, ConfirmKCPathResult]] */
         RequestReceipt: {
             /** Allowed Actions */
             allowed_actions?: string[];
@@ -1069,7 +1211,7 @@ export interface components {
              */
             receipt_state: "not_found" | "accepted" | "completed" | "rejected";
             /** Result */
-            result?: components["schemas"]["ConfirmationResult"] | components["schemas"]["SaveResult"] | null;
+            result?: components["schemas"]["ConfirmationResult"] | components["schemas"]["SaveResult"] | components["schemas"]["ConfirmKCPathResult"] | null;
             /** Result Refs */
             result_refs?: components["schemas"]["Ref"][];
         };
@@ -1124,7 +1266,14 @@ export interface components {
             gaps?: components["schemas"]["Issue"][];
             object_ref: components["schemas"]["KnowledgeRef"];
         };
-        SaveResult: components["schemas"]["CreateDomainResult"] | components["schemas"]["SaveKnowledgeResult"] | components["schemas"]["SaveTaskResult"];
+        SaveResult: components["schemas"]["CreateDomainResult"] | components["schemas"]["SaveKnowledgeResult"] | components["schemas"]["SaveTaskResult"] | components["schemas"]["SaveSolutionResult"];
+        /** SaveSolutionResult */
+        SaveSolutionResult: {
+            content_ref: components["schemas"]["SolutionContentRef"];
+            /** Gaps */
+            gaps: components["schemas"]["Issue"][];
+            object_ref: components["schemas"]["SolutionRef"];
+        };
         /** SaveTaskResult */
         SaveTaskResult: {
             content_ref: components["schemas"]["TaskContentRef"];
@@ -1188,6 +1337,79 @@ export interface components {
              */
             signed_out: true;
         };
+        /** SolutionContentRef */
+        SolutionContentRef: {
+            object_ref: components["schemas"]["SolutionRef"];
+            /**
+             * Owner
+             * @default domain
+             * @constant
+             */
+            owner: "domain";
+            /**
+             * Path
+             * @default
+             * @constant
+             */
+            path: "";
+        };
+        /**
+         * SolutionDefinition
+         * @description 方法描述本层思路、依据、适用条件和关键过程。
+         */
+        "SolutionDefinition-Input": {
+            applicability?: components["schemas"]["RichContent-Input"] | null;
+            approach?: components["schemas"]["RichContent-Input"] | null;
+            /** Kc Refs */
+            kc_refs?: components["schemas"]["KnowledgeRef"][];
+            key_process?: components["schemas"]["RichContent-Input"] | null;
+            name: components["schemas"]["NonBlank"];
+            rationale?: components["schemas"]["RichContent-Input"] | null;
+        };
+        /**
+         * SolutionDefinition
+         * @description 方法描述本层思路、依据、适用条件和关键过程。
+         */
+        "SolutionDefinition-Output": {
+            applicability?: components["schemas"]["RichContent-Output"] | null;
+            approach?: components["schemas"]["RichContent-Output"] | null;
+            /** Kc Refs */
+            kc_refs?: components["schemas"]["KnowledgeRef"][];
+            key_process?: components["schemas"]["RichContent-Output"] | null;
+            name: components["schemas"]["NonBlank"];
+            rationale?: components["schemas"]["RichContent-Output"] | null;
+        };
+        /** SolutionDetail */
+        SolutionDetail: {
+            object: components["schemas"]["SolutionView"];
+        };
+        /** SolutionRef */
+        SolutionRef: {
+            /**
+             * Kind
+             * @constant
+             */
+            kind: "solution";
+            object_id: components["schemas"]["JsonUuid"];
+            version: components["schemas"]["Version"];
+        };
+        /** SolutionView */
+        SolutionView: {
+            content: components["schemas"]["SolutionDefinition-Output"];
+            content_ref: components["schemas"]["SolutionContentRef"];
+            /** Gaps */
+            gaps: components["schemas"]["Issue"][];
+            /** Is Identity Deleted */
+            is_identity_deleted: boolean;
+            object_ref: components["schemas"]["SolutionRef"];
+            /**
+             * Source Event Id
+             * Format: uuid
+             */
+            source_event_id: string;
+            /** Source Refs */
+            source_refs?: components["schemas"]["Ref"][];
+        };
         /**
          * SourceRef
          * @description 来源固定到文件与校验值，或固定事件中的一个片段。
@@ -1249,9 +1471,13 @@ export interface components {
             boundaries?: components["schemas"]["RichContent-Input"] | null;
             completion_conditions?: components["schemas"]["RichContent-Input"] | null;
             expected_output?: components["schemas"]["RichContent-Input"] | null;
+            /** Method Refs */
+            method_refs?: components["schemas"]["SolutionRef"][];
             name: components["schemas"]["NonBlank"];
             /** Parameters */
             parameters?: components["schemas"]["TaskParameter"][];
+            /** Prerequisites */
+            prerequisites?: components["schemas"]["Prerequisite"][];
             responsibility?: components["schemas"]["RichContent-Input"] | null;
         };
         /**
@@ -1263,10 +1489,30 @@ export interface components {
             boundaries?: components["schemas"]["RichContent-Output"] | null;
             completion_conditions?: components["schemas"]["RichContent-Output"] | null;
             expected_output?: components["schemas"]["RichContent-Output"] | null;
+            /** Method Refs */
+            method_refs?: components["schemas"]["SolutionRef"][];
             name: components["schemas"]["NonBlank"];
             /** Parameters */
             parameters?: components["schemas"]["TaskParameter"][];
+            /** Prerequisites */
+            prerequisites?: components["schemas"]["Prerequisite"][];
             responsibility?: components["schemas"]["RichContent-Output"] | null;
+        };
+        /** TaskDependencies */
+        TaskDependencies: {
+            /** Gaps */
+            gaps: components["schemas"]["Issue"][];
+            /** Kc Refs */
+            kc_refs: components["schemas"]["KnowledgeRef"][];
+            /** Kc Sources */
+            kc_sources: components["schemas"]["KnowledgeSources"][];
+            /** Kc Test Paths */
+            kc_test_paths: components["schemas"]["KCPathView"][];
+            /** Method Refs */
+            method_refs: components["schemas"]["SolutionRef"][];
+            /** Prerequisites */
+            prerequisites: components["schemas"]["Prerequisite"][];
+            task_ref: components["schemas"]["TaskRef"];
         };
         /** TaskDetail */
         TaskDetail: {
@@ -1332,6 +1578,24 @@ export interface components {
              */
             object_kind: "kc";
             object_ref: components["schemas"]["KnowledgeRef"];
+            request_id: components["schemas"]["RequestId"];
+        };
+        /** UpdateSolutionRequest */
+        UpdateSolutionRequest: {
+            /**
+             * Action
+             * @constant
+             */
+            action: "update";
+            change_note: components["schemas"]["NonBlank"];
+            definition: components["schemas"]["SolutionDefinition-Input"];
+            expected_version: components["schemas"]["Version"];
+            /**
+             * Object Kind
+             * @constant
+             */
+            object_kind: "solution";
+            object_ref: components["schemas"]["SolutionRef"];
             request_id: components["schemas"]["RequestId"];
         };
         /** UpdateTaskRequest */
@@ -1767,7 +2031,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateDomainRequest"] | components["schemas"]["CreateKnowledgeRequest"] | components["schemas"]["UpdateKnowledgeRequest"] | components["schemas"]["DeleteKnowledgeRequest"] | components["schemas"]["CreateTaskRequest"] | components["schemas"]["UpdateTaskRequest"] | components["schemas"]["DeleteTaskRequest"];
+                "application/json": components["schemas"]["CreateDomainRequest"] | components["schemas"]["CreateKnowledgeRequest"] | components["schemas"]["UpdateKnowledgeRequest"] | components["schemas"]["DeleteKnowledgeRequest"] | components["schemas"]["CreateTaskRequest"] | components["schemas"]["UpdateTaskRequest"] | components["schemas"]["DeleteTaskRequest"] | components["schemas"]["CreateSolutionRequest"] | components["schemas"]["UpdateSolutionRequest"] | components["schemas"]["DeleteSolutionRequest"];
             };
         };
         responses: {
@@ -1899,6 +2163,261 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DomainList"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Method Not Allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Client Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    domain_query_dependencies: {
+        parameters: {
+            query: {
+                task_id: string;
+                version: number;
+                solution_ids?: string[] | null;
+            };
+            header?: {
+                "X-Expected-Session"?: string | null;
+            };
+            path: {
+                domain_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskDependencies"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Method Not Allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Client Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    domain_confirm_kc_path: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Expected-Session"?: string | null;
+                "X-CSRF-Token"?: string | null;
+            };
+            path: {
+                domain_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmKCPathRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConfirmKCPathResponse"];
                 };
             };
             /** @description Bad Request */

@@ -1,11 +1,11 @@
 # M1 事件与消息载荷
 
-> **版本**：v0.9<br>
+> **版本**：v0.10<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-16<br>
-> **修订说明**：v0.8 → v0.9，登记ExecutionStateChanged已实现范围，事件类型总数不变<br>
+> **更新日期**：2026-11-22<br>
+> **修订说明**：v0.9 → v0.10，登记 KC 路径确认及依据不足事件<br>
 
 本分册是事件信封、类型化动作字段与通知结构的唯一字段定义；完整事实正文及投影登记见[事件正文合同](Event_Facts.md)。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
 
@@ -479,12 +479,18 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `confirmation_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `basis_ref` | Ref | 是 | 同一事件生成的固定检验依据 |
 | `kc_ref` | ObjectRef(kc) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `task_ref` | ObjectRef(task) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `solution_ref` | ObjectRef(solution) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `request_ref` | ID | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 不修改个人状态和章节采用。
+
+<a id="domainkctestpathnotready"></a>
+#### 3.24.1 `DomainKCTestPathNotReady`
+
+生产方 `domain`，归属 `domain`。要检查的关系有效且字段缺失或管理员确认依据不足时产生。随事件保存问题、可观察表现、不足示例及固定任务责任引用。使用与 §3.24 一致的 KC、Task、Solution、依据和请求引用，`confirmation_ref=null`。两类路径事实首次接线版本均为 v1，仅供查询。
 
 <a id="activityconfigsaved"></a>
 ### 3.25 `ActivityConfigSaved`
@@ -1024,3 +1030,4 @@ runtime运行留痕的records使用固定DTO，逐事件数量及条件见正文
 | v0.7 | 2026-11-16 | 落实账号及首次确认事件，固定告知正文与读取用途 |
 | v0.8 | 2026-11-16 | 接线既定DeliveryNotice及DeliveryStateChanged，固定正式事实核验 |
 | v0.9 | 2026-11-16 | 登记ExecutionStateChanged已实现范围，事件类型总数不变 |
+| v0.10 | 2026-11-22 | 登记直接检验路径依据和未确认的留痕 |

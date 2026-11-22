@@ -110,6 +110,7 @@ class ApiContractTests(unittest.IsolatedAsyncioTestCase):
             {item["$ref"] for item in result_types if "$ref" in item},
             {
                 "#/components/schemas/ConfirmationResult",
+                "#/components/schemas/ConfirmKCPathResult",
                 "#/components/schemas/SaveResult",
             },
         )
@@ -120,5 +121,6 @@ class ApiContractTests(unittest.IsolatedAsyncioTestCase):
                 "#/components/schemas/CreateDomainResult",
                 "#/components/schemas/SaveKnowledgeResult",
                 "#/components/schemas/SaveTaskResult",
+                "#/components/schemas/SaveSolutionResult",
             },
         )

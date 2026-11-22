@@ -24,7 +24,7 @@ _CONTENT_FIELDS = frozenset(
     kind category_column series column color axis min max step legend relationship
     stacked slice_colors
     objects object_id shape relations subject predicate object basis layout view_box boxes box
-    points position object_ref meaning constraints
+    points position object_ref meaning constraints task_ref reason applies_to method_refs
     """.split()
 )
 
@@ -37,7 +37,7 @@ def safe_error(error: RequestError, *, issues: list[Issue] | None = None) -> JSO
         error=ErrorDetail(
             code=error.code,
             message=error.message,
-            issues=issues or [],
+            issues=error.issues if issues is None else issues,
             retryable=error.status in {429, 503},
         )
     )
@@ -57,6 +57,8 @@ def content_issues(error: RequestValidationError) -> list[Issue]:
             "kc.update",
             "task.create",
             "task.update",
+            "solution.create",
+            "solution.update",
         ):
             location = (location[0], *location[2:])
         if len(location) < 3 or tuple(location[:2]) != ("body", "definition"):
@@ -74,6 +76,12 @@ def content_issues(error: RequestValidationError) -> list[Issue]:
             "completion_conditions",
             "boundaries",
             "parameters",
+            "approach",
+            "rationale",
+            "key_process",
+            "method_refs",
+            "kc_refs",
+            "prerequisites",
         ):
             continue
         parts = location[3:]

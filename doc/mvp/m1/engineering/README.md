@@ -1,11 +1,11 @@
 # M1 工程设计
 
-> **版本**：v0.107<br>
+> **版本**：v0.108<br>
 > **状态**：已进入小增量工程实现；进度及待确认项见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.106 → v0.107，登记 E01-16 载荷交付入口<br>
+> **修订说明**：v0.107 → v0.108，登记 KC 检验依据不足事实<br>
 
 E01-16 的配置、范围及复核见[载荷交付记录](../../../../src/m1/deploy/environments/local-wsl/E01-16-payload-codec.md)，进度见[实施计划](Delivery_Plan.md)。
 
@@ -153,7 +153,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 
 本节保留类型和主流程用途索引；正式信封、逐事件字段及模块内部事实统一维护于[事件消息分册](contracts/Event_Messages.md)。业务保存条件仍由各模块负责。
 
-本目录登记主流程的事件含义、生产方、使用方和关联事实，作为图与模块合同的共同索引。**业务含义归生产模块，公共信封与投递机制归公共运行。** 现行74类事件及动作字段已登记；正文类型、数量和条件见[事件正文§3.2](contracts/Event_Facts.md#32-事件携带记录与条件)。具体订阅实现仍按处理器登记，不把结果类型或Operation名称当成事件类型。
+本目录登记主流程的事件含义、生产方、使用方和关联事实，作为图与模块合同的共同索引。**业务含义归生产模块，公共信封与投递机制归公共运行。** 现行75类事件及动作字段已登记。正文类型、数量和条件见[事件正文§3.2](contracts/Event_Facts.md#32-事件携带记录与条件)。具体订阅实现按处理器登记。
 
 “触发处理”表示消费方因事实开展工作；“结果通知”只提示可授权读取；“查询取证／留痕”不新增订阅任务。生产方不读取使用方等待条件，是否等待、期限及超时仍归使用方；无等待者也保留正式事实。
 
@@ -190,6 +190,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | `DomainTemplateCandidatePrepared` | Domain形成Task／Solution候选 | 管理员核对候选及来源，不等于正式定义已保存 | [Domain§3.2](Domain_Space_Design.md#32-domainextract_template) |
 | `DomainInstanceSaved` | Domain保存题目、题内参考及定义关系 | 查询题目、题内参考、Task／Solution及来源；不等于学生已见题 | [Domain§5.1](Domain_Space_Design.md#51-domainsave_instance) |
 | `DomainKCTestPathConfirmed` | Domain确认已有版本的KC直接检验路径 | 查询内容就绪依据；不产生个人评价、不自动改章节关联 | [Domain§4.3](Domain_Space_Design.md#43-kc直接检验路径的准备与确认)、[§6.6](Domain_Space_Design.md#66-http请求响应与分页) |
+| `DomainKCTestPathNotReady` | Domain记录有效引用组合的检验依据不足 | 查询固定版本的问题和不足示例 | [事件正文](contracts/Event_Messages.md#domainkctestpathnotready) |
 | `ActivityConfigSaved` | Interaction保存活动配置 | 查询蓝图、规则及推荐策略的实际依据 | [Interaction§1.1](Interaction_Space_Design.md#11-manage_activity_config维护活动配置) |
 | `DetectionPlanPrepared` | Interaction保存可确认题单 | 查询计划、覆盖及反馈安排；不是开测或作答事件 | [Interaction§4.1](Interaction_Space_Design.md#41-prepare_detection准备本次检测) |
 | `TaskUseCreated` | Interaction固定并正式提供本次题面 | Evaluation沿作答读取当时题面、条件和采用引用；不代表浏览器已阅读 | [Interaction§4.3、§6.5](Interaction_Space_Design.md#43-计划题目使用与提交记录) |
@@ -209,7 +210,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 
 ### 6.3 完整事实与运行留痕补充
 
-正文和类型化字段只在[事件消息](contracts/Event_Messages.md#41-补齐的事实类型schema_version1)与[事件正文](contracts/Event_Facts.md)维护。下表是新增类型的责任索引；只留痕不等于自动订阅，不增加AI Operation。原47类载荷升至v2，新27类为v1；共74类。
+正文和类型化字段在[事件消息](contracts/Event_Messages.md#41-补齐的事实类型schema_version1)与[事件正文](contracts/Event_Facts.md)维护。下表是当时补齐的 27 类事实责任索引。现行事件总数以 §6 为准。
 
 | 事件 | 生产方 / 范围 | 事实及用途 |
 | --- | --- | --- |
@@ -348,3 +349,4 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | v0.105 | 2026-11-22 | 关联事件读取现行合同与回归记录 |
 | v0.106 | 2026-11-22 | 统一 E01-08 交付入口 |
 | v0.107 | 2026-11-22 | 登记 E01-16 载荷交付入口 |
+| v0.108 | 2026-11-22 | 登记 KC 检验依据不足事实及查询责任 |

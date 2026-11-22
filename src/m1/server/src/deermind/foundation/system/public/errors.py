@@ -30,10 +30,17 @@ class RequestError(Exception):
     """仅传入可公开文本；状态码与业务码由处理方明确指定。"""
 
     def __init__(
-        self, status: int, code: str, message: str, retry_after: int | None = None
+        self,
+        status: int,
+        code: str,
+        message: str,
+        retry_after: int | None = None,
+        *,
+        issues: list[Issue] | None = None,
     ) -> None:
         super().__init__(message)
         self.status = status
         self.code = code
         self.message = message
         self.retry_after = retry_after
+        self.issues = issues or []

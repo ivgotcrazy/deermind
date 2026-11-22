@@ -1,11 +1,11 @@
 # M1 Domain API
 
-> **版本**：v0.7<br>
+> **版本**：v0.9<br>
 > **状态**：设计合同；已实现范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.6 → v0.7，登记 E02-04 任务定义、条件及版本<br>
+> **修订说明**：v0.8 → v0.9，登记 E02-06 路径、依据不足及收据<br>
 
 共同类型与回执见[总册](../API_and_Message_Design.md)。接口只接受已授权领域及精确对象引用；所有定义/内容结构以[Domain§1](../Domain_Space_Design.md#1-领域对象身份与关系)为唯一来源。API不直接接收数据库行或模型任意生成的ID。
 
@@ -84,6 +84,8 @@ E02-01 接入 D01、D02、D04 和 D13 的管理员领域根分支。各请求携
 
 E02-04 新增 `object_kind=task`，沿用成员新建、修订和软删除的请求及版本规则。Task 载荷见 [Domain §1.2 与 §3.1](../Domain_Space_Design.md#31-可检查的任务定义)。已提供的条件正文及参数在保存前校验。未填正文为 `null`，缺项在 `gaps` 返回。方法及先导关系随下一增量接入。
 
+E02-05 新增 `object_kind=solution`。Task 定义接收 `method_refs`、`prerequisites`，Solution 接收 `kc_refs`。三者均随持有者版本保存，省略时为空。非法关系返回 `invalid_reference` 或 `dependency_cycle`，`issues[].path` 指明涉及的关系字段。旧 Task 请求仍可用原编号查询或重放。
+
 服务端分配领域 ID，将 `DomainDefinitionSaved`、首版、领域头、投影收据和请求收据同事务提交。原请求编号与内容相同时返回原结果，原编号用于不同内容时返回 409。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；version_conflict；dependency_cycle；invalid_reference。
@@ -132,7 +134,7 @@ E02-04 新增 `object_kind=task`，沿用成员新建、修订和软删除的请
 
 处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
 
-管理员可列出知识成分和任务。支持 `kinds=kc` 或 `kinds=task`，无筛选时返回两类。续页绑定管理员、领域、名称、类型筛选和目录修订，变化后返回 409 `read_range_changed`。
+管理员可列出知识成分、任务和方法。支持 `kinds=kc`、`kinds=task` 或 `kinds=solution`，无筛选时返回三类。续页绑定管理员、领域、名称、类型筛选和目录修订，变化后返回 409 `read_range_changed`。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；read_range_changed；invalid_reference。
 
@@ -170,7 +172,7 @@ E02-04 新增 `object_kind=task`，沿用成员新建、修订和软删除的请
 
 领域根详情要求两个路径 ID 均为同一领域。越界或指定版本不存在返回 404，`source_event_id` 指向详情所读的事实。D04 返回该版本的说明和覆盖范围，用于共用内容渲染。
 
-知识成分和任务要求对象属于路径中的领域。不传版本时只返回未移除的当前版本；传入精确版本可读取历史，`is_identity_deleted` 反映当前是否移除。Task 详情返回所读版本的缺项。
+知识成分、任务和方法要求对象属于路径中的领域。不传版本时只返回未移除的当前版本。传入精确版本可读取历史，`is_identity_deleted` 反映当前是否移除。任务和方法详情返回所读版本的缺项。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；invalid_request（实例缺view）；forbidden（请求答案）。
 
@@ -202,10 +204,15 @@ E02-04 新增 `object_kind=task`，沿用成员新建、修订和软删除的请
 | --- | --- | --- | --- |
 | `task_ref` | ObjectRef(task) | 是 | 查询对象 |
 | `method_refs` | ObjectRef(solution)[] | 是 | Task直接方法 |
-| `kc_refs` | ObjectRef(kc)[] | 是 | 方法引用知识去重 |
+| `kc_refs` | ObjectRef(kc)[] | 是 | 按精确版本去重的直接知识 |
+| `kc_sources` | {kc_id, uses[{method_ref,kc_ref}]}[] | 是 | 按 KC 身份汇总并保留来源方法和各自采用的 KC 版本 |
 | `prerequisites` | 先导关系[] | 是 | Domain§1.2的task_ref、适用方法与依赖条件；不是可执行子调用树 |
+| `gaps` | Issue[] | 是 | Task 固定版本的定义缺项 |
+| `kc_test_paths` | KCPathView[] | 是 | 该 Task 精确版本和所选方法的已确认路径，含 KC、依据、原事件、确认人、时间及不足示例 |
 
 处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
+
+E02-05 接入管理员查询。给定方法时，只返回该任务版本选中的直接方法及适用的先导，指定范围只保留命中的方法版本。先导的知识成分不进入本任务汇总。旧版本的关系仍按原引用读取。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；invalid_reference。
 
@@ -390,6 +397,7 @@ E02-04 新增 `object_kind=task`，沿用成员新建、修订和软删除的请
 | `solution_ref` | ObjectRef(solution) | 全部是 | 三个精确版本 |
 | `observable_behavior` | string | 是 | 能直接观察的理解/表现 |
 | `insufficient_examples` | string[] | 是 | 仅引用而不能证明理解的反例 |
+| `not_direct_reason` | string或null | 否 | 管理员明确记录依据不足时填写原因 |
 
 成功：200 `MutationReceipt`，其中`result`为下表；需要后台检查的分支另按说明返回202。
 
@@ -400,6 +408,8 @@ E02-04 新增 `object_kind=task`，沿用成员新建、修订和软删除的请
 处理边界：不产生个人Evidence或概率，也不改变章节采用。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；invalid_reference；not_ready。
+
+三者仍可采用且具有指定的版本关系，才进入就绪检查。缺少必要正文或管理员选择记录不足时，返回 409 `not_ready`，保存依据事实及未确认的原收据。非法引用返回 400，未产生确认。原请求用 R04 查询，`action=domain.confirm_kc_path`、`resource_kind=domain`、`resource_id` 为领域 ID。未确认收据返回 `receipt_state=rejected`、问题及依据引用。相同精确三元组重复确认返回首次的确认依据。
 
 请求／查询参数（示意数据）：
 
@@ -498,7 +508,7 @@ E02-04 新增 `object_kind=task`，沿用成员新建、修订和软删除的请
 
 本节不是HTTP接口。公共运行通过`domain.query_content`取得原请求的收据；浏览器只调用[公共收据R04](Runtime_Protocols.md#r04)。查找依据为原action、resource及request_id，加已验证的原请求人；所有者再次核对当前权限。业务处理规则见[模块合同](../Domain_Space_Design.md#64-请求与待办状态)。
 
-`domain.save_definition` 的领域、知识成分及任务维护以原管理员账号作为 R04 查找范围。已提交返回 D02 原结果，即使随后已有新版本或对象已移除。Task 的缺项按收据所指的固定版本读取。当前会话仍须具备管理员权限。
+`domain.save_definition` 的领域、知识成分、任务及方法维护以原管理员账号作为 R04 查找范围。已提交返回 D02 原结果，即使随后已有新版本或对象已移除。缺项按收据所指的固定版本读取。当前会话仍须具备管理员权限。
 
 所有者返回下列内部投影；底座按R04转换字段。无记录返回not_found，查询故障返回读取失败，不伪造空收据。
 
@@ -569,3 +579,5 @@ ContentRef只允许所属view已授权的JSON Pointer；图文重排不升对象
 | v0.5 | 2026-11-22 | 接入领域说明、覆盖范围及结构化正文的字段定位 |
 | v0.6 | 2026-11-22 | 登记知识成分的保存、列表、精确版本和原请求收据 |
 | v0.7 | 2026-11-22 | 登记任务草稿、条件校验、类型筛选和精确版本 |
+| v0.8 | 2026-11-22 | 登记方法、关系定位、知识来源和分方法查询 |
+| v0.9 | 2026-11-22 | 登记 D05 的确认视图及 D10 检查结果、收据与防重 |

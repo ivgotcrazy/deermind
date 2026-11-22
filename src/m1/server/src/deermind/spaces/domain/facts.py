@@ -16,11 +16,13 @@ from deermind.abstractions.events import (
     Ref,
 )
 from deermind.spaces.domain.public import (
+    DefinitionContent,
     DomainDefinition,
     DomainRef,
     KnowledgeComponent,
     NonBlank,
     ObjectRef,
+    SolutionDefinition,
     TaskDefinition,
     Version,
 )
@@ -36,7 +38,7 @@ class DomainVersion(FactModel):
     object_id: UUID
     version: Version
     content_schema_version: Literal[1]
-    content: DomainDefinition | KnowledgeComponent | TaskDefinition
+    content: DefinitionContent
     is_deleted: bool
     created_at: datetime
     created_by: Ref
@@ -101,8 +103,11 @@ def validate_saved(draft: EventDraft, payload: EventPayload) -> None:
             or payload.action != "create"
         ):
             raise ValueError("Invalid Domain root definition")
-    elif draft.scope_id == ref.object_id or (
-        not isinstance(value.content, KnowledgeComponent if ref.kind == "kc" else TaskDefinition)
+    elif draft.scope_id == ref.object_id or not isinstance(
+        value.content,
+        {"kc": KnowledgeComponent, "task": TaskDefinition, "solution": SolutionDefinition}[
+            ref.kind
+        ],
     ):
         raise ValueError("Invalid member definition")
 
