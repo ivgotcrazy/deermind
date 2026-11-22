@@ -3,7 +3,6 @@
 from typing import Literal
 from uuid import UUID
 
-from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.abstractions.events import EventDraft, EventPayload, EventRegistration, Ref
 
 
@@ -48,19 +47,3 @@ SIGNED_OUT = EventRegistration(
     payload_model=AccountSignedOut,
     validate=validate_auth_fact,
 )
-
-
-def maintenance_read(access: ReadAccess, event: EventFact) -> ReadGrant | None:
-    """账号重建只读取不含秘密的审计事实，并跳过登录控制的恢复。"""
-    if access.maintenance_ref is None:
-        return None
-    fields = {"account_id", "session_id"}
-    if event.event_type == "AccountSignedOut":
-        fields.update({"subject_ref", "outcome", "reason_code"})
-    return ReadGrant({}, frozenset(fields), "账号认证记录")
-
-
-AUTH_READ_POLICIES = [
-    ReadPolicy(event, 1, "product", "projection_rebuild", maintenance_read)
-    for event in ("AccountSignedIn", "AccountSignedOut")
-]

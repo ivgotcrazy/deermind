@@ -1,7 +1,6 @@
 """装配账号业务维护入口；不定义转换规则或业务表结构。"""
 
 import hashlib
-import secrets
 from pathlib import Path
 
 from deermind.abstractions import event_reading as reading
@@ -48,7 +47,7 @@ def account_rebuilder(engine: AsyncEngine, files: FileStorage) -> AccountRebuild
             raise RuntimeError("Rebuild implementation is not available for verification")
         digest.update(module.__name__.encode())
         digest.update(Path(module.__file__).read_bytes())
-    reader = event_reader(engine, files, cursor_key=secrets.token_bytes(32))
+    reader = event_reader(engine, files)
     maintenance = records.ProjectionRecords(
         engine, expected_revision=EXPECTED_REVISION, maintenance_lock=MAINTENANCE_LOCK
     )

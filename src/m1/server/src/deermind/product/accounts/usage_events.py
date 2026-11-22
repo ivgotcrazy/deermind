@@ -3,7 +3,6 @@
 from uuid import UUID
 
 from deermind.abstractions.encoding import canonical_json
-from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
@@ -80,35 +79,4 @@ USAGE_CONFIRMED = EventRegistration(
     UsageConfirmed,
     validate_usage,
     USAGE_RECORDS,
-)
-
-
-def usage_read(access: ReadAccess, event: EventFact) -> ReadGrant | None:
-    if access.maintenance_ref is not None:
-        return ReadGrant(
-            dict.fromkeys(USAGE_RECORDS),
-            frozenset({"student_id", "confirmation_ref", "usage_conditions_ref", "notice_text"}),
-            "使用确认已记录",
-        )
-    return None
-
-
-USAGE_READ_POLICY = ReadPolicy(
-    "UsageConfirmationRecorded", 2, "product", "projection_rebuild", usage_read
-)
-
-
-def receipt_read(access: ReadAccess, event: EventFact) -> ReadGrant | None:
-    """只有服务端已核对收据归属的调用可读原结果；不开放任意账号事件读取。"""
-    if access.execution_ref != event.correlation_id:
-        return None
-    return ReadGrant(
-        {("product.usage_conditions", 1): None, ("product.usage_confirmations", 1): None},
-        frozenset(),
-        "使用确认结果",
-    )
-
-
-USAGE_RECEIPT_POLICY = ReadPolicy(
-    "UsageConfirmationRecorded", 2, "product", "execution_support", receipt_read
 )

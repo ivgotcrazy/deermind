@@ -1,11 +1,11 @@
 # M1 源码与工程资产组织
 
-> **版本**：v0.16<br>
+> **版本**：v0.17<br>
 > **状态**：代码按已批准目录逐增量接线；进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.15 → v0.16，更新单批重建入口与记录职责<br>
+> **修订说明**：v0.16 → v0.17，更新事件读取合同路径及业务授权归属<br>
 
 ## 1. 范围与维护位置
 
@@ -275,7 +275,7 @@ server/migrations/
 
 ### 6.4 E01-07落地
 
-`foundation/system/events/reading.py`维护读取合同与JSON Pointer处理；`query.py`维护固定上界查询、受信用途核验及授权后解引用。所有者在既有facts/records文件登记固定DTO及字段许可，`bootstrap/events.py`汇总已实现的维护读取。不引入通用全文访问或业务空模块。
+`abstractions/event_reading.py`维护片段引用、扫描结果及JSON Pointer规则；`foundation/system/events/query.py`执行显式范围查询与内容校验。业务用例负责授权，账号投影器维护采用类型，bootstrap/events.py汇总读写共用的事件格式。
 
 `server/tests/test_event_pointers.py`验证指针规则；`tests/migrations/event_read_fixture.py`提供隔离的业务授权夹具，`test_event_reads.py`通过`test.sh reads`验证构建包和真实PG。不新增表或迁移，正式浏览器入口随登录及业务功能实施。
 
@@ -433,3 +433,4 @@ E01-13实际新增`foundation/system/executions/`（工作、尝试、授权、S
 | v0.14 | 2026-11-16 | 将账号投影和重建归还业务，底座仅保存通用控制记录 |
 | v0.15 | 2026-11-17 | 落实独立抽象层、实现迁移、装配与禁止依赖规则 |
 | v0.16 | 2026-11-22 | 更新单批重建入口与记录职责 |
+| v0.17 | 2026-11-22 | 更新事件读取合同路径及业务授权归属 |

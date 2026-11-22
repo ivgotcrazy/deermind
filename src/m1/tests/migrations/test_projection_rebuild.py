@@ -369,12 +369,64 @@ class ProjectionRebuildTests(DatabaseTestCase):
         path.chmod(0o600)
         path.write_bytes(b"!" + original[1:])
         service = account_rebuilder(maintenance, self.files)
-        job = await self.rebuild(service, [scope])
+        # 带附件的维护读取也必须沿用 gate；另开连接会触发第二次 checkout。
+        with patch.object(
+            maintenance.sync_engine.pool, "connect", wraps=maintenance.sync_engine.pool.connect
+        ) as checkout:
+            job = await self.rebuild(service, [scope])
+            self.assertEqual(checkout.call_count, 1)
         self.assertEqual(job.state, "failed")
+        self.assert_no_copy(service, job.rebuild_id)
         self.assertEqual(self.rows("product.accounts"), before)
         self.assertEqual(self.rows("runtime.file_objects"), file_rows)
         path.write_bytes(original)
         self.assertEqual((await self.rebuild(service, [scope], 3)).state, "completed")
+
+    def test_mismatched_attachment_and_unknown_target_version_roll_back(self) -> None:
+        asyncio.run(self.execute(self.invalid_target))
+
+    async def invalid_target(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
+        scope = await self.seed(app, large=True)
+        service = account_rebuilder(maintenance, self.files)
+        baseline = self.rows("product.accounts")
+        receipts = self.rows("runtime.projection_receipts")
+        original = self.rows("runtime.file_objects")[0]
+
+        # 模拟登记错属、媒体类型错误和无法解码的目标版本。三个失败批次均不得发布。
+        for generation, column, incorrect in (
+            (2, "artifact_key", "fact:other:account"),
+            (3, "media_type", "text/plain"),
+            (4, "schema_version", 99),
+        ):
+            with self.engine.begin() as connection:
+                if column == "schema_version":
+                    connection.execute(
+                        text(
+                            "UPDATE runtime.events SET schema_version=:value WHERE scope_id=:scope"
+                        ),
+                        {"value": incorrect, "scope": scope},
+                    )
+                else:
+                    connection.execute(
+                        text(
+                            f"UPDATE runtime.file_objects SET {column}=:value WHERE file_id=:file"
+                        ),
+                        {"value": incorrect, "file": original["file_id"]},
+                    )
+            failed = await self.rebuild(service, [scope], generation)
+            self.assertEqual(failed.state, "failed")
+            self.assert_no_copy(service, failed.rebuild_id)
+            self.assertEqual(self.rows("product.accounts"), baseline)
+            self.assertEqual(self.rows("runtime.projection_receipts"), receipts)
+            self.assertEqual(self.rows("runtime.projection_offsets"), [])
+            if column != "schema_version":
+                with self.engine.begin() as connection:
+                    connection.execute(
+                        text(
+                            f"UPDATE runtime.file_objects SET {column}=:value WHERE file_id=:file"
+                        ),
+                        {"value": original[column], "file": original["file_id"]},
+                    )
 
     def test_cli_requires_maintenance_and_status_reads_committed_result(self) -> None:
         scopes: list[UUID] = []
@@ -601,9 +653,7 @@ class ProjectionRebuildTests(DatabaseTestCase):
     async def temporary_failure(self, app: AsyncEngine, maintenance: AsyncEngine) -> None:
         selected = await self.seed(app)
         service = account_rebuilder(maintenance, self.files)
-        with patch.object(
-            service.reader, "read_projection_event", side_effect=ConnectionError("temporary")
-        ):
+        with patch.object(service.reader, "scan_scope", side_effect=ConnectionError("temporary")):
             failed = await self.rebuild(service, [selected])
         self.assertEqual(failed.state, "failed")
         self.assert_no_copy(service, failed.rebuild_id)

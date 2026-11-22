@@ -102,20 +102,6 @@ class ProjectionRecords:
             },
         )
 
-    async def event_id(self, connection: AsyncConnection, bound: ScopeBound, sequence: int) -> UUID:
-        if not 1 <= sequence <= bound.upper_seq:
-            raise ValueError("Sequence exceeds fixed history")
-        identity = await connection.scalar(
-            text(
-                "SELECT event_id FROM runtime.events WHERE scope_kind=:kind "
-                "AND scope_id=:scope AND scope_event_seq=:seq"
-            ),
-            {"kind": bound.scope_kind, "scope": bound.scope_id, "seq": sequence},
-        )
-        if not isinstance(identity, UUID):
-            raise ValueError("A source sequence is missing")
-        return identity
-
     async def applied(self, connection: AsyncConnection, job: RebuildJob) -> set[UUID]:
         return set(
             await connection.scalars(

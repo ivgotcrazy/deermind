@@ -1,6 +1,5 @@
-"""事件读取的内部合同；身份和用途由受信入口提供，不从客户端反序列化。"""
+"""事件读取的内部合同；范围与取材条件由业务入口核定。"""
 
-from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Literal
@@ -8,53 +7,18 @@ from uuid import UUID
 
 from pydantic import JsonValue
 
-from deermind.abstractions.events import FactModel, Ref
+from deermind.abstractions.events import FactModel, Ref, StoredEvent
 
 PAGE_DEFAULT = 50
 PAGE_MAX = 100
 RESPONSE_LIMIT = 4 * 1024 * 1024
 FACT_READ_LIMIT = 32 * 1024 * 1024
 
-Purpose = Literal[
-    "student_history",
-    "admin_review",
-    "material_processing",
-    "domain_intake",
-    "task_supply",
-    "learning_context",
-    "evaluation_basis",
-    "execution_support",
-    "projection_rebuild",
-]
-
 
 class EventPartRef(FactModel):
     event_id: UUID
     record_id: str | None
     path: str
-
-
-@dataclass(frozen=True)
-class ReadAccess:
-    """所有者已核验的本次授权；技术身份本身不赋予任意业务数据读取权。"""
-
-    principal_id: str
-    handler_id: str
-    module: str
-    purpose: Purpose
-    authorization_ref: str
-    scopes: frozenset[tuple[str, UUID]]
-    source_event_ids: frozenset[UUID] | None = None
-    resource_refs: tuple[Ref, ...] = ()
-    execution_ref: UUID | None = None
-    maintenance_ref: str | None = None
-
-
-@dataclass(frozen=True)
-class ReadHandler:
-    handler_id: str
-    module: str
-    purpose: Purpose
 
 
 class EventFact(FactModel):
@@ -84,23 +48,10 @@ class EventFact(FactModel):
 
 
 @dataclass(frozen=True)
-class ReadGrant:
-    """所有者授予本事件的字段；None表示该固定Schema全部字段，缺项表示拒绝。"""
-
-    record_fields: Mapping[tuple[str, int], frozenset[str] | None]
-    payload_fields: frozenset[str]
-    summary: str
-    subject_refs: tuple[Ref, ...] = ()
-
-
-@dataclass(frozen=True)
-class ReadPolicy:
-    event_type: str
-    schema_version: int
-    module: str
-    purpose: Purpose
-    # 参数为授权及完整事件信封；回调只判断本模块规则，不调用模型或写入数据。
-    authorize: Callable[[ReadAccess, EventFact], ReadGrant | None]
+class ScanPage:
+    events: tuple[StoredEvent, ...]
+    scanned_through_seq: int
+    upper_seq: int
 
 
 @dataclass(frozen=True)

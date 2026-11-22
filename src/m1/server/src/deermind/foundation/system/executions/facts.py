@@ -4,7 +4,6 @@ import json
 from typing import Literal
 from uuid import UUID, uuid4
 
-from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
@@ -139,19 +138,3 @@ async def record_change(
         correlation_id=execution.execution_id,
         expected_seq={scope: sequence or 0},
     )
-
-
-def maintenance_grant(access: ReadAccess, event: EventFact) -> ReadGrant | None:
-    """沿既有维护授权读取完整执行快照，不开放到学生端。"""
-    if access.maintenance_ref is None:
-        return None
-    return ReadGrant(
-        {(name, 1): None for name in MODELS},
-        frozenset({"subject_ref", "outcome", "reason_code"}),
-        "工作执行记录",
-    )
-
-
-EXECUTION_READ_POLICY = ReadPolicy(
-    "ExecutionStateChanged", 1, "runtime", "execution_support", maintenance_grant
-)

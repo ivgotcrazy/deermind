@@ -1,4 +1,4 @@
-"""AI事件记录矩阵和读取许可；正文转换由本所有者提供，事件底座只校验。"""
+"""AI事件记录矩阵；正文转换由本所有者提供，事件底座只校验。"""
 
 import hashlib
 from collections import Counter
@@ -8,7 +8,6 @@ from uuid import UUID
 from deermind.abstractions.ai.contracts import ExecutionConfig
 from deermind.abstractions.ai.requests import ModelRequestFact
 from deermind.abstractions.encoding import canonical_json
-from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
@@ -124,20 +123,4 @@ REGISTRATIONS = [
         {(name, 1): MODELS[name] for name in matrix},
     )
     for event_type, matrix in MATRIX.items()
-]
-
-
-def maintenance_read(access: ReadAccess, event: EventFact) -> ReadGrant | None:
-    """只向受控维护开放调用事实，不向通用页面暴露模型材料。"""
-    if access.maintenance_ref is None:
-        return None
-    return ReadGrant(
-        {(name, 1): None for name in MATRIX[event.event_type]},
-        frozenset({"subject_ref", "outcome", "reason_code"}),
-        "AI工作记录",
-    )
-
-
-READ_POLICIES = [
-    ReadPolicy(name, 1, "ai", "execution_support", maintenance_read) for name in MATRIX
 ]

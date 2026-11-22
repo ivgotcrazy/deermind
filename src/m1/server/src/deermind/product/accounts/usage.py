@@ -3,7 +3,7 @@
 from uuid import UUID, uuid4
 
 from deermind.abstractions.encoding import canonical_json
-from deermind.abstractions.event_reading import EventPartRef, ReadAccess
+from deermind.abstractions.event_reading import EventPartRef
 from deermind.abstractions.events import Ref
 from deermind.foundation.system.events.query import EventReader
 from deermind.foundation.system.events.store import EventStore
@@ -198,9 +198,7 @@ class AccountUsage:
                 receipt = await complete_request(
                     connection, receipt, Ref(owner="runtime", type="event", id=str(event_id))
                 )
-        return await self._saved_result(
-            session.account.account_id, session.session_id, student, receipt
-        )
+        return await self._saved_result(student, receipt)
 
     async def read_receipt(
         self, principal: UUID, session: UUID, query: ReceiptQuery
@@ -252,7 +250,7 @@ class AccountUsage:
         if row["state"] != "completed" or row["result_ref"] is None:
             raise RuntimeError("Incomplete synchronous confirmation receipt")
         receipt = Receipt(row["request_ref"], Ref.model_validate(row["result_ref"]))
-        original = await self._saved_result(principal, session, query.resource_id, receipt)
+        original = await self._saved_result(query.resource_id, receipt)
         return ReceiptView(
             receipt_state="completed",
             receipt_ref=receipt.request_ref,
@@ -261,30 +259,26 @@ class AccountUsage:
             result_refs=[original.result.confirmation_ref],
         )
 
-    async def _saved_result(
-        self, principal: UUID, session: UUID, student: UUID, receipt: Receipt
-    ) -> ConfirmUsageResponse:
+    async def _saved_result(self, student: UUID, receipt: Receipt) -> ConfirmUsageResponse:
         if receipt.result_ref is None:
             raise RuntimeError("Confirmation receipt has no result")
         # 重复提交读取原事件的快照，不把后来变化的条件伪装为原请求结果。
-        facts = await self.reader.read_event_facts(
-            ReadAccess(
-                principal_id=str(principal),
-                handler_id="product.usage_receipt",
-                module="product",
-                purpose="execution_support",
-                authorization_ref=str(session),
-                scopes=frozenset({("account", student)}),
-                execution_ref=receipt.request_ref,
-            ),
-            [
-                EventPartRef(event_id=UUID(receipt.result_ref.id), record_id="conditions", path=""),
-                EventPartRef(
-                    event_id=UUID(receipt.result_ref.id), record_id="confirmation", path=""
-                ),
-            ],
-            purpose="execution_support",
-        )
+        identity = UUID(receipt.result_ref.id)
+        try:
+            facts = await self.reader.read_facts(
+                "account",
+                student,
+                identity,
+                refs=[
+                    EventPartRef(event_id=identity, record_id=key, path="")
+                    for key in ("conditions", "confirmation")
+                ],
+                expected_event_type="UsageConfirmationRecorded",
+                schema_version=2,
+                correlation_id=receipt.request_ref,
+            )
+        except LookupError as error:
+            raise AuthError(404, "not_found", "没有可读取的请求结果。") from error
         items = facts["items"]
         if not isinstance(items, list) or len(items) != 2:
             raise RuntimeError("Invalid confirmation fact result")

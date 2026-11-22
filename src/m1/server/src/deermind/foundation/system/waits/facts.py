@@ -4,7 +4,6 @@ import json
 from typing import Literal
 from uuid import UUID, uuid4
 
-from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
@@ -107,19 +106,6 @@ async def record(
         correlation_id=wait.execution_id,
         expected_seq={scope: sequence or 0},
     )
-
-
-def maintenance(access: ReadAccess, event: EventFact) -> ReadGrant | None:
-    if access.maintenance_ref is None:
-        return None
-    return ReadGrant(
-        {("runtime.waits", 1): None, ("runtime.wait_handling", 1): None},
-        frozenset({"subject_ref", "outcome", "reason_code"}),
-        "等待记录",
-    )
-
-
-READ_POLICY = ReadPolicy("WaitStateChanged", 1, "runtime", "execution_support", maintenance)
 
 
 async def read_wait(connection: AsyncConnection, identity: str, *, lock: bool = False) -> Wait:

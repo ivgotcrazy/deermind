@@ -13,7 +13,7 @@
 | E01-05 | 事件、生产者投影与请求收据原子保存 | [E01-05-facts.md](E01-05-facts.md) |
 | E01-06 | 文件、事实附件完整性与引用提交 | [E01-06-files.md](E01-06-files.md) |
 | E01-07 | 事实授权查询、分页与附件正文读取 | [E01-07-reads.md](E01-07-reads.md) |
-| E01-08 | 业务投影生成、五表按范围重建及维护结果 | [首批历史](E01-08-rebuild.md)；[职责补修](E01-08-ownership.md)；[当前命令与验证](E01-08-single-run.md) |
+| E01-08 | 业务投影生成、五表按范围重建及维护结果 | [首批历史](E01-08-rebuild.md)；[职责补修](E01-08-ownership.md)；[维护命令](E01-08-single-run.md)；[读取整改与验证](E01-08-read-followups.md) |
 | E01-09 | 登录、Cookie会话与身份隔离 | [E01-09-auth.md](E01-09-auth.md) |
 | E01-10 | 合成账号维护、首次确认与密码恢复 | [E01-10-account-usage.md](E01-10-account-usage.md) |
 | E01-11 | 公共收据查询、统一错误和类型化客户端 | [E01-11-request-receipts.md](E01-11-request-receipts.md) |

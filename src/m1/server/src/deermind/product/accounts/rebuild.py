@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
 
-from deermind.abstractions.event_reading import ReadAccess
+from deermind.abstractions.events import StoredEvent
 from deermind.foundation.system.events.query import EventReader
 from deermind.foundation.system.projections.contracts import CheckIssue, RebuildJob
 from deermind.foundation.system.projections.records import ProjectionRecords
@@ -133,16 +133,23 @@ class AccountRebuilder:
         async with self.records.guard() as gate:
             return await self._job(gate, identity, operator, authorization)
 
-    def _access(self, job: RebuildJob) -> ReadAccess:
-        return ReadAccess(
-            job.operator_id,
-            "product.account_rebuild",
-            "product",
-            "projection_rebuild",
-            job.authorization_ref,
-            frozenset((b.scope_kind, b.scope_id) for b in job.scope_bounds),
-            maintenance_ref=str(job.rebuild_id),
-        )
+    async def _events(self, gate: AsyncConnection, job: RebuildJob) -> AsyncGenerator[StoredEvent]:
+        for bound in job.scope_bounds:
+            after = 0
+            while after < bound.upper_seq:
+                # 单个目标事实可含大附件；每次只保留一个解包后的事件。
+                page = await self.reader.scan_scope(
+                    gate,
+                    bound.scope_kind,
+                    bound.scope_id,
+                    after_seq=after,
+                    upper_seq=bound.upper_seq,
+                    types=EVENT_TYPES,
+                    limit=1,
+                )
+                for event in page.events:
+                    yield event
+                after = page.scanned_through_seq
 
     async def _build(self, gate: AsyncConnection, job: RebuildJob) -> None:
         """副本只在本次事务内存在；正式外键约束仍在发布时检查。"""
@@ -150,34 +157,24 @@ class AccountRebuilder:
             target = job.target_relations[table.name]
             await gate.execute(text(f"CREATE TABLE {target} (LIKE {table.name} INCLUDING ALL)"))
             await gate.execute(text(f"REVOKE ALL ON {target} FROM deermind_app, PUBLIC"))
-        access = self._access(job)
-        for bound in job.scope_bounds:
-            for sequence in range(1, bound.upper_seq + 1):
-                event_id = await self.records.event_id(gate, bound, sequence)
-                event = await self.reader.read_projection_event(access, event_id)
-                await apply_account_events(
-                    gate, [event], generation=job.generation, targets=job.target_relations
-                )
+        async for event in self._events(gate, job):
+            await apply_account_events(
+                gate, [event], generation=job.generation, targets=job.target_relations
+            )
 
     async def _verify(self, gate: AsyncConnection, job: RebuildJob) -> None:
         """按完整历史推导应有行集合，再逐表比较；防止漏行、多行和旧快照伪装最新值。"""
         expected: dict[str, dict[object, dict[str, object]]] = {t.name: {} for t in TABLES}
         applied: set[UUID] = set()
-        access = self._access(job)
-        for bound in job.scope_bounds:
-            for sequence in range(1, bound.upper_seq + 1):
-                event_id = await self.records.event_id(gate, bound, sequence)
-                event = await self.reader.read_projection_event(access, event_id)
-                if event.draft.event_type not in EVENT_TYPES:
-                    continue
-                applied.add(event_id)
-                rows = rows_for(event)
-                for table in TABLES:
-                    for row in rows[table.name]:
-                        key = row[table.key]
-                        if key in expected[table.name] and not table.update_columns:
-                            raise ValueError("Immutable account fact identity is repeated")
-                        expected[table.name][key] = row
+        async for event in self._events(gate, job):
+            applied.add(event.draft.event_id)
+            rows = rows_for(event)
+            for table in TABLES:
+                for row in rows[table.name]:
+                    key = row[table.key]
+                    if key in expected[table.name] and not table.update_columns:
+                        raise ValueError("Immutable account fact identity is repeated")
+                    expected[table.name][key] = row
         if await self.records.applied(gate, job) != applied:
             raise ValueError("Applied receipts differ from the account events actually handled")
         if set(expected["product.accounts"]) != {b.scope_id for b in job.scope_bounds}:

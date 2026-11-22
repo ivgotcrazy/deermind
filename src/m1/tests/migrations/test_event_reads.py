@@ -1,33 +1,29 @@
-"""真实PG的授权读取与分页用例；仅随机测试库和临时文件，不新增业务页面。"""
+"""真实PG的显式条件读取与分页用例；仅随机测试库和临时文件，不新增业务页面。"""
 
 import asyncio
 import json
 import tempfile
 from collections.abc import Awaitable, Callable
-from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
 from uuid import UUID, uuid4
 
-from deermind.abstractions.event_reading import EventFilter, EventPartRef, ReadAccess
+from deermind.abstractions.event_reading import EventFilter, EventPartRef
 from deermind.abstractions.events import EventDraft, ProducerAccess, Ref
-from deermind.bootstrap.events import event_reader
 from deermind.entrypoints.maintenance.database import upgrade
 from deermind.foundation.system.events.attachments import FactAttachments
 from deermind.foundation.system.events.query import EventReader
 from deermind.foundation.system.events.store import EventStore
 from deermind.infrastructure.database.connection import application_engine
 from deermind.infrastructure.files.local import LocalFiles
-from deermind.product.accounts.save import save_initial_account
-from event_read_fixture import HANDLERS, POLICIES, REGISTRATIONS
+from event_read_fixture import REGISTRATIONS
 from pydantic import JsonValue, TypeAdapter
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 from test_database import DatabaseTestCase
 
 ITEMS = TypeAdapter(list[dict[str, JsonValue]])
-OBJECT = TypeAdapter(dict[str, JsonValue])
 
 
 def items(response: dict[str, JsonValue]) -> list[dict[str, JsonValue]]:
@@ -44,24 +40,9 @@ class EventReadTests(DatabaseTestCase):
         self.files = LocalFiles(Path(temporary.name), backend="local")
         self.scope = uuid4()
         self.other_scope = uuid4()
-        self.access = ReadAccess(
-            "student-one",
-            "test.student",
-            "product",
-            "student_history",
-            "authorized-request",
-            frozenset({("learning_space", self.scope)}),
-        )
 
     def reader(self, engine: AsyncEngine) -> EventReader:
-        return EventReader(
-            engine,
-            self.files,
-            REGISTRATIONS,
-            HANDLERS,
-            POLICIES,
-            cursor_key=b"fixed-test-signing-key-not-a-secret",
-        )
+        return EventReader(engine, self.files, REGISTRATIONS)
 
     async def append(
         self,
@@ -135,108 +116,63 @@ class EventReadTests(DatabaseTestCase):
         finally:
             await engine.dispose()
 
-    def test_snapshot_cursor_and_private_list(self) -> None:
-        asyncio.run(self.with_engine(self.snapshot_cursor))
+    def test_metadata_uses_fixed_upper_and_explicit_filter(self) -> None:
+        asyncio.run(self.with_engine(self.snapshot))
 
-    async def snapshot_cursor(self, engine: AsyncEngine) -> None:
-        first = await self.append(engine)
+    async def snapshot(self, engine: AsyncEngine) -> None:
+        await self.append(engine)
         await self.append(engine, private=True)
         third = await self.append(engine)
         reader = self.reader(engine)
-        page = await reader.query_events(self.access, "learning_space", self.scope, limit=1)
-        self.assertEqual(page["upper_seq"], 3)
-        encoded = json.dumps(page, ensure_ascii=False)
-        self.assertNotIn("PRIVATE", encoded)
-        self.assertNotIn("payload", encoded)
-        self.assertNotIn("records", encoded)
-        cursor = page["next_cursor"]
-        self.assertIsInstance(cursor, str)
-        assert isinstance(cursor, str)
-        await self.append(engine, body="分页后才写入")
-        middle = await reader.query_events(
-            self.access, "learning_space", self.scope, cursor=cursor, limit=1
-        )
-        self.assertEqual(middle["items"], [])
-        next_cursor = middle["next_cursor"]
-        assert isinstance(next_cursor, str)
-        last = await reader.query_events(
-            self.access, "learning_space", self.scope, cursor=next_cursor
-        )
-        self.assertEqual(last["upper_seq"], 3)
-        self.assertIsNone(last["next_cursor"])
-        self.assertEqual([item["event_id"] for item in items(last)], [str(third.event_id)])
-        self.assertNotEqual(first.event_id, third.event_id)
-        fresh = await reader.query_events(self.access, "learning_space", self.scope)
-        self.assertEqual(fresh["upper_seq"], 4)
-
-    def test_cursor_rejects_identity_filter_scope_and_signature_changes(self) -> None:
-        asyncio.run(self.with_engine(self.cursor_rejections))
-
-    async def cursor_rejections(self, engine: AsyncEngine) -> None:
+        filters = EventFilter(event_types=("TestChatRecorded",))
+        first = await reader.query_metadata("learning_space", self.scope, filters=filters, limit=1)
+        self.assertEqual((first["next_after_seq"], first["upper_seq"]), (1, 3))
+        self.assertNotIn("payload", items(first)[0])
+        self.assertNotIn("PRIVATE", json.dumps(first))
         await self.append(engine)
-        await self.append(engine)
-        reader = self.reader(engine)
-        page = await reader.query_events(self.access, "learning_space", self.scope, limit=1)
-        cursor = page["next_cursor"]
-        assert isinstance(cursor, str)
-        for access, filters, token in (
-            (replace(self.access, principal_id="another"), EventFilter(), cursor),
-            (replace(self.access, authorization_ref="new-authorization"), EventFilter(), cursor),
-            (self.access, EventFilter(event_types=("TestChatRecorded",)), cursor),
-            (self.access, EventFilter(), "!" + cursor[1:]),
-        ):
-            with self.assertRaises(ValueError):
-                await reader.query_events(
-                    access, "learning_space", self.scope, filters=filters, cursor=token
-                )
-        with self.assertRaises(PermissionError):
-            await reader.query_events(
-                self.access, "learning_space", self.other_scope, cursor=cursor
-            )
+        last = await reader.query_metadata(
+            "learning_space", self.scope, filters=filters, upper_seq=3, after_seq=1
+        )
+        self.assertEqual([r["event_id"] for r in items(last)], [str(third.event_id)])
+        self.assertIsNone(last["next_after_seq"])
 
-    def test_fields_purpose_and_scope_cannot_be_bypassed(self) -> None:
-        asyncio.run(self.with_engine(self.denied_reads))
+    def test_constraints_checked_before_attachment_io(self) -> None:
+        asyncio.run(self.with_engine(self.constrained))
 
-    async def denied_reads(self, engine: AsyncEngine) -> None:
-        own = await self.append(engine, body="大" * 12000)
-        other = await self.append(engine, scope=self.other_scope)
-        private = await self.append(engine, private=True)
+    async def constrained(self, engine: AsyncEngine) -> None:
+        own = await self.append(engine, body="x" * 33000)
+        ref = EventPartRef(event_id=own.event_id, record_id="message", path="/body")
         reader = self.reader(engine)
-        ref = EventPartRef(event_id=own.event_id, record_id="message", path="")
-        for reference in (
-            ref.model_copy(update={"path": "/secret"}),
-            ref.model_copy(update={"event_id": other.event_id}),
-            ref.model_copy(update={"event_id": private.event_id}),
-        ):
-            with patch.object(
-                self.files, "read", side_effect=AssertionError("must not read")
-            ) as read:
-                with self.assertRaises(PermissionError):
-                    await reader.read_event_facts(
-                        self.access, [reference], purpose="student_history"
+        with patch.object(self.files, "read", side_effect=AssertionError("must not open blob")):
+            for scope, event_type, version, correlation in (
+                (self.other_scope, own.event_type, 1, None),
+                (self.scope, "TestPrivateRecorded", 1, None),
+                (self.scope, own.event_type, 2, None),
+                (self.scope, own.event_type, 1, uuid4()),
+            ):
+                with self.assertRaises(LookupError):
+                    await reader.read_facts(
+                        "learning_space",
+                        scope,
+                        own.event_id,
+                        refs=[ref],
+                        expected_event_type=event_type,
+                        schema_version=version,
+                        correlation_id=correlation,
                     )
-                read.assert_not_called()
-        with self.assertRaises(PermissionError):
-            await reader.read_event_facts(self.access, [ref], purpose="projection_rebuild")
-        with self.assertRaises(PermissionError):
-            await reader.read_event_facts(
-                replace(self.access, handler_id="unknown"), [ref], purpose="student_history"
+            for invalid in (
+                ref.model_copy(update={"record_id": None, "path": "/records/0"}),
+                ref.model_copy(update={"event_id": uuid4()}),
+            ):
+                with self.assertRaises(ValueError):
+                    await reader.read_facts(
+                        "learning_space", self.scope, own.event_id, refs=[invalid]
+                    )
+            action = ref.model_copy(update={"record_id": None, "path": "/action"})
+            response = await reader.read_facts(
+                "learning_space", self.scope, own.event_id, refs=[action]
             )
-        allowed = await reader.read_event_facts(self.access, [ref], purpose="student_history")
-        self.assertNotIn("PRIVATE", json.dumps(allowed))
-        self.assertNotIn("storage_key", json.dumps(allowed))
-        self.assertNotIn('"storage":', json.dumps(allowed))
-        self.assertEqual(items(allowed)[0]["visibility"], "partial")
-        self.assertEqual(items(allowed)[0]["completeness"], "complete")
-        payload = ref.model_copy(update={"record_id": None, "path": ""})
-        result = await reader.read_event_facts(self.access, [payload], purpose="student_history")
-        self.assertEqual(items(result)[0]["content"], {"action": "recorded"})
-        with self.assertRaises(PermissionError):
-            await reader.read_event_facts(
-                self.access,
-                [payload.model_copy(update={"path": "/records"})],
-                purpose="student_history",
-            )
+            self.assertEqual(items(response)[0]["content"], "recorded")
 
     def test_source_reference_requires_fresh_authorization(self) -> None:
         asyncio.run(self.with_engine(self.source_reference))
@@ -246,48 +182,57 @@ class EventReadTests(DatabaseTestCase):
         source = EventPartRef(event_id=other.event_id, record_id="message", path="/body")
         own = await self.append(engine, source=source)
         reader = self.reader(engine)
-        result = await reader.read_event_facts(
-            self.access,
-            [EventPartRef(event_id=own.event_id, record_id="message", path="/source")],
-            purpose="student_history",
-        )
-        self.assertEqual(items(result)[0]["content"], source.model_dump(mode="json"))
-        with self.assertRaises(PermissionError):
-            await reader.read_event_facts(self.access, [source], purpose="student_history")
-
-    def test_continuous_scan_advances_over_filtered_events(self) -> None:
-        asyncio.run(self.with_engine(self.scan_progress))
-
-    async def scan_progress(self, engine: AsyncEngine) -> None:
-        await self.append(engine, private=True)
-        await self.append(engine, private=True)
-        last = await self.append(engine)
-        access = replace(
-            self.access,
-            handler_id="test.maintenance",
-            module="runtime",
-            purpose="projection_rebuild",
-            maintenance_ref="approved-maintenance",
-        )
-        reader = self.reader(engine)
-        first = await reader.read_scope_events(
-            access, "learning_space", self.scope, after_seq=0, types=("TestChatRecorded",), limit=2
-        )
-        self.assertEqual(first["items"], [])
-        self.assertEqual(first["scanned_through_seq"], 2)
-        await self.append(engine)
-        second = await reader.read_scope_events(
-            access,
+        result = await reader.read_facts(
             "learning_space",
             self.scope,
-            after_seq=2,
-            through_seq=3,
-            types=("TestChatRecorded",),
+            own.event_id,
+            refs=[EventPartRef(event_id=own.event_id, record_id="message", path="/source")],
         )
-        self.assertEqual(second["scanned_through_seq"], 3)
-        self.assertEqual(items(second)[0]["event_id"], str(last.event_id))
-        with self.assertRaises(PermissionError):
-            await reader.read_scope_events(self.access, "learning_space", self.scope, after_seq=0)
+        self.assertEqual(items(result)[0]["content"], source.model_dump(mode="json"))
+        with self.assertRaises(LookupError):
+            await reader.read_facts("learning_space", self.scope, source.event_id, refs=[source])
+
+    def test_scan_checks_every_sequence_before_filtering(self) -> None:
+        asyncio.run(self.with_engine(self.scan))
+
+    async def scan(self, engine: AsyncEngine) -> None:
+        ignored = await self.append(engine, private=True, body="x" * 33000)
+        selected = await self.append(engine)
+        await self.append(engine)
+        reader = self.reader(engine)
+        types = frozenset({selected.event_type})
+        async with engine.begin() as connection:
+            with patch.object(self.files, "read", side_effect=AssertionError("irrelevant blob")):
+                first = await reader.scan_scope(
+                    connection,
+                    "learning_space",
+                    self.scope,
+                    after_seq=0,
+                    upper_seq=2,
+                    types=types,
+                    limit=1,
+                )
+                second = await reader.scan_scope(
+                    connection,
+                    "learning_space",
+                    self.scope,
+                    after_seq=first.scanned_through_seq,
+                    upper_seq=2,
+                    types=types,
+                )
+            self.assertEqual(first.events, ())
+            self.assertEqual((first.scanned_through_seq, first.upper_seq), (1, 2))
+            self.assertEqual([e.draft.event_id for e in second.events], [selected.event_id])
+            self.assertEqual(second.scanned_through_seq, 2)
+        with self.engine.begin() as admin:
+            admin.execute(
+                text("DELETE FROM runtime.events WHERE event_id=:id"), {"id": ignored.event_id}
+            )
+        async with engine.begin() as connection:
+            with self.assertRaisesRegex(ValueError, "sequence is missing"):
+                await reader.scan_scope(
+                    connection, "learning_space", self.scope, after_seq=0, upper_seq=2, types=types
+                )
 
     def test_attachment_faults_are_not_empty_success(self) -> None:
         asyncio.run(self.with_engine(self.attachment_faults))
@@ -296,45 +241,17 @@ class EventReadTests(DatabaseTestCase):
         draft = await self.append(engine, body="x" * 33000)
         ref = EventPartRef(event_id=draft.event_id, record_id="message", path="/body")
         reader = self.reader(engine)
-        result = await reader.read_event_facts(self.access, [ref], purpose="student_history")
+        result = await reader.read_facts("learning_space", self.scope, ref.event_id, refs=[ref])
         self.assertEqual(items(result)[0]["content"], "x" * 33000)
         file = next(self.files.root.glob("*.blob"))
         content = file.read_bytes()
         file.chmod(0o600)
         file.write_bytes(b"!" + content[1:])
         with self.assertRaises(OSError):
-            await reader.read_event_facts(self.access, [ref], purpose="student_history")
+            await reader.read_facts("learning_space", self.scope, ref.event_id, refs=[ref])
         file.unlink()
         with self.assertRaises(OSError):
-            await reader.read_event_facts(self.access, [ref], purpose="student_history")
-
-    def test_evaluation_requires_source_and_resource_bounds(self) -> None:
-        asyncio.run(self.with_engine(self.evaluation_bounds))
-
-    async def evaluation_bounds(self, engine: AsyncEngine) -> None:
-        own = await self.append(engine)
-        other = await self.append(engine)
-        reader = self.reader(engine)
-        access = replace(
-            self.access,
-            handler_id="test.evaluation",
-            module="evaluation",
-            purpose="evaluation_basis",
-        )
-        ref = EventPartRef(event_id=own.event_id, record_id="message", path="/body")
-        with self.assertRaises(PermissionError):
-            await reader.read_event_facts(access, [ref], purpose="evaluation_basis")
-        access = replace(
-            access, source_event_ids=frozenset({own.event_id}), resource_refs=(own.owner_ref,)
-        )
-        result = await reader.read_event_facts(access, [ref], purpose="evaluation_basis")
-        self.assertEqual(items(result)[0]["content"], "可见原文")
-        for narrowed in (
-            replace(access, source_event_ids=frozenset({other.event_id})),
-            replace(access, resource_refs=(other.owner_ref,)),
-        ):
-            with self.assertRaises(PermissionError):
-                await reader.read_event_facts(narrowed, [ref], purpose="evaluation_basis")
+            await reader.read_facts("learning_space", self.scope, ref.event_id, refs=[ref])
 
     def test_filters_and_query_limits(self) -> None:
         asyncio.run(self.with_engine(self.query_filters))
@@ -348,66 +265,16 @@ class EventReadTests(DatabaseTestCase):
             recorded_from=datetime.now(UTC) - timedelta(days=1),
             recorded_to=datetime.now(UTC) + timedelta(days=1),
         )
-        result = await reader.query_events(
-            self.access, "learning_space", self.scope, filters=filters
-        )
+        result = await reader.query_metadata("learning_space", self.scope, filters=filters)
         self.assertEqual([item["event_id"] for item in items(result)], [str(first.event_id)])
         for limit in (0, 101, True):
             with self.assertRaises(ValueError):
-                await reader.query_events(self.access, "learning_space", self.scope, limit=limit)
+                await reader.query_metadata("learning_space", self.scope, limit=limit)
         with self.assertRaises(ValueError):
-            await reader.query_events(
-                self.access,
+            await reader.query_metadata(
                 "learning_space",
                 self.scope,
                 filters=EventFilter(recorded_from=datetime(2026, 1, 1)),
-            )
-
-    def test_real_account_requires_authorized_maintenance(self) -> None:
-        asyncio.run(self.with_engine(self.real_account))
-
-    async def real_account(self, engine: AsyncEngine) -> None:
-        from deermind.bootstrap.events import event_store
-
-        identity = uuid4()
-        access = ProducerAccess(
-            "product",
-            Ref(owner="runtime", type="service", id="test"),
-            frozenset({("account", identity)}),
-        )
-        await save_initial_account(
-            engine,
-            event_store(),
-            access,
-            request_id="account",
-            account_id=identity,
-            login_identifier="test",
-            display_name="账号",
-        )
-        async with engine.connect() as connection:
-            event_id = await connection.scalar(text("SELECT event_id FROM runtime.events"))
-        reader = event_reader(engine, self.files, cursor_key=b"fixed-test-signing-key-not-a-secret")
-        authorized = ReadAccess(
-            "operator",
-            "product.account_rebuild",
-            "product",
-            "projection_rebuild",
-            "approved-maintenance",
-            frozenset({("account", identity)}),
-            maintenance_ref="maintenance-1",
-        )
-        ref = EventPartRef(event_id=event_id, record_id="account", path="")
-        result = await reader.read_event_facts(authorized, [ref], purpose="projection_rebuild")
-        restored = await reader.read_projection_event(authorized, event_id)
-        self.assertEqual(restored.draft.event_id, event_id)
-        self.assertEqual(restored.draft.scope_id, identity)
-        self.assertEqual(restored.payload.records[0].record_type, "product.accounts")
-        self.assertEqual(
-            OBJECT.validate_python(items(result)[0]["content"], strict=True)["display_name"], "账号"
-        )
-        with self.assertRaises(PermissionError):
-            await reader.read_event_facts(
-                replace(authorized, maintenance_ref=None), [ref], purpose="projection_rebuild"
             )
 
     def test_response_and_decoded_content_limits_do_not_truncate(self) -> None:
@@ -421,12 +288,12 @@ class EventReadTests(DatabaseTestCase):
         async with engine.connect() as connection:
             before = await connection.scalar(text("SELECT count(*) FROM runtime.events"))
         with self.assertRaisesRegex(ValueError, "Response exceeds 4MiB"):
-            await reader.read_event_facts(self.access, [ref] * 4, purpose="student_history")
+            await reader.read_facts("learning_space", self.scope, ref.event_id, refs=[ref] * 4)
         small = ref.model_copy(update={"path": "/source"})
         with self.assertRaises(ValueError):
-            await reader.read_event_facts(self.access, [small] * 32, purpose="student_history")
+            await reader.read_facts("learning_space", self.scope, ref.event_id, refs=[small] * 32)
         # 失败不消耗事实，也不推进外部进度；缩小范围后可重新取得完整正文。
-        result = await reader.read_event_facts(self.access, [ref], purpose="student_history")
+        result = await reader.read_facts("learning_space", self.scope, ref.event_id, refs=[ref])
         self.assertEqual(items(result)[0]["content"], "x" * (1024 * 1024))
         async with engine.connect() as connection:
             self.assertEqual(
@@ -442,54 +309,20 @@ class EventReadTests(DatabaseTestCase):
         reader = self.reader(engine)
         ref = EventPartRef(event_id=draft.event_id, record_id="message", path="/body/child")
         with self.assertRaises(ValueError):
-            await reader.read_event_facts(self.access, [ref], purpose="student_history")
+            await reader.read_facts("learning_space", self.scope, ref.event_id, refs=[ref])
         with self.assertRaises(ValueError):
-            await reader.read_event_facts(
-                self.access,
-                [ref.model_copy(update={"record_id": "missing"})],
-                purpose="student_history",
+            await reader.read_facts(
+                "learning_space",
+                self.scope,
+                ref.event_id,
+                refs=[ref.model_copy(update={"record_id": "missing"})],
             )
-        result = await reader.read_event_facts(
-            self.access,
-            [ref.model_copy(update={"path": "/source/unknown"})],
-            purpose="student_history",
+        result = await reader.read_facts(
+            "learning_space",
+            self.scope,
+            ref.event_id,
+            refs=[ref.model_copy(update={"path": "/source/unknown"})],
         )
         self.assertEqual(items(result)[0]["completeness"], "incomplete")
         self.assertEqual(items(result)[0]["missing_reasons"], ["field_missing"])
         self.assertIsNone(items(result)[0]["content"])
-
-    def test_file_registration_only_opens_to_authorized_maintenance(self) -> None:
-        asyncio.run(self.with_engine(self.file_registration))
-
-    async def file_registration(self, engine: AsyncEngine) -> None:
-        await self.append(engine, body="x" * 33000)
-        async with engine.connect() as connection:
-            row = (
-                await connection.execute(
-                    text(
-                        "SELECT event_id, scope_id FROM runtime.events "
-                        "WHERE event_type='FileReceived'"
-                    )
-                )
-            ).one()
-        reader = event_reader(engine, self.files, cursor_key=b"fixed-test-signing-key-not-a-secret")
-        access = ReadAccess(
-            "operator",
-            "runtime.file_review",
-            "runtime",
-            "execution_support",
-            "authorized-maintenance",
-            frozenset({("file", row.scope_id)}),
-            maintenance_ref="maintenance-1",
-        )
-        ref = EventPartRef(event_id=row.event_id, record_id="file", path="")
-        result = await reader.read_event_facts(access, [ref], purpose="execution_support")
-        content = OBJECT.validate_python(items(result)[0]["content"], strict=True)
-        self.assertEqual(content["file_id"], str(row.scope_id))
-        self.assertEqual(content["category"], "fact")
-        with self.assertRaises(PermissionError):
-            await reader.read_event_facts(
-                replace(access, maintenance_ref=None, execution_ref=uuid4()),
-                [ref],
-                purpose="execution_support",
-            )

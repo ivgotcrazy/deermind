@@ -1,11 +1,11 @@
 # M1 运行接口与 WebSocket 协议
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **状态**：设计合同；已实现范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-16<br>
-> **修订说明**：v0.4 → v0.5，实现R04本人使用确认收据；明确当前登记动作和读取边界<br>
+> **更新日期**：2026-11-22<br>
+> **修订说明**：v0.5 → v0.6，区分公开事件视图及内部读取合同<br>
 
 公共运行只提供通用认证、收据、派发、等待与回传；所有者仍决定业务处理和可展示内容。HTTP路径相对/api/m1，WebSocket /ws使用deermind.v1。底层订阅与发布格式见[事件分册](Event_Messages.md)。
 
@@ -225,7 +225,7 @@ EventSummaryView包含event_id、event_type、schema_version、scope_kind、scop
 | `event` | EventDetailView | 是 | 已授权事实片段；不是完整内部事件信封，字段定义见R05后的公共视图 |
 | `source_content_refs` | EventPartRef[] | 是 | 仅给有权继续读取的来源；后续请求重新授权 |
 
-处理边界：详情原文由read_event_facts按EventPartRef读取；事件列表返回摘要及获授权片段，事件ID不授予整个空间或私有记录的读取权限。
+处理边界：对外查询入口先核验权限、限定来源和字段，再由read_facts按范围及EventPartRef读取；事件列表返回摘要及获授权片段，事件ID不授予整个空间或私有记录的读取权限。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
 
@@ -379,8 +379,8 @@ watch的最小view登记：learning_space允许conversation、activity_tree、go
 | --- | --- | --- |
 | read_result / read_publication / publish_result | 注册生产者及获授权消费者 | [公共运行§1.2](../System_Foundation_Design.md#12-公开操作) |
 | register_wait / cancel_wait | 消费模块 | [公共运行§3.1](../System_Foundation_Design.md#31-等待记录) |
-| append_events / read_event_facts / apply_projection / rebuild_projection | 注册生产者、获授权读取方或维护处理器；不开放任意事件写HTTP入口 | [公共运行§2](../System_Foundation_Design.md#2-全局事件的追加与查询)、[正文合同](Event_Facts.md) |
-| query_events / read_scope_events | 获授权读取方；完整扫描与界面筛选分开 | [公共运行§2.2](../System_Foundation_Design.md#22-空间事件顺序与有界读取)、[§2.5](../System_Foundation_Design.md#25-查询与读取边界) |
+| append_events / read_facts / apply_projection / rebuild_projection | 注册生产者、获授权读取方或维护处理器；不开放任意事件写HTTP入口 | [公共运行§2](../System_Foundation_Design.md#2-全局事件的追加与查询)、[正文合同](Event_Facts.md) |
+| query_metadata / scan_scope | 获授权读取方；完整扫描与界面筛选分开 | [公共运行§2.2](../System_Foundation_Design.md#22-各范围事件顺序与有界读取)、[§2.5](../System_Foundation_Design.md#25-查询与读取边界) |
 | read_operation_run | 原工作授权读取方 | [公共运行§1.3](../System_Foundation_Design.md#13-operationstep与operationrun) |
 | read_execution / retry_execution / read_handoffs / retry_handoff | 受控维护入口；不新增浏览器任意执行权限 | [公共运行§4.5](../System_Foundation_Design.md#45-失败收尾停止与授权恢复) |
 
@@ -397,3 +397,4 @@ HTTP请求收据中的action采用登记的所有者入口名；WS动作名先�
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.4 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |
 | v0.5 | 2026-11-16 | 实现R04本人使用确认收据；明确当前登记动作和读取边界 |
+| v0.6 | 2026-11-22 | 区分公开事件视图及内部读取合同 |

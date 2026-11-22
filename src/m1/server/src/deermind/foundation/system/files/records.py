@@ -1,7 +1,6 @@
 """不可变文件登记及FileReceived的完整正文；不承接教材或AI业务。"""
 
 from deermind.abstractions.encoding import canonical_json
-from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
@@ -70,24 +69,4 @@ FILE_REGISTRATION = EventRegistration(
     payload_model=FileReceived,
     validate=validate_file,
     record_models={("runtime.file_objects", 1): FileObject},
-)
-
-
-def file_maintenance(access: ReadAccess, event: EventFact) -> ReadGrant | None:
-    """存储键只供明确授权的维护读取；文件身份不产生浏览器下载权限。"""
-    if access.maintenance_ref is None:
-        return None
-    return ReadGrant(
-        {("runtime.file_objects", 1): None},
-        frozenset({"subject_ref", "outcome", "reason_code"}),
-        "文件已保存并核验",
-    )
-
-
-FILE_READ_POLICY = ReadPolicy(
-    "FileReceived",
-    1,
-    "runtime",
-    "execution_support",
-    file_maintenance,
 )

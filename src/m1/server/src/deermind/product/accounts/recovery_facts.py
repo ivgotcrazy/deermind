@@ -2,7 +2,6 @@
 
 from uuid import UUID
 
-from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.abstractions.events import EventDraft, EventPayload, EventRegistration, Ref
 from pydantic import Field
 
@@ -30,17 +29,4 @@ RECOVERED = EventRegistration(
     "account",
     AccountRecovered,
     validate_recovery,
-)
-
-
-def recovery_read(access: ReadAccess, event: EventFact) -> ReadGrant | None:
-    if access.maintenance_ref is None:
-        return None
-    return ReadGrant(
-        {}, frozenset({"account_id", "verification_ref", "credential_revision"}), "账号凭据已重置"
-    )
-
-
-RECOVERY_READ_POLICY = ReadPolicy(
-    "AccountRecovered", 2, "product", "projection_rebuild", recovery_read
 )

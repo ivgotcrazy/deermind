@@ -205,6 +205,20 @@ class AccountUsageTests(DatabaseTestCase):
                 ):
                     self.assertNotIn(secret, content + receipts)
 
+            # 两条确认属于同一账号；调换结果引用后也不能冒充原请求。
+            with self.engine.begin() as connection:
+                connection.execute(
+                    text(
+                        "UPDATE product.command_receipt SET result_ref=jsonb_set("
+                        "result_ref, '{id}', (SELECT to_jsonb(event_id::text) FROM runtime.events "
+                        "WHERE correlation_id=:other AND event_type='UsageConfirmationRecorded')) "
+                        "WHERE request_ref=:original"
+                    ),
+                    {"other": first.request_ref, "original": final.request_ref},
+                )
+            with self.assertRaises(AuthError):
+                await usage.confirm(signed_in.view, assent)
+
         asyncio.run(self.scenario(check))
 
     def test_decline_concurrency_and_transaction_rollback(self) -> None:

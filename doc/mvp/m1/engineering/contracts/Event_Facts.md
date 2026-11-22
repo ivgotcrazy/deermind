@@ -1,11 +1,11 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.11<br>
+> **版本**：v0.12<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.10 → v0.11，同步按范围重建及失败重做<br>
+> **修订说明**：v0.11 → v0.12，明确业务授权与三种内部读取的边界<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
@@ -34,7 +34,7 @@ owner_ref、subject_refs及message_ref、submission_ref、reply_ref等对象引�
 
 ArtifactValue沿数据库总册§3。文件先完整保存并核验hash，再把身份、hash和媒体类型写入事件；文件准备失败不提交事件。不覆盖已引用文件，事件引用期间不得删除。事务失败留下的未引用临时文件不算已发生的业务事实。正文hash按所登记Schema的固定编码计算；不同内容不得复用同一引用。
 
-内部read_event_facts接收access_context、refs:EventPartRef[]、purpose:§2.2枚举。成功返回items，顺序与refs一致；每项为ref、schema_ref:{record_type,schema_version}或{event_type,schema_version}、content:已授权内容、sha256、visible_paths:string[]、visibility:complete/partial、completeness:complete/incomplete及missing_reasons:string[]。sha256对应实际返回内容的规范化编码；visibility表示字段裁剪，completeness表示获准材料是否齐备，两者不能混用。缺失必须逐项明确；无权、非法片段或存储故障返回对应错误，不能伪装成完整空结果。不提供跨空间无界全文读取。
+内部read_facts读取单个事件：scope种类、scope ID和事件ID必填；refs逐项点名记录及JSON Pointer，必须属于该事件。调用方可进一步限定事件类型、版本、correlation_id。返回items与refs同序，包含ref、schema_ref、content、sha256、visible_paths、visibility、completeness和missing_reasons。引用的目标另行授权读取。
 
 ### 2.1 正文Schema与字段字典的关系
 
@@ -50,7 +50,7 @@ EventPartRef只表达已声明的来源、证据或取材关系；不是任意�
 
 ### 2.2 原文读取用途与权限
 
-purpose由已登记处理器设置，不接受浏览器或模型自行指定。事件管理依次检查执行身份、用途、资源范围、record_type和字段；业务所有者提供范围与字段判定。原引用可读不等于被引用目标可读，附件和每一层来源均重复授权。未登记组合默认拒绝。
+下表描述业务用例的权限。业务入口从已核验的会话、执行或维护任务确定可用范围、来源、记录与字段，再调用底座。用途名不能作为授权凭据。
 
 | purpose | 调用方 | 允许记录及字段 | 范围与限制 |
 | --- | --- | --- | --- |
@@ -66,7 +66,7 @@ purpose由已登记处理器设置，不接受浏览器或模型自行指定。�
 
 花括号为精确record_type后缀集合；“本Space正文”仅指§3中该所有者已登记类型，不包含其他模块。四类配置指blueprint_revisions、rule_revisions、strategy_revisions、binding_revisions。业务所有者仍要逐字段收窄；模块在白名单不表示其所有学生数据可读。
 
-表中“自身”“有关”“获准”均须落实为access_context内的模块、执行/请求、资源范围和来源集合，不能由purpose字符串单独证明。调用方已有公开查询时仍走该查询；read_event_facts不提供绕过所有者的全文扫描。裁剪后返回字段路径及缺口，不声称裁剪结果仍是完整FactRecord DTO；重建用途要求完整，否则停止。授权失败不以missing或空数组掩盖。
+业务入口逐次核对表中的账号、资源、执行及来源约束。底座执行显式条件；不匹配时不给出其他范围是否存在该事件的信息。缺字段按incomplete返回；非法片段或附件故障明确失败。
 
 record_id=null的payload读取仍按事件类型和字段授权：业务消费者只读其已登记触发事件及本次关联事实；例如Domain供题读取TaskSupplyRequested，目标计算读取LearningTargetApplied。它不开放同范围全部事件。浏览器只取R05/R06公开视图；维护纯动作只对相应维护授权可见。
 
@@ -78,9 +78,9 @@ record_id=null的payload读取仍按事件类型和字段授权：业务消费�
 4. 同事务追加事件、投影及收据。重建采用同一校验和转换；缺记录、错身份、未知类型或附件不完整均拒绝，不生成半份消息。
 
 
-**E01-07实现。** 登记处理器的模块和用途必须与受信读取上下文一致；所有者按事件类型及版本授予record_type和顶层字段，字段的下级内容随该字段授权，不自动追读其中的引用。`record_id=null`只能读获准动作字段，禁止借payload.records绕过记录授权。根路径返回裁剪后的内容及可见字段，不冒充完整DTO。精确引用无权时拒绝；列表隐藏不可见事件，与“读取获准字段但缺失”分开处理。
+**取材边界。** record_id为空时只能选动作字段；空路径显式选择该对象全部内容，动作对象始终排除records。读取记录必须点名record_id。列表只提供源事件的元数据，可见摘要和对外游标归业务入口。
 
-每份附件先授权再读取，必须匹配事件ID＋record_id的固定产物身份，并通过长度/hash、规范编码和记录Schema校验。单次调用预算及响应限额以[基础设施§4.5](../Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)H02/F01为准。失败不截断、不追加事实、不推进加工游标。本轮只有已实现账号/文件的维护登记；学习、评价等用途的测试夹具不等于相应业务已接线。
+业务入口选材后，底座核对附件的后端、类别、事件ID＋record_id归属、媒体类型、长度、哈希、规范编码及记录Schema。账号重建按投影器选定类型执行完整事件校验，其余事件仅检查序号。预算见[基础设施§4.5](../Infrastructure_and_Deployment_Design.md#45-首轮入口与执行参数建议)。
 
 ## 3. 事实正文与投影登记
 
@@ -331,3 +331,4 @@ M1只提供受控维护重建，不新增管理页面。业务生成器先按§3
 | v0.9 | 2026-11-16 | 接线ExecutionStateChanged控制快照，不参与业务投影重建 |
 | v0.10 | 2026-11-16 | 明确事件与业务生成器解耦、真实应用收据和重建覆盖边界 |
 | v0.11 | 2026-11-22 | 同步按范围重建及失败重做 |
+| v0.12 | 2026-11-22 | 明确业务授权与三种内部读取的边界 |

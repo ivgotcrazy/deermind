@@ -10,13 +10,7 @@ from deermind.abstractions.delivery import (
     HandoffAttempt,
     SubscriptionReceipt,
 )
-from deermind.abstractions.event_reading import (
-    EventFact,
-    EventPartRef,
-    ReadAccess,
-    ReadGrant,
-    ReadPolicy,
-)
+from deermind.abstractions.event_reading import EventPartRef
 from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
@@ -196,22 +190,3 @@ async def record_change(
         correlation_id=event_id,
         expected_seq={scope: sequence or 0},
     )
-
-
-def maintenance_grant(access: ReadAccess, event: EventFact) -> ReadGrant | None:
-    if access.maintenance_ref is None:
-        return None
-    return ReadGrant(
-        {(name, 1): None for name in MODELS},
-        frozenset({"subject_ref", "outcome", "reason_code", "source_event_ref"}),
-        "事件交接记录",
-    )
-
-
-DELIVERY_READ_POLICY = ReadPolicy(
-    "DeliveryStateChanged",
-    1,
-    "runtime",
-    "execution_support",
-    maintenance_grant,
-)

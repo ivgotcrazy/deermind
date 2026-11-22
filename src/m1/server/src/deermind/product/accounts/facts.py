@@ -5,7 +5,6 @@ from typing import Annotated, Literal
 from uuid import UUID
 
 from deermind.abstractions.encoding import canonical_json
-from deermind.abstractions.event_reading import EventFact, ReadAccess, ReadGrant, ReadPolicy
 from deermind.abstractions.events import (
     EventDraft,
     EventPayload,
@@ -134,31 +133,4 @@ ACCOUNT_REGISTRATION = EventRegistration(
     payload_model=AccountSaved,
     validate=validate_account,
     record_models={("product.accounts", 1): AccountFact, **USAGE_RECORDS},
-)
-
-
-def account_maintenance(access: ReadAccess, event: EventFact) -> ReadGrant | None:
-    """账号事实只向已授权维护读取开放；通用管理员事件页不展示账号敏感依据。"""
-    if access.maintenance_ref is None:
-        return None
-    return ReadGrant(
-        {("product.accounts", 1): None, **dict.fromkeys(USAGE_RECORDS)},
-        frozenset(
-            {
-                "account_id",
-                "action",
-                "account_revision",
-                "relation_refs",
-            }
-        ),
-        "初始账号已保存",
-    )
-
-
-ACCOUNT_READ_POLICY = ReadPolicy(
-    "TrialAccountSaved",
-    1,
-    "product",
-    "projection_rebuild",
-    account_maintenance,
 )
