@@ -6,6 +6,7 @@ import { useSession } from './session';
 import UsageConfirmation from './UsageConfirmation.vue';
 
 defineProps<{ role: 'student' | 'admin' }>();
+const emit = defineEmits<{ signOut: [] }>();
 const realtimeState = ref<RealtimeState>('idle');
 const storageUnavailable = ref(false);
 const realtime = new Realtime({
@@ -13,9 +14,10 @@ const realtime = new Realtime({
   onSessionInvalid: () => void refresh(),
   onStorageUnavailable: () => (storageUnavailable.value = true),
 });
-const { session, phase, busy, error, refresh, signIn, signOut } = useSession(() =>
-  realtime.clearPending(),
-);
+const { session, phase, busy, error, refresh, signIn, signOut } = useSession(() => {
+  realtime.clearPending();
+  emit('signOut');
+});
 watch(session, (value) => realtime.setSession(value), { flush: 'sync' });
 onBeforeUnmount(() => realtime.dispose());
 const login = ref('');
@@ -88,7 +90,7 @@ async function submit() {
           <p role="status">实时连接暂不可用。</p>
           <button class="secondary" type="button" @click="realtime.reconnect()">重新连接</button>
         </template>
-        <slot :key="session.session_id" :realtime="realtime" />
+        <slot :key="session.session_id" :realtime="realtime" :session="session" />
       </template>
     </template>
   </section>

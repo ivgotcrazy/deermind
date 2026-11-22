@@ -1,11 +1,11 @@
 # M1 运行接口与 WebSocket 协议
 
-> **版本**：v0.7<br>
+> **版本**：v0.8<br>
 > **状态**：设计合同；已实现范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.6 → v0.7，登记已确认的消息上限与连接恢复顺序<br>
+> **修订说明**：v0.7 → v0.8，登记 E02-01 新建领域收据<br>
 
 公共运行只提供通用认证、收据、派发、等待与回传；所有者仍决定业务处理和可展示内容。HTTP路径相对/api/m1，WebSocket /ws使用deermind.v1。底层订阅与发布格式见[事件分册](Event_Messages.md)。
 
@@ -115,7 +115,14 @@
 <a id="r04"></a>
 ## R04 按原请求查回执
 
-E01-11实际登记：`action=product.record_usage_confirmation`、`resource_kind=account`、`resource_id=本人账号UUID`，request_id为原确认UUID；必带当前`X-Expected-Session`。当前成功结果精确为ConfirmationResult，原确认的allowed/gaps不随后来的决定变化。无收据返回200/not_found；越权返回404，未知动作400，失效登录401，故障503或500。管理命令、未来异步动作未开放网页补读，不能借此遍历业务收据。
+已接入的动作使用 `resource_kind=account`、`resource_id=原请求人账号UUID`、原 `request_id` 和当前 `X-Expected-Session`。
+
+| 动作 | 结果及权限 |
+| :--- | :--- |
+| `product.record_usage_confirmation` | 学生本人原确认的 `ConfirmationResult`，其中 allowed/gaps 保留当时结果 |
+| `domain.save_definition` | 原管理员新建领域的 D02 结果，仍须具备管理员权限 |
+
+无收据返回 200/not_found，越权返回 404，未知动作返回 400，失效登录返回 401，读取故障返回 503 或 500。网页仅可补读已登记的原请求。
 
 `GET /requests/receipt` → `runtime.read_request_receipt`。权限：原请求人，并通过所有者当前权限。处理规则：[恢复规则](../System_Foundation_Design.md#55-重连与通知遗漏)。
 
@@ -399,3 +406,4 @@ HTTP请求收据中的action采用登记的所有者入口名；WS动作名先�
 | v0.5 | 2026-11-16 | 实现R04本人使用确认收据；明确当前登记动作和读取边界 |
 | v0.6 | 2026-11-22 | 区分公开事件视图及内部读取合同 |
 | v0.7 | 2026-11-22 | 登记已确认的消息上限与连接恢复顺序 |
+| v0.8 | 2026-11-22 | 登记 E02-01 新建领域收据的原请求、账号范围和结果 |

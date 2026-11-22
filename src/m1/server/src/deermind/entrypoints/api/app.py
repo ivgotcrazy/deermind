@@ -11,9 +11,11 @@ import uvicorn
 from deermind.bootstrap.accounts import configure_usage
 from deermind.bootstrap.authentication import configure_authentication
 from deermind.bootstrap.database import database_lifespan
+from deermind.bootstrap.domain import configure_domain
 from deermind.bootstrap.settings import Settings
 from deermind.entrypoints.api.auth import router
 from deermind.entrypoints.api.body_limit import RequestBodyLimit
+from deermind.entrypoints.api.domain import router as domain_router
 from deermind.entrypoints.api.errors import api_error
 from deermind.entrypoints.api.realtime import Realtime
 from deermind.entrypoints.api.realtime import router as realtime_router
@@ -28,6 +30,7 @@ from deermind.infrastructure.files.check import check_storage
 from deermind.infrastructure.nats.connection import MessagingSettings
 from deermind.infrastructure.nats.realtime import ViewNotices
 from deermind.product.public.errors import RequestConflict
+from deermind.spaces.domain.public import SAVE_ACTION
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel
@@ -83,12 +86,17 @@ def create_app(
                 app.state.database = engine
                 app.state.auth, app.state.auth_config = await configure_authentication(engine)
                 app.state.usage = configure_usage(engine, settings.files_root)
+                domain = configure_domain(
+                    engine, settings.files_root, backend=settings.files_backend
+                )
+                app.state.domain = domain
                 app.state.receipts = RequestReceipts(
                     {
                         (
                             "product.record_usage_confirmation",
                             "account",
                         ): app.state.usage.read_receipt,
+                        (SAVE_ACTION, "account"): domain.read_receipt,
                     }
                 )
                 app.state.realtime = hub
@@ -121,6 +129,7 @@ def create_app(
 
     app.include_router(router)
     app.include_router(usage_router)
+    app.include_router(domain_router)
 
     app.include_router(receipts_router)
     app.include_router(realtime_router)

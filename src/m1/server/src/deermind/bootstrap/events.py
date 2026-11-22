@@ -19,6 +19,7 @@ from deermind.product.accounts.recovery_facts import RECOVERED
 from deermind.product.accounts.usage_events import (
     USAGE_CONFIRMED,
 )
+from deermind.spaces.domain.facts import DOMAIN_SAVED
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 REGISTRATIONS = [
@@ -32,6 +33,7 @@ REGISTRATIONS = [
     DELIVERY_REGISTRATION,
     EXECUTION_REGISTRATION,
     WAIT_REGISTRATION,
+    DOMAIN_SAVED,
     *AI_REGISTRATIONS,
 ]
 

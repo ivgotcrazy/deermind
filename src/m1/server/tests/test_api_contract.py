@@ -78,6 +78,13 @@ class ApiContractTests(unittest.IsolatedAsyncioTestCase):
                 self.assertIn("404", operation["responses"])
                 self.assertNotIn("422", operation["responses"])
         receipt = schema["paths"]["/api/m1/requests/receipt"]["get"]["responses"]["200"]
-        self.assertIn(
-            "ConfirmationResult", receipt["content"]["application/json"]["schema"]["$ref"]
+        receipt_type = receipt["content"]["application/json"]["schema"]["$ref"].rsplit("/", 1)[-1]
+        receipt_properties = schema["components"]["schemas"][receipt_type]["properties"]
+        result_types = receipt_properties["result"]["anyOf"]
+        self.assertEqual(
+            {item["$ref"] for item in result_types if "$ref" in item},
+            {
+                "#/components/schemas/ConfirmationResult",
+                "#/components/schemas/CreateDomainResult",
+            },
         )

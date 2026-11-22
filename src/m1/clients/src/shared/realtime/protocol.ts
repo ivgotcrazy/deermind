@@ -1,6 +1,6 @@
 /** Shared WebSocket envelope, with runtime checks at the browser receive boundary. */
 
-import type { components } from '../../../../contracts/generated/http/schema';
+import type { components, paths } from '../../../../contracts/generated/http/schema';
 import type { DeepReadonly } from 'vue';
 
 export const SUBPROTOCOL = 'deermind.v1';
@@ -20,7 +20,7 @@ export type Command = {
 };
 
 export type ReceiptView = Pick<
-  components['schemas']['ReceiptView_ConfirmationResult_'],
+  paths['/api/m1/requests/receipt']['get']['responses'][200]['content']['application/json'],
   'receipt_state' | 'business_state' | 'execution_ref' | 'execution_state'
 > & { [key: string]: unknown };
 

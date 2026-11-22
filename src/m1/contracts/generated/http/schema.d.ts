@@ -55,6 +55,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/m1/domain-definitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Domain */
+        post: operations["domain_save_definition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/m1/domains": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Domains */
+        get: operations["domain_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/m1/domains/{domain_id}/objects/{object_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Domain Detail */
+        get: operations["domain_object_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/m1/requests/receipt": {
         parameters: {
             query?: never;
@@ -213,6 +264,121 @@ export interface components {
             /** Gaps */
             gaps: components["schemas"]["UsageGap"][];
         };
+        /** CreateDomainRequest */
+        CreateDomainRequest: {
+            /**
+             * Action
+             * @constant
+             */
+            action: "create";
+            change_note: components["schemas"]["NonBlank"];
+            definition: components["schemas"]["DomainDefinition"];
+            /**
+             * Object Kind
+             * @constant
+             */
+            object_kind: "domain";
+            request_id: components["schemas"]["RequestId"];
+        };
+        /** CreateDomainResponse */
+        CreateDomainResponse: {
+            /**
+             * Request Ref
+             * Format: uuid
+             */
+            request_ref: string;
+            result: components["schemas"]["CreateDomainResult"];
+        };
+        /** CreateDomainResult */
+        CreateDomainResult: {
+            content_ref: components["schemas"]["DomainContentRef"];
+            /** Gaps */
+            gaps?: components["schemas"]["Issue"][];
+            object_ref: components["schemas"]["DomainRef"];
+        };
+        /** DomainContentRef */
+        DomainContentRef: {
+            object_ref: components["schemas"]["DomainRef"];
+            /**
+             * Owner
+             * @default domain
+             * @constant
+             */
+            owner: "domain";
+            /**
+             * Path
+             * @default
+             * @constant
+             */
+            path: "";
+        };
+        /**
+         * DomainDefinition
+         * @description 本增量的领域名称及可空的扩展正文。
+         */
+        DomainDefinition: {
+            /** Coverage */
+            coverage?: null;
+            /** Description */
+            description?: null;
+            name: components["schemas"]["NonBlank"];
+        };
+        /** DomainDetail */
+        DomainDetail: {
+            object: components["schemas"]["DomainView"];
+        };
+        /** DomainList */
+        DomainList: {
+            /** Items */
+            items: components["schemas"]["DomainRow"][];
+        };
+        /** DomainRef */
+        DomainRef: {
+            /**
+             * Kind
+             * @default domain
+             * @constant
+             */
+            kind: "domain";
+            /**
+             * Object Id
+             * Format: uuid
+             */
+            object_id: string;
+            version: components["schemas"]["Version"];
+        };
+        /** DomainRow */
+        DomainRow: {
+            /** Description */
+            description?: null;
+            /** Is Deleted */
+            is_deleted: boolean;
+            /** Name */
+            name: string;
+            object_ref: components["schemas"]["DomainRef"];
+            /**
+             * Source Event Id
+             * Format: uuid
+             */
+            source_event_id: string;
+        };
+        /** DomainView */
+        DomainView: {
+            content: components["schemas"]["DomainDefinition"];
+            content_ref: components["schemas"]["DomainContentRef"];
+            /** Gaps */
+            gaps?: components["schemas"]["Issue"][];
+            /** Is Identity Deleted */
+            is_identity_deleted: boolean;
+            object_ref: components["schemas"]["DomainRef"];
+            /**
+             * Source Event Id
+             * Format: uuid
+             */
+            source_event_id: string;
+            /** Source Refs */
+            source_refs?: components["schemas"]["Ref"][];
+        };
         /** ErrorDetail */
         ErrorDetail: {
             /** Code */
@@ -248,8 +414,25 @@ export interface components {
             path: string;
             related_ref?: components["schemas"]["Ref"] | null;
         };
-        /** ReceiptView[ConfirmationResult] */
-        ReceiptView_ConfirmationResult_: {
+        NonBlank: string;
+        /** Ref */
+        Ref: {
+            /** Id */
+            id: string;
+            /** Owner */
+            owner: string;
+            /** Path */
+            path?: string | null;
+            /** Revision */
+            revision?: number | null;
+            /** Type */
+            type: string;
+            /** Version */
+            version?: number | null;
+        };
+        RequestId: string;
+        /** ReceiptView[Union[ConfirmationResult, CreateDomainResult]] */
+        RequestReceipt: {
             /** Allowed Actions */
             allowed_actions?: string[];
             /** Business State */
@@ -266,24 +449,10 @@ export interface components {
              * @enum {string}
              */
             receipt_state: "not_found" | "accepted" | "completed" | "rejected";
-            result?: components["schemas"]["ConfirmationResult"] | null;
+            /** Result */
+            result?: components["schemas"]["ConfirmationResult"] | components["schemas"]["CreateDomainResult"] | null;
             /** Result Refs */
             result_refs?: components["schemas"]["Ref"][];
-        };
-        /** Ref */
-        Ref: {
-            /** Id */
-            id: string;
-            /** Owner */
-            owner: string;
-            /** Path */
-            path?: string | null;
-            /** Revision */
-            revision?: number | null;
-            /** Type */
-            type: string;
-            /** Version */
-            version?: number | null;
         };
         /**
          * SessionView
@@ -371,6 +540,7 @@ export interface components {
              */
             student_id: string;
         };
+        Version: number;
     };
     responses: never;
     parameters: never;
@@ -741,6 +911,379 @@ export interface operations {
             };
         };
     };
+    domain_save_definition: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Expected-Session"?: string | null;
+                "X-CSRF-Token"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateDomainRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateDomainResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Method Not Allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Client Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    domain_list: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Expected-Session"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DomainList"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Method Not Allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Client Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    domain_object_detail: {
+        parameters: {
+            query?: {
+                version?: number | null;
+            };
+            header?: {
+                "X-Expected-Session"?: string | null;
+            };
+            path: {
+                domain_id: string;
+                object_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DomainDetail"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Method Not Allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Client Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     runtime_read_request_receipt: {
         parameters: {
             query: {
@@ -763,7 +1306,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ReceiptView_ConfirmationResult_"];
+                    "application/json": components["schemas"]["RequestReceipt"];
                 };
             };
             /** @description Bad Request */

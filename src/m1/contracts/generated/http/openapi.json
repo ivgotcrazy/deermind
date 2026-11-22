@@ -167,6 +167,263 @@
         "title": "ConfirmationResult",
         "type": "object"
       },
+      "CreateDomainRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "create",
+            "title": "Action",
+            "type": "string"
+          },
+          "change_note": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/DomainDefinition"
+          },
+          "object_kind": {
+            "const": "domain",
+            "title": "Object Kind",
+            "type": "string"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "object_kind",
+          "action",
+          "definition",
+          "change_note"
+        ],
+        "title": "CreateDomainRequest",
+        "type": "object"
+      },
+      "CreateDomainResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CreateDomainResult"
+          }
+        },
+        "required": [
+          "request_ref",
+          "result"
+        ],
+        "title": "CreateDomainResponse",
+        "type": "object"
+      },
+      "CreateDomainResult": {
+        "additionalProperties": false,
+        "properties": {
+          "content_ref": {
+            "$ref": "#/components/schemas/DomainContentRef"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/DomainRef"
+          }
+        },
+        "required": [
+          "object_ref",
+          "content_ref"
+        ],
+        "title": "CreateDomainResult",
+        "type": "object"
+      },
+      "DomainContentRef": {
+        "additionalProperties": false,
+        "properties": {
+          "object_ref": {
+            "$ref": "#/components/schemas/DomainRef"
+          },
+          "owner": {
+            "const": "domain",
+            "default": "domain",
+            "title": "Owner",
+            "type": "string"
+          },
+          "path": {
+            "const": "",
+            "default": "",
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_ref"
+        ],
+        "title": "DomainContentRef",
+        "type": "object"
+      },
+      "DomainDefinition": {
+        "additionalProperties": false,
+        "description": "本增量的领域名称及可空的扩展正文。",
+        "properties": {
+          "coverage": {
+            "title": "Coverage",
+            "type": "null"
+          },
+          "description": {
+            "title": "Description",
+            "type": "null"
+          },
+          "name": {
+            "$ref": "#/components/schemas/NonBlank"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "DomainDefinition",
+        "type": "object"
+      },
+      "DomainDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "object": {
+            "$ref": "#/components/schemas/DomainView"
+          }
+        },
+        "required": [
+          "object"
+        ],
+        "title": "DomainDetail",
+        "type": "object"
+      },
+      "DomainList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DomainRow"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "DomainList",
+        "type": "object"
+      },
+      "DomainRef": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "domain",
+            "default": "domain",
+            "title": "Kind",
+            "type": "string"
+          },
+          "object_id": {
+            "format": "uuid",
+            "title": "Object Id",
+            "type": "string"
+          },
+          "version": {
+            "$ref": "#/components/schemas/Version"
+          }
+        },
+        "required": [
+          "object_id",
+          "version"
+        ],
+        "title": "DomainRef",
+        "type": "object"
+      },
+      "DomainRow": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "null"
+          },
+          "is_deleted": {
+            "title": "Is Deleted",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/DomainRef"
+          },
+          "source_event_id": {
+            "format": "uuid",
+            "title": "Source Event Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_ref",
+          "name",
+          "is_deleted",
+          "source_event_id"
+        ],
+        "title": "DomainRow",
+        "type": "object"
+      },
+      "DomainView": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/DomainDefinition"
+          },
+          "content_ref": {
+            "$ref": "#/components/schemas/DomainContentRef"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "is_identity_deleted": {
+            "title": "Is Identity Deleted",
+            "type": "boolean"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/DomainRef"
+          },
+          "source_event_id": {
+            "format": "uuid",
+            "title": "Source Event Id",
+            "type": "string"
+          },
+          "source_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "object_ref",
+          "content",
+          "content_ref",
+          "is_identity_deleted",
+          "source_event_id"
+        ],
+        "title": "DomainView",
+        "type": "object"
+      },
       "ErrorDetail": {
         "additionalProperties": false,
         "properties": {
@@ -271,7 +528,78 @@
         "title": "Issue",
         "type": "object"
       },
-      "ReceiptView_ConfirmationResult_": {
+      "NonBlank": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "Ref": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "owner": {
+            "minLength": 1,
+            "title": "Owner",
+            "type": "string"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Path"
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision"
+          },
+          "type": {
+            "minLength": 1,
+            "title": "Type",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "owner",
+          "type",
+          "id"
+        ],
+        "title": "Ref",
+        "type": "object"
+      },
+      "RequestId": {
+        "maxLength": 128,
+        "minLength": 1,
+        "type": "string"
+      },
+      "RequestReceipt": {
         "additionalProperties": false,
         "properties": {
           "allowed_actions": {
@@ -353,9 +681,13 @@
                 "$ref": "#/components/schemas/ConfirmationResult"
               },
               {
+                "$ref": "#/components/schemas/CreateDomainResult"
+              },
+              {
                 "type": "null"
               }
-            ]
+            ],
+            "title": "Result"
           },
           "result_refs": {
             "items": {
@@ -368,69 +700,7 @@
         "required": [
           "receipt_state"
         ],
-        "title": "ReceiptView[ConfirmationResult]",
-        "type": "object"
-      },
-      "Ref": {
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "minLength": 1,
-            "title": "Id",
-            "type": "string"
-          },
-          "owner": {
-            "minLength": 1,
-            "title": "Owner",
-            "type": "string"
-          },
-          "path": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Path"
-          },
-          "revision": {
-            "anyOf": [
-              {
-                "minimum": 1.0,
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Revision"
-          },
-          "type": {
-            "minLength": 1,
-            "title": "Type",
-            "type": "string"
-          },
-          "version": {
-            "anyOf": [
-              {
-                "minimum": 1.0,
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Version"
-          }
-        },
-        "required": [
-          "owner",
-          "type",
-          "id"
-        ],
-        "title": "Ref",
+        "title": "ReceiptView[Union[ConfirmationResult, CreateDomainResult]]",
         "type": "object"
       },
       "SessionView": {
@@ -620,6 +890,10 @@
         ],
         "title": "UsageView",
         "type": "object"
+      },
+      "Version": {
+        "minimum": 1.0,
+        "type": "integer"
       }
     }
   },
@@ -1032,6 +1306,517 @@
         ]
       }
     },
+    "/api/m1/domain-definitions": {
+      "post": {
+        "operationId": "domain_save_definition",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDomainRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDomainResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Create Domain",
+        "tags": [
+          "domain"
+        ]
+      }
+    },
+    "/api/m1/domains": {
+      "get": {
+        "operationId": "domain_list",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "List Domains",
+        "tags": [
+          "domain"
+        ]
+      }
+    },
+    "/api/m1/domains/{domain_id}/objects/{object_id}": {
+      "get": {
+        "operationId": "domain_object_detail",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "domain_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Domain Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "object_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Object Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "version",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 9223372036854775807,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Domain Detail",
+        "tags": [
+          "domain"
+        ]
+      }
+    },
     "/api/m1/requests/receipt": {
       "get": {
         "operationId": "runtime_read_request_receipt",
@@ -1101,7 +1886,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiptView_ConfirmationResult_"
+                  "$ref": "#/components/schemas/RequestReceipt"
                 }
               }
             },

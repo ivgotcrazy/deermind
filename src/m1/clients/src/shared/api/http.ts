@@ -12,6 +12,7 @@ type Body<O> = O extends { requestBody: { content: { 'application/json': infer B
   ? B
   : undefined;
 type Query<O> = O extends { parameters: { query: infer Q } } ? Q : never;
+type Params<O> = O extends { parameters: { path: infer P } } ? P : never;
 type Session = Pick<components['schemas']['SessionView'], 'session_id' | 'csrf_token'>;
 type Options = { session?: Session; signal?: AbortSignal };
 
@@ -62,14 +63,20 @@ async function send<T>(path: string, method: Method, options: Options, body?: un
 
 export function get<P extends Route<'get'>>(
   path: P,
-  options: Options & { query?: Query<paths[P]['get']> } = {},
+  options: Options & { query?: Query<paths[P]['get']>; params?: Params<paths[P]['get']> } = {},
 ): Promise<Success<paths[P]['get']>> {
+  const params = new Map(Object.entries(options.params ?? {}));
+  const resolved = path.replace(/\{([^}]+)\}/g, (_placeholder, name: string) => {
+    const value = params.get(name);
+    if (value === undefined) throw new Error(`请求缺少路径参数 ${name}。`);
+    return encodeURIComponent(String(value));
+  });
   const query = new URLSearchParams();
   if (options.query)
     for (const [key, value] of Object.entries(options.query)) {
       if (value !== undefined) query.set(key, String(value));
     }
-  return send(path + (query.size ? `?${query}` : ''), 'get', options);
+  return send(resolved + (query.size ? `?${query}` : ''), 'get', options);
 }
 
 export function post<P extends Route<'post'>>(

@@ -2,6 +2,7 @@
 
 from deermind.entrypoints.maintenance.database import upgrade
 from deermind.foundation.ai.facts import MODELS
+from deermind.infrastructure.database.connection import EXPECTED_REVISION
 from sqlalchemy import text
 from test_database import DatabaseTestCase
 
@@ -14,7 +15,7 @@ class AISchemaTests(DatabaseTestCase):
         with self.engine.connect() as connection:
             self.assertEqual(
                 connection.scalar(text("SELECT version_num FROM public.alembic_version")),
-                "0011_ai_calls",
+                EXPECTED_REVISION,
             )
             names = connection.scalars(
                 text("SELECT tablename FROM pg_tables WHERE schemaname='ai' ORDER BY tablename")

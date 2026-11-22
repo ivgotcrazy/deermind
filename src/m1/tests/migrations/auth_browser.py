@@ -53,7 +53,13 @@ async def seed(fixture: DatabaseTestCase) -> None:
         await engine.dispose()
 
 
-def main(seed_accounts: Callable[[DatabaseTestCase], Awaitable[None]] = seed) -> None:
+def main(
+    seed_accounts: Callable[[DatabaseTestCase], Awaitable[None]] = seed,
+    *,
+    origin: str = "http://127.0.0.1:5185",
+    port: int = 5185,
+    serve_client: bool = True,
+) -> None:
     fixture = DatabaseTestCase()
     try:
         fixture.setUp()
@@ -72,20 +78,21 @@ def main(seed_accounts: Callable[[DatabaseTestCase], Awaitable[None]] = seed) ->
                     "M1_TEMPORAL_ADDRESS": "127.0.0.1:1",
                     "M1_TEMPORAL_NAMESPACE": "browser-test",
                     "M1_TASK_QUEUE": "unused",
-                    "M1_AUTH_LOCAL_HTTP": "true",
-                    "M1_AUTH_ORIGINS": "http://127.0.0.1:5185",
+                    "M1_AUTH_LOCAL_HTTP": str(origin.startswith("http:")).lower(),
+                    "M1_AUTH_ORIGINS": origin,
                     "M1_AUTH_TRUSTED_PROXIES": "",
                 }
             )
             dist = Path(__file__).resolve().parents[2] / "clients/dist"
             app = create_app()
-            for route in ("admin", "student", "assets"):
-                app.mount("/" + route, StaticFiles(directory=dist / route, html=True))
+            if serve_client:
+                for route in ("admin", "student", "assets"):
+                    app.mount("/" + route, StaticFiles(directory=dist / route, html=True))
             configure_logging()
             uvicorn.run(
                 app,
                 host="127.0.0.1",
-                port=5185,
+                port=port,
                 access_log=False,
                 log_config=None,
                 proxy_headers=False,
