@@ -100,10 +100,6 @@ class TargetDefinitions:
         for index, draft in enumerate(body.items):
             if draft.item_id in seen:
                 raise RequestError(400, "invalid_reference", "目标项不能重复。")
-            if draft.task_conditions.parameter_values:
-                raise RequestError(
-                    400, "invalid_condition", "当前 Task 仅定义了文字范围，请用文字描述目标条件。"
-                )
             claim = claims[draft.claim_ref]
             chapters = await self.chapter_basis(db, body.textbook_id, draft, claim)
             item, missing, sources = prepare_item(

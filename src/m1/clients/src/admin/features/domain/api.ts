@@ -168,7 +168,6 @@ export type MemberView =
   | components['schemas']['KnowledgeView']
   | components['schemas']['TaskView']
   | components['schemas']['SolutionView'];
-export type TaskParameter = components['schemas']['TaskParameter'];
 export type TaskRef = components['schemas']['TaskRef'];
 export type SolutionRef = components['schemas']['SolutionRef'];
 export type KnowledgeRef = components['schemas']['KnowledgeRef'];

@@ -1,11 +1,11 @@
 # M1 产品业务设计
 
-> **版本**：v0.41<br>
+> **版本**：v0.42<br>
 > **状态**：登录与账号事实已按增量接线；其他能力及待确认项见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.40 → v0.41，明确目标文字范围和结构化取值条件<br>
+> **修订说明**：v0.41 → v0.42，目标题目范围统一为文字描述<br>
 
 本文设计教材准备、学习目标、学习空间和账号关系等产品业务，说明这些业务如何调用核心Space。教材助手归本模块管理，个人能力与目标达成计算仍由Evaluation负责；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。学习用时统计与提醒后置，不作为M1模块或验收条件。
 
@@ -468,7 +468,7 @@ Domain软删除需要领域排他锁。若删除先完成，本次新关联拒�
 | `item_id, title` | ID、string／是；新增item_id可省 | 同一条目更新沿用ID；同一目标内唯一 |
 | `claim_ref` | 精确修订引用／是 | Evaluation所有；其task_ref须与所选章节关联的Task版本一致，不自动兼容不同版本 |
 | `chapter_refs` | 章节ID数组／是，非空 | 本教材内的要求来源；不是学生长期选章，也不是聊天限制 |
-| `task_conditions` | `{description:string, parameter_values:object}`／是 | 可用文字说明范围。只有 Task 声明可校验的参数类型和值域时才允许结构化取值。现有文字类型和约束保持原样，无形式化定义时 `parameter_values` 为空对象。Evaluation 由实际证据核对范围 |
+| `task_conditions` | `{description:string}`／是 | 用文字限定本目标考察的题目范围。空字符串表示无额外范围限制。供题使用这段说明，Evaluation 依据实际题面和作答证据核对覆盖 |
 | `method_mode` | `specified|any_one|each`／是 | specified恰一法；any_one须同一法满足全部要求；each逐法满足，不拼接不同方法的方面 |
 | `methods` | MethodRequirement数组／是，非空 | 每项`method_ref, chapter_refs[], aspects[]`；章节是本条目的子集，且确实采用该方法；方法不得重复 |
 | `aspects` | `{aspect_ref, condition_values:object}[]`／是，非空 | 来自Claim；值仅可填写该方面规则声明的可配置条件，缺省取该修订默认值并固定；无规则时仅可留空并列缺口 |
@@ -720,3 +720,4 @@ Evaluation按[§6.4](Evaluation_Space_Design.md#64-目标结果存储与原子�
 | v0.39 | 2026-11-22 | 落实教材上传登记、补页及原件回读的操作边界 |
 | v0.40 | 2026-11-22 | 明确教材对话产物、出处绑定、采用范围和活动中删除的锁序 |
 | v0.41 | 2026-11-23 | 明确目标文字范围及结构化取值条件 |
+| v0.42 | 2026-11-23 | 目标题目范围统一为文字描述 |

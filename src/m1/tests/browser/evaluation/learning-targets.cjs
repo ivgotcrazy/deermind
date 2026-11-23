@@ -55,7 +55,16 @@ async function run() {
     ];
     const task_ref = await define('task', {
       name: '已知原量和增加比例 ' + stamp, method_refs: methods,
-      parameters: [{ name: '比例', meaning: '相对原量的增加比例', type: '分数', constraints: '小于 1 的正分数' }],
+      applicability: {
+        schema_version: '1',
+        role: 'definition',
+        blocks: [{
+          block_id: 'condition', type: 'paragraph',
+          payload: { spans: [{ type: 'text', text: '增加比例是小于 1 的正分数。' }] },
+          provenance: { source_refs: [], transformation: 'generated' },
+        }],
+        data_tables: [], source_refs: [],
+      },
     });
     const chapters = selectedChapters.map(chapter => chapter.chapter_id);
     for (const [index, chapter] of chapters.entries())
@@ -76,7 +85,7 @@ async function run() {
     const claim_ref = claim.claim_ref;
     const item = {
       title: '四分之一', claim_ref, chapter_refs: chapters, method_mode: 'each',
-      task_conditions: { description: '只考察增加四分之一', parameter_values: {} },
+      task_conditions: { description: '只考察增加四分之一' },
       methods: methods.map((method_ref, index) => ({
         method_ref, chapter_refs: [chapters[index] ?? chapters[0]],
         aspects: [{ aspect_ref: { claim_ref, aspect_code: 'independent' }, condition_values: {} }],
@@ -86,6 +95,7 @@ async function run() {
     const route = '/learning-targets';
     const initial = await post(route, command);
     const original = initial.result.target;
+    assert.deepEqual(original.items[0].task_conditions, item.task_conditions);
     assert.deepEqual(await post(route, command), initial);
     assert.deepEqual(original.items[0].methods.map(m => m.chapter_refs), [[chapters[0]], [chapters[1] ?? chapters[0]]]);
     const target_id = original.target_ref.target_id;
@@ -94,8 +104,8 @@ async function run() {
     const bad = await post(route, { ...rev, items: [falseOrigin] }, 409);
     assert.equal(bad.error.code, 'invalid_reference');
     const inventedValue = { ...item, task_conditions: { ...item.task_conditions, parameter_values: { 比例: 0.25 } } };
-    const typed = await post(route, { ...rev, request_id: randomUUID(), items: [inventedValue] }, 400);
-    assert.equal(typed.error.code, 'invalid_condition');
+    const rejected = await post(route, { ...rev, request_id: randomUUID(), items: [inventedValue] }, 400);
+    assert.equal(rejected.error.code, 'invalid_request');
     const updated = await post(route, { ...rev, request_id: randomUUID(), items: [{
       ...item, item_id: original.items[0].item_id, method_mode: 'any_one',
     }] });
@@ -113,7 +123,7 @@ async function run() {
     await writeFile(path.join(evidence, 'target-two-chapters.json'), JSON.stringify({
       textbook_id, domain_id, import_id: book.import_id, chapter_refs: chapters, target: updated.result.target,
     }, null, 2));
-    console.log(`Verified method scope (${chapters.length} chapter(s)), text parameters, historical revisions and target UI.`);
+    console.log(`Verified method scope (${chapters.length} chapter(s)), textual conditions, historical revisions and target UI.`);
   } finally {
     await browser.close();
   }

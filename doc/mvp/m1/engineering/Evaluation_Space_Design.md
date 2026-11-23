@@ -1,11 +1,11 @@
 # M1 Evaluation Space 设计
 
-> **版本**：v0.27<br>
-> **状态**：事件合同评审修订稿；容量与保留候选待确认，未编码<br>
+> **版本**：v0.29<br>
+> **状态**：已实施范围与进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-22<br>
-> **修订说明**：v0.26 → v0.27，限定评价取材范围后按片段读取<br>
+> **更新日期**：2026-11-23<br>
+> **修订说明**：v0.28 → v0.29，用实际题面和证据核对目标文字范围<br>
 
 本文设计评价定义、Evidence形成、Belief更新和个人目标达成计算，明确语义解释与确定性计算怎样衔接。学习目标定义归产品业务，原始交互事实及当题判题反馈归Interaction，Evaluation不直接控制教学；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -66,7 +66,7 @@ M1把Claim、Task内判据库、方法关联及方面规则保存为一个定义
 
 判据身份criterion_id在本Claim各修订间保持。完整引用为`{claim_ref,criterion_id}`；aspect_ref为`{claim_ref,aspect_code}`；rule_ref为`{claim_ref,method_ref,aspect_code}`。快照内部只存局部ID，公开读取时补齐完整引用。修改任一部分都保留旧快照，已应用课程继续读取原修订；不复制旧Belief到新修订。
 
-**目标条件。** condition_schema使用JSON Schema的对象、标量、枚举和范围约束；不接收脚本、查询表达式或模型生成的可执行代码。default_values必须通过同一Schema；字段省略仅在已定义默认值时补齐，null只有Schema明确允许时合法。Task参数范围仍由Domain定义。
+**目标条件。** 评价方面的condition_schema使用JSON Schema的对象、标量、枚举和范围约束；不接收脚本、查询表达式或模型生成的可执行代码。default_values必须通过同一Schema；字段省略仅在已定义默认值时补齐，null只有Schema明确允许时合法。Task允许范围来自Domain定义正文，目标可用文字进一步限定考察范围。
 
 程序能比较的条件保留类型化事实，如迁移类型、实际间隔；自然语言要求保留原文及固定规则引用。目标对照不再次调用LLM解释旧答案，缺少可比较事实时返回待确认，见§4.2。帮助条件记录实际受助要求，不在此配置工具许可。
 
@@ -209,7 +209,7 @@ AI输出`candidates[]`及`unattributed[]`；后者仅含source_spans、reason及
 
 观测候选必须引用学生本次提交的实际片段；参考解法、既有Belief或Interaction判题不能替代学生表现。教学候选必须引用本次机会在服务端正式提供的教学内容。程序验证块及范围确实属于材料、引用文本未被改写；引用存在仅证明出处有效，语义是否支持结论仍按判据解释。
 
-正式`EvidenceItem`由程序分配evidence_ref，并保存input_ref、source_kind／source_id、分项身份、判据结果、rule_ref、题目参数、condition_facts、source_spans、source_refs、qualification、verdict和reason_codes。source_refs由有效片段及输入追溯出源事件和正文引用；题目参数从实际题目使用记录读取，缺失不让AI补猜。所有结果只追加，候选不能直接作为正式Evidence读取。
+正式`EvidenceItem`由程序分配evidence_ref，并保存input_ref、source_kind／source_id、分项身份、判据结果、rule_ref、condition_facts、source_spans、source_refs、qualification、verdict和reason_codes。source_refs由有效片段及输入追溯出源事件和正文引用。解释作答时核对实际题面是否满足本次目标文字范围，在condition_facts记录明确覆盖、未覆盖或未知及题面出处。题意、取值或单位不明确时保留未知。所有结果只追加，候选不能直接作为正式Evidence读取。
 
 | 核对结果 | qualification／verdict | 数值处理 |
 | --- | --- | --- |
@@ -309,13 +309,13 @@ AI输出`candidates[]`及`unattributed[]`；后者仅含source_spans、reason及
 
 非法数值、断裂引用或读取故障使本次计算失败，不输出能力状态。无快照或尚无分项不创建0.50观测。p_current和历史答对题数不参加达标比较。
 
-**条件复用。** 只比较已保存的事实：Task参数按类型和值域核对；方面条件使用固定规则及已有资格事实。最小间隔改变时可用已记录的实际间隔重新比较，不能改证据发生时间。自然语言条件若无法从现有结构化事实或同一固定资格结论核对，返回condition_unknown；不重新解释旧作答，也不按文字相似认定满足。
+**条件复用。** 目标计算只用已保存的事实。方面条件按固定规则和已有资格事实核对。最小间隔改变时可用已记录的实际间隔重新比较，不能改证据发生时间。限定题目范围时，使用对应目标范围的已核实覆盖结论；缺少结论时返回`condition_unknown`。目标计算不重新解释旧作答，也不按文字相似认定满足。
 
-目标计算读取Evidence的最小投影为`evidence_ref, claim_ref, method_ref, aspect_code, rule_ref, verdict, qualification, task_parameters, condition_facts, source_refs`。qualification明确eligible／ineligible／unknown；eligible包括正证和反证。只返回快照实际纳入的作答Evidence，完整条目见§2.4；教学Evidence不计作目标的实际观测覆盖。
+目标计算读取Evidence的最小投影为`evidence_ref, claim_ref, method_ref, aspect_code, rule_ref, verdict, qualification, condition_facts, source_refs`。qualification明确eligible／ineligible／unknown；eligible包括正证和反证。只返回快照实际纳入的作答Evidence，完整条目见§2.4；教学Evidence不计作目标的实际观测覆盖。
 
 | 条件输入 | 确定性比较 |
 | --- | --- |
-| Task参数值或范围 | 与task_parameters中同名、同类型值比较；不支持的形式返回unknown，不靠字符串近似 |
+| 目标题目文字范围 | 仅采用有题面出处且明确覆盖这段范围的结论。空描述表示没有额外范围限制 |
 | 迁移类型／参照表征 | 与condition_facts记录的代码及参照引用核对；新数值不自动满足新表征 |
 | 保持最小间隔 | 使用资格处理中已核实的基准、实际间隔及期间练习；时间未知不以0补齐，沿§6.8已确认的服务端UTC时间口径 |
 | 规则内的语义资格 | 仅复用对应rule_ref及已核对条件下的结论；新条件没有可比较事实时返回unknown |
@@ -347,6 +347,8 @@ any_one有一种已准备方法整体met时即可met，其他候选方法缺口�
 | met／met | unprepared／null | met并列B缺口 | unprepared／null |
 
 ### 4.4 目标结果载荷
+
+E03 中，Worker 接收 `LearningTargetApplied`，读取固定采用并计算目标。一次短事务保存计算输入、结果与事件。Product 在保存时保护当前采用，Evaluation 只用匹配当前目标依据的结果更新展示。作答观测和掌握快照在 E05 接入。
 
 本结构作为§5.2的goal_result内容，按结果引用读取；通知不携带完整个人评价。
 
@@ -723,3 +725,5 @@ condition_facts保存start_ref、end_ref、两端时间、elapsed_seconds及know
 | v0.25 | 2026-11-15 | 同步工程目录、职责依赖、Vue客户端及OpenAPI生成边界。仅文档修订，见MVP决定登记§97。 |
 | v0.26 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |
 | v0.27 | 2026-11-22 | 限定评价取材范围后按片段读取 |
+| v0.28 | 2026-11-23 | 登记目标初始计算、重复交付与迟到结果保存 |
+| v0.29 | 2026-11-23 | 用实际题面和证据核对目标文字范围 |

@@ -40,6 +40,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 type ReadGoal = Callable[[AsyncConnection, UUID, UUID], Awaitable[GoalEvaluation | None]]
+CANDIDATE_ORDER = {"kc": 0, "task_instance": 1, "reference": 2}
 
 
 class CourseSpaces:
@@ -62,9 +63,16 @@ class CourseSpaces:
             adoption = await self.adoption(db, space.current_adoption_ref)
             adopted = await self.adopted(db, adoption)
             result = await self.read_goal(db, space_id, adoption.target_basis_ref)
+            domain = await db.scalar(
+                text("SELECT domain_id FROM product.textbook WHERE textbook_id=:book"),
+                {"book": space.textbook_id},
+            )
+        if not isinstance(domain, UUID):
+            raise RuntimeError("Applied textbook has no domain reference")
         return SpaceGoalView(
             target_basis_ref=adopted.target_basis_ref,
             target_title=adopted.snapshot.target_title,
+            domain_id=domain,
             pending=result is None,
             current=result,
         )
@@ -216,21 +224,24 @@ class CourseSpaces:
             )
             if chapter_view is None:
                 raise RequestError(404, "not_found", "这个章节不在空间采用范围内。")
-            parts: list[tuple[UUID, UUID, UUID]] = []
+            parts: list[tuple[str, str, UUID, UUID, UUID]] = []
             for ref in chapter_view.content_refs:
                 row = (
                     await db.execute(
                         text(
-                            "SELECT candidate_id,import_id,source_event_id FROM "
+                            "SELECT kind,local_key,candidate_id,import_id,source_event_id FROM "
                             "product.material_candidate "
                             "WHERE candidate_id=:id AND candidate_revision=:revision"
                         ),
                         {"id": UUID(ref.id), "revision": ref.revision},
                     )
                 ).one()
-                parts.append((row.import_id, row.source_event_id, row.candidate_id))
+                parts.append(
+                    (row.kind, row.local_key, row.import_id, row.source_event_id, row.candidate_id)
+                )
         content: list[dict[str, JsonValue]] = []
-        for import_id, event_id, candidate_id in parts:
+        ordered = sorted(parts, key=lambda item: (CANDIDATE_ORDER[item[0]], item[1]))
+        for _, _, import_id, event_id, candidate_id in ordered:
             found = await self.materials.reader.read_facts(
                 "material_import",
                 import_id,

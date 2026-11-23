@@ -5,6 +5,7 @@ import { get, post } from '../../../shared/api/http';
 import type { DomainSession } from '../domain/api';
 import { listTextbooks, type TextbookRow } from '../materials/api';
 import CourseApplication from './CourseApplication.vue';
+import { methodKey, methodNames } from './methodNames';
 
 type Schema = components['schemas'];
 type Target = Schema['TargetView'];
@@ -23,6 +24,7 @@ const draftItems = ref<Item[]>([]);
 const claimId = ref('');
 const editing = ref<Target>();
 const title = ref('');
+const names = ref<Record<string, string>>({});
 const error = ref('');
 const status = ref('');
 const busy = ref(false);
@@ -73,6 +75,7 @@ function reset() {
   editing.value = undefined;
   title.value = '';
   draftItems.value = [];
+  names.value = {};
   claimId.value = '';
 }
 
@@ -99,7 +102,14 @@ async function readClaim(ref: Schema['ClaimRef']) {
     params: { claim_id: ref.claim_id },
     query: { revision: ref.revision },
   });
-  return result.claim;
+  const claim = result.claim;
+  const labels = await methodNames(
+    props.session,
+    claim.definition.domain_id,
+    claim.definition.methods.map((method) => method.method_ref),
+  );
+  names.value = { ...names.value, ...labels };
+  return claim;
 }
 
 async function addGoal() {
@@ -114,7 +124,7 @@ async function addGoal() {
         title: claim.definition.title,
         claim_ref: row.claim_ref,
         chapter_refs: [],
-        task_conditions: { description: '', parameter_values: {} },
+        task_conditions: { description: '' },
         method_mode: 'each',
         methods: [],
       },
@@ -302,7 +312,7 @@ async function save() {
               </label>
             </fieldset>
             <fieldset
-              v-for="method in item.claim.definition.methods"
+              v-for="(method, index) in item.claim.definition.methods"
               :key="method.method_ref.object_id"
             >
               <label
@@ -314,7 +324,7 @@ async function save() {
                     select(item, method.method_ref, ($event.target as HTMLInputElement).checked)
                   "
                 />
-                方法 {{ method.method_ref.object_id.slice(0, 8) }} · v{{
+                {{ names[methodKey(method.method_ref)] ?? `方法 ${index + 1}` }} · v{{
                   method.method_ref.version
                 }}
               </label>

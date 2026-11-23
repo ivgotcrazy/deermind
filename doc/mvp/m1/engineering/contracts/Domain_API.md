@@ -1,11 +1,11 @@
 # M1 Domain API
 
-> **版本**：v0.11<br>
+> **版本**：v0.12<br>
 > **状态**：设计合同；已实现范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.10 → v0.11，明确题内参考归类的两项结论与依据<br>
+> **修订说明**：v0.11 → v0.12，同步 Task 正文保存合同<br>
 
 共同类型与回执见[总册](../API_and_Message_Design.md)。接口只接受已授权领域及精确对象引用；所有定义/内容结构以[Domain§1](../Domain_Space_Design.md#1-领域对象身份与关系)为唯一来源。API不直接接收数据库行或模型任意生成的ID。
 
@@ -82,7 +82,7 @@ E02-01 接入 D01、D02、D04 和 D13 的管理员领域根分支。各请求携
 
 新建知识成分携带 `domain_id`。修订与软删除由 `object_ref` 找到其所属领域，且 `object_ref.version`、`expected_version`、当前版本须相同。软删除省略 `definition`，提交的版本保留上一版正文并标记删除。
 
-E02-04 新增 `object_kind=task`，沿用成员新建、修订和软删除的请求及版本规则。Task 载荷见 [Domain §1.2 与 §3.1](../Domain_Space_Design.md#31-可检查的任务定义)。已提供的条件正文及参数在保存前校验。未填正文为 `null`，缺项在 `gaps` 返回。方法及先导关系随下一增量接入。
+`object_kind=task` 沿用成员新建、修订和软删除的请求及版本规则。Task 载荷见 [Domain §1.2 与 §3.1](../Domain_Space_Design.md#31-可检查的任务定义)。变量和限制写在内容正文，保存时校验正文结构。未填正文为 `null`，缺项在 `gaps` 返回。
 
 E02-05 新增 `object_kind=solution`。Task 定义接收 `method_refs`、`prerequisites`，Solution 接收 `kc_refs`。三者均随持有者版本保存，省略时为空。非法关系返回 `invalid_reference` 或 `dependency_cycle`，`issues[].path` 指明涉及的关系字段。旧 Task 请求仍可用原编号查询或重放。
 
@@ -595,3 +595,4 @@ ContentRef只允许所属view已授权的JSON Pointer；图文重排不升对象
 | v0.9 | 2026-11-22 | 登记 D05 的确认视图及 D10 检查结果、收据与防重 |
 | v0.10 | 2026-11-22 | 登记定义提取、实例归类与后续正式保存的接口 |
 | v0.11 | 2026-11-23 | 明确题内参考归类分别核对父题和参考，补充结论及证据口径 |
+| v0.12 | 2026-11-23 | 同步 Task 正文保存合同 |

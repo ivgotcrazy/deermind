@@ -1,13 +1,13 @@
 images:
-  server: deermind/server:e03-09-r3
-  client: deermind/client:e03-09-r3
+  server: deermind/server:e03-task-text-r1
+  client: deermind/client:e03-task-text-r1
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
 filesClaim: deermind-files
 database:
   host: deermind-postgres
   port: 5432
-  name: deermind
+  name: deermind_task_text
   existingSecret: deermind-postgres
 temporal:
   address: deermind-temporal-frontend:7233

@@ -71,24 +71,20 @@ async function main() {
       认知责任: '解释每单位时间的路程怎样累积。',
       预期表现: '用自己的话说明 d=v×t 为什么成立。',
       完成条件: '说清每个量的含义，并说明需要保持匀速。',
-      适用条件: '速度保持不变，时间与速度的单位相容。',
+      适用条件: '速度保持不变，行进时间 t > 0，时间与速度的单位相容。',
       适用边界: '排除变速运动。',
     });
-    await dialog.getByText('参数（可选）', { exact: true }).click();
-    await dialog.getByRole('button', { name: '添加参数' }).click();
-    await dialog.getByLabel('参数名称').fill('t');
-    await dialog.getByLabel('含义', { exact: true }).fill('行进时间');
-    await dialog.getByLabel('类型', { exact: true }).fill('数值');
-    await dialog.getByLabel('约束', { exact: true }).fill('t > 0，单位与速度相容');
+    assert.equal(await dialog.getByRole('button', { name: '添加参数' }).count(), 0);
     await dialog.getByRole('button', { name: '保存', exact: true }).click();
     const first = page.getByRole('region', { name: /解释匀速路程关系/ });
     await first.getByText('尚未关联方法。').waitFor();
-    await first.getByText('行进时间。t > 0，单位与速度相容').waitFor();
+    await first.getByText('速度保持不变，行进时间 t > 0，时间与速度的单位相容。').waitFor();
     const catalog = `/api/m1/domains/${domainId}/objects`;
     const [initial] = (await read(page, session, catalog, { kinds: 'task' })).items;
     const originalPath = `${catalog}/${initial.object_ref.object_id}`;
     const before = (await read(page, session, originalPath)).object;
     assert.equal(before.object_ref.version, 1);
+    assert.equal(Object.hasOwn(before.content, 'parameters'), false);
     assert.deepEqual(before.gaps.map((gap) => gap.path), ['/method_refs']);
 
     await create.click();
@@ -127,7 +123,7 @@ async function main() {
       domainName, domainId, taskVersion1: before.object_ref, taskVersion2: committed.result.object_ref,
       draftGaps: (await read(page, session, `${catalog}/${list.items.find((item) => item.name === calculation).object_ref.object_id}`)).object.gaps,
     }, null, 2));
-    console.log('E02-04 browser: distinct tasks, draft gaps, parameters, edit conflict and v1 verified');
+    console.log('E02-04 browser: distinct tasks, draft gaps, textual conditions, edit conflict and v1 verified');
   } finally {
     await browser.close();
   }

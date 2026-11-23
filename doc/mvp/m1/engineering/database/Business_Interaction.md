@@ -1,10 +1,10 @@
 # deermind 数据库：交互空间数据字典
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **状态**：事件合同评审修订稿；容量与保留候选待确认，未编码<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
-> **更新日期**：2026-11-15<br>
-> **修订说明**：v0.4 → v0.5，补正文、投影矩阵、状态及读取授权；容量候选待审，见MVP决定登记§98<br>
+> **更新日期**：2026-11-23<br>
+> **修订说明**：v0.5 → v0.6，统一活动类型的协议值<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **35 张表、306 个列定义**。处理流程、接口和业务载荷由[Interaction_Space_Design.md](../Interaction_Space_Design.md) §1.3、§2.4、§3.7—3.9、§4.3、§5.3、§6.3、§7.1维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -360,7 +360,7 @@ erDiagram
 | `scope_id` | `uuid` | 否 | 无 | 学习空间身份；逻辑引用 product.learning_space.space_id |
 | `root_id` | `uuid` | 否 | 无 | 根活动；根记录指向自己；FK → `interaction.activities.activity_id` |
 | `parent_id` | `uuid` | 是 | 无 | 父活动；顶层为空；FK → `interaction.activities.activity_id` |
-| `type` | `text` | 否 | 无 | explanation、qa、detection、free_chat；具体枚举按活动合同 |
+| `type` | `text` | 否 | 无 | explanation、question_answer、detection、free_chat；具体枚举按活动合同 |
 | `name` | `text` | 否 | 无 | 按活动内容生成的可读名称 |
 | `config_ref` | `uuid` | 否 | 无 | 固定活动配置；FK → `interaction.resolved_configs.config_id` |
 | `adoption_ref` | `uuid` | 否 | 无 | 根采用的课程；逻辑引用product.space_adoption |
@@ -731,7 +731,7 @@ erDiagram
 | --- | --- | --- | --- | --- |
 | `blueprint_id` | `uuid` | 否 | 无 | 配置对象身份；主键组成字段 |
 | `revision` | `bigint` | 否 | 无 | 从1递增；写入时比较预期修订，不以时间代替；主键组成字段 |
-| `activity_type` | `text` | 否 | 无 | explanation、qa、detection、free_chat |
+| `activity_type` | `text` | 否 | 无 | explanation、question_answer、detection、free_chat |
 | `definition` | `jsonb` | 否 | 无 | Interaction§1.3 BlueprintRevision：nodes、transitions；节点完整输入/动作/fallback，转移含顺序/条件/依据 |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
@@ -754,7 +754,7 @@ erDiagram
 | --- | --- | --- | --- | --- |
 | `rule_id` | `uuid` | 否 | 无 | 配置对象身份；主键组成字段 |
 | `revision` | `bigint` | 否 | 无 | 从1递增；写入时比较预期修订，不以时间代替；主键组成字段 |
-| `activity_type` | `text` | 否 | 无 | explanation、qa、detection、free_chat |
+| `activity_type` | `text` | 否 | 无 | explanation、question_answer、detection、free_chat |
 | `definition` | `jsonb` | 否 | 无 | Interaction§1.3 RuleRevision：name、applies_when、requirement、basis、limitations、enabled |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
@@ -777,7 +777,7 @@ erDiagram
 | --- | --- | --- | --- | --- |
 | `strategy_id` | `uuid` | 否 | 无 | 配置对象身份；主键组成字段 |
 | `revision` | `bigint` | 否 | 无 | 从1递增；写入时比较预期修订，不以时间代替；主键组成字段 |
-| `activity_type` | `text` | 否 | 无 | explanation、qa、detection、free_chat |
+| `activity_type` | `text` | 否 | 无 | explanation、question_answer、detection、free_chat |
 | `definition` | `jsonb` | 否 | 无 | Interaction§1.3 StrategyRevision：name、purpose、applicability、materials、approach、adaptation、finish_conditions、enabled |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
@@ -800,7 +800,7 @@ erDiagram
 | --- | --- | --- | --- | --- |
 | `binding_id` | `uuid` | 否 | 无 | 配置对象身份；主键组成字段 |
 | `revision` | `bigint` | 否 | 无 | 从1递增；写入时比较预期修订，不以时间代替；主键组成字段 |
-| `activity_type` | `text` | 否 | 无 | explanation、qa、detection、free_chat |
+| `activity_type` | `text` | 否 | 无 | explanation、question_answer、detection、free_chat |
 | `definition` | `jsonb` | 否 | 无 | Interaction§1.3 ActivityBindingRevision：活动规则/策略引用、节点本层引用；不复制继承内容 |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
@@ -1096,3 +1096,4 @@ LLM提议与程序采用结果。
 | v0.3 | 2026-11-15 | 无检测轮的作答明确写SQL NULL，保留原部分唯一约束。见MVP决定登记§95。 |
 | v0.4 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.5 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |
+| v0.6 | 2026-11-23 | 对齐答疑活动类型的协议值 |

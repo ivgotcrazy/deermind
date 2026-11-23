@@ -33,7 +33,7 @@ class GoalCalculationTests(unittest.TestCase):
             title="四分之一",
             claim_ref=claim,
             chapter_refs=[chapter],
-            task_conditions=TaskConditions(description="", parameter_values={"fraction": "1/4"}),
+            task_conditions=TaskConditions(description="增加四分之一"),
             method_mode="each",
             methods=[
                 MethodRequirement(method_ref=method, chapter_refs=[chapter], aspects=[aspect])
@@ -42,8 +42,8 @@ class GoalCalculationTests(unittest.TestCase):
         )
         self.assertEqual(derive_target([item], {}, {}).attainment, "unknown")
         evidence = Ref(owner="evaluation", type="evidence", id=str(uuid4()))
-        correct_scope = CoveredAnswer(evidence, "eligible", {"fraction": "1/4"}, {"help": "none"})
-        other_scope = CoveredAnswer(evidence, "eligible", {"fraction": "1/5"}, {"help": "none"})
+        correct_scope = CoveredAnswer(evidence, "eligible", {"help": "none"}, "增加四分之一")
+        other_scope = CoveredAnswer(evidence, "eligible", {"help": "none"}, "增加五分之一")
         first_key, second_key = (claim, first, "independent"), (claim, second, "independent")
         snapshot = {
             first_key: Observation(Decimal("0.9000"), [correct_scope]),

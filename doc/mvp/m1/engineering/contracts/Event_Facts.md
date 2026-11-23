@@ -1,11 +1,11 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.16<br>
+> **版本**：v0.17<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.15 → v0.16，登记首次活动蓝图及节点移除的绑定记录<br>
+> **修订说明**：v0.16 → v0.17，同步 Task 定义和目标文字范围的正文合同<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
@@ -195,12 +195,12 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | `AnswerSubmitted` | `interaction.submissions`[1] | 身份等于submission_ref；answer保存完整提交，不用EventPartRef替代必填正文 |
 | `TeachingOpportunityClosed` | `interaction.opportunity_closures`[1] | 机会身份等于opportunity_id；不重复创建teaching_opportunities |
 | `BeliefEvaluationCompleted` | `evaluation.evidence`[0..n]；`evaluation.belief_revision`[0..n]；`evaluation.mastery_snapshot`[1] | Evidence/修订集合分别等于payload引用集合；合法完成总有新快照；跳过数值更新时修订为0 |
-| `GoalEvaluationCompleted` | `evaluation.goal_evaluation`[1] | 结果等于goal_evaluation_ref；是否更新当前索引按current_state_applied，不重新算目标 |
-| `LearningTargetSaved` | `product.learning_target`[1]；`product.learning_target_version`[1] | 身份/当前头快照及本次新版本；不重复投影旧版本 |
-| `CourseApplied` | `product.course_application`[1]；`product.target_basis`[1] | 同一application的新应用及固定依据；检查结果已由ApplicationChecked登记 |
+| `GoalEvaluationCompleted` | `evaluation.goal_evaluation`[1]；`evaluation.goal_calculation_input`[0..1] | E03 首次计算或修订目标时，固定输入与结果共同保存。已有 `GoalCalculationPrepared` 的处理沿用固定输入。是否推进当前索引由 `current_state_applied` 决定 |
+| `LearningTargetSaved` | `product.learning_target`[1]；`product.learning_target_version`[1] | 身份/当前头快照及本次新版本；目标条目按Product§4.2.1保存文字范围 |
+| `CourseApplied` | `product.course_application`[1]；`product.target_basis`[0..1] | 新应用携带本次建立的评价依据。已存在同一依据时沿用固定引用。检查结果由 `ApplicationChecked` 保存 |
 | `LearningSpaceCreated` | `product.learning_space`[1]；`product.space_adoption`[1] | 首次空间和初始采用；身份分别匹配scope与adoption_ref |
 | `LearningSpaceAdoptionChanged` | `product.learning_space`[1]；`product.space_adoption`[1] | 空间身份不变；追加新采用并保存current_adoption_ref |
-| `DomainDefinitionSaved` | `domain.object_version`[1] | 本次object_ref的新版本；create/update/soft_delete都不覆盖旧版本 |
+| `DomainDefinitionSaved` | `domain.object_version`[1] | 本次object_ref的新版本；Task变量和限制随Domain§1.2正文保存 |
 | `DomainIntakeSourceInvalidated` | `domain.intake_item`[1] | item_ref的最新有效性快照；不删除已入库定义 |
 | `DomainIntakeItemProcessed` | `domain.intake_item`[1..n] | 一项正常处理；确认同时移除子项时携带全部受影响项。领域对象另记版本 |
 | `DomainAnalysisInputFixed` | `domain.artifact`[1] | 定义提取或归类的固定输入，含原内容与所选固定定义 |
@@ -337,4 +337,5 @@ M1只提供受控维护重建，不新增管理页面。业务生成器先按§3
 | v0.13 | 2026-11-22 | 登记路径确认和依据不足的事件正文组合 |
 | v0.14 | 2026-11-22 | 登记领域受理固定输入、新增待办正文及复用引用 |
 | v0.15 | 2026-11-22 | 登记领域分析固定输入和待办处理组合 |
-| v0.16 | 2026-11-23 | 登记首次活动蓝图及绑定事实 |
+| v0.16 | 2026-11-23 | 登记活动配置、课程采用及目标计算的记录映射 |
+| v0.17 | 2026-11-23 | 同步 Task 定义和目标文字范围的正文合同 |

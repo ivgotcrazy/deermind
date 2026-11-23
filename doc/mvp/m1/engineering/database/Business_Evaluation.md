@@ -1,10 +1,10 @@
 # deermind 数据库：评估空间数据字典
 
-> **版本**：v0.3<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **版本**：v0.4<br>
+> **状态**：Evidence 存储随 E05 实施，本轮修订待评审<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
-> **更新日期**：2026-11-15<br>
-> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **更新日期**：2026-11-23<br>
+> **修订说明**：v0.3 → v0.4，在条件事实登记题面覆盖依据<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **13 张表、127 个列定义**。处理流程、接口和业务载荷由[Evaluation_Space_Design.md](../Evaluation_Space_Design.md) §1.5、§2.3—2.4、§3—6维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -211,8 +211,7 @@ AI对表现的解释候选。
 | `source_id` | `uuid` | 否 | 无 | 作答或稳定教学机会身份 |
 | `execution_checks` | `jsonb` | 否 | 无 | Evaluation§2.4：criterion_id、met/not_met/unknown、source_spans、reason |
 | `rule_ref` | `jsonb` | 否 | 无 | 本方面实际判据版本；Ref，见总册§3 |
-| `task_parameters` | `jsonb` | 否 | 无 | 本次实际题目参数；缺失显式记录，不让AI补猜 |
-| `condition_facts` | `jsonb` | 否 | 无 | Evaluation§2.4：condition、known/unknown/not_applicable、value、source_refs；value按对应方面condition_schema校验 |
+| `condition_facts` | `jsonb` | 否 | 无 | Evaluation§2.4：condition、known/unknown/not_applicable、value、source_refs。方面条件按condition_schema校验；目标题目范围覆盖记录本次范围描述、结论及题面出处 |
 | `source_spans` | `jsonb` | 否 | 无 | 授权原文的块/范围/图表元素引用 |
 | `source_refs` | `jsonb` | 否 | '[]'::jsonb | 源事件和原文位置；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `qualification` | `text` | 否 | 无 | eligible、ineligible、unknown |
@@ -428,3 +427,4 @@ AI对表现的解释候选。
 | v0.1 | 2026-11-15 | 逐表补齐列、键、空值、默认值、约束和关系；未执行建表或迁移 |
 | v0.2 | 2026-11-15 | 物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。 |
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
+| v0.4 | 2026-11-23 | 在条件事实登记题面覆盖依据 |

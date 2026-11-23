@@ -1,11 +1,11 @@
 # M1 Domain Space 设计
 
-> **版本**：v0.26<br>
+> **版本**：v0.27<br>
 > **状态**：设计合同；已实现范围见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-22<br>
-> **修订说明**：v0.25 → v0.26，登记 E02-06 检验路径及依据不足记录<br>
+> **更新日期**：2026-11-23<br>
+> **修订说明**：v0.26 → v0.27，移除 Task 参数表，出题按需读取正文<br>
 
 本文维护可复用领域内容及其业务操作，不保存学生作答、个人接触史或 Belief。依据为 [PRD R04](../PRD.md#34-维护领域处理入库并关联章节m1-r04)、[R07](../PRD.md#37-准备题目和参考m1-r07)与[内容规格§3.2–3.3](../design/Content_and_Model_Reference.md#32-领域对象与字段)；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -43,12 +43,12 @@ Domain保留定义提取、实例归类和智能供题三项AI Operation。维�
 | --- | --- | --- |
 | Domain | `name:string, coverage:RichContent?, description:RichContent?` | 名称必填；不保存可由`domain_id`查询得到的成员列表 |
 | Task | `name, responsibility, expected_output, completion_conditions, applicability, boundaries`；后五项为`RichContent` | 明确认知责任、要求的表现和条件，不能仅以题型名或公式替代 |
-| Task关系 | `method_refs:ObjectRef[], prerequisites:Prerequisite[], parameters:Parameter[]` | 正式使用至少一法；参数可空；不接收Task→KC，也不存KC Task／复合Task角色 |
+| Task关系 | `method_refs:ObjectRef[], prerequisites:Prerequisite[]` | 正式使用至少一法；不接收Task→KC，也不存KC Task／复合Task角色 |
 | Solution | `name, approach, rationale, applicability, key_process, kc_refs:ObjectRef[]`；说明字段为`RichContent` | 正式使用时方法依据与直接KC明确；可关联多个KC，不要求可执行子调用树 |
 | KC | `name, definition, applicability, examples, non_examples`；说明字段为`RichContent` | 含义和条件必备；正反例可空并说明不足；直接检验路径单列在§4.3，不倒置为KC持有Task依赖 |
 | TaskInstance | `title:string, task_ref:ObjectRef, statement:RichContent, answer_basis:RichContent?, reference_solutions:ReferenceSolution[], source_refs[]` | 一题一个主要Task；`answer_basis=null`是尚未准备，不等于无须核对；参考解法可为空 |
 
-`Prerequisite`包含`task_ref, reason:string, applies_to=all|specified, method_refs[]`。`all`时数组为空，`specified`时非空且属于本Task直接方法。`Parameter`包含`name, meaning, type, constraints`；只在任务确有变量时填写，不把所有任务参数化。
+`Prerequisite`包含`task_ref, reason:string, applies_to=all|specified, method_refs[]`。`all`时数组为空，`specified`时非空且属于本Task直接方法。
 
 `ReferenceSolution`包含题内唯一的`reference_id`、`solution_ref:ObjectRef`、`content:RichContent`、`origin=textbook|system_generated|admin_authored`及`source_refs[]`。具体解法必须指向本题所采用Task版本中的方法。参考编号在题目后续版本中保持，内容改动产生题目新版本；不另设参考版本号。教材没有给出的解法不能标成教材原解。
 
@@ -230,9 +230,9 @@ flowchart TD
 
 ### 3.1 可检查的任务定义
 
-Task必须描述责任、交付表现、完成条件、适用条件和边界。参数表可选；存在公式、单位或结构化变量时进行相应校验，不要求每类任务先参数化。
+Task必须描述责任、交付表现、完成条件、适用条件和边界。变量含义、单位、取值和允许变化的范围写在条件或边界正文，公式沿用统一内容结构。
 
-E02-04 接入五项正文及可选参数。草稿以 `null` 表示未填项，响应通过 `gaps` 指明该版本缺项。已提供的正文必须非空，采用 `definition` 用途并通过内容结构校验。参数名称去首尾空白后须唯一，含义、类型及约束须非空。约束保存为文字，供后续供题和检查取用。方法与先导关系随 E02-05 接入。
+草稿以 `null` 表示未填项，响应通过 `gaps` 指明该版本缺项。已提供的正文必须非空，采用 `definition` 用途并通过内容结构校验。供题和归类读取固定版本的完整定义。
 
 生成和反向归类使用同一责任边界：核对所需表现、条件及方法适用性，不仅比较题干、公式或KC重叠。新数字可以保持归属；新认知责任不能硬塞原Task。未知或冲突保留未决。Task完成条件不是个人目标达标规则。
 
@@ -245,7 +245,7 @@ E02-04 接入五项正文及可选参数。草稿以 `null` 表示未填项，�
 | 持久 Step | 输入与执行 | 保存产物与停止条件 |
 | --- | --- | --- |
 | `prepare_template_input` | 固定候选内容、来源、现有定义查询结果及用户要求 | `extraction_input_ref`；源不存在或权限不符即停止 |
-| `derive_template_candidate` | 经 AI 底座提取可复用任务责任或方法依据、条件与关键过程；参数按需保留；只允许读取本领域内容 | `candidate_ref`，载荷为§1定义字段、依据与 `unresolved[]`；不允许模型写模型库或编造已存在对象身份 |
+| `derive_template_candidate` | 经 AI 底座提取可复用任务责任或方法依据、条件与关键过程；变量和限制随正文提取；只允许读取本领域内容 | `candidate_ref`，载荷为§1定义字段、依据与 `unresolved[]`；不允许模型写模型库或编造已存在对象身份 |
 | `check_template_candidate` | 检查结构、引用与来源支撑；不能确认的依赖保留为建议 | `check_ref, issues[]`；不自动补建其他模型元素 |
 
 受理返回 `operation_run_id`，通过公共 `read_operation_run` 读取状态及最终 `candidate_ref, check_ref, proposed_definition, issues[]`，追加 `DomainTemplateCandidatePrepared`。候选需管理员确认后调用 `domain.save_definition` 才成为定义，实例仍待关联。技术重试复用已完成产物；重新提出不同要求是新请求，保留前候选引用。**验收例：** 从例题具体解法提出Solution候选，不同时创建其他定义或修改题目参考；缺知识依据或方法条件时显示缺口。
@@ -272,7 +272,7 @@ Task先导记录已有Task、理由和适用方法（全部或指定）。保存
 
 校验方法确属所选Task版本，按KC身份汇总并保留每个方法实际引用的KC版本；同一KC被引用不同版本时全部列出来源，不任选一版冒充一致。缺引用和先导环明确报告，不裁掉问题伪造完整结果。不根据定义推断学生实际方法或更新Belief。具体查询载荷在接口设计中补齐。
 
-Product检查应用时，结合`query_content`读取固定Task参数、方法定义及本查询的路径／缺口，不在检查阶段生成或筛选检测题。KC检验路径用于内容准备，不把先导Task自动加入目标。确认应用时另用§6.7的guard_references保护引用。
+Product检查应用时，结合`query_content`读取固定Task与方法定义及本查询的路径／缺口，不在检查阶段生成或筛选检测题。KC检验路径用于内容准备，不把先导Task自动加入目标。确认应用时另用§6.7的guard_references保护引用。
 
 **验收例：** 方法A用乘法意义，B用乘除互逆；查询A只返回A的KC及适用先导，不把B特有要求或先导的全部知识算进去。
 
@@ -334,14 +334,14 @@ E02-06 在管理端从 Task 详情核对一个方法直接引用的 KC。程序�
 
 **供题职责。** `domain.supply_task`是按本次用途、方法、条件和接触史裁决适用实例的唯一入口；无论库存是否充足均走本流程。`query_content`只浏览或读取指定内容，不承担第二套供题筛选。Interaction负责题单安排及使用前条件复核，不重复实现`select_instances`。
 
-`assessment_constraints` 包含本次参数范围、拟检查方面与表征／时间条件；空对象表示无额外条件，不能表示已满足所有方面。供题不证明保持已达标；实际间隔及 Evidence 资格由 Interaction／Evaluation 判断。`exposure_refs=[]` 只表示调用方确认无相关经历；来源未知须显式返回缺口，不能据此声称新题。
+`assessment_constraints` 包含本次题目范围描述、拟检查方面与表征／时间条件；空对象表示无额外条件，不能表示已满足所有方面。供题不证明保持已达标；实际间隔及 Evidence 资格由 Interaction／Evaluation 判断。`exposure_refs=[]` 只表示调用方确认无相关经历；来源未知须显式返回缺口，不能据此声称新题。
 
 | 持久 Step | 执行与分支 | 可恢复产物 |
 | --- | --- | --- |
 | `prepare_supply` | 固定定义、允许方法及调用方条件；核对定义就绪、方法来源与用途 | `supply_input_ref`；无方法或非法范围时返回明确缺口 |
 | `select_instances` | 查询已核对实例，逐题按当前用途和提供的接触史筛选，去除重复 | `selection_ref`；够数直接进入批次提交，不调用生成 |
-| `generate_candidates` | 不足部分经 AI 底座按固定定义生成题目和必要解法参考；读取权限限本次材料 | `candidate_batch_ref`；不可扩大定义或通过读 Belief 改写题意 |
-| `check_candidates` | 检查题意／图表、参数、答案、范围、归类及本次用途；失败候选隔离 | `check_batch_ref`；有合格替代继续，预算内仍无题则记录 `unfilled[]` |
+| `generate_candidates` | 现有实例不足时，经 AI 底座按固定Task正文和本次范围生成缺少的题目与必要参考。LLM在本次调用理解变量、单位和取值限制 | `candidate_batch_ref`；不可扩大定义或通过读 Belief 改写题意 |
+| `check_candidates` | 检查题意／图表、实际取值、答案、范围、归类及本次用途；失败候选隔离 | `check_batch_ref`；有合格替代继续，预算内仍无题则记录 `unfilled[]` |
 | `commit_supply` | 将合格新实例、参考与检查保存，再提交供题批次；已有实例直接引用 | `supply_batch_ref`；本步失败从已有候选恢复，不重新生成已通过题 |
 
 生成输出为§1.2的 题目及其参考解法候选、适用条件，参考解法、提示和题面分开。程序校验结构与引用，语义检查记录所用模型／规则及理由；检查无法确认不作通过。模型超时、格式错误走有界技术重试；合法但无合格题是业务结果，不无限换题。
@@ -662,3 +662,4 @@ C06  relation={subject: point_1, predicate: inside, object: circle_1,
 | v0.24 | 2026-11-22 | 登记 E02-04 任务正文、参数、草稿缺项及版本 |
 | v0.25 | 2026-11-22 | 登记方法、KC、先导和关系投影的实现范围 |
 | v0.26 | 2026-11-22 | 登记直接检验检查项、确认与不足记录的职责 |
+| v0.27 | 2026-11-23 | 移除 Task 参数表，出题按需读取正文 |

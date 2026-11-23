@@ -1,11 +1,11 @@
 # M1 Product API
 
-> **版本**：v0.8<br>
+> **版本**：v0.9<br>
 > **状态**：设计合同；已实施范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.7 → v0.8，登记课程检查的固定选择与空间查询入口<br>
+> **修订说明**：v0.8 → v0.9，同步目标文字范围的保存合同<br>
 
 共同类型、认证头、回执和错误见[总册](../API_and_Message_Design.md)。本分册定义前后端载荷；内容提取、采用和应用规则仍由Product负责。
 
@@ -659,7 +659,7 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 | `target_id` | ID | update是 | 固定目标身份 |
 | `expected_revision` | Revision | 修改时是 | 要修改的资源修订；冲突后重读，不自动覆盖 |
 | `title` | string | 是 | 目标名 |
-| `items` | GoalItem[] | 是 | Product§4.2.1完整条目；Task/方法范围来自教材关联 |
+| `items` | GoalItem[] | 是 | Product§4.2.1完整条目；Task/方法范围来自教材关联，`task_conditions` 只含文字 `description` |
 
 成功：200 `MutationReceipt`，其中`result`为下表；需要后台检查的分支另按说明返回202。
 
@@ -760,7 +760,15 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
     "target_id": "00000000-0000-4000-8000-000000000002",
     "revision": 1
   },
-  "expected_application_ref": null
+  "expected_application_ref": null,
+  "chapters": [
+    {
+      "chapter_id": "00000000-0000-4000-8000-000000000011",
+      "revision": 1,
+      "content_refs": []
+    }
+  ],
+  "activity_config_refs": []
 }
 ```
 
@@ -926,6 +934,7 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 | --- | --- | --- |
 | `target_basis_ref` | Ref | 当前采用的评价依据 |
 | `target_title` | string | 当前应用的目标名称 |
+| `domain_id` | UUID | 教材所属领域，用于读取方法名称 |
 | `pending` | boolean | 当前依据的计算尚未保存 |
 | `current` | GoalEvaluation 或 null | Evaluation 保存的完整目标判断，含分项状态、理由及 Evidence 引用 |
 
@@ -961,6 +970,8 @@ E03 由 Product 调用 Evaluation 的只读查询，只返回匹配当前目标�
 路径和字段缺口在本稿补齐，限额及部署命令的安全接线继续沿认证/基础设施设计。不得以内部服务身份读取无关教材或任意学生空间。
 <a id="p27"></a>
 ## P27 空间教材阅读
+
+E03 的已采用章节正文使用 P24。下列原页及教材阅读合同由学生端增量接线。
 
 `GET /learning-spaces/{id}/textbook` → `product.query_product_view/space_material`。权限：本人/管理员；补齐既有教材查询投影。处理规则：[Product处理规则](../Product_Application_Design.md#52-productquery_product_view按权限读取业务视图)。
 
@@ -1125,3 +1136,4 @@ E03 由 Product 调用 Evaluation 的只读查询，只返回匹配当前目标�
 | v0.6 | 2026-11-22 | 登记教材原件清单与原请求恢复字段 |
 | v0.7 | 2026-11-22 | 登记教材候选工作流、领域受理和章节即时保存合同 |
 | v0.8 | 2026-11-23 | 登记目标、应用选择和学习空间读写合同 |
+| v0.9 | 2026-11-23 | 同步目标文字范围的保存合同 |

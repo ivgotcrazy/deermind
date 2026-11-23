@@ -167,10 +167,6 @@ class DomainTests(DatabaseTestCase):
             admin = _login(client, "operator")
             root = _save(client, admin, _body(uuid4(), "两章候选采用范围"))
             domain = root.raise_for_status().json()["result"]["object_ref"]["object_id"]
-                }
-                if check_goal
-                else {}
-            )
             # 预置同一基线的候选。采用请求仍经过真实 HTTP、收据和事件事务。
             with self.engine.begin() as db:
                 keys = {"book": textbook, "import": imported, "domain": domain, "fact": source}
@@ -315,9 +311,16 @@ class DomainTests(DatabaseTestCase):
                 {
                     key: _content("已知原量与增加比例，给出新量及列式。")
                     for key in (
-                        "responsibility", "expected_output", "completion_conditions",
-                        "applicability", "boundaries",
+                        "responsibility",
+                        "expected_output",
+                        "completion_conditions",
+                        "applicability",
+                        "boundaries",
                     )
+                }
+                if check_goal
+                else {}
+            )
             methods = [
                 _save(
                     client,
@@ -427,7 +430,6 @@ class DomainTests(DatabaseTestCase):
                 .raise_for_status()
                 .json()["result"]["claim_ref"]
             )
-            no_parameters: dict[str, object] = {}
             no_conditions: dict[str, object] = {}
             target = (
                 client.post(
@@ -445,7 +447,6 @@ class DomainTests(DatabaseTestCase):
                                 "chapter_refs": [str(first), str(second)],
                                 "task_conditions": {
                                     "description": "原量增加四分之一",
-                                    "parameter_values": no_parameters,
                                 },
                                 "method_mode": "each",
                                 "methods": [
@@ -476,6 +477,9 @@ class DomainTests(DatabaseTestCase):
             self.assertEqual(
                 [method["chapter_refs"] for method in target["items"][0]["methods"]],
                 [[str(first)], [str(second)]],
+            )
+            self.assertEqual(
+                target["items"][0]["task_conditions"], {"description": "原量增加四分之一"}
             )
             self.assertEqual(
                 target["chapter_basis_refs"],
@@ -662,10 +666,14 @@ class DomainTests(DatabaseTestCase):
         self, client: TestClient, target: TargetView, chapters: tuple[UUID, UUID]
     ) -> None:
         def send(
-            route: str, body: object, session: SessionView, method: str = "POST",
+            route: str,
+            body: object,
+            session: SessionView,
+            method: str = "POST",
         ) -> dict[str, JsonValue]:
             value = client.request(
-                method, "/api/m1" + route,
+                method,
+                "/api/m1" + route,
                 headers={"Origin": _ORIGIN, **session_headers(session)},
                 json=body,
             )
@@ -674,40 +682,81 @@ class DomainTests(DatabaseTestCase):
         operator = _login(client, "operator")
         config_route = "/interaction/activity-configs/detection"
 
-        def configure(kind: str, definition: dict[str, JsonValue], revision: int | None,
-                      reference: JsonValue = None) -> dict[str, JsonValue]:
-            result = send(config_route, {
-                "request_id": str(uuid4()), "config_kind": kind, "expected_revision": revision,
-                "config_ref": reference, "definition": {"activity_type": "detection", **definition},
-            }, operator, "PUT")["result"]
+        def configure(
+            kind: str,
+            definition: dict[str, JsonValue],
+            revision: int | None,
+            reference: JsonValue = None,
+        ) -> dict[str, JsonValue]:
+            result = send(
+                config_route,
+                {
+                    "request_id": str(uuid4()),
+                    "config_kind": kind,
+                    "expected_revision": revision,
+                    "config_ref": reference,
+                    "definition": {"activity_type": "detection", **definition},
+                },
+                operator,
+                "PUT",
+            )["result"]
             assert isinstance(result, dict)
             return result
 
-        blueprint = configure("blueprint", {
-            "nodes": [
-                {
-                    "node_id": node, "name": node, "purpose": "固定检测",
-                    "required_inputs": [], "outputs": [], "allowed_actions": [],
-                    "execution_guidance": "按当前信息处理",
-                    "fallback": {"action": "wait_input", "explanation": "等待确认"},
-                }
-                for node in ("start", "end")
-            ],
-            "transitions": [{
-                "transition_id": "end-step", "source_node_id": "start", "target_node_id": "end",
-                "order": 1, "when": "on_control", "condition_text": "已确认",
-                "required_facts": [{"code": "plan_confirmed", "value": True}], "evidence_required": False,
-            }],
-        }, None)
-        rule = configure("rule", {
-            "name": "独立检测", "applies_when": "检测期间", "requirement": "关闭本轮后才能提供帮助。",
-            "basis": "检测规则", "limitations": [], "enabled": True,
-        }, 1)["definition_ref"]
+        blueprint = configure(
+            "blueprint",
+            {
+                "nodes": [
+                    {
+                        "node_id": node,
+                        "name": node,
+                        "purpose": "固定检测",
+                        "required_inputs": [],
+                        "outputs": [],
+                        "allowed_actions": [],
+                        "execution_guidance": "按当前信息处理",
+                        "fallback": {"action": "wait_input", "explanation": "等待确认"},
+                    }
+                    for node in ("start", "end")
+                ],
+                "transitions": [
+                    {
+                        "transition_id": "end-step",
+                        "source_node_id": "start",
+                        "target_node_id": "end",
+                        "order": 1,
+                        "when": "on_control",
+                        "condition_text": "已确认",
+                        "required_facts": [{"code": "plan_confirmed", "value": True}],
+                        "evidence_required": False,
+                    }
+                ],
+            },
+            None,
+        )
+        rule = configure(
+            "rule",
+            {
+                "name": "独立检测",
+                "applies_when": "检测期间",
+                "requirement": "关闭本轮后才能提供帮助。",
+                "basis": "检测规则",
+                "limitations": [],
+                "enabled": True,
+            },
+            1,
+        )["definition_ref"]
         binding = blueprint["affected_refs"]
         assert isinstance(rule, dict) and isinstance(binding, list)
-        detection = configure("binding", {
-            "activity": {"rule_ids": [rule["id"]], "strategy_ids": []}, "nodes": {},
-        }, 2, binding[0])["config_ref"]
+        detection = configure(
+            "binding",
+            {
+                "activity": {"rule_ids": [rule["id"]], "strategy_ids": []},
+                "nodes": {},
+            },
+            2,
+            binding[0],
+        )["config_ref"]
 
         def adopt(target_ref: dict[str, JsonValue], previous: JsonValue) -> dict[str, JsonValue]:
             operator = _login(client, "operator")
@@ -994,11 +1043,8 @@ class DomainTests(DatabaseTestCase):
                 "responsibility": _content("说明单位时间路程如何累积"),
                 "expected_output": _content("说明速度、时间和路程之间的关系"),
                 "completion_conditions": _content("能解释每个量的意义", with_formula=True),
-                "applicability": _content("速度保持不变，单位相容"),
+                "applicability": _content("速度保持不变，行进时间 t > 0，单位相容"),
                 "boundaries": _content("排除变速运动"),
-                "parameters": [
-                    {"name": "t", "meaning": "行进时间", "type": "数值", "constraints": "t > 0"}
-                ],
             }
             create: dict[str, JsonValue] = {
                 "request_id": str(request_id),
@@ -1015,14 +1061,6 @@ class DomainTests(DatabaseTestCase):
                     {**_content("条件"), "role": "statement"},
                     "/definition/applicability",
                 ),
-                (
-                    "parameters",
-                    [
-                        {"name": "t", "meaning": "时间", "type": "数值", "constraints": "t > 0"},
-                        {"name": " t ", "meaning": "时刻", "type": "数值", "constraints": "t > 1"},
-                    ],
-                    "/definition/parameters/1/name",
-                ),
             )
             for field, value, expected_path in invalid_cases:
                 rejected = _save(
@@ -1035,6 +1073,10 @@ class DomainTests(DatabaseTestCase):
                         for issue in rejected.json()["error"]["issues"]
                     )
                 )
+            removed_field = _save(
+                client, admin, {**create, "definition": {**definition, "parameters": []}}
+            )
+            self.assertEqual(removed_field.status_code, 400)
             self.assertEqual(self.persisted_counts(), (1,) * 6)
             explanation = _save(client, admin, create).raise_for_status().json()
             self.assertEqual(
@@ -1043,6 +1085,11 @@ class DomainTests(DatabaseTestCase):
             ref = explanation["result"]["object_ref"]
             path = f"{catalog}/{ref['object_id']}"
             before = client.get(path, headers=headers).raise_for_status().json()["object"]
+            spans = before["content"]["applicability"]["blocks"][0]["payload"]["spans"]
+            self.assertEqual(
+                spans, [{"type": "text", "text": "速度保持不变，行进时间 t > 0，单位相容"}]
+            )
+            self.assertNotIn("parameters", before["content"])
             calculation = (
                 _save(
                     client,

@@ -149,13 +149,6 @@ class KnowledgeComponent(FactModel):
         return definition_content(content, cls.__name__)
 
 
-class TaskParameter(FactModel):
-    name: NonBlank
-    meaning: NonBlank
-    type: NonBlank
-    constraints: NonBlank
-
-
 class Prerequisite(FactModel):
     task_ref: TaskRef
     reason: NonBlank
@@ -172,7 +165,6 @@ class TaskDefinition(FactModel):
     completion_conditions: RichContent | None = None
     applicability: RichContent | None = None
     boundaries: RichContent | None = None
-    parameters: list[TaskParameter] = Field(default_factory=list[TaskParameter])
     method_refs: list[SolutionRef] = Field(default_factory=list[SolutionRef])
     prerequisites: list[Prerequisite] = Field(default_factory=list[Prerequisite])
 
@@ -188,16 +180,6 @@ class TaskDefinition(FactModel):
         ):
             invalid(cls.__name__, ("blocks",), "请提供正文，未填项请留空。")
         return definition_content(content, cls.__name__)
-
-    @field_validator("parameters")
-    @classmethod
-    def unique_parameters(cls, parameters: list[TaskParameter]) -> list[TaskParameter]:
-        seen: set[str] = set()
-        for index, parameter in enumerate(parameters):
-            if parameter.name in seen:
-                invalid(cls.__name__, (index, "name"), "参数名称重复。")
-            seen.add(parameter.name)
-        return parameters
 
 
 def task_gaps(content: TaskDefinition) -> list[Issue]:

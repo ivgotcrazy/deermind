@@ -77,7 +77,17 @@ async function run() {
       });
       target = result.result.target;
     }
-    const first = (await inspect()).result;
+    const nav = admin.page.getByRole('navigation', { name: '管理功能' });
+    await nav.getByRole('button', { name: '目标管理' }).click();
+    const targetArea = admin.page.getByRole('region', { name: '目标管理' });
+    await targetArea.getByLabel('教材').selectOption(textbook_id);
+    await targetArea.getByRole('button', { name: target.title + ' · v1' }).click();
+    const uiCheck = admin.page.waitForResponse(response =>
+      response.url().endsWith('/api/m1/course-applications/checks') && response.ok());
+    await targetArea.getByRole('button', { name: '检查课程' }).click();
+    const first = (await (await uiCheck).json()).result;
+    await targetArea.getByRole('button', { name: '确认应用' }).waitFor();
+    await admin.page.screenshot({ path: path.join(evidence, 'course-check.png'), fullPage: true });
     assert.equal(first.can_apply, true);
     assert.ok(first.readiness.some(row => row.purpose === 'evaluation' && row.status === 'limited'));
     assert.deepEqual(await head(), first.base_application_ref);
@@ -147,6 +157,8 @@ async function run() {
     const tabs = workspace.getByRole('navigation', { name: '空间详情' });
     await tabs.getByRole('button', { name: '学习目标' }).click();
     await workspace.getByRole('status').filter({ hasText: '准备不足' }).waitFor();
+    await workspace.getByRole('heading', { name: /先求增加量/ }).waitFor();
+    await workspace.getByRole('heading', { name: /先求新量倍数/ }).waitFor();
     await admin.page.screenshot({ path: path.join(evidence, 'space-goal.png'), fullPage: true });
     await tabs.getByRole('button', { name: '空间事件' }).click();
     await workspace.getByLabel('事件类型').selectOption('GoalEvaluationCompleted');

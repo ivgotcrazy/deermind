@@ -72,7 +72,7 @@ class LearningTargetScopeTests(unittest.TestCase):
             title="四分之一",
             claim_ref=claim_ref,
             chapter_refs=chapters,
-            task_conditions=TaskConditions(description="增加四分之一", parameter_values={}),
+            task_conditions=TaskConditions(description="增加四分之一"),
             method_mode="each",
             methods=[
                 MethodRequirement(method_ref=method, chapter_refs=[chapter], aspects=[aspect])

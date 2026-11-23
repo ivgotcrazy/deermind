@@ -22,7 +22,6 @@ import type {
   Prerequisite,
   SolutionRef,
   TaskDependencies,
-  TaskParameter,
 } from './api';
 import type { RichContent as StoredContent } from '../../../shared/content/types';
 
@@ -71,7 +70,6 @@ const dialog = ref<HTMLDialogElement>();
 const name = ref('');
 const note = ref('');
 const draft = ref<Partial<Record<Field, string>>>({});
-const parameters = ref<TaskParameter[]>([]);
 const methods = ref<SolutionRef[]>([]);
 const knowledge = ref<KnowledgeRef[]>([]);
 const prerequisites = ref<Prerequisite[]>([]);
@@ -105,10 +103,6 @@ const displayedFields = computed(() =>
     return content ? [{ field, fieldLabel, content }] : [];
   }),
 );
-const storedParameters = computed(() => {
-  const content = detail.value?.content;
-  return content && 'parameters' in content ? (content.parameters ?? []) : [];
-});
 const storedKnowledge = computed(() => {
   const content = detail.value?.content;
   return content && 'kc_refs' in content ? (content.kc_refs ?? []) : [];
@@ -277,8 +271,6 @@ function open(modeValue: typeof mode.value) {
     for (const [field] of fields) {
       draft.value[field] = modeValue === 'create' ? '' : (plainText(storedField(field)) ?? '');
     }
-    parameters.value =
-      modeValue !== 'create' ? storedParameters.value.map((parameter) => ({ ...parameter })) : [];
     const content = modeValue === 'update' ? detail.value?.content : undefined;
     methods.value =
       content && 'method_refs' in content
@@ -417,11 +409,6 @@ function submit() {
     return;
   }
   if (kind === 'task') {
-    const parameterNames = parameters.value.map((parameter) => parameter.name.trim());
-    if (new Set(parameterNames).size !== parameterNames.length) {
-      saveError.value = '参数名称重复。';
-      return;
-    }
     const body = {
       ...base,
       object_kind: 'task',
@@ -432,7 +419,6 @@ function submit() {
         completion_conditions: contentFor('completion_conditions'),
         applicability: contentFor('applicability'),
         boundaries: contentFor('boundaries'),
-        parameters: parameters.value,
         method_refs: methods.value,
         prerequisites: prerequisites.value,
       },
@@ -551,15 +537,6 @@ onBeforeUnmount(() => signal.abort());
         <h5>{{ fieldLabel }}</h5>
         <RichContent :content="content" />
       </section>
-      <section v-if="storedParameters.length" class="field">
-        <h5>参数</h5>
-        <dl class="parameters">
-          <template v-for="parameter in storedParameters" :key="parameter.name">
-            <dt>{{ parameter.name }} · {{ parameter.type }}</dt>
-            <dd>{{ parameter.meaning }}。{{ parameter.constraints }}</dd>
-          </template>
-        </dl>
-      </section>
       <section v-if="storedKnowledge.length" class="field">
         <h5>直接知识成分</h5>
         <ul class="relation-list">
@@ -648,23 +625,6 @@ onBeforeUnmount(() => signal.abort());
               />
               <span v-else>保留已有内容。</span>
             </label>
-            <details v-if="kind === 'task'" :open="parameters.length > 0">
-              <summary>参数（可选）</summary>
-              <fieldset v-for="(parameter, index) in parameters" :key="index">
-                <legend>参数 {{ index + 1 }}</legend>
-                <label>参数名称 <input v-model="parameter.name" required /></label>
-                <label>含义 <input v-model="parameter.meaning" required /></label>
-                <label>类型 <input v-model="parameter.type" required /></label>
-                <label>约束 <input v-model="parameter.constraints" required /></label>
-                <button type="button" @click="parameters.splice(index, 1)">移除参数</button>
-              </fieldset>
-              <button
-                type="button"
-                @click="parameters.push({ name: '', meaning: '', type: '', constraints: '' })"
-              >
-                添加参数
-              </button>
-            </details>
             <template v-if="kind !== 'kc'">
               <p v-if="catalogBusy" role="status">正在读取关联选项…</p>
               <p v-if="catalogError" role="alert">{{ catalogError }}</p>
@@ -810,13 +770,6 @@ dialog form,
 dialog label {
   display: grid;
   gap: 0.55rem;
-}
-.parameters,
-.parameters dd {
-  margin: 0;
-}
-.parameters dd + dt {
-  margin-top: 0.5rem;
 }
 .gaps {
   margin: 0;

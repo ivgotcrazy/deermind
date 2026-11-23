@@ -4,6 +4,7 @@ import type { components } from '../../../../../contracts/generated/http/schema'
 import { get } from '../../../shared/api/http';
 import AdoptedChapter from '../../../shared/content/AdoptedChapter.vue';
 import type { DomainSession } from '../domain/api';
+import { methodKey, methodNames } from './methodNames';
 
 type Schema = components['schemas'];
 type EventSummary = {
@@ -19,6 +20,7 @@ const next = ref<string>();
 const selected = ref<Schema['SpaceRow']>();
 const adoption = ref<Schema['AdoptionView']>();
 const goal = ref<Schema['SpaceGoalView']>();
+const methodLabels = ref<Record<string, string>>({});
 const events = ref<EventSummary[]>();
 const nextEvent = ref<number>();
 const upper = ref<number>();
@@ -64,6 +66,7 @@ async function enter(space: Schema['SpaceRow']) {
   selected.value = space;
   adoption.value = undefined;
   goal.value = undefined;
+  methodLabels.value = {};
   events.value = undefined;
   eventType.value = '';
   await show('textbook');
@@ -81,7 +84,17 @@ async function show(selection: typeof tab.value) {
     }
     if (selection === 'goal') {
       const data = await get('/api/m1/learning-spaces/{space_id}/goal', options);
-      if (selected.value?.space_id === space_id) goal.value = data;
+      const labels = await methodNames(
+        props.session,
+        data.domain_id,
+        data.current?.result.items.flatMap((item) =>
+          item.methods.map((method) => method.method_ref),
+        ) ?? [],
+      );
+      if (selected.value?.space_id === space_id) {
+        goal.value = data;
+        methodLabels.value = labels;
+      }
     }
     if (selection === 'events') await loadEvents();
   } catch (caught) {
@@ -187,11 +200,14 @@ async function loadEvents(after?: number) {
               }}
             </h5>
             <p>{{ state(item) }}</p>
-            <ul v-for="method in item.methods" :key="method.method_ref.object_id">
-              <li v-for="aspect in method.aspects" :key="aspect.aspect_code">
-                {{ aspects[aspect.aspect_code] ?? aspect.aspect_code }} · {{ state(aspect) }}
-              </li>
-            </ul>
+            <section v-for="(method, index) in item.methods" :key="method.method_ref.object_id">
+              <h6>{{ methodLabels[methodKey(method.method_ref)] ?? `方法 ${index + 1}` }}</h6>
+              <ul>
+                <li v-for="aspect in method.aspects" :key="aspect.aspect_code">
+                  {{ aspects[aspect.aspect_code] ?? aspect.aspect_code }} · {{ state(aspect) }}
+                </li>
+              </ul>
+            </section>
           </article>
         </template>
         <button type="button" @click="show('goal')">刷新结果</button>

@@ -3564,6 +3564,11 @@ export interface components {
         /** SpaceGoalView */
         SpaceGoalView: {
             current: components["schemas"]["GoalEvaluation"] | null;
+            /**
+             * Domain Id
+             * Format: uuid
+             */
+            domain_id: string;
             /** Pending */
             pending: boolean;
             target_basis_ref: components["schemas"]["Ref"];
@@ -3732,10 +3737,6 @@ export interface components {
         TaskConditions: {
             /** Description */
             description: string;
-            /** Parameter Values */
-            parameter_values: {
-                [key: string]: components["schemas"]["JsonValue"];
-            };
         };
         /** TaskContentRef */
         TaskContentRef: {
@@ -3765,8 +3766,6 @@ export interface components {
             /** Method Refs */
             method_refs?: components["schemas"]["SolutionRef"][];
             name: components["schemas"]["NonBlank"];
-            /** Parameters */
-            parameters?: components["schemas"]["TaskParameter"][];
             /** Prerequisites */
             prerequisites?: components["schemas"]["Prerequisite"][];
             responsibility?: components["schemas"]["RichContent-Input"] | null;
@@ -3783,8 +3782,6 @@ export interface components {
             /** Method Refs */
             method_refs?: components["schemas"]["SolutionRef"][];
             name: components["schemas"]["NonBlank"];
-            /** Parameters */
-            parameters?: components["schemas"]["TaskParameter"][];
             /** Prerequisites */
             prerequisites?: components["schemas"]["Prerequisite"][];
             responsibility?: components["schemas"]["RichContent-Output"] | null;
@@ -3830,13 +3827,6 @@ export interface components {
             statement: components["schemas"]["RichContent-Output"];
             task_ref: components["schemas"]["TaskRef"];
             title: components["schemas"]["NonBlank"];
-        };
-        /** TaskParameter */
-        TaskParameter: {
-            constraints: components["schemas"]["NonBlank"];
-            meaning: components["schemas"]["NonBlank"];
-            name: components["schemas"]["NonBlank"];
-            type: components["schemas"]["NonBlank"];
         };
         /** TaskRef */
         TaskRef: {

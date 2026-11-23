@@ -8071,6 +8071,11 @@
               }
             ]
           },
+          "domain_id": {
+            "format": "uuid",
+            "title": "Domain Id",
+            "type": "string"
+          },
           "pending": {
             "title": "Pending",
             "type": "boolean"
@@ -8086,6 +8091,7 @@
         "required": [
           "target_basis_ref",
           "target_title",
+          "domain_id",
           "pending",
           "current"
         ],
@@ -8528,18 +8534,10 @@
             "maxLength": 4096,
             "title": "Description",
             "type": "string"
-          },
-          "parameter_values": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/JsonValue"
-            },
-            "title": "Parameter Values",
-            "type": "object"
           }
         },
         "required": [
-          "description",
-          "parameter_values"
+          "description"
         ],
         "title": "TaskConditions",
         "type": "object"
@@ -8623,13 +8621,6 @@
           "name": {
             "$ref": "#/components/schemas/NonBlank"
           },
-          "parameters": {
-            "items": {
-              "$ref": "#/components/schemas/TaskParameter"
-            },
-            "title": "Parameters",
-            "type": "array"
-          },
           "prerequisites": {
             "items": {
               "$ref": "#/components/schemas/Prerequisite"
@@ -8707,13 +8698,6 @@
           },
           "name": {
             "$ref": "#/components/schemas/NonBlank"
-          },
-          "parameters": {
-            "items": {
-              "$ref": "#/components/schemas/TaskParameter"
-            },
-            "title": "Parameters",
-            "type": "array"
           },
           "prerequisites": {
             "items": {
@@ -8907,31 +8891,6 @@
           "source_refs"
         ],
         "title": "TaskInstance",
-        "type": "object"
-      },
-      "TaskParameter": {
-        "additionalProperties": false,
-        "properties": {
-          "constraints": {
-            "$ref": "#/components/schemas/NonBlank"
-          },
-          "meaning": {
-            "$ref": "#/components/schemas/NonBlank"
-          },
-          "name": {
-            "$ref": "#/components/schemas/NonBlank"
-          },
-          "type": {
-            "$ref": "#/components/schemas/NonBlank"
-          }
-        },
-        "required": [
-          "name",
-          "meaning",
-          "type",
-          "constraints"
-        ],
-        "title": "TaskParameter",
         "type": "object"
       },
       "TaskRef": {

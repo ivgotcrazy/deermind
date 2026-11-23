@@ -38,7 +38,6 @@ class MethodRequirement(FactModel):
 
 class TaskConditions(FactModel):
     description: Annotated[str, StringConstraints(strip_whitespace=True, max_length=4096)]
-    parameter_values: dict[str, JsonValue]
 
 
 class GoalItemFields(FactModel):

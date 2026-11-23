@@ -178,6 +178,7 @@ class ApplicationHead(FactModel):
 class SpaceGoalView(FactModel):
     target_basis_ref: Ref
     target_title: str
+    domain_id: UUID
     pending: bool
     current: GoalEvaluation | None
 

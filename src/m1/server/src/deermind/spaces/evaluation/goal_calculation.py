@@ -31,7 +31,6 @@ type BeliefKey = tuple[ClaimRef, SolutionRef, str]
 class CoveredAnswer:
     evidence_ref: Ref
     qualification: Literal["eligible", "ineligible", "unknown"]
-    task_parameters: Mapping[str, JsonValue]
     condition_values: Mapping[str, JsonValue]
     verified_scope: str | None = None
 
@@ -87,7 +86,6 @@ def _aspect(
         for answer in observed.covered_answers
         if (
             answer.qualification == "eligible"
-            and _covers(item.task_conditions.parameter_values, answer.task_parameters)
             and _covers(aspect.condition_values, answer.condition_values)
             and (
                 not item.task_conditions.description

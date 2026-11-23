@@ -75,7 +75,6 @@ def content_issues(error: RequestValidationError) -> list[Issue]:
             "expected_output",
             "completion_conditions",
             "boundaries",
-            "parameters",
             "approach",
             "rationale",
             "key_process",
