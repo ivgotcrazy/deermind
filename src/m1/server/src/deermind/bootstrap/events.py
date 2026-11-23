@@ -35,6 +35,11 @@ from deermind.spaces.domain.kc_path_facts import PATH_REGISTRATIONS
 from deermind.spaces.domain.supply_facts import REGISTRATIONS as TASK_SUPPLY
 from deermind.spaces.evaluation.definition_facts import REGISTRATION as CLAIM_DEFINITION
 from deermind.spaces.evaluation.goal_facts import REGISTRATION as GOAL_RESULT
+from deermind.spaces.evaluation.input_facts import REGISTRATION as EVALUATION_INPUT
+from deermind.spaces.evaluation.interpretation_facts import (
+    REGISTRATION as EVALUATION_INTERPRETATION,
+)
+from deermind.spaces.evaluation.mastery_facts import REGISTRATION as EVALUATION_MASTERY
 from deermind.spaces.interaction.config_facts import REGISTRATION as ACTIVITY_CONFIG
 from deermind.spaces.interaction.conversation_facts import REGISTRATIONS as CONVERSATION
 from deermind.spaces.interaction.detection_plans import REGISTRATION as DETECTION_PLAN
@@ -49,6 +54,9 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 REGISTRATIONS = [
     LEARNING_TARGET,
     GOAL_RESULT,
+    EVALUATION_INPUT,
+    EVALUATION_INTERPRETATION,
+    EVALUATION_MASTERY,
     *LEARNING_COURSES,
     ACCOUNT_REGISTRATION,
     FILE_REGISTRATION,

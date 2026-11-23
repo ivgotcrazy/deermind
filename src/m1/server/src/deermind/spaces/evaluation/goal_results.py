@@ -2,6 +2,8 @@
 
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime
+from decimal import Decimal
+from typing import Literal
 from uuid import UUID, uuid4
 
 from deermind.abstractions.delivery import Acceptance, EventNotice
@@ -11,9 +13,18 @@ from deermind.abstractions.events import EventDraft, FactRecord, InlineContent, 
 from deermind.foundation.system.events.query import EventReader
 from deermind.foundation.system.events.store import EventStore, lock_scope_sequence
 from deermind.product.public.courses import AdoptionView
+from deermind.spaces.domain.public import SolutionRef
 from deermind.spaces.evaluation import goal_facts as facts
-from deermind.spaces.evaluation.goal_calculation import GoalKey, derive_target
-from deermind.spaces.evaluation.public import GoalEvaluation
+from deermind.spaces.evaluation import mastery_facts
+from deermind.spaces.evaluation.goal_calculation import (
+    BeliefKey,
+    CoveredAnswer,
+    GoalKey,
+    Observation,
+    derive_target,
+)
+from deermind.spaces.evaluation.inputs import find_prepared
+from deermind.spaces.evaluation.public import ClaimRef, GoalEvaluation
 from pydantic import JsonValue
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
@@ -49,27 +60,61 @@ class GoalResults:
             {"scope": scope, "trigger": trigger},
         )
 
+    @staticmethod
+    async def progress(db: AsyncConnection, scope: UUID) -> Literal["pending", "failed"] | None:
+        row = (
+            await db.execute(
+                text("""
+            SELECT x.state, p.active_trigger_event_id
+            FROM evaluation.evaluation_progress p
+            LEFT JOIN runtime.executions x ON x.scope_id=p.scope_id
+                AND x.acceptance_key=p.active_trigger_event_id::text
+            WHERE p.scope_id=:scope
+        """),
+                {"scope": scope},
+            )
+        ).one_or_none()
+        if row is None or row.active_trigger_event_id is None:
+            return None
+        return "failed" if row.state in {"failed", "cancelled"} else "pending"
+
     async def receive(self, db: AsyncConnection, notice: EventNotice) -> Acceptance:
-        scope, trigger = notice.scope_id, notice.event_id
-        previous = await self._recorded(db, scope, trigger)
-        if previous is not None:
-            return Acceptance(disposition="accepted", arrangement_refs=[result_ref(previous)])
+        scope, cause = notice.scope_id, notice.event_id
+        is_mastery = notice.event_type == mastery_facts.COMPLETED
         data = await self.reader.read_facts(
             "learning_space",
             scope,
-            trigger,
-            expected_event_type=TRIGGER,
-            refs=[EventPartRef(event_id=trigger, record_id=None, path="")],
+            cause,
+            expected_event_type=notice.event_type,
+            refs=[EventPartRef(event_id=cause, record_id=None, path="")],
         )
         parts = data["items"]
         assert isinstance(parts, list) and isinstance(parts[0], dict)
         payload = parts[0]["content"]
         assert isinstance(payload, dict)
-        adoption_ref = Ref.model_validate(payload["adoption_ref"])
-        basis_ref = Ref.model_validate(payload["target_basis_ref"])
-        applied = await self.adoption(db, scope, UUID(adoption_ref.id))
-        if applied.target_basis_ref != basis_ref or applied.adoption_ref != adoption_ref:
-            raise ValueError("Goal trigger does not match its adoption")
+        trigger = UUID(str(payload["trigger_event_id"])) if is_mastery else cause
+        previous = await self._recorded(db, scope, trigger)
+        if previous is not None:
+            return Acceptance(disposition="accepted", arrangement_refs=[result_ref(previous)])
+        if is_mastery:
+            prepared = await find_prepared(db, scope, trigger)
+            input_ref = Ref.model_validate(payload["input_ref"])
+            if prepared is None or str(prepared.input_id) != input_ref.id:
+                raise ValueError("Mastery result has no matching evaluation input")
+            fixed = prepared.input
+            applied = await self.adoption(db, scope, UUID(fixed.adoption_ref.id))
+            if applied.target_basis_ref != fixed.target_basis_ref:
+                raise ValueError("Evaluation input does not match its fixed target")
+            pinned = Ref.model_validate(payload["snapshot_ref"])
+        else:
+            adoption_ref = Ref.model_validate(payload["adoption_ref"])
+            basis_ref = Ref.model_validate(payload["target_basis_ref"])
+            applied = await self.adoption(db, scope, UUID(adoption_ref.id))
+            if applied.target_basis_ref != basis_ref or applied.adoption_ref != adoption_ref:
+                raise ValueError("Goal trigger does not match its adoption")
+            pinned = None
+        adoption_ref, basis_ref = applied.adoption_ref, applied.target_basis_ref
+        snapshot = await self.read_snapshot(db, scope, pinned)
         gaps = applied.snapshot.evaluation_gaps
         by_aspect: dict[GoalKey, list[str]] = {}
         for item in applied.snapshot.items:
@@ -81,8 +126,8 @@ class GoalResults:
                         method.method_ref.version,
                     ):
                         by_aspect[item.item_id, method.method_ref, gap.aspect_code] = gap.reasons
-        # E03 has no observations. E05 supplies the accepted mastery/evidence view.
-        decision = derive_target(applied.snapshot.items, by_aspect, {})
+        observations = await self._observations(db, snapshot) if snapshot is not None else {}
+        decision = derive_target(applied.snapshot.items, by_aspect, observations)
         basis = await self.protect(db, scope)
         previous = await self._recorded(db, scope, trigger)
         if previous is not None:
@@ -90,19 +135,28 @@ class GoalResults:
         current = (
             await db.execute(
                 text(
-                    "SELECT current_result_ref,target_basis_ref,mastery_publication_seq "
-                    "FROM evaluation.goal_current WHERE scope_id=:scope"
+                    "SELECT c.current_result_ref,c.target_basis_ref,"
+                    "c.mastery_publication_seq,g.result "
+                    "FROM evaluation.goal_current c LEFT JOIN evaluation.goal_evaluation g "
+                    "ON g.goal_evaluation_id=c.current_result_ref WHERE c.scope_id=:scope"
                 ),
                 {"scope": scope},
             )
         ).one_or_none()
-        reason = (
-            "target_changed"
-            if basis != UUID(basis_ref.id)
-            else "already_current"
-            if current and current.target_basis_ref == basis
-            else None
-        )
+        sequence = snapshot.publication_seq if snapshot else 0
+        reason = None
+        if basis != UUID(basis_ref.id):
+            reason = "target_changed"
+        elif current and sequence < current.mastery_publication_seq:
+            reason = "older_snapshot"
+        elif (
+            current
+            and current.target_basis_ref == basis
+            and current.mastery_publication_seq == sequence
+        ):
+            if canonical_json(current.result) != canonical_json(decision.model_dump(mode="json")):
+                raise ValueError("Goal calculation conflicts with a result on the same basis")
+            reason = "already_current"
         now = datetime.now(UTC)
         planned = facts.CalculationInput(
             input_id=uuid4(),
@@ -110,9 +164,13 @@ class GoalResults:
             trigger_event_id=trigger,
             target_basis_ref=UUID(basis_ref.id),
             adoption_ref=UUID(adoption_ref.id),
-            mastery_snapshot_ref=None,
-            mastery_publication_seq=0,
-            evidence_coverage=[],
+            mastery_snapshot_ref=snapshot.snapshot_id if snapshot else None,
+            mastery_publication_seq=sequence,
+            evidence_coverage=[
+                answer.evidence_ref.model_dump(mode="json")
+                for observation in observations.values()
+                for answer in observation.covered_answers
+            ],
             calculation_rule_ref="M1-GOAL-THRESHOLD-01",
             planned_result_id=uuid4(),
             created_at=now,
@@ -133,7 +191,9 @@ class GoalResults:
             trigger_event_id=trigger,
             goal_evaluation_ref=reference,
             target_basis_ref=basis_ref,
-            snapshot_ref=None,
+            snapshot_ref=mastery_facts.ref("mastery_snapshot", snapshot.snapshot_id)
+            if snapshot
+            else None,
             result_ref=reference,
             previous_current_ref=result_ref(result.previous_current_ref)
             if result.previous_current_ref
@@ -162,12 +222,10 @@ class GoalResults:
             reference,
             body.model_dump(mode="json"),
             None,
-            causation_event_id=trigger,
+            causation_event_id=cause,
         )
         service = Ref(owner="evaluation", type="handler", id="evaluation.reassess_target")
-        access = ProducerAccess(
-            "evaluation", service, frozenset({event_scope}), frozenset({trigger})
-        )
+        access = ProducerAccess("evaluation", service, frozenset({event_scope}), frozenset({cause}))
         sequence = await lock_scope_sequence(db, *event_scope)
         (stored,) = await self.store.append(
             db,
@@ -179,6 +237,90 @@ class GoalResults:
         )
         await facts.project(db, stored)
         return Acceptance(disposition="accepted", arrangement_refs=[reference])
+
+    @staticmethod
+    async def read_snapshot(
+        db: AsyncConnection, scope: UUID, pinned: Ref | None
+    ) -> mastery_facts.MasterySnapshot | None:
+        if pinned:
+            row = await db.scalar(
+                text("""
+                SELECT to_jsonb(s)-'source_event_id' FROM evaluation.mastery_snapshot s
+                WHERE s.scope_id=:scope AND s.snapshot_id=:id
+            """),
+                {"scope": scope, "id": UUID(pinned.id)},
+            )
+            if row is None:
+                raise ValueError("Goal calculation snapshot does not belong to this space")
+        else:
+            row = await db.scalar(
+                text("""
+                SELECT to_jsonb(s)-'source_event_id'
+                FROM evaluation.mastery_head h
+                JOIN evaluation.mastery_snapshot s ON s.snapshot_id=h.current_snapshot_ref
+                WHERE h.scope_id=:scope
+            """),
+                {"scope": scope},
+            )
+        return (
+            mastery_facts.MasterySnapshot.model_validate_json(canonical_json(row)) if row else None
+        )
+
+    @staticmethod
+    async def _observations(
+        db: AsyncConnection, snapshot: mastery_facts.MasterySnapshot
+    ) -> dict[BeliefKey, Observation]:
+        by_item: dict[BeliefKey, list[CoveredAnswer]] = {}
+        rows = (
+            await db.execute(
+                text("""
+            SELECT e.evidence_id,e.claim_id,e.claim_revision,e.method_id,e.method_version,
+                e.aspect_code,e.qualification,e.condition_facts
+            FROM evaluation.evidence e
+            JOIN evaluation.mastery_snapshot s ON s.source_event_id=e.source_event_id
+            WHERE e.scope_id=:scope AND e.source_kind='answer' AND s.publication_seq<=:seq
+            ORDER BY s.publication_seq DESC, e.evidence_id
+        """),
+                {"scope": snapshot.scope_id, "seq": snapshot.publication_seq},
+            )
+        ).all()
+        for row in rows:
+            key = (
+                ClaimRef(claim_id=row.claim_id, revision=row.claim_revision),
+                SolutionRef(kind="solution", object_id=row.method_id, version=row.method_version),
+                str(row.aspect_code),
+            )
+            conditions = {
+                item["condition"]: item["value"]
+                for item in row.condition_facts
+                if item["status"] == "known" and item["condition"] != "target_scope"
+            }
+            scopes = [
+                item["value"]
+                for item in row.condition_facts
+                if item["condition"] == "target_scope" and item["status"] == "known"
+            ]
+            by_item.setdefault(key, []).extend(
+                CoveredAnswer(
+                    mastery_facts.ref("evidence", row.evidence_id),
+                    row.qualification,
+                    conditions,
+                    scope,
+                )
+                for scope in (scopes or [None])
+            )
+        result: dict[BeliefKey, Observation] = {}
+        for item in snapshot.items:
+            key = (
+                ClaimRef(claim_id=item.claim_id, revision=item.claim_revision),
+                SolutionRef(kind="solution", object_id=item.method_id, version=item.method_version),
+                str(item.aspect_code),
+            )
+            result[key] = Observation(
+                Decimal(str(item.p_obs)) if item.p_obs is not None else None,
+                by_item.get(key, ()),
+            )
+        return result
 
     @staticmethod
     async def current(

@@ -4,19 +4,60 @@ from datetime import datetime
 from typing import Annotated, Literal, Protocol
 from uuid import UUID
 
+from deermind.abstractions.event_reading import EventPartRef
 from deermind.abstractions.events import FactModel, Ref
 from deermind.foundation.system.files.uploads import JsonUUID
 from deermind.foundation.system.public.errors import Issue
 from deermind.product.public.authentication import AccountView
 from deermind.product.public.materials import RequestId, Revision
 from deermind.spaces.domain.public import RichContent
-from pydantic import AwareDatetime, Field, StringConstraints, model_validator
+from pydantic import AwareDatetime, Field, JsonValue, StringConstraints, model_validator
 
 MANAGE_ACTIVITY = "interaction.manage_activity_config"
 CONTROL_ACTIVITY = "interaction.control_activity"
 HANDLE_INPUT = "interaction.handle_input"
 SUBMIT_ANSWER = "interaction.submit_answer"
 PREPARE_DETECTION = "interaction.prepare_detection"
+
+
+type EvaluationMaterialRole = Literal[
+    "answer",
+    "help_basis",
+    "question",
+    "round_opened",
+    "round_closed",
+    "help",
+    "provided_help",
+    "prior_question",
+    "teaching",
+    "closure",
+]
+
+
+class EvaluationMaterial(FactModel):
+    role: EvaluationMaterialRole
+    ref: EventPartRef
+    sha256: str
+    content: JsonValue
+
+
+class EvaluationSource(FactModel):
+    scope_id: UUID
+    trigger_event_id: UUID
+    source_seq: int
+    source_kind: Literal["answer", "teaching"]
+    source_id: UUID
+    adoption_ref: Ref
+    activity_ref: Ref
+    task_use_ref: Ref | None
+    round_ref: Ref | None
+    plan_ref: Ref | None
+    task_instance_ref: Ref | None
+    occurred_at: AwareDatetime
+    materials: list[EvaluationMaterial]
+    missing_reasons: list[str]
+
+
 type ActivityType = Literal["explanation", "question_answer", "detection", "free_chat"]
 type ConfigKind = Literal["blueprint", "rule", "strategy", "binding"]
 type Wording = Annotated[

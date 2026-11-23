@@ -68,6 +68,16 @@
 | E04-14 | 正式教学收束、延迟呈现和回执防重 | [教学事实验证](E04-14-teaching-provision.md) |
 | E04-15 | 长对话摘要、暂停恢复和教材显式引用 | [记忆与引用验证](E04-15-working-memory.md) |
 | E04-16 | 四分之一三情境、刷新和反馈故障恢复 | [主线回归验证](E04-16-quarter-learning-path.md) |
+| E05-01 | 确定性概率计算与试用参数 | [掌握概率验证](E05-01-belief-calculation.md) |
+| E05-02 | 原始作答、正式教学及固定评价材料 | [评价取材验证](E05-02-evaluation-input.md) |
+| E05-03 | 作答的实际方法归因与程序校验 | [作答证据解释](E05-03-answer-evidence.md) |
+| E05-04 | 教学机会收束、实际方法与学习资格 | [教学机会解释](E05-04-teaching-evidence.md) |
+| E05-05 | 证据、概率、快照共同保存与失败回滚 | [掌握状态提交](E05-05-mastery-commit.md) |
+| E05-06 | 原事件顺序、停止推进及恢复 | [评价顺序与恢复](E05-06-evaluation-order.md) |
+| E05-07 | 目标达成及旧目标结果保护 | [目标结果验证](E05-07-goal-attainment.md) |
+| E05-08 | 目标、Evidence 和原始事件双向追溯 | [管理员追溯验证](E05-08-evaluation-trace.md) |
+| E05-09 | 读取掌握快照、通知和等待接续 | [教学接续验证](E05-09-mastery-follow-up.md) |
+| E05-10 | 两种方法及四个评价方面的闭环回归 | [评价闭环验证](E05-10-evaluation-loop.md) |
 
 ## 查阅规则
 

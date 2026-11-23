@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 from deermind.bootstrap.domain_operation import DomainAnalysisWorkflow
+from deermind.bootstrap.evaluation_operation import EvaluationWorkflow, TeachingWorkflow
 from deermind.bootstrap.material_operation import MaterialWorkflow
 from deermind.bootstrap.settings import Settings
 from deermind.bootstrap.student_operation import StudentWorkflow
@@ -36,6 +37,8 @@ def create_worker(
             DomainAnalysisWorkflow,
             StudentWorkflow,
             SupplyWorkflow,
+            EvaluationWorkflow,
+            TeachingWorkflow,
         ]
         if material
         else [StorageProbe],

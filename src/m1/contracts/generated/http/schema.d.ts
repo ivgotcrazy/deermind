@@ -447,6 +447,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/m1/evaluation/spaces/{scope_id}/basis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Basis */
+        get: operations["evaluation_read_basis"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/m1/file-uploads": {
         parameters: {
             query?: never;
@@ -1378,6 +1395,61 @@ export interface components {
         };
         /** @enum {string} */
         Attainment: "met" | "needs_strengthening" | "unknown";
+        /** BasisView */
+        BasisView: {
+            basis_ref?: components["schemas"]["Ref"] | null;
+            belief?: components["schemas"]["BeliefView"] | null;
+            evidence?: components["schemas"]["EvidenceView"] | null;
+            /** Items */
+            items?: components["schemas"]["EvidenceSummary"][] | null;
+            /** Next Cursor */
+            next_cursor?: string | null;
+            /** Processing */
+            processing?: ("not_found" | "pending" | "completed" | "failed") | null;
+            source?: components["schemas"]["SourceExcerpt"] | null;
+            /**
+             * View
+             * @enum {string}
+             */
+            view: "target" | "belief" | "evidence" | "event" | "processing";
+        };
+        /** BeliefChange */
+        BeliefChange: {
+            /** Algorithm Ref */
+            algorithm_ref: string;
+            /** P Current After */
+            p_current_after: number;
+            /** P Current Before */
+            p_current_before: number;
+            /** P Obs After */
+            p_obs_after?: number | null;
+            /** P Obs Before */
+            p_obs_before?: number | null;
+            /** Parameter Ref */
+            parameter_ref: string;
+            /**
+             * Update Kind
+             * @enum {string}
+             */
+            update_kind: "observation" | "learning_transition";
+        };
+        /** BeliefView */
+        BeliefView: {
+            belief_revision_ref?: components["schemas"]["Ref"] | null;
+            /** Last Observed At */
+            last_observed_at?: string | null;
+            /**
+             * Observation Status
+             * @enum {string}
+             */
+            observation_status: "observed" | "unknown";
+            /** P Current */
+            p_current: number;
+            /** P Obs */
+            p_obs?: number | null;
+            /** Unknown Reasons */
+            unknown_reasons: string[];
+        };
         /** BindingDefinition */
         BindingDefinition: {
             activity: components["schemas"]["LocalBinding"];
@@ -2373,6 +2445,18 @@ export interface components {
             /** Reasons */
             reasons: string[];
         };
+        /** EventPartRef */
+        EventPartRef: {
+            /**
+             * Event Id
+             * Format: uuid
+             */
+            event_id: string;
+            /** Path */
+            path: string;
+            /** Record Id */
+            record_id: string | null;
+        };
         /** EventPartSource */
         EventPartSource: {
             event_id: components["schemas"]["JsonUuid"];
@@ -2385,6 +2469,49 @@ export interface components {
              * @enum {string}
              */
             type: "event_part";
+        };
+        /** EvidenceQuote */
+        EvidenceQuote: {
+            /** Quote */
+            quote: string;
+            ref: components["schemas"]["EventPartRef"];
+        };
+        /** EvidenceSummary */
+        EvidenceSummary: {
+            /** Aspect Code */
+            aspect_code: string;
+            evidence_ref: components["schemas"]["Ref"];
+            /** Qualification */
+            qualification: string;
+            /** Reason */
+            reason: string;
+            /** Source Event Refs */
+            source_event_refs: string[];
+            /** Verdict */
+            verdict: string | null;
+        };
+        /** EvidenceView */
+        EvidenceView: {
+            /** Aspect Code */
+            aspect_code: string;
+            belief_change?: components["schemas"]["BeliefChange"] | null;
+            /**
+             * Evidence Id
+             * Format: uuid
+             */
+            evidence_id: string;
+            /** Qualification */
+            qualification: string;
+            /** Reason */
+            reason: string;
+            /** Reason Codes */
+            reason_codes: string[];
+            /** Source Refs */
+            source_refs: components["schemas"]["EventPartRef"][];
+            /** Source Spans */
+            source_spans: components["schemas"]["EvidenceQuote"][];
+            /** Verdict */
+            verdict?: string | null;
         };
         /** ExecutionCriterion */
         ExecutionCriterion: {
@@ -4016,6 +4143,16 @@ export interface components {
             /** Source Refs */
             source_refs?: components["schemas"]["Ref"][];
         };
+        /** SourceExcerpt */
+        SourceExcerpt: {
+            /** Content */
+            content: components["schemas"]["JsonValue"][];
+            /**
+             * Event Id
+             * Format: uuid
+             */
+            event_id: string;
+        };
         /**
          * SourceRef
          * @description 来源固定到文件与校验值，或固定事件中的一个片段。
@@ -4048,6 +4185,8 @@ export interface components {
              * Format: uuid
              */
             domain_id: string;
+            /** Evaluation Processing */
+            evaluation_processing?: ("pending" | "failed") | null;
             /** Pending */
             pending: boolean;
             target_basis_ref: components["schemas"]["Ref"];
@@ -7845,6 +7984,143 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ClaimDetail"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Method Not Allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Client Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    evaluation_read_basis: {
+        parameters: {
+            query: {
+                view: "target" | "belief" | "evidence" | "event" | "processing";
+                result_id?: string | null;
+                item_id?: string | null;
+                evidence_id?: string | null;
+                event_id?: string | null;
+                snapshot_id?: string | null;
+                claim_id?: string | null;
+                claim_revision?: number | null;
+                method_id?: string | null;
+                method_version?: number | null;
+                aspect_code?: ("independent" | "understanding" | "transfer" | "retention") | null;
+                cursor?: string | null;
+                limit?: number;
+            };
+            header?: {
+                "X-Expected-Session"?: string | null;
+            };
+            path: {
+                scope_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BasisView"];
                 };
             };
             /** @description Bad Request */

@@ -27,12 +27,24 @@ const upper = ref<number>();
 const error = ref('');
 const tab = ref<'textbook' | 'goal' | 'events'>('textbook');
 const eventType = ref('');
+const trace = ref<HTMLDialogElement>();
+const evidenceList = ref<Schema['EvidenceSummary'][]>([]);
+const evidence = ref<Schema['EvidenceView']>();
+const source = ref<Schema['SourceExcerpt']>();
+const evidenceCursor = ref<string>();
+const traceError = ref('');
+const traceLoading = ref(false);
+const traceSelection = ref<{ result_id: string; item_id: string } | { event_id: string }>();
+let traceRequest = 0;
 const names: Record<string, string> = {
   LearningSpaceCreated: '建立学习空间',
   LearningSpaceEntered: '进入学习空间',
   LearningSpaceAdoptionChanged: '更新课程采用',
   LearningTargetApplied: '应用目标依据',
   GoalEvaluationCompleted: '完成目标计算',
+  BeliefEvaluationCompleted: '完成掌握状态计算',
+  AnswerSubmitted: '提交作答',
+  TeachingOpportunityClosed: '结束教学机会',
 };
 const aspects: Record<string, string> = {
   independent: '独立',
@@ -40,6 +52,93 @@ const aspects: Record<string, string> = {
   transfer: '迁移',
   retention: '保持',
 };
+const qualifications: Record<string, string> = {
+  eligible: '符合评价条件',
+  ineligible: '不符合评价条件',
+  unknown: '依据不足',
+};
+
+function evidenceState(item: { verdict?: string | null; qualification: string }) {
+  if (item.verdict === 'positive') return '正向证据';
+  if (item.verdict === 'negative') return '反向证据';
+  return qualifications[item.qualification] ?? '待确认';
+}
+
+function percent(value?: number | null) {
+  return value == null ? '未观测' : `${(100 * value).toFixed(1)}%`;
+}
+
+function openTrace(selection: NonNullable<typeof traceSelection.value>) {
+  traceSelection.value = selection;
+  evidenceList.value = [];
+  evidence.value = undefined;
+  source.value = undefined;
+  evidenceCursor.value = undefined;
+  trace.value?.showModal();
+  void readEvidenceList();
+}
+
+async function readEvidenceList(cursor?: string) {
+  const scope_id = selected.value?.space_id;
+  const selection = traceSelection.value;
+  if (!scope_id || !selection) return;
+  const request = ++traceRequest;
+  traceLoading.value = true;
+  traceError.value = '';
+  try {
+    const data = await get('/api/m1/evaluation/spaces/{scope_id}/basis', {
+      session: props.session,
+      params: { scope_id },
+      query: { view: 'item_id' in selection ? 'target' : 'event', ...selection, cursor },
+    });
+    if (request !== traceRequest) return;
+    evidenceList.value = cursor
+      ? [...evidenceList.value, ...(data.items ?? [])]
+      : (data.items ?? []);
+    evidenceCursor.value = data.next_cursor ?? undefined;
+  } catch (caught) {
+    if (request === traceRequest) traceError.value = (caught as Error).message;
+  } finally {
+    if (request === traceRequest) traceLoading.value = false;
+  }
+}
+
+async function readEvidence(evidence_id: string, event_id?: string) {
+  const scope_id = selected.value?.space_id;
+  if (!scope_id) return;
+  const request = ++traceRequest;
+  source.value = undefined;
+  traceLoading.value = true;
+  traceError.value = '';
+  try {
+    const data = await get('/api/m1/evaluation/spaces/{scope_id}/basis', {
+      session: props.session,
+      params: { scope_id },
+      query: { view: 'evidence', evidence_id, event_id },
+    });
+    if (request !== traceRequest) return;
+    evidence.value = data.evidence ?? undefined;
+    source.value = data.source ?? undefined;
+  } catch (caught) {
+    if (request === traceRequest) traceError.value = (caught as Error).message;
+  } finally {
+    if (request === traceRequest) traceLoading.value = false;
+  }
+}
+
+function resetTrace() {
+  ++traceRequest;
+  traceLoading.value = false;
+  traceSelection.value = undefined;
+}
+
+function backToEvidenceList() {
+  ++traceRequest;
+  traceLoading.value = false;
+  traceError.value = '';
+  evidence.value = undefined;
+  source.value = undefined;
+}
 const labels = { textbook: '教材', goal: '学习目标', events: '空间事件' } as const;
 function state(entry: { readiness: string; attainment?: string | null }) {
   if (entry.readiness === 'unprepared') return '准备不足';
@@ -190,6 +289,12 @@ async function loadEvents(after?: number) {
       <template v-else-if="tab === 'goal' && goal">
         <h4>{{ goal.target_title }}</h4>
         <p v-if="goal.pending" role="status">该目标的计算尚未完成。</p>
+        <p v-else-if="goal.evaluation_processing === 'pending'" role="status">
+          新的评价正在处理，当前显示上一次结果。
+        </p>
+        <p v-else-if="goal.evaluation_processing === 'failed'" role="status">
+          新的评价处理失败，当前保留上一次结果。
+        </p>
         <template v-if="goal.current">
           <p role="status">{{ state(goal.current.result) }}</p>
           <article v-for="item in goal.current.result.items" :key="item.item_id">
@@ -200,6 +305,14 @@ async function loadEvents(after?: number) {
               }}
             </h5>
             <p>{{ state(item) }}</p>
+            <button
+              type="button"
+              @click="
+                openTrace({ result_id: goal.current.goal_evaluation_id, item_id: item.item_id })
+              "
+            >
+              查看评价证据
+            </button>
             <section v-for="(method, index) in item.methods" :key="method.method_ref.object_id">
               <h6>{{ methodLabels[methodKey(method.method_ref)] ?? `方法 ${index + 1}` }}</h6>
               <ul>
@@ -227,7 +340,7 @@ async function loadEvents(after?: number) {
               <th>序号</th>
               <th>事件</th>
               <th>发生时间</th>
-              <th>事件引用</th>
+              <th>证据</th>
             </tr>
           </thead>
           <tbody>
@@ -239,12 +352,105 @@ async function loadEvents(after?: number) {
                   new Date(event.recorded_at).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
                 }}
               </td>
-              <td>{{ event.event_id }}</td>
+              <td>
+                <button type="button" @click="openTrace({ event_id: event.event_id })">
+                  查看相关证据
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
         <button v-if="nextEvent" type="button" @click="loadEvents(nextEvent)">更多事件</button>
       </template>
     </template>
+    <dialog
+      ref="trace"
+      class="evidence-dialog"
+      aria-labelledby="evidence-title"
+      @close="resetTrace"
+    >
+      <header>
+        <h3 id="evidence-title">评价证据</h3>
+        <form method="dialog"><button type="submit">关闭</button></form>
+      </header>
+      <p v-if="traceLoading" role="status">正在读取评价依据。</p>
+      <p v-if="traceError" role="alert">{{ traceError }}</p>
+      <template v-if="evidence">
+        <button type="button" @click="backToEvidenceList">返回证据列表</button>
+        <h4>
+          {{ aspects[evidence.aspect_code] ?? evidence.aspect_code }} ·
+          {{ evidenceState(evidence) }}
+        </h4>
+        <p>{{ evidence.reason }}</p>
+        <p v-if="evidence.belief_change?.update_kind === 'observation'">
+          观测概率 {{ percent(evidence.belief_change.p_obs_before) }} →
+          {{ percent(evidence.belief_change.p_obs_after) }}
+        </p>
+        <p v-else-if="evidence.belief_change?.update_kind === 'learning_transition'">
+          教学后的估计 {{ percent(evidence.belief_change.p_current_before) }} →
+          {{ percent(evidence.belief_change.p_current_after) }}
+        </p>
+        <p v-else>本条证据未更新概率。</p>
+        <ul v-if="evidence.source_spans.length">
+          <li v-for="span in evidence.source_spans" :key="span.quote">{{ span.quote }}</li>
+        </ul>
+        <h4>来源事件</h4>
+        <ul>
+          <li
+            v-for="event in [...new Set(evidence.source_refs.map((ref) => ref.event_id))]"
+            :key="event"
+          >
+            <button type="button" @click="readEvidence(evidence.evidence_id, event)">
+              查看来源事实
+            </button>
+            <small>{{ event }}</small>
+          </li>
+        </ul>
+        <section v-if="source" aria-label="来源事实">
+          <h4>来源事实</h4>
+          <pre v-for="(part, index) in source.content" :key="index">{{
+            typeof part === 'string' ? part : JSON.stringify(part, null, 2)
+          }}</pre>
+        </section>
+      </template>
+      <template v-else>
+        <ul v-if="evidenceList.length">
+          <li v-for="item in evidenceList" :key="item.evidence_ref.id">
+            <button type="button" @click="readEvidence(item.evidence_ref.id)">
+              {{ aspects[item.aspect_code] ?? item.aspect_code }} · {{ evidenceState(item) }}
+            </button>
+            <p>{{ item.reason }}</p>
+          </li>
+        </ul>
+        <p v-else-if="!traceLoading && !traceError">暂无相关证据。</p>
+        <button v-if="evidenceCursor" type="button" @click="readEvidenceList(evidenceCursor)">
+          更多证据
+        </button>
+      </template>
+    </dialog>
   </section>
 </template>
+
+<style scoped>
+.evidence-dialog {
+  width: min(42rem, calc(100% - 2rem));
+  max-height: 85vh;
+  padding: 1.5rem;
+}
+.evidence-dialog header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.evidence-dialog li {
+  margin-block: 0.5rem;
+}
+.evidence-dialog small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.evidence-dialog pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+</style>

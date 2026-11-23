@@ -27,4 +27,5 @@ class ReplyCandidate(FactModel):
     question: TeachingQuestion | None = None
     verdict: Literal["correct", "incorrect", "partial", "uncertain"] | None = None
     help_quote: str | None = None
+    use_latest_evaluation: bool = False
     memory: Remember | None = None

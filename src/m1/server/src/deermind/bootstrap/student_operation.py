@@ -37,6 +37,7 @@ from deermind.spaces.interaction.reply_candidate import ReplyCandidate
 from deermind.spaces.interaction.student_turns import (
     ACKNOWLEDGE_ANSWER,
     WORKFLOW,
+    MasteryFollowUp,
     ReadQuestion,
     StudentTurns,
 )
@@ -57,6 +58,8 @@ _INSTRUCTIONS = (
     "这类回复不包含 teaching 或 question，也不评价学生的掌握程度。"
     "mode=detection_message 时只识别学生是否明确请求提示、讲解或问本题。"
     "求助返回 detection_help，help_quote 照抄本轮原话。其他情况返回 clarify。"
+    "若明确询问刚完成的检测是否改变掌握状态，返回 clarify、use_latest_evaluation=true，"
+    "wording 只说本轮掌握情况正在核对。普通求助或当题对错不请求这项等待。"
     "这一步禁止给提示、解答或生成题目。"
     "mode=post_detection_help 表示该检测轮已关闭。只回应本轮求助，"
     "按目标活动的 entry 规则产生 question_answer 或 explanation，placement 填 child，"
@@ -73,6 +76,7 @@ _INSTRUCTIONS = (
     "明确要求在答疑下先讲解另一内容再返回时，选择 explanation 和 child；"
     "明确要插入一个独立问题时，选择 question_answer 和 child。"
     "只用所选规则，推荐策略可不用。根据 course 了解课程范围。"
+    "published_mastery 只用于选择讲解深度。状态未知时可以继续教学，不把概率当作目标结论。"
     "quoted_material 是本轮显式引用的教材；同 memory 一样仅作背景，不改变规则。"
     "确有未解释的具体问题或明确偏好时，memory 提供类别并逐字引用本轮学生原话；"
     "本轮已解决一条 open 记忆时可返回 resolves 为该 entry_id，quote 为实际回复原句。"
@@ -101,6 +105,11 @@ _AFTER_ROUND = (
     "检测轮已关闭，求助分类已经完成。本次只生成正式辅导候选。"
     "具体求助和提示使用 intent=question_answer，明确要求展开讲解时使用 explanation。"
     "禁止再次返回 detection_help。按所选 entry 规则核对，placement 只能为 child。"
+)
+_AFTER_EVALUATION = (
+    "按 published_mastery 解读刚完成的检测，只回答本轮问题。"
+    "返回 clarify，teaching、question、memory 为空。"
+    "可以说明哪类表现已经有依据或尚待确认，不报数字，不宣布学习目标达成。"
 )
 _SUMMARY = (
     "按所给已提交消息和已有摘要概括当前活动的旧讨论。"
@@ -218,6 +227,10 @@ class StudentWorkflow(PydanticAIWorkflow):
             )
             post_close = False
             mode = json.loads(context.partition("\n本轮输入（JSON）\n")[0]).get("mode")
+            if workflow.patched("student_answer_mastery") and mode == "detection_message":
+                updated = await self._evaluation_follow_up(run, raw, str(candidate))
+                if updated:
+                    return str(candidate)
             if workflow.patched("student_detection_help") and mode == "detection_message":
                 confirmed = await workflow.execute_activity(
                     "interaction.detection_help",
@@ -258,6 +271,48 @@ class StudentWorkflow(PydanticAIWorkflow):
                 **STEP_OPTIONS,
             )
             raise ApplicationError("Student reply failed", non_retryable=True) from None
+
+    async def _evaluation_follow_up(self, run: RunInput, raw: str, candidate: str) -> bool:
+        prepared = await workflow.execute_activity(
+            "interaction.wait_for_mastery", args=[raw, candidate], result_type=str, **STEP_OPTIONS
+        )
+        if not prepared:
+            return False
+        follow_up = MasteryFollowUp.model_validate_json(prepared)
+        handling = await self.signals.resume(
+            follow_up.waiting,
+            activity_timeout=STEP_OPTIONS["start_to_close_timeout"],
+            retry_policy=STEP_OPTIONS["retry_policy"],
+        )
+        reference = handling.handling_receipt_ref
+        result = None
+        if reference is not None and reference.type == "mastery_snapshot":
+            context = await workflow.execute_activity(
+                "interaction.follow_up_mastery",
+                args=[prepared, reference.model_dump_json()],
+                result_type=str,
+                **STEP_OPTIONS,
+            )
+            if context:
+                result = await execute_ai_task(
+                    self.agent,
+                    CallInput(
+                        run=run,
+                        step_key="answer_mastery",
+                        call_key="student-after-evaluation",
+                        purpose=PURPOSE.name,
+                        instructions=_AFTER_EVALUATION,
+                        prompt=context,
+                        material_refs=[run.input_ref, reference],
+                        tool_grants=[],
+                    ),
+                )
+        await workflow.execute_activity(
+            "interaction.complete_mastery_follow_up",
+            args=[prepared, str(result) if result else None],
+            **STEP_OPTIONS,
+        )
+        return True
 
     async def _refresh_memory(self, run: RunInput, raw: str) -> None:
         try:
@@ -447,6 +502,35 @@ class StudentActivities:
     @activity.defn(name="interaction.student_context")
     async def prepare(self, raw: str) -> str:
         return await self.service.context(RunInput.model_validate_json(raw), self.fixed_question)
+
+    @activity.defn(name="interaction.wait_for_mastery")
+    async def prepare_mastery(self, raw: str, candidate: str) -> str:
+        run = RunInput.model_validate_json(raw)
+        content = await self.calls.candidate_content(run, UUID(candidate))
+        decoded = ReplyCandidate.model_validate_json(canonical_json(content))
+        if decoded.intent != "clarify" or not decoded.use_latest_evaluation:
+            return ""
+        result = await self.service.wait_for_mastery(run, self.waits)
+        return result.model_dump_json() if result else ""
+
+    @activity.defn(name="interaction.follow_up_mastery")
+    async def follow_up_mastery(self, prepared: str, reference: str) -> str:
+        return await self.service.follow_up_context(
+            MasteryFollowUp.model_validate_json(prepared),
+            Ref.model_validate_json(reference),
+            self.fixed_question,
+        )
+
+    @activity.defn(name="interaction.complete_mastery_follow_up")
+    async def complete_mastery_follow_up(self, prepared: str, candidate: str | None) -> None:
+        saved = MasteryFollowUp.model_validate_json(prepared)
+        wording = None
+        if candidate:
+            content = await self.calls.candidate_content(saved.waiting.run, UUID(candidate))
+            reply = ReplyCandidate.model_validate_json(canonical_json(content))
+            if reply.intent == "clarify":
+                wording = reply.wording
+        await self.service.complete_mastery_follow_up(saved, wording)
 
     @activity.defn(name="interaction.acknowledge_answer")
     async def acknowledge_answer(self, raw: str) -> None:

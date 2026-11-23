@@ -60,7 +60,9 @@ async def arrange(
     return Ref(owner="runtime", type="handoff", id=str(identity))
 
 
-def subscription(entries: Registry, policies: Policies) -> Subscription | None:
+def subscription(
+    entries: Registry, policies: Policies, subscriber_id: str = "runtime_waits"
+) -> Subscription | None:
     """只订阅已接线业务声明的候选类型；没有业务登记时不造空订阅。"""
     if not policies.items:
         return None
@@ -105,7 +107,7 @@ def subscription(entries: Registry, policies: Policies) -> Subscription | None:
         return Acceptance(disposition="accepted" if refs else "ignored", arrangement_refs=refs)
 
     return Subscription(
-        "runtime_waits",
+        subscriber_id,
         "1",
         frozenset(t for p in policies.items for t in p.event_types),
         frozenset(k for p in policies.items for k in p.scope_kinds),

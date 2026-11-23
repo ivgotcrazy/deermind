@@ -9,8 +9,11 @@ from deermind.bootstrap.executions import registry
 from deermind.bootstrap.waits import policies
 from deermind.foundation.system.delivery.contracts import Subscription, SubscriptionRegistry
 from deermind.foundation.system.executions.contracts import Registry
+from deermind.foundation.system.waits.contracts import Policies
 from deermind.foundation.system.waits.notifications import subscription
 from deermind.spaces.evaluation.goal_results import TRIGGER
+from deermind.spaces.evaluation.mastery_facts import COMPLETED as MASTERY_COMPLETED
+from deermind.spaces.evaluation.operations import ANSWER, TEACHING
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 type Handler = Callable[[AsyncConnection, EventNotice], Awaitable[Acceptance]]
@@ -26,12 +29,27 @@ def subscriptions(
     invalidate_source: Handler = _unbound,
     reassess_target: Handler = _unbound,
     supply_task: Handler = _unbound,
+    receive_evaluation: Handler = _unbound,
     *,
     entries: Registry | None = None,
 ) -> SubscriptionRegistry:
-    waiting = subscription(entries or registry(), policies())
+    shared = entries or registry()
     scope = frozenset({"material_import"})
     items = [
+        Subscription(
+            "evaluation_submission",
+            "1",
+            frozenset({ANSWER}),
+            frozenset({"learning_space"}),
+            receive_evaluation,
+        ),
+        Subscription(
+            "evaluation_teaching",
+            "1",
+            frozenset({TEACHING}),
+            frozenset({"learning_space"}),
+            receive_evaluation,
+        ),
         Subscription(
             "domain_task_supply",
             "1",
@@ -46,6 +64,13 @@ def subscriptions(
             frozenset({"learning_space"}),
             reassess_target,
         ),
+        Subscription(
+            "evaluation_goal_from_mastery",
+            "1",
+            frozenset({MASTERY_COMPLETED}),
+            frozenset({"learning_space"}),
+            reassess_target,
+        ),
         Subscription("domain_intake", "1", frozenset({REQUESTED}), scope, receive_intake),
         Subscription(
             "domain_material_invalidation", "1", frozenset({DELETED}), scope, invalidate_source
@@ -54,4 +79,13 @@ def subscriptions(
             "product_intake_result", "1", frozenset({RECEIVED, REJECTED}), scope, receive_result
         ),
     ]
-    return SubscriptionRegistry([*items, waiting] if waiting else items)
+    for waiting_policy in policies().items:
+        subscriber_id = (
+            "runtime_waits"
+            if waiting_policy.ref.id == "task_supply"
+            else f"interaction_wait_{waiting_policy.ref.id}"
+        )
+        waiting = subscription(shared, Policies([waiting_policy]), subscriber_id)
+        if waiting is not None:
+            items.append(waiting)
+    return SubscriptionRegistry(items)

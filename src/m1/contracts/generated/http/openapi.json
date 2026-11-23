@@ -815,6 +815,233 @@
         ],
         "type": "string"
       },
+      "BasisView": {
+        "additionalProperties": false,
+        "properties": {
+          "basis_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "belief": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BeliefView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EvidenceView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "items": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/EvidenceSummary"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "processing": {
+            "anyOf": [
+              {
+                "enum": [
+                  "not_found",
+                  "pending",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Processing"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SourceExcerpt"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "view": {
+            "enum": [
+              "target",
+              "belief",
+              "evidence",
+              "event",
+              "processing"
+            ],
+            "title": "View",
+            "type": "string"
+          }
+        },
+        "required": [
+          "view"
+        ],
+        "title": "BasisView",
+        "type": "object"
+      },
+      "BeliefChange": {
+        "additionalProperties": false,
+        "properties": {
+          "algorithm_ref": {
+            "title": "Algorithm Ref",
+            "type": "string"
+          },
+          "p_current_after": {
+            "title": "P Current After",
+            "type": "number"
+          },
+          "p_current_before": {
+            "title": "P Current Before",
+            "type": "number"
+          },
+          "p_obs_after": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P Obs After"
+          },
+          "p_obs_before": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P Obs Before"
+          },
+          "parameter_ref": {
+            "title": "Parameter Ref",
+            "type": "string"
+          },
+          "update_kind": {
+            "enum": [
+              "observation",
+              "learning_transition"
+            ],
+            "title": "Update Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "update_kind",
+          "p_current_before",
+          "p_current_after",
+          "parameter_ref",
+          "algorithm_ref"
+        ],
+        "title": "BeliefChange",
+        "type": "object"
+      },
+      "BeliefView": {
+        "additionalProperties": false,
+        "properties": {
+          "belief_revision_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_observed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Observed At"
+          },
+          "observation_status": {
+            "enum": [
+              "observed",
+              "unknown"
+            ],
+            "title": "Observation Status",
+            "type": "string"
+          },
+          "p_current": {
+            "title": "P Current",
+            "type": "number"
+          },
+          "p_obs": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P Obs"
+          },
+          "unknown_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unknown Reasons",
+            "type": "array"
+          }
+        },
+        "required": [
+          "p_current",
+          "observation_status",
+          "unknown_reasons"
+        ],
+        "title": "BeliefView",
+        "type": "object"
+      },
       "BindingDefinition": {
         "additionalProperties": false,
         "properties": {
@@ -3847,6 +4074,38 @@
         "title": "EvaluationGap",
         "type": "object"
       },
+      "EventPartRef": {
+        "additionalProperties": false,
+        "properties": {
+          "event_id": {
+            "format": "uuid",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "record_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record Id"
+          }
+        },
+        "required": [
+          "event_id",
+          "record_id",
+          "path"
+        ],
+        "title": "EventPartRef",
+        "type": "object"
+      },
       "EventPartSource": {
         "additionalProperties": false,
         "properties": {
@@ -3882,6 +4141,148 @@
           "path"
         ],
         "title": "EventPartSource",
+        "type": "object"
+      },
+      "EvidenceQuote": {
+        "additionalProperties": false,
+        "properties": {
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "ref": {
+            "$ref": "#/components/schemas/EventPartRef"
+          }
+        },
+        "required": [
+          "ref",
+          "quote"
+        ],
+        "title": "EvidenceQuote",
+        "type": "object"
+      },
+      "EvidenceSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "aspect_code": {
+            "title": "Aspect Code",
+            "type": "string"
+          },
+          "evidence_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "qualification": {
+            "title": "Qualification",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "source_event_refs": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Source Event Refs",
+            "type": "array"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          }
+        },
+        "required": [
+          "evidence_ref",
+          "aspect_code",
+          "qualification",
+          "verdict",
+          "reason",
+          "source_event_refs"
+        ],
+        "title": "EvidenceSummary",
+        "type": "object"
+      },
+      "EvidenceView": {
+        "additionalProperties": false,
+        "properties": {
+          "aspect_code": {
+            "title": "Aspect Code",
+            "type": "string"
+          },
+          "belief_change": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BeliefChange"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence_id": {
+            "format": "uuid",
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "qualification": {
+            "title": "Qualification",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "source_refs": {
+            "items": {
+              "$ref": "#/components/schemas/EventPartRef"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          },
+          "source_spans": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceQuote"
+            },
+            "title": "Source Spans",
+            "type": "array"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "aspect_code",
+          "qualification",
+          "reason",
+          "reason_codes",
+          "source_refs",
+          "source_spans"
+        ],
+        "title": "EvidenceView",
         "type": "object"
       },
       "ExecutionCriterion": {
@@ -8878,6 +9279,29 @@
         "title": "SolutionView",
         "type": "object"
       },
+      "SourceExcerpt": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "items": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Content",
+            "type": "array"
+          },
+          "event_id": {
+            "format": "uuid",
+            "title": "Event Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event_id",
+          "content"
+        ],
+        "title": "SourceExcerpt",
+        "type": "object"
+      },
       "SourceRef": {
         "additionalProperties": false,
         "description": "来源固定到文件与校验值，或固定事件中的一个片段。",
@@ -8990,6 +9414,21 @@
             "format": "uuid",
             "title": "Domain Id",
             "type": "string"
+          },
+          "evaluation_processing": {
+            "anyOf": [
+              {
+                "enum": [
+                  "pending",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluation Processing"
           },
           "pending": {
             "title": "Pending",
@@ -15340,6 +15779,385 @@
           }
         },
         "summary": "Read Claim",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    },
+    "/api/m1/evaluation/spaces/{scope_id}/basis": {
+      "get": {
+        "operationId": "evaluation_read_basis",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scope_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scope Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "view",
+            "required": true,
+            "schema": {
+              "enum": [
+                "target",
+                "belief",
+                "evidence",
+                "event",
+                "processing"
+              ],
+              "title": "View",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "result_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Result Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "item_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Item Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "evidence_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evidence Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "event_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Event Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "snapshot_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Snapshot Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "claim_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Claim Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "claim_revision",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Claim Revision"
+            }
+          },
+          {
+            "in": "query",
+            "name": "method_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Method Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "method_version",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Method Version"
+            }
+          },
+          {
+            "in": "query",
+            "name": "aspect_code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "independent",
+                    "understanding",
+                    "transfer",
+                    "retention"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Aspect Code"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasisView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Read Basis",
         "tags": [
           "evaluation"
         ]

@@ -109,17 +109,21 @@ async def project(connection: AsyncConnection, saved: StoredEvent) -> None:
         payload = saved.payload
         assert isinstance(payload, GoalCompleted)
         if payload.current_state_applied:
+            fixed = records[INPUT]
+            assert isinstance(fixed, InlineContent)
             await connection.execute(
                 text(
-                    "INSERT INTO "
-                    "evaluation.goal_current(scope_id,current_result_ref,target_basis_ref) "
-                    "VALUES (:scope,:result,:basis) ON CONFLICT(scope_id) DO UPDATE "
+                    "INSERT INTO evaluation.goal_current("
+                    "scope_id,current_result_ref,target_basis_ref,mastery_publication_seq) "
+                    "VALUES (:scope,:result,:basis,:seq) ON CONFLICT(scope_id) DO UPDATE "
                     "SET current_result_ref=EXCLUDED.current_result_ref,"
-                    "target_basis_ref=EXCLUDED.target_basis_ref,mastery_publication_seq=0"
+                    "target_basis_ref=EXCLUDED.target_basis_ref,"
+                    "mastery_publication_seq=EXCLUDED.mastery_publication_seq"
                 ),
                 {
                     "scope": saved.draft.scope_id,
                     "result": UUID(payload.goal_evaluation_ref.id),
                     "basis": UUID(payload.target_basis_ref.id),
+                    "seq": fixed.value["mastery_publication_seq"],
                 },
             )

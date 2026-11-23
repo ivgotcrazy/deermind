@@ -5,11 +5,13 @@ from deermind.foundation.system.executions.contracts import Registry
 from deermind.foundation.system.waits.contracts import Policies
 from deermind.foundation.system.waits.service import Waits
 from deermind.spaces.domain.supply import TaskSupply
+from deermind.spaces.evaluation.publication import find_result
+from deermind.spaces.interaction.mastery_wait import policy as mastery_policy
 from deermind.spaces.interaction.supply_wait import policy
 
 
 def policies() -> Policies:
-    return Policies([policy(TaskSupply.find_batch_result)])
+    return Policies([policy(TaskSupply.find_batch_result), mastery_policy(find_result)])
 
 
 def waits(entries: Registry | None = None) -> Waits:

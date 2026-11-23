@@ -62,6 +62,7 @@ class EventFilter:
     causation_event_id: UUID | None = None
     recorded_from: datetime | None = None
     recorded_to: datetime | None = None
+    event_id: UUID | None = None
 
 
 def pointer_parts(path: str) -> list[str]:

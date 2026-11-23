@@ -5,6 +5,7 @@ from decimal import Decimal
 from typing import Annotated, Literal, Protocol
 from uuid import UUID
 
+from deermind.abstractions.event_reading import EventPartRef
 from deermind.abstractions.events import FactModel, Ref
 from deermind.foundation.system.files.uploads import JsonUUID
 from deermind.foundation.system.public.errors import Issue
@@ -224,3 +225,91 @@ class GoalEvaluation(FactModel):
     previous_current_ref: UUID | None
     current_state_applied: bool
     created_at: datetime
+
+
+class EvidenceSummary(FactModel):
+    evidence_ref: Ref
+    aspect_code: str
+    qualification: str
+    verdict: str | None
+    reason: str
+    source_event_refs: list[UUID]
+
+
+class EvidenceQuote(FactModel):
+    ref: EventPartRef
+    quote: str
+
+
+class BeliefChange(FactModel):
+    update_kind: Literal["observation", "learning_transition"]
+    p_obs_before: float | None = None
+    p_obs_after: float | None = None
+    p_current_before: float
+    p_current_after: float
+    parameter_ref: str
+    algorithm_ref: str
+
+
+class EvidenceView(FactModel):
+    evidence_id: UUID
+    aspect_code: str
+    qualification: str
+    verdict: str | None = None
+    reason: str
+    reason_codes: list[str]
+    source_refs: list[EventPartRef]
+    source_spans: list[EvidenceQuote]
+    belief_change: BeliefChange | None = None
+
+
+class BeliefView(FactModel):
+    p_obs: float | None = None
+    p_current: float
+    last_observed_at: datetime | None = None
+    belief_revision_ref: Ref | None = None
+    observation_status: Literal["observed", "unknown"]
+    unknown_reasons: list[str]
+
+
+class SourceExcerpt(FactModel):
+    event_id: UUID
+    content: list[JsonValue]
+
+
+class BasisView(FactModel):
+    view: Literal["target", "belief", "evidence", "event", "processing"]
+    basis_ref: Ref | None = None
+    items: list[EvidenceSummary] | None = None
+    next_cursor: str | None = None
+    evidence: EvidenceView | None = None
+    source: SourceExcerpt | None = None
+    belief: BeliefView | None = None
+    processing: Literal["not_found", "pending", "completed", "failed"] | None = None
+
+
+class EvaluationBasisService(Protocol):
+    async def target(
+        self, scope: UUID, identity: UUID, item: UUID, after: UUID | None, limit: int
+    ) -> BasisView: ...
+
+    async def evidence(self, scope: UUID, identity: UUID, origin: UUID | None) -> BasisView: ...
+
+    async def from_event(
+        self, scope: UUID, event: UUID, after: UUID | None, limit: int
+    ) -> BasisView: ...
+
+    async def belief(
+        self,
+        scope: UUID,
+        snapshot: UUID,
+        claim: UUID,
+        revision: int,
+        method: UUID,
+        version: int,
+        aspect: str,
+        after: UUID | None,
+        limit: int,
+    ) -> BasisView: ...
+
+    async def processing(self, scope: UUID, trigger: UUID) -> BasisView: ...

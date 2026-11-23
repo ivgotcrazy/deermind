@@ -19,7 +19,14 @@ from deermind.bootstrap.domain_operation import PURPOSE, DomainAnalysisActivitie
 from deermind.bootstrap.evaluation import (
     configure_activity_configs,
     configure_claims,
+    configure_evaluation_inputs,
     configure_targets,
+)
+from deermind.bootstrap.evaluation_operation import PURPOSE as EVALUATION_PURPOSE
+from deermind.bootstrap.evaluation_operation import (
+    EvaluationActivities,
+    configure_evaluation_operation,
+    evaluation_credential,
 )
 from deermind.bootstrap.executions import limits
 from deermind.bootstrap.material_operation import material_activities
@@ -91,6 +98,9 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
         config = configure_activity_configs(engine, settings)
         goals = configure_goals(target_definitions, config)
         _checks, spaces, _applications = configure_courses(target_definitions, config)
+        evaluation = configure_evaluation_operation(
+            configure_evaluation_inputs(claims, spaces), settings.task_queue, claims.reader
+        )
         conversation = configure_conversation(spaces, config)
         student = configure_student_turns(
             spaces, conversation, materials.attachments, settings, config
@@ -104,6 +114,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
                 *analysis.registry.entries.values(),
                 *student.registry.entries.values(),
                 *generation.registry.entries.values(),
+                *evaluation.registry.entries.values(),
             ]
         )
         subscribers = subscriptions(
@@ -112,6 +123,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
             processing.invalidate_source,
             goals.receive,
             supply.receive,
+            evaluation.receive,
             entries=entries,
         )
         execution_limits = limits()
@@ -136,6 +148,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
             detection,
         )
         supply_activities = SupplyActivities(generation, calls)
+        evaluation_activities = EvaluationActivities(evaluation, calls, evaluation_credential)
         lifecycle = runtime.lifecycle(engine, entries, execution_limits)
         wait_activities = runtime.wait_activities(
             engine, waiting, timeout_seconds=execution_limits.finalize_seconds
@@ -156,11 +169,15 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
                         STUDENT_PURPOSE.schema_ref.model_dump_json(): STUDENT_PURPOSE.output,
                         GENERATE.schema_ref.model_dump_json(): GENERATE.output,
                         CHECK.schema_ref.model_dump_json(): CHECK.output,
+                        EVALUATION_PURPOSE.schema_ref.model_dump_json(): EVALUATION_PURPOSE.output,
                     },
                 ),
                 analysis_activities.prepare,
                 analysis_activities.finish,
                 student_activities.prepare,
+                student_activities.prepare_mastery,
+                student_activities.follow_up_mastery,
+                student_activities.complete_mastery_follow_up,
                 student_activities.acknowledge_answer,
                 student_activities.prepare_memory,
                 student_activities.save_memory,
@@ -173,6 +190,9 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
                 supply_activities.prepare,
                 supply_activities.review,
                 supply_activities.commit,
+                evaluation_activities.prepare,
+                evaluation_activities.save,
+                evaluation_activities.publish,
             ],
         )
         try:
@@ -188,6 +208,9 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
                 )
                 async with asyncio.TaskGroup() as tasks:
                     tasks.create_task(run_bridge(engine, transport, subscribers, stopped))
+                    tasks.create_task(
+                        evaluation.reconcile(stopped, execution_limits.reconcile_seconds)
+                    )
                     tasks.create_task(
                         run_relay(engine, entries, Transport(client, execution_limits), stopped)
                     )

@@ -2,6 +2,7 @@
 
 from uuid import UUID
 
+from deermind.abstractions.events import Ref
 from deermind.bootstrap.settings import Settings
 from deermind.bootstrap.student_operation import student_config
 from deermind.foundation.system.events.attachments import FactAttachments
@@ -15,12 +16,14 @@ from deermind.product.public.courses import AdoptionView, CourseSnapshot
 from deermind.spaces.domain.course_readiness import check_methods
 from deermind.spaces.domain.supply import TaskSupply
 from deermind.spaces.evaluation.goal_results import GoalResults
+from deermind.spaces.evaluation.publication import MasteryPublication
 from deermind.spaces.interaction.configurations import ActivityConfigs
 from deermind.spaces.interaction.conversation import Conversation
 from deermind.spaces.interaction.conversation_facts import ACCEPTED, COMPLETED
 from deermind.spaces.interaction.public import ActivityType, ConfigView
 from deermind.spaces.interaction.rounds import DetectionRounds
 from deermind.spaces.interaction.student_turns import StudentTurns
+from pydantic import JsonValue
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 STUDENT_VIEWS = {
@@ -37,7 +40,7 @@ def configure_courses(
     targets: TargetDefinitions, configs: ActivityConfigs
 ) -> tuple[CourseChecks, CourseSpaces, CourseApplications]:
     checks = CourseChecks(targets, configs.fixed_config, check_methods)
-    spaces = CourseSpaces(checks, GoalResults.current)
+    spaces = CourseSpaces(checks, GoalResults.current, GoalResults.progress)
     return checks, spaces, CourseApplications(checks, spaces)
 
 
@@ -90,6 +93,15 @@ def configure_student_turns(
                 return resolved, adopted.snapshot
         return None, adopted.snapshot
 
+    publications = MasteryPublication(spaces.engine)
+
+    async def read_mastery(scope: UUID, adoption: UUID, pinned: Ref | None) -> dict[str, JsonValue]:
+        async with spaces.engine.connect() as db:
+            selected = await spaces.fixed_adoption(db, scope, adoption)
+        return await publications.read(
+            scope, [item.claim_ref for item in selected.snapshot.items], pinned
+        )
+
     return StudentTurns(
         conversation,
         current_adoption,
@@ -98,4 +110,5 @@ def configure_student_turns(
         student_config(),
         activity_config,
         spaces.read_quoted_content,
+        read_mastery,
     )

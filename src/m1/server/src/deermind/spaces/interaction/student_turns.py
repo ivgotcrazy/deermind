@@ -2,7 +2,7 @@
 
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, replace
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from hashlib import sha256
 from typing import Literal
 from uuid import NAMESPACE_URL, UUID, uuid4, uuid5
@@ -10,9 +10,9 @@ from uuid import NAMESPACE_URL, UUID, uuid4, uuid5
 from deermind.abstractions.ai.contracts import ExecutionConfig
 from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.event_reading import EventPartRef
-from deermind.abstractions.events import EventDraft, Ref
+from deermind.abstractions.events import EventDraft, FactModel, Ref
 from deermind.abstractions.executions import Authorization, Execution, RunInput, State
-from deermind.abstractions.waits import WaitCall
+from deermind.abstractions.waits import Condition, ResultKey, WaitCall
 from deermind.foundation.ai import store as ai_store
 from deermind.foundation.system.events.attachments import FactAttachments
 from deermind.foundation.system.executions import commands, store
@@ -27,6 +27,7 @@ from deermind.spaces.interaction import conversation_facts as facts
 from deermind.spaces.interaction import (
     help_facts,
     history,
+    mastery_wait,
     memory_facts,
     provision_facts,
     round_facts,
@@ -95,6 +96,14 @@ type ActivityConfig = Callable[
 type TurnOutcome = Literal["completed", "needs_input", "blocked", "failed", "cancelled"]
 type ReadQuestion = Callable[[AsyncConnection, Ref], Awaitable[TaskInstance | None]]
 type ReadChapter = Callable[[UUID, UUID, Ref], Awaitable[list[dict[str, JsonValue]]]]
+type ReadMastery = Callable[[UUID, UUID, Ref | None], Awaitable[dict[str, JsonValue]]]
+
+
+class MasteryFollowUp(FactModel):
+    waiting: WaitCall
+    adoption_id: UUID
+    activity_id: UUID
+    round_id: UUID
 
 
 @dataclass(frozen=True)
@@ -128,6 +137,7 @@ class StudentTurns:
         config: ExecutionConfig | None,
         activity_config: ActivityConfig,
         read_chapter: ReadChapter,
+        read_mastery: ReadMastery | None = None,
     ) -> None:
         self.conversation = conversation
         self.engine = conversation.engine
@@ -136,6 +146,7 @@ class StudentTurns:
         self.config = config
         self.activity_config = activity_config
         self.read_chapter = read_chapter
+        self.read_mastery = read_mastery
         self.registry = Registry(
             [
                 Entry(
@@ -732,7 +743,12 @@ class StudentTurns:
         )
 
     async def context(
-        self, run: RunInput, question: ReadQuestion | None = None, *, post_close: bool = False
+        self,
+        run: RunInput,
+        question: ReadQuestion | None = None,
+        *,
+        post_close: bool = False,
+        mastery_ref: Ref | None = None,
     ) -> str:
         """只从固定输入与当前活动取材。"""
         async with self.engine.begin() as db:
@@ -843,8 +859,8 @@ class StudentTurns:
                         "omission": "章节超出本轮取材范围，请学生指出具体段落。",
                     }
                 )
+        adoption = active.identity.adoption_ref if active else adoption_id
         if active is None or active.identity.type != "detection" or post_close:
-            adoption = active.identity.adoption_ref if active else UUID(grant.basis_refs[0].id)
             kinds: tuple[ActivityType, ...] = ("explanation", "question_answer")
             for kind in kinds:
                 positions: list[history.ActivityState | None] = [None]
@@ -870,6 +886,11 @@ class StudentTurns:
                         )
                         if chosen is not None:
                             contexts.append(chosen)
+        mastery = (
+            await self.read_mastery(work.scope_id, adoption, mastery_ref)
+            if self.read_mastery
+            else None
+        )
         return (
             canonical_json(
                 {
@@ -882,11 +903,105 @@ class StudentTurns:
                     else None,
                     "recent": list(reversed(history_text)),
                     "teaching_contexts": contexts,
+                    "published_mastery": mastery,
                 }
             )
             + "\n本轮输入（JSON）\n"
             + canonical_json(raw)
         )
+
+    async def wait_for_mastery(self, run: RunInput, waits: Waits) -> MasteryFollowUp | None:
+        async with self.engine.begin() as db:
+            work = await store.active(db, self.registry, run, "step")
+            current = await history.current(db, work.scope_id)
+            round_ = current.current_round
+            activity = current.current_activity
+            if not activity or not round_ or round_.state != "closed" or round_.can_continue:
+                return None
+            trigger = await db.scalar(
+                text("""
+                SELECT event_ref FROM interaction.submissions
+                WHERE scope_id=:scope AND round_id=:round
+            """),
+                {"scope": work.scope_id, "round": UUID(round_.round_ref.id)},
+            )
+            if not isinstance(trigger, UUID):
+                return None
+            adoption = await self.current_adoption(db, work.scope_id, False)
+            active = await history.activity_at(db, work.scope_id, activity.activity_ref.activity_id)
+            now = await db.scalar(text("SELECT clock_timestamp()"))
+            reserve = 120
+            expires = min(now + timedelta(seconds=45), run.deadline_at - timedelta(seconds=reserve))
+            if active.identity.adoption_ref != adoption or expires <= now:
+                return None
+            waiting = await waits.register(
+                db,
+                run,
+                step_key="answer_mastery",
+                owner=round_.round_ref,
+                condition=Condition(
+                    event_types=[mastery_wait.EVENT],
+                    scope_kind=SCOPE,
+                    scope_id=work.scope_id,
+                    equals={"producer": "evaluation", "correlation_id": str(trigger)},
+                    result_key=ResultKey(
+                        scope_id=work.scope_id,
+                        trigger_event_id=trigger,
+                        producer="evaluation",
+                        result_kind="belief_result",
+                    ),
+                ),
+                probe_ref=mastery_wait.PROBE,
+                deadline=expires,
+                reserve_seconds=reserve,
+            )
+            return MasteryFollowUp(
+                waiting=WaitCall(run=run, wait_id=waiting.wait_id),
+                adoption_id=adoption,
+                activity_id=activity.activity_ref.activity_id,
+                round_id=UUID(round_.round_ref.id),
+            )
+
+    async def follow_up_context(
+        self, saved: MasteryFollowUp, reference: Ref, question: ReadQuestion
+    ) -> str:
+        async with self.engine.begin() as db:
+            work = await store.active(db, self.registry, saved.waiting.run, "step")
+            if not await self._same_mastery_round(db, work.scope_id, saved):
+                return ""
+        return await self.context(
+            saved.waiting.run, question, post_close=True, mastery_ref=reference
+        )
+
+    async def _same_mastery_round(
+        self, db: AsyncConnection, scope: UUID, saved: MasteryFollowUp
+    ) -> bool:
+        current = await history.current(db, scope)
+        activity, round_ = current.current_activity, current.current_round
+        return (
+            await self.current_adoption(db, scope, False) == saved.adoption_id
+            and activity is not None
+            and activity.activity_ref.activity_id == saved.activity_id
+            and round_ is not None
+            and round_.round_ref.id == str(saved.round_id)
+            and round_.state == "closed"
+            and not round_.can_continue
+        )
+
+    async def complete_mastery_follow_up(self, saved: MasteryFollowUp, wording: str | None) -> None:
+        run = saved.waiting.run
+        async with self.engine.begin() as db:
+            work = await store.lock_owned(db, self.registry, run.execution_id)
+            if work.state == "completed" and work.active_attempt_id == run.attempt_id:
+                return
+            work = await store.active(db, self.registry, run, "finish")
+            if not await self._same_mastery_round(db, work.scope_id, saved):
+                reply = "这次评价对应之前的检测，当前活动可以继续。"
+            else:
+                reply = wording or "本轮的掌握情况还在核对，可以继续学习。"
+            result = await self._save_result(db, work, "completed", reply, None)
+            await commands.complete(db, self.registry, run, result)
+            await self._occupy(db, work.scope_id, None)
 
     async def _prepare_lesson(
         self,
@@ -1328,6 +1443,7 @@ class StudentTurns:
                 and ("start_child" if placement == "child" else "switch") in node_actions
             )
         )
+
         choice = (
             decide(config.definition, node, candidate.teaching, original_text, {})
             if candidate.teaching and placed

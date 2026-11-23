@@ -1,10 +1,10 @@
 # deermind 数据库：评估空间数据字典
 
-> **版本**：v0.4<br>
-> **状态**：Evidence 存储随 E05 实施，本轮修订待评审<br>
+> **版本**：v0.5<br>
+> **状态**：E05 迁移已在现有 K3s 接线，验收进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.3 → v0.4，在条件事实登记题面覆盖依据<br>
+> **修订说明**：v0.4 → v0.5，登记评价输入、解释、掌握状态与顺序迁移<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **13 张表、127 个列定义**。处理流程、接口和业务载荷由[Evaluation_Space_Design.md](../Evaluation_Space_Design.md) §1.5、§2.3—2.4、§3—6维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -178,7 +178,7 @@ AI对表现的解释候选。
 | `input_ref` | `uuid` | 否 | 无 | 固定输入；FK → `evaluation.evaluation_input.input_id` |
 | `ai_call_ref` | `jsonb` | 否 | 无 | AI调用与候选；Ref，见总册§3 |
 | `contract_ref` | `jsonb` | 否 | 无 | 解释输出Schema/提示合同版本；Ref，见总册§3 |
-| `candidate` | `jsonb` | 否 | 无 | Evaluation§2.4：candidates[]、unattributed[]；判据结果、方面判断、条件、原文片段和限制 |
+| `candidate` | `jsonb` | 否 | 无 | Evaluation§2.4：candidates[]、unattributed[]、covered_scopes[]；含固定候选编号、方法原文、判据结果和范围出处 |
 | `validation` | `jsonb` | 否 | 无 | 来源、Schema、候选边界及冲突检查的逐项结果 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
@@ -420,6 +420,15 @@ AI对表现的解释候选。
 
 查询索引：主键及上述唯一键；其他索引遵循总册§3。
 
+## 14. E05 迁移
+
+| 迁移 | 表或索引 |
+| :--- | :--- |
+| `0038_evaluation_input` | 评价输入及空间内触发唯一键 |
+| `0039_evaluation_interpretation` | 模型解释和程序核对结果，每份输入保存一次 |
+| `0040_evaluation_mastery` | Evidence、Belief 修订与当前索引、掌握快照与当前引用 |
+| `0041_evaluation_progress` | 空间顺序游标和当前来源。开发环境从迁移前最后一条事实开始接收后续评价 |
+
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
@@ -428,3 +437,4 @@ AI对表现的解释候选。
 | v0.2 | 2026-11-15 | 物理表定义集中到数据库分册；模块保留流程、接口和事务规则。保持同库schema划分，未改原型或编码。见MVP决定登记§93。 |
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.4 | 2026-11-23 | 在条件事实登记题面覆盖依据 |
+| v0.5 | 2026-11-23 | 登记 E05 实际迁移及解释字段 |

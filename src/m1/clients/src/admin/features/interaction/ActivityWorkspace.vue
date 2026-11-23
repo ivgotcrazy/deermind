@@ -4,10 +4,11 @@ import type { components, operations } from '../../../../../contracts/generated/
 import { ApiError, get, put } from '../../../shared/api/http';
 
 type Schema = components['schemas'];
-type Activity = Schema['BlueprintDefinition']['activity_type'];
+type Blueprint = NonNullable<Schema['ConfigView']['definition']['blueprint']>;
+type Activity = Blueprint['activity_type'];
 type Binding = Schema['LocalBinding'];
-type Rule = Schema['RuleDefinition'];
-type Strategy = Schema['StrategyDefinition'];
+type Rule = Schema['BoundRule']['definition'];
+type Strategy = Schema['BoundStrategy']['definition'];
 type Command = operations['interaction_save_config']['requestBody']['content']['application/json'];
 type Change = Command extends infer C
   ? C extends Command
@@ -31,7 +32,7 @@ const stages: Record<Activity, string[]> = {
 const path = '/api/m1/interaction/activity-configs/{activity_type}';
 const activity = ref<Activity>('explanation');
 const view = ref<Schema['ConfigView']>();
-const blueprint = ref<Schema['BlueprintDefinition']>();
+const blueprint = ref<Blueprint>();
 const binding = ref<Schema['BindingDefinition']>();
 const error = ref('');
 const status = ref('');
@@ -53,7 +54,7 @@ function emptyBinding(): Binding {
   return { rule_ids: [], strategy_ids: [] };
 }
 
-function draft(type: Activity): Schema['BlueprintDefinition'] {
+function draft(type: Activity): Blueprint {
   const names = ['开始', ...stages[type], '结束'];
   const ids = names.map((_, n) =>
     n === 0 ? 'start' : n === names.length - 1 ? 'end' : `step-${n}`,

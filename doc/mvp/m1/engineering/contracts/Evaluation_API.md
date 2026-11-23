@@ -1,11 +1,11 @@
 # M1 Evaluation API
 
-> **版本**：v0.4<br>
-> **状态**：Claim 列表、详情、写入及收据已接线；验收进度见实施计划<br>
+> **版本**：v0.5<br>
+> **状态**：Claim 定义及评价追溯接口见 OpenAPI，验收进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.3 → v0.4，登记 Claim 定义接口与公共收据接线<br>
+> **修订说明**：v0.4 → v0.5，登记评价追溯查询和来源片段读取<br>
 
 所有写入口只维护评价定义；个人Evidence、Belief和目标结果只能由已登记处理流程产生。查询不重新评价、不改概率。共同认证、回执和错误见[总册](../API_and_Message_Design.md)。
 
@@ -215,15 +215,15 @@ ClaimRow只含claim_ref:ClaimRef、task_ref:ObjectRef(task)、title:string、gap
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `view` | processing/target/belief/evidence | 是 | 分支返回 |
-| `result_ref` | Ref | target列表是 | 固定目标结果 |
+| `view` | processing/target/belief/evidence/event | 是 | 从空间事件反查时使用event，限管理员 |
+| `result_id` | UUID | target列表是 | 固定目标结果 |
 | `item_id` | ID | target列表是 | 该结果的目标项 |
-| `snapshot_ref` | Ref | belief是 | 固定发布快照 |
-| `claim_ref` | ClaimRef | belief是 | 分项定义 |
-| `method_ref` | ObjectRef(solution) | belief是 | 实际方法 |
+| `snapshot_id` | UUID | belief是 | 固定发布快照 |
+| `claim_id`、`claim_revision` | UUID、int | belief是 | 分项定义 |
+| `method_id`、`method_version` | UUID、int | belief是 | 实际方法 |
 | `aspect_code` | string | belief是 | 具体评价方面 |
-| `evidence_ref` | Ref | evidence是 | 单证据 |
-| `result_key` | ResultKey | processing是 | 原触发和阶段 |
+| `evidence_id` | UUID | evidence是 | 固定单条证据 |
+| `event_id` | UUID | processing、event是；evidence可选 | 原触发、反查事件或该证据允许读取的一个来源 |
 | `cursor` | string | 否；首次省略 | 不透明续页游标，绑定筛选、身份及读取范围 |
 | `limit` | int | 否；沿总册分页配置 | 正整数，不超过部署已接收上限 |
 
@@ -234,10 +234,11 @@ ClaimRow只含claim_ref:ClaimRef、task_ref:ObjectRef(task)、title:string、gap
 | `view` | 请求枚举 | 是 | 与请求对应 |
 | `basis_ref` | Ref或null | 是 | 固定结果或快照；未处理可null |
 | `belief` | BeliefItem或null | belief是 | 分项判断 |
-| `evidence` | EvidenceView或null | evidence是 | 完整证据解释 |
-| `items` | Evidence摘要[] | target/belief是 | evidence_ref、qualification、verdict、reason、source_event_refs |
-| `next_cursor` | string或null | target/belief是 | 固定依据集合续页 |
-| `processing` | 结果状态对象 | processing是 | 沿Runtime read_result，不启动评价 |
+| `evidence` | EvidenceView | evidence是 | 证据解释、源引用及本条导致的概率变化 |
+| `source` | SourceExcerpt | evidence选择event_id时有 | 仅返回本证据已经关联的原文片段 |
+| `items` | Evidence摘要[] | target/belief/event是 | evidence_ref、aspect_code、qualification、verdict、reason、source_event_refs |
+| `next_cursor` | string | 有下一页时返回 | 绑定身份、范围及当前筛选 |
+| `processing` | not_found/pending/completed/failed | processing是 | 查询源事件的评价处理状态，不启动工作 |
 
 处理边界：目标→Evidence列表→单Evidence→源事件；来源事件不直接替代目标依据列表。每个view只返回对应字段，其他分支字段省略。
 
@@ -248,11 +249,7 @@ ClaimRow只含claim_ref:ClaimRef、task_ref:ObjectRef(task)、title:string、gap
 ```json
 {
   "view": "target",
-  "result_ref": {
-    "owner": "evaluation",
-    "type": "goal_result",
-    "id": "00000000-0000-4000-8000-000000000001"
-  },
+  "result_id": "00000000-0000-4000-8000-000000000001",
   "item_id": "00000000-0000-4000-8000-000000000009",
   "limit": 20
 }
@@ -310,3 +307,4 @@ E06的target分支先返回证据摘要，点击后以evidence_ref读取详情�
 | v0.2 | 2026-11-15 | 明确学生目标聚合、管理查询及Evidence／Belief读取入口。见MVP决定登记§95。 |
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.4 | 2026-11-23 | 登记 Claim 定义写入、固定修订查询和公共收据 |
+| v0.5 | 2026-11-23 | 登记目标、概率、Evidence 与来源事件的双向查询 |

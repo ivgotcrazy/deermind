@@ -22,6 +22,7 @@ from deermind.bootstrap.domain import configure_domain
 from deermind.bootstrap.evaluation import (
     configure_activity_configs,
     configure_claims,
+    configure_evaluation_basis,
     configure_targets,
 )
 from deermind.bootstrap.materials import (
@@ -144,6 +145,7 @@ def create_app(
                 app.state.domain = domain
                 claims = configure_claims(engine, settings)
                 app.state.claims = claims
+                app.state.evaluation_basis = configure_evaluation_basis(claims)
                 configs = configure_activity_configs(engine, settings)
                 app.state.activity_configs = configs
                 materials, app.state.uploads = configure_materials(engine, settings, domain)

@@ -3,6 +3,7 @@
 from collections.abc import Awaitable, Callable, Sequence
 from datetime import UTC, datetime
 from hashlib import sha256
+from typing import Literal
 from uuid import UUID, uuid4
 
 from deermind.abstractions.encoding import canonical_json
@@ -41,15 +42,21 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 type ReadGoal = Callable[[AsyncConnection, UUID, UUID], Awaitable[GoalEvaluation | None]]
+type ReadProgress = Callable[
+    [AsyncConnection, UUID], Awaitable[Literal["pending", "failed"] | None]
+]
 CANDIDATE_ORDER = {"kc": 0, "task_instance": 1, "reference": 2}
 
 
 class CourseSpaces:
-    def __init__(self, checks: CourseChecks, read_goal: ReadGoal) -> None:
+    def __init__(
+        self, checks: CourseChecks, read_goal: ReadGoal, read_progress: ReadProgress
+    ) -> None:
         self.checks = checks
         self.engine = checks.engine
         self.materials = checks.materials
         self.read_goal = read_goal
+        self.read_progress = read_progress
 
     async def current_adoption(self, account: AccountView, space_id: UUID) -> AdoptionView:
         async with self.engine.connect() as db:
@@ -72,6 +79,7 @@ class CourseSpaces:
             adoption = await self.adoption(db, space.current_adoption_ref)
             adopted = await self.adopted(db, adoption)
             result = await self.read_goal(db, space_id, adoption.target_basis_ref)
+            processing = await self.read_progress(db, space_id)
             domain = await db.scalar(
                 text("SELECT domain_id FROM product.textbook WHERE textbook_id=:book"),
                 {"book": space.textbook_id},
@@ -84,6 +92,7 @@ class CourseSpaces:
             domain_id=domain,
             pending=result is None,
             current=result,
+            evaluation_processing=processing,
         )
 
     async def domain_for(self, db: AsyncConnection, scope: UUID) -> UUID:

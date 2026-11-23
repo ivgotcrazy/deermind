@@ -3,6 +3,7 @@
 import asyncio
 import hashlib
 from collections.abc import Sequence
+from contextlib import nullcontext
 from uuid import UUID
 
 from deermind.abstractions.encoding import canonical_json
@@ -65,6 +66,7 @@ class EventReader:
         after_seq: int = 0,
         upper_seq: int | None = None,
         limit: int = PAGE_DEFAULT,
+        connection: AsyncConnection | None = None,
     ) -> dict[str, JsonValue]:
         """列表只取元数据；后续页沿用第一页的上界。"""
         self._limit(limit)
@@ -94,6 +96,7 @@ class EventReader:
             clauses.append("event_type=ANY(:types)")
             parameters["types"] = list(filters.event_types)
         for column, value, expression in (
+            ("id", filters.event_id, "event_id=:id"),
             ("correlation", filters.correlation_id, "correlation_id=:correlation"),
             ("cause", filters.causation_event_id, "causation_event_id=:cause"),
             ("from", filters.recorded_from, "recorded_at>=:from"),
@@ -108,9 +111,9 @@ class EventReader:
             )
             owner = filters.subject_ref.model_dump(mode="json", exclude_none=True)
             parameters.update(subject=canonical_json([owner]), owner=canonical_json(owner))
-        async with self.engine.connect() as connection:
+        async with self.engine.connect() if connection is None else nullcontext(connection) as db:
             current = (
-                await connection.scalar(
+                await db.scalar(
                     text(
                         "SELECT last_seq FROM runtime.scope_event_heads "
                         "WHERE scope_kind=:kind AND scope_id=:scope"
@@ -135,9 +138,7 @@ class EventReader:
                 + " ORDER BY scope_event_seq LIMIT :limit"
             )
             rows = (
-                await connection.scalars(
-                    text("SELECT to_jsonb(m) FROM (" + statement + ") m"), parameters
-                )
+                await db.scalars(text("SELECT to_jsonb(m) FROM (" + statement + ") m"), parameters)
             ).all()
         return self._response(
             {

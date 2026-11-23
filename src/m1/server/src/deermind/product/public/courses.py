@@ -184,6 +184,7 @@ class SpaceGoalView(FactModel):
     domain_id: UUID
     pending: bool
     current: GoalEvaluation | None
+    evaluation_processing: Literal["pending", "failed"] | None = None
 
 
 class SpaceChapterContent(FactModel):

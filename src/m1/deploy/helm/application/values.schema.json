@@ -25,6 +25,15 @@
     "studentAssistant": {
       "$ref": "#/properties/materialAssistant"
     },
+    "evaluationAssistant": {
+      "type": "object",
+      "required": ["model", "existingSecret"],
+      "properties": {
+        "model": { "type": "string", "minLength": 1 },
+        "existingSecret": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
     "images": {
       "type": "object",
       "required": ["server", "client"],

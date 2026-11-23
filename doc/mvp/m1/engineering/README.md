@@ -1,11 +1,11 @@
 # M1 工程设计
 
-> **版本**：v0.110<br>
+> **版本**：v0.111<br>
 > **状态**：已进入小增量工程实现；进度及待确认项见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.109 → v0.110，同步产品规格版本和 Task 正文范围的工程依据<br>
+> **修订说明**：v0.110 → v0.111，登记掌握结果的目标对照和教学读取<br>
 
 E01-16 的配置、范围及复核见[载荷交付记录](../../../../src/m1/deploy/environments/local-wsl/E01-16-payload-codec.md)，进度见[实施计划](Delivery_Plan.md)。
 
@@ -53,7 +53,7 @@ AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己�
 | 当前产品输入 | 版本与作用 |
 | --- | --- |
 | [PRD](../PRD.md) | v0.30：M1产品行为与验收；Web交付，学习用时功能后置 |
-| [内容与模型规格](../design/Content_and_Model_Reference.md) | v0.28：对象关系、教学与评价语义、试用算法和参数 |
+| [内容与模型规格](../design/Content_and_Model_Reference.md) | v0.29：对象关系、教学与评价语义、试用算法和参数 |
 | [交互规格](../design/Interaction_Design.md)及[原型](../prototype/README.md) | 交互规格 v0.27：管理员和学生的操作与状态；旧截图和原型仅供参考，正式布局与样式重新设计 |
 | [验证计划](../validation/Validation_Plan.md) | v0.10：内容、语义、数值、效果及真实浏览器验收口径 |
 
@@ -173,7 +173,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | `DomainTaskSupplyCompleted` | Domain完成供题处理并保存批次；可有未满足项 | Interaction读取批次并复核使用条件，不自动开测 | 原供题事件、批次、实例及未满足项；[Domain§5.2](Domain_Space_Design.md#52-domainsupply_task) |
 | `AnswerSubmitted` | Interaction接受实际作答并固定当时条件 | Evaluation触发`evaluate_submission`；不等当题判题 | 本次题目使用、作答、活动／轮及内容引用，当时目标／教材采用依据与存在时的题单引用；[Interaction§4.2](Interaction_Space_Design.md#42-submit_answer提交实际作答)、[Evaluation§2](Evaluation_Space_Design.md#2-原始事实到evidence) |
 | `TeachingOpportunityClosed` | Interaction收束服务端正式提供的教学段，不等显示回执 | Evaluation触发`apply_learning_opportunity`，再判断资格 | 机会身份、正式内容、目的、收束及采用引用；[Interaction§3.7](Interaction_Space_Design.md#37-帮助与教学机会的服务端事实)、[Evaluation§3](Evaluation_Space_Design.md#3-belief分项与数值更新) |
-| `BeliefEvaluationCompleted` | Evaluation提交一批Evidence及更新／未更新结果 | Interaction按需要授权读取、接续或核对主动任务；目标及追溯查询可读取依据 | 原始触发、input_ref、Evidence／修订、snapshot_ref、result_ref及原因；[Evaluation§6.5](Evaluation_Space_Design.md#65-事件与结果交接)、[Interaction§5.3](Interaction_Space_Design.md#53-主动任务的依据和生命周期)；未取得目标结果时不能先宣告达标 |
+| `BeliefEvaluationCompleted` | Evaluation提交一批Evidence及更新／未更新结果 | Evaluation按固定采用另算目标；Interaction按需要授权读取或接续；主动任务按后续增量接入 | 原始触发、input_ref、Evidence／修订、snapshot_ref、result_ref及原因；[Evaluation§6.5](Evaluation_Space_Design.md#65-事件与结果交接)、[Interaction§5.3](Interaction_Space_Design.md#53-主动任务的依据和生命周期)；目标达成以目标结果为准 |
 | `GoalEvaluationCompleted` | Evaluation保存本次目标计算结果，含历史／未推进结果 | Interaction核对当前依据后接续或检查主动任务；Product授权查询并组织展示 | 触发、目标及快照、结果引用、是否推进当前；[Evaluation§6.5](Evaluation_Space_Design.md#65-事件与结果交接)、[Interaction§5.3](Interaction_Space_Design.md#53-主动任务的依据和生命周期)；两类评价通知不重复创建同依据任务 |
 
 ### 6.2 查询取证与业务留痕
@@ -353,3 +353,4 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | v0.108 | 2026-11-22 | 登记 KC 检验依据不足事实及查询责任 |
 | v0.109 | 2026-11-22 | 登记教材分析输入及领域和章节事实的追溯入口 |
 | v0.110 | 2026-11-23 | 同步产品规格版本和 Task 正文范围的工程依据 |
+| v0.111 | 2026-11-23 | 登记掌握完成事件到目标计算、Interaction 等待与读取的边界 |

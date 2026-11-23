@@ -1,19 +1,24 @@
 """评价定义的管理端 HTTP 入口。"""
 
+from hashlib import sha256
 from secrets import compare_digest
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
+from deermind.abstractions.encoding import canonical_json
 from deermind.entrypoints.api.auth import access
 from deermind.entrypoints.api.errors import ERRORS
 from deermind.foundation.system.public.errors import RequestError
 from deermind.product.public.authentication import SessionView
+from deermind.product.public.courses import LearningSpaceService
 from deermind.spaces.evaluation.public import (
+    BasisView,
     ClaimCommand,
     ClaimDetail,
     ClaimList,
     ClaimReceipt,
     ClaimService,
+    EvaluationBasisService,
 )
 from fastapi import APIRouter, Header, Query, Request, Response
 
@@ -99,3 +104,104 @@ async def save_claim(
     session = await admin_session(request, response, expected, csrf, writing=True)
     service: ClaimService = request.app.state.claims
     return await service.save(session.account.account_id, body)
+
+
+@router.get(
+    "/spaces/{scope_id}/basis",
+    response_model=BasisView,
+    response_model_exclude_none=True,
+    responses=ERRORS,
+    operation_id="evaluation_read_basis",
+)
+async def read_basis(
+    request: Request,
+    response: Response,
+    scope_id: UUID,
+    view: Literal["target", "belief", "evidence", "event", "processing"],
+    result_id: UUID | None = None,
+    item_id: UUID | None = None,
+    evidence_id: UUID | None = None,
+    event_id: UUID | None = None,
+    snapshot_id: UUID | None = None,
+    claim_id: UUID | None = None,
+    claim_revision: Annotated[int | None, Query(ge=1)] = None,
+    method_id: UUID | None = None,
+    method_version: Annotated[int | None, Query(ge=1)] = None,
+    aspect_code: Literal["independent", "understanding", "transfer", "retention"] | None = None,
+    cursor: Annotated[str | None, Query(max_length=128)] = None,
+    limit: Annotated[int, Query(ge=1, le=100)] = 50,
+    expected: ExpectedSession = None,
+) -> BasisView:
+    auth, config = access(request)
+    session = await auth.session(request.cookies.get(config.cookie_name), expected)
+    if expected is None:
+        raise RequestError(403, "forbidden", "请使用有效的会话。")
+    response.headers["Cache-Control"] = "no-store"
+    spaces: LearningSpaceService = request.app.state.course_spaces
+    await spaces.current_adoption(session.account, scope_id)
+    service: EvaluationBasisService = request.app.state.evaluation_basis
+    binding = sha256(
+        canonical_json(
+            [
+                str(session.account.account_id),
+                str(scope_id),
+                view,
+                *[
+                    str(value)
+                    for value in (
+                        result_id,
+                        item_id,
+                        event_id,
+                        snapshot_id,
+                        claim_id,
+                        claim_revision,
+                        method_id,
+                        method_version,
+                        aspect_code,
+                    )
+                ],
+            ]
+        ).encode()
+    ).hexdigest()[:24]
+    after = _basis_cursor(cursor, binding)
+    if view == "target" and result_id and item_id:
+        result = await service.target(scope_id, result_id, item_id, after, limit)
+    elif view == "evidence" and evidence_id:
+        return await service.evidence(scope_id, evidence_id, event_id)
+    elif view == "event" and event_id:
+        if session.account.role != "admin":
+            raise RequestError(403, "forbidden", "只有管理员可从事件查看相关证据。")
+        result = await service.from_event(scope_id, event_id, after, limit)
+    elif view == "processing" and event_id:
+        return await service.processing(scope_id, event_id)
+    elif view == "belief" and (
+        snapshot_id and claim_id and claim_revision and method_id and method_version and aspect_code
+    ):
+        result = await service.belief(
+            scope_id,
+            snapshot_id,
+            claim_id,
+            claim_revision,
+            method_id,
+            method_version,
+            aspect_code,
+            after,
+            limit,
+        )
+    else:
+        raise RequestError(400, "invalid_request", "缺少本次评价查询所需的引用。")
+    if result.next_cursor:
+        result = result.model_copy(update={"next_cursor": f"{binding}.{result.next_cursor}"})
+    return result
+
+
+def _basis_cursor(cursor: str | None, binding: str) -> UUID | None:
+    if cursor is None:
+        return None
+    prefix, _, value = cursor.partition(".")
+    if not compare_digest(prefix.encode(), binding.encode()):
+        raise RequestError(400, "invalid_request", "续页位置与本次评价查询不符。")
+    try:
+        return UUID(value)
+    except ValueError as error:
+        raise RequestError(400, "invalid_request", "续页位置无效。") from error

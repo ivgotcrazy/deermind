@@ -76,7 +76,11 @@ def _aspect(
             reasons=["no_observation"],
             aspect_code=code,
             p_obs=None,
-            evidence_refs=[],
+            evidence_refs=list(
+                dict.fromkeys(answer.evidence_ref for answer in observed.covered_answers)
+            )
+            if observed
+            else [],
         )
     probability = observed.p_obs
     if not probability.is_finite() or not 0 <= probability <= 1:

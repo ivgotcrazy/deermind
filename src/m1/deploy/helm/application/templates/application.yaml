@@ -104,6 +104,17 @@ spec:
             {{- end }}
             {{- end }}
             {{- end }}
+            {{- if eq $component "worker" }}
+            {{- with $root.Values.evaluationAssistant }}
+            - name: M1_EVALUATION_MODEL
+              value: {{ .model | quote }}
+            - name: M1_EVALUATION_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "evaluationAssistant.existingSecret is required" .existingSecret | quote }}
+                  key: api-key
+            {{- end }}
+            {{- end }}
             - name: M1_TEMPORAL_ADDRESS
               value: {{ required "Temporal address is required" $root.Values.temporal.address | quote }}
             - name: M1_TEMPORAL_NAMESPACE
