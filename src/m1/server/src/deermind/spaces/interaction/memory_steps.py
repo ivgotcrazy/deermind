@@ -40,17 +40,18 @@ async def prepare(service: StudentTurns, run: RunInput) -> SummaryMaterial | Non
                     "WHERE m.scope_id=:scope AND a.activity_id=:activity "
                     "AND m.role IN ('student','assistant') AND m.message_seq>:after "
                     "AND m.source_input_ref IS DISTINCT FROM :input "
-                    "ORDER BY m.message_seq LIMIT 12"
+                    "ORDER BY m.message_seq LIMIT :limit"
                 ),
                 {
                     "scope": work.scope_id,
                     "activity": activity,
                     "after": summary.basis_message_seq if summary else 0,
                     "input": UUID(work.input_ref.id),
+                    "limit": memory_facts.HISTORY_WINDOW,
                 },
             )
         ).all()
-        if len(window) < 12:
+        if len(window) < memory_facts.HISTORY_WINDOW:
             return None
         older: list[dict[str, JsonValue]] = [
             {"role": row.role, "parts": row.parts} for row in window[:6]

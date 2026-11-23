@@ -6,7 +6,12 @@ type Activity = components['schemas']['ActivityView'];
 type Page = components['schemas']['ActivityPage'];
 type Query = { parent?: string; cursor?: string };
 
-defineProps<{ page?: Page; branches: Record<string, Page>; expanded: Record<string, boolean> }>();
+defineProps<{
+  page?: Page;
+  branches: Record<string, Page>;
+  expanded: Record<string, boolean>;
+  canResume: boolean;
+}>();
 defineEmits<{
   locate: [activity: Activity];
   toggle: [id: string];
@@ -43,6 +48,7 @@ const time = new Intl.DateTimeFormat('zh-CN', { dateStyle: 'short', timeStyle: '
           <button
             v-if="activity.run_state === 'paused'"
             type="button"
+            :disabled="!canResume"
             @click="$emit('resume', activity)"
           >
             继续活动
@@ -55,6 +61,7 @@ const time = new Intl.DateTimeFormat('zh-CN', { dateStyle: 'short', timeStyle: '
           :page="branches[activity.activity_ref.activity_id]"
           :branches="branches"
           :expanded="expanded"
+          :can-resume="canResume"
           @locate="$emit('locate', $event)"
           @toggle="$emit('toggle', $event)"
           @resume="$emit('resume', $event)"
@@ -111,7 +118,11 @@ button {
   text-align: start;
   overflow-wrap: anywhere;
 }
-button:hover {
+button:not(:disabled):hover {
   text-decoration: underline;
+}
+button:disabled {
+  color: var(--color-muted);
+  cursor: not-allowed;
 }
 </style>

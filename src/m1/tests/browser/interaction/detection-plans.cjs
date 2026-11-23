@@ -5,6 +5,8 @@ const { chromium } = require('playwright');
 
 const origin = process.env.M1_TEST_DOMAIN_ORIGIN;
 const directory = process.env.M1_TEST_DOMAIN_BROWSER_EVIDENCE;
+const course = process.env.M1_TEST_LEARNING_SPACE ?? 'E04 合成教材';
+const partial = process.env.M1_TEST_PARTIAL_PLAN === '1';
 
 async function run() {
   await mkdir(directory, { recursive: true });
@@ -17,11 +19,12 @@ async function run() {
     await page.getByRole('button', { name: '登录' }).click();
     await page.getByRole('button', { name: '退出登录' }).waitFor();
     const entered = page.waitForResponse(item => item.url().endsWith('/learning-spaces/open') && item.ok());
-    await page.getByRole('button', { name: /E04 合成教材/ }).first().click();
+    await page.getByRole('button', { name: new RegExp(course) }).first().click();
     const scope = (await (await entered).json()).result.space.space_id;
     const session = await (await page.request.get(origin + '/api/m1/auth/session')).json();
     const headers = { Origin: origin, 'X-Expected-Session': session.session_id, 'X-CSRF-Token': session.csrf_token };
     const api = origin + '/api/m1/learning-spaces/' + scope;
+    const chatPanel = page.getByRole('region', { name: '学习对话' });
 
     async function verify(action, accepted) {
       assert.equal(accepted.status(), 202, await accepted.text());
@@ -39,21 +42,34 @@ async function run() {
       assert.equal(status?.execution_ref, initial.execution_ref);
       assert.equal(status?.result?.outcome, 'completed', JSON.stringify(status));
       const message = page.locator('#study-message-' + status.result.message_refs[0]);
-      await message.getByRole('region', { name: '检测题单' }).waitFor({ timeout: 30_000 });
+      const card = message.getByRole('region', { name: '检测题单' });
+      await card.waitFor({ timeout: 30_000 });
       assert.equal(await message.getByLabel('你的作答').count(), 0);
+      if (partial) {
+        assert.match(await card.innerText(), /1\s*题/);
+        assert.match(await card.innerText(), /暂时没有满足该方法和范围的题目/);
+        const confirm = card.getByRole('button', { name: '确认并开始', exact: true });
+        await confirm.and(page.locator(':enabled')).waitFor();
+      }
       return { receipt: status, summary: await message.innerText() };
     }
 
     const initialView = await page.request.get(api + '/conversation?view=current', { headers });
     const initial = (await initialView.json()).current.current_activity;
-    if (initial?.type === 'detection') {
+    if (initial) {
       const restored = page.waitForResponse(item => item.url() === api + '/activity-actions' && item.request().method() === 'POST');
       await page.getByRole('button', { name: '结束活动', exact: true }).click();
       assert.equal((await restored).status(), 200);
     }
     const directRequest = page.waitForResponse(item => item.url() === api + '/detection-plans' && item.request().method() === 'POST');
-    await page.getByRole('button', { name: '准备检测', exact: true }).click();
+    await chatPanel.getByRole('button', { name: '准备检测', exact: true }).click();
     const direct = await verify('interaction.prepare_detection', await directRequest);
+    if (partial) {
+      await page.screenshot({ path: path.join(directory, 'partial-detection-plan.png'), fullPage: true });
+      await writeFile(path.join(directory, 'partial-detection-plan.json'), JSON.stringify({ scope, direct }, null, 2));
+      console.log('Verified that a partial plan lists the gap and waits for student confirmation.');
+      return;
+    }
 
     const ended = page.waitForResponse(item => item.url() === api + '/activity-actions' && item.request().method() === 'POST');
     await page.getByRole('button', { name: '结束活动', exact: true }).click();

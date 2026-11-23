@@ -792,18 +792,25 @@ class StudentTurns:
                 if leaf
                 else []
             )
+            covered_through = next(
+                (item.basis_message_seq for item in memories if item.kind == "summary"), 0
+            )
+            # 摘要未保存时，继续读取本轮能放入预算的原消息。
             recent = await db.execute(
                 text(
                     "SELECT m.message_id,m.role,m.parts FROM interaction.messages m "
                     "LEFT JOIN interaction.message_assignments a ON a.message_id=m.message_id "
                     "WHERE m.scope_id=:scope AND m.source_input_ref IS DISTINCT FROM :input "
                     "AND a.activity_id IS NOT DISTINCT FROM CAST(:activity AS uuid) "
-                    "AND m.role IN ('student','assistant') ORDER BY m.message_seq DESC LIMIT 6"
+                    "AND m.role IN ('student','assistant') AND m.message_seq>:covered "
+                    "ORDER BY m.message_seq DESC LIMIT :limit"
                 ),
                 {
                     "scope": work.scope_id,
                     "input": UUID(work.input_ref.id),
                     "activity": leaf.activity_ref.activity_id if leaf else None,
+                    "covered": covered_through,
+                    "limit": memory_facts.HISTORY_WINDOW,
                 },
             )
             history_text: list[dict[str, JsonValue]] = []

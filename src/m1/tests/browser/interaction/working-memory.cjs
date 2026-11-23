@@ -6,6 +6,9 @@ const { chromium } = require('playwright');
 
 const origin = process.env.M1_TEST_DOMAIN_ORIGIN;
 const out = process.env.M1_TEST_DOMAIN_BROWSER_EVIDENCE;
+const course = process.env.M1_TEST_LEARNING_SPACE ?? 'E04 合成教材';
+const fallback = process.env.M1_TEST_MEMORY_FALLBACK === '1';
+const stale = process.env.M1_TEST_MEMORY_STALE === '1';
 
 async function run() {
   await mkdir(out, { recursive: true });
@@ -18,7 +21,7 @@ async function run() {
     await page.getByRole('button', { name: '登录' }).click();
     await page.getByRole('button', { name: '退出登录' }).waitFor();
     const opened = page.waitForResponse(response => response.url().endsWith('/learning-spaces/open') && response.ok());
-    await page.getByRole('button', { name: /E04 合成教材/ }).first().click();
+    await page.getByRole('button', { name: new RegExp(course) }).first().click();
     const scope = (await (await opened).json()).result.space.space_id;
     const api = origin + '/api/m1';
     const root = api + '/learning-spaces/' + scope;
@@ -65,7 +68,10 @@ async function run() {
       assert.equal(receipt?.result?.outcome, 'completed', JSON.stringify(receipt));
       const last = page.locator('#study-message-' + receipt.result.message_refs[0]);
       await last.waitFor();
-      return { command, result: receipt.result, wording: await last.innerText() };
+      return {
+        command, execution: receipt.execution_ref,
+        result: receipt.result, wording: await last.innerText(),
+      };
     }
 
     const turns = [];
@@ -76,23 +82,32 @@ async function run() {
     assert.equal(turns[1].command.input.explicit_refs.length, 1);
     assert.equal(turns[1].command.input.explicit_refs[0].type, 'material_candidate');
     const activity = turns[0].result.current.current_activity.activity_ref.activity_id;
-    const paused = await control('暂停活动');
-    assert.equal(paused.current_activity, null);
-    const resumed = await control('继续活动');
-    assert.equal(resumed.current_activity.activity_ref.activity_id, activity);
+    if (!fallback) {
+      const paused = await control('暂停活动');
+      assert.equal(paused.current_activity, null);
+      const resumed = await control('继续活动');
+      assert.equal(resumed.current_activity.activity_ref.activity_id, activity);
+    }
     for (const wording of [
       '我还没懂，请继续当前讲解，先用数 8 说明原量和增加量。',
       '请继续当前讲解。先用图说明这两部分，我更喜欢先看图。',
       '我还没懂，请继续用同一个例子解释为什么还要加回原量。',
       '请继续当前讲解，用两句区分原量、增加量和新量。',
-      '请继续当前讲解，把之前的 8 和增加四分之一联起来说。',
+      fallback
+        ? '请继续当前讲解。先说我第一句话不懂的是哪两种量，再说明怎么算新量。'
+        : '请继续当前讲解，把之前的 8 和增加四分之一联起来说。',
     ]) {
       turns.push(await send(wording));
+    }
+    if (stale) {
+      turns.push(await send('请继续当前讲解。先说我引用教材时想弄懂什么，再说明原量和新量的区别。'));
     }
     assert.ok(turns.every(turn => turn.result.current.current_activity.activity_ref.activity_id === activity));
     await page.screenshot({ path: path.join(out, 'working-memory.png'), fullPage: true });
     await writeFile(path.join(out, 'working-memory.json'), JSON.stringify({ scope, activity, turns }, null, 2));
-    console.log('Verified scoped textbook citation and resumed long conversation in K3s.');
+    console.log(fallback
+      ? 'Verified replies continue in the same lesson during a summary fault.'
+      : 'Verified scoped textbook citation and resumed long conversation in K3s.');
   } finally {
     await browser.close();
   }

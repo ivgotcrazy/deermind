@@ -12,4 +12,6 @@
 
 本轮包含 81 项后端单测、两项工作记忆定点回归、架构检查、后端及 Vue 类型检查。故障注入结束后已恢复原 Worker 环境，三个应用部署均就绪。
 
-浏览器脚本为 `tests/browser/interaction/quarter-learning-path.cjs`、`feedback-recovery.cjs`。录像、截图、原回执和数据库对照位于 `src/m1/.artifacts/e04-16-k3s-20261123/`。更换主题、供题提交前中断和摘要故障等未复验分支仍列在对应增量记录中。
+浏览器脚本为 `tests/browser/interaction/quarter-learning-path.cjs`、`feedback-recovery.cjs`。录像、截图、原回执和数据库对照位于 `src/m1/.artifacts/e04-16-k3s-20261123/`。专项复验见 [E04-06 换主题](E04-06-nested-activities.md)、[E04-08 供题恢复](E04-08-generated-questions.md)、[E04-10 检测题单](E04-10-detection-plans.md)、[E04-14 回复停止](E04-14-teaching-provision.md) 和 [E04-15 摘要回退](E04-15-working-memory.md)。
+
+专项复验结束时，应用 Helm 修订 83，API 和 Worker 镜像为 `e04-special-r1`，客户端镜像为 `e04-special-r2`。83 项后端单测、架构及前后端类型检查通过。故障注入已撤回，Worker 恢复正常启动命令。

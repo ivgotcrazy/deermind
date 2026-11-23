@@ -22,6 +22,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 SAVED = "InteractionMemorySaved"
 REVISION = "interaction.memory_revisions"
+HISTORY_WINDOW = 12
 Kind = Literal["entries", "summary"]
 
 

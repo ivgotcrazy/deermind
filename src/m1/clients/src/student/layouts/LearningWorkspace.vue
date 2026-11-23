@@ -592,6 +592,7 @@ void refresh();
             :page="activities"
             :expanded="expanded"
             :branches="branches"
+            :can-resume="!saving && !active?.current_activity && !active?.active_input_id"
             @locate="locate"
             @toggle="toggle"
             @more="more"

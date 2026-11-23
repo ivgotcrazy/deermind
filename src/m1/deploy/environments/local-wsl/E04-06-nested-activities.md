@@ -10,4 +10,10 @@
 | 查看历史 | 从活动目录定位已结束的子讲解，当前活动保持原讲解。 |
 | 规则来源 | 候选引用错规则时，仅用实际生效的规则和本轮输入复核；程序复查后才采用。定点测试 9 项通过。 |
 
-浏览器复验使用 `tests/browser/interaction/nested-activities.cjs`。路径回执、截图及部署日志位于 `src/m1/.artifacts/e04-06-k3s-20261123/`。本次课程的讲解节点未启用主动换主题，换主题仍需用允许 `switch` 的蓝图另测。
+浏览器复验使用 `tests/browser/interaction/nested-activities.cjs`。路径回执、截图及部署日志位于 `src/m1/.artifacts/e04-06-k3s-20261123/`。
+
+## 换主题复验
+
+应用 Helm 修订 83。合成课程采用允许 `switch` 的讲解蓝图。切换书页时活动不变。明确从“四分之一”换到“长方形面积”时开始新的顶层活动，原讲解暂停。新讲解期间目录中的“继续活动”显示为禁用。结束新讲解后点“继续活动”，恢复原活动 ID。
+
+浏览器脚本为 `tests/browser/interaction/topic-switch.cjs`。截图和回执见 `src/m1/.artifacts/e04-special-k3s-20261123/browser/` 的 `topic-switch.png`、`topic-switch.json`。
