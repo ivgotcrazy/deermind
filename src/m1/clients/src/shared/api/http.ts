@@ -112,6 +112,14 @@ export function post<P extends Route<'post'>>(
   return send(resolvePath(path, options.params), 'post', options, body);
 }
 
+export function put<P extends Route<'put'>>(
+  path: P,
+  body: Body<paths[P]['put']>,
+  options: Options & { params: Params<paths[P]['put']> },
+): Promise<Success<paths[P]['put']>> {
+  return send(resolvePath(path, options.params), 'put', options, body);
+}
+
 export function postAccepted<P extends Route<'post'>>(
   path: P,
   body: Body<paths[P]['post']>,

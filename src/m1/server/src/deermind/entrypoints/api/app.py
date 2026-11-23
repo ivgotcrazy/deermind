@@ -10,8 +10,14 @@ from uuid import UUID
 import uvicorn
 from deermind.bootstrap.accounts import configure_usage
 from deermind.bootstrap.authentication import configure_authentication
+from deermind.bootstrap.courses import configure_courses
 from deermind.bootstrap.database import database_lifespan
 from deermind.bootstrap.domain import configure_domain
+from deermind.bootstrap.evaluation import (
+    configure_activity_configs,
+    configure_claims,
+    configure_targets,
+)
 from deermind.bootstrap.materials import (
     configure_chapter_associations,
     configure_domain_analysis,
@@ -25,10 +31,14 @@ from deermind.bootstrap.materials import (
     configure_materials,
 )
 from deermind.bootstrap.settings import Settings
+from deermind.entrypoints.api.activity_configs import router as activity_router
 from deermind.entrypoints.api.auth import router
 from deermind.entrypoints.api.body_limit import RequestBodyLimit
+from deermind.entrypoints.api.courses import router as courses_router
 from deermind.entrypoints.api.domain import router as domain_router
 from deermind.entrypoints.api.errors import api_error
+from deermind.entrypoints.api.evaluation import router as evaluation_router
+from deermind.entrypoints.api.learning_targets import router as target_router
 from deermind.entrypoints.api.materials import router as materials_router
 from deermind.entrypoints.api.realtime import Realtime
 from deermind.entrypoints.api.realtime import router as realtime_router
@@ -43,7 +53,9 @@ from deermind.infrastructure.files.check import check_storage
 from deermind.infrastructure.nats.connection import MessagingSettings
 from deermind.infrastructure.nats.realtime import ViewNotices
 from deermind.product.public.chapter_associations import CHAPTER_ACTION
+from deermind.product.public.courses import CHECK_COURSE, CONFIRM_COURSE, OPEN_SPACE
 from deermind.product.public.errors import RequestConflict
+from deermind.product.public.learning_targets import SAVE_TARGET
 from deermind.product.public.material_assistant import CONVERSE, DECIDE
 from deermind.product.public.material_intake import SUBMIT_INTAKE
 from deermind.product.public.materials import DELETE_MATERIAL, RECEIVE_MATERIAL
@@ -55,6 +67,8 @@ from deermind.spaces.domain.public import (
     SAVE_ACTION,
     SAVE_INSTANCE,
 )
+from deermind.spaces.evaluation.public import MANAGE_CLAIM
+from deermind.spaces.interaction.public import MANAGE_ACTIVITY
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel
@@ -114,8 +128,18 @@ def create_app(
                     engine, settings.files_root, backend=settings.files_backend
                 )
                 app.state.domain = domain
+                claims = configure_claims(engine, settings)
+                app.state.claims = claims
+                configs = configure_activity_configs(engine, settings)
+                app.state.activity_configs = configs
                 materials, app.state.uploads = configure_materials(engine, settings, domain)
                 app.state.materials = materials
+                targets = configure_targets(materials, claims)
+                app.state.learning_targets = targets
+                checks, spaces, applications = configure_courses(targets, configs)
+                app.state.course_checks = checks
+                app.state.course_spaces = spaces
+                app.state.course_applications = applications
                 assistant = configure_material_assistant(engine, settings, materials)
                 app.state.material_assistant = assistant
                 deletion = configure_material_deletion(assistant)
@@ -153,6 +177,12 @@ def create_app(
                         (SAVE_INSTANCE, "domain"): instances.receipt,
                         (DELETE_MATERIAL, "material_import"): deletion.receipt,
                         (CHAPTER_ACTION, "textbook"): chapters.receipt,
+                        (MANAGE_CLAIM, "domain"): claims.receipt,
+                        (MANAGE_ACTIVITY, "activity_config"): configs.receipt,
+                        (SAVE_TARGET, "textbook"): targets.receipt,
+                        (CHECK_COURSE, "textbook"): checks.receipt,
+                        (CONFIRM_COURSE, "textbook"): applications.receipt,
+                        (OPEN_SPACE, "account"): spaces.receipt,
                     }
                 )
                 app.state.realtime = hub
@@ -187,6 +217,10 @@ def create_app(
     app.include_router(usage_router)
     app.include_router(domain_router)
     app.include_router(materials_router)
+    app.include_router(evaluation_router)
+    app.include_router(activity_router)
+    app.include_router(target_router)
+    app.include_router(courses_router)
 
     app.include_router(receipts_router)
     app.include_router(realtime_router)

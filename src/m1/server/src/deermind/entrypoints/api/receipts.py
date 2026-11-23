@@ -8,6 +8,14 @@ from deermind.foundation.system.public.errors import RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.foundation.system.requests import RequestReceipts
 from deermind.product.public.chapter_associations import CHAPTER_ACTION, ChapterAssociationResult
+from deermind.product.public.courses import (
+    CHECK_COURSE,
+    CONFIRM_COURSE,
+    CourseApplyResult,
+    CourseCheckResult,
+    SpaceOpenResult,
+)
+from deermind.product.public.learning_targets import SAVE_TARGET, TargetDetail
 from deermind.product.public.material_assistant import (
     CONVERSE,
     DECIDE,
@@ -35,6 +43,8 @@ from deermind.spaces.domain.public import (
     IntakeActionResult,
     SaveResult,
 )
+from deermind.spaces.evaluation.public import MANAGE_CLAIM, ClaimResult
+from deermind.spaces.interaction.public import MANAGE_ACTIVITY, ConfigResult
 from fastapi import APIRouter, Header, Query, Request, Response
 
 router = APIRouter(prefix="/api/m1", tags=["requests"])
@@ -51,6 +61,12 @@ type RequestReceipt = ReceiptView[
     | InstanceView
     | ChapterAssociationResult
     | MaterialDeletionResult
+    | ClaimResult
+    | ConfigResult
+    | TargetDetail
+    | CourseCheckResult
+    | CourseApplyResult
+    | SpaceOpenResult
 ]
 
 
@@ -85,6 +101,11 @@ async def receipt(
             SAVE_INSTANCE,
             DELETE_MATERIAL,
             CHAPTER_ACTION,
+            MANAGE_CLAIM,
+            MANAGE_ACTIVITY,
+            SAVE_TARGET,
+            CHECK_COURSE,
+            CONFIRM_COURSE,
         )
         and session.account.role != "admin"
     ):
@@ -105,4 +126,10 @@ async def receipt(
         | InstanceView
         | ChapterAssociationResult
         | MaterialDeletionResult
+        | ClaimResult
+        | ConfigResult
+        | TargetDetail
+        | CourseCheckResult
+        | CourseApplyResult
+        | SpaceOpenResult
     ].model_validate(result.model_dump())

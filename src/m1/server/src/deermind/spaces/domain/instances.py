@@ -73,6 +73,27 @@ async def require_definition(
     return value
 
 
+async def evaluation_task(
+    connection: AsyncConnection,
+    domain_id: UUID,
+    reference: TaskRef,
+) -> TaskDefinition:
+    """锁定领域目录后核对评价可使用的 Task 和各直接方法版本。"""
+    root = await connection.scalar(
+        text(
+            "SELECT object_id FROM domain.object_identity "
+            "WHERE object_id=:id AND kind='domain' FOR UPDATE"
+        ),
+        {"id": domain_id},
+    )
+    if root is None:
+        raise RequestError(404, "not_found", "找不到领域。")
+    task = TaskDefinition.model_validate(await require_definition(connection, domain_id, reference))
+    for method in task.method_refs:
+        await require_definition(connection, domain_id, method)
+    return task
+
+
 async def validate_instance(
     connection: AsyncConnection,
     domain_id: UUID,

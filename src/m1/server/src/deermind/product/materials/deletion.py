@@ -116,6 +116,12 @@ class MaterialDeletion:
                 or active != imported["active_request_ref"]
             ):
                 raise RequestError(409, "revision_conflict", "教材已更新，请重新确认删除范围。")
+            applied = await connection.scalar(
+                text("SELECT 1 FROM product.application_head WHERE textbook_id=:book LIMIT 1"),
+                {"book": imported["textbook_id"]},
+            )
+            if applied is not None:
+                raise RequestError(409, "already_applied", "教材已应用，不能删除此导入。")
             sources = (
                 await connection.scalars(
                     text(

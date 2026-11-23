@@ -1,11 +1,11 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.15<br>
+> **版本**：v0.16<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-22<br>
-> **修订说明**：v0.14 → v0.15，登记归类输入、待办处理与题目版本正文<br>
+> **更新日期**：2026-11-23<br>
+> **修订说明**：v0.15 → v0.16，登记首次活动蓝图及节点移除的绑定记录<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
@@ -208,7 +208,7 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | `DomainInstanceSaved` | `domain.object_version`[1] | kind=task_instance；题面及各参考解法包含在本次固定版本中 |
 | `DomainKCTestPathConfirmed` | `domain.artifact`[1]、`domain.kc_test_path`[1] | 固定三版本、任务责任引用及就绪依据一致 |
 | `DomainKCTestPathNotReady` | `domain.artifact`[1] | `kind=readiness_check`，保留固定版本和问题；无确认行 |
-| `ActivityConfigSaved` | `interaction.blueprint_revisions`[0..1]；`interaction.rule_revisions`[0..1]；`interaction.strategy_revisions`[0..1]；`interaction.binding_revisions`[0..1]；`interaction.resolved_configs`[1] | 前四类按config_kind恰选一类一条；config_ref指本次新解析配置 |
+| `ActivityConfigSaved` | `interaction.blueprint_revisions`[0..1]；`interaction.rule_revisions`[0..1]；`interaction.strategy_revisions`[0..1]；`interaction.binding_revisions`[0..1]；`interaction.resolved_configs`[1] | 按 `config_kind` 携带对应定义。首次蓝图另带空绑定。移除有绑定的节点时另带新版绑定。`config_ref` 指本次解析包 |
 | `DetectionPlanPrepared` | `interaction.detection_plans`[0..1]；`interaction.plan_revisions`[1]；`interaction.plan_progress`[1..n] | 首次含plan；每次含新内容修订及prepared进度；替代旧修订时同时含其superseded进度 |
 | `TaskUseCreated` | `interaction.task_uses`[1] | 本次task_use_ref；同批轮事件仅引用，不再复制正文 |
 | `PresentationRecorded` | `interaction.presentations`[1] | 原回执及未知项；不补写教学或评价结论 |
@@ -337,3 +337,4 @@ M1只提供受控维护重建，不新增管理页面。业务生成器先按§3
 | v0.13 | 2026-11-22 | 登记路径确认和依据不足的事件正文组合 |
 | v0.14 | 2026-11-22 | 登记领域受理固定输入、新增待办正文及复用引用 |
 | v0.15 | 2026-11-22 | 登记领域分析固定输入和待办处理组合 |
+| v0.16 | 2026-11-23 | 登记首次活动蓝图及绑定事实 |

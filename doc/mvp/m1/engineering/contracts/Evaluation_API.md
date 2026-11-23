@@ -1,11 +1,11 @@
 # M1 Evaluation API
 
-> **版本**：v0.3<br>
-> **状态**：事件事实源修订稿待用户审阅；未编码、未修改原型<br>
+> **版本**：v0.4<br>
+> **状态**：Claim 列表、详情、写入及收据已接线；验收进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-15<br>
-> **修订说明**：v0.2 → v0.3，统一事件事实源、同步投影、正文读取及订阅合同；见MVP决定登记§96<br>
+> **更新日期**：2026-11-23<br>
+> **修订说明**：v0.3 → v0.4，登记 Claim 定义接口与公共收据接线<br>
 
 所有写入口只维护评价定义；个人Evidence、Belief和目标结果只能由已登记处理流程产生。查询不重新评价、不改概率。共同认证、回执和错误见[总册](../API_and_Message_Design.md)。
 
@@ -120,6 +120,8 @@ ClaimRow只含claim_ref:ClaimRef、task_ref:ObjectRef(task)、title:string、gap
 | `affected_method_refs` | ObjectRef(solution)[] | 是 | 本次影响方法 |
 
 处理边界：只追加定义快照，不启动个人评价、应用目标或复制旧Belief。
+
+公共收据使用动作 `evaluation.manage_claim`、资源类型 `domain` 及 `domain_id`。成功后按原 `request_id` 读取，返回原修订、变更标记、定义缺口及受影响方法。创建判据时由服务端分配 `criterion_id`。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；claim_exists；revision_conflict；invalid_reference；criterion_in_use。
 
@@ -307,3 +309,4 @@ E06的target分支先返回证据摘要，点击后以evidence_ref读取详情�
 | v0.1 | 2026-11-15 | 补齐接口/消息字段、边界及样例；具体格式待审阅，未编码 |
 | v0.2 | 2026-11-15 | 明确学生目标聚合、管理查询及Evidence／Belief读取入口。见MVP决定登记§95。 |
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
+| v0.4 | 2026-11-23 | 登记 Claim 定义写入、固定修订查询和公共收据 |

@@ -19,6 +19,8 @@ from deermind.product.accounts.recovery_facts import RECOVERED
 from deermind.product.accounts.usage_events import (
     USAGE_CONFIRMED,
 )
+from deermind.product.learning.course_facts import REGISTRATIONS as LEARNING_COURSES
+from deermind.product.learning.target_facts import REGISTRATION as LEARNING_TARGET
 from deermind.product.materials.adoption_facts import REGISTRATIONS as MATERIAL_ADOPTIONS
 from deermind.product.materials.assistant_facts import REGISTRATIONS as MATERIAL_ASSISTANT
 from deermind.product.materials.chapter_associations import REGISTRATION as CHAPTERS
@@ -30,9 +32,15 @@ from deermind.spaces.domain.facts import DOMAIN_SAVED
 from deermind.spaces.domain.instance_facts import REGISTRATIONS as DOMAIN_INSTANCES
 from deermind.spaces.domain.intake import REGISTRATIONS as DOMAIN_INTAKE
 from deermind.spaces.domain.kc_path_facts import PATH_REGISTRATIONS
+from deermind.spaces.evaluation.definition_facts import REGISTRATION as CLAIM_DEFINITION
+from deermind.spaces.evaluation.goal_facts import REGISTRATION as GOAL_RESULT
+from deermind.spaces.interaction.config_facts import REGISTRATION as ACTIVITY_CONFIG
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 REGISTRATIONS = [
+    LEARNING_TARGET,
+    GOAL_RESULT,
+    *LEARNING_COURSES,
     ACCOUNT_REGISTRATION,
     FILE_REGISTRATION,
     REBUILD_FINISHED,
@@ -54,6 +62,8 @@ REGISTRATIONS = [
     *DOMAIN_ANALYSIS,
     *DOMAIN_INSTANCES,
     *PATH_REGISTRATIONS,
+    CLAIM_DEFINITION,
+    ACTIVITY_CONFIG,
     *AI_REGISTRATIONS,
 ]
 

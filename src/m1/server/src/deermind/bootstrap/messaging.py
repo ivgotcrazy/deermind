@@ -8,6 +8,7 @@ from deermind.bootstrap.executions import registry
 from deermind.bootstrap.waits import policies
 from deermind.foundation.system.delivery.contracts import Subscription, SubscriptionRegistry
 from deermind.foundation.system.waits.notifications import subscription
+from deermind.spaces.evaluation.goal_results import TRIGGER
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 type Handler = Callable[[AsyncConnection, EventNotice], Awaitable[Acceptance]]
@@ -21,10 +22,18 @@ def subscriptions(
     receive_intake: Handler = _unbound,
     receive_result: Handler = _unbound,
     invalidate_source: Handler = _unbound,
+    reassess_target: Handler = _unbound,
 ) -> SubscriptionRegistry:
     waiting = subscription(registry(), policies())
     scope = frozenset({"material_import"})
     items = [
+        Subscription(
+            "evaluation_reassess_target",
+            "1",
+            frozenset({TRIGGER}),
+            frozenset({"learning_space"}),
+            reassess_target,
+        ),
         Subscription("domain_intake", "1", frozenset({REQUESTED}), scope, receive_intake),
         Subscription(
             "domain_material_invalidation", "1", frozenset({DELETED}), scope, invalidate_source

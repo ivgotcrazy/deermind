@@ -7,9 +7,15 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from deermind.bootstrap import runtime
+from deermind.bootstrap.courses import configure_goals
 from deermind.bootstrap.database import database_lifespan
 from deermind.bootstrap.domain import configure_domain
 from deermind.bootstrap.domain_operation import PURPOSE, DomainAnalysisActivities
+from deermind.bootstrap.evaluation import (
+    configure_activity_configs,
+    configure_claims,
+    configure_targets,
+)
 from deermind.bootstrap.executions import limits
 from deermind.bootstrap.material_operation import material_activities
 from deermind.bootstrap.materials import (
@@ -72,8 +78,14 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
         analysis = configure_domain_analysis(intake, materials, settings)
         intake_results = configure_material_intake(materials)
         processing = configure_intake_processing(analysis)
+        target_definitions = configure_targets(materials, configure_claims(engine, settings))
+        config = configure_activity_configs(engine, settings)
+        goals = configure_goals(target_definitions, config)
         subscribers = subscriptions(
-            intake.receive, intake_results.receive_result, processing.invalidate_source
+            intake.receive,
+            intake_results.receive_result,
+            processing.invalidate_source,
+            goals.receive,
         )
         entries = Registry(
             [*assistant.registry.entries.values(), *analysis.registry.entries.values()]

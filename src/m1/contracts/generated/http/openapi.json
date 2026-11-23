@@ -38,6 +38,32 @@
         "title": "AccountView",
         "type": "object"
       },
+      "Action": {
+        "enum": [
+          "reply",
+          "clarify",
+          "wait_input",
+          "start_child",
+          "prepare_detection",
+          "start_detection",
+          "continue_detection",
+          "record_answer",
+          "return_parent",
+          "pause",
+          "finish",
+          "switch"
+        ],
+        "type": "string"
+      },
+      "ActivityType": {
+        "enum": [
+          "explanation",
+          "question_answer",
+          "detection",
+          "free_chat"
+        ],
+        "type": "string"
+      },
       "AdoptedMaterialResult": {
         "additionalProperties": false,
         "properties": {
@@ -84,6 +110,31 @@
           "content_revision"
         ],
         "title": "AdoptedMaterialResult",
+        "type": "object"
+      },
+      "AdoptionView": {
+        "additionalProperties": false,
+        "properties": {
+          "adoption_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "application_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/CourseSnapshot"
+          },
+          "target_basis_ref": {
+            "$ref": "#/components/schemas/Ref"
+          }
+        },
+        "required": [
+          "adoption_ref",
+          "application_ref",
+          "target_basis_ref",
+          "snapshot"
+        ],
+        "title": "AdoptionView",
         "type": "object"
       },
       "AnalysisAcceptance": {
@@ -232,6 +283,159 @@
         "title": "AppendMaterial",
         "type": "object"
       },
+      "ApplicationHead": {
+        "additionalProperties": false,
+        "properties": {
+          "application_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "application_ref"
+        ],
+        "title": "ApplicationHead",
+        "type": "object"
+      },
+      "AspectCode": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$",
+        "type": "string"
+      },
+      "AspectDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "aspect_code": {
+            "title": "Aspect Code",
+            "type": "string"
+          },
+          "attainment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Attainment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "p_obs": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P Obs"
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/Readiness"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          }
+        },
+        "required": [
+          "readiness",
+          "attainment",
+          "reasons",
+          "aspect_code",
+          "p_obs",
+          "evidence_refs"
+        ],
+        "title": "AspectDecision",
+        "type": "object"
+      },
+      "AspectDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "change_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Explanation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "code": {
+            "$ref": "#/components/schemas/AspectCode"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "label": {
+            "$ref": "#/components/schemas/Title"
+          }
+        },
+        "required": [
+          "code",
+          "label",
+          "description"
+        ],
+        "title": "AspectDefinition",
+        "type": "object"
+      },
+      "AspectRule": {
+        "additionalProperties": false,
+        "properties": {
+          "aspect_code": {
+            "$ref": "#/components/schemas/AspectCode"
+          },
+          "condition_schema": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Condition Schema",
+            "type": "object"
+          },
+          "default_values": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Default Values",
+            "type": "object"
+          },
+          "evidence_requirements": {
+            "items": {
+              "$ref": "#/components/schemas/Explanation"
+            },
+            "title": "Evidence Requirements",
+            "type": "array"
+          },
+          "judgement_basis": {
+            "$ref": "#/components/schemas/Explanation"
+          }
+        },
+        "required": [
+          "aspect_code",
+          "judgement_basis",
+          "evidence_requirements",
+          "condition_schema",
+          "default_values"
+        ],
+        "title": "AspectRule",
+        "type": "object"
+      },
       "Assessment": {
         "additionalProperties": false,
         "properties": {
@@ -273,6 +477,42 @@
         "title": "Assessment",
         "type": "object"
       },
+      "Attainment": {
+        "enum": [
+          "met",
+          "needs_strengthening",
+          "unknown"
+        ],
+        "type": "string"
+      },
+      "BindingDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "activity": {
+            "$ref": "#/components/schemas/LocalBinding"
+          },
+          "activity_type": {
+            "$ref": "#/components/schemas/ActivityType"
+          },
+          "nodes": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/LocalBinding"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/NodeId"
+            },
+            "title": "Nodes",
+            "type": "object"
+          }
+        },
+        "required": [
+          "activity_type",
+          "activity",
+          "nodes"
+        ],
+        "title": "BindingDefinition",
+        "type": "object"
+      },
       "BlankSpan": {
         "additionalProperties": false,
         "properties": {
@@ -292,6 +532,123 @@
           "label"
         ],
         "title": "BlankSpan",
+        "type": "object"
+      },
+      "BlueprintDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "activity_type": {
+            "$ref": "#/components/schemas/ActivityType"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/BlueprintNode"
+            },
+            "minItems": 2,
+            "title": "Nodes",
+            "type": "array"
+          },
+          "transitions": {
+            "items": {
+              "$ref": "#/components/schemas/Transition"
+            },
+            "title": "Transitions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "activity_type",
+          "nodes",
+          "transitions"
+        ],
+        "title": "BlueprintDefinition",
+        "type": "object"
+      },
+      "BlueprintNode": {
+        "additionalProperties": false,
+        "properties": {
+          "allowed_actions": {
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            },
+            "title": "Allowed Actions",
+            "type": "array"
+          },
+          "execution_guidance": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "fallback": {
+            "$ref": "#/components/schemas/Fallback"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "node_id": {
+            "$ref": "#/components/schemas/NodeId"
+          },
+          "outputs": {
+            "items": {
+              "$ref": "#/components/schemas/Wording"
+            },
+            "title": "Outputs",
+            "type": "array"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "required_inputs": {
+            "items": {
+              "$ref": "#/components/schemas/Wording"
+            },
+            "title": "Required Inputs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "node_id",
+          "name",
+          "purpose",
+          "required_inputs",
+          "execution_guidance",
+          "outputs",
+          "allowed_actions",
+          "fallback"
+        ],
+        "title": "BlueprintNode",
+        "type": "object"
+      },
+      "BoundRule": {
+        "additionalProperties": false,
+        "properties": {
+          "definition": {
+            "$ref": "#/components/schemas/RuleDefinition"
+          },
+          "ref": {
+            "$ref": "#/components/schemas/Ref"
+          }
+        },
+        "required": [
+          "ref",
+          "definition"
+        ],
+        "title": "BoundRule",
+        "type": "object"
+      },
+      "BoundStrategy": {
+        "additionalProperties": false,
+        "properties": {
+          "definition": {
+            "$ref": "#/components/schemas/StrategyDefinition"
+          },
+          "ref": {
+            "$ref": "#/components/schemas/Ref"
+          }
+        },
+        "required": [
+          "ref",
+          "definition"
+        ],
+        "title": "BoundStrategy",
         "type": "object"
       },
       "CandidateRef": {
@@ -488,6 +845,80 @@
           "active"
         ],
         "title": "ChapterAssociationView",
+        "type": "object"
+      },
+      "ChapterSelection": {
+        "additionalProperties": false,
+        "properties": {
+          "chapter_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "content_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Content Refs",
+            "type": "array"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          }
+        },
+        "required": [
+          "chapter_id",
+          "revision",
+          "content_refs"
+        ],
+        "title": "ChapterSelection",
+        "type": "object"
+      },
+      "ChapterSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "associations": {
+            "items": {
+              "$ref": "#/components/schemas/ChapterAssociationView"
+            },
+            "title": "Associations",
+            "type": "array"
+          },
+          "chapter_id": {
+            "format": "uuid",
+            "title": "Chapter Id",
+            "type": "string"
+          },
+          "content_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Content Refs",
+            "type": "array"
+          },
+          "page_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Page Refs",
+            "type": "array"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "chapter_id",
+          "revision",
+          "title",
+          "page_refs",
+          "content_refs",
+          "associations"
+        ],
+        "title": "ChapterSnapshot",
         "type": "object"
       },
       "Chart": {
@@ -722,9 +1153,311 @@
         "title": "CheckManualInstance",
         "type": "object"
       },
+      "ClaimDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "aspects": {
+            "items": {
+              "$ref": "#/components/schemas/AspectDefinition"
+            },
+            "minItems": 1,
+            "title": "Aspects",
+            "type": "array"
+          },
+          "criteria": {
+            "items": {
+              "$ref": "#/components/schemas/ExecutionCriterion"
+            },
+            "title": "Criteria",
+            "type": "array"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "domain_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/MethodDefinition"
+            },
+            "title": "Methods",
+            "type": "array"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Title"
+          }
+        },
+        "required": [
+          "domain_id",
+          "task_ref",
+          "title",
+          "description",
+          "aspects",
+          "criteria",
+          "methods"
+        ],
+        "title": "ClaimDefinition",
+        "type": "object"
+      },
+      "ClaimDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "claim": {
+            "$ref": "#/components/schemas/ClaimView"
+          }
+        },
+        "required": [
+          "claim"
+        ],
+        "title": "ClaimDetail",
+        "type": "object"
+      },
+      "ClaimList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimRow"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "ClaimList",
+        "type": "object"
+      },
+      "ClaimReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ClaimResult"
+          }
+        },
+        "required": [
+          "request_ref",
+          "result"
+        ],
+        "title": "ClaimReceipt",
+        "type": "object"
+      },
+      "ClaimRef": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          }
+        },
+        "required": [
+          "claim_id",
+          "revision"
+        ],
+        "title": "ClaimRef",
+        "type": "object"
+      },
+      "ClaimResult": {
+        "additionalProperties": false,
+        "properties": {
+          "affected_method_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SolutionRef"
+            },
+            "title": "Affected Method Refs",
+            "type": "array"
+          },
+          "changed": {
+            "title": "Changed",
+            "type": "boolean"
+          },
+          "claim_ref": {
+            "$ref": "#/components/schemas/ClaimRef"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim_ref",
+          "changed",
+          "gaps",
+          "affected_method_refs"
+        ],
+        "title": "ClaimResult",
+        "type": "object"
+      },
+      "ClaimRow": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_ref": {
+            "$ref": "#/components/schemas/ClaimRef"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_ref",
+          "task_ref",
+          "title",
+          "gaps"
+        ],
+        "title": "ClaimRow",
+        "type": "object"
+      },
+      "ClaimView": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_ref": {
+            "$ref": "#/components/schemas/ClaimRef"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/ClaimDefinition"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim_ref",
+          "definition",
+          "gaps"
+        ],
+        "title": "ClaimView",
+        "type": "object"
+      },
       "Color": {
         "pattern": "^#[0-9a-fA-F]{6}$",
         "type": "string"
+      },
+      "ConfigReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ConfigResult"
+          }
+        },
+        "required": [
+          "request_ref",
+          "result"
+        ],
+        "title": "ConfigReceipt",
+        "type": "object"
+      },
+      "ConfigResult": {
+        "additionalProperties": false,
+        "properties": {
+          "affected_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Affected Refs",
+            "type": "array"
+          },
+          "config_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "definition_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "config_ref",
+          "definition_ref",
+          "affected_refs",
+          "gaps"
+        ],
+        "title": "ConfigResult",
+        "type": "object"
+      },
+      "ConfigView": {
+        "additionalProperties": false,
+        "properties": {
+          "config_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/ResolvedActivityConfig"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "usage_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Usage Refs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "config_ref",
+          "definition",
+          "gaps",
+          "usage_refs"
+        ],
+        "title": "ConfigView",
+        "type": "object"
       },
       "ConfirmKCPathRequest": {
         "additionalProperties": false,
@@ -993,6 +1726,366 @@
           }
         ]
       },
+      "CourseApplyReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CourseApplyResult"
+          }
+        },
+        "required": [
+          "request_ref",
+          "result"
+        ],
+        "title": "CourseApplyReceipt",
+        "type": "object"
+      },
+      "CourseApplyResult": {
+        "additionalProperties": false,
+        "properties": {
+          "affected_spaces": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Affected Spaces",
+            "type": "array"
+          },
+          "application_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "changed": {
+            "title": "Changed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "application_ref",
+          "changed",
+          "affected_spaces"
+        ],
+        "title": "CourseApplyResult",
+        "type": "object"
+      },
+      "CourseCheckCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "activity_config_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Activity Config Refs",
+            "type": "array"
+          },
+          "chapters": {
+            "items": {
+              "$ref": "#/components/schemas/ChapterSelection"
+            },
+            "minItems": 1,
+            "title": "Chapters",
+            "type": "array"
+          },
+          "expected_application_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "target_ref": {
+            "$ref": "#/components/schemas/TargetRef"
+          },
+          "textbook_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          }
+        },
+        "required": [
+          "request_id",
+          "textbook_id",
+          "target_ref",
+          "expected_application_ref",
+          "chapters",
+          "activity_config_refs"
+        ],
+        "title": "CourseCheckCommand",
+        "type": "object"
+      },
+      "CourseCheckReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CourseCheckResult"
+          }
+        },
+        "required": [
+          "request_ref",
+          "result"
+        ],
+        "title": "CourseCheckReceipt",
+        "type": "object"
+      },
+      "CourseCheckResult": {
+        "additionalProperties": false,
+        "properties": {
+          "base_application_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "can_apply": {
+            "title": "Can Apply",
+            "type": "boolean"
+          },
+          "changes": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Changes",
+            "type": "array"
+          },
+          "check_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "proposed_application": {
+            "$ref": "#/components/schemas/CourseSnapshot"
+          },
+          "readiness": {
+            "items": {
+              "$ref": "#/components/schemas/PurposeCheck"
+            },
+            "title": "Readiness",
+            "type": "array"
+          }
+        },
+        "required": [
+          "check_ref",
+          "base_application_ref",
+          "proposed_application",
+          "changes",
+          "readiness",
+          "can_apply"
+        ],
+        "title": "CourseCheckResult",
+        "type": "object"
+      },
+      "CourseConfirmCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "check_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "expected_application_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "check_ref",
+          "expected_application_ref"
+        ],
+        "title": "CourseConfirmCommand",
+        "type": "object"
+      },
+      "CourseOption": {
+        "additionalProperties": false,
+        "properties": {
+          "application_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "target_ref": {
+            "$ref": "#/components/schemas/TargetRef"
+          },
+          "target_title": {
+            "title": "Target Title",
+            "type": "string"
+          },
+          "textbook_id": {
+            "format": "uuid",
+            "title": "Textbook Id",
+            "type": "string"
+          },
+          "textbook_title": {
+            "title": "Textbook Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "textbook_id",
+          "textbook_title",
+          "target_ref",
+          "target_title",
+          "application_ref"
+        ],
+        "title": "CourseOption",
+        "type": "object"
+      },
+      "CourseOptions": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CourseOption"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "CourseOptions",
+        "type": "object"
+      },
+      "CourseSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "activity_config_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Activity Config Refs",
+            "type": "array"
+          },
+          "chapters": {
+            "items": {
+              "$ref": "#/components/schemas/ChapterSnapshot"
+            },
+            "title": "Chapters",
+            "type": "array"
+          },
+          "evaluation_gaps": {
+            "items": {
+              "$ref": "#/components/schemas/EvaluationGap"
+            },
+            "title": "Evaluation Gaps",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GoalItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "readiness": {
+            "items": {
+              "$ref": "#/components/schemas/PurposeCheck"
+            },
+            "title": "Readiness",
+            "type": "array"
+          },
+          "target_ref": {
+            "$ref": "#/components/schemas/TargetRef"
+          },
+          "target_title": {
+            "title": "Target Title",
+            "type": "string"
+          },
+          "textbook_title": {
+            "title": "Textbook Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "textbook_title",
+          "target_ref",
+          "target_title",
+          "chapters",
+          "activity_config_refs",
+          "readiness",
+          "items",
+          "evaluation_gaps"
+        ],
+        "title": "CourseSnapshot",
+        "type": "object"
+      },
+      "CreateClaim": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "create_claim",
+            "title": "Action",
+            "type": "string"
+          },
+          "aspects": {
+            "items": {
+              "$ref": "#/components/schemas/AspectDefinition"
+            },
+            "minItems": 1,
+            "title": "Aspects",
+            "type": "array"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "domain_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Title"
+          }
+        },
+        "required": [
+          "request_id",
+          "action",
+          "domain_id",
+          "task_ref",
+          "title",
+          "description",
+          "aspects"
+        ],
+        "title": "CreateClaim",
+        "type": "object"
+      },
       "CreateDomainRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1153,6 +2246,73 @@
         "title": "CreateSolutionRequest",
         "type": "object"
       },
+      "CreateSpace": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "create",
+            "title": "Action",
+            "type": "string"
+          },
+          "expected_application_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "target_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "textbook_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          }
+        },
+        "required": [
+          "request_id",
+          "action",
+          "textbook_id",
+          "target_id",
+          "expected_application_ref"
+        ],
+        "title": "CreateSpace",
+        "type": "object"
+      },
+      "CreateTarget": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "create",
+            "title": "Action",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GoalItemDraft"
+            },
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "textbook_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Label"
+          }
+        },
+        "required": [
+          "action",
+          "request_id",
+          "textbook_id",
+          "title",
+          "items"
+        ],
+        "title": "CreateTarget",
+        "type": "object"
+      },
       "CreateTaskRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1198,6 +2358,53 @@
           "definition"
         ],
         "title": "CreateTaskRequest",
+        "type": "object"
+      },
+      "CriterionDraft": {
+        "additionalProperties": false,
+        "properties": {
+          "criterion_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JsonUUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fail_description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "judgement_basis": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "pass_description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "required_inputs": {
+            "items": {
+              "$ref": "#/components/schemas/Explanation"
+            },
+            "title": "Required Inputs",
+            "type": "array"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Title"
+          },
+          "unknown_description": {
+            "$ref": "#/components/schemas/Explanation"
+          }
+        },
+        "required": [
+          "title",
+          "required_inputs",
+          "judgement_basis",
+          "pass_description",
+          "fail_description",
+          "unknown_description"
+        ],
+        "title": "CriterionDraft",
         "type": "object"
       },
       "DataCell": {
@@ -2016,6 +3223,29 @@
         "title": "DraftDefinition",
         "type": "object"
       },
+      "EnterSpace": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "enter",
+            "title": "Action",
+            "type": "string"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "space_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          }
+        },
+        "required": [
+          "request_id",
+          "action",
+          "space_id"
+        ],
+        "title": "EnterSpace",
+        "type": "object"
+      },
       "ErrorDetail": {
         "additionalProperties": false,
         "properties": {
@@ -2072,6 +3302,45 @@
         "title": "ErrorResponse",
         "type": "object"
       },
+      "EvaluationGap": {
+        "additionalProperties": false,
+        "properties": {
+          "aspect_code": {
+            "title": "Aspect Code",
+            "type": "string"
+          },
+          "item_id": {
+            "format": "uuid",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "method_id": {
+            "format": "uuid",
+            "title": "Method Id",
+            "type": "string"
+          },
+          "method_version": {
+            "title": "Method Version",
+            "type": "integer"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          }
+        },
+        "required": [
+          "item_id",
+          "method_id",
+          "method_version",
+          "aspect_code",
+          "reasons"
+        ],
+        "title": "EvaluationGap",
+        "type": "object"
+      },
       "EventPartSource": {
         "additionalProperties": false,
         "properties": {
@@ -2108,6 +3377,52 @@
         ],
         "title": "EventPartSource",
         "type": "object"
+      },
+      "ExecutionCriterion": {
+        "additionalProperties": false,
+        "properties": {
+          "criterion_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "fail_description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "judgement_basis": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "pass_description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "required_inputs": {
+            "items": {
+              "$ref": "#/components/schemas/Explanation"
+            },
+            "title": "Required Inputs",
+            "type": "array"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Title"
+          },
+          "unknown_description": {
+            "$ref": "#/components/schemas/Explanation"
+          }
+        },
+        "required": [
+          "title",
+          "required_inputs",
+          "judgement_basis",
+          "pass_description",
+          "fail_description",
+          "unknown_description",
+          "criterion_id"
+        ],
+        "title": "ExecutionCriterion",
+        "type": "object"
+      },
+      "Explanation": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
       },
       "ExtractDefinition": {
         "additionalProperties": false,
@@ -2148,6 +3463,29 @@
           "template_kind"
         ],
         "title": "ExtractDefinition",
+        "type": "object"
+      },
+      "Fallback": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "clarify",
+              "wait_input",
+              "blocked"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "explanation": {
+            "$ref": "#/components/schemas/Wording"
+          }
+        },
+        "required": [
+          "action",
+          "explanation"
+        ],
+        "title": "Fallback",
         "type": "object"
       },
       "FileReceipt": {
@@ -2237,6 +3575,225 @@
           "definition_locations"
         ],
         "title": "Finding",
+        "type": "object"
+      },
+      "GoalDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "attainment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Attainment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemDecision"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/Readiness"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          }
+        },
+        "required": [
+          "readiness",
+          "attainment",
+          "reasons",
+          "items"
+        ],
+        "title": "GoalDecision",
+        "type": "object"
+      },
+      "GoalEvaluation": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "current_state_applied": {
+            "title": "Current State Applied",
+            "type": "boolean"
+          },
+          "goal_evaluation_id": {
+            "format": "uuid",
+            "title": "Goal Evaluation Id",
+            "type": "string"
+          },
+          "input_ref": {
+            "format": "uuid",
+            "title": "Input Ref",
+            "type": "string"
+          },
+          "previous_current_ref": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Current Ref"
+          },
+          "result": {
+            "$ref": "#/components/schemas/GoalDecision"
+          },
+          "scope_id": {
+            "format": "uuid",
+            "title": "Scope Id",
+            "type": "string"
+          },
+          "target_basis_ref": {
+            "format": "uuid",
+            "title": "Target Basis Ref",
+            "type": "string"
+          },
+          "trigger_event_id": {
+            "format": "uuid",
+            "title": "Trigger Event Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "goal_evaluation_id",
+          "scope_id",
+          "trigger_event_id",
+          "input_ref",
+          "target_basis_ref",
+          "result",
+          "previous_current_ref",
+          "current_state_applied",
+          "created_at"
+        ],
+        "title": "GoalEvaluation",
+        "type": "object"
+      },
+      "GoalItem": {
+        "additionalProperties": false,
+        "properties": {
+          "chapter_refs": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "minItems": 1,
+            "title": "Chapter Refs",
+            "type": "array"
+          },
+          "claim_ref": {
+            "$ref": "#/components/schemas/ClaimRef"
+          },
+          "item_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "method_mode": {
+            "enum": [
+              "specified",
+              "any_one",
+              "each"
+            ],
+            "title": "Method Mode",
+            "type": "string"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/MethodRequirement"
+            },
+            "minItems": 1,
+            "title": "Methods",
+            "type": "array"
+          },
+          "task_conditions": {
+            "$ref": "#/components/schemas/TaskConditions"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Label"
+          }
+        },
+        "required": [
+          "title",
+          "claim_ref",
+          "chapter_refs",
+          "task_conditions",
+          "method_mode",
+          "methods",
+          "item_id"
+        ],
+        "title": "GoalItem",
+        "type": "object"
+      },
+      "GoalItemDraft": {
+        "additionalProperties": false,
+        "properties": {
+          "chapter_refs": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "minItems": 1,
+            "title": "Chapter Refs",
+            "type": "array"
+          },
+          "claim_ref": {
+            "$ref": "#/components/schemas/ClaimRef"
+          },
+          "item_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JsonUUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "method_mode": {
+            "enum": [
+              "specified",
+              "any_one",
+              "each"
+            ],
+            "title": "Method Mode",
+            "type": "string"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/MethodRequirement"
+            },
+            "minItems": 1,
+            "title": "Methods",
+            "type": "array"
+          },
+          "task_conditions": {
+            "$ref": "#/components/schemas/TaskConditions"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Label"
+          }
+        },
+        "required": [
+          "title",
+          "claim_ref",
+          "chapter_refs",
+          "task_conditions",
+          "method_mode",
+          "methods"
+        ],
+        "title": "GoalItemDraft",
         "type": "object"
       },
       "Health": {
@@ -2867,6 +4424,66 @@
         "title": "Issue",
         "type": "object"
       },
+      "ItemDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "attainment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Attainment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "claim_ref": {
+            "$ref": "#/components/schemas/ClaimRef"
+          },
+          "item_id": {
+            "format": "uuid",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "method_mode": {
+            "enum": [
+              "specified",
+              "any_one",
+              "each"
+            ],
+            "title": "Method Mode",
+            "type": "string"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/MethodDecision"
+            },
+            "title": "Methods",
+            "type": "array"
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/Readiness"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          }
+        },
+        "required": [
+          "readiness",
+          "attainment",
+          "reasons",
+          "item_id",
+          "claim_ref",
+          "method_mode",
+          "methods"
+        ],
+        "title": "ItemDecision",
+        "type": "object"
+      },
       "JsonUUID": {
         "format": "uuid",
         "type": "string"
@@ -3163,6 +4780,36 @@
           "source_event_id"
         ],
         "title": "KnowledgeView",
+        "type": "object"
+      },
+      "Label": {
+        "maxLength": 160,
+        "minLength": 1,
+        "type": "string"
+      },
+      "LocalBinding": {
+        "additionalProperties": false,
+        "properties": {
+          "rule_ids": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "title": "Rule Ids",
+            "type": "array"
+          },
+          "strategy_ids": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "title": "Strategy Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rule_ids",
+          "strategy_ids"
+        ],
+        "title": "LocalBinding",
         "type": "object"
       },
       "MaterialAdoptionReceipt": {
@@ -4278,6 +5925,110 @@
         "title": "MemberRow",
         "type": "object"
       },
+      "MethodDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "aspects": {
+            "items": {
+              "$ref": "#/components/schemas/AspectDecision"
+            },
+            "title": "Aspects",
+            "type": "array"
+          },
+          "attainment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Attainment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "method_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/Readiness"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          }
+        },
+        "required": [
+          "readiness",
+          "attainment",
+          "reasons",
+          "method_ref",
+          "aspects"
+        ],
+        "title": "MethodDecision",
+        "type": "object"
+      },
+      "MethodDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "aspect_rules": {
+            "items": {
+              "$ref": "#/components/schemas/AspectRule"
+            },
+            "title": "Aspect Rules",
+            "type": "array"
+          },
+          "criterion_ids": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "title": "Criterion Ids",
+            "type": "array"
+          },
+          "method_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          }
+        },
+        "required": [
+          "method_ref",
+          "criterion_ids",
+          "aspect_rules"
+        ],
+        "title": "MethodDefinition",
+        "type": "object"
+      },
+      "MethodRequirement": {
+        "additionalProperties": false,
+        "properties": {
+          "aspects": {
+            "items": {
+              "$ref": "#/components/schemas/TargetAspect"
+            },
+            "minItems": 1,
+            "title": "Aspects",
+            "type": "array"
+          },
+          "chapter_refs": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "minItems": 1,
+            "title": "Chapter Refs",
+            "type": "array"
+          },
+          "method_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          }
+        },
+        "required": [
+          "method_ref",
+          "chapter_refs",
+          "aspects"
+        ],
+        "title": "MethodRequirement",
+        "type": "object"
+      },
       "MissingCell": {
         "additionalProperties": false,
         "properties": {
@@ -4346,6 +6097,10 @@
         ],
         "title": "NewMaterial",
         "type": "object"
+      },
+      "NodeId": {
+        "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$",
+        "type": "string"
       },
       "NonBlank": {
         "minLength": 1,
@@ -4679,6 +6434,67 @@
         "title": "ProvidedCell",
         "type": "object"
       },
+      "Purpose": {
+        "enum": [
+          "reading",
+          "explanation",
+          "qa",
+          "practice_feedback",
+          "detection",
+          "evaluation"
+        ],
+        "type": "string"
+      },
+      "PurposeCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "basis_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Basis Refs",
+            "type": "array"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/Purpose"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "limited",
+              "blocked"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "subject_ref": {
+            "$ref": "#/components/schemas/Ref"
+          }
+        },
+        "required": [
+          "subject_ref",
+          "purpose",
+          "status",
+          "reasons",
+          "basis_refs"
+        ],
+        "title": "PurposeCheck",
+        "type": "object"
+      },
+      "Readiness": {
+        "enum": [
+          "ready",
+          "unprepared"
+        ],
+        "type": "string"
+      },
       "Rectangle": {
         "items": {
           "type": "number"
@@ -4875,6 +6691,45 @@
         "title": "RegisterMaterialFile",
         "type": "object"
       },
+      "RemoveCriterion": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "remove_criterion",
+            "title": "Action",
+            "type": "string"
+          },
+          "claim_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "criterion_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "domain_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "expected_revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "request_id",
+          "domain_id",
+          "task_ref",
+          "claim_id",
+          "expected_revision",
+          "action",
+          "criterion_id"
+        ],
+        "title": "RemoveCriterion",
+        "type": "object"
+      },
       "RequestId": {
         "maxLength": 128,
         "minLength": 1,
@@ -4995,6 +6850,24 @@
                 "$ref": "#/components/schemas/MaterialDeletionResult"
               },
               {
+                "$ref": "#/components/schemas/ClaimResult"
+              },
+              {
+                "$ref": "#/components/schemas/ConfigResult"
+              },
+              {
+                "$ref": "#/components/schemas/TargetDetail"
+              },
+              {
+                "$ref": "#/components/schemas/CourseCheckResult"
+              },
+              {
+                "$ref": "#/components/schemas/CourseApplyResult"
+              },
+              {
+                "$ref": "#/components/schemas/SpaceOpenResult"
+              },
+              {
                 "type": "null"
               }
             ],
@@ -5011,7 +6884,122 @@
         "required": [
           "receipt_state"
         ],
-        "title": "ReceiptView[Union[ConfirmationResult, SaveResult, ConfirmKCPathResult, MaterialResult, MaterialTurnResult, AdoptedMaterialResult, IntakeSubmissionView, AnalysisReceipt, IntakeActionResult, InstanceView, ChapterAssociationResult, MaterialDeletionResult]]",
+        "title": "ReceiptView[Union[ConfirmationResult, SaveResult, ConfirmKCPathResult, MaterialResult, MaterialTurnResult, AdoptedMaterialResult, IntakeSubmissionView, AnalysisReceipt, IntakeActionResult, InstanceView, ChapterAssociationResult, MaterialDeletionResult, ClaimResult, ConfigResult, TargetDetail, CourseCheckResult, CourseApplyResult, SpaceOpenResult]]",
+        "type": "object"
+      },
+      "RequiredFact": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "enum": [
+              "plan_confirmed",
+              "round_closed",
+              "plan_has_next",
+              "child_finished",
+              "result_ready"
+            ],
+            "title": "Code",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "value"
+        ],
+        "title": "RequiredFact",
+        "type": "object"
+      },
+      "ResolvedActivityConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "activity_type": {
+            "$ref": "#/components/schemas/ActivityType"
+          },
+          "binding": {
+            "$ref": "#/components/schemas/BindingDefinition"
+          },
+          "binding_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "blueprint": {
+            "$ref": "#/components/schemas/BlueprintDefinition"
+          },
+          "blueprint_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/BoundRule"
+            },
+            "title": "Rules",
+            "type": "array"
+          },
+          "strategies": {
+            "items": {
+              "$ref": "#/components/schemas/BoundStrategy"
+            },
+            "title": "Strategies",
+            "type": "array"
+          }
+        },
+        "required": [
+          "activity_type",
+          "blueprint_ref",
+          "binding_ref",
+          "blueprint",
+          "binding",
+          "rules",
+          "strategies"
+        ],
+        "title": "ResolvedActivityConfig",
+        "type": "object"
+      },
+      "ReviseTarget": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "update",
+            "title": "Action",
+            "type": "string"
+          },
+          "expected_revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GoalItemDraft"
+            },
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "target_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "textbook_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Label"
+          }
+        },
+        "required": [
+          "action",
+          "request_id",
+          "textbook_id",
+          "target_id",
+          "expected_revision",
+          "title",
+          "items"
+        ],
+        "title": "ReviseTarget",
         "type": "object"
       },
       "Revision": {
@@ -5123,6 +7111,272 @@
         "title": "RichContent",
         "type": "object"
       },
+      "RuleDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "activity_type": {
+            "$ref": "#/components/schemas/ActivityType"
+          },
+          "applies_when": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "basis": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "limitations": {
+            "items": {
+              "$ref": "#/components/schemas/Wording"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "requirement": {
+            "$ref": "#/components/schemas/Wording"
+          }
+        },
+        "required": [
+          "activity_type",
+          "name",
+          "applies_when",
+          "requirement",
+          "basis",
+          "limitations",
+          "enabled"
+        ],
+        "title": "RuleDefinition",
+        "type": "object"
+      },
+      "SaveAspectRule": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "save_aspect_rule",
+            "title": "Action",
+            "type": "string"
+          },
+          "claim_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "domain_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "expected_revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "method_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "rule": {
+            "$ref": "#/components/schemas/AspectRule"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "request_id",
+          "domain_id",
+          "task_ref",
+          "claim_id",
+          "expected_revision",
+          "action",
+          "method_ref",
+          "rule"
+        ],
+        "title": "SaveAspectRule",
+        "type": "object"
+      },
+      "SaveBinding": {
+        "additionalProperties": false,
+        "properties": {
+          "config_kind": {
+            "const": "binding",
+            "title": "Config Kind",
+            "type": "string"
+          },
+          "config_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "definition": {
+            "$ref": "#/components/schemas/BindingDefinition"
+          },
+          "expected_revision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Revision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "config_ref",
+          "expected_revision",
+          "config_kind",
+          "definition"
+        ],
+        "title": "SaveBinding",
+        "type": "object"
+      },
+      "SaveBlueprint": {
+        "additionalProperties": false,
+        "properties": {
+          "config_kind": {
+            "const": "blueprint",
+            "title": "Config Kind",
+            "type": "string"
+          },
+          "config_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "definition": {
+            "$ref": "#/components/schemas/BlueprintDefinition"
+          },
+          "expected_revision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Revision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "config_ref",
+          "expected_revision",
+          "config_kind",
+          "definition"
+        ],
+        "title": "SaveBlueprint",
+        "type": "object"
+      },
+      "SaveClaim": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "save_claim",
+            "title": "Action",
+            "type": "string"
+          },
+          "aspects": {
+            "items": {
+              "$ref": "#/components/schemas/AspectDefinition"
+            },
+            "minItems": 1,
+            "title": "Aspects",
+            "type": "array"
+          },
+          "claim_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "domain_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "expected_revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Title"
+          }
+        },
+        "required": [
+          "request_id",
+          "domain_id",
+          "task_ref",
+          "claim_id",
+          "expected_revision",
+          "action",
+          "title",
+          "description",
+          "aspects"
+        ],
+        "title": "SaveClaim",
+        "type": "object"
+      },
+      "SaveCriterion": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "save_criterion",
+            "title": "Action",
+            "type": "string"
+          },
+          "claim_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "criterion": {
+            "$ref": "#/components/schemas/CriterionDraft"
+          },
+          "domain_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "expected_revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "request_id",
+          "domain_id",
+          "task_ref",
+          "claim_id",
+          "expected_revision",
+          "action",
+          "criterion"
+        ],
+        "title": "SaveCriterion",
+        "type": "object"
+      },
       "SaveKnowledgeResult": {
         "additionalProperties": false,
         "properties": {
@@ -5163,6 +7417,51 @@
           }
         ]
       },
+      "SaveRule": {
+        "additionalProperties": false,
+        "properties": {
+          "config_kind": {
+            "const": "rule",
+            "title": "Config Kind",
+            "type": "string"
+          },
+          "config_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "definition": {
+            "$ref": "#/components/schemas/RuleDefinition"
+          },
+          "expected_revision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Revision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "config_ref",
+          "expected_revision",
+          "config_kind",
+          "definition"
+        ],
+        "title": "SaveRule",
+        "type": "object"
+      },
       "SaveSolutionResult": {
         "additionalProperties": false,
         "properties": {
@@ -5186,6 +7485,51 @@
           "gaps"
         ],
         "title": "SaveSolutionResult",
+        "type": "object"
+      },
+      "SaveStrategy": {
+        "additionalProperties": false,
+        "properties": {
+          "config_kind": {
+            "const": "strategy",
+            "title": "Config Kind",
+            "type": "string"
+          },
+          "config_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "definition": {
+            "$ref": "#/components/schemas/StrategyDefinition"
+          },
+          "expected_revision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Revision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "config_ref",
+          "expected_revision",
+          "config_kind",
+          "definition"
+        ],
+        "title": "SaveStrategy",
         "type": "object"
       },
       "SaveTaskResult": {
@@ -5242,6 +7586,53 @@
           "expires_at"
         ],
         "title": "SessionView",
+        "type": "object"
+      },
+      "SetMethodCriteria": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "set_method_criteria",
+            "title": "Action",
+            "type": "string"
+          },
+          "claim_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "criterion_ids": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "title": "Criterion Ids",
+            "type": "array"
+          },
+          "domain_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "expected_revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "method_ref": {
+            "$ref": "#/components/schemas/SolutionRef"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "request_id",
+          "domain_id",
+          "task_ref",
+          "claim_id",
+          "expected_revision",
+          "action",
+          "method_ref",
+          "criterion_ids"
+        ],
+        "title": "SetMethodCriteria",
         "type": "object"
       },
       "Shape": {
@@ -5647,6 +8038,240 @@
         "title": "SourceRef",
         "type": "object"
       },
+      "SpaceChapterContent": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "additionalProperties": {
+                "$ref": "#/components/schemas/JsonValue"
+              },
+              "type": "object"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "SpaceChapterContent",
+        "type": "object"
+      },
+      "SpaceGoalView": {
+        "additionalProperties": false,
+        "properties": {
+          "current": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GoalEvaluation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pending": {
+            "title": "Pending",
+            "type": "boolean"
+          },
+          "target_basis_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "target_title": {
+            "title": "Target Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_basis_ref",
+          "target_title",
+          "pending",
+          "current"
+        ],
+        "title": "SpaceGoalView",
+        "type": "object"
+      },
+      "SpaceList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SpaceRow"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "SpaceList",
+        "type": "object"
+      },
+      "SpaceOpenResult": {
+        "additionalProperties": false,
+        "properties": {
+          "adoption": {
+            "$ref": "#/components/schemas/AdoptionView"
+          },
+          "created": {
+            "title": "Created",
+            "type": "boolean"
+          },
+          "entry_event_ref": {
+            "format": "uuid",
+            "title": "Entry Event Ref",
+            "type": "string"
+          },
+          "space": {
+            "$ref": "#/components/schemas/SpaceRow"
+          }
+        },
+        "required": [
+          "space",
+          "created",
+          "adoption",
+          "entry_event_ref"
+        ],
+        "title": "SpaceOpenResult",
+        "type": "object"
+      },
+      "SpaceReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/SpaceOpenResult"
+          }
+        },
+        "required": [
+          "request_ref",
+          "result"
+        ],
+        "title": "SpaceReceipt",
+        "type": "object"
+      },
+      "SpaceRow": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "space_id": {
+            "format": "uuid",
+            "title": "Space Id",
+            "type": "string"
+          },
+          "student_id": {
+            "format": "uuid",
+            "title": "Student Id",
+            "type": "string"
+          },
+          "student_name": {
+            "title": "Student Name",
+            "type": "string"
+          },
+          "target_id": {
+            "format": "uuid",
+            "title": "Target Id",
+            "type": "string"
+          },
+          "target_title": {
+            "title": "Target Title",
+            "type": "string"
+          },
+          "textbook_id": {
+            "format": "uuid",
+            "title": "Textbook Id",
+            "type": "string"
+          },
+          "textbook_title": {
+            "title": "Textbook Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "space_id",
+          "student_id",
+          "student_name",
+          "textbook_id",
+          "textbook_title",
+          "target_id",
+          "target_title",
+          "created_at"
+        ],
+        "title": "SpaceRow",
+        "type": "object"
+      },
+      "StrategyDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "activity_type": {
+            "$ref": "#/components/schemas/ActivityType"
+          },
+          "adaptation": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "applicability": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "approach": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "finish_conditions": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "materials": {
+            "items": {
+              "$ref": "#/components/schemas/Wording"
+            },
+            "title": "Materials",
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Wording"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/Wording"
+          }
+        },
+        "required": [
+          "activity_type",
+          "name",
+          "purpose",
+          "applicability",
+          "materials",
+          "approach",
+          "adaptation",
+          "finish_conditions",
+          "enabled"
+        ],
+        "title": "StrategyDefinition",
+        "type": "object"
+      },
       "SubjectKind": {
         "enum": [
           "task",
@@ -5733,6 +8358,190 @@
           "payload"
         ],
         "title": "TableBlock",
+        "type": "object"
+      },
+      "TargetAspect": {
+        "additionalProperties": false,
+        "properties": {
+          "aspect_ref": {
+            "$ref": "#/components/schemas/TargetAspectRef"
+          },
+          "condition_values": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Condition Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "aspect_ref",
+          "condition_values"
+        ],
+        "title": "TargetAspect",
+        "type": "object"
+      },
+      "TargetAspectRef": {
+        "additionalProperties": false,
+        "properties": {
+          "aspect_code": {
+            "$ref": "#/components/schemas/AspectCode"
+          },
+          "claim_ref": {
+            "$ref": "#/components/schemas/ClaimRef"
+          }
+        },
+        "required": [
+          "claim_ref",
+          "aspect_code"
+        ],
+        "title": "TargetAspectRef",
+        "type": "object"
+      },
+      "TargetDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "target": {
+            "$ref": "#/components/schemas/TargetView"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "title": "TargetDetail",
+        "type": "object"
+      },
+      "TargetList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TargetView"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "TargetList",
+        "type": "object"
+      },
+      "TargetReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/TargetDetail"
+          }
+        },
+        "required": [
+          "request_ref",
+          "result"
+        ],
+        "title": "TargetReceipt",
+        "type": "object"
+      },
+      "TargetRef": {
+        "additionalProperties": false,
+        "properties": {
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "target_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          }
+        },
+        "required": [
+          "target_id",
+          "revision"
+        ],
+        "title": "TargetRef",
+        "type": "object"
+      },
+      "TargetView": {
+        "additionalProperties": false,
+        "properties": {
+          "chapter_basis_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Chapter Basis Refs",
+            "type": "array"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GoalItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "target_ref": {
+            "$ref": "#/components/schemas/TargetRef"
+          },
+          "textbook_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Label"
+          }
+        },
+        "required": [
+          "target_ref",
+          "textbook_id",
+          "title",
+          "items",
+          "chapter_basis_refs",
+          "gaps"
+        ],
+        "title": "TargetView",
+        "type": "object"
+      },
+      "TaskConditions": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "maxLength": 4096,
+            "title": "Description",
+            "type": "string"
+          },
+          "parameter_values": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Parameter Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "description",
+          "parameter_values"
+        ],
+        "title": "TaskConditions",
         "type": "object"
       },
       "TaskContentRef": {
@@ -6324,6 +9133,74 @@
         "title": "TextbookRow",
         "type": "object"
       },
+      "Title": {
+        "maxLength": 160,
+        "minLength": 1,
+        "type": "string"
+      },
+      "Transition": {
+        "additionalProperties": false,
+        "properties": {
+          "condition_text": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Wording"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence_required": {
+            "title": "Evidence Required",
+            "type": "boolean"
+          },
+          "order": {
+            "minimum": 1.0,
+            "title": "Order",
+            "type": "integer"
+          },
+          "required_facts": {
+            "items": {
+              "$ref": "#/components/schemas/RequiredFact"
+            },
+            "title": "Required Facts",
+            "type": "array"
+          },
+          "source_node_id": {
+            "$ref": "#/components/schemas/NodeId"
+          },
+          "target_node_id": {
+            "$ref": "#/components/schemas/NodeId"
+          },
+          "transition_id": {
+            "$ref": "#/components/schemas/NodeId"
+          },
+          "when": {
+            "enum": [
+              "on_enter",
+              "on_input",
+              "after_reply",
+              "on_child_return",
+              "on_result",
+              "on_control"
+            ],
+            "title": "When",
+            "type": "string"
+          }
+        },
+        "required": [
+          "transition_id",
+          "source_node_id",
+          "target_node_id",
+          "order",
+          "when",
+          "required_facts",
+          "evidence_required"
+        ],
+        "title": "Transition",
+        "type": "object"
+      },
       "TurnOutcome": {
         "enum": [
           "completed",
@@ -6581,6 +9458,11 @@
         "maximum": 9.223372036854776e+18,
         "minimum": 1.0,
         "type": "integer"
+      },
+      "Wording": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
       }
     }
   },
@@ -6990,6 +9872,720 @@
         "summary": "Sign Out",
         "tags": [
           "authentication"
+        ]
+      }
+    },
+    "/api/m1/course-applications/checks": {
+      "post": {
+        "operationId": "product_check_course",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseCheckCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseCheckReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Check Course",
+        "tags": [
+          "courses-and-spaces"
+        ]
+      }
+    },
+    "/api/m1/course-applications/confirmations": {
+      "post": {
+        "operationId": "product_confirm_course",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseConfirmCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseApplyReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Confirm Course",
+        "tags": [
+          "courses-and-spaces"
+        ]
+      }
+    },
+    "/api/m1/course-applications/current": {
+      "get": {
+        "operationId": "product_course_head",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "textbook_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Textbook Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationHead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Current Course",
+        "tags": [
+          "courses-and-spaces"
+        ]
+      }
+    },
+    "/api/m1/course-options": {
+      "get": {
+        "operationId": "product_courses",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "domain_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Domain Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseOptions"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Course Options",
+        "tags": [
+          "courses-and-spaces"
         ]
       }
     },
@@ -10171,6 +13767,605 @@
         ]
       }
     },
+    "/api/m1/evaluation/claim-commands": {
+      "post": {
+        "operationId": "evaluation_save_claim",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "discriminator": {
+                  "mapping": {
+                    "create_claim": "#/components/schemas/CreateClaim",
+                    "remove_criterion": "#/components/schemas/RemoveCriterion",
+                    "save_aspect_rule": "#/components/schemas/SaveAspectRule",
+                    "save_claim": "#/components/schemas/SaveClaim",
+                    "save_criterion": "#/components/schemas/SaveCriterion",
+                    "set_method_criteria": "#/components/schemas/SetMethodCriteria"
+                  },
+                  "propertyName": "action"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateClaim"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SaveClaim"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SaveCriterion"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SetMethodCriteria"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SaveAspectRule"
+                  },
+                  {
+                    "$ref": "#/components/schemas/RemoveCriterion"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaimReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Save Claim",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    },
+    "/api/m1/evaluation/claims": {
+      "get": {
+        "operationId": "evaluation_list_claims",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "domain_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Domain Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "task_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Task Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 160,
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaimList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "List Claims",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    },
+    "/api/m1/evaluation/claims/{claim_id}": {
+      "get": {
+        "operationId": "evaluation_read_claim",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "claim_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Claim Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "revision",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 9223372036854775807,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Revision"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaimDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Read Claim",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    },
     "/api/m1/file-uploads": {
       "post": {
         "operationId": "register_file_upload",
@@ -10638,6 +14833,2091 @@
         "summary": "Write Upload",
         "tags": [
           "materials"
+        ]
+      }
+    },
+    "/api/m1/interaction/activity-configs/{activity_type}": {
+      "get": {
+        "operationId": "interaction_read_config",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "activity_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "explanation",
+                "question_answer",
+                "detection",
+                "free_chat"
+              ],
+              "title": "Activity Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "config_ref",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Config Ref"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Read Config",
+        "tags": [
+          "interaction"
+        ]
+      },
+      "put": {
+        "operationId": "interaction_save_config",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "activity_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "explanation",
+                "question_answer",
+                "detection",
+                "free_chat"
+              ],
+              "title": "Activity Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "discriminator": {
+                  "mapping": {
+                    "binding": "#/components/schemas/SaveBinding",
+                    "blueprint": "#/components/schemas/SaveBlueprint",
+                    "rule": "#/components/schemas/SaveRule",
+                    "strategy": "#/components/schemas/SaveStrategy"
+                  },
+                  "propertyName": "config_kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SaveBlueprint"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SaveRule"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SaveStrategy"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SaveBinding"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Save Config",
+        "tags": [
+          "interaction"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces": {
+      "get": {
+        "operationId": "product_list_spaces",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "student_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Student Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "textbook_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Textbook Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "target_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Target Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "student_name",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 160,
+              "title": "Student Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "List Spaces",
+        "tags": [
+          "courses-and-spaces"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/open": {
+      "post": {
+        "operationId": "product_open_space",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "discriminator": {
+                  "mapping": {
+                    "create": "#/components/schemas/CreateSpace",
+                    "enter": "#/components/schemas/EnterSpace"
+                  },
+                  "propertyName": "action"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateSpace"
+                  },
+                  {
+                    "$ref": "#/components/schemas/EnterSpace"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Open Space",
+        "tags": [
+          "courses-and-spaces"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{space_id}": {
+      "get": {
+        "operationId": "product_space_adoption",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "space_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Space Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdoptionView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Space Adoption",
+        "tags": [
+          "courses-and-spaces"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{space_id}/chapters/{chapter_id}": {
+      "get": {
+        "operationId": "product_space_chapter",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "space_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Space Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "chapter_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Chapter Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceChapterContent"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Space Chapter",
+        "tags": [
+          "courses-and-spaces"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{space_id}/events": {
+      "get": {
+        "operationId": "product_space_events",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "space_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Space Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "event_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 10,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Event Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after_seq",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "After Seq",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "upper_seq",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Upper Seq"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/JsonValue"
+                  },
+                  "title": "Response Product Space Events",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Space Events",
+        "tags": [
+          "courses-and-spaces"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{space_id}/goal": {
+      "get": {
+        "operationId": "product_space_goal",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "space_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Space Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceGoalView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Space Goal",
+        "tags": [
+          "courses-and-spaces"
+        ]
+      }
+    },
+    "/api/m1/learning-targets": {
+      "get": {
+        "operationId": "product_list_targets",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "textbook_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Textbook Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TargetList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "List Targets",
+        "tags": [
+          "learning-targets"
+        ]
+      },
+      "post": {
+        "operationId": "product_save_target",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "discriminator": {
+                  "mapping": {
+                    "create": "#/components/schemas/CreateTarget",
+                    "update": "#/components/schemas/ReviseTarget"
+                  },
+                  "propertyName": "action"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateTarget"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ReviseTarget"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TargetReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Save Target",
+        "tags": [
+          "learning-targets"
+        ]
+      }
+    },
+    "/api/m1/learning-targets/{target_id}": {
+      "get": {
+        "operationId": "product_read_target",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "revision",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 9223372036854775807,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Revision"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TargetDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Read Target",
+        "tags": [
+          "learning-targets"
         ]
       }
     },

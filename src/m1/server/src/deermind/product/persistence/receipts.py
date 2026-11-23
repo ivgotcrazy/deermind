@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from hashlib import sha256
 from uuid import UUID, uuid4
 
+from deermind.abstractions.command_receipts import CommandReceipt
 from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.events import Ref
 from deermind.foundation.system.public.errors import ErrorDetail
@@ -14,9 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 
 @dataclass(frozen=True)
-class Receipt:
-    request_ref: UUID
-    result_ref: Ref | None
+class Receipt(CommandReceipt):
     error: ErrorDetail | None = None
 
 
@@ -28,6 +27,7 @@ async def claim_request(
     scope_id: str,
     request_id: str,
     normalized_input: dict[str, JsonValue],
+    reserved_ref: UUID | None = None,
 ) -> Receipt:
     """先取得收据身份；竞争者等待原事务，然后读取同一结果。
 
@@ -38,7 +38,7 @@ async def claim_request(
         raise ValueError("Receipt requires a transaction and nonempty identity")
     body = canonical_json(normalized_input)
     parameters: dict[str, object] = {
-        "ref": uuid4(),
+        "ref": reserved_ref or uuid4(),
         "principal": principal_id,
         "action": action,
         "scope": scope_id,
@@ -84,7 +84,11 @@ async def claim_request(
     return Receipt(row["request_ref"], Ref.model_validate(row["result_ref"]))
 
 
-async def complete_request(connection: AsyncConnection, receipt: Receipt, result: Ref) -> Receipt:
+async def complete_request(
+    connection: AsyncConnection,
+    receipt: CommandReceipt,
+    result: Ref,
+) -> Receipt:
     """原事务内一次落定，调用方仅在事务提交后返回。"""
     completed = await connection.scalar(
         text(
@@ -111,3 +115,35 @@ async def reject_request(connection: AsyncConnection, receipt: Receipt, error: E
     )
     if changed != receipt.request_ref:
         raise RequestConflict("Receipt is not awaiting a result")
+
+
+async def find_completed_request(
+    connection: AsyncConnection,
+    principal: UUID,
+    action: str,
+    scope: UUID,
+    request_id: str,
+    normalized_input: dict[str, JsonValue] | None = None,
+) -> CommandReceipt | None:
+    """按已鉴权调用者、用途和范围读取已完成收据。"""
+    row = (
+        await connection.execute(
+            text(
+                "SELECT request_ref,result_ref,normalized_input FROM product.command_receipt "
+                "WHERE principal_id=:principal "
+                "AND action=:action AND scope_id=:scope AND request_id=:request "
+                "AND state='completed'"
+            ),
+            {
+                "principal": str(principal),
+                "action": action,
+                "scope": str(scope),
+                "request": request_id,
+            },
+        )
+    ).one_or_none()
+    if row is None:
+        return None
+    if normalized_input is not None and row.normalized_input != normalized_input:
+        raise RequestConflict("Request identity was already used with different input")
+    return CommandReceipt(row.request_ref, Ref.model_validate(row.result_ref))

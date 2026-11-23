@@ -5,8 +5,14 @@ import AuthGate from '../shared/auth/AuthGate.vue';
 import DomainWorkspace from './features/domain/DomainWorkspace.vue';
 import { clearCreateDraft } from './features/domain/draft';
 import TextbookWorkspace from './features/materials/TextbookWorkspace.vue';
+import ClaimWorkspace from './features/evaluation/ClaimWorkspace.vue';
+import ActivityWorkspace from './features/interaction/ActivityWorkspace.vue';
+import TargetWorkspace from './features/learning/TargetWorkspace.vue';
+import SpaceWorkspace from './features/learning/SpaceWorkspace.vue';
 
-const selection = ref<'domain' | 'textbooks'>('domain');
+const selection = ref<'domain' | 'textbooks' | 'evaluation' | 'interaction' | 'targets' | 'spaces'>(
+  'domain',
+);
 </script>
 
 <template>
@@ -23,9 +29,37 @@ const selection = ref<'domain' | 'textbooks'>('domain');
         >
           教材管理
         </button>
+        <button
+          type="button"
+          :aria-pressed="selection === 'evaluation'"
+          @click="selection = 'evaluation'"
+        >
+          评估管理
+        </button>
+        <button
+          type="button"
+          :aria-pressed="selection === 'interaction'"
+          @click="selection = 'interaction'"
+        >
+          交互活动
+        </button>
+        <button
+          type="button"
+          :aria-pressed="selection === 'targets'"
+          @click="selection = 'targets'"
+        >
+          目标管理
+        </button>
+        <button type="button" :aria-pressed="selection === 'spaces'" @click="selection = 'spaces'">
+          学习空间
+        </button>
       </nav>
       <DomainWorkspace v-if="selection === 'domain'" :session="session" />
-      <TextbookWorkspace v-else :session="session" />
+      <TextbookWorkspace v-else-if="selection === 'textbooks'" :session="session" />
+      <ClaimWorkspace v-else-if="selection === 'evaluation'" :session="session" />
+      <ActivityWorkspace v-else-if="selection === 'interaction'" :session="session" />
+      <TargetWorkspace v-else-if="selection === 'targets'" :session="session" />
+      <SpaceWorkspace v-else :session="session" />
     </AuthGate>
   </EntryShell>
 </template>

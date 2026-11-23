@@ -1,11 +1,11 @@
 # M1 Product API
 
-> **版本**：v0.7<br>
+> **版本**：v0.8<br>
 > **状态**：设计合同；已实施范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-22<br>
-> **修订说明**：v0.6 → v0.7，登记教材修正、采用、入库提交、章节关联及删除合同<br>
+> **更新日期**：2026-11-23<br>
+> **修订说明**：v0.7 → v0.8，登记课程检查的固定选择与空间查询入口<br>
 
 共同类型、认证头、回执和错误见[总册](../API_and_Message_Design.md)。本分册定义前后端载荷；内容提取、采用和应用规则仍由Product负责。
 
@@ -731,6 +731,8 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 | `textbook_id` | ID | 是 | 教材 |
 | `target_ref` | TargetRef | 是 | 精确目标修订 |
 | `expected_application_ref` | Ref或null | 是 | 首次应用明确null |
+| `chapters` | ChapterSelection[] | 是 | 每项固定 `chapter_id`、`revision` 及 `content_refs`。只替换本次选中的章节 |
+| `activity_config_refs` | Ref[] | 是 | 按配置包精确修订，每类最多一条。空缺按用途报告 |
 
 成功：200 `MutationReceipt`，其中`result`为下表；需要后台检查的分支另按说明返回202。
 
@@ -739,10 +741,12 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 | `check_ref` | Ref | 是 | 不可变检查 |
 | `base_application_ref` | Ref或null | 是 | 检查基准 |
 | `changes` | Issue[] | 是 | 变化摘要 |
+| `proposed_application` | CourseSnapshot | 是 | 本次检查固定的教材、目标、章节及准备结论 |
 | `readiness` | 用途检查对象[] | 是 | purpose、status、basis_refs、issues；结构沿Product§4.3 |
 | `can_apply` | boolean | 是 | 程序从检查结果决定 |
 
 处理边界：只保存检查；学生尚不能选用拟应用内容。
+管理员用 `GET /course-applications/current?textbook_id={id}&target_id={id}` 取得当前应用基准。检查和确认的公共收据分别使用 `product.check_course`、`product.confirm_course`。范围为 `textbook`。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；invalid_reference；revision_conflict。
 
@@ -880,6 +884,7 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `student_id` | ID | 管理员可选 | 学生不得指定他人 |
+| `student_name` | string | 否 | 按学生显示名筛选 |
 | `textbook_id` | ID | 否 | 组合筛选 |
 | `target_id` | ID | 否 | 组合筛选 |
 | `cursor` | string | 否；首次省略 | 不透明续页游标，绑定筛选、身份及读取范围 |
@@ -907,61 +912,24 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 <a id="p24"></a>
 ## P24 空间采用内容
 
-`GET /learning-spaces/{id}/adoption` → `product.query_product_view`。权限：本人/管理员及获授权内部调用。处理规则：[Product处理规则](../Product_Application_Design.md#52-productquery_product_view按权限读取业务视图)。
+`GET /learning-spaces/{space_id}` 返回当前 `AdoptionView`。学生只可读本人空间，管理员可读授权空间。视图含采用引用、应用引用、目标依据和固定课程快照。
 
-请求字段（路径字段不重复放入正文）：
+`GET /learning-spaces/{space_id}/chapters/{chapter_id}` 返回对应采用章节的 `items`。正文从候选事实的固定版本读出。章节越界返回 404。
 
-| 字段 | 类型 | 必填／缺省 | 含义与约束 |
-| --- | --- | --- | --- |
-| `adoption_ref` | Ref | 否 | 省略当前，指定读历史 |
-
-响应：200，直接返回下列对象。
-
-| 字段 | 类型 | 必填／缺省 | 含义与约束 |
-| --- | --- | --- | --- |
-| `adoption` | AdoptionView | 是 | 固定教材及目标引用 |
-| `is_current` | boolean | 是 | 查询时是否仍当前 |
-
-处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
-
-错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
-
-请求／查询参数（示意数据）：
-
-```json
-{}
-```
-
+`GET /learning-spaces/{space_id}/events` 仅供管理员。接受 `event_type`、`after_seq`、`upper_seq` 和 `limit`，返回 `items`、`upper_seq` 和 `next_after_seq`。继续翻页沿用读取上界。列表项只含事件元数据。
 <a id="p25"></a>
 ## P25 空间目标展示
 
-`GET /learning-spaces/{id}/goal` → `product.query_product_view`。权限：本人或管理员。处理规则：[Product处理规则](../Product_Application_Design.md#52-productquery_product_view按权限读取业务视图)。
+`GET /learning-spaces/{space_id}/goal`。学生只可读本人，管理员可读授权空间。
 
-除路径与共同认证头外，无业务请求字段。
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| `target_basis_ref` | Ref | 当前采用的评价依据 |
+| `target_title` | string | 当前应用的目标名称 |
+| `pending` | boolean | 当前依据的计算尚未保存 |
+| `current` | GoalEvaluation 或 null | Evaluation 保存的完整目标判断，含分项状态、理由及 Evidence 引用 |
 
-响应：200，直接返回下列对象。
-
-| 字段 | 类型 | 必填／缺省 | 含义与约束 |
-| --- | --- | --- | --- |
-| `adoption` | AdoptionView | 是 | 当前依据 |
-| `requirements` | GoalItem[] | 是 | 目标要求 |
-| `processing` | GoalProcessing | 是 | 与Evaluation目标查询一致 |
-| `pending` | boolean | 是 | 是否另有后续评价尚未结束 |
-| `failure_ref` | Ref或null | 是 | 真实失败引用 |
-| `goal_result_ref` | Ref或null | 是 | 仅匹配当前依据 |
-| `result` | GoalResult或null | 是 | Evaluation§4.4，待计算不是未达标 |
-| `gaps` | Issue[] | 是 | 课程准备缺口 |
-
-处理边界：学生目标页统一使用本入口，Product在内部按授权读取Evaluation并聚合当前采用及目标要求；不重算评价。Evidence／Belief详情沿[Evaluation E06](Evaluation_API.md#e06)读取，不把目标页直接跳到事件列表。
-
-错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)。
-
-请求／查询参数（示意数据）：
-
-```json
-{}
-```
-
+E03 由 Product 调用 Evaluation 的只读查询，只返回匹配当前目标依据的结果。教材与目标要求沿 P24 读取。Evidence 的深入取材见 [Evaluation E06](Evaluation_API.md#e06)。
 <a id="p26"></a>
 ## P26 Product收据内部投影
 
@@ -1156,3 +1124,4 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 | v0.5 | 2026-11-16 | 接线本人使用条件查询与首次确认；管理操作采用命令 |
 | v0.6 | 2026-11-22 | 登记教材原件清单与原请求恢复字段 |
 | v0.7 | 2026-11-22 | 登记教材候选工作流、领域受理和章节即时保存合同 |
+| v0.8 | 2026-11-23 | 登记目标、应用选择和学习空间读写合同 |

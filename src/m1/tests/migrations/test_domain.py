@@ -15,11 +15,15 @@ from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.event_reading import EventPartRef
 from deermind.abstractions.events import Ref, StoredEvent
 from deermind.abstractions.material_intake import CandidateRef, IntakeSource
+from deermind.bootstrap.courses import configure_goals
 from deermind.entrypoints.api.app import create_app
 from deermind.entrypoints.maintenance.database import migration_config, upgrade
 from deermind.foundation.system.public.errors import ErrorDetail
+from deermind.infrastructure.database.connection import EXPECTED_REVISION
 from deermind.product.public.authentication import SessionView
+from deermind.product.public.learning_targets import TargetView
 from deermind.spaces.domain.intake_processing import IntakeProcessing
+from deermind.spaces.evaluation.public import STANDARD_ASPECTS
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from httpx2 import Response
@@ -163,6 +167,10 @@ class DomainTests(DatabaseTestCase):
             admin = _login(client, "operator")
             root = _save(client, admin, _body(uuid4(), "两章候选采用范围"))
             domain = root.raise_for_status().json()["result"]["object_ref"]["object_id"]
+                }
+                if check_goal
+                else {}
+            )
             # 预置同一基线的候选。采用请求仍经过真实 HTTP、收据和事件事务。
             with self.engine.begin() as db:
                 keys = {"book": textbook, "import": imported, "domain": domain, "fact": source}
@@ -283,12 +291,33 @@ class DomainTests(DatabaseTestCase):
 
     def test_same_task_can_use_different_methods_in_two_chapters(self) -> None:
         """同一 Task 的采用按章节生效，取消一章不会改变另一章。"""
+        self._two_chapter_flow(check_goal=False)
+
+    def test_goal_reassessment_keeps_late_results_historical(self) -> None:
+        self._two_chapter_flow(check_goal=True)
+
+    def _two_chapter_flow(self, *, check_goal: bool) -> None:
         textbook, imported, source = uuid4(), uuid4(), uuid4()
         first, second = uuid4(), uuid4()
         with self.api() as client:
             admin = _login(client, "operator")
             root = _save(client, admin, _body(uuid4(), "两章的同一任务"))
             domain = root.raise_for_status().json()["result"]["object_ref"]["object_id"]
+            method_fields = (
+                {
+                    key: _content("按已知原量与增加比例列式并核对结果。")
+                    for key in ("approach", "rationale", "applicability", "key_process")
+                }
+                if check_goal
+                else {}
+            )
+            task_fields = (
+                {
+                    key: _content("已知原量与增加比例，给出新量及列式。")
+                    for key in (
+                        "responsibility", "expected_output", "completion_conditions",
+                        "applicability", "boundaries",
+                    )
             methods = [
                 _save(
                     client,
@@ -298,7 +327,7 @@ class DomainTests(DatabaseTestCase):
                         "action": "create",
                         "object_kind": "solution",
                         "domain_id": domain,
-                        "definition": {"name": name},
+                        "definition": {"name": name, **method_fields},
                         "change_note": "两章可采用不同方法",
                     },
                 )
@@ -315,7 +344,7 @@ class DomainTests(DatabaseTestCase):
                         "action": "create",
                         "object_kind": "task",
                         "domain_id": domain,
-                        "definition": {"name": "求部分量", "method_refs": methods},
+                        "definition": {"name": "求部分量", "method_refs": methods, **task_fields},
                         "change_note": "章节采用的固定任务",
                     },
                 )
@@ -339,7 +368,8 @@ class DomainTests(DatabaseTestCase):
                         "INSERT INTO product.textbook "
                         "(textbook_id,domain_id,import_id,metadata,metadata_revision,"
                         "created_at,source_event_id) "
-                        "VALUES (:book,:domain,:import,'{}',1,now(),:fact)"
+                        "VALUES (:book,:domain,:import,"
+                        "jsonb_build_object('title','M1 test'),1,now(),:fact)"
                     ),
                     values,
                 )
@@ -377,6 +407,102 @@ class DomainTests(DatabaseTestCase):
                 )
                 relations.append(Ref.model_validate(saved["association_ref"]))
                 self.assertEqual(saved["method_refs"], [method])
+            claim = (
+                client.post(
+                    "/api/m1/evaluation/claim-commands",
+                    headers=headers,
+                    json={
+                        "request_id": str(uuid4()),
+                        "action": "create_claim",
+                        "domain_id": str(domain),
+                        "task_ref": task,
+                        "title": "两章各用一种方法",
+                        "description": "分别核对每种方法。",
+                        "aspects": [
+                            {"code": code, "label": label, "description": label}
+                            for code, label in STANDARD_ASPECTS.items()
+                        ],
+                    },
+                )
+                .raise_for_status()
+                .json()["result"]["claim_ref"]
+            )
+            no_parameters: dict[str, object] = {}
+            no_conditions: dict[str, object] = {}
+            target = (
+                client.post(
+                    "/api/m1/learning-targets",
+                    headers=headers,
+                    json={
+                        "request_id": str(uuid4()),
+                        "action": "create",
+                        "textbook_id": str(textbook),
+                        "title": "两章目标",
+                        "items": [
+                            {
+                                "title": "分别核对",
+                                "claim_ref": claim,
+                                "chapter_refs": [str(first), str(second)],
+                                "task_conditions": {
+                                    "description": "原量增加四分之一",
+                                    "parameter_values": no_parameters,
+                                },
+                                "method_mode": "each",
+                                "methods": [
+                                    {
+                                        "method_ref": method,
+                                        "chapter_refs": [str(chapter)],
+                                        "aspects": [
+                                            {
+                                                "aspect_ref": {
+                                                    "claim_ref": claim,
+                                                    "aspect_code": "independent",
+                                                },
+                                                "condition_values": no_conditions,
+                                            }
+                                        ],
+                                    }
+                                    for method, chapter in zip(
+                                        methods, (first, second), strict=True
+                                    )
+                                ],
+                            }
+                        ],
+                    },
+                )
+                .raise_for_status()
+                .json()["result"]["target"]
+            )
+            self.assertEqual(
+                [method["chapter_refs"] for method in target["items"][0]["methods"]],
+                [[str(first)], [str(second)]],
+            )
+            self.assertEqual(
+                target["chapter_basis_refs"],
+                [ref.model_dump(mode="json") for ref in relations],
+            )
+            if check_goal:
+                self._verify_delayed_goal(
+                    client, TargetView.model_validate_json(canonical_json(target)), (first, second)
+                )
+                headers = {"Origin": _ORIGIN, **session_headers(_login(client, "operator"))}
+                deletion = client.post(
+                    f"/api/m1/material-imports/{imported}/delete",
+                    headers=headers,
+                    json={
+                        "request_id": str(uuid4()),
+                        "expected_revision": 1,
+                        "confirmed_scope_ref": {
+                            "owner": "product",
+                            "type": "deletion_scope",
+                            "id": str(imported),
+                            "revision": 1,
+                        },
+                    },
+                )
+                self.assertEqual(deletion.status_code, 409)
+                self.assertEqual(deletion.json()["error"]["code"], "already_applied")
+                return
             removed = client.post(
                 paths[0],
                 headers=headers,
@@ -531,6 +657,199 @@ class DomainTests(DatabaseTestCase):
                     other: ("pending", 1),
                 },
             )
+
+    def _verify_delayed_goal(
+        self, client: TestClient, target: TargetView, chapters: tuple[UUID, UUID]
+    ) -> None:
+        def send(
+            route: str, body: object, session: SessionView, method: str = "POST",
+        ) -> dict[str, JsonValue]:
+            value = client.request(
+                method, "/api/m1" + route,
+                headers={"Origin": _ORIGIN, **session_headers(session)},
+                json=body,
+            )
+            return value.raise_for_status().json()
+
+        operator = _login(client, "operator")
+        config_route = "/interaction/activity-configs/detection"
+
+        def configure(kind: str, definition: dict[str, JsonValue], revision: int | None,
+                      reference: JsonValue = None) -> dict[str, JsonValue]:
+            result = send(config_route, {
+                "request_id": str(uuid4()), "config_kind": kind, "expected_revision": revision,
+                "config_ref": reference, "definition": {"activity_type": "detection", **definition},
+            }, operator, "PUT")["result"]
+            assert isinstance(result, dict)
+            return result
+
+        blueprint = configure("blueprint", {
+            "nodes": [
+                {
+                    "node_id": node, "name": node, "purpose": "固定检测",
+                    "required_inputs": [], "outputs": [], "allowed_actions": [],
+                    "execution_guidance": "按当前信息处理",
+                    "fallback": {"action": "wait_input", "explanation": "等待确认"},
+                }
+                for node in ("start", "end")
+            ],
+            "transitions": [{
+                "transition_id": "end-step", "source_node_id": "start", "target_node_id": "end",
+                "order": 1, "when": "on_control", "condition_text": "已确认",
+                "required_facts": [{"code": "plan_confirmed", "value": True}], "evidence_required": False,
+            }],
+        }, None)
+        rule = configure("rule", {
+            "name": "独立检测", "applies_when": "检测期间", "requirement": "关闭本轮后才能提供帮助。",
+            "basis": "检测规则", "limitations": [], "enabled": True,
+        }, 1)["definition_ref"]
+        binding = blueprint["affected_refs"]
+        assert isinstance(rule, dict) and isinstance(binding, list)
+        detection = configure("binding", {
+            "activity": {"rule_ids": [rule["id"]], "strategy_ids": []}, "nodes": {},
+        }, 2, binding[0])["config_ref"]
+
+        def adopt(target_ref: dict[str, JsonValue], previous: JsonValue) -> dict[str, JsonValue]:
+            operator = _login(client, "operator")
+            chapter_data: list[dict[str, JsonValue]] = [
+                {"chapter_id": str(chapter), "revision": 1, "content_refs": []}
+                for chapter in chapters
+            ]
+            check = send(
+                "/course-applications/checks",
+                {
+                    "request_id": str(uuid4()),
+                    "textbook_id": str(target.textbook_id),
+                    "target_ref": target_ref,
+                    "expected_application_ref": previous,
+                    "chapters": chapter_data,
+                    "activity_config_refs": [detection],
+                },
+                operator,
+            )
+            result = check["result"]
+            assert isinstance(result, dict)
+            readiness = result["readiness"]
+            assert isinstance(readiness, list)
+            detection_rows = [
+                row for row in readiness if isinstance(row, dict) and row["purpose"] == "detection"
+            ]
+            self.assertEqual(len(detection_rows), len(chapters))
+            self.assertTrue(all(row["status"] == "ready" for row in detection_rows))
+            applied = send(
+                "/course-applications/confirmations",
+                {
+                    "request_id": str(uuid4()),
+                    "check_ref": result["check_ref"],
+                    "expected_application_ref": previous,
+                },
+                operator,
+            )["result"]
+            assert isinstance(applied, dict)
+            return applied
+
+        current = adopt(target.target_ref.model_dump(mode="json"), None)
+        student = _login(client, "student")
+        usage = (
+            client.get("/api/m1/usage-conditions", headers=session_headers(student))
+            .raise_for_status()
+            .json()
+        )
+        send(
+            "/usage-confirmations",
+            {
+                "request_id": str(uuid4()),
+                "expected_revision": usage["revision"],
+                "confirmation": {
+                    "student_id": str(student.account.account_id),
+                    "kind": "student_assent",
+                    "notice_ref": usage["notice_ref"],
+                    "source_ref": usage["source_ref"],
+                    "decision": "accepted",
+                },
+            },
+            student,
+        )
+        opened = send(
+            "/learning-spaces/open",
+            {
+                "request_id": str(uuid4()),
+                "action": "create",
+                "textbook_id": str(target.textbook_id),
+                "target_id": str(target.target_ref.target_id),
+                "expected_application_ref": current["application_ref"],
+            },
+            student,
+        )["result"]
+        assert isinstance(opened, dict) and isinstance(opened["space"], dict)
+        scope_id = opened["space"]["space_id"]
+        assert isinstance(scope_id, str)
+        operator = _login(client, "operator")
+        revised = send(
+            "/learning-targets",
+            {
+                "request_id": str(uuid4()),
+                "action": "update",
+                "textbook_id": str(target.textbook_id),
+                "target_id": str(target.target_ref.target_id),
+                "expected_revision": target.target_ref.revision,
+                "title": target.title,
+                "items": [
+                    item.model_copy(update={"method_mode": "any_one"}).model_dump(mode="json")
+                    for item in target.items
+                ],
+            },
+            operator,
+        )["result"]
+        assert isinstance(revised, dict) and isinstance(revised["target"], dict)
+        ref = revised["target"]["target_ref"]
+        assert isinstance(ref, dict)
+        adopt(ref, current["application_ref"])
+        with self.engine.connect() as db:
+            triggers = db.scalars(
+                text(
+                    "SELECT event_id FROM runtime.events WHERE scope_id=:scope "
+                    "AND event_type='LearningTargetApplied' ORDER BY scope_event_seq"
+                ),
+                {"scope": UUID(scope_id)},
+            ).all()
+        older, newer = triggers
+
+        async def deliver(trigger: UUID) -> Acceptance:
+            assert isinstance(client.app, FastAPI)
+            state = client.app.state
+            handler = configure_goals(state.learning_targets, state.activity_configs)
+            async with state.database.begin() as db:
+                return await handler.receive(
+                    db,
+                    EventNotice(
+                        delivery_id=uuid4(),
+                        event_id=trigger,
+                        event_type="LearningTargetApplied",
+                        producer="product",
+                        scope_kind="learning_space",
+                        scope_id=UUID(scope_id),
+                        schema_version=1,
+                        handoff_id=uuid4(),
+                    ),
+                )
+
+        assert client.portal is not None
+        newest = client.portal.call(deliver, newer).arrangement_refs[0]
+        oldest = client.portal.call(deliver, older).arrangement_refs[0]
+        self.assertEqual(client.portal.call(deliver, older).arrangement_refs, [oldest])
+        with self.engine.connect() as db:
+            rows = db.execute(
+                text(
+                    "SELECT goal_evaluation_id,current_state_applied "
+                    "FROM evaluation.goal_evaluation "
+                    "WHERE scope_id=:scope"
+                ),
+                {"scope": UUID(scope_id)},
+            ).all()
+        self.assertEqual(
+            dict((str(row[0]), row[1]) for row in rows), {newest.id: True, oldest.id: False}
+        )
 
     def test_knowledge_versions_catalog_and_original_receipt(self) -> None:
         """并行提交同一旧版，仅一个生效；删除后仍保留原文与原收据。"""
@@ -1461,7 +1780,7 @@ class DomainMigrationTests(DatabaseTestCase):
         with self.engine.connect() as connection:
             self.assertEqual(
                 connection.scalar(text("SELECT version_num FROM public.alembic_version")),
-                "0023_material_deletion",
+                EXPECTED_REVISION,
             )
             self.assertEqual(connection.execute(facts).all(), old_events)
             self.assertEqual(connection.execute(accounts).all(), old_accounts)
