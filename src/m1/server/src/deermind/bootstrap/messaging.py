@@ -4,9 +4,11 @@ from collections.abc import Awaitable, Callable
 
 from deermind.abstractions.delivery import Acceptance, EventNotice
 from deermind.abstractions.material_intake import DELETED, RECEIVED, REJECTED, REQUESTED
+from deermind.abstractions.task_supply import REQUESTED as SUPPLY_REQUESTED
 from deermind.bootstrap.executions import registry
 from deermind.bootstrap.waits import policies
 from deermind.foundation.system.delivery.contracts import Subscription, SubscriptionRegistry
+from deermind.foundation.system.executions.contracts import Registry
 from deermind.foundation.system.waits.notifications import subscription
 from deermind.spaces.evaluation.goal_results import TRIGGER
 from sqlalchemy.ext.asyncio import AsyncConnection
@@ -23,10 +25,20 @@ def subscriptions(
     receive_result: Handler = _unbound,
     invalidate_source: Handler = _unbound,
     reassess_target: Handler = _unbound,
+    supply_task: Handler = _unbound,
+    *,
+    entries: Registry | None = None,
 ) -> SubscriptionRegistry:
-    waiting = subscription(registry(), policies())
+    waiting = subscription(entries or registry(), policies())
     scope = frozenset({"material_import"})
     items = [
+        Subscription(
+            "domain_task_supply",
+            "1",
+            frozenset({SUPPLY_REQUESTED}),
+            frozenset({"learning_space"}),
+            supply_task,
+        ),
         Subscription(
             "evaluation_reassess_target",
             "1",

@@ -680,22 +680,22 @@ class DomainTests(DatabaseTestCase):
             return value.raise_for_status().json()
 
         operator = _login(client, "operator")
-        config_route = "/interaction/activity-configs/detection"
 
         def configure(
             kind: str,
             definition: dict[str, JsonValue],
             revision: int | None,
             reference: JsonValue = None,
+            activity: str = "detection",
         ) -> dict[str, JsonValue]:
             result = send(
-                config_route,
+                f"/interaction/activity-configs/{activity}",
                 {
                     "request_id": str(uuid4()),
                     "config_kind": kind,
                     "expected_revision": revision,
                     "config_ref": reference,
-                    "definition": {"activity_type": "detection", **definition},
+                    "definition": {"activity_type": activity, **definition},
                 },
                 operator,
                 "PUT",
@@ -757,6 +757,65 @@ class DomainTests(DatabaseTestCase):
             2,
             binding[0],
         )["config_ref"]
+        explanation = configure(
+            "blueprint",
+            {
+                "nodes": [
+                    {
+                        "node_id": name,
+                        "name": name,
+                        "purpose": "讲清楚原量和增加量",
+                        "required_inputs": [],
+                        "execution_guidance": "用当前问题组织说明",
+                        "outputs": [],
+                        "allowed_actions": ["reply", "clarify"] if name == "explain" else [],
+                        "fallback": {"action": "clarify", "explanation": "请说具体一点"},
+                    }
+                    for name in ("start", "explain", "end")
+                ],
+                "transitions": [
+                    {
+                        "transition_id": identity,
+                        "source_node_id": source,
+                        "target_node_id": target,
+                        "order": 1,
+                        "when": timing,
+                        "required_facts": [],
+                        "evidence_required": False,
+                    }
+                    for identity, source, target, timing in (
+                        ("begin", "start", "explain", "on_enter"),
+                        ("finish", "explain", "end", "on_control"),
+                    )
+                ],
+            },
+            None,
+            activity="explanation",
+        )["affected_refs"]
+        explanation_rule = configure(
+            "rule",
+            {
+                "name": "使用中文",
+                "applies_when": "讲解时",
+                "requirement": "使用学生能读懂的中文。",
+                "basis": "讲解合同测试",
+                "limitations": [],
+                "enabled": True,
+            },
+            1,
+            activity="explanation",
+        )["definition_ref"]
+        assert isinstance(explanation, list) and isinstance(explanation_rule, dict)
+        lesson = configure(
+            "binding",
+            {
+                "activity": {"rule_ids": [explanation_rule["id"]], "strategy_ids": []},
+                "nodes": {},
+            },
+            2,
+            explanation[0],
+            activity="explanation",
+        )["config_ref"]
 
         def adopt(target_ref: dict[str, JsonValue], previous: JsonValue) -> dict[str, JsonValue]:
             operator = _login(client, "operator")
@@ -772,7 +831,7 @@ class DomainTests(DatabaseTestCase):
                     "target_ref": target_ref,
                     "expected_application_ref": previous,
                     "chapters": chapter_data,
-                    "activity_config_refs": [detection],
+                    "activity_config_refs": [detection, lesson],
                 },
                 operator,
             )
@@ -833,6 +892,9 @@ class DomainTests(DatabaseTestCase):
         assert isinstance(opened, dict) and isinstance(opened["space"], dict)
         scope_id = opened["space"]["space_id"]
         assert isinstance(scope_id, str)
+        assert isinstance(detection, dict)
+        self._verify_activity_forest(client, student, opened, Ref.model_validate(detection))
+        self._verify_student_turn(client, student, scope_id)
         operator = _login(client, "operator")
         revised = send(
             "/learning-targets",
@@ -899,6 +961,231 @@ class DomainTests(DatabaseTestCase):
         self.assertEqual(
             dict((str(row[0]), row[1]) for row in rows), {newest.id: True, oldest.id: False}
         )
+
+    def _verify_activity_forest(
+        self, client: TestClient, student: SessionView, opened: dict[str, JsonValue], config: Ref
+    ) -> None:
+        """用实际空间验证活动命令、嵌套返回和只读历史定位。"""
+        from deermind.product.public.courses import SpaceOpenResult
+        from deermind.spaces.interaction.conversation import Conversation
+        from deermind.spaces.interaction.public import ActivityRef
+
+        view = SpaceOpenResult.model_validate_json(canonical_json(opened))
+        scope = view.space.space_id
+        path = f"/api/m1/learning-spaces/{scope}"
+        headers = {"Origin": _ORIGIN, **session_headers(student)}
+        app, portal = client.app, client.portal
+        assert isinstance(app, FastAPI) and portal is not None
+        conversation: Conversation = app.state.conversation
+
+        def read(**query: str) -> dict[str, JsonValue]:
+            return (
+                client.get(f"{path}/conversation", headers=headers, params=query)
+                .raise_for_status()
+                .json()
+            )
+
+        def control(ref: ActivityRef, action: str) -> dict[str, JsonValue]:
+            body = {
+                "request_id": str(uuid4()),
+                "action": action,
+                "activity_ref": ref.model_dump(mode="json"),
+                "expected_activity_revision": ref.revision,
+            }
+            first = client.post(f"{path}/activity-actions", headers=headers, json=body)
+            self.assertEqual(first.status_code, 200, first.text)
+            self.assertEqual(
+                client.post(f"{path}/activity-actions", headers=headers, json=body).json(),
+                first.json(),
+            )
+            receipt = client.get(
+                "/api/m1/requests/receipt",
+                headers=headers,
+                params={
+                    "action": "interaction.control_activity",
+                    "resource_kind": "learning_space",
+                    "resource_id": str(scope),
+                    "request_id": str(body["request_id"]),
+                },
+            )
+            self.assertEqual(receipt.status_code, 200, receipt.text)
+            self.assertEqual(receipt.json()["result"], first.json()["result"])
+            return first.json()
+
+        async def begin(name: str, parent: ActivityRef | None = None) -> ActivityRef:
+            # 夹具只替代尚未接线的活动启动者，运行事件仍走正式事务。
+            fixed = await app.state.activity_configs.fixed_config(config)
+            async with conversation.engine.begin() as db:
+                return await conversation.begin(
+                    db,
+                    scope,
+                    student.account.account_id,
+                    view.adoption.adoption_ref,
+                    config,
+                    fixed.definition,
+                    "detection",
+                    name,
+                    view.entry_event_ref,
+                    parent_id=parent.activity_id if parent else None,
+                )
+
+        current = read(view="current")["current"]
+        assert isinstance(current, dict)
+        self.assertEqual(current["path"], [])
+        root = portal.call(begin, "第一项")
+        child = portal.call(begin, "其中一轮后追问", root)
+        control(child, "pause")
+        self.assertEqual(
+            read(view="current")["current"],
+            {
+                "active_input_id": None,
+                "allowed_actions": [],
+                "current_activity": None,
+                "latest_message_seq": 3,
+                "path": [],
+            },
+        )
+        resumed = child.model_copy(update={"revision": 2})
+        control(resumed, "resume")
+        stale = client.post(
+            f"{path}/activity-actions",
+            headers=headers,
+            json={
+                "request_id": str(uuid4()),
+                "action": "finish",
+                "activity_ref": child.model_dump(mode="json"),
+                "expected_activity_revision": 1,
+            },
+        )
+        self.assertEqual(stale.status_code, 409)
+        control(child.model_copy(update={"revision": 3}), "finish")
+        parent_now = read(view="current")["current"]
+        assert isinstance(parent_now, dict) and isinstance(parent_now["current_activity"], dict)
+        self.assertEqual(parent_now["current_activity"]["name"], "第一项")
+        control(
+            ActivityRef.model_validate(parent_now["current_activity"]["activity_ref"]), "finish"
+        )
+        next_root = portal.call(begin, "第二项")
+        roots = read(view="activity_tree", limit="1")
+        assert isinstance(roots["next_cursor"], str)
+        older = read(view="activity_tree", limit="1", cursor=roots["next_cursor"])
+        assert isinstance(older["items"], list) and isinstance(older["items"][0], dict)
+        self.assertEqual(older["items"][0]["name"], "第一项")
+        nested = read(view="activity_tree", activity_ref=str(root.activity_id))["items"]
+        assert isinstance(nested, list) and isinstance(nested[0], dict)
+        anchor = nested[0]["first_message_ref"]
+        assert isinstance(anchor, str)
+        page = read(view="messages", anchor_message_id=anchor)["items"]
+        assert isinstance(page, list)
+        self.assertTrue(
+            any(isinstance(item, dict) and item["message_id"] == anchor for item in page)
+        )
+        current = read(view="current")["current"]
+        assert isinstance(current, dict) and isinstance(current["current_activity"], dict)
+        self.assertEqual(
+            current["current_activity"]["activity_ref"], next_root.model_dump(mode="json")
+        )
+        control(next_root, "finish")
+
+    def _verify_student_turn(self, client: TestClient, student: SessionView, scope: str) -> None:
+        """受理、忙时拒绝、停止、终态补读在同一实际空间验证。"""
+        from deermind.abstractions.executions import RunInput
+        from deermind.bootstrap.student_operation import student_config
+        from deermind.foundation.system.executions import commands, store
+        from deermind.spaces.interaction.student_turns import StudentTurns
+
+        assert isinstance(client.app, FastAPI) and client.portal is not None
+        turns: StudentTurns = client.app.state.student_turns
+        with patch.dict("os.environ", {"M1_STUDENT_MODEL_ENABLED": "true"}):
+            turns.config = student_config()
+        path = f"/api/m1/learning-spaces/{scope}"
+        headers = {"Origin": _ORIGIN, **session_headers(student)}
+        command: dict[str, JsonValue] = {
+            "request_id": str(uuid4()),
+            "input": {"text": "你好，DeerMind。", "attachment_refs": [], "explicit_refs": []},
+        }
+        accepted = client.post(f"{path}/inputs", headers=headers, json=command)
+        self.assertEqual(accepted.status_code, 202, accepted.text)
+        self.assertEqual(
+            client.post(f"{path}/inputs", headers=headers, json=command).json(),
+            accepted.json(),
+        )
+        other = client.post(
+            f"{path}/inputs", headers=headers, json={**command, "request_id": str(uuid4())}
+        )
+        self.assertEqual(other.status_code, 409, other.text)
+        self.assertEqual(other.json()["error"]["code"], "interaction_busy")
+        query = {
+            "action": "interaction.handle_input",
+            "resource_kind": "learning_space",
+            "resource_id": scope,
+            "request_id": str(command["request_id"]),
+        }
+        receipt = client.get("/api/m1/requests/receipt", headers=headers, params=query)
+        self.assertEqual(receipt.json()["receipt_state"], "accepted", receipt.text)
+        self.assertEqual(receipt.json()["execution_ref"], accepted.json()["execution_ref"])
+        stop = {
+            "request_id": str(uuid4()),
+            "action": "stop_reply",
+            "target_input_id": accepted.json()["input_id"],
+        }
+        stopped = client.post(f"{path}/activity-actions", headers=headers, json=stop)
+        self.assertEqual(stopped.status_code, 200, stopped.text)
+        self.assertEqual(stopped.json()["result"]["outcome"], "stopped")
+        self.assertIsNone(stopped.json()["result"]["current"]["active_input_id"])
+        self.assertEqual(
+            client.post(f"{path}/activity-actions", headers=headers, json=stop).json(),
+            stopped.json(),
+        )
+        receipt = client.get("/api/m1/requests/receipt", headers=headers, params=query)
+        self.assertEqual(receipt.json()["receipt_state"], "completed", receipt.text)
+        self.assertEqual(receipt.json()["result"]["outcome"], "cancelled")
+        messages = client.get(f"{path}/conversation", headers=headers, params={"view": "messages"})
+        self.assertEqual(messages.status_code, 200, messages.text)
+        student_messages = [
+            item["parts"][0]["text"]
+            for item in messages.json()["items"]
+            if item["role"] == "student"
+        ]
+        self.assertEqual(student_messages, ["你好，DeerMind。"])
+
+        failed_id = str(uuid4())
+        next_turn = client.post(
+            f"{path}/inputs", headers=headers, json={**command, "request_id": failed_id}
+        )
+        self.assertEqual(next_turn.status_code, 202, next_turn.text)
+
+        async def fail(work_id: UUID) -> None:
+            async with turns.engine.begin() as db:
+                work = await store.load(db, work_id)
+                assert work.active_attempt_id is not None
+                attempt = await store.attempt(db, work.active_attempt_id)
+                run = RunInput(
+                    execution_id=work.execution_id,
+                    attempt_id=attempt.attempt_id,
+                    input_ref=work.input_ref,
+                    implementation_ref=work.implementation_ref,
+                    ai_config_ref=work.ai_config_ref,
+                    deadline_at=attempt.deadline_at,
+                )
+            prepared = await turns.context(run)
+            self.assertIn('"context_ref"', prepared)
+            async with turns.engine.begin() as db:
+                await commands.fail(
+                    db,
+                    turns.registry,
+                    run,
+                    Ref(owner="runtime", type="execution_failure", id="MODEL_TEST_FAILURE"),
+                )
+
+        client.portal.call(fail, UUID(next_turn.json()["execution_ref"]))
+        failed = client.get(
+            "/api/m1/requests/receipt", headers=headers, params={**query, "request_id": failed_id}
+        )
+        self.assertEqual(failed.status_code, 200, failed.text)
+        self.assertEqual(failed.json()["result"]["outcome"], "failed")
+        self.assertEqual(failed.json()["result"]["message_refs"], [])
+        self.assertIsNone(failed.json()["result"]["current"]["active_input_id"])
 
     def test_knowledge_versions_catalog_and_original_receipt(self) -> None:
         """并行提交同一旧版，仅一个生效；删除后仍保留原文与原收据。"""

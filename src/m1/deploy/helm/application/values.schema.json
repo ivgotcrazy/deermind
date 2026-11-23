@@ -22,6 +22,9 @@
       },
       "additionalProperties": false
     },
+    "studentAssistant": {
+      "$ref": "#/properties/materialAssistant"
+    },
     "images": {
       "type": "object",
       "required": ["server", "client"],

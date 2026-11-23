@@ -1,11 +1,11 @@
 # M1 Product API
 
-> **版本**：v0.9<br>
+> **版本**：v0.10<br>
 > **状态**：设计合同；已实施范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.8 → v0.9，同步目标文字范围的保存合同<br>
+> **修订说明**：v0.9 → v0.10，登记学习工作区只读恢复与教材来源<br>
 
 共同类型、认证头、回执和错误见[总册](../API_and_Message_Design.md)。本分册定义前后端载荷；内容提取、采用和应用规则仍由Product负责。
 
@@ -922,7 +922,9 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 
 `GET /learning-spaces/{space_id}` 返回当前 `AdoptionView`。学生只可读本人空间，管理员可读授权空间。视图含采用引用、应用引用、目标依据和固定课程快照。
 
-`GET /learning-spaces/{space_id}/chapters/{chapter_id}` 返回对应采用章节的 `items`。正文从候选事实的固定版本读出。章节越界返回 404。
+`GET /learning-spaces/{space_id}/workspace` 仅供本人学生刷新恢复。200 返回 `{space, adoption}`，不追加 `LearningSpaceEntered`。正常进入继续用 `POST /learning-spaces/open`。
+
+`GET /learning-spaces/{space_id}/chapters/{chapter_id}` 返回对应采用章节的 `items`，各条 `source_ref` 为对应内容的固定引用。正文从候选事实的固定版本读出。章节越界返回 404。
 
 `GET /learning-spaces/{space_id}/events` 仅供管理员。接受 `event_type`、`after_seq`、`upper_seq` 和 `limit`，返回 `items`、`upper_seq` 和 `next_after_seq`。继续翻页沿用读取上界。列表项只含事件元数据。
 <a id="p25"></a>
@@ -1137,3 +1139,4 @@ E03 的已采用章节正文使用 P24。下列原页及教材阅读合同由学
 | v0.7 | 2026-11-22 | 登记教材候选工作流、领域受理和章节即时保存合同 |
 | v0.8 | 2026-11-23 | 登记目标、应用选择和学习空间读写合同 |
 | v0.9 | 2026-11-23 | 同步目标文字范围的保存合同 |
+| v0.10 | 2026-11-23 | 登记学习工作区只读恢复及教材内容的固定引用 |

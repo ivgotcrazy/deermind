@@ -55,6 +55,155 @@
         ],
         "type": "string"
       },
+      "ActivityCommand": {
+        "additionalProperties": false,
+        "description": "暂停、恢复或结束固定修订。",
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/ControlAction"
+          },
+          "activity_ref": {
+            "$ref": "#/components/schemas/ActivityRef"
+          },
+          "expected_activity_revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "activity_ref",
+          "expected_activity_revision",
+          "action"
+        ],
+        "title": "ActivityCommand",
+        "type": "object"
+      },
+      "ActivityControlReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ActivityControlResult"
+          }
+        },
+        "required": [
+          "request_ref",
+          "result"
+        ],
+        "title": "ActivityControlReceipt",
+        "type": "object"
+      },
+      "ActivityControlResult": {
+        "additionalProperties": false,
+        "properties": {
+          "committed_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Committed Refs",
+            "type": "array"
+          },
+          "current": {
+            "$ref": "#/components/schemas/CurrentConversation"
+          },
+          "outcome": {
+            "enum": [
+              "changed",
+              "stopped",
+              "already_committed"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          }
+        },
+        "required": [
+          "current",
+          "outcome",
+          "committed_refs"
+        ],
+        "title": "ActivityControlResult",
+        "type": "object"
+      },
+      "ActivityNotice": {
+        "additionalProperties": false,
+        "description": "已保存的活动变动提示。",
+        "properties": {
+          "part_id": {
+            "title": "Part Id",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "type": {
+            "const": "activity_notice",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "part_id",
+          "type",
+          "text"
+        ],
+        "title": "ActivityNotice",
+        "type": "object"
+      },
+      "ActivityPage": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityView"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "ActivityPage",
+        "type": "object"
+      },
+      "ActivityRef": {
+        "additionalProperties": false,
+        "description": "固定活动运行修订。",
+        "properties": {
+          "activity_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          }
+        },
+        "required": [
+          "activity_id",
+          "revision"
+        ],
+        "title": "ActivityRef",
+        "type": "object"
+      },
       "ActivityType": {
         "enum": [
           "explanation",
@@ -63,6 +212,74 @@
           "free_chat"
         ],
         "type": "string"
+      },
+      "ActivityView": {
+        "additionalProperties": false,
+        "description": "目录和当前路径共同使用的活动摘要。",
+        "properties": {
+          "activity_ref": {
+            "$ref": "#/components/schemas/ActivityRef"
+          },
+          "first_message_ref": {
+            "format": "uuid",
+            "title": "First Message Ref",
+            "type": "string"
+          },
+          "has_children": {
+            "title": "Has Children",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "node_id": {
+            "title": "Node Id",
+            "type": "string"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "root_id": {
+            "format": "uuid",
+            "title": "Root Id",
+            "type": "string"
+          },
+          "run_state": {
+            "$ref": "#/components/schemas/RunState"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ActivityType"
+          }
+        },
+        "required": [
+          "activity_ref",
+          "type",
+          "name",
+          "started_at",
+          "parent_id",
+          "root_id",
+          "node_id",
+          "run_state",
+          "first_message_ref",
+          "has_children"
+        ],
+        "title": "ActivityView",
+        "type": "object"
       },
       "AdoptedMaterialResult": {
         "additionalProperties": false,
@@ -254,6 +471,119 @@
           "output"
         ],
         "title": "AnalysisReceipt",
+        "type": "object"
+      },
+      "AnswerCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "activity_ref": {
+            "$ref": "#/components/schemas/ActivityRef"
+          },
+          "answer": {
+            "$ref": "#/components/schemas/AnswerInput"
+          },
+          "expected_round_revision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Revision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "round_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "submission_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "task_use_ref": {
+            "$ref": "#/components/schemas/Ref"
+          }
+        },
+        "required": [
+          "request_id",
+          "submission_id",
+          "task_use_ref",
+          "activity_ref",
+          "round_ref",
+          "answer"
+        ],
+        "title": "AnswerCommand",
+        "type": "object"
+      },
+      "AnswerInput": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "$ref": "#/components/schemas/Wording"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "AnswerInput",
+        "type": "object"
+      },
+      "AnswerReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "event_ref": {
+            "format": "uuid",
+            "title": "Event Ref",
+            "type": "string"
+          },
+          "feedback_runtime_ref": {
+            "format": "uuid",
+            "title": "Feedback Runtime Ref",
+            "type": "string"
+          },
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          },
+          "result_keys": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Result Keys",
+            "type": "array"
+          },
+          "round_state": {
+            "anyOf": [
+              {
+                "const": "closed",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Round State"
+          },
+          "submission_ref": {
+            "$ref": "#/components/schemas/Ref"
+          }
+        },
+        "required": [
+          "request_ref",
+          "submission_ref",
+          "event_ref",
+          "feedback_runtime_ref"
+        ],
+        "title": "AnswerReceipt",
         "type": "object"
       },
       "AppendMaterial": {
@@ -1726,6 +2056,14 @@
           }
         ]
       },
+      "ControlAction": {
+        "enum": [
+          "pause",
+          "resume",
+          "finish"
+        ],
+        "type": "string"
+      },
       "CourseApplyReceipt": {
         "additionalProperties": false,
         "properties": {
@@ -2407,6 +2745,84 @@
         "title": "CriterionDraft",
         "type": "object"
       },
+      "CurrentConversation": {
+        "additionalProperties": false,
+        "description": "当前活动与正在处理的输入。",
+        "properties": {
+          "active_input_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active Input Id"
+          },
+          "allowed_actions": {
+            "items": {
+              "$ref": "#/components/schemas/ControlAction"
+            },
+            "title": "Allowed Actions",
+            "type": "array"
+          },
+          "current_activity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActivityView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "current_round": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DetectionRoundView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "latest_message_seq": {
+            "title": "Latest Message Seq",
+            "type": "integer"
+          },
+          "path": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityView"
+            },
+            "title": "Path",
+            "type": "array"
+          }
+        },
+        "required": [
+          "current_activity",
+          "path",
+          "active_input_id",
+          "allowed_actions",
+          "latest_message_seq"
+        ],
+        "title": "CurrentConversation",
+        "type": "object"
+      },
+      "CurrentView": {
+        "additionalProperties": false,
+        "properties": {
+          "current": {
+            "$ref": "#/components/schemas/CurrentConversation"
+          }
+        },
+        "required": [
+          "current"
+        ],
+        "title": "CurrentView",
+        "type": "object"
+      },
       "DataCell": {
         "discriminator": {
           "mapping": {
@@ -2687,6 +3103,96 @@
           "expected_version"
         ],
         "title": "DeleteTaskRequest",
+        "type": "object"
+      },
+      "DetectionPlanPart": {
+        "additionalProperties": false,
+        "properties": {
+          "gaps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "part_id": {
+            "title": "Part Id",
+            "type": "string"
+          },
+          "plan_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "question_count": {
+            "title": "Question Count",
+            "type": "integer"
+          },
+          "type": {
+            "const": "detection_plan",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "part_id",
+          "type",
+          "plan_ref",
+          "question_count",
+          "gaps"
+        ],
+        "title": "DetectionPlanPart",
+        "type": "object"
+      },
+      "DetectionPlanRef": {
+        "additionalProperties": false,
+        "properties": {
+          "plan_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          }
+        },
+        "required": [
+          "plan_id",
+          "revision"
+        ],
+        "title": "DetectionPlanRef",
+        "type": "object"
+      },
+      "DetectionRoundView": {
+        "additionalProperties": false,
+        "properties": {
+          "can_continue": {
+            "title": "Can Continue",
+            "type": "boolean"
+          },
+          "plan_ref": {
+            "$ref": "#/components/schemas/DetectionPlanRef"
+          },
+          "round_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "state": {
+            "enum": [
+              "open",
+              "paused",
+              "closed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "task_use_ref": {
+            "$ref": "#/components/schemas/Ref"
+          }
+        },
+        "required": [
+          "round_ref",
+          "task_use_ref",
+          "plan_ref",
+          "state",
+          "can_continue"
+        ],
+        "title": "DetectionRoundView",
         "type": "object"
       },
       "Diagram": {
@@ -4787,6 +5293,93 @@
         "minLength": 1,
         "type": "string"
       },
+      "LearningInputAcceptance": {
+        "additionalProperties": false,
+        "description": "输入及后台工作已经共同保存。",
+        "properties": {
+          "execution_ref": {
+            "format": "uuid",
+            "title": "Execution Ref",
+            "type": "string"
+          },
+          "input_id": {
+            "format": "uuid",
+            "title": "Input Id",
+            "type": "string"
+          },
+          "request_ref": {
+            "format": "uuid",
+            "title": "Request Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_ref",
+          "execution_ref",
+          "input_id"
+        ],
+        "title": "LearningInputAcceptance",
+        "type": "object"
+      },
+      "LearningInputCommand": {
+        "additionalProperties": false,
+        "description": "学生消息首次送达和受理不明时使用同一请求编号。",
+        "properties": {
+          "input": {
+            "$ref": "#/components/schemas/StudentInput"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "input"
+        ],
+        "title": "LearningInputCommand",
+        "type": "object"
+      },
+      "LearningTurnResult": {
+        "additionalProperties": false,
+        "description": "固定已保存的当前回复和此次输入的结束结果。",
+        "properties": {
+          "current": {
+            "$ref": "#/components/schemas/CurrentConversation"
+          },
+          "input_id": {
+            "format": "uuid",
+            "title": "Input Id",
+            "type": "string"
+          },
+          "message_refs": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Message Refs",
+            "type": "array"
+          },
+          "outcome": {
+            "enum": [
+              "completed",
+              "needs_input",
+              "blocked",
+              "failed",
+              "cancelled"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          }
+        },
+        "required": [
+          "input_id",
+          "message_refs",
+          "current",
+          "outcome"
+        ],
+        "title": "LearningTurnResult",
+        "type": "object"
+      },
       "LocalBinding": {
         "additionalProperties": false,
         "properties": {
@@ -5925,6 +6518,126 @@
         "title": "MemberRow",
         "type": "object"
       },
+      "MessagePage": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MessageView"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "last_seq": {
+            "title": "Last Seq",
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "upper_seq": {
+            "title": "Upper Seq",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor",
+          "last_seq",
+          "upper_seq"
+        ],
+        "title": "MessagePage",
+        "type": "object"
+      },
+      "MessagePart": {
+        "discriminator": {
+          "mapping": {
+            "activity_notice": "#/components/schemas/ActivityNotice",
+            "detection_plan": "#/components/schemas/DetectionPlanPart",
+            "question": "#/components/schemas/QuestionPart",
+            "text": "#/components/schemas/TextPart"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/TextPart"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityNotice"
+          },
+          {
+            "$ref": "#/components/schemas/QuestionPart"
+          },
+          {
+            "$ref": "#/components/schemas/DetectionPlanPart"
+          }
+        ]
+      },
+      "MessageView": {
+        "additionalProperties": false,
+        "description": "正式提供的聊天消息。",
+        "properties": {
+          "activity_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActivityRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "committed_at": {
+            "format": "date-time",
+            "title": "Committed At",
+            "type": "string"
+          },
+          "message_id": {
+            "format": "uuid",
+            "title": "Message Id",
+            "type": "string"
+          },
+          "message_seq": {
+            "title": "Message Seq",
+            "type": "integer"
+          },
+          "parts": {
+            "items": {
+              "$ref": "#/components/schemas/MessagePart"
+            },
+            "title": "Parts",
+            "type": "array"
+          },
+          "role": {
+            "enum": [
+              "student",
+              "assistant",
+              "system"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message_id",
+          "message_seq",
+          "role",
+          "parts",
+          "activity_ref",
+          "committed_at"
+        ],
+        "title": "MessageView",
+        "type": "object"
+      },
       "MethodDecision": {
         "additionalProperties": false,
         "properties": {
@@ -6121,6 +6834,40 @@
             "$ref": "#/components/schemas/SolutionDetail"
           }
         ]
+      },
+      "OpenDetectionRound": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "start_detection",
+              "continue_detection"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "activity_ref": {
+            "$ref": "#/components/schemas/ActivityRef"
+          },
+          "expected_activity_revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "plan_ref": {
+            "$ref": "#/components/schemas/DetectionPlanRef"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "action",
+          "activity_ref",
+          "expected_activity_revision",
+          "plan_ref"
+        ],
+        "title": "OpenDetectionRound",
+        "type": "object"
       },
       "OriginalMedia": {
         "enum": [
@@ -6330,6 +7077,19 @@
         "minItems": 2,
         "type": "array"
       },
+      "PrepareDetectionCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id"
+        ],
+        "title": "PrepareDetectionCommand",
+        "type": "object"
+      },
       "Prerequisite": {
         "additionalProperties": false,
         "properties": {
@@ -6361,6 +7121,73 @@
           "applies_to"
         ],
         "title": "Prerequisite",
+        "type": "object"
+      },
+      "PresentationCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "client_reported_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Reported At"
+          },
+          "content_part_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "maxItems": 32,
+            "title": "Content Part Refs",
+            "type": "array"
+          },
+          "presentation_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "resource_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "surface": {
+            "enum": [
+              "chat",
+              "history",
+              "textbook"
+            ],
+            "title": "Surface",
+            "type": "string"
+          }
+        },
+        "required": [
+          "presentation_id",
+          "surface",
+          "resource_ref",
+          "content_part_refs"
+        ],
+        "title": "PresentationCommand",
+        "type": "object"
+      },
+      "PresentationReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "presentation_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "received_at": {
+            "format": "date-time",
+            "title": "Received At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "presentation_ref",
+          "received_at"
+        ],
+        "title": "PresentationReceipt",
         "type": "object"
       },
       "PreviousMaterialBatch": {
@@ -6486,6 +7313,60 @@
           "basis_refs"
         ],
         "title": "PurposeCheck",
+        "type": "object"
+      },
+      "QuestionPart": {
+        "additionalProperties": false,
+        "description": "题目卡片固定本次使用身份，练习和正式检测只带题面。",
+        "properties": {
+          "part_id": {
+            "title": "Part Id",
+            "type": "string"
+          },
+          "purpose": {
+            "enum": [
+              "example",
+              "practice",
+              "detection"
+            ],
+            "title": "Purpose",
+            "type": "string"
+          },
+          "statement": {
+            "$ref": "#/components/schemas/RichContent-Output"
+          },
+          "task_use_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "const": "question",
+            "title": "Type",
+            "type": "string"
+          },
+          "worked_solution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichContent-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "part_id",
+          "type",
+          "title",
+          "purpose",
+          "task_use_ref",
+          "statement"
+        ],
+        "title": "QuestionPart",
         "type": "object"
       },
       "Readiness": {
@@ -6868,6 +7749,12 @@
                 "$ref": "#/components/schemas/SpaceOpenResult"
               },
               {
+                "$ref": "#/components/schemas/ActivityControlResult"
+              },
+              {
+                "$ref": "#/components/schemas/LearningTurnResult"
+              },
+              {
                 "type": "null"
               }
             ],
@@ -6884,7 +7771,7 @@
         "required": [
           "receipt_state"
         ],
-        "title": "ReceiptView[Union[ConfirmationResult, SaveResult, ConfirmKCPathResult, MaterialResult, MaterialTurnResult, AdoptedMaterialResult, IntakeSubmissionView, AnalysisReceipt, IntakeActionResult, InstanceView, ChapterAssociationResult, MaterialDeletionResult, ClaimResult, ConfigResult, TargetDetail, CourseCheckResult, CourseApplyResult, SpaceOpenResult]]",
+        "title": "ReceiptView[Union[ConfirmationResult, SaveResult, ConfirmKCPathResult, MaterialResult, MaterialTurnResult, AdoptedMaterialResult, IntakeSubmissionView, AnalysisReceipt, IntakeActionResult, InstanceView, ChapterAssociationResult, MaterialDeletionResult, ClaimResult, ConfigResult, TargetDetail, CourseCheckResult, CourseApplyResult, SpaceOpenResult, ActivityControlResult, LearningTurnResult]]",
         "type": "object"
       },
       "RequiredFact": {
@@ -6956,6 +7843,23 @@
           "strategies"
         ],
         "title": "ResolvedActivityConfig",
+        "type": "object"
+      },
+      "RetryLearningWork": {
+        "additionalProperties": false,
+        "properties": {
+          "execution_ref": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "execution_ref"
+        ],
+        "title": "RetryLearningWork",
         "type": "object"
       },
       "ReviseTarget": {
@@ -7152,6 +8056,17 @@
         ],
         "title": "RuleDefinition",
         "type": "object"
+      },
+      "RunState": {
+        "enum": [
+          "active",
+          "waiting_child",
+          "paused",
+          "completed",
+          "cancelled",
+          "blocked"
+        ],
+        "type": "string"
       },
       "SaveAspectRule": {
         "additionalProperties": false,
@@ -8148,8 +9063,8 @@
         },
         "required": [
           "space",
-          "created",
           "adoption",
+          "created",
           "entry_event_ref"
         ],
         "title": "SpaceOpenResult",
@@ -8228,6 +9143,47 @@
         "title": "SpaceRow",
         "type": "object"
       },
+      "SpaceWorkspace": {
+        "additionalProperties": false,
+        "properties": {
+          "adoption": {
+            "$ref": "#/components/schemas/AdoptionView"
+          },
+          "space": {
+            "$ref": "#/components/schemas/SpaceRow"
+          }
+        },
+        "required": [
+          "space",
+          "adoption"
+        ],
+        "title": "SpaceWorkspace",
+        "type": "object"
+      },
+      "StopReply": {
+        "additionalProperties": false,
+        "description": "停止当前输入继续提交结果，保留已经保存的事实。",
+        "properties": {
+          "action": {
+            "const": "stop_reply",
+            "title": "Action",
+            "type": "string"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "target_input_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          }
+        },
+        "required": [
+          "request_id",
+          "action",
+          "target_input_id"
+        ],
+        "title": "StopReply",
+        "type": "object"
+      },
       "StrategyDefinition": {
         "additionalProperties": false,
         "properties": {
@@ -8276,6 +9232,44 @@
           "enabled"
         ],
         "title": "StrategyDefinition",
+        "type": "object"
+      },
+      "StudentInput": {
+        "additionalProperties": false,
+        "description": "保持实际输入原文，当前浏览位置不进入引用。",
+        "properties": {
+          "attachment_refs": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "title": "Attachment Refs",
+            "type": "array"
+          },
+          "explicit_refs": {
+            "items": {
+              "$ref": "#/components/schemas/Ref"
+            },
+            "title": "Explicit Refs",
+            "type": "array"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "required": [
+          "text",
+          "attachment_refs",
+          "explicit_refs"
+        ],
+        "title": "StudentInput",
         "type": "object"
       },
       "SubjectKind": {
@@ -8961,6 +9955,32 @@
           "gaps"
         ],
         "title": "TaskView",
+        "type": "object"
+      },
+      "TextPart": {
+        "additionalProperties": false,
+        "description": "消息中的原样文字。",
+        "properties": {
+          "part_id": {
+            "title": "Part Id",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "type": {
+            "const": "text",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "part_id",
+          "type",
+          "text"
+        ],
+        "title": "TextPart",
         "type": "object"
       },
       "TextSpan": {
@@ -15617,6 +16637,1397 @@
         ]
       }
     },
+    "/api/m1/learning-spaces/{scope_id}/activity-actions": {
+      "post": {
+        "operationId": "interaction_control_activity",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scope_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scope Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "discriminator": {
+                  "mapping": {
+                    "continue_detection": "#/components/schemas/OpenDetectionRound",
+                    "finish": "#/components/schemas/ActivityCommand",
+                    "pause": "#/components/schemas/ActivityCommand",
+                    "resume": "#/components/schemas/ActivityCommand",
+                    "start_detection": "#/components/schemas/OpenDetectionRound",
+                    "stop_reply": "#/components/schemas/StopReply"
+                  },
+                  "propertyName": "action"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ActivityCommand"
+                  },
+                  {
+                    "$ref": "#/components/schemas/StopReply"
+                  },
+                  {
+                    "$ref": "#/components/schemas/OpenDetectionRound"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityControlReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Control Activity",
+        "tags": [
+          "interaction"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{scope_id}/answers": {
+      "post": {
+        "operationId": "interaction_submit_answer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scope_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scope Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Submit Answer",
+        "tags": [
+          "interaction"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{scope_id}/conversation": {
+      "get": {
+        "operationId": "interaction_query_conversation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scope_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scope Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "view",
+            "required": true,
+            "schema": {
+              "enum": [
+                "current",
+                "activity_tree",
+                "messages"
+              ],
+              "title": "View",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "activity_ref",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Activity Ref"
+            }
+          },
+          {
+            "in": "query",
+            "name": "anchor_message_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Anchor Message Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after_seq",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "title": "After Seq",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/CurrentView"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ActivityPage"
+                    },
+                    {
+                      "$ref": "#/components/schemas/MessagePage"
+                    }
+                  ],
+                  "title": "Response Interaction Query Conversation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Query Conversation",
+        "tags": [
+          "interaction"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{scope_id}/detection-plans": {
+      "post": {
+        "operationId": "interaction_prepare_detection",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scope_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scope Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareDetectionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearningInputAcceptance"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Prepare Detection",
+        "tags": [
+          "interaction"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{scope_id}/input-retries": {
+      "post": {
+        "operationId": "interaction_retry_work",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scope_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scope Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetryLearningWork"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearningInputAcceptance"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Retry Input",
+        "tags": [
+          "interaction"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{scope_id}/inputs": {
+      "post": {
+        "operationId": "interaction_handle_input",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scope_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scope Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LearningInputCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearningInputAcceptance"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Handle Input",
+        "tags": [
+          "interaction"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{scope_id}/presentations": {
+      "post": {
+        "operationId": "interaction_record_presentation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scope_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scope Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresentationCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresentationReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Record Presentation",
+        "tags": [
+          "interaction"
+        ]
+      }
+    },
     "/api/m1/learning-spaces/{space_id}": {
       "get": {
         "operationId": "product_space_adoption",
@@ -16322,6 +18733,165 @@
           }
         },
         "summary": "Space Goal",
+        "tags": [
+          "courses-and-spaces"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{space_id}/workspace": {
+      "get": {
+        "operationId": "product_read_space_workspace",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "space_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Space Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceWorkspace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Space Workspace",
         "tags": [
           "courses-and-spaces"
         ]

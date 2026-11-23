@@ -1,11 +1,11 @@
 # M1 事件与消息载荷
 
-> **版本**：v0.14<br>
+> **版本**：v0.17<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.13 → v0.14，登记进入空间回执所需的创建标记<br>
+> **修订说明**：v0.16 → v0.17，登记求助处置与题单取消的提交边界<br>
 
 本分册是事件信封、类型化动作字段与通知结构的唯一字段定义；完整事实正文及投影登记见[事件正文合同](Event_Facts.md)。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
 
@@ -231,11 +231,13 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 | `task_ref` | ObjectRef(task) | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `allowed_method_refs` | ObjectRef(solution)[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `assessment_constraints_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `assessment_constraints` | string或null | 是 | 本次可供判定的文字限制，null表示无额外条件 |
 | `method_source_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 | `exposure_refs` | Ref[] | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
+| `exposed_instances` | Ref[]或null | 是 | 本次能核实的已接触题版本；null表示无法核实，空数组表示已核对且无相关题 |
 | `count` | int | 是；正数 | 需提供的题量 |
 
-复杂条件通过固定supply_input_ref读取Domain§5.2输入；exposure_refs=[]只在确认无经历时使用，未知须带输入缺口。
+`supply_input_ref` 固定原需求依据。Domain 使用本事件的条件和接触范围，接触史未知时保存明确缺口。
 
 <a id="domaintasksupplycompleted"></a>
 ### 3.10 `DomainTaskSupplyCompleted`
@@ -251,6 +253,10 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 | `result_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
 
 空批是合法业务结果，技术失败不是空批；取回后仍需条件复核，检测先确认题单。
+
+#### 供题内部留痕
+
+`DomainTaskSupplyPrepared` 固定本次输入及已选库存的用途检查。`DomainTaskSupplyChecked` 保存通过复核的新题检查。两事件均归属学习空间，由 Domain 追加，包含 `trigger_event_id`、`input_artifact_ref` 和 `use_check_refs`。它们用于核对来源，接续依据是完成事件和已保存批次。
 
 <a id="answersubmitted"></a>
 ### 3.11 `AnswerSubmitted`
@@ -572,6 +578,8 @@ Domain只处理仍pending的受影响待办；已入库定义保持。
 
 消费方式：Evaluation经源事件取证，不直接触发评价。
 
+开放轮内求助时先保存 `DetectionRoundClosed`，同批追加 handled。若轮已因提交而关闭，保留原作答及闭轮原因，handled 可携带取消剩余题单的进度。provided 只能在保存正式回应时追加。
+
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `help_ref` | Ref | 是 | 按字段类型保存事实值或对象身份；引用不授予原文读取权限 |
@@ -881,7 +889,9 @@ Product完成章节添加、编辑或取消关联时产生，作用域为 `textb
 | MaterialIntakeStatusUpdated | received/rejected | submission_id、domain_event_id、domain_receipt_ref、outcome 必填。Domain事件同时登记为信封的原因 |
 | ApplicationChecked | ready/blocked | 无；完整检查项在正文 |
 | AccountSignedOut | signed_out/invalidated | account_id:ID、session_id:ID，必填；不能包含会话秘密 |
-| InteractionInputCompleted | completed/failed | 无；失败原因不可为空 |
+| InteractionInputAccepted | 见固定受理结果 | `input_ref`、`adoption_ref`、`acceptance`。自然输入的受理结果包含原请求、工作和输入 ID；同步控制为空 |
+| InteractionInputCompleted | 由正式结果给出 | `input_ref`、`result_ref`，以及同步控制或学习回复结果。学习回复记录完成、需补充、受限、失败或停止 |
+| MessageAssigned | 已确定 | `message_ref`、`activity_ref`；正文保存归属行 |
 | ProactiveCheckCompleted | suggested/no_action/blocked | 无 |
 | AICallChanged / ModelRequestChanged / ToolActionChanged | started/completed/failed/cancelled/unknown/denied | reason_code按结果填写；unknown保留未确认边界 |
 | ExecutionStateChanged | accepted/started/stopped/failed/completed/recovery_accepted/progress_saved | 无 |
@@ -1038,3 +1048,6 @@ runtime运行留痕的records使用固定DTO，逐事件数量及条件见正文
 | v0.12 | 2026-11-22 | 登记教材提交、领域受理和教材端状态回写 |
 | v0.13 | 2026-11-22 | 对齐固定分析输入、归类、正式入库和章节关联的事件正文 |
 | v0.14 | 2026-11-23 | 登记 LearningSpaceEntered 的创建标记 |
+| v0.15 | 2026-11-23 | 登记学生输入、正式结果和消息归属的动作字段 |
+| v0.16 | 2026-11-23 | 登记供题的固定条件、输入和复核事实 |
+| v0.17 | 2026-11-23 | 登记求助、先前作答与取消剩余题单的事件职责 |

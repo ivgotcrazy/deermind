@@ -6,9 +6,28 @@ from uuid import UUID
 from deermind.foundation.system.public.errors import Issue, RequestError
 from deermind.spaces.interaction.public import (
     BlueprintDefinition,
+    BlueprintNode,
     LocalBinding,
     ResolvedActivityConfig,
 )
+
+
+def entry_node(blueprint: BlueprintDefinition) -> BlueprintNode | None:
+    """只自动通过不需要运行事实或语义判断的开始转移。"""
+    edges = sorted(
+        (
+            edge
+            for edge in blueprint.transitions
+            if edge.source_node_id == "start" and edge.when == "on_enter"
+        ),
+        key=lambda edge: edge.order,
+    )
+    if not edges:
+        return None
+    first = edges[0]
+    if first.target_node_id == "end" or first.required_facts or first.condition_text:
+        return None
+    return next(node for node in blueprint.nodes if node.node_id == first.target_node_id)
 
 
 def _reach(start: str, edges: dict[str, set[str]]) -> set[str]:

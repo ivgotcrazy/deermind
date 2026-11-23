@@ -2,13 +2,19 @@
 import { ref } from 'vue';
 import type { components } from '../../../contracts/generated/http/schema';
 import { get, post } from '../shared/api/http';
-import AdoptedChapter from '../shared/content/AdoptedChapter.vue';
+import type { Realtime } from '../shared/realtime/client';
+import LearningWorkspace from './layouts/LearningWorkspace.vue';
 
 type Schema = components['schemas'];
-const props = defineProps<{ session: Pick<Schema['SessionView'], 'session_id' | 'csrf_token'> }>();
+const props = defineProps<{
+  realtime: Pick<Realtime, 'watch'>;
+  session: Pick<Schema['SessionView'], 'session_id' | 'csrf_token'> & {
+    account: Pick<Schema['SessionView']['account'], 'account_id'>;
+  };
+}>();
 const courses = ref<Schema['CourseOption'][]>();
 const spaces = ref<Schema['SpaceRow'][]>([]);
-const opened = ref<Schema['SpaceOpenResult']>();
+const opened = ref<Schema['SpaceWorkspace']>();
 const error = ref('');
 const busy = ref(false);
 const next = ref<string>();
@@ -28,7 +34,31 @@ async function load(cursor?: string) {
     error.value = (caught as Error).message;
   }
 }
-void load();
+function reflectSpace(space?: string) {
+  const url = new URL(window.location.href);
+  if (space) url.searchParams.set('space', space);
+  else url.searchParams.delete('space');
+  window.history.replaceState(window.history.state, '', url);
+}
+
+async function restoreWorkspace(space: string) {
+  busy.value = true;
+  try {
+    opened.value = await get('/api/m1/learning-spaces/{space_id}/workspace', {
+      session: props.session,
+      params: { space_id: space },
+    });
+  } catch {
+    reflectSpace();
+    await load();
+  } finally {
+    busy.value = false;
+  }
+}
+
+const savedSpace = new URL(window.location.href).searchParams.get('space');
+if (savedSpace) void restoreWorkspace(savedSpace);
+else void load();
 
 async function open(command: Schema['CreateSpace'] | Schema['EnterSpace']) {
   busy.value = true;
@@ -37,6 +67,7 @@ async function open(command: Schema['CreateSpace'] | Schema['EnterSpace']) {
     opened.value = (
       await post('/api/m1/learning-spaces/open', command, { session: props.session })
     ).result;
+    reflectSpace(opened.value.space.space_id);
   } catch (caught) {
     error.value = (caught as Error).message;
   } finally {
@@ -89,16 +120,18 @@ function enterSpace(space: Schema['SpaceRow']) {
         type="button"
         @click="
           opened = undefined;
+          reflectSpace();
           load();
         "
       >
         返回课程列表
       </button>
-      <h2>{{ opened.space.textbook_title }} · {{ opened.space.target_title }}</h2>
-      <AdoptedChapter
+      <LearningWorkspace
+        :key="opened.space.space_id"
         :session="session"
-        :space="opened.space.space_id"
-        :chapters="opened.adoption.snapshot.chapters"
+        :account-id="session.account.account_id"
+        :realtime="realtime"
+        :opened="opened"
       />
     </template>
   </section>

@@ -1,11 +1,11 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.17<br>
+> **版本**：v0.19<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.16 → v0.17，同步 Task 定义和目标文字范围的正文合同<br>
+> **修订说明**：v0.18 → v0.19，登记检测求助及题单进度记录<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
@@ -192,6 +192,8 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | `ActivityChanged` | `interaction.activities`[0..1]；`interaction.activity_revisions`[1]；`interaction.round_revisions`[0..1]；`interaction.plan_progress`[0..n] | 首次活动含activities；暂停/恢复开放轮时含该轮新修订；取消无开放轮题单时含其进度；有开放轮则由DetectionRoundClosed唯一保存该题单进度 |
 | `TaskSupplyRequested` | 无 | 供题要求及精确材料引用在类型化payload；不创建实例 |
 | `DomainTaskSupplyCompleted` | `domain.supply_batch`[1] | 批结果含合格实例及未满足项；新实例另由DomainInstanceSaved登记 |
+| `DomainTaskSupplyPrepared` | `domain.artifact`[1..n] | 固定一个输入，另含各已选库存题的用途检查 |
+| `DomainTaskSupplyChecked` | `domain.artifact`[1..n] | 通过复核的新题检查；供题完成由批次事件登记 |
 | `AnswerSubmitted` | `interaction.submissions`[1] | 身份等于submission_ref；answer保存完整提交，不用EventPartRef替代必填正文 |
 | `TeachingOpportunityClosed` | `interaction.opportunity_closures`[1] | 机会身份等于opportunity_id；不重复创建teaching_opportunities |
 | `BeliefEvaluationCompleted` | `evaluation.evidence`[0..n]；`evaluation.belief_revision`[0..n]；`evaluation.mastery_snapshot`[1] | Evidence/修订集合分别等于payload引用集合；合法完成总有新快照；跳过数值更新时修订为0 |
@@ -212,7 +214,7 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | `DetectionPlanPrepared` | `interaction.detection_plans`[0..1]；`interaction.plan_revisions`[1]；`interaction.plan_progress`[1..n] | 首次含plan；每次含新内容修订及prepared进度；替代旧修订时同时含其superseded进度 |
 | `TaskUseCreated` | `interaction.task_uses`[1] | 本次task_use_ref；同批轮事件仅引用，不再复制正文 |
 | `PresentationRecorded` | `interaction.presentations`[1] | 原回执及未知项；不补写教学或评价结论 |
-| `HelpHandled` | `interaction.help_facts`[1] | 主键=(help_id,stage)；handled与provided各自一条，内容与stage一致 |
+| `HelpHandled` | `interaction.help_facts`[1]；`interaction.plan_progress`[0..1] | 主键=(help_id,stage)。如已有轮因提交关闭，handled可携带其题单取消进度；保留原关闭原因和作答 |
 | `ChatMessageRecorded` | `interaction.messages`[1] | message_ref对应完整parts；活动归属另由MessageAssigned保存 |
 | `InteractionInputStopped` | `interaction.input_results`[1] | 取消结果指原input_id；已受理输入不重写；已有回复不重复保存 |
 | `DetectionRoundClosed` | `interaction.round_revisions`[1]；`interaction.plan_progress`[1] | round变closed；更新所属固定题单修订的进度，不追加题单内容版本 |
@@ -339,3 +341,5 @@ M1只提供受控维护重建，不新增管理页面。业务生成器先按§3
 | v0.15 | 2026-11-22 | 登记领域分析固定输入和待办处理组合 |
 | v0.16 | 2026-11-23 | 登记活动配置、课程采用及目标计算的记录映射 |
 | v0.17 | 2026-11-23 | 同步 Task 定义和目标文字范围的正文合同 |
+| v0.18 | 2026-11-23 | 登记供题输入、库存用途检查与新题复核正文 |
+| v0.19 | 2026-11-23 | 登记求助事件携带已关闭轮的剩余题单取消记录 |

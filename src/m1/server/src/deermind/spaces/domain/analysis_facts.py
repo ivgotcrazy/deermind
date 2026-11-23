@@ -28,7 +28,7 @@ ARTIFACT = "domain.artifact"
 class AnalysisArtifact(FactModel):
     artifact_id: UUID
     domain_id: UUID
-    kind: Literal["input", "definition_candidate", "classification_check"]
+    kind: Literal["input", "definition_candidate", "classification_check", "use_check"]
     input_ref: Ref
     definition_refs: list[Ref]
     payload: dict[str, JsonValue]

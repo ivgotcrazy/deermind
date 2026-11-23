@@ -25,6 +25,7 @@ from deermind.product.public.courses import (
     SpaceGoalView,
     SpaceList,
     SpaceReceipt,
+    SpaceWorkspace,
 )
 from fastapi import APIRouter, Query, Request, Response
 from pydantic import JsonValue
@@ -188,6 +189,23 @@ async def space_adoption(
     account = await reader(request, response, expected)
     service: LearningSpaceService = request.app.state.course_spaces
     return await service.current_adoption(account, space_id)
+
+
+@router.get(
+    "/learning-spaces/{space_id}/workspace",
+    response_model=SpaceWorkspace,
+    responses=ERRORS,
+    operation_id="product_read_space_workspace",
+)
+async def space_workspace(
+    request: Request,
+    response: Response,
+    space_id: UUID,
+    expected: ExpectedSession = None,
+) -> SpaceWorkspace:
+    account = await reader(request, response, expected, student_only=True)
+    service: LearningSpaceService = request.app.state.course_spaces
+    return await service.workspace(account, space_id)
 
 
 @router.get(

@@ -1,6 +1,6 @@
 images:
-  server: deermind/server:e03-task-text-r1
-  client: deermind/client:e03-task-text-r1
+  server: deermind/server:e04-16-r2
+  client: deermind/client:e04-16-r2
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
 filesClaim: deermind-files
@@ -18,6 +18,11 @@ messaging:
   deployment: local-wsl
   existingSecret: deermind-nats
 materialAssistant:
+  enabled: true
+  model: deepseek-flash
+  existingSecret: deermind-material-model
+
+studentAssistant:
   enabled: true
   model: deepseek-flash
   existingSecret: deermind-material-model

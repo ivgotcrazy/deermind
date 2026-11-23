@@ -7,6 +7,8 @@ from typing import Any
 from deermind.bootstrap.domain_operation import DomainAnalysisWorkflow
 from deermind.bootstrap.material_operation import MaterialWorkflow
 from deermind.bootstrap.settings import Settings
+from deermind.bootstrap.student_operation import StudentWorkflow
+from deermind.bootstrap.supply_operation import SupplyWorkflow
 from deermind.infrastructure.temporal.executions import Lifecycle
 from deermind.infrastructure.temporal.probe import StorageProbe
 from deermind.infrastructure.temporal.probe_activity import ProbeActivity
@@ -28,7 +30,13 @@ def create_worker(
     return Worker(
         client,
         task_queue=settings.task_queue,
-        workflows=[StorageProbe, MaterialWorkflow, DomainAnalysisWorkflow]
+        workflows=[
+            StorageProbe,
+            MaterialWorkflow,
+            DomainAnalysisWorkflow,
+            StudentWorkflow,
+            SupplyWorkflow,
+        ]
         if material
         else [StorageProbe],
         activities=[ProbeActivity(settings.files_root).reply]

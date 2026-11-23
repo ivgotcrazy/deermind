@@ -111,6 +111,7 @@ class ApiContractTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(
             {item["$ref"] for item in result_types if "$ref" in item},
             {
+                "#/components/schemas/ActivityControlResult",
                 "#/components/schemas/AdoptedMaterialResult",
                 "#/components/schemas/AnalysisReceipt",
                 "#/components/schemas/ChapterAssociationResult",
@@ -125,6 +126,7 @@ class ApiContractTests(unittest.IsolatedAsyncioTestCase):
                 "#/components/schemas/InstanceView",
                 "#/components/schemas/IntakeActionResult",
                 "#/components/schemas/IntakeSubmissionView",
+                "#/components/schemas/LearningTurnResult",
                 "#/components/schemas/MaterialDeletionResult",
                 "#/components/schemas/MaterialResult",
                 "#/components/schemas/MaterialTurnResult",

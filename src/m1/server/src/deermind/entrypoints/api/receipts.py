@@ -44,8 +44,14 @@ from deermind.spaces.domain.public import (
     SaveResult,
 )
 from deermind.spaces.evaluation.public import MANAGE_CLAIM, ClaimResult
-from deermind.spaces.interaction.public import MANAGE_ACTIVITY, ConfigResult
+from deermind.spaces.interaction.public import (
+    MANAGE_ACTIVITY,
+    ActivityControlResult,
+    ConfigResult,
+    LearningTurnResult,
+)
 from fastapi import APIRouter, Header, Query, Request, Response
+from pydantic import TypeAdapter
 
 router = APIRouter(prefix="/api/m1", tags=["requests"])
 type RequestReceipt = ReceiptView[
@@ -67,7 +73,10 @@ type RequestReceipt = ReceiptView[
     | CourseCheckResult
     | CourseApplyResult
     | SpaceOpenResult
+    | ActivityControlResult
+    | LearningTurnResult
 ]
+_RECEIPT = TypeAdapter(RequestReceipt)
 
 
 @router.get(
@@ -113,23 +122,4 @@ async def receipt(
     readers: RequestReceipts = request.app.state.receipts
     result = await readers.read(session.account.account_id, session.session_id, query)
     response.headers["Cache-Control"] = "no-store"
-    return ReceiptView[
-        ConfirmationResult
-        | SaveResult
-        | ConfirmKCPathResult
-        | MaterialResult
-        | MaterialTurnResult
-        | AdoptedMaterialResult
-        | IntakeSubmissionView
-        | AnalysisReceipt
-        | IntakeActionResult
-        | InstanceView
-        | ChapterAssociationResult
-        | MaterialDeletionResult
-        | ClaimResult
-        | ConfigResult
-        | TargetDetail
-        | CourseCheckResult
-        | CourseApplyResult
-        | SpaceOpenResult
-    ].model_validate(result.model_dump())
+    return _RECEIPT.validate_python(result.model_dump())

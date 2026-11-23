@@ -1,10 +1,10 @@
 # deermind 数据库：交互空间数据字典
 
-> **版本**：v0.6<br>
-> **状态**：事件合同评审修订稿；容量与保留候选待确认，未编码<br>
+> **版本**：v0.8<br>
+> **状态**：字段设计；已实施表和集群验证见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.5 → v0.6，统一活动类型的协议值<br>
+> **修订说明**：v0.7 → v0.8，登记同一输入各次执行的结果键<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **35 张表、306 个列定义**。处理流程、接口和业务载荷由[Interaction_Space_Design.md](../Interaction_Space_Design.md) §1.3、§2.4、§3.7—3.9、§4.3、§5.3、§6.3、§7.1维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -268,7 +268,7 @@ erDiagram
 | --- | --- | --- | --- | --- |
 | `result_id` | `uuid` | 否 | 无 | 结果身份；主键组成字段 |
 | `input_id` | `uuid` | 否 | 无 | 受理输入；FK → `interaction.inputs.input_id` |
-| `step_key` | `text` | 否 | 无 | 该输入中稳定结果步骤键 |
+| `step_key` | `text` | 否 | 无 | 输入内的稳定结果键。首次回复为 reply，恢复尝试为 reply:尝试序号；控制结果用其原步骤键 |
 | `outcome` | `text` | 否 | 无 | completed、needs_input、blocked、failed、cancelled |
 | `message_refs` | `jsonb` | 否 | '[]'::jsonb | 本次正式回复；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `activity_revision_refs` | `jsonb` | 否 | '[]'::jsonb | 本次活动变化；Ref[]，固定版本；空数组表示没有，不表示未知 |
@@ -867,7 +867,7 @@ LLM提议与程序采用结果。
 | `scope_id` | `uuid` | 否 | 无 | 学习空间身份；逻辑引用 product.learning_space.space_id |
 | `input_ref` | `uuid` | 是 | 无 | 当前输入；FK → `interaction.inputs.input_id` |
 | `source_trigger_ref` | `uuid` | 是 | 无 | 系统事实来源 |
-| `activity_revision_ref` | `jsonb` | 否 | 无 | 处理前活动依据；Ref，见总册§3 |
+| `activity_revision_ref` | `jsonb` | 是 | 无 | 处理前活动修订。已有活动时必填；首次判断是否开启活动时为空。采用结果中保存本次产生的修订 |
 | `context_bundle_id` | `uuid` | 否 | 无 | 使用的上下文；FK → `interaction.context_bundles.bundle_id` |
 | `ai_candidate_ref` | `jsonb` | 是 | 无 | AI候选；规则确定的控制可空；Ref，见总册§3 |
 | `proposal` | `jsonb` | 否 | 无 | Interaction§3.5：动作、节点转移、教学语义判断和原文依据 |
@@ -1097,3 +1097,5 @@ LLM提议与程序采用结果。
 | v0.4 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.5 | 2026-11-15 | 补齐事件正文、记录映射、状态或读取边界；容量及保留候选仍待确认。仅文档修订，见MVP决定登记§98。 |
 | v0.6 | 2026-11-23 | 对齐答疑活动类型的协议值 |
+| v0.7 | 2026-11-23 | 明确首次讲解决策如何保存活动依据 |
+| v0.8 | 2026-11-23 | 明确失败恢复分次保存结果并沿用原输入、原收据 |

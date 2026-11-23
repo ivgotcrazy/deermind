@@ -32,9 +32,18 @@ from deermind.spaces.domain.facts import DOMAIN_SAVED
 from deermind.spaces.domain.instance_facts import REGISTRATIONS as DOMAIN_INSTANCES
 from deermind.spaces.domain.intake import REGISTRATIONS as DOMAIN_INTAKE
 from deermind.spaces.domain.kc_path_facts import PATH_REGISTRATIONS
+from deermind.spaces.domain.supply_facts import REGISTRATIONS as TASK_SUPPLY
 from deermind.spaces.evaluation.definition_facts import REGISTRATION as CLAIM_DEFINITION
 from deermind.spaces.evaluation.goal_facts import REGISTRATION as GOAL_RESULT
 from deermind.spaces.interaction.config_facts import REGISTRATION as ACTIVITY_CONFIG
+from deermind.spaces.interaction.conversation_facts import REGISTRATIONS as CONVERSATION
+from deermind.spaces.interaction.detection_plans import REGISTRATION as DETECTION_PLAN
+from deermind.spaces.interaction.help_facts import REGISTRATION as HELP_HANDLED
+from deermind.spaces.interaction.memory_facts import REGISTRATION as INTERACTION_MEMORY
+from deermind.spaces.interaction.provision_facts import REGISTRATIONS as TEACHING_PROVISION
+from deermind.spaces.interaction.round_facts import CLOSE_REGISTRATION, START_REGISTRATION
+from deermind.spaces.interaction.supply_facts import REGISTRATION as SUPPLY_REQUEST
+from deermind.spaces.interaction.task_facts import REGISTRATIONS as TASK_FACTS
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 REGISTRATIONS = [
@@ -64,6 +73,16 @@ REGISTRATIONS = [
     *PATH_REGISTRATIONS,
     CLAIM_DEFINITION,
     ACTIVITY_CONFIG,
+    *CONVERSATION,
+    SUPPLY_REQUEST,
+    *TASK_FACTS,
+    DETECTION_PLAN,
+    START_REGISTRATION,
+    CLOSE_REGISTRATION,
+    HELP_HANDLED,
+    *TEACHING_PROVISION,
+    INTERACTION_MEMORY,
+    *TASK_SUPPLY,
     *AI_REGISTRATIONS,
 ]
 

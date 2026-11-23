@@ -52,6 +52,22 @@
 | E03-07 | 初始目标计算 | [目标初始状态](E03-07-initial-goal.md) |
 | E03-08 | 目标采用及重评 | [迟到和重复投递](E03-08-target-reassessment.md) |
 | E03-09 | 管理端学习空间 | [教材、目标和事件复验](E03-09-space-review.md) |
+| E04-01 | 学生单页布局、换章及展开状态恢复 | [学生工作区验证](E04-01-student-workspace.md) |
+| E04-02 | 活动目录、暂停恢复和历史定位 | [活动森林验证](E04-02-activity-history.md) |
+| E04-03 | 学生输入受理、回执补读和停止 | [学生输入验证](E04-03-student-input.md) |
+| E04-04 | 自由交谈、澄清与模型失败收尾 | [自由交谈验证](E04-04-free-chat.md) |
+| E04-05 | 按蓝图讲解、配置固定与未知条件 | [讲解验证](E04-05-explanation.md) |
+| E04-06 | 答疑与讲解嵌套、逐层返回 | [嵌套活动验证](E04-06-nested-activities.md) |
+| E04-07 | 按用途、方法与接触情况供给已有题 | [已有题供给验证](E04-07-existing-questions.md) |
+| E04-08 | 缺题生成、独立检查与保存 | [生成题验证](E04-08-generated-questions.md) |
+| E04-09 | 例题、练习、作答和当题反馈 | [练习反馈验证](E04-09-practice-feedback.md) |
+| E04-10 | 独立及聊天入口准备题单 | [题单准备验证](E04-10-detection-plans.md) |
+| E04-11 | 确认题单、开启和复查检测轮 | [开轮验证](E04-11-detection-rounds.md) |
+| E04-12 | 正式作答、续轮和当题反馈 | [作答验证](E04-12-detection-answers.md) |
+| E04-13 | 检测中求助、闭轮与返回 | [求助验证](E04-13-detection-help.md) |
+| E04-14 | 正式教学收束、延迟呈现和回执防重 | [教学事实验证](E04-14-teaching-provision.md) |
+| E04-15 | 长对话摘要、暂停恢复和教材显式引用 | [记忆与引用验证](E04-15-working-memory.md) |
+| E04-16 | 四分之一三情境、刷新和反馈故障恢复 | [主线回归验证](E04-16-quarter-learning-path.md) |
 
 ## 查阅规则
 

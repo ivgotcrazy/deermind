@@ -7,9 +7,14 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from deermind.bootstrap import runtime
-from deermind.bootstrap.courses import configure_goals
+from deermind.bootstrap.courses import (
+    configure_conversation,
+    configure_courses,
+    configure_goals,
+    configure_student_turns,
+)
 from deermind.bootstrap.database import database_lifespan
-from deermind.bootstrap.domain import configure_domain
+from deermind.bootstrap.domain import configure_domain, configure_task_supply
 from deermind.bootstrap.domain_operation import PURPOSE, DomainAnalysisActivities
 from deermind.bootstrap.evaluation import (
     configure_activity_configs,
@@ -29,6 +34,9 @@ from deermind.bootstrap.materials import (
 from deermind.bootstrap.messaging import subscriptions
 from deermind.bootstrap.services import create_worker
 from deermind.bootstrap.settings import Settings
+from deermind.bootstrap.student_operation import PURPOSE as STUDENT_PURPOSE
+from deermind.bootstrap.student_operation import StudentActivities, configure_detection
+from deermind.bootstrap.supply_operation import CHECK, GENERATE, SupplyActivities
 from deermind.bootstrap.temporal import connect_temporal
 from deermind.bootstrap.waits import waits
 from deermind.foundation.ai.execution import Calls
@@ -78,23 +86,57 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
         analysis = configure_domain_analysis(intake, materials, settings)
         intake_results = configure_material_intake(materials)
         processing = configure_intake_processing(analysis)
-        target_definitions = configure_targets(materials, configure_claims(engine, settings))
+        claims = configure_claims(engine, settings)
+        target_definitions = configure_targets(materials, claims)
         config = configure_activity_configs(engine, settings)
         goals = configure_goals(target_definitions, config)
+        _checks, spaces, _applications = configure_courses(target_definitions, config)
+        conversation = configure_conversation(spaces, config)
+        student = configure_student_turns(
+            spaces, conversation, materials.attachments, settings, config
+        )
+        supply, generation = configure_task_supply(
+            engine, materials.events, materials.reader, materials.attachments, settings
+        )
+        entries = Registry(
+            [
+                *assistant.registry.entries.values(),
+                *analysis.registry.entries.values(),
+                *student.registry.entries.values(),
+                *generation.registry.entries.values(),
+            ]
+        )
         subscribers = subscriptions(
             intake.receive,
             intake_results.receive_result,
             processing.invalidate_source,
             goals.receive,
-        )
-        entries = Registry(
-            [*assistant.registry.entries.values(), *analysis.registry.entries.values()]
+            supply.receive,
+            entries=entries,
         )
         execution_limits = limits()
         calls = Calls(engine, entries, materials.attachments)
         analysis_activities = DomainAnalysisActivities(analysis, calls)
+        waiting = waits(entries)
+
+        detection = configure_detection(
+            student,
+            waiting,
+            spaces.domain_for,
+            claims.detail,
+            supply.read_supplied_question,
+        )
+        student_activities = StudentActivities(
+            student,
+            calls,
+            waiting,
+            spaces.domain_for,
+            supply.read_supplied_question,
+            supply.read_fixed_question,
+            detection,
+        )
+        supply_activities = SupplyActivities(generation, calls)
         lifecycle = runtime.lifecycle(engine, entries, execution_limits)
-        waiting = waits()
         wait_activities = runtime.wait_activities(
             engine, waiting, timeout_seconds=execution_limits.finalize_seconds
         )
@@ -107,10 +149,30 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
             wait_activities,
             [
                 *material_activities(
-                    assistant, calls, {PURPOSE.schema_ref.model_dump_json(): PURPOSE.output}
+                    assistant,
+                    calls,
+                    {
+                        PURPOSE.schema_ref.model_dump_json(): PURPOSE.output,
+                        STUDENT_PURPOSE.schema_ref.model_dump_json(): STUDENT_PURPOSE.output,
+                        GENERATE.schema_ref.model_dump_json(): GENERATE.output,
+                        CHECK.schema_ref.model_dump_json(): CHECK.output,
+                    },
                 ),
                 analysis_activities.prepare,
                 analysis_activities.finish,
+                student_activities.prepare,
+                student_activities.acknowledge_answer,
+                student_activities.prepare_memory,
+                student_activities.save_memory,
+                student_activities.detection_help,
+                student_activities.review,
+                student_activities.prepare_question,
+                student_activities.prepare_detection,
+                student_activities.finish_detection_plan,
+                student_activities.finish,
+                supply_activities.prepare,
+                supply_activities.review,
+                supply_activities.commit,
             ],
         )
         try:

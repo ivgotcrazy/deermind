@@ -10,7 +10,13 @@ from uuid import UUID
 import uvicorn
 from deermind.bootstrap.accounts import configure_usage
 from deermind.bootstrap.authentication import configure_authentication
-from deermind.bootstrap.courses import configure_courses
+from deermind.bootstrap.courses import (
+    STUDENT_VIEWS,
+    configure_conversation,
+    configure_courses,
+    configure_rounds,
+    configure_student_turns,
+)
 from deermind.bootstrap.database import database_lifespan
 from deermind.bootstrap.domain import configure_domain
 from deermind.bootstrap.evaluation import (
@@ -34,6 +40,8 @@ from deermind.bootstrap.settings import Settings
 from deermind.entrypoints.api.activity_configs import router as activity_router
 from deermind.entrypoints.api.auth import router
 from deermind.entrypoints.api.body_limit import RequestBodyLimit
+from deermind.entrypoints.api.conversation import connect_realtime
+from deermind.entrypoints.api.conversation import router as conversation_router
 from deermind.entrypoints.api.courses import router as courses_router
 from deermind.entrypoints.api.domain import router as domain_router
 from deermind.entrypoints.api.errors import api_error
@@ -68,7 +76,13 @@ from deermind.spaces.domain.public import (
     SAVE_INSTANCE,
 )
 from deermind.spaces.evaluation.public import MANAGE_CLAIM
-from deermind.spaces.interaction.public import MANAGE_ACTIVITY
+from deermind.spaces.interaction.public import (
+    CONTROL_ACTIVITY,
+    HANDLE_INPUT,
+    MANAGE_ACTIVITY,
+    PREPARE_DETECTION,
+    SUBMIT_ANSWER,
+)
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel
@@ -112,7 +126,7 @@ def create_app(
 ) -> FastAPI:
     """OpenAPI export is offline; required configuration is checked on startup."""
     hub = realtime or Realtime()
-    routes = dict(view_routes or {})
+    routes = dict(STUDENT_VIEWS if view_routes is None else view_routes)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
@@ -140,6 +154,15 @@ def create_app(
                 app.state.course_checks = checks
                 app.state.course_spaces = spaces
                 app.state.course_applications = applications
+                conversation = configure_conversation(spaces, configs)
+                app.state.conversation = conversation
+                turns = configure_student_turns(
+                    spaces, conversation, materials.attachments, settings, configs
+                )
+                app.state.student_turns = turns
+                app.state.detection_rounds = configure_rounds(turns)
+                if realtime is None:
+                    connect_realtime(hub, turns)
                 assistant = configure_material_assistant(engine, settings, materials)
                 app.state.material_assistant = assistant
                 deletion = configure_material_deletion(assistant)
@@ -183,6 +206,10 @@ def create_app(
                         (CHECK_COURSE, "textbook"): checks.receipt,
                         (CONFIRM_COURSE, "textbook"): applications.receipt,
                         (OPEN_SPACE, "account"): spaces.receipt,
+                        (CONTROL_ACTIVITY, "learning_space"): conversation.receipt,
+                        (HANDLE_INPUT, "learning_space"): turns.receipt,
+                        (SUBMIT_ANSWER, "learning_space"): turns.receipt,
+                        (PREPARE_DETECTION, "learning_space"): turns.receipt,
                     }
                 )
                 app.state.realtime = hub
@@ -221,6 +248,7 @@ def create_app(
     app.include_router(activity_router)
     app.include_router(target_router)
     app.include_router(courses_router)
+    app.include_router(conversation_router)
 
     app.include_router(receipts_router)
     app.include_router(realtime_router)

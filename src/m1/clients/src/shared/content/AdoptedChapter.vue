@@ -6,12 +6,15 @@ import RichContent from './RichContent.vue';
 import type { RichContent as StructuredContent } from './types';
 
 type Chapter = components['schemas']['ChapterSnapshot'];
-type Content = { title: string; content: StructuredContent };
+type Reference = components['schemas']['Ref'];
+type Content = { title: string; content: StructuredContent; source?: Reference };
 const props = defineProps<{
   session: Pick<components['schemas']['SessionView'], 'session_id' | 'csrf_token'>;
   space: string;
   chapters: Chapter[];
+  allowReference?: boolean;
 }>();
+const emit = defineEmits<{ reference: [item: { title: string; source: Reference }] }>();
 const selected = ref('');
 const contents = ref<Content[]>([]);
 const error = ref('');
@@ -39,7 +42,16 @@ async function open(chapter: Chapter) {
     if (chapter_id !== selected.value || space_id !== props.space) return;
     contents.value = data.items.flatMap((item) =>
       typeof item.title === 'string' && item.content && typeof item.content === 'object'
-        ? [{ title: item.title, content: item.content as StructuredContent }]
+        ? [
+            {
+              title: item.title,
+              content: item.content as StructuredContent,
+              source:
+                item.source_ref && typeof item.source_ref === 'object'
+                  ? (item.source_ref as Reference)
+                  : undefined,
+            },
+          ]
         : [],
     );
   } catch (caught) {
@@ -68,9 +80,36 @@ async function open(chapter: Chapter) {
     <p v-if="error" role="alert">{{ error }}</p>
     <p v-else-if="loading" role="status">正在读取章节…</p>
     <p v-else-if="selected && !contents.length">这一章尚无可展示的采用内容。</p>
+    <template v-else-if="allowReference && contents.length">
+      <button
+        v-for="chapter in chapters.filter((item) => item.chapter_id === selected)"
+        :key="chapter.chapter_id"
+        type="button"
+        @click="
+          emit('reference', {
+            title: chapter.title,
+            source: {
+              owner: 'product',
+              type: 'chapter',
+              id: chapter.chapter_id,
+              revision: chapter.revision,
+            },
+          })
+        "
+      >
+        引用本节
+      </button>
+    </template>
     <article v-for="(item, index) in contents" :key="index">
       <h4>{{ item.title }}</h4>
       <RichContent :content="item.content" />
+      <button
+        v-if="allowReference && item.source"
+        type="button"
+        @click="emit('reference', { title: item.title, source: item.source })"
+      >
+        引用此处
+      </button>
     </article>
   </section>
 </template>

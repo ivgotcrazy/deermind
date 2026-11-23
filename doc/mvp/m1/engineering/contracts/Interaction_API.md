@@ -1,11 +1,11 @@
 # M1 Interaction API
 
-> **版本**：v0.4<br>
+> **版本**：v0.7<br>
 > **状态**：已实施范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.3 → v0.4，明确完整配置包读取与首存空绑定<br>
+> **修订说明**：v0.6 → v0.7，登记题单准备、开轮、正式作答、呈现及教材引用<br>
 
 学生推进交流的入口按空间串行。查询、教材浏览和呈现回执不占聊天入口；stop_reply是忙时唯一学生控制例外。所有入口共用[总册](../API_and_Message_Design.md)认证、回执和错误。运行配置、消息与活动的业务语义仍由Interaction维护。
 
@@ -16,7 +16,7 @@
 | 类型 | 字段 | 约束 |
 | --- | --- | --- |
 | ActivityRef | {activity_id:ID,revision:Revision} | 运行修订；不替代配置版本 |
-| ActivityView | activity_ref、type、name、started_at、parent_id:ID\|null、root_id:ID、node_id:ID、run_state、first_message_ref:ID\|null、children:ActivityView[] | 类型与运行状态沿Interaction§2.5；树目录不返回私有规则/候选 |
+| ActivityView | activity_ref、type、name、started_at、parent_id:ID\|null、root_id:ID、node_id:ID、run_state、first_message_ref:ID、has_children:boolean | 类型与运行状态沿Interaction§2.5；树目录不返回私有规则/候选 |
 | CurrentView | current_activity:ActivityView\|null、path:ActivityView[]、active_input_id:ID\|null、allowed_actions:string[]、latest_message_seq:int、proactive_cards:Ref[]、processing:Processing | 只返回当前合法动作；无活动不是失败 |
 | MessageView | message_id:ID、message_seq:int、role:student/assistant/system、parts:MessagePart[]、activity_ref:ActivityRef\|null、committed_at:Timestamp | parts沿Interaction§2.4；只含已提交内容 |
 | StudentInput | text:string或null、attachment_refs:ID[]、explicit_refs:Ref[] | text和附件至少一项非空；浏览位置不自动进入explicit_refs |
@@ -117,7 +117,7 @@ Activity与Message的显示字段由所有者投影，不能让浏览器读数�
 | `request_id` | RequestId | 是 | 同一次操作重试沿用；不随重新连接改变 |
 | `input` | StudentInput | 是 | 原文与显式引用，不随浏览器当前章节限制 |
 
-受理：202 `AcceptedReceipt`；最终结果从原收据查询，`result`为下表。
+受理：202 返回 `request_ref`、`execution_ref` 和 `input_id`。重发使用同一请求编号。处理完成后从原收据查询，`result` 为下表。文字可带一条显式教材引用，由程序核对本次采用的章节或内容版本。当前聊天附件返回明确限制。
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
@@ -127,6 +127,8 @@ Activity与Message的显示字段由所有者投影，不能让浏览器读数�
 | `outcome` | completed/needs_input/blocked/failed/cancelled | 是 | 交流结果，不表示目标已达标 |
 
 处理边界：保存输入和受理后才返回；回复检查保存后整条显示。聊天内要求检测继续同一后台工作，不再重复派发。
+
+技术失败可用 `POST /learning-spaces/{scope_id}/input-retries`，传稳定的 `request_id` 和原 `execution_ref`。202 返回原输入与收据身份。只在空间未接收更新的交流且采用依据一致时受理，原作答保留，已保存步骤沿用。结果在原收据按本次执行尝试读取。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；interaction_busy不受理；identity_conflict。
 
@@ -171,6 +173,8 @@ Activity与Message的显示字段由所有者投影，不能让浏览器读数�
 处理边界：开测须确认题单；准备题完成不自动开测。停止只废止本输入继续提交，不取消Evaluation或回滚已保存答案。switch若要AI准备，按原入口受理规则返回202。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；interaction_busy；revision_conflict；stale_plan；blocked。
+
+独立准备入口为 `POST /learning-spaces/{scope_id}/detection-plans` → `interaction.prepare_detection`。正文只带 `request_id`，202 及收据形状沿 I03。聊天请求复用相同准备流程，仍使用原输入的收据。题单卡片含 `plan_ref`、`question_count` 和缺口说明。只有学生另行提交匹配修订的 `start_detection` 才创建首轮。继续下一题使用已确认的同一题单修订。
 
 请求／查询参数（示意数据）：
 
@@ -274,6 +278,8 @@ Activity与Message的显示字段由所有者投影，不能让浏览器读数�
 
 处理边界：200直接确认presentation_ref/received_at，按presentation_id去重；不占聊天入口、不更新概率、不决定是否正式提供教学。
 
+E04 接入聊天和历史消息呈现，片段使用 `/parts/{index}` 指向已保存消息。教材阅读位置不作为教学机会或评价依据。
+
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；identity_conflict。
 
 请求／查询参数（示意数据）：
@@ -302,11 +308,10 @@ Activity与Message的显示字段由所有者投影，不能让浏览器读数�
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `view` | current/activity_tree/messages | 是 | 三种视图 |
-| `activity_ref` | Ref | 树展开或消息筛选可选 | 同空间 |
+| `activity_ref` | UUID | 树展开或消息筛选可选 | 同空间活动身份 |
 | `anchor_message_id` | ID | messages可选 | 定位历史锚点 |
 | `after_seq` | int，各可选 | messages可选 | 首屏上界服务端确定 |
-| `upper_seq` | int，各可选 | messages可选 | 首屏上界服务端确定 |
-| `cursor` | string | 否；首次省略 | 不透明续页游标，绑定筛选、身份及读取范围 |
+| `cursor` | string | 否；首次省略 | 不透明游标，绑定筛选、身份及读取范围。消息续页沿用首屏上界 |
 | `limit` | int | 否；沿总册分页配置 | 正整数，不超过部署已接收上限 |
 
 响应：200，直接返回下列对象。
@@ -319,7 +324,7 @@ Activity与Message的显示字段由所有者投影，不能让浏览器读数�
 | `last_seq` | int，各一 | 消息是 | 范围固定 |
 | `upper_seq` | int，各一 | 消息是 | 范围固定 |
 
-处理边界：回看不恢复活动；current分支不返回items，其他分支不返回current。树按开始时间/稳定ID排序，子活动只在请求展开范围返回。
+处理边界：回看不恢复活动；current分支不返回items，其他分支不返回current。树按开始时间及稳定ID排序。目录响应以has_children标识可展开节点，指定活动后读取直接子活动。已接入查询、暂停、恢复、结束和停止回复，检测控制见后续增量。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；invalid_cursor；forbidden。
 
@@ -417,3 +422,6 @@ I05接受作答后返回本次提交引用；Evaluation自行按原始事件处�
 | v0.2 | 2026-11-15 | 练习round_ref明确为null，空字符串拒绝。见MVP决定登记§95。 |
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.4 | 2026-11-23 | 登记配置包读取与首存空绑定 |
+| v0.5 | 2026-11-23 | 登记活动目录、历史锚点与暂停、恢复、结束的实现 |
+| v0.6 | 2026-11-23 | 登记学生输入、停止、收据补读及历史分页边界 |
+| v0.7 | 2026-11-23 | 登记题单准备、开轮、正式作答、呈现和教材引用 |

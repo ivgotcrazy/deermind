@@ -89,6 +89,21 @@ spec:
             {{- end }}
             {{- end }}
             {{- end }}
+            {{- with $root.Values.studentAssistant }}
+            - name: M1_STUDENT_MODEL_ENABLED
+              value: {{ .enabled | quote }}
+            {{- if .enabled }}
+            - name: M1_STUDENT_MODEL
+              value: {{ .model | quote }}
+            {{- if eq $component "worker" }}
+            - name: M1_STUDENT_MODEL_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "studentAssistant.existingSecret is required when enabled" .existingSecret | quote }}
+                  key: api-key
+            {{- end }}
+            {{- end }}
+            {{- end }}
             - name: M1_TEMPORAL_ADDRESS
               value: {{ required "Temporal address is required" $root.Values.temporal.address | quote }}
             - name: M1_TEMPORAL_NAMESPACE

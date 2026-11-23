@@ -159,10 +159,13 @@ class AdoptionView(FactModel):
     snapshot: CourseSnapshot
 
 
-class SpaceOpenResult(FactModel):
+class SpaceWorkspace(FactModel):
     space: SpaceRow
-    created: bool
     adoption: AdoptionView
+
+
+class SpaceOpenResult(SpaceWorkspace):
+    created: bool
     entry_event_ref: UUID
 
 
@@ -218,6 +221,7 @@ class LearningSpaceService(Protocol):
         limit: int,
     ) -> SpaceList: ...
     async def current_adoption(self, account: AccountView, space_id: UUID) -> AdoptionView: ...
+    async def workspace(self, account: AccountView, space_id: UUID) -> SpaceWorkspace: ...
     async def current_goal(self, account: AccountView, space_id: UUID) -> SpaceGoalView: ...
     async def chapter_content(
         self,

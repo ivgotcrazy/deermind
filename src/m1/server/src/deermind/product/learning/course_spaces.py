@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 
 from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.event_reading import EventFilter, EventPartRef
-from deermind.abstractions.events import EventDraft, ProducerAccess
+from deermind.abstractions.events import EventDraft, ProducerAccess, Ref
 from deermind.foundation.system.events.store import lock_scope_sequence
 from deermind.foundation.system.public.errors import RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
@@ -33,6 +33,7 @@ from deermind.product.public.courses import (
     SpaceOpenResult,
     SpaceReceipt,
     SpaceRow,
+    SpaceWorkspace,
 )
 from deermind.spaces.evaluation.public import GoalEvaluation
 from pydantic import JsonValue
@@ -56,6 +57,14 @@ class CourseSpaces:
             self.authorize(account, space)
             return await self.adopted(db, await self.adoption(db, space.current_adoption_ref))
 
+    async def workspace(self, account: AccountView, space_id: UUID) -> SpaceWorkspace:
+        """刷新只读工作区，不登记新的进入事实。"""
+        async with self.engine.connect() as db:
+            space = await self.row(db, space_id)
+            self.authorize(account, space)
+            adoption = await self.adoption(db, space.current_adoption_ref)
+            return await self._workspace(db, account, space, adoption)
+
     async def current_goal(self, account: AccountView, space_id: UUID) -> SpaceGoalView:
         async with self.engine.connect() as db:
             space = await self.row(db, space_id)
@@ -76,6 +85,18 @@ class CourseSpaces:
             pending=result is None,
             current=result,
         )
+
+    async def domain_for(self, db: AsyncConnection, scope: UUID) -> UUID:
+        identity = await db.scalar(
+            text(
+                "SELECT t.domain_id FROM product.learning_space s "
+                "JOIN product.textbook t USING(textbook_id) WHERE s.space_id=:scope"
+            ),
+            {"scope": scope},
+        )
+        if not isinstance(identity, UUID):
+            raise LookupError("The learning space has no adopted domain")
+        return identity
 
     async def list_events(
         self, scope: UUID, event_types: tuple[str, ...], after: int, upper: int | None, limit: int
@@ -218,14 +239,35 @@ class CourseSpaces:
         async with self.engine.connect() as db:
             space = await self.row(db, scope)
             self.authorize(account, space)
-            adopted = await self.adopted(db, await self.adoption(db, space.current_adoption_ref))
+        return await self.fixed_chapter_content(scope, space.current_adoption_ref, chapter)
+
+    async def fixed_chapter_content(
+        self,
+        scope: UUID,
+        adoption: UUID,
+        chapter: UUID | None,
+        revision: int | None = None,
+        *,
+        source: Ref | None = None,
+    ) -> list[dict[str, JsonValue]]:
+        async with self.engine.connect() as db:
+            adopted = await self.fixed_adoption(db, scope, adoption)
             chapter_view = next(
-                (row for row in adopted.snapshot.chapters if row.chapter_id == chapter), None
+                (
+                    row
+                    for row in adopted.snapshot.chapters
+                    if (
+                        row.chapter_id == chapter and (revision is None or revision == row.revision)
+                    )
+                    or (source is not None and source in row.content_refs)
+                ),
+                None,
             )
             if chapter_view is None:
                 raise RequestError(404, "not_found", "这个章节不在空间采用范围内。")
             parts: list[tuple[str, str, UUID, UUID, UUID]] = []
-            for ref in chapter_view.content_refs:
+            selected = [source] if source is not None else chapter_view.content_refs
+            for ref in selected:
                 row = (
                     await db.execute(
                         text(
@@ -259,10 +301,20 @@ class CourseSpaces:
             assert isinstance(items, list) and isinstance(items[0], dict)
             body = items[0]["content"]
             assert isinstance(body, dict)
-            content.append(body)
+            reference = next(item for item in selected if item.id == str(candidate_id))
+            content.append({**body, "source_ref": reference.model_dump(mode="json")})
         if len(canonical_json(content).encode()) > 4 * 1024**2:
             raise RequestError(413, "payload_too_large", "章节正文超过读取限额。")
         return content
+
+    async def read_quoted_content(
+        self, scope: UUID, adoption: UUID, reference: Ref
+    ) -> list[dict[str, JsonValue]]:
+        if reference.type == "material_candidate":
+            return await self.fixed_chapter_content(scope, adoption, None, source=reference)
+        return await self.fixed_chapter_content(
+            scope, adoption, UUID(reference.id), reference.revision
+        )
 
     def build_adoption(
         self,
@@ -402,24 +454,37 @@ class CourseSpaces:
         identity: UUID,
         created: bool,
     ) -> SpaceReceipt:
-        view = await self.adopted(db, adoption)
+        workspace = await self._workspace(db, account, space, adoption)
         return SpaceReceipt(
             request_ref=request,
             result=SpaceOpenResult(
-                space=SpaceRow(
-                    space_id=space.space_id,
-                    student_id=space.student_id,
-                    student_name=account.display_name,
-                    textbook_id=space.textbook_id,
-                    target_id=space.target_id,
-                    created_at=space.created_at,
-                    textbook_title=view.snapshot.textbook_title,
-                    target_title=view.snapshot.target_title,
-                ),
+                space=workspace.space,
                 created=created,
-                adoption=view,
+                adoption=workspace.adoption,
                 entry_event_ref=identity,
             ),
+        )
+
+    async def _workspace(
+        self,
+        db: AsyncConnection,
+        account: AccountView,
+        space: facts.SpaceHead,
+        adoption: facts.AdoptionRow,
+    ) -> SpaceWorkspace:
+        view = await self.adopted(db, adoption)
+        return SpaceWorkspace(
+            space=SpaceRow(
+                space_id=space.space_id,
+                student_id=space.student_id,
+                student_name=account.display_name,
+                textbook_id=space.textbook_id,
+                target_id=space.target_id,
+                created_at=space.created_at,
+                textbook_title=view.snapshot.textbook_title,
+                target_title=view.snapshot.target_title,
+            ),
+            adoption=view,
         )
 
     async def open(self, account: AccountView, command: SpaceCommand) -> SpaceReceipt:
