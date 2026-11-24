@@ -126,7 +126,8 @@ def build_agent(
             model_id != "deermind:controlled"
             or ctx.deps.input.purpose != purpose.name
             or binding.contract_ref != purpose.contract_ref
-            or binding.prompt_ref != purpose.prompt_ref
+            or binding.prompt_ref.model_copy(update={"version": purpose.prompt_ref.version})
+            != purpose.prompt_ref
             or binding.schema_ref != purpose.schema_ref
         ):
             raise AIRejected("configuration_unavailable")

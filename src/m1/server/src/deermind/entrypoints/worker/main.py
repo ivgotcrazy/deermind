@@ -39,6 +39,7 @@ from deermind.bootstrap.materials import (
     configure_materials,
 )
 from deermind.bootstrap.messaging import subscriptions
+from deermind.bootstrap.prompts import configure_prompts
 from deermind.bootstrap.services import create_worker
 from deermind.bootstrap.settings import Settings
 from deermind.bootstrap.student_operation import PURPOSE as STUDENT_PURPOSE
@@ -73,6 +74,7 @@ async def run() -> None:
 
 async def serve(settings: Settings, engine: AsyncEngine) -> None:
     """数据库版本检查通过后，才连接Temporal并拉取任务。"""
+    prompts = configure_prompts()
     async with asyncio.timeout(15):
         client = await connect_temporal(settings, engine)
         await client.workflow_service.describe_namespace(
@@ -127,7 +129,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
             entries=entries,
         )
         execution_limits = limits()
-        calls = Calls(engine, entries, materials.attachments)
+        calls = Calls(engine, entries, materials.attachments, prompts)
         analysis_activities = DomainAnalysisActivities(analysis, calls)
         waiting = waits(entries)
 

@@ -11,9 +11,11 @@ from uuid import uuid4
 
 from ai_fixture import AIWorkflow, Fixture, Output
 from deermind.abstractions.ai.calls import AIRejected
-from deermind.abstractions.ai.contracts import ModelProfile
+from deermind.abstractions.ai.contracts import ModelProfile, PromptCallInput
+from deermind.abstractions.events import Ref
 from deermind.entrypoints.maintenance.database import upgrade
 from deermind.foundation.ai import store as ai_store
+from deermind.foundation.ai.prompts import PromptLibrary, PromptSource
 from deermind.foundation.ai.records import CandidateFact
 from deermind.foundation.system.executions import commands
 from deermind.foundation.system.executions import store as executions
@@ -50,6 +52,76 @@ class AICallTests(DatabaseTestCase):
     def test_fixed_configuration_input_conflict_and_unknown_usage(self) -> None:
         """配置固定、调用防重、未知保留预约，恢复/重复调用不能清零。"""
         asyncio.run(self.configuration_and_usage())
+
+    def test_restored_call_reads_the_accepted_prompt_version(self) -> None:
+        """切换默认版本后，旧任务复用同一调用与候选，新任务读取新版。"""
+        asyncio.run(self.prompt_version())
+
+    async def prompt_version(self) -> None:
+        async with self.fixture() as fixture:
+            first = Ref(owner="interaction", type="prompt", id="fixture", version=1)
+            second = first.model_copy(update={"version": 2})
+
+            def select_prompt(ref: Ref) -> None:
+                binding = fixture.config.purpose_bindings["ai_test"]
+                fixture.config = fixture.config.model_copy(
+                    update={
+                        "purpose_bindings": {
+                            "ai_test": binding.model_copy(update={"prompt_ref": ref})
+                        }
+                    }
+                )
+
+            select_prompt(first)
+            async with fixture.calls.engine.begin() as connection:
+                old = await fixture.accept(connection, "old-prompt")
+            handle = await fixture.calls.prepare(old)
+            candidate = await fixture.calls.candidate(handle, {"answer": "five quarters"})
+
+            root = Path(self.directory.name)
+            for ref, instructions in ((first, old.instructions), (second, "New prompt.")):
+                directory = root / "prompts" / ref.id / f"v{ref.version}"
+                directory.mkdir(parents=True)
+                (directory / "instructions.md").write_text(instructions + "\n", encoding="utf-8")
+            with patch("deermind.foundation.ai.prompts.files", return_value=root):
+                fixture.calls.prompts = PromptLibrary([PromptSource("fixture", second)])
+                select_prompt(second)
+                async with fixture.calls.engine.begin() as connection:
+                    new = await fixture.accept(connection, "new-prompt")
+                    await commands.fail(connection, fixture.registry, old.run, fixture.reference)
+                    restored = await commands.retry(
+                        connection,
+                        fixture.registry,
+                        fixture.caller(),
+                        old.run.execution_id,
+                        request_id="restore-old-prompt",
+                        seconds=300,
+                    )
+                    assert restored.active_attempt_id is not None
+                    attempt = await executions.attempt(connection, restored.active_attempt_id)
+                    run = old.run.model_copy(
+                        update={
+                            "attempt_id": attempt.attempt_id,
+                            "deadline_at": attempt.deadline_at,
+                        }
+                    )
+                    await commands.start(connection, fixture.registry, run)
+                for request, reference, instructions in (
+                    (old.model_copy(update={"run": run}), first, old.instructions),
+                    (new, second, "New prompt."),
+                ):
+                    packaged = PromptCallInput(
+                        **request.model_dump(exclude={"instructions"}),
+                        prompt_parts=["instructions"],
+                    )
+                    saved = await fixture.calls.prepare(packaged)
+                    self.assertEqual(saved.binding.prompt_ref, reference)
+                    self.assertEqual(saved.input.instructions, instructions)
+                    if reference == first:
+                        self.assertEqual(saved.call_id, handle.call_id)
+                        self.assertEqual(saved.candidate_ref, candidate)
+                    else:
+                        self.assertIsNone(saved.candidate_ref)
 
     async def configuration_and_usage(self) -> None:
         async with self.fixture() as fixture:

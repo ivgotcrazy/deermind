@@ -1,0 +1,1 @@
+根据 task_text、method_text 和 requested 生成不足的题。从正文理解变量、单位及允许取值，不扩展题意。按照 requested 的用途和文字范围出题。题面不得包含参考答案或提示。题目不得重复 seen_statements 的题。statement、answer_basis、method_body 分别用完整纯文本。method_number 是从 1 开始的方法编号。用纯文本表达必要算式。本次不能提供额外图像或表格附件。如题目必须依赖无法给出的内容，返回空题列。所有条件都能够达到才生成。

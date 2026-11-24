@@ -5,8 +5,8 @@ from uuid import UUID
 
 from deermind.abstractions.ai.contracts import (
     CallHandle,
-    CallInput,
     ExecutionConfig,
+    PromptCallInput,
     PurposeBinding,
 )
 from deermind.abstractions.encoding import canonical_json
@@ -40,20 +40,6 @@ CHECK = Purpose(
     Ref(owner="domain", type="prompt", id="check_supply", version=1),
     Ref(owner="domain", type="ai_schema", id="QualityChecks", version=1),
     QualityChecks,
-)
-_GENERATE = (
-    "根据 task_text、method_text 和 requested 生成不足的题。"
-    "从正文理解变量、单位及允许取值，不扩展题意。按照 requested 的用途和文字范围出题。"
-    "题面不得包含参考答案或提示。题目不得重复 seen_statements 的题。"
-    "statement、answer_basis、method_body 分别用完整纯文本。"
-    "method_number 是从 1 开始的方法编号。用纯文本表达必要算式。"
-    "本次不能提供额外图像或表格附件。如题目必须依赖无法给出的内容，返回空题列。"
-    "所有条件都能够达到才生成。"
-)
-_CHECK = (
-    "独立按题面解题，再用给出的 Task、方法、用途、文字条件和接触范围核对。"
-    "仅在题意完整、可解、答法正确、使用准许方法、与范围一致且未泄露提示时给 pass。"
-    "题目编号从 1 开始，每道候选恰好一次。信息不足用 unknown。只返回简短检查依据。"
 )
 
 
@@ -99,12 +85,12 @@ class SupplyWorkflow(PydanticAIWorkflow):
             ]
             candidate = await execute_ai_task(
                 self.generate,
-                CallInput(
+                PromptCallInput(
                     run=run,
                     step_key="generate_candidates",
                     call_key="generate",
                     purpose=GENERATE.name,
-                    instructions=_GENERATE,
+                    prompt_parts=["instructions"],
                     prompt=packed,
                     material_refs=material_refs,
                     tool_grants=[],
@@ -118,12 +104,12 @@ class SupplyWorkflow(PydanticAIWorkflow):
             )
             decision = await execute_ai_task(
                 self.check,
-                CallInput(
+                PromptCallInput(
                     run=run,
                     step_key="check_candidates",
                     call_key="check",
                     purpose=CHECK.name,
-                    instructions=_CHECK,
+                    prompt_parts=["instructions"],
                     prompt=check_input,
                     material_refs=material_refs,
                     tool_grants=[],

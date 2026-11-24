@@ -87,17 +87,28 @@ class ExecutionConfig(FactModel):
         return self
 
 
-class CallInput(FactModel):
-    """Operation组装好的输入；工具集合是程序授予，不从模型正文解析。"""
+class CallParameters(FactModel):
+    """Operation 选定材料及工具权限，适用于两种调用输入。"""
 
     run: RunInput
     step_key: NonEmpty
     call_key: NonEmpty
     purpose: NonEmpty
-    instructions: NonEmpty
     prompt: NonEmpty
     material_refs: list[Ref]
     tool_grants: list[Ref]
+
+
+class CallInput(CallParameters):
+    """已组装的调用输入，保存实际送模指令。"""
+
+    instructions: NonEmpty
+
+
+class PromptCallInput(CallParameters):
+    """Operation 按顺序指定指令文件，由受理时固定的版本提供正文。"""
+
+    prompt_parts: Annotated[list[NonEmpty], Field(min_length=1)]
 
 
 class CallHandle(FactModel):

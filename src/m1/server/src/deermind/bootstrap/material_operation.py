@@ -11,9 +11,9 @@ from uuid import UUID
 from deermind.abstractions.ai.contracts import (
     Budget,
     CallHandle,
-    CallInput,
     ExecutionConfig,
     ModelProfile,
+    PromptCallInput,
     PurposeBinding,
 )
 from deermind.abstractions.encoding import canonical_json
@@ -30,7 +30,6 @@ from deermind.infrastructure.ai.execution import execute_ai_task
 from deermind.infrastructure.files.originals import render_original_page
 from deermind.product.materials.assistant import WORKFLOW, MaterialAssistant
 from deermind.product.materials.proposals import (
-    INSTRUCTIONS,
     MaterialProposal,
     OriginalCoverage,
     ProposedChapter,
@@ -153,12 +152,12 @@ class MaterialWorkflow(PydanticAIWorkflow):
                     candidates.append(
                         await execute_ai_task(
                             self.agent,
-                            CallInput(
+                            PromptCallInput(
                                 run=run,
                                 step_key="parse",
                                 call_key=f"pages-{offset}",
                                 purpose=PURPOSE.name,
-                                instructions=INSTRUCTIONS,
+                                prompt_parts=["instructions"],
                                 prompt=selection.prompt,
                                 material_refs=[
                                     Ref(

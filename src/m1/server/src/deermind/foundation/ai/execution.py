@@ -3,12 +3,19 @@
 from uuid import UUID, uuid4
 
 from deermind.abstractions.ai.calls import AIRejected
-from deermind.abstractions.ai.contracts import CallHandle, CallInput
+from deermind.abstractions.ai.contracts import (
+    CallHandle,
+    CallInput,
+    ExecutionConfig,
+    PromptCallInput,
+    PurposeBinding,
+)
 from deermind.abstractions.ai.requests import ModelRequestFact
 from deermind.abstractions.events import Ref
 from deermind.abstractions.executions import Execution, RunInput
 from deermind.abstractions.hashing import digest
 from deermind.foundation.ai import store
+from deermind.foundation.ai.prompts import PromptLibrary
 from deermind.foundation.ai.records import CallAttemptFact, CallFact, CandidateFact
 from deermind.foundation.system.events.attachments import FactAttachments
 from deermind.foundation.system.executions import store as executions
@@ -22,22 +29,54 @@ class Calls:
     """由装配层提供当前授权和文件能力；不含教材、学生或评价业务判断。"""
 
     def __init__(
-        self, engine: AsyncEngine, registry: Registry, attachments: FactAttachments
+        self,
+        engine: AsyncEngine,
+        registry: Registry,
+        attachments: FactAttachments,
+        prompts: PromptLibrary | None = None,
     ) -> None:
         self.engine = engine
         self.registry = registry
         self.attachments = attachments
+        self.prompts = prompts
 
-    async def prepare(self, incoming: CallInput) -> CallHandle:
-        """固定输入后建立调用；复用候选仍检查当前工作权限。"""
+    async def _configuration(
+        self, run: RunInput, purpose: str
+    ) -> tuple[Execution, ExecutionConfig, PurposeBinding]:
         async with self.engine.begin() as connection:
-            execution = await executions.active(connection, self.registry, incoming.run, "step")
+            execution = await executions.active(connection, self.registry, run, "step")
             config = await store.configuration(connection, execution.execution_id)
-        binding = config.purpose_bindings.get(incoming.purpose)
+        binding = config.purpose_bindings.get(purpose)
         if binding is None:
             raise AIRejected("configuration_unavailable")
+        return execution, config, binding
+
+    def _instructions(self, binding: PurposeBinding, parts: list[str]) -> str:
+        if self.prompts is None:
+            raise AIRejected("configuration_unavailable")
+        return self.prompts.read(binding.prompt_ref, parts)
+
+    async def prompt_instructions(self, run: RunInput, purpose: str, parts: list[str]) -> str:
+        """准备 Activity 也可按固定用途渲染它所选的指令片段。"""
+        _, _, binding = await self._configuration(run, purpose)
+        return self._instructions(binding, parts)
+
+    async def prepare(self, incoming: CallInput | PromptCallInput) -> CallHandle:
+        """固定实际送模输入；复用候选仍检查当前工作权限。"""
+        execution, config, binding = await self._configuration(incoming.run, incoming.purpose)
         if any(ref not in binding.tool_refs for ref in incoming.tool_grants):
             raise AIRejected("forbidden")
+        if isinstance(incoming, PromptCallInput):
+            incoming = CallInput(
+                run=incoming.run,
+                step_key=incoming.step_key,
+                call_key=incoming.call_key,
+                purpose=incoming.purpose,
+                prompt=incoming.prompt,
+                material_refs=incoming.material_refs,
+                tool_grants=incoming.tool_grants,
+                instructions=self._instructions(binding, incoming.prompt_parts),
+            )
         # 尝试号和新恢复时限不属于固定输入；其他字段变化必须使用新的调用键。
         body = incoming.model_dump(mode="json", exclude={"run"})
         input_hash = digest({"input": body, "binding": binding.model_dump(mode="json")})

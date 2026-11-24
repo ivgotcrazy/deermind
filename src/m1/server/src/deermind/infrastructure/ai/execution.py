@@ -6,7 +6,7 @@ from datetime import timedelta
 from uuid import UUID
 
 from deermind.abstractions.ai.calls import AIRejected, CallService
-from deermind.abstractions.ai.contracts import CallHandle, CallInput
+from deermind.abstractions.ai.contracts import CallHandle, CallInput, PromptCallInput
 from deermind.abstractions.encoding import canonical_json
 from pydantic import BaseModel, JsonValue, TypeAdapter
 from pydantic_ai import Agent
@@ -15,6 +15,8 @@ from pydantic_ai.usage import UsageLimits
 from temporalio import activity, workflow
 from temporalio.common import RetryPolicy
 from temporalio.exceptions import ApplicationError
+
+CALL_INPUT = TypeAdapter(CallInput | PromptCallInput)
 
 
 class Activities:
@@ -27,7 +29,7 @@ class Activities:
     @activity.defn(name="ai.prepare_call")
     async def prepare(self, body: str) -> str:
         try:
-            handle = await self.calls.prepare(CallInput.model_validate_json(body))
+            handle = await self.calls.prepare(CALL_INPUT.validate_json(body))
             if handle.binding.schema_ref.model_dump_json() not in self.schemas:
                 raise AIRejected("configuration_unavailable")
             return handle.model_dump_json()
@@ -55,7 +57,7 @@ class Activities:
 
 async def execute_ai_task(
     agent: Agent[CallHandle, BaseModel],
-    incoming: CallInput,
+    incoming: CallInput | PromptCallInput,
     *,
     user_content: Sequence[UserContent] | None = None,
 ) -> UUID:

@@ -5,7 +5,7 @@ from uuid import UUID
 
 from pydantic import JsonValue
 
-from deermind.abstractions.ai.contracts import CallHandle, CallInput
+from deermind.abstractions.ai.contracts import CallHandle, CallInput, PromptCallInput
 from deermind.abstractions.ai.requests import ModelRequestFact
 from deermind.abstractions.events import Ref
 
@@ -15,7 +15,7 @@ class AIRejected(ValueError):
 
 
 class CallService(Protocol):
-    async def prepare(self, incoming: CallInput) -> CallHandle: ...
+    async def prepare(self, incoming: CallInput | PromptCallInput) -> CallHandle: ...
     async def remaining(self, handle: CallHandle) -> float: ...
     async def reserve(
         self,
