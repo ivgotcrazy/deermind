@@ -59,6 +59,15 @@ class MasteryPublication:
     def __init__(self, engine: AsyncEngine) -> None:
         self.engine = engine
 
+    @staticmethod
+    async def current_reference(db: AsyncConnection, scope: UUID) -> Ref | None:
+        """Fix the published snapshot identity without expanding its contents."""
+        identity = await db.scalar(
+            text("SELECT current_snapshot_ref FROM evaluation.mastery_head WHERE scope_id=:scope"),
+            {"scope": scope},
+        )
+        return mastery_facts.ref("mastery_snapshot", identity) if identity is not None else None
+
     async def read(
         self,
         scope: UUID,

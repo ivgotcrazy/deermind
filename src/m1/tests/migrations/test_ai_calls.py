@@ -280,6 +280,10 @@ class AICallTests(DatabaseTestCase):
             keys = ["first-test-key"]
 
             async def response(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
+                self.assertEqual(
+                    {tool.name for tool in info.function_tools},
+                    {"lookup"} if len(requests) <= 2 else set(),
+                )
                 if len(requests) == 1:
                     raise ConnectionError("synthetic-secret-must-not-leak")
                 name = "submit_candidate"
@@ -301,7 +305,12 @@ class AICallTests(DatabaseTestCase):
                 return FunctionModel(response, model_name=profile.model)
 
             agent = build_agent(
-                fixture.purpose, fixture.calls, fixture.tools, lambda _: keys[0], factory=factory
+                fixture.purpose,
+                fixture.calls,
+                fixture.tools,
+                lambda _: keys[0],
+                factory=factory,
+                first_batch_limit=2,
             )
             activities = Activities(fixture.calls, {fixture.reference.model_dump_json(): Output})
             AIWorkflow.agent = agent

@@ -4,6 +4,7 @@ from uuid import UUID
 
 from deermind.abstractions.events import Ref
 from deermind.bootstrap.settings import Settings
+from deermind.bootstrap.student_materials import StudentMaterialSources
 from deermind.bootstrap.student_operation import student_config
 from deermind.foundation.system.events.attachments import FactAttachments
 from deermind.product.learning.course_applications import CourseApplications
@@ -102,6 +103,7 @@ def configure_student_turns(
             scope, [item.claim_ref for item in selected.snapshot.items], pinned
         )
 
+    sources = StudentMaterialSources(spaces, publications)
     return StudentTurns(
         conversation,
         current_adoption,
@@ -111,4 +113,6 @@ def configure_student_turns(
         activity_config,
         spaces.read_quoted_content,
         read_mastery,
+        sources.catalogue,
+        sources.read,
     )

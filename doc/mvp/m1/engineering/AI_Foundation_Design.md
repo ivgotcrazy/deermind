@@ -1,11 +1,11 @@
 # M1 AI 底座设计
 
-> **版本**：v0.34<br>
+> **版本**：v0.35<br>
 > **状态**：E01-15 已通过评审，E01-16 接线与验收见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-24<br>
-> **修订说明**：v0.33 → v0.34，登记 Prompt 资源、版本选择与恢复<br>
+> **修订说明**：v0.34 → v0.35，登记学习助手的首批只读工具及调用上限<br>
 
 本文设计各业务和Space共用的模型调用、工具循环及通用材料处理能力。业务Operation决定取材、组装上下文和保存记忆；底座按调用方要求执行，代码不内置学习空间、活动或题目等业务概念。职责以[总体§3.4](System_Design.md#34-agent上下文和记忆)为准；持久任务生命周期归公共运行底座，共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -176,10 +176,10 @@ Worker入口装配[公共运行§3.3.1](System_Foundation_Design.md#331-入口�
 | --- | --- | --- |
 | Product教材助手 | read_material_pages、read_material_content、read_material_history | 只读；范围、父题和原件完整性见[Product§3.4.2](Product_Application_Design.md#342-operation取材与工具) |
 | Product工作保存 | store_material_work | draft_write；只存本次草稿，不采用、不入Domain、不建章节关联 |
-| Interaction学习助手 | read_activity_material、read_course_material、read_published_state | 只读；按当前用途裁剪，见[Interaction§3.10](Interaction_Space_Design.md#310-容量工具与提示合同) |
+| Interaction学习助手 | read_activity_material、read_course_material、read_published_state | 只读；仅本次固定编号，见[Interaction§3.10](Interaction_Space_Design.md#310-容量工具与提示合同) |
 | Domain、Evaluation及内部摘要 | 空集合 | 先由程序取材后调用；需要扩大工具范围时修订用途合同，不能自动开放已有全部查询 |
 
-input_classification、memory_extract及memory_summary不开放上述学习读取工具；需要的材料由Operation事先准备，learning_reply等用途仍只能取授权子集。
+学习助手仅在普通回复和关轮后的帮助中授予补读。SDK 只向首次模型请求提供这些工具，实际执行拒绝第二批或同批第三条读取。结构化候选的输出工具照常可用。业务工具采用同一授权、预算和结果留痕机制。
 
 本表不授予通用数据库、Shell、浏览器、任意文件或外网工具。正式保存、事件发布、关闭检测轮和概率计算都是程序步骤，不作为模型工具。已有受控草稿写入保留，不以“有副作用”为由另加人工审批。
 
@@ -480,3 +480,4 @@ Worker使用官方`PydanticAIPlugin`、`TemporalDurability`与`FunctionToolset`�
 | v0.32 | 2026-11-22 | 同步 E01-16 载荷限额与恢复验收 |
 | v0.33 | 2026-11-23 | 确认 E05 作答及教学机会评价的运行额度 |
 | v0.34 | 2026-11-24 | 落实按业务归档的 Prompt 资源、受理版本和旧任务恢复 |
+| v0.35 | 2026-11-24 | 登记学习助手首批补读、工具次数和结构化输出边界 |

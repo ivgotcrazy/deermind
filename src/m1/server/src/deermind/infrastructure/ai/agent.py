@@ -59,11 +59,17 @@ class ToolContext(TemporalRunContext[CallHandle]):
             result["tool_call_metadata"] = {
                 "model_response": len(responses),
                 "tool_ordinal": positions[0],
+                "business_position": sum(
+                    isinstance(part, ToolCallPart) and part.tool_name != "submit_candidate"
+                    for part in responses[-1].parts[: positions[0]]
+                ),
             }
         return result
 
 
-def authorized_tools(tools: ToolService) -> FunctionToolset[CallHandle]:
+def authorized_tools(
+    tools: ToolService, first_batch_limit: int | None = None
+) -> FunctionToolset[CallHandle]:
     """使用官方可持久执行的FunctionToolset，每个工具独立落到Activity。"""
 
     descriptions = {tool.name: tool for tool in tools.descriptions()}
@@ -72,6 +78,10 @@ def authorized_tools(tools: ToolService) -> FunctionToolset[CallHandle]:
         ctx: RunContext[CallHandle], definition: ToolDefinition
     ) -> ToolDefinition | None:
         reference = descriptions[definition.name].reference
+        if first_batch_limit is not None and any(
+            isinstance(message, ModelResponse) for message in ctx.messages
+        ):
+            return None
         if reference in ctx.deps.binding.tool_refs and reference in ctx.deps.input.tool_grants:
             return definition
         return None
@@ -86,6 +96,15 @@ def authorized_tools(tools: ToolService) -> FunctionToolset[CallHandle]:
             turn, ordinal = metadata.get("model_response"), metadata.get("tool_ordinal")
             if not isinstance(turn, int) or not isinstance(ordinal, int) or ctx.tool_name is None:
                 raise AIRejected("invalid_tool_position")
+            if first_batch_limit is not None:
+                position = metadata.get("business_position")
+                if turn != 1 or position is None or not 1 <= position <= first_batch_limit:
+                    return {
+                        "status": "invalid_arguments",
+                        "data": {"reason": "本轮补读次数已用完，请依据已有材料回应。"},
+                        "source_refs": [],
+                        "owner_receipt_ref": None,
+                    }
             parameters = TypeAdapter(dict[str, JsonValue]).validate_python(arguments)
             result = await tools.invoke(ctx.deps, ctx.tool_name, parameters, turn, ordinal)
             if result.status == "source_changed":
@@ -117,6 +136,7 @@ def build_agent(
     credentials: SecretReader,
     *,
     factory: ModelFactory = provider_model,
+    first_batch_limit: int | None = None,
 ) -> Agent[CallHandle, BaseModel]:
     """启动前登记；解析函数无I/O，当前密钥只在ControlledModel.request中读取。"""
 
@@ -144,7 +164,7 @@ def build_agent(
         instructions=instructions,
         defer_model_check=True,
         retries=1,
-        toolsets=[authorized_tools(tools)],
+        toolsets=[authorized_tools(tools, first_batch_limit)],
         capabilities=[
             ResolveModelId(resolve),
             TemporalDurability(

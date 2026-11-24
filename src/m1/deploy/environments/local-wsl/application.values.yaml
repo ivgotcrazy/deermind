@@ -1,5 +1,5 @@
 images:
-  server: deermind/server:prompt-r1
+  server: deermind/server:learning-reads-r3
   client: deermind/client:e05-10-r4
 nodeSelector:
   kubernetes.io/hostname: deermind-m1

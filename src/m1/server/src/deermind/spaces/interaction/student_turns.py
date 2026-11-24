@@ -51,6 +51,12 @@ from deermind.spaces.interaction.conversation import (
     revise,
     store_position,
 )
+from deermind.spaces.interaction.learning_materials import (
+    TOOL_REFS,
+    CourseIndex,
+    ReadCourse,
+    activity_index,
+)
 from deermind.spaces.interaction.public import (
     CONTROL_ACTIVITY,
     HANDLE_INPUT,
@@ -138,6 +144,8 @@ class StudentTurns:
         activity_config: ActivityConfig,
         read_chapter: ReadChapter,
         read_mastery: ReadMastery | None = None,
+        course_index: CourseIndex | None = None,
+        read_course: ReadCourse | None = None,
     ) -> None:
         self.conversation = conversation
         self.engine = conversation.engine
@@ -147,6 +155,8 @@ class StudentTurns:
         self.activity_config = activity_config
         self.read_chapter = read_chapter
         self.read_mastery = read_mastery
+        self.course_index = course_index
+        self.read_course = read_course
         self.registry = Registry(
             [
                 Entry(
@@ -780,11 +790,23 @@ class StudentTurns:
             if post_close and (assessment is None or assessment.state != "closed"):
                 raise RuntimeError("Post-round help requires a closed round")
             if assessment and not post_close:
-                return (
-                    canonical_json({"mode": "detection_message", "round_state": assessment.state})
-                    + "\n本轮输入（JSON）\n"
-                    + canonical_json(raw)
-                )
+                detection: dict[str, JsonValue] = {
+                    "mode": "detection_message",
+                    "round_state": assessment.state,
+                }
+                if (
+                    assessment.state == "open"
+                    and self.course_index
+                    and (await self._reads_enabled(db, work))
+                ):
+                    detection["question"] = await db.scalar(
+                        text(
+                            "SELECT statement FROM interaction.task_uses "
+                            "WHERE scope_id=:scope AND task_use_id=:id"
+                        ),
+                        {"scope": work.scope_id, "id": UUID(assessment.task_use_ref.id)},
+                    )
+                return canonical_json(detection) + "\n本轮输入（JSON）\n" + canonical_json(raw)
             fixed_question = None
             if post_close and assessment and question:
                 source = await db.scalar(
@@ -814,7 +836,7 @@ class StudentTurns:
             # 摘要未保存时，继续读取本轮能放入预算的原消息。
             recent = await db.execute(
                 text(
-                    "SELECT m.message_id,m.role,m.parts FROM interaction.messages m "
+                    "SELECT m.message_id,m.message_seq,m.role,m.parts FROM interaction.messages m "
                     "LEFT JOIN interaction.message_assignments a ON a.message_id=m.message_id "
                     "WHERE m.scope_id=:scope AND m.source_input_ref IS DISTINCT FROM :input "
                     "AND a.activity_id IS NOT DISTINCT FROM CAST(:activity AS uuid) "
@@ -831,6 +853,7 @@ class StudentTurns:
             )
             history_text: list[dict[str, JsonValue]] = []
             message_refs: list[Ref] = []
+            before = current.latest_message_seq + 1
             remaining = 32 * 1024
             for item in recent.mappings():
                 message: dict[str, JsonValue] = {"role": item["role"], "parts": item["parts"]}
@@ -839,6 +862,24 @@ class StudentTurns:
                     break
                 history_text.append(message)
                 message_refs.append(ref("message", item["message_id"]))
+                before = item["message_seq"]
+            allow_reads = (
+                self.course_index is not None
+                and mastery_ref is None
+                and (active is None or str(active.identity.adoption_ref) == grant.basis_refs[0].id)
+                and await self._reads_enabled(db, work)
+            )
+            readable = (
+                await activity_index(
+                    db,
+                    work.scope_id,
+                    UUID(grant.basis_refs[0].id),
+                    before,
+                    [item.activity_ref.activity_id for item in current.path],
+                )
+                if allow_reads
+                else []
+            )
         source = StudentInput.model_validate_json(canonical_json(raw))
         contexts: list[dict[str, JsonValue]] = []
         quoted: list[dict[str, JsonValue]] = []
@@ -886,11 +927,22 @@ class StudentTurns:
                         )
                         if chosen is not None:
                             contexts.append(chosen)
-        mastery = (
-            await self.read_mastery(work.scope_id, adoption, mastery_ref)
-            if self.read_mastery
-            else None
-        )
+        if allow_reads and self.course_index:
+            async with self.engine.connect() as db:
+                readable.extend(
+                    await self.course_index(db, work.scope_id, adoption, source.explicit_refs)
+                )
+            mastery: dict[str, JsonValue] | None = {
+                "state": "reference_available"
+                if any(item.reference.type == "mastery_snapshot" for item in readable)
+                else "unknown",
+            }
+        else:
+            mastery = (
+                await self.read_mastery(work.scope_id, adoption, mastery_ref)
+                if self.read_mastery
+                else None
+            )
         return (
             canonical_json(
                 {
@@ -904,10 +956,24 @@ class StudentTurns:
                     "recent": list(reversed(history_text)),
                     "teaching_contexts": contexts,
                     "published_mastery": mastery,
+                    **(
+                        {"readable_materials": [item.model_dump(mode="json") for item in readable]}
+                        if readable
+                        else {}
+                    ),
                 }
             )
             + "\n本轮输入（JSON）\n"
             + canonical_json(raw)
+        )
+
+    @staticmethod
+    async def _reads_enabled(db: AsyncConnection, work: Execution) -> bool:
+        config = await ai_store.configuration(db, work.execution_id)
+        return config.budget.max_tool_attempts > 0 and any(
+            ref in binding.tool_refs
+            for binding in config.purpose_bindings.values()
+            for ref in TOOL_REFS.values()
         )
 
     async def wait_for_mastery(self, run: RunInput, waits: Waits) -> MasteryFollowUp | None:

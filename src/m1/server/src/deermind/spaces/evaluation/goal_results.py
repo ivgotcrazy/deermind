@@ -335,3 +335,31 @@ class GoalResults:
             {"scope": scope, "basis": target_basis},
         )
         return None if raw is None else GoalEvaluation.model_validate_json(canonical_json(raw))
+
+    @staticmethod
+    async def current_reference(
+        db: AsyncConnection, scope: UUID, target_basis: UUID
+    ) -> UUID | None:
+        """Identify the current result without expanding the target decision."""
+        return await db.scalar(
+            text(
+                "SELECT current_result_ref FROM evaluation.goal_current "
+                "WHERE scope_id=:scope AND target_basis_ref=:basis"
+            ),
+            {"scope": scope, "basis": target_basis},
+        )
+
+    @staticmethod
+    async def fixed_result(
+        db: AsyncConnection, scope: UUID, target_basis: UUID, identity: UUID
+    ) -> GoalEvaluation | None:
+        """Read a previously published result for the specified adopted target."""
+        raw: JsonValue = await db.scalar(
+            text(
+                "SELECT to_jsonb(g)-'source_event_id' FROM evaluation.goal_evaluation g "
+                "WHERE g.scope_id=:scope AND g.target_basis_ref=:basis "
+                "AND g.goal_evaluation_id=:id AND g.current_state_applied"
+            ),
+            {"scope": scope, "basis": target_basis, "id": identity},
+        )
+        return None if raw is None else GoalEvaluation.model_validate_json(canonical_json(raw))

@@ -20,8 +20,8 @@ from deermind.abstractions.executions import RunInput
 from deermind.abstractions.task_supply import SuppliedTask
 from deermind.abstractions.waits import WaitCall
 from deermind.bootstrap.material_operation import STEP_OPTIONS
+from deermind.bootstrap.student_tools import configure_student_tools
 from deermind.foundation.ai.execution import Calls
-from deermind.foundation.ai.tools import Tools
 from deermind.foundation.system.executions import store
 from deermind.foundation.system.waits.service import Waits
 from deermind.infrastructure.ai.agent import Purpose, build_agent
@@ -32,6 +32,7 @@ from deermind.spaces.evaluation.public import ClaimDetail, ClaimRef
 from deermind.spaces.interaction import memory_steps
 from deermind.spaces.interaction.detection_help import prepare_help
 from deermind.spaces.interaction.detection_preparation import DetectionPreparation, PlanWork
+from deermind.spaces.interaction.learning_materials import TOOL_REFS, reply_materials
 from deermind.spaces.interaction.public import PREPARE_DETECTION, QuestionPart
 from deermind.spaces.interaction.reply_candidate import ReplyCandidate
 from deermind.spaces.interaction.student_turns import (
@@ -54,7 +55,7 @@ _KEY = "M1_STUDENT_MODEL_KEY"
 PURPOSE = Purpose(
     "student_conversation",
     Ref(owner="interaction", type="ai_purpose", id="student_conversation", version=1),
-    Ref(owner="interaction", type="prompt", id="student_conversation", version=14),
+    Ref(owner="interaction", type="prompt", id="student_conversation", version=15),
     Ref(owner="interaction", type="ai_schema", id="ReplyCandidate", version=9),
     ReplyCandidate,
 )
@@ -64,13 +65,13 @@ def student_config() -> ExecutionConfig | None:
     if os.environ.get("M1_STUDENT_MODEL_ENABLED") != "true":
         return None
     return ExecutionConfig(
-        revision="student-conversation-11",
+        revision="student-conversation-12",
         purpose_bindings={
             PURPOSE.name: PurposeBinding(
                 contract_ref=PURPOSE.contract_ref,
                 prompt_ref=PURPOSE.prompt_ref,
                 schema_ref=PURPOSE.schema_ref,
-                tool_refs=[],
+                tool_refs=list(TOOL_REFS.values()),
                 profile=ModelProfile(
                     connection_ref=Ref(owner="ai", type="connection", id="deepseek", version=1),
                     profile_ref=Ref(owner="ai", type="profile", id="student", version=1),
@@ -84,8 +85,8 @@ def student_config() -> ExecutionConfig | None:
             )
         },
         budget=Budget(
-            max_model_requests=3,
-            max_tool_attempts=0,
+            max_model_requests=4,
+            max_tool_attempts=2,
             max_repairs=1,
             max_input_tokens=96_000,
             max_output_tokens=2048,
@@ -145,6 +146,7 @@ class StudentWorkflow(PydanticAIWorkflow):
                     "interaction.acknowledge_answer", raw, **STEP_OPTIONS
                 )
                 return context
+            prompt, refs, tools = reply_materials(context, run.input_ref)
             candidate = await execute_ai_task(
                 self.agent,
                 PromptCallInput(
@@ -153,9 +155,9 @@ class StudentWorkflow(PydanticAIWorkflow):
                     call_key="student-conversation",
                     purpose=PURPOSE.name,
                     prompt_parts=["instructions"],
-                    prompt=context,
-                    material_refs=[run.input_ref],
-                    tool_grants=[],
+                    prompt=prompt,
+                    material_refs=refs,
+                    tool_grants=tools,
                 ),
             )
             post_close = False
@@ -173,6 +175,7 @@ class StudentWorkflow(PydanticAIWorkflow):
                 )
                 if confirmed:
                     context, post_close = confirmed, True
+                    prompt, refs, tools = reply_materials(context, run.input_ref)
                     candidate = await execute_ai_task(
                         self.agent,
                         PromptCallInput(
@@ -181,9 +184,9 @@ class StudentWorkflow(PydanticAIWorkflow):
                             call_key="student-after-round",
                             purpose=PURPOSE.name,
                             prompt_parts=["instructions", "after_round"],
-                            prompt=context,
-                            material_refs=[run.input_ref],
-                            tool_grants=[],
+                            prompt=prompt,
+                            material_refs=refs,
+                            tool_grants=tools,
                         ),
                     )
             elif workflow.patched("student_prepare_detection") and await self._prepare_detection(
@@ -429,7 +432,13 @@ class StudentActivities:
         self.waits, self.domain_for, self.question = waits, domain_for, question
         self.fixed_question = fixed_question
         self.detection = detection
-        StudentWorkflow.agent = build_agent(PURPOSE, calls, Tools(calls, []), _credential)
+        StudentWorkflow.agent = build_agent(
+            PURPOSE,
+            calls,
+            configure_student_tools(service, calls),
+            _credential,
+            first_batch_limit=2,
+        )
         StudentWorkflow.__pydantic_ai_agents__ = [StudentWorkflow.agent]
 
     @activity.defn(name="interaction.student_context")

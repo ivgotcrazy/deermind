@@ -1,4 +1,4 @@
-"""只读取本次评价所引用的领域对象固定版本。"""
+"""读取已由业务调用者选定的领域对象固定版本。"""
 
 from uuid import UUID
 
@@ -21,7 +21,7 @@ async def read_fixed_reference(
         or reference.version is None
         or reference.path is not None
     ):
-        raise ValueError("Expected a fixed evaluation reference")
+        raise ValueError("Expected a fixed Domain reference")
     saved = (
         await db.execute(
             text(
