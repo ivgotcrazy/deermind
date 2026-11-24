@@ -4,13 +4,16 @@ from uuid import UUID
 
 from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.events import FactModel, Ref
-from deermind.abstractions.executions import RunInput
+from deermind.abstractions.executions import Execution, RunInput
 from deermind.foundation.system.executions import store
+from deermind.foundation.system.executions.contracts import Registry
+from deermind.spaces.interaction import conversation_facts as facts
 from deermind.spaces.interaction import history, memory_facts
-from deermind.spaces.interaction.conversation import draft, ref
-from deermind.spaces.interaction.student_turns import StudentTurns
+from deermind.spaces.interaction.conversation import Conversation, draft, ref
+from deermind.spaces.interaction.public import StudentInput, TextPart
 from pydantic import JsonValue
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
 
 class SummaryMaterial(FactModel):
@@ -22,9 +25,9 @@ class SummaryMaterial(FactModel):
     earlier_summary: str | None
 
 
-async def prepare(service: StudentTurns, run: RunInput) -> SummaryMaterial | None:
-    async with service.engine.begin() as db:
-        work = await store.active(db, service.registry, run, "step")
+async def prepare(engine: AsyncEngine, registry: Registry, run: RunInput) -> SummaryMaterial | None:
+    async with engine.begin() as db:
+        work = await store.active(db, registry, run, "step")
         current = await history.current(db, work.scope_id)
         leaf = current.current_activity
         if not leaf or leaf.type not in {"explanation", "question_answer"}:
@@ -74,13 +77,18 @@ async def prepare(service: StudentTurns, run: RunInput) -> SummaryMaterial | Non
 
 
 async def save(
-    service: StudentTurns, run: RunInput, material: SummaryMaterial, wording: str, candidate: UUID
+    conversation: Conversation,
+    registry: Registry,
+    run: RunInput,
+    material: SummaryMaterial,
+    wording: str,
+    candidate: UUID,
 ) -> None:
     if not 1 <= len(wording.strip()) <= 768:
         return
-    async with service.engine.begin() as db:
-        await store.lock_owned(db, service.registry, run.execution_id)
-        work = await store.active(db, service.registry, run, "step")
+    async with conversation.engine.begin() as db:
+        await store.lock_owned(db, registry, run.execution_id)
+        work = await store.active(db, registry, run, "step")
         current = await history.current(db, work.scope_id)
         leaf = current.current_activity
         if (
@@ -114,10 +122,45 @@ async def save(
             material.covered_refs,
             prior,
         )
-        await service.conversation.append(
+        await conversation.append(
             db,
             work.scope_id,
             UUID(authorization.initiator_ref.id),
             UUID(work.acceptance_key),
             [draft(work.scope_id, memory_facts.SAVED, record.memory_ref, record, request)],
         )
+
+
+async def remember_from_reply(
+    db: AsyncConnection,
+    work: Execution,
+    message: facts.MessageFact,
+    activity: history.ActivityState,
+    proposal: memory_facts.Remember,
+) -> memory_facts.MemorySaved | None:
+    raw = await db.scalar(
+        text("SELECT input FROM interaction.inputs WHERE scope_id=:scope AND input_id=:id"),
+        {"scope": work.scope_id, "id": UUID(work.input_ref.id)},
+    )
+    original = StudentInput.model_validate_json(canonical_json(raw))
+    items = await memory_facts.read(db, work.scope_id, activity.identity.activity_id)
+    previous = next((value for value in items if value.kind == "entries"), None)
+    provided = ref("message", message.message_id).model_copy(update={"path": "/parts/0"})
+    first = message.parts[0]
+    if not isinstance(first, TextPart):
+        return None
+    entries = memory_facts.remember(
+        proposal, original.text or "", first.text, work.input_ref, provided, previous
+    )
+    if entries is None:
+        return None
+    return memory_facts.revise(
+        work.scope_id,
+        ref("activity", activity.identity.activity_id, activity.position.revision),
+        work.input_ref,
+        "entries",
+        message.message_seq,
+        {"entries": [item.model_dump(mode="json") for item in entries]},
+        [work.input_ref, provided],
+        previous,
+    )

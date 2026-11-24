@@ -12,6 +12,7 @@ from deermind.spaces.domain.public import TaskInstance
 from deermind.spaces.interaction import conversation_facts as facts
 from deermind.spaces.interaction import detection_plans, history, round_facts, task_facts
 from deermind.spaces.interaction.conversation import (
+    Conversation,
     activity_change,
     assign_message,
     draft,
@@ -29,7 +30,7 @@ from deermind.spaces.interaction.public import (
     OpenDetectionRound,
     QuestionPart,
 )
-from deermind.spaces.interaction.student_turns import ReadQuestion, StudentTurns
+from deermind.spaces.interaction.student_context import ActivityConfig, ReadQuestion
 from sqlalchemy import text
 from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncConnection
@@ -45,8 +46,15 @@ class OpenedRound:
 
 
 class DetectionRounds:
-    def __init__(self, turns: StudentTurns, read_question: ReadQuestion) -> None:
-        self.turns, self.read_question = turns, read_question
+    def __init__(
+        self,
+        conversation: Conversation,
+        activity_config: ActivityConfig,
+        read_question: ReadQuestion,
+    ) -> None:
+        self.conversation = conversation
+        self.activity_config = activity_config
+        self.read_question = read_question
 
     async def open(
         self,
@@ -54,7 +62,7 @@ class DetectionRounds:
         scope: UUID,
         command: OpenDetectionRound,
     ) -> ActivityControlReceipt:
-        service = self.turns.conversation
+        service = self.conversation
         principal = account.account_id
         async with service.engine.begin() as db:
             await service.authorize(db, account, scope, False)
@@ -83,7 +91,7 @@ class DetectionRounds:
             ):
                 raise RequestError(409, "revision_conflict", "当前检测活动已变化。")
             state = await history.activity_at(db, scope, leaf.activity_ref.activity_id)
-            config, _course = await self.turns.activity_config(
+            config, _course = await self.activity_config(
                 scope,
                 state.identity.adoption_ref,
                 "detection",

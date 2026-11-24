@@ -5,23 +5,27 @@ from uuid import UUID, uuid5
 
 from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.events import EventDraft, InlineContent
-from deermind.abstractions.executions import RunInput
+from deermind.abstractions.executions import Execution, RunInput
 from deermind.foundation.system.executions import store
+from deermind.foundation.system.executions.contracts import Registry
+from deermind.spaces.interaction import conversation_facts as facts
 from deermind.spaces.interaction import help_facts, history, round_facts
-from deermind.spaces.interaction.conversation import draft
+from deermind.spaces.interaction.conversation import Conversation, draft, ref
 from deermind.spaces.interaction.detection_plans import PlanProgress
 from deermind.spaces.interaction.public import StudentInput
-from deermind.spaces.interaction.student_turns import StudentTurns
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncConnection
 
 
-async def prepare_help(service: StudentTurns, run: RunInput, quote: str | None) -> bool:
+async def prepare_help(
+    conversation: Conversation, registry: Registry, run: RunInput, quote: str | None
+) -> bool:
     """只接受能在当前已受理原话中核实的求助。"""
     if not quote or not quote.strip():
         return False
-    async with service.engine.begin() as db:
-        await store.lock_owned(db, service.registry, run.execution_id)
-        work = await store.active(db, service.registry, run, "step")
+    async with conversation.engine.begin() as db:
+        await store.lock_owned(db, registry, run.execution_id)
+        work = await store.active(db, registry, run, "step")
         current = await history.current(db, work.scope_id)
         leaf, opened = current.current_activity, current.current_round
         if not leaf or leaf.type != "detection" or not opened:
@@ -94,7 +98,30 @@ async def prepare_help(service: StudentTurns, run: RunInput, quote: str | None) 
             )
         )
         principal = UUID((await store.authorization(db, work.execution_id)).initiator_ref.id)
-        await service.conversation.append(
-            db, work.scope_id, principal, UUID(work.acceptance_key), events
-        )
+        await conversation.append(db, work.scope_id, principal, UUID(work.acceptance_key), events)
         return True
+
+
+async def provided_help_event(
+    db: AsyncConnection, work: Execution, message: facts.MessageFact, request: str
+) -> EventDraft | None:
+    row = await db.scalar(
+        text(
+            "SELECT to_jsonb(h)-'source_event_id' FROM interaction.help_facts h "
+            "WHERE h.scope_id=:scope AND h.source_input_ref=:input AND h.stage='handled'"
+        ),
+        {"scope": work.scope_id, "input": UUID(work.input_ref.id)},
+    )
+    if row is None:
+        return None
+    handled = help_facts.HelpFact.model_validate_json(canonical_json(row))
+    message_ref = ref("message", message.message_id)
+    saved = handled.model_copy(
+        update={
+            "stage": "provided",
+            "provided_part_refs": [message_ref.model_copy(update={"path": "/parts/0"})],
+            "created_at": message.committed_at,
+        }
+    )
+    body = help_facts.payload(saved, work.input_ref, message_ref)
+    return draft(work.scope_id, help_facts.HANDLED, body.help_ref, body, request)

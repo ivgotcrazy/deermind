@@ -29,20 +29,21 @@ from deermind.infrastructure.ai.execution import execute_ai_task
 from deermind.infrastructure.temporal.waits import WaitSignals
 from deermind.spaces.domain.public import TaskInstance, TaskRef
 from deermind.spaces.evaluation.public import ClaimDetail, ClaimRef
-from deermind.spaces.interaction import memory_steps
+from deermind.spaces.interaction import mastery_wait, memory_steps
 from deermind.spaces.interaction.detection_help import prepare_help
 from deermind.spaces.interaction.detection_preparation import DetectionPreparation, PlanWork
 from deermind.spaces.interaction.learning_materials import TOOL_REFS, reply_materials
+from deermind.spaces.interaction.mastery_wait import MasteryFollowUp
 from deermind.spaces.interaction.public import PREPARE_DETECTION, QuestionPart
 from deermind.spaces.interaction.reply_candidate import ReplyCandidate
-from deermind.spaces.interaction.student_turns import (
-    ACKNOWLEDGE_ANSWER,
-    WORKFLOW,
-    MasteryFollowUp,
-    ReadQuestion,
-    StudentTurns,
+from deermind.spaces.interaction.student_context import ACKNOWLEDGE_ANSWER, ReadQuestion
+from deermind.spaces.interaction.student_turns import StudentTurns
+from deermind.spaces.interaction.teaching_questions import (
+    TeachingCard,
+    question_trigger,
+    request_question,
 )
-from deermind.spaces.interaction.teaching_questions import TeachingCard, question_trigger
+from deermind.spaces.interaction.turn_requests import WORKFLOW
 from pydantic import BaseModel
 from pydantic_ai import Agent
 from pydantic_ai.durable_exec.temporal import PydanticAIWorkflow
@@ -114,7 +115,15 @@ def configure_detection(
     async def read_task(claim: ClaimRef) -> TaskRef:
         return (await read_claim(claim.claim_id, claim.revision)).claim.definition.task_ref
 
-    return DetectionPreparation(student, waiting, domain_for, read_task, supplied)
+    return DetectionPreparation(
+        student.conversation,
+        student.registry,
+        student.activity_config,
+        waiting,
+        domain_for,
+        read_task,
+        supplied,
+    )
 
 
 @workflow.defn(name=WORKFLOW, sandboxed=False)
@@ -435,7 +444,7 @@ class StudentActivities:
         StudentWorkflow.agent = build_agent(
             PURPOSE,
             calls,
-            configure_student_tools(service, calls),
+            configure_student_tools(service.engine, service.read_course, calls),
             _credential,
             first_batch_limit=2,
         )
@@ -443,7 +452,9 @@ class StudentActivities:
 
     @activity.defn(name="interaction.student_context")
     async def prepare(self, raw: str) -> str:
-        return await self.service.context(RunInput.model_validate_json(raw), self.fixed_question)
+        return await self.service.context_builder.build(
+            RunInput.model_validate_json(raw), self.fixed_question
+        )
 
     @activity.defn(name="interaction.wait_for_mastery")
     async def prepare_mastery(self, raw: str, candidate: str) -> str:
@@ -452,12 +463,20 @@ class StudentActivities:
         decoded = ReplyCandidate.model_validate_json(canonical_json(content))
         if decoded.intent != "clarify" or not decoded.use_latest_evaluation:
             return ""
-        result = await self.service.wait_for_mastery(run, self.waits)
+        result = await mastery_wait.wait_for_mastery(
+            self.service.conversation,
+            self.service.registry,
+            self.service.current_adoption,
+            run,
+            self.waits,
+        )
         return result.model_dump_json() if result else ""
 
     @activity.defn(name="interaction.follow_up_mastery")
     async def follow_up_mastery(self, prepared: str, reference: str) -> str:
-        return await self.service.follow_up_context(
+        return await mastery_wait.follow_up_context(
+            self.service.context_builder,
+            self.service.current_adoption,
             MasteryFollowUp.model_validate_json(prepared),
             Ref.model_validate_json(reference),
             self.fixed_question,
@@ -472,7 +491,13 @@ class StudentActivities:
             reply = ReplyCandidate.model_validate_json(canonical_json(content))
             if reply.intent == "clarify":
                 wording = reply.wording
-        await self.service.complete_mastery_follow_up(saved, wording)
+        await mastery_wait.complete_mastery_follow_up(
+            self.service.conversation,
+            self.service.registry,
+            self.service.current_adoption,
+            saved,
+            wording,
+        )
 
     @activity.defn(name="interaction.acknowledge_answer")
     async def acknowledge_answer(self, raw: str) -> None:
@@ -480,7 +505,9 @@ class StudentActivities:
 
     @activity.defn(name="interaction.prepare_memory")
     async def prepare_memory(self, raw: str) -> str:
-        material = await memory_steps.prepare(self.service, RunInput.model_validate_json(raw))
+        material = await memory_steps.prepare(
+            self.service.engine, self.service.registry, RunInput.model_validate_json(raw)
+        )
         return material.model_dump_json() if material else ""
 
     @activity.defn(name="interaction.save_memory")
@@ -490,7 +517,8 @@ class StudentActivities:
         candidate = ReplyCandidate.model_validate(value)
         if candidate.intent == "memory_summary":
             await memory_steps.save(
-                self.service,
+                self.service.conversation,
+                self.service.registry,
                 run,
                 memory_steps.SummaryMaterial.model_validate_json(material),
                 candidate.wording,
@@ -503,10 +531,10 @@ class StudentActivities:
         saved = await self.calls.candidate_content(run, UUID(candidate_id))
         candidate = ReplyCandidate.model_validate(saved)
         if candidate.intent != "detection_help" or not await prepare_help(
-            self.service, run, candidate.help_quote
+            self.service.conversation, self.service.registry, run, candidate.help_quote
         ):
             return ""
-        return await self.service.context(run, self.fixed_question, post_close=True)
+        return await self.service.context_builder.build(run, self.fixed_question, post_close=True)
 
     @activity.defn(name="interaction.student_review")
     async def review(self, raw: str, context: str, candidate_id: str) -> str:
@@ -548,8 +576,14 @@ class StudentActivities:
             or proposal.teaching.action != "reply"
         ):
             return ""
-        got = await self.service.request_question(
-            run, proposal.question, self.waits, self.domain_for
+        got = await request_question(
+            self.service.conversation,
+            self.service.registry,
+            self.service.activity_config,
+            run,
+            proposal.question,
+            self.waits,
+            self.domain_for,
         )
         return got.model_dump_json() if got else ""
 

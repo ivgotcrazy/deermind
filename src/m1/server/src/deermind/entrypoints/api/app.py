@@ -161,10 +161,10 @@ def create_app(
                 turns = configure_student_turns(
                     spaces, conversation, materials.attachments, settings, configs
                 )
-                app.state.student_turns = turns
+                app.state.student_turns = turns.requests
                 app.state.detection_rounds = configure_rounds(turns)
                 if realtime is None:
-                    connect_realtime(hub, turns)
+                    connect_realtime(hub, turns.requests)
                 assistant = configure_material_assistant(engine, settings, materials)
                 app.state.material_assistant = assistant
                 deletion = configure_material_deletion(assistant)
@@ -209,9 +209,9 @@ def create_app(
                         (CONFIRM_COURSE, "textbook"): applications.receipt,
                         (OPEN_SPACE, "account"): spaces.receipt,
                         (CONTROL_ACTIVITY, "learning_space"): conversation.receipt,
-                        (HANDLE_INPUT, "learning_space"): turns.receipt,
-                        (SUBMIT_ANSWER, "learning_space"): turns.receipt,
-                        (PREPARE_DETECTION, "learning_space"): turns.receipt,
+                        (HANDLE_INPUT, "learning_space"): turns.requests.receipt,
+                        (SUBMIT_ANSWER, "learning_space"): turns.requests.receipt,
+                        (PREPARE_DETECTION, "learning_space"): turns.requests.receipt,
                     }
                 )
                 app.state.realtime = hub

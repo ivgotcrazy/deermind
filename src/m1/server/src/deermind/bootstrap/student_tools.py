@@ -7,6 +7,7 @@ from deermind.foundation.ai.tools import Tool, Tools
 from deermind.foundation.system.public.errors import RequestError
 from deermind.spaces.interaction.learning_materials import (
     TOOL_REFS,
+    ReadCourse,
     ReadKind,
     ReadMaterial,
     ReadPage,
@@ -18,12 +19,13 @@ from deermind.spaces.interaction.learning_materials import (
     selected_reference,
     unavailable,
 )
-from deermind.spaces.interaction.student_turns import StudentTurns
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncConnection
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
 
-def configure_student_tools(turns: StudentTurns, calls: Calls) -> Tools:
+def configure_student_tools(
+    engine: AsyncEngine, read_course: ReadCourse | None, calls: Calls
+) -> Tools:
     def register(kind: ReadKind, description: str, parameters: type[ReadMaterial]) -> Tool:
         async def check(db: AsyncConnection, handle: CallHandle, args: BaseModel) -> bool:
             return isinstance(args, ReadMaterial) and await read_scope(db, handle) is not None
@@ -34,7 +36,7 @@ def configure_student_tools(turns: StudentTurns, calls: Calls) -> Tools:
             if reference is None:
                 return unavailable()
             try:
-                async with turns.engine.connect() as db:
+                async with engine.connect() as db:
                     await calls.guard(db, handle)
                     selected = await read_scope(db, handle)
                     if selected is None:
@@ -45,8 +47,8 @@ def configure_student_tools(turns: StudentTurns, calls: Calls) -> Tools:
                         content = await read_activity(db, scope, reference, before)
                     else:
                         read = (
-                            await turns.read_course(db, scope, adoption, reference)
-                            if turns.read_course
+                            await read_course(db, scope, adoption, reference)
+                            if read_course
                             else None
                         )
                         if read is None:

@@ -9,14 +9,16 @@ from deermind.abstractions.events import FactModel, Ref
 from deermind.abstractions.executions import RunInput
 from deermind.abstractions.task_supply import REQUESTED, SuppliedTask
 from deermind.foundation.system.executions import store
+from deermind.foundation.system.executions.contracts import Registry
 from deermind.foundation.system.waits.service import Waits
 from deermind.spaces.domain.public import TaskInstance, TaskRef
 from deermind.spaces.evaluation.public import ClaimRef
 from deermind.spaces.interaction import detection_plans, history
 from deermind.spaces.interaction.blueprints import entry_node
-from deermind.spaces.interaction.conversation import draft, ref
+from deermind.spaces.interaction.conversation import Conversation, draft, ref
 from deermind.spaces.interaction.public import DetectionPlanPart
-from deermind.spaces.interaction.student_turns import StudentTurns
+from deermind.spaces.interaction.student_context import ActivityConfig
+from deermind.spaces.interaction.turn_result import Reply, complete_turn
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
 
@@ -31,7 +33,9 @@ class PlanWork(FactModel):
 class DetectionPreparation:
     def __init__(
         self,
-        student: StudentTurns,
+        conversation: Conversation,
+        registry: Registry,
+        activity_config: ActivityConfig,
         waits: Waits,
         domain_for: Callable[[AsyncConnection, UUID], Awaitable[UUID]],
         read_task: Callable[[ClaimRef], Awaitable[TaskRef]],
@@ -39,11 +43,16 @@ class DetectionPreparation:
             [AsyncConnection, UUID, UUID], Awaitable[tuple[TaskInstance, SuppliedTask, UUID] | None]
         ],
     ) -> None:
-        self.student, self.waits, self.domain_for = student, waits, domain_for
+        self.conversation, self.registry, self.activity_config = (
+            conversation,
+            registry,
+            activity_config,
+        )
+        self.waits, self.domain_for = waits, domain_for
         self.read_task, self.supplied = read_task, supplied
 
     async def prepare(self, run: RunInput) -> PlanWork:
-        service = self.student
+        service = self.conversation
         async with service.engine.connect() as db:
             work = await store.load(db, run.execution_id)
             auth = await store.authorization(db, run.execution_id)
@@ -59,7 +68,7 @@ class DetectionPreparation:
             activity_ref=None, adoption=adoption, groups=[], gaps=["当前活动无法准备检测。"]
         )
         if parent and parent.identity.type != "detection":
-            config, _course = await service.activity_config(
+            config, _course = await self.activity_config(
                 work.scope_id,
                 adoption,
                 parent.identity.type,
@@ -71,7 +80,7 @@ class DetectionPreparation:
                 for node in config.definition.blueprint.nodes
             ):
                 return failed
-        config, course = await service.activity_config(work.scope_id, adoption, "detection", None)
+        config, course = await self.activity_config(work.scope_id, adoption, "detection", None)
         if config is None or config.gaps:
             return failed
         first = entry_node(config.definition.blueprint)
@@ -82,7 +91,7 @@ class DetectionPreparation:
         if not required.items:
             return failed.model_copy(update={"gaps": required.gaps})
         async with service.engine.begin() as db:
-            work = await store.active(db, service.registry, run, "step")
+            work = await store.active(db, self.registry, run, "step")
             source = (
                 await db.execute(
                     text(
@@ -99,7 +108,7 @@ class DetectionPreparation:
                 target = parent.identity.activity_id
                 revision = parent.position.revision
             else:
-                created = await service.conversation.begin(
+                created = await service.begin(
                     db,
                     work.scope_id,
                     principal,
@@ -140,7 +149,7 @@ class DetectionPreparation:
                     event = draft(
                         work.scope_id, REQUESTED, payload.request_ref, payload, source.request_id
                     )
-                    await service.conversation.append(
+                    await service.append(
                         db,
                         work.scope_id,
                         principal,
@@ -164,12 +173,12 @@ class DetectionPreparation:
             )
 
     async def finish(self, run: RunInput, prepared: PlanWork, available: set[UUID]) -> None:
-        service = self.student
+        service = self.conversation
         async with service.engine.begin() as db:
-            current = await store.lock_owned(db, service.registry, run.execution_id)
+            current = await store.lock_owned(db, self.registry, run.execution_id)
             if current.state == "completed":
                 return
-            work = await store.active(db, service.registry, run, "finish")
+            work = await store.active(db, self.registry, run, "finish")
             source = await db.scalar(
                 text("SELECT request_id FROM interaction.inputs WHERE input_id=:id"),
                 {"id": UUID(work.input_ref.id)},
@@ -206,7 +215,7 @@ class DetectionPreparation:
                 owner, payload = detection_plans.prepared_plan(
                     work, prepared.activity_ref, prepared.adoption, items, gaps
                 )
-                await service.conversation.append(
+                await service.append(
                     db,
                     work.scope_id,
                     principal,
@@ -223,4 +232,12 @@ class DetectionPreparation:
                     gaps=gaps,
                 )
             wording = "题单已准备好，确认后开始。" if part else "暂时没有可用的检测题。"
-            await service.save_plan_result(db, run, work, wording, part)
+            await complete_turn(
+                service,
+                db,
+                self.registry,
+                run,
+                work,
+                "completed" if part else "blocked",
+                Reply(wording, part),
+            )

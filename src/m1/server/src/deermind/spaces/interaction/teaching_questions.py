@@ -3,21 +3,28 @@
 from collections.abc import Awaitable, Callable
 from dataclasses import replace
 from datetime import timedelta
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 from uuid import UUID, uuid5
 
-from deermind.abstractions.events import FactModel, Ref
+from deermind.abstractions.events import EventDraft, FactModel, Ref
 from deermind.abstractions.executions import Execution, RunInput
 from deermind.abstractions.task_supply import COMPLETED, REQUESTED, TaskSupplyRequested
-from deermind.abstractions.waits import Condition, Wait
+from deermind.abstractions.waits import Condition, Wait, WaitCall
+from deermind.foundation.system.executions import store
+from deermind.foundation.system.executions.contracts import Registry
 from deermind.foundation.system.waits.service import Waits
 from deermind.product.public.courses import CourseSnapshot
 from deermind.spaces.domain.public import TaskRef
+from deermind.spaces.interaction import conversation_facts as facts
+from deermind.spaces.interaction import history, task_facts
 from deermind.spaces.interaction.conversation import Conversation, draft, ref
 from deermind.spaces.interaction.public import ActivityView, QuestionPart
 from deermind.spaces.interaction.supply_wait import PROBE
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
+
+if TYPE_CHECKING:
+    from deermind.spaces.interaction.student_context import ActivityConfig
 
 
 class TeachingQuestion(FactModel):
@@ -144,3 +151,99 @@ async def wait_for_question(
         deadline=deadline,
         reserve_seconds=20,
     )
+
+
+def presented_card(
+    scope: UUID,
+    card: TeachingCard,
+    leaf: ActivityView,
+    saved_activity: history.ActivityState,
+    message: facts.MessageFact,
+    request_id: str,
+) -> EventDraft:
+    activity = leaf.activity_ref.activity_id
+    adoption = saved_activity.identity.adoption_ref
+    use = task_facts.TaskUseFact(
+        task_use_id=UUID(card.part.task_use_ref.id),
+        scope_id=scope,
+        activity_id=activity,
+        round_id=None,
+        plan_item_ref=None,
+        instance_ref=card.instance_ref,
+        statement=card.part.statement.model_dump(mode="json"),
+        adoption_ref=adoption,
+        purpose=card.part.purpose,
+        method_conditions={
+            "method_refs": [item.model_dump(mode="json") for item in card.method_refs]
+        },
+        prepared_at=message.committed_at,
+        provided_message_ref=message.message_id,
+    )
+    return replace(
+        draft(
+            scope,
+            task_facts.PRESENTED,
+            card.part.task_use_ref,
+            task_facts.TaskUseCreated(
+                task_use_ref=card.part.task_use_ref,
+                activity_ref=ref("activity", activity, leaf.activity_ref.revision),
+                round_ref=None,
+                plan_ref=None,
+                adoption_ref=Ref(owner="product", type="space_adoption", id=str(adoption)),
+                records=[facts.record(task_facts.TASK_USE, use.task_use_id, use)],
+            ),
+            request_id,
+        ),
+        causation_event_id=card.supply_event_id,
+    )
+
+
+async def request_question(
+    conversation: Conversation,
+    registry: Registry,
+    activity_config: ActivityConfig,
+    run: RunInput,
+    question: TeachingQuestion,
+    waits: Waits,
+    domain_for: Callable[[AsyncConnection, UUID], Awaitable[UUID]],
+) -> WaitCall | None:
+    async with conversation.engine.connect() as db:
+        work = await store.load(db, run.execution_id)
+        active = (await history.current(db, work.scope_id)).current_activity
+        if active is None or active.type not in {"explanation", "question_answer"}:
+            return None
+        state = await history.activity_at(db, work.scope_id, active.activity_ref.activity_id)
+    config, course = await activity_config(
+        work.scope_id, state.identity.adoption_ref, active.type, state.identity.config_ref
+    )
+    if config is None or not any(
+        node.node_id == active.node_id and "reply" in node.allowed_actions
+        for node in config.definition.blueprint.nodes
+    ):
+        return None
+    async with conversation.engine.begin() as db:
+        work = await store.active(db, registry, run, "step")
+        leaf = (await history.current(db, work.scope_id)).current_activity
+        if leaf is None or active.activity_ref != leaf.activity_ref:
+            return None
+        principal = UUID((await store.authorization(db, run.execution_id)).initiator_ref.id)
+        request_id = await db.scalar(
+            text("SELECT request_id FROM interaction.inputs WHERE input_id=:id"),
+            {"id": UUID(work.input_ref.id)},
+        )
+        if not isinstance(request_id, str):
+            raise ValueError("Question supply requires its original input")
+        saved = await wait_for_question(
+            db,
+            conversation,
+            waits,
+            run,
+            work,
+            leaf,
+            course,
+            question,
+            domain_for,
+            principal,
+            request_id,
+        )
+        return WaitCall(run=run, wait_id=saved.wait_id) if saved else None

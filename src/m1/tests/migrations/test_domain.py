@@ -1041,6 +1041,7 @@ class DomainTests(DatabaseTestCase):
                 "active_input_id": None,
                 "allowed_actions": [],
                 "current_activity": None,
+                "current_round": None,
                 "latest_message_seq": 3,
                 "path": [],
             },
@@ -1090,14 +1091,23 @@ class DomainTests(DatabaseTestCase):
     def _verify_student_turn(self, client: TestClient, student: SessionView, scope: str) -> None:
         """受理、忙时拒绝、停止、终态补读在同一实际空间验证。"""
         from deermind.abstractions.executions import RunInput
+        from deermind.bootstrap.courses import configure_student_turns
         from deermind.bootstrap.student_operation import student_config
         from deermind.foundation.system.executions import commands, store
-        from deermind.spaces.interaction.student_turns import StudentTurns
+        from deermind.spaces.interaction.turn_requests import TurnRequests
 
         assert isinstance(client.app, FastAPI) and client.portal is not None
-        turns: StudentTurns = client.app.state.student_turns
+        app_state = client.app.state
+        turns: TurnRequests = app_state.student_turns
         with patch.dict("os.environ", {"M1_STUDENT_MODEL_ENABLED": "true"}):
             turns.config = student_config()
+        context = configure_student_turns(
+            app_state.course_spaces,
+            app_state.conversation,
+            app_state.materials.attachments,
+            app_state.settings,
+            app_state.activity_configs,
+        ).context_builder
         path = f"/api/m1/learning-spaces/{scope}"
         headers = {"Origin": _ORIGIN, **session_headers(student)}
         command: dict[str, JsonValue] = {
@@ -1168,7 +1178,7 @@ class DomainTests(DatabaseTestCase):
                     ai_config_ref=work.ai_config_ref,
                     deadline_at=attempt.deadline_at,
                 )
-            prepared = await turns.context(run)
+            prepared = await context.build(run)
             self.assertIn('"context_ref"', prepared)
             async with turns.engine.begin() as db:
                 await commands.fail(
@@ -1186,6 +1196,29 @@ class DomainTests(DatabaseTestCase):
         self.assertEqual(failed.json()["result"]["outcome"], "failed")
         self.assertEqual(failed.json()["result"]["message_refs"], [])
         self.assertIsNone(failed.json()["result"]["current"]["active_input_id"])
+
+        newer = client.post(
+            f"{path}/inputs", headers=headers, json={**command, "request_id": str(uuid4())}
+        )
+        self.assertEqual(newer.status_code, 202, newer.text)
+        stale_retry = client.post(
+            f"{path}/input-retries",
+            headers=headers,
+            json={
+                "request_id": str(uuid4()),
+                "execution_ref": next_turn.json()["execution_ref"],
+            },
+        )
+        self.assertEqual(stale_retry.status_code, 409, stale_retry.text)
+        self.assertEqual(stale_retry.json()["error"]["code"], "revision_conflict")
+        current = client.get(f"{path}/conversation", headers=headers, params={"view": "current"})
+        self.assertEqual(current.json()["current"]["active_input_id"], newer.json()["input_id"])
+        cleanup = client.post(
+            f"{path}/activity-actions",
+            headers=headers,
+            json={**stop, "request_id": str(uuid4()), "target_input_id": newer.json()["input_id"]},
+        )
+        self.assertEqual(cleanup.status_code, 200, cleanup.text)
 
     def test_knowledge_versions_catalog_and_original_receipt(self) -> None:
         """并行提交同一旧版，仅一个生效；删除后仍保留原文与原收据。"""

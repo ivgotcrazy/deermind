@@ -42,6 +42,7 @@ from deermind.spaces.interaction.public import (
     ActivityPage,
     ActivityRef,
     ActivityType,
+    ActivityView,
     CurrentView,
     DirectoryView,
     MessagePage,
@@ -537,6 +538,8 @@ class Conversation:
         result: ActivityControlResult,
         messages: list[Ref],
         revisions: list[Ref],
+        *,
+        prior_events: Sequence[EventDraft] = (),
     ) -> ActivityControlReceipt:
         result_id = uuid4()
         result_ref = ref("input_result", result_id)
@@ -562,7 +565,7 @@ class Conversation:
             ),
             request_id,
         )
-        await self.append(db, scope, principal, saved.request_ref, [completed])
+        await self.append(db, scope, principal, saved.request_ref, [*prior_events, completed])
         await self.receipts.complete_request(db, saved, ref("event", completed.event_id))
         return ActivityControlReceipt(request_ref=saved.request_ref, result=result)
 
@@ -802,3 +805,46 @@ def return_point(
     ):
         raise RuntimeError("Active child has no valid return point")
     return parent, point.node_id
+
+
+async def return_after_reply(
+    db: AsyncConnection,
+    scope: UUID,
+    leaf: ActivityView,
+    sequence: int,
+    input_id: UUID,
+    request_id: str,
+) -> tuple[UUID | None, int, UUID, list[EventDraft]]:
+    commands_to_save: list[EventDraft] = []
+    sequence += 1
+    notice_id = uuid4()
+    path = await history.lineage(db, scope, leaf.activity_ref.activity_id)
+    returning = return_point(path)
+    ending = "已结束「" + leaf.name + "」。"
+    next_leaf = None
+    if returning is not None:
+        parent, node = returning
+        restored = revise(
+            parent.position,
+            "active",
+            node,
+            "return_parent",
+            datetime.now(UTC),
+            input_id=input_id,
+        )
+        commands_to_save.append(activity_change(parent.identity, restored, request_id))
+        ending = "回到「" + parent.identity.name + "」。"
+        next_leaf = parent.identity.activity_id
+    commands_to_save.extend(
+        notice_events(
+            scope,
+            leaf.activity_ref.activity_id,
+            notice_id,
+            sequence,
+            ending,
+            datetime.now(UTC),
+            input_id=input_id,
+            request=request_id,
+        )
+    )
+    return next_leaf, sequence, notice_id, commands_to_save

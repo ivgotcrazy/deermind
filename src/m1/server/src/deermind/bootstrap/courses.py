@@ -34,7 +34,9 @@ STUDENT_VIEWS = {
 
 
 def configure_rounds(turns: StudentTurns) -> DetectionRounds:
-    return DetectionRounds(turns, TaskSupply.read_fixed_question)
+    return DetectionRounds(
+        turns.conversation, turns.activity_config, TaskSupply.read_fixed_question
+    )
 
 
 def configure_courses(

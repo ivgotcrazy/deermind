@@ -3,9 +3,10 @@ import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import type { components } from '../../../../contracts/generated/http/schema';
 import { ApiError, get, post } from '../../shared/api/http';
 import AdoptedChapter from '../../shared/content/AdoptedChapter.vue';
-import RichContent from '../../shared/content/RichContent.vue';
 import type { Realtime } from '../../shared/realtime/client';
 import ActivityDirectory from '../features/conversation/ActivityDirectory.vue';
+import DetectionPlanCard from '../features/conversation/DetectionPlanCard.vue';
+import QuestionCard from '../features/conversation/QuestionCard.vue';
 import { activityLabels } from '../features/conversation/activityLabels';
 
 type Schema = components['schemas'];
@@ -654,72 +655,37 @@ void refresh();
               {{ message.role === 'student' ? '我' : 'DeerMind' }}
             </small>
             <template v-for="part in message.parts" :key="part.part_id">
-              <section
+              <QuestionCard
                 v-if="part.type === 'question'"
-                class="question-card"
-                :aria-label="part.title"
-              >
-                <h4>{{ part.title }}</h4>
-                <RichContent :content="part.statement" />
-                <details v-if="part.worked_solution">
-                  <summary>查看解法</summary>
-                  <RichContent :content="part.worked_solution" />
-                </details>
-                <form
-                  v-if="
-                    (part.purpose === 'practice' ||
-                      (part.purpose === 'detection' &&
-                        active?.current_round?.state === 'open' &&
-                        active.current_round.task_use_ref.id === part.task_use_ref.id)) &&
-                    message.activity_ref?.activity_id ===
-                      active?.current_activity?.activity_ref.activity_id
-                  "
-                  @submit.prevent="answer(part)"
-                >
-                  <label :for="`answer-${part.task_use_ref.id}`">你的作答</label>
-                  <textarea
-                    :id="`answer-${part.task_use_ref.id}`"
-                    v-model="answers[part.task_use_ref.id]"
-                    rows="3"
-                    maxlength="4096"
-                  />
-                  <button
-                    type="submit"
-                    :disabled="
-                      saving || !!active?.active_input_id || !answers[part.task_use_ref.id]?.trim()
-                    "
-                  >
-                    提交作答
-                  </button>
-                </form>
-              </section>
-              <section
+                v-model:answer="answers[part.task_use_ref.id]"
+                :question="part"
+                :can-answer="
+                  (part.purpose === 'practice' ||
+                    (part.purpose === 'detection' &&
+                      active?.current_round?.state === 'open' &&
+                      active.current_round.task_use_ref.id === part.task_use_ref.id)) &&
+                  message.activity_ref?.activity_id ===
+                    active?.current_activity?.activity_ref.activity_id
+                "
+                :busy="saving || !!active?.active_input_id"
+                @submit="answer(part)"
+              />
+              <DetectionPlanCard
                 v-else-if="part.type === 'detection_plan'"
-                class="question-card"
-                aria-label="检测题单"
-              >
-                <h4>检测题单 · {{ part.question_count }} 题</h4>
-                <ul v-if="part.gaps.length">
-                  <li v-for="(gap, index) in part.gaps" :key="index">{{ gap }}</li>
-                </ul>
-                <button
-                  v-if="
-                    !active?.current_round &&
-                    message.activity_ref?.activity_id ===
-                      active?.current_activity?.activity_ref.activity_id
-                  "
-                  :disabled="saving || !!active?.active_input_id"
-                  type="button"
-                  @click="
-                    openRound('start_detection', {
-                      plan_id: part.plan_ref.id,
-                      revision: part.plan_ref.revision ?? 1,
-                    })
-                  "
-                >
-                  确认并开始
-                </button>
-              </section>
+                :plan="part"
+                :can-start="
+                  !active?.current_round &&
+                  message.activity_ref?.activity_id ===
+                    active?.current_activity?.activity_ref.activity_id
+                "
+                :busy="saving || !!active?.active_input_id"
+                @start="
+                  openRound('start_detection', {
+                    plan_id: part.plan_ref.id,
+                    revision: part.plan_ref.revision ?? 1,
+                  })
+                "
+              />
               <p v-else>{{ part.text }}</p>
             </template>
           </article>
