@@ -29,22 +29,26 @@ def access(request: Request, *, writing: bool = False) -> tuple[Authentication, 
         or (origin is not None and origin not in config.origins)
         or (writing and origin not in config.origins)
     ):
+        # Host 不在白名单、跨站请求，或 Origin 未登记，拒绝本次请求。
         raise AuthError(403, "forbidden", "请求来源不允许。")
     return service, config
 
 
 def source_address(request: Request, config: AuthConfig) -> str:
     if request.client is None:
+        # 连接信息缺失，无法判定来源。
         raise AuthError(400, "invalid_request", "无法确认请求来源。")
     peer = ip_address(request.client.host)
     # 只信任配置过的反向代理，代理必须覆盖而不是拼接来源头。
     if any(peer in network for network in config.trusted_proxies):
+        # 直连对端属于受信代理，来源 IP 取代理转发头。
         raw = request.headers.get("x-real-ip")
         if raw is None:
             raise AuthError(400, "invalid_request", "代理没有提供请求来源。")
         try:
             return str(ip_address(raw))
         except ValueError as error:
+            # 转发头不是合法 IP，按无效请求处理。
             raise AuthError(400, "invalid_request", "请求来源格式不正确。") from error
     return str(peer)
 
@@ -52,6 +56,7 @@ def source_address(request: Request, config: AuthConfig) -> str:
 def return_path(value: str | None) -> str | None:
     # 当前只有两个正式入口，不接受任意跳转URL或编码绕过。
     if value is not None and value not in {"/admin/", "/student/"}:
+        # 仅放行两个正式入口，拦截任意跳转 URL 与编码绕过。
         raise AuthError(400, "invalid_request", "返回页面不允许。")
     return value
 
@@ -62,6 +67,7 @@ def return_path(value: str | None) -> str | None:
 async def sign_in(request: Request, response: Response, body: SignInRequest) -> SignInResponse:
     service, config = access(request, writing=True)
     if request.headers.get("content-type", "").split(";")[0] != "application/json":
+        # 登录入口仅接受 JSON，拒绝表单等其他编码。
         raise AuthError(400, "invalid_request", "登录只接受JSON请求。")
     target = return_path(body.return_to)
     result = await service.sign_in(

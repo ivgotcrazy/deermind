@@ -27,6 +27,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 def account_rebuilder(engine: AsyncEngine, files: FileStorage) -> AccountRebuilder:
     """记录本批实现摘要；副本和表范围由账号业务维护。"""
     digest = hashlib.sha256(Path(__file__).read_bytes())
+    # 把重建链路涉及的各模块名称与源码计入摘要，版本不符即拒绝重建。
     for module in (
         facts,
         auth_facts,
@@ -44,6 +45,7 @@ def account_rebuilder(engine: AsyncEngine, files: FileStorage) -> AccountRebuild
         records,
     ):
         if module.__file__ is None:
+            # 内置/打包模块取不到源码，无法参与实现摘要校验。
             raise RuntimeError("Rebuild implementation is not available for verification")
         digest.update(module.__name__.encode())
         digest.update(Path(module.__file__).read_bytes())

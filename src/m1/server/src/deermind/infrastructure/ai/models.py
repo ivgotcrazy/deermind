@@ -88,6 +88,7 @@ class ControlledModel(Model[None]):
     ) -> ModelResponse:
         """每次真实传输单独记录；已保存响应可复用，已发未确认保留未知用量。"""
         if workflow.in_workflow():
+            # 模型请求必须在 Activity 内发出，Workflow 内不得直连供应商。
             raise AIRejected("model_io_requires_activity")
         handle = self.handle
         await self.calls.remaining(handle)
@@ -107,11 +108,13 @@ class ControlledModel(Model[None]):
         )
         encoded = canonical_body(body)
         if len(encoded) > handle.budget.max_input_bytes:
+            # 固定编码后的请求体超出输入字节预算，不发起请求。
             raise AIRejected("required_context_too_large")
         # 图片原始字节仍计入传输大小。DeepSeek 每张图片最多 1024 tokens。
         estimate = bounded_tokens(body, messages, handle.binding.profile)
         ordinal = sum(isinstance(item, ModelResponse) for item in messages) + 1
         transport = activity.info().attempt if activity.in_activity() else 1
+        # 首次传输且上一请求带重试反馈/工具重试回执，才计入 repair 用量。
         repair = (
             transport == 1
             and bool(messages)
@@ -134,6 +137,7 @@ class ControlledModel(Model[None]):
             handle, ordinal, transport, request_ref, estimate, repair=repair
         )
         if saved.outcome == "success" and saved.response_ref is not None:
+            # 已有确认的保存响应，直接复用，不再重问模型。
             previous = await self.calls.read_material(
                 saved.response_ref, source=source, max_bytes=handle.budget.max_result_bytes
             )
@@ -141,6 +145,7 @@ class ControlledModel(Model[None]):
                 TypeAdapter(ModelResponse).validate_python(previous), model_request_parameters
             )
         if saved.outcome != "pending":
+            # 预约结果为失败/取消等终态，本次请求不再继续。
             raise AIRejected("request_already_failed")
 
         context = {
@@ -156,6 +161,7 @@ class ControlledModel(Model[None]):
             # 读取当前凭据在预约之后；失败仍留痕，不能回退至旧密钥或另一模型。
             key = self.credentials(handle.binding.profile.credential_ref)
             if not key:
+                # 凭据缺失，禁止回退旧密钥或换用其他模型。
                 raise AIRejected("configuration_unavailable")
             model = self.factory(handle.binding.profile, key)
             remaining = await self.calls.remaining(handle)
@@ -169,6 +175,7 @@ class ControlledModel(Model[None]):
             async with asyncio.timeout(min(90.0, remaining)), AsyncExitStack() as stack:
                 # 注入OpenAI客户端由本层创建；Provider不负责关闭外部传入的客户端。
                 if isinstance(model, OpenAIChatModel):
+                    # 本层创建的 OpenAI 客户端需随请求一并关闭。
                     await stack.enter_async_context(model.client)
                 await stack.enter_async_context(model)
                 response = await model.request(messages, settings, model_request_parameters)
@@ -205,6 +212,7 @@ class ControlledModel(Model[None]):
                 "模型响应已保存", extra={**context, "action": "model_request", "outcome": "success"}
             )
         except asyncio.CancelledError:
+            # 被取消也要在后台落账，避免会话持锁后用量悬空。
             await asyncio.shield(
                 self.calls.settle(
                     handle,
@@ -217,6 +225,7 @@ class ControlledModel(Model[None]):
             )
             raise
         except Exception as error:
+            # 非取消异常先落账，再按错误类别决定是否可重试。
             code = str(error) if isinstance(error, AIRejected) else "model_request_failed"
             LOGGER.warning(
                 "模型请求未完成",
@@ -237,6 +246,7 @@ class ControlledModel(Model[None]):
             )
             # SDK异常可能含响应正文和请求地址；Temporal只收固定分类。
             status = getattr(error, "status_code", None)
+            # 业务拒绝/参数错误，或 4xx（除 429 限流）判定为永久失败，不可重试。
             permanent = isinstance(error, (AIRejected, ValueError)) or (
                 isinstance(status, int) and status < 500 and status != 429
             )
@@ -257,6 +267,7 @@ def bounded_tokens(
     images = 0
     for message in messages:
         if not isinstance(message, ModelRequest):
+            # 非请求消息直接参与文本编码估算。
             text_messages.append(message)
             continue
         parts: list[ModelRequestPart] = []
@@ -271,9 +282,11 @@ def bounded_tokens(
                         and item.media_type in {"image/jpeg", "image/png"}
                         and profile.base_url.rstrip("/") == "https://api.deepseek.com"
                     ):
+                        # 受信供应商支持的图片，以占位符计入文本并单独估算图片 tokens。
                         contents.append("[image]")
                         images += 1
                     else:
+                        # 其余二进制内容当前输入合同不支持。
                         raise AIRejected("unsupported_input")
                 part = replace(part, content=contents)
             parts.append(part)
@@ -286,9 +299,11 @@ def checked_response(response: ModelResponse, parameters: ModelRequestParameters
     """新响应与已存响应执行相同检查，缓存不扩大工具权限。"""
     calls = [part for part in response.parts if isinstance(part, ToolCallPart)]
     if len({part.tool_call_id for part in calls}) != len(calls):
+        # 工具调用编号重复，无法唯一定位回执。
         raise AIRejected("duplicate_tool_identity")
     permitted = {tool.name for tool in parameters.function_tools + parameters.output_tools}
     if any(part.tool_name not in permitted for part in calls):
+        # 模型调用了未授权工具，缓存响应同样不得放行。
         raise AIRejected("forbidden_tool")
     return response
 

@@ -108,6 +108,7 @@ class TurnRequests:
 
     async def _lock(self, db: AsyncConnection, kind: str, scope: UUID) -> None:
         if kind != SCOPE:
+            # 执行锁定只接受学习空间作用域。
             raise PermissionError("Expected learning space")
         await self.current_adoption(db, scope, True)
         await lock_position(db, scope)
@@ -120,6 +121,7 @@ class TurnRequests:
         self, db: AsyncConnection, work: Execution, authorization: Authorization, action: str
     ) -> None:
         if action in {"read", "cancel"}:
+            # 读取与取消不校验输入持有权。
             return
         scope, input_id = work.scope_id, UUID(work.input_ref.id)
         basis = await self.current_adoption(db, scope, False)
@@ -133,6 +135,7 @@ class TurnRequests:
                 {"scope": scope, "id": input_id},
             )
             if not valid or str(basis) != authorization.basis_refs[0].id:
+                # 无进行中输入或采用依据已变，重试被拒绝。
                 raise RequestError(409, "revision_conflict", "当前交流已变化，无法重试原请求。")
             await set_active_input(db, scope, input_id)
             return
@@ -146,6 +149,7 @@ class TurnRequests:
             {"scope": scope, "id": input_id},
         )
         if found != input_id or str(basis) != authorization.basis_refs[0].id:
+            # 输入已不持有空间，或采用依据与授权不符。
             raise PermissionError("Input no longer owns the space or adopted basis")
 
     async def _read_part(
@@ -177,10 +181,12 @@ class TurnRequests:
         """Prepare material before locking, then recheck adoption and turn ownership."""
         entry = HANDLE_INPUT
         if isinstance(command, AnswerCommand):
+            # 作答提交：动作记为提交答案，正文取自学生作答。
             action, kind = SUBMIT_ANSWER, "answer"
             content = StudentInput(text=command.answer.text, attachment_refs=[], explicit_refs=[])
             identity_input = command
         elif isinstance(command, PrepareDetectionCommand):
+            # 准备检测：走检测入口，正文为系统占位文本。
             entry = PREPARE_DETECTION
             action, kind = entry, "activity_control"
             content = StudentInput(
@@ -190,6 +196,7 @@ class TurnRequests:
             )
             identity_input = content
         else:
+            # 普通聊天消息。
             action, kind = entry, "message"
             content = command.input
             identity_input = content
@@ -214,6 +221,7 @@ class TurnRequests:
                 or 0
             )
         if saved is not None:
+            # 同请求已有完成记录，按幂等重放回执。
             assert saved.result_ref is not None
             return await self._read_acceptance(scope, UUID(saved.result_ref.id), saved.request_ref)
         if (
@@ -223,13 +231,17 @@ class TurnRequests:
             and before.current_round.round_ref.id == command.round_ref.id
             and before.current_round.state == "closed"
         ):
+            # 目标检测轮已闭环，不能再作答。
             raise RequestError(409, "round_closed", "当前检测轮已经结束。")
         if before.active_input_id is not None:
+            # 空间尚有进行中输入，拒绝并发。
             raise RequestError(409, "interaction_busy", "正在处理上一条，草稿已保留。")
         if content.attachment_refs:
+            # 本轮聊天不接收附件。
             raise RequestError(400, "invalid_reference", "当前聊天只接收文字和教材引用。")
         references = content.explicit_refs
         if references:
+            # 显式引用必须落在当前采用快照的章节/内容范围内。
             available = [
                 Ref(
                     owner="product", type="chapter", id=str(item.chapter_id), revision=item.revision
@@ -242,9 +254,11 @@ class TurnRequests:
                 for content in chapter.content_refs
             )
             if len(references) > 1 or references[0] not in available:
+                # 一次只允许一条引用，且必须在可用清单内。
                 raise RequestError(404, "not_found", "引用的教材内容不在当前采用范围内。")
         config = self.config
         if config is None:
+            # 缺模型配置，无法启动执行。
             raise RequestError(503, "configuration_unavailable", "学习助手尚未配置模型。")
         response = LearningInputAcceptance(
             request_ref=uuid4(), execution_ref=uuid4(), input_id=uuid4()
@@ -288,7 +302,7 @@ class TurnRequests:
             event_access(scope, principal),
             (accepted,)
             if isinstance(command, AnswerCommand)
-            else (accepted, message_event(user_message, None, command.request_id)),
+            else (accepted, message_event(user_message, None, command.request_id)),  # 普通输入另落学生消息事件
         )
         async with self.engine.begin() as db:
             receipt = await service.receipts.claim_request(
@@ -301,21 +315,25 @@ class TurnRequests:
                 reserved_ref=response.request_ref,
             )
             if receipt.result_ref:
+                # 认领时发现已有完成回执，直接重放。
                 replay = UUID(receipt.result_ref.id), receipt.request_ref
             else:
                 updated = await service.authorize(db, account, scope, True)
                 await lock_position(db, scope)
                 latest = await history.current(db, scope)
                 if latest.active_input_id is not None:
+                    # 加锁后仍有进行中输入，视为并发冲突。
                     raise RequestError(409, "interaction_busy", "正在处理上一条，草稿已保留。")
                 if (
                     await next_position(db, scope) != (sequence, epoch)
                     or updated.adoption_ref != adoption.adoption_ref
                 ):
+                    # 消息序号/轮次或采用依据在准备期间发生变化，乐观锁冲突。
                     raise RequestError(409, "revision_conflict", "学习空间已更新，请再发送一次。")
                 await service.append(db, scope, principal, response.request_ref, prepared)
                 leaf = latest.current_activity
                 if isinstance(command, AnswerCommand):
+                    # 作答输入额外落提交事实。
                     await save_submission(service, db, scope, principal, response, command, latest)
                 await store_position(
                     db,
@@ -380,6 +398,7 @@ class TurnRequests:
                 db, principal, query.action, query.resource_id, query.request_id
             )
         if saved is None or saved.result_ref is None:
+            # 无完成回执，按未找到返回。
             return ReceiptView[LearningTurnResult](receipt_state="not_found")
         accepted = await self._read_acceptance(
             query.resource_id, UUID(saved.result_ref.id), saved.request_ref
@@ -400,7 +419,7 @@ class TurnRequests:
                 )
             )
             if finished is not None
-            else None
+            else None  # 尚无完成结果事件，回执停留在已接受状态
         )
         return ReceiptView[LearningTurnResult](
             receipt_state="completed" if turn else "accepted",
@@ -419,14 +438,17 @@ class TurnRequests:
             try:
                 current = await store.load(db, command.execution_ref)
             except NoResultFound as error:
+                # 执行记录不存在。
                 raise RequestError(404, "not_found", "找不到这次交流。") from error
             if current.scope_id != scope or current.entry_ref not in {
                 HANDLE_INPUT,
                 PREPARE_DETECTION,
             }:
+                # 不属于本空间或非可重试入口。
                 raise RequestError(404, "not_found", "找不到这次交流。")
             authorization = await store.authorization(db, current.execution_id)
             if authorization.initiator_ref.id != str(account.account_id):
+                # 非发起人无权重试。
                 raise RequestError(404, "not_found", "找不到这次交流。")
             try:
                 saved = await commands.retry(
@@ -438,6 +460,7 @@ class TurnRequests:
                     seconds=300,
                 )
             except ValueError as error:
+                # 执行状态不允许重试。
                 raise RequestError(409, "blocked", "这次交流当前不能重试。") from error
             return LearningInputAcceptance(
                 request_ref=UUID(saved.acceptance_key),
@@ -462,6 +485,7 @@ class TurnRequests:
                 )
             ).one_or_none()
             if original is None:
+                # 目标输入不存在或类型不可停止。
                 raise RequestError(404, "not_found", "找不到这次交流。")
             original_receipt = await service.receipts.find_completed_request(
                 db,
@@ -473,6 +497,7 @@ class TurnRequests:
                 original.request_id,
             )
         if original_receipt is None or original_receipt.result_ref is None:
+            # 原请求未落完成回执，无法定位待停止执行。
             raise RequestError(404, "not_found", "找不到这次交流。")
         accepted = await self._read_acceptance(
             scope, UUID(original_receipt.result_ref.id), original_receipt.request_ref
@@ -487,6 +512,7 @@ class TurnRequests:
                 normalized_input=command.model_dump(mode="json", exclude={"request_id"}),
             )
             if receipt.result_ref is None:
+                # 取消请求首次认领，加锁后取消原执行。
                 adoption = await service.authorize(db, account, scope, True)
                 await lock_position(db, scope)
                 stopped = await commands.cancel(
@@ -500,7 +526,7 @@ class TurnRequests:
                 outcome = ActivityControlResult(
                     current=current,
                     outcome="stopped" if stopped.state == "cancelled" else "already_committed",
-                    committed_refs=[stopped.result_ref] if stopped.result_ref else [],
+                    committed_refs=[stopped.result_ref] if stopped.result_ref else [],  # 已落回执则带回引用
                 )
                 now = datetime.now(UTC)
                 _, epoch = await next_position(db, scope)
@@ -537,4 +563,5 @@ class TurnRequests:
                     [],
                     prior_events=[accepted_event],
                 )
+        # 取消请求已有回执，按既有结果重放。
         return await service.replay_control(scope, receipt)

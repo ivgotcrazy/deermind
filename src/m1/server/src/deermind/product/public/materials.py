@@ -46,8 +46,10 @@ class ReceiveFiles(FactModel):
     @model_validator(mode="after")
     def unique_files(self) -> "ReceiveFiles":
         if len({file.order for file in self.files}) != len(self.files):
+            # 同批文件局部序号不得重复。
             raise ValueError("File order must be unique")
         if len({file.receipt.storage_ref for file in self.files}) != len(self.files):
+            # 同一文件不得在一批内重复登记。
             raise ValueError("File receipts must be unique")
         return self
 

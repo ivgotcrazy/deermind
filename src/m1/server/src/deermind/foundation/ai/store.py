@@ -1,4 +1,9 @@
-"""AI事实与投影的共同保存；所有者持工作锁，模型和文件I/O均在事务外。"""
+"""AI 事实与投影的共同保存；所有者持工作锁，模型和文件 I/O 均在事务外。
+
+分层定位：foundation（AI 底座）
+对外契约：load/record/pin/configuration 承接 AI 事实追加、投影落库与配置读取。
+边界约束：调用方持有工作锁与共同事务；本模块不做模型调用、文件写入或业务接受判断。
+"""
 
 import json
 from datetime import datetime
@@ -26,7 +31,9 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 
 async def now(connection: AsyncConnection) -> datetime:
+    """取数据库当前时钟时间，作为事实记录的服务端时间基准。"""
     value = await connection.scalar(text("SELECT clock_timestamp()"))
+    # 数据库返回非时间类型属异常，不能作为事实时间基准。
     if not isinstance(value, datetime):
         raise RuntimeError("Database did not return a timestamp")
     return value
@@ -36,6 +43,7 @@ async def load[Fact: FactModel](
     connection: AsyncConnection, table: str, model: type[Fact], keys: dict[str, object]
 ) -> Fact | None:
     """仅查询程序登记的表及主键；不允许模型提供表名、筛选或SQL片段。"""
+    # 表名与主键组合必须在程序登记内，防止模型侧注入表名或筛选条件。
     if table not in KEYS or set(keys) != set(KEYS[table]):
         raise ValueError("Unregistered AI projection read")
     where = " AND ".join(f"{key}=:{key}" for key in keys)
@@ -44,6 +52,7 @@ async def load[Fact: FactModel](
         .mappings()
         .one_or_none()
     )
+    # 无匹配投影记录，按未登记返回。
     if row is None:
         return None
     values = {key: value for key, value in row.items() if key != "source_event_id"}
@@ -71,6 +80,7 @@ async def record(
         for index, (name, value) in enumerate(facts)
     ]
     # 正文大的材料/候选在事务外固定为附件；这里不可在持锁时写文件。
+    # 任一条记录超内联上限，说明前置外置未做，拒绝提交。
     if any(
         len(canonical_json(item.content.model_dump()).encode()) > INLINE_LIMIT for item in records
     ):
@@ -117,6 +127,7 @@ async def pin(
     connection: AsyncConnection, execution: Execution, config: ExecutionConfig
 ) -> ConfigurationFact:
     """与受理共用短事务；重复受理复用旧配置，配置变化只作用于新工作。"""
+    # 仅 AI 操作工作可固定配置，且配置引用与执行身份一致。
     if execution.kind != "ai_operation" or execution.ai_config_ref != execution.execution_id:
         raise ValueError("AI configuration identity must equal its execution identity")
     saved = await load(
@@ -125,6 +136,7 @@ async def pin(
         ConfigurationFact,
         {"execution_id": execution.execution_id},
     )
+    # 已有固定配置：重复受理复用旧快照，配置变化只作用于新工作。
     if saved is not None:
         return saved
     body = config.model_dump(mode="json")
@@ -153,9 +165,11 @@ async def pin(
 
 
 async def configuration(connection: AsyncConnection, execution_id: UUID) -> ExecutionConfig:
+    """按执行编号读取已固定的 AI 配置快照；未固定则拒绝。"""
     saved = await load(
         connection, "ai.execution_configs", ConfigurationFact, {"execution_id": execution_id}
     )
+    # 配置尚未固定，不能读取快照。
     if saved is None:
         raise ValueError("configuration_unavailable")
     return ExecutionConfig.model_validate_json(canonical_json(saved.config))

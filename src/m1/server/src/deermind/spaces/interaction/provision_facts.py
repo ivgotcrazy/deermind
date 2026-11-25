@@ -84,6 +84,7 @@ class PresentationRecorded(EventPayload):
 
 
 def validate(draft: EventDraft, body: EventPayload) -> None:
+    # 教学事实事件只携带一条记录。
     if len(body.records) != 1:
         raise ValueError("One provision fact is required")
     item = body.records[0]
@@ -119,6 +120,7 @@ def validate(draft: EventDraft, body: EventPayload) -> None:
             and data["resource_ref"] == body.resource_ref.model_dump(mode="json")
             and data["part_refs"] == [value.model_dump(mode="json") for value in body.part_refs]
         )
+    # 校验未通过，或记录标识为空、与所有者引用不符，均判事实不一致。
     if not valid or len(item.record_id) == 0 or item.record_id != draft.owner_ref.id:
         raise ValueError("Inconsistent provision record")
 
@@ -157,10 +159,12 @@ EVENTS = {row.event_type for row in REGISTRATIONS}
 
 async def project(db: AsyncConnection, event: StoredEvent) -> None:
     async with application(db, "interaction.provision", 1, event.draft.event_id) as apply:
+        # 事件已投影过，重复应用直接返回。
         if not apply:
             return
         item = event.payload.records[0]
         table = item.record_type
+        # 表类型须属于机会、关闭或呈现三类，且正文为已解码内联内容。
         if table not in {OPPORTUNITY, CLOSURE, PRESENTATION} or not isinstance(
             item.content, InlineContent
         ):

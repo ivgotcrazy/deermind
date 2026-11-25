@@ -51,11 +51,14 @@ def candidate_scope(
     selected: dict[TaskRef, dict[SolutionRef, list[Ref]]] = {}
     for chapter in snapshot.chapters:
         for association in chapter.associations:
+            # 只统计仍生效的章节关联。
             if association.active:
                 methods = selected.setdefault(association.task_ref, {})
                 for method in association.method_refs:
+                    # 记录每种解法在哪些章节关联中出现，保留独立出处。
                     methods.setdefault(method, []).append(association.association_ref)
     result: list[input_facts.CandidateTask] = []
+    # 按快照中出现的主张逐个组装候选任务。
     for claim in dict.fromkeys(item.claim_ref for item in snapshot.items):
         definition = claims[claim].definition
         adopted = selected.get(definition.task_ref, {})
@@ -69,6 +72,7 @@ def candidate_scope(
                 task_ref=definition.task_ref,
                 claim_ref=claim,
                 methods=choices,
+                # 定义中的解法在采用教材里一个都没匹配上，记为解法缺失。
                 gaps=[] if choices else ["adopted_method_missing"],
             )
         )
@@ -91,6 +95,7 @@ async def find_prepared(
         ),
         {"scope": scope, "trigger": trigger},
     )
+    # 未找到该触发对应的准备记录，返回空。
     if row is None:
         return None
     return input_facts.InputRecord.model_validate_json(canonical_json(row))
@@ -114,12 +119,14 @@ class EvaluationInputs:
 
     async def prepare(self, scope: UUID, trigger: UUID) -> EvaluationMaterials:
         source = await self.sources(scope, trigger)
+        # 回读到的来源事件范围与触发标识须与请求一致。
         if source.scope_id != scope or source.trigger_event_id != trigger:
             raise ValueError("Evaluation source does not match the requested scope")
         async with self.engine.connect() as db:
             adopted = await self.adoptions(db, scope, UUID(source.adoption_ref.id))
         actual, fixed = source.adoption_ref, adopted.adoption_ref
         # 采用记录的 UUID 已唯一固定该次采用；Product 另返回空间内的采用序号。
+        # 固定采用引用须与来源记录一致，且修订号为空或等于已登记修订号。
         if fixed.model_copy(
             update={"revision": actual.revision}
         ) != actual or actual.revision not in (None, fixed.revision):
@@ -128,6 +135,7 @@ class EvaluationInputs:
             claim: (await self.claims(claim.claim_id, claim.revision)).claim
             for claim in dict.fromkeys(item.claim_ref for item in adopted.snapshot.items)
         }
+        # 回读到的主张引用须与请求的版本标识一致，防止串到其他修订版。
         if any(key != value.claim_ref for key, value in claims.items()):
             raise ValueError("Claim lookup returned a different revision")
         candidates = candidate_scope(adopted.snapshot, claims)
@@ -171,6 +179,7 @@ class EvaluationInputs:
     ) -> tuple[dict[Ref, dict[str, JsonValue]], list[input_facts.DomainLocator], list[str]]:
         needed: dict[Ref, UUID] = {}
         domains: set[UUID] = set()
+        # 汇总候选任务及其解法所属的领域引用，供后续回读领域事实。
         for candidate in candidates:
             domain = claims[candidate.claim_ref].definition.domain_id
             domains.add(domain)
@@ -182,6 +191,7 @@ class EvaluationInputs:
         gaps: list[str] = []
         allowed_tasks = [item.task_ref for item in candidates]
         async with self.engine.connect() as db:
+            # 作答类还需核对提交时绑定的任务实例是否落在评价范围内。
             if source.source_kind == "answer":
                 fixed = source.task_instance_ref
                 if fixed is None:
@@ -194,6 +204,7 @@ class EvaluationInputs:
                         TaskInstance.model_validate_json(canonical_json(task[0])).task_ref
                         not in allowed_tasks
                     ):
+                        # 任务实例不在本次候选任务清单内，记为越界。
                         gaps.append("task_outside_evaluation_scope")
                     else:
                         contents[fixed], event_id = task
@@ -205,10 +216,13 @@ class EvaluationInputs:
                             )
                         )
                 else:
+                    # 候选跨多个领域，无法唯一判定任务实例归属，记领域不明。
                     gaps.append("evaluation_domain_unknown")
+            # 逐个回读所需任务/解法的领域事实。
             for reference, domain in needed.items():
                 found = await self.domain(db, domain, reference)
                 if found is None:
+                    # 事实缺失记入缺口清单，继续处理其余引用。
                     gaps.append(f"{reference.type}_missing:{reference.id}")
                     continue
                 contents[reference], event_id = found
@@ -228,6 +242,7 @@ class EvaluationInputs:
         async with self.engine.connect() as db:
             previous = await find_prepared(db, scope, trigger)
         if previous:
+            # 同一触发重复准备时，固定材料必须与首次一致，否则判来源不稳定。
             if previous.input != basis:
                 raise ValueError("A fixed evaluation source returned different material")
             return previous
@@ -270,6 +285,7 @@ class EvaluationInputs:
         async with self.engine.begin() as db:
             sequence = await lock_scope_sequence(db, *fact_scope)
             previous = await find_prepared(db, scope, trigger)
+            # 事务内二次查重，防止并发请求重复落同一准备记录。
             if previous:
                 if previous.input != basis:
                     raise ValueError("A fixed evaluation source returned different material")

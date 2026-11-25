@@ -77,6 +77,7 @@ def reply_materials(context: str, origin: Ref) -> tuple[str, list[Ref], list[Ref
     bundle = _CONTEXT.validate_json(header)
     raw = bundle.pop("readable_materials", None)
     if raw is None:
+        # 输入未登记可读材料，只带本次 origin 引用。
         return context, [origin], []
     items = _CATALOGUE.validate_json(canonical_json(raw))
     bundle["readable_materials"] = [
@@ -93,9 +94,11 @@ def reply_materials(context: str, origin: Ref) -> tuple[str, list[Ref], list[Ref
 def selected_reference(handle: CallHandle, kind: ReadKind, number: int) -> Ref | None:
     refs = handle.input.material_refs
     if not 1 <= number < len(refs):
+        # 编号越界，无对应引用。
         return None
     reference = refs[number]
     if (reference.owner, reference.type) not in _LOCATIONS[kind]:
+        # 引用位置不在该读取类型的授权清单内。
         return None
     return reference
 
@@ -104,6 +107,7 @@ def result(data: dict[str, JsonValue], refs: Sequence[Ref] = ()) -> ToolResult:
     """Omit oversized objects whole so formulas, tables and quoted text stay intact."""
     value = ToolResult(status="ok", data=data, source_refs=list(refs), owner_receipt_ref=None)
     if len(canonical_json(value.model_dump(mode="json")).encode("utf-8")) <= MATERIAL_BYTES:
+        # 未超字节上限，整段返回。
         return value
     return ToolResult(
         status="ok",
@@ -126,6 +130,7 @@ def course_result(body: JsonValue, refs: list[Ref], section: str | None) -> Tool
     """Offer whole rich-content blocks when the complete material exceeds the limit."""
     whole = result({"material": body}, refs)
     if section is None and "omission" not in whole.data:
+        # 未指定分段且整段未超长，直接整段返回。
         return whole
     fields = body[0] if isinstance(body, list) and len(body) == 1 else body
     choices: dict[str, JsonValue] = {}
@@ -135,13 +140,14 @@ def course_result(body: JsonValue, refs: list[Ref], section: str | None) -> Tool
                 continue
             blocks = value.get("blocks")
             if isinstance(blocks, list):
+                # 每个富文本块拆成单独可选分段，最多 30 块。
                 for index, block in enumerate(blocks[:30], start=1):
                     choices[f"{name}:{index}"] = {**value, "blocks": [block]}
     if section is not None:
         return (
             result({"material": choices[section], "section": section}, refs)
             if section in choices
-            else unavailable()
+            else unavailable()  # 请求分段不在可选清单内
         )
     return (
         result({"omission": "材料过长，可按下列分段补读。", "sections": list(choices)}, refs)
@@ -155,6 +161,7 @@ async def activity_index(
 ) -> list[ReadableMaterial]:
     """List the authorized activity history and its latest presented question and help."""
     if not activities:
+        # 无授权活动，返回空目录。
         return []
     items: list[ReadableMaterial] = []
     for activity in activities[-2:]:
@@ -191,6 +198,7 @@ async def activity_index(
     ).all()
     for row in rows:
         label = "已呈现题面" if row.kind == "task_use" else "已提供的帮助"
+        # 题面/帮助消息各登记一条活动材料。
         items.append(
             ReadableMaterial(
                 kind="activity",
@@ -199,6 +207,7 @@ async def activity_index(
             )
         )
         if row.instance_ref is not None:
+            # 题面挂了题目实例，再附一条课程资料引用。
             items.append(
                 ReadableMaterial(
                     kind="course",
@@ -216,6 +225,7 @@ async def read_activity(
     if reference.type == "activity_history":
         boundary = int(reference.path.removeprefix("/")) if reference.path else 0
         if before is not None and before >= boundary:
+            # 续读位置未早于已报边界，不允许越界回读。
             return unavailable()
         rows = (
             await db.execute(
@@ -245,6 +255,7 @@ async def read_activity(
                 "next_before": next_before,
             }
             if "omission" in result(data, [*refs, message]).data:
+                # 累积后超长：已纳入的条目保留，本条截断。
                 if not selected:
                     return result(
                         {
@@ -266,6 +277,7 @@ async def read_activity(
             refs,
         )
     if before is not None:
+        # 单条材料不支持续读游标。
         return unavailable()
     params = {"scope": scope, "id": UUID(reference.id)}
     if reference.type == "task_use":
@@ -279,7 +291,7 @@ async def read_activity(
         return (
             result({"statement": statement}, [reference])
             if statement is not None
-            else unavailable()
+            else unavailable()  # 题面未呈现，无原文可取
         )
     if reference.type == "help":
         rows = (
@@ -293,6 +305,7 @@ async def read_activity(
             )
         ).one_or_none()
         if rows is None:
+            # 求助记录未关联可呈现消息。
             return unavailable()
         return result(
             {"parts": rows.parts},
@@ -305,20 +318,23 @@ async def read_activity(
         ),
         params,
     )
-    return result({"parts": parts}, [reference]) if parts is not None else unavailable()
+    return result({"parts": parts}, [reference]) if parts is not None else unavailable()  # 消息不存在或角色不可呈现
 
 
 async def read_scope(db: AsyncConnection, handle: CallHandle) -> tuple[UUID, UUID] | None:
     """Use the active execution's owner and the current detection state at read time."""
     if handle.input.step_key not in {"reply", "post_detection_help"}:
+        # 仅作答回复与检测后求助两步允许读取活动材料。
         return None
     work = await store.load(db, handle.input.run.execution_id)
     current = await history.current(db, work.scope_id)
     if current.current_round is not None and current.current_round.state == "open":
+        # 检测轮进行中，不开放活动材料读取。
         return None
     if handle.input.step_key == "post_detection_help" and (
         current.current_round is None or current.current_round.state != "closed"
     ):
+        # 检测后求助要求轮次已闭环。
         return None
     authorization = await store.authorization(db, work.execution_id)
     return work.scope_id, UUID(authorization.basis_refs[0].id)

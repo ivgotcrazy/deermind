@@ -56,6 +56,7 @@ class EvaluationFacts:
         )
         items = page["items"]
         if not isinstance(items, list) or not items or not isinstance(items[0], dict):
+            # 触发事件不在授权事实范围内。
             raise LookupError("Evaluation source is outside the authorized facts")
         row = items[0]
         return EventLocation.model_validate_json(
@@ -78,10 +79,12 @@ class EvaluationFacts:
         )
         items = found["items"]
         if not isinstance(items, list) or len(items) != len(refs):
+            # 读取结果条数与请求片段数不符，视为响应不完整。
             raise ValueError("Incomplete event reading response")
         materials: list[EvaluationMaterial] = []
         for (role, _, _), ref, value in zip(selectors, refs, items, strict=True):
             if not isinstance(value, dict) or value["completeness"] != "complete":
+                # 片段未完整落库，不能作为取证原文。
                 raise LookupError("A recorded evaluation field is missing")
             digest = value["sha256"]
             if not isinstance(digest, str):
@@ -96,7 +99,9 @@ class EvaluationFacts:
             scope, trigger, (task_facts.SUBMITTED, provision_facts.CLOSED)
         )
         if location.event_type == task_facts.SUBMITTED:
+            # 作答收束：按提交事实取证。
             return await self._answer(scope, trigger, location)
+        # 其余为教学机会闭环，按教学收束取证。
         return await self._teaching(scope, trigger, location)
 
     async def prior_questions(
@@ -132,6 +137,7 @@ class EvaluationFacts:
                 )
             ).all()
         if len(candidates) > 100:
+            # 历史题量超阈值，不回溯先例，避免上下文膨胀。
             return None
         return [
             question
@@ -170,6 +176,7 @@ class EvaluationFacts:
         missing: list[str] = []
         use: task_facts.TaskUseFact | None = None
         if basis.task_use_event_id is None:
+            # 缺少题目使用事件，记缺口。
             missing.append("task_use_missing")
         else:
             use, question = await self._question(
@@ -185,10 +192,12 @@ class EvaluationFacts:
                 raise ValueError("Submission does not match the original question")
             materials.append(question)
         if basis.help_event_ids is None:
+            # 求助历史不可考，记缺口。
             missing.append("help_history_unknown")
         for event in dict.fromkeys(basis.help_event_ids or []):
             materials.extend(await self._help(scope, event, submission, location.scope_event_seq))
         if basis.prior_task_use_event_ids is None:
+            # 既往接触不可考，记缺口。
             missing.append("prior_exposure_unknown")
         for event in dict.fromkeys(basis.prior_task_use_event_ids or []):
             previous, question = await self._question(
@@ -198,6 +207,7 @@ class EvaluationFacts:
                 raise ValueError("Exposure does not match this question instance")
             materials.append(question)
         if submission.round_id:
+            # 检测作答还需补开轮/闭轮事实。
             rounds = await self._round(scope, submission)
             materials.extend(rounds)
             if len(rounds) != 2:
@@ -228,6 +238,7 @@ class EvaluationFacts:
         )
         question = task_facts.TaskUseFact.model_validate_json(canonical_json(material.content))
         if question.scope_id != scope or str(question.task_use_id) != location.owner_ref.id:
+            # 题目事实与事件归属不一致。
             raise ValueError("Question does not match its event")
         return question, material
 
@@ -240,6 +251,7 @@ class EvaluationFacts:
         role: Literal["teaching", "provided_help"],
     ) -> EvaluationMaterial:
         if part.owner != "interaction" or part.type != "message" or not part.path:
+            # 教学文本引用必须指向 interaction 消息且带片段路径。
             raise ValueError("Invalid teaching text reference")
         async with self.reader.engine.connect() as db:
             event = await db.scalar(
@@ -253,6 +265,7 @@ class EvaluationFacts:
                 {"scope": scope, "message": UUID(part.id), "activity": activity},
             )
         if not isinstance(event, UUID):
+            # 消息不在授权活动范围内。
             raise LookupError("Referenced teaching text is outside the authorized activity")
         location = await self._location(
             scope, event, (conversation_facts.RECORDED,), cutoff=cutoff - 1
@@ -278,7 +291,7 @@ class EvaluationFacts:
         if help_record.scope_id != scope or help_record.task_use_id != submission.task_use_ref:
             raise ValueError("Help does not belong to this question use")
         for part in help_record.provided_part_refs:
-            # A substantive reply may be in a child activity. Help already identifies its message.
+            # 实质回复可能在子活动中，求助记录已指明对应消息。
             if action.provided_message_ref is None or action.provided_message_ref.id != part.id:
                 raise ValueError("Help content is unrelated to the provided message")
             materials.append(await self._message(scope, None, part, cutoff, "provided_help"))
@@ -308,12 +321,14 @@ class EvaluationFacts:
                 )
             ).one_or_none()
         if row is None:
+            # 未查到对应检测轮，返回空。
             return []
         identity = str(submission.round_id)
         materials = await self._parts(
             scope, row.opened, round_facts.STARTED, [("round_opened", identity, "")]
         )
         if row.closed:
+            # 有本次提交触发的闭轮记录，再取闭轮事实。
             materials.extend(
                 await self._parts(
                     scope,
@@ -341,6 +356,7 @@ class EvaluationFacts:
             raise ValueError("Teaching closure does not match its trigger")
         materials = [closure]
         for part in action.provided_part_refs:
+            # 闭环记录列出的教学片段，逐个回查消息原文。
             materials.append(
                 await self._message(
                     scope, UUID(action.activity_ref.id), part, location.scope_event_seq, "teaching"
@@ -366,5 +382,6 @@ class EvaluationFacts:
 
 def _object(value: JsonValue) -> dict[str, JsonValue]:
     if not isinstance(value, dict):
+        # 事件片段须为对象，才能按字段解包。
         raise ValueError("Expected an event object")
     return value

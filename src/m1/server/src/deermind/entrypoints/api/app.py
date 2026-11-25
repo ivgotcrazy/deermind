@@ -135,6 +135,7 @@ def create_app(
         check_storage(settings.files_root, require_mount=settings.files_backend == "pvc")
         app.state.settings = settings
         try:
+            # 启动阶段装配全部业务服务并挂载到 app.state，退出时随生命周期释放。
             async with database_lifespan() as engine:
                 app.state.database = engine
                 app.state.auth, app.state.auth_config = await configure_authentication(engine)
@@ -164,6 +165,7 @@ def create_app(
                 app.state.student_turns = turns.requests
                 app.state.detection_rounds = configure_rounds(turns)
                 if realtime is None:
+                    # 未注入测试用 realtime 实例时，把学生回合请求接入实时推送通道。
                     connect_realtime(hub, turns.requests)
                 assistant = configure_material_assistant(engine, settings, materials)
                 app.state.material_assistant = assistant
@@ -219,10 +221,12 @@ def create_app(
                 async def refresh(event_id: UUID) -> None:
                     change = await resolve_view_change(engine, event_id, routes)
                     if change:
+                        # 事件对应的视图确有变化，推送给在线连接。
                         await hub.notify(change.kind, change.resource_id, change.views)
 
                 messaging = None
                 if "M1_NATS_ADDRESS" in os.environ:
+                    # 显式配置了 NATS 地址才接入消息总线，否则本地通知仅走内存。
                     messaging = MessagingSettings.from_environment()
                 notices = ViewNotices(messaging, refresh, hub.resync)
                 app.state.view_notices = notices
@@ -233,6 +237,7 @@ def create_app(
                 async with notices.listen():
                     yield
         except Exception:
+            # 装配或运行期异常：记录后终止启动，避免带残缺依赖对外服务。
             LOGGER.exception(
                 "API 启动或运行失败，请检查配置与数据库版本",
                 extra={"action": "api_failed", "outcome": "failed", "error_code": "API_FAILED"},
@@ -255,6 +260,7 @@ def create_app(
     app.include_router(receipts_router)
     app.include_router(realtime_router)
     app.add_middleware(RequestBodyLimit)
+    # 各类异常统一交由 api_error 转换为公开错误响应。
     for error_type in (
         RequestError,
         RequestConflict,
@@ -277,6 +283,7 @@ def create_app(
             check_storage(settings.files_root, require_mount=settings.files_backend == "pvc")
             await check_database(app.state.database)
         except (OSError, SQLAlchemyError, DatabaseNotReady) as error:
+            # 文件目录或数据库不可用，就绪探针返回 503，不暴露内部细节。
             LOGGER.error(
                 "数据库或共享文件目录不可用",
                 extra={

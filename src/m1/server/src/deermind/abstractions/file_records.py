@@ -1,4 +1,9 @@
-"""文件登记数据与事件正文；无存储及投影实现。"""
+"""文件登记数据与事件正文；无存储及投影实现。
+
+分层定位：abstractions（跨层合同）
+对外契约：FileObject 文件登记记录与 FileReceived 事件正文。
+边界约束：只定义文件身份与事件结构，不含字节存储与授权核验。
+"""
 
 from datetime import datetime
 from typing import Annotated, Literal
@@ -11,6 +16,8 @@ from deermind.abstractions.files import FileBytes
 
 
 class FileObject(FactModel):
+    """已登记文件的身份、后端、存储键、完整性信息与分类来源。"""
+
     file_id: UUID
     backend: Literal["local", "pvc", "object"]
     storage_key: NonEmpty
@@ -26,10 +33,13 @@ class FileObject(FactModel):
     created_at: datetime
 
     def bytes_ref(self) -> FileBytes:
+        """生成字节读取所需的精简引用（不含媒体类型与分类等登记信息）。"""
         return FileBytes(self.file_id, self.storage_key, self.byte_size, self.sha256)
 
 
 class FileReceived(EventPayload):
+    """文件完整保存且校验通过的事件正文。"""
+
     subject_ref: Ref
     outcome: Literal["recorded"]
     reason_code: None

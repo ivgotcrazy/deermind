@@ -75,6 +75,7 @@ def cursor_position(cursor: str | None, token: str) -> UUID | None:
         return None
     prefix, _, value = cursor.partition(".")
     if prefix != token:
+        # 游标前缀须与当前读取范围的指纹一致，防止跨范围翻页。
         raise RequestError(400, "invalid_request", "续页位置与当前读取范围不符，请重新读取。")
     try:
         return UUID(value)
@@ -104,6 +105,7 @@ class MaterialReceiving:
     @staticmethod
     def administrator(session: SessionView) -> UUID:
         if session.account.role != "admin":
+            # 教材管理仅限管理员。
             raise RequestError(403, "forbidden", "只有管理员可以管理教材。")
         return session.account.account_id
 
@@ -113,6 +115,7 @@ class MaterialReceiving:
         statement = _IMPORT + (" FOR UPDATE OF i" if lock else "")
         row = (await connection.execute(text(statement), {"id": identity})).mappings().one_or_none()
         if row is None:
+            # 仅返回 active 导入；缺失或已删除均按未找到处理。
             raise RequestError(404, "not_found", "找不到此教材导入。")
         return row
 
@@ -126,11 +129,13 @@ class MaterialReceiving:
             )
         except RequestError as error:
             if error.status != 404:
+                # 非 404 错误原样上抛，仅把领域不存在转为引用无效。
                 raise
             raise RequestError(400, "invalid_reference", "请选择有效领域。") from error
         if not isinstance(detail, DomainDetail) or detail.object.is_identity_deleted:
             raise RequestError(400, "invalid_reference", "请选择有效领域。")
         if identity is not None:
+            # 补件场景：核对既有导入与所选领域一致。
             async with self.engine.connect() as connection:
                 imported = await self.read_import(connection, identity)
             if imported["domain_id"] != domain.object_id:
@@ -161,6 +166,7 @@ class MaterialReceiving:
         )
         items = found["items"]
         if not isinstance(items, list) or len(items) != 1 or not isinstance(items[0], dict):
+            # 收据对应的受理事件必须恰好一条，属内部一致性错误。
             raise RuntimeError("Material receipt source event does not exist")
         event_id = UUID(str(items[0]["event_id"]))
         facts = await self.reader.read_facts(
@@ -178,6 +184,7 @@ class MaterialReceiving:
         result = records[0]["content"]
         if not isinstance(result, dict):
             raise RuntimeError("Invalid MaterialReceived action fields")
+        # 把 source_refs 还原为公开结果的 received 列表。
         return MaterialResult.model_validate(
             {
                 **{key: value for key, value in result.items() if key != "source_refs"},
@@ -195,8 +202,10 @@ class MaterialReceiving:
     ) -> ReceiptView[MaterialResult]:
         row = await self._receipt_row(principal, query.resource_id, query.request_id)
         if row is None:
+            # 无收据记录，按未找到返回。
             return ReceiptView[MaterialResult](receipt_state="not_found")
         if row["state"] == "failed":
+            # 永久失败收据直接回传错误，不重复执行。
             return ReceiptView[MaterialResult](
                 receipt_state="rejected",
                 receipt_ref=row["request_ref"],
@@ -221,8 +230,10 @@ class MaterialReceiving:
         prior = await self._receipt_row(principal, scope, body.request_id)
         if prior is not None:
             if normalized != prior["normalized_input"]:
+                # 同一请求键被不同输入复用，属冲突。
                 raise RequestConflict("Material request reused with different input")
             if prior["error"] is not None:
+                # 原请求已永久失败，回传其错误结果。
                 raise self._failure(ErrorDetail.model_validate(prior["error"]))
             return MaterialReceipt(
                 request_ref=prior["request_ref"],
@@ -233,8 +244,10 @@ class MaterialReceiving:
 
         current = None
         if creating:
+            # 新建：校验所选领域有效。
             await self.authorize_upload(session, body.domain_ref, None)
         else:
+            # 补件：载入既有导入作为修订基线。
             async with self.engine.connect() as connection:
                 current = await self.read_import(connection, scope)
         import_id = uuid4() if creating else scope
@@ -257,6 +270,7 @@ class MaterialReceiving:
         access = ProducerAccess("product", actor, frozenset({("material_import", import_id)}))
         prepared = None
         if sources:
+            # 存在可登记原件时组装受理事件；无原件则只落失败收据。
             rows = [record(IMPORT, import_id, imported)]
             if isinstance(body, NewMaterial):
                 book = TextbookRow(
@@ -306,6 +320,7 @@ class MaterialReceiving:
             )
             reference = receipt.result_ref
             if receipt.error is not None:
+                # 收据本身已带错误（如冲突占用），直接沿用。
                 error = receipt.error
             elif reference is None:
                 if isinstance(body, AppendMaterial):
@@ -315,6 +330,7 @@ class MaterialReceiving:
                         or current is None
                         or locked["revision"] != current["revision"]
                     ):
+                        # 补件基线与持锁后现状不一致，记修订冲突。
                         error = ErrorDetail(
                             code="revision_conflict",
                             message="原件清单已变化，请刷新后重试。",
@@ -322,6 +338,7 @@ class MaterialReceiving:
                             retryable=False,
                         )
                 if error is None and prepared is None:
+                    # 无有效原件可登记，记来源不可用。
                     error = ErrorDetail(
                         code="source_unavailable",
                         message="没有可登记的原件。",
@@ -329,8 +346,10 @@ class MaterialReceiving:
                         retryable=False,
                     )
                 if error:
+                    # 永久失败落定拒绝收据并回滚事务。
                     await reject_request(connection, receipt, error)
                 elif prepared is not None:
+                    # 校验通过：锁序号、追加事件并投影。
                     event_scope = ("material_import", import_id)
                     sequence = await lock_scope_sequence(connection, *event_scope)
                     (stored,) = await self.events.append(
@@ -345,6 +364,7 @@ class MaterialReceiving:
                     reference = import_ref(import_id)
                     await complete_request(connection, receipt, reference)
         if error:
+            # 事务内落定的失败错误按对应状态码抛出。
             raise self._failure(error)
         assert reference is not None
         return MaterialReceipt(
@@ -362,6 +382,7 @@ class MaterialReceiving:
         existing_files: set[UUID] = set()
         existing_orders: set[int] = set()
         if current is not None:
+            # 补件：载入既有文件与序号，避免重复登记。
             async with self.engine.connect() as connection:
                 rows = await connection.execute(
                     text(
@@ -377,6 +398,7 @@ class MaterialReceiving:
             raise RequestError(413, "payload_too_large", "一次登记合计最多 2 GiB 原件。")
         sources: list[MaterialSourceFact] = []
         issues: list[Issue] = []
+        # 按局部序号排序逐件核验收据与归属。
         for index, item in sorted(enumerate(body.files), key=lambda entry: entry[1].order):
             file_id = item.receipt.storage_ref
             row = uploads.get(file_id)
@@ -396,6 +418,7 @@ class MaterialReceiving:
                     and domain.object_id == current["domain_id"]
                     and row["resource_ref"] == import_ref(import_id).model_dump(exclude_none=True)
                 )
+                # 新建要求文件未绑定其他资源；补件要求文件归属本导入且领域一致。
             if not allowed or row is None:
                 issues.append(
                     Issue(
@@ -484,6 +507,7 @@ class MaterialReceiving:
             )
             if row is None:
                 raise RequestError(404, "not_found", "找不到此教材。")
+            # 命中教材后分页读取其原件清单。
             book = TextbookRow.model_validate_json(canonical_json(row["book"]))
             result = await connection.execute(
                 text(
@@ -499,6 +523,7 @@ class MaterialReceiving:
         for source in sources[:limit]:
             file = await self.uploads.registry.by_id(source["file_id"])
             if file is None or file.sha256 != source["sha256"] or file.category != "original":
+                # 文件缺失、摘要不符或非原件类别，登记不完整。
                 raise RequestError(503, "source_unavailable", "教材原件登记不完整。")
             views.append(
                 MaterialSourceView(
@@ -561,12 +586,14 @@ class MaterialReceiving:
             or file.category != "original"
             or file.media_type not in MAX_BYTES
         ):
+            # 摘要、类别或类型校验任一不符均视为原件不可用。
             raise RequestError(503, "source_unavailable", "教材原件登记不完整。")
         try:
             source = await asyncio.to_thread(
                 self.open_file, file.bytes_ref(), MAX_BYTES[file.media_type]
             )
         except (ValueError, OSError) as error:
+            # 读文件或完整性校验失败，转为来源不可用错误。
             raise RequestError(
                 503, "source_unavailable", "教材原件缺失或完整性检查失败。"
             ) from error

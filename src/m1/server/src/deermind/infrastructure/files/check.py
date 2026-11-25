@@ -13,4 +13,5 @@ def check_storage(root: Path, *, require_mount: bool = True) -> None:
         probe.write(b"deermind")
         probe.flush()
         if Path(probe.name).read_bytes() != b"deermind":
+            # 临时文件回读内容不一致，判定挂载存储不可靠。
             raise OSError("Storage probe did not round-trip")

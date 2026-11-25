@@ -92,6 +92,7 @@ class AnswerFeedbackPrepared(EventPayload):
 
 
 def validate(draft: EventDraft, payload: EventPayload) -> None:
+    # 任务事件只携带一条已解码的内联记录。
     if len(payload.records) != 1 or not isinstance(payload.records[0].content, InlineContent):
         raise ValueError("A task event requires one decoded record")
     body = payload.records[0].content.value
@@ -123,6 +124,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         subject = payload.feedback_ref
     else:
         raise ValueError("Unregistered interaction task fact")
+    # 草稿所有者、记录标识与正文各身份字段须与事件引用逐项一致。
     if (
         draft.owner_ref != subject
         or payload.records[0].record_id != subject.id
@@ -145,10 +147,12 @@ REGISTRATIONS = [
 
 async def project(db: AsyncConnection, event: StoredEvent) -> None:
     async with application(db, "interaction.task_uses", 1, event.draft.event_id) as needed:
+        # 事件已投影过，重复应用直接返回。
         if not needed:
             return
         record = event.payload.records[0]
         table = record.record_type
+        # 表类型须在三类任务事实内，且正文为已解码内联内容。
         if table not in {TASK_USE, SUBMISSION, ANSWER_FEEDBACK} or not isinstance(
             record.content, InlineContent
         ):

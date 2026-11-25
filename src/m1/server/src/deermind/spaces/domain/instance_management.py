@@ -32,6 +32,7 @@ class InstanceManagement:
         async with self.engine.connect() as connection:
             result = await load_instance(connection, domain_id, identity, version)
         if version is None and result.is_deleted:
+            # 读取头部版本且已软删，按移除处理。
             raise RequestError(404, "not_found", "题目已移除。")
         return result
 
@@ -39,6 +40,7 @@ class InstanceManagement:
         try:
             after = UUID(cursor) if cursor else None
         except ValueError as error:
+            # 续页游标不是合法 UUID。
             raise RequestError(400, "invalid_request", "题目列表的续页位置无效。") from error
         async with self.engine.connect() as connection:
             ids = (
@@ -59,13 +61,14 @@ class InstanceManagement:
             ]
         return InstanceList(
             items=items,
-            next_cursor=str(ids[limit - 1]) if len(ids) > limit else None,
+            next_cursor=str(ids[limit - 1]) if len(ids) > limit else None,  # 超出一页才给续页游标
         )
 
     @staticmethod
     def _content(command: InstanceCommand, previous: InstanceView | None) -> TaskInstance:
         if command.action == "soft_delete":
             if previous is None or command.instance is not None:
+                # 软删须定位既有题目，且不带新正文。
                 raise RequestError(400, "invalid_request", "请选择要移除的题目。")
             return previous.content
         instance = command.instance
@@ -77,6 +80,7 @@ class InstanceManagement:
         )
         for entry in instance.reference_solutions:
             if entry.origin != "admin_authored" and references.get(entry.reference_id) != entry:
+                # 教材/系统解法改动须走原流程，不能手工改写。
                 raise RequestError(400, "invalid_reference", "教材或系统原有解法需沿原流程提交。")
             if entry.origin == "admin_authored" and (
                 entry.source_refs or entry.content.source_refs
@@ -87,6 +91,7 @@ class InstanceManagement:
             or instance.source_refs != original.source_refs
             or instance.statement.source_refs != original.statement.source_refs
         ):
+            # 手工修改不得新增未经核对的教材来源。
             raise RequestError(400, "invalid_reference", "手工修改不能增加未经核对的教材来源。")
         return instance
 
@@ -112,6 +117,7 @@ class InstanceManagement:
             ).one_or_none()
             if row is not None:
                 if row.input_hash != signature:
+                    # 同请求编号对应不同输入，幂等键冲突。
                     raise RequestError(409, "request_conflict", "此编号已用于另一题目修改。")
                 ref = Ref.model_validate(row.result_ref)
                 saved = await load_instance(connection, domain_id, UUID(ref.id), ref.version)
@@ -128,6 +134,7 @@ class InstanceManagement:
             or command.object_ref != previous.instance_ref
             or command.expected_version != previous.instance_ref.version
         ):
+            # 修订/软删须定位未删除的既有题目，且版本乐观锁匹配。
             raise RequestError(409, "version_conflict", "题目已更新，请重新读取。")
         content = self._content(command, previous)
         reference = previous.instance_ref if previous else None
@@ -170,6 +177,7 @@ class InstanceManagement:
                 },
             )
             if claimed is None:
+                # 认领冲突：并发下已有回执，回读既有结果。
                 row = (
                     await connection.execute(
                         text(
@@ -182,16 +190,19 @@ class InstanceManagement:
                 if row.input_hash != signature:
                     raise RequestError(409, "request_conflict", "此编号已用于另一题目修改。")
                 ref = Ref.model_validate(row.result_ref)
+                ref = Ref.model_validate(row.result_ref)
                 result = await load_instance(connection, domain_id, UUID(ref.id), ref.version)
                 return InstanceReceipt(request_ref=request, result=result)
             await self.analysis.lock(connection, *scope)
             if reference is not None:
                 current = await load_instance(connection, domain_id, identity)
                 if current.instance_ref != reference or current.is_deleted:
+                    # 加锁后复核：身份/版本已变或已删除，乐观锁冲突。
                     raise RequestError(409, "version_conflict", "题目已更新，请重新读取。")
             if command.action != "soft_delete":
                 await validate_instance(connection, domain_id, content)
                 if previous is None or previous.content != content:
+                    # 新建或内容有变化时，核对与分类检查结论一致。
                     await self.analysis.require_instance_match(
                         connection,
                         domain_id,
@@ -236,6 +247,7 @@ class InstanceManagement:
                 {"id": identity},
             )
             if row is None:
+                # 无完成回执，按未找到返回。
                 return ReceiptView[InstanceView](receipt_state="not_found")
             ref = Ref.model_validate(row)
             saved = await load_instance(connection, domain, UUID(ref.id), ref.version)

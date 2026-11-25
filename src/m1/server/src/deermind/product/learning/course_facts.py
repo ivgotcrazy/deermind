@@ -152,6 +152,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
     kinds = {record.record_type for record in payload.records}
     required = allowed.keys() - ({BASIS} if draft.event_type == APPLIED else set())
     if not required <= kinds <= allowed.keys() or len(kinds) != len(payload.records):
+        # 记录类型集合须满足事件矩阵，且无重复类型。
         raise ValueError("Course fact records do not match its event type")
     for record in payload.records:
         assert isinstance(record.content, InlineContent)
@@ -161,6 +162,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         ):
             raise ValueError("Projection belongs to a different learning space")
         if record.record_type == SPACE_ADOPTION and value["event_ref"] != str(draft.event_id):
+            # 采用记录须引用产生它的本事件。
             raise ValueError("Adoption must cite its own fact")
 
 
@@ -207,6 +209,7 @@ def event(
 
 async def project(db: AsyncConnection, saved: StoredEvent) -> None:
     if saved.draft.event_type == ENTERED:
+        # 进入事件只刷新空间最近进入时间，不写事实行。
         await db.execute(
             text("""
                 UPDATE product.learning_space SET last_entered_at=:entered
@@ -219,6 +222,7 @@ async def project(db: AsyncConnection, saved: StoredEvent) -> None:
         return
     async with application(db, "product.course_views", 1, saved.draft.event_id) as needed:
         if not needed:
+            # 事件已投影过，幂等重放跳过。
             return
         # Event order puts the rows referenced by foreign keys first.
         for row in saved.payload.records:
@@ -230,6 +234,7 @@ async def project(db: AsyncConnection, saved: StoredEvent) -> None:
                 f"jsonb_populate_record(NULL::{table},CAST(:body AS jsonb))"
             )
             if table == SPACE:
+                # 空间头需回填当前采用记录对应的应用引用。
                 # Legacy adoption events still replay their original binding.
                 adoption = next(
                     record
@@ -249,6 +254,7 @@ async def project(db: AsyncConnection, saved: StoredEvent) -> None:
                 previous = body["previous_application_id"]
                 revision = 1
                 if previous is not None:
+                    # 修订版本号接前一应用版本递增。
                     parent = await db.scalar(
                         text(
                             "SELECT revision FROM product.course_application "
@@ -262,6 +268,7 @@ async def project(db: AsyncConnection, saved: StoredEvent) -> None:
                 body["revision"] = revision
             await db.execute(text(sql), {"body": canonical_json(body)})
             if table == COURSE:
+                # 同步刷新教材-目标维度的当前应用头。
                 await db.execute(
                     text(
                         "INSERT INTO product.application_head "

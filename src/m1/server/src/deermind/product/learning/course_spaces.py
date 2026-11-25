@@ -92,6 +92,7 @@ class CourseSpaces:
                 {"book": space.textbook_id},
             )
         if not isinstance(domain, UUID):
+            # 已采用教材缺少领域引用，数据不一致。
             raise RuntimeError("Applied textbook has no domain reference")
         return SpaceGoalView(
             target_basis_ref=adopted.target_basis_ref,
@@ -111,6 +112,7 @@ class CourseSpaces:
             {"scope": scope},
         )
         if not isinstance(identity, UUID):
+            # 空间尚未采用教材，没有可追溯的领域。
             raise LookupError("The learning space has no adopted domain")
         return identity
 
@@ -129,18 +131,21 @@ class CourseSpaces:
                 limit=limit,
             )
         except ValueError as error:
+            # 事件序号/游标参数非法，转为请求错误。
             raise RequestError(400, "invalid_request", str(error)) from error
 
     async def receipt(
         self, principal: UUID, _session: UUID, query: ReceiptQuery
     ) -> ReceiptView[SpaceOpenResult]:
         if principal != query.resource_id:
+            # 回执按学生自身作用域定位，他人空间不对外可见。
             return ReceiptView[SpaceOpenResult](receipt_state="not_found")
         async with self.engine.connect() as db:
             saved = await find_completed_request(
                 db, principal, OPEN_SPACE, principal, query.request_id
             )
             if saved is None or saved.result_ref is None:
+                # 无已完成回执，或回执尚未落结果。
                 return ReceiptView[SpaceOpenResult](receipt_state="not_found")
             name = await db.scalar(
                 text(
@@ -150,6 +155,7 @@ class CourseSpaces:
                 {"id": principal},
             )
             if not isinstance(name, str):
+                # 回执主体已不是学生账号，回执结果不再对外返回。
                 return ReceiptView[SpaceOpenResult](receipt_state="not_found")
             value = await self.entry_result(
                 db,
@@ -202,6 +208,7 @@ class CourseSpaces:
         )
         found = await db.scalar(text(sql), {"id": space_id})
         if found is None:
+            # 空间记录不存在。
             raise RequestError(404, "not_found", "找不到学习空间。")
         return facts.SpaceHead.model_validate_json(canonical_json(found))
 
@@ -214,6 +221,7 @@ class CourseSpaces:
             {"id": identity},
         )
         if raw is None:
+            # 采用记录缺失，属数据不一致。
             raise RuntimeError("Missing space adoption")
         return facts.AdoptionRow.model_validate_json(canonical_json(raw))
 
@@ -228,6 +236,7 @@ class CourseSpaces:
             )
         ).one_or_none()
         if course is None:
+            # 采用记录指向的课程版本已不存在。
             raise RuntimeError("Missing adopted course")
         from deermind.product.public.courses import CourseSnapshot
 
@@ -248,6 +257,7 @@ class CourseSpaces:
     ) -> AdoptionView:
         adoption = await self.adoption(db, identity)
         if adoption.space_id != scope:
+            # 采用记录属于其他空间，不跨空间暴露。
             raise RequestError(404, "not_found", "找不到此空间的采用记录。")
         return await self.adopted(db, adoption)
 
@@ -285,9 +295,11 @@ class CourseSpaces:
                 None,
             )
             if chapter_view is None:
+                # 按章节号/版本或内容引用都未在本空间快照中命中。
                 raise RequestError(404, "not_found", "这个章节不在空间采用范围内。")
             parts: list[tuple[str, str, UUID, UUID, UUID]] = []
             selected = [source] if source is not None else chapter_view.content_refs
+            # 逐份候选内容取出类型、本地编号与溯源事件。
             for ref in selected:
                 row = (
                     await db.execute(
@@ -303,6 +315,7 @@ class CourseSpaces:
                     (row.kind, row.local_key, row.import_id, row.source_event_id, row.candidate_id)
                 )
         content: list[dict[str, JsonValue]] = []
+        # 按候选类型优先级（KC→题目→参考）与本地编号排序，保证正文呈现顺序稳定。
         ordered = sorted(parts, key=lambda item: (CANDIDATE_ORDER[item[0]], item[1]))
         for _, _, import_id, event_id, candidate_id in ordered:
             found = await self.materials.reader.read_facts(
@@ -325,6 +338,7 @@ class CourseSpaces:
             reference = next(item for item in selected if item.id == str(candidate_id))
             content.append({**body, "source_ref": reference.model_dump(mode="json")})
         if len(canonical_json(content).encode()) > 4 * 1024**2:
+            # 章节合并正文超出单次读取的 4MB 限额。
             raise RequestError(413, "payload_too_large", "章节正文超过读取限额。")
         return content
 
@@ -332,6 +346,7 @@ class CourseSpaces:
         self, scope: UUID, adoption: UUID, reference: Ref
     ) -> list[dict[str, JsonValue]]:
         if reference.type == "material_candidate":
+            # 直接引用候选内容：按来源候选定位，不绑定章节。
             return await self.fixed_chapter_content(scope, adoption, None, source=reference)
         return await self.fixed_chapter_content(
             scope, adoption, UUID(reference.id), reference.revision
@@ -399,6 +414,7 @@ class CourseSpaces:
 
     def authorize(self, caller: AccountView, space: facts.SpaceHead) -> None:
         if caller.role == "student" and caller.account_id != space.student_id:
+            # 学生只能访问自己的空间；他人空间按不存在处理，避免泄露存在性。
             raise RequestError(404, "not_found", "找不到学习空间。")
 
     async def entry_result(
@@ -418,6 +434,7 @@ class CourseSpaces:
             },
         )
         if scope is None:
+            # 未在当前学生名下命中该进入事件。
             raise RequestError(404, "not_found", "找不到空间进入记录。")
         space = await self.row(db, scope)
         data = await self.materials.reader.read_facts(
@@ -475,10 +492,12 @@ class CourseSpaces:
         }
         names: dict[str, None] = {}
         if methods:
+            # 快照中存在方法时，再读取领域名汇总学习方法清单。
             domain = await self.domain_for(db, space.space_id)
             for method in methods.values():
                 name = await self.read_method_name(db, domain, method)
                 if name:
+                    # 方法名去重后归集。
                     names[name] = None
         return SpaceWorkspace(
             space=SpaceRow(
@@ -511,6 +530,7 @@ class CourseSpaces:
                 reserved_ref=request,
             )
             if receipt.result_ref is not None:
+                # 进入请求幂等重放，回原进入事件结果。
                 return await self.entry_result(
                     db, account, receipt.request_ref, UUID(receipt.result_ref.id)
                 )
@@ -518,13 +538,16 @@ class CourseSpaces:
             created = False
             drafts: list[EventDraft] = []
             if isinstance(command, CreateSpace):
+                # 新建空间路径：加锁读取教材，核对目标上是否已有已发布课程。
                 await self.checks.book(db, command.textbook_id, lock=True)
                 course = await self.checks.current(db, command.textbook_id, command.target_id)
                 if course is None:
+                    # 教材与目标组合尚未应用课程，不能建空间。
                     raise RequestError(409, "not_ready", "该教材与目标尚未应用。")
                 if command.expected_application_ref != facts.ref(
                     "course_application", course.application_id
                 ):
+                    # 当前课程版本与命令选择时不一致。
                     raise RequestError(409, "application_changed", "课程已更新，请刷新后选择。")
                 identity = await db.scalar(
                     text(
@@ -537,6 +560,7 @@ class CourseSpaces:
                     },
                 )
                 if identity is None:
+                    # 该学生尚无对应课程的空间，新建空间并落初始采用。
                     created = True
                     space = facts.SpaceHead(
                         space_id=uuid4(),
@@ -550,9 +574,11 @@ class CourseSpaces:
                         space, course, now, command.request_id
                     )
                 else:
+                    # 已有同课程空间，直接复用其当前采用。
                     space = await self.row(db, identity, lock=True)
                     adoption = await self.adoption(db, space.current_adoption_ref)
             else:
+                # 进入既有空间路径：加锁取空间并做归属复核。
                 space = await self.row(db, command.space_id, lock=True)
                 self.authorize(account, space)
                 adoption = await self.adoption(db, space.current_adoption_ref)
@@ -615,6 +641,7 @@ class CourseSpaces:
                 )
                 for row in rows[:limit]
             ],
+            # 多取一条判断是否还有下一页；超出限额才生成续页游标。
             next_cursor=f"{token}.{rows[limit - 1].application_id}" if len(rows) > limit else None,
         )
 
@@ -630,7 +657,9 @@ class CourseSpaces:
     ) -> SpaceList:
         if account.role == "student":
             if student not in (None, account.account_id):
+                # 学生不能按他人账号过滤空间。
                 raise RequestError(404, "not_found", "找不到学习空间。")
+            # 强制按本人账号过滤。
             student = account.account_id
         token = sha256(
             f"{account.account_id}:{student}:{textbook}:{target}:{name}".encode()
@@ -639,6 +668,7 @@ class CourseSpaces:
         async with self.engine.connect() as db:
             recent = None
             if account.role == "student":
+                # 学生列表额外回填最近进入的空间。
                 recent = await db.scalar(
                     text("""
                         SELECT space_id FROM product.learning_space
@@ -687,6 +717,7 @@ class CourseSpaces:
             )
         return SpaceList(
             items=[SpaceRow.model_validate(dict(row)) for row in rows[:limit]],
+            # 多取一条判断是否还有下一页；超出限额才生成续页游标。
             next_cursor=f"{token}.{rows[limit - 1]['space_id']}" if len(rows) > limit else None,
             recent_space_id=recent,
         )

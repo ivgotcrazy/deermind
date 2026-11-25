@@ -59,6 +59,7 @@ def payload(
 ) -> HelpHandled:
     owner = Ref(owner="interaction", type="help", id=str(saved.help_id))
     records = [record(HELP, f"{saved.help_id}:{saved.stage}", saved)]
+    # 附带计划进度时追加第二条进度记录。
     if progress is not None:
         records.append(record(PROGRESS, f"{progress.plan_id}:{progress.plan_revision}", progress))
     return HelpHandled(
@@ -73,12 +74,14 @@ def payload(
 
 
 def validate(draft: EventDraft, body: EventPayload) -> None:
+    # 求助事件携带一条或两条记录。
     if not isinstance(body, HelpHandled) or len(body.records) not in {1, 2}:
         raise ValueError("A help event requires one record")
     item = body.records[0]
     if item.record_type != HELP or not isinstance(item.content, InlineContent):
         raise ValueError("Missing help record")
     saved = HelpFact.model_validate_json(canonical_json(item.content.value))
+    # 范围、标识、阶段、分类、闭环引用须与事件正文一致；提供阶段须有对应引用，实质帮助须挂闭环。
     if (
         saved.scope_id != draft.scope_id
         or str(saved.help_id) != body.help_ref.id
@@ -91,6 +94,7 @@ def validate(draft: EventDraft, body: EventPayload) -> None:
         or (saved.classification == "substantive" and saved.round_closure_ref is None)
     ):
         raise ValueError("Inconsistent help record")
+    # 第二条记录为计划取消进度，须满足已受理、实质分类、已取消且无当前轮。
     if len(body.records) == 2:
         progress = body.records[1]
         if (
@@ -152,6 +156,7 @@ async def answer_basis(
 
 async def project(db: AsyncConnection, event: StoredEvent) -> None:
     async with application(db, "interaction.help", 1, event.draft.event_id) as apply:
+        # 事件已投影过，重复应用直接返回。
         if not apply:
             return
         item = event.payload.records[0]
@@ -168,6 +173,7 @@ async def project(db: AsyncConnection, event: StoredEvent) -> None:
                 )
             },
         )
+        # 存在第二条记录时，校验并投影计划取消进度。
         if len(event.payload.records) == 2:
             progress = event.payload.records[1].content
             if not isinstance(progress, InlineContent):

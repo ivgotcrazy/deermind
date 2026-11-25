@@ -44,6 +44,7 @@ def teaching_options(course: CourseSnapshot) -> list[TaskRef]:
     options: dict[tuple[UUID, int], TaskRef] = {}
     for chapter in course.chapters:
         for link in chapter.associations:
+            # 只收集启用且带方法的关联，按任务编号+版本去重。
             if link.active and link.method_refs:
                 options[(link.task_ref.object_id, link.task_ref.version)] = link.task_ref
     return list(options.values())
@@ -55,6 +56,7 @@ def teaching_sources(course: CourseSnapshot, task: TaskRef) -> tuple[list[Ref], 
     sources: list[Ref] = []
     for chapter in course.chapters:
         for link in chapter.associations:
+            # 跳过未启用、任务不符或无方法的关联。
             if not link.active or link.task_ref != task or not link.method_refs:
                 continue
             sources.append(link.association_ref)
@@ -87,10 +89,12 @@ async def wait_for_question(
 ) -> Wait | None:
     methods, sources = teaching_sources(course, question.task)
     if not methods:
+        # 该任务在课程中没有可用方法，不发起供题。
         return None
     now = await db.scalar(text("SELECT clock_timestamp()"))
     deadline = min(now + timedelta(seconds=180), run.deadline_at - timedelta(seconds=20))
     if deadline <= now:
+        # 剩余时间已不足以预留等待，不发起。
         return None
     scope = work.scope_id
     identity = question_trigger(work.execution_id)
@@ -99,6 +103,7 @@ async def wait_for_question(
         text("SELECT 1 FROM runtime.events WHERE event_id=:id"), {"id": identity}
     )
     if recorded is None:
+        # 供题请求事件尚未落库，先追加事件再登记等待。
         history = (
             await db.execute(
                 text(
@@ -210,12 +215,14 @@ async def request_question(
     async with conversation.engine.connect() as db:
         work = await store.load(db, run.execution_id)
         active = (await history.current(db, work.scope_id)).current_activity
+        # 仅讲解与答疑类活动可发起例题/练习供题。
         if active is None or active.type not in {"explanation", "question_answer"}:
             return None
         state = await history.activity_at(db, work.scope_id, active.activity_ref.activity_id)
     config, course = await activity_config(
         work.scope_id, state.identity.adoption_ref, active.type, state.identity.config_ref
     )
+    # 当前蓝图节点须授权 reply，才允许出题。
     if config is None or not any(
         node.node_id == active.node_id and "reply" in node.allowed_actions
         for node in config.definition.blueprint.nodes
@@ -224,6 +231,7 @@ async def request_question(
     async with conversation.engine.begin() as db:
         work = await store.active(db, registry, run, "step")
         leaf = (await history.current(db, work.scope_id)).current_activity
+        # 事务内重新读叶活动，与初次判定不一致则中止，避免活动已切换。
         if leaf is None or active.activity_ref != leaf.activity_ref:
             return None
         principal = UUID((await store.authorization(db, run.execution_id)).initiator_ref.id)
@@ -232,6 +240,7 @@ async def request_question(
             {"id": UUID(work.input_ref.id)},
         )
         if not isinstance(request_id, str):
+            # 供题须挂在原始输入上，缺失请求编号则报错。
             raise ValueError("Question supply requires its original input")
         saved = await wait_for_question(
             db,
@@ -246,4 +255,5 @@ async def request_question(
             principal,
             request_id,
         )
+        # 等待已登记则返回等待调用，否则返回空。
         return WaitCall(run=run, wait_id=saved.wait_id) if saved else None

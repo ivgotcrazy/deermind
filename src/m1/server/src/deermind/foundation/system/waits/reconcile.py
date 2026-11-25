@@ -1,4 +1,9 @@
-"""底座补查遗漏通知；技术适配不读写等待表。"""
+"""底座补查遗漏通知；技术适配不读写等待表。
+
+分层定位：foundation（公共运行底座 / 等待补查）
+对外契约：reconcile 分批复查未结束等待的命中状态并补发通知；run_reconciler 周期驱动补查循环。
+边界约束：读取失败保留原等待，不判为超时；技术适配层不直接读写等待表。
+"""
 
 import asyncio
 import logging
@@ -33,11 +38,13 @@ async def reconcile(
                 {"after": after},
             )
         ).all()
+    # 逐条复查待命中的等待；单条失败不影响同批其余条目。
     for identity in identities:
         try:
             async with asyncio.timeout(timeout_seconds), engine.begin() as connection:
                 saved = await facts.read_wait(connection, str(identity))
                 execution = await store.load(connection, saved.execution_id)
+                # 工作尚无当前尝试，等待暂无可核对对象，跳过本批。
                 if execution.active_attempt_id is None:
                     continue
                 current = await store.attempt(connection, execution.active_attempt_id)
@@ -51,11 +58,13 @@ async def reconcile(
                 )
                 saved = await waits.probe(connection, run, identity)
                 handling = await facts.read_handling(connection, saved)
+                # 等待已出结果或接续已取消，补发对应通知；仍在待命则不动作。
                 if saved.resolution != "pending" or handling.state == "cancelled":
                     await notifications.arrange(
                         connection, waits.entries, execution, saved, "reconcile:" + saved.resolution
                     )
         except Exception:
+            # 读取或核对失败：保留原等待，不判为超时，仅记日志待下批补查。
             LOGGER.exception(
                 "等待补查失败，保留原等待",
                 extra={
@@ -75,7 +84,9 @@ async def run_reconciler(
     interval: int,
     timeout_seconds: int,
 ) -> None:
+    """等待补查循环：按固定间隔分批复查，停止事件置位后退出。"""
     after = None
+    # 停止信号未置位前按固定间隔分批补查；after 记录上批末条游标。
     while not stopped.is_set():
         try:
             after = await reconcile(engine, waits, timeout_seconds=timeout_seconds, after=after)

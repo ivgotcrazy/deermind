@@ -155,6 +155,7 @@ def prepared_plan(
 
 
 def validate(draft: EventDraft, payload: EventPayload) -> None:
+    # 题单准备事件须为身份、内容、进度三记录固定顺序。
     if not isinstance(payload, PlanPrepared) or [row.record_type for row in payload.records] != [
         PLAN,
         REVISION,
@@ -163,10 +164,12 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         raise ValueError("A prepared plan requires its identity, content and progress")
     identity = str(payload.plan_ref.plan_id)
     for row in payload.records:
+        # 各记录须为内联内容且共用同一题单标识。
         if not isinstance(row.content, InlineContent) or row.content.value["plan_id"] != identity:
             raise ValueError("Plan records do not share an identity")
     progress = payload.records[2].content
     assert isinstance(progress, InlineContent)
+    # 所有者须匹配；准备阶段状态为 prepared 且不得悬挂当前轮次。
     if (
         draft.owner_ref.id != identity
         or progress.value["status"] != "prepared"
@@ -188,9 +191,11 @@ REGISTRATION = EventRegistration(
 
 async def project(db: AsyncConnection, event: StoredEvent) -> None:
     async with application(db, "interaction.detection_plans", 1, event.draft.event_id) as apply:
+        # 事件已投影过，重复应用直接返回。
         if not apply:
             return
         for row in event.payload.records:
+            # 表类型须属于三类题单记录，且正文为已解码内联内容。
             if row.record_type not in {PLAN, REVISION, PROGRESS} or not isinstance(
                 row.content, InlineContent
             ):
@@ -224,6 +229,7 @@ def requirements(
     for goal in course.items:
         task = claim_tasks.get(goal.claim_ref)
         if task is None:
+            # 目标缺少对应任务定义，记入缺口。
             gaps.append(goal.title + "缺少可用的任务定义。")
             continue
         eligible: list[tuple[SolutionRef, list[Ref], list[str]]] = []
@@ -239,10 +245,12 @@ def requirements(
                 and condition.method_ref in adopted.method_refs
             ]
             if not sources:
+                # 该方法在当前章节下没有有效采用来源，记入缺口。
                 gaps.append(goal.title + "有方法缺少采用来源。")
                 continue
             aspects = sorted({value.aspect_ref.aspect_code for value in condition.aspects})
             eligible.append((condition.method_ref, sources, aspects))
+        # 任选其一模式：存在可用方法时合并为单条要求。
         if goal.method_mode == "any_one" and eligible:
             items.append(
                 PlanRequirement(
@@ -257,6 +265,7 @@ def requirements(
                 )
             )
         else:
+            # 必选全部模式：每个可用方法各自拆成一条要求。
             for method, sources, aspects in eligible:
                 items.append(
                     PlanRequirement(

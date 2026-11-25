@@ -21,6 +21,7 @@ async def read_fixed_reference(
         or reference.version is None
         or reference.path is not None
     ):
+        # 固定引用必须归属 domain、类型受限、带版本且不带片段路径。
         raise ValueError("Expected a fixed Domain reference")
     saved = (
         await db.execute(
@@ -39,5 +40,6 @@ async def read_fixed_reference(
         )
     ).one_or_none()
     if saved is None:
+        # 归域/种类/版本不符或已删除，按无固定引用处理。
         return None
     return OBJECT_CONTENT.validate_python(saved.content, strict=True), saved.source_event_id

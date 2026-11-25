@@ -27,7 +27,9 @@ async def initialize(client: Client, settings: Settings) -> None:
         )
     except RPCError as error:
         if error.status != RPCStatusCode.NOT_FOUND:
+            # 非"命名空间不存在"的 Temporal 错误向上抛，不静默吞掉。
             raise
+        # 命名空间尚不存在，按保留期 30 天创建。
         await client.workflow_service.register_namespace(
             RegisterNamespaceRequest(
                 namespace=settings.temporal_namespace,
@@ -36,6 +38,7 @@ async def initialize(client: Client, settings: Settings) -> None:
         )
     else:
         if response.config.workflow_execution_retention_ttl.seconds != 30 * 86400:
+            # 既有命名空间保留期与批准值不一致，拒绝沿用。
             raise ValueError("Existing namespace retention differs from the approved 30 days")
 
 
@@ -54,6 +57,7 @@ async def probe(client: Client, settings: Settings) -> None:
             execution_timeout=timedelta(seconds=30),
         )
         if result != token or reply.read_text(encoding="utf-8") != token:
+            # 工作流返回值或共享卷回写令牌不一致，说明执行/卷链路异常。
             raise ValueError("Worker result or shared reply mismatch")
         LOGGER.info(
             "测试任务完成，API 与 Worker 共享卷双向读写通过",
@@ -64,6 +68,7 @@ async def probe(client: Client, settings: Settings) -> None:
             },
         )
     finally:
+        # 无论成功失败，清理探针临时文件，避免共享卷残留。
         request.unlink(missing_ok=True)
         reply.unlink(missing_ok=True)
 
@@ -72,6 +77,7 @@ async def run(command: str) -> None:
     settings = Settings.from_environment()
     async with asyncio.timeout(45):
         if command == "init-namespace":
+            # 仅做命名空间初始化，不需要业务数据库连接。
             client = await Client.connect(
                 settings.temporal_address,
                 namespace=settings.temporal_namespace,
@@ -90,6 +96,7 @@ def main() -> None:
     try:
         asyncio.run(run(args.command))
     except Exception:
+        # 部署检查失败：记录后以非零码退出。
         LOGGER.exception(
             "部署检查失败，请检查目标配置及服务状态",
             extra={

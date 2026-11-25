@@ -81,6 +81,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         or types.count(IMPORT) != 1
         or (isinstance(payload, MaterialDeclined) and CHAPTER in types)
     ):
+        # 拒绝决定不产生章节索引；矩阵须恰好一条决定、批次、导入记录。
         raise ValueError("Invalid material decision records")
 
 
@@ -138,6 +139,7 @@ async def project(connection: AsyncConnection, event: StoredEvent) -> None:
         if not isinstance(record.content, InlineContent):
             raise ValueError("Projection requires hydrated material decisions")
         if record.record_type == DECISION:
+            # 取出决定记录，供后续维护当前内容索引。
             result = MaterialDecision.model_validate_json(canonical_json(record.content.value))
         await connection.execute(
             text(_STATEMENTS[record.record_type]),
@@ -148,7 +150,9 @@ async def project(connection: AsyncConnection, event: StoredEvent) -> None:
             },
         )
     if result is None or result.decision == "decline":
+        # 拒绝或无决定记录不改动当前内容索引。
         return
+    # 先把被替换的旧候选置为退役。
     for old in result.before_refs:
         await connection.execute(
             text(
@@ -163,6 +167,7 @@ async def project(connection: AsyncConnection, event: StoredEvent) -> None:
                 "revision": old.revision,
             },
         )
+    # 再把本次采纳的候选写入当前索引。
     for adopted in result.after_refs:
         await connection.execute(
             text(

@@ -1,4 +1,9 @@
-"""启动/取消的短租约；共享既有交接表，和消息发布保持各自重试预算。"""
+"""启动/取消的短租约；共享既有交接表，和消息发布保持各自重试预算。
+
+分层定位：foundation（公共运行底座 / 执行派发）
+对外契约：claim 领取到期命令租约；finish 落定命令回执。
+边界约束：进程重启不清尝试次数；只允许当前租约写回执；启动回执不把已完成/停止业务改回 running。
+"""
 
 import json
 from dataclasses import dataclass
@@ -14,6 +19,8 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 @dataclass(frozen=True)
 class Lease:
+    """一份已领取的命令租约：交接编号、命令类别、持有者、尝试号、截止时间与派发命令。"""
+
     handoff_id: UUID
     kind: Literal["start", "cancel", "signal"]
     owner: str
@@ -40,6 +47,7 @@ async def claim(engine: AsyncEngine, limits: Limits) -> Lease | None:
             .mappings()
             .one_or_none()
         )
+        # 无到期可领取的命令，本轮空闲返回。
         if row is None:
             return None
         count, first = (
@@ -53,6 +61,7 @@ async def claim(engine: AsyncEngine, limits: Limits) -> Lease | None:
         ).one()
         now = await connection.scalar(text("SELECT clock_timestamp()"))
         deadline = (first or now) + timedelta(seconds=limits.budget_seconds)
+        # 尝试次数达上限或已超派发期限，交接判耗尽，留给故障核对收尾。
         if count >= limits.attempts or now >= deadline:
             await connection.execute(
                 text(
@@ -116,6 +125,7 @@ async def finish(
                 {"id": lease.handoff_id},
             )
         ).one()
+        # 仅当前持有且未过期的租约可写回执；租约已易主或过期则拒绝覆盖。
         if current != ("leased", lease.owner, True):
             return False
         await connection.execute(
@@ -153,6 +163,7 @@ async def finish(
                 "delay": timedelta(seconds=(2, 5, 10, 20)[min(lease.attempt_no - 1, 3)]),
             },
         )
+        # 启动成功带回运行标识时，回填到对应尝试；已有标识则保持不变。
         if run_id is not None:
             await connection.execute(
                 text(

@@ -24,6 +24,7 @@ class Activities:
         try:
             return (await self.service.probe(call)).model_dump_json()
         except (ValueError, PermissionError) as error:
+            # 探测输入非法或无权限，转为不可重试错误。
             raise ApplicationError(
                 "Wait probe rejected", type=type(error).__name__, non_retryable=True
             ) from None
@@ -34,6 +35,7 @@ class Activities:
         try:
             return (await self.service.handle(call)).model_dump_json()
         except (ValueError, PermissionError) as error:
+            # 接续输入非法或无权限，转为不可重试错误。
             raise ApplicationError(
                 "Wait handling rejected", type=type(error).__name__, non_retryable=True
             ) from None
@@ -53,10 +55,12 @@ class WaitSignals:
     ) -> Handling:
         """先补查再挂起；Timer到期仍补查一次。Activity预算由所属工作给出。"""
         identity = str(call.wait_id)
+        # 循环探测：每次先清掉早到提示，再补查等待是否已解决。
         while True:
             self.pending.discard(identity)
             remaining = call.run.deadline_at - workflow.now()
             if remaining.total_seconds() <= 0:
+                # 已过执行截止时间，不再等待接续。
                 raise ApplicationError("Execution deadline expired", non_retryable=True)
             body = await workflow.execute_activity(
                 "runtime.wait_probe",
@@ -68,17 +72,21 @@ class WaitSignals:
             )
             saved = Wait.model_validate_json(body)
             if saved.resolution != "pending":
+                # 等待已有结论，退出探测循环进入接续。
                 break
             remaining = saved.deadline_at - workflow.now()
             if remaining.total_seconds() > 0:
                 try:
+                    # 挂起等待早到提示或等待时限，超时后回到下一轮补查。
                     await workflow.wait_condition(
                         lambda: identity in self.pending, timeout=remaining
                     )
                 except TimeoutError:
+                    # 等待超时不视为失败，由循环再次补查状态。
                     pass
         remaining = call.run.deadline_at - workflow.now()
         if remaining.total_seconds() <= 0:
+            # 接续前已无剩余时间，不再发起处理 Activity。
             raise ApplicationError("No time left for continuation", non_retryable=True)
         body = await workflow.execute_activity(
             "runtime.wait_handle",
@@ -90,5 +98,6 @@ class WaitSignals:
         )
         result = Handling.model_validate_json(body)
         if result.state == "failed":
+            # 接续处理被业务拒绝，转为不可重试错误。
             raise ApplicationError("Wait continuation rejected", non_retryable=True)
         return result

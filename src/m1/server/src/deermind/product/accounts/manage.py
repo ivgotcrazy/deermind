@@ -64,6 +64,7 @@ class AccountManager:
             await lock_accounts(connection, {account_id, session.account.account_id})
             await authorize(connection, session, admin=True)
             if receipt.result_ref is not None:
+                # 同一请求已受理过，直接回原回执，避免重复落账。
                 return receipt
             row = (
                 (
@@ -81,9 +82,11 @@ class AccountManager:
                 .one_or_none()
             )
             if row is None:
+                # 目标账号不存在，或角色并非学生。
                 raise AuthError(404, "not_found", "学生账号不存在。")
             original = AccountFact.model_validate(dict(row))
             if original.revision != expected_revision:
+                # 版本与调用方预期不符，判定并发修改冲突。
                 raise AuthError(409, "revision_conflict", "账号已变化，请重新核对。")
             updated = AccountFact.model_validate(
                 {
@@ -127,6 +130,7 @@ class AccountManager:
         actor = Ref(owner="runtime", type="maintenance_operator", id=operator)
         async with self.engine.begin() as connection:
             if await connection.scalar(text("SELECT current_user")) != "deermind_migrator":
+                # 引导入口仅限部署维护数据库账号，普通服务账号无权创建管理员。
                 raise AuthError(403, "forbidden", "首次管理员必须由部署维护账号创建。")
             receipt = await claim_request(
                 connection,
@@ -141,10 +145,12 @@ class AccountManager:
                 },
             )
             if receipt.result_ref is not None:
+                # 引导请求幂等重放，直接返回原回执。
                 return receipt
             if await connection.scalar(
                 text("SELECT EXISTS(SELECT 1 FROM product.accounts WHERE role='admin')")
             ):
+                # 已存在管理员，引导只能执行一次。
                 raise AuthError(409, "already_initialized", "已有管理员，请使用账号恢复命令。")
             now = await database_time(connection)
             account = AccountFact(
@@ -201,6 +207,7 @@ class AccountManager:
         synthetic: bool,
     ) -> Receipt:
         if not synthetic:
+            # M1 阶段只开放合成测试账号，禁止创建真实学生。
             raise AuthError(403, "test_accounts_only", "当前仅允许合成测试账号。")
         if session.account.role != "admin":
             raise AuthError(403, "forbidden", "仅管理员可以创建测试账号。")
@@ -224,6 +231,7 @@ class AccountManager:
             await lock_accounts(connection, {session.account.account_id})
             await authorize(connection, session, admin=True)
             if receipt.result_ref is not None:
+                # 创建请求幂等重放，直接返回原回执。
                 return receipt
             now = await database_time(connection)
             student = AccountFact(
@@ -245,6 +253,7 @@ class AccountManager:
                 {"ref": verification_ref.model_dump_json()},
             )
             if guardian is None:
+                # 同一核实身份尚无监护记录，新建一条；已存在则复用既有监护主体。
                 guardian = uuid4()
                 records.append(
                     record(
@@ -326,6 +335,7 @@ class AccountManager:
     ) -> Receipt:
         """普通管理员恢复学生；部署维护者可恢复管理员。旧会话凭据代次立即失效。"""
         hashed = await self._hash(password)
+        # 有会话即记操作账号主体；无会话则记部署维护者主体。
         actor = (
             Ref(owner="product", type="account", id=str(session.account.account_id))
             if session
@@ -348,8 +358,10 @@ class AccountManager:
                 connection, {account_id, *([session.account.account_id] if session else [])}
             )
             if session:
+                # 管理员会话路径：按管理员权限复核。
                 await authorize(connection, session, admin=True)
             elif await connection.scalar(text("SELECT current_user")) != "deermind_migrator":
+                # 无会话的维护路径：必须是部署维护数据库账号。
                 raise AuthError(403, "forbidden", "维护恢复需要部署凭据。")
             account = (
                 (
@@ -362,8 +374,10 @@ class AccountManager:
                 .one_or_none()
             )
             if account is None or account["role"] != ("student" if session else "admin"):
+                # 会话路径只能恢复学生，维护路径只能恢复管理员，角色不符即不可恢复。
                 raise AuthError(404, "not_found", "可恢复的账号不存在。")
             if receipt.result_ref is not None:
+                # 恢复请求幂等重放，直接返回原回执。
                 return receipt
             if account["revision"] != expected_revision:
                 raise AuthError(409, "revision_conflict", "账号已变化，请重新核对。")
@@ -376,6 +390,7 @@ class AccountManager:
                 {"id": account_id, "hash": hashed},
             )
             if not isinstance(revision, int):
+                # 凭据行缺失，说明账号未建立登录凭据。
                 raise AuthError(404, "not_found", "账号凭据不存在。")
             event = await append_account_event(
                 connection,

@@ -87,9 +87,11 @@ async def control_activity(
 ) -> ActivityControlReceipt:
     account = await reader(request, response, expected, csrf, writing=True, student_only=True)
     if isinstance(body, StopReply):
+        # 停止当前回复由回合服务处理。
         turns: StudentTurnService = request.app.state.student_turns
         return await turns.stop(account, scope_id, body)
     if isinstance(body, OpenDetectionRound):
+        # 开启诊断轮由诊断轮服务处理。
         rounds: DetectionRoundService = request.app.state.detection_rounds
         return await rounds.open(account, scope_id, body)
     service: ConversationService = request.app.state.conversation
@@ -160,6 +162,7 @@ async def handle_input(
         payload=body.model_dump(mode="json", exclude={"request_id"}),
     )
     if command.business_size() > MESSAGE_BYTES:
+        # 业务载荷超出实时通道单帧上限，拒绝提交。
         raise RequestError(413, "payload_too_large", "输入超过聊天大小限制。")
     turns: StudentTurnService = request.app.state.student_turns
     return await turns.accept(account, scope_id, body)
@@ -170,21 +173,25 @@ def connect_realtime(hub: Realtime, turns: StudentTurnService) -> None:
 
     async def authorized(session: SessionView, resource: Resource, _views: frozenset[str]) -> bool:
         if resource.kind != SCOPE or session.account.usage_gaps:
+            # 资源类型不符，或账号存在未通过的使用缺口，拒绝订阅。
             return False
         try:
             await turns.check_space(session.account, UUID(resource.id))
         except (RequestError, ValueError):
+            # 无空间访问权限或资源 ID 非法，按未授权处理。
             return False
         return True
 
     async def receive(session: SessionView, frame: Command) -> CommandResult:
         if session.account.role != "student":
+            # 实时消息通道仅向学生开放。
             raise RequestError(403, "forbidden", "仅学生可以发送学习消息。")
         try:
             command = LearningInputCommand.model_validate_json(
                 canonical_json({"request_id": frame.request_id, **frame.payload})
             )
         except ValidationError as error:
+            # 帧载荷不符合学习消息合同，按无效请求返回。
             raise RequestError(400, "invalid_request", "请输入有效的学习消息。") from error
         got = await turns.accept(session.account, UUID(frame.resource.id), command)
         return CommandResult(

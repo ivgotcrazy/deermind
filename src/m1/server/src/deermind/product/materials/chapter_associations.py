@@ -120,6 +120,7 @@ class ChapterAssociations:
         ).one_or_none()
         if row is None:
             raise RequestError(404, "not_found", "找不到此教材章节。")
+        # 连带读取并校验所属导入状态，必要时持锁。
         await self.materials.read_import(connection, row.import_id, lock=lock)
         return row.import_id, row.domain_id
 
@@ -193,11 +194,13 @@ class ChapterAssociations:
                 normalized_input={**command.model_dump(mode="json"), "chapter_id": str(chapter_id)},
             )
             if receipt.result_ref is not None:
+                # 幂等重放：读回原关联结果。
                 result = await self._read_result(textbook_id, UUID(receipt.result_ref.id))
                 return ChapterAssociationReceipt(request_ref=receipt.request_ref, result=result)
             _import, domain = await self._context(connection, textbook_id, chapter_id, lock=True)
             original = None
             if command.action == "add":
+                # 新增路径不允许携带基线版本或既有关联标识。
                 if command.expected_revision is not None or command.association_id is not None:
                     raise RequestError(400, "invalid_reference", "新增关联不使用旧版本。")
                 already = await connection.scalar(
@@ -208,8 +211,10 @@ class ChapterAssociations:
                     {"chapter": chapter_id, "task": command.task_ref.object_id},
                 )
                 if already:
+                    # 同一章节已存在该任务的有效关联。
                     raise RequestError(409, "already_linked", "本章已有此任务。")
             else:
+                # 修订/移除路径：载入既有关联作为基线。
                 data = await connection.scalar(
                     text(
                         "SELECT to_jsonb(a)-'source_event_id' FROM product.chapter_association a "
@@ -225,6 +230,7 @@ class ChapterAssociations:
                     or original.revision != command.expected_revision
                     or original.task_id != command.task_ref.object_id
                 ):
+                    # 基线缺失、版本不符或任务被替换，均视为关联已变化。
                     raise RequestError(409, "revision_conflict", "章节关联已变化，请重新读取。")
             active = command.action != "remove"
             knowledge: list[KnowledgeRef] = []
@@ -232,9 +238,12 @@ class ChapterAssociations:
             if active:
                 keys = {(method.object_id, method.version) for method in methods}
                 if not methods or len(keys) != len(methods):
+                    # 方法清单非空且不得重复。
                     raise RequestError(400, "invalid_reference", "请选择至少一个不同的方法。")
+                # 交域内核验任务-方法-知识来源归属。
                 knowledge = await self.method_guard(connection, domain, command.task_ref, methods)
             else:
+                # 移除关联清空方法清单。
                 methods = []
             event_id = uuid4()
             association = AssociationFact(
@@ -327,6 +336,7 @@ class ChapterAssociations:
                 )
             ).one_or_none()
         if row is None:
+            # 无已完成关联收据，按未找到返回。
             return ReceiptView[ChapterAssociationResult](receipt_state="not_found")
         return ReceiptView[ChapterAssociationResult](
             receipt_state="completed",

@@ -40,6 +40,7 @@ def create_worker(
             EvaluationWorkflow,
             TeachingWorkflow,
         ]
+        # 传入业务装配时才注册各业务 Workflow；否则只挂探测 Workflow。
         if material
         else [StorageProbe],
         activities=[ProbeActivity(settings.files_root).reply]

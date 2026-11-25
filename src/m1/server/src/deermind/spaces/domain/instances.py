@@ -40,6 +40,7 @@ async def load_instance(
         )
     ).one_or_none()
     if row is None:
+        # 实例不存在或指定版本已删除。
         raise RequestError(404, "not_found", "找不到此题目实例。")
     return InstanceView(
         instance_ref=InstanceRef(object_id=identity, version=row.version),
@@ -69,6 +70,7 @@ async def require_definition(
         },
     )
     if value is None:
+        # 定义或其头部版本已删除，不可采用。
         raise RequestError(409, "invalid_reference", "所选定义已不可采用。")
     return value
 
@@ -90,6 +92,7 @@ async def evaluation_task(
         raise RequestError(404, "not_found", "找不到领域。")
     task = TaskDefinition.model_validate(await require_definition(connection, domain_id, reference))
     for method in task.method_refs:
+        # 任务各直接方法也须处于可采用版本。
         await require_definition(connection, domain_id, method)
     return task
 
@@ -100,6 +103,7 @@ async def validate_instance(
     instance: TaskInstance,
 ) -> None:
     if instance.statement.role != "statement" or not instance.statement.blocks:
+        # 题面须为 statement 且含正文块。
         raise RequestError(400, "invalid_request", "题面正文必填。")
     definition = await require_definition(connection, domain_id, instance.task_ref)
     task = TaskDefinition.model_validate_json(canonical_json(definition))
@@ -144,6 +148,7 @@ async def chapter_methods(
         for item in solution.kc_refs:
             key = (item.object_id, item.version)
             if key not in seen:
+                # 同一知识成分去重，首次出现时核对可采用性。
                 await require_definition(connection, domain_id, item)
                 seen.add(key)
                 knowledge.append(item)

@@ -35,6 +35,7 @@ async def claim_request(
     本函数只能接收已验证、已剔除凭据的输入。
     """
     if not connection.in_transaction() or not all((principal_id, action, scope_id, request_id)):
+        # 收据必须在事务内取得，且身份四元组不可为空。
         raise ValueError("Receipt requires a transaction and nonempty identity")
     body = canonical_json(normalized_input)
     parameters: dict[str, object] = {
@@ -60,6 +61,7 @@ async def claim_request(
         parameters,
     )
     if isinstance(inserted, UUID):
+        # 本事务抢到收据身份，进入后续写流程。
         return Receipt(inserted, None)
     row = (
         (
@@ -76,10 +78,13 @@ async def claim_request(
         .one()
     )
     if row["input_digest"] != parameters["digest"] or row["normalized_input"] != normalized_input:
+        # 同一请求键被不同输入复用，属冲突而非幂等重放。
         raise RequestConflict("Request identity was already used with different input")
     if row["state"] == "failed" and row["error"] is not None:
+        # 永久失败收据直接回传已落定的错误，不重复执行。
         return Receipt(row["request_ref"], None, ErrorDetail.model_validate(row["error"]))
     if row["state"] != "completed" or row["result_ref"] is None:
+        # 原事务尚未提交完成，并发方等待其结束后再读。
         raise RequestConflict("Receipt has no completed synchronous result")
     return Receipt(row["request_ref"], Ref.model_validate(row["result_ref"]))
 
@@ -99,6 +104,7 @@ async def complete_request(
         {"ref": receipt.request_ref, "result": result.model_dump_json(exclude_none=True)},
     )
     if completed != receipt.request_ref:
+        # 收据已被其他流程落定，不能重复完成。
         raise RequestConflict("Receipt is not awaiting completion")
     return Receipt(receipt.request_ref, result)
 
@@ -114,6 +120,7 @@ async def reject_request(connection: AsyncConnection, receipt: Receipt, error: E
         {"id": receipt.request_ref, "error": error.model_dump_json()},
     )
     if changed != receipt.request_ref:
+        # 收据状态已变更，不能再次标记失败。
         raise RequestConflict("Receipt is not awaiting a result")
 
 
@@ -143,6 +150,7 @@ async def find_completed_request(
         )
     ).one_or_none()
     if row is None:
+        # 无已完成收据，交由调用方按首次请求处理。
         return None
     if normalized_input is not None and row.normalized_input != normalized_input:
         raise RequestConflict("Request identity was already used with different input")

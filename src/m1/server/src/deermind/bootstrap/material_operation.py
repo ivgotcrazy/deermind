@@ -58,6 +58,7 @@ _PAGE_BATCH = 4
 
 def material_config() -> ExecutionConfig | None:
     if os.environ.get("M1_MATERIAL_MODEL_ENABLED") != "true":
+        # 未显式启用教材抽取模型，返回空配置关闭该路径。
         return None
     return ExecutionConfig(
         revision="material-extraction-1",
@@ -132,6 +133,7 @@ class MaterialWorkflow(PydanticAIWorkflow):
         offset = 0
         try:
             await workflow.execute_activity("runtime.execution_started", body, **STEP_OPTIONS)
+            # 按页批逐段抽取，直到取完或出现阻断性缺失。
             while True:
                 packed = await workflow.execute_activity(
                     "material.render_pages", args=[body, offset], result_type=str, **STEP_OPTIONS
@@ -139,6 +141,7 @@ class MaterialWorkflow(PydanticAIWorkflow):
                 selection = PreparedRange.model_validate_json(packed)
                 gaps.extend(selection.gaps)
                 if selection.pages and not selection.gaps:
+                    # 本批有可读页面且无缺失问题，才提交模型解析。
                     contents: list[UserContent] = [selection.prompt]
                     for page in selection.pages:
                         contents.extend(
@@ -174,6 +177,7 @@ class MaterialWorkflow(PydanticAIWorkflow):
                     )
                     shown.extend(page.source for page in selection.pages)
                 if selection.next_offset is None or selection.gaps:
+                    # 已到末尾，或本批出现问题，停止翻页。
                     break
                 offset = selection.next_offset
             await workflow.execute_activity(
@@ -188,6 +192,7 @@ class MaterialWorkflow(PydanticAIWorkflow):
             )
             return run.input_ref.id
         except ActivityError:
+            # 活动失败：落失败回执后转不可重试应用错误。
             await workflow.execute_activity(
                 "runtime.execution_failed", args=[body, "MATERIAL_ASSISTANT_FAILED"], **STEP_OPTIONS
             )
@@ -209,6 +214,7 @@ class MaterialActivities:
         gaps = [str(problem) for problem in problems]
         rendered: list[ImagePage] = []
         if not gaps:
+            # 尚无缺失问题时，逐页校验原件并渲染为图片。
             for value in pages[offset : offset + _PAGE_BATCH]:
                 assert isinstance(value, dict)
                 index = value["file_page"]
@@ -222,12 +228,14 @@ class MaterialActivities:
                     or file.sha256 != value["sha256"]
                     or file.media_type not in MAX_BYTES
                 ):
+                    # 原件缺失、类型不符、摘要不符或格式不支持，记问题并中止本批。
                     gaps.append(f"{value['original_name']} 第 {index} 页的原件缺失。")
                     break
 
                 try:
                     image = await asyncio.to_thread(self._render_one, file, index)
                 except (OSError, ValueError, RuntimeError):
+                    # 页面渲染失败，记问题并中止本批。
                     gaps.append(f"{value['original_name']} 第 {index} 页无法读取。")
                     break
                 rendered.append(
@@ -253,6 +261,7 @@ class MaterialActivities:
         previous = await self.service.previous_context(turn)
         prompt = str(turn.input["message"])
         if previous:
+            # 有上一批候选时，把修正上下文追加到提示词。
             prompt += (
                 "\n以下是所引用的上一批候选，只用于核对本次请求。"
                 "请保留与这条修正无关的原有内容，交付修正后的完整候选。\n" + previous
@@ -282,9 +291,11 @@ class MaterialActivities:
         ]
         proposal = merge_proposals(values, selected) if values else None
         if proposal is not None and gaps:
+            # 已有提案但存在缺失问题，结果降级为待补充输入。
             proposal = proposal.model_copy(
                 update={"outcome": "needs_input", "questions": [*proposal.questions, *gaps]}
             )
+        # 无缺失、且提案不处于待补充状态时，本轮才可标记完成。
         can_complete = not gaps and (proposal is None or proposal.outcome != "needs_input")
         outcome: TurnOutcome = "completed" if can_complete else "needs_input"
         reply = "\n".join(
@@ -312,9 +323,11 @@ def merge_proposals(proposals: list[MaterialProposal], shown: list[SourceRef]) -
     issues: list[str] = []
     questions: list[str] = []
     allowed = {item.source_id for item in shown}
+    # 逐段合并候选，把各段局部键改写为全局唯一编号。
     for index, proposal in enumerate(proposals, 1):
         local = {item.source_id for item in proposal.coverage}
         if not local <= allowed:
+            # 候选覆盖了本批未提供的来源，属越界引用。
             raise ValueError("Unexpected material coverage")
         proposal = proposal.bind_sources([item for item in shown if item.source_id in local])
         keys = {item.local_key: f"{index}:{order}" for order, item in enumerate(proposal.changes)}
@@ -327,6 +340,7 @@ def merge_proposals(proposals: list[MaterialProposal], shown: list[SourceRef]) -
                 update={
                     "local_key": keys[item.local_key],
                     "chapter_key": sections[item.chapter_key],
+                    # 有父级编号时一并改写为全局键，无父级保持空。
                     "parent_key": keys[item.parent_key] if item.parent_key else None,
                 }
             )
@@ -341,6 +355,7 @@ def merge_proposals(proposals: list[MaterialProposal], shown: list[SourceRef]) -
         issues.extend(proposal.issues)
         questions.extend(proposal.questions)
     return MaterialProposal(
+        # 有待补充问题记 needs_input；有实际改动记 proposal；否则仅回复记 reply。
         outcome="needs_input"
         if questions
         else "proposal"
@@ -348,6 +363,7 @@ def merge_proposals(proposals: list[MaterialProposal], shown: list[SourceRef]) -
         else "reply",
         reply="\n".join(item.reply for item in proposals),
         changes=changes,
+        # 退役项按出现顺序去重。
         retire=list(dict.fromkeys(retire)),
         catalog_changes=chapters,
         coverage=coverage,

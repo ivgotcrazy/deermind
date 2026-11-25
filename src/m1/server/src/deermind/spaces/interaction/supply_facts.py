@@ -5,6 +5,7 @@ from deermind.abstractions.task_supply import REQUESTED, TaskSupplyRequested
 
 
 def _validate(draft: EventDraft, payload: EventPayload) -> None:
+    # 请求类型、所有者引用、任务归属与版本、允许解法与出处引用须齐备且匹配。
     if (
         not isinstance(payload, TaskSupplyRequested)
         or payload.request_ref != draft.owner_ref
@@ -16,6 +17,7 @@ def _validate(draft: EventDraft, payload: EventPayload) -> None:
         or not payload.method_source_refs
     ):
         raise ValueError("Supply request needs a fixed task and permitted chapter methods")
+    # 允许解法引用必须属于 domain、类型为 solution 且带版本号。
     if any(
         reference.owner != "domain" or reference.type != "solution" or reference.version is None
         for reference in payload.allowed_method_refs

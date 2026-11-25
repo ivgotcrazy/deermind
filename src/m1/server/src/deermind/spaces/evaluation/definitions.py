@@ -49,8 +49,10 @@ def _invalid(message: str, *, code: str = "invalid_reference") -> RequestError:
 
 def _check_aspects(aspects: list[AspectDefinition]) -> None:
     codes = {a.code for a in aspects}
+    # 方面代码去重后数量减少，说明存在重复定义。
     if len(codes) != len(aspects):
         raise _invalid("评价方面代码不能重复。")
+    # 偏离默认方面集合时，至少一处要给变更理由，且新增非标准方面必须各自说明理由。
     if codes != STANDARD_ASPECTS.keys() and (
         not any(a.change_reason for a in aspects)
         or any(not a.change_reason for a in aspects if a.code not in STANDARD_ASPECTS)
@@ -60,10 +62,12 @@ def _check_aspects(aspects: list[AspectDefinition]) -> None:
 
 def _gaps(definition: ClaimDefinition) -> list[Issue]:
     result: list[Issue] = []
+    # 任务缺少任何直接方法，记整体缺口。
     if not definition.methods:
         result.append(Issue(code="missing_methods", path="/methods", message="任务没有直接方法。"))
     for index, method in enumerate(definition.methods):
         path = f"/methods/{index}"
+        # 方法尚未挂任何执行判据。
         if not method.criterion_ids:
             result.append(
                 Issue(
@@ -72,6 +76,7 @@ def _gaps(definition: ClaimDefinition) -> list[Issue]:
             )
         rules = {rule.aspect_code for rule in method.aspect_rules}
         for aspect in definition.aspects:
+            # 规则缺失或方面本身不受支持，分别记不同缺口码。
             if aspect.code not in rules or aspect.code not in STANDARD_ASPECTS:
                 result.append(
                     Issue(
@@ -93,6 +98,7 @@ def _revise(
     if isinstance(command, SaveClaim):
         _check_aspects(command.aspects)
         codes = {aspect.code for aspect in command.aspects}
+        # 方面集合相对旧版有变化时，必须给出变更理由。
         if codes != {aspect.code for aspect in prior.aspects} and not any(
             aspect.change_reason for aspect in command.aspects
         ):
@@ -125,11 +131,13 @@ def _revise(
             if isinstance(command, SaveCriterion)
             else command.criterion_id
         )
+        # 已有判据必须归属于本主张，不得跨主张改动。
         if identity is not None and identity not in criteria:
             raise _invalid("判据不属于本 Claim。")
         identity = identity or uuid4()
         affected = [m.method_ref for m in prior.methods if identity in m.criterion_ids]
         if isinstance(command, RemoveCriterion):
+            # 仍被方法引用的判据不能直接删除。
             if affected:
                 raise _invalid("请先取消方法对该判据的引用。", code="criterion_in_use")
             del criteria[identity]
@@ -141,9 +149,11 @@ def _revise(
         return prior.model_copy(update={"criteria": list(criteria.values())}), affected, [identity]
 
     existing = next((m for m in prior.methods if m.method_ref == command.method_ref), None)
+    # 目标方法必须是该任务版本下的直接方法。
     if existing is None:
         raise _invalid("所选方法不是此版本任务的直接方法。")
     if isinstance(command, SetMethodCriteria):
+        # 所选判据不得重复，且必须全部属于本主张。
         if (
             len(set(command.criterion_ids)) != len(command.criterion_ids)
             or not set(command.criterion_ids) <= criteria.keys()
@@ -152,11 +162,13 @@ def _revise(
         changed = existing.model_copy(update={"criterion_ids": command.criterion_ids})
     else:
         rule = command.rule
+        # 规则挂接的方面必须是本主张已定义的方面。
         if rule.aspect_code not in {a.code for a in prior.aspects}:
             raise _invalid("所选评价方面不属于本 Claim。")
         try:
             verify_schema(rule.condition_schema, rule.default_values)
         except ValueError as error:
+            # 条件模式与默认值不合法，转为 400 条件错误。
             raise RequestError(400, "invalid_condition", str(error)) from error
         rules = {item.aspect_code: item for item in existing.aspect_rules}
         rules[rule.aspect_code] = rule
@@ -210,6 +222,7 @@ class ClaimDefinitions:
                 after = UUID(position)
             except ValueError as error:
                 raise RequestError(400, "invalid_cursor", "续页位置无效。") from error
+            # 游标前缀须与当前查询条件摘要一致，防止沿用旧条件翻页。
             if prefix != token:
                 raise RequestError(400, "invalid_cursor", "查询条件变化，请重新读取列表。")
         async with self.engine.connect() as db:
@@ -263,6 +276,7 @@ class ClaimDefinitions:
                     {"id": claim_id, "revision": revision},
                 )
             ).one_or_none()
+        # 未命中对应主张修订记录，返回 404。
         if row is None:
             raise RequestError(404, "not_found", "找不到指定 Claim 修订。")
         event_id = row.source_event_id
@@ -320,6 +334,7 @@ class ClaimDefinitions:
                 query.resource_id,
                 query.request_id,
             )
+        # 找不到已完成的管理请求，回执记为未找到。
         if receipt is None:
             return ReceiptView[ClaimResult](receipt_state="not_found")
         saved = await self._read_receipt(receipt)
@@ -338,15 +353,18 @@ class ClaimDefinitions:
                 command.request_id,
                 normalized,
             )
+            # 仅在无既有回执时才校验任务；已有回执直接复用其结果。
             task = (
                 await self.task_guard(db, command.domain_id, command.task_ref)
                 if saved is None
                 else None
             )
         if saved is not None:
+            # 同一请求已完成，幂等返回既有回执结果。
             return await self._read_receipt(saved)
         assert task is not None
         previous = None
+        # 新建分支：以任务下已有方法构造初始空定义。
         if isinstance(command, CreateClaim):
             _check_aspects(command.aspects)
             reference = ClaimRef(claim_id=uuid4(), revision=1)
@@ -365,6 +383,7 @@ class ClaimDefinitions:
             affected, criteria = task.method_refs, []
         else:
             prior, _ = await self._version(command.claim_id, command.expected_revision)
+            # 旧定义的领域与任务版本必须与命令指定的一致。
             if (prior.definition.domain_id, prior.definition.task_ref) != (
                 command.domain_id,
                 command.task_ref,
@@ -389,6 +408,7 @@ class ClaimDefinitions:
         actor = Ref(owner="product", type="account", id=str(principal))
         access = ProducerAccess("evaluation", actor, frozenset({scope}))
         prepared = None
+        # 仅当定义确有变更时才构造待落库事件。
         if changed:
             version = facts.ClaimVersion(
                 claim_id=reference.claim_id,
@@ -440,6 +460,7 @@ class ClaimDefinitions:
                 normalized_input=normalized,
                 reserved_ref=request_ref,
             )
+            # 回执尚无结果引用，才进入本次落库流程。
             if receipt.result_ref is None:
                 await self.task_guard(db, command.domain_id, command.task_ref)
                 await self._guard_head(db, command, previous)
@@ -482,6 +503,7 @@ class ClaimDefinitions:
                 },
             )
         ).one_or_none()
+        # 新建主张时该任务版本已存在 Claim，拒绝重复创建。
         if previous is None and row is not None:
             raise RequestError(
                 409,
@@ -501,6 +523,7 @@ class ClaimDefinitions:
                     )
                 ],
             )
+        # 修订时头指针已被改动（缺失或编号不一致），判修订冲突。
         if previous is not None and (
             row is None
             or (row.claim_id, row.head_revision) != (previous.claim_id, previous.revision)

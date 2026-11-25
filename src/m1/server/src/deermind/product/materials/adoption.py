@@ -72,6 +72,7 @@ class MaterialAdoptions:
         )
         if row is None:
             raise LookupError("Missing adoption result")
+        # 命中决定记录后转为事实模型。
         return facts.MaterialDecision.model_validate_json(canonical_json(row))
 
     async def decide(
@@ -88,6 +89,7 @@ class MaterialAdoptions:
                 normalized_input=command.model_dump(mode="json"),
             )
             if receipt.result_ref is not None:
+                # 幂等重放：读回原决定事实。
                 result = await self._saved(connection, import_id, receipt.result_ref.id)
             else:
                 imported = await self.materials.read_import(connection, import_id, lock=True)
@@ -96,6 +98,7 @@ class MaterialAdoptions:
                     batch.decision_state != "pending"
                     or batch.decision_revision != command.expected_revision
                 ):
+                    # 批次已被决定或版本已变，不能重复决策。
                     raise RequestError(409, "already_decided", "这批候选已有决定，请刷新详情。")
                 result = await self._save(
                     connection, import_id, imported, command, batch, receipt.request_ref, principal
@@ -116,6 +119,7 @@ class MaterialAdoptions:
         )
         if row is None:
             raise RequestError(404, "not_found", "找不到本教材的候选批次。")
+        # 命中批次记录后转为事实模型。
         return CandidateBatchFact.model_validate_json(canonical_json(row))
 
     async def _check_overlap(
@@ -132,6 +136,7 @@ class MaterialAdoptions:
             if item.get("action") in ("replace", "retire")
         ]
         if previous is not None and targets:
+            # 先核对修订/退役目标相对前序批次是否仍在当前版本。
             prior = PreviousMaterialBatch.model_validate(previous)
             changed = await connection.scalar(
                 text(
@@ -151,6 +156,7 @@ class MaterialAdoptions:
                     409, "candidate_basis_changed", "要修正的内容已变化，请重新核对。"
                 )
             if all(item.get("action") != "add" for item in batch.write_set):
+                # 纯修订/退役无需再按新页占用基准查重。
                 return
 
         # 尚无候选身份的新内容使用所读原页作为占用基准。
@@ -166,6 +172,7 @@ class MaterialAdoptions:
             {"id": import_id, "basis": batch.scope["basis_revision"], "pages": pages},
         )
         if collision is not None:
+            # 同一原页已有更新的采用结果，新内容存在覆盖冲突。
             raise RequestError(
                 409, "candidate_basis_changed", "相关原页的内容已采用新结果，请重新核对。"
             )
@@ -191,6 +198,7 @@ class MaterialAdoptions:
         chapters: list[FactRecord] = []
         pages = [str(source["source_id"]) for source in batch.read_set]
         if adopting:
+            # 采用前先确认候选取材完整，并查重后再组装新旧引用。
             if batch.coverage["complete"] is not True:
                 raise RequestError(
                     409, "incomplete_candidate", "候选仍缺原页或关键信息，请补充后再采用。"
@@ -293,6 +301,7 @@ class MaterialAdoptions:
             if item.get("action") in ("replace", "retire")
         ]
         if older is not None and affected:
+            # 取本次被替换/退役的旧候选作为 before 引用。
             prior = PreviousMaterialBatch.model_validate(older)
             before = [
                 _candidate_ref(row.candidate_id, row.candidate_revision)
@@ -319,6 +328,7 @@ class MaterialAdoptions:
                 {"id": import_id, "parents": before_ids},
             )
             if dependent:
+                # 仍有题内参考挂在被退役题目上，须一并核对。
                 raise RequestError(
                     409, "candidate_dependency_changed", "请同时核对受影响的题内参考。"
                 )
@@ -335,6 +345,7 @@ class MaterialAdoptions:
         proposed = batch.diff_summary["chapters"]
         assert isinstance(proposed, list)
         chapters: list[FactRecord] = []
+        # 逐章组装章节记录，版本接前序章节递增。
         for item in proposed:
             assert isinstance(item, dict)
             identity = UUID(str(item["chapter_id"]))
@@ -391,6 +402,7 @@ class MaterialAdoptions:
                 .one_or_none()
             )
             if row is None:
+                # 无已完成决定收据，按未找到返回。
                 return ReceiptView[AdoptedMaterialResult](receipt_state="not_found")
             result = await self._saved(connection, query.resource_id, row["result_ref"]["id"])
         return ReceiptView[AdoptedMaterialResult](
@@ -439,6 +451,7 @@ class MaterialAdoptions:
             "chapters": chapters,
         }
         if len(items) > 100 or len(canonical_json(view).encode()) > 4 * 1024**2:
+            # 条目数或体积超限，提示收窄到单章查看。
             raise RequestError(413, "payload_too_large", "内容太多，请选择一个章节。")
         return MaterialCurrentContents.model_validate(
             {

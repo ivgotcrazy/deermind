@@ -49,6 +49,7 @@ class MessagingSettings(BaseModel):
             {
                 field: os.environ[f"M1_NATS_{field.upper()}"]
                 for field in cls.model_fields
+                # 仅读取已配置的环境变量，缺失字段由模型校验兜底。
                 if f"M1_NATS_{field.upper()}" in os.environ
             }
         )
@@ -105,6 +106,7 @@ class JetStream:
         self.js = JetStreamContext(client, timeout=5)
 
     def stream_config(self, *, failure: bool) -> StreamConfig:
+        # 失败流只订阅消费失败/终止的系统建议；业务流订阅全部事件主题。
         subjects = (
             [
                 f"$JS.EVENT.ADVISORY.CONSUMER.{kind}.{self.settings.stream}.*"
@@ -131,9 +133,11 @@ class JetStream:
         return ConsumerConfig(
             durable_name=name,
             name=name,
+            # 按事件类型筛选的订阅只收安装后新事件；失败收集器回放全部历史。
             deliver_policy=DeliverPolicy.NEW if event_types else DeliverPolicy.ALL,
             ack_policy=AckPolicy.EXPLICIT,
             ack_wait=30,
+            # 筛选订阅投递上限 5 次，失败收集器不限投递次数。
             max_deliver=5 if event_types else -1,
             max_ack_pending=1,
             filter_subjects=sorted(self.settings.subject(item) for item in event_types)
@@ -143,20 +147,24 @@ class JetStream:
 
     async def initialize(self, subscriptions: Sequence[SubscriptionSpec]) -> None:
         """仅维护凭据使用；已有资源只核对，不覆盖或删除不一致配置。"""
+        # 先核对/创建失败流与业务流，再逐个登记持久消费者。
         for failure in (True, False):
             expected = self.stream_config(failure=failure)
             assert expected.name is not None
             try:
                 await self.js.stream_info(expected.name)
             except NotFoundError:
+                # 流不存在才创建；已存在的流只做配置核对。
                 # SDK的**params未标注；仅传入其已声明的StreamConfig。
                 await self.js.add_stream(expected)  # pyright: ignore[reportUnknownMemberType]
             await self.check_stream(failure=failure)
             if failure:
+                # 失败流绑定固定的失败收集消费者。
                 await self._create_consumer(
                     self.settings.failures, self.consumer_config("failure_collector", None)
                 )
         for item in subscriptions:
+            # 业务流按各订阅方登记持久消费者。
             await self._create_consumer(
                 self.settings.stream, self.consumer_config(item.subscriber_id, item.event_types)
             )
@@ -166,6 +174,7 @@ class JetStream:
         try:
             await self.js.consumer_info(stream, expected.durable_name)
         except NotFoundError:
+            # 消费者不存在才创建，固定快照保证新订阅不回放旧事件。
             # 新订阅只收安装后的事件；固定快照使旧事件不会自动加入新订阅。
             # SDK的**params未标注；不使用动态参数扩展。
             await self.js.add_consumer(stream, expected)  # pyright: ignore[reportUnknownMemberType]
@@ -176,11 +185,13 @@ class JetStream:
         actual = (await self.js.consumer_info(stream, expected.durable_name)).config
         for field in ("ack_policy", "ack_wait", "max_deliver", "max_ack_pending"):
             if getattr(actual, field) != getattr(expected, field):
+                # 既有消费者关键字段与期望不符，拒绝沿用。
                 raise ValueError(f"Consumer configuration mismatch: {field}")
         filters = set(
             actual.filter_subjects or ([actual.filter_subject] if actual.filter_subject else [])
         )
         if filters != set(expected.filter_subjects or []):
+            # 订阅主题过滤范围不一致，避免漏收或越权收到事件。
             raise ValueError("Consumer filter mismatch")
 
     async def check_stream(self, *, failure: bool) -> None:
@@ -198,8 +209,10 @@ class JetStream:
             "deny_purge",
         ):
             if getattr(actual, field) != getattr(expected, field):
+                # 流保留策略、存储类型或限额与期望不符。
                 raise ValueError(f"Stream configuration mismatch: {field}")
         if set(actual.subjects or []) != set(expected.subjects or []):
+            # 流订阅主题集合不一致。
             raise ValueError("Stream subject mismatch")
 
     async def check_subscribers(self, subscriptions: Sequence[SubscriptionSpec]) -> None:
@@ -209,11 +222,13 @@ class JetStream:
                     self.settings.stream, self.consumer_config(item.subscriber_id, item.event_types)
                 )
         except NotFoundError as error:
+            # 已登记消费者缺失，投递链路不可用。
             raise DeliveryUnavailable("Registered consumer is absent") from error
 
     async def publish(self, notice: EventNotice) -> tuple[str, int]:
         body = notice.model_dump_json(exclude={"handoff_id"}).encode("utf-8")
         if len(body) > 64 * 1024:
+            # 事件通知体超出单消息上限，避免超大消息进入流。
             raise ValueError("Event notice exceeds 64KiB")
         receipt = await self.js.publish(
             self.settings.subject(notice.event_type),
@@ -222,6 +237,7 @@ class JetStream:
             timeout=5,
         )
         if receipt.stream != self.settings.stream:
+            # 回执流与业务流不符，防止发布到错误持久化域。
             raise ValueError("Publish receipt belongs to a different stream")
         return receipt.stream, receipt.seq
 
@@ -236,6 +252,7 @@ class JetStream:
             try:
                 messages = await consumer.fetch(batch=1, timeout=1)
             except (TimeoutError, NatsTimeout):
+                # 短轮询窗口内无消息，返回 None 供上层继续等待。
                 yield None
             else:
                 yield NatsMessage(messages[0])
@@ -258,6 +275,7 @@ class JetStream:
             or type(sequence) is not int
             or not isinstance(subscriber, str)
         ):
+            # 建议流、序号或订阅方缺失/非法，无法识别为失败通知。
             raise ValueError("Unrecognized failure advisory")
         return DeliveryAdvisory(
             stream,
@@ -273,10 +291,12 @@ class JetStream:
         try:
             await self.js.consumer_info(self.settings.stream, subscriber)
         except NotFoundError:
+            # 持久消费者已不存在，判定订阅侧缺失。
             return "consumer_missing"
         try:
             await self.js.get_msg(self.settings.stream, seq=sequence)
         except NotFoundError:
+            # 消费者在但消息已从流中移除，判定传输侧丢失。
             return "transport_lost"
         return "unknown"
 

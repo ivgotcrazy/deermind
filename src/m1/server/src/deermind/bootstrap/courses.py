@@ -86,13 +86,16 @@ def configure_student_turns(
         async with spaces.engine.connect() as db:
             adopted = await spaces.fixed_adoption(db, scope, adoption_id)
         if fixed_id is not None:
+            # 命令显式指定配置：按编号取，并核对它属于本课程快照。
             fixed = await configs.detail(kind, fixed_id)
             if fixed.config_ref not in adopted.snapshot.activity_config_refs:
+                # 指定配置不在采用课程内，拒绝使用。
                 raise ValueError("Activity configuration is outside the adopted course")
             return fixed, adopted.snapshot
         for reference in adopted.snapshot.activity_config_refs:
             resolved = await configs.fixed_config(reference)
             if resolved.definition.activity_type == kind:
+                # 在快照配置中按活动类型匹配到一份。
                 return resolved, adopted.snapshot
         return None, adopted.snapshot
 

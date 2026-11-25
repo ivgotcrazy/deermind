@@ -126,6 +126,7 @@ def fact(table: str, identity: UUID, body: FactModel) -> FactRecord:
 
 
 def _decode(item: FactRecord, model: type[FactModel]) -> FactModel:
+    # 投影前记录正文必须是已解码的内联内容。
     if not isinstance(item.content, InlineContent):
         raise ValueError("Evidence and mastery records must be decoded")
     return model.model_validate_json(canonical_json(item.content.value))
@@ -134,6 +135,7 @@ def _decode(item: FactRecord, model: type[FactModel]) -> FactModel:
 def validate(draft: EventDraft, payload: EventPayload) -> None:
     if not isinstance(payload, BeliefCompleted):
         raise ValueError("Unexpected evaluation result event")
+    # 触发事件、结果所有者与快照引用须与草稿身份逐项一致。
     if (
         draft.causation_event_id != payload.trigger_event_id
         or draft.owner_ref != payload.result_ref
@@ -141,23 +143,28 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
     ):
         raise ValueError("Evaluation result identity does not match the source")
     grouped: dict[str, list[Ref]] = {EVIDENCE: [], REVISION: [], SNAPSHOT: []}
+    # 逐条解码记录，按三类分别核对归属并收集引用。
     for item in payload.records:
         table = item.record_type
         record = _decode(item, MODELS[table])
         if isinstance(record, EvidenceRecord):
             kind, identity = "evidence", record.evidence_id
+            # 佐证必须挂在本次输入之下。
             if str(record.input_ref) != payload.input_ref.id:
                 raise ValueError("Evidence does not match the input")
         elif isinstance(record, BeliefRevision):
             kind, identity = "belief_revision", record.belief_revision_id
+            # 信念修订必须由本次触发事件产生。
             if record.trigger_event_id != payload.trigger_event_id:
                 raise ValueError("Revision does not match the source")
         else:
             assert isinstance(record, MasterySnapshot)
             kind, identity = "mastery_snapshot", record.snapshot_id
+        # 记录标识与范围须与事件草稿一致，不得越界混入。
         if str(identity) != item.record_id or record.scope_id != draft.scope_id:
             raise ValueError("Evaluation record is outside its event")
         grouped[table].append(ref(kind, identity))
+    # 汇总出的三类引用列表须与事件正文声明的引用逐条吻合。
     if (
         grouped[EVIDENCE] != payload.evidence_refs
         or grouped[REVISION] != payload.belief_revision_refs
@@ -184,10 +191,12 @@ REGISTRATION = EventRegistration(
 
 async def project(db: AsyncConnection, event: StoredEvent) -> None:
     async with application(db, SNAPSHOT, 1, event.draft.event_id) as needed:
+        # 事件已投影过，重复应用直接返回。
         if not needed:
             return
         for table in MODELS:
             for item in event.payload.records:
+                # 只处理当前表对应的记录。
                 if item.record_type != table:
                     continue
                 if not isinstance(item.content, InlineContent):
@@ -201,8 +210,10 @@ async def project(db: AsyncConnection, event: StoredEvent) -> None:
                     ),
                     {"body": canonical_json(body)},
                 )
+                # 信念修订落表后刷新对应方面的当前信念指针。
                 if table == REVISION:
                     await _current(db, UUID(item.record_id))
+                # 快照落表后刷新范围的最新掌握快照指针。
                 if table == SNAPSHOT:
                     await _head(db, UUID(item.record_id))
 
@@ -227,6 +238,7 @@ async def _current(db: AsyncConnection, identity: UUID) -> None:
 
 
 async def _head(db: AsyncConnection, identity: UUID) -> None:
+    # 仅当新快照发布序号更靠后时才覆盖头指针，避免旧快照回写。
     await db.execute(
         text("""
         INSERT INTO evaluation.mastery_head (scope_id, current_snapshot_ref, publication_seq)

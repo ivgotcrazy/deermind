@@ -31,6 +31,7 @@ def record(name: str, kind: str, fact: FactModel) -> FactRecord:
 def decode(record: FactRecord) -> FactModel:
     model = USAGE_RECORDS.get((record.record_type, record.schema_version))
     if model is None or not isinstance(record.content, InlineContent):
+        # 记录类型/版本未登记，或内容非内联。
         raise ValueError("Unsupported or undecoded usage record")
     return model.model_validate_json(canonical_json(record.content.value))
 
@@ -44,11 +45,13 @@ class UsageConfirmed(EventPayload):
 
 def validate_usage(draft: EventDraft, payload: EventPayload) -> None:
     if not isinstance(payload, UsageConfirmed) or len(payload.records) != 2:
+        # 事件须恰好携带一条确认决定和一条条件快照。
         raise ValueError("Confirmation requires a decision and its conditions snapshot")
     facts = [decode(item) for item in payload.records]
     confirmations = [f for f in facts if isinstance(f, ConfirmationFact)]
     conditions = [f for f in facts if isinstance(f, ConditionsFact)]
     if len(confirmations) != 1 or len(conditions) != 1:
+        # 两类事实各须恰好一条。
         raise ValueError("Invalid confirmation record matrix")
     confirmation, condition = confirmations[0], conditions[0]
     if (
@@ -68,6 +71,7 @@ def validate_usage(draft: EventDraft, payload: EventPayload) -> None:
         or payload.confirmation_ref not in condition.confirmation_refs
         or not payload.notice_text
     ):
+        # 学生归属、事件 owner、确认/条件引用与条件内确认列表及告知文案须彼此一致。
         raise ValueError("Confirmation facts do not agree")
 
 

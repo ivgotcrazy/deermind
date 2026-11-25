@@ -29,6 +29,7 @@ PROBE = Ref(owner="interaction", type="wait_policy", id="answer_mastery", revisi
 def policy(find: Callable[[AsyncConnection, UUID, UUID], Awaitable[Match | None]]) -> Policy:
     async def probe(db: AsyncConnection, work: Execution, condition: Condition) -> Match | None:
         key = condition.result_key
+        # 等待结果必须是本空间 evaluation 产出的信念结果。
         if key is None or (key.producer, key.result_kind, key.scope_id) != (
             "evaluation",
             "belief_result",
@@ -72,6 +73,7 @@ async def wait_for_mastery(
         current = await history.current(db, work.scope_id)
         round_ = current.current_round
         activity = current.current_activity
+        # 仅当轮次已关闭且不可继续时，才需要等待掌握结果做后续跟进。
         if not activity or not round_ or round_.state != "closed" or round_.can_continue:
             return None
         trigger = await db.scalar(
@@ -81,6 +83,7 @@ async def wait_for_mastery(
         """),
             {"scope": work.scope_id, "round": UUID(round_.round_ref.id)},
         )
+        # 未取到触发事件引用，无法登记等待。
         if not isinstance(trigger, UUID):
             return None
         adoption = await current_adoption(db, work.scope_id, False)
@@ -88,6 +91,7 @@ async def wait_for_mastery(
         now = await db.scalar(text("SELECT clock_timestamp()"))
         reserve = 120
         expires = min(now + timedelta(seconds=45), run.deadline_at - timedelta(seconds=reserve))
+        # 活动采用与当前采用不符，或剩余时间不足以等待，放弃登记。
         if active.identity.adoption_ref != adoption or expires <= now:
             return None
         waiting = await waits.register(
@@ -128,6 +132,7 @@ async def follow_up_context(
 ) -> str:
     async with context.engine.begin() as db:
         work = await store.active(db, context.registry, saved.waiting.run, "step")
+        # 跟进上下文所属轮次已变化，不沿用旧掌握上下文。
         if not await _same_mastery_round(current_adoption, db, work.scope_id, saved):
             return ""
     return await context.build(saved.waiting.run, question, post_close=True, mastery_ref=reference)
@@ -159,9 +164,11 @@ async def complete_mastery_follow_up(
     run = saved.waiting.run
     async with conversation.engine.begin() as db:
         work = await store.lock_owned(db, registry, run.execution_id)
+        # 已完成且仍是本次尝试，幂等返回。
         if work.state == "completed" and work.active_attempt_id == run.attempt_id:
             return
         work = await store.active(db, registry, run, "finish")
+        # 轮次已变化则提示评价对应旧检测；否则用给定措辞或默认提示收尾。
         if not await _same_mastery_round(current_adoption, db, work.scope_id, saved):
             reply = "这次评价对应之前的检测，当前活动可以继续。"
         else:

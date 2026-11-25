@@ -50,6 +50,7 @@ class ProposedContent(FactModel):
                 for aid in self.teaching_aids
             )
         ):
+            # 类型与正文角色、正文块、出处、父题、教学辅助归属须一致。
             raise ValueError("候选类型、正文用途、出处或父题不一致")
         return self
 
@@ -67,6 +68,7 @@ class MaterialProposal(FactModel):
     @model_validator(mode="after")
     def coherent(self) -> Self:
         if self.outcome == "proposal" and not (self.changes or self.catalog_changes or self.retire):
+            # 提案态必须带至少一类变更候选。
             raise ValueError("提案必须有内容或章节候选")
         if self.outcome == "needs_input" and not self.questions:
             raise ValueError("等待补充必须说明需要什么")
@@ -75,6 +77,7 @@ class MaterialProposal(FactModel):
         by_key = {change.local_key: change for change in self.changes}
         chapters = {chapter.local_key for chapter in self.catalog_changes}
         if len(by_key) != len(self.changes) or len(chapters) != len(self.catalog_changes):
+            # 局部编号重复会导致引用错位。
             raise ValueError("候选和章节的局部编号必须唯一")
         for change in self.changes:
             parent = by_key.get(change.parent_key) if change.parent_key else None
@@ -86,6 +89,7 @@ class MaterialProposal(FactModel):
                     or parent.chapter_key != change.chapter_key
                 )
             ):
+                # 章节引用须存在；参考解法的父题须在同章节且为题目。
                 raise ValueError("候选章节或参考解法的父题不在本批")
         return self
 
@@ -94,6 +98,7 @@ class MaterialProposal(FactModel):
         allowed = {source.source_id: source for source in shown}
         covered = {item.source_id for item in self.coverage}
         if len(covered) != len(self.coverage) or covered != allowed.keys():
+            # 覆盖清单须与本轮实际提供的页一一对应。
             raise ValueError("覆盖清单必须对应本轮实际看到的页")
         for chapter in self.catalog_changes:
             if not set(chapter.source_ids) <= allowed.keys():
@@ -104,6 +109,7 @@ class MaterialProposal(FactModel):
             for ref in body.source_refs:
                 source = allowed.get(ref.source_id)
                 if source is None:
+                    # 出处编号不在本轮提供页内，拒绝绑定。
                     raise ValueError("候选出处超出已提供的页")
                 sources.append(
                     source.model_copy(

@@ -1,4 +1,10 @@
-"""调用方提供用途、材料和权限；AI底座只执行登记的能力和有限预算。"""
+"""调用方提供用途、材料和权限；AI底座只执行登记的能力和有限预算。
+
+分层定位：abstractions（AI 跨层合同）
+对外契约：Budget、ModelProfile、PurposeBinding、ExecutionConfig、CallInput、CallHandle
+等调用配置与身份结构。
+边界约束：只定义受理时固定的配置与输入，不含模型调用与授权执行实现。
+"""
 
 from typing import Annotated, Literal
 from urllib.parse import urlsplit
@@ -28,8 +34,10 @@ class Budget(FactModel):
 
     @model_validator(mode="after")
     def total_covers_one_request(self) -> "Budget":
+        # 总令牌预算必须至少覆盖一次最大请求的输入加输出。
         if self.max_total_tokens < self.max_input_tokens + self.max_output_tokens:
             raise ValueError("Total budget must cover one maximum request")
+        # 修复次数不能占用掉全部模型请求，须保留至少一次正式请求。
         if self.max_repairs >= self.max_model_requests:
             raise ValueError("Repair requires a remaining model request")
         return self
@@ -51,6 +59,7 @@ class ModelProfile(FactModel):
     def controlled_address(self) -> "ModelProfile":
         # 只接受装配配置；此检查还阻止把认证信息放进URL后进入事实/历史。
         address = urlsplit(self.base_url)
+        # 必须 HTTPS、有主机名，且不得在 URL 内嵌账号密码、查询串或片段。
         if (
             address.scheme != "https"
             or not address.hostname
@@ -82,6 +91,7 @@ class ExecutionConfig(FactModel):
 
     @model_validator(mode="after")
     def nonempty_bindings(self) -> "ExecutionConfig":
+        # 用途绑定不能为空，且每个用途键都不能是空白。
         if not self.purpose_bindings or any(not key.strip() for key in self.purpose_bindings):
             raise ValueError("An AI work requires registered purposes")
         return self

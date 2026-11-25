@@ -111,10 +111,12 @@ type ObjectRef = DomainRef | MemberRef
 
 def definition_content(content: RichContent | None, title: str) -> RichContent | None:
     if content is None:
+        # 可空字段直接放行。
         return None
     if content.role != "definition":
         invalid(title, ("role",), "此字段只能使用定义正文。")
     if content.source_refs:
+        # 定义入口暂不允许挂外部来源。
         invalid(title, ("source_refs",), "此入口暂未提供外部来源授权。")
     return content
 
@@ -145,6 +147,7 @@ class KnowledgeComponent(FactModel):
     @classmethod
     def validate_content(cls, content: RichContent | None) -> RichContent | None:
         if content is not None and not content.blocks:
+            # 非空定义不得留空正文块。
             invalid(cls.__name__, ("blocks",), "请提供正文。")
         return definition_content(content, cls.__name__)
 
@@ -178,6 +181,7 @@ class TaskDefinition(FactModel):
             or any(span.type != "text" or span.text.strip() for span in block.payload.spans)
             for block in content.blocks
         ):
+            # 所有段落都是空文本时，视为未填。
             invalid(cls.__name__, ("blocks",), "请提供正文，未填项请留空。")
         return definition_content(content, cls.__name__)
 
@@ -196,6 +200,7 @@ def task_gaps(content: TaskDefinition) -> list[Issue]:
         if value is None
     ]
     if not content.method_refs:
+        # 任务未关联任何方法，记缺口。
         gaps.append(Issue(code="missing_methods", path="/method_refs", message="尚未关联方法。"))
     return gaps
 
@@ -231,6 +236,7 @@ def solution_gaps(content: SolutionDefinition) -> list[Issue]:
         if value is None
     ]
     if not content.kc_refs:
+        # 方法未关联知识成分，记缺口。
         gaps.append(Issue(code="missing_knowledge", path="/kc_refs", message="尚未关联知识成分。"))
     return gaps
 
@@ -337,6 +343,7 @@ def save_variant(value: object) -> str | None:
     else:
         kind, action = getattr(value, "object_kind", None), getattr(value, "action", None)
     if isinstance(kind, str) and isinstance(action, str):
+        # 种类+动作拼成判别标签。
         return f"{kind}.{action}"
     return None
 

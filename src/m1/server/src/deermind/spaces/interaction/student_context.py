@@ -66,6 +66,7 @@ class StudentContext:
             work = await store.active(db, self.registry, run, "step")
             submission = await read_answer_context(db, UUID(work.input_ref.id))
             if submission is not None:
+                # 本轮输入是作答提交，走进答反馈分支。
                 if submission.round_id:
                     position = await history.current(db, work.scope_id)
                     fixed_round = position.current_round
@@ -74,6 +75,7 @@ class StudentContext:
                         and fixed_round.can_continue
                         and fixed_round.round_ref.id == str(submission.round_id)
                     ):
+                        # 对应检测轮仍可继续，先让学生确认答案。
                         return ACKNOWLEDGE_ANSWER
                 related = await question(db, submission.instance_ref) if question else None
                 fixed = related.model_dump(mode="json") if related else None
@@ -89,6 +91,7 @@ class StudentContext:
             current = await history.current(db, work.scope_id)
             assessment = current.current_round
             if post_close and (assessment is None or assessment.state != "closed"):
+                # 检测后求助要求轮次已闭环。
                 raise RuntimeError("Post-round help requires a closed round")
             if assessment and not post_close:
                 detection: dict[str, JsonValue] = {
@@ -100,6 +103,7 @@ class StudentContext:
                     and self.course_index
                     and (await self._reads_enabled(db, work))
                 ):
+                    # 开轮且允许取材时，附当前题面。
                     detection["question"] = await db.scalar(
                         text(
                             "SELECT statement FROM interaction.task_uses "
@@ -110,6 +114,7 @@ class StudentContext:
                 return canonical_json(detection) + "\n本轮输入（JSON）\n" + canonical_json(raw)
             fixed_question = None
             if post_close and assessment and question:
+                # 检测后求助：回查本轮题目实例作为固定题面。
                 source = await db.scalar(
                     text(
                         "SELECT instance_ref FROM interaction.task_uses "
@@ -129,7 +134,7 @@ class StudentContext:
             memories = (
                 await memory_facts.read(db, work.scope_id, leaf.activity_ref.activity_id)
                 if leaf
-                else []
+                else []  # 无叶活动时无可继承记忆
             )
             covered_through = next(
                 (item.basis_message_seq for item in memories if item.kind == "summary"), 0
@@ -160,6 +165,7 @@ class StudentContext:
                 message: dict[str, JsonValue] = {"role": item["role"], "parts": item["parts"]}
                 remaining -= len(canonical_json(message).encode("utf-8"))
                 if remaining < 0:
+                    # 预算耗尽，停止纳入更早消息。
                     break
                 history_text.append(message)
                 message_refs.append(ref("message", item["message_id"]))
@@ -179,7 +185,7 @@ class StudentContext:
                     [item.activity_ref.activity_id for item in current.path],
                 )
                 if allow_reads
-                else []
+                else []  # 不允许取材时不登记可读材料
             )
         source = StudentInput.model_validate_json(canonical_json(raw))
         contexts: list[dict[str, JsonValue]] = []
@@ -188,6 +194,7 @@ class StudentContext:
         for reference in source.explicit_refs:
             parts = await self.read_chapter(work.scope_id, adoption_id, reference)
             if len(canonical_json(parts).encode()) <= 16 * 1024:
+                # 章节在取材预算内，整段引用。
                 quoted.append(
                     {
                         "ref": reference.model_dump(mode="json"),
@@ -195,6 +202,7 @@ class StudentContext:
                     }
                 )
             else:
+                # 章节超长，只记省略提示。
                 quoted.append(
                     {
                         "ref": reference.model_dump(mode="json"),
@@ -203,11 +211,12 @@ class StudentContext:
                 )
         adoption = active.identity.adoption_ref if active else adoption_id
         if active is None or active.identity.type != "detection" or post_close:
+            # 非检测活动或检测后求助，准备讲解/问答教学上下文。
             kinds: tuple[ActivityType, ...] = ("explanation", "question_answer")
             for kind in kinds:
                 positions: list[history.ActivityState | None] = [None]
                 if active and active.identity.type == kind:
-                    positions.append(active)
+                    positions.append(active)  # 当前活动同型时，按当前节点取配置
                 for position in positions:
                     config, course = await self.activity_config(
                         work.scope_id,
@@ -216,6 +225,7 @@ class StudentContext:
                         position.identity.config_ref if position else None,
                     )
                     if config is not None and not config.gaps:
+                        # 配置完整无缺口，才打包教学上下文。
                         chosen = await self._prepare_lesson(
                             run,
                             work,
@@ -229,6 +239,7 @@ class StudentContext:
                         if chosen is not None:
                             contexts.append(chosen)
         if allow_reads and self.course_index:
+            # 允许取材：从课程目录补登记可读材料。
             async with self.engine.connect() as db:
                 readable.extend(
                     await self.course_index(db, work.scope_id, adoption, source.explicit_refs)
@@ -242,7 +253,7 @@ class StudentContext:
             mastery = (
                 await self.read_mastery(work.scope_id, adoption, mastery_ref)
                 if self.read_mastery
-                else None
+                else None  # 无掌握度读取器则不附掌握度
             )
         return (
             canonical_json(
@@ -253,14 +264,14 @@ class StudentContext:
                     "memory": [value.content for value in memories],
                     "activity": current.current_activity.model_dump(mode="json")
                     if current.current_activity
-                    else None,
+                    else None,  # 无叶活动时活动字段留空
                     "recent": list(reversed(history_text)),
                     "teaching_contexts": contexts,
                     "published_mastery": mastery,
                     **(
                         {"readable_materials": [item.model_dump(mode="json") for item in readable]}
                         if readable
-                        else {}
+                        else {}  # 无可读材料时省略该字段
                     ),
                 }
             )
@@ -291,6 +302,7 @@ class StudentContext:
         definition = config.definition
         kind = definition.activity_type
         if kind != "explanation" and kind != "question_answer":
+            # 教学上下文只接受讲解/问答两类活动。
             raise ValueError("Expected a teaching activity configuration")
         node = (
             next(
@@ -302,6 +314,7 @@ class StudentContext:
             else entry_node(definition.blueprint)
         )
         if node is None:
+            # 蓝图找不到入口/当前节点，无法打包上下文。
             return None
         binding = effective_binding(definition, node.node_id)
         rules = [item for item in definition.rules if UUID(item.ref.id) in binding.rule_ids]
@@ -350,6 +363,7 @@ class StudentContext:
                 {"id": bundle_id},
             )
             if existing is None:
+                # 同批上下文尚未落库，登记新的上下文包事件。
                 authorization = await store.authorization(db, work.execution_id)
                 request_id = await db.scalar(
                     text("SELECT request_id FROM interaction.inputs WHERE input_id=:id"),

@@ -94,6 +94,7 @@ class CourseChecks:
             )
         ).one_or_none()
         if row is None:
+            # 教材不存在或已删除。
             raise RequestError(404, "not_found", "找不到教材。")
         await self.materials.read_import(db, row.import_id, lock=lock)
         return row.import_id, row.domain_id, row.title
@@ -113,10 +114,12 @@ class CourseChecks:
 
     async def fixed_check(self, db: AsyncConnection, reference: Ref) -> facts.CheckRow:
         if reference.owner != "product" or reference.type != "application_check":
+            # 引用主体或类型不是课程检查记录。
             raise RequestError(400, "invalid_reference", "请选择一条课程检查。")
         try:
             identity = UUID(reference.id)
         except ValueError as error:
+            # 编号不是合法 UUID。
             raise RequestError(400, "invalid_reference", "课程检查编号无效。") from error
         raw = await db.scalar(
             text(
@@ -126,6 +129,7 @@ class CourseChecks:
             {"id": identity},
         )
         if raw is None:
+            # 检查记录已不存在。
             raise RequestError(404, "not_found", "找不到课程检查。")
         return facts.CheckRow.model_validate_json(canonical_json(raw))
 
@@ -141,6 +145,7 @@ class CourseChecks:
                 query.request_id,
             )
             if receipt is None or receipt.result_ref is None:
+                # 无已完成回执，或回执尚未落结果。
                 return ReceiptView[CourseCheckResult](receipt_state="not_found")
             result = view(await self.fixed_check(db, receipt.result_ref))
         return ReceiptView[CourseCheckResult](
@@ -167,6 +172,7 @@ class CourseChecks:
             )
         ).one_or_none()
         if row is None or row.revision != selection.revision:
+            # 章节不存在，或章节版本与选择时不一致。
             raise RequestError(409, "check_stale", "选用章节已变化，请重新检查。")
         contents = (
             await db.execute(
@@ -184,6 +190,7 @@ class CourseChecks:
         canonical = {canonical_json(ref.model_dump(mode="json")) for ref in available}
         given = {canonical_json(ref.model_dump(mode="json")) for ref in selection.content_refs}
         if not given <= canonical or len(given) != len(selection.content_refs):
+            # 所选内容中有失效项，或同一引用被重复选择。
             raise RequestError(409, "check_stale", "选用的内容已变化，请重新检查。")
         associations = (
             await db.scalars(
@@ -212,6 +219,7 @@ class CourseChecks:
         current = await self.current(db, command.textbook_id, command.target_ref.target_id)
         ref = facts.ref("course_application", current.application_id) if current else None
         if ref != command.expected_application_ref:
+            # 当前已发布应用与命令所基于的版本不一致。
             raise RequestError(409, "check_stale", "当前课程已变化，请重新检查。")
         head = await db.scalar(
             text(
@@ -221,6 +229,7 @@ class CourseChecks:
             {"book": command.textbook_id, "target": command.target_ref.target_id},
         )
         if head != command.target_ref.revision:
+            # 学习目标版本已更新，检查所基于的目标过期。
             raise RequestError(409, "check_stale", "学习目标已变化，请重新检查。")
         return current
 
@@ -237,6 +246,7 @@ class CourseChecks:
         textbook = command.textbook_id
         chapter_ids = {chapter.chapter_id for chapter in command.chapters}
         if len(chapter_ids) != len(command.chapters):
+            # 去重后数量变少，说明同一章节被重复选择。
             raise RequestError(400, "invalid_reference", "选用章节不能重复。")
         scope = ("course_application", textbook)
         normalized = command.model_dump(mode="json")
@@ -246,6 +256,7 @@ class CourseChecks:
                 db, principal, CHECK_COURSE, textbook, command.request_id, normalized
             )
             if saved is not None and saved.result_ref is not None:
+                # 检查请求幂等重放，直接返回原检查结果。
                 return CourseCheckReceipt(
                     request_ref=saved.request_ref,
                     result=view(await self.fixed_check(db, saved.result_ref)),
@@ -254,10 +265,12 @@ class CourseChecks:
             await self.targets.detail(command.target_ref.target_id, command.target_ref.revision)
         ).target
         configs: dict[str, ConfigView] = {}
+        # 逐份读取活动配置，并按活动类型归集。
         for reference in command.activity_config_refs:
             config = await self.configs(reference)
             key = config.definition.activity_type
             if key in configs:
+                # 同一活动类型被选择了多份配置。
                 raise RequestError(400, "invalid_reference", "每类活动只能选用一份配置。")
             configs[key] = config
 
@@ -267,6 +280,7 @@ class CourseChecks:
             selected = await self.selections(db, textbook, import_id, command)
             chapters = list(selected)
             if old is not None:
+                # 保留上一版已选、本轮未改动也未剔除的章节，避免它们从快照中丢失。
                 chapters.extend(
                     chapter
                     for chapter in old.content_snapshot.chapters
@@ -301,6 +315,7 @@ class CourseChecks:
                 check_ref=reference,
                 textbook_id=textbook,
                 target_ref=command.target_ref,
+                # 有阻断项记 blocked，否则记 ready。
                 check_status="blocked" if blockers else "ready",
                 request_ref=request,
                 records=[facts.record(facts.CHECK, check.check_id, check)],
@@ -320,6 +335,7 @@ class CourseChecks:
                 reserved_ref=request,
             )
             if saved.result_ref is not None:
+                # 事务内再次核对：并发请求已完成本单，直接返回其回执。
                 return CourseCheckReceipt(
                     request_ref=saved.request_ref,
                     result=view(await self.fixed_check(db, saved.result_ref)),
@@ -329,11 +345,13 @@ class CourseChecks:
             if title != snapshot.textbook_title or selected != await self.selections(
                 db, textbook, import_id, command
             ):
+                # 加锁后复核教材标题或所选章节集合已变。
                 raise RequestError(409, "check_stale", "本次选用的教材内容已变化。")
             verified, latest_blockers = await prepare_course(
                 db, domain, title, target, snapshot.chapters, configs, self.check_methods
             )
             if verified != snapshot or blockers != latest_blockers:
+                # 二次准备得到的快照或阻断项与首次不一致，准备依据已变。
                 raise RequestError(409, "check_stale", "课程准备依据已变化，请重新检查。")
             sequence = await lock_scope_sequence(db, *scope)
             (stored,) = await self.materials.events.append(

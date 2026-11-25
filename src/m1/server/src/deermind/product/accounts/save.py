@@ -29,6 +29,7 @@ async def save_initial_account(
     不能把本函数当作免认证的账号创建API。新账号身份由调用方固定并在重试沿用。
     """
     if access.producer != "product" or ("account", account_id) not in access.scopes:
+        # 生产者必须是 product，且持有本账号作用域授权。
         raise PermissionError("Account scope is not authorized")
     owner = Ref(owner="product", type="account", id=str(account_id), revision=1)
     async with engine.begin() as connection:
@@ -45,6 +46,7 @@ async def save_initial_account(
             },
         )
         if receipt.result_ref is not None:
+            # 幂等重放：回执已有结果，直接返回原收据。
             return receipt
         created_at = await connection.scalar(text("SELECT clock_timestamp()"))
         if not isinstance(created_at, datetime):

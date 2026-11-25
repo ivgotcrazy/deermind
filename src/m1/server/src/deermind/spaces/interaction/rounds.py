@@ -75,13 +75,16 @@ class DetectionRounds:
                 normalized_input=command.model_dump(mode="json", exclude={"request_id"}),
             )
             if receipt.result_ref:
+                # 请求已受理过，按回执重放既有结果。
                 return await service.replay_control(scope, receipt)
             adoption = await service.authorize(db, account, scope, True)
             await lock_position(db, scope)
             current = await history.current(db, scope)
             if current.active_input_id:
+                # 空间尚有进行中输入，拒绝并发开轮。
                 raise RequestError(409, "interaction_busy", "正在处理上一条，请稍候。")
             leaf = current.current_activity
+            # 叶活动必须是活跃的检测活动，且引用与预期修订一致。
             if (
                 leaf is None
                 or leaf.type != "detection"
@@ -97,6 +100,7 @@ class DetectionRounds:
                 "detection",
                 state.identity.config_ref,
             )
+            # 当前蓝图节点须授权本次开轮动作。
             if not config or not any(
                 node.node_id == leaf.node_id and command.action in node.allowed_actions
                 for node in config.definition.blueprint.nodes
@@ -104,8 +108,10 @@ class DetectionRounds:
                 raise RequestError(409, "blocked", "当前蓝图节点尚不能开始这一轮。")
             plan = await self._plan(db, scope, leaf.activity_ref.activity_id, command)
             if plan.adoption_ref != UUID(adoption.adoption_ref.id):
+                # 题单对应的采用已变更，题单失效。
                 raise RequestError(409, "stale_plan", "学习目标已更新，请重新准备题单。")
             if command.action == "start_detection":
+                # 首轮开题单须处于 prepared，且当前无进行中轮次。
                 if plan.status != "prepared" or current.current_round is not None:
                     raise RequestError(409, "stale_plan", "该题单已确认。")
             elif (
@@ -113,6 +119,7 @@ class DetectionRounds:
                 or current.current_round is None
                 or not current.current_round.can_continue
             ):
+                # 续做要求题单已确认、存在已闭环且仍有剩余项的轮次。
                 raise RequestError(409, "blocked", "请先结束当前检测轮。")
             used = set(
                 (
@@ -131,9 +138,11 @@ class DetectionRounds:
             ]
             selected = next((item for item in items if item.item_id not in used), None)
             if selected is None:
+                # 题单项均已使用，题单完成。
                 raise RequestError(409, "stale_plan", "题单已完成。")
             task = await self.read_question(db, selected.supplied.task_instance_ref)
             if task is None or task.task_ref != selected.requirement.task_ref:
+                # 题目实例缺失或任务与要求不符，题单失效。
                 raise RequestError(409, "stale_plan", "题目不可用，请重新准备题单。")
             exposed = await db.scalar(
                 text(
@@ -143,6 +152,7 @@ class DetectionRounds:
                 {"scope": scope, "id": selected.supplied.task_instance_ref.id},
             )
             if exposed:
+                # 题目实例已在本空间用过，避免重复出题。
                 raise RequestError(409, "stale_plan", "该题已使用，请重新准备题单。")
             sequence, epoch = await next_position(db, scope)
             opened = self._drafts(
@@ -209,6 +219,7 @@ class DetectionRounds:
             )
         ).one_or_none()
         if row is None:
+            # 指定题单版本不存在或已被更新版本取代。
             raise RequestError(409, "stale_plan", "找不到当前题单版本，请重新准备。")
         return row
 

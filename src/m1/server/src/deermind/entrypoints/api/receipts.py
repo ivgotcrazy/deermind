@@ -94,6 +94,7 @@ async def receipt(
     auth, config = access(request)
     session = await auth.session(request.cookies.get(config.cookie_name), expected)
     if expected is None:
+        # 缺少会话标识，无法绑定回执归属。
         raise RequestError(403, "forbidden", "请先刷新登录状态。")
     if (
         query.action
@@ -118,6 +119,7 @@ async def receipt(
         )
         and session.account.role != "admin"
     ):
+        # 这些业务动作回执仅限管理员可见，普通学生按不存在处理。
         raise RequestError(404, "not_found", "找不到请求。")
     readers: RequestReceipts = request.app.state.receipts
     result = await readers.read(session.account.account_id, session.session_id, query)

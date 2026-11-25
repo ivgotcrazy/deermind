@@ -79,6 +79,7 @@ def calculate_revision(
     previous: facts.MasteryItem | None,
     source: InputRecord,
 ) -> facts.BeliefRevision | None:
+    # 佐证不合格则不产生信念修订。
     if item.qualification != "eligible":
         return None
     parameters = belief.M1_PARAMETERS
@@ -86,6 +87,7 @@ def calculate_revision(
     observed = previous.p_obs if previous else None
     last_seen = previous.last_observed_at if previous else None
     kind: Literal["observation", "learning_transition"]
+    # 有判定结论走观测更新；无结论只做学习状态推演。
     if item.verdict:
         kind = "observation"
         posterior = belief.update_observation(prior, item.verdict, parameters)
@@ -95,6 +97,7 @@ def calculate_revision(
         kind = "learning_transition"
         next_observed = observed
         next_current = belief.predict_learning(prior, item.aspect_code, True, parameters)
+        # 推演后当前概率未变化，不记修订。
         if next_current == prior:
             return None
     return facts.BeliefRevision(
@@ -183,6 +186,7 @@ class Mastery:
             work = await store.load(db, run.execution_id)
             source, checked = await self._records(db, work.scope_id, reference)
             prior = await _latest(db, work.scope_id)
+            # 已完成且仍是本次尝试：幂等重入，核对快照引用后直接返回。
             if work.state == "completed" and work.active_attempt_id == run.attempt_id:
                 if work.result_ref != expected:
                     raise ValueError("Evaluation has a different saved batch")
@@ -205,16 +209,19 @@ class Mastery:
         prepared = await self.inputs.attachments.prepare(self.inputs.events, access, (draft,))
         async with self.inputs.engine.begin() as db:
             current = await store.lock_owned(db, self.registry, run.execution_id)
+            # 加锁后再次确认已完成且为本次尝试，避免并发重复落库。
             if current.state == "completed" and current.active_attempt_id == run.attempt_id:
                 if current.result_ref != body.result_ref:
                     raise ValueError("Evaluation has a different saved batch")
                 return body.result_ref
             await store.active(db, self.registry, run, "finish")
+            # 执行输入引用须与本次触发一致，防止结果挂错执行。
             if current.input_ref.id != str(trigger):
                 raise ValueError("Evaluation result does not belong to this execution")
             await ordering.protect(db, source.scope_id, trigger)
             sequence = await lock_scope_sequence(db, *scope)
             latest = await _latest(db, source.scope_id)
+            # 提交前复核：头快照与计算时读到的基线不一致，说明状态已被改动，中止本次落库。
             if (latest.snapshot_id if latest else None) != (prior.snapshot_id if prior else None):
                 raise RuntimeError("Evaluation state changed before commit")
             (event,) = await self.inputs.events.append(
@@ -245,6 +252,7 @@ class Mastery:
     async def _records(
         db: AsyncConnection, scope: UUID, reference: Ref
     ) -> tuple[InputRecord, interpretation_facts.InterpretationRecord | None]:
+        # 批次只能挂在已准备的输入或其解释记录之下。
         if reference.owner != "evaluation" or reference.type not in {
             "evaluation_input",
             "interpretation",
@@ -252,6 +260,7 @@ class Mastery:
             raise ValueError("Evaluation batch requires a prepared input or interpretation")
         identity = UUID(reference.id)
         interpretation_row = None
+        # 引用指向解释时先回读解释记录，并取其所属输入作为定位基准。
         if reference.type == "interpretation":
             raw = await db.scalar(
                 text("""
@@ -274,6 +283,7 @@ class Mastery:
             {"id": identity, "scope": scope},
         )
         source = InputRecord.model_validate_json(canonical_json(raw))
+        # 输入钉住的参数与算法引用须为当前认可的 BKT 公式版本。
         if (source.input.parameter_ref, source.input.algorithm_ref) != (
             belief.PARAMETER_REF,
             belief.ALGORITHM_REF,
@@ -298,6 +308,7 @@ class Mastery:
         if checked:
             for value in checked.validation:
                 entry = evidence_record(source, checked.interpretation_id, value, now)
+                # 佐证已落库则记重复来源，跳过本条不重复计算。
                 if await db.scalar(
                     text("SELECT 1 FROM evaluation.evidence WHERE evidence_id=:id"),
                     {"id": entry.evidence_id},
@@ -311,8 +322,10 @@ class Mastery:
                 reasons.update(entry.reason_codes)
                 if change:
                     changes.append(change)
+                # 合格但未产生数值变化，单独记录原因。
                 elif entry.qualification == "eligible":
                     reasons.add("no_numeric_change")
+        # 既无佐证也无任何原因码时，兜底记为无可归属证据。
         if not evidence and not reasons:
             reasons.add("no_attributable_evidence")
         snapshot = facts.MasterySnapshot(

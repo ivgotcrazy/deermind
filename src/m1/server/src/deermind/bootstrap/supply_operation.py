@@ -46,6 +46,7 @@ CHECK = Purpose(
 def supply_config() -> ExecutionConfig | None:
     base = material_config()
     if base is None:
+        # 未配置模型/预算，供题生成与检查暂不可用。
         return None
     profile = base.purpose_bindings[MATERIAL_PURPOSE.name].profile
     return ExecutionConfig(
@@ -122,6 +123,7 @@ class SupplyWorkflow(PydanticAIWorkflow):
             )
             return str(decision)
         except (ActivityError, ApplicationError):
+            # 业务活动失败：落失败回执后转不可重试应用错误。
             await workflow.execute_activity(
                 "runtime.execution_failed",
                 args=[raw, "TASK_SUPPLY_FAILED"],
@@ -156,6 +158,7 @@ class SupplyActivities:
         async with self.service.engine.connect() as db:
             execution = await store.load(db, run.execution_id)
         if execution.state == "completed":
+            # 执行已完成，重复提交不覆盖选定结果。
             return
         body = await self.calls.candidate_content(run, UUID(candidate))
         checked = await self.calls.candidate_content(run, UUID(selected))

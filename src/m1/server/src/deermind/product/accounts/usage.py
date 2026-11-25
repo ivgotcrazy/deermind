@@ -46,6 +46,7 @@ async def current_conditions(connection: AsyncConnection, student: UUID) -> Cond
         .one_or_none()
     )
     if row is None:
+        # 学生尚无使用条件记录。
         raise AuthError(404, "not_found", "使用确认记录不存在。")
     # PG JSONB中的UUID等由正式DTO解码，不能靠隐式Python类型转换。
     return ConditionsFact.model_validate(dict(row))
@@ -57,6 +58,7 @@ class AccountUsage:
 
     async def view(self, session: SessionView) -> UsageView:
         if session.account.role != "student":
+            # 学生视角入口，非学生无权查看。
             raise AuthError(403, "forbidden", "此入口只显示本人的使用确认。")
         async with self.engine.connect() as connection:
             condition = await current_conditions(connection, session.account.account_id)
@@ -83,14 +85,17 @@ class AccountUsage:
         if is_student and (
             student != session.account.account_id or decision.kind != "student_assent"
         ):
+            # 学生只能为本人提交本人同意。
             raise AuthError(403, "forbidden", "只能确认本人的使用意愿。")
         if decision.notice_ref != TEST_NOTICE:
+            # 告知文案版本已变，需重新查看后再确认。
             raise AuthError(409, "notice_changed", "告知内容已变化，请重新查看。")
         if is_student and (
             decision.source_ref != assent_source(str(student), body.expected_revision)
             or decision.occurred_at is not None
             or decision.decision == "pending"
         ):
+            # 学生确认必须来自本人页面，且不能自带时间或保持待定。
             raise AuthError(400, "invalid_request", "请通过本人的确认页面提交。")
         async with self.engine.begin() as connection:
             receipt = await claim_request(
@@ -104,13 +109,16 @@ class AccountUsage:
             await lock_accounts(connection, {student, session.account.account_id})
             await authorize(connection, session, admin=not is_student)
             if receipt.result_ref is None:
+                # 回执未落结果，才进入本次写入；已落结果走幂等重放。
                 condition = await current_conditions(connection, student)
                 if condition.revision != body.expected_revision:
+                    # 条件版本与请求期望不符，乐观锁冲突。
                     raise AuthError(409, "revision_conflict", "确认条件已变化，请刷新后重试。")
                 now = await database_time(connection)
                 if decision.occurred_at is not None and (
                     decision.occurred_at.tzinfo is None or decision.occurred_at > now
                 ):
+                    # 自带时间须带时区且不得晚于当前库时间。
                     raise AuthError(400, "invalid_request", "核实时间必须明确且不能晚于现在。")
                 confirmations: list[ConfirmationFact] = []
                 rows = (
@@ -129,10 +137,12 @@ class AccountUsage:
                 for row in rows:
                     fact = ConfirmationFact.model_validate(dict(row))
                     if fact.kind == decision.kind and fact.decision == "accepted":
+                        # 同类同意已存在，重复确认被拒绝。
                         raise AuthError(
                             409, "already_confirmed", "此项已确认；本轮不提供撤回流程。"
                         )
                     if fact.kind != decision.kind:
+                        # 保留其他类型的历史确认，供条件推导汇总。
                         confirmations.append(fact)
                 confirmation = ConfirmationFact(
                     confirmation_id=uuid4(),
@@ -205,6 +215,7 @@ class AccountUsage:
     ) -> ReceiptView[ConfirmationResult]:
         """仅本人原请求；每次重新授权，不读取当前条件冒充原请求结果。"""
         if query.resource_id != principal:
+            # 只能读取本人账号下的请求。
             raise AuthError(404, "not_found", "没有可读取的请求。")
         try:
             request_id = str(UUID(query.request_id))
@@ -224,6 +235,7 @@ class AccountUsage:
                 {"session": session, "account": principal},
             )
             if role != "student":
+                # 会话对应账号非学生，不暴露该请求。
                 raise AuthError(404, "not_found", "没有可读取的请求。")
             row = (
                 (
@@ -248,6 +260,7 @@ class AccountUsage:
         if row is None:
             return ReceiptView(receipt_state="not_found")
         if row["state"] != "completed" or row["result_ref"] is None:
+            # 同步确认回执必须已提交并带结果引用。
             raise RuntimeError("Incomplete synchronous confirmation receipt")
         receipt = Receipt(row["request_ref"], Ref.model_validate(row["result_ref"]))
         original = await self._saved_result(query.resource_id, receipt)
@@ -278,6 +291,7 @@ class AccountUsage:
                 correlation_id=receipt.request_ref,
             )
         except LookupError as error:
+            # 原事件或事实记录已不可读。
             raise AuthError(404, "not_found", "没有可读取的请求结果。") from error
         items = facts["items"]
         if not isinstance(items, list) or len(items) != 2:

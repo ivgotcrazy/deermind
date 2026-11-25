@@ -64,6 +64,7 @@ PURPOSE = Purpose(
 
 def student_config() -> ExecutionConfig | None:
     if os.environ.get("M1_STUDENT_MODEL_ENABLED") != "true":
+        # 未显式启用对话模型，返回空配置关闭该路径。
         return None
     return ExecutionConfig(
         revision="student-conversation-12",
@@ -143,14 +144,17 @@ class StudentWorkflow(PydanticAIWorkflow):
         try:
             await workflow.execute_activity("runtime.execution_started", raw, **STEP_OPTIONS)
             if run.implementation_ref.id == PREPARE_DETECTION:
+                # 检测准备子流程：不进入对话回复，直接完成准备后返回。
                 await self._prepare_detection(raw, None)
                 return raw
             if workflow.patched("student_activity_memory"):
+                # 灰度开关开启时，先刷新活动记忆摘要。
                 await self._refresh_memory(run, raw)
             context = await workflow.execute_activity(
                 "interaction.student_context", raw, result_type=str, **STEP_OPTIONS
             )
             if context == ACKNOWLEDGE_ANSWER:
+                # 本轮仅为确认答案，落确认后直接返回，不生成回复。
                 await workflow.execute_activity(
                     "interaction.acknowledge_answer", raw, **STEP_OPTIONS
                 )
@@ -174,6 +178,7 @@ class StudentWorkflow(PydanticAIWorkflow):
             if workflow.patched("student_answer_mastery") and mode == "detection_message":
                 updated = await self._evaluation_follow_up(run, raw, str(candidate))
                 if updated:
+                    # 已按评价跟进闭环，不再走帮助或出题分支。
                     return str(candidate)
             if workflow.patched("student_detection_help") and mode == "detection_message":
                 confirmed = await workflow.execute_activity(
@@ -183,6 +188,7 @@ class StudentWorkflow(PydanticAIWorkflow):
                     **STEP_OPTIONS,
                 )
                 if confirmed:
+                    # 帮助上下文已确认，标记为关闭后再生成后续回复。
                     context, post_close = confirmed, True
                     prompt, refs, tools = reply_materials(context, run.input_ref)
                     candidate = await execute_ai_task(
@@ -201,8 +207,10 @@ class StudentWorkflow(PydanticAIWorkflow):
             elif workflow.patched("student_prepare_detection") and await self._prepare_detection(
                 raw, str(candidate)
             ):
+                # 检测准备已闭环，直接返回候选。
                 return str(candidate)
             if workflow.patched("verify_bound_teaching_rules"):
+                # 灰度开关开启时，先做教学规则核对再收尾。
                 await self._finish_checked(run, raw, context, str(candidate), post_close=post_close)
             else:
                 await workflow.execute_activity(
@@ -210,6 +218,7 @@ class StudentWorkflow(PydanticAIWorkflow):
                 )
             return str(candidate)
         except (ActivityError, ApplicationError):
+            # 活动失败：落失败回执后转不可重试应用错误。
             await workflow.execute_activity(
                 "runtime.execution_failed",
                 args=[raw, "STUDENT_REPLY_FAILED"],
@@ -222,6 +231,7 @@ class StudentWorkflow(PydanticAIWorkflow):
             "interaction.wait_for_mastery", args=[raw, candidate], result_type=str, **STEP_OPTIONS
         )
         if not prepared:
+            # 没有可跟进的掌握度等待，不进入评价跟进。
             return False
         follow_up = MasteryFollowUp.model_validate_json(prepared)
         handling = await self.signals.resume(
@@ -232,6 +242,7 @@ class StudentWorkflow(PydanticAIWorkflow):
         reference = handling.handling_receipt_ref
         result = None
         if reference is not None and reference.type == "mastery_snapshot":
+            # 等待结算为掌握度快照时，构造跟进上下文。
             context = await workflow.execute_activity(
                 "interaction.follow_up_mastery",
                 args=[prepared, reference.model_dump_json()],
@@ -265,6 +276,7 @@ class StudentWorkflow(PydanticAIWorkflow):
                 "interaction.prepare_memory", raw, result_type=str, **STEP_OPTIONS
             )
             if not material:
+                # 无可摘要材料，跳过记忆刷新。
                 return
             picked = memory_steps.SummaryMaterial.model_validate_json(material)
             summary = await execute_ai_task(
@@ -295,9 +307,11 @@ class StudentWorkflow(PydanticAIWorkflow):
             **STEP_OPTIONS,
         )
         if not prepared:
+            # 无检测计划，不进入准备流程。
             return False
         plan = PlanWork.model_validate_json(prepared)
         available: list[str] = []
+        # 逐组等待供题结算，记录已就绪的触发项。
         for group in plan.groups:
             settlement = await self.signals.resume(
                 group.waiting,
@@ -306,6 +320,7 @@ class StudentWorkflow(PydanticAIWorkflow):
             )
             result = settlement.handling_receipt_ref
             if result is not None and result.type == "supply_batch":
+                # 结算为供题批次，该组触发项可用。
                 available.append(str(group.trigger))
         await workflow.execute_activity(
             "interaction.finish_detection_plan",
@@ -325,6 +340,7 @@ class StudentWorkflow(PydanticAIWorkflow):
         )
         checked = None
         if review:
+            # 有可核对上下文时，让模型复核教学规则约束。
             try:
                 checked = await execute_ai_task(
                     self.agent,
@@ -344,6 +360,7 @@ class StudentWorkflow(PydanticAIWorkflow):
                 pass
         arguments = [raw, candidate, str(checked) if checked else None]
         if post_close:
+            # 帮助关闭后的收尾：不再等待供题。
             await workflow.execute_activity(
                 "interaction.student_finish", args=[*arguments, False, True], **STEP_OPTIONS
             )
@@ -357,6 +374,7 @@ class StudentWorkflow(PydanticAIWorkflow):
                 **STEP_OPTIONS,
             )
             if question:
+                # 已生成待解题目，等待供题批次结算。
                 settled = await self.signals.resume(
                     WaitCall.model_validate_json(question),
                     activity_timeout=STEP_OPTIONS["start_to_close_timeout"],
@@ -376,6 +394,7 @@ class StudentWorkflow(PydanticAIWorkflow):
 
 def post_round_reply(candidate: ReplyCandidate) -> ReplyCandidate:
     if candidate.intent == "detection_help" and candidate.teaching is not None:
+        # 帮助回复带教学内容时，归并为答疑意图。
         return candidate.model_copy(update={"intent": "question_answer"})
     return candidate
 
@@ -383,9 +402,11 @@ def post_round_reply(candidate: ReplyCandidate) -> ReplyCandidate:
 def rule_review_context(context: str, draft: ReplyCandidate) -> str:
     teaching = draft.teaching
     if teaching is None or draft.intent not in {"explanation", "question_answer"}:
+        # 无教学内容，或意图不属于可核对范围，不生成复核上下文。
         return ""
     packed, separator, raw_input = context.partition("\n本轮输入（JSON）\n")
     if not separator:
+        # 上下文缺少本轮输入分隔，无法拆分复核部分。
         return ""
     source = json.loads(packed)
     current = source["activity"]
@@ -403,10 +424,12 @@ def rule_review_context(context: str, draft: ReplyCandidate) -> str:
         None,
     )
     if selected is None:
+        # 未找到匹配活动类型与位置的教学上下文。
         return ""
     required = {item["ref"]["id"] for item in selected["rules"]}
     reported = {item.rule_id for item in teaching.rules}
     if required == reported and len(reported) == len(teaching.rules):
+        # 引用规则齐全且无重复，无需复核。
         return ""
     return (
         canonical_json(
@@ -462,6 +485,7 @@ class StudentActivities:
         content = await self.calls.candidate_content(run, UUID(candidate))
         decoded = ReplyCandidate.model_validate_json(canonical_json(content))
         if decoded.intent != "clarify" or not decoded.use_latest_evaluation:
+            # 非澄清意图，或未要求参考最新评价，不等待掌握度。
             return ""
         result = await mastery_wait.wait_for_mastery(
             self.service.conversation,
@@ -490,6 +514,7 @@ class StudentActivities:
             content = await self.calls.candidate_content(saved.waiting.run, UUID(candidate))
             reply = ReplyCandidate.model_validate_json(canonical_json(content))
             if reply.intent == "clarify":
+                # 跟进回复仍是澄清，保留其措辞用于闭环。
                 wording = reply.wording
         await mastery_wait.complete_mastery_follow_up(
             self.service.conversation,
@@ -508,6 +533,7 @@ class StudentActivities:
         material = await memory_steps.prepare(
             self.service.engine, self.service.registry, RunInput.model_validate_json(raw)
         )
+        # 无待摘要材料时返回空串。
         return material.model_dump_json() if material else ""
 
     @activity.defn(name="interaction.save_memory")
@@ -516,6 +542,7 @@ class StudentActivities:
         value = await self.calls.candidate_content(run, UUID(candidate_id))
         candidate = ReplyCandidate.model_validate(value)
         if candidate.intent == "memory_summary":
+            # 候选为记忆摘要时，落保存活动记忆。
             await memory_steps.save(
                 self.service.conversation,
                 self.service.registry,
@@ -533,6 +560,7 @@ class StudentActivities:
         if candidate.intent != "detection_help" or not await prepare_help(
             self.service.conversation, self.service.registry, run, candidate.help_quote
         ):
+            # 非帮助意图，或帮助上下文准备失败。
             return ""
         return await self.service.context_builder.build(run, self.fixed_question, post_close=True)
 
@@ -542,6 +570,7 @@ class StudentActivities:
         saved = await self.calls.candidate_content(run, UUID(candidate_id))
         candidate = ReplyCandidate.model_validate(saved)
         mode = json.loads(context.partition("\n本轮输入（JSON）\n")[0]).get("mode")
+        # 帮助关闭后的轮次先归并意图，再构造规则复核上下文。
         return rule_review_context(
             context, post_round_reply(candidate) if mode == "post_detection_help" else candidate
         )
@@ -552,6 +581,7 @@ class StudentActivities:
         if candidate_id:
             candidate = await self.calls.candidate_content(run, UUID(candidate_id))
             if ReplyCandidate.model_validate(candidate).intent != "detection":
+                # 候选不是检测意图，无需准备检测计划。
                 return ""
         return (await self.detection.prepare(run)).model_dump_json()
 
@@ -575,6 +605,7 @@ class StudentActivities:
             or proposal.intent not in {"explanation", "question_answer"}
             or proposal.teaching.action != "reply"
         ):
+            # 缺题目、教学定位不符或动作不是回复，不触发出题等待。
             return ""
         got = await request_question(
             self.service.conversation,
@@ -592,15 +623,19 @@ class StudentActivities:
     ) -> TeachingCard | None:
         request = proposal.question
         if request is None:
+            # 候选未带题目请求，不构造教学卡片。
             return None
         trigger = question_trigger(run.execution_id)
         async with self.service.engine.connect() as db:
             got = await self.question(db, work_scope, trigger)
         if got is None:
+            # 未取到匹配的供题。
             return None
         question, supplied, cause = got
         if question.task_ref != request.task:
+            # 供题所属任务与请求不一致。
             return None
+        # 在题目参考解法中匹配供题带出的解法引用。
         solution = next(
             (
                 item.content
@@ -618,6 +653,7 @@ class StudentActivities:
                 purpose=request.purpose,
                 task_use_ref=Ref(owner="interaction", type="task_use", id=str(identity)),
                 statement=question.statement,
+                # 仅示范用途附带已解出的解法。
                 worked_solution=solution if request.purpose == "example" else None,
             ),
             instance_ref=supplied.task_instance_ref,
@@ -638,11 +674,14 @@ class StudentActivities:
         async with self.service.engine.connect() as connection:
             work = await store.load(connection, run.execution_id)
         if work.state == "completed" and work.active_attempt_id == run.attempt_id:
+            # 执行已由本次尝试完成，重复收尾不覆盖结果。
             return
         saved = await self.calls.candidate_content(run, UUID(candidate_id))
         original = ReplyCandidate.model_validate(saved)
         if post_close:
+            # 帮助关闭后的轮次先归并意图。
             original = post_round_reply(original)
+        # 供题就绪时才读取教学卡片。
         card = await self._read_card(run, work.scope_id, original) if supply_ready else None
         if checked_id and original.teaching:
             reviewed = await self.calls.candidate_content(run, UUID(checked_id))
@@ -654,6 +693,7 @@ class StudentActivities:
                 and candidate.teaching.placement == original.teaching.placement
                 and candidate.teaching.placement_quote == original.teaching.placement_quote
             ):
+                # 复核结果与原候选在意图、主题、定位上一致，保留原题目后落库。
                 candidate = candidate.model_copy(update={"question": original.question})
                 await self.service.finish(
                     run, candidate, UUID(checked_id), card, post_close=post_close

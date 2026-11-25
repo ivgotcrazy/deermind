@@ -93,15 +93,18 @@ RECORD_TYPES: dict[ConfigKind, str] = {
 
 
 def validate(draft: EventDraft, payload: EventPayload) -> None:
+    # 事件类型与所有者引用须与配置结果引用一致。
     if not isinstance(payload, ActivityConfigSaved) or draft.owner_ref != payload.config_ref:
         raise ValueError("Activity configuration fact identity differs")
     records = {item.record_type: item for item in payload.records}
     record_type = RECORD_TYPES[payload.config_kind]
     expected = {record_type, RESOLVED}
+    # 蓝图新建或附带绑定时，记录集合还须包含绑定修订。
     if payload.config_kind == "blueprint" and (
         payload.previous_config_ref is None or BINDING in records
     ):
         expected.add(BINDING)
+    # 实际记录集合须与预期的修订对象加解析包一一对应。
     if set(records) != expected or len(payload.records) != len(expected):
         raise ValueError("Expected one written object revision and one resolved package")
     resolved = records[RESOLVED].content
@@ -111,12 +114,14 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         binding = records[BINDING].content
         assert isinstance(binding, InlineContent)
         linked = Ref.model_validate(resolved.value["binding_ref"])
+        # 绑定修订的标识、版本与活动类型须与解析包内引用一致。
         if (
             binding.value["binding_id"] != linked.id
             or binding.value["revision"] != linked.revision
             or binding.value["activity_type"] != payload.activity_type
         ):
             raise ValueError("Binding version cannot differ from the resolved package")
+    # 解析包与修订记录的标识、活动类型、版本及对象编号须与固定引用逐项吻合。
     if (
         resolved.value["config_id"] != payload.config_ref.id
         or resolved.value["activity_type"] != payload.activity_type
@@ -150,12 +155,14 @@ async def project(connection: AsyncConnection, saved: StoredEvent) -> None:
     async with application(
         connection, "interaction.activity_configs", 1, saved.draft.event_id
     ) as needed:
+        # 事件已投影过，重复应用直接返回。
         if not needed:
             return
         for item in change.records:
             content = item.content
             assert isinstance(content, InlineContent)
             table = item.record_type
+            # 表类型须属于四类修订或解析包。
             if table not in {*RECORD_TYPES.values(), RESOLVED}:
                 raise ValueError("Unexpected activity configuration record")
             await connection.execute(

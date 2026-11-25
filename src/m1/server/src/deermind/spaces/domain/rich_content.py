@@ -42,6 +42,7 @@ def identifiers(values: Iterable[str], path: Location, field: str) -> set[str]:
     seen: set[str] = set()
     for index, value in enumerate(values):
         if value in seen:
+            # 编号重复，定位到具体条目报错。
             invalid("RichContent", (*path, index, field), "同一内容内的编号必须唯一。")
         seen.add(value)
     return seen
@@ -75,6 +76,7 @@ class SourceRef(FactModel):
         if self.region is not None:
             left, top, right, bottom = self.region
             if left < 0 or top < 0 or left >= right or top >= bottom:
+                # 区域坐标须非负且右/下大于左/上。
                 invalid("SourceRef", ("region",), "来源区域必须按左、上、右、下记录。")
         return self
 
@@ -177,6 +179,7 @@ class DataTable(FactModel):
         identifiers((row.row_id for row in self.rows), ("rows",), "row_id")
         for index, row in enumerate(self.rows):
             if row.cells.keys() != columns:
+                # 行单元格集合须与列定义完全一致。
                 invalid(
                     "DataTable",
                     ("rows", index, "cells"),
@@ -185,6 +188,7 @@ class DataTable(FactModel):
             for column in self.columns:
                 cell = row.cells[column.key]
                 if isinstance(cell, ProvidedCell) and column.value_type == "decimal":
+                    # 已提供的数值列须通过十进制格式校验。
                     check_decimal_cell(cell.value, ("rows", index, "cells", column.key, "value"))
         return self
 
@@ -237,6 +241,7 @@ class Chart(FactModel):
     def validate_axes(self) -> Self:
         identifiers((series.column for series in self.series), ("series",), "column")
         if self.kind == "pie":
+            # 扇形图：无坐标轴、单列、百分比、互不重叠组成。
             if self.axis is not None:
                 invalid("Chart", ("axis",), "扇形图不使用坐标轴。")
             if len(self.series) != 1:
@@ -246,6 +251,7 @@ class Chart(FactModel):
             if self.relationship != "disjoint_parts":
                 invalid("Chart", ("relationship",), "扇形图需要互不重叠的组成部分。")
         else:
+            # 柱/折线图：必须有坐标轴，且不挂扇区颜色。
             if self.axis is None:
                 invalid("Chart", ("axis",), "柱状图和折线图需要坐标轴。")
             if self.slice_colors:
@@ -297,12 +303,14 @@ class Diagram(FactModel):
         shapes = {item.object_id for item in self.objects if item.shape != "point"}
         for index, relation in enumerate(self.relations):
             if relation.subject not in points:
+                # 起点须是图中的点对象。
                 invalid(
                     "Diagram",
                     ("relations", index, "subject"),
                     "关系起点必须引用图中的点。",
                 )
             if relation.object not in shapes:
+                # 目标须是图中的形状对象。
                 invalid(
                     "Diagram",
                     ("relations", index, "object"),
@@ -321,8 +329,10 @@ class Diagram(FactModel):
             "object_ref",
         )
         if boxes != shapes:
+            # 矩形排布与形状对象一一对应。
             invalid("Diagram", ("layout", "boxes"), "每个形状需要一份对应的排布。")
         if marks != points:
+            # 点排布与点对象一一对应。
             invalid("Diagram", ("layout", "points"), "每个点需要一份对应的排布。")
         for index, box in enumerate(self.layout.boxes):
             if min(box.box[2:]) <= 0:
@@ -380,6 +390,7 @@ def check_chart_data(chart: Chart, table: DataTable, path: Location) -> None:
     columns = {column.key: column for column in table.columns}
     category = columns.get(chart.category_column)
     if category is None or category.value_type != "text":
+        # 分类列必须存在且为文字列。
         invalid("RichContent", (*path, "category_column"), "图表分类必须引用文字列。")
     if chart.slice_colors and len(chart.slice_colors) != len(table.rows):
         invalid("RichContent", (*path, "slice_colors"), "每个类别需要一份对应的扇区颜色。")
@@ -388,6 +399,7 @@ def check_chart_data(chart: Chart, table: DataTable, path: Location) -> None:
         column_path = (*path, "series", index, "column")
         column = columns.get(series.column)
         if column is None or column.value_type != "decimal":
+            # 数值列必须存在且为十进制类型。
             invalid("RichContent", column_path, "图表数列必须引用数值列。")
         if column.unit != chart.unit:
             invalid("RichContent", column_path, "数列单位与图表单位不一致。")
@@ -402,6 +414,7 @@ def check_chart_data(chart: Chart, table: DataTable, path: Location) -> None:
             if any(not 0 <= value <= 100 for value in samples):
                 invalid("RichContent", column_path, "扇区比例须在 0 至 100 之间。")
             if samples and len(samples) == len(table.rows):
+                # 每行都有值时，校验完整扇形比例和为 100。
                 # 按源值小数位求和，避免先四舍五入后把不完整扇形误判为整圆。
                 with localcontext() as arithmetic:
                     decimal_places = max(-int(value.as_tuple().exponent) for value in samples)
@@ -445,6 +458,7 @@ class RichContent(FactModel):
             )
             if isinstance(block, MathSequenceBlock):
                 if self.role == "statement" and block.payload.purpose == "reference_work":
+                    # 题面正文不得夹带参考解法。
                     invalid(
                         "RichContent",
                         (*path, "payload", "purpose"),
@@ -453,6 +467,7 @@ class RichContent(FactModel):
             elif isinstance(block, (ChartBlock, TableBlock)):
                 table = tables.get(block.payload.data_ref)
                 if table is None:
+                    # 块引用的数据表未在正文登记。
                     invalid(
                         "RichContent",
                         (*path, "payload", "data_ref"),
@@ -461,6 +476,7 @@ class RichContent(FactModel):
                 if isinstance(block, ChartBlock):
                     check_chart_data(block.payload, table, (*path, "payload"))
             elif isinstance(block, DiagramBlock):
+                # 图形关系逐条核对来源引用。
                 for relation_index, relation in enumerate(block.payload.relations):
                     check_sources(
                         relation.source_refs,

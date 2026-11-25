@@ -83,6 +83,7 @@ class MaterialDeletion:
                 normalized_input=command.model_dump(mode="json"),
             )
             if receipt.result_ref is not None:
+                # 幂等重放：删除已完成，直接返回成功结果。
                 return MaterialDeletionReceipt(
                     request_ref=receipt.request_ref,
                     result=MaterialDeletionResult(import_id=import_id, deleted=True),
@@ -91,6 +92,7 @@ class MaterialDeletion:
             active = observed["active_request_ref"]
             work = None
             if active is not None:
+                # 导入被一轮助手占用，先定位其运行工作。
                 work = await connection.scalar(
                     text(
                         "SELECT runtime_ref FROM product.material_turn "
@@ -99,6 +101,7 @@ class MaterialDeletion:
                     {"turn": active, "id": import_id},
                 )
                 if work is None:
+                    # 占用请求缺少持久化运行身份，属内部一致性错误。
                     raise ValueError("Active material work lacks its durable identity")
                 # 正常结束和失败收尾都先锁运行工作，再写教材。
                 await store.lock_owned(connection, self.assistant.registry, work)
@@ -115,12 +118,14 @@ class MaterialDeletion:
                 or command.confirmed_scope_ref != expected
                 or active != imported["active_request_ref"]
             ):
+                # 基线版本、删除范围引用或占用状态任一不符即冲突。
                 raise RequestError(409, "revision_conflict", "教材已更新，请重新确认删除范围。")
             applied = await connection.scalar(
                 text("SELECT 1 FROM product.application_head WHERE textbook_id=:book LIMIT 1"),
                 {"book": imported["textbook_id"]},
             )
             if applied is not None:
+                # 教材已被课程应用，导入不可删除。
                 raise RequestError(409, "already_applied", "教材已应用，不能删除此导入。")
             sources = (
                 await connection.scalars(
@@ -141,6 +146,7 @@ class MaterialDeletion:
                 )
             ).all()
             if work is not None:
+                # 先取消占用的助手运行，再删除教材。
                 await commands.cancel(
                     connection,
                     self.assistant.registry,
@@ -235,6 +241,7 @@ class MaterialDeletion:
                 },
             )
         if identity is None:
+            # 无已完成删除收据，按未找到返回。
             return ReceiptView[MaterialDeletionResult](receipt_state="not_found")
         return ReceiptView[MaterialDeletionResult](
             receipt_ref=identity,

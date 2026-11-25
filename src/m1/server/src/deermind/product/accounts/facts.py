@@ -66,14 +66,17 @@ def account_content(payload: EventPayload) -> AccountFact:
         raise ValueError("Expected account fact")
     accounts = [r for r in payload.records if r.record_type == "product.accounts"]
     if len(accounts) != 1 or accounts[0].schema_version != 1:
+        # 账号记录须恰好一条且为 v1。
         raise ValueError("Exactly one account record is required")
     record = accounts[0]
     if not isinstance(record.content, InlineContent):
         raise ValueError("Account projection requires decoded content")
     fact = AccountFact.model_validate_json(canonical_json(record.content.value))
     if fact.account_id != payload.account_id or fact.revision != payload.account_revision:
+        # 事实身份与修订号须与事件负载一致。
         raise ValueError("Account fact identity does not match event payload")
     if payload.action == "bootstrap_admin":
+        # 初始管理员：单条激活账号、v1、无监护关系。
         if (
             fact.role != "admin"
             or fact.status != "active"
@@ -102,8 +105,10 @@ def account_content(payload: EventPayload) -> AccountFact:
                     Ref(owner="product", type="guardian_relation", id=str(related.relation_id))
                 )
             elif not isinstance(related, GuardianFact):
+                # 账号保存只允许条件、关系、监护事实，不夹带确认记录。
                 raise ValueError("Account save cannot contain a confirmation")
         if conditions != 1 or relations != payload.relation_refs:
+            # 条件须恰好一条，关系引用须与记录一一对应。
             raise ValueError(
                 "Account save requires conditions and matching relationship references"
             )
@@ -116,6 +121,7 @@ def validate_account(draft: EventDraft, payload: EventPayload) -> None:
         owner="product", type="account", id=str(fact.account_id), revision=fact.revision
     )
     if draft.scope_id != fact.account_id or draft.owner_ref != expected_owner:
+        # 事件作用域与 owner 须指向事实账号及对应修订。
         raise ValueError("Account event scope or owner does not match its fact")
 
 

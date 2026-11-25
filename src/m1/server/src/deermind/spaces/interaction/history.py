@@ -79,6 +79,7 @@ async def activity_at(db: AsyncConnection, scope: UUID, activity: UUID) -> Activ
         .one_or_none()
     )
     if row is None:
+        # 指定空间内不存在该活动，按 404 处理。
         raise RequestError(404, "not_found", "找不到这个活动。")
     return _state(row)
 
@@ -116,13 +117,16 @@ async def current(db: AsyncConnection, scope: UUID) -> CurrentConversation:
         )
     ).one_or_none()
     leaf = row.current_leaf_ref if row else None
+    # 有叶活动时沿递归路径取根到叶的当前修订，否则路径为空。
     path = [state.view() for state in await lineage(db, scope, leaf)] if leaf else []
     active = row.active_input_id if row else None
+    # 仅当叶活动为检测活动时，查询其当前轮次视图。
     round_view = await current_round(db, leaf) if leaf and path[-1].type == "detection" else None
     return CurrentConversation(
         current_activity=path[-1] if path else None,
         path=path,
         active_input_id=active,
+        # 已有活动且无进行中输入时，才允许暂停或结束。
         allowed_actions=["pause", "finish"] if path and not active else [],
         latest_message_seq=row.last_message_seq if row else 0,
         current_round=round_view,
@@ -149,6 +153,7 @@ async def current_round(db: AsyncConnection, activity_id: UUID) -> DetectionRoun
         )
     ).one_or_none()
     if row is None:
+        # 活动下没有检测轮次，返回空视图。
         return None
     return DetectionRoundView(
         round_ref=Ref(
@@ -157,14 +162,17 @@ async def current_round(db: AsyncConnection, activity_id: UUID) -> DetectionRoun
         task_use_ref=Ref(owner="interaction", type="task_use", id=str(row.task_use_ref)),
         plan_ref=DetectionPlanRef(plan_id=row.plan_id, revision=row.plan_revision),
         state=row.state,
+        # 轮次已关闭且题单仍有剩余项时，才允许续做。
         can_continue=row.state == "closed" and row.remaining,
     )
 
 
 def _cursor(token: str, cursor: str | None) -> str | None:
     if cursor is None:
+        # 首页无游标，直接返回。
         return None
     prefix, separator, value = cursor.partition(".")
+    # 游标摘要须与当前查询维度匹配，且三段完整，否则判无效。
     if prefix != token or not separator or not value:
         raise RequestError(400, "invalid_cursor", "这个游标不属于当前查询。")
     return value
@@ -184,18 +192,22 @@ async def directory(
 ) -> ActivityPage:
     """顶层从新到旧，展开直接子活动时从早到晚。"""
     if parent is not None:
+        # 展开子活动前，先校验父活动属于当前空间。
         await activity_at(db, scope, parent)
     token = _token(str(account), str(scope), "activity_tree", str(parent))
     position = _cursor(token, cursor)
+    # 顶层按时间新到旧，展开子级按早到晚。
     operator, direction = (">", "ASC") if parent else ("<", "DESC")
     values: dict[str, object] = {"scope": scope, "parent": parent, "limit": limit + 1}
     clause = " WHERE a.scope_id=:scope AND a.parent_id IS NOT DISTINCT FROM CAST(:parent AS uuid)"
     if position is not None:
         try:
             anchor = await activity_at(db, scope, UUID(position))
+            # 游标锚点不在当前父级下，视为越界。
             if anchor.identity.parent_id != parent:
                 raise ValueError("Cursor outside parent")
         except (RequestError, ValueError) as error:
+            # 锚点缺失或越界，统一转换为无效游标错误。
             raise RequestError(400, "invalid_cursor", "找不到游标对应的活动。") from error
         values.update(time=anchor.identity.started_at, id=anchor.identity.activity_id)
         clause += f" AND (a.started_at,a.activity_id) {operator} (:time,:id)"
@@ -213,6 +225,7 @@ async def directory(
         .all()
     )
     items = [_state(row).view() for row in rows[:limit]]
+    # 实际取回超过页大小说明仍有下一页，生成续页游标。
     next_cursor = f"{token}.{items[-1].activity_ref.activity_id}" if len(rows) > limit else None
     return ActivityPage(items=items, next_cursor=next_cursor)
 
@@ -229,15 +242,18 @@ async def messages(
 ) -> MessagePage:
     """顺序补读或者从活动首条消息附近查询。"""
     if activity is not None:
+        # 指定活动时先校验其属于当前空间。
         await activity_at(db, scope, activity)
     token = _token(str(account), str(scope), "messages", str(activity), str(anchor))
     position = _cursor(token, cursor)
     upper = (await current(db, scope)).latest_message_seq
     if position is not None:
         pair = position.split(",")
+        # 游标须为“序号,上界”两位纯数字。
         if len(pair) != 2 or any(not entry.isascii() or not entry.isdigit() for entry in pair):
             raise RequestError(400, "invalid_cursor", "消息续页位置不正确。")
         after, fixed_upper = map(int, pair)
+        # 续页上界在分页期间固定，须落在合法序号区间内。
         if not 0 <= after <= fixed_upper <= upper:
             raise RequestError(400, "invalid_cursor", "消息续页范围不正确。")
         upper = fixed_upper
@@ -250,9 +266,12 @@ async def messages(
             {"scope": scope, "id": anchor},
         )
         if not isinstance(anchor_seq, int):
+            # 锚点消息不存在，按 404 处理。
             raise RequestError(404, "not_found", "找不到这条聊天记录。")
+        # 以锚点为中心向前回退一段，作为首屏起点。
         after = max(0, anchor_seq - max(1, limit // 3))
     if after > upper:
+        # 起点已越过当前消息上界，请求非法。
         raise RequestError(400, "invalid_request", "消息起点超过当前记录范围。")
     rows = (
         await db.scalars(
@@ -278,6 +297,7 @@ async def messages(
         )
     ).all()
     items = [MessageView.model_validate_json(canonical_json(row)) for row in rows[:limit]]
+    # 空页时回退到起点作为游标基准。
     last = items[-1].message_seq if items else after
     return MessagePage(
         items=items,

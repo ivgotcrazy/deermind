@@ -1,4 +1,10 @@
-"""Worker内派发与故障核对；远程查询在事务外，结束后由所有者共同收尾。"""
+"""Worker 内派发与故障核对；远程查询在事务外，结束后由所有者共同收尾。
+
+分层定位：foundation（公共运行底座 / 执行派发）
+对外契约：dispatch_one 派发单条命令；reconcile 按服务端结束状态收尾；run_relay 启动派发与核对循环。
+边界约束：失联或历史缺失留故障，不凭无响应判死；正常完成必须先保存正式结果，
+Workflow 关闭不凭空生成结果。
+"""
 
 import asyncio
 import json
@@ -22,6 +28,7 @@ async def validate(engine: AsyncEngine, registry: Registry, command: Dispatch) -
         saved = await store.load(connection, command.run.execution_id)
         current = await store.attempt(connection, command.run.attempt_id)
         entry = registry.resolve(saved)
+        # 尝试归属、工作流、期限与固定工作的引用、登记类型/队列任一漂移，判派发不一致。
         if (
             current.execution_id != saved.execution_id
             or current.workflow_id != command.workflow_id
@@ -33,6 +40,7 @@ async def validate(engine: AsyncEngine, registry: Registry, command: Dispatch) -
             or entry.task_queue != command.task_queue
         ):
             raise ValueError("Saved dispatch differs from the registered execution")
+        # 仅当仍是当前有效尝试且工作处于可活动状态，本次派发才仍有必要。
         return saved.active_attempt_id == current.attempt_id and saved.state in {
             "ready",
             "running",
@@ -45,6 +53,7 @@ async def dispatch_one(
 ) -> bool:
     """交接不等整项工作；停止资格已在PG落定，取消网络失败也不允许旧结果写入。"""
     lease = await dispatch.claim(engine, transport.limits)
+    # 无可领取命令，本轮空闲返回。
     if lease is None:
         return False
     try:
@@ -52,10 +61,13 @@ async def dispatch_one(
         remaining = (lease.deadline - datetime.now(UTC)).total_seconds()
         run_id = None
         async with asyncio.timeout(min(transport.limits.request_seconds, max(0, remaining))):
+            # 启动命令且仍需派发：交给执行传输拉起新运行。
             if lease.kind == "start" and needed:
                 run_id = await transport.start(lease.command)
+            # 信号命令且仍需派发：向已运行实例投递信号。
             elif lease.kind == "signal" and needed:
                 await transport.signal(lease.command)
+            # 取消命令：直接通知传输取消，不校验启动必要性。
             elif lease.kind == "cancel":
                 try:
                     await transport.cancel(lease.command)
@@ -69,10 +81,13 @@ async def dispatch_one(
                             ),
                             {"key": str(lease.command.run.attempt_id)},
                         )
+                    # 启动交接既未送达也未耗尽，取消结果不能视为确定，重新抛出留待重试。
                     if start_state not in {"delivered", "exhausted"}:
                         raise
+        # 传输调用完成且未抛错，把交接标记成功并带回运行标识。
         await dispatch.finish(engine, lease, success=True, run_id=run_id)
     except Exception as error:
+        # 派发未确认：交接记失败并保留原工作，不凭异常判定业务已死。
         await dispatch.finish(engine, lease, success=False, error_code=type(error).__name__)
         LOGGER.warning(
             "执行命令尚未确认，原工作和交接记录保留",
@@ -114,6 +129,7 @@ async def reconcile(
             .mappings()
             .all()
         )
+    # 逐条复查未结束工作；单条核对异常不影响同批其余条目。
     for row in rows:
         command = Dispatch.model_validate_json(json.dumps(row["payload"]))
         try:
@@ -122,8 +138,10 @@ async def reconcile(
             try:
                 running = await transport.running(command)
             except ExecutionNotFound:
+                # 已有真实运行记录却查不到，属传输侧异常，向上抛交由外层留故障。
                 if row["temporal_run_id"] is not None:
                     raise
+                # 无运行记录：交接已耗尽，或已过期限且启动未送达，判启动未找到。
                 if row["dispatch_state"] == "exhausted" or (
                     command.run.deadline_at <= datetime.now(UTC)
                     and row["dispatch_state"] != "delivered"
@@ -133,6 +151,7 @@ async def reconcile(
                 if not running:
                     # 正常业务完成必须先保存正式结果；仅Workflow关闭不能凭空生成结果。
                     failure_code = "WORKFLOW_CLOSED_WITHOUT_RESULT"
+            # 已确定失败原因，在限定时限内落失败收尾。
             if failure_code:
                 async with (
                     asyncio.timeout(transport.limits.finalize_seconds),
@@ -150,6 +169,7 @@ async def reconcile(
                         ),
                     )
         except Exception as error:
+            # 状态暂不可确认：保留原状态与业务，仅记错误日志，不重做业务。
             LOGGER.error(
                 "执行结束状态待核对，保留原状态，不重做业务",
                 extra={
@@ -172,6 +192,8 @@ async def run_relay(
     """同一Worker内的两个独立循环；退出保留所有持久安排。"""
 
     async def publish() -> None:
+        """命令派发循环：每轮领取一条待派发命令交给执行传输。"""
+        # 停止信号未置位前持续轮询，单轮异常不中断循环。
         while not stopped.is_set():
             try:
                 await dispatch_one(engine, registry, transport)
@@ -182,7 +204,9 @@ async def run_relay(
             await asyncio.sleep(1)
 
     async def inspect() -> None:
+        """执行状态核对循环：分批复查未结束工作的服务端状态并收尾。"""
         after = None
+        # 按核对间隔分批推进；after 记录上批末条游标避免长任务占住范围。
         while not stopped.is_set():
             try:
                 after = await reconcile(engine, registry, transport, after)
@@ -196,6 +220,7 @@ async def run_relay(
     try:
         await stopped.wait()
     finally:
+        # 收到停止信号后取消两个循环并等待退出，持久化安排保留不动。
         for task in tasks:
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)

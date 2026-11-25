@@ -67,6 +67,7 @@ class SourceInvalidated(EventPayload):
 def _validate(draft: EventDraft, payload: EventPayload) -> None:
     if isinstance(payload, InstanceSaved):
         if len(payload.records) != 1 or payload.records[0].record_type != VERSION:
+            # 实例保存事件只含一条完整版本记录。
             raise ValueError("Instance save requires one full version")
         content = payload.records[0].content
         if not isinstance(content, InlineContent):
@@ -82,14 +83,17 @@ def _validate(draft: EventDraft, payload: EventPayload) -> None:
             raise ValueError("Instance version conflicts with the event")
         old = payload.previous_ref
         if old is None:
+            # 新建实例无前版本，须从 v1 且动作 create。
             if ref.version != 1 or payload.action != "create":
                 raise ValueError("New instances begin at version one")
         elif old.object_id != ref.object_id or old.version + 1 != ref.version:
+            # 修订版本必须接在前一版本之后。
             raise ValueError("Instance history must be continuous")
     elif isinstance(payload, ItemProcessed):
         if payload.domain_id != draft.scope_id or not payload.records:
             raise ValueError("Missing intake result records")
         if any(record.record_type != ITEM for record in payload.records):
+            # 处理结果只能回写关联的待办条目。
             raise ValueError("Intake result may only update related intake items")
     elif isinstance(payload, SourceInvalidated):
         if (
@@ -126,8 +130,10 @@ async def project_instance(
     domain = event.draft.scope_id
     async with application(connection, "domain.instances.v1", 1, event.draft.event_id) as apply:
         if not apply:
+            # 回执不要求投影时跳过落库。
             return
         if payload.action == "create":
+            # 新建先登记身份行，版本号置 1。
             await connection.execute(
                 text(
                     "INSERT INTO domain.object_identity(object_id,kind,domain_id,head_version) "
@@ -150,6 +156,7 @@ async def project_instance(
             },
         )
         if payload.action != "create":
+            # 修订/软删后更新身份行的头部版本。
             await connection.execute(
                 text("UPDATE domain.object_identity SET head_version=:version WHERE object_id=:id"),
                 {"id": value.object_id, "version": value.version},
@@ -164,7 +171,7 @@ async def project_instance(
                 solution.solution_ref,
             )
             for index, solution in enumerate(value.content.reference_solutions)
-        )
+        )  # 逐条登记题内参考解法引用
         await connection.execute(
             text(
                 "INSERT INTO domain.object_reference "
@@ -199,6 +206,7 @@ async def project_items(connection: AsyncConnection, event: StoredEvent) -> None
         if not apply:
             return
         for record in event.payload.records:
+            # 逐条回写待办条目的修订、状态与结果引用。
             assert isinstance(record.content, InlineContent)
             item = IntakeItem.model_validate_json(canonical_json(record.content.value))
             await connection.execute(

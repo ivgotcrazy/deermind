@@ -79,6 +79,7 @@ class IntakeItem(FactModel):
     def view(self) -> IntakeView:
         parent = self.parent_instance_ref
         if self.parent_item_id is not None:
+            # 挂在父待办下时，父引用展示为待办条目；否则展示实例引用。
             parent = Ref(owner="domain", type="intake_item", id=str(self.parent_item_id))
         return IntakeView(
             item_ref=self.reference(),
@@ -120,11 +121,14 @@ def _validate(draft: EventDraft, payload: EventPayload) -> None:
         raise ValueError("Invalid domain intake fact")
     kind = RECEIVED if payload.outcome == "received" else REJECTED
     if draft.event_type != kind or draft.causation_event_id != payload.trigger_event_id:
+        # 事件类型与受理结论、触发事件必须一致。
         raise ValueError("Intake result does not match its source")
     counts = [item.record_type for item in payload.records]
     if counts[:2] != [ARTIFACT, SUBMISSION] or any(name != ITEM for name in counts[2:]):
+        # 记录顺序固定：输入产物、提交记录，其后全是待办条目。
         raise ValueError("Invalid intake projection records")
     if payload.outcome == "rejected" and (not payload.issues or payload.items or counts[2:]):
+        # 拒收必须带问题，且不得产生待办条目。
         raise ValueError("A rejected intake cannot create pending items")
 
 
@@ -146,6 +150,7 @@ async def _project(connection: AsyncConnection, event: StoredEvent) -> None:
     for record in event.payload.records:
         relation = record.record_type
         if relation not in _MODELS or not isinstance(record.content, InlineContent):
+            # 记录类型须在固定白名单内，且为内联内容。
             raise ValueError("Invalid intake record")
         content = {**record.content.value, "source_event_id": str(event.draft.event_id)}
         # 关系名只来自模块固定白名单。父题排在参考之前，外键在写入时校验。
@@ -179,6 +184,7 @@ class DomainIntake:
         token = sha256(f"{reader_id}:{domain_id}:{kind}".encode()).hexdigest()
         after = None
         if cursor is not None:
+            # 续页游标须带本查询的读令牌前缀，防止跨列表翻页。
             prefix, _, position = cursor.partition(".")
             try:
                 if prefix != token:
@@ -203,6 +209,7 @@ class DomainIntake:
         return IntakeList(
             items=[item.view() for item in items],
             read_token=token,
+            # 多拉一行判断是否还有下一页。
             next_cursor=f"{token}.{items[-1].item_id}" if len(rows) > limit else None,
         )
 
@@ -229,6 +236,7 @@ class DomainIntake:
                 {"domain": domain_id, "source": source},
             )
         if row is None:
+            # 未找到同来源的题目待办，解法缺少父题。
             raise RequestError(404, "missing_parent", "请先选择并提交对应题目。")
         item = IntakeItem.model_validate_json(canonical_json(row))
         return IntakeDetail(item=item.view())
@@ -242,6 +250,7 @@ class DomainIntake:
             {"domain": domain_id, "item": item_id},
         )
         if row is None:
+            # 待办条目不存在或不属于本领域。
             raise RequestError(404, "not_found", "找不到此领域的待入库内容。")
         return IntakeItem.model_validate_json(canonical_json(row))
 
@@ -260,6 +269,7 @@ class DomainIntake:
         assert isinstance(parts, list) and isinstance(parts[0], dict)
         part = parts[0]["content"]
         if not isinstance(part, dict):
+            # 候选事实正文须为对象结构。
             raise ValueError("Missing candidate record")
         return part
 
@@ -301,9 +311,11 @@ class DomainIntake:
                 or raw["basis_revision"] != ref.basis_revision
                 or raw["import_id"] != str(notice.scope_id)
             ):
+                # 候选身份与固定事实不符，防止引用错位。
                 raise ValueError("Intake candidate identity differs from its fixed fact")
             kind = raw["kind"]
             if kind not in ("kc", "task_instance", "reference"):
+                # 领域只接受知识、题目、解法三类内容。
                 raise IntakeRefused("领域不接受该内容类别。")
             body = raw["body"]
             if not isinstance(body, dict) or not isinstance(body.get("title"), str):
@@ -324,6 +336,7 @@ class DomainIntake:
                 f"{notice.scope_id}:{ref.candidate_id}:"
                 f"{ref.candidate_revision}:{source.adoption_ref.id}"
             )
+            # 先查是否已存在同键待办，避免重复受理。
             saved = await connection.scalar(
                 text(
                     "SELECT to_jsonb(i)-'source_event_id' FROM domain.intake_item i "
@@ -332,6 +345,7 @@ class DomainIntake:
                 {"domain": request.domain_id, "key": key},
             )
             if saved is not None:
+                # 已存在：记入既有字典，跳过新建。
                 existing[ref.key()] = IntakeItem.model_validate_json(canonical_json(saved))
                 continue
             parent_id: UUID | None = None
@@ -339,6 +353,7 @@ class DomainIntake:
             identity = uuid4()
             group = identity
             if kind == "reference":
+                # 解法须绑定到题目；分三种父题来源：新候选、已有待办、已有实例。
                 binding = bindings.get(ref.key())
                 if binding is None or expected_parent is None:
                     raise IntakeRefused("解法缺少对应题目。")
@@ -346,6 +361,7 @@ class DomainIntake:
                     f"{notice.scope_id}:{expected_parent.id}:{expected_parent.revision}:%"
                 )
                 if binding.parent_candidate_ref is not None:
+                    # 父题来自同批候选，在新建或既有待办中查找。
                     parent = new.get(binding.parent_candidate_ref.key()) or existing.get(
                         binding.parent_candidate_ref.key()
                     )
@@ -357,10 +373,12 @@ class DomainIntake:
                         or parent.source_ref.candidate_ref.candidate_revision
                         != expected_parent.revision
                     ):
+                        # 父题缺失、类别不符、已移除或候选身份不符，拒绝受理。
                         raise IntakeRefused("解法对应的题目未提交或已经移除。")
                     parent_id = parent.item_id
                     group = parent.group_id
                 elif binding.parent_item_ref is not None:
+                    # 父题来自既有待办条目，校验归属与固定版本。
                     parent_ref = binding.parent_item_ref
                     if parent_ref.owner != "domain" or parent_ref.type != "intake_item":
                         raise IntakeRefused("请选择同领域的待入库题目。")
@@ -382,9 +400,11 @@ class DomainIntake:
                         )
                     ).one_or_none()
                     if found is None:
+                        # 指定版本的待办题目已不存在或被移除。
                         raise IntakeRefused("找不到固定版本的待入库题目。")
                     parent_id, group = found
                 else:
+                    # 父题来自已落库的题目实例，校验同领域与版本有效。
                     instance = binding.task_instance_ref
                     if (
                         instance is None
@@ -411,6 +431,7 @@ class DomainIntake:
                         },
                     )
                     if found is None:
+                        # 实例版本已删或对应的待办未完成，拒绝绑定。
                         raise IntakeRefused("找不到固定版本的题目实例。")
                     group = found
             new[ref.key()] = IntakeItem(
@@ -438,6 +459,7 @@ class DomainIntake:
             {"id": notice.event_id},
         )
         if previous is not None:
+            # 同一触发事件已受理过，幂等返回原提交记录。
             ref = Ref(owner="domain", type="intake_submission", id=str(previous))
             return Acceptance(disposition="accepted", arrangement_refs=[ref])
         # 同领域的提交及定义保存共享根锁，防止在检查后产生重复或失效的父题引用。
@@ -451,6 +473,7 @@ class DomainIntake:
             {"id": request.domain_id},
         )
         if deleted is None:
+            # 领域身份不存在，提交无法归属。
             raise ValueError("Intake references a missing domain")
         created = datetime.now(UTC)
         artifact_id = uuid4()
@@ -460,6 +483,7 @@ class DomainIntake:
         items: list[IntakeItem] = []
         try:
             if deleted:
+                # 领域已停用，整批拒收。
                 raise IntakeRefused("所属领域已停用。")
             retired = await self.reader.query_metadata(
                 "material_import",
@@ -468,6 +492,7 @@ class DomainIntake:
                 limit=1,
             )
             if retired["items"]:
+                # 来源教材已删除，不再受理其素材。
                 raise IntakeRefused("来源教材已移除。")
             refs, items = await self._items(connection, notice, request, artifact_id, created)
         except IntakeRefused as error:

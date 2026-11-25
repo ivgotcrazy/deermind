@@ -92,8 +92,10 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         elif row.record_type == SOURCE:
             sources.append(MaterialSourceFact.model_validate_json(raw))
         else:
+            # 未登记的记录类型不能进入教材投影。
             raise ValueError("Unexpected material record")
     if len(imports) != 1 or not sources:
+        # 导入记录须恰好一条，来源至少一条。
         raise ValueError("MaterialReceived requires one import and at least one source")
     imported = imports[0]
     if (
@@ -110,6 +112,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         or any(source.import_id != imported.import_id for source in sources)
         or [source.ref() for source in sources] != payload.source_refs
     ):
+        # owner、状态、归属、修订及来源引用须与记录一致。
         raise ValueError("MaterialReceived records do not match their references")
 
 
@@ -140,6 +143,7 @@ async def project(connection: AsyncConnection, event: StoredEvent) -> None:
             raise ValueError("Projection requires hydrated records")
         table = record_.record_type
         if table == IMPORT:
+            # 导入记录：冲突时推进修订与时间戳。
             statement = (
                 f"INSERT INTO product.material_import ({_IMPORT_COLUMNS}) "
                 f"SELECT {_IMPORT_COLUMNS} FROM jsonb_populate_record("
@@ -149,16 +153,19 @@ async def project(connection: AsyncConnection, event: StoredEvent) -> None:
                 "source_event_id=excluded.source_event_id"
             )
         elif table == TEXTBOOK:
+            # 教材记录：首次写入。
             statement = (
                 "INSERT INTO product.textbook SELECT * FROM "
                 "jsonb_populate_record(NULL::product.textbook,CAST(:value AS jsonb))"
             )
         elif table == SOURCE:
+            # 来源页记录：追加写入。
             statement = (
                 "INSERT INTO product.material_source SELECT * FROM "
                 "jsonb_populate_record(NULL::product.material_source,CAST(:value AS jsonb))"
             )
         else:
+            # 投影表类型不在登记范围内。
             raise ValueError("Unknown material projection")
         await connection.execute(
             text(statement),

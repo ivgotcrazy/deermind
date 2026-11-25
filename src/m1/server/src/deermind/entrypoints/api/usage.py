@@ -51,6 +51,7 @@ async def confirm(
         or not secrets.compare_digest(csrf, session.csrf_token)
         or session.account.role != "student"
     ):
+        # 缺会话标识/CSRF、CSRF 不符，或调用方非学生本人，拒绝确认。
         raise AuthError(403, "forbidden", "请通过本人确认页面提交。")
     service: UsageService = request.app.state.usage
     result = await service.confirm(session, body)

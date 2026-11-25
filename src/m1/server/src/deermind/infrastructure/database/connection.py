@@ -37,10 +37,12 @@ async def check_database(engine: AsyncEngine) -> None:
     async with engine.connect() as connection:
         identity = await connection.scalar(text("SELECT current_user"))
         if identity != "deermind_app":
+            # 业务连接必须使用应用专用账号，拒绝迁移/管理员账号直连。
             raise DatabaseNotReady("Application must use deermind_app")
 
         versions = await connection.scalars(text("SELECT version_num FROM public.alembic_version"))
         if list(versions) != [EXPECTED_REVISION]:
+            # 数据库迁移版本与应用期望不一致，拒绝启动。
             raise DatabaseNotReady("Database revision does not match this application")
 
         names = await connection.scalars(
@@ -48,4 +50,5 @@ async def check_database(engine: AsyncEngine) -> None:
             {"names": list(SCHEMAS)},
         )
         if set(names) != set(SCHEMAS):
+            # 必备模块 schema 不齐全，判定数据库不可用。
             raise DatabaseNotReady("A required module schema is missing")

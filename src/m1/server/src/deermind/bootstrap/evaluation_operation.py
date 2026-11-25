@@ -117,9 +117,11 @@ async def _evaluate(raw: str, agent: Agent[CallHandle, BaseModel], purpose: Purp
         material = ModelMaterial.model_validate_json(payload)
         publish_mastery = workflow.patched("evaluation-publish-mastery")
         if material.interpretation_ref is not None or (publish_mastery and material.prompt is None):
+            # 已有解释可复用，或纯主流程无需生成解释，直接按依据发布掌握度。
             basis = material.interpretation_ref or material.input_ref
             return await _publish(raw, basis)
         if material.prompt is None:
+            # 无提示词、也不发布掌握度：直接按输入完成执行。
             await workflow.execute_activity(
                 "runtime.execution_completed",
                 args=[raw, material.input_ref.model_dump_json()],
@@ -139,6 +141,7 @@ async def _evaluate(raw: str, agent: Agent[CallHandle, BaseModel], purpose: Purp
                 tool_grants=[],
             ),
         )
+        # 仅在启用掌握度发布时，把发布标记传给保存活动。
         arguments = (
             [raw, str(candidate), publish_mastery] if publish_mastery else [raw, str(candidate)]
         )
@@ -149,11 +152,13 @@ async def _evaluate(raw: str, agent: Agent[CallHandle, BaseModel], purpose: Purp
             **STEP_OPTIONS,
         )
         if not publish_mastery:
+            # 不发布掌握度，返回解释记录编号即可。
             return interpretation_id
         return await _publish(
             raw, Ref(owner="evaluation", type="interpretation", id=interpretation_id)
         )
     except (ActivityError, ApplicationError):
+        # 业务活动失败：落失败回执后转不可重试应用错误。
         await workflow.execute_activity(
             "runtime.execution_failed",
             args=[raw, "EVALUATION_INTERPRETATION_FAILED"],
@@ -209,6 +214,7 @@ class EvaluationActivities:
         input_ref = Ref(owner="evaluation", type="evaluation_input", id=str(bundle.record.input_id))
         prompt = None
         if checkpoint is None and interpretation.choices(bundle):
+            # 无既有解释、且本批存在可比历史时，取历史生成解释提示词。
             historical = await self.service.history(bundle)
             prompt = interpretation.prompt(bundle, historical.checks, list(historical.comparison))
         return ModelMaterial(

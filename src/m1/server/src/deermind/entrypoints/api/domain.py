@@ -50,6 +50,7 @@ async def _session(
     auth, config = access(request, writing=writing)
     session = await auth.session(request.cookies.get(config.cookie_name), expected)
     if expected is None:
+        # 缺少会话标识，无法绑定操作归属。
         raise AuthError(403, "forbidden", "请先刷新登录状态。")
     response.headers["Cache-Control"] = "no-store"
     return session
@@ -140,6 +141,7 @@ async def process_intake(
         or csrf is None
         or not compare_digest(csrf.encode(), session.csrf_token.encode())
     ):
+        # 非管理员，或写操作缺/不符 CSRF，拒绝本次变更。
         raise AuthError(403, "forbidden", "请使用有效的管理员会话。")
     processing: DomainIntakeActions = request.app.state.domain_intake_processing
     return await processing.process(domain_id, item_id, session.account.account_id, body)
@@ -227,6 +229,7 @@ async def save_instance(
         or csrf is None
         or not compare_digest(csrf.encode(), session.csrf_token.encode())
     ):
+        # 非管理员，或写操作缺/不符 CSRF，拒绝本次变更。
         raise AuthError(403, "forbidden", "请使用有效的管理员会话。")
     service: DomainInstanceService = request.app.state.domain_instances
     return await service.save(domain_id, session.account.account_id, body)
@@ -246,6 +249,7 @@ async def _analyze(
         or csrf is None
         or not compare_digest(csrf.encode(), session.csrf_token.encode())
     ):
+        # 非管理员，或写操作缺/不符 CSRF，拒绝本次变更。
         raise AuthError(403, "forbidden", "请使用有效的管理员会话。")
     analysis: DomainAnalysisService = request.app.state.domain_analysis
     return await analysis.accept(domain_id, session.account.account_id, body)
@@ -331,6 +335,7 @@ async def save_definition(
 ) -> CreateDomainResponse:
     session = await _session(request, response, expected, writing=True)
     if csrf is None or not compare_digest(csrf.encode(), session.csrf_token.encode()):
+        # CSRF 缺失或不符，要求重新登录后再提交。
         raise AuthError(403, "forbidden", "请刷新登录状态后重新保存。")
     service: DomainService = request.app.state.domain
     return await service.save_definition(session, body)
@@ -393,6 +398,7 @@ async def confirm_kc_path(
 ) -> ConfirmKCPathResponse:
     session = await _session(request, response, expected, writing=True)
     if csrf is None or not compare_digest(csrf.encode(), session.csrf_token.encode()):
+        # CSRF 缺失或不符，要求重新登录后再提交。
         raise AuthError(403, "forbidden", "请刷新登录状态后重新保存。")
     service: DomainService = request.app.state.domain
     return await service.confirm_kc_path(session, domain_id, body)

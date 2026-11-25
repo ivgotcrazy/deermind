@@ -90,6 +90,7 @@ def activity_change(
         facts.record(facts.REVISION, f"{position.activity_id}@{position.revision}", position)
     ]
     if position.revision == 1:
+        # 首版同时写入活动身份记录。
         records.insert(0, facts.record(facts.ACTIVITY, identity.activity_id, identity))
     change = facts.ActivityChanged(
         records=records,
@@ -246,6 +247,7 @@ class Conversation:
             commit_id=uuid4(),
             correlation_id=request,
         ):
+            # 按事件类型路由到对应事实投影，通用记录走 conversation 投影。
             if item.draft.event_type == detection_plans.PREPARED:
                 await detection_plans.project(db, item)
             elif item.draft.event_type in {round_facts.STARTED, round_facts.CLOSED}:
@@ -281,8 +283,10 @@ class Conversation:
         async with self.engine.connect() as db:
             await self.authorize(db, account, scope, False)
             if view == "current":
+                # 当前会话视图：叶活动、路径与活动输入。
                 return CurrentView(current=await history.current(db, scope))
             if view == "activity_tree":
+                # 目录视图：活动森林分页。
                 return await history.directory(
                     db, account.account_id, scope, activity, cursor, limit
                 )
@@ -317,6 +321,7 @@ class Conversation:
                 db, principal, CONTROL_ACTIVITY, query.resource_id, query.request_id
             )
         if saved is None:
+            # 无对应已完成控制命令，收据记未找到。
             return ReceiptView[ActivityControlResult](receipt_state="not_found")
         replay = await self.replay_control(query.resource_id, saved)
         return ReceiptView[ActivityControlResult](
@@ -336,8 +341,10 @@ class Conversation:
             try:
                 message_id = UUID(resource.id)
             except ValueError as exc:
+                # 编号非合法 UUID，按找不到显示内容处理。
                 raise RequestError(404, "not_found", "找不到显示内容。") from exc
             if command.surface == "textbook" or resource != ref("message", message_id):
+                # 教材面不登记呈现；引用也必须指向本空间消息。
                 raise RequestError(404, "not_found", "找不到显示内容。")
             count = await db.scalar(
                 text(
@@ -347,6 +354,7 @@ class Conversation:
                 {"scope": scope, "id": message_id},
             )
             if count is None:
+                # 消息不存在或角色不可呈现，按找不到处理。
                 raise RequestError(404, "not_found", "找不到显示内容。")
             allowed = [
                 resource.model_copy(update={"path": f"/parts/{index}"}) for index in range(count)
@@ -357,6 +365,7 @@ class Conversation:
                 or len(reported) != len({item.path for item in reported})
                 or any(item not in allowed for item in reported)
             ):
+                # 片段不能为空、路径不得重复，且必须落在该消息允许范围内。
                 raise RequestError(400, "invalid_reference", "显示片段不属于该消息。")
             owner = ref("presentation", command.presentation_id)
             previous = await db.scalar(
@@ -376,6 +385,7 @@ class Conversation:
                 client_reported_at=command.client_reported_at,
             )
             if previous:
+                # 同一呈现编号已有记录，核对内容是否一致（幂等重放）。
                 original = provision_facts.Presentation.model_validate_json(
                     canonical_json(previous)
                 )
@@ -418,21 +428,26 @@ class Conversation:
                 normalized_input=command.model_dump(mode="json", exclude={"request_id"}),
             )
             if saved.result_ref is not None:
+                # 命令已完成，按回执重放既有结果。
                 return await self.replay_control(scope, saved)
             adoption = await self.authorize(db, account, scope, True)
             await lock_position(db, scope)
             before = await history.current(db, scope)
             if before.active_input_id is not None:
+                # 空间尚有进行中输入，拒绝并发控制。
                 raise RequestError(409, "interaction_busy", "正在处理上一条，请稍候。")
             if before.current_round and before.current_round.state == "open":
+                # 进行中的检测轮须先闭环，再做活动控制。
                 raise RequestError(409, "blocked", "请先完成或结束当前检测轮。")
             path = await history.lineage(db, scope, command.activity_ref.activity_id)
             if not path:
+                # 沿引用找不到活动路径。
                 raise RequestError(404, "not_found", "找不到这个活动。")
             leaf = path[-1]
             if leaf.position.revision != command.expected_activity_revision or (
                 leaf.position.revision != command.activity_ref.revision
             ):
+                # 实际修订与命令携带的预期/引用修订不符，乐观锁冲突。
                 raise RequestError(409, "revision_conflict", "活动已变化，请刷新后再试。")
             before_id = (
                 before.current_activity.activity_ref.activity_id
@@ -486,6 +501,7 @@ class Conversation:
         revision_refs: list[Ref] = []
         for state, run_state, node in changes:
             if run_state == "completed":
+                # 活动完成时尝试闭环对应教学机会。
                 closure = await teaching_opportunities.closed(
                     db, scope, state, input_id, accepted, "completed"
                 )
@@ -591,6 +607,7 @@ class Conversation:
         before = await history.current(db, scope)
         leaf = before.current_activity
         if parent_id != (leaf.activity_ref.activity_id if leaf else None):
+            # 父活动须与当前叶活动一致，否则视为已变更。
             raise RequestError(409, "revision_conflict", "当前活动已变化。")
         if activity_type != definition.blueprint.activity_type:
             raise ValueError("Activity type and fixed blueprint differ")
@@ -637,10 +654,12 @@ class Conversation:
         )
         pending = [recorded]
         if parent_id:
+            # 子活动：先核对父活动采用依据，再挂起到等待子活动状态。
             parent = await history.activity_at(db, scope, parent_id)
             if parent.identity.adoption_ref != owner.adoption_ref:
                 raise RequestError(409, "revision_conflict", "子活动采用依据已变化。")
             if activity_type == "detection" and input_id:
+                # 父活动检测机会在子活动开启时闭环。
                 closure = await teaching_opportunities.closed(
                     db, scope, parent, input_id, recorded, "completed"
                 )
@@ -752,6 +771,7 @@ async def _control_changes(
     leaf = path[-1]
     identity = leaf.identity
     if command.action == "resume":
+        # 恢复：查是否存在暂停子活动。
         child = await db.scalar(
             text(
                 "SELECT a.activity_id FROM interaction.activities a "
@@ -766,6 +786,7 @@ async def _control_changes(
             or child
             or any(item.position.run_state != "paused" for item in path)
         ):
+            # 已有进行活动、存在子活动，或路径上有非暂停活动，均不可恢复。
             raise RequestError(409, "revision_conflict", "只能恢复已暂停的叶活动。")
         restored: list[tuple[history.ActivityState, RunState, str]] = [
             (item, "waiting_child", item.position.node_id) for item in path[:-1]
@@ -773,8 +794,10 @@ async def _control_changes(
         restored.append((leaf, "active", leaf.position.node_id))
         return restored, identity.activity_id, "继续「" + identity.name + "」。"
     if current != identity.activity_id or leaf.position.run_state != "active":
+        # 暂停/结束只能作用于当前活跃叶活动。
         raise RequestError(409, "revision_conflict", "请选择当前进行中的活动。")
     if command.action == "pause":
+        # 暂停：路径上全部活动置为 paused，不切叶。
         return (
             [(item, "paused", item.position.node_id) for item in path],
             None,
@@ -783,6 +806,7 @@ async def _control_changes(
     changed: list[tuple[history.ActivityState, RunState, str]] = [(leaf, "completed", "end")]
     returning = return_point(path)
     if returning is None:
+        # 根活动结束，无父活动可回退。
         return changed, None, "已结束「" + identity.name + "」。"
     parent, node = returning
     changed.append((parent, "active", node))
@@ -794,6 +818,7 @@ def return_point(
 ) -> tuple[history.ActivityState, str] | None:
     """结束子活动时验证并返回当初保存的父节点。"""
     if len(path) < 2:
+        # 路径不足两层，无子活动返回点。
         return None
     leaf = path[-1]
     parent = path[-2]
@@ -803,6 +828,7 @@ def return_point(
         or point.parent.activity_id != parent.identity.activity_id
         or (parent.position.run_state != "waiting_child")
     ):
+        # 返回点缺失、父引用不符或父活动非等待子活动状态，均视为无效。
         raise RuntimeError("Active child has no valid return point")
     return parent, point.node_id
 
@@ -823,6 +849,7 @@ async def return_after_reply(
     ending = "已结束「" + leaf.name + "」。"
     next_leaf = None
     if returning is not None:
+        # 有返回点：父活动恢复到保存节点，叶切回父活动。
         parent, node = returning
         restored = revise(
             parent.position,

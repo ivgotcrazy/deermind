@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 async def lock_accounts(connection: AsyncConnection, ids: set[UUID]) -> None:
     for identity in sorted(ids, key=str):
+        # 按编号排序加锁，保证跨账号锁顺序一致，避免死锁。
         await connection.execute(
             text(
                 "SELECT last_seq FROM runtime.scope_event_heads "
@@ -34,6 +35,7 @@ async def authorize(connection: AsyncConnection, session: SessionView, *, admin:
         {"session": session.session_id, "account": session.account.account_id},
     )
     if valid is None:
+        # 会话已撤销/过期/账号停用或凭据代次不符。
         raise AuthError(401, "unauthenticated", "登录已失效，请重新登录。")
     if admin and valid != "admin":
         raise AuthError(403, "forbidden", "此操作仅限管理员。")
@@ -42,6 +44,7 @@ async def authorize(connection: AsyncConnection, session: SessionView, *, admin:
 async def database_time(connection: AsyncConnection) -> datetime:
     now = await connection.scalar(text("SELECT clock_timestamp()"))
     if not isinstance(now, datetime):
+        # 库时钟须返回时间值，否则无法落时间戳。
         raise RuntimeError("Database clock unavailable")
     return now
 

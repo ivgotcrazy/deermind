@@ -66,12 +66,14 @@ class MemorySaved(EventPayload):
 
 
 def validate(draft: EventDraft, body: EventPayload) -> None:
+    # 记忆修订事件须单条记录且带来源引用。
     if not isinstance(body, MemorySaved) or len(body.records) != 1 or not body.source_refs:
         raise ValueError("A memory revision requires exact source references")
     item = body.records[0]
     if item.record_type != REVISION or not isinstance(item.content, InlineContent):
         raise ValueError("Missing memory revision record")
     entry = MemoryRevision.model_validate_json(canonical_json(item.content.value))
+    # 范围、记忆引用、所有者、活动、类型与记录编号须逐项一致。
     if (
         entry.scope_id != draft.scope_id
         or entry.identity != body.memory_ref
@@ -148,11 +150,13 @@ def remember(
     previous: MemoryRevision | None,
 ) -> list[Entry] | None:
     wording = proposal.quote.strip()
+    # 记忆措辞长度不在区间内，不收录。
     if not 1 <= len(wording) <= 240:
         return None
     raw = previous.content.get("entries") if previous else None
     entries = [Entry.model_validate(row) for row in raw] if isinstance(raw, list) else []
     if proposal.resolves is not None:
+        # 闭环提议：找到对应未决条目且答复含该引文时，标记为已解决。
         for index, row in enumerate(entries):
             if row.entry_id == proposal.resolves and row.state == "open" and wording in reply:
                 entries[index] = row.model_copy(
@@ -160,8 +164,10 @@ def remember(
                 )
                 return entries
         return None
+    # 原话中检索不到引文，或条目已重复，不新增。
     if wording not in student_text or any(row.text == wording for row in entries):
         return None
+    # 条目数达上限，不再追加。
     if len(entries) >= 24:
         return None
     return [
@@ -179,6 +185,7 @@ def remember(
 
 async def project(db: AsyncConnection, event: StoredEvent) -> None:
     async with application(db, "interaction.memory", 1, event.draft.event_id) as apply:
+        # 事件已投影过，重复应用直接返回。
         if not apply:
             return
         item = event.payload.records[0]
@@ -204,5 +211,6 @@ async def project(db: AsyncConnection, event: StoredEvent) -> None:
             ),
             {"body": canonical_json(source)},
         )
+        # 头指针未按 revision+1 推进，说明投影顺序已乱，拒绝落表。
         if changed is None:
             raise ValueError("Memory head advanced before projection")

@@ -83,6 +83,7 @@ class IntakeProcessing:
         ).all()
         removed: list[Ref] = []
         for domain_id in domains:
+            # 按领域加锁，逐个处理来源失效的待办。
             scope = ("domain", domain_id)
             await self.analysis.lock(connection, *scope)
             rows = (
@@ -121,6 +122,7 @@ class IntakeProcessing:
                 )
                 removed.append(reference)
             if drafts:
+                # 本领域有待办被标记失效，才追加失效事件并投影。
                 sequence = await lock_scope_sequence(connection, *scope)
                 actor = Ref(owner="domain", type="service", id="material-invalidation")
                 events = await self.intake.store.append(
@@ -177,8 +179,10 @@ class IntakeProcessing:
         request: UUID,
     ) -> tuple[Ref, list[EventDraft]]:
         if item.kind != "kc" or (command.definition is None) == (command.existing_kc_ref is None):
+            # KC 待办二选一：引用已有定义或提交新定义，不能并存或都缺。
             raise RequestError(400, "invalid_request", "请选择一个已有知识成分或填写新定义。")
         if command.existing_kc_ref is not None:
+            # 复用已有 KC：校验归属与版本后直接返回引用，不产生新事件。
             ref = command.existing_kc_ref
             await require_definition(connection, item.domain_id, ref)
             return definition_facts.version_ref(ref), []
@@ -232,6 +236,7 @@ class IntakeProcessing:
     ) -> tuple[Ref, Ref | None, list[EventDraft], facts.InstanceVersion | None]:
         checks = [command.classification_check_ref] if command.classification_check_ref else []
         if item.kind == "task_instance" and command.action == "associate_task" and command.task_ref:
+            # 题目类待办：关联到任务定义，复用或新建题目实例。
             task = command.task_ref
             await require_definition(connection, item.domain_id, task)
             await self.analysis.require_match(
@@ -243,6 +248,7 @@ class IntakeProcessing:
             )
             reused = command.existing_instance_ref
             if reused is not None:
+                # 指定复用已有实例，先核对内容是否与本题一致。
                 existing = await load_instance(
                     connection, item.domain_id, reused.object_id, reused.version
                 )
@@ -254,6 +260,7 @@ class IntakeProcessing:
                     or existing.content.statement.blocks != body.blocks
                     or existing.content.statement.data_tables != body.data_tables
                 ):
+                    # 实例已删、任务不符或题面/表格不同，不能复用。
                     raise RequestError(409, "classification_failed", "已有实例与本题内容不一致。")
                 return reused.reference(), None, [], None
             new = TaskInstance(
@@ -281,12 +288,14 @@ class IntakeProcessing:
             or command.action != "associate_solution"
             or not command.solution_ref
         ):
+            # 解法类待办必须关联到已有解法定义。
             raise RequestError(400, "invalid_request", "请为所选待办指定对应领域定义。")
         parent = await self.parent_instance(connection, item)
         if (
             command.task_instance_ref != parent.instance_ref
             or command.expected_version != parent.instance_ref.version
         ):
+            # 父题实例或版本已变，乐观锁冲突。
             raise RequestError(409, "version_conflict", "题目版本已变化，请刷新后关联。")
         solution = command.solution_ref
         await require_definition(connection, item.domain_id, solution)
@@ -306,6 +315,7 @@ class IntakeProcessing:
         )
         drafts: list[EventDraft] = []
         if adding_method:
+            # 任务尚未收录该方法，需用户显式确认并校验任务版本未变。
             if not command.confirm_add_method or command.expected_task_version != task.version:
                 raise RequestError(409, "confirmation_required", "请确认将该方法添加到本题任务。")
             head = await connection.scalar(
@@ -313,6 +323,7 @@ class IntakeProcessing:
                 {"id": task.object_id},
             )
             if head != task.version:
+                # 任务定义在核对后又被更新，方法关联需重新走确认。
                 raise RequestError(409, "version_conflict", "任务定义已更新，需重新核对方法。")
             added, task = self._add_method(
                 item.domain_id,
@@ -408,8 +419,10 @@ class IntakeProcessing:
         if reference is None and item.parent_item_id is not None:
             pending = await self.intake.item(connection, item.domain_id, item.parent_item_id)
             if pending.state == "completed":
+                # 父待办已完成，取其落库结果作为父题实例引用。
                 reference = pending.result_ref
         if reference is None or reference.type != "task_instance":
+            # 父题尚未关联到领域实例。
             raise RequestError(409, "parent_not_linked", "请先把父题关联到领域。")
         parent = await load_instance(connection, item.domain_id, UUID(reference.id))
         if parent.is_deleted:
@@ -431,6 +444,7 @@ class IntakeProcessing:
         body: RichContent | None,
     ) -> Plan:
         if item.state != "pending" or item.revision != command.expected_revision:
+            # 待办已被处理或版本号过期，乐观锁拒绝。
             raise RequestError(409, "already_processed", "待办状态已更新，请刷新。")
         children: list[IntakeItem] = []
         drafts: list[EventDraft] = []
@@ -438,14 +452,17 @@ class IntakeProcessing:
         reference: Ref | None = None
         version: facts.InstanceVersion | None = None
         if command.action == "discard":
+            # 移除待办：先取其下属解法子项，需确认一并删除。
             children = await self._children(connection, item.item_id)
             if children and not command.confirm_discard_children:
                 raise RequestError(
                     409, "confirmation_required", "此题仍有待办解法，请确认一起移除。"
                 )
         elif command.action == "add_kc":
+            # 新增知识成分定义。
             root, drafts = await self._knowledge(connection, item, command, actor, request)
         else:
+            # 关联题目或解法，需要正文内容。
             assert body is not None
             root, reference, drafts, version = await self._associated(
                 connection, item, command, actor, request, body
@@ -529,6 +546,7 @@ class IntakeProcessing:
             ).one_or_none()
             if previous:
                 if previous.input_hash != signature:
+                    # 同编号对应不同命令内容，幂等冲突。
                     raise RequestError(409, "request_conflict", "此编号已用于另一项处理。")
                 return IntakeActionReceipt(
                     request_ref=identity,
@@ -537,6 +555,7 @@ class IntakeProcessing:
             item = await self.intake.item(connection, domain_id, item_id)
         body = None
         if command.action in ("associate_task", "associate_solution"):
+            # 关联类动作需要从候选素材解析正文富内容。
             raw = await self.intake.candidate(item)
             content = raw["body"]
             assert isinstance(content, dict)
@@ -572,6 +591,7 @@ class IntakeProcessing:
                 },
             )
             if inserted is None:
+                # 并发下回执已被插入，走幂等重放。
                 row = (
                     await connection.execute(
                         text(
@@ -582,10 +602,12 @@ class IntakeProcessing:
                     )
                 ).one()
                 if row.input_hash != signature:
+                    # 重放时再次核对输入指纹，防止编号串用。
                     raise RequestError(409, "request_conflict", "此编号已用于另一项处理。")
                 result = await self._result(domain_id, UUID(row.result_ref["id"]))
                 return IntakeActionReceipt(request_ref=identity, result=result)
             if command.action != "discard":
+                # 非移除动作需校验来源素材仍有效。
                 await self.analysis.guard_source(
                     connection, UUID(item.candidate_key.partition(":")[0]), item.source_ref
                 )
@@ -593,9 +615,11 @@ class IntakeProcessing:
             locked = await self.intake.item(connection, domain_id, item_id)
             checked = await self._plan(connection, locked, command, actor, identity, body)
             if checked.result != plan.result:
+                # 锁内重算结果与锁前计划不一致，说明待办状态被并发改动。
                 raise RequestError(409, "version_conflict", "待办或题目已变化，请重试。")
             if checked.instance_version and plan.instance_version:
                 if checked.instance_version.content != plan.instance_version.content:
+                    # 实例正文在两次计划之间发生变化，乐观锁拒绝。
                     raise RequestError(409, "version_conflict", "题目内容已变化，请重试。")
             sequence = await lock_scope_sequence(connection, *scope)
             events = await self.intake.store.append(
@@ -608,12 +632,15 @@ class IntakeProcessing:
             )
             for event in events:
                 if event.draft.event_type == facts.PROCESSED:
+                    # 待办处理结果投影到 intake_item。
                     await facts.project_items(connection, event)
                 elif event.draft.event_type == facts.SAVED:
+                    # 定义保存事件：先校验实例内容，再落实例投影。
                     assert plan.instance_version is not None
                     await validate_instance(connection, domain_id, plan.instance_version.content)
                     await facts.project_instance(connection, event, plan.instance_version)
                 else:
+                    # 其余定义类事件走通用领域事件应用。
                     await apply_domain_event(connection, event)
             result_ref = Ref(owner="runtime", type="event", id=str(events[-1].draft.event_id))
             await connection.execute(
@@ -643,6 +670,7 @@ class IntakeProcessing:
                 {"id": identity},
             )
         if result is None:
+            # 无已完成回执，返回未找到视图。
             return ReceiptView[IntakeActionResult](receipt_state="not_found")
         return ReceiptView[IntakeActionResult](
             receipt_state="completed",

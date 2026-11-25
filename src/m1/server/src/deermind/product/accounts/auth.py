@@ -37,10 +37,13 @@ def account_view(row: RowMapping) -> AccountView:
     if row["role"] == "student":
         reasons = row.get("usage_reasons")
         if row.get("eligibility") == "allowed":
+            # 资格放行，无缺口。
             gaps = []
         elif reasons:
+            # 已有登记缺口，逐条转为视图缺口。
             gaps = [UsageGap.model_validate(item) for item in reasons]
         else:
+            # 未放行且无具体原因，记一条默认的确认未完成缺口。
             gaps = [
                 UsageGap(
                     code="usage_confirmation_required",
@@ -77,6 +80,7 @@ class AuthService:
         keys = {"login": digest(login), "source": digest(source)}
         refusal: AuthError | None = None
         async with self.engine.begin() as connection:
+            # 按固定顺序取咨询建议锁，避免并发相互死锁。
             for value in sorted("auth:" + key + ":" + val for key, val in keys.items()):
                 await connection.execute(
                     text("SELECT pg_advisory_xact_lock(hashtextextended(:v,0))"), {"v": value}
@@ -84,6 +88,7 @@ class AuthService:
             now = await connection.scalar(text("SELECT clock_timestamp()"))
             if not isinstance(now, datetime):
                 raise RuntimeError("Database clock unavailable")
+            # 分别按账号与来源两个维度核对近 15 分钟尝试限额。
             for key, limit in (("login", 5), ("source", 60)):
                 condition = "AND outcome IN ('pending','invalid')" if key == "login" else ""
                 row = (
@@ -97,6 +102,7 @@ class AuthService:
                     )
                 ).one()
                 if row.total >= limit:
+                    # 触限：按最早一条尝试的过期时间估算冷却秒数。
                     seconds = max(
                         1, math.ceil((row.oldest + timedelta(minutes=15) - now).total_seconds())
                     )
@@ -105,6 +111,7 @@ class AuthService:
                     )
                     break
             if refusal is None:
+                # 未触限：先占位一条 pending 尝试，供后续回填结果。
                 await connection.execute(
                     text(
                         "INSERT INTO product.login_attempts "
@@ -114,6 +121,7 @@ class AuthService:
                     {"id": identity, **keys, "now": now},
                 )
         if refusal:
+            # 触限拒绝，占位尝试随事务回滚。
             raise refusal
         return identity
 
@@ -137,6 +145,7 @@ class AuthService:
         if self._dummy_hash is None:
             raise RuntimeError("Authentication service is not initialized")
         if self._hashes >= 2:
+            # 散列槽位已满，限制并发登录散列任务数。
             raise AuthError(503, "resource_unavailable", "正在处理其他登录，请稍后再试。")
         self._hashes += 1
         attempt: UUID | None = None
@@ -158,6 +167,7 @@ class AuthService:
                     .mappings()
                     .one_or_none()
                 )
+            # 账号不存在时也用占位散列走一次校验，保持响应时长一致，避免计时侧信道。
             password_hash = row["password_hash"] if row else self._dummy_hash
             verification = asyncio.create_task(
                 asyncio.to_thread(self.hasher.verify, password, password_hash)
@@ -169,6 +179,7 @@ class AuthService:
                 await verification
                 raise
             if not valid or row is None or row["status"] != "active":
+                # 密码错误、账号不存在或已停用，均按认证失败处理。
                 await self._attempt_result(attempt, "invalid")
                 raise AuthError(401, "unauthenticated", "账号或密码不正确。")
             result = await self._open_session(row, old_token, attempt)
@@ -179,6 +190,7 @@ class AuthService:
             return result
         except AuthError as error:
             if attempt is not None:
+                # 业务拒绝类异常回填为不可用尝试。
                 await self._attempt_result(attempt, "unavailable")
             LOGGER.warning(
                 "登录未完成",
@@ -187,9 +199,11 @@ class AuthService:
             raise
         except Exception:
             if attempt is not None:
+                # 未预期异常同样回填，避免 pending 尝试长期挂起。
                 await self._attempt_result(attempt, "unavailable")
             raise
         finally:
+            # 无论成功失败，最终释放散列槽位。
             self._hashes -= 1
 
     async def _event(
@@ -208,6 +222,7 @@ class AuthService:
             "session_id": str(session),
         }
         if outcome != "signed_in":
+            # 退出/失效事件需带主体引用与结果原因。
             payload.update(
                 {
                     "subject_ref": owner.model_dump(mode="json"),
@@ -223,6 +238,7 @@ class AuthService:
             {"id": account},
         )
         if seq is None:
+            # 账号缺少源事实事件头，无法追加登录/退出事件。
             raise RuntimeError("Account has no source facts")
         await self.store.append(
             connection,
@@ -259,6 +275,7 @@ class AuthService:
                 .one_or_none()
             )
             ids = sorted({original["account_id"], *([old["account_id"]] if old else [])}, key=str)
+            # 新旧账号事件头按固定顺序加锁，防止并发重置/换号竞争。
             for identity in ids:
                 await connection.execute(
                     text(
@@ -289,11 +306,13 @@ class AuthService:
                 or current["credential_revision"] != original["credential_revision"]
                 or current["password_hash"] != original["password_hash"]
             ):
+                # 持锁后复核：账号停用、密码或凭据版本已变更则拒绝。
                 raise AuthError(401, "unauthenticated", "账号或密码已变更，请重新登录。")
             now = await connection.scalar(text("SELECT clock_timestamp()"))
             if not isinstance(now, datetime):
                 raise RuntimeError("Database clock unavailable")
             if old:
+                # 换号登录：先撤销同一浏览器携带的旧会话。
                 changed = await connection.execute(
                     text(
                         "UPDATE product.auth_sessions SET revoked_at=:now "
@@ -302,6 +321,7 @@ class AuthService:
                     {"now": now, "id": old["session_id"]},
                 )
                 if changed.rowcount:
+                    # 旧会话此前未撤销，落一条失效事件。
                     await self._event(
                         connection, old["account_id"], old["session_id"], "invalidated", attempt
                     )
@@ -360,8 +380,10 @@ class AuthService:
                 .one_or_none()
             )
         if row is None:
+            # 会话不存在、已撤销、过期、账号停用或凭据已变。
             raise AuthError(401, "unauthenticated", "请先登录。")
         if expected is not None and expected != str(row["session_id"]):
+            # 会话身份与调用方留存标识不一致，判定会话已被更换。
             raise AuthError(409, "session_changed", "登录账号已变化，请重新确认身份。")
         return SessionView(
             account=account_view(row),
@@ -375,9 +397,11 @@ class AuthService:
             view = await self.session(token, expected)
         except AuthError as error:
             if error.status == 401:
+                # 未登录直接视为退出完成，不报错。
                 return
             raise
         if expected is None or csrf is None or not secrets.compare_digest(csrf, view.csrf_token):
+            # 缺少或 CSRF 不符，拒绝退出以防止跨站请求。
             raise AuthError(403, "forbidden", "请刷新页面后重试。")
         async with self.engine.begin() as connection:
             await connection.execute(
@@ -395,6 +419,7 @@ class AuthService:
                 {"id": view.session_id},
             )
             if result.rowcount:
+                # 会话此前未撤销，落一条退出事件。
                 await self._event(
                     connection, view.account.account_id, view.session_id, "signed_out", uuid4()
                 )

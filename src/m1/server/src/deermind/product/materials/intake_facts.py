@@ -56,6 +56,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         raise ValueError("Expected complete material submission")
     content = SubmissionFact.model_validate_json(canonical_json(row.content.value))
     if content.import_id != draft.scope_id or str(content.submission_id) != row.record_id:
+        # 提交作用域与记录身份须一致。
         raise ValueError("Submission scope does not match")
     if isinstance(payload, IntakeRequested) and (
         content.trigger_event_id != draft.event_id
@@ -64,6 +65,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         or payload.parent_bindings != content.parent_bindings
         or payload.candidate_refs != [source.candidate_ref for source in payload.sources]
     ):
+        # 请求事件的触发、候选与父题绑定须与落库提交一致。
         raise ValueError("Submission sources do not match")
 
 

@@ -30,8 +30,10 @@ async def check_methods(
         )
         missing = solution_gaps(solution)
         explanation.extend(missing)
+        # 缺知识成分只记讲解侧缺口，不计入检测侧阻塞。
         detection.extend(issue for issue in missing if issue.code != "missing_knowledge")
     if not methods:
+        # 未采用任何解法，讲解与检测两侧都记缺口。
         issue = Issue(code="missing_methods", path="/methods", message="本章尚未采用解法。")
         explanation.append(issue)
         detection.append(issue)
@@ -51,6 +53,7 @@ async def check_methods(
             {"id": kc.object_id, "version": kc.version},
         )
         if path is None:
+            # 该知识成分缺已确认的直接检验路径，记讲解侧缺口。
             explanation.append(
                 Issue(
                     code="missing_kc_path",

@@ -77,15 +77,18 @@ def location_tables(data: dict[str, JsonValue]) -> tuple[dict[str, str], dict[st
     for key in ("candidate", "parent"):
         source = data[key]
         if not isinstance(source, dict):
+            # 来源缺失时跳过，不生成位置编号。
             continue
         body = source.get("body")
         content = body.get("content") if isinstance(body, dict) else None
         blocks = content.get("blocks") if isinstance(content, dict) else None
         if isinstance(blocks, list):
+            # 正文块逐条编号为材料位置。
             for index, _block in enumerate(blocks):
                 materials[f"M{len(materials) + 1}"] = f"/{key}/body/content/blocks/{index}"
         references = body.get("references") if isinstance(body, dict) else None
         if isinstance(references, list):
+            # 参考条目同样纳入材料位置表。
             for index, reference in enumerate(references):
                 if isinstance(reference, dict):
                     materials[f"M{len(materials) + 1}"] = f"/{key}/body/references/{index}"
@@ -131,13 +134,16 @@ def accepted_output(
     materials, candidates = location_tables(data)
     keyed = {entry.candidate_key: entry for entry in output.results}
     if len(keyed) != len(output.results) or set(keyed) != set(candidates):
+        # 模型结果必须覆盖全部候选，且每个候选恰好一次。
         raise ValueError("Model results must cover the provided candidates exactly once")
     for key, entry in keyed.items():
         if entry.result == "matched" and not any(
             item.material_locations and item.definition_locations for item in entry.findings
         ):
+            # 判定匹配必须同时给出材料与定义双侧证据。
             raise ValueError("A match needs material and definition evidence")
         if entry.result != "matched" and not (entry.findings or entry.issues):
+            # 不匹配必须给出具体理由。
             raise ValueError("A nonmatch needs a concrete reason")
         for finding in entry.findings:
             if not set(finding.material_locations) <= materials.keys():
@@ -146,6 +152,7 @@ def accepted_output(
                 raise ValueError("Evidence is outside the supplied definition")
     if output.draft is None:
         if data["action"] == EXTRACT and not output.unresolved:
+            # 抽取动作要么给草稿，要么显式标注缺口。
             raise ValueError("Missing extraction proposal or explicit gap")
         return None
     if data["action"] != EXTRACT or output.draft.kind != data["subject_kind"]:
@@ -191,6 +198,7 @@ class DomainAnalysis:
 
     async def lock(self, connection: AsyncConnection, scope: str, domain_id: UUID) -> None:
         if scope != "domain":
+            # 分析执行只允许落在领域作用域。
             raise PermissionError("Wrong analysis scope")
         result = await connection.scalar(
             text(
@@ -200,6 +208,7 @@ class DomainAnalysis:
             {"id": domain_id},
         )
         if result is None:
+            # 领域身份不存在或已删除。
             raise RequestError(404, "not_found", "找不到领域。")
 
     async def check(
@@ -211,6 +220,7 @@ class DomainAnalysis:
     ) -> None:
         fixed = await self._artifact(connection, execution.scope_id, UUID(execution.input_ref.id))
         if fixed.kind != "input" or fixed.payload.get("action") != execution.entry_ref:
+            # 固定输入必须属于本次分析动作，防止跨执行复用。
             raise PermissionError("The fixed input belongs to another analysis")
         if action == "accept" and fixed.command_ref is None:
             raise PermissionError("Analysis requires an accepted request")
@@ -219,6 +229,7 @@ class DomainAnalysis:
         self, connection: AsyncConnection, work: Execution, state: State, result: Ref | None
     ) -> None:
         if state not in ("completed", "failed", "cancelled"):
+            # 中间态不回写回执，等待终态再落账。
             return
         fixed = await self._artifact(connection, work.scope_id, UUID(work.input_ref.id))
         assert fixed.command_ref is not None
@@ -258,6 +269,7 @@ class DomainAnalysis:
             {"id": identity, "domain": domain_id},
         )
         if row is None:
+            # 产物不存在或不属于本领域。
             raise RequestError(404, "not_found", "找不到此领域的产物。")
         return facts.AnalysisArtifact.model_validate_json(canonical_json(row))
 
@@ -265,6 +277,7 @@ class DomainAnalysis:
         async with self.engine.connect() as connection:
             value = await self._artifact(connection, domain_id, identity)
         if value.kind == "input":
+            # 输入产物不直接对外展示。
             raise RequestError(404, "not_found", "找不到可查看的检查产物。")
         return AnalysisArtifactView(artifact=value.model_dump(mode="json"))
 
@@ -280,20 +293,24 @@ class DomainAnalysis:
         parent_statement: dict[str, JsonValue] | None = None,
     ) -> None:
         if check is None or check.owner != "domain" or check.type != "artifact":
+            # 必须先有领域内的分类检查产物。
             raise RequestError(409, "classification_required", "请先核对分类结果。")
         checked = await self._artifact(connection, domain_id, UUID(check.id))
         if checked.kind != "classification_check" or checked.definition_refs != definitions:
+            # 检查所依据的定义集合已变，归类结果失效。
             raise RequestError(409, "classification_stale", "归类使用的定义已有变化，请重新检查。")
         fixed = await self._artifact(connection, domain_id, UUID(checked.input_ref.id))
         if (
             fixed.input_ref != item.reference()
             or bool(fixed.payload.get("adding_method")) != adding_method
         ):
+            # 检查对应的待办或加方法场景已变，归类结果失效。
             raise RequestError(409, "classification_stale", "归类使用的待办已有变化，请重新检查。")
         if parent_statement is not None:
             parent = fixed.payload.get("parent")
             body = parent.get("body") if isinstance(parent, dict) else None
             if not isinstance(body, dict) or body.get("content") != parent_statement:
+                # 父题题面在检查后发生变化，需重新核对。
                 raise RequestError(
                     409, "classification_stale", "归类使用的父题题面已变化，请重新检查。"
                 )
@@ -319,6 +336,7 @@ class DomainAnalysis:
             raise RequestError(409, "classification_required", "请选择题目归类检查结果。")
         fixed = await self._artifact(connection, domain_id, UUID(checked.input_ref.id))
         if fixed.payload.get("manual_instance") != instance.model_dump(mode="json"):
+            # 手工实例题面或参考与检查时不一致，结果失效。
             raise RequestError(409, "classification_stale", "题面或参考已变化，请重新检查。")
         result = AnalysisReceipt.model_validate_json(canonical_json(checked.payload))
         if {entry.result for entry in result.output.results} != {"matched"}:
@@ -333,8 +351,10 @@ class DomainAnalysis:
     ) -> tuple[dict[str, JsonValue], list[Ref]]:
         selected: list[TaskRef | SolutionRef]
         if isinstance(command, CheckClassification):
+            # 分类检查：固定任务，可选带方法。
             selected = [command.task_ref, *([command.solution_ref] if command.solution_ref else [])]
         elif isinstance(command, CheckManualInstance):
+            # 手工实例：取任务及其全部参考方法，去重。
             selected = [command.instance.task_ref]
             for entry in command.instance.reference_solutions:
                 if entry.solution_ref not in selected:
@@ -343,6 +363,7 @@ class DomainAnalysis:
             selected = []
         rows: list[Row[tuple[UUID, str, int, dict[str, JsonValue]]]] = []
         if selected:
+            # 有固定候选：逐条按身份与版本校验可用性。
             for ref in selected:
                 row = (
                     await connection.execute(
@@ -364,6 +385,7 @@ class DomainAnalysis:
                     )
                 ).one_or_none()
                 if row is None:
+                    # 定义版本已删或不属于本领域，不可作为候选。
                     raise RequestError(409, "invalid_reference", "所选定义已经不可用。")
                 rows.append(row)
         else:
@@ -387,6 +409,7 @@ class DomainAnalysis:
         for row in rows:
             key = row.kind if selected else f"definition-{len(refs) + 1}"
             if isinstance(command, CheckManualInstance) and row.kind == "solution":
+                # 手工实例场景下方法以 method-N 编号暴露给模型。
                 key = f"method-{len(refs)}"
             ref = Ref(owner="domain", type=row.kind, id=str(row.object_id), version=row.version)
             contents[key] = row.content
@@ -399,6 +422,7 @@ class DomainAnalysis:
         command: Command,
     ) -> tuple[IntakeItem | None, dict[str, JsonValue], list[Ref]]:
         if isinstance(command, CheckManualInstance):
+            # 手工实例检查：无待办条目，直接用提交的实例构造快照。
             instance = command.instance
             async with self.engine.connect() as connection:
                 definitions, refs = await self._definitions(connection, domain_id, "task", command)
@@ -428,6 +452,7 @@ class DomainAnalysis:
         async with self.engine.connect() as connection:
             item = await self.intake.item(connection, domain_id, UUID(ref.id))
             if item.reference() != ref or item.state != "pending":
+                # 修订号不符或已被处理，乐观锁拒绝。
                 raise RequestError(409, "source_changed", "待入库内容已变化，请刷新。")
             if item.kind not in ("task_instance", "reference"):
                 raise RequestError(400, "invalid_reference", "此操作只适用于题目和题内参考。")
@@ -437,9 +462,11 @@ class DomainAnalysis:
             if isinstance(command, CheckClassification) and (command.solution_ref is not None) != (
                 kind == "solution"
             ):
+                # 解法类检查必须带方法引用，题目类不得带。
                 raise RequestError(400, "invalid_reference", "检查题内参考时必须选择对应方法。")
             definitions, refs = await self._definitions(connection, domain_id, kind, command)
             if isinstance(command, CheckClassification) and command.confirm_add_method:
+                # 确认加方法：在任务草稿上预挂待加入的方法供模型核对。
                 definition = definitions["task"]
                 if not isinstance(definition, dict) or command.solution_ref is None:
                     raise RequestError(400, "invalid_reference", "请明确要加入任务的方法。")
@@ -454,6 +481,7 @@ class DomainAnalysis:
                 definitions["task"] = proposed.model_dump(mode="json")
             previous = None
             if isinstance(command, ExtractDefinition) and command.prior_candidate_ref:
+                # 带前序候选：读取既有草稿作为对照输入。
                 candidate = await self._artifact(
                     connection, domain_id, UUID(command.prior_candidate_ref.id)
                 )
@@ -466,6 +494,7 @@ class DomainAnalysis:
                 parent_item = await self.intake.item(connection, domain_id, item.parent_item_id)
                 reference = parent_item.result_ref if parent_item.state == "completed" else None
                 if reference is None:
+                    # 父待办尚未完成，回退用其候选素材作为父题内容。
                     parent = await self.intake.candidate(parent_item)
             if reference is not None:
                 instance = await load_instance(connection, domain_id, UUID(reference.id))
@@ -537,6 +566,7 @@ class DomainAnalysis:
     ) -> AnalysisAcceptance:
         config = self.config
         if config is None:
+            # 未配置分析模型，无法发起执行。
             raise RequestError(503, "temporarily_unavailable", "领域分析模型尚未配置。")
         action = EXTRACT if isinstance(command, ExtractDefinition) else CLASSIFY
         body = command.model_dump(mode="json")
@@ -551,6 +581,7 @@ class DomainAnalysis:
             )
         if saved is not None:
             if saved != digest(body):
+                # 同编号对应不同命令内容，幂等冲突。
                 raise RequestError(409, "request_conflict", "请求编号已用于另一项分析。")
             return AnalysisAcceptance(request_ref=identity, operation_run_id=run_id)
         item, source, refs = await self._snapshot(domain_id, command)
@@ -596,6 +627,7 @@ class DomainAnalysis:
                 },
             )
             if claimed is None:
+                # 并发下回执已被插入，核对输入指纹后重放。
                 saved = await connection.scalar(
                     text("SELECT input_hash FROM domain.command_receipt WHERE receipt_id=:id"),
                     {"id": identity},
@@ -604,6 +636,7 @@ class DomainAnalysis:
                     raise RequestError(409, "request_conflict", "请求编号已用于另一项分析。")
             else:
                 if item is not None:
+                    # 有待办条目时先校验来源素材仍有效。
                     await self.guard_source(
                         connection, UUID(item.candidate_key.partition(":")[0]), item.source_ref
                     )
@@ -611,6 +644,7 @@ class DomainAnalysis:
                 if item is not None:
                     current = await self.intake.item(connection, domain_id, item.item_id)
                     if current.state != "pending" or current.reference() != item.reference():
+                        # 锁内重查待办已被并发改动，拒绝发起执行。
                         raise RequestError(409, "source_changed", "待入库内容已变化，请刷新。")
                 scope = ("domain", domain_id)
                 sequence = await lock_scope_sequence(connection, *scope)
@@ -682,6 +716,7 @@ class DomainAnalysis:
         async with self.engine.begin() as connection:
             work = await store.lock_owned(connection, self.registry, run.execution_id)
             if work.state == "completed":
+                # 结果已被另一路完成，避免重复落产物。
                 return
             await store.active(connection, self.registry, run, "finish")
             scope = ("domain", value.domain_id)
@@ -717,6 +752,7 @@ class DomainAnalysis:
             if row is None:
                 return ReceiptView[AnalysisReceipt](receipt_state="not_found")
             if row.state != "completed":
+                # 未完成回执按受理中或拒绝返回，不带业务结果。
                 return ReceiptView[AnalysisReceipt](
                     receipt_state="accepted" if row.state == "accepted" else "rejected",
                     receipt_ref=identity,

@@ -118,6 +118,7 @@ async def _save_result(
                 db, scope, saved_activity.identity.activity_id
             )
             if opportunity is None:
+                # 活动尚无进行中机会，先登记开启事件。
                 opened = teaching_opportunities.started(
                     scope, saved_activity, input_id, message.committed_at
                 )
@@ -132,16 +133,19 @@ async def _save_result(
                 )
             provided = await provided_help_event(db, work, message, request_id)
             if provided:
+                # 本轮产生了求助记录，追加求助事件。
                 commands_to_save.append(provided)
             if reply.memory is not None:
                 update = await remember_from_reply(db, work, message, saved_activity, reply.memory)
                 if update:
+                    # 记忆条目有更新，追加记忆修订事件。
                     commands_to_save.append(
                         draft(scope, memory_facts.SAVED, update.memory_ref, update, request_id)
                     )
         if card is not None and leaf is not None and activity is not None:
             assert saved_activity is not None
             if card.part.purpose == "practice":
+                # 练习题提交后，尝试关闭对应教学机会。
                 closure = await teaching_opportunities.closed(
                     db, scope, saved_activity, input_id, commands_to_save[0], "completed"
                 )
@@ -151,6 +155,7 @@ async def _save_result(
                 presented_card(scope, card, leaf, saved_activity, message, request_id)
             )
         if activity is not None:
+            # 回查本次输入对应的学生原话消息。
             original = await db.scalar(
                 text(
                     "SELECT to_jsonb(m)-'source_event_id' FROM interaction.messages m "
@@ -159,6 +164,7 @@ async def _save_result(
                 {"scope": scope, "input": input_id},
             )
             if original is None and not await read_answer_context(db, input_id):
+                # 受理输入既无原话消息也无作答上下文，数据不完整，报错。
                 raise RuntimeError("Accepted student input is missing its message")
             if original is not None:
                 origin = facts.MessageFact.model_validate_json(canonical_json(original))
@@ -167,6 +173,7 @@ async def _save_result(
         messages.append(message.message_id)
         next_leaf = activity
         if leaf is not None and leaf.run_state == "completed":
+            # 叶活动已完成，回复后沿返回点回到父活动。
             next_leaf, sequence, notice_id, returning = await return_after_reply(
                 db, scope, leaf, sequence, input_id, request_id
             )
@@ -181,6 +188,7 @@ async def _save_result(
             source_events=frozenset({card.supply_event_id}) if card else frozenset(),
         )
         if leaf and leaf.run_state == "completed" and saved_activity is not None:
+            # 活动完成后再次尝试闭环教学机会（含返回父活动的情形）。
             closure = await teaching_opportunities.closed(
                 db, scope, saved_activity, input_id, commands_to_save[0], "completed"
             )
@@ -232,11 +240,14 @@ async def finalize_turn(
     cause: Ref | None,
 ) -> None:
     if state == "completed":
+        # 已正常收尾，无需二次终态处理。
         return
     active = await history.current(db, work.scope_id)
     if active.active_input_id != UUID(work.input_ref.id):
+        # 当前活动输入已不是本次执行，避免覆盖他人状态。
         return
     if state == "cancelled":
+        # 取消记为 cancelled 结果，其余异常记为 failed 并附原因引用。
         await _save_result(conversation, db, work, "cancelled", None)
     else:
         await _save_result(conversation, db, work, "failed", None, cause)
@@ -245,8 +256,10 @@ async def finalize_turn(
 
 async def reply_step(db: AsyncConnection, work: Execution) -> str:
     if work.active_attempt_id is None:
+        # 无活动尝试，记为首轮回话步骤。
         return "reply"
     attempt = await store.attempt(db, work.active_attempt_id)
+    # 首轮为 reply，重试行追加尝试号区分。
     return "reply" if attempt.attempt_no == 1 else f"reply:{attempt.attempt_no}"
 
 

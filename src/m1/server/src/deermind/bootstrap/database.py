@@ -51,4 +51,5 @@ async def database_lifespan() -> AsyncGenerator[AsyncEngine]:
         await check_database(engine)
         yield engine
     finally:
+        # 无论受理是否异常，都释放本进程的连接池。
         await engine.dispose()

@@ -136,6 +136,7 @@ class QuestionPart(FactModel):
 
     @model_validator(mode="after")
     def check_visibility(self) -> "QuestionPart":
+        # 题干须为陈述角色；仅例题可带参考答案，且答案角色须为 reference。
         if self.statement.role != "statement" or (
             self.worked_solution is not None
             and (self.purpose != "example" or self.worked_solution.role != "reference")
@@ -245,6 +246,7 @@ class StudentInput(FactModel):
 
     @model_validator(mode="after")
     def require_content(self) -> "StudentInput":
+        # 文本去空白后为空且无附件，视为空输入。
         if not (self.text and self.text.strip()) and not self.attachment_refs:
             raise ValueError("请输入消息或附上材料。")
         return self

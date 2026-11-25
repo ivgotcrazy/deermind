@@ -32,6 +32,7 @@ def main() -> None:
     recovery.add_argument("--authorization", required=True)
     args = parser.parse_args()
     if args.action == "initialize":
+        # 初始化消息资源；其余子命令为单事件补发。
         asyncio.run(initialize())
     else:
         asyncio.run(recover(args.handoff, args.operator, args.authorization))
@@ -52,4 +53,5 @@ async def recover(handoff: UUID, operator: str, authorization: str) -> None:
         identity = await redeliver(engine, handoff, operator=operator, authorization=authorization)
         print(f"Redelivery arranged: {identity}")
     finally:
+        # 命令结束后释放临时连接池。
         await engine.dispose()

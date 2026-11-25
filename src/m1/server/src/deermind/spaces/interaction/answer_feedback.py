@@ -52,6 +52,7 @@ async def read_answer_context(db: AsyncConnection, source: UUID) -> AnswerContex
             {"id": source},
         )
     ).one_or_none()
+    # 命中作答上下文则组装对象，无记录返回空。
     return (
         AnswerContext(
             row.submission_id,
@@ -101,6 +102,7 @@ async def save_answer_feedback(
                 }
             ],
         },
+        # 判定为不确定时标注证据局限，其余不留限制项。
         limitations=["uncertain"] if candidate.verdict == "uncertain" else [],
         run_ref=work.execution_id,
         created_at=datetime.now(UTC),
@@ -140,26 +142,32 @@ async def save_submission(
 ) -> None:
     leaf = current.current_activity
     if leaf is None or leaf.activity_ref != practice.activity_ref or leaf.run_state != "active":
+        # 活动已切换或非活跃；若所引轮次已闭环，优先报轮次结束。
         if practice.round_ref and current.current_round and current.current_round.state == "closed":
             raise RequestError(409, "round_closed", "当前检测轮已经结束。")
         raise RequestError(409, "revision_conflict", "作答所属活动已变动。")
     if practice.task_use_ref.owner != "interaction" or practice.task_use_ref.type != "task_use":
+        # 引用必须指向本空间内的练习使用记录。
         raise RequestError(400, "invalid_reference", "请选择本次活动中的练习。")
     try:
         use_id = UUID(practice.task_use_ref.id)
     except ValueError as error:
+        # 编号非合法 UUID，转换为无效引用错误。
         raise RequestError(400, "invalid_reference", "练习编号无效。") from error
     opened = current.current_round if practice.round_ref else None
     if practice.round_ref:
         if opened is None or opened.state != "open":
+            # 所引轮次不存在或已闭环，不能再提交。
             raise RequestError(409, "round_closed", "当前检测轮已经结束。")
         if (
             opened.round_ref != practice.round_ref
             or opened.round_ref.revision != practice.expected_round_revision
             or opened.task_use_ref != practice.task_use_ref
         ):
+            # 轮次引用、修订与题目实例须与当前轮一致。
             raise RequestError(409, "revision_conflict", "检测题目或轮次已变化。")
     elif practice.expected_round_revision is not None:
+        # 教学练习不带检测轮，却提供了轮次修订，引用非法。
         raise RequestError(400, "invalid_reference", "教学练习没有检测轮。")
     use = (
         await db.execute(
@@ -179,11 +187,13 @@ async def save_submission(
         )
     ).one_or_none()
     if use is None:
+        # 练习使用记录在当前活动/轮次范围内不存在。
         raise RequestError(404, "not_found", "找不到此练习。")
     if await db.scalar(
         text("SELECT 1 FROM interaction.submissions WHERE submission_id=:id"),
         {"id": practice.submission_id},
     ):
+        # 作答编号已被占用，避免重复提交。
         raise RequestError(409, "identity_conflict", "该作答编号已经使用。")
     identity = ref("submission", practice.submission_id)
     event_id = uuid5(acceptance.input_id, "answer-submitted")
@@ -227,9 +237,11 @@ async def save_submission(
         db, scope, position, acceptance.input_id, event, "completed"
     )
     if closure:
+        # 作答完成后可闭环教学机会，追加关闭事件。
         events.append(closure)
     events.append(replace(event, event_id=event_id))
     if opened:
+        # 检测轮提交后，按提交原因生成闭轮事件。
         closed, _next = await round_facts.close_payload(
             db,
             opened,

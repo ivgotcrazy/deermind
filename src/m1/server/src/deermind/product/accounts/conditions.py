@@ -28,8 +28,10 @@ def derive_conditions(
     current: dict[str, ConfirmationFact] = {}
     for fact in confirmations:
         if fact.student_id != student_id or fact.notice_ref != notice_ref:
+            # 确认须属于本学生和本告知版本，防止混入他人或旧告知。
             raise ValueError("Confirmation does not belong to this student and notice")
         if fact.kind in current:
+            # 每类只允许一条当前确认。
             raise ValueError("Select one current confirmation per kind before calculation")
         current[fact.kind] = fact
 
@@ -45,6 +47,7 @@ def derive_conditions(
     for kind, label in (("guardian_consent", "监护人同意"), ("student_assent", "本人使用意愿")):
         fact = current.get(kind)
         if fact is None or fact.decision != "accepted":
+            # 区分"已拒绝"与"尚未确认"，给出不同缺口码。
             declined = fact is not None and fact.decision == "declined"
             reasons.append(
                 UsageIssue(
@@ -54,6 +57,7 @@ def derive_conditions(
                 )
             )
     rejected = any(fact.decision == "declined" for fact in current.values())
+    # 任一拒绝即阻断；无拒绝但仍有缺口为待定；缺口清空才放行。
     eligibility = "blocked" if rejected else ("pending" if reasons else "allowed")
     return ConditionsFact(
         student_id=student_id,

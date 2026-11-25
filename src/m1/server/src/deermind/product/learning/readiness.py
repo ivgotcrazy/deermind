@@ -44,6 +44,7 @@ async def prepare_course(
     evaluation: list[EvaluationGap] = []
     by_chapter = {chapter.chapter_id: chapter for chapter in chapters}
 
+    # 逐章节汇总阅读、讲解、问答、练习反馈与检测各用途的就绪情况。
     for chapter in chapters:
         subject = facts.ref("material_chapter", chapter.chapter_id, chapter.revision)
         reasons = (
@@ -69,6 +70,7 @@ async def prepare_course(
                 teaching, supply = await methods(db, domain, entry.task_ref, entry.method_refs)
             except RequestError as error:
                 if error.code != "invalid_reference":
+                    # 非引用失效错误向上抛，仅记录可识别的悬空引用。
                     raise
                 blockers.append(issue(error.code, f"/chapters/{chapter.chapter_id}", str(error)))
             else:
@@ -84,6 +86,7 @@ async def prepare_course(
         )
         for purpose, activity, gaps in purposes:
             config = configs.get(activity)
+            # 缺配置时记一条“活动未配置”缺口，否则并入配置自带缺口。
             misses = [*gaps, *(config.gaps if config is not None else [_missing()])]
             reasons = list(
                 {(reason.code, reason.path, reason.message): reason for reason in misses}.values()
@@ -98,6 +101,7 @@ async def prepare_course(
                 )
             )
 
+    # 核对目标项及其方法是否都落在本课程章节关联内，并汇总评价缺口。
     for i, item in enumerate(target.items):
         for j, method in enumerate(item.methods):
             for chapter_id in method.chapter_refs:
@@ -122,6 +126,7 @@ async def prepare_course(
                     if entry.path in {prefix, f"{prefix}/aspects/{k}"}
                 ]
                 if missing:
+                    # 收集该方面在目标层登记的评价缺口。
                     evaluation.append(
                         EvaluationGap(
                             item_id=item.item_id,
@@ -132,6 +137,7 @@ async def prepare_course(
                         )
                     )
         if not set(item.chapter_refs) <= by_chapter.keys():
+            # 目标引用的章节不在本课程章节集合内。
             blockers.append(issue("target_outside_course", f"/items/{i}", "课程没有包含目标章节。"))
     checks.append(
         PurposeCheck(

@@ -95,6 +95,7 @@ def _ref_keys(body: ConfirmKCPathRequest) -> dict[str, UUID | int]:
 
 def _receipt(row: RowMapping) -> ReceiptView[ConfirmKCPathResult]:
     if row["state"] == "failed":
+        # 失败回执转为拒绝视图，带回依据产物引用。
         error = ErrorDetail.model_validate(row["error"])
         return ReceiptView[ConfirmKCPathResult](
             receipt_state="rejected",
@@ -115,6 +116,7 @@ def _receipt(row: RowMapping) -> ReceiptView[ConfirmKCPathResult]:
 
 def _response(receipt: ReceiptView[ConfirmKCPathResult]) -> ConfirmKCPathResponse:
     if receipt.error is not None:
+        # 回执带业务错误，转成 409 抛出。
         raise RequestError(
             409, receipt.error.code, receipt.error.message, issues=receipt.error.issues
         )
@@ -124,6 +126,7 @@ def _response(receipt: ReceiptView[ConfirmKCPathResult]) -> ConfirmKCPathRespons
 
 def _replay(row: RowMapping, normalized: str, digest: str) -> ConfirmKCPathResponse:
     if row["input_hash"] != digest or canonical_json(row["normalized_input"]) != normalized:
+        # 同编号对应不同输入，幂等键冲突。
         raise RequestError(409, "request_conflict", "请求编号已用于其他内容。")
     return _response(_receipt(row))
 
@@ -147,6 +150,7 @@ async def _check_path(
     by_ref = {(row.kind, row.object_id, row.version): row.content for row in rows}
     for field, ref in named_refs:
         if (ref.kind, ref.object_id, ref.version) not in by_ref:
+            # 版本已删、不存在或跨领域，按引用错误抛出。
             raise relationship_error(f"/{field}", "引用的版本不存在、已移除或不属于本领域。")
     task = TaskDefinition.model_validate(
         by_ref["task", body.task_ref.object_id, body.task_ref.version]
@@ -155,8 +159,10 @@ async def _check_path(
         by_ref["solution", body.solution_ref.object_id, body.solution_ref.version]
     )
     if body.solution_ref not in task.method_refs:
+        # 任务→方法须为直接采用关系。
         raise relationship_error("/solution_ref", "指定版本的方法必须由该任务版本直接采用。")
     if body.kc_ref not in method.kc_refs:
+        # 方法→KC 须为直接引用关系。
         raise relationship_error("/kc_ref", "指定版本的知识成分必须由该方法版本直接引用。")
     issues = [
         issue.model_copy(update={"path": f"/task_ref{issue.path}"})
@@ -168,6 +174,7 @@ async def _check_path(
         if issue.path in {"/rationale", "/applicability", "/key_process"}
     ]
     if body.not_direct_reason is not None:
+        # 人工说明路径不直接的原因，作为补充问题留档。
         issues.append(
             Issue(code="not_direct", path="/not_direct_reason", message=body.not_direct_reason)
         )
@@ -188,6 +195,7 @@ async def _project(connection: AsyncConnection, event: StoredEvent) -> None:
     artifact, path = path_records(event.payload)
     async with application(connection, "domain.kc_test_paths.v1", 1, event.draft.event_id) as apply:
         if not apply:
+            # 已被回执投影处理过，跳过落表。
             return
         await connection.execute(
             text(
@@ -211,6 +219,7 @@ async def _project(connection: AsyncConnection, event: StoredEvent) -> None:
             },
         )
         if path is not None:
+            # 仅确认通过的记录落 kc_test_path 表；不足依据只落 artifact。
             await connection.execute(
                 text(
                     "INSERT INTO domain.kc_test_path "
@@ -233,6 +242,7 @@ async def read_task_paths(
 ) -> list[KCPathView]:
     """读取所选方法和固定任务版本的确认，包含历史依据。"""
     if not methods:
+        # 未指定方法时无路径可读。
         return []
     methods_by_key = {(ref.object_id, ref.version): ref for ref in methods}
     rows = await connection.execute(
@@ -248,6 +258,7 @@ async def read_task_paths(
     for row in rows:
         method = methods_by_key.get((row.solution_id, row.solution_version))
         if method is None:
+            # 路径关联的方法不在本次所选范围内，跳过。
             continue
         basis = PathBasis.model_validate(row.payload)
         result.append(
@@ -284,6 +295,7 @@ class KCTestPaths:
         async with self.engine.connect() as connection:
             previous = (await connection.execute(_RECEIPT, key)).mappings().one_or_none()
             if previous is not None:
+                # 同请求编号已有回执，按幂等重放校验后返回。
                 return _replay(previous, normalized, digest)
             issues = await _check_path(connection, domain, body)
             now = await connection.scalar(text("SELECT clock_timestamp()"))
@@ -310,6 +322,7 @@ class KCTestPaths:
         rows = [_record(ARTIFACT_TYPE, artifact_id, artifact)]
         related = None
         if not issues:
+            # 校验无缺口才生成确认记录；有缺口只落依据产物。
             keys = _ref_keys(body)
             path = PathRecord.model_validate(
                 {
@@ -348,6 +361,7 @@ class KCTestPaths:
         try:
             prepared = await self.attachments.prepare(self.events, access, (draft,))
         except OSError as error:
+            # 附件落盘失败按临时不可用返回，不污染业务状态。
             raise RequestError(503, "temporarily_unavailable", "暂时无法保存检验依据。") from error
 
         async with self.engine.begin() as connection:
@@ -364,6 +378,7 @@ class KCTestPaths:
                 {**key, "id": request_id, "body": normalized, "digest": digest},
             )
             if claimed is None:
+                # 并发下回执被他方插入，转走幂等重放分支。
                 row = (await connection.execute(_RECEIPT, key)).mappings().one()
                 return _replay(row, normalized, digest)
 
@@ -377,6 +392,7 @@ class KCTestPaths:
                 {"id": domain},
             )
             if root is None:
+                # 领域身份已删除或不存在，拒绝写入。
                 raise RequestError(404, "not_found", "找不到指定领域。")
             # 条件正文来自固定版本，锁内重查活动身份和固定关系。
             await _check_path(connection, domain, body)
@@ -386,6 +402,7 @@ class KCTestPaths:
                 else None
             )
             if existing is not None:
+                # 同一三元组已有确认记录，复用原依据，避免重复投影。
                 related = path_ref(existing.confirmation_id)
                 artifact_id = existing.basis_artifact_id
             else:
@@ -443,6 +460,7 @@ class KCTestPaths:
         self, principal: UUID, query: ReceiptQuery
     ) -> ReceiptView[ConfirmKCPathResult]:
         if query.action != CONFIRM_PATH_ACTION or query.resource_kind != "domain":
+            # 收据只对本动作、本领域开放查询。
             raise RequestError(400, "invalid_request", "该路径确认收据不可查询。")
         async with self.engine.connect() as connection:
             row = (
@@ -455,5 +473,6 @@ class KCTestPaths:
                 .one_or_none()
             )
         if row is None:
+            # 无对应回执，返回未找到视图。
             return ReceiptView[ConfirmKCPathResult](receipt_state="not_found")
         return _receipt(row)

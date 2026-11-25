@@ -61,6 +61,7 @@ class MaterialIntake:
             },
         )
         if available is None:
+            # 候选已退役、版本不符或采用记录不一致，引用已失效。
             raise RequestError(409, "source_changed", "所引用的教材内容已变化，请重新提交。")
 
     async def _read(
@@ -75,12 +76,14 @@ class MaterialIntake:
         )
         if row is None:
             raise RequestError(404, "not_found", "找不到本教材的入库提交。")
+        # 命中提交记录后转为事实模型。
         return facts.SubmissionFact.model_validate_json(canonical_json(row))
 
     async def _view(
         self, connection: AsyncConnection, row: facts.SubmissionFact
     ) -> IntakeSubmissionView:
         delivery = await delivery_state(connection, row.trigger_event_id)
+        # 租约在途对外仍显示为待送达。
         visible_delivery = "pending" if delivery == "leased" else delivery
         retired = await connection.scalar(
             text("SELECT status='deleted' FROM product.material_import WHERE import_id=:id"),
@@ -93,6 +96,7 @@ class MaterialIntake:
             domain_receipt_ref=row.domain_receipt_ref,
             items=row.items,
             issues=[Issue.model_validate(item) for item in row.issues],
+            # 导入已删除时提交等待状态视为关闭。
             wait_state="closed" if retired else row.wait_state,
             delivery_state=visible_delivery
             if visible_delivery in ("pending", "delivered", "exhausted")
@@ -113,6 +117,7 @@ class MaterialIntake:
     ) -> list[IntakeSource]:
         selected: dict[CandidateKey, RowMapping] = {}
         sources: list[IntakeSource] = []
+        # 逐条核对所采用候选是否为当前有效版本。
         for reference in command.adopted_content_refs:
             item = (
                 (
@@ -138,6 +143,7 @@ class MaterialIntake:
                 .one_or_none()
             )
             if item is None or reference.key() in selected:
+                # 引用失效或同一候选重复提交。
                 raise RequestError(409, "invalid_reference", "只可提交不同且当前已采用的内容。")
             selected[reference.key()] = item
             sources.append(
@@ -159,6 +165,7 @@ class MaterialIntake:
         }
         bound = {binding.candidate_ref.key() for binding in command.parent_bindings}
         if bound != required or len(bound) != len(command.parent_bindings):
+            # 参考类候选与父题绑定必须一一对应，不得遗漏或重复。
             raise RequestError(400, "missing_parent", "每条题内参考都需要指定对应题目。")
         for binding in command.parent_bindings:
             if binding.parent_candidate_ref is not None:
@@ -171,6 +178,7 @@ class MaterialIntake:
                     or expected["id"] != str(parent.candidate_id)
                     or expected["revision"] != parent.candidate_revision
                 ):
+                    # 父题须在本批内、类型为题目，且与候选登记的父引用一致。
                     raise RequestError(400, "missing_parent", "请同时提交题内参考所对应的题目。")
         return sources
 
@@ -233,6 +241,7 @@ class MaterialIntake:
                 normalized_input=command.model_dump(mode="json"),
             )
             if receipt.result_ref is None:
+                # 本事务抢到收据身份，持锁校验并落提交事件。
                 imported = await self.materials.read_import(connection, import_id, lock=True)
                 sources = await self._sources(connection, import_id, command)
                 row = facts.SubmissionFact(
@@ -268,6 +277,7 @@ class MaterialIntake:
                 )
                 await complete_request(connection, receipt, reference)
             else:
+                # 幂等重放：读回原提交事实组装结果。
                 row = await self._read(connection, import_id, UUID(receipt.result_ref.id))
             return IntakeAccepted(
                 request_ref=receipt.request_ref, result=await self._view(connection, row)
@@ -295,6 +305,7 @@ class MaterialIntake:
         )
         row = await self._read(connection, notice.scope_id, decision.intake_request_id)
         if row.trigger_event_id != decision.trigger_event_id:
+            # 回写结果须对应原始提交触发事件，防止串单。
             raise ValueError("Intake outcome does not match the original submission")
         updated = row.model_copy(
             update={
@@ -344,6 +355,7 @@ class MaterialIntake:
                 )
             ).one_or_none()
             if row is None:
+                # 无已完成提交收据，按未找到返回。
                 return ReceiptView[IntakeSubmissionView](receipt_state="not_found")
             saved = await self._read(connection, query.resource_id, UUID(row.result_ref["id"]))
             return ReceiptView[IntakeSubmissionView](

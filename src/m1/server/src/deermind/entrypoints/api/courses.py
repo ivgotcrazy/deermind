@@ -49,11 +49,14 @@ async def reader(
     if expected is None or (
         writing and (csrf is None or not compare_digest(csrf.encode(), session.csrf_token.encode()))
     ):
+        # 缺会话标识，或写操作缺/不符 CSRF，拒绝访问。
         raise RequestError(403, "forbidden", "请刷新登录后再试。")
     account = session.account
     if student_only and account.role != "student":
+        # 仅限学生的入口拒绝管理员。
         raise RequestError(403, "forbidden", "请使用学生账号。")
     if account.role == "student" and account.usage_gaps:
+        # 学生存在未通过的使用缺口，暂不可进入学习。
         raise RequestError(403, "usage_not_ready", "请先完成使用确认。")
     response.headers["Cache-Control"] = "no-store"
     return account

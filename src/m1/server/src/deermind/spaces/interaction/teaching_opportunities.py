@@ -61,6 +61,7 @@ async def closed(
     reason: facts.CloseReason,
 ) -> EventDraft | None:
     opportunity = await opened(db, scope, activity.identity.activity_id)
+    # 该活动没有未关闭的教学机会，无需生成关闭事件。
     if opportunity is None:
         return None
     rows = await db.scalars(
@@ -85,6 +86,7 @@ async def closed(
         },
     )
     parts = [ref("message", item).model_copy(update={"path": "/parts/0"}) for item in rows]
+    # 没有可纳入的讲解/答疑消息，不生成关闭事件。
     if not parts:
         return None
     identity = ref("opportunity_closure", opportunity.opportunity_id)

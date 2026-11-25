@@ -74,6 +74,7 @@ class DetectionPreparation:
                 parent.identity.type,
                 parent.identity.config_ref,
             )
+            # 父活动蓝图当前节点不允许发起准备检测，直接失败返回。
             if not config or not any(
                 node.node_id == parent.position.node_id
                 and "prepare_detection" in node.allowed_actions
@@ -85,9 +86,11 @@ class DetectionPreparation:
             return failed
         first = entry_node(config.definition.blueprint)
         if first is None:
+            # 检测蓝图缺少入口节点，无法开活动。
             return failed
         tasks = {goal.claim_ref: await self.read_task(goal.claim_ref) for goal in course.items}
         required = detection_plans.requirements(course, tasks)
+        # 拆分后无任何可用要求，带缺口返回失败。
         if not required.items:
             return failed.model_copy(update={"gaps": required.gaps})
         async with service.engine.begin() as db:
@@ -103,6 +106,7 @@ class DetectionPreparation:
             ).one()
             principal = UUID(auth.initiator_ref.id)
             if parent and parent.identity.type == "detection":
+                # 复用既有检测活动时，必须由同一输入触发，否则放弃。
                 if parent.position.source_input_ref != UUID(work.input_ref.id):
                     return failed
                 target = parent.identity.activity_id
@@ -143,6 +147,7 @@ class DetectionPreparation:
                 identity, payload = detection_plans.supply_request(
                     work, activity, domain, requirement, known, exposed
                 )
+                # 供题请求事件尚未落库时才追加，避免重复登记。
                 if not await db.scalar(
                     text("SELECT 1 FROM runtime.events WHERE event_id=:id"), {"id": identity}
                 ):
@@ -177,6 +182,7 @@ class DetectionPreparation:
         async with service.engine.begin() as db:
             current = await store.lock_owned(db, self.registry, run.execution_id)
             if current.state == "completed":
+                # 执行已完成，避免重复收尾。
                 return
             work = await store.active(db, self.registry, run, "finish")
             source = await db.scalar(
@@ -189,16 +195,19 @@ class DetectionPreparation:
             gaps = list(prepared.gaps)
             selected: set[Ref] = set()
             for entry in prepared.groups:
+                # 仅等待已就绪的触发才读取供题结果。
                 result = (
                     await self.supplied(db, work.scope_id, entry.trigger)
                     if entry.trigger in available
                     else None
                 )
                 if result is None or result[1].task_instance_ref in selected:
+                    # 无结果或题目实例已被选中，记入缺口并跳过。
                     gaps.append("暂时没有满足该方法和范围的题目。")
                     continue
                 instance, supplied, _event = result
                 if instance.task_ref != entry.requirement.task_ref:
+                    # 供题任务与原要求任务不符，记入缺口并跳过。
                     gaps.append("供题结果与原 Task 不一致。")
                     continue
                 selected.add(supplied.task_instance_ref)
@@ -211,6 +220,7 @@ class DetectionPreparation:
                     )
                 )
             part = None
+            # 存在活动且至少整理出一条题项时，落题单准备事件并生成题单部件。
             if prepared.activity_ref and items:
                 owner, payload = detection_plans.prepared_plan(
                     work, prepared.activity_ref, prepared.adoption, items, gaps
@@ -231,6 +241,7 @@ class DetectionPreparation:
                     question_count=len(items),
                     gaps=gaps,
                 )
+            # 有题单部件时提示确认开始，否则告知暂无可用题目。
             wording = "题单已准备好，确认后开始。" if part else "暂时没有可用的检测题。"
             await complete_turn(
                 service,

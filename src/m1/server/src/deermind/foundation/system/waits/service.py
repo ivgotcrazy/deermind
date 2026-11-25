@@ -1,4 +1,9 @@
-"""登记、补查和接续；所有者持业务锁，底座只落定一次等待决定。"""
+"""登记、补查和接续；所有者持业务锁，底座只落定一次等待决定。
+
+分层定位：foundation（公共运行底座 / 等待服务）
+对外契约：Waits 提供等待登记、条件探测、命中接续与取消；mark_waiting 把执行置为等待状态。
+边界约束：probe 只锁等待不取业务写锁；handle 的副作用与接续收据同事务提交；取消先落定则不能再执行。
+"""
 
 from datetime import datetime
 from uuid import UUID, uuid4
@@ -15,7 +20,10 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 
 class Waits:
+    """等待底座服务：持有注册表与等待策略，承接登记、探测、接续与取消。"""
+
     def __init__(self, entries: Registry, policies: Policies, *, maximum_seconds: int) -> None:
+        # 等待总时长上限必须为正，拒绝零或负上限。
         if maximum_seconds <= 0:
             raise ValueError("Finite wait limit required")
         self.entries, self.policies, self.maximum_seconds = entries, policies, maximum_seconds
@@ -34,12 +42,13 @@ class Waits:
     ) -> Wait:
         """重复登记沿原截止时间；业务恢复位置与等待必须由调用方同事务提交。"""
         execution = await store.active(connection, self.entries, run, "step")
+        # 登记条件与接续预算逐项校验，任一不合法即拒绝：
         if (
-            not step_key.strip()
-            or reserve_seconds <= 0
+            not step_key.strip()  # 步骤键非空，用于同步骤重复登记去重
+            or reserve_seconds <= 0  # 命中后留给接续动作的预算为正
             or condition.result_key
-            and condition.result_key.scope_id != condition.scope_id
-            or not set(condition.equals) <= {"event_id", "producer", "correlation_id"}
+            and condition.result_key.scope_id != condition.scope_id  # 结果键归属同一范围
+            or not set(condition.equals) <= {"event_id", "producer", "correlation_id"}  # 相等条件只允许固定字段
         ):
             raise ValueError("Invalid wait condition or continuation budget")
         digest = steps.input_hash(condition.model_dump(mode="json"))
@@ -51,11 +60,14 @@ class Waits:
             ),
             {"execution": run.execution_id, "step": step_key, "digest": digest},
         )
+        # 命中同步骤、同条件摘要的既有等待：恢复沿原等待，不新建第二条。
         if existing:
             saved = await facts.read_wait(connection, str(existing), lock=True)
             self.policies.resolve(saved, execution)
+            # 探测程序或归属与原等待不一致，说明被另一处复用，判登记冲突。
             if saved.probe_ref != probe_ref or saved.owner_ref != owner:
                 raise ValueError("Wait registration conflict")
+            # 仍在等待中：核对恢复后到执行期限是否还留得出接续预算。
             if saved.resolution == "pending":
                 now = await connection.scalar(text("SELECT clock_timestamp()"))
                 if (
@@ -65,12 +77,14 @@ class Waits:
                 await mark_waiting(connection, run)
             return saved
         now = await connection.scalar(text("SELECT clock_timestamp()"))
+        # 截止时间必须带时区；等待时长落在允许区间内；且截止后到执行期限仍留得出接续预算。
         if (
             deadline.tzinfo is None
             or not 0 < (deadline - now).total_seconds() <= self.maximum_seconds
             or (run.deadline_at - deadline).total_seconds() < reserve_seconds
         ):
             raise ValueError("Wait exceeds its limit or leaves no continuation budget")
+        # 按探测程序引用查找登记的等待策略；查无则拒绝，不接受未注册的探测方。
         policy = next((p for p in self.policies.items if p.ref == probe_ref), None)
         if policy is None:
             raise PermissionError("Unknown wait policy")
@@ -122,31 +136,35 @@ class Waits:
         """只锁Wait，不取得业务写锁；数据库读取失败不能伪装成未取得结果。"""
         execution = await store.load(connection, run.execution_id)
         current = await store.attempt(connection, run.attempt_id)
+        # 任一条件不满足即视为旧尝试/已停止，拒绝本次探测：
         if (
-            execution.active_attempt_id != run.attempt_id
-            or current.execution_id != run.execution_id
-            or execution.state not in {"ready", "running", "waiting"}
-            or execution.implementation_ref != run.implementation_ref
-            or execution.ai_config_ref != run.ai_config_ref
-            or execution.input_ref != run.input_ref
-            or current.deadline_at != run.deadline_at
+            execution.active_attempt_id != run.attempt_id  # 提交者不是当前有效尝试
+            or current.execution_id != run.execution_id  # 尝试不属于本执行
+            or execution.state not in {"ready", "running", "waiting"}  # 工作已不在可活动状态
+            or execution.implementation_ref != run.implementation_ref  # 实现引用漂移
+            or execution.ai_config_ref != run.ai_config_ref  # 配置引用漂移
+            or execution.input_ref != run.input_ref  # 输入引用漂移
+            or current.deadline_at != run.deadline_at  # 尝试期限与受理记录不一致
         ):
             raise ValueError("Wait attempt is no longer active")
         await store.check(connection, self.entries, execution, "read")
         saved = await facts.read_wait(connection, str(identity), lock=True)
         policy = self.policies.resolve(saved, execution)
         handling = await facts.read_handling(connection, saved)
+        # 等待已有终态或已被取消：直接返回原决定，不再探测。
         if saved.resolution != "pending" or handling.state == "cancelled":
             return saved
         probe_started = await connection.scalar(text("SELECT clock_timestamp()"))
         found = await policy.probe(connection, execution, saved.condition)
         now = await connection.scalar(text("SELECT clock_timestamp()"))
+        # 未命中且尚未到期：保持等待，本次探测返回空结果。
         if found is None and now < saved.deadline_at:
             return saved
         # 普通补查恰好跨过截止点时，还需做一次到期后的查询，不能沿用之前的空结果。
         if found is None and probe_started < saved.deadline_at <= now:
             found = await policy.probe(connection, execution, saved.condition)
             now = await connection.scalar(text("SELECT clock_timestamp()"))
+        # 探测命中事件：回查事件记录，逐项核验是否确属等待条件。
         if found is not None:
             event = (
                 (
@@ -162,6 +180,7 @@ class Waits:
                 .mappings()
                 .one()
             )
+            # 类型、范围、生产者/关联键任一不符，即视为无关事件，拒绝据此接续。
             if (
                 event["event_type"] not in saved.condition.event_types
                 or event["scope_kind"] != saved.condition.scope_kind
@@ -196,12 +215,15 @@ class Waits:
         saved = await facts.read_wait(connection, str(identity), lock=True)
         policy = self.policies.resolve(saved, execution)
         handling = await facts.read_handling(connection, saved)
+        # 接续已定案（已提交或已取消）：幂等返回原处理记录。
         if handling.state in {"committed", "cancelled"}:
             return handling
+        # 等待尚未得出结论，不能进入业务接续。
         if saved.resolution == "pending":
             raise ValueError("Cannot handle an unresolved wait")
         granted = await store.authorization(connection, run.execution_id)
         try:
+            # 嵌套事务内执行业务接续，接续收据随外层事务一并提交或回滚。
             async with connection.begin_nested():
                 receipt = await policy.handle(connection, execution, saved)
                 await connection.execute(
@@ -212,6 +234,7 @@ class Waits:
                     ),
                     {"id": identity, "receipt": receipt.model_dump_json()},
                 )
+        # 业务或权限错误：接续记为 failed 并落失败引用，不中断当前事务后续留痕。
         except (ValueError, PermissionError) as error:
             failure = Ref(
                 owner="runtime", type="wait_failure", id=str(identity), path=type(error).__name__
@@ -226,6 +249,7 @@ class Waits:
             )
         handling = await facts.read_handling(connection, saved)
         await facts.record(connection, saved, handling, "handled", granted.initiator_ref)
+        # 接续成功：已无其他待决等待时，把执行与尝试从等待态恢复为运行态。
         if handling.state == "committed":
             await connection.execute(
                 text(
@@ -246,6 +270,7 @@ class Waits:
         return handling
 
     async def cancel(self, connection: AsyncConnection, caller: Caller, identity: UUID) -> Handling:
+        """校验调用者与归属后取消未提交的等待；已 committed/cancelled 的保留原决定。"""
         saved = await facts.read_wait(connection, str(identity))
         execution = await store.lock_owned(connection, self.entries, saved.execution_id)
         caller.require(execution, "cancel")
@@ -253,6 +278,7 @@ class Waits:
         saved = await facts.read_wait(connection, str(identity), lock=True)
         self.policies.resolve(saved, execution)
         handling = await facts.read_handling(connection, saved)
+        # 已提交或已取消的等待保留原决定，不再覆盖。
         if handling.state in {"committed", "cancelled"}:
             return handling
         await connection.execute(

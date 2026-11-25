@@ -51,10 +51,12 @@ def _validate(draft: EventDraft, payload: EventPayload) -> None:
     if isinstance(payload, SupplyPrepared):
         refs = payload.use_check_refs
         if draft.event_type == PREPARED:
+            # 预备事件额外带输入产物记录。
             refs = [payload.input_artifact_ref, *refs]
         if [record.record_id for record in payload.records] != [ref.id for ref in refs]:
             raise ValueError("Unexpected supply input or check records")
     elif isinstance(payload, DomainTaskSupplyCompleted):
+        # 完成事件：单条批次记录，批次引用与结果/归属引用一致。
         if (
             len(payload.records) != 1
             or payload.records[0].record_id != payload.supply_batch_ref.id
@@ -73,6 +75,7 @@ def _validate(draft: EventDraft, payload: EventPayload) -> None:
     else:
         raise ValueError("Unexpected supply event")
     if draft.causation_event_id != payload.trigger_event_id:
+        # 事件必须回溯到原始供题请求。
         raise ValueError("Supply event must identify its original request")
 
 
@@ -110,6 +113,7 @@ REGISTRATIONS = [
 async def project(db: AsyncConnection, event: StoredEvent) -> None:
     async with application(db, "domain.task_supply", 1, event.draft.event_id) as needed:
         if needed:
+            # 回执要求投影时才落库。
             await _project(db, event)
 
 
@@ -118,11 +122,13 @@ async def _project(db: AsyncConnection, event: StoredEvent) -> None:
         if not isinstance(record.content, InlineContent):
             raise ValueError("Decoded supply record required")
         if record.record_type == analysis_facts.ARTIFACT:
+            # 分析产物复用 analysis_facts 投影。
             value = analysis_facts.AnalysisArtifact.model_validate_json(
                 canonical_json(record.content.value)
             )
             await analysis_facts.project(db, event, value)
         elif record.record_type == BATCH:
+            # 批次记录写入供题批次表。
             await db.execute(
                 text(
                     "INSERT INTO domain.supply_batch SELECT * FROM "
@@ -138,4 +144,5 @@ async def _project(db: AsyncConnection, event: StoredEvent) -> None:
                 },
             )
         else:
+            # 未识别的记录类型，拒绝投影。
             raise ValueError("Unknown supply record format")

@@ -1,4 +1,9 @@
-"""Interaction 和 Domain 共享的供题请求及结果事实。"""
+"""Interaction 和 Domain 共享的供题请求及结果事实。
+
+分层定位：abstractions（跨层合同）
+对外契约：供题请求/完成事件正文，及已供题目、未满足项结构。
+边界约束：只定义事件正文与结构，不含选题、生成与核验实现。
+"""
 
 from typing import Annotated, Literal
 from uuid import UUID
@@ -13,6 +18,8 @@ type SupplyPurpose = Literal["example", "practice", "assessment"]
 
 
 class TaskSupplyRequested(EventPayload):
+    """供题请求正文：用途、题目/方法/约束、已接触实例与所需数量。"""
+
     request_ref: Ref
     supply_input_ref: Ref
     domain_id: UUID
@@ -29,12 +36,16 @@ class TaskSupplyRequested(EventPayload):
 
 
 class DomainTaskSupplyCompleted(EventPayload):
+    """供题完成正文：触发事件、供题批次引用与结果引用。"""
+
     trigger_event_id: UUID
     supply_batch_ref: Ref
     result_ref: Ref
 
 
 class SuppliedTask(FactModel):
+    """一道已供题目：实例、正文、参考解法、匹配方法、使用核验；来源为既有或生成。"""
+
     task_instance_ref: Ref
     content_ref: Ref
     reference_solution_refs: list[Ref]
@@ -44,6 +55,8 @@ class SuppliedTask(FactModel):
 
 
 class UnfilledSupply(FactModel):
+    """未满足供题项：数量、条件、原因类别与是否可重试。"""
+
     count: Annotated[int, Field(gt=0)]
     condition: str | None
     reason: Literal["exposure_unknown", "requires_semantic_check", "no_eligible_instance"]

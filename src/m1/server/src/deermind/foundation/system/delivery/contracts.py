@@ -1,4 +1,9 @@
-"""进程内订阅合同及严格通知格式；通知不携带正文或读取授权。"""
+"""进程内订阅合同及严格通知格式；通知不携带正文或读取授权。
+
+分层定位：foundation（公共运行底座 / 事件交接）
+对外契约：Subscription 登记订阅者与事务回调；SubscriptionRegistry 提供类型匹配；specifications 向技术适配暴露订阅描述。
+边界约束：只维护订阅快照与匹配规则，不含投递、重试或网络传输实现。
+"""
 
 import re
 from collections.abc import Awaitable, Callable, Sequence
@@ -29,7 +34,9 @@ class SubscriptionRegistry:
     def __init__(self, subscriptions: Sequence[Subscription]) -> None:
         self.items = tuple(subscriptions)
         names: set[str] = set()
+        # 逐条校验订阅：去重、必备集合、禁订阅交接事件自身、回调可调用、命名合法。
         for item in self.items:
+            # 重复订阅者、空版本/类型/范围、订阅 DeliveryStateChanged 自身或回调不可调用均判无效。
             if (
                 item.subscriber_id in names
                 or not item.revision
@@ -46,6 +53,8 @@ class SubscriptionRegistry:
             names.add(item.subscriber_id)
 
     def matching(self, event_type: str, scope_kind: str) -> list[Subscription]:
+        """按事件类型与范围种类筛选命中的订阅者。"""
+        # 同时匹配事件类型与范围种类才纳入本次通知。
         return [
             item
             for item in self.items

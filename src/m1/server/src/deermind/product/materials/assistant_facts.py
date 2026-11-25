@@ -107,6 +107,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
     if not isinstance(payload, (AssistantMessageReceived, CandidatePrepared, TurnFinished)):
         raise ValueError("Unknown material assistant fact")
     if draft.scope_id != payload.import_id:
+        # 事件作用域须指向本批导入。
         raise ValueError("Material assistant fact does not match its import")
     counts: dict[str, int] = {}
     for record in payload.records:
@@ -116,10 +117,12 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         if "import_id" in value and value["import_id"] != str(payload.import_id):
             raise ValueError("Material record refers to a different import")
         if record.record_type == TURN and value["request_ref"] != str(payload.request_ref):
+            # 轮次记录须归属本次请求。
             raise ValueError("Fact refers to a different material turn")
         counts[record.record_type] = counts.get(record.record_type, 0) + 1
     expected = dict(_MATRICES[draft.event_type])
     if isinstance(payload, TurnFinished) and payload.reply_ref is None:
+        # 无回复消息的结束事件不携带消息记录。
         expected.pop(MESSAGE)
     if isinstance(payload, CandidatePrepared):
         if CANDIDATE in counts:
@@ -135,9 +138,11 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
             elif value["decision_state"] == "superseded":
                 superseded += 1
         if pending != 1 or superseded not in (0, 1):
+            # 新批次须恰好一条 pending，被取代批次至多一条。
             raise ValueError("Expected one new pending batch and at most one replaced batch")
         expected[BATCH] = 1 + superseded
     if counts != expected:
+        # 记录矩阵数量须与事件类型约定一致。
         raise ValueError("Unexpected material assistant record combination")
 
 
@@ -188,6 +193,7 @@ async def project(connection: AsyncConnection, event: StoredEvent) -> None:
     for record in event.payload.records:
         if not isinstance(record.content, InlineContent):
             raise ValueError("Projection requires hydrated material records")
+        # 按记录类型选择对应投影语句，冲突时覆盖当前快照。
         await connection.execute(
             text(_INSERTS[record.record_type]),
             {

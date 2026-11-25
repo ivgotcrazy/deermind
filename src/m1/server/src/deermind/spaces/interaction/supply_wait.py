@@ -15,11 +15,13 @@ PROBE = Ref(owner="interaction", type="wait_policy", id="task_supply", revision=
 
 def policy(find: Callable[[AsyncConnection, UUID, UUID], Awaitable[Match | None]]) -> Policy:
     async def probe(db: AsyncConnection, work: Execution, condition: Condition) -> Match | None:
+        # 等待条件必须显式指定由 domain 作为生产方。
         if condition.equals.get("producer") != "domain":
             raise ValueError("Supply wait must identify its producer")
         return await find(db, work.scope_id, UUID(condition.equals["correlation_id"]))
 
     async def handle(_db: AsyncConnection, _work: Execution, wait: Wait) -> Ref:
+        # 已有结果引用则直接回传；无结果说明等待超时。
         if wait.result_ref:
             return wait.result_ref
         return Ref(owner="interaction", type="task_supply_timeout", id=str(wait.wait_id))

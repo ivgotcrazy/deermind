@@ -34,15 +34,18 @@ def configure_student_tools(
             assert isinstance(args, ReadMaterial)
             reference = selected_reference(handle, kind, args.number)
             if reference is None:
+                # 序号未对应到当前会话可见的材料引用。
                 return unavailable()
             try:
                 async with engine.connect() as db:
                     await calls.guard(db, handle)
                     selected = await read_scope(db, handle)
                     if selected is None:
+                        # 会话已无有效学习空间作用域。
                         return unavailable()
                     scope, adoption = selected
                     if kind == "activity":
+                        # 活动类补读：按页面前翻位置取活动原文。
                         before = args.before if isinstance(args, ReadPage) else None
                         content = await read_activity(db, scope, reference, before)
                     else:
@@ -52,17 +55,22 @@ def configure_student_tools(
                             else None
                         )
                         if read is None:
+                            # 课程材料读取器未接线，或未取到内容。
                             content = unavailable()
                         elif isinstance(args, ReadSection):
+                            # 按指定章节截取课程结果。
                             content = course_result(read[0], read[1], args.section)
                         else:
                             content = result({"material": read[0]}, read[1])
                     await calls.guard(db, handle)
+                    # 收尾复核作用域未在读取期间被切换，否则返回不可用。
                     return content if await read_scope(db, handle) == selected else unavailable()
             except RequestError as error:
                 if error.status == 413:
+                    # 材料超限：返回省略提示，引导学生指明段落。
                     return result({"omission": "材料过长，请学生指出具体段落。"}, [reference])
                 if error.status == 404:
+                    # 引用材料已不存在，按不可用处理。
                     return unavailable()
                 raise
 

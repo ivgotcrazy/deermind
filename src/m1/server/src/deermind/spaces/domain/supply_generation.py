@@ -104,6 +104,7 @@ class GenerateSupply:
 
     @staticmethod
     async def _lock(db: AsyncConnection, kind: str, identity: UUID) -> None:
+        # 供题锁定必须落在固定领域身份上。
         if kind != "domain" or not await db.scalar(
             text("SELECT object_id FROM domain.object_identity WHERE object_id=:id FOR UPDATE"),
             {"id": identity},
@@ -117,6 +118,7 @@ class GenerateSupply:
             return
         value = await self._basis(db, work)
         if value.requested.domain_id != work.scope_id:
+            # 供题依据归属另一领域，拒绝。
             raise PermissionError("Supply context belongs to another domain")
 
     @staticmethod
@@ -135,12 +137,14 @@ class GenerateSupply:
             {"id": UUID(work.input_ref.id), "domain": work.scope_id},
         )
         if body is None:
+            # 供题输入产物缺失，无法恢复依据。
             raise LookupError("Supply input is missing")
         return Basis.model_validate_json(canonical_json(body))
 
     async def accept(self, db: AsyncConnection, stored: Basis, input_ref: Ref) -> Ref:
         """结果未完成时同一触发重投仍返回原执行。"""
         if self.config is None:
+            # 未配置模型，无法启动生成执行。
             raise ValueError("Task generation is not configured")
         domain = stored.requested.domain_id
         work_id = uuid5(stored.trigger_event_id, "generate-task-supply")
@@ -175,6 +179,7 @@ class GenerateSupply:
         async with self.engine.connect() as db:
             execution = await store.load(db, run.execution_id)
             if execution.state == "completed":
+                # 已完成的执行不重复落结果。
                 return
             basis = await self._basis(db, execution)
         trigger = basis.trigger_event_id
@@ -185,15 +190,18 @@ class GenerateSupply:
         accepted = accepted_numbers(checks, len(questions))
         seen = set(basis.seen_statements)
         if len(questions) <= basis.remaining:
+            # 候选数量不超缺口，逐条物化通过检查的题目。
             for number in accepted:
                 try:
                     task = materialize(
                         questions[number - 1], basis.task, basis.methods, trigger, number
                     )
                 except ValueError:
+                    # 物化校验失败，跳过该候选。
                     continue
                 statement = canonical_json(task.statement.model_dump(mode="json"))
                 if statement in seen:
+                    # 题面与既有题目重复，去重。
                     continue
                 seen.add(statement)
                 identities.append(task)
@@ -203,6 +211,7 @@ class GenerateSupply:
         async with self.engine.begin() as db:
             saved = await store.lock_owned(db, self.registry, run.execution_id)
             if saved.state == "completed":
+                # 加锁后发现已完成，放弃重复提交。
                 return
             await store.active(db, self.registry, run, "finish")
             for instance in identities:
@@ -221,8 +230,10 @@ class GenerateSupply:
                 correlation_id=trigger,
             ):
                 if instance := versions.get(event.draft.event_id):
+                    # 题目版本事件投影实例表。
                     await project_instance(db, event, instance)
                 else:
+                    # 其余为供题批次/检查事件。
                     await supply_facts.project(db, event)
             await commands.complete(db, self.registry, run, result)
 
@@ -243,6 +254,7 @@ class GenerateSupply:
         drafts: list[EventDraft] = []
         versions: dict[UUID, InstanceVersion] = {}
         for number, question in enumerate(new, 1):
+            # 为每道新题生成检查产物、实例事件与供题条目。
             identity = uuid5(trigger, f"generated-question:{number}")
             check_id = uuid5(trigger, f"generated-check:{number}")
             check_ref = reference("use_check", check_id)
@@ -301,6 +313,7 @@ class GenerateSupply:
                 )
             )
         if check_records:
+            # 有生成检查时，先落检查事件。
             validated = supply_facts.SupplyPrepared(
                 trigger_event_id=trigger,
                 input_artifact_ref=input_ref,
@@ -334,7 +347,7 @@ class GenerateSupply:
                 )
             ]
             if still_missing
-            else []
+            else []  # 凑满数量则无缺口
         )
         projection = supply_facts.SupplyBatch(
             batch_id=batch_id,

@@ -39,6 +39,7 @@ PURPOSE = Purpose(
 def analysis_config() -> ExecutionConfig | None:
     base = material_config()
     if base is None:
+        # 未配置模型/预算，领域分析暂不可用。
         return None
     model = base.purpose_bindings[MATERIAL_PURPOSE.name].profile
     return ExecutionConfig(
@@ -100,6 +101,7 @@ class DomainAnalysisWorkflow(PydanticAIWorkflow):
             )
             return str(candidate)
         except (ActivityError, ApplicationError):
+            # 业务活动失败：落失败回执后转成不可重试的应用错误。
             await workflow.execute_activity(
                 "runtime.execution_failed", args=[body, "DOMAIN_ANALYSIS_FAILED"], **STEP_OPTIONS
             )
@@ -142,6 +144,7 @@ class DomainAnalysisActivities:
         async with self.service.engine.connect() as connection:
             saved = await store.load(connection, run.execution_id)
         if saved.state == "completed":
+            # 执行已完成，重复回写不覆盖结果。
             return
         candidate = UUID(key)
         result = AnalysisOutput.model_validate(await self.calls.candidate_content(run, candidate))

@@ -32,6 +32,7 @@ _CONTENT_FIELDS = frozenset(
 def safe_error(error: RequestError, *, issues: list[Issue] | None = None) -> JSONResponse:
     headers = {"Cache-Control": "no-store"}
     if error.retry_after is not None:
+        # 错误携带重试间隔时，随响应头告知客户端。
         headers["Retry-After"] = str(error.retry_after)
     body = ErrorResponse(
         error=ErrorDetail(
@@ -49,6 +50,7 @@ def safe_error(error: RequestError, *, issues: list[Issue] | None = None) -> JSO
 def content_issues(error: RequestValidationError) -> list[Issue]:
     """只公开 RichContent 的约定字段和位置，不回显输入、动态字段或底层异常。"""
     issues: list[Issue] = []
+    # 逐条校验错误，仅提取约定字段与位置形成对外 issue。
     for item in error.errors():
         location = item["loc"]
         if len(location) > 1 and location[1] in (
@@ -60,8 +62,10 @@ def content_issues(error: RequestValidationError) -> list[Issue]:
             "solution.create",
             "solution.update",
         ):
+            # 嵌套命令层位置需剥掉一层，指向实际校验字段。
             location = (location[0], *location[2:])
         if len(location) < 3 or tuple(location[:2]) != ("body", "definition"):
+            # 非 definition 文档字段的错误不对外暴露路径。
             continue
         field = location[2]
         if field not in (
@@ -82,9 +86,11 @@ def content_issues(error: RequestValidationError) -> list[Issue]:
             "kc_refs",
             "prerequisites",
         ):
+            # 不在白名单内的字段名不回显。
             continue
         parts = location[3:]
         if item["type"] == "extra_forbidden":
+            # 多余字段错误的末段是被禁字段名，路径回退到其父级。
             parts = parts[:-1]
         segments = [
             str(part)
@@ -95,23 +101,28 @@ def content_issues(error: RequestValidationError) -> list[Issue]:
         message = item["msg"] if item["type"] == "invalid_content" else "该处内容不符合结构要求。"
         issues.append(Issue(code="invalid_content", path=path, message=message))
         if len(issues) == 8:
+            # 对外 issue 上限 8 条，避免回显过多内部细节。
             break
     return issues
 
 
 async def api_error(request: Request, error: Exception) -> JSONResponse:
     if isinstance(error, RequestError):
+        # 业务错误已带对外状态码与文案，直接包装。
         return safe_error(error)
     if isinstance(error, RequestValidationError):
+        # 入参校验失败转为 400，issue 仅含白名单字段位置。
         return safe_error(
             RequestError(400, "invalid_request", "请求格式不正确。"),
             issues=content_issues(error),
         )
     if isinstance(error, (RequestConflict, IntegrityError)):
+        # 业务冲突或数据库唯一约束冲突，统一映射为 409。
         return safe_error(
             RequestError(409, "request_conflict", "请求身份或内容冲突，请核对后重试。")
         )
     if isinstance(error, HTTPException):
+        # Starlette 原生异常按状态码映射对外错误码。
         code = {404: "not_found", 405: "method_not_allowed", 503: "temporarily_unavailable"}.get(
             error.status_code, "invalid_request"
         )
@@ -122,6 +133,7 @@ async def api_error(request: Request, error: Exception) -> JSONResponse:
         exc_info=(type(error), error, error.__traceback__),
         extra={"action": "api_request", "outcome": "failed", "error_code": type(error).__name__},
     )
+    # 数据库类异常按依赖不可用返回 503，其余未预期异常返回 500。
     status = 503 if isinstance(error, SQLAlchemyError) else 500
     code = "temporarily_unavailable" if status == 503 else "internal_error"
     return safe_error(RequestError(status, code, "服务暂不可用，请先查询原请求结果。"))

@@ -1,4 +1,10 @@
-"""执行身份、命令和边界数据；不包含注册器或数据库事务。"""
+"""执行身份、命令和边界数据；不包含注册器或数据库事务。
+
+分层定位：abstractions（跨层合同）
+对外契约：Execution、Attempt、Authorization、StepResult、RunInput、Dispatch、Limits
+及执行传输、生命周期两个端口 Protocol。
+边界约束：只定义执行身份与接口，不含状态机、账本或事务实现。
+"""
 
 from datetime import datetime
 from typing import Literal, Protocol
@@ -12,6 +18,8 @@ State = Literal["ready", "running", "waiting", "completed", "failed", "cancelled
 
 
 class Execution(FactModel):
+    """一次 AI Operation 或普通 handler 的执行记录，归属某空间并固定受理输入。"""
+
     execution_id: UUID
     kind: Literal["ai_operation", "handler"]
     owner: str
@@ -31,6 +39,8 @@ class Execution(FactModel):
 
 
 class Attempt(FactModel):
+    """执行的一次尝试：重试编号、所属工作流、时限与状态；恢复产生新尝试。"""
+
     attempt_id: UUID
     execution_id: UUID
     attempt_no: int
@@ -46,6 +56,8 @@ class Attempt(FactModel):
 
 
 class Authorization(FactModel):
+    """受理时固定的授权范围：发起人、允许动作、资源范围与依据引用。"""
+
     execution_id: UUID
     initiator_ref: Ref
     owner: str
@@ -57,6 +69,8 @@ class Authorization(FactModel):
 
 
 class StepResult(FactModel):
+    """单个业务步骤的结果留痕，含发生键、输入哈希、结果引用与所属尝试。"""
+
     execution_id: UUID
     step_name: str
     occurrence_key: str
@@ -106,6 +120,8 @@ class ExecutionNotFound(LookupError):
 
 
 class ExecutionTransport(Protocol):
+    """执行传输端口：启动、信号、取消与查询运行状态；具体队列/工作流实现由基础设施提供。"""
+
     @property
     def limits(self) -> Limits: ...
     async def start(self, command: Dispatch) -> str: ...
@@ -115,6 +131,8 @@ class ExecutionTransport(Protocol):
 
 
 class LifecycleService(Protocol):
+    """执行状态回写端口：开始、完成、失败；状态变更的留痕由实现方负责。"""
+
     async def started(self, run: RunInput) -> None: ...
     async def completed(self, run: RunInput, result: Ref) -> None: ...
     async def failed(self, run: RunInput, error_code: str) -> None: ...

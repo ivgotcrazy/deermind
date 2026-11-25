@@ -30,6 +30,7 @@ async def prepare(engine: AsyncEngine, registry: Registry, run: RunInput) -> Sum
         work = await store.active(db, registry, run, "step")
         current = await history.current(db, work.scope_id)
         leaf = current.current_activity
+        # 仅讲解与答疑活动需要生成长交流摘要。
         if not leaf or leaf.type not in {"explanation", "question_answer"}:
             return None
         activity = leaf.activity_ref.activity_id
@@ -54,6 +55,7 @@ async def prepare(engine: AsyncEngine, registry: Registry, run: RunInput) -> Sum
                 },
             )
         ).all()
+        # 可纳入窗口的消息不足一窗，不触发摘要。
         if len(window) < memory_facts.HISTORY_WINDOW:
             return None
         older: list[dict[str, JsonValue]] = [
@@ -63,6 +65,7 @@ async def prepare(engine: AsyncEngine, registry: Registry, run: RunInput) -> Sum
         prior = (
             [Ref.model_validate(item) for item in old_refs] if isinstance(old_refs, list) else []
         )
+        # 旧材料体积超限或已攒满引用条数，不再追加摘要。
         if len(canonical_json(older).encode()) > 16 * 1024 or len(prior) >= 60:
             return None
         earlier = summary.content.get("text") if summary else None
@@ -84,6 +87,7 @@ async def save(
     wording: str,
     candidate: UUID,
 ) -> None:
+    # 摘要措辞长度不在允许区间，不保存。
     if not 1 <= len(wording.strip()) <= 768:
         return
     async with conversation.engine.begin() as db:
@@ -91,6 +95,7 @@ async def save(
         work = await store.active(db, registry, run, "step")
         current = await history.current(db, work.scope_id)
         leaf = current.current_activity
+        # 当前活动与摘要材料所属活动不一致，放弃保存。
         if (
             not leaf
             or ref("activity", leaf.activity_ref.activity_id, leaf.activity_ref.revision)
@@ -99,6 +104,7 @@ async def save(
             return
         history_rows = await memory_facts.read(db, work.scope_id, leaf.activity_ref.activity_id)
         prior = next((item for item in history_rows if item.kind == "summary"), None)
+        # 前序摘要标识与材料记录的基线不一致，避免覆盖新版本。
         if (prior.identity if prior else None) != material.previous:
             return
         authorization = await store.authorization(db, run.execution_id)
@@ -147,11 +153,13 @@ async def remember_from_reply(
     previous = next((value for value in items if value.kind == "entries"), None)
     provided = ref("message", message.message_id).model_copy(update={"path": "/parts/0"})
     first = message.parts[0]
+    # 首段不是文本段，无可记忆内容。
     if not isinstance(first, TextPart):
         return None
     entries = memory_facts.remember(
         proposal, original.text or "", first.text, work.input_ref, provided, previous
     )
+    # 未能提炼出记忆条目，不生成记忆事件。
     if entries is None:
         return None
     return memory_facts.revise(

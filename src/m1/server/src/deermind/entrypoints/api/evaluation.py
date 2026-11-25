@@ -45,6 +45,7 @@ async def admin_session(
             and (csrf is None or not compare_digest(csrf.encode(), session.csrf_token.encode()))
         )
     ):
+        # 缺会话标识、非管理员，或写操作缺/不符 CSRF，拒绝访问管理端。
         raise RequestError(403, "forbidden", "请使用有效的管理员会话。")
     response.headers["Cache-Control"] = "no-store"
     return session
@@ -135,6 +136,7 @@ async def read_basis(
     auth, config = access(request)
     session = await auth.session(request.cookies.get(config.cookie_name), expected)
     if expected is None:
+        # 缺会话标识，无法绑定评价查询归属。
         raise RequestError(403, "forbidden", "请使用有效的会话。")
     response.headers["Cache-Control"] = "no-store"
     spaces: LearningSpaceService = request.app.state.course_spaces
@@ -164,19 +166,25 @@ async def read_basis(
         ).encode()
     ).hexdigest()[:24]
     after = _basis_cursor(cursor, binding)
+    # 按视图类型分派对应评价依据查询，每种视图要求的引用参数不同。
     if view == "target" and result_id and item_id:
+        # 目标视图：按结果与条目定位目标掌握情况。
         result = await service.target(scope_id, result_id, item_id, after, limit)
     elif view == "evidence" and evidence_id:
+        # 证据视图：直接取单条证据，无需续页。
         return await service.evidence(scope_id, evidence_id, event_id)
     elif view == "event" and event_id:
         if session.account.role != "admin":
+            # 从事件回溯证据仅限管理员。
             raise RequestError(403, "forbidden", "只有管理员可从事件查看相关证据。")
         result = await service.from_event(scope_id, event_id, after, limit)
     elif view == "processing" and event_id:
+        # 处理过程视图：返回单事件的处理轨迹。
         return await service.processing(scope_id, event_id)
     elif view == "belief" and (
         snapshot_id and claim_id and claim_revision and method_id and method_version and aspect_code
     ):
+        # 信念视图：快照、知识主张、方法与方面引用齐全才允许查询。
         result = await service.belief(
             scope_id,
             snapshot_id,
@@ -189,19 +197,24 @@ async def read_basis(
             limit,
         )
     else:
+        # 视图与引用参数不匹配，无法定位评价依据。
         raise RequestError(400, "invalid_request", "缺少本次评价查询所需的引用。")
     if result.next_cursor:
+        # 续页游标前缀本次查询绑定值，防止跨查询翻页。
         result = result.model_copy(update={"next_cursor": f"{binding}.{result.next_cursor}"})
     return result
 
 
 def _basis_cursor(cursor: str | None, binding: str) -> UUID | None:
     if cursor is None:
+        # 首页无续页游标。
         return None
     prefix, _, value = cursor.partition(".")
     if not compare_digest(prefix.encode(), binding.encode()):
+        # 游标绑定前缀与本次查询不符，拒绝跨查询续页。
         raise RequestError(400, "invalid_request", "续页位置与本次评价查询不符。")
     try:
         return UUID(value)
     except ValueError as error:
+        # 游标末段不是合法 UUID。
         raise RequestError(400, "invalid_request", "续页位置无效。") from error

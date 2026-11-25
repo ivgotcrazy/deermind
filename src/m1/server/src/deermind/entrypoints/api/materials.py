@@ -64,10 +64,12 @@ async def _admin(request: Request, response: Response, *, writing: bool = False)
     expected = request.headers.get("x-expected-session")
     session = await auth.session(request.cookies.get(config.cookie_name), expected)
     if expected is None or session.account.role != "admin":
+        # 缺会话标识或非管理员，拒绝访问教材管理入口。
         raise RequestError(403, "forbidden", "请使用管理员会话。")
     if writing and not compare_digest(
         request.headers.get("x-csrf-token", "").encode(), session.csrf_token.encode()
     ):
+        # 写操作 CSRF 不符，要求重新登录后提交。
         raise RequestError(403, "forbidden", "请刷新登录状态后重新提交。")
     response.headers["Cache-Control"] = "no-store"
     return session
@@ -124,10 +126,12 @@ async def write_upload(request: Request, response: Response, upload_id: UUID) ->
 
     async def chunks() -> AsyncIterator[bytes]:
         try:
+            # 按流式分块转发上传内容，空块不写入。
             async for chunk in request.stream():
                 if chunk:
                     yield chunk
         except ClientDisconnect as error:
+            # 客户端中途断开，本次上传视为来源不可用，需重传。
             raise RequestError(422, "source_unavailable", "上传已中断，请重传此文件。") from error
 
     return await uploads.write(
@@ -238,8 +242,10 @@ async def download_resource(
         owner = Ref.model_validate_json(owner_ref)
         source_id = UUID(owner.id)
     except (ValidationError, ValueError) as error:
+        # 来源引用不是合法 Ref 或 ID，按无效请求处理。
         raise RequestError(400, "invalid_request", "教材来源引用无效。") from error
     if view != "source" or owner.owner != "product" or owner.type != "material_source":
+        # 仅放行产品侧教材原件的下载用途，其余按不存在处理。
         raise RequestError(404, "not_found", "找不到此用途的文件。")
     materials: MaterialService = request.app.state.materials
     source, media, size, name = await materials.download(session, source_id, storage_ref)
@@ -315,6 +321,7 @@ async def decide_material_batch(
 ) -> MaterialAdoptionReceipt:
     session = await _admin(request, response, writing=True)
     if body.batch_ref.batch_id != batch_id:
+        # 路径批次与回执引用不符，拦截跨批次误操作。
         raise RequestError(400, "invalid_reference", "候选批次与请求路径不一致。")
     adoptions: MaterialAdoptionService = request.app.state.material_adoptions
     return await adoptions.decide(session, import_id, body)

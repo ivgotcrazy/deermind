@@ -47,6 +47,7 @@ class ToolContext(TemporalRunContext[CallHandle]):
         result = super().serialize_run_context(ctx)
         responses = [message for message in ctx.messages if isinstance(message, ModelResponse)]
         if ctx.tool_call_id and responses:
+            # 在最后一条模型响应中定位本次工具调用的序号。
             positions = [
                 index + 1
                 for index, part in enumerate(responses[-1].parts)
@@ -55,6 +56,7 @@ class ToolContext(TemporalRunContext[CallHandle]):
                 and part.tool_name == ctx.tool_name
             ]
             if len(positions) != 1:
+                # 位置不唯一或缺失，无法把工具 Activity 关联到模型响应。
                 raise AIRejected("invalid_tool_position")
             result["tool_call_metadata"] = {
                 "model_response": len(responses),
@@ -81,24 +83,29 @@ def authorized_tools(
         if first_batch_limit is not None and any(
             isinstance(message, ModelResponse) for message in ctx.messages
         ):
+            # 已进入补读批次后不再开放可补读工具。
             return None
         if reference in ctx.deps.binding.tool_refs and reference in ctx.deps.input.tool_grants:
+            # 工具既在绑定范围内，又被本次会话显式授权，才挂给模型。
             return definition
         return None
 
     async def invoke(ctx: RunContext[CallHandle], **arguments: JsonValue) -> dict[str, JsonValue]:
         try:
             if workflow.in_workflow():
+                # 工具 I/O 必须落在独立 Activity，Workflow 内不得直连工具服务。
                 raise AIRejected("tool_io_requires_activity")
             metadata = TypeAdapter(dict[str, int]).validate_python(
                 ctx.tool_call_metadata or {}, strict=True
             )
             turn, ordinal = metadata.get("model_response"), metadata.get("tool_ordinal")
             if not isinstance(turn, int) or not isinstance(ordinal, int) or ctx.tool_name is None:
+                # 缺少模型响应序号或工具序号，无法定位工具调用来源。
                 raise AIRejected("invalid_tool_position")
             if first_batch_limit is not None:
                 position = metadata.get("business_position")
                 if turn != 1 or position is None or not 1 <= position <= first_batch_limit:
+                    # 超出首轮补读次数上限，工具返回参数非法而非执行。
                     return {
                         "status": "invalid_arguments",
                         "data": {"reason": "本轮补读次数已用完，请依据已有材料回应。"},
@@ -108,9 +115,11 @@ def authorized_tools(
             parameters = TypeAdapter(dict[str, JsonValue]).validate_python(arguments)
             result = await tools.invoke(ctx.deps, ctx.tool_name, parameters, turn, ordinal)
             if result.status == "source_changed":
+                # 取材源已变更，当前候选失效，按拒绝处理。
                 raise AIRejected("source_changed")
             return result.model_dump(mode="json")
         except Exception as error:
+            # 工具异常统一转为不可重试的 ApplicationError，保留稳定错误码。
             code = str(error) if isinstance(error, AIRejected) else "tool_failed"
             raise ApplicationError(code, type="AIToolRejected", non_retryable=True) from None
 
@@ -150,6 +159,7 @@ def build_agent(
             != purpose.prompt_ref
             or binding.schema_ref != purpose.schema_ref
         ):
+            # 模型标识、用途或合同/提示词/schema 引用与本 Agent 登记不符，拒绝解析。
             raise AIRejected("configuration_unavailable")
         return ControlledModel(ctx.deps, calls, credentials, factory=factory)
 

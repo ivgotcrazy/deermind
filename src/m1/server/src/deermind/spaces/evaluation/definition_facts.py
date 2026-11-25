@@ -47,9 +47,11 @@ class ClaimChanged(EventPayload):
 
 
 def validate(draft: EventDraft, payload: EventPayload) -> None:
+    # 变更事件恰好携带一条版本记录。
     if not isinstance(payload, ClaimChanged) or len(payload.records) != 1:
         raise ValueError("Claim change must carry a complete version")
     item = payload.records[0]
+    # 记录编号、类型与内联正文不符，判版本记录无效。
     if (
         item.record_id != RECORD_ID
         or item.record_type != RECORD
@@ -57,6 +59,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
     ):
         raise ValueError("Claim change record is invalid")
     version = ClaimVersion.model_validate_json(canonical_json(item.content.value))
+    # 范围、领域、任务、主张标识与请求引用必须与事件正文逐项一致。
     if (
         draft.scope_id != payload.domain_id
         or version.definition.domain_id != payload.domain_id
@@ -82,6 +85,7 @@ async def project(connection: AsyncConnection, event: StoredEvent) -> None:
     async with application(
         connection, "evaluation.claim_definitions", 1, event.draft.event_id
     ) as needed:
+        # 事件已投影过，重复应用直接返回。
         if not needed:
             return
         await connection.execute(

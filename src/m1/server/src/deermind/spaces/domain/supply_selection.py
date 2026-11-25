@@ -19,6 +19,7 @@ def select_instances(
 ) -> tuple[list[EligibleInstance], UnfilledSupply | None]:
     """只交付条件已能判定的题。自然语言范围尚未核实时保留缺口。"""
     if requested.exposed_instances is None:
+        # 既往接触不可考，无法筛题，记不可重试缺口。
         return [], UnfilledSupply(
             count=requested.count,
             condition=requested.assessment_constraints,
@@ -26,6 +27,7 @@ def select_instances(
             retryable=False,
         )
     if requested.assessment_constraints and requested.assessment_constraints.strip():
+        # 条件含自然语言描述，需语义核对，本轮不交付。
         return [], UnfilledSupply(
             count=requested.count,
             condition=requested.assessment_constraints,
@@ -44,6 +46,7 @@ def select_instances(
             or str(body.task_ref.object_id) != requested.task_ref.id
             or body.task_ref.version != requested.task_ref.version
         ):
+            # 已删除、已接触或任务/版本不符，跳过。
             continue
         matches = tuple(
             item
@@ -51,13 +54,16 @@ def select_instances(
             if (str(item.solution_ref.object_id), item.solution_ref.version) in allowed
         )
         if not matches or (requested.purpose == "assessment" and body.answer_basis is None):
+            # 无授权解法，或检测用途缺答案依据，跳过。
             continue
         statement = canonical_json(body.statement.model_dump(mode="json"))
         if statement in seen:
+            # 题面重复，去重。
             continue
         seen.add(statement)
         chosen.append(EligibleInstance(instance, matches))
         if len(chosen) == requested.count:
+            # 凑满数量即返回，无缺口。
             return chosen, None
     return chosen, UnfilledSupply(
         count=requested.count - len(chosen),

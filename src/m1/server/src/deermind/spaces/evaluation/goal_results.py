@@ -74,8 +74,10 @@ class GoalResults:
                 {"scope": scope},
             )
         ).one_or_none()
+        # 无进行中的触发，视为没有待办进度。
         if row is None or row.active_trigger_event_id is None:
             return None
+        # 失败与取消归为 failed，其余在途状态记 pending。
         return "failed" if row.state in {"failed", "cancelled"} else "pending"
 
     async def receive(self, db: AsyncConnection, notice: EventNotice) -> Acceptance:
@@ -94,15 +96,18 @@ class GoalResults:
         assert isinstance(payload, dict)
         trigger = UUID(str(payload["trigger_event_id"])) if is_mastery else cause
         previous = await self._recorded(db, scope, trigger)
+        # 该触发已算过目标结果，幂等返回既有结果引用。
         if previous is not None:
             return Acceptance(disposition="accepted", arrangement_refs=[result_ref(previous)])
         if is_mastery:
             prepared = await find_prepared(db, scope, trigger)
             input_ref = Ref.model_validate(payload["input_ref"])
+            # 掌握结果必须挂在匹配的评价输入之下。
             if prepared is None or str(prepared.input_id) != input_ref.id:
                 raise ValueError("Mastery result has no matching evaluation input")
             fixed = prepared.input
             applied = await self.adoption(db, scope, UUID(fixed.adoption_ref.id))
+            # 采用视图的目标依据须与输入固定记录一致。
             if applied.target_basis_ref != fixed.target_basis_ref:
                 raise ValueError("Evaluation input does not match its fixed target")
             pinned = Ref.model_validate(payload["snapshot_ref"])
@@ -110,6 +115,7 @@ class GoalResults:
             adoption_ref = Ref.model_validate(payload["adoption_ref"])
             basis_ref = Ref.model_validate(payload["target_basis_ref"])
             applied = await self.adoption(db, scope, UUID(adoption_ref.id))
+            # 目标触发的采用引用与目标依据须与登记采用视图一致。
             if applied.target_basis_ref != basis_ref or applied.adoption_ref != adoption_ref:
                 raise ValueError("Goal trigger does not match its adoption")
             pinned = None
@@ -117,6 +123,7 @@ class GoalResults:
         snapshot = await self.read_snapshot(db, scope, pinned)
         gaps = applied.snapshot.evaluation_gaps
         by_aspect: dict[GoalKey, list[str]] = {}
+        # 把教材差距按 目标项 → 解法 → 方面 归集到对应决策键。
         for item in applied.snapshot.items:
             for method in item.methods:
                 for gap in gaps:
@@ -130,6 +137,7 @@ class GoalResults:
         decision = derive_target(applied.snapshot.items, by_aspect, observations)
         basis = await self.protect(db, scope)
         previous = await self._recorded(db, scope, trigger)
+        # 计算完成后二次查重，防止并发重复落目标结果。
         if previous is not None:
             return Acceptance(disposition="accepted", arrangement_refs=[result_ref(previous)])
         current = (
@@ -145,10 +153,13 @@ class GoalResults:
         ).one_or_none()
         sequence = snapshot.publication_seq if snapshot else 0
         reason = None
+        # 目标依据已变更，本次结果不应用为当前态。
         if basis != UUID(basis_ref.id):
             reason = "target_changed"
+        # 所用掌握快照发布序号早于当前已持有的，属于旧快照。
         elif current and sequence < current.mastery_publication_seq:
             reason = "older_snapshot"
+        # 同一依据、同一快照序号下已存在结果，须与本次计算逐字节一致。
         elif (
             current
             and current.target_basis_ref == basis
@@ -242,6 +253,7 @@ class GoalResults:
     async def read_snapshot(
         db: AsyncConnection, scope: UUID, pinned: Ref | None
     ) -> mastery_facts.MasterySnapshot | None:
+        # 指定了快照引用时按编号回读，否则取范围当前头快照。
         if pinned:
             row = await db.scalar(
                 text("""
@@ -250,6 +262,7 @@ class GoalResults:
             """),
                 {"scope": scope, "id": UUID(pinned.id)},
             )
+            # 指定快照不存在于本空间，判引用越界。
             if row is None:
                 raise ValueError("Goal calculation snapshot does not belong to this space")
         else:
@@ -290,11 +303,13 @@ class GoalResults:
                 SolutionRef(kind="solution", object_id=row.method_id, version=row.method_version),
                 str(row.aspect_code),
             )
+            # 取已知条件值，排除专用范围条件（范围单独收集）。
             conditions = {
                 item["condition"]: item["value"]
                 for item in row.condition_facts
                 if item["status"] == "known" and item["condition"] != "target_scope"
             }
+            # 收集已知的目标范围取值，供佐证按范围匹配。
             scopes = [
                 item["value"]
                 for item in row.condition_facts
@@ -310,6 +325,7 @@ class GoalResults:
                 for scope in (scopes or [None])
             )
         result: dict[BeliefKey, Observation] = {}
+        # 按快照中的方面逐项装配观测值与佐证列表。
         for item in snapshot.items:
             key = (
                 ClaimRef(claim_id=item.claim_id, revision=item.claim_revision),

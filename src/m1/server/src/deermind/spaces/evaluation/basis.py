@@ -53,13 +53,16 @@ class EvaluationBasis:
             )
         ).all()
         items: list[EvidenceSummary] = []
+        # 取前 limit 条；多查一条用于判断是否还有下一页。
         for row in rows[:limit]:
+            # 来源事件引用去重，保留出现顺序。
             source_events = list(dict.fromkeys(UUID(ref["event_id"]) for ref in row.source_refs))
             items.append(
                 EvidenceSummary(
                     evidence_ref=facts.ref("evidence", row.evidence_id),
                     occurred_at=row.occurred_at,
                     source_activity=row.source_activity,
+                    # 触发事件须出现在来源事件列表中，才作为可回查的计时事件。
                     timed_event_id=row.trigger_event_id
                     if row.trigger_event_id in source_events
                     else None,
@@ -70,6 +73,7 @@ class EvaluationBasis:
                     source_event_refs=source_events,
                 )
             )
+        # 超出本条限说明还有下一页，返回末条标识作为翻页游标。
         return items, items[-1].evidence_ref.id if len(rows) > limit else None
 
     async def target(
@@ -83,12 +87,15 @@ class EvaluationBasis:
             """),
                 {"scope": scope, "id": identity},
             )
+            # 目标评价记录不存在，返回 404。
             if row is None:
                 raise _missing()
             result = GoalDecision.model_validate_json(canonical_json(row))
             chosen = next((entry for entry in result.items if entry.item_id == item), None)
+            # 目标项不在该评价结果中，同样视为依据缺失。
             if chosen is None:
                 raise _missing()
+            # 沿 目标项 → 解法 → 方面 三层展开，收集全部佐证引用。
             references = [
                 UUID(ref.id)
                 for method in chosen.methods
@@ -122,16 +129,20 @@ class EvaluationBasis:
             """),
                 {"scope": scope, "id": identity},
             )
+        # 佐证记录不存在，返回 404。
         if row is None:
             raise _missing()
         entry = facts.EvidenceRecord.model_validate_json(canonical_json(row))
         excerpt = None
+        # 指定了来源事件时，回读该事件下与本佐证相关的原文片段。
         if origin:
             refs = [ref for ref in entry.source_refs if ref.event_id == origin]
+            # 本佐证在该事件下没有可定位的片段，视为依据缺失。
             if not refs:
                 raise _missing()
             source = await self.reader.read_facts("learning_space", scope, origin, refs=refs)
             parts = source.get("items")
+            # 来源事实结构不完整，判读取失败。
             if not isinstance(parts, list):
                 raise ValueError("Incomplete evidence source")
             excerpt = SourceExcerpt(
@@ -152,6 +163,7 @@ class EvaluationBasis:
                 source_spans=[
                     EvidenceQuote(ref=span.ref, quote=span.quote) for span in entry.source_spans
                 ],
+                # 有对应信念修订记录时才回填变更前后概率，否则留空。
                 belief_change=BeliefChange.model_validate(change) if change is not None else None,
             ),
             source=excerpt,
@@ -163,6 +175,7 @@ class EvaluationBasis:
         meta = await self.reader.query_metadata(
             "learning_space", scope, filters=EventFilter(event_id=event), limit=1
         )
+        # 事件元数据不存在，返回 404。
         if not meta["items"]:
             raise _missing()
         async with self.engine.connect() as db:
@@ -208,6 +221,7 @@ class EvaluationBasis:
             """),
                 {"scope": scope, "id": snapshot},
             )
+            # 掌握快照不存在，返回 404。
             if row is None:
                 raise _missing()
             pinned = facts.MasterySnapshot.model_validate_json(canonical_json(row))
@@ -227,6 +241,7 @@ class EvaluationBasis:
                 ),
                 None,
             )
+            # 快照中找不到该主张/解法/方面组合，视为依据缺失。
             if item is None:
                 raise _missing()
             items, cursor = await self._page(
@@ -258,6 +273,7 @@ class EvaluationBasis:
             """),
                 {"scope": scope, "trigger": trigger},
             )
+            # 执行记录已受理，或评价输入本身已登记，均视为该触发已被接收。
             accepted = row is not None or await db.scalar(
                 text("""
                 SELECT 1 FROM evaluation.evaluation_input
@@ -267,6 +283,7 @@ class EvaluationBasis:
             )
         state: Literal["not_found", "pending", "completed", "failed"] = "not_found"
         if accepted:
+            # 已完成记 completed；失败与取消归为 failed；其余在途状态记 pending。
             state = (
                 "completed"
                 if row == "completed"

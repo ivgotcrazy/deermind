@@ -125,6 +125,7 @@ _VERSION = text(
 
 def administrator(session: SessionView) -> UUID:
     if session.account.role != "admin":
+        # 领域读写仅限管理员账号。
         raise RequestError(403, "forbidden", "当前账号无领域管理权限。")
     return session.account.account_id
 
@@ -140,16 +141,19 @@ def receipt_key(principal_id: UUID, request_id: str) -> dict[str, str]:
 
 def save_result(ref: ObjectRef, content: DefinitionContent | None = None) -> SaveResult:
     if isinstance(ref, KnowledgeRef):
+        # KC 结果不带内容缺口。
         return SaveKnowledgeResult(object_ref=ref, content_ref=KnowledgeContentRef(object_ref=ref))
     if isinstance(ref, TaskRef):
         if not isinstance(content, TaskDefinition):
             raise RuntimeError("A Task receipt must reference its fixed definition")
+        # 任务结果附任务字段缺口。
         return SaveTaskResult(
             object_ref=ref, content_ref=TaskContentRef(object_ref=ref), gaps=task_gaps(content)
         )
     if isinstance(ref, SolutionRef):
         if not isinstance(content, SolutionDefinition):
             raise RuntimeError("A Solution receipt must reference its fixed definition")
+        # 解法结果附解法字段缺口。
         return SaveSolutionResult(
             object_ref=ref,
             content_ref=SolutionContentRef(object_ref=ref),
@@ -164,6 +168,7 @@ def saved_response(row: RowMapping) -> CreateDomainResponse:
     saved = Ref.model_validate(row["result_ref"])
     content = None
     if saved.owner == "domain" and saved.type == "domain" and saved.version == 1:
+        # 新建领域：v1 根对象引用。
         ref = DomainRef(object_id=UUID(saved.id), version=1)
     elif saved.owner == "domain" and saved.type == "kc" and saved.version is not None:
         ref = KnowledgeRef(kind="kc", object_id=UUID(saved.id), version=saved.version)
@@ -174,12 +179,14 @@ def saved_response(row: RowMapping) -> CreateDomainResponse:
         ref = SolutionRef(kind="solution", object_id=UUID(saved.id), version=saved.version)
         content = SolutionDefinition.model_validate(row["content"])
     else:
+        # 回执结果引用不在允许的版本类型内。
         raise RuntimeError("A domain receipt must reference a saved definition version")
     return CreateDomainResponse(request_ref=row["receipt_id"], result=save_result(ref, content))
 
 
 def replay(row: RowMapping, body: str, digest: str) -> CreateDomainResponse:
     if row["input_hash"] != digest or canonical_json(row["normalized_input"]) != body:
+        # 幂等键对应不同输入，冲突。
         raise RequestError(409, "request_conflict", "请求编号已用于其他内容。")
     return saved_response(row)
 
@@ -192,8 +199,10 @@ async def apply_domain_event(connection: AsyncConnection, event: StoredEvent) ->
     root = isinstance(ref, DomainRef)
     async with application(connection, "domain.definitions.v1", 1, event.draft.event_id) as apply:
         if not apply:
+            # 已被回执投影处理过，跳过落表。
             return
         if event.payload.action == "create":
+            # 新建先写身份记录；修订复用既有身份。
             await connection.execute(
                 text(
                     "INSERT INTO domain.object_identity "
@@ -228,11 +237,13 @@ async def apply_domain_event(connection: AsyncConnection, event: StoredEvent) ->
             },
         )
         if event.payload.action != "create":
+            # 修订/删除把身份头版本推进到新版本。
             await connection.execute(
                 text("UPDATE domain.object_identity SET head_version=:version WHERE object_id=:id"),
                 {"id": ref.object_id, "version": ref.version},
             )
         if not root:
+            # 成员对象：重放引用关系，并推进所属领域目录修订号。
             await apply_references(connection, ref, value.content)
             await connection.execute(
                 text(
@@ -307,6 +318,7 @@ class DomainDefinitions:
             await connection.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"))
             catalog = await connection.scalar(text(_ROOT), {"id": domain_id})
             if catalog is None:
+                # 领域不存在或已删除。
                 raise RequestError(404, "not_found", "找不到指定领域。")
             token = sha256(
                 canonical_json([str(actor), str(domain_id), name, selected, catalog]).encode()
@@ -319,6 +331,7 @@ class DomainDefinitions:
                 except ValueError as error:
                     raise RequestError(400, "invalid_request", "续页位置无效。") from error
                 if prefix != token:
+                    # 目录修订或筛选条件已变，旧游标失效。
                     raise RequestError(409, "read_range_changed", "领域目录已变化，请重新读取。")
             rows = (
                 (
@@ -364,6 +377,7 @@ class DomainDefinitions:
                 )
                 for row in rows[:limit]
             ],
+            # 多拉一行判断是否还有下一页。
             next_cursor=f"{token}.{rows[limit - 1]['object_id']}" if len(rows) > limit else None,
             read_token=token,
         )
@@ -380,9 +394,11 @@ class DomainDefinitions:
             row = await self._version_row(connection, object_id, version)
         owner = object_id if row["kind"] == "domain" else row["domain_id"]
         if owner != domain_id:
+            # 对象不属于所查领域，按未找到处理。
             raise RequestError(404, "not_found", "找不到指定领域对象或版本。")
         value = await self._read_version(row, owner, object_id)
         if row["kind"] == "solution":
+            # 解法视图附解法缺口。
             if not isinstance(value.content, SolutionDefinition):
                 raise RuntimeError("A Solution must reference its own content model")
             solution_ref = SolutionRef(kind="solution", object_id=object_id, version=value.version)
@@ -397,6 +413,7 @@ class DomainDefinitions:
                 )
             )
         if row["kind"] == "task":
+            # 任务视图附任务缺口。
             if not isinstance(value.content, TaskDefinition):
                 raise RuntimeError("A Task must reference its own content model")
             task_ref = TaskRef(kind="task", object_id=value.object_id, version=value.version)
@@ -411,6 +428,7 @@ class DomainDefinitions:
                 )
             )
         if row["kind"] == "kc":
+            # 知识成分视图。
             if not isinstance(value.content, KnowledgeComponent):
                 raise RuntimeError("A knowledge component must reference its own content model")
             ref = KnowledgeRef(kind="kc", object_id=value.object_id, version=value.version)
@@ -424,6 +442,7 @@ class DomainDefinitions:
                 )
             )
         if not isinstance(value.content, DomainDefinition):
+            # 根领域内容须为领域定义模型。
             raise RuntimeError("A domain root must reference its own content model")
         domain_ref = DomainRef(object_id=value.object_id, version=value.version)
         return DomainDetail(
@@ -445,6 +464,7 @@ class DomainDefinitions:
             .one_or_none()
         )
         if row is None:
+            # 对象或指定版本不存在、已删或跨领域。
             raise RequestError(404, "not_found", "找不到指定领域对象或版本。")
         return row
 
@@ -465,6 +485,7 @@ class DomainDefinitions:
             raise RuntimeError("A domain version must load exactly one fact record")
         value = DomainVersion.model_validate_json(canonical_json(items[0]["content"]))
         if (value.object_id, value.version) != (object_id, row["version"]):
+            # 投影指向的事实与所查版本不一致，防止版本错位。
             raise RuntimeError("The domain version projection points to a different fact")
         return value
 
@@ -478,10 +499,12 @@ class DomainDefinitions:
     ) -> TaskDependencies:
         detail = await self.read_object(session, domain_id, task_id, version)
         if not isinstance(detail, TaskDetail):
+            # 所查对象不是任务版本。
             raise RequestError(404, "not_found", "找不到指定任务版本。")
         task = detail.object
         methods = task.content.method_refs
         if solution_ids is not None:
+            # 指定方法子集：必须全部属于本任务直接采用的方法。
             chosen = set(solution_ids)
             if not chosen.issubset(ref.object_id for ref in methods):
                 raise relationship_error("/solution_ids", "只能查询本任务版本直接采用的方法。")
@@ -490,12 +513,14 @@ class DomainDefinitions:
         prerequisites: list[Prerequisite] = []
         for link in task.content.prerequisites:
             if link.applies_to == "all":
+                # 全任务生效的先导条件直接保留。
                 prerequisites.append(link)
                 continue
             applicable = [
                 ref for ref in link.method_refs if (ref.object_id, ref.version) in selected
             ]
             if applicable:
+                # 方法限定的先导条件，只保留本次所选方法对应的部分。
                 prerequisites.append(link.model_copy(update={"method_refs": applicable}))
         async with self.engine.connect() as connection:
             kc_refs, sources = await method_knowledge(connection, methods)
@@ -530,6 +555,7 @@ class DomainDefinitions:
             # 空关系与 E02-04 请求等价，旧请求编号仍能取得原结果。
             for field in ("method_refs", "prerequisites"):
                 if request["definition"][field] == []:
+                    # 空关系字段剔除后参与指纹计算，保证新旧请求等价可重放。
                     del request["definition"][field]
         normalized = canonical_json(request)
         digest = sha256(normalized.encode("utf-8")).hexdigest()
@@ -538,6 +564,7 @@ class DomainDefinitions:
             # 重试已提交请求直接查回旧结果；大正文也不会再次准备附件。
             exists = (await connection.execute(_RECEIPT, key)).mappings().one_or_none()
             if exists is not None:
+                # 同编号已有回执，核对指纹后幂等重放。
                 return replay(exists, normalized, digest)
             created_at = await connection.scalar(text("SELECT clock_timestamp()"))
             if isinstance(
@@ -551,6 +578,7 @@ class DomainDefinitions:
                     DeleteSolutionRequest,
                 ),
             ):
+                # 修订/删除须先载入被改对象的固定版本。
                 row = await self._version_row(
                     connection, body.object_ref.object_id, body.object_ref.version
                 )
@@ -558,6 +586,7 @@ class DomainDefinitions:
 
         previous = None
         if isinstance(body, CreateDomainRequest):
+            # 新建领域根对象：v1，归属自身。
             ref = DomainRef(object_id=uuid4(), version=1)
             domain_id = ref.object_id
             content = body.definition
@@ -574,15 +603,18 @@ class DomainDefinitions:
             domain_id = body.domain_id
             content = body.definition
         else:
+            # 修订/删除：沿用既有对象，版本号在前一版基础上 +1。
             assert row is not None
             domain_id = row["domain_id"]
             if row["kind"] != body.object_ref.kind or not isinstance(domain_id, UUID):
                 raise RequestError(404, "not_found", "找不到指定领域对象。")
             previous = body.object_ref
             if previous.version != body.expected_version:
+                # 乐观锁：请求所带期望版本与底版不符。
                 raise RequestError(409, "version_conflict", "编辑版本不一致，请检查原稿。")
             ref = previous.model_copy(update={"version": previous.version + 1})
             if isinstance(body, DeleteKnowledgeRequest | DeleteTaskRequest | DeleteSolutionRequest):
+                # 软删除沿用原内容，仅标记 is_deleted。
                 content = (await self._read_version(row, domain_id, ref.object_id)).content
             else:
                 content = body.definition
@@ -620,6 +652,7 @@ class DomainDefinitions:
             if isinstance(body, (CreateTaskRequest, CreateSolutionRequest))
             else None
         )
+        # 仅新建题目/解法可带定义候选作为事件关联依据。
         draft = EventDraft(
             event_id=uuid4(),
             event_type=EVENT_TYPE,
@@ -634,6 +667,7 @@ class DomainDefinitions:
         try:
             prepared = await self.attachments.prepare(self.events, access, (draft,))
         except OSError as error:
+            # 附件落盘失败按临时不可用返回。
             raise RequestError(503, "temporarily_unavailable", "暂时无法保存领域内容。") from error
 
         async with self.engine.begin() as connection:
@@ -651,11 +685,12 @@ class DomainDefinitions:
                 {**key, "receipt": receipt_id, "body": normalized, "digest": digest},
             )
             if claimed is None:
-                # 唯一键等到另一事务提交后，本次查询读取其完整收据。
+                # 并发下回执已被插入，读取其完整收据后重放。
                 existing = (await connection.execute(_RECEIPT, key)).mappings().one()
                 return replay(existing, normalized, digest)
             sequence = 0
             if not isinstance(ref, DomainRef):
+                # 成员保存先锁领域并核对版本；根领域不需要成员锁。
                 sequence = await self._lock_member_save(connection, domain_id, previous)
                 if candidate is not None:
                     if candidate.owner != "domain" or candidate.type != "artifact":
@@ -669,10 +704,12 @@ class DomainDefinitions:
                         {"domain": domain_id, "id": UUID(candidate.id)},
                     )
                     if proposal != content.model_dump(mode="json"):
+                        # 落库定义须与确认过的候选草稿一致。
                         raise RequestError(
                             409, "candidate_basis_changed", "定义与所确认的候选不一致。"
                         )
                 if body.action != "soft_delete":
+                    # 非删除动作才校验引用关系；删除只标记状态。
                     await validate_relationships(connection, domain_id, ref.object_id, content)
             (saved,) = await self.events.append(
                 connection,
@@ -702,6 +739,7 @@ class DomainDefinitions:
         # 所有领域成员保存先锁所属领域，再核对成员的当前版本。
         root = await connection.scalar(text(_ROOT + " FOR UPDATE OF i"), {"id": domain_id})
         if root is None:
+            # 领域已删或不存在，成员保存拒绝。
             raise RequestError(404, "not_found", "找不到指定领域。")
         if previous is not None:
             head = (
@@ -716,6 +754,7 @@ class DomainDefinitions:
                 )
             ).one_or_none()
             if head is None or head.is_deleted or head.head_version != previous.version:
+                # 对象已删、不存在或头版本与期望版本不符，乐观锁冲突。
                 raise RequestError(409, "version_conflict", "领域对象已变更，请核对最新版本。")
         sequence = await connection.scalar(
             text(
@@ -725,6 +764,7 @@ class DomainDefinitions:
             {"id": domain_id},
         )
         if not isinstance(sequence, int):
+            # 领域须已有已提交根事件，才能取事件序号。
             raise RuntimeError("A domain catalog must have a committed root event")
         return sequence
 
@@ -735,6 +775,7 @@ class DomainDefinitions:
         if query.action != SAVE_ACTION or query.resource_kind != "account":
             raise RequestError(400, "invalid_request", "该领域请求入口不可查询。")
         if query.resource_id != principal_id:
+            # 只能查询当前管理员自己发起的请求。
             raise RequestError(404, "not_found", "找不到领域请求。")
         key = receipt_key(principal_id, query.request_id)
         async with self.engine.connect() as connection:

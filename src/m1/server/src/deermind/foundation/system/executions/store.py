@@ -1,4 +1,10 @@
-"""工作与尝试的原子保存；远程执行、模型调用均不在此仓储内进行。"""
+"""工作与尝试的原子保存；远程执行、模型调用均不在此仓储内进行。
+
+分层定位：foundation（公共运行底座 / 执行仓储）
+对外契约：load/attempt/authorization/check/arrange/new_attempt/accept/active/close
+承接执行与尝试的读取、认领、授权核对、命令安排与收尾。
+边界约束：调用方持有工作锁与共同事务；本仓储不做远程执行、模型调用或业务收尾判断。
+"""
 
 import json
 from datetime import timedelta
@@ -29,6 +35,7 @@ async def load(connection: AsyncConnection, execution_id: UUID, *, lock: bool = 
 
 
 async def attempt(connection: AsyncConnection, attempt_id: UUID) -> Attempt:
+    """按尝试编号读取尝试记录。"""
     row = (
         (
             await connection.execute(
@@ -52,6 +59,7 @@ async def lock_owned(
 
 
 async def authorization(connection: AsyncConnection, execution_id: UUID) -> Authorization:
+    """按执行编号读取受理时固定的授权记录。"""
     row = (
         (
             await connection.execute(
@@ -73,8 +81,10 @@ async def check(
 ) -> Authorization:
     """所存授权只是依据，所有者仍检查当前业务资格和资源。"""
     granted = await authorization(connection, execution.execution_id)
+    # 先核受理授权清单：动作未在获准范围内直接拒绝，不进入所有者业务核验。
     if action not in granted.allowed_actions:
         raise PermissionError("Action was not granted to this work")
+    # 所存授权只是依据，所有者仍按当前业务资格与资源复核该动作。
     await registry.resolve(execution).check(connection, execution, granted, action)
     return granted
 
@@ -90,6 +100,7 @@ async def arrange(
 ) -> None:
     """命令内容随工作固定；取消仅针对指定尝试，不跨尝试寻址。"""
     entry = registry.resolve(execution)
+    # 取消命令必须携带请求号：据此定位唯一取消对象，避免对整项工作或其他尝试生效。
     if kind == "cancel" and not request_id:
         raise ValueError("Cancellation must identify its request")
     body = RunInput(
@@ -116,6 +127,7 @@ async def arrange(
         {
             "id": uuid4(),
             "kind": kind,
+            # 取消键带请求号，防止同尝试的重复取消互相覆盖；启动键按尝试号去重。
             "key": f"{request_id}:{current.attempt_id}"
             if kind == "cancel"
             else str(current.attempt_id),
@@ -134,6 +146,7 @@ async def new_attempt(
     retry_request_id: str | None = None,
 ) -> Attempt:
     """在原工作锁内追加；期限从受理算起，派发及排队消耗同一份时间。"""
+    # 执行预算必须是有限正整数，拒绝零、负数或浮点预算。
     if type(seconds) is not int or seconds <= 0:
         raise ValueError("A finite positive execution budget is required")
     identity = uuid4()
@@ -201,9 +214,11 @@ async def accept(
     commit_id: UUID | None = None,
 ) -> Execution:
     """同键返回原工作，异输入拒绝；调用方负责和业务收据共同提交或回滚。"""
+    # 必须在调用方已开启的事务内提交，且受理键非空；本方法不另开事务。
     if not connection.in_transaction() or not acceptance_key.strip():
         raise ValueError("An active transaction and acceptance key are required")
     entry = registry.entries[entry_name]
+    # AI 操作与 AI 配置必须成对：是 ai_operation 就必须带配置，反之亦然。
     if (entry.kind == "ai_operation") != (ai_config_ref is not None):
         raise ValueError("AI configuration must match the registered work kind")
     await entry.lock(connection, scope_kind, scope_id)
@@ -219,14 +234,17 @@ async def accept(
         ),
         {"owner": entry.owner, "entry": entry_name, "scope": scope_id, "key": acceptance_key},
     )
+    # 命中同一受理键的既有工作：走幂等返回，不再创建第二次生产工作。
     if existing is not None:
         saved = await load(connection, existing, lock=True)
         caller.require(saved, "accept")
+        # 范围类型或输入引用与原工作不一致，说明同一受理键被用于另一工作，判身份冲突。
         if saved.scope_kind != scope_kind or saved.input_ref != input_ref:
             raise ValueError("Execution identity conflict")
         await check(connection, registry, saved, "read")
         return saved
 
+    # 新建工作：预分配执行身份，构造执行记录与受理授权，再落库并追加首个尝试。
     # AI配置表以execution_id为主键；受理方预分配此身份并在同一事务固定配置。
     identity = ai_config_ref if ai_config_ref is not None else uuid4()
     now = await connection.scalar(text("SELECT clock_timestamp()"))
@@ -248,6 +266,7 @@ async def accept(
         created_at=now,
         updated_at=now,
     )
+    # 核验调用者身份对该工作具有受理资格。
     caller.require(saved, "accept")
     granted = Authorization(
         execution_id=identity,
@@ -259,6 +278,7 @@ async def accept(
         basis_refs=basis_refs,
         created_at=now,
     )
+    # 所有者按受理授权与当前业务资源复核，通过后才落执行与授权记录。
     await entry.check(connection, saved, granted, "accept")
     await connection.execute(
         text(
@@ -292,14 +312,15 @@ async def active(
     """先锁工作再检查身份和期限；旧尝试的任何业务提交都必须经过这里。"""
     saved = await lock_owned(connection, registry, run.execution_id)
     current = await attempt(connection, run.attempt_id)
+    # 任一条件不满足即视为旧尝试/已停止/已过期，拒绝本次业务提交：
     if (
-        saved.active_attempt_id != run.attempt_id
-        or saved.state not in {"ready", "running", "waiting"}
-        or saved.input_ref != run.input_ref
-        or saved.implementation_ref != run.implementation_ref
-        or saved.ai_config_ref != run.ai_config_ref
-        or current.deadline_at != run.deadline_at
-        or current.deadline_at <= await connection.scalar(text("SELECT clock_timestamp()"))
+        saved.active_attempt_id != run.attempt_id  # 提交者不是当前有效尝试
+        or saved.state not in {"ready", "running", "waiting"}  # 工作已不在可活动状态
+        or saved.input_ref != run.input_ref  # 输入引用与固定工作漂移
+        or saved.implementation_ref != run.implementation_ref  # 实现引用漂移
+        or saved.ai_config_ref != run.ai_config_ref  # 配置引用漂移
+        or current.deadline_at != run.deadline_at  # 尝试期限与受理记录不一致
+        or current.deadline_at <= await connection.scalar(text("SELECT clock_timestamp()"))  # 尝试已过期
     ):
         raise ValueError("Execution attempt is stale, stopped, or expired")
     await check(connection, registry, saved, action)
@@ -318,13 +339,17 @@ async def close(
     request_id: str | None = None,
 ) -> Execution:
     """持工作锁时调用；业务收尾失败则整次回滚，不能只保存公共完成状态。"""
+    # 收尾只能落到三种终态之一，中间状态不能经此入口保存。
     if state not in {"completed", "failed", "cancelled"}:
         raise ValueError("A terminal state is required")
+    # 取消：先取消名下尚未提交的等待，保留已落定的决定。
     if state == "cancelled":
         await cancel_execution(connection, execution.execution_id, actor)
+    # 所有者业务收尾：更新业务副本；这一步失败会随整事务回滚。
     await registry.resolve(execution).finalize(
         connection, execution, state, result_ref or failure_ref
     )
+    # 完成前不允许尚有待发布的预期结果；缺结果不能先把工作置为完成。
     if state == "completed" and await connection.scalar(
         text(
             "SELECT EXISTS (SELECT 1 FROM runtime.result_attempts "
@@ -333,6 +358,7 @@ async def close(
         {"id": execution.active_attempt_id},
     ):
         raise ValueError("Expected results must be published before completion")
+    # 收尾本尝试上剩余的结果尝试，统一记为终态并附失败引用。
     await connection.execute(
         text(
             "UPDATE runtime.result_attempts SET outcome=:state,failure_ref=CAST(:failure AS jsonb),"
@@ -344,6 +370,7 @@ async def close(
             "failure": failure_ref.model_dump_json() if failure_ref else None,
         },
     )
+    # 落执行记录终态与结果/失败引用。
     await connection.execute(
         text(
             "UPDATE runtime.executions SET state=:state,result_ref=CAST(:result AS jsonb),"
@@ -357,6 +384,7 @@ async def close(
             "failure": failure_ref.model_dump_json() if failure_ref else None,
         },
     )
+    # 同步当前尝试的终态与失败引用。
     await connection.execute(
         text(
             "UPDATE runtime.execution_attempts SET state=:state,"
@@ -372,6 +400,7 @@ async def close(
     saved = await load(connection, execution.execution_id)
     assert saved.active_attempt_id is not None
     current = await attempt(connection, saved.active_attempt_id)
+    # 留痕结果：完成记 completed、失败记 failed、取消记 stopped。
     outcome = "completed" if state == "completed" else "failed" if state == "failed" else "stopped"
     await record_change(connection, saved, outcome, actor, attempt=current, request_id=request_id)
     return saved

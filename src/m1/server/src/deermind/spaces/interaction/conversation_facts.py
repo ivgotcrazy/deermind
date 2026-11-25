@@ -227,23 +227,31 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
     """验明每条记录的空间、业务身份以及本事件携带的记录组合。"""
     expected: dict[str, tuple[Ref, str]] = {}
     if isinstance(payload, InputAccepted):
+        # 输入受理：记录输入事实。
         expected[INPUT] = (payload.input_ref, "input_id")
     elif isinstance(payload, InputCompleted):
+        # 输入完成：记录结果事实。
         expected[RESULT] = (payload.result_ref, "result_id")
     elif isinstance(payload, MessageRecorded):
+        # 消息落库：记录消息事实。
         expected[MESSAGE] = (payload.message_ref, "message_id")
     elif isinstance(payload, ActivityChanged):
+        # 活动变更：记录修订；首版同时落活动主记录。
         expected[REVISION] = (payload.revision_ref, "activity_id")
         if payload.revision_ref.revision == 1:
             expected[ACTIVITY] = (payload.activity_ref, "activity_id")
     elif isinstance(payload, MessageAssigned):
+        # 消息归属活动：记录分配事实。
         expected[ASSIGNMENT] = (payload.message_ref, "message_id")
     elif isinstance(payload, ContextPrepared) and payload.subject_ref == draft.owner_ref:
+        # 上下文准备：主体引用须与所有者一致，再落上下文包。
         expected[CONTEXT] = (payload.subject_ref, "bundle_id")
     elif isinstance(payload, DecisionRecorded) and payload.subject_ref == draft.owner_ref:
+        # 决策记录：主体引用须与所有者一致，再落决策事实。
         expected[DECISION] = (payload.subject_ref, "decision_id")
     else:
         raise ValueError("Unexpected interaction event")
+    # 实际记录类型集合与条数须与预期组合完全吻合。
     if {item.record_type for item in payload.records} != expected.keys() or len(
         payload.records
     ) != len(expected):
@@ -251,6 +259,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
     for item in payload.records:
         content = item.content
         identity, column = expected[item.record_type]
+        # 内联正文须保留业务身份与范围一致；修订记录另校验版本与节点。
         if not isinstance(content, InlineContent) or (
             content.value[column] != identity.id
             or content.value.get("scope_id", str(draft.scope_id)) != str(draft.scope_id)
@@ -293,11 +302,13 @@ async def project(connection: AsyncConnection, saved: StoredEvent) -> None:
     async with application(
         connection, "interaction.conversation", 1, saved.draft.event_id
     ) as needed:
+        # 事件已投影过，重复应用直接返回。
         if not needed:
             return
         for item in saved.payload.records:
             body = item.content
             table = item.record_type
+            # 表类型须在已登记模型内，且正文为已解码内联内容。
             if table not in MODELS or not isinstance(body, InlineContent):
                 raise ValueError("Unexpected interaction projection")
             await connection.execute(
@@ -311,6 +322,7 @@ async def project(connection: AsyncConnection, saved: StoredEvent) -> None:
                     )
                 },
             )
+            # 修订记录落表后，同步推进活动头指针到当前 revision。
             if table == REVISION:
                 await connection.execute(
                     text(

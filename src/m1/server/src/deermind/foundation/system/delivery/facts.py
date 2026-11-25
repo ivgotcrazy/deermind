@@ -1,4 +1,9 @@
-"""交接关键结论追加为事实；租约、轮询和网络心跳不生成事实。"""
+"""交接关键结论追加为事实；租约、轮询和网络心跳不生成事实。
+
+分层定位：foundation（公共运行底座 / 事件交接）
+对外契约：DeliveryStateChanged 事件正文、MODELS 记录模型与 record_change 事实追加。
+边界约束：只追加交接结论事实，不安排自身发布，不清除旧收据或改写既有事实。
+"""
 
 import json
 from typing import Literal
@@ -26,6 +31,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 Outcome = Literal["arranged", "accepted", "rejected", "ignored", "failed", "redelivery_approved"]
+# 交接相关事实表名到记录模型的映射。
 MODELS: dict[str, type[FactModel]] = {
     "runtime.handoffs": Handoff,
     "runtime.handoff_attempts": HandoffAttempt,
@@ -35,6 +41,8 @@ MODELS: dict[str, type[FactModel]] = {
 
 
 class DeliveryStateChanged(EventPayload):
+    """交接状态变更事件正文：归属、结果、原因码与来源事件定位。"""
+
     subject_ref: Ref
     outcome: Outcome
     reason_code: str | None
@@ -43,11 +51,14 @@ class DeliveryStateChanged(EventPayload):
 
 def validate_delivery(draft: EventDraft, payload: EventPayload) -> None:
     """只接受完整控制记录；同名H记录不取得重建业务表的权限。"""
+    # 正文类型与归属主体必须与事件所有者一致。
     if not isinstance(payload, DeliveryStateChanged) or payload.subject_ref != draft.owner_ref:
         raise ValueError("Invalid delivery fact identity")
     counts: dict[str, int] = {}
+    # 逐条解码记录，核对类型、版本、内联状态与归属来源。
     for record in payload.records:
         model = MODELS.get(record.record_type)
+        # 类型未登记、版本不符或正文仍是未解附件，判无效交接事实。
         if (
             model is None
             or record.schema_version != 1
@@ -55,14 +66,17 @@ def validate_delivery(draft: EventDraft, payload: EventPayload) -> None:
         ):
             raise ValueError("Invalid delivery fact record")
         item = model.model_validate_json(json.dumps(record.content.value))
+        # 交接记录须属于本范围，且其携带事件与事件正文来源一致。
         if isinstance(item, Handoff) and (
             item.handoff_id != draft.scope_id
             or item.payload.event_id != payload.source_event_ref.event_id
         ):
             raise ValueError("Delivery fact source differs from its handoff")
         counts[record.record_type] = counts.get(record.record_type, 0) + 1
+    # 交接事实必须携带恰好一条交接记录。
     if counts.get("runtime.handoffs") != 1:
         raise ValueError("Delivery fact requires exactly one handoff")
+    # 受理/拒绝/忽略类结果必须附带订阅方收据。
     if (
         payload.outcome in {"accepted", "rejected", "ignored"}
         and counts.get("runtime.subscription_receipts") != 1
@@ -117,6 +131,7 @@ async def record_change(
         )
 
     add("runtime.handoffs", dict(handoff), "handoff")
+    # 指定了订阅方才补查其订阅收据。
     if subscriber_id is not None:
         receipt = (
             (
@@ -131,6 +146,7 @@ async def record_change(
             .mappings()
             .one_or_none()
         )
+        # 查到收据才追加；订阅方尚未回执则不夹带空收据。
         if receipt is not None:
             add("runtime.subscription_receipts", dict(receipt), "receipt")
     failures = (
@@ -141,6 +157,7 @@ async def record_change(
             {"id": handoff_id},
         )
     ).mappings()
+    # 逐条交接失败记录追加进事实留痕。
     for failure in failures:
         add("runtime.delivery_failures", dict(failure), str(failure["failure_id"]))
 

@@ -48,6 +48,7 @@ class DomainVersion(FactModel):
     @classmethod
     def utc_time(cls, value: datetime) -> datetime:
         if value.utcoffset() != timedelta(0):
+            # 领域版本时间戳统一存 UTC，禁止带本地时区偏移。
             raise ValueError("Domain version timestamps must be UTC")
         return value
 
@@ -71,6 +72,7 @@ def version_ref(object_ref: ObjectRef) -> Ref:
 def version_content(payload: EventPayload) -> DomainVersion:
     """验证正文和版本投影使用同一固定记录。"""
     if not isinstance(payload, DomainSaved) or len(payload.records) != 1:
+        # 保存事件须只含一条版本记录。
         raise ValueError("Domain save must contain one version record")
     record = payload.records[0]
     if (
@@ -85,6 +87,7 @@ def version_content(payload: EventPayload) -> DomainVersion:
         value.object_id != payload.object_ref.object_id
         or value.version != payload.object_ref.version
     ):
+        # 记录内对象身份/版本须与事件引用一致。
         raise ValueError("Domain object identity or version mismatch")
     return value
 
@@ -95,8 +98,10 @@ def validate_saved(draft: EventDraft, payload: EventPayload) -> None:
     value = version_content(payload)
     ref = payload.object_ref
     if draft.owner_ref != version_ref(ref):
+        # 事件归属须与对象版本引用一致。
         raise ValueError("Domain save does not match its scope or owner")
     if isinstance(ref, DomainRef):
+        # 根 Domain 定义：内容类型、作用域与创建动作须匹配。
         if (
             not isinstance(value.content, DomainDefinition)
             or draft.scope_id != ref.object_id
@@ -109,11 +114,13 @@ def validate_saved(draft: EventDraft, payload: EventPayload) -> None:
             ref.kind
         ],
     ):
+        # 成员定义不得挂在根作用域下，且内容类型须与种类匹配。
         raise ValueError("Invalid member definition")
 
     previous = payload.previous_ref
     if payload.action == "create":
         if previous is not None or ref.version != 1:
+            # 新建必须无前版本且从 v1 起。
             raise ValueError("A new definition must start at version one")
     elif (
         previous is None
@@ -121,8 +128,10 @@ def validate_saved(draft: EventDraft, payload: EventPayload) -> None:
         or previous.object_id != ref.object_id
         or previous.version != ref.version - 1
     ):
+        # 修订必须接在同一对象的前一版本之后。
         raise ValueError("A revision must append to its previous version")
     if value.is_deleted != (payload.action == "soft_delete"):
+        # 动作与软删状态必须一致。
         raise ValueError("The definition action and deletion state disagree")
 
 

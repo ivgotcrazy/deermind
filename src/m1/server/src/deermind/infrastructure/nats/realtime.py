@@ -33,11 +33,13 @@ class ViewNotices:
     @asynccontextmanager
     async def listen(self) -> AsyncGenerator[None]:
         """启动独立订阅、重试首次连接，并在 API 退出时关闭订阅。"""
+        # 未配置 NATS 时不起订阅任务，页面刷新仅走本地通道。
         task = asyncio.create_task(self._start(self.settings)) if self.settings else None
         try:
             yield
         finally:
             if task:
+                # 退出时取消订阅任务并等待其收尾。
                 task.cancel()
                 await asyncio.gather(task, return_exceptions=True)
             if self._client:
@@ -48,11 +50,13 @@ class ViewNotices:
         """由数据所有者在提交后调用。返回是否已交给本地 NATS 客户端。"""
         client = self._client
         if self.settings is None or client is None or not client.is_connected:
+            # 消息通道未就绪，调用方可由后续 HTTP 补读兜底。
             return False
         subject = f"dm.{self.settings.deployment}.view_changed"
         try:
             await client.publish(subject, str(event_id).encode("ascii"))
         except Error as error:
+            # 发布失败记录告警并返回未交付，不抛断业务提交。
             await self._error(error)
             return False
         return True
@@ -84,10 +88,12 @@ class ViewNotices:
                     )
                     await client.flush(timeout=3)
             except (Error, OSError, TimeoutError) as error:
+                # 连接或订阅失败：关闭旧客户端，退避后下一轮重连。
                 await self._error(error)
                 await client.close()
                 await asyncio.sleep(2)
             else:
+                # 订阅建立并 flush 成功，标记就绪后退出启动循环。
                 await self._reconnected()
                 return
 
@@ -108,13 +114,16 @@ class ViewNotices:
             },
         )
         if isinstance(error, SlowConsumerError):
+            # 本地订阅积压被断开，要求客户端全量重同步。
             await self.resync()
 
     async def _message(self, message: Msg) -> None:
         if len(message.data) != 36:
+            # 长度不符标准 UUID，丢弃非本通道消息。
             return
         try:
             event_id = UUID(message.data.decode("ascii"))
         except ValueError:
+            # 内容不是合法 UUID，丢弃。
             return
         await self.receive(event_id)

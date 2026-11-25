@@ -22,6 +22,7 @@ class Settings(BaseModel):
     @classmethod
     def absolute_directory(cls, value: Path) -> Path:
         if not value.is_absolute() or not value.is_dir():
+            # 文件根目录必须是部署给定的绝对路径且已存在。
             raise ValueError("files_root must be an existing absolute directory")
         return value
 

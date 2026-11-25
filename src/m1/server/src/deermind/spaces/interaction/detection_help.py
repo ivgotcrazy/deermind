@@ -21,6 +21,7 @@ async def prepare_help(
     conversation: Conversation, registry: Registry, run: RunInput, quote: str | None
 ) -> bool:
     """只接受能在当前已受理原话中核实的求助。"""
+    # 引文为空不受理求助。
     if not quote or not quote.strip():
         return False
     async with conversation.engine.begin() as db:
@@ -28,6 +29,7 @@ async def prepare_help(
         work = await store.active(db, registry, run, "step")
         current = await history.current(db, work.scope_id)
         leaf, opened = current.current_activity, current.current_round
+        # 叶子活动须为检测轮且存在开启中的轮次，否则不受理。
         if not leaf or leaf.type != "detection" or not opened:
             return False
         source = (
@@ -40,8 +42,10 @@ async def prepare_help(
             )
         ).one()
         accepted = StudentInput.model_validate_json(canonical_json(source.input))
+        # 引文必须能在已受理原话中检索到。
         if quote not in (accepted.text or ""):
             return False
+        # 轮次状态须为开放或已关闭，其余状态不受理。
         if opened.state not in {"open", "closed"}:
             return False
         identity, now = UUID(work.input_ref.id), datetime.now(UTC)
@@ -52,11 +56,13 @@ async def prepare_help(
             ),
             {"id": help_id},
         )
+        # 该求助已处理过，幂等返回成功。
         if existing is not None:
             return True
         closure = opened.round_ref
         events: list[EventDraft] = []
         progress = None
+        # 开放或可继续的轮次，先按求助原因生成关闭/推进载荷。
         if opened.state == "open" or opened.can_continue:
             closed, _ = await round_facts.close_payload(
                 db,
@@ -72,6 +78,7 @@ async def prepare_help(
                     draft(work.scope_id, round_facts.CLOSED, closure, closed, source.request_id)
                 )
             else:
+                # 非开放状态下取出计划进度，供后续求助记录携带。
                 content = closed.records[1].content
                 assert isinstance(content, InlineContent)
                 progress = PlanProgress.model_validate_json(canonical_json(content.value))
@@ -112,6 +119,7 @@ async def provided_help_event(
         ),
         {"scope": work.scope_id, "input": UUID(work.input_ref.id)},
     )
+    # 无已受理求助记录，不生成提供帮助事件。
     if row is None:
         return None
     handled = help_facts.HelpFact.model_validate_json(canonical_json(row))

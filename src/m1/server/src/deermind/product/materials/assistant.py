@@ -102,6 +102,7 @@ class MaterialAssistant:
 
     async def _lock(self, connection: AsyncConnection, kind: str, identity: UUID) -> None:
         if kind != SCOPE:
+            # 助手执行只允许绑定教材导入作用域。
             raise PermissionError("Wrong material import scope")
         # 失败收尾需要锁住已软删除的导入，业务校验另查其 active 状态。
         value = await connection.scalar(
@@ -115,6 +116,7 @@ class MaterialAssistant:
         self, connection: AsyncConnection, work: Execution, _granted: Authorization, action: str
     ) -> None:
         if action in {"read", "cancel"}:
+            # 只读与取消不占用导入写归属，直接放行。
             return
         value = (
             await connection.execute(
@@ -126,6 +128,7 @@ class MaterialAssistant:
             )
         ).one()
         if value != ("active", UUID(work.input_ref.id)):
+            # 导入已停用，或占用请求已被其他轮次接管。
             raise PermissionError("Material turn no longer owns the import")
 
     async def _turn(
@@ -146,6 +149,7 @@ class MaterialAssistant:
         )
         if row is None:
             raise LookupError("Material turn does not exist")
+        # 命中轮次记录后转为事实模型。
         return _turn_from_row(row)
 
     async def _manifest(
@@ -174,6 +178,7 @@ class MaterialAssistant:
             and earlier_pages is None
             and not any(term in command.message for term in WHOLE_BOOK)
         ):
+            # 既未选原件、又未指整本，消息也未暗示全册，缺少取材范围。
             return [], ["请明确要解析整本教材，或选择需要核对的原件及页码。"]
         selected = {item.source_id: item for item in selection.source_refs} if selection else {}
         if selection and (
@@ -186,12 +191,14 @@ class MaterialAssistant:
         missing: list[str] = []
         for row in rows:
             if selected and row["source_id"] not in selected:
+                # 未被选中的原件跳过。
                 continue
             items = row["pages"]
             supplied = selected.get(row["source_id"])
             first = supplied.first_page if supplied else 1
             last = supplied.last_page if supplied else len(items)
             if first > last or last > len(items):
+                # 页码区间越界或起止颠倒，记缺口并跳过该原件。
                 missing.append(f"{row['original_name']} 缺少文件内第 {first}–{last} 页。")
                 continue
             for item in items[first - 1 : last]:
@@ -200,6 +207,7 @@ class MaterialAssistant:
                     and earlier_pages is not None
                     and item["page_id"] not in earlier_pages
                 ):
+                    # 沿用上一轮已读页集合，跳过本次未在其中的页。
                     continue
                 pages.append(
                     {
@@ -211,6 +219,7 @@ class MaterialAssistant:
                         "original_name": row["original_name"],
                     }
                 )
+        # 有缺口报缺口；无缺口但一页未取到时提示空范围。
         return pages, missing or ([] if pages else ["此范围没有可供核对的原件。"])
 
     async def _previous_batch(
@@ -241,6 +250,7 @@ class MaterialAssistant:
         if row is None:
             raise RequestError(404, "not_found", "找不到这份候选的固定版本。")
         if row["decision_state"] not in {"pending", "adopted"}:
+            # 已拒绝或已被取代的批次不能作为前序依据。
             raise RequestError(409, "revision_conflict", "这份候选已失效，请引用当前候选。")
         return row
 
@@ -253,20 +263,24 @@ class MaterialAssistant:
         signature = digest(command.model_dump(mode="json"))
         config = self.config
         if config is None:
+            # 模型执行配置缺失，无法发起助手轮次。
             raise RequestError(503, "configuration_unavailable", "教材助手的模型服务尚未配置。")
         async with self.engine.begin() as connection:
             imported = await self.materials.read_import(connection, identity, lock=True)
             try:
                 previous = await self._turn(connection, action_id, identity)
             except LookupError:
+                # 同一请求键无历史轮次，视为首次提交。
                 previous = None
             if previous is not None:
                 if previous.input_digest != signature:
+                    # 幂等键被不同输入复用，属冲突。
                     raise RequestError(409, "request_conflict", "此请求编号已用于另一条消息。")
                 return MaterialTurnAcceptance(
                     request_ref=action_id, execution_ref=previous.runtime_ref
                 )
             if imported["active_request_ref"] is not None:
+                # 导入正被另一轮次占用，避免并发并发处理。
                 raise RequestError(409, "assistant_busy", "正在处理上一条消息，请稍后再发送。")
             if (
                 command.selection is not None
@@ -276,6 +290,7 @@ class MaterialAssistant:
             prior_batch = command.previous_batch_ref
             earlier_pages = None
             if prior_batch is not None:
+                # 引用前序批次时，取出其已读页集合作为上下文范围。
                 earlier = await self._previous_batch(connection, identity, prior_batch)
                 earlier_pages = {str(ref["source_id"]) for ref in earlier["read_set"]}
             pages, gaps = await self._manifest(connection, identity, command, earlier_pages)
@@ -431,6 +446,7 @@ class MaterialAssistant:
     async def previous_context(self, turn: facts.TurnFact) -> str:
         reference = turn.input.get("previous_batch")
         if reference is None:
+            # 无前序批次则不带历史上下文。
             return ""
         fixed = PreviousMaterialBatch.model_validate(reference)
         async with self.engine.connect() as connection:
@@ -460,6 +476,7 @@ class MaterialAssistant:
         async with self.engine.begin() as connection:
             saved = await store.lock_owned(connection, self.registry, run.execution_id)
             if saved.state == "completed":
+                # 已完成的执行重复收尾直接返回。
                 return
             work = await store.active(connection, self.registry, run, "finish")
             turn = await self._turn(connection, UUID(work.input_ref.id), work.scope_id)
@@ -469,6 +486,7 @@ class MaterialAssistant:
             if proposal is not None and (
                 proposal.changes or proposal.catalog_changes or proposal.retire
             ):
+                # 提案含改动、目录调整或退役项，先落候选批次。
                 batches.append(
                     await self._publish_candidates(
                         connection, actor, turn, imported, proposal, shown
@@ -497,6 +515,7 @@ class MaterialAssistant:
         previous_rows: dict[str, facts.CandidateFact] = {}
         chapter_names: dict[str, UUID] = {}
         if prior_ref is not None:
+            # 载入前序批次快照，供修订与退役定位旧候选。
             previous = PreviousMaterialBatch.model_validate(prior_ref)
             snapshot = await self._previous_batch(connection, turn.import_id, previous)
             sources = (
@@ -512,15 +531,18 @@ class MaterialAssistant:
                 prior = facts.CandidateFact.model_validate_json(canonical_json(row))
                 previous_rows[str(prior.candidate_id)] = prior
             for section in snapshot["diff_summary"]["chapters"]:
+                # 记录章节名到前序章节标识的映射，便于目录调整复用。
                 chapter_names[section["name"]] = UUID(section["chapter_id"])
         candidates: dict[str, tuple[UUID, int]] = {}
         replaced: set[str] = set()
         for item in proposal.changes:
             if item.replaces is None:
+                # 无替换目标：新建候选，版本从 1 起。
                 candidates[item.local_key] = (uuid4(), 1)
                 continue
             old = previous_rows.get(item.replaces)
             if old is None or old.kind != item.kind or item.replaces in replaced:
+                # 修订目标须在前序批次内、类型一致且未被重复替换。
                 raise ValueError("Correction target is outside the referenced batch")
             latest = await connection.scalar(
                 text(
@@ -546,6 +568,7 @@ class MaterialAssistant:
         for target in proposal.retire:
             old = previous_rows.get(target)
             if old is None or target in replaced:
+                # 退役目标须在前序批次内，且不能同时又是被替换对象。
                 raise ValueError(
                     "Retirement target is outside the referenced batch or also replaced"
                 )
@@ -559,6 +582,7 @@ class MaterialAssistant:
                     "title": old.body["title"],
                 }
             )
+        # 为每条改动组装候选事实记录与写集条目。
         for entry in proposal.changes:
             identity, revision = candidates[entry.local_key]
             row = facts.CandidateFact(
@@ -633,6 +657,7 @@ class MaterialAssistant:
             fixed = PreviousMaterialBatch.model_validate(previous)
             source = await self._previous_batch(connection, turn.import_id, fixed)
             if source["decision_state"] == "pending":
+                # 新批次覆盖完整时，把仍在待审的旧批次标记为已被取代。
                 body = {
                     key: str(value) if isinstance(value, (UUID, datetime)) else value
                     for key, value in source.items()
@@ -717,9 +742,11 @@ class MaterialAssistant:
         self, connection: AsyncConnection, work: Execution, state: State, _result: Ref | None
     ) -> None:
         if state not in {"failed", "cancelled"}:
+            # 成功收尾无需补偿处理。
             return
         turn = await self._turn(connection, UUID(work.input_ref.id), work.scope_id)
         if turn.state != "accepted":
+            # 轮次已落定过结果，避免重复补偿。
             return
         imported = (
             (
@@ -732,6 +759,7 @@ class MaterialAssistant:
             .one()
         )
         if imported["active_request_ref"] == turn.request_ref:
+            # 仅当本次执行仍持有导入占用时才释放占用并落失败/取消结果。
             granted = await store.authorization(connection, work.execution_id)
             next_seq = await self._save_outcome(
                 connection,
@@ -758,10 +786,12 @@ class MaterialAssistant:
                     query.resource_id,
                 )
         except LookupError:
+            # 无对应轮次收据，按未找到返回。
             return ReceiptView[MaterialTurnResult](receipt_state="not_found")
         status = "accepted" if turn.state == "accepted" else "completed"
         result = None
         if status == "completed":
+            # 已完成轮次回读结束事件事实以组装结果。
             found = await self.reader.query_metadata(
                 SCOPE,
                 turn.import_id,
@@ -795,6 +825,7 @@ class MaterialAssistant:
         self.materials.administrator(session)
         async with self.engine.connect() as connection:
             imported = await self.materials.read_import(connection, import_id)
+            # 上界取请求上限与当前最后消息序号的较小值。
             horizon = (
                 min(upper, imported["next_message_seq"] - 1)
                 if upper is not None
@@ -839,6 +870,7 @@ class MaterialAssistant:
             )
             if batch is None:
                 raise RequestError(404, "not_found", "找不到这批教材候选。")
+            # 批次与候选明细一并读出。
             candidates = (
                 await connection.scalars(
                     text(
@@ -849,5 +881,6 @@ class MaterialAssistant:
                 )
             ).all()
         if len(canonical_json([batch, *candidates]).encode()) > 4 * 1024**2:
+            # 结果体积超限，提示收窄取材范围。
             raise RequestError(413, "payload_too_large", "候选过多，请按较小的原件范围重新核对。")
         return MaterialBatchView(batch=batch, items=list(candidates))

@@ -87,6 +87,7 @@ class InputPrepared(EventPayload):
 
 
 def validate(draft: EventDraft, payload: EventPayload) -> None:
+    # 正文类型、所有者引用、触发事件与记录基数须一致。
     if (
         not isinstance(payload, InputPrepared)
         or draft.owner_ref != payload.evaluation_input_ref
@@ -95,9 +96,11 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
     ):
         raise ValueError("Evaluation input event has inconsistent identity")
     record = payload.records[0]
+    # 记录类型与内联正文不符，判输入记录不完整。
     if record.record_type != INPUT or not isinstance(record.content, InlineContent):
         raise ValueError("Evaluation input requires its complete record")
     body = InputRecord.model_validate_json(canonical_json(record.content.value))
+    # 输入标识、所有者、范围、触发事件与源序号必须与事件逐项对得上。
     if (
         str(body.input_id) != record.record_id
         or record.record_id != draft.owner_ref.id
@@ -115,9 +118,11 @@ REGISTRATION = EventRegistration(
 
 async def project(db: AsyncConnection, event: StoredEvent) -> None:
     async with application(db, INPUT, 1, event.draft.event_id) as needed:
+        # 事件已投影过，重复应用直接返回。
         if not needed:
             return
         body = event.payload.records[0].content
+        # 投影前正文仍须是已解码内联内容。
         if not isinstance(body, InlineContent):
             raise ValueError("Evaluation input is not decoded")
         await db.execute(

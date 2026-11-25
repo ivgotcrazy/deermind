@@ -67,6 +67,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         raise ValueError("Target fact scope does not match")
     records = {record.record_type: record for record in payload.records}
     if set(records) != {HEAD, VERSION} or len(payload.records) != 2:
+        # 变更须同时带头记录和版本记录。
         raise ValueError("Target change requires a head and a version")
     head, version = records[HEAD].content, records[VERSION].content
     assert isinstance(head, InlineContent) and isinstance(version, InlineContent)
@@ -78,6 +79,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         or version.value["revision"] != ref.revision
         or head.value["textbook_id"] != str(payload.textbook_id)
     ):
+        # 头/版本快照的目标、修订号与教材归属须与固定引用一致。
         raise ValueError("Target snapshot differs from its fixed reference")
 
 
@@ -107,6 +109,7 @@ async def project(connection: AsyncConnection, saved: StoredEvent) -> None:
         connection, "product.learning_targets", 1, saved.draft.event_id
     ) as needed:
         if not needed:
+            # 已被回执投影处理过，跳过落表。
             return
         for key, statement in _PROJECTIONS.items():
             record = records[key]

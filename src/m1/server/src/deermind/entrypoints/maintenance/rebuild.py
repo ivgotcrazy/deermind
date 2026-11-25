@@ -22,6 +22,7 @@ async def run(args: argparse.Namespace) -> int:
     settings = DatabaseSettings.from_environment()
     backend = os.environ.get("M1_FILES_BACKEND", "pvc")
     if backend != "local" and backend != "pvc":
+        # 维护命令仅支持本地目录或 PVC 两种后端，其余配置拒绝启动。
         raise ValueError("Maintenance file backend must be local or pvc")
     files = LocalFiles(Path(os.environ["M1_FILES_ROOT"]), backend=backend)
     engine = create_async_engine(
@@ -33,6 +34,7 @@ async def run(args: argparse.Namespace) -> int:
     try:
         service = account_rebuilder(engine, files)
         if args.action == "run":
+            # 执行重建：携带代次与明确范围。
             job = await service.rebuild(
                 args.rebuild_id,
                 args.generation,
@@ -41,6 +43,7 @@ async def run(args: argparse.Namespace) -> int:
                 authorization=args.authorization,
             )
         else:
+            # status 仅查询已存重建任务的当前状态。
             job = await service.status(
                 args.rebuild_id, operator=args.operator, authorization=args.authorization
             )
@@ -51,8 +54,10 @@ async def run(args: argparse.Namespace) -> int:
             extra={"action": "projection_rebuild", "outcome": job.state},
         )
         print(job.model_dump_json())
+        # 仅重建完成退出码为 0，其余状态（含进行中/失败）返回 1。
         return 0 if job.state == "completed" else 1
     finally:
+        # 命令结束后释放临时连接池。
         await engine.dispose()
 
 
@@ -67,8 +72,10 @@ def main() -> None:
     parser.add_argument("--scope", type=UUID, action="append")
     args = parser.parse_args()
     if args.action == "run" and (args.generation is None or not args.scope):
+        # run 必须显式给出代次与范围，禁止无范围重建。
         parser.error("Run requires generation and explicit scopes")
     if args.action == "status" and (args.generation is not None or args.scope):
+        # status 只凭已存重建身份查询，不应附带重建参数。
         parser.error("Status only needs the stored rebuild identity")
     configure_logging()
     try:

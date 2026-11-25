@@ -1,4 +1,9 @@
-"""后台工作的固定身份及步骤合同；输入、实现和授权不能由恢复请求替换。"""
+"""后台工作的固定身份及步骤合同；输入、实现和授权不能由恢复请求替换。
+
+分层定位：foundation（公共运行底座 / 执行生命周期）
+对外契约：Entry 登记入口的锁/校验/收尾；Registry 解析入口；Caller 做执行动作授权。
+边界约束：注册对象只由程序提供；入口实现、归属与类型必须与执行记录一致。
+"""
 
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
@@ -36,14 +41,18 @@ class Registry:
     def __init__(self, entries: Sequence[Entry]) -> None:
         self.entries: dict[str, Entry] = {}
         for entry in entries:
+            # 入口名重复或未挂在本所有者命名空间下，判无效登记。
             if entry.name in self.entries or not entry.name.startswith(entry.owner + "."):
                 raise ValueError("Duplicate entry or invalid owner")
+            # 工作流类型与任务队列必须登记，派发时据此定位执行通道。
             if not entry.workflow_type or not entry.task_queue:
                 raise ValueError("Workflow and queue registration are required")
             self.entries[entry.name] = entry
 
     def resolve(self, execution: Execution) -> Entry:
+        """按执行记录解析入口，并核对归属、类型与实现引用一致。"""
         entry = self.entries[execution.entry_ref]
+        # 归属、类型或实现引用与登记不一致，说明旧合同被替换或执行记录被改写。
         if (
             entry.owner != execution.owner
             or entry.kind != execution.kind
@@ -63,6 +72,8 @@ class Caller:
     actions: frozenset[str]
 
     def require(self, execution: Execution, action: str) -> None:
+        """核对调用方归属、范围与动作授权；不符则拒绝访问。"""
+        # 归属、授权范围与动作三者任一不符，拒绝本次执行访问。
         if (
             execution.owner != self.owner
             or (execution.scope_kind, execution.scope_id) not in self.scopes

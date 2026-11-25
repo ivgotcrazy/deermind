@@ -25,9 +25,11 @@ LOGGER = logging.getLogger("product.accounts")
 
 def password(label: str, *, confirm: bool = False) -> str:
     if not sys.stdin.isatty():
+        # 非交互终端无法安全读取密码，避免密码进入脚本参数或日志。
         raise ValueError("Passwords require an interactive terminal")
     value = getpass.getpass(label)
     if confirm and value != getpass.getpass("再次输入密码："):
+        # 两次输入不一致，拒绝保存密码。
         raise ValueError("两次密码不同")
     return value
 
@@ -62,6 +64,7 @@ def parser() -> argparse.ArgumentParser:
     consent.add_argument("--verification", required=True)
     consent.add_argument("--decision", choices=["accepted", "declined", "pending"], required=True)
     consent.add_argument("--files-root", type=Path, required=True)
+    # 重置学生密码与恢复管理员共用同一组参数，仅操作人参数名不同。
     for name in ("reset-student-password", "recover-admin"):
         reset = commands.add_parser(name)
         reset.add_argument(
@@ -83,6 +86,7 @@ async def execute(args: argparse.Namespace) -> None:
     try:
         manager, auth = await configure_account_management(engine)
         if args.action == "bootstrap-admin":
+            # 初始化首个管理员，无需先登录既有账号。
             receipt = await manager.bootstrap(
                 login=args.login,
                 name=args.name,
@@ -91,6 +95,7 @@ async def execute(args: argparse.Namespace) -> None:
             )
         else:
             if args.action != "recover-admin":
+                # 非恢复管理员操作先以管理员身份登录，recover-admin 走独立授权。
                 login = await auth.sign_in(
                     args.admin, password("管理员密码："), "management-cli", None
                 )
@@ -100,6 +105,7 @@ async def execute(args: argparse.Namespace) -> None:
                 id=getattr(args, "verification", "not-used"),
             )
             if args.action == "create-student" and login:
+                # 新建合成学生账号，学生密码需二次确认。
                 receipt = await manager.create_student(
                     login.view,
                     request_id=args.request_id,
@@ -111,6 +117,7 @@ async def execute(args: argparse.Namespace) -> None:
                     synthetic=args.synthetic,
                 )
             elif args.action == "update-student" and login:
+                # 修改学生登录名与名称，按期望修订号做乐观并发校验。
                 receipt = await manager.update_student(
                     login.view,
                     account_id=args.account_id,
@@ -120,8 +127,10 @@ async def execute(args: argparse.Namespace) -> None:
                     name=args.name,
                 )
             elif args.action == "record-guardian-consent" and login:
+                # 监护人同意前先打印测试告知文本，要求操作员显式确认。
                 print(TEST_NOTICE_TEXT)
                 if input("确认已按这份测试告知核实该决定？输入 yes：") != "yes":
+                    # 未输入 yes 视为放弃，不落同意记录。
                     raise ValueError("未确认，不保存")
                 service = configure_usage(engine, args.files_root)
                 result = await service.confirm(
@@ -141,6 +150,7 @@ async def execute(args: argparse.Namespace) -> None:
                 print(result.model_dump_json())
                 return
             else:
+                # 其余为密码恢复/重置：校验身份后设置新密码。
                 receipt = await manager.recover(
                     login.view if login else None,
                     account_id=args.account_id,
@@ -156,6 +166,7 @@ async def execute(args: argparse.Namespace) -> None:
         )
     finally:
         if login and auth:
+            # 已登录的管理员会话在命令结束后主动注销，避免会话残留。
             await auth.sign_out(login.token, str(login.view.session_id), login.view.csrf_token)
         await engine.dispose()
 
@@ -166,9 +177,11 @@ def main() -> None:
     try:
         asyncio.run(execute(args))
     except AuthError as error:
+        # 认证失败仅对外输出安全文案，不暴露凭据细节。
         print(error.message, file=sys.stderr)
         raise SystemExit(1) from None
     except (ValueError, ValidationError, RequestConflict, IntegrityError):
+        # 输入非法或记录冲突，本次变更未保存。
         print("输入或记录发生冲突；未保存本次变更，请核对后重试。", file=sys.stderr)
         raise SystemExit(1) from None
     except Exception:

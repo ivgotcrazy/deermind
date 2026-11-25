@@ -25,8 +25,10 @@ def validate_auth_fact(draft: EventDraft, payload: EventPayload) -> None:
         or payload.account_id != draft.scope_id
         or draft.owner_ref != Ref(owner="product", type="account", id=str(payload.account_id))
     ):
+        # 类型、记录数、账号归属与事件 owner 任一不符即拒绝。
         raise ValueError("Authentication fact does not match its account")
     if isinstance(payload, AccountSignedOut) and payload.subject_ref != draft.owner_ref:
+        # 登出/撤销的主体必须就是事件所属账号。
         raise ValueError("Authentication subject differs from its owner")
 
 

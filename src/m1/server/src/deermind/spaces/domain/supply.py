@@ -106,6 +106,7 @@ class TaskSupply:
     async def find_batch_result(db: AsyncConnection, scope: UUID, trigger: UUID) -> Match | None:
         batch = await TaskSupply.read_batch(db, scope, trigger)
         if batch is None:
+            # 未查到该触发的供题批次。
             return None
         return Match(
             event_id=batch.completed_event_id, result_ref=_ref("supply_batch", batch.batch_id)
@@ -117,6 +118,7 @@ class TaskSupply:
     ) -> tuple[TaskInstance, SuppliedTask, UUID] | None:
         batch = await TaskSupply.read_batch(db, scope, trigger)
         if batch is None or not batch.items:
+            # 无批次或批次未交付题目。
             return None
         item = batch.items[0]
         body = await TaskSupply.read_fixed_question(db, item.task_instance_ref)
@@ -125,6 +127,7 @@ class TaskSupply:
     @staticmethod
     async def read_fixed_question(db: AsyncConnection, fixed: Ref) -> TaskInstance | None:
         if fixed.owner != "domain" or fixed.type != "task_instance" or fixed.version is None:
+            # 引用不合法或未锁定版本。
             return None
         body = await db.scalar(
             text(
@@ -146,12 +149,14 @@ class TaskSupply:
             or notice.event_type != REQUESTED
             or notice.producer != "interaction"
         ):
+            # 非学习空间的供题请求通知，忽略。
             return Acceptance(disposition="ignored", arrangement_refs=[])
         trigger, scope = notice.event_id, notice.scope_id
         batch_id = uuid5(trigger, "task-supply-batch")
         batch = _ref("supply_batch", batch_id)
         answer = Acceptance(disposition="accepted", arrangement_refs=[batch])
         if await self._exists(db, trigger, scope):
+            # 同触发批次已落库，幂等重放。
             return answer
         data = await self.reader.read_facts(
             SCOPE,
@@ -176,10 +181,11 @@ class TaskSupply:
         methods = [
             SolutionRef(kind="solution", object_id=UUID(method.id), version=method.version)
             for method in requested.allowed_method_refs
-            if method.version is not None
+            if method.version is not None  # 未锁定版本的方法不纳入核对
         ]
         await chapter_methods(db, requested.domain_id, task, methods)
         if await self._exists(db, trigger, scope):
+            # 核对期间并发已落库，再次幂等返回。
             return answer
         input_id = uuid5(trigger, "task-supply-input")
         if await db.scalar(
@@ -189,6 +195,7 @@ class TaskSupply:
             ),
             {"id": input_id, "domain": requested.domain_id},
         ):
+            # 已有生成依据，重投时回到原生成执行。
             return Acceptance(
                 disposition="accepted",
                 arrangement_refs=[
@@ -227,6 +234,7 @@ class TaskSupply:
         records: list[FactRecord] = []
         supplied: list[SuppliedTask] = []
         for candidate in chosen:
+            # 每道入选库存题落一条使用检查产物与供题条目。
             instance = candidate.instance.instance_ref
             identity = instance.reference()
             check_id = uuid5(trigger, f"{identity.id}:{identity.version}")
@@ -267,6 +275,7 @@ class TaskSupply:
             and unfilled
             and requested.exposed_instances is not None
         ):
+            # 库存不足且可生成：构造生成依据供后续执行补齐。
             domain = requested.domain_id
             definition = TaskDefinition.model_validate(await require_definition(db, domain, task))
             solutions = [
@@ -297,7 +306,7 @@ class TaskSupply:
             scope_id=scope,
             input_artifact_id=input_id,
             items=supplied,
-            unfilled=[unfilled] if unfilled else [],
+            unfilled=[unfilled] if unfilled else [],  # 凑满则无缺口
             completed_event_id=event_id,
             created_at=when,
         )
@@ -329,6 +338,7 @@ class TaskSupply:
             )
         ]
         if basis is None:
+            # 无需生成时，本次直接落完成批次事件。
             drafts.append(
                 EventDraft(
                     event_id,
@@ -358,6 +368,7 @@ class TaskSupply:
         for event in events:
             await supply_facts.project(db, event)
         if basis and generation:
+            # 有待生成缺口，启动生成执行并回其执行引用。
             work = await generation.accept(db, basis, input_ref)
             return Acceptance(disposition="accepted", arrangement_refs=[work])
         return answer

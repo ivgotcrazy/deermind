@@ -31,9 +31,11 @@ class Activities:
         try:
             handle = await self.calls.prepare(CALL_INPUT.validate_json(body))
             if handle.binding.schema_ref.model_dump_json() not in self.schemas:
+                # 绑定的模型/输出 schema 未在本环境登记，拒绝调用。
                 raise AIRejected("configuration_unavailable")
             return handle.model_dump_json()
         except (ValueError, PermissionError):
+            # 输入非法或无调用权限，转为不可重试的业务错误。
             raise ApplicationError(
                 "AI call rejected", type="AIRequestRejected", non_retryable=True
             ) from None
@@ -46,6 +48,7 @@ class Activities:
             candidate = schema.model_validate_json(output_json, strict=True)
             return str(await self.calls.candidate(handle, candidate.model_dump(mode="json")))
         except (ValueError, PermissionError, KeyError):
+            # 候选输出不符合 schema 或绑定缺失，同样不可重试。
             raise ApplicationError(
                 "AI candidate rejected", type="AIRequestRejected", non_retryable=True
             ) from None
@@ -63,6 +66,7 @@ async def execute_ai_task(
 ) -> UUID:
     """供Operation Workflow调用；复用已存候选，不重问模型，也不直接保存业务结果。"""
     if not workflow.in_workflow():
+        # 持久化 AI 步骤必须运行在 Workflow 内，保证候选与失败可回放。
         raise ValueError("Durable AI execution requires a Workflow")
     handle_json = await workflow.execute_activity(
         "ai.prepare_call",
@@ -73,12 +77,14 @@ async def execute_ai_task(
     )
     handle = CallHandle.model_validate_json(handle_json)
     if handle.candidate_ref is not None:
+        # 已有可复用候选，直接返回，不重问模型。
         return handle.candidate_ref
     seconds = (
         incoming.run.deadline_at - workflow.now()
     ).total_seconds() - handle.budget.finalize_reserve_seconds
     try:
         if seconds <= 0:
+            # 扣除收尾预留后已无可用时间预算，拒绝发起模型请求。
             raise AIRejected("budget_exhausted")
         async with asyncio.timeout(seconds):
             result = await agent.run(

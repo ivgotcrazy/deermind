@@ -29,15 +29,18 @@ async def read_study_method_name(
         Ref(owner="domain", type="solution", id=str(method.object_id), version=method.version),
     )
     name = fixed[0].get("name") if fixed else None
+    # 仅当名称为字符串时返回，否则按无名方法处理。
     return name if isinstance(name, str) else None
 
 
 def domain_refs(snapshot: CourseSnapshot) -> list[ReadableMaterial]:
     items: list[ReadableMaterial] = []
     seen: set[tuple[str, UUID, int]] = set()
+    # 遍历章节关联，归集任务与解法引用，并按身份+版本去重。
     for chapter in snapshot.chapters:
         for association in chapter.associations:
             if not association.active:
+                # 已停用的关联不再进入可读目录。
                 continue
             for obj in (association.task_ref, *association.method_refs):
                 key = (obj.kind, obj.object_id, obj.version)
@@ -76,6 +79,7 @@ class StudentMaterialSources:
                 )
             ),
         )
+        # 章节按是否含显式引用排序后，逐段追加教材内容。
         for chapter in chapters:
             by_priority = sorted(
                 enumerate(chapter.content_refs, start=1), key=lambda item: item[1] not in explicit
@@ -91,12 +95,14 @@ class StudentMaterialSources:
                 if len(items) >= COURSE_LIMIT:
                     break
             if len(items) >= COURSE_LIMIT:
+                # 课程材料已满，停止追加后续章节。
                 break
         fixed = await self.publications.current_reference(db, scope)
         goal = await GoalResults.current_reference(db, scope, UUID(adopted.target_basis_ref.id))
         published: list[ReadableMaterial] = []
         for item in snapshot.items:
             if fixed:
+                # 有已发布掌握度时，为每个方面补一条掌握状态引用。
                 published.append(
                     ReadableMaterial(
                         kind="published",
@@ -105,6 +111,7 @@ class StudentMaterialSources:
                     )
                 )
             if goal:
+                # 有目标判断结果时，补一条目标判断引用。
                 published.append(
                     ReadableMaterial(
                         kind="published",
@@ -118,6 +125,7 @@ class StudentMaterialSources:
                     )
                 )
             if len(published) >= STATE_LIMIT:
+                # 状态类引用已满，停止追加。
                 break
         return [*items[:COURSE_LIMIT], *published[:STATE_LIMIT]]
 
@@ -127,6 +135,7 @@ class StudentMaterialSources:
         adopted = await self.spaces.fixed_adoption(db, scope, adoption)
         if reference.owner == "product" and reference.type == "material_candidate":
             if not any(reference in chapter.content_refs for chapter in adopted.snapshot.chapters):
+                # 候选内容不在本空间采用快照内。
                 return None
             parts = await self.spaces.read_quoted_content(scope, adoption, reference)
             material: list[JsonValue] = [part for part in parts]
@@ -134,10 +143,12 @@ class StudentMaterialSources:
         if reference.owner == "domain":
             allowed = [value.reference for value in domain_refs(adopted.snapshot)]
             if reference.type != "task_instance" and reference not in allowed:
+                # 领域引用不在本课程允许清单内。
                 return None
             domain = await self.spaces.domain_for(db, scope)
             record = await read_fixed_reference(db, domain, reference)
             if record is None:
+                # 领域固定记录已不存在。
                 return None
             body, event = record
             if reference.type == "task_instance":
@@ -149,17 +160,21 @@ class StudentMaterialSources:
                     version=instance.task_ref.version,
                 )
                 if task not in allowed:
+                    # 实例所属任务不在允许清单内，不暴露题面。
                     return None
             return body, [reference, Ref(owner="domain", type="event", id=str(event))]
 
         if reference.owner != "evaluation" or reference.path is None:
+            # 非评价域引用，或未带方面路径，不予读取。
             return None
         item_id = UUID(reference.path.removeprefix("/"))
         item = next((item for item in adopted.snapshot.items if item.item_id == item_id), None)
         if item is None:
+            # 路径指向的方面不在快照内。
             return None
         fixed = reference.model_copy(update={"path": None})
         if reference.type == "mastery_snapshot":
+            # 掌握度快照：按方面引用读取已发布记录。
             return await self.publications.read(scope, [item.claim_ref], fixed), [reference]
         if reference.type == "goal_evaluation":
             goal = await GoalResults.fixed_result(
@@ -170,5 +185,6 @@ class StudentMaterialSources:
                     (entry for entry in goal.result.items if entry.item_id == item_id), None
                 )
                 if match:
+                    # 目标判断结果中命中对应方面，返回该条目。
                     return match.model_dump(mode="json"), [reference, adopted.target_basis_ref]
         return None

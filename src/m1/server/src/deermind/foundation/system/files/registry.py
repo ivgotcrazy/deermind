@@ -1,4 +1,9 @@
-"""文件登记与 FileReceived 事实在同一短事务提交。"""
+"""文件登记与 FileReceived 事实在同一短事务提交。
+
+分层定位：foundation（公共运行底座 / 文件登记仓储）
+对外契约：FileRegistry 按产物身份或文件身份查询登记；register/register_in 追加登记事实并写投影。
+边界约束：登记事实与 file_objects 投影在同一事务提交；可复用调用方已开启的事务一并落定。
+"""
 
 from uuid import UUID, uuid4
 
@@ -33,6 +38,7 @@ class FileRegistry:
                 text(f"SELECT to_jsonb(f) FROM runtime.file_objects f WHERE {field}=:identity"),
                 {"identity": identity},
             )
+        # 无对应登记记录，按未登记返回。
         if row is None:
             return None
         return FileObject.model_validate_json(canonical_json(row))

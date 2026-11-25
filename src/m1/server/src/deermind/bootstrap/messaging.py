@@ -79,6 +79,7 @@ def subscriptions(
             "product_intake_result", "1", frozenset({RECEIVED, REJECTED}), scope, receive_result
         ),
     ]
+    # 逐条等待策略接线对应通知订阅。
     for waiting_policy in policies().items:
         subscriber_id = (
             "runtime_waits"
@@ -87,5 +88,6 @@ def subscriptions(
         )
         waiting = subscription(shared, Policies([waiting_policy]), subscriber_id)
         if waiting is not None:
+            # 策略产生有效订阅才加入注册表。
             items.append(waiting)
     return SubscriptionRegistry(items)

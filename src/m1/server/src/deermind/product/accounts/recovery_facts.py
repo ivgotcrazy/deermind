@@ -19,6 +19,7 @@ def validate_recovery(draft: EventDraft, payload: EventPayload) -> None:
         or payload.account_id != draft.scope_id
         or draft.owner_ref != Ref(owner="product", type="account", id=str(payload.account_id))
     ):
+        # 类型、记录数、账号归属与事件 owner 任一不符即拒绝。
         raise ValueError("Recovery event does not match its account")
 
 

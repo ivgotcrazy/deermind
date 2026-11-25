@@ -35,6 +35,7 @@ async def next_source(
             args,
         )
     ).one()
+    # 已有进行中的触发事件，不取下一条源事件，避免并发重算。
     if row.active_trigger_event_id is not None:
         return None
     page = await reader.query_metadata(
@@ -46,9 +47,11 @@ async def next_source(
         connection=db,
     )
     items = page["items"]
+    # 无后续事件，游标保持原位。
     if not isinstance(items, list) or not items:
         return None
     item = items[0]
+    # 元数据条目结构不符，判源事件无效。
     if not isinstance(item, dict):
         raise ValueError("Evaluation source metadata is invalid")
     return SourceEvent(
@@ -76,6 +79,7 @@ async def protect(db: AsyncConnection, scope: UUID, trigger: UUID) -> None:
     """),
         {"scope": scope},
     )
+    # 当前活动触发事件与本次核对的触发不一致，说明源已被更替，拒绝继续收尾。
     if active != trigger:
         raise ValueError("This evaluation is not the active source for its space")
 

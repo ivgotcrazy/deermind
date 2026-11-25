@@ -1,4 +1,9 @@
-"""订阅方保存唤醒安排；生产者无须知道有没有等待，以及谁在等。"""
+"""订阅方保存唤醒安排；生产者无须知道有没有等待，以及谁在等。
+
+分层定位：foundation（公共运行底座 / 等待通知）
+对外契约：arrange 为已命中等待登记信号交接；subscription 把已接线业务的候选类型接入订阅接收器。
+边界约束：消息只唤醒固定 Workflow，不重启工作；实际正文读取由业务 probe 另行授权。
+"""
 
 from uuid import uuid4
 
@@ -19,6 +24,7 @@ async def arrange(
     connection: AsyncConnection, entries: Registry, execution: Execution, wait: Wait, reason: str
 ) -> Ref:
     """同一等待、尝试、通知只登记一次；发给固定Workflow，不重新启动工作。"""
+    # 工作尚无当前尝试，等待无法挂接到执行通道。
     if execution.active_attempt_id is None:
         raise ValueError("Wait has no execution attempt")
     current = await store.attempt(connection, execution.active_attempt_id)
@@ -64,10 +70,12 @@ def subscription(
     entries: Registry, policies: Policies, subscriber_id: str = "runtime_waits"
 ) -> Subscription | None:
     """只订阅已接线业务声明的候选类型；没有业务登记时不造空订阅。"""
+    # 无任何等待策略，接收器无需注册。
     if not policies.items:
         return None
 
     async def accept(connection: AsyncConnection, notice: EventNotice) -> Acceptance:
+        """订阅接收器：按范围、类型与相等条件匹配待命中等待，登记唤醒安排。"""
         # 接收器已核对正式事件；此处只查元数据，实际内容由业务probe授权读取。
         correlation = await connection.scalar(
             text("SELECT correlation_id FROM runtime.events WHERE event_id=:id"),
@@ -91,6 +99,7 @@ def subscription(
             )
         ).all()
         refs: list[Ref] = []
+        # 逐条候选等待复核策略归属，再按相等条件决定是否登记唤醒。
         for identity in identities:
             wait = await facts.read_wait(connection, str(identity))
             execution = await store.load(connection, wait.execution_id)
@@ -100,6 +109,7 @@ def subscription(
                 "producer": notice.producer,
                 "correlation_id": str(correlation),
             }
+            # 相等条件全部命中才安排唤醒；任一不符则忽略本次通知。
             if all(values.get(k) == value for k, value in wait.condition.equals.items()):
                 refs.append(
                     await arrange(connection, entries, execution, wait, str(notice.event_id))

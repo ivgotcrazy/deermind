@@ -1,4 +1,9 @@
-"""订阅方可靠承接；提交后的收据决定是否Ack，后续执行不占消息确认期限。"""
+"""订阅方可靠承接；提交后的收据决定是否 Ack，后续执行不占消息确认期限。
+
+分层定位：foundation（公共运行底座 / 事件交接）
+对外契约：accept 在事务内核验通知与库中事实一致，调用订阅回调并保存承接收据。
+边界约束：同订阅同事件串行承接；回调失败则安排与收据整体回滚；不信任外部通知正文。
+"""
 
 import asyncio
 import json
@@ -19,6 +24,7 @@ async def accept(
 ) -> SubscriptionReceipt:
     """仅信任库中事实；同订阅同事件串行承接，回调失败则安排和收据全部回滚。"""
     async with asyncio.timeout(20), engine.begin() as connection:
+        # 同订阅同事件串行承接，避免重复回执或并发回调交错。
         await connection.execute(
             text("SELECT pg_advisory_xact_lock(hashtextextended(:key,0))"),
             {
@@ -38,9 +44,11 @@ async def accept(
             .mappings()
             .one_or_none()
         )
+        # 库中无对应已提交交接，外部通知无事实依据，拒绝承接。
         if row is None:
             raise ValueError("Notification has no committed handoff")
         handoff = Handoff.model_validate_json(json.dumps(dict(row), default=str))
+        # 通知正文必须与库中交接载荷一致，不信任外部通知自带内容。
         if handoff.payload.model_dump(exclude={"handoff_id"}) != notice.model_dump(
             exclude={"handoff_id"}
         ):
@@ -54,6 +62,7 @@ async def accept(
                 {"id": notice.event_id},
             )
         ).one()
+        # 事件类型、版本、范围与生产方须与库中事件一致，任一不符判通知被篡改。
         if source != (
             notice.event_type,
             notice.schema_version,
@@ -62,6 +71,7 @@ async def accept(
             notice.producer,
         ):
             raise ValueError("Notification differs from the saved event")
+        # 订阅未登记该事件类型，不予承接。
         if notice.event_type not in subscription.event_types:
             raise PermissionError("Subscription does not accept this event type")
 
@@ -79,9 +89,11 @@ async def accept(
             .mappings()
             .one_or_none()
         )
+        # 同订阅同事件已有收据：幂等读回，不重复调用业务回调。
         if existing is not None:
             return SubscriptionReceipt.model_validate_json(json.dumps(dict(existing), default=str))
         expected_revision = handoff.subscription_snapshot.get(subscription.subscriber_id)
+        # 订阅版本在交接之后发生变化，须先按旧快照解决交接，不能用新版本承接。
         if expected_revision is not None and expected_revision != subscription.revision:
             raise ValueError("Subscription revision changed; resolve the saved handoff first")
 
@@ -116,6 +128,7 @@ async def accept(
             .one()
         )
         commit_id = uuid4()
+        # 订阅方拒绝承接：登记交接失败记录，供后续重投与对账。
         if result.disposition == "rejected":
             await mark_failure(
                 connection,

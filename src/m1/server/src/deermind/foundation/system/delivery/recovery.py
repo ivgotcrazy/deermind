@@ -1,4 +1,9 @@
-"""受控重送只补指定事件尚未承接的订阅；不清除旧收据或改写事实。"""
+"""受控重送只补指定事件尚未承接的订阅；不清除旧收据或改写事实。
+
+分层定位：foundation（公共运行底座 / 事件交接）
+对外契约：redeliver 供维护账号对已耗尽/已送达的交接批准受控重送。
+边界约束：同一批准号复用安排；自动重试未结束时拒绝；只补失败且未承接的订阅。
+"""
 
 import json
 from uuid import UUID, uuid4
@@ -18,9 +23,11 @@ async def redeliver(
     authorization: str,
 ) -> UUID:
     """仅维护账号可调用；同一批准号复用安排，自动重试未结束时拒绝重送。"""
+    # 操作人与批准引用均不能为空。
     if not operator.strip() or not authorization.strip():
         raise ValueError("Operator and approval reference are required")
     async with engine.begin() as connection:
+        # 仅维护账号可批准重送，普通订阅方无权触发。
         if await connection.scalar(text("SELECT current_user")) != "deermind_migrator":
             raise PermissionError("Redelivery requires maintenance credentials")
         row = (
@@ -41,8 +48,10 @@ async def redeliver(
             ),
             {"key": key},
         )
+        # 同一批准号已有重送安排：幂等返回原交接，不重复建。
         if existing is not None:
             return existing
+        # 交接仍在自动重试中，未到耗尽/已送达，不允许手工重送。
         if previous.state not in {"exhausted", "delivered"}:
             raise ValueError("Automatic delivery is still active")
         failures = set(
@@ -59,11 +68,13 @@ async def redeliver(
                 {"event": previous.payload.event_id},
             )
         )
+        # 仅重送“失败过且至今未承接”的订阅；已收到收据的不重复推送。
         expected = {
             name: revision
             for name, revision in previous.subscription_snapshot.items()
             if name in failures and name not in received
         }
+        # 没有可重送的订阅，拒绝生成空交接。
         if not expected:
             raise ValueError("No unaccepted failed subscription to redeliver")
         identity, delivery_id, commit_id = uuid4(), uuid4(), uuid4()

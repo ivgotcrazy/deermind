@@ -58,6 +58,7 @@ class TargetDefinitions:
         ).one_or_none()
         if row is None:
             raise RequestError(404, "not_found", "找不到此教材。")
+        # 读取并校验导入记录状态，必要时持锁防并发修订。
         await self.materials.read_import(db, row.import_id, lock=lock)
         return row.domain_id
 
@@ -99,6 +100,7 @@ class TargetDefinitions:
         seen: set[UUID] = set()
         for index, draft in enumerate(body.items):
             if draft.item_id in seen:
+                # 同一批内目标项标识不得重复。
                 raise RequestError(400, "invalid_reference", "目标项不能重复。")
             claim = claims[draft.claim_ref]
             chapters = await self.chapter_basis(db, body.textbook_id, draft, claim)
@@ -124,6 +126,7 @@ class TargetDefinitions:
                 )
             ).one_or_none()
         if row is None:
+            # 未命中目标或其指定版本。
             raise RequestError(404, "not_found", "找不到此学习目标修订。")
         result = await self.materials.reader.read_facts(
             "learning_target",
@@ -177,6 +180,7 @@ class TargetDefinitions:
                 db, principal, SAVE_TARGET, query.resource_id, query.request_id
             )
         if saved is None:
+            # 无已完成收据，交由调用方按首次请求处理。
             return ReceiptView[TargetDetail](receipt_state="not_found")
         reply = await self._replay(saved)
         return ReceiptView[TargetDetail](
@@ -192,11 +196,13 @@ class TargetDefinitions:
             )
             domain = await self._book(db, book)
         if saved is not None:
+            # 幂等重放：同一请求键已完成，直接回放原结果。
             return await self._replay(saved)
         target_id = body.target_id if isinstance(body, ReviseTarget) else uuid4()
         expected = body.expected_revision if isinstance(body, ReviseTarget) else None
         prior_items: set[UUID] = set()
         if expected is not None:
+            # 修订路径：载入基线版本，核对其归属教材。
             previous = (await self.detail(target_id, expected)).target
             if previous.textbook_id != book:
                 raise RequestError(404, "not_found", "找不到此教材的学习目标。")
@@ -205,6 +211,7 @@ class TargetDefinitions:
         for item in body.items:
             ref = item.claim_ref
             if ref not in claims:
+                # 同一 Claim 引用只读取一次，结果缓存复用。
                 claim = (await self.claims(ref.claim_id, ref.revision)).claim
                 if claim.definition.domain_id != domain:
                     raise RequestError(409, "invalid_reference", "Claim 不属于该教材领域。")
@@ -272,6 +279,7 @@ class TargetDefinitions:
                 reserved_ref=request,
             )
             if receipt.result_ref is None:
+                # 本事务抢到收据身份，进入持锁校验与落事件流程。
                 await self._book(db, book, lock=True)
                 current = (
                     await db.execute(
@@ -283,12 +291,14 @@ class TargetDefinitions:
                     )
                 ).one_or_none()
                 if expected != (current.head_revision if current else None):
+                    # 持锁后复核基线修订号，防止并发覆盖。
                     raise RequestError(409, "revision_conflict", "学习目标已变化，请重新读取。")
                 for item in items:
                     chapters = await self.chapter_basis(db, book, item, claims[item.claim_ref])
                     if len(chapters) != len(item.chapter_refs) or any(
                         value.association_ref not in chapter_refs for value in chapters.values()
                     ):
+                        # 章节关联在并发期间被改动，需重选后重试。
                         raise RequestError(409, "revision_conflict", "章节关联已变化，请重新选择。")
                 sequence = await lock_scope_sequence(db, *scope)
                 (stored,) = await self.materials.events.append(

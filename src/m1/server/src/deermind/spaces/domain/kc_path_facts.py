@@ -79,22 +79,26 @@ def path_records(payload: KCPathEvent) -> tuple[PathArtifact, PathRecord | None]
     records: dict[str, FactRecord] = {}
     for record in payload.records:
         if not isinstance(record.content, InlineContent) or record.record_type in records:
+            # 记录须完整且类型不重复。
             raise ValueError("A path event requires distinct, complete records")
         records[record.record_type] = record
     artifact_record = records.pop(ARTIFACT_TYPE, None)
     path_record = records.pop(PATH_TYPE, None)
     if artifact_record is None or records:
+        # 除产物与路径记录外不得有多余记录。
         raise ValueError("A path event has unexpected records")
     assert isinstance(artifact_record.content, InlineContent)
     artifact = PathArtifact.model_validate_json(canonical_json(artifact_record.content.value))
     if artifact_record.record_id != str(artifact.artifact_id):
         raise ValueError("A path basis must use its stable identity")
     if path_record is None:
+        # 未就绪事件只带产物，无路径确认记录。
         return artifact, None
     assert isinstance(path_record.content, InlineContent)
     confirmation = PathRecord.model_validate_json(canonical_json(path_record.content.value))
     if path_record.record_id != str(confirmation.confirmation_id):
         raise ValueError("A path record must use its stable identity")
+    return artifact, confirmation
     return artifact, confirmation
 
 
@@ -114,6 +118,7 @@ def validate_path_event(draft: EventDraft, payload: EventPayload) -> None:
     ):
         raise ValueError("Path basis and its source versions do not match")
     if draft.event_type == NOT_READY:
+        # 未就绪事件：不得带路径确认，归属产物，结果须为 not_ready 且留有缺口。
         if (
             path is not None
             or payload.confirmation_ref is not None
@@ -123,6 +128,7 @@ def validate_path_event(draft: EventDraft, payload: EventPayload) -> None:
         ):
             raise ValueError("An incomplete check cannot confirm a path")
         return
+    # 确认事件：路径记录、确认引用、结果与所检版本/产物须全部对齐。
     if (
         path is None
         or payload.confirmation_ref != path_ref(path.confirmation_id)

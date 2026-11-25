@@ -1,4 +1,9 @@
-"""等待与发布结果的数据合同。"""
+"""等待与发布结果的数据合同。
+
+分层定位：abstractions（跨层合同）
+对外契约：ResultKey、Publication、ResultView、Condition、Wait、Handling 及等待服务端口 Protocol。
+边界约束：只定义等待条件、结果视图与接口，不含等待匹配与恢复实现。
+"""
 
 from datetime import datetime
 from typing import Literal, Protocol
@@ -11,6 +16,8 @@ from deermind.abstractions.executions import RunInput
 
 
 class ResultKey(FactModel):
+    """结果定位键：空间、触发事件、生产方与结果种类，全局唯一确定一份结果。"""
+
     scope_id: UUID
     trigger_event_id: UUID
     producer: NonEmpty
@@ -18,6 +25,8 @@ class ResultKey(FactModel):
 
 
 class Publication(ResultKey):
+    """已发布的结果：产出执行、结果引用、相关引用、正文与发布时间。"""
+
     execution_id: UUID
     attempt_id: UUID
     result_ref: Ref
@@ -28,6 +37,8 @@ class Publication(ResultKey):
 
 
 class ResultView(FactModel):
+    """按授权读取到的结果状态视图：可用、等待、失败或未找到。"""
+
     state: Literal["available", "pending", "failed", "not_found"]
     publication: Publication | None = None
     failure_ref: Ref | None = None
@@ -44,6 +55,8 @@ class Condition(FactModel):
 
 
 class Wait(FactModel):
+    """一条等待登记：命中条件、探测引用、时限、恢复动作与最终处置结果。"""
+
     wait_id: UUID
     owner_ref: Ref
     execution_id: UUID
@@ -63,6 +76,8 @@ class Wait(FactModel):
 
 
 class Handling(FactModel):
+    """等待命中后的处理承诺状态：待处理、已提交、失败或取消，附回执与失败引用。"""
+
     wait_id: UUID
     resume_action_id: UUID
     state: Literal["awaiting", "committed", "failed", "cancelled"]
@@ -72,15 +87,21 @@ class Handling(FactModel):
 
 
 class Match(FactModel):
+    """命中的事件及其可选结果引用。"""
+
     event_id: UUID
     result_ref: Ref | None
 
 
 class WaitCall(FactModel):
+    """等待服务调用输入：执行身份与等待编号。"""
+
     run: RunInput
     wait_id: UUID
 
 
 class WaitService(Protocol):
+    """等待服务端口：探测条件是否满足、处理命中并提交恢复动作。"""
+
     async def probe(self, call: WaitCall) -> Wait: ...
     async def handle(self, call: WaitCall) -> Handling: ...

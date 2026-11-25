@@ -30,6 +30,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 def normalized_basis(snapshot: CourseSnapshot) -> dict[str, JsonValue]:
     items: list[dict[str, object]] = []
+    # 各层按稳定键排序后再序列化，保证同一内容算出的摘要一致。
     for item in sorted(snapshot.items, key=lambda i: i.item_id):
         methods: list[dict[str, object]] = []
         for method in sorted(
@@ -79,6 +80,7 @@ def normalized_basis(snapshot: CourseSnapshot) -> dict[str, JsonValue]:
                 ),
             }
             for chapter in sorted(snapshot.chapters, key=lambda c: c.chapter_id)
+            # 只保留本轮题目实际引用到的章节。
             if chapter.chapter_id in chapter_ids
         ],
         "evaluation_gaps": sorted(
@@ -105,6 +107,7 @@ class CourseApplications:
                 query.request_id,
             )
             if receipt is None or receipt.result_ref is None:
+                # 无已完成回执，或回执尚未落结果，按未受理返回。
                 return ReceiptView[CourseApplyResult](receipt_state="not_found")
             result = await self._result(db, receipt.result_ref)
         return ReceiptView[CourseApplyResult](
@@ -120,8 +123,10 @@ class CourseApplications:
             {"id": UUID(reference.id)},
         )
         if not isinstance(revision, int):
+            # 回执指向的应用记录已不存在，数据不一致。
             raise ValueError("The published course version is missing")
         # Old receipts still describe the spaces affected before version binding.
+        # 仅本次变更的应用才回填受影响空间；旧回执不反查空间归属。
         affected: list[UUID] = (
             list(
                 (
@@ -160,6 +165,7 @@ class CourseApplications:
             )
         ).one_or_none()
         if raw is None:
+            # 本目标尚无同摘要依据，新建一条 Basis 行。
             row = facts.BasisRow(
                 basis_id=uuid4(),
                 textbook_id=textbook,
@@ -170,6 +176,7 @@ class CourseApplications:
             )
             return row.basis_id, row
         if canonical_json(raw.normalized_basis) != canonical_json(normalized):
+            # 摘要相同但规范化内容不同，属哈希碰撞或数据损坏。
             raise RuntimeError("Target basis digest collision")
         return raw.basis_id, None
 
@@ -183,12 +190,15 @@ class CourseApplications:
                 db, principal, CONFIRM_COURSE, textbook, command.request_id, normalized
             )
             if saved is not None and saved.result_ref is not None:
+                # 同一请求此前已确认完成，幂等返回原结果。
                 return CourseApplyReceipt(
                     request_ref=saved.request_ref, result=await self._result(db, saved.result_ref)
                 )
             if command.expected_application_ref != check.base_application_ref:
+                # 确认所基于的应用版本与检查基准已脱节。
                 raise RequestError(409, "check_stale", "检查基准与确认请求不一致。")
             if check.blockers:
+                # 仍有阻止项，课程不具备应用条件。
                 raise RequestError(
                     409, "not_ready", "课程还有阻止应用的项目。", issues=check.blockers
                 )
@@ -212,6 +222,7 @@ class CourseApplications:
         reference = facts.ref("course_application", course.application_id)
         records: list[FactRecord] = []
         if basis_row is not None:
+            # 新建的依据行需随本次事件一并投影；复用既有依据则不再记录。
             records.append(facts.record(facts.BASIS, basis_id, basis_row))
         records.append(facts.record(facts.COURSE, course.application_id, course))
         scope = ("course_application", textbook)
@@ -245,6 +256,7 @@ class CourseApplications:
                 reserved_ref=request,
             )
             if receipt.result_ref is not None:
+                # 事务内再次核对：并发请求已完成本单，直接返回其回执。
                 return CourseApplyReceipt(
                     request_ref=receipt.request_ref,
                     result=await self._result(db, receipt.result_ref),
@@ -255,18 +267,22 @@ class CourseApplications:
             if title != snapshot.textbook_title or any(
                 chapter not in snapshot.chapters for chapter in selected
             ):
+                # 加锁后复核教材标题或所选章节已变，检查结果失效。
                 raise RequestError(409, "check_stale", "已选用的教材内容发生变化，请重新检查。")
+            # 逐章节、逐关联复核题目与方法在领域内仍有效。
             for chapter in snapshot.chapters:
                 for row in chapter.associations:
                     try:
                         await self.checks.check_methods(db, domain, row.task_ref, row.method_refs)
                     except RequestError as error:
                         if error.code in {"invalid_reference", "not_found"}:
+                            # 引用已被领域侧删除，属检查失效而非参数错误。
                             raise RequestError(
                                 409, "check_stale", "课程引用的领域定义已变化。"
                             ) from error
                         raise
             if previous is not None and previous.content_snapshot == snapshot:
+                # 与上一版快照完全相同，不产生新版本，回执指向无变更记录。
                 same = facts.ref("course_application_no_change", previous.application_id)
                 await complete_request(db, receipt, same)
                 return CourseApplyReceipt(request_ref=request, result=await self._result(db, same))

@@ -88,6 +88,7 @@ def _record(
 
 def _next(kind: str, previous: Ref | None) -> Ref:
     if previous is None:
+        # 无既有修订，生成新对象并置版本 1。
         return Ref(owner="interaction", type=kind, id=str(uuid4()), revision=1)
     assert previous.revision is not None
     return previous.model_copy(update={"revision": previous.revision + 1})
@@ -131,6 +132,7 @@ class ActivityConfigs:
                 {"type": activity, "id": UUID(ref.id), "revision": ref.revision},
             )
         if event is None:
+            # 修订记录找不到来源事件，不可变引用已损坏。
             raise RuntimeError("Configuration package has a missing immutable reference")
         value = await self._fact(activity, event, ref.id)
         assert isinstance(value, dict)
@@ -152,6 +154,7 @@ class ActivityConfigs:
                 )
             ).one_or_none()
         if row is None:
+            # 指定活动类型下没有已保存的解析配置包。
             raise RequestError(404, "not_found", "未保存此活动的配置。")
         body = await self._fact(activity, row.source_event_id, str(row.config_id))
         packet = facts.ResolvedConfig.model_validate_json(canonical_json(body))
@@ -202,6 +205,7 @@ class ActivityConfigs:
 
     async def fixed_config(self, reference: Ref) -> ConfigView:
         if reference.owner != "interaction" or reference.type != "activity_config":
+            # 引用主体与类型须指向活动配置。
             raise RequestError(400, "invalid_reference", "请选择完整的活动配置。")
         try:
             identity = UUID(reference.id)
@@ -216,6 +220,7 @@ class ActivityConfigs:
             raise RequestError(404, "not_found", "找不到指定配置修订。")
         result = await self.detail(activity, identity)
         if result.config_ref != reference:
+            # 读到的配置修订与所给引用版本不符。
             raise RequestError(409, "invalid_reference", "活动配置修订不一致。")
         return result
 
@@ -230,6 +235,7 @@ class ActivityConfigs:
         if body.definition.activity_type != activity:
             raise RequestError(400, "invalid_reference", "配置不属于当前活动类型。")
         if prior is None:
+            # 首版必须从零保存蓝图，且不能引用既有对象。
             if not isinstance(body, SaveBlueprint) or body.config_ref is not None:
                 raise RequestError(409, "blueprint_required", "请先保存活动蓝图。")
             validate_blueprint(body.definition)
@@ -267,12 +273,14 @@ class ActivityConfigs:
         if (body.config_ref is not None and body.config_ref not in current) or (
             body.config_ref is None and isinstance(body, SaveBinding | SaveBlueprint)
         ):
+            # 引用的对象须在当前配置包内；绑定/蓝图增量必须带既有修订。
             raise RequestError(409, "invalid_reference", "配置对象或修订不属于当前配置包。")
         reference = _next(body.config_kind, body.config_ref)
         changes = [_record(body.config_kind, reference, body.definition, actor, now)]
         if isinstance(body, SaveBlueprint):
             validate_blueprint(body.definition)
             valid_ids = {node.node_id for node in body.definition.nodes}
+            # 新蓝图剔除已删除节点上的残留绑定。
             nodes = {key: value for key, value in config.binding.nodes.items() if key in valid_ids}
             config = config.model_copy(
                 update={"blueprint": body.definition, "blueprint_ref": reference}
@@ -283,15 +291,18 @@ class ActivityConfigs:
                 config = config.model_copy(update={"binding": binding, "binding_ref": binding_ref})
                 changes.append(_record("binding", binding_ref, binding, actor, now))
         elif isinstance(body, SaveBinding):
+            # 绑定整体替换，绑定引用推进到新版本。
             config = config.model_copy(
                 update={"binding": body.definition, "binding_ref": reference}
             )
         elif isinstance(body, SaveRule):
+            # 规则按引用剔除旧版本，再追加新规则定义。
             kept = [rule for rule in config.rules if rule.ref != body.config_ref]
             config = config.model_copy(
                 update={"rules": [*kept, BoundRule(ref=reference, definition=body.definition)]}
             )
         else:
+            # 策略按引用剔除旧版本，再追加新策略定义。
             kept_strategies = [s for s in config.strategies if s.ref != body.config_ref]
             config = config.model_copy(
                 update={
@@ -323,12 +334,14 @@ class ActivityConfigs:
             (item for item in ACTIVITY_TYPES if scope_id(item) == query.resource_id), None
         )
         if activity is None:
+            # 资源编号无法映射到活动类型，按未找到处理。
             return ReceiptView[ConfigResult](receipt_state="not_found")
         async with self.engine.connect() as db:
             saved = await self.receipts.find_completed_request(
                 db, principal, MANAGE_ACTIVITY, query.resource_id, query.request_id
             )
         if saved is None:
+            # 没有对应已完成请求，收据记未找到。
             return ReceiptView[ConfigResult](receipt_state="not_found")
         result = await self._replay(activity, saved)
         return ReceiptView[ConfigResult](
@@ -345,15 +358,18 @@ class ActivityConfigs:
                 db, principal, MANAGE_ACTIVITY, identity, body.request_id, normalized
             )
         if saved is not None:
+            # 相同请求已完成，按收据重放既有结果。
             return await self._replay(activity, saved)
         try:
             prior = await self.detail(activity, None)
         except RequestError as error:
             if error.status != 404:
+                # 非 404 的其他错误向上抛出。
                 raise
             prior = None
         previous = prior.config_ref if prior is not None else None
         if body.expected_revision != (previous.revision if previous else None):
+            # 期望版本与当前头修订不符，拒绝覆盖。
             raise RequestError(409, "revision_conflict", "活动配置已变化，请重新读取。")
         now = datetime.now(UTC)
         actor = Ref(owner="product", type="account", id=str(principal))
@@ -419,6 +435,7 @@ class ActivityConfigs:
                 reserved_ref=request,
             )
             if receipt.result_ref is None:
+                # 收据未挂结果，才执行首次提交路径。
                 sequence = await lock_scope_sequence(db, *scope)
                 head = await db.scalar(
                     text(
@@ -427,6 +444,7 @@ class ActivityConfigs:
                     {"type": activity},
                 )
                 if head != (UUID(previous.id) if previous else None):
+                    # 事务内头指针已被他人推进，乐观锁冲突。
                     raise RequestError(409, "revision_conflict", "活动配置已变化，请重新读取。")
                 (stored,) = await self.events.append(
                     db,

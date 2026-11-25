@@ -53,10 +53,12 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
     if not isinstance(payload, GoalCompleted):
         raise ValueError("Invalid goal result")
     records = {record.record_type: record for record in payload.records}
+    # 一次目标评价必须同时携带计算输入与结果两条记录。
     if set(records) != {INPUT, RESULT} or len(payload.records) != 2:
         raise ValueError("A goal evaluation needs both its input and result")
     checked, result = records[INPUT].content, records[RESULT].content
     assert isinstance(checked, InlineContent) and isinstance(result, InlineContent)
+    # 两条记录的范围、触发事件与目标依据须与事件正文一致。
     for row in (checked.value, result.value):
         if (
             row["scope_id"] != str(draft.scope_id)
@@ -64,6 +66,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
             or row["target_basis_ref"] != payload.target_basis_ref.id
         ):
             raise ValueError("Goal evaluation references differ from its fixed input")
+    # 结果标识、计划结果、输入引用与当前态标记须两条记录互相对得上。
     if (
         result.value["goal_evaluation_id"] != payload.goal_evaluation_ref.id
         or result.value["goal_evaluation_id"] != checked.value["planned_result_id"]
@@ -86,9 +89,11 @@ REGISTRATION = EventRegistration(
 
 async def project(connection: AsyncConnection, saved: StoredEvent) -> None:
     async with application(connection, "evaluation.goal_views", 1, saved.draft.event_id) as needed:
+        # 事件已投影过，重复应用直接返回。
         if not needed:
             return
         records = {row.record_type: row.content for row in saved.payload.records}
+        # 逐条把输入与结果记录落进对应投影表。
         for table in (INPUT, RESULT):
             record = records[table]
             assert isinstance(record, InlineContent)
@@ -108,6 +113,7 @@ async def project(connection: AsyncConnection, saved: StoredEvent) -> None:
             )
         payload = saved.payload
         assert isinstance(payload, GoalCompleted)
+        # 仅当本次结果已应用为当前态时，更新范围当前结果指针。
         if payload.current_state_applied:
             fixed = records[INPUT]
             assert isinstance(fixed, InlineContent)

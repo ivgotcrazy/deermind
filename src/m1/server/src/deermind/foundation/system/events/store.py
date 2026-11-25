@@ -1,4 +1,9 @@
-"""只追加事实及可靠投递安排；业务投影和共同提交由外层用例负责。"""
+"""只追加事实及可靠投递安排；业务投影和共同提交由外层用例负责。
+
+分层定位：foundation（公共运行底座 / 事件仓储）
+对外契约：EventStore 校验整批事件、按范围序号头落库，并按登记安排可靠投递。
+边界约束：使用调用方已开启的同一事务；本层不调业务投影器、不发通知、不调 AI、不推进订阅游标。
+"""
 
 import hashlib
 import json
@@ -42,6 +47,7 @@ async def lock_scope_sequence(connection: AsyncConnection, kind: str, scope_id: 
         ),
         params,
     )
+    # 序号头记录缺失属底层数据异常，不能继续分配序号。
     if not isinstance(current, int):
         raise RuntimeError("Missing event sequence")
     return current
@@ -58,6 +64,7 @@ class EventStore:
     ) -> None:
         self._arrange_delivery = arrange_delivery
         self._registry: dict[tuple[str, int], EventRegistration] = {}
+        # 按类型+版本登记；同键重复会覆盖，判重复登记。
         for registration in registrations:
             key = (registration.event_type, registration.schema_version)
             if key in self._registry:
@@ -79,8 +86,10 @@ class EventStore:
         调用前取得业务锁。本方法不调用业务投影器；调用者随后在同一事务应用自己的投影。
         此入口不发送通知、不调用AI、不推进订阅扫描游标。
         """
+        # 必须复用调用方已开启事务，且批次非空。
         if not connection.in_transaction() or not drafts:
             raise ValueError("An active transaction and a nonempty event batch are required")
+        # 已预处理事实直接取用其解码正文，否则按草稿原地校验。
         if isinstance(drafts, PreparedEvents):
             prepared = drafts
             drafts = prepared.drafts
@@ -91,6 +100,7 @@ class EventStore:
             raise ValueError("An event batch cannot be empty")
         expected_seq = dict(expected_seq)
         if prepared is not None:
+            # 预处理结果必须属于同一生产者上下文，且解码正文与草稿一一对应。
             if prepared.access != access or len(prepared.decoded_payloads) != len(drafts):
                 raise PermissionError("Prepared facts belong to a different producer context")
             decoded_drafts = tuple(
@@ -102,6 +112,7 @@ class EventStore:
             validated = self.validate_inline(access, drafts)
         await self._check_content(connection, drafts, validated)
         scopes = {(draft.scope_kind, draft.scope_id) for draft in drafts}
+        # 期望序号必须恰好覆盖本批涉及的全部范围，且序号为非负整数。
         if set(expected_seq) != scopes or any(
             type(n) is not int or n < 0 for n in expected_seq.values()
         ):
@@ -109,18 +120,22 @@ class EventStore:
 
         # 先锁所有范围，防止多范围提交按不同顺序互相等待。
         sequences: dict[tuple[str, UUID], int] = {}
+        # 按固定顺序逐范围取序号头，避免死锁。
         for kind, scope_id in sorted(scopes, key=lambda scope: (scope[0], str(scope[1]))):
             current = await lock_scope_sequence(connection, kind, scope_id)
+            # 实际最新序号与调用方期望不一致，说明范围已被并发追加，判冲突。
             if current != expected_seq[kind, scope_id]:
                 raise EventConflict("Event scope has changed")
             sequences[kind, scope_id] = current
 
         stored: list[StoredEvent] = []
+        # 按草稿固定顺序逐事件分配范围内序号并落库。
         for draft, (_registration, payload) in zip(drafts, validated, strict=True):
             scope = (draft.scope_kind, draft.scope_id)
             sequences[scope] += 1
             # clock_timestamp取当前记录时点，不取事务启动时间。
             recorded_at = await connection.scalar(text("SELECT clock_timestamp()"))
+            # 数据库未返回合法时间属底层异常，不能落无时间事件。
             if not isinstance(recorded_at, datetime):
                 raise RuntimeError("Database did not return a timestamp")
             event = StoredEvent(
@@ -129,6 +144,7 @@ class EventStore:
             await self._insert(connection, access, event)
             stored.append(event)
 
+        # 回写各范围最新序号。
         for (kind, scope_id), sequence in sequences.items():
             await connection.execute(
                 text(
@@ -137,6 +153,7 @@ class EventStore:
                 ),
                 {"kind": kind, "id": scope_id, "seq": sequence},
             )
+        # 已登记投递安排时，逐事件在同事务内安排可靠投递。
         if self._arrange_delivery is not None:
             for event in stored:
                 await self._arrange_delivery(connection, event)
@@ -147,24 +164,31 @@ class EventStore:
     ) -> list[tuple[EventRegistration, EventPayload]]:
         """所有者验证记录矩阵与正文；未登记类型、错范围和重复身份一律拒绝。"""
         event_ids = [draft.event_id for draft in drafts]
+        # 批内事件编号不得重复。
         if len(event_ids) != len(set(event_ids)):
             raise ValueError("Duplicate event identity in batch")
         remaining = set(event_ids)
         result: list[tuple[EventRegistration, EventPayload]] = []
+        # 逐事件核对登记、生产者授权、范围与因果顺序。
         for draft in drafts:
             registration = self._registry.get((draft.event_type, draft.schema_version))
+            # 类型或版本未登记，拒绝解码。
             if registration is None:
                 raise ValueError("Event type or schema version is not registered")
+            # 生产者、范围类型与授权范围任一不符，拒绝该事件。
             if (
                 registration.producer != access.producer
                 or registration.scope_kind != draft.scope_kind
                 or (draft.scope_kind, draft.scope_id) not in access.scopes
             ):
                 raise PermissionError("Producer is not authorized for this event scope")
+            # 事件必须有请求来源，或挂在前序事实上。
             if not draft.source_request_id and draft.causation_event_id is None:
                 raise ValueError("An event requires a request or a preceding fact")
+            # 因事件排在果事件之前，不能引用同批中尚未处理的事件。
             if draft.causation_event_id in remaining:
                 raise ValueError("A cause must precede this event")
+            # 跨批前序事实必须在授权来源集合内。
             if (
                 draft.causation_event_id is not None
                 and draft.causation_event_id not in event_ids
@@ -174,9 +198,11 @@ class EventStore:
             remaining.remove(draft.event_id)
             # 从固定JSON解码，UUID/UTC等正文由其登记Schema严格校验。
             payload = registration.payload_model.model_validate_json(canonical_json(draft.payload))
+            # 落到事件内的记录必须是内联内容；外置附件须先经附件准备流程。
             if any(not isinstance(record.content, InlineContent) for record in payload.records):
                 raise ValueError("File-backed facts require verified attachment preparation")
             record_ids = [record.record_id for record in payload.records]
+            # 同事件内记录编号不得重复。
             if len(record_ids) != len(set(record_ids)):
                 raise ValueError("Duplicate record identity in event")
             registration.validate(draft, payload)
@@ -190,15 +216,19 @@ class EventStore:
         validated: list[tuple[EventRegistration, EventPayload]],
     ) -> None:
         """只查不可变文件登记，不在业务事务内读文件；核对外置与完整DTO一致。"""
+        # 逐事件比对线路草稿与解码正文，防止预处理后内容被改动。
         for draft, (registration, decoded) in zip(drafts, validated, strict=True):
             wire = registration.payload_model.model_validate_json(canonical_json(draft.payload))
+            # 记录条数不一致，说明正文被增删过。
             if len(wire.records) != len(decoded.records):
                 raise ValueError("Prepared record count changed")
             for record, full in zip(wire.records, decoded.records, strict=True):
+                # 解码记录必须自带完整 DTO，不能留外置占位。
                 if not isinstance(full.content, InlineContent):
                     raise ValueError("Decoded record must contain its complete DTO")
                 content = canonical_json(full.content.value).encode("utf-8")
                 if isinstance(record.content, FileContent):
+                    # 外置附件：先核摘要与解码内容一致，再查文件登记元数据。
                     reference = record.content
                     if reference.sha256 != hashlib.sha256(content).hexdigest():
                         raise ValueError("Attachment hash differs from its decoded DTO")
@@ -211,6 +241,7 @@ class EventStore:
                             {"id": reference.file_id},
                         )
                     ).one_or_none()
+                    # 摘要、字节数、类型、取材键任一不符，即附件未为本记录登记。
                     if row != (
                         reference.sha256,
                         len(content),
@@ -219,6 +250,7 @@ class EventStore:
                     ):
                         raise ValueError("Attachment is not registered for this fact record")
                 else:
+                    # 内联记录：内容须与解码正文一致，且不超内联体积上限。
                     if record.content != full.content:
                         raise ValueError("Prepared inline content changed")
                     if len(content) > INLINE_LIMIT:
@@ -231,6 +263,7 @@ class EventStore:
                     ]
                 }
             )
+            # 恢复完整记录后整事件仍须与解码正文一致，否则元数据被改动。
             if restored != decoded:
                 raise ValueError("Prepared event metadata changed")
 
@@ -238,6 +271,7 @@ class EventStore:
     async def _insert(
         connection: AsyncConnection, access: ProducerAccess, event: StoredEvent
     ) -> None:
+        """把已校验的信封写入 runtime.events；大小按完整信封核算，UTC 时间取实际保存值。"""
         draft = event.draft
         # 大小包括完整信封，而不是只计算payload。UTC时间使用实际保存值。
         envelope = {
@@ -267,6 +301,7 @@ class EventStore:
             "client_reported_at": None,
             "payload": draft.payload,
         }
+        # 完整信封规范化编码后超事件体积上限，拒绝落库。
         if len(canonical_json(envelope).encode("utf-8")) > EVENT_LIMIT:
             raise ValueError("Encoded event exceeds 1MiB")
         await connection.execute(

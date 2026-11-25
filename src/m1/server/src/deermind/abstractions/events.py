@@ -1,4 +1,10 @@
-"""事件保存的内部合同；只接受程序登记的类型，不接受任意表名或SQL。"""
+"""事件保存的内部合同；只接受程序登记的类型，不接受任意表名或SQL。
+
+分层定位：abstractions（跨层合同）
+对外契约：Ref、EventDraft、ProducerAccess、PreparedEvents、StoredEvent、EventRegistration
+被 foundation、infrastructure、product 与各 Space 共同引用。
+边界约束：本文件只定义数据结构与校验规则，不含存储、投影或订阅实现。
+"""
 
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
@@ -20,6 +26,8 @@ class FactModel(BaseModel):
 
 
 class Ref(FactModel):
+    """对象引用三元组（owner/type/id），可带单一版本定位；不直接持有正文。"""
+
     owner: NonEmpty
     type: NonEmpty
     id: NonEmpty
@@ -29,12 +37,15 @@ class Ref(FactModel):
 
     @model_validator(mode="after")
     def single_version(self) -> "Ref":
+        # revision 与 version 互斥，避免同一引用同时携带两套版本口径。
         if self.revision is not None and self.version is not None:
             raise ValueError("A reference cannot contain both revision and version")
         return self
 
 
 class InlineContent(FactModel):
+    """内联在事件正文中的小体量 JSON；超出内联限额的正文走 FileContent。"""
+
     storage: Literal["inline"]
     value: dict[str, JsonValue]
 
@@ -49,6 +60,8 @@ class FileContent(FactModel):
 
 
 class FactRecord(FactModel):
+    """单条事实记录：身份、类型、schema 版本与正文载体。"""
+
     record_id: NonEmpty
     record_type: NonEmpty
     schema_version: Annotated[int, Field(ge=1)]
@@ -56,6 +69,8 @@ class FactRecord(FactModel):
 
 
 class EventPayload(FactModel):
+    """事件正文信封，由一批事实记录组成。"""
+
     records: list[FactRecord]
 
 
@@ -97,6 +112,8 @@ class PreparedEvents:
 
 @dataclass(frozen=True)
 class StoredEvent:
+    """落库后的完整事件：原始草稿、提交号、关联号、范围内序号与解析后正文。"""
+
     draft: EventDraft
     commit_id: UUID
     correlation_id: UUID

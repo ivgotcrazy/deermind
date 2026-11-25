@@ -53,6 +53,7 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         or payload.records[0].record_type != ARTIFACT
         or payload.records[0].record_id != payload.artifact_ref.id
     ):
+        # 事实须归同一域、单条产物记录且记录身份与产物引用一致。
         raise ValueError("Analysis artifact does not match the event")
 
 

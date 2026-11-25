@@ -83,6 +83,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
 
     stopped = asyncio.Event()
     loop = asyncio.get_running_loop()
+    # 注册终止信号：收到后置位停止事件，由各后台任务自行退出轮询。
     for signum in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(signum, stopped.set)
 
@@ -226,6 +227,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
                         )
                     )
         finally:
+            # 退出时移除就绪标记，避免编排侧继续把流量发往本进程。
             READY_FILE.unlink(missing_ok=True)
     LOGGER.info("Worker 已停止", extra={"action": "worker_stopped", "outcome": "success"})
 
@@ -235,6 +237,7 @@ def main() -> None:
     try:
         asyncio.run(run())
     except Exception:
+        # 未预期启动失败：记录后以非零码退出，交由编排重启。
         LOGGER.exception(
             "Worker 无法继续运行，请检查配置与依赖",
             extra={"action": "worker_failed", "outcome": "failed", "error_code": "WORKER_FAILED"},

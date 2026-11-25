@@ -38,11 +38,13 @@ class Relationship(NamedTuple):
 
 def references(content: DefinitionContent) -> list[Relationship]:
     if isinstance(content, SolutionDefinition):
+        # 方法→知识成分关系。
         return [
             Relationship(f"/kc_refs/{index}", "solution_kc", ref)
             for index, ref in enumerate(content.kc_refs)
         ]
     if not isinstance(content, TaskDefinition):
+        # 其他定义类型无可提取关系。
         return []
     entries = [
         Relationship(f"/method_refs/{index}", "task_method", ref)
@@ -74,6 +76,7 @@ def _check_task_shape(content: TaskDefinition) -> None:
     for index, link in enumerate(content.prerequisites):
         path = f"/prerequisites/{index}/method_refs"
         if (link.applies_to == "specified") != bool(link.method_refs):
+            # 指定适用范围必须带方法，反之不得带方法。
             raise relationship_error(path, "请按先导适用范围设置方法。")
         targets = [(ref.object_id, ref.version) for ref in link.method_refs]
         if len(set(targets)) != len(targets) or any(ref not in methods for ref in targets):
@@ -88,6 +91,7 @@ async def validate_relationships(
         _check_task_shape(content)
     entries = references(content)
     if not entries:
+        # 无关系引用，无需核对。
         return
     rows = await connection.execute(
         text(
@@ -107,6 +111,7 @@ async def validate_relationships(
         if entry.kind != "prerequisite_method_scope":
             key = (entry.kind, ref.object_id)
             if key in seen:
+                # 同类对象重复关联，去重校验失败。
                 raise relationship_error(entry.path, "同一对象不能重复关联。")
             seen.add(key)
         if entry.kind == "task_prerequisite" and ref.object_id == owner_id:
@@ -115,7 +120,7 @@ async def validate_relationships(
             raise relationship_error(entry.path, "引用的版本不存在、已移除或不属于本领域。")
 
     if isinstance(content, TaskDefinition) and content.prerequisites:
-        # 已提交快照各自无环。新边只可能因某条先导路径回到本对象而引入环。
+        # 已提交快照各自无环；沿新边递归查是否回到本任务。
         cycle = await connection.scalar(
             text(
                 "WITH RECURSIVE edges(object_id,version) AS ("
@@ -128,6 +133,7 @@ async def validate_relationships(
             {"owner": owner_id, **_keys([link.task_ref for link in content.prerequisites])},
         )
         if cycle:
+            # 递归路径回到本任务，构成先导环。
             raise relationship_error(
                 "/prerequisites", "先导路径回到了当前任务。", "dependency_cycle"
             )
@@ -138,6 +144,7 @@ async def apply_references(
 ) -> None:
     entries = references(content)
     if entries:
+        # 逐条落库对象间关系索引。
         await connection.execute(
             _RELATION_INSERT,
             [
@@ -159,7 +166,7 @@ async def method_knowledge(
 ) -> tuple[list[KnowledgeRef], list[KnowledgeSources]]:
     """只按精确方法版本读取直接KC，保留每个来源的实际版本。"""
     if not methods:
-        return [], []
+        return [], []  # 无方法则无直接知识成分
     rows = await connection.execute(
         text(
             f"WITH selected AS ({_EXACT_REFS}) "
@@ -174,6 +181,7 @@ async def method_knowledge(
     refs: dict[tuple[UUID, int], KnowledgeRef] = {}
     uses: dict[UUID, list[KnowledgeUse]] = {}
     for row in rows:
+        # 按知识成分聚合来源方法，保留方法实际版本。
         kc = KnowledgeRef(kind="kc", object_id=row.target_id, version=row.target_version)
         method = SolutionRef(kind="solution", object_id=row.owner_id, version=row.owner_version)
         refs[(kc.object_id, kc.version)] = kc
