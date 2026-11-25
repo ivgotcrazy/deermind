@@ -38,28 +38,38 @@ class EvaluationBasis:
         rows = (
             await db.execute(
                 text("""
-            SELECT evidence_id,aspect_code,qualification,verdict,reason,source_refs
-            FROM evaluation.evidence
-            WHERE scope_id=:scope AND evidence_id=ANY(CAST(:refs AS uuid[]))
+            SELECT e.evidence_id,e.aspect_code,e.qualification,e.verdict,e.reason,e.source_refs,
+                CAST(i.input->>'occurred_at' AS timestamptz) AS occurred_at,
+                CASE WHEN i.source_kind='answer' AND i.input->>'round_ref' IS NOT NULL
+                     THEN 'detection' ELSE i.source_kind END AS source_activity,
+                i.trigger_event_id
+            FROM evaluation.evidence e LEFT JOIN evaluation.evaluation_input i
+                ON i.scope_id=e.scope_id AND i.input_id=e.input_ref
+            WHERE e.scope_id=:scope AND evidence_id=ANY(CAST(:refs AS uuid[]))
                 AND (CAST(:after AS uuid) IS NULL OR evidence_id>:after)
             ORDER BY evidence_id LIMIT :limit
         """),
                 {"scope": scope, "refs": list(references), "after": after, "limit": limit + 1},
             )
         ).all()
-        items = [
-            EvidenceSummary(
-                evidence_ref=facts.ref("evidence", row.evidence_id),
-                aspect_code=row.aspect_code,
-                qualification=row.qualification,
-                verdict=row.verdict,
-                reason=row.reason,
-                source_event_refs=list(
-                    dict.fromkeys(UUID(ref["event_id"]) for ref in row.source_refs)
-                ),
+        items: list[EvidenceSummary] = []
+        for row in rows[:limit]:
+            source_events = list(dict.fromkeys(UUID(ref["event_id"]) for ref in row.source_refs))
+            items.append(
+                EvidenceSummary(
+                    evidence_ref=facts.ref("evidence", row.evidence_id),
+                    occurred_at=row.occurred_at,
+                    source_activity=row.source_activity,
+                    timed_event_id=row.trigger_event_id
+                    if row.trigger_event_id in source_events
+                    else None,
+                    aspect_code=row.aspect_code,
+                    qualification=row.qualification,
+                    verdict=row.verdict,
+                    reason=row.reason,
+                    source_event_refs=source_events,
+                )
             )
-            for row in rows[:limit]
-        ]
         return items, items[-1].evidence_ref.id if len(rows) > limit else None
 
     async def target(

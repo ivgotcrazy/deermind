@@ -97,6 +97,7 @@ class CourseCheckReceipt(FactModel):
 
 class CourseApplyResult(FactModel):
     application_ref: Ref
+    application_version: int
     changed: bool
     affected_spaces: list[UUID]
 
@@ -112,6 +113,7 @@ class CourseOption(FactModel):
     target_ref: TargetRef
     target_title: str
     application_ref: Ref
+    application_version: int
 
 
 class CourseOptions(FactModel):
@@ -144,17 +146,22 @@ class SpaceRow(FactModel):
     textbook_title: str
     target_id: UUID
     target_title: str
+    target_revision: int
+    application_ref: Ref
+    application_version: int
     created_at: datetime
 
 
 class SpaceList(FactModel):
     items: list[SpaceRow]
     next_cursor: str | None
+    recent_space_id: UUID | None
 
 
 class AdoptionView(FactModel):
     adoption_ref: Ref
     application_ref: Ref
+    application_version: int
     target_basis_ref: Ref
     snapshot: CourseSnapshot
 
@@ -162,6 +169,7 @@ class AdoptionView(FactModel):
 class SpaceWorkspace(FactModel):
     space: SpaceRow
     adoption: AdoptionView
+    study_methods: list[str] = Field(default_factory=list[str])
 
 
 class SpaceOpenResult(SpaceWorkspace):
@@ -176,6 +184,8 @@ class SpaceReceipt(FactModel):
 
 class ApplicationHead(FactModel):
     application_ref: Ref | None
+    application_version: int | None
+    target_revision: int | None
 
 
 class SpaceGoalView(FactModel):

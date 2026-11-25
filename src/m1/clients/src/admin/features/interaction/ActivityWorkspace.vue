@@ -38,6 +38,14 @@ const error = ref('');
 const status = ref('');
 const busy = ref(false);
 const node = ref('start');
+const bindingNode = ref('');
+const sections = {
+  blueprint: '活动蓝图',
+  rules: '教学规则',
+  strategies: '推荐策略',
+  binding: '作用范围',
+} as const;
+const section = ref<keyof typeof sections>('blueprint');
 const rule = ref<Rule>();
 const strategy = ref<Strategy>();
 const ruleRef = ref<Schema['Ref'] | null>(null);
@@ -47,7 +55,8 @@ const selected = computed(() =>
 );
 const local = computed(
   () =>
-    binding.value && (node.value === '' ? binding.value.activity : binding.value.nodes[node.value]),
+    binding.value &&
+    (bindingNode.value === '' ? binding.value.activity : binding.value.nodes[bindingNode.value]),
 );
 
 function emptyBinding(): Binding {
@@ -92,6 +101,11 @@ async function load() {
     view.value = current;
     blueprint.value = current.definition.blueprint;
     binding.value = current.definition.binding;
+    selectBindingScope(
+      current.definition.blueprint.nodes.some((n) => n.node_id === bindingNode.value)
+        ? bindingNode.value
+        : '',
+    );
   } catch (caught) {
     if (type !== activity.value) return;
     if (caught instanceof ApiError && caught.status === 404) {
@@ -107,12 +121,14 @@ async function load() {
 watch(
   activity,
   () => {
+    section.value = 'blueprint';
     view.value = undefined;
     blueprint.value = undefined;
     binding.value = undefined;
     rule.value = undefined;
     strategy.value = undefined;
     node.value = 'start';
+    bindingNode.value = '';
     error.value = '';
     status.value = '';
     void load();
@@ -147,6 +163,10 @@ async function save(change: Change) {
 
 function selectNode(id: string) {
   node.value = id;
+}
+
+function selectBindingScope(id: string) {
+  bindingNode.value = id;
   if (id && binding.value) binding.value.nodes[id] ??= emptyBinding();
 }
 
@@ -247,9 +267,9 @@ const actions = {
 </script>
 
 <template>
-  <section aria-label="交互活动">
-    <h2>交互活动</h2>
-    <nav aria-label="活动类型">
+  <section class="admin-editor activity-workspace" aria-label="交互活动">
+    <h1 class="admin-page-title">交互活动</h1>
+    <nav class="editor-tabs" aria-label="活动类型">
       <button
         v-for="(label, type) in labels"
         :key="type"
@@ -268,7 +288,19 @@ const actions = {
       <ul v-else-if="view.gaps.length" aria-label="配置缺项">
         <li v-for="gap in view.gaps" :key="gap.path">{{ gap.message }}</li>
       </ul>
-      <section aria-label="活动蓝图">
+      <nav class="config-views" aria-label="配置内容">
+        <button
+          v-for="(label, key) in sections"
+          :key="key"
+          type="button"
+          :disabled="busy || (key !== 'blueprint' && !view)"
+          :aria-pressed="section === key"
+          @click="section = key"
+        >
+          {{ label }}
+        </button>
+      </nav>
+      <section v-show="section === 'blueprint'" class="editor-panel" aria-label="活动蓝图">
         <h3>活动蓝图</h3>
         <div class="flow">
           <div v-for="entry in blueprint.nodes" :key="entry.node_id" class="flow-node">
@@ -301,21 +333,20 @@ const actions = {
           "
         >
           <fieldset :disabled="busy">
-            <div v-if="selected" class="fields">
+            <div v-if="selected" class="fields node-fields">
               <label>节点名称 <input v-model="selected.name" required /></label>
               <label>目的 <input v-model="selected.purpose" required /></label>
               <label>执行说明 <textarea v-model="selected.execution_guidance" required /></label>
               <label
                 >无法继续时 <textarea v-model="selected.fallback.explanation" required />
               </label>
-              <label
-                >允许动作
-                <select v-model="selected.allowed_actions" multiple>
-                  <option v-for="(label, action) in actions" :key="action" :value="action">
-                    {{ label }}
-                  </option>
-                </select></label
-              >
+              <fieldset class="action-choices">
+                <legend>允许动作</legend>
+                <label v-for="(label, action) in actions" :key="action">
+                  <input v-model="selected.allowed_actions" type="checkbox" :value="action" />
+                  {{ label }}
+                </label>
+              </fieldset>
               <button
                 v-if="node !== 'start' && node !== 'end'"
                 type="button"
@@ -376,33 +407,35 @@ const actions = {
         </form>
       </section>
       <template v-if="view && binding">
-        <section>
-          <h3>规则与推荐策略</h3>
-          <div class="actions">
-            <button type="button" :disabled="busy" @click="editRule()">新建规则</button>
-            <button type="button" :disabled="busy" @click="editStrategy()">新建策略</button>
-          </div>
-          <div class="fields">
-            <button
-              v-for="entry in view.definition.rules"
-              :key="entry.ref.id"
-              type="button"
-              @click="editRule(entry)"
-            >
-              {{ entry.definition.name }}
+        <section v-show="section === 'rules'" class="editor-panel">
+          <header class="editor-row">
+            <h3>教学规则</h3>
+            <button type="button" class="primary" :disabled="busy" @click="editRule()">
+              新建规则
             </button>
-            <button
-              v-for="entry in view.definition.strategies"
-              :key="entry.ref.id"
-              type="button"
-              @click="editStrategy(entry)"
-            >
-              {{ entry.definition.name }}
-            </button>
-          </div>
+          </header>
+          <table v-if="view.definition.rules.length" class="admin-data-table config-table">
+            <thead>
+              <tr>
+                <th>规则名称</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="entry in view.definition.rules" :key="entry.ref.id">
+                <td>
+                  <button type="button" @click="editRule(entry)">
+                    {{ entry.definition.name }}
+                  </button>
+                </td>
+                <td>{{ entry.definition.enabled ? '启用' : '停用' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p v-else>尚未创建规则。</p>
           <form
             v-if="rule"
-            class="fields"
+            class="fields config-form"
             @submit.prevent="save({ config_kind: 'rule', config_ref: ruleRef, definition: rule! })"
           >
             <label>规则名称 <input v-model="rule.name" required /></label>
@@ -411,9 +444,36 @@ const actions = {
             <label><input v-model="rule.enabled" type="checkbox" /> 启用规则</label>
             <button type="submit" :disabled="busy">保存规则</button>
           </form>
+        </section>
+        <section v-show="section === 'strategies'" class="editor-panel">
+          <header class="editor-row">
+            <h3>推荐策略</h3>
+            <button type="button" class="primary" :disabled="busy" @click="editStrategy()">
+              新建策略
+            </button>
+          </header>
+          <table v-if="view.definition.strategies.length" class="admin-data-table config-table">
+            <thead>
+              <tr>
+                <th>策略名称</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="entry in view.definition.strategies" :key="entry.ref.id">
+                <td>
+                  <button type="button" @click="editStrategy(entry)">
+                    {{ entry.definition.name }}
+                  </button>
+                </td>
+                <td>{{ entry.definition.enabled ? '启用' : '停用' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p v-else>尚未创建策略。</p>
           <form
             v-if="strategy"
-            class="fields"
+            class="fields config-form"
             @submit.prevent="
               save({ config_kind: 'strategy', config_ref: strategyRef, definition: strategy! })
             "
@@ -425,6 +485,8 @@ const actions = {
             <label><input v-model="strategy.enabled" type="checkbox" /> 启用推荐策略</label>
             <button type="submit" :disabled="busy">保存策略</button>
           </form>
+        </section>
+        <section v-show="section === 'binding'" class="editor-panel">
           <form
             @submit.prevent="
               save({
@@ -439,12 +501,12 @@ const actions = {
               <label
                 >配置位置
                 <select
-                  :value="node"
-                  @change="selectNode(($event.target as HTMLSelectElement).value)"
+                  :value="bindingNode"
+                  @change="selectBindingScope(($event.target as HTMLSelectElement).value)"
                 >
                   <option value="">活动级</option>
                   <option
-                    v-for="entry in blueprint.nodes"
+                    v-for="entry in view.definition.blueprint.nodes"
                     :key="entry.node_id"
                     :value="entry.node_id"
                   >
@@ -472,27 +534,76 @@ const actions = {
 </template>
 
 <style scoped>
-.flow,
-.actions,
-.fields {
+.config-views {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 6px;
+}
+.config-table {
+  margin-top: 14px;
+}
+.activity-workspace > nav,
+.activity-workspace > section {
+  margin-top: 16px;
+}
+.flow,
+.flow-node,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 8px;
 }
 .flow {
-  margin-block: 0.75rem;
+  margin: 12px 0;
+  padding: 16px;
+  background: var(--el-fill-color-light);
 }
 .flow-node {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
+  align-self: stretch;
+  align-content: start;
+  flex-direction: column;
+  align-items: start;
+}
+.flow-node span {
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
 }
 .fields {
-  margin-block: 0.75rem;
-}
-.fields label {
   display: grid;
-  gap: 0.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  align-items: end;
+  gap: 12px;
+  margin: 12px 0;
+}
+.activity-workspace .action-choices {
+  grid-column: 1/-1;
+  display: flex;
+  gap: 10px 18px;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.node-fields,
+.config-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+.config-form > label:has(textarea),
+.config-form > button {
+  grid-column: 1/-1;
+}
+@media (max-width: 760px) {
+  .node-fields,
+  .config-form {
+    grid-template-columns: 1fr;
+  }
+}
+.fields button {
+  justify-self: start;
+}
+.activity-workspace form + form {
+  border-top: 1px solid var(--el-border-color);
+  margin-top: 16px;
+  padding-top: 16px;
 }
 </style>

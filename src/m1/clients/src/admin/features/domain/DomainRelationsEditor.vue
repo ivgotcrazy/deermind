@@ -149,7 +149,7 @@ function toggleMethod(link: Prerequisite, method: SolutionRef, checked: boolean)
 <style scoped>
 fieldset {
   margin-block: 0.5rem;
-  border: 1px solid #ddd6c7;
+  border: 1px solid var(--el-border-color);
 }
 label {
   display: grid;
@@ -166,18 +166,5 @@ ul {
 }
 li {
   margin-block: 0.25rem;
-}
-select,
-textarea,
-button {
-  font: inherit;
-  color: inherit;
-  border: 1px solid #d5cdbf;
-  border-radius: 0.4rem;
-  background: #fffdf8;
-  padding: 0.25rem 0.5rem;
-}
-button:disabled {
-  opacity: 0.55;
 }
 </style>

@@ -482,7 +482,7 @@ onBeforeUnmount(() => signal.abort());
 </script>
 
 <template>
-  <section class="members">
+  <section class="members editor-panel">
     <header class="bar">
       <h3>{{ label }}</h3>
       <button v-if="pending" type="button" @click="open('create')">核对保存结果</button>
@@ -500,7 +500,12 @@ onBeforeUnmount(() => signal.abort());
     <p v-else-if="!rows.length && !error">这里还没有符合条件的{{ label }}。</p>
     <ul v-if="rows.length" class="results">
       <li v-for="row in rows" :key="row.object_ref.object_id">
-        <button type="button" :disabled="detailBusy" @click="showDetail(row.object_ref.object_id)">
+        <button
+          type="button"
+          :aria-pressed="detail?.object_ref.object_id === row.object_ref.object_id"
+          :disabled="detailBusy"
+          @click="showDetail(row.object_ref.object_id)"
+        >
           {{ row.name }} <small>v{{ row.object_ref.version }}</small>
         </button>
       </li>
@@ -670,117 +675,52 @@ onBeforeUnmount(() => signal.abort());
 
 <style scoped>
 .members,
-.reading {
+.reading,
+.field {
   display: grid;
-  gap: 0.9rem;
-  margin-top: 1.25rem;
-  padding-top: 1rem;
-  border-top: 1px solid #ddd6c7;
+  gap: 12px;
+}
+.reading {
+  padding-top: 16px;
+  border-top: 1px solid var(--el-border-color);
 }
 .bar,
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
   align-items: center;
+  gap: 8px;
 }
 header.bar {
   justify-content: space-between;
 }
+form.bar {
+  align-items: end;
+}
 .actions {
   justify-content: flex-end;
 }
-h3,
-h4,
-h5,
-p {
-  margin: 0;
-}
-small {
-  color: #5d635a;
-  font-weight: normal;
-}
-.field {
-  display: grid;
-  gap: 0.4rem;
-}
 .results {
-  display: grid;
-  gap: 0.35rem;
+  max-height: 18rem;
+  overflow: auto;
+  list-style: none;
   padding: 0;
   margin: 0;
-  list-style: none;
+  border: 1px solid var(--el-border-color);
+}
+.results li + li {
+  border-top: 1px solid var(--el-border-color-light);
 }
 .results button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
   text-align: start;
 }
-button,
-input,
-textarea {
-  font: inherit;
-  padding: 0.38rem 0.65rem;
-  border: 1px solid #d5cdbf;
-  border-radius: 0.4rem;
-  color: inherit;
-  background: #fffdf8;
-}
-.reading select {
-  font: inherit;
-  color: inherit;
-  background: #fffdf8;
-  border: 1px solid #d5cdbf;
-  border-radius: 0.4rem;
-  padding: 0.35rem;
-}
-.relation-list {
-  margin: 0;
-  padding-inline-start: 1.4rem;
-}
-button {
-  cursor: pointer;
-}
-button:disabled {
-  opacity: 0.55;
-  cursor: default;
-}
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid #346348;
-  outline-offset: 2px;
-}
-.primary {
-  color: white;
-  background: #28513c;
-  border-color: #28513c;
-}
-dialog {
-  max-width: min(33rem, calc(100% - 2rem));
-  width: 100%;
-  border: 1px solid #d5cdbf;
-  border-radius: 0.7rem;
-  background: #fffdf8;
-  max-height: calc(100dvh - 2rem);
-}
-dialog::backdrop {
-  background: #151c1855;
-}
-dialog form,
-dialog label {
-  display: grid;
-  gap: 0.55rem;
-}
+.relation-list,
 .gaps {
   margin: 0;
-  padding-inline-start: 1.4rem;
-  color: #5d635a;
-}
-fieldset {
-  margin-block: 0.5rem;
-  border: 1px solid #ddd6c7;
-}
-fieldset label {
-  margin-bottom: 0.45rem;
+  padding-left: 20px;
 }
 </style>

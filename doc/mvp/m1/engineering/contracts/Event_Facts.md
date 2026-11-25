@@ -1,11 +1,11 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.19<br>
+> **版本**：v0.20<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.18 → v0.19，登记检测求助及题单进度记录<br>
+> **修订说明**：v0.19 → v0.20，注明固定版本和最近空间由原有事件投影得出<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
@@ -38,7 +38,7 @@ ArtifactValue沿数据库总册§3。文件先完整保存并核验hash，再把
 
 ### 2.1 正文Schema与字段字典的关系
 
-§3逐项登记的是固定业务快照DTO。其v1字段精确采用链接表的全部业务列，排除source_event_id，以及product.material_import.active_request_ref和next_message_seq；后两项分别是运行占用和可重算消息序号，不属于历史正文；各主键、版本、时间与可空约束保留。uuid/text映射string，bigint映射integer，boolean映射boolean，timestamptz映射UTC Timestamp，date映射YYYY-MM-DD字符串，数值映射有限JSON number，JSONB沿字段注明的业务Schema。所有字段都显式给出，SQL NULL映射JSON null；不依赖数据库默认值补全历史。
+§3逐项登记的是固定业务快照DTO。v1采用链接表的业务列，排除source_event_id、product.material_import的运行占用active_request_ref和派生next_message_seq，以及课程投影派生的course_application.revision、learning_space.application_ref和last_entered_at。各主键、版本、时间与可空约束保留。uuid/text映射string，bigint映射integer，boolean映射boolean，timestamptz映射UTC Timestamp，date映射YYYY-MM-DD字符串，数值映射有限JSON number，JSONB沿字段注明的业务Schema。所有字段都显式给出，SQL NULL映射JSON null；不依赖数据库默认值补全历史。
 
 这是本次字段定义的复用，**不是运行时读取表生成事件，也不是允许事件执行任意表更新**。写入前由所有者构造并校验DTO，事件保存后由所属业务的生成器映射查询表。后续数据库列变更不会自动改变已登记DTO；需单独升正文Schema版本并保留旧解码器。业务数据不经事件API直接写入。
 
@@ -170,7 +170,7 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | --- | --- | --- |
 | 当前版本索引 | Domain对象身份/头、Claim身份/头、活动/配置/记忆头、目标/掌握当前索引 | 从对应已记录版本的正式选用顺序生成；不能简单取最大ID |
 | 关系与覆盖索引 | object_reference、material_content_current、application_head | 从版本正文、采用/同意/完成事实确定性计算；保存索引与投影收据同事务 |
-| 业务中包含的当前引用 | learning_space.current_adoption_ref等 | 由对应采用事件的完整快照更新；重建不重新判断目标达成 |
+| 业务中包含的当前引用 | learning_space.current_adoption_ref等 | 由实际采用事件的完整快照恢复。课程版本从前一发布派生；空间application_ref取实际采用，last_entered_at取最后真实进入；重建不评价 |
 | 控制与秘密 | 命令收据、登录会话/凭据、space_runtime、resume_actions、evaluation_progress、AI预算预约、执行/等待/交接表 | 不在业务投影重建中重启或替换。按运行恢复/整套备份恢复；其重要状态变化另有事件，不能用控制行替代历史事实 |
 | 文件及执行产物 | file_objects及文件、step_results、published_results | 原件和已保存步骤保留；正式输出的内容来源是事件或事件附件。文件位置、执行接续仍由原子系统维护 |
 
@@ -201,7 +201,7 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | `LearningTargetSaved` | `product.learning_target`[1]；`product.learning_target_version`[1] | 身份/当前头快照及本次新版本；目标条目按Product§4.2.1保存文字范围 |
 | `CourseApplied` | `product.course_application`[1]；`product.target_basis`[0..1] | 新应用携带本次建立的评价依据。已存在同一依据时沿用固定引用。检查结果由 `ApplicationChecked` 保存 |
 | `LearningSpaceCreated` | `product.learning_space`[1]；`product.space_adoption`[1] | 首次空间和初始采用；身份分别匹配scope与adoption_ref |
-| `LearningSpaceAdoptionChanged` | `product.learning_space`[1]；`product.space_adoption`[1] | 空间身份不变；追加新采用并保存current_adoption_ref |
+| `LearningSpaceAdoptionChanged` | `product.learning_space`[1]；`product.space_adoption`[1] | 历史采用事实；回放保留实际采用及current_adoption_ref |
 | `DomainDefinitionSaved` | `domain.object_version`[1] | 本次object_ref的新版本；Task变量和限制随Domain§1.2正文保存 |
 | `DomainIntakeSourceInvalidated` | `domain.intake_item`[1] | item_ref的最新有效性快照；不删除已入库定义 |
 | `DomainIntakeItemProcessed` | `domain.intake_item`[1..n] | 一项正常处理；确认同时移除子项时携带全部受影响项。领域对象另记版本 |
@@ -343,3 +343,4 @@ M1只提供受控维护重建，不新增管理页面。业务生成器先按§3
 | v0.17 | 2026-11-23 | 同步 Task 定义和目标文字范围的正文合同 |
 | v0.18 | 2026-11-23 | 登记供题输入、库存用途检查与新题复核正文 |
 | v0.19 | 2026-11-23 | 登记求助事件携带已关闭轮的剩余题单取消记录 |
+| v0.20 | 2026-11-24 | 注明固定版本和最近空间由原有事件投影得出 |

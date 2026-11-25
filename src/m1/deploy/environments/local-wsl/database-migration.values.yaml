@@ -1,4 +1,4 @@
-image: deermind/server:e04-15-r1
+image: deermind/server:course-version-r2
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
 database:

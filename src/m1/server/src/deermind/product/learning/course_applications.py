@@ -1,17 +1,16 @@
-"""Confirm an immutable course check with the related space adoptions."""
+"""Publish a checked course version without changing existing spaces."""
 
 from datetime import UTC, datetime
 from hashlib import sha256
 from uuid import UUID, uuid4
 
 from deermind.abstractions.encoding import canonical_json
-from deermind.abstractions.events import EventDraft, FactRecord, ProducerAccess, Ref
+from deermind.abstractions.events import FactRecord, ProducerAccess, Ref
 from deermind.foundation.system.events.store import lock_scope_sequence
 from deermind.foundation.system.public.errors import RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.learning import course_facts as facts
 from deermind.product.learning.course_checks import CourseChecks
-from deermind.product.learning.course_spaces import CourseSpaces
 from deermind.product.persistence.receipts import (
     claim_request,
     complete_request,
@@ -90,9 +89,8 @@ def normalized_basis(snapshot: CourseSnapshot) -> dict[str, JsonValue]:
 
 
 class CourseApplications:
-    def __init__(self, checks: CourseChecks, spaces: CourseSpaces) -> None:
+    def __init__(self, checks: CourseChecks) -> None:
         self.checks = checks
-        self.spaces = spaces
         self.engine = checks.engine
 
     async def receipt(
@@ -117,6 +115,13 @@ class CourseApplications:
 
     async def _result(self, db: AsyncConnection, reference: Ref) -> CourseApplyResult:
         changed = reference.type == "course_application"
+        revision = await db.scalar(
+            text("SELECT revision FROM product.course_application WHERE application_id=:id"),
+            {"id": UUID(reference.id)},
+        )
+        if not isinstance(revision, int):
+            raise ValueError("The published course version is missing")
+        # Old receipts still describe the spaces affected before version binding.
         affected: list[UUID] = (
             list(
                 (
@@ -134,6 +139,7 @@ class CourseApplications:
         )
         return CourseApplyResult(
             application_ref=facts.ref("course_application", UUID(reference.id)),
+            application_version=revision,
             changed=changed,
             affected_spaces=affected,
         )
@@ -265,25 +271,6 @@ class CourseApplications:
                 await complete_request(db, receipt, same)
                 return CourseApplyReceipt(request_ref=request, result=await self._result(db, same))
 
-            spaces: list[UUID] = list(
-                (
-                    await db.scalars(
-                        text(
-                            "SELECT space_id FROM product.learning_space WHERE textbook_id=:book "
-                            "AND target_id=:target ORDER BY space_id FOR UPDATE"
-                        ),
-                        {"book": textbook, "target": course.target_id},
-                    )
-                ).all()
-            )
-            drafts: list[EventDraft] = []
-            for space_id in spaces:
-                space = await self.spaces.row(db, space_id)
-                adoption = await self.spaces.adoption(db, space.current_adoption_ref)
-                _updated, changes = self.spaces.build_adoption(
-                    space, course, adoption, now, command.request_id
-                )
-                drafts.extend(changes)
             sequence = await lock_scope_sequence(db, *scope)
             (result,) = await events.append(
                 db,
@@ -294,12 +281,5 @@ class CourseApplications:
                 expected_seq={scope: sequence},
             )
             await facts.project(db, result)
-            if drafts:
-                await self.spaces.append(db, principal, request, drafts, commit_id=commit)
             await complete_request(db, receipt, reference)
-        return CourseApplyReceipt(
-            request_ref=request,
-            result=CourseApplyResult(
-                application_ref=reference, changed=True, affected_spaces=spaces
-            ),
-        )
+            return CourseApplyReceipt(request_ref=request, result=await self._result(db, reference))

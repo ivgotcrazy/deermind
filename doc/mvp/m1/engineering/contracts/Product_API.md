@@ -1,11 +1,11 @@
 # M1 Product API
 
-> **版本**：v0.10<br>
+> **版本**：v0.11<br>
 > **状态**：设计合同；已实施范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.9 → v0.10，登记学习工作区只读恢复与教材来源<br>
+> **修订说明**：v0.10 → v0.11，登记 课程版本、固定采用和最近空间的接口字段<br>
 
 共同类型、认证头、回执和错误见[总册](../API_and_Message_Design.md)。本分册定义前后端载荷；内容提取、采用和应用规则仍由Product负责。
 
@@ -24,8 +24,8 @@
 | MaterialMessage | message_id:ID、seq:int、role:user/assistant、body:RichContent、explicit_refs:Ref[]、turn_ref:ID、created_at:Timestamp | 正式正文；进度不反复改写正文 |
 | CandidateBatchView | Product§3.4.3的完整CandidateBatch，另含decision_state:pending/adopted/declined/superseded、decision_revision:Revision | read_set/write_set及coverage沿原结构；不返回私有Prompt |
 | TargetView | target_ref:{target_id,revision}、textbook_id:ID、title:string、items:GoalItem[]、chapter_basis_refs:Ref[]、gaps:Issue[] | GoalItem沿Product§4.2.1；保存不等于应用 |
-| SpaceRow | space_id:ID、student_id:ID、textbook_id:ID、target_id:ID、current_adoption_ref:Ref、title:string | 仅本人或获授权管理员；列表不推算掌握率 |
-| AdoptionView | space_id:ID、adoption_ref:Ref、application_ref:Ref、target_basis_ref:Ref、textbook_content_ref:Ref、target_ref:Ref | 固定采用内容；既有活动不因当前采用更新而换依据 |
+| SpaceRow | space_id:ID、student_id:ID、student_name:string、textbook_id:ID、textbook_title:string、target_id:ID、target_title:string、target_revision:int、application_ref:Ref、application_version:int、created_at:Timestamp | 仅本人或获授权管理员；列表不推算掌握率 |
+| AdoptionView | adoption_ref:Ref、application_ref:Ref、application_version:int、target_basis_ref:Ref、snapshot:CourseSnapshot | 固定采用内容及目标修订 |
 
 表中的content及候选结构直接引用[Product§3.4](../Product_Application_Design.md#34-productconverse_material_assistant持续对话解析与纠错)，GoalItem引用[§4.2.1](../Product_Application_Design.md#421-目标条目)。列表行不返回文件系统路径、秘密或整本解析正文。
 
@@ -42,12 +42,11 @@
 | IntakeMapping.group_ref | Ref | 是 | 父题/解法的显示分组 |
 | IntakeMapping.parent_ref | Ref或null | 是 | 解法关联的父题；其他项null |
 | CourseOption.textbook_id | ID | 是 | 教材身份 |
-| CourseOption.title | string | 是 | 教材名 |
-| CourseOption.target_id | ID | 是 | 目标身份 |
+| CourseOption.textbook_title | string | 是 | 教材名 |
+| CourseOption.target_ref | TargetRef | 是 | 目标身份及精确修订 |
 | CourseOption.target_title | string | 是 | 目标名 |
 | CourseOption.application_ref | Ref | 是 | 固定已应用结果 |
-| CourseOption.limitations | Issue[] | 是 | 用途限制；无则[] |
-| CourseOption.existing_space_id | ID或null | 是 | 本人已选同组合时返回原空间 |
+| CourseOption.application_version | int | 是 | 教材与目标组合内的发布版本 |
 
 <a id="p01"></a>
 ## P01 登录
@@ -746,7 +745,7 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 | `can_apply` | boolean | 是 | 程序从检查结果决定 |
 
 处理边界：只保存检查；学生尚不能选用拟应用内容。
-管理员用 `GET /course-applications/current?textbook_id={id}&target_id={id}` 取得当前应用基准。检查和确认的公共收据分别使用 `product.check_course`、`product.confirm_course`。范围为 `textbook`。
+管理员用 `GET /course-applications/current?textbook_id={id}&target_id={id}` 取得当前发布基准，返回 `application_ref`、`application_version` 和 `target_revision`，尚未发布时均为空。检查和确认的公共收据分别使用 `product.check_course`、`product.confirm_course`。范围为 `textbook`。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；invalid_reference；revision_conflict。
 
@@ -791,9 +790,10 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 | --- | --- | --- | --- |
 | `application_ref` | Ref | 是 | 已应用快照 |
 | `changed` | boolean | 是 | 内容未变化可false |
-| `affected_spaces` | ID[] | 是 | 实际推进采用的空间 |
+| `application_version` | int | 是 | 发布版本 |
+| `affected_spaces` | ID[] | 是 | 当前发布为空；历史收据保留当时影响范围 |
 
-处理边界：一起保存应用、空间采用及相关事件；只推进同textbook_id、同target_id的空间，不修改空间身份；仅目标依据改变才产生LearningTargetApplied。
+处理边界：一起保存应用版本、组合发布指针、CourseApplied及原请求收据。空间采用在学生新建空间时保存。
 
 错误：共同错误见[总册§2](../API_and_Message_Design.md#2-认证回执与错误)；check_stale；not_ready。
 
@@ -863,7 +863,7 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
-| `space` | SpaceRow | 是 | 同学生/教材/目标复用已有空间 |
+| `space` | SpaceRow | 是 | 同学生、同应用版本复用已有空间 |
 | `created` | boolean | 是 | 是否本次新建 |
 | `adoption` | AdoptionView | 是 | 进入时采用 |
 | `entry_event_ref` | ID | 是 | 实际进入事实 |
@@ -903,6 +903,7 @@ ImportView包含textbook、revision、source_revision、content_revision、sourc
 | 字段 | 类型 | 必填／缺省 | 含义与约束 |
 | --- | --- | --- | --- |
 | `items` | SpaceRow[] | 是 | 授权范围内 |
+| `recent_space_id` | ID或null | 是 | 学生最近一次成功进入的空间；无记录或管理员查询为null |
 | `next_cursor` | string或null | 是 | 续页 |
 
 处理边界：只读；无数据不等于读取失败，不产生学习或评价事件。
@@ -1140,3 +1141,4 @@ E03 的已采用章节正文使用 P24。下列原页及教材阅读合同由学
 | v0.8 | 2026-11-23 | 登记目标、应用选择和学习空间读写合同 |
 | v0.9 | 2026-11-23 | 同步目标文字范围的保存合同 |
 | v0.10 | 2026-11-23 | 登记学习工作区只读恢复及教材内容的固定引用 |
+| v0.11 | 2026-11-24 | 登记 课程版本、固定采用和最近空间的接口字段 |

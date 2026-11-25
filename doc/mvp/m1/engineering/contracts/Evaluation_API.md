@@ -1,11 +1,11 @@
 # M1 Evaluation API
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **状态**：Claim 定义及评价追溯接口见 OpenAPI，验收进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-23<br>
-> **修订说明**：v0.4 → v0.5，登记评价追溯查询和来源片段读取<br>
+> **更新日期**：2026-11-25<br>
+> **修订说明**：v0.5 → v0.6，明确证据列表与作答原文的时间依据<br>
 
 所有写入口只维护评价定义；个人Evidence、Belief和目标结果只能由已登记处理流程产生。查询不重新评价、不改概率。共同认证、回执和错误见[总册](../API_and_Message_Design.md)。
 
@@ -20,7 +20,7 @@
 | BeliefItem | 完整分项字段沿[Evaluation§5.1](../Evaluation_Space_Design.md#51-学习者掌握状态的发布视图) | 保留aspect、evidence_coverage、unknown_reasons、source_refs原名，不另造一套概率结构 |
 | EvidenceView | 正式EvidenceItem及授权来源，见[Evaluation§2.4](../Evaluation_Space_Design.md#24-ai候选与程序接受) | qualification=eligible/ineligible/unknown；verdict=positive/negative/null，条件不足不是negative |
 
-ClaimRow只含claim_ref:ClaimRef、task_ref:ObjectRef(task)、title:string、gaps:Issue[]，四项必填。Evidence摘要包含evidence_ref:Ref、qualification:eligible/ineligible/unknown、verdict:positive/negative/null、reason:string、source_event_refs:ID[]，全部必填；原文沿授权引用读取。
+ClaimRow只含claim_ref:ClaimRef、task_ref:ObjectRef(task)、title:string、gaps:Issue[]，四项必填。Evidence 摘要见 E06 的响应表。原文沿授权引用读取。
 
 <a id="e01"></a>
 ## E01 Claim列表
@@ -236,9 +236,11 @@ ClaimRow只含claim_ref:ClaimRef、task_ref:ObjectRef(task)、title:string、gap
 | `belief` | BeliefItem或null | belief是 | 分项判断 |
 | `evidence` | EvidenceView | evidence是 | 证据解释、源引用及本条导致的概率变化 |
 | `source` | SourceExcerpt | evidence选择event_id时有 | 仅返回本证据已经关联的原文片段 |
-| `items` | Evidence摘要[] | target/belief/event是 | evidence_ref、aspect_code、qualification、verdict、reason、source_event_refs |
+| `items` | Evidence摘要[] | target/belief/event是 | evidence_ref、aspect_code、qualification、verdict、reason、source_event_refs，以及下述来源时间字段 |
 | `next_cursor` | string | 有下一页时返回 | 绑定身份、范围及当前筛选 |
 | `processing` | not_found/pending/completed/failed | processing是 | 查询源事件的评价处理状态，不启动工作 |
+
+摘要中的 `occurred_at` 取固定评价输入中的服务端作答受理时间或教学机会结束时间。`source_activity` 区分有检测轮的作答（detection）、其他作答（answer）和教学机会（teaching）。`timed_event_id` 只在触发事件已列入 source_event_refs 时返回。客户端按北京时间显示，只在打开这个事件的原文时沿用该时间。来源缺失时省略相应值。
 
 处理边界：目标→Evidence列表→单Evidence→源事件；来源事件不直接替代目标依据列表。每个view只返回对应字段，其他分支字段省略。
 
@@ -286,6 +288,10 @@ E06的target分支先返回证据摘要，点击后以evidence_ref读取详情�
         "id": "evidence-01"
       },
       "qualification": "eligible",
+      "aspect_code": "independent",
+      "source_activity": "detection",
+      "occurred_at": "2026-11-24T08:31:00Z",
+      "timed_event_id": "answer-event-01",
       "verdict": "positive",
       "reason": "本次无当题帮助，列式与结果符合要求。",
       "source_event_refs": [
@@ -308,3 +314,4 @@ E06的target分支先返回证据摘要，点击后以evidence_ref读取详情�
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.4 | 2026-11-23 | 登记 Claim 定义写入、固定修订查询和公共收据 |
 | v0.5 | 2026-11-23 | 登记目标、概率、Evidence 与来源事件的双向查询 |
+| v0.6 | 2026-11-25 | 增加证据来源类别、发生时间与原文时间归属 |

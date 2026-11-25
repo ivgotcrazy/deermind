@@ -157,7 +157,7 @@ onBeforeUnmount(() => lifecycle.abort());
 </script>
 
 <template>
-  <section aria-label="章节关联">
+  <section class="editor-panel" aria-label="章节关联">
     <p v-if="!sections.length">采用教材解析结果后，可以为章节添加关联。</p>
     <template v-else>
       <div class="association-heading">
@@ -175,7 +175,7 @@ onBeforeUnmount(() => lifecycle.abort());
         >
         <button type="button" class="primary" :disabled="busy" @click="open()">添加关联</button>
       </div>
-      <table v-if="associations.length">
+      <table v-if="associations.length" class="admin-data-table">
         <thead>
           <tr>
             <th scope="col">任务</th>
@@ -194,12 +194,14 @@ onBeforeUnmount(() => lifecycle.abort());
               }}
             </td>
             <td>
-              <button type="button" class="secondary" :disabled="busy" @click="open(row)">
-                编辑
-              </button>
-              <button type="button" class="secondary" :disabled="busy" @click="save(row)">
-                取消关联
-              </button>
+              <div class="admin-row-actions">
+                <button type="button" class="secondary" :disabled="busy" @click="open(row)">
+                  编辑
+                </button>
+                <button type="button" class="destructive" :disabled="busy" @click="save(row)">
+                  取消关联
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -239,10 +241,11 @@ onBeforeUnmount(() => lifecycle.abort());
           </label>
         </fieldset>
         <p v-if="error" role="alert">{{ error }}</p>
-        <button type="submit" :disabled="busy || !selectedMethods.length">保存</button>
-        <button type="button" class="secondary" :disabled="busy" @click="dialog?.close()">
-          取消
-        </button>
+        <footer class="editor-footer">
+          <button type="button" class="secondary" :disabled="busy" @click="dialog?.close()">
+            取消</button
+          ><button type="submit" :disabled="busy || !selectedMethods.length">保存</button>
+        </footer>
       </form>
     </dialog>
   </section>
@@ -251,8 +254,13 @@ onBeforeUnmount(() => lifecycle.abort());
 <style scoped>
 .association-heading {
   display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
   align-items: end;
   justify-content: space-between;
   gap: 1rem;
+}
+.association-heading label {
+  min-width: min(100%, 16rem);
 }
 </style>

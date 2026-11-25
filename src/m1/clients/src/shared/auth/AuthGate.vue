@@ -31,7 +31,33 @@ async function submit() {
 </script>
 
 <template>
-  <section class="auth-card" aria-label="登录身份" :aria-busy="busy || phase === 'checking'">
+  <slot
+    v-if="$slots.entry && phase !== 'authenticated'"
+    name="entry"
+    :phase="phase"
+    :busy="busy"
+    :error="error"
+    :sign-in="signIn"
+    :retry="() => refresh()"
+  />
+  <slot
+    v-else-if="
+      $slots.workspace &&
+      session?.account.role === role &&
+      (role !== 'student' || !session.account.usage_gaps.length)
+    "
+    :key="session.session_id"
+    name="workspace"
+    :session="session"
+    :realtime="realtime"
+    :busy="busy"
+    :error="error"
+    :sign-out="signOut"
+    :realtime-state="realtimeState"
+    :storage-unavailable="storageUnavailable"
+    :reconnect="() => realtime.reconnect()"
+  />
+  <section v-else class="auth-card" aria-label="登录身份" :aria-busy="busy || phase === 'checking'">
     <p v-if="error" role="alert">{{ error }}</p>
     <p v-if="phase === 'checking'" role="status">
       {{ busy ? '正在处理登录，请稍候…' : '正在确认登录状态…' }}

@@ -1,13 +1,27 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import {
+  PanelLeftClose,
+  PanelLeftOpen,
+  PanelRightClose,
+  PanelTopClose,
+  PanelTopOpen,
+} from '@lucide/vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import type { components } from '../../../../contracts/generated/http/schema';
 import { ApiError, get, post } from '../../shared/api/http';
 import AdoptedChapter from '../../shared/content/AdoptedChapter.vue';
 import type { Realtime } from '../../shared/realtime/client';
+import { Button } from '../components/ui/button';
 import ActivityDirectory from '../features/conversation/ActivityDirectory.vue';
 import DetectionPlanCard from '../features/conversation/DetectionPlanCard.vue';
 import QuestionCard from '../features/conversation/QuestionCard.vue';
-import { activityLabels } from '../features/conversation/activityLabels';
+import StudyComposer from '../features/conversation/StudyComposer.vue';
+import TutorText from '../features/conversation/TutorText.vue';
+import {
+  activityClock,
+  activityDay,
+  activityLabels,
+} from '../features/conversation/activityLabels';
 
 type Schema = components['schemas'];
 const { opened, session, accountId, realtime } = defineProps<{
@@ -15,6 +29,7 @@ const { opened, session, accountId, realtime } = defineProps<{
   session: Pick<Schema['SessionView'], 'session_id' | 'csrf_token'>;
   accountId: string;
   realtime: Pick<Realtime, 'watch'>;
+  created: boolean;
 }>();
 
 // 仅保存界面偏好。空间切换时实例随 space_id 重建。
@@ -22,6 +37,14 @@ const key = `deermind:study-layout:${accountId}:${opened.space.space_id}`;
 const readerOpen = ref(true);
 const chatOpen = ref(true);
 const activityOpen = ref(true);
+const showDirectoryButton = ref<InstanceType<typeof Button>>();
+const hideDirectoryButton = ref<InstanceType<typeof Button>>();
+defineExpose({
+  readerOpen,
+  openReader: () => {
+    readerOpen.value = true;
+  },
+});
 const draft = ref('');
 const quotedContent = ref<{ title: string; source: Schema['Ref'] }>();
 const pending = ref<Schema['LearningInputCommand']>();
@@ -59,6 +82,7 @@ watch([readerOpen, chatOpen, activityOpen], ([reader, chat, activities]) => {
 });
 
 const controller = new AbortController();
+let turnCheck: AbortController | undefined;
 const unsubscribe = realtime.watch(
   { kind: 'learning_space', id: opened.space.space_id },
   ['conversation', 'activity_tree'],
@@ -73,6 +97,7 @@ const timer = window.setInterval(() => {
 }, 2000);
 onBeforeUnmount(() => {
   controller.abort();
+  turnCheck?.abort();
   unsubscribe();
   window.clearInterval(timer);
 });
@@ -82,9 +107,47 @@ const branches = ref<Record<string, Schema['ActivityPage']>>({});
 const expanded = ref<Record<string, boolean>>({});
 const messages = ref<Schema['MessageView'][]>();
 const chatContent = ref<HTMLElement>();
-const selectedMessage = ref<string>();
+const studyInput = ref<InstanceType<typeof StudyComposer>>();
+const history = ref<Schema['ActivityView']>();
+const loadingHistory = ref(false);
+const historyCursor = ref<string>();
+const selectedMessage = computed(() => history.value?.first_message_ref);
+const displayActivity = computed(
+  () => active.value?.current_activity ?? activities.value?.items[0],
+);
+const pathLabels = computed(
+  () => active.value?.path.map((item) => activityLabels[item.type]).join(' / ') || '学习对话',
+);
+const answerParentId = computed(() =>
+  active.value?.current_activity?.type === 'question_answer'
+    ? (active.value.current_activity.parent_id ?? undefined)
+    : undefined,
+);
+const completedDisplay = computed(() => {
+  const activity = history.value ?? displayActivity.value;
+  if (activity?.run_state !== 'completed') return '';
+  return `${activityDay(activity.started_at)} ${activityClock.format(new Date(activity.started_at))} · 已完成的${activityLabels[activity.type]}`;
+});
+const studyTopics = computed(() =>
+  opened.study_methods?.length
+    ? opened.study_methods
+    : (opened.adoption.snapshot.items ?? []).map((item) => item.title),
+);
+const startPrompt = computed(() =>
+  opened.study_methods?.length &&
+  opened.adoption.snapshot.items.some((item) => item.method_mode === 'each')
+    ? '目标要求分别掌握所选方法。想先学哪一种？'
+    : '可以从这里开始，也可以直接提问。',
+);
 const error = ref('');
 const saving = ref(false);
+watch(
+  saving,
+  (writing) => {
+    if (writing) turnCheck?.abort();
+  },
+  { flush: 'sync' },
+);
 let stopCommand: Schema['StopReply'] | undefined;
 let detectionRequest: Schema['PrepareDetectionCommand'] | undefined;
 let roundRequest: Schema['OpenDetectionRound'] | undefined;
@@ -175,11 +238,13 @@ function showError(reason: unknown) {
     error.value = reason instanceof Error ? reason.message : '暂时无法读取对话，请重试。';
 }
 
-async function readActivities(parent?: string, cursor?: string) {
+async function readActivities(parent?: string, cursor?: string, signal = controller.signal) {
   const result = await get(conversation, {
     ...options,
+    signal,
     query: { view: 'activity_tree', activity_ref: parent, cursor },
   });
+  if (signal.aborted) return;
   if (!('items' in result) || 'last_seq' in result) throw new Error('活动目录返回格式不正确。');
   const previous = parent ? branches.value[parent] : activities.value;
   const page =
@@ -203,31 +268,87 @@ async function toggle(id: string) {
   if (expanded.value[id] && !branches.value[id]) await more({ parent: id });
 }
 
-async function readMessages(after?: number, anchor?: string) {
+async function readMessages(
+  after?: number,
+  viewed?: Schema['ActivityView'],
+  cursor?: string,
+  signal = controller.signal,
+) {
   const request = ++navigation;
+  const anchor = viewed?.first_message_ref;
   const result = await get(conversation, {
     ...options,
-    query: { view: 'messages', after_seq: after, anchor_message_id: anchor },
+    signal,
+    query: {
+      view: 'messages',
+      after_seq: after,
+      anchor_message_id: anchor,
+      activity_ref: viewed?.activity_ref.activity_id,
+      cursor,
+    },
   });
+  if (signal.aborted) return;
   if (!('last_seq' in result)) throw new Error('聊天记录返回格式不正确。');
   if (request !== navigation) return;
-  messages.value = result.items;
-  selectedMessage.value = anchor;
-  if (anchor) {
-    chatOpen.value = true;
-    await nextTick();
-    document.getElementById('study-message-' + anchor)?.scrollIntoView({ block: 'nearest' });
-  } else {
-    await nextTick();
-    if (chatContent.value) chatContent.value.scrollTop = chatContent.value.scrollHeight;
+  messages.value = cursor ? [...(messages.value ?? []), ...result.items] : result.items;
+  loadingHistory.value = false;
+  historyCursor.value = viewed ? (result.next_cursor ?? undefined) : undefined;
+  if (viewed) chatOpen.value = true;
+  await nextTick();
+  if (signal.aborted || request !== navigation) return;
+  if (chatContent.value && !cursor) {
+    chatContent.value.scrollTop = viewed ? 0 : chatContent.value.scrollHeight;
   }
-  watchPresentations(result.items, anchor ? 'history' : 'chat');
+  watchPresentations(messages.value, viewed ? 'history' : 'chat');
 }
 
 async function locate(activity: Schema['ActivityView']) {
+  if (
+    activity.activity_ref.activity_id === active.value?.current_activity?.activity_ref.activity_id
+  ) {
+    await returnToCurrent();
+    return;
+  }
+  const previous = history.value;
+  history.value = activity;
+  loadingHistory.value = true;
   try {
-    await readMessages(undefined, activity.first_message_ref);
+    await readMessages(undefined, activity);
   } catch (reason) {
+    if (history.value === activity) {
+      history.value = previous;
+      loadingHistory.value = false;
+      showError(reason);
+    }
+  }
+}
+
+async function readHistoryPage() {
+  if (!history.value || !historyCursor.value) return;
+  try {
+    await readMessages(undefined, history.value, historyCursor.value);
+  } catch (reason) {
+    showError(reason);
+  }
+}
+
+function readLatest(signal = controller.signal) {
+  return readMessages(
+    Math.max(0, (active.value?.latest_message_seq ?? 0) - 50),
+    undefined,
+    undefined,
+    signal,
+  );
+}
+
+async function returnToCurrent() {
+  const previous = history.value;
+  history.value = undefined;
+  chatOpen.value = true;
+  try {
+    await readLatest();
+  } catch (reason) {
+    history.value = previous;
     showError(reason);
   }
 }
@@ -236,19 +357,25 @@ async function refresh() {
   error.value = '';
   try {
     await readCurrent();
-    await Promise.all([
-      readActivities(),
-      readMessages(Math.max(0, (active.value?.latest_message_seq ?? 0) - 50)),
-    ]);
+    await Promise.all([readActivities(), history.value ? Promise.resolve() : readLatest()]);
   } catch (reason) {
     showError(reason);
   }
 }
 
-async function readCurrent() {
-  const result = await get(conversation, { ...options, query: { view: 'current' } });
+async function readCurrent(signal = controller.signal) {
+  const result = await get(conversation, { ...options, signal, query: { view: 'current' } });
+  if (signal.aborted) return;
   if (!('current' in result)) throw new Error('当前活动返回格式不正确。');
+  const previous = active.value?.current_activity?.activity_ref.activity_id;
   active.value = result.current;
+  if (previous !== result.current.current_activity?.activity_ref.activity_id) {
+    const ancestors = result.current.path.slice(0, -1);
+    for (const item of ancestors) expanded.value[item.activity_ref.activity_id] = true;
+    await Promise.all(
+      ancestors.map((item) => readActivities(item.activity_ref.activity_id, undefined, signal)),
+    );
+  }
 }
 
 function confirmAccepted(sent: Schema['LearningInputCommand']) {
@@ -258,10 +385,10 @@ function confirmAccepted(sent: Schema['LearningInputCommand']) {
     quotedContent.value = undefined;
 }
 
-async function readWork(work: WorkRequest) {
+async function readWork(work: WorkRequest, signal: AbortSignal) {
   return get('/api/m1/requests/receipt', {
     session,
-    signal: controller.signal,
+    signal,
     query: {
       action: work.action,
       resource_kind: 'learning_space',
@@ -303,13 +430,16 @@ async function retryLast() {
 }
 
 async function checkTurn() {
-  if (saving.value || controller.signal.aborted) return;
-  saving.value = true;
+  if (saving.value || turnCheck || controller.signal.aborted) return;
+  const check = new AbortController();
+  turnCheck = check;
+  const { signal } = check;
   try {
     const sent = pending.value;
     if (sent) {
       const work: WorkRequest = { requestId: sent.request_id, action: 'interaction.handle_input' };
-      const receipt = await readWork(work);
+      const receipt = await readWork(work, signal);
+      if (signal.aborted) return;
       if (receipt.receipt_state === 'not_found') {
         waitingForReceipt.value = true;
       } else {
@@ -323,7 +453,8 @@ async function checkTurn() {
     }
     const tracked = trackedWork.value;
     if (tracked) {
-      const receipt = await readWork(tracked);
+      const receipt = await readWork(tracked, signal);
+      if (signal.aborted) return;
       if (receipt.receipt_state === 'completed') {
         trackedWork.value = undefined;
         workNotice.value = '';
@@ -331,7 +462,8 @@ async function checkTurn() {
       }
     }
     const previous = active.value;
-    await readCurrent();
+    await readCurrent(signal);
+    if (signal.aborted) return;
     if (
       previous?.active_input_id &&
       !active.value?.active_input_id &&
@@ -348,18 +480,22 @@ async function checkTurn() {
           .map((item) => item.activity_ref.activity_id)
           .filter((id) => expanded.value[id]),
       );
-      await Promise.all([readActivities(), ...[...parents].map((id) => readActivities(id))]);
+      await Promise.all([
+        readActivities(undefined, undefined, signal),
+        ...[...parents].map((id) => readActivities(id, undefined, signal)),
+      ]);
     }
     if (
-      !selectedMessage.value &&
-      previous?.latest_message_seq !== active.value?.latest_message_seq
+      !signal.aborted &&
+      !history.value &&
+      (messages.value?.at(-1)?.message_seq ?? -1) < (active.value?.latest_message_seq ?? 0)
     ) {
-      await readMessages(Math.max(0, (active.value?.latest_message_seq ?? 0) - 50));
+      await readLatest(signal);
     }
   } catch {
     // 查询失败时不推断已受理、失败或完成，下一次继续补查。
   } finally {
-    saving.value = false;
+    turnCheck = undefined;
   }
 }
 
@@ -383,7 +519,7 @@ async function send() {
   try {
     await post('/api/m1/learning-spaces/{scope_id}/inputs', sent, options);
     confirmAccepted(sent);
-    selectedMessage.value = undefined;
+    history.value = undefined;
     await refresh();
   } catch (reason) {
     if (reason instanceof ApiError && reason.status < 500 && reason.status !== 408) {
@@ -428,7 +564,7 @@ async function answer(part: Schema['QuestionPart']) {
     retryChoice.value = undefined;
     answerRequests.delete(identity);
     if (answers.value[identity]?.trim() === command.answer.text) answers.value[identity] = '';
-    selectedMessage.value = undefined;
+    history.value = undefined;
     workNotice.value = '作答已保存，正在核对这道题。';
     await refresh();
   } catch (reason) {
@@ -454,7 +590,7 @@ async function prepareDetection() {
     };
     retryChoice.value = undefined;
     detectionRequest = undefined;
-    selectedMessage.value = undefined;
+    history.value = undefined;
     await refresh();
   } catch (reason) {
     if (reason instanceof ApiError && reason.status < 500 && reason.status !== 408) {
@@ -496,7 +632,7 @@ async function openRound(
     );
     roundRequest = undefined;
     active.value = changed.result.current;
-    selectedMessage.value = undefined;
+    history.value = undefined;
     await refresh();
   } catch (reason) {
     if (reason instanceof ApiError && reason.status < 500 && reason.status !== 408) {
@@ -529,8 +665,7 @@ async function stop() {
     active.value = reply.result.current;
     workNotice.value = reply.result.outcome === 'stopped' ? '已停止本次回复。' : '本次回复已结束。';
     stopCommand = undefined;
-    if (!selectedMessage.value)
-      await readMessages(Math.max(0, reply.result.current.latest_message_seq - 50));
+    if (!history.value) await readLatest();
   } catch (reason) {
     showError(reason);
   } finally {
@@ -570,186 +705,319 @@ function controlCurrent(action: Schema['ControlAction']) {
   if (item) void control(action, item);
 }
 
+function startTopic(title: string) {
+  if (draft.value.trim()) {
+    studyInput.value?.focus();
+    return;
+  }
+  draft.value = `请讲解「${title}」。`;
+  chatOpen.value = true;
+  studyInput.value?.focus();
+}
+
+async function setDirectoryOpen(open: boolean) {
+  activityOpen.value = open;
+  await nextTick();
+  const button = open ? hideDirectoryButton.value : showDirectoryButton.value;
+  (button?.$el as HTMLElement | undefined)?.focus({ preventScroll: true });
+}
+
 void refresh();
 </script>
 
 <template>
   <section class="workspace" aria-label="学习工作区">
-    <h2>{{ opened.space.textbook_title }} · {{ opened.space.target_title }}</h2>
-    <p v-if="error" role="alert">
-      {{ error }} <button type="button" @click="refresh()">重试读取</button>
+    <p v-if="error" class="workspace-error" role="alert">
+      {{ error }} <Button variant="outline" size="sm" @click="refresh()">重试读取</Button>
     </p>
-    <div class="panes" :class="{ paired: readerOpen, 'has-directory': activityOpen }">
-      <aside class="pane" aria-label="活动目录">
+    <div
+      class="panes"
+      :class="{ 'has-reader': readerOpen, 'has-directory': activityOpen, 'chat-folded': !chatOpen }"
+    >
+      <aside
+        v-show="activityOpen"
+        id="study-directory"
+        class="pane activity-pane"
+        aria-label="活动目录"
+      >
         <header class="pane-header">
-          <h3>活动</h3>
-          <button type="button" :aria-expanded="activityOpen" @click="activityOpen = !activityOpen">
-            {{ activityOpen ? '收起目录' : '展开目录' }}
-          </button>
+          <h2>活动历史</h2>
+          <Button
+            ref="hideDirectoryButton"
+            class="pane-icon"
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="收起目录"
+            title="收起目录"
+            aria-expanded="true"
+            aria-controls="study-directory"
+            @click="setDirectoryOpen(false)"
+          >
+            <PanelLeftClose aria-hidden="true" />
+          </Button>
         </header>
-        <div v-show="activityOpen" class="directory">
+        <div class="directory">
           <ActivityDirectory
             v-if="activities?.items.length"
             :page="activities"
             :expanded="expanded"
             :branches="branches"
             :can-resume="!saving && !active?.current_activity && !active?.active_input_id"
+            :current-id="active?.current_activity?.activity_ref.activity_id"
+            :history-id="history?.activity_ref.activity_id"
+            :answer-parent-id="answerParentId"
+            group-by-day
             @locate="locate"
             @toggle="toggle"
             @more="more"
             @resume="control('resume', $event)"
           />
-          <p v-else-if="activities">暂无活动。</p>
-          <button
+          <p v-else-if="activities" class="muted">开始学习后，活动会按时间出现在这里。</p>
+          <Button
             v-if="activities?.next_cursor"
             type="button"
+            variant="ghost"
+            size="sm"
             @click="more({ cursor: activities.next_cursor })"
           >
             更多活动
-          </button>
+          </Button>
         </div>
       </aside>
-      <section class="pane" aria-label="学习对话">
-        <header class="pane-header">
-          <h3>学习对话</h3>
-          <button
-            type="button"
-            aria-controls="study-chat-content"
-            :aria-expanded="chatOpen"
-            @click="chatOpen = !chatOpen"
-          >
-            {{ chatOpen ? '收起聊天' : '展开聊天' }}
-          </button>
+
+      <section class="pane dialogue-pane" aria-label="学习对话">
+        <header class="dialogue-header">
+          <div class="dialogue-column heading-row">
+            <div class="dialogue-title">
+              <Button
+                v-if="!activityOpen"
+                ref="showDirectoryButton"
+                class="pane-icon"
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="展开目录"
+                title="展开目录"
+                aria-expanded="false"
+                aria-controls="study-directory"
+                @click="setDirectoryOpen(true)"
+              >
+                <PanelLeftOpen aria-hidden="true" />
+              </Button>
+              <div>
+                <p class="activity-path">{{ pathLabels }}</p>
+                <h1>{{ displayActivity?.name ?? '开始学习' }}</h1>
+              </div>
+            </div>
+            <div class="dialogue-actions">
+              <Button
+                v-if="active?.allowed_actions.includes('pause')"
+                type="button"
+                variant="outline"
+                size="sm"
+                :disabled="saving"
+                @click="controlCurrent('pause')"
+              >
+                暂停活动
+              </Button>
+              <Button
+                v-if="active?.allowed_actions.includes('finish')"
+                type="button"
+                variant="outline"
+                size="sm"
+                :disabled="saving"
+                @click="controlCurrent('finish')"
+              >
+                结束活动
+              </Button>
+              <Button
+                v-if="active && active.current_activity?.type !== 'detection'"
+                type="button"
+                variant="outline"
+                size="sm"
+                :disabled="saving || !!active.active_input_id"
+                @click="prepareDetection()"
+              >
+                准备检测
+              </Button>
+              <Button
+                class="pane-icon"
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-controls="study-chat-content"
+                :aria-label="chatOpen ? '收起聊天' : '展开聊天'"
+                :title="chatOpen ? '收起聊天' : '展开聊天'"
+                :aria-expanded="chatOpen"
+                @click="chatOpen = !chatOpen"
+              >
+                <PanelTopClose v-if="chatOpen" />
+                <PanelTopOpen v-else />
+              </Button>
+            </div>
+          </div>
         </header>
-        <div v-if="active?.path.length" class="activity-path">
-          <div v-for="item in active.path" :key="item.activity_ref.activity_id" class="path-item">
-            <span>{{ activityLabels[item.type] }}</span>
-            <strong>{{ item.name }}</strong>
-          </div>
-          <button
-            v-if="active.allowed_actions.includes('pause')"
-            type="button"
-            :disabled="saving"
-            @click="controlCurrent('pause')"
-          >
-            暂停活动
-          </button>
-          <button
-            v-if="active.allowed_actions.includes('finish')"
-            type="button"
-            :disabled="saving"
-            @click="controlCurrent('finish')"
-          >
-            结束活动
-          </button>
-        </div>
         <div v-show="chatOpen" id="study-chat-content" ref="chatContent" class="chat-content">
-          <p v-if="messages && !messages.length">暂无聊天记录。</p>
-          <article
-            v-for="message in messages"
-            :id="'study-message-' + message.message_id"
-            :key="message.message_id"
-            :class="{ selected: selectedMessage === message.message_id }"
-          >
-            <small v-if="message.role !== 'system'">
-              {{ message.role === 'student' ? '我' : 'DeerMind' }}
-            </small>
-            <template v-for="part in message.parts" :key="part.part_id">
-              <QuestionCard
-                v-if="part.type === 'question'"
-                v-model:answer="answers[part.task_use_ref.id]"
-                :question="part"
-                :can-answer="
-                  (part.purpose === 'practice' ||
-                    (part.purpose === 'detection' &&
-                      active?.current_round?.state === 'open' &&
-                      active.current_round.task_use_ref.id === part.task_use_ref.id)) &&
-                  message.activity_ref?.activity_id ===
-                    active?.current_activity?.activity_ref.activity_id
-                "
-                :busy="saving || !!active?.active_input_id"
-                @submit="answer(part)"
-              />
-              <DetectionPlanCard
-                v-else-if="part.type === 'detection_plan'"
-                :plan="part"
-                :can-start="
-                  !active?.current_round &&
-                  message.activity_ref?.activity_id ===
-                    active?.current_activity?.activity_ref.activity_id
-                "
-                :busy="saving || !!active?.active_input_id"
-                @start="
-                  openRound('start_detection', {
-                    plan_id: part.plan_ref.id,
-                    revision: part.plan_ref.revision ?? 1,
-                  })
-                "
-              />
-              <p v-else>{{ part.text }}</p>
-            </template>
-          </article>
-        </div>
-        <form class="composer" @submit.prevent="send()">
-          <button
-            v-if="active?.current_round?.can_continue"
-            type="button"
-            :disabled="saving || !!active.active_input_id"
-            @click="openRound('continue_detection', active.current_round.plan_ref)"
-          >
-            继续下一题
-          </button>
-          <button
-            v-if="active?.current_activity?.type !== 'detection'"
-            type="button"
-            :disabled="saving || !!active?.active_input_id"
-            @click="prepareDetection()"
-          >
-            准备检测
-          </button>
-          <label for="study-input">输入消息</label>
-          <p v-if="quotedContent">
-            引用 {{ quotedContent.title }}
-            <button type="button" @click="quotedContent = undefined">移除引用</button>
-          </p>
-          <textarea id="study-input" v-model="draft" rows="2" />
-          <p v-if="workNotice" role="status">{{ workNotice }}</p>
-          <button v-if="retryChoice" type="button" :disabled="saving" @click="retryLast()">
-            重试原请求
-          </button>
-          <p v-if="active?.active_input_id" role="status">正在处理上一条消息。</p>
-          <p v-else-if="waitingForReceipt" role="status">正在核对是否已受理，草稿已保留。</p>
-          <div class="composer-actions">
-            <button v-if="active?.active_input_id" type="button" :disabled="saving" @click="stop()">
-              停止本次回复
-            </button>
-            <button
-              v-else
-              type="submit"
-              :disabled="saving || (!waitingForReceipt && (!!pending || !draft.trim()))"
+          <div class="dialogue-column message-list">
+            <div v-if="history" class="history-notice">
+              <span>正在回看 · {{ history.name }}</span>
+              <Button type="button" variant="outline" size="sm" @click="returnToCurrent()"
+                >回到当前</Button
+              >
+            </div>
+            <p v-if="completedDisplay" class="past-state">{{ completedDisplay }}</p>
+            <p v-if="history && loadingHistory" role="status">正在读取活动消息…</p>
+            <div v-if="messages && !messages.length && !history" class="new-space">
+              <h2 v-if="created">这是你在课程 v{{ opened.space.application_version }} 的新空间</h2>
+              <p class="muted">{{ created ? startPrompt : '暂无聊天记录。' }}</p>
+              <Button
+                v-for="title in created ? studyTopics : []"
+                :key="title"
+                class="start-topic"
+                type="button"
+                variant="secondary"
+                @click="startTopic(title)"
+              >
+                {{ title }}
+              </Button>
+            </div>
+            <article
+              v-for="message in messages"
+              v-show="!history || !loadingHistory"
+              :id="'study-message-' + message.message_id"
+              :key="message.message_id"
+              :class="[message.role, { selected: selectedMessage === message.message_id }]"
             >
-              {{ waitingForReceipt ? '重试发送' : '发送' }}
-            </button>
+              <small
+                v-if="message.role === 'assistant'"
+                class="speaker"
+                :class="{ 'sr-only': completedDisplay }"
+                >DeerMind</small
+              >
+              <template v-for="part in message.parts" :key="part.part_id">
+                <QuestionCard
+                  v-if="part.type === 'question'"
+                  v-model:answer="answers[part.task_use_ref.id]"
+                  :question="part"
+                  :can-answer="
+                    !history &&
+                    (part.purpose === 'practice' ||
+                      (part.purpose === 'detection' &&
+                        active?.current_round?.state === 'open' &&
+                        active.current_round.task_use_ref.id === part.task_use_ref.id)) &&
+                    message.activity_ref?.activity_id ===
+                      active?.current_activity?.activity_ref.activity_id
+                  "
+                  :busy="saving || !!active?.active_input_id"
+                  @submit="answer(part)"
+                />
+                <DetectionPlanCard
+                  v-else-if="part.type === 'detection_plan'"
+                  :plan="part"
+                  :can-start="
+                    !history &&
+                    !active?.current_round &&
+                    message.activity_ref?.activity_id ===
+                      active?.current_activity?.activity_ref.activity_id
+                  "
+                  :busy="saving || !!active?.active_input_id"
+                  @start="
+                    openRound('start_detection', {
+                      plan_id: part.plan_ref.id,
+                      revision: part.plan_ref.revision ?? 1,
+                    })
+                  "
+                />
+                <TutorText
+                  v-else-if="part.type === 'text' && message.role === 'assistant'"
+                  :text="part.text"
+                />
+                <p v-else>{{ part.text }}</p>
+              </template>
+            </article>
+            <Button
+              v-if="historyCursor && !loadingHistory"
+              type="button"
+              variant="ghost"
+              size="sm"
+              @click="readHistoryPage()"
+              >更多活动消息</Button
+            >
           </div>
-        </form>
+        </div>
+
+        <div class="composer-dock">
+          <StudyComposer
+            ref="studyInput"
+            v-model="draft"
+            class="dialogue-column"
+            :citation="quotedContent?.title"
+            :action="active?.active_input_id ? 'stop' : waitingForReceipt ? 'resend' : 'send'"
+            :disabled="saving || (!active?.active_input_id && !waitingForReceipt && !!pending)"
+            @send="send()"
+            @stop="stop()"
+            @remove-citation="quotedContent = undefined"
+          >
+            <div
+              v-if="
+                workNotice ||
+                retryChoice ||
+                waitingForReceipt ||
+                active?.current_round?.can_continue
+              "
+              class="composer-status"
+            >
+              <p v-if="workNotice" role="status">{{ workNotice }}</p>
+              <p v-if="waitingForReceipt && !active?.active_input_id" role="status">
+                正在核对是否已受理，草稿已保留。
+              </p>
+              <Button
+                v-if="retryChoice"
+                type="button"
+                variant="outline"
+                size="sm"
+                :disabled="saving"
+                @click="retryLast()"
+                >重试原请求</Button
+              >
+              <Button
+                v-if="active?.current_round?.can_continue"
+                type="button"
+                variant="outline"
+                size="sm"
+                :disabled="saving || !!active.active_input_id"
+                @click="openRound('continue_detection', active.current_round.plan_ref)"
+                >继续下一题</Button
+              >
+            </div>
+          </StudyComposer>
+        </div>
       </section>
-      <section class="pane" aria-label="教材">
+
+      <section v-show="readerOpen" class="pane reader-pane" aria-label="教材">
         <header class="pane-header">
-          <h3>教材</h3>
-          <button
+          <h2>教材</h2>
+          <Button
+            class="pane-icon"
             type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="收起教材"
+            title="收起教材"
             aria-controls="study-reader-content"
             :aria-expanded="readerOpen"
-            @click="readerOpen = !readerOpen"
+            @click="readerOpen = false"
           >
-            {{ readerOpen ? '收起教材' : '展开教材' }}
-          </button>
+            <PanelRightClose aria-hidden="true" />
+          </Button>
         </header>
-        <div v-show="readerOpen" id="study-reader-content" class="reader-content">
+        <div id="study-reader-content" class="reader-content">
           <AdoptedChapter
             :session="session"
             :space="opened.space.space_id"
             :chapters="opened.adoption.snapshot.chapters"
+            :reading="{ title: opened.space.textbook_title, selectionKey: key + ':chapter' }"
             allow-reference
             @reference="
               quotedContent = $event;
@@ -763,132 +1031,293 @@ void refresh();
 </template>
 
 <style scoped>
-.workspace h2 {
-  margin: 1.25rem 0;
-  font-size: clamp(1.15rem, 2vw, 1.6rem);
-  line-height: 1.4;
+.workspace {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  padding: 20px 18px 24px;
+}
+.workspace-error {
+  margin: 0 0 0.5rem;
+  color: #943f31;
 }
 .panes {
+  --directory: 250px;
+  --reader: 364px;
   display: grid;
-  gap: 0.75rem;
+  flex: 1 1 auto;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  min-height: 0;
+}
+.panes.has-directory {
+  grid-template-columns: var(--directory) minmax(0, 1fr);
+}
+.panes.has-reader {
+  grid-template-columns: minmax(0, 1fr) var(--reader);
+  column-gap: 18px;
+}
+.panes.has-directory.has-reader {
+  grid-template-columns: var(--directory) minmax(0, 1fr) var(--reader);
 }
 .pane {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  align-self: start;
-  border: 1px solid var(--color-line);
-  border-radius: 0.5rem;
-  background: #fcfdfb;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--background);
 }
 .pane-header {
   display: flex;
-  flex-wrap: wrap;
+  flex: 0 0 57px;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.625rem 0.875rem;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
 }
-.pane-header h3 {
+.pane-header h2 {
   margin: 0;
-  font-size: 1rem;
+  font: var(--study-font-section);
 }
-.pane-header button,
-.composer-actions button {
-  border: 1px solid var(--color-line);
-  border-radius: 0.35rem;
-  background: white;
-  color: var(--color-accent);
-  font: inherit;
-  padding: 0.25rem 0.625rem;
-  cursor: pointer;
+.pane-icon {
+  color: var(--muted-foreground);
 }
-.chat-content,
-.reader-content,
-.composer,
-.directory,
-.activity-path {
-  padding: 0.875rem;
-  border-top: 1px solid var(--color-line);
+.dialogue-header {
+  flex: 0 0 auto;
+  min-height: 92px;
+  padding: 15px 22px 16px;
+  border-bottom: 1px solid var(--border);
 }
-.path-item {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  align-items: center;
+.dialogue-column {
+  width: min(100%, 706px);
+  margin-inline: auto;
 }
-.path-item + .path-item {
-  border-inline-start: 1px solid var(--color-line);
-  padding-inline-start: 0.375rem;
-}
-.chat-content {
-  min-height: 10rem;
-  max-height: 60vh;
-  overflow: auto;
-  color: var(--color-muted);
-}
-.chat-content p {
-  margin: 0;
-}
-.chat-content article {
-  padding: 0.5rem;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.chat-content .selected {
-  border-left: 2px solid var(--color-accent);
-  background: #eef4ee;
-}
-.activity-path {
+.heading-row,
+.dialogue-actions {
   display: flex;
-  gap: 0.375rem;
-  flex-wrap: wrap;
-  font-size: 0.875rem;
-}
-.reader-content {
-  max-height: 70vh;
-  overflow: auto;
-}
-.composer {
-  display: grid;
+  justify-content: space-between;
   gap: 0.375rem;
 }
-.composer-actions {
+.dialogue-title {
   display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.dialogue-actions {
+  flex-wrap: wrap;
+  align-content: flex-start;
   justify-content: flex-end;
 }
-.composer-actions button:disabled {
-  opacity: 0.5;
-  cursor: default;
+.activity-path {
+  margin: 0 0 0.25rem;
+  color: var(--primary);
+  font: var(--study-font-meta);
+  font-weight: 600;
 }
-.composer textarea {
+.dialogue-header h1 {
+  margin: 0;
+  font: var(--study-font-title);
+  overflow-wrap: anywhere;
+}
+.directory,
+.reader-content,
+.chat-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.directory {
+  padding: 15px 11px;
+}
+.directory > p {
+  margin: 0.25rem 0.375rem;
+  font: var(--study-font-ui);
+}
+.reader-content {
+  padding: 19px 17px 23px;
+}
+.chat-content {
+  padding: 24px 21px 26px;
+}
+.chat-content:has(.history-notice) {
+  padding-top: 16px;
+}
+.message-list {
+  display: grid;
+  align-content: start;
+  gap: 1.375rem;
+}
+.message-list article {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+  font: var(--study-font-body);
+  overflow-wrap: anywhere;
+}
+.message-list article > p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.message-list .student {
+  justify-self: end;
+  width: fit-content;
+  max-width: min(100%, 28rem);
+  padding: 0.625rem 0.875rem;
+  border-radius: 10px;
+  background: var(--accent);
+}
+.speaker {
+  color: var(--primary);
+  font: var(--study-font-meta);
+  font-weight: 600;
+}
+.message-list .system,
+.past-state {
+  color: var(--muted-foreground);
+  font: var(--study-font-meta);
+}
+.message-list .selected {
+  scroll-margin-top: 0.5rem;
+}
+.history-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: var(--primary);
+  font: var(--study-font-ui);
+  font-weight: 600;
+}
+.history-notice :deep(button) {
+  flex: none;
+}
+.new-space {
+  padding-top: 0.5rem;
+}
+.new-space h2 {
+  margin-top: 0;
+  font: var(--study-font-section);
+}
+.new-space p {
+  margin-bottom: 1.875rem;
+}
+.new-space .start-topic {
+  display: flex;
+  justify-content: flex-start;
   width: 100%;
-  resize: vertical;
-  border: 1px solid var(--color-line);
-  border-radius: 0.35rem;
-  padding: 0.5rem;
-  font: inherit;
-  color: inherit;
+  height: auto;
+  min-height: 64px;
+  margin-top: 1rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border);
+  background: var(--muted);
+  color: var(--foreground);
+  font: var(--study-font-ui);
+  font-weight: 600;
+  text-align: start;
+  white-space: normal;
 }
-.workspace :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+.muted {
+  color: var(--muted-foreground);
 }
-@media (min-width: 56rem) {
-  .paired {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  }
-  .pane:first-child {
-    grid-column: 1 / -1;
+.composer-dock {
+  flex: none;
+  padding: 0.625rem 21px 1rem;
+}
+.chat-folded .dialogue-pane {
+  justify-content: space-between;
+}
+.composer-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem 0.75rem;
+  margin-bottom: 0.5rem;
+  color: var(--muted-foreground);
+  font: var(--study-font-ui);
+}
+.composer-status p {
+  margin: 0;
+}
+.workspace :focus-visible:not(textarea) {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+@media (max-width: 76rem) {
+  .panes {
+    --directory: 210px;
+    --reader: 300px;
   }
 }
-@media (min-width: 70rem) {
-  .has-directory {
-    grid-template-columns: minmax(11rem, 2fr) minmax(0, 5fr);
+@media (max-width: 60rem) {
+  .workspace {
+    padding: 0.75rem;
   }
-  .paired.has-directory {
-    grid-template-columns: minmax(11rem, 2fr) minmax(0, 5fr) minmax(0, 6fr);
+  .panes {
+    gap: 0.625rem;
   }
-  .has-directory .pane:first-child {
+  .panes.has-reader {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(13rem, 2fr) minmax(9rem, 1fr);
+  }
+  .panes.has-directory.has-reader {
+    grid-template-columns: var(--directory) minmax(0, 1fr);
+  }
+  .has-directory.has-reader .activity-pane {
+    grid-row: span 2;
+  }
+  .has-directory.has-reader .reader-pane {
+    grid-column: 2;
+  }
+}
+@media (max-width: 41rem) {
+  .panes,
+  .panes.has-directory,
+  .panes.has-reader,
+  .panes.has-directory.has-reader {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .panes.has-directory {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .panes.has-reader {
+    grid-template-rows: minmax(11rem, 2fr) minmax(7rem, 1fr);
+  }
+  .panes.has-directory.has-reader {
+    grid-template-rows: auto minmax(11rem, 2fr) minmax(7rem, 1fr);
+  }
+  .has-directory.has-reader .activity-pane {
+    grid-row: auto;
+  }
+  .has-directory.has-reader .reader-pane {
     grid-column: auto;
+  }
+  .activity-pane .pane-header {
+    flex-basis: 40px;
+  }
+  .directory {
+    max-height: 8rem;
+  }
+  .dialogue-header,
+  .chat-content,
+  .composer-dock {
+    padding-inline: 0.75rem;
+  }
+  .dialogue-header {
+    min-height: 64px;
+  }
+  .heading-row {
+    flex-wrap: wrap;
   }
 }
 </style>

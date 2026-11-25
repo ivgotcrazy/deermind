@@ -1,4 +1,7 @@
 {
   "extends": "../quality/tsconfig.base.json",
+  "compilerOptions": {
+    "paths": { "@/*": ["./src/*"] }
+  },
   "include": ["src/**/*.ts", "src/**/*.vue", "env.d.ts", "vite.config.ts"]
 }

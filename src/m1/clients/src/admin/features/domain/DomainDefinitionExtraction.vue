@@ -172,15 +172,18 @@ onBeforeUnmount(() => {
       <ul v-if="result.output.unresolved.length">
         <li v-for="gap in result.output.unresolved" :key="gap">{{ gap }}</li>
       </ul>
+    </template>
+    <footer class="editor-footer">
+      <button type="button" class="secondary" @click="dialog?.close()">关闭</button>
       <button
-        v-if="result.proposed_definition && !notice"
+        v-if="result?.proposed_definition && !notice"
         type="button"
+        class="primary"
         :disabled="saving"
         @click="save"
       >
         确认添加定义
       </button>
-    </template>
-    <button type="button" class="secondary" @click="dialog?.close()">关闭</button>
+    </footer>
   </dialog>
 </template>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { ElButton, ElInput } from 'element-plus';
+import EvidenceDrawer from './EvidenceDrawer.vue';
 import type { components } from '../../../../../contracts/generated/http/schema';
 import { get } from '../../../shared/api/http';
 import AdoptedChapter from '../../../shared/content/AdoptedChapter.vue';
@@ -27,15 +29,31 @@ const upper = ref<number>();
 const error = ref('');
 const tab = ref<'textbook' | 'goal' | 'events'>('textbook');
 const eventType = ref('');
-const trace = ref<HTMLDialogElement>();
-const evidenceList = ref<Schema['EvidenceSummary'][]>([]);
-const evidence = ref<Schema['EvidenceView']>();
-const source = ref<Schema['SourceExcerpt']>();
-const evidenceCursor = ref<string>();
-const traceError = ref('');
-const traceLoading = ref(false);
-const traceSelection = ref<{ result_id: string; item_id: string } | { event_id: string }>();
-let traceRequest = 0;
+const drawer = ref<InstanceType<typeof EvidenceDrawer>>();
+const traceTitle = ref('');
+const evidenceSubjects = computed(() => {
+  const result: Record<string, string> = {};
+  for (const item of goal.value?.current?.result.items ?? []) {
+    for (const method of item.methods) {
+      for (const aspect of method.aspects) {
+        const name = methodLabels.value[methodKey(method.method_ref)];
+        for (const evidence of aspect.evidence_refs) {
+          result[evidence.id] = [aspects[aspect.aspect_code] ?? aspect.aspect_code, name]
+            .filter(Boolean)
+            .join(' · ');
+        }
+      }
+    }
+  }
+  return result;
+});
+function openTrace(
+  selection: { result_id: string; item_id: string } | { event_id: string },
+  title: string,
+) {
+  traceTitle.value = title;
+  drawer.value?.openTrace(selection);
+}
 const names: Record<string, string> = {
   LearningSpaceCreated: '建立学习空间',
   LearningSpaceEntered: '进入学习空间',
@@ -47,97 +65,21 @@ const names: Record<string, string> = {
   TeachingOpportunityClosed: '结束教学机会',
 };
 const aspects: Record<string, string> = {
-  independent: '独立',
+  independent: '独立完成',
   understanding: '理解',
   transfer: '迁移',
   retention: '保持',
 };
-const qualifications: Record<string, string> = {
-  eligible: '符合评价条件',
-  ineligible: '不符合评价条件',
-  unknown: '依据不足',
-};
-
-function evidenceState(item: { verdict?: string | null; qualification: string }) {
-  if (item.verdict === 'positive') return '正向证据';
-  if (item.verdict === 'negative') return '反向证据';
-  return qualifications[item.qualification] ?? '待确认';
-}
-
-function percent(value?: number | null) {
-  return value == null ? '未观测' : `${(100 * value).toFixed(1)}%`;
-}
-
-function openTrace(selection: NonNullable<typeof traceSelection.value>) {
-  traceSelection.value = selection;
-  evidenceList.value = [];
-  evidence.value = undefined;
-  source.value = undefined;
-  evidenceCursor.value = undefined;
-  trace.value?.showModal();
-  void readEvidenceList();
-}
-
-async function readEvidenceList(cursor?: string) {
-  const scope_id = selected.value?.space_id;
-  const selection = traceSelection.value;
-  if (!scope_id || !selection) return;
-  const request = ++traceRequest;
-  traceLoading.value = true;
-  traceError.value = '';
-  try {
-    const data = await get('/api/m1/evaluation/spaces/{scope_id}/basis', {
-      session: props.session,
-      params: { scope_id },
-      query: { view: 'item_id' in selection ? 'target' : 'event', ...selection, cursor },
-    });
-    if (request !== traceRequest) return;
-    evidenceList.value = cursor
-      ? [...evidenceList.value, ...(data.items ?? [])]
-      : (data.items ?? []);
-    evidenceCursor.value = data.next_cursor ?? undefined;
-  } catch (caught) {
-    if (request === traceRequest) traceError.value = (caught as Error).message;
-  } finally {
-    if (request === traceRequest) traceLoading.value = false;
-  }
-}
-
-async function readEvidence(evidence_id: string, event_id?: string) {
-  const scope_id = selected.value?.space_id;
-  if (!scope_id) return;
-  const request = ++traceRequest;
-  source.value = undefined;
-  traceLoading.value = true;
-  traceError.value = '';
-  try {
-    const data = await get('/api/m1/evaluation/spaces/{scope_id}/basis', {
-      session: props.session,
-      params: { scope_id },
-      query: { view: 'evidence', evidence_id, event_id },
-    });
-    if (request !== traceRequest) return;
-    evidence.value = data.evidence ?? undefined;
-    source.value = data.source ?? undefined;
-  } catch (caught) {
-    if (request === traceRequest) traceError.value = (caught as Error).message;
-  } finally {
-    if (request === traceRequest) traceLoading.value = false;
-  }
-}
-
-function resetTrace() {
-  ++traceRequest;
-  traceLoading.value = false;
-  traceSelection.value = undefined;
-}
-
-function backToEvidenceList() {
-  ++traceRequest;
-  traceLoading.value = false;
-  traceError.value = '';
-  evidence.value = undefined;
-  source.value = undefined;
+function time(value: string) {
+  return new Intl.DateTimeFormat('zh-CN', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(new Date(value));
 }
 const labels = { textbook: '教材', goal: '学习目标', events: '空间事件' } as const;
 function state(entry: { readiness: string; attainment?: string | null }) {
@@ -228,16 +170,17 @@ async function loadEvents(after?: number) {
 </script>
 
 <template>
-  <section aria-label="学习空间">
-    <h2>学习空间</h2>
+  <section aria-label="学习空间" class="space-workspace">
+    <h1 v-if="!selected" class="admin-page-title">学习空间</h1>
     <p v-if="error" role="alert">{{ error }}</p>
     <template v-if="!selected">
-      <form @submit.prevent="list()">
-        <label>学生姓名 <input v-model="search" /></label>
-        <button type="submit">搜索</button>
+      <form class="admin-list-toolbar" @submit.prevent="list()">
+        <label for="student-search">学生姓名</label>
+        <ElInput id="student-search" v-model="search" placeholder="输入学生姓名" clearable />
+        <ElButton type="primary" native-type="submit">搜索</ElButton>
       </form>
       <p v-if="spaces && !spaces.length">没有符合条件的学习空间。</p>
-      <table v-else-if="spaces">
+      <table v-else-if="spaces" class="admin-data-table">
         <thead>
           <tr>
             <th>学生</th>
@@ -251,25 +194,39 @@ async function loadEvents(after?: number) {
               <button type="button" @click="enter(space)">{{ space.student_name }}</button>
             </td>
             <td>{{ space.textbook_title }}</td>
-            <td>{{ space.target_title }}</td>
+            <td>
+              {{ space.target_title }} · 课程 v{{ space.application_version }} · 目标 v{{
+                space.target_revision
+              }}
+            </td>
           </tr>
         </tbody>
       </table>
-      <button v-if="next" type="button" @click="list(next)">更多空间</button>
+      <ElButton v-if="next" @click="list(next)">更多空间</ElButton>
     </template>
     <template v-else>
-      <button
-        type="button"
-        @click="
-          selected = undefined;
-          goal = undefined;
-          events = undefined;
-        "
-      >
-        返回空间列表
-      </button>
-      <h3>{{ selected.student_name }} · {{ selected.textbook_title }}</h3>
-      <nav aria-label="空间详情">
+      <header class="space-heading">
+        <p class="space-crumb">
+          <ElButton
+            link
+            aria-label="返回空间列表"
+            @click="
+              selected = undefined;
+              goal = undefined;
+              events = undefined;
+            "
+            >学习空间</ElButton
+          >
+          / {{ selected.student_name }}
+        </p>
+        <h1 class="admin-page-title">{{ selected.target_title }}</h1>
+        <p>{{ selected.student_name }} · {{ selected.textbook_title }}</p>
+        <div class="space-versions">
+          <span>课程 v{{ selected.application_version }}</span
+          ><span>目标 v{{ selected.target_revision }}</span>
+        </div>
+      </header>
+      <nav aria-label="空间详情" class="space-tabs">
         <button
           v-for="(label, key) in labels"
           :key="key"
@@ -287,54 +244,87 @@ async function loadEvents(after?: number) {
         :chapters="adoption.snapshot.chapters"
       />
       <template v-else-if="tab === 'goal' && goal">
-        <h4>{{ goal.target_title }}</h4>
-        <p v-if="goal.pending" role="status">该目标的计算尚未完成。</p>
-        <p v-else-if="goal.evaluation_processing === 'pending'" role="status">
-          新的评价正在处理，当前显示上一次结果。
-        </p>
-        <p v-else-if="goal.evaluation_processing === 'failed'" role="status">
-          新的评价处理失败，当前保留上一次结果。
-        </p>
-        <template v-if="goal.current">
-          <p role="status">{{ state(goal.current.result) }}</p>
-          <article v-for="item in goal.current.result.items" :key="item.item_id">
-            <h5>
-              {{
-                adoption?.snapshot.items.find((entry) => entry.item_id === item.item_id)?.title ??
-                goal.target_title
-              }}
-            </h5>
-            <p>{{ state(item) }}</p>
-            <button
-              type="button"
-              @click="
-                openTrace({ result_id: goal.current.goal_evaluation_id, item_id: item.item_id })
+        <section class="result-overview" aria-label="当前目标结果">
+          <div>
+            <p>当前目标结果</p>
+            <strong role="status">{{
+              goal.current ? state(goal.current.result) : '待计算'
+            }}</strong>
+          </div>
+          <div class="evaluation-status">
+            <span
+              class="status-badge"
+              :data-kind="
+                !goal.pending && !goal.evaluation_processing && goal.current ? 'met' : 'pending'
               "
+              >{{
+                goal.evaluation_processing === 'failed'
+                  ? '本次评价失败'
+                  : goal.pending || goal.evaluation_processing === 'pending' || !goal.current
+                    ? '等待评价'
+                    : '本次评价已完成'
+              }}</span
             >
-              查看评价证据
-            </button>
-            <section v-for="(method, index) in item.methods" :key="method.method_ref.object_id">
-              <h6>{{ methodLabels[methodKey(method.method_ref)] ?? `方法 ${index + 1}` }}</h6>
-              <ul>
-                <li v-for="aspect in method.aspects" :key="aspect.aspect_code">
-                  {{ aspects[aspect.aspect_code] ?? aspect.aspect_code }} · {{ state(aspect) }}
-                </li>
-              </ul>
+            <small v-if="goal.current"
+              >已沿用该空间创建时选用的要求 · {{ time(goal.current.created_at) }}</small
+            >
+            <small v-if="goal.evaluation_processing">当前保留上一次结果。</small>
+            <ElButton
+              v-if="goal.pending || goal.evaluation_processing || !goal.current"
+              link
+              @click="show('goal')"
+              >刷新结果</ElButton
+            >
+          </div>
+        </section>
+        <template v-if="goal.current">
+          <article v-for="item in goal.current.result.items" :key="item.item_id" class="goal-card">
+            <header>
+              <h2>
+                {{
+                  adoption?.snapshot.items.find((entry) => entry.item_id === item.item_id)?.title ??
+                  goal.target_title
+                }}
+              </h2>
+              <ElButton
+                @click="
+                  openTrace(
+                    { result_id: goal.current.goal_evaluation_id, item_id: item.item_id },
+                    adoption?.snapshot.items.find((entry) => entry.item_id === item.item_id)
+                      ?.title ?? goal.target_title,
+                  )
+                "
+                >查看评价证据</ElButton
+              >
+            </header>
+            <section
+              v-for="(method, index) in item.methods"
+              :key="methodKey(method.method_ref)"
+              class="goal-method"
+            >
+              <p>{{ methodLabels[methodKey(method.method_ref)] ?? '方法 ' + (index + 1) }}</p>
+              <div v-for="aspect in method.aspects" :key="aspect.aspect_code" class="aspect-row">
+                <strong>{{ aspects[aspect.aspect_code] ?? aspect.aspect_code }}</strong>
+                <span class="status-badge" :data-kind="aspect.attainment">{{ state(aspect) }}</span>
+                <span>{{ aspect.evidence_refs.length }} 条关联证据</span>
+              </div>
             </section>
+            <p v-if="!item.methods.length">{{ state(item) }}</p>
           </article>
         </template>
-        <button type="button" @click="show('goal')">刷新结果</button>
       </template>
       <template v-else-if="tab === 'events'">
-        <label
-          >事件类型
-          <select v-model="eventType" @change="loadEvents()">
-            <option value="">全部</option>
-            <option v-for="(label, key) in names" :key="key" :value="key">{{ label }}</option>
-          </select></label
-        >
+        <div class="admin-list-toolbar">
+          <label
+            >事件类型
+            <select v-model="eventType" @change="loadEvents()">
+              <option value="">全部</option>
+              <option v-for="(label, key) in names" :key="key" :value="key">{{ label }}</option>
+            </select></label
+          >
+        </div>
         <p v-if="events && !events.length">没有符合条件的空间事件。</p>
-        <table v-else-if="events">
+        <table v-else-if="events" class="admin-data-table">
           <thead>
             <tr>
               <th>序号</th>
@@ -353,104 +343,219 @@ async function loadEvents(after?: number) {
                 }}
               </td>
               <td>
-                <button type="button" @click="openTrace({ event_id: event.event_id })">
+                <button
+                  type="button"
+                  @click="
+                    openTrace(
+                      { event_id: event.event_id },
+                      names[event.event_type] ?? event.event_type,
+                    )
+                  "
+                >
                   查看相关证据
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
-        <button v-if="nextEvent" type="button" @click="loadEvents(nextEvent)">更多事件</button>
+        <ElButton v-if="nextEvent" @click="loadEvents(nextEvent)">更多事件</ElButton>
       </template>
     </template>
-    <dialog
-      ref="trace"
-      class="evidence-dialog"
-      aria-labelledby="evidence-title"
-      @close="resetTrace"
-    >
-      <header>
-        <h3 id="evidence-title">评价证据</h3>
-        <form method="dialog"><button type="submit">关闭</button></form>
-      </header>
-      <p v-if="traceLoading" role="status">正在读取评价依据。</p>
-      <p v-if="traceError" role="alert">{{ traceError }}</p>
-      <template v-if="evidence">
-        <button type="button" @click="backToEvidenceList">返回证据列表</button>
-        <h4>
-          {{ aspects[evidence.aspect_code] ?? evidence.aspect_code }} ·
-          {{ evidenceState(evidence) }}
-        </h4>
-        <p>{{ evidence.reason }}</p>
-        <p v-if="evidence.belief_change?.update_kind === 'observation'">
-          观测概率 {{ percent(evidence.belief_change.p_obs_before) }} →
-          {{ percent(evidence.belief_change.p_obs_after) }}
-        </p>
-        <p v-else-if="evidence.belief_change?.update_kind === 'learning_transition'">
-          教学后的估计 {{ percent(evidence.belief_change.p_current_before) }} →
-          {{ percent(evidence.belief_change.p_current_after) }}
-        </p>
-        <p v-else>本条证据未更新概率。</p>
-        <ul v-if="evidence.source_spans.length">
-          <li v-for="span in evidence.source_spans" :key="span.quote">{{ span.quote }}</li>
-        </ul>
-        <h4>来源事件</h4>
-        <ul>
-          <li
-            v-for="event in [...new Set(evidence.source_refs.map((ref) => ref.event_id))]"
-            :key="event"
-          >
-            <button type="button" @click="readEvidence(evidence.evidence_id, event)">
-              查看来源事实
-            </button>
-            <small>{{ event }}</small>
-          </li>
-        </ul>
-        <section v-if="source" aria-label="来源事实">
-          <h4>来源事实</h4>
-          <pre v-for="(part, index) in source.content" :key="index">{{
-            typeof part === 'string' ? part : JSON.stringify(part, null, 2)
-          }}</pre>
-        </section>
-      </template>
-      <template v-else>
-        <ul v-if="evidenceList.length">
-          <li v-for="item in evidenceList" :key="item.evidence_ref.id">
-            <button type="button" @click="readEvidence(item.evidence_ref.id)">
-              {{ aspects[item.aspect_code] ?? item.aspect_code }} · {{ evidenceState(item) }}
-            </button>
-            <p>{{ item.reason }}</p>
-          </li>
-        </ul>
-        <p v-else-if="!traceLoading && !traceError">暂无相关证据。</p>
-        <button v-if="evidenceCursor" type="button" @click="readEvidenceList(evidenceCursor)">
-          更多证据
-        </button>
-      </template>
-    </dialog>
+    <EvidenceDrawer
+      v-if="selected"
+      ref="drawer"
+      :key="selected.space_id"
+      :session="session"
+      :space-id="selected.space_id"
+      :subject="traceTitle"
+      :evidence-subjects="evidenceSubjects"
+    />
   </section>
 </template>
-
 <style scoped>
-.evidence-dialog {
-  width: min(42rem, calc(100% - 2rem));
-  max-height: 85vh;
-  padding: 1.5rem;
+.space-workspace {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--el-text-color-primary);
 }
-.evidence-dialog header {
+.space-workspace :deep(.adopted-content) {
+  background: white;
+  border: 1px solid var(--el-border-color);
+  border-radius: 4px;
+  padding: 18px;
+}
+.space-workspace :deep(.adopted-content nav) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.space-workspace :deep(.adopted-content button) {
+  border: 1px solid var(--el-border-color);
+  background: white;
+  color: var(--el-text-color-regular);
+  padding: 8px 14px;
+  cursor: pointer;
+  font: inherit;
+}
+.space-workspace :deep(.adopted-content button[aria-pressed='true']) {
+  color: var(--el-color-primary);
+  background: var(--admin-selected);
+}
+.space-workspace > .el-button {
+  margin-top: 16px;
+}
+.space-heading p {
+  margin: 6px 0 11px;
+  color: var(--el-text-color-secondary);
+}
+.space-heading .space-crumb {
+  margin: 0 0 12px;
+  font-size: 13px;
+}
+.space-crumb :deep(.el-button) {
+  color: inherit;
+  font-size: inherit;
+}
+.space-versions {
+  display: flex;
+  gap: 10px;
+}
+.space-versions span,
+.status-badge {
+  display: inline-block;
+  justify-self: start;
+  text-align: center;
+  font-size: 12px;
+  border-radius: 4px;
+  line-height: 24px;
+  padding: 0 14px;
+  background: var(--el-fill-color-light);
+}
+.space-versions span:first-child {
+  color: var(--el-color-primary);
+  background: var(--admin-selected);
+}
+.space-tabs {
+  display: flex;
+  margin: 26px 0 22px;
+  background: white;
+  border-bottom: 1px solid var(--el-border-color);
+}
+.space-tabs button {
+  height: 42px;
+  padding: 0 14px;
+  margin-right: 25px;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  font: inherit;
+  color: var(--el-text-color-regular);
+  cursor: pointer;
+}
+.space-tabs button[aria-pressed='true'] {
+  border-color: var(--el-color-primary);
+  color: var(--el-color-primary);
+  font-weight: 600;
+}
+.result-overview,
+.goal-card {
+  border: 1px solid var(--el-border-color);
+  background: white;
+  border-radius: 4px;
+  padding: 14px 16px;
+}
+.result-overview {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
+  align-items: center;
+  gap: 16px;
+  min-height: 96px;
 }
-.evidence-dialog li {
-  margin-block: 0.5rem;
+.result-overview p,
+.goal-method p {
+  color: var(--el-text-color-secondary);
+  margin: 0 0 7px;
 }
-.evidence-dialog small {
-  display: block;
-  overflow-wrap: anywhere;
+.result-overview strong {
+  font-size: 22px;
 }
-.evidence-dialog pre {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+.evaluation-status {
+  display: grid;
+  justify-items: end;
+  gap: 12px;
+  text-align: right;
+}
+.evaluation-status .status-badge {
+  justify-self: end;
+}
+.evaluation-status small {
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+.status-badge {
+  background: #fff0d6;
+  color: #71491c;
+}
+.status-badge[data-kind='met'] {
+  background: var(--admin-success-bg);
+  color: var(--admin-success-text);
+}
+.goal-card {
+  margin-top: 26px;
+  min-height: 170px;
+}
+.goal-card header {
+  display: flex;
+  gap: 16px;
+  align-items: start;
+  justify-content: space-between;
+  position: relative;
+  padding-right: 135px;
+}
+.goal-card h2 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 24px;
+}
+.goal-card header :deep(.el-button) {
+  position: absolute;
+  right: 4px;
+  height: 40px;
+  border-radius: 0;
+}
+.goal-method p {
+  margin: 8px 135px 22px 0;
+}
+.aspect-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 24%) minmax(100px, 19%) 1fr;
+  align-items: center;
+  gap: 0;
+  min-height: 60px;
+  border-top: 1px solid var(--el-border-color);
+  font-size: 13px;
+}
+.aspect-row > span:last-child {
+  color: var(--el-text-color-secondary);
+}
+@media (max-width: 700px) {
+  .result-overview {
+    align-items: start;
+    flex-direction: column;
+  }
+  .aspect-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .goal-card header {
+    padding-right: 0;
+    flex-wrap: wrap;
+  }
+  .goal-card header :deep(.el-button) {
+    position: static;
+  }
+  .goal-method p {
+    margin-right: 0;
+  }
 }
 </style>

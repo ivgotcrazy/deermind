@@ -289,7 +289,7 @@ class DomainTests(DatabaseTestCase):
         """同一 Task 的采用按章节生效，取消一章不会改变另一章。"""
         self._two_chapter_flow(check_goal=False)
 
-    def test_goal_reassessment_keeps_late_results_historical(self) -> None:
+    def test_course_version_keeps_spaces_and_goal_results_separate(self) -> None:
         self._two_chapter_flow(check_goal=True)
 
     def _two_chapter_flow(self, *, check_goal: bool) -> None:
@@ -677,7 +677,8 @@ class DomainTests(DatabaseTestCase):
                 headers={"Origin": _ORIGIN, **session_headers(session)},
                 json=body,
             )
-            return value.raise_for_status().json()
+            self.assertEqual(value.status_code, 200, value.text)
+            return value.json()
 
         operator = _login(client, "operator")
 
@@ -895,6 +896,13 @@ class DomainTests(DatabaseTestCase):
         assert isinstance(detection, dict)
         self._verify_activity_forest(client, student, opened, Ref.model_validate(detection))
         self._verify_student_turn(client, student, scope_id)
+        config = migration_config()
+        with self.engine.begin() as connection:
+            config.attributes["connection"] = connection
+            command.downgrade(config, "0041_evaluation_progress")
+        self.assertEqual(upgrade(self.migrator), "0041_evaluation_progress")
+        listing = client.get("/api/m1/learning-spaces", headers=session_headers(student))
+        self.assertEqual(listing.raise_for_status().json()["recent_space_id"], scope_id)
         operator = _login(client, "operator")
         revised = send(
             "/learning-targets",
@@ -915,18 +923,52 @@ class DomainTests(DatabaseTestCase):
         assert isinstance(revised, dict) and isinstance(revised["target"], dict)
         ref = revised["target"]["target_ref"]
         assert isinstance(ref, dict)
-        adopt(ref, current["application_ref"])
+        updated = adopt(ref, current["application_ref"])
+        self.assertEqual(updated["application_version"], 2)
+        self.assertEqual(updated["affected_spaces"], [])
+        student = _login(client, "student")
+        create = {
+            "action": "create",
+            "textbook_id": str(target.textbook_id),
+            "target_id": str(target.target_ref.target_id),
+            "expected_application_ref": updated["application_ref"],
+        }
+        newer_space = send(
+            "/learning-spaces/open", {**create, "request_id": str(uuid4())}, student
+        )["result"]
+        again = send("/learning-spaces/open", {**create, "request_id": str(uuid4())}, student)[
+            "result"
+        ]
+        assert isinstance(newer_space, dict) and isinstance(newer_space["space"], dict)
+        assert isinstance(again, dict)
+        new_scope = newer_space["space"]["space_id"]
+        assert isinstance(new_scope, str)
+        self.assertNotEqual(new_scope, scope_id)
+        self.assertEqual(again["space"], newer_space["space"])
+        self.assertFalse(again["created"])
+        listing = client.get("/api/m1/learning-spaces", headers=session_headers(student))
+        self.assertEqual(listing.raise_for_status().json()["recent_space_id"], new_scope)
+        prior = send(
+            "/learning-spaces/open",
+            {"request_id": str(uuid4()), "action": "enter", "space_id": scope_id},
+            student,
+        )["result"]
+        assert isinstance(prior, dict)
+        self.assertEqual(prior["adoption"], opened["adoption"])
+        listing = client.get("/api/m1/learning-spaces", headers=session_headers(student))
+        self.assertEqual(listing.raise_for_status().json()["recent_space_id"], scope_id)
         with self.engine.connect() as db:
-            triggers = db.scalars(
+            triggers = db.execute(
                 text(
-                    "SELECT event_id FROM runtime.events WHERE scope_id=:scope "
-                    "AND event_type='LearningTargetApplied' ORDER BY scope_event_seq"
+                    "SELECT scope_id,event_id FROM runtime.events "
+                    "WHERE scope_id IN (:older,:newer) AND event_type='LearningTargetApplied'"
                 ),
-                {"scope": UUID(scope_id)},
-            ).all()
-        older, newer = triggers
+                {"older": UUID(scope_id), "newer": UUID(new_scope)},
+            )
+            indexed = {str(row.scope_id): row.event_id for row in triggers}
+        self.assertEqual(len(indexed), 2)
 
-        async def deliver(trigger: UUID) -> Acceptance:
+        async def deliver(trigger: UUID, space_id: str) -> Acceptance:
             assert isinstance(client.app, FastAPI)
             state = client.app.state
             handler = configure_goals(state.learning_targets, state.activity_configs)
@@ -939,27 +981,29 @@ class DomainTests(DatabaseTestCase):
                         event_type="LearningTargetApplied",
                         producer="product",
                         scope_kind="learning_space",
-                        scope_id=UUID(scope_id),
+                        scope_id=UUID(space_id),
                         schema_version=1,
                         handoff_id=uuid4(),
                     ),
                 )
 
         assert client.portal is not None
-        newest = client.portal.call(deliver, newer).arrangement_refs[0]
-        oldest = client.portal.call(deliver, older).arrangement_refs[0]
-        self.assertEqual(client.portal.call(deliver, older).arrangement_refs, [oldest])
+        newest = client.portal.call(deliver, indexed[new_scope], new_scope).arrangement_refs[0]
+        oldest = client.portal.call(deliver, indexed[scope_id], scope_id).arrangement_refs[0]
+        self.assertEqual(
+            client.portal.call(deliver, indexed[scope_id], scope_id).arrangement_refs, [oldest]
+        )
         with self.engine.connect() as db:
             rows = db.execute(
                 text(
                     "SELECT goal_evaluation_id,current_state_applied "
                     "FROM evaluation.goal_evaluation "
-                    "WHERE scope_id=:scope"
+                    "WHERE scope_id IN (:older,:newer)"
                 ),
-                {"scope": UUID(scope_id)},
+                {"older": UUID(scope_id), "newer": UUID(new_scope)},
             ).all()
         self.assertEqual(
-            dict((str(row[0]), row[1]) for row in rows), {newest.id: True, oldest.id: False}
+            dict((str(row[0]), row[1]) for row in rows), {newest.id: True, oldest.id: True}
         )
 
     def _verify_activity_forest(

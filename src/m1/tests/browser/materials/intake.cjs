@@ -65,7 +65,7 @@ async function run() {
     await page.screenshot({ path: path.join(evidence, 'C03-intake-material.png'), fullPage: true });
     await navigation.getByRole('button', { name: '领域管理' }).click();
     await page.getByRole('searchbox', { name: '搜索领域' }).fill(label);
-    await page.getByRole('list', { name: '领域列表' }).getByText(label, { exact: true }).click();
+    await page.getByRole('table', { name: '领域列表' }).getByText(label, { exact: true }).click();
     await page.getByRole('button', { name: '待入库内容' }).click();
     const table = page.getByRole('region', { name: '待入库内容' });
     await table.getByRole('cell', { name: '题目', exact: true }).waitFor();

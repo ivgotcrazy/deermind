@@ -1,10 +1,10 @@
 # deermind 数据库：产品业务数据字典
 
-> **版本**：v0.10<br>
+> **版本**：v0.11<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **更新日期**：2026-11-22<br>
-> **修订说明**：v0.9 → v0.10，登记待入库提交的受理结果和查询索引<br>
+> **修订说明**：v0.10 → v0.11，维护课程发布版本、空间固定采用及最近进入索引字段<br>
 
 本分册是[数据库设计](../Database_Design.md)的字段附录，共 **29 张表、253 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
@@ -150,6 +150,7 @@ erDiagram
     product__command_receipt ||--o{ product__material_adoption : "request_ref"
     product__course_application |o--o{ product__course_application : "previous_application_id"
     product__course_application ||--o{ product__application_head : "current_application_ref"
+    product__course_application ||--o{ product__learning_space : "application_ref"
     product__course_application ||--o{ product__space_adoption : "application_ref"
     product__guardian_records ||--o{ product__student_guardian_relations : "guardian_id"
     product__learning_space ||--o{ product__space_adoption : "space_id"
@@ -779,6 +780,7 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | `textbook_id` | `uuid` | 否 | 无 | 教材；FK → `product.textbook.textbook_id` |
 | `target_id` | `uuid` | 否 | 无 | 目标；FK → `product.learning_target.target_id` |
 | `previous_application_id` | `uuid` | 是 | 无 | 上一应用；FK → `product.course_application.application_id` |
+| `revision` | `bigint` | 否 | 无 | 从1递增，由前一应用确定；CHECK > 0 |
 | `check_ref` | `uuid` | 否 | 无 | 通过的固定检查；FK → `product.application_check.check_id` |
 | `content_snapshot` | `jsonb` | 否 | 无 | 教材、章节、Task及方法适用来源的固定版本；不自动取最新 |
 | `target_basis_ref` | `uuid` | 否 | 无 | 评价目标依据；FK → `product.target_basis.basis_id` |
@@ -786,7 +788,7 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
-约束与关系：同一request重试返回原应用；应用不改不删。
+约束与关系：UQ(textbook_id,target_id,revision)。同一请求重试返回原应用；发布版本只追加。
 
 查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
@@ -837,9 +839,9 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 数据性质：事件生成的业务投影。正文类型及产生事件见[事件正文登记](../contracts/Event_Facts.md#3-事实正文与投影登记)；修改本行只能由已提交新事实的投影器执行，原始事件不可覆盖。
 
 
-一个学生的教材和目标组合。
+一个学生固定选用的课程版本。
 
-主键：`(space_id)`。写入方式：身份固定；当前采用可更新。
+主键：`(space_id)`。写入方式：首次写入固定课程及目标，成功进入更新最近进入时间。
 
 | 字段 | PostgreSQL 类型 | 可空 | 默认值 | 定义、约束与引用 |
 | --- | --- | --- | --- | --- |
@@ -847,13 +849,15 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | `student_id` | `uuid` | 否 | 无 | 学生；FK → `product.accounts.account_id` |
 | `textbook_id` | `uuid` | 否 | 无 | 教材；FK → `product.textbook.textbook_id` |
 | `target_id` | `uuid` | 否 | 无 | 稳定目标身份，创建空间后不换；修订由采用记录固定；FK → `product.learning_target.target_id` |
-| `current_adoption_ref` | `uuid` | 否 | 无 | 当前采用；FK → `product.space_adoption.adoption_id` |
+| `current_adoption_ref` | `uuid` | 否 | 无 | 固定采用；FK → `product.space_adoption.adoption_id` |
+| `application_ref` | `uuid` | 否 | 无 | 从实际采用派生的固定应用；FK → `product.course_application.application_id` |
+| `last_entered_at` | `timestamptz` | 是 | 无 | 从LearningSpaceEntered记录时间派生；尚未记录为null |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
-约束与关系：UQ(student_id,textbook_id,target_id)；重复选用直接进入原空间；采用指针循环提交时检查。
+约束与关系：UQ(student_id,application_ref)；重复选用同一版本进入原空间。采用必须属于本空间并与应用一致。
 
-查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
+查询索引：source_event_id、(student_id,last_entered_at DESC NULLS LAST,space_id)、主键和上述唯一键。
 
 ## 28. `product.space_adoption`
 
@@ -872,12 +876,12 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | `application_ref` | `uuid` | 否 | 无 | 不可变课程应用；FK → `product.course_application.application_id` |
 | `target_basis_ref` | `uuid` | 否 | 无 | 采用时目标依据；FK → `product.target_basis.basis_id` |
 | `previous_adoption_id` | `uuid` | 是 | 无 | 前一采用；FK → `product.space_adoption.adoption_id` |
-| `reason` | `text` | 否 | 无 | 首次选用或管理员应用新课程的原因 |
+| `reason` | `text` | 否 | 无 | 首次选用原因；历史记录保留原应用调整原因 |
 | `event_ref` | `uuid` | 否 | 无 | 采用事件；逻辑引用runtime.events |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 | `source_event_id` | `uuid` | 否 | 无 | 生成该行正文的事件；逻辑引用runtime.events.event_id。正文按record_type和本行主键定位；原文不依赖本行反查 |
 
-约束与关系：UQ(space_id,adoption_seq)；Product在同一短事务内核对application_ref与target_basis_ref的textbook_id、target_id均等于所属空间；previous_adoption_id及current_adoption_ref只能引用本空间采用。同目标升版追加采用，不修改空间身份；指针更新与Evaluation当前结果校验共享短事务。
+约束与关系：UQ(space_id,adoption_seq)；Product在同一短事务内核对application_ref与target_basis_ref的textbook_id、target_id均等于所属空间；previous_adoption_id及current_adoption_ref只能引用本空间采用。发布不推进已有空间的采用。迁移固定切换前实际采用，原采用历史仍可查询。
 
 查询索引：source_event_id；主键及上述唯一键；其他索引遵循总册§3。
 
@@ -913,3 +917,4 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | v0.8 | 2026-11-16 | 落地监护与使用确认四表；补齐唯一键、索引及写入权限 |
 | v0.9 | 2026-11-22 | 落实教材元数据、不可变原件及页序约束 |
 | v0.10 | 2026-11-22 | 登记向 Domain 提交的精确来源、受理结果和查询方式 |
+| v0.11 | 2026-11-24 | 维护课程发布版本、空间固定采用及最近进入索引字段 |

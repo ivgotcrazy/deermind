@@ -64,9 +64,24 @@ class CourseChecks:
     async def head(self, textbook: UUID, target: UUID) -> ApplicationHead:
         async with self.engine.connect() as db:
             await self.book(db, textbook, lock=False)
-            current = await self.current(db, textbook, target)
-        reference = facts.ref("course_application", current.application_id) if current else None
-        return ApplicationHead(application_ref=reference)
+            row = (
+                await db.execute(
+                    text("""
+                        SELECT c.application_id, c.revision,
+                            c.content_snapshot->'target_ref' AS target_ref
+                        FROM product.application_head h
+                        JOIN product.course_application c
+                            ON c.application_id=h.current_application_ref
+                        WHERE h.textbook_id=:book AND h.target_id=:target
+                    """),
+                    {"book": textbook, "target": target},
+                )
+            ).one_or_none()
+        return ApplicationHead(
+            application_ref=facts.ref("course_application", row.application_id) if row else None,
+            application_version=row.revision if row else None,
+            target_revision=row.target_ref["revision"] if row else None,
+        )
 
     async def book(self, db: AsyncConnection, book: UUID, *, lock: bool) -> tuple[UUID, UUID, str]:
         row = (
@@ -88,7 +103,7 @@ class CourseChecks:
     ) -> facts.CourseRow | None:
         raw = await db.scalar(
             text(
-                "SELECT to_jsonb(a)-'source_event_id' FROM product.application_head h "
+                "SELECT to_jsonb(a)-'source_event_id'-'revision' FROM product.application_head h "
                 "JOIN product.course_application a ON a.application_id=h.current_application_ref "
                 "WHERE h.textbook_id=:book AND h.target_id=:target"
             ),

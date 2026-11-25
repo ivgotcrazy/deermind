@@ -253,10 +253,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="material-assistant" aria-label="教材助手">
+  <section class="material-assistant editor-panel" aria-label="教材助手">
     <h4>教材助手</h4>
     <ol v-if="history.length">
-      <li v-for="entry in history" :key="entry.message_id">
+      <li
+        v-for="entry in history"
+        :key="entry.message_id"
+        :class="{ outgoing: entry.role === 'user' }"
+      >
         <b>{{ entry.role === 'user' ? '你' : '教材助手' }}</b>
         <p v-for="part in entry.body" :key="part.part_id">{{ part.text }}</p>
         <button
@@ -269,7 +273,7 @@ onBeforeUnmount(() => {
         </button>
       </li>
     </ol>
-    <form class="material-assistant" @submit.prevent="send()">
+    <form class="assistant-compose" @submit.prevent="send()">
       <div v-if="reference">
         已引用上一批候选。
         <button type="button" @click="reference = undefined">移除引用</button>
@@ -325,8 +329,13 @@ onBeforeUnmount(() => {
       <ul v-if="retirements.length">
         <li v-for="title in retirements" :key="title">拟从教材解析结果撤下：{{ title }}</li>
       </ul>
-      <div v-if="decisionState === 'pending'">
-        <button type="button" :disabled="deciding || !completeCandidate" @click="decide('adopt')">
+      <div v-if="decisionState === 'pending'" class="editor-footer">
+        <button
+          type="button"
+          class="primary"
+          :disabled="deciding || !completeCandidate"
+          @click="decide('adopt')"
+        >
           采用
         </button>
         <button type="button" :disabled="deciding" @click="decide('decline')">不采用</button>
@@ -357,12 +366,55 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.material-assistant,
-.material-assistant label {
+.material-assistant > ol {
   display: grid;
-  gap: 0.7rem;
+  gap: 10px;
+  max-height: 24rem;
+  overflow: auto;
+  list-style: none;
+  padding: 12px;
+  background: var(--el-fill-color-light);
+  border-radius: 4px;
+}
+.material-assistant li {
+  background: white;
+  border: 1px solid var(--el-border-color);
+  padding: 12px 16px;
+  border-radius: 4px;
+  width: fit-content;
+  max-width: 90%;
+  overflow-wrap: anywhere;
+}
+.material-assistant .outgoing {
+  justify-self: end;
+  background: var(--admin-selected);
 }
 .material-assistant li p {
   white-space: pre-wrap;
+  margin: 4px 0;
+}
+.assistant-compose {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+.assistant-compose > div {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.assistant-compose textarea {
+  width: 100%;
+}
+.material-assistant > section {
+  margin-top: 20px;
+  border-top: 1px solid var(--el-border-color);
+  padding-top: 16px;
+}
+.material-assistant article {
+  margin: 12px 0;
+  padding: 12px 16px;
+  background: var(--el-fill-color-light);
 }
 </style>

@@ -132,7 +132,7 @@ async function run() {
 
     await navigation.getByRole('button', { name: '领域管理' }).click();
     await page.getByRole('searchbox', { name: '搜索领域' }).fill(label);
-    await page.getByRole('list', { name: '领域列表' }).getByText(label, { exact: true }).click();
+    await page.getByRole('table', { name: '领域列表' }).getByText(label, { exact: true }).click();
     await page.getByRole('button', { name: '题目实例' }).click();
     const panel = page.getByRole('region', { name: '题目实例' });
     await panel.getByRole('button', { name: old.content.title + ' · v1', exact: true }).first().click();

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { components } from '../../../../../contracts/generated/http/schema';
 import RichContent from '../../../shared/content/RichContent.vue';
+import { Button } from '../../components/ui/button';
 
 defineProps<{
   question: components['schemas']['QuestionPart'];
@@ -28,7 +29,7 @@ const emit = defineEmits<{ submit: [] }>();
         rows="3"
         maxlength="4096"
       />
-      <button type="submit" :disabled="busy || !answer?.trim()">提交作答</button>
+      <Button type="submit" size="sm" :disabled="busy || !answer?.trim()">提交作答</Button>
     </form>
   </section>
 </template>

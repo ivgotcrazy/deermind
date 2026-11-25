@@ -1255,6 +1255,8 @@ export interface components {
         AdoptionView: {
             adoption_ref: components["schemas"]["Ref"];
             application_ref: components["schemas"]["Ref"];
+            /** Application Version */
+            application_version: number;
             snapshot: components["schemas"]["CourseSnapshot"];
             target_basis_ref: components["schemas"]["Ref"];
         };
@@ -1343,6 +1345,10 @@ export interface components {
         /** ApplicationHead */
         ApplicationHead: {
             application_ref: components["schemas"]["Ref"] | null;
+            /** Application Version */
+            application_version: number | null;
+            /** Target Revision */
+            target_revision: number | null;
         };
         AspectCode: string;
         /** AspectDecision */
@@ -1850,6 +1856,8 @@ export interface components {
             /** Affected Spaces */
             affected_spaces: string[];
             application_ref: components["schemas"]["Ref"];
+            /** Application Version */
+            application_version: number;
             /** Changed */
             changed: boolean;
         };
@@ -1894,6 +1902,8 @@ export interface components {
         /** CourseOption */
         CourseOption: {
             application_ref: components["schemas"]["Ref"];
+            /** Application Version */
+            application_version: number;
             target_ref: components["schemas"]["TargetRef"];
             /** Target Title */
             target_title: string;
@@ -2481,12 +2491,18 @@ export interface components {
             /** Aspect Code */
             aspect_code: string;
             evidence_ref: components["schemas"]["Ref"];
+            /** Occurred At */
+            occurred_at: string | null;
             /** Qualification */
             qualification: string;
             /** Reason */
             reason: string;
+            /** Source Activity */
+            source_activity: ("detection" | "answer" | "teaching") | null;
             /** Source Event Refs */
             source_event_refs: string[];
+            /** Timed Event Id */
+            timed_event_id: string | null;
             /** Verdict */
             verdict: string | null;
         };
@@ -4199,6 +4215,8 @@ export interface components {
             items: components["schemas"]["SpaceRow"][];
             /** Next Cursor */
             next_cursor: string | null;
+            /** Recent Space Id */
+            recent_space_id: string | null;
         };
         /** SpaceOpenResult */
         SpaceOpenResult: {
@@ -4211,6 +4229,8 @@ export interface components {
              */
             entry_event_ref: string;
             space: components["schemas"]["SpaceRow"];
+            /** Study Methods */
+            study_methods?: string[];
         };
         /** SpaceReceipt */
         SpaceReceipt: {
@@ -4223,6 +4243,9 @@ export interface components {
         };
         /** SpaceRow */
         SpaceRow: {
+            application_ref: components["schemas"]["Ref"];
+            /** Application Version */
+            application_version: number;
             /**
              * Created At
              * Format: date-time
@@ -4245,6 +4268,8 @@ export interface components {
              * Format: uuid
              */
             target_id: string;
+            /** Target Revision */
+            target_revision: number;
             /** Target Title */
             target_title: string;
             /**
@@ -4259,6 +4284,8 @@ export interface components {
         SpaceWorkspace: {
             adoption: components["schemas"]["AdoptionView"];
             space: components["schemas"]["SpaceRow"];
+            /** Study Methods */
+            study_methods?: string[];
         };
         /**
          * StopReply

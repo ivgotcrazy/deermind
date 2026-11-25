@@ -5,6 +5,8 @@ const STORAGE_KEY = 'deermind-domain-create-pending-v1';
 export type CreateDraft = Readonly<{
   request_id: string;
   name: string;
+  coverage?: string;
+  description?: string;
 }>;
 
 export function readCreateDraft(accountId: string): CreateDraft | null {
@@ -21,7 +23,14 @@ export function readCreateDraft(accountId: string): CreateDraft | null {
     'name' in value &&
     typeof value.name === 'string'
   ) {
-    return { request_id: value.request_id, name: value.name };
+    const coverage = 'coverage' in value ? value.coverage : undefined;
+    const description = 'description' in value ? value.description : undefined;
+    if (
+      (coverage === undefined || typeof coverage === 'string') &&
+      (description === undefined || typeof description === 'string')
+    ) {
+      return { request_id: value.request_id, name: value.name, coverage, description };
+    }
   }
   clearCreateDraft();
   return null;

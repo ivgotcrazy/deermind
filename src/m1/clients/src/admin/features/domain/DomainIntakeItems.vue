@@ -41,11 +41,15 @@ onBeforeUnmount(() => lifecycle.abort());
 </script>
 
 <template>
-  <section aria-label="待入库内容">
+  <section class="editor-panel" aria-label="待入库内容">
+    <header class="editor-row intake-heading">
+      <h3>待入库内容</h3>
+      <button type="button" class="secondary" :disabled="loading" @click="load()">刷新</button>
+    </header>
     <p v-if="error" role="alert">{{ error }}</p>
     <p v-if="loading" role="status">正在读取待入库内容…</p>
     <p v-else-if="items && !items.length">暂无待入库内容。</p>
-    <table v-if="items?.length">
+    <table v-if="items?.length" class="admin-data-table intake-table">
       <thead>
         <tr>
           <th scope="col">内容</th>
@@ -58,20 +62,23 @@ onBeforeUnmount(() => lifecycle.abort());
         <tr v-for="item in items" :key="item.item_ref.id">
           <th scope="row">{{ item.title }}</th>
           <td>{{ labels[item.kind] }}</td>
-          <td>待入库</td>
+          <td><span class="intake-status">待入库</span></td>
           <td>
-            <DomainIntakeActions
-              :item="item"
-              :domain-id="domainId"
-              :session="session"
-              @saved="load()"
-            />
-            <DomainDefinitionExtraction
-              v-if="item.kind !== 'kc'"
-              :item="item"
-              :domain-id="domainId"
-              :session="session"
-            />
+            <div class="admin-row-actions">
+              <DomainIntakeActions
+                :item="item"
+                :domain-id="domainId"
+                :session="session"
+                @saved="load()"
+              >
+                <DomainDefinitionExtraction
+                  v-if="item.kind !== 'kc'"
+                  :item="item"
+                  :domain-id="domainId"
+                  :session="session"
+                />
+              </DomainIntakeActions>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -79,6 +86,35 @@ onBeforeUnmount(() => lifecycle.abort());
     <button v-if="cursor" type="button" class="secondary" :disabled="loading" @click="load(cursor)">
       加载更多
     </button>
-    <button type="button" class="secondary" :disabled="loading" @click="load()">刷新</button>
   </section>
 </template>
+
+<style scoped>
+.intake-heading {
+  margin-bottom: 16px;
+}
+.intake-table thead th:first-child {
+  width: 46%;
+}
+.intake-table thead th:nth-child(2),
+.intake-table thead th:nth-child(3) {
+  width: 12%;
+}
+.intake-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: #fff4df;
+  color: #815019;
+  font-size: 13px;
+  white-space: nowrap;
+}
+@media (max-width: 1024px) {
+  .intake-table :is(th, td) {
+    padding: 10px;
+  }
+  .intake-table thead th:first-child {
+    width: 38%;
+  }
+}
+</style>

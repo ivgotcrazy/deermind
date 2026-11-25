@@ -56,7 +56,7 @@ async function main() {
     }
     await save(page, session, 'task', { name: '识别参照整体' }, domainId);
     await page.reload();
-    await page.getByRole('list', { name: '领域列表' }).getByRole('button', { name: domainName }).click();
+    await page.getByRole('table', { name: '领域列表' }).getByRole('button', { name: domainName }).click();
     const navigation = page.getByRole('navigation', { name: '领域对象' });
     await navigation.getByRole('button', { name: '方法', exact: true }).click();
     const dialog = page.getByRole('dialog');

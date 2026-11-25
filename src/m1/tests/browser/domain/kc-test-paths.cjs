@@ -80,7 +80,7 @@ async function main() {
       method_refs: [method],
     });
     await page.reload();
-    await page.getByRole('list', { name: '领域列表' }).getByRole('button', { name: domainName }).click();
+    await page.getByRole('table', { name: '领域列表' }).getByRole('button', { name: domainName }).click();
     await page.getByRole('navigation', { name: '领域对象' }).getByRole('button', { name: '任务', exact: true }).click();
 
     const paths = page.getByRole('region', { name: '知识成分及检验路径' });

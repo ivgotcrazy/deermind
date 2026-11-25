@@ -168,7 +168,7 @@ async function run() {
     if (evidenceDir) await page.screenshot({ path: path.join(evidenceDir, 'domain-detail.png') });
 
     await page.reload();
-    const list = page.getByRole('list', { name: '领域列表' });
+    const list = page.getByRole('table', { name: '领域列表' });
     await list.getByRole('button', { name: first }).waitFor();
     await list.getByRole('button', { name: second }).waitFor();
     const search = page.getByRole('searchbox', { name: '搜索领域' });
@@ -228,7 +228,8 @@ async function run() {
       output.websocket = websocket;
     }
 
-    await page.getByRole('button', { name: '退出登录' }).click();
+    await page.getByRole('button', { name: '管理员账号与退出登录', exact: true }).click();
+    await page.getByRole('menuitem', { name: '退出登录', exact: true }).click();
     await signIn(page, accounts.student);
     await page.getByText('当前账号属于学生端。').waitFor();
     assert.equal(await page.getByRole('region', { name: '领域管理' }).count(), 0);

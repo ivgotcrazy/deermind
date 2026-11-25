@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { ApiError, get, post } from '../../../shared/api/http';
 import { listDomains } from '../domain/api';
 import type { DomainRow, DomainSession } from '../domain/api';
+import DomainCreateDialog from '../domain/DomainCreateDialog.vue';
 import { detail, download, listTextbooks, readReceipt, receive, upload } from './api';
 import type { MaterialDetail, MaterialFile, ReceiveCommand, SourceView, TextbookRow } from './api';
 import MaterialAssistantPanel from './MaterialAssistantPanel.vue';
@@ -12,6 +13,14 @@ const { session } = defineProps<{ session: DomainSession }>();
 const lifecycle = new AbortController();
 const books = ref<TextbookRow[]>([]);
 const domains = ref<DomainRow[]>([]);
+const domainFilter = ref('');
+const domainDialog = ref<InstanceType<typeof DomainCreateDialog>>();
+const domainNames = computed(
+  () => new Map(domains.value.map((row) => [row.object_ref.object_id, row.name])),
+);
+const listError = ref('');
+const loadingBooks = ref(true);
+let listRequest: AbortController | undefined;
 const bookCursor = ref<string>();
 const selected = ref<MaterialDetail>();
 const dialog = ref<HTMLDialogElement>();
@@ -26,6 +35,7 @@ const source = ref('');
 const edition = ref('');
 const filter = ref('');
 const files = ref<File[]>([]);
+const fileInput = ref<HTMLInputElement>();
 const beginningOrder = ref(1);
 const busy = ref(false);
 const progress = ref('');
@@ -33,7 +43,6 @@ const error = ref('');
 const resultNotice = ref('');
 const pending = ref<ReceiveCommand>();
 const appending = ref(false);
-const bookFilter = ref('');
 const hasBook = computed(() => Boolean(selected.value));
 
 function message(cause: unknown, fallback: string) {
@@ -41,12 +50,31 @@ function message(cause: unknown, fallback: string) {
 }
 
 async function loadBooks(cursor?: string) {
-  const name = filter.value.trim();
-  const response = await listTextbooks(session, name, cursor);
-  books.value = cursor ? [...books.value, ...response.items] : response.items;
-  bookCursor.value = response.next_cursor ?? undefined;
-  bookFilter.value = name;
+  listRequest?.abort();
+  const request = new AbortController();
+  listRequest = request;
+  loadingBooks.value = true;
+  listError.value = '';
+  if (!cursor) {
+    bookCursor.value = undefined;
+    books.value = [];
+  }
+  try {
+    const response = await listTextbooks(
+      session,
+      { name: filter.value.trim(), domain_id: domainFilter.value || undefined, cursor },
+      request.signal,
+    );
+    if (request.signal.aborted) return;
+    books.value = cursor ? [...books.value, ...response.items] : response.items;
+    bookCursor.value = response.next_cursor ?? undefined;
+  } catch (cause) {
+    if (!request.signal.aborted) listError.value = message(cause, '无法读取教材列表。');
+  } finally {
+    if (!request.signal.aborted) loadingBooks.value = false;
+  }
 }
+watch([domainFilter, filter], () => void loadBooks());
 
 async function read(id: string, cursor?: string) {
   const response = await detail(session, id, cursor);
@@ -127,14 +155,14 @@ async function show(id: string, cursor?: string) {
   }
 }
 
-async function search(next = false) {
+async function selectCreatedDomain(id: string) {
   busy.value = true;
+  domain.value = id;
   error.value = '';
   try {
-    if (!next || bookFilter.value === filter.value.trim())
-      await loadBooks(next ? bookCursor.value : undefined);
+    domains.value = (await listDomains(session, lifecycle.signal)).items;
   } catch (cause) {
-    error.value = message(cause, '无法读取教材列表。');
+    error.value = message(cause, '领域已创建，暂时无法读取领域列表。');
   } finally {
     busy.value = false;
   }
@@ -147,9 +175,10 @@ function open(append: boolean) {
   title.value = '';
   source.value = '';
   edition.value = '';
-  domain.value = append ? (selected.value?.textbook.domain_id ?? '') : '';
+  domain.value = append ? (selected.value?.textbook.domain_id ?? '') : domainFilter.value;
   beginningOrder.value = append ? (selected.value?.sources.at(-1)?.order ?? 0) + 1 : 1;
   files.value = [];
+  if (fileInput.value) fileInput.value.value = '';
   dialog.value?.showModal();
 }
 
@@ -262,79 +291,140 @@ async function getFile(item: SourceView) {
 }
 
 onMounted(async () => {
+  void loadBooks();
   try {
-    const [available] = await Promise.all([listDomains(session, lifecycle.signal), loadBooks()]);
-    domains.value = available.items;
+    domains.value = (await listDomains(session, lifecycle.signal)).items;
   } catch (cause) {
     error.value = message(cause, '无法加载教材管理。');
   }
 });
-onBeforeUnmount(() => lifecycle.abort());
+onBeforeUnmount(() => {
+  lifecycle.abort();
+  listRequest?.abort();
+});
 </script>
 
 <template>
-  <section class="auth-card material-workspace" aria-label="教材管理">
-    <h2>教材管理</h2>
+  <section class="admin-editor material-workspace" aria-label="教材管理">
+    <h1 v-if="!hasBook" class="admin-page-title">教材管理</h1>
     <p v-if="resultNotice" role="status">{{ resultNotice }}</p>
     <p v-if="error && !dialog?.open" role="alert">{{ error }}</p>
 
     <template v-if="!hasBook">
-      <form class="material-actions" @submit.prevent="search()">
-        <label>教材名称 <input v-model="filter" type="search" maxlength="512" /></label>
-        <button type="submit" :disabled="busy">搜索</button>
-        <button type="button" :disabled="busy" @click="open(false)">上传教材</button>
+      <form class="admin-list-toolbar textbook-filters" @submit.prevent="loadBooks()">
+        <label for="textbook-domain">领域</label>
+        <select id="textbook-domain" v-model="domainFilter" aria-label="按领域查找">
+          <option value="">全部领域</option>
+          <option
+            v-for="row in domains"
+            :key="row.object_ref.object_id"
+            :value="row.object_ref.object_id"
+          >
+            {{ row.name }}
+          </option>
+        </select>
+        <label for="textbook-name">教材名称</label
+        ><input
+          id="textbook-name"
+          v-model="filter"
+          type="search"
+          maxlength="512"
+          placeholder="按教材名称搜索"
+        />
+        <button type="submit" class="secondary" :disabled="busy">搜索</button>
+        <button type="button" class="primary toolbar-end" :disabled="busy" @click="open(false)">
+          上传教材
+        </button>
       </form>
-      <ul v-if="books.length" class="material-list">
-        <li v-for="book in books" :key="book.textbook_id">
-          <button type="button" :disabled="busy" @click="show(book.textbook_id)">
-            {{ book.metadata.title }}
-          </button>
-          <span>{{ book.metadata.source }}</span>
-        </li>
-      </ul>
-      <p v-else>暂无教材。</p>
-      <button v-if="bookCursor" type="button" :disabled="busy" @click="search(true)">
+      <p v-if="listError" role="alert">{{ listError }}</p>
+      <table v-if="books.length" class="admin-data-table" aria-label="教材列表">
+        <thead>
+          <tr>
+            <th>教材名称</th>
+            <th>所属领域</th>
+            <th>版次</th>
+            <th>来源</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="book in books" :key="book.textbook_id">
+            <td>
+              <button type="button" :disabled="busy" @click="show(book.textbook_id)">
+                {{ book.metadata.title }}
+              </button>
+            </td>
+            <td>{{ domainNames.get(book.domain_id) ?? '领域不可用' }}</td>
+            <td>{{ book.metadata.edition || '—' }}</td>
+            <td>{{ book.metadata.source }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else-if="loadingBooks" class="editor-empty" role="status">正在读取教材…</p>
+      <p v-else-if="!listError" class="editor-empty" role="status">
+        {{
+          filter.trim() ? '没有符合条件的教材。' : domainFilter ? '该领域暂无教材。' : '暂无教材。'
+        }}
+      </p>
+      <button
+        v-if="bookCursor"
+        type="button"
+        :disabled="busy || loadingBooks"
+        @click="loadBooks(bookCursor)"
+      >
         更多教材
       </button>
     </template>
 
     <template v-else-if="selected">
-      <button type="button" :disabled="busy" @click="selected = undefined">返回教材列表</button>
-      <h3>{{ selected.textbook.metadata.title }}</h3>
+      <p class="admin-crumb">
+        <button
+          type="button"
+          aria-label="返回教材列表"
+          :disabled="busy"
+          @click="selected = undefined"
+        >
+          教材管理
+        </button>
+        / {{ selected.textbook.metadata.title }}
+      </p>
+      <h1 class="admin-page-title">{{ selected.textbook.metadata.title }}</h1>
       <p>
+        所属领域 · {{ domainNames.get(selected.textbook.domain_id) ?? '领域不可用' }} ·
         {{ selected.textbook.metadata.source
         }}<span v-if="selected.textbook.metadata.edition">
           · {{ selected.textbook.metadata.edition }}</span
         >
       </p>
-      <div class="material-actions">
-        <h4>教材原件</h4>
+      <section class="editor-panel">
+        <div class="material-actions">
+          <h3>教材原件</h3>
+          <button
+            type="button"
+            :disabled="busy || Boolean(selected.next_source_cursor)"
+            @click="open(true)"
+          >
+            补充原件
+          </button>
+          <button type="button" class="secondary" :disabled="busy" @click="openDelete">
+            删除导入
+          </button>
+        </div>
+        <ol class="material-list">
+          <li v-for="item in selected.sources" :key="item.source_ref.id">
+            <button type="button" @click="getFile(item)">{{ item.original_name }}</button>
+            <span>{{ item.page_count }} 页 · 顺序 {{ item.order }}</span>
+          </li>
+        </ol>
         <button
+          v-if="selected.next_source_cursor"
           type="button"
-          :disabled="busy || Boolean(selected.next_source_cursor)"
-          @click="open(true)"
+          :disabled="busy"
+          @click="show(selected.textbook.textbook_id, selected.next_source_cursor)"
         >
-          补充原件
+          更多原件
         </button>
-        <button type="button" class="secondary" :disabled="busy" @click="openDelete">
-          删除导入
-        </button>
-      </div>
-      <ol class="material-list">
-        <li v-for="item in selected.sources" :key="item.source_ref.id">
-          <button type="button" @click="getFile(item)">{{ item.original_name }}</button>
-          <span>{{ item.page_count }} 页 · 顺序 {{ item.order }}</span>
-        </li>
-      </ol>
-      <button
-        v-if="selected.next_source_cursor"
-        type="button"
-        :disabled="busy"
-        @click="show(selected.textbook.textbook_id, selected.next_source_cursor)"
-      >
-        更多原件
-      </button>
-      <nav aria-label="教材工作区">
+      </section>
+      <nav class="editor-tabs" aria-label="教材工作区">
         <button
           type="button"
           class="secondary"
@@ -370,29 +460,54 @@ onBeforeUnmount(() => lifecycle.abort());
         <h3>删除教材导入</h3>
         <p>此操作会停止未完成的教材处理，保留原件以及已经入库的领域内容。</p>
         <p v-if="deleteError" role="alert">{{ deleteError }}</p>
-        <button type="submit" :disabled="deleting">确认删除</button>
-        <button type="button" class="secondary" :disabled="deleting" @click="deleteDialog?.close()">
-          取消
-        </button>
+        <footer class="editor-footer">
+          <button
+            type="button"
+            class="secondary"
+            :disabled="deleting"
+            @click="deleteDialog?.close()"
+          >
+            取消</button
+          ><button type="submit" :disabled="deleting">确认删除</button>
+        </footer>
       </form>
     </dialog>
     <dialog ref="dialog" aria-labelledby="material-editor-title" @cancel.prevent>
       <form class="material-form" @submit.prevent="submit">
         <h3 id="material-editor-title">{{ appending ? '补充原件' : '上传教材' }}</h3>
         <template v-if="!appending">
-          <label
-            >所属领域
-            <select v-model="domain" required :disabled="busy || Boolean(pending)">
-              <option value="">请选择领域</option>
-              <option
-                v-for="row in domains"
-                :key="row.object_ref.object_id"
-                :value="row.object_ref.object_id"
-              >
-                {{ row.name }}
-              </option>
-            </select></label
+          <div class="upload-domain">
+            <label
+              >所属领域
+              <select v-model="domain" required :disabled="busy || Boolean(pending)">
+                <option value="">请选择领域</option>
+                <option
+                  v-for="row in domains"
+                  :key="row.object_ref.object_id"
+                  :value="row.object_ref.object_id"
+                >
+                  {{ row.name }}
+                </option>
+              </select></label
+            >
+            <button
+              type="button"
+              class="secondary"
+              :disabled="busy || !!pending"
+              @click="domainDialog?.open()"
+            >
+              新建领域
+            </button>
+          </div>
+          <button
+            v-if="domain && !domainNames.has(domain)"
+            type="button"
+            class="secondary"
+            :disabled="busy"
+            @click="selectCreatedDomain(domain)"
           >
+            重新读取所属领域
+          </button>
           <label
             >教材名称
             <input
@@ -417,6 +532,7 @@ onBeforeUnmount(() => lifecycle.abort());
         <label
           >教材文件
           <input
+            ref="fileInput"
             type="file"
             accept="application/pdf,image/png,image/jpeg"
             multiple
@@ -430,41 +546,57 @@ onBeforeUnmount(() => lifecycle.abort());
           <button type="button" :disabled="busy || Boolean(pending)" @click="dialog?.close()">
             取消
           </button>
-          <button type="submit" :disabled="busy">
+          <button type="submit" :disabled="busy || (!pending && !domainNames.has(domain))">
             {{ pending ? '继续本次登记' : '上传并登记' }}
           </button>
         </div>
       </form>
     </dialog>
+    <DomainCreateDialog
+      ref="domainDialog"
+      :session="session"
+      select-on-save
+      @saved="selectCreatedDomain"
+    />
   </section>
 </template>
 
 <style scoped>
-.material-workspace,
-.material-form,
-.material-form label {
+.upload-domain {
   display: grid;
-  gap: 0.8rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+.textbook-filters input,
+.textbook-filters select {
+  flex: 1 1 10rem;
+  min-width: 0;
 }
 .material-actions,
 .material-list li {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 0.7rem;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.material-actions h3 {
+  margin-right: auto;
 }
 .material-list {
-  display: grid;
-  gap: 0.7rem;
+  padding: 0;
+  list-style: none;
+  margin: 12px 0 0;
 }
-dialog {
-  width: min(30rem, calc(100% - 2rem));
-  border: 1px solid #d7dfd6;
-  border-radius: 0.8rem;
-  color: inherit;
-  padding: 1.5rem;
+.material-list li {
+  padding: 8px 0;
+  border-top: 1px solid var(--el-border-color-light);
 }
-dialog::backdrop {
-  background: rgb(21 39 32 / 45%);
+.material-list span {
+  margin-left: auto;
+  color: var(--el-text-color-secondary);
+}
+.material-workspace > .editor-tabs {
+  margin: 20px 0 16px;
 }
 </style>

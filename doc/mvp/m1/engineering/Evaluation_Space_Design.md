@@ -1,11 +1,11 @@
 # M1 Evaluation Space 设计
 
-> **版本**：v0.32<br>
+> **版本**：v0.33<br>
 > **状态**：已实施范围与进度见实施计划<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计写作规范](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.31 → v0.32，登记目标保存、掌握读取及历史条件的接线<br>
+> **修订说明**：v0.32 → v0.33，目标初始化按固定空间版本处理，保留历史触发读取<br>
 
 本文设计评价定义、Evidence形成、Belief更新和个人目标达成计算，明确语义解释与确定性计算怎样衔接。学习目标定义归产品业务，原始交互事实及当题判题反馈归Interaction，Evaluation不直接控制教学；共同输入见[工程入口§2](README.md#2-设计输入与历史参考)。
 
@@ -280,7 +280,7 @@ AI输出`candidates[]`及`unattributed[]`；后者仅含source_spans、reason及
 
 ### 4.1 `reassess_target`：目标采用变化后的重新对照
 
-只由产品业务的`LearningTargetApplied`订阅启动普通目标对照处理，不调用LLM，包含首次采用及实际目标条件变化。必填`scope_id`、`trigger_event_id`、`target_basis_ref`、`application_ref`、`applied_at`；`previous_target_basis_ref`首次为空。Evaluation读取业务模块公开的不可变采用条件，不能直接查询其私有表。
+只由产品业务的`LearningTargetApplied`订阅启动普通目标对照处理，不调用LLM，新空间首次采用触发；既有的历史采用变化事件仍可处理。必填`scope_id`、`trigger_event_id`、`target_basis_ref`、`application_ref`、`applied_at`；`previous_target_basis_ref`首次为空。Evaluation读取业务模块公开的不可变采用条件，不能直接查询其私有表。
 
 1. 核对采用事实及条件引用，登记本次处理的`goal_result`。已有表现不重新解释、不做观测或学习转移，也不等待本触发下不存在的`belief_result`。
 2. 固定一份合法掌握快照及其已纳入Evidence；缺少数据与读取失败分别处理。
@@ -504,7 +504,7 @@ Evaluation通过已注册的订阅接收事实事件，按触发身份去重，�
 
 目标变化不等待同一触发产生`belief_result`，因为本次不会生产该结果。上述对应关系描述本Space会产生哪些业务事实，供消费方定义订阅条件，不是Evaluation对等待者的应答承诺；生产方不读取等待登记。
 
-采用相关事实见[事件目录](README.md#6-跨模块事件目录)。`LearningTargetSaved`、`CourseApplied`、`LearningSpaceCreated`、`LearningSpaceAdoptionChanged`不是额外重评触发；LearningSpaceEntered仅供Interaction检查主动任务。首次采用及目标依据变化由Product发出LearningTargetApplied，通过§1.2和Product§5.2.1取得固定条件。无个人证据可判待确认；课程缺口及技术失败另列，不算学生未掌握。
+采用相关事实见[事件目录](README.md#6-跨模块事件目录)。`LearningTargetSaved`、`CourseApplied`、`LearningSpaceCreated`、`LearningSpaceAdoptionChanged`不是额外重评触发；LearningSpaceEntered仅供Interaction检查主动任务。新建空间时由Product发出LearningTargetApplied，通过§1.2和Product§5.2.1取得固定条件。无个人证据可判待确认；课程缺口及技术失败另列，不算学生未掌握。
 
 同一事件重复投递只返回已有受理记录；尚未受理可读到`not_found`，受理后结果进入`pending`。作答与教学机会安排AI Operation，目标采用安排普通对照处理；各事件材料见§2–4；源事件载荷由Interaction或产品业务维护，公共信封见系统底座。Interaction判题、Evidence形成、Belief更新和目标更新等派生事件不再当成学生新表现，防止自己触发自己并重复增权。
 
@@ -586,7 +586,7 @@ sequenceDiagram
     R-->>R: 提交成功后投递通知
 ```
 
-应用先提交：旧计算留历史，LearningTargetApplied已触发新目标计算。目标结果先提交：结果在该时点有效；随后应用追加新采用，查询按新依据过滤旧结果并等待新计算。二者不丢已保存记录，也不取消对方工作。
+发布新版与原空间的目标计算可并行。原计算仍归原空间和固定目标依据。学生另建新版空间后，由该空间的LearningTargetApplied启动独立计算。历史触发晚到时仍按实际采用依据隔离结果。
 
 ### 6.5 事件与结果交接
 
@@ -737,3 +737,4 @@ condition_facts保存两端原文引用、服务端时间、elapsed_seconds及�
 | v0.30 | 2026-11-23 | 明确正式检测的系统帮助与场外帮助口径，登记数值实现引用 |
 | v0.31 | 2026-11-23 | 登记候选编号、方法原文核验及两项评价的已确认额度 |
 | v0.32 | 2026-11-23 | 登记固定采用的目标保存、掌握接续及迁移和保持的资格接线 |
+| v0.33 | 2026-11-24 | 目标初始化按固定空间版本处理，保留历史触发读取 |

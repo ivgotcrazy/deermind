@@ -206,6 +206,15 @@ def event(
 
 
 async def project(db: AsyncConnection, saved: StoredEvent) -> None:
+    if saved.draft.event_type == ENTERED:
+        await db.execute(
+            text("""
+                UPDATE product.learning_space SET last_entered_at=:entered
+                WHERE space_id=:id AND (last_entered_at IS NULL OR last_entered_at<:entered)
+            """),
+            {"id": saved.draft.scope_id, "entered": saved.recorded_at},
+        )
+        return
     if not saved.payload.records:
         return
     async with application(db, "product.course_views", 1, saved.draft.event_id) as needed:
@@ -215,36 +224,52 @@ async def project(db: AsyncConnection, saved: StoredEvent) -> None:
         for row in saved.payload.records:
             table = row.record_type
             assert isinstance(row.content, InlineContent)
+            body = {**row.content.value, "source_event_id": str(saved.draft.event_id)}
             sql = (
                 f"INSERT INTO {table} SELECT * FROM "
                 f"jsonb_populate_record(NULL::{table},CAST(:body AS jsonb))"
             )
             if table == SPACE:
+                # Legacy adoption events still replay their original binding.
+                adoption = next(
+                    record
+                    for record in saved.payload.records
+                    if record.record_type == SPACE_ADOPTION
+                    and record.record_id == body["current_adoption_ref"]
+                )
+                assert isinstance(adoption.content, InlineContent)
+                body["application_ref"] = adoption.content.value["application_ref"]
                 sql += (
                     " ON CONFLICT(space_id) DO UPDATE "
                     "SET current_adoption_ref=EXCLUDED.current_adoption_ref,"
+                    "application_ref=EXCLUDED.application_ref,"
                     "source_event_id=EXCLUDED.source_event_id"
                 )
-            await db.execute(
-                text(sql),
-                {
-                    "body": canonical_json(
-                        {
-                            **row.content.value,
-                            "source_event_id": str(saved.draft.event_id),
-                        }
+            if table == COURSE:
+                previous = body["previous_application_id"]
+                revision = 1
+                if previous is not None:
+                    parent = await db.scalar(
+                        text(
+                            "SELECT revision FROM product.course_application "
+                            "WHERE application_id=:id"
+                        ),
+                        {"id": previous},
                     )
-                },
-            )
+                    if not isinstance(parent, int):
+                        raise ValueError("The previous course version is missing")
+                    revision = parent + 1
+                body["revision"] = revision
+            await db.execute(text(sql), {"body": canonical_json(body)})
             if table == COURSE:
                 await db.execute(
                     text(
                         "INSERT INTO product.application_head "
-                        "SELECT textbook_id,target_id,application_id,1 FROM "
+                        "SELECT textbook_id,target_id,application_id,revision FROM "
                         "product.course_application "
                         "WHERE application_id=:id ON CONFLICT(textbook_id,target_id) DO UPDATE "
                         "SET current_application_ref=EXCLUDED.current_application_ref,"
-                        "revision=product.application_head.revision+1"
+                        "revision=EXCLUDED.revision"
                     ),
                     {"id": UUID(row.record_id)},
                 )

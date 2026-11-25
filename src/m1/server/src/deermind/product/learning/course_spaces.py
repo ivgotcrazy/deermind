@@ -36,6 +36,7 @@ from deermind.product.public.courses import (
     SpaceRow,
     SpaceWorkspace,
 )
+from deermind.spaces.domain.public import SolutionRef
 from deermind.spaces.evaluation.public import GoalEvaluation
 from pydantic import JsonValue
 from sqlalchemy import text
@@ -45,18 +46,24 @@ type ReadGoal = Callable[[AsyncConnection, UUID, UUID], Awaitable[GoalEvaluation
 type ReadProgress = Callable[
     [AsyncConnection, UUID], Awaitable[Literal["pending", "failed"] | None]
 ]
+type ReadMethodName = Callable[[AsyncConnection, UUID, SolutionRef], Awaitable[str | None]]
 CANDIDATE_ORDER = {"kc": 0, "task_instance": 1, "reference": 2}
 
 
 class CourseSpaces:
     def __init__(
-        self, checks: CourseChecks, read_goal: ReadGoal, read_progress: ReadProgress
+        self,
+        checks: CourseChecks,
+        read_goal: ReadGoal,
+        read_progress: ReadProgress,
+        read_method_name: ReadMethodName,
     ) -> None:
         self.checks = checks
         self.engine = checks.engine
         self.materials = checks.materials
         self.read_goal = read_goal
         self.read_progress = read_progress
+        self.read_method_name = read_method_name
 
     async def current_adoption(self, account: AccountView, space_id: UUID) -> AdoptionView:
         async with self.engine.connect() as db:
@@ -189,7 +196,8 @@ class CourseSpaces:
         lock: bool = False,
     ) -> facts.SpaceHead:
         sql = (
-            "SELECT to_jsonb(s)-'source_event_id' FROM product.learning_space s "
+            "SELECT to_jsonb(s)-'source_event_id'-'application_ref'-'last_entered_at' "
+            "FROM product.learning_space s "
             "WHERE space_id=:id" + (" FOR UPDATE" if lock else "")
         )
         found = await db.scalar(text(sql), {"id": space_id})
@@ -210,21 +218,25 @@ class CourseSpaces:
         return facts.AdoptionRow.model_validate_json(canonical_json(raw))
 
     async def adopted(self, db: AsyncConnection, adoption: facts.AdoptionRow) -> AdoptionView:
-        snapshot = await db.scalar(
-            text(
-                "SELECT content_snapshot FROM product.course_application WHERE application_id=:id"
-            ),
-            {"id": adoption.application_ref},
-        )
-        if snapshot is None:
+        course = (
+            await db.execute(
+                text(
+                    "SELECT content_snapshot,revision FROM product.course_application "
+                    "WHERE application_id=:id"
+                ),
+                {"id": adoption.application_ref},
+            )
+        ).one_or_none()
+        if course is None:
             raise RuntimeError("Missing adopted course")
         from deermind.product.public.courses import CourseSnapshot
 
         return AdoptionView(
             adoption_ref=facts.ref("space_adoption", adoption.adoption_id, adoption.adoption_seq),
             application_ref=facts.ref("course_application", adoption.application_ref),
+            application_version=course.revision,
             target_basis_ref=facts.ref("target_basis", adoption.target_basis_ref),
-            snapshot=CourseSnapshot.model_validate_json(canonical_json(snapshot)),
+            snapshot=CourseSnapshot.model_validate_json(canonical_json(course.content_snapshot)),
         )
 
     async def protect_basis(self, db: AsyncConnection, scope: UUID) -> UUID:
@@ -325,29 +337,26 @@ class CourseSpaces:
             scope, adoption, UUID(reference.id), reference.revision
         )
 
-    def build_adoption(
+    def _initial_adoption(
         self,
         space: facts.SpaceHead,
         course: facts.CourseRow,
-        previous: facts.AdoptionRow | None,
         now: datetime,
         request_id: str,
     ) -> tuple[facts.AdoptionRow, list[EventDraft]]:
-        adoption_id, event_id = uuid4(), uuid4()
-        sequence = previous.adoption_seq + 1 if previous else 1
+        adoption_id, event_id = space.current_adoption_ref, uuid4()
         adopted = facts.AdoptionRow(
             adoption_id=adoption_id,
             space_id=space.space_id,
-            adoption_seq=sequence,
+            adoption_seq=1,
             application_ref=course.application_id,
             target_basis_ref=course.target_basis_ref,
-            previous_adoption_id=previous.adoption_id if previous else None,
-            reason="course_application" if previous else "student_selection",
+            previous_adoption_id=None,
+            reason="student_selection",
             event_ref=event_id,
             created_at=now,
         )
-        space = space.model_copy(update={"current_adoption_ref": adoption_id})
-        adoption_ref = facts.ref("space_adoption", adopted.adoption_id, sequence)
+        adoption_ref = facts.ref("space_adoption", adopted.adoption_id, 1)
         basis = facts.ref("target_basis", adopted.target_basis_ref)
         application_ref = facts.ref("course_application", course.application_id)
         scope = ("learning_space", space.space_id)
@@ -356,9 +365,8 @@ class CourseSpaces:
             facts.record(facts.SPACE, space.space_id, space),
             facts.record(facts.SPACE_ADOPTION, adoption_id, adopted),
         ]
-        old_basis = facts.ref("target_basis", previous.target_basis_ref) if previous else None
-        if previous is None:
-            change = facts.event(
+        return adopted, [
+            facts.event(
                 facts.CREATED,
                 scope,
                 owner,
@@ -371,46 +379,23 @@ class CourseSpaces:
                 ),
                 identity=event_id,
                 request_id=request_id,
-            )
-        else:
-            assert old_basis is not None
-            change = facts.event(
-                facts.ADOPTION,
+            ),
+            facts.event(
+                facts.TARGET_APPLIED,
                 scope,
                 owner,
-                facts.LearningSpaceAdoptionChanged(
-                    previous_adoption_ref=facts.ref(
-                        "space_adoption", previous.adoption_id, previous.adoption_seq
-                    ),
+                facts.LearningTargetApplied(
                     adoption_ref=adoption_ref,
-                    previous_target_basis_ref=old_basis,
+                    application_ref=application_ref,
                     target_basis_ref=basis,
-                    cause_ref=application_ref,
-                    records=records,
+                    previous_target_basis_ref=None,
+                    applied_at=now,
+                    cause_ref=facts.ref("event", event_id),
+                    records=[],
                 ),
-                identity=event_id,
                 request_id=request_id,
-            )
-        drafts = [change]
-        if old_basis != basis:
-            drafts.append(
-                facts.event(
-                    facts.TARGET_APPLIED,
-                    scope,
-                    owner,
-                    facts.LearningTargetApplied(
-                        adoption_ref=adoption_ref,
-                        application_ref=application_ref,
-                        target_basis_ref=basis,
-                        previous_target_basis_ref=old_basis,
-                        applied_at=now,
-                        cause_ref=facts.ref("event", event_id),
-                        records=[],
-                    ),
-                    request_id=request_id,
-                )
-            )
-        return adopted, drafts
+            ),
+        ]
 
     def authorize(self, caller: AccountView, space: facts.SpaceHead) -> None:
         if caller.role == "student" and caller.account_id != space.student_id:
@@ -470,6 +455,7 @@ class CourseSpaces:
                 space=workspace.space,
                 created=created,
                 adoption=workspace.adoption,
+                study_methods=workspace.study_methods,
                 entry_event_ref=identity,
             ),
         )
@@ -482,6 +468,18 @@ class CourseSpaces:
         adoption: facts.AdoptionRow,
     ) -> SpaceWorkspace:
         view = await self.adopted(db, adoption)
+        methods = {
+            (method.method_ref.object_id, method.method_ref.version): method.method_ref
+            for item in view.snapshot.items
+            for method in item.methods
+        }
+        names: dict[str, None] = {}
+        if methods:
+            domain = await self.domain_for(db, space.space_id)
+            for method in methods.values():
+                name = await self.read_method_name(db, domain, method)
+                if name:
+                    names[name] = None
         return SpaceWorkspace(
             space=SpaceRow(
                 space_id=space.space_id,
@@ -492,8 +490,12 @@ class CourseSpaces:
                 created_at=space.created_at,
                 textbook_title=view.snapshot.textbook_title,
                 target_title=view.snapshot.target_title,
+                target_revision=view.snapshot.target_ref.revision,
+                application_ref=view.application_ref,
+                application_version=view.application_version,
             ),
             adoption=view,
+            study_methods=list(names),
         )
 
     async def open(self, account: AccountView, command: SpaceCommand) -> SpaceReceipt:
@@ -527,12 +529,11 @@ class CourseSpaces:
                 identity = await db.scalar(
                     text(
                         "SELECT space_id FROM product.learning_space "
-                        "WHERE student_id=:student AND textbook_id=:book AND target_id=:target"
+                        "WHERE student_id=:student AND application_ref=:application"
                     ),
                     {
                         "student": account.account_id,
-                        "book": command.textbook_id,
-                        "target": command.target_id,
+                        "application": course.application_id,
                     },
                 )
                 if identity is None:
@@ -545,8 +546,8 @@ class CourseSpaces:
                         current_adoption_ref=uuid4(),
                         created_at=now,
                     )
-                    adoption, drafts = self.build_adoption(
-                        space, course, None, now, command.request_id
+                    adoption, drafts = self._initial_adoption(
+                        space, course, now, command.request_id
                     )
                 else:
                     space = await self.row(db, identity, lock=True)
@@ -590,7 +591,7 @@ class CourseSpaces:
             rows = (
                 await db.execute(
                     text(
-                        "SELECT a.application_id,a.textbook_id,a.content_snapshot FROM "
+                        "SELECT a.application_id,a.textbook_id,a.content_snapshot,a.revision FROM "
                         "product.application_head h "
                         "JOIN product.course_application a ON "
                         "a.application_id=h.current_application_ref "
@@ -610,6 +611,7 @@ class CourseSpaces:
                     target_ref=row.content_snapshot["target_ref"],
                     target_title=row.content_snapshot["target_title"],
                     application_ref=facts.ref("course_application", row.application_id),
+                    application_version=row.revision,
                 )
                 for row in rows[:limit]
             ],
@@ -635,13 +637,27 @@ class CourseSpaces:
         ).hexdigest()
         after = cursor_position(cursor, token)
         async with self.engine.connect() as db:
+            recent = None
+            if account.role == "student":
+                recent = await db.scalar(
+                    text("""
+                        SELECT space_id FROM product.learning_space
+                        WHERE student_id=:student AND last_entered_at IS NOT NULL
+                        ORDER BY last_entered_at DESC,space_id LIMIT 1
+                    """),
+                    {"student": account.account_id},
+                )
             rows = (
                 (
                     await db.execute(
                         text(
                             "SELECT s.space_id,s.student_id,p.display_name AS "
                             "student_name,s.created_at,"
-                            "s.textbook_id,s.target_id,c.content_snapshot->>'target_title' AS "
+                            "s.textbook_id,s.target_id,c.revision AS application_version,"
+                            "jsonb_build_object('owner','product','type','course_application',"
+                            "'id',c.application_id) AS application_ref,"
+                            "(c.content_snapshot->'target_ref'->>'revision')::integer "
+                            "AS target_revision,c.content_snapshot->>'target_title' AS "
                             "target_title,"
                             "c.content_snapshot->>'textbook_title' AS textbook_title "
                             "FROM product.learning_space s JOIN product.accounts p ON "
@@ -672,4 +688,5 @@ class CourseSpaces:
         return SpaceList(
             items=[SpaceRow.model_validate(dict(row)) for row in rows[:limit]],
             next_cursor=f"{token}.{rows[limit - 1]['space_id']}" if len(rows) > limit else None,
+            recent_space_id=recent,
         )

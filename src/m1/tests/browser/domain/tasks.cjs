@@ -62,7 +62,7 @@ async function main() {
     });
     const domainId = root.result.object_ref.object_id;
     await page.reload();
-    await page.getByRole('list', { name: '领域列表' }).getByRole('button', { name: domainName }).click();
+    await page.getByRole('table', { name: '领域列表' }).getByRole('button', { name: domainName }).click();
     await page.getByRole('navigation', { name: '领域对象' }).getByRole('button', { name: '任务' }).click();
     const create = page.getByRole('button', { name: '新建任务', exact: true });
     const dialog = page.getByRole('dialog');

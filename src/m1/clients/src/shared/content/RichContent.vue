@@ -6,7 +6,10 @@ import ContentTable from './ContentTable.vue';
 import MathFormula from './MathFormula';
 import type { RichContent } from './types';
 
-const { content } = defineProps<{ content: RichContent }>();
+const { content, showSourcePages = true } = defineProps<{
+  content: RichContent;
+  showSourcePages?: boolean;
+}>();
 
 const blocks = computed(() => {
   const tables = new Map(content.data_tables.map((table) => [table.data_id, table]));
@@ -62,7 +65,9 @@ const sourcePages = computed(() => [
       <p v-else class="source">这个内容块暂时无法显示。</p>
       <p v-if="block.provenance.note" class="source">{{ block.provenance.note }}</p>
     </div>
-    <p v-if="sourcePages.length" class="source">来源 {{ sourcePages.join('、') }}</p>
+    <p v-if="showSourcePages && sourcePages.length" class="source">
+      来源 {{ sourcePages.join('、') }}
+    </p>
   </div>
 </template>
 

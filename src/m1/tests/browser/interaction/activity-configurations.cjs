@@ -67,11 +67,14 @@ async function run() {
     assert.equal(invalid.error.code, 'invalid_blueprint');
     assert.deepEqual((await read(type)).config_ref, original.config_ref);
     const ruleName = '引用学生原话 ' + randomUUID().slice(0, 6);
+    await workspace.getByRole('button', { name: '教学规则', exact: true }).click();
     await workspace.getByRole('button', { name: '新建规则' }).click();
     await workspace.getByLabel('规则名称').fill(ruleName);
     await workspace.getByLabel('规则内容').fill('澄清时引用学生的原话。');
     await workspace.getByRole('button', { name: '保存规则' }).click();
     await workspace.getByRole('status').filter({ hasText: `已保存修订 ${version + 1}` }).waitFor();
+    await workspace.getByRole('button', { name: '作用范围', exact: true }).click();
+    assert.equal(await workspace.getByLabel('配置位置').inputValue(), '');
     await workspace.getByLabel('配置位置').selectOption('');
     await workspace.getByRole('checkbox', { name: ruleName }).check();
     await workspace.getByRole('button', { name: '保存作用范围' }).click();
@@ -81,6 +84,9 @@ async function run() {
     assert.equal(bound.definition.binding.activity.rule_ids.length, original.definition.binding.activity.rule_ids.length + 1);
     await workspace.getByLabel('配置位置').selectOption('step-1');
     assert.ok(!(await workspace.getByRole('checkbox', { name: ruleName }).isChecked()));
+    await workspace.getByRole('navigation', { name: '配置内容' }).getByRole('button', { name: '活动蓝图' }).click();
+    const startNode = original.definition.blueprint.nodes.find((node) => node.node_id === 'start');
+    assert.equal(await workspace.locator('.flow-node button[aria-pressed="true"]').innerText(), startNode.name);
     const old = await read(type, '?config_ref=' + original.config_ref.id);
     assert.deepEqual(old, original);
     await put(type, {

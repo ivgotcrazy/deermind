@@ -15,8 +15,11 @@ export type ReceiveCommand =
   | { kind: 'domain'; scope: string; body: NewMaterial }
   | { kind: 'material_import'; scope: string; body: AppendMaterial };
 
-export const listTextbooks = (session: DomainSession, name: string, cursor?: string) =>
-  get('/api/m1/textbooks', { session, query: { name, cursor } });
+export const listTextbooks = (
+  session: DomainSession,
+  query: { name: string; domain_id?: string; cursor?: string },
+  signal: AbortSignal,
+) => get('/api/m1/textbooks', { session, query, signal });
 
 export const detail = (session: DomainSession, id: string, cursor?: string) =>
   get('/api/m1/textbooks/{textbook_id}', {

@@ -24,6 +24,25 @@ export async function readDomain(domainId: string, session: Session, signal: Abo
   return object as components['schemas']['DomainView'];
 }
 
+function definitionText(text?: string): components['schemas']['RichContent-Input'] | null {
+  if (!text) return null;
+  return {
+    role: 'definition',
+    schema_version: '1',
+    data_tables: [],
+    source_refs: [],
+    blocks: text
+      .split('\n')
+      .filter((line) => line.trim())
+      .map((line, i) => ({
+        block_id: `p-${i + 1}`,
+        type: 'paragraph',
+        payload: { spans: [{ type: 'text', text: line }] },
+        provenance: { transformation: 'generated', source_refs: [], note: '' },
+      })),
+  };
+}
+
 export function createDomain(draft: CreateDraft, session: Session, signal: AbortSignal) {
   return post(
     '/api/m1/domain-definitions',
@@ -31,7 +50,11 @@ export function createDomain(draft: CreateDraft, session: Session, signal: Abort
       request_id: draft.request_id,
       object_kind: 'domain',
       action: 'create',
-      definition: { name: draft.name, coverage: null, description: null },
+      definition: {
+        name: draft.name,
+        coverage: definitionText(draft.coverage),
+        description: definitionText(draft.description),
+      },
       change_note: '新建领域',
     },
     { session, signal },

@@ -41,7 +41,7 @@ async function changeAccountAcrossTabs(page) {
   await second.getByLabel('账号').fill('operator');
   await second.getByLabel('密码').fill('synthetic-test-password-only');
   await second.getByRole('button', { name: '登录' }).click();
-  await first.getByText('合成管理员', { exact: true }).waitFor();
+  await first.getByRole('button', { name: '管理员账号与退出登录', exact: true }).and(first.getByTitle('合成管理员')).waitFor();
   assert.equal(await first.getByText('合成学生', { exact: true }).count(), 0);
   if (evidence) await first.screenshot({ path: evidence.replace(/\.png$/, '-tabs.png') });
   console.log('两标签页验证通过：退出后旧连接关闭，换账号后两页都显示当前身份。');

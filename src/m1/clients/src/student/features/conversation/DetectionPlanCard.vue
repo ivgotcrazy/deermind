@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { components } from '../../../../../contracts/generated/http/schema';
+import { Button } from '../../components/ui/button';
 
 defineProps<{
   plan: components['schemas']['DetectionPlanPart'];
@@ -16,9 +17,9 @@ const emit = defineEmits<{ start: [] }>();
     <ul v-if="plan.gaps.length">
       <li v-for="(gap, index) in plan.gaps" :key="index">{{ gap }}</li>
     </ul>
-    <button v-if="canStart" :disabled="busy" type="button" @click="emit('start')">
+    <Button v-if="canStart" :disabled="busy" type="button" size="sm" @click="emit('start')">
       确认并开始
-    </button>
+    </Button>
   </section>
 </template>
 

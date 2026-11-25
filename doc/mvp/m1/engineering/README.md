@@ -1,11 +1,11 @@
 # M1 工程设计
 
-> **版本**：v0.111<br>
+> **版本**：v0.112<br>
 > **状态**：已进入小增量工程实现；进度及待确认项见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.110 → v0.111，登记掌握结果的目标对照和教学读取<br>
+> **修订说明**：v0.111 → v0.112，登记固定版本空间的有效触发与历史采用事件<br>
 
 E01-16 的配置、范围及复核见[载荷交付记录](../../../../src/m1/deploy/environments/local-wsl/E01-16-payload-codec.md)，进度见[实施计划](Delivery_Plan.md)。
 
@@ -166,7 +166,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | `DomainIntakeRejected` | Domain确认来源失效或父题缺失等业务原因，整批拒收 | Product读取intake_receipt，outcome=rejected，结束等待并展示原因；技术故障不发此事件 | 原提交事件、候选及原因；同上。重复投递读取原决定，补齐后须明确提交新请求 |
 | `MaterialCandidatesAdopted` | 产品业务采用教材修正候选 | Domain核对受影响待办的来源是否仍有效；不改已入库定义 | 导入、采用内容及替代关系；[产品业务§3.5](Product_Application_Design.md#35-productdecide_material_candidate采用或不采用候选)、[Domain§2](Domain_Space_Design.md#2-定义维护与教材内容入库) |
 | `MaterialImportDeleted` | 产品业务删除未完成导入 | Domain标记相应未入库来源失效，保留已入库内容 | 导入及受影响来源；[产品业务§3.3](Product_Application_Design.md#33-productdelete_material_import删除未完成导入)、[Domain§2](Domain_Space_Design.md#2-定义维护与教材内容入库) |
-| `LearningTargetApplied` | Product在空间首次采用或目标依据变化时产生 | Evaluation普通处理reassess_target，只重新对照已有状态 | scope_id（学习空间）、adoption_ref、application_ref、target_basis_ref；[Product§6.1](Product_Application_Design.md#61-写入事件与跨模块交接)、[Evaluation§4](Evaluation_Space_Design.md#4-学习目标达成计算) |
+| `LearningTargetApplied` | Product在新空间首次采用时产生；旧采用变化的事实仍保留 | Evaluation普通处理reassess_target，只重新对照已有状态 | scope_id（学习空间）、adoption_ref、application_ref、target_basis_ref；[Product§6.1](Product_Application_Design.md#61-写入事件与跨模块交接)、[Evaluation§4](Evaluation_Space_Design.md#4-学习目标达成计算) |
 | `LearningSpaceEntered` | Product接受学生实际进入；同请求一次，重连／查询除外 | Interaction的check_proactive_task；不自动开测、不触发评价 | 空间及进入时采用引用、request_ref；[Product§5.1](Product_Application_Design.md#51-productopen_learning_space创建或进入个人空间)、[Interaction§5.1](Interaction_Space_Design.md#51-check_proactive_task核对主动任务) |
 | `ActivityChanged` | Interaction保存活动及路径修订 | 普通接入核对固定修订，仅结束事实触发check_proactive_task；其他变化只供查询，不能直接加分 | 活动、修订、父子返回位置及来源；[Interaction§2.5](Interaction_Space_Design.md#25-活动运行与返回)、[§5.3](Interaction_Space_Design.md#53-主动任务的依据和生命周期) |
 | `TaskSupplyRequested` | Interaction形成例题、练习或检测供题要求 | Domain触发`supply_task`，统一筛选及补足题目 | 当前活动、Task、方法、用途、条件和接触事实；[Interaction§3.11](Interaction_Space_Design.md#311-讲解例题与形成性练习的供题)、[§4.1](Interaction_Space_Design.md#41-prepare_detection准备本次检测)、[Domain§5.2](Domain_Space_Design.md#52-domainsupply_task) |
@@ -183,7 +183,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | `LearningTargetSaved` | 产品业务保存共享目标定义 | 查询定义及采用依据；不针对个人空间，不触发目标重评 | [产品业务§4.2](Product_Application_Design.md#42-productsave_learning_target维护目标定义) |
 | `CourseApplied` | 产品业务确认应用教材与目标组合；不新增课程实体 | 查询组合采用及使用限制；不是个人目标重评触发 | [产品业务§4.3](Product_Application_Design.md#43-productapply_course检查并应用教材与目标组合) |
 | `LearningSpaceCreated` | 产品业务创建个人学习空间 | 查询空间、所属学生及首次采用；初始目标对照由同次提交的`LearningTargetApplied`触发 | [产品业务§5.1](Product_Application_Design.md#51-productopen_learning_space创建或进入个人空间) |
-| `LearningSpaceAdoptionChanged` | 产品业务更新已有空间的当前教材／目标采用 | 查询新旧采用依据；仅当目标条件实际变化时另有`LearningTargetApplied`，不重复触发评价 | [产品业务§4.3](Product_Application_Design.md#43-productapply_course检查并应用教材与目标组合) |
+| `LearningSpaceAdoptionChanged` | 既有空间过去发生的采用变化 | 保留历史追溯；当前发布流程不生成 | [产品业务§4.3](Product_Application_Design.md#43-productapply_course检查并应用教材与目标组合) |
 | `DomainDefinitionSaved` | Domain保存定义 | 查询定义及实际依据，不自动重新评价历史作答 | [Domain§2.1](Domain_Space_Design.md#21-domainsave_definition) |
 | `DomainIntakeSourceInvalidated` | Domain确认未入库来源已被替代或删除 | 教材与待办查询来源失效结果；不撤销已入库对象 | [Domain§2.2](Domain_Space_Design.md#22-domainreceive_intake) |
 | `DomainIntakeItemProcessed` | Domain处理入库项 | 教材可查询处理结果及关联对象；不自动建立章节关联 | [Domain§2.3](Domain_Space_Design.md#23-domainprocess_intake) |
@@ -207,7 +207,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 
 账号、上传、候选和运行留痕统一登记于事件合同；本目录索引生产方和用途。事件保存当时完整事实，大正文使用固定附件，NATS只传通知。登记不表示向浏览器推送完整事件；客户端仍按授权查询业务视图。
 
-`apply_course`原合同已有`LearningTargetApplied`；本轮补登记而非新增触发路径。Evaluation按§6.1的作答、教学机会两类事实启动AI Operation，目标采用事实启动普通目标对照处理，不同时订阅上述保存、应用和空间留痕事件重算同一目标。需交接但未被可靠承接的失败按[总体§6.5.1](System_Design.md#651-自动重试结束后的收尾责任)处理；没有订阅用途的留痕不记“无人消费故障”。
+`apply_course`发布课程版本；首次创建空间时登记`LearningTargetApplied`。Evaluation按§6.1的作答、教学机会两类事实启动AI Operation，目标采用事实启动普通目标对照处理，不同时订阅上述保存、应用和空间留痕事件重算同一目标。需交接但未被可靠承接的失败按[总体§6.5.1](System_Design.md#651-自动重试结束后的收尾责任)处理；没有订阅用途的留痕不记“无人消费故障”。
 
 ### 6.3 完整事实与运行留痕补充
 
@@ -354,3 +354,4 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | v0.109 | 2026-11-22 | 登记教材分析输入及领域和章节事实的追溯入口 |
 | v0.110 | 2026-11-23 | 同步产品规格版本和 Task 正文范围的工程依据 |
 | v0.111 | 2026-11-23 | 登记掌握完成事件到目标计算、Interaction 等待与读取的边界 |
+| v0.112 | 2026-11-24 | 登记固定版本空间的有效触发与历史采用事件 |

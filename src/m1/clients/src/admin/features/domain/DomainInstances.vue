@@ -201,11 +201,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section aria-label="题目实例">
-    <button type="button" class="primary" @click="open()">添加题目</button>
+  <section class="editor-panel" aria-label="题目实例">
+    <div class="editor-row">
+      <h3>题目实例</h3>
+      <button type="button" class="primary" @click="open()">添加题目</button>
+    </div>
     <p v-if="error && !dialog?.open" role="alert">{{ error }}</p>
     <p v-if="rows && !rows.length">暂无题目实例。</p>
-    <ul>
+    <ul class="editor-records">
       <li v-for="item in rows" :key="item.instance_ref.object_id">
         <button
           type="button"
@@ -225,7 +228,7 @@ onBeforeUnmount(() => {
     <article v-if="selected">
       <h4>{{ selected.content.title }} · v{{ selected.instance_ref.version }}</h4>
       <p v-if="selected.is_deleted">已移除</p>
-      <form @submit.prevent="readOlder">
+      <form class="version-picker" @submit.prevent="readOlder">
         <label>历史版本 <input v-model.number="version" type="number" min="1" required /></label>
         <button type="submit" class="secondary">读取版本</button>
       </form>
@@ -261,11 +264,25 @@ onBeforeUnmount(() => {
         <label>修改说明 <input v-model.trim="note" :disabled="busy" required /></label>
         <p v-if="busy" role="status">{{ status }}</p>
         <p v-if="error" role="alert">{{ error }}</p>
-        <button type="submit" :disabled="busy">检查并保存</button>
-        <button type="button" class="secondary" :disabled="busy" @click="dialog?.close()">
-          取消
-        </button>
+        <footer class="editor-footer">
+          <button type="button" class="secondary" :disabled="busy" @click="dialog?.close()">
+            取消</button
+          ><button type="submit" :disabled="busy">检查并保存</button>
+        </footer>
       </form>
     </dialog>
   </section>
 </template>
+
+<style scoped>
+.version-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px;
+  margin: 12px 0;
+}
+.version-picker input {
+  max-width: 7rem;
+}
+</style>

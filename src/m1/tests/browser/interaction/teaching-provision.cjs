@@ -3,6 +3,7 @@ const { randomUUID } = require('node:crypto');
 const { mkdir, writeFile } = require('node:fs/promises');
 const path = require('node:path');
 const { chromium } = require('playwright');
+const { enterCourse } = require('./select-course.cjs');
 
 const origin = process.env.M1_TEST_DOMAIN_ORIGIN;
 const out = process.env.M1_TEST_DOMAIN_BROWSER_EVIDENCE;
@@ -20,9 +21,7 @@ async function run() {
     await page.getByLabel('密码').fill(process.env.M1_TEST_DOMAIN_STUDENT_PASSWORD);
     await page.getByRole('button', { name: '登录' }).click();
     await page.getByRole('button', { name: '退出登录' }).waitFor();
-    const entered = page.waitForResponse(response => response.url().endsWith('/learning-spaces/open') && response.ok());
-    await page.getByRole('button', { name: new RegExp(course) }).first().click();
-    const scope = (await (await entered).json()).result.space.space_id;
+    const scope = await enterCourse(page, new RegExp(course));
     const api = origin + '/api/m1';
     const root = api + '/learning-spaces/' + scope;
     const session = await (await page.request.get(api + '/auth/session')).json();
@@ -99,7 +98,6 @@ async function run() {
     assert.equal(different.status(), 409, await different.text());
 
     await page.reload();
-    await page.getByRole('button', { name: new RegExp(course) }).last().click();
     await page.getByLabel('输入消息').waitFor();
     await page.locator('#study-message-' + first.message_refs[0]).waitFor();
     await page.screenshot({ path: path.join(out, 'teaching-provision.png'), fullPage: true });

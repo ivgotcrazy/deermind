@@ -63,7 +63,7 @@ async function main() {
     await page.getByLabel('账号').fill(process.env.M1_TEST_DOMAIN_LOGIN);
     await page.getByLabel('密码').fill(process.env.M1_TEST_DOMAIN_PASSWORD);
     await page.getByRole('button', { name: '登录' }).click();
-    const domains = page.getByRole('list', { name: '领域列表' });
+    const domains = page.getByRole('table', { name: '领域列表' });
     await page.getByRole('button', { name: '新建领域' }).waitFor();
     const session = await (await page.request.get(origin + '/api/m1/auth/session')).json();
     const root = await save(page, session, {

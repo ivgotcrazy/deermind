@@ -1,0 +1,157 @@
+@layer theme, base, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+:root {
+  --background: #fffcf6;
+  --foreground: #24291f;
+  --muted: #efeae0;
+  --muted-foreground: #585b50;
+  --primary: #3c593a;
+  --primary-foreground: #fff;
+  --secondary: #e3ead7;
+  --secondary-foreground: #2e432c;
+  --border: #dad4c5;
+  --input: #dad4c5;
+  --ring: #476e44;
+  --accent: #e3ead7;
+  --accent-foreground: #2e432c;
+  --radius: 0.625rem;
+  --color-accent: var(--primary);
+  --color-muted: var(--muted-foreground);
+  --color-line: var(--border);
+  --study-font-family:
+    'PingFang SC', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui,
+    sans-serif;
+  --study-font-meta: 400 0.8125rem/1.5 var(--study-font-family);
+  --study-font-ui: 400 0.875rem/1.5 var(--study-font-family);
+  --study-font-body: 400 1rem/1.65 var(--study-font-family);
+  --study-font-section: 600 1rem/1.4 var(--study-font-family);
+  --study-font-title: 600 1.25rem/1.4 var(--study-font-family);
+  --study-nav-height: 52px;
+  --study-nav-surface: #f4ebe0;
+  --study-nav-paper: #faf5ee;
+  --study-nav-ink: #1d1b18;
+  --study-nav-muted: #645c50;
+  --study-nav-line: #c6bbac;
+  --study-nav-selected: #cfe3b2;
+  color: var(--foreground);
+  background: #f4f0e7;
+}
+
+@media (max-width: 41rem) {
+  :root {
+    --study-nav-height: 56px;
+  }
+}
+
+/* 弹层渲染在工作台之外，和顶部栏共用这组颜色。 */
+.space-header,
+[data-slot='dialog-content'].space-picker {
+  --background: var(--study-nav-paper);
+  --foreground: var(--study-nav-ink);
+  --muted-foreground: var(--study-nav-muted);
+  --border: var(--study-nav-line);
+  --accent: var(--study-nav-surface);
+  --accent-foreground: var(--study-nav-ink);
+  --primary: var(--study-nav-selected);
+  --primary-foreground: var(--study-nav-ink);
+  color: var(--foreground);
+}
+
+.student-shell,
+[data-slot='dialog-content'].space-picker {
+  font: var(--study-font-ui);
+}
+
+.student-shell [data-slot='button'],
+.space-picker [data-slot='button'] {
+  font: var(--study-font-ui);
+  font-weight: 500;
+}
+
+.student-shell .rich-content .source {
+  font: var(--study-font-meta);
+}
+
+.student-shell .rich-content table,
+.student-shell .rich-content figcaption {
+  font: var(--study-font-ui);
+}
+
+.student-shell .rich-content figcaption {
+  font-weight: 600;
+}
+
+.student-shell .question-card {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+}
+
+.student-shell .question-card > [data-slot='button'] {
+  justify-self: start;
+}
+
+.student-shell .question-card h4 {
+  margin: 0;
+  font: var(--study-font-section);
+}
+
+.student-shell .question-card form {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.student-shell .question-card label,
+.student-shell .question-card summary {
+  font: var(--study-font-ui);
+  font-weight: 500;
+}
+
+.student-shell .question-card textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font: var(--study-font-body);
+}
+
+.student-shell .question-card ul {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+@layer base {
+  [data-slot='button'] {
+    border: 0 solid var(--border);
+    background-color: transparent;
+    color: inherit;
+    font-family: inherit;
+  }
+}

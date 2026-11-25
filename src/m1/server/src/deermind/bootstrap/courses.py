@@ -4,7 +4,7 @@ from uuid import UUID
 
 from deermind.abstractions.events import Ref
 from deermind.bootstrap.settings import Settings
-from deermind.bootstrap.student_materials import StudentMaterialSources
+from deermind.bootstrap.student_materials import StudentMaterialSources, read_study_method_name
 from deermind.bootstrap.student_operation import student_config
 from deermind.foundation.system.events.attachments import FactAttachments
 from deermind.product.learning.course_applications import CourseApplications
@@ -43,8 +43,8 @@ def configure_courses(
     targets: TargetDefinitions, configs: ActivityConfigs
 ) -> tuple[CourseChecks, CourseSpaces, CourseApplications]:
     checks = CourseChecks(targets, configs.fixed_config, check_methods)
-    spaces = CourseSpaces(checks, GoalResults.current, GoalResults.progress)
-    return checks, spaces, CourseApplications(checks, spaces)
+    spaces = CourseSpaces(checks, GoalResults.current, GoalResults.progress, read_study_method_name)
+    return checks, spaces, CourseApplications(checks)
 
 
 def configure_goals(targets: TargetDefinitions, configs: ActivityConfigs) -> GoalResults:

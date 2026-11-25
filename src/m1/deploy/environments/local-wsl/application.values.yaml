@@ -1,6 +1,6 @@
 images:
-  server: deermind/server:student-turns-refactor-r1
-  client: deermind/client:learning-refactor-r2
+  server: deermind/server:evidence-time-r1
+  client: deermind/client:textbook-domain-ui-r2
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
 filesClaim: deermind-files

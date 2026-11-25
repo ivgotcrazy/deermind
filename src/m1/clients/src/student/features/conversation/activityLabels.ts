@@ -7,3 +7,20 @@ export const activityLabels: Record<components['schemas']['ActivityType'], strin
   detection: '检测',
   free_chat: '自由交谈',
 };
+
+const day = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'numeric', day: 'numeric' });
+export const activityClock = new Intl.DateTimeFormat('zh-CN', {
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
+
+export function activityDay(value: string) {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  const label = day.format(new Date(value));
+  if (label === day.format(today)) return '今天';
+  if (label === day.format(yesterday)) return '昨天';
+  return label;
+}

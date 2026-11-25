@@ -229,6 +229,9 @@ class GoalEvaluation(FactModel):
 
 class EvidenceSummary(FactModel):
     evidence_ref: Ref
+    occurred_at: datetime | None
+    source_activity: Literal["detection", "answer", "teaching"] | None
+    timed_event_id: UUID | None
     aspect_code: str
     qualification: str
     verdict: str | None

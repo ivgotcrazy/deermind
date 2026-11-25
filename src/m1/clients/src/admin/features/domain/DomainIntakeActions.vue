@@ -253,7 +253,8 @@ onBeforeUnmount(() => {
       item.kind === 'kc' ? '添加知识成分' : item.kind === 'task_instance' ? '关联任务' : '关联方法'
     }}
   </button>
-  <button type="button" class="secondary" @click="open('discard')">删除</button>
+  <slot />
+  <button type="button" class="destructive" @click="open('discard')">删除</button>
   <dialog ref="dialog" aria-label="处理待入库内容">
     <form @submit.prevent="submit">
       <h3>{{ mode === 'discard' ? '删除待入库内容' : '选择领域定义' }}</h3>
@@ -295,8 +296,12 @@ onBeforeUnmount(() => {
           <p v-for="issue in assessment.issues" :key="issue">{{ issue }}</p>
         </li>
       </ul>
-      <button type="submit" :disabled="busy">{{ mode === 'discard' ? '确认删除' : '确认' }}</button>
-      <button type="button" class="secondary" @click="dialog?.close()">关闭</button>
+      <footer class="editor-footer">
+        <button type="button" class="secondary" @click="dialog?.close()">关闭</button
+        ><button type="submit" :disabled="busy">
+          {{ mode === 'discard' ? '确认删除' : '确认' }}
+        </button>
+      </footer>
     </form>
   </dialog>
 </template>

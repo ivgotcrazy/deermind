@@ -349,11 +349,11 @@ function saveRule() {
 </script>
 
 <template>
-  <section class="panel claim-workspace" aria-label="评估管理">
-    <h1>评估管理</h1>
-    <label
-      >领域
-      <select v-model="domain" :disabled="busy" @change="loadDomain">
+  <section class="admin-editor claim-workspace" aria-label="评估管理">
+    <h1 class="admin-page-title">评估管理</h1>
+    <div class="admin-list-toolbar">
+      <label for="claim-domain">领域</label>
+      <select id="claim-domain" v-model="domain" :disabled="busy" @change="loadDomain">
         <option value="">请选择领域</option>
         <option
           v-for="item in domains"
@@ -362,12 +362,13 @@ function saveRule() {
         >
           {{ item.name }}
         </option>
-      </select></label
-    >
+      </select>
+    </div>
     <p v-if="error" role="alert">{{ error }}</p>
     <p v-if="status" role="status">{{ status }}</p>
     <div v-if="rows" class="claim-layout">
-      <aside aria-label="Claim 列表">
+      <aside class="editor-panel" aria-label="Claim 列表">
+        <h3>Claim 列表</h3>
         <button
           type="button"
           :disabled="busy"
@@ -394,7 +395,7 @@ function saveRule() {
         </ul>
         <p v-else>这个领域还没有 Claim。</p>
       </aside>
-      <form v-if="!selected" class="claim-fields" @submit.prevent="create">
+      <form v-if="!selected" class="claim-fields editor-panel" @submit.prevent="create">
         <h2>新建 Claim</h2>
         <label
           >任务
@@ -409,8 +410,8 @@ function saveRule() {
         <label>说明 <textarea v-model="description" required maxlength="4096" /></label>
         <button type="submit" :disabled="busy || !tasks.length">创建 Claim</button>
       </form>
-      <div v-else class="claim-fields">
-        <header>
+      <div v-else class="claim-fields editor-panel">
+        <header class="editor-row claim-heading">
           <h2>{{ selected.definition.title }}</h2>
           <label
             >修订版本
@@ -439,36 +440,40 @@ function saveRule() {
           </ul>
         </details>
         <section aria-label="判据库" class="claim-section">
-          <h3>执行判据库</h3>
-          <button v-if="editable" type="button" :disabled="busy" @click="editCriterion()">
-            添加判据
-          </button>
-          <ul v-if="selected.definition.criteria.length">
+          <header class="editor-row">
+            <h3>执行判据库</h3>
+            <button v-if="editable" type="button" :disabled="busy" @click="editCriterion()">
+              添加判据
+            </button>
+          </header>
+          <ul v-if="selected.definition.criteria.length" class="criteria-list">
             <li v-for="item in selected.definition.criteria" :key="item.criterion_id">
-              {{ item.title }} <small>{{ item.judgement_basis }}</small>
-              <button v-if="editable" type="button" :disabled="busy" @click="editCriterion(item)">
-                编辑
-              </button>
-              <button
-                v-if="editable"
-                type="button"
-                :disabled="
-                  busy ||
-                  selected.definition.methods.some((entry) =>
-                    entry.criterion_ids.includes(item.criterion_id),
-                  )
-                "
-                @click="removeCriterion(item.criterion_id)"
-              >
-                移除
-              </button>
+              <div class="criterion-content">
+                <strong>{{ item.title }}</strong
+                ><small>{{ item.judgement_basis }}</small>
+              </div>
+              <div v-if="editable" class="actions">
+                <button type="button" :disabled="busy" @click="editCriterion(item)">编辑</button>
+                <button
+                  type="button"
+                  :disabled="
+                    busy ||
+                    selected.definition.methods.some((entry) =>
+                      entry.criterion_ids.includes(item.criterion_id),
+                    )
+                  "
+                  @click="removeCriterion(item.criterion_id)"
+                >
+                  移除
+                </button>
+              </div>
             </li>
           </ul>
           <p v-else>先添加判据，再为方法选择判据。</p>
         </section>
         <section v-if="method" aria-label="方法与评价" class="claim-section">
           <h3>任务方法</h3>
-          <nav aria-label="任务方法">
+          <nav aria-label="任务方法" class="editor-tabs">
             <button
               v-for="(entry, index) in selected.definition.methods"
               :key="methodKey(entry.method_ref)"
@@ -580,71 +585,82 @@ function saveRule() {
 </template>
 
 <style scoped>
-.claim-workspace :is(button, select, input:not([type='checkbox']), textarea) {
-  box-sizing: border-box;
-  border: 1px solid var(--color-border, #d8ded7);
-  border-radius: 0.35rem;
-  background: #fff;
-  color: inherit;
-  font: inherit;
-  padding: 0.4rem 0.6rem;
-}
-.claim-workspace button[aria-pressed='true'],
-.claim-workspace button[type='submit'] {
-  border-color: var(--color-accent);
-  background: var(--color-accent);
-  color: #fff;
-}
-.claim-workspace button:disabled {
-  opacity: 0.55;
-}
 .claim-layout {
   display: grid;
-  grid-template-columns: minmax(11rem, 15rem) minmax(0, 1fr);
-  gap: 1.5rem;
-  margin-top: 1.25rem;
+  grid-template-columns: minmax(180px, 24%) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
 }
 .claim-layout aside ul {
-  display: grid;
-  gap: 0.5rem;
   padding: 0;
+  margin: 12px 0 0;
   list-style: none;
+  max-height: 55vh;
+  overflow: auto;
 }
-.claim-layout aside button {
+.claim-layout aside li + li {
+  border-top: 1px solid var(--el-border-color-light);
+}
+.claim-layout aside li button {
   width: 100%;
-  text-align: left;
+  text-align: start;
 }
 .claim-fields {
   display: grid;
+  gap: 12px;
   align-content: start;
-  justify-items: start;
-  gap: 0.65rem;
 }
-.claim-fields label:has(textarea),
-.claim-section {
-  width: 100%;
-}
-.claim-fields textarea {
-  width: min(100%, 42rem);
-  min-height: 3.5rem;
+.claim-fields > button {
+  justify-self: start;
 }
 .claim-section {
-  border-block-start: 1px solid var(--color-border, #d8ded7);
+  border-top: 1px solid var(--el-border-color);
+  padding-top: 16px;
 }
-.claim-section nav,
-.claim-section li,
-.actions {
+.claim-section form {
+  padding: 16px 0;
+}
+.claim-heading {
+  align-items: end;
+  flex-wrap: wrap;
+}
+.claim-heading label {
+  min-width: 7rem;
+}
+.criteria-list {
+  margin: 12px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--el-border-color-light);
+  list-style: none;
+}
+.criteria-list li {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--el-border-color-light);
+}
+.criterion-content {
+  display: grid;
+  flex: 1 1 15rem;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 .claim-section small {
   overflow-wrap: anywhere;
 }
-@media (max-width: 720px) {
+@media (max-width: 840px) {
   .claim-layout {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: 1fr;
   }
 }
 </style>

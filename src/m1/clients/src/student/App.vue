@@ -1,29 +1,50 @@
 <script setup lang="ts">
-import EntryShell from '../shared/ui/EntryShell.vue';
 import AuthGate from '../shared/auth/AuthGate.vue';
 import CourseSelection from './CourseSelection.vue';
+import StudentSignIn from './StudentSignIn.vue';
 </script>
 
 <template>
-  <EntryShell
-    class="student-shell"
-    title="学生端"
-    other-label="管理端"
-    other-href="/admin/"
-    hide-note
-  >
-    <AuthGate v-slot="{ session, realtime }" role="student">
-      <CourseSelection :key="session.session_id" :session="session" :realtime="realtime" />
+  <main class="student-app">
+    <AuthGate role="student">
+      <template #entry="entry">
+        <StudentSignIn v-bind="entry" />
+      </template>
+      <template
+        #workspace="{
+          session,
+          realtime,
+          busy,
+          error,
+          signOut,
+          realtimeState,
+          storageUnavailable,
+          reconnect,
+        }"
+      >
+        <CourseSelection
+          :key="session.session_id"
+          :session="session"
+          :realtime="realtime"
+          :sign-out="signOut"
+          :signing-out="busy"
+          :auth-error="error"
+          :realtime-state="realtimeState"
+          :storage-unavailable="storageUnavailable"
+          :reconnect="reconnect"
+        />
+      </template>
     </AuthGate>
-  </EntryShell>
+  </main>
 </template>
 
 <style scoped>
-.student-shell {
-  max-width: 86rem;
-}
-.student-shell :deep(main) {
+.student-app {
   max-width: none;
-  padding-top: 1rem;
+  padding: 0;
+}
+.student-app > :deep(.auth-card) {
+  width: min(calc(100% - 2rem), 40rem);
+  margin: 2rem auto;
 }
 </style>

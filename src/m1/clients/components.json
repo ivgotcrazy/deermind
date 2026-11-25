@@ -1,0 +1,20 @@
+{
+  "$schema": "https://shadcn-vue.com/schema.json",
+  "style": "new-york",
+  "typescript": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/student/learning-theme.css",
+    "baseColor": "stone",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@/student/components",
+    "ui": "@/student/components/ui",
+    "utils": "@/student/cn",
+    "lib": "@/student",
+    "composables": "@/student/composables"
+  },
+  "iconLibrary": "lucide"
+}

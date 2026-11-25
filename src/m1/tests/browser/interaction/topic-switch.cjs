@@ -4,6 +4,7 @@ const { randomUUID } = require('node:crypto');
 const { mkdir, readFile, writeFile } = require('node:fs/promises');
 const path = require('node:path');
 const { chromium } = require('playwright');
+const { enterCourse } = require('./select-course.cjs');
 
 const origin = process.env.M1_TEST_DOMAIN_ORIGIN;
 const output = process.env.M1_TEST_DOMAIN_BROWSER_EVIDENCE;
@@ -134,12 +135,7 @@ async function run() {
       process.env.M1_TEST_DOMAIN_STUDENT_LOGIN,
       process.env.M1_TEST_DOMAIN_STUDENT_PASSWORD,
     );
-    const course = page.getByRole('button', { name: new RegExp(title) }).first();
-    const entry = page.waitForResponse(
-      (response) => response.url().endsWith('/learning-spaces/open') && response.ok(),
-    );
-    await course.click();
-    const scope = (await (await entry).json()).result.space.space_id;
+    const scope = await enterCourse(page, title);
     const space = '/learning-spaces/' + scope;
     const chat = page.getByRole('region', { name: '学习对话' });
     async function control(button) {

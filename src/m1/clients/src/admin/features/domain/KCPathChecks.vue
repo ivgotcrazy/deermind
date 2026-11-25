@@ -296,38 +296,10 @@ dt {
 }
 summary {
   cursor: pointer;
-  color: #28513c;
+  color: var(--el-color-primary);
 }
 small {
-  color: #5d635a;
-}
-button,
-select,
-textarea {
-  font: inherit;
-  color: inherit;
-  background: #fffdf8;
-  border: 1px solid #d5cdbf;
-  border-radius: 0.4rem;
-  padding: 0.32rem 0.6rem;
-}
-button:disabled {
-  opacity: 0.55;
-}
-.primary {
-  background: #28513c;
-  color: white;
-  border-color: #28513c;
-}
-dialog {
-  width: min(32rem, calc(100% - 2rem));
-  max-height: calc(100dvh - 2rem);
-  border: 1px solid #ddd6c7;
-  border-radius: 0.7rem;
-  background: #fffdf8;
-}
-dialog::backdrop {
-  background: #151c1855;
+  color: var(--el-text-color-secondary);
 }
 .actions {
   display: flex;

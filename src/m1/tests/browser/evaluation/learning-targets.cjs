@@ -114,6 +114,7 @@ async function run() {
     assert.deepEqual((await read(`${route}/${target_id}?revision=1`)).target, original);
     await nav.getByRole('button', { name: '目标管理' }).click();
     const workspace = page.getByRole('region', { name: '目标管理' });
+    await workspace.getByLabel('领域', { exact: true }).selectOption(domain_id);
     await workspace.getByLabel('教材').selectOption(textbook_id);
     await workspace.getByRole('button', { name: command.title + ' · v2' }).click();
     await workspace.getByLabel('达标方式').waitFor();

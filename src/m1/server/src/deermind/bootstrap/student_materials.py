@@ -8,7 +8,7 @@ from deermind.abstractions.events import Ref
 from deermind.product.learning.course_spaces import CourseSpaces
 from deermind.product.public.courses import CourseSnapshot
 from deermind.spaces.domain.evaluation_references import read_fixed_reference
-from deermind.spaces.domain.public import TaskInstance
+from deermind.spaces.domain.public import SolutionRef, TaskInstance
 from deermind.spaces.evaluation.goal_results import GoalResults
 from deermind.spaces.evaluation.publication import MasteryPublication
 from deermind.spaces.interaction.learning_materials import ReadableMaterial
@@ -17,6 +17,19 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 COURSE_LIMIT = 16
 STATE_LIMIT = 8
+
+
+async def read_study_method_name(
+    db: AsyncConnection, domain: UUID, method: SolutionRef
+) -> str | None:
+    """Read the name of a Solution pinned by the adopted learning target."""
+    fixed = await read_fixed_reference(
+        db,
+        domain,
+        Ref(owner="domain", type="solution", id=str(method.object_id), version=method.version),
+    )
+    name = fixed[0].get("name") if fixed else None
+    return name if isinstance(name, str) else None
 
 
 def domain_refs(snapshot: CourseSnapshot) -> list[ReadableMaterial]:

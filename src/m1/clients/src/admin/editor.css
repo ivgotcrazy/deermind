@@ -1,0 +1,298 @@
+/* Authoring screens share the controls, surfaces and active states of the course review. */
+.admin-editor {
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--el-text-color-regular);
+}
+.admin-editor :where(h2, h3, h4, h5, legend) {
+  color: var(--el-text-color-primary);
+  line-height: 1.45;
+  margin: 0;
+}
+.admin-editor h2 {
+  font-size: 20px;
+}
+.admin-editor h3 {
+  font-size: 17px;
+}
+.admin-editor :where(h4, h5, legend) {
+  font-size: 14px;
+  font-weight: 600;
+}
+.admin-editor small {
+  color: var(--el-text-color-secondary);
+}
+.editor-panel {
+  min-width: 0;
+  padding: 20px;
+  background: white;
+  border: 1px solid var(--el-border-color);
+  border-radius: 4px;
+}
+.editor-panel > :where(h2, h3, h4) {
+  margin-bottom: 12px;
+}
+.admin-editor :where(button, input, select, textarea) {
+  font: inherit;
+}
+.admin-editor :where(button) {
+  min-height: 32px;
+  padding: 5px 14px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 3px;
+  background: white;
+  color: var(--el-text-color-regular);
+  cursor: pointer;
+}
+.admin-editor :where(button:hover:enabled, button[aria-pressed='true']) {
+  color: var(--el-color-primary);
+  background: var(--admin-selected);
+}
+.admin-editor :where(.primary, button[type='submit']:not(.secondary)) {
+  color: white;
+  border-color: var(--el-color-primary);
+  background: var(--el-color-primary);
+}
+.admin-editor :where(.primary, button[type='submit']:not(.secondary)):hover:enabled {
+  background: #174b99;
+  color: white;
+}
+.admin-editor button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.admin-editor :where(button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--el-color-primary);
+  outline-offset: 2px;
+}
+.admin-editor :where(input:not([type='checkbox'], [type='radio']), select, textarea) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  color: var(--el-text-color-primary);
+  background: white;
+  border: 1px solid var(--el-border-color);
+  border-radius: 3px;
+}
+.admin-editor textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+.admin-editor label {
+  display: block;
+  max-width: 100%;
+}
+.admin-editor label :where(input:not([type='checkbox'], [type='radio']), select, textarea) {
+  margin-top: 4px;
+}
+.admin-editor :is(input[type='checkbox'], input[type='radio']) {
+  accent-color: var(--el-color-primary);
+}
+.admin-editor fieldset {
+  min-inline-size: 0;
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  border: 1px solid var(--el-border-color);
+  border-radius: 3px;
+}
+.admin-editor fieldset > button {
+  justify-self: start;
+}
+.admin-editor fieldset legend {
+  padding: 0 6px;
+}
+.admin-editor .admin-list-toolbar :where(input, select) {
+  width: min(100%, 320px);
+}
+.admin-list-toolbar > label:has(select) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-editor .admin-list-toolbar label select {
+  margin: 0;
+}
+.admin-editor .admin-data-table :where(th, td) {
+  max-width: 34rem;
+}
+.admin-editor .admin-data-table td > button {
+  min-height: 28px;
+  color: var(--el-color-primary);
+  background: transparent;
+}
+.admin-editor .toolbar-end {
+  margin-left: auto;
+}
+.admin-crumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  color: var(--el-text-color-secondary);
+  font-size: 13px;
+}
+.admin-crumb button,
+.admin-editor .results button,
+.claim-layout aside li button {
+  border: 0;
+}
+.admin-crumb button {
+  padding: 0;
+  min-height: 20px;
+  background: transparent;
+  color: inherit;
+}
+.admin-editor .editor-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  background: white;
+  border-bottom: 1px solid var(--el-border-color);
+}
+.admin-editor .editor-tabs button {
+  min-height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: var(--el-text-color-regular);
+}
+.admin-editor .editor-tabs button[aria-pressed='true'] {
+  color: var(--el-color-primary);
+  border-bottom-color: var(--el-color-primary);
+  background: white;
+  font-weight: 600;
+}
+.editor-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.editor-records {
+  list-style: none;
+  padding: 0;
+  max-height: 24rem;
+  overflow: auto;
+}
+.editor-records li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border-top: 1px solid var(--el-border-color-light);
+}
+.editor-records li button:first-child {
+  margin-right: auto;
+  text-align: left;
+  color: var(--el-color-primary);
+}
+.editor-notices,
+.admin-editor [aria-label='配置缺项'] {
+  background: white;
+  padding: 12px 32px;
+  border-inline-start: 3px solid #cb9335;
+}
+.admin-editor .editor-empty {
+  padding: 28px;
+  text-align: center;
+  background: white;
+  color: var(--el-text-color-secondary);
+}
+.admin-editor [role='alert'] {
+  color: #a3342a;
+}
+.admin-editor dialog {
+  width: min(520px, calc(100% - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  padding: 22px 24px;
+  background: white;
+  color: var(--el-text-color-primary);
+  border: 1px solid var(--el-border-color);
+  border-radius: 4px;
+}
+.admin-editor dialog::backdrop {
+  background: rgb(30 44 60 / 24%);
+}
+.admin-editor dialog form {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+.admin-editor dialog form > button {
+  justify-self: start;
+}
+.admin-editor dialog :where(.actions, .material-actions) {
+  justify-content: flex-end;
+}
+.target-editor > fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.target-editor > fieldset > fieldset {
+  background: var(--el-fill-color-light);
+}
+.target-editor fieldset fieldset fieldset {
+  background: white;
+}
+.target-editor button {
+  justify-self: start;
+}
+.admin-sidebar nav {
+  position: sticky;
+  top: calc(var(--admin-topbar-height) + 20px);
+}
+@media (max-width: 760px) {
+  .admin-frame {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 60px auto 1fr;
+  }
+  .admin-sidebar {
+    padding: 6px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--el-border-color);
+    overflow-x: auto;
+  }
+  .admin-sidebar nav,
+  .admin-sidebar .admin-nav-group {
+    display: flex;
+    position: static;
+    align-items: center;
+  }
+  .admin-sidebar .admin-nav-group p,
+  .admin-sidebar .admin-nav-group + .admin-nav-group::before {
+    display: none;
+  }
+  .admin-sidebar .admin-nav-group .el-button {
+    width: auto;
+    height: 36px;
+    white-space: nowrap;
+  }
+  .admin-main {
+    padding: 16px;
+  }
+  .admin-list-toolbar {
+    gap: 8px;
+  }
+  .editor-panel {
+    padding: 14px;
+  }
+}
+
+.editor-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--el-border-color-light);
+}

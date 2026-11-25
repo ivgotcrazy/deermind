@@ -55,7 +55,7 @@ async function snapshot(page, name) {
 }
 
 async function openDomain(page, name) {
-  const list = page.getByRole('list', { name: '领域列表' });
+  const list = page.getByRole('table', { name: '领域列表' });
   await list.getByRole('button', { name }).click();
   const detail = page.locator('.domain-detail');
   await detail.getByRole('heading', { name, exact: true }).waitFor();
@@ -213,7 +213,7 @@ async function run() {
     await page.getByLabel('账号').fill(login);
     await page.getByLabel('密码').fill(password);
     await page.getByRole('button', { name: '登录' }).click();
-    await page.getByRole('list', { name: '领域列表' }).waitFor();
+    await page.getByRole('table', { name: '领域列表' }).waitFor();
     const session = await (await page.request.get(origin + '/api/m1/auth/session')).json();
     assert.equal(session.account.role, 'admin');
     const headers = {

@@ -22,20 +22,32 @@ export function useSession(onSignOut?: () => void) {
   function clear() {
     epoch += 1;
     read?.abort();
+    read = undefined;
     clearTimeout(expiry);
     session.value = null;
     phase.value = 'checking';
   }
 
-  async function refresh(preserveError = false) {
-    if (disposed) return;
-    clear();
+  async function refresh(preserveError = false, keepCurrentView = false) {
+    if (disposed || (keepCurrentView && read)) return;
+    if (!keepCurrentView) clear();
     if (!preserveError) error.value = '';
     const current = epoch;
-    read = new AbortController();
+    const request = new AbortController();
+    read = request;
     try {
-      const value = await get('/api/m1/auth/session', { signal: read.signal });
+      const value = await get('/api/m1/auth/session', { signal: request.signal });
       if (disposed || current !== epoch) return;
+      const previous = session.value;
+      if (
+        previous &&
+        (previous.session_id !== value.session_id ||
+          previous.account.account_id !== value.account.account_id ||
+          previous.account.role !== value.account.role)
+      ) {
+        clear();
+      }
+      clearTimeout(expiry);
       session.value = value;
       phase.value = 'authenticated';
       // 计时器只触发重新读取，是否过期最终以服务端为准。
@@ -45,9 +57,12 @@ export function useSession(onSignOut?: () => void) {
       );
     } catch (cause) {
       if (disposed || current !== epoch) return;
+      if (session.value) clear();
       phase.value = cause instanceof ApiError && cause.status === 401 ? 'anonymous' : 'unavailable';
       if (phase.value !== 'anonymous')
         error.value = cause instanceof Error ? cause.message : '暂时无法确认登录状态。';
+    } finally {
+      if (read === request) read = undefined;
     }
   }
 
@@ -114,7 +129,8 @@ export function useSession(onSignOut?: () => void) {
     }
   }
   function visible() {
-    if (!document.hidden && !busy.value) void refresh();
+    // 焦点恢复也可能发生在一次点击中。核验同一会话时保留当前组件。
+    if (!document.hidden && !busy.value) void refresh(false, true);
   }
 
   onMounted(() => {
