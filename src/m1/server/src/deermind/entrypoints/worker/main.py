@@ -74,43 +74,72 @@ async def run() -> None:
 
 async def serve(settings: Settings, engine: AsyncEngine) -> None:
     """数据库版本检查通过后，才连接Temporal并拉取任务。"""
+    # ── 启动连接与停止信号 ──
+    # 加载按固定身份与版本登记的提示词资源。
     prompts = configure_prompts()
     async with asyncio.timeout(15):
+        # 15 秒内连接 Temporal，并核对目标命名空间可达；超时即启动失败。
         client = await connect_temporal(settings, engine)
         await client.workflow_service.describe_namespace(
             DescribeNamespaceRequest(namespace=settings.temporal_namespace),
         )
 
+    # 停止事件：收到终止信号后置位，各后台任务据此自行退出轮询。
     stopped = asyncio.Event()
     loop = asyncio.get_running_loop()
-    # 注册终止信号：收到后置位停止事件，由各后台任务自行退出轮询。
     for signum in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(signum, stopped.set)
 
+    # ── 线程池 ──
     # Blocking file I/O runs in the activity pool, not on the asyncio loop.
+    # Workflow 任务池 2、Activity 池 4；阻塞文件 I/O 走活动线程池，不占事件循环。
     with ThreadPoolExecutor(2) as workflow_executor, ThreadPoolExecutor(4) as activity_executor:
+        # ── 教材与领域侧服务 ──
+        # 领域定义服务：KC/路径/对象版本的事件与附件读写。
         domain = configure_domain(engine, settings.files_root, backend=settings.files_backend)
+        # 教材接收/登记服务；上传器本进程不直接使用，留空绑定。
         materials, _uploads = configure_materials(engine, settings, domain)
+        # 教材助手：对话与决策，调用 AI 能力。
         assistant = configure_material_assistant(engine, settings, materials)
+        # 领域侧提交读取。
         intake = configure_domain_intake(materials)
+        # 领域分析：抽取/分类，必要时落生成执行。
         analysis = configure_domain_analysis(intake, materials, settings)
+        # 教材业务侧入库结果接收。
         intake_results = configure_material_intake(materials)
+        # 入库处理编排。
         processing = configure_intake_processing(analysis)
+
+        # ── 学习目标与评价侧服务 ──
+        # 评价主张定义：掌握度主张的登记、事实留存与读取。
         claims = configure_claims(engine, settings)
+        # 学习目标定义。
         target_definitions = configure_targets(materials, claims)
+        # 交互环节固定配置。
         config = configure_activity_configs(engine, settings)
+        # 目标掌握度结果计算与发布。
         goals = configure_goals(target_definitions, config)
+        # 学习空间与采纳；课程核对/申请本进程不直接使用，留空绑定。
         _checks, spaces, _applications = configure_courses(target_definitions, config)
+
+        # ── 回合与供题服务 ──
+        # 评价操作服务：评价输入、账本与结果发布。
         evaluation = configure_evaluation_operation(
             configure_evaluation_inputs(claims, spaces), settings.task_queue, claims.reader
         )
+        # 学习空间会话：活动与消息保存。
         conversation = configure_conversation(spaces, config)
+        # 学生回合服务：作答、输入、检测准备与掌握度读取。
         student = configure_student_turns(
             spaces, conversation, materials.attachments, settings, config
         )
+        # 供题库存与生成执行。
         supply, generation = configure_task_supply(
             engine, materials.events, materials.reader, materials.attachments, settings
         )
+
+        # ── 执行条目、订阅与底座依赖 ──
+        # 执行条目注册表：汇总各所有者登记的执行定位信息，供生命周期/中继/等待使用。
         entries = Registry(
             [
                 *assistant.registry.entries.values(),
@@ -120,6 +149,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
                 *evaluation.registry.entries.values(),
             ]
         )
+        # 事件订阅注册表：各模块声明关心的事件，处理器由下方活动适配器注入。
         subscribers = subscriptions(
             intake.receive,
             intake_results.receive_result,
@@ -129,11 +159,17 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
             evaluation.receive,
             entries=entries,
         )
+        # 执行限额：请求时限、尝试次数、租约与对账间隔。
         execution_limits = limits()
+        # AI 调用底座：调用账本、附件读取与 prompts。
         calls = Calls(engine, entries, materials.attachments, prompts)
+        # 领域分析活动适配器，挂到 Temporal Activity。
         analysis_activities = DomainAnalysisActivities(analysis, calls)
+        # 等待登记服务：补查与接续的业务侧实现。
         waiting = waits(entries)
 
+        # ── 业务活动适配器 ──
+        # 检测编排：回合、活动配置与供题之间的检测准备与收尾。
         detection = configure_detection(
             student,
             waiting,
@@ -141,6 +177,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
             claims.detail,
             supply.read_supplied_question,
         )
+        # 学生回合活动适配器：作答、记忆、检测、复习与提问等 Activity。
         student_activities = StudentActivities(
             student,
             calls,
@@ -150,12 +187,19 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
             supply.read_fixed_question,
             detection,
         )
+        # 供题活动适配器：固定题与生成题的准备、复核与提交。
         supply_activities = SupplyActivities(generation, calls)
+        # 评价活动适配器：含凭据注入，负责准备、保存与发布。
         evaluation_activities = EvaluationActivities(evaluation, calls, evaluation_credential)
+
+        # ── 底座活动与 Worker 注册 ──
+        # 执行生命周期活动适配器：started/completed/failed 收尾。
         lifecycle = runtime.lifecycle(engine, entries, execution_limits)
+        # 等待探测与接续活动适配器。
         wait_activities = runtime.wait_activities(
             engine, waiting, timeout_seconds=execution_limits.finalize_seconds
         )
+        # 组装 Temporal Worker：注册 Workflow/Activity 与并发上限，绑定任务队列。
         worker = create_worker(
             client,
             settings,
@@ -164,6 +208,7 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
             lifecycle,
             wait_activities,
             [
+                # 教材类活动：按用途 schema 映射到对应结果输出类型。
                 *material_activities(
                     assistant,
                     calls,
@@ -198,25 +243,33 @@ async def serve(settings: Settings, engine: AsyncEngine) -> None:
                 evaluation_activities.publish,
             ],
         )
+        # ── 启动常驻后台协程 ──
         try:
+            # 启动 Worker 并连上 NATS 传输；退出时一并释放。
             async with worker, connect(MessagingSettings.from_environment()) as transport:
+                # 只读核对业务流与失败流存在，不创建或删除消息资源。
                 await transport.check_stream(failure=False)
                 await transport.check_stream(failure=True)
                 # 初始化由维护入口完成；运行账号只绑定，不得建删消息资源。
                 await transport.js.consumer_info(transport.settings.failures, "failure_collector")
+                # 就绪标记落盘，编排侧据此探活。
                 READY_FILE.touch()
                 LOGGER.info(
                     "Worker 已启动，等待共享队列任务",
                     extra={"action": "worker_started", "outcome": "success"},
                 )
                 async with asyncio.TaskGroup() as tasks:
+                    # 消息桥接：按订阅把事件投递给对应所有者处理器。
                     tasks.create_task(run_bridge(engine, transport, subscribers, stopped))
+                    # 评价对账：补查未收尾的评价操作。
                     tasks.create_task(
                         evaluation.reconcile(stopped, execution_limits.reconcile_seconds)
                     )
+                    # 执行中继：对接 Temporal Transport，推进已受理执行。
                     tasks.create_task(
                         run_relay(engine, entries, Transport(client, execution_limits), stopped)
                     )
+                    # 等待对账：补查遗漏通知，接续到期等待。
                     tasks.create_task(
                         run_reconciler(
                             engine,

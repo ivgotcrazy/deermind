@@ -137,54 +137,92 @@ def create_app(
         try:
             # 启动阶段装配全部业务服务并挂载到 app.state，退出时随生命周期释放。
             async with database_lifespan() as engine:
+                # ── 基础设施与账号 ──
+                # 数据库引擎：各业务服务共享的异步连接引擎。
                 app.state.database = engine
+                # 认证实现（会话与凭据校验）与认证环境边界配置。
                 app.state.auth, app.state.auth_config = await configure_authentication(engine)
+                # 账号用量服务：用量账本登记与用量收据读取。
                 app.state.usage = configure_usage(engine, settings.files_root)
+
+                # ── 领域定义与评价配置 ──
+                # 领域定义服务：KC/路径/对象版本的事件与附件读写。
                 domain = configure_domain(
                     engine, settings.files_root, backend=settings.files_backend
                 )
                 app.state.domain = domain
+                # 评价主张定义：掌握度主张的登记、事实留存与读取。
                 claims = configure_claims(engine, settings)
                 app.state.claims = claims
+                # 评价依据读取，复用主张定义的引擎与事件读者。
                 app.state.evaluation_basis = configure_evaluation_basis(claims)
+                # 交互环节固定配置的登记与读取。
                 configs = configure_activity_configs(engine, settings)
                 app.state.activity_configs = configs
+
+                # ── 教材接收与文件上传 ──
+                # 教材接收/登记服务；同时返回文件上传登记与原件校验器。
                 materials, app.state.uploads = configure_materials(engine, settings, domain)
                 app.state.materials = materials
+
+                # ── 学习目标与课程空间 ──
+                # 学习目标定义：基于教材接收与主张定义解析条件。
                 targets = configure_targets(materials, claims)
                 app.state.learning_targets = targets
+                # 课程就绪核对 / 学习空间与采纳 / 课程申请 三个服务。
                 checks, spaces, applications = configure_courses(targets, configs)
                 app.state.course_checks = checks
                 app.state.course_spaces = spaces
                 app.state.course_applications = applications
+
+                # ── 会话与学生回合 ──
+                # 学习空间会话：保存活动与消息，授权时核对空间归属与采纳。
                 conversation = configure_conversation(spaces, configs)
                 app.state.conversation = conversation
+                # 学生回合服务：作答、输入、检测准备与掌握度读取；requests 为对外请求面。
                 turns = configure_student_turns(
                     spaces, conversation, materials.attachments, settings, configs
                 )
                 app.state.student_turns = turns.requests
+                # 检测轮次编排，基于会话与活动配置补充固定题。
                 app.state.detection_rounds = configure_rounds(turns)
                 if realtime is None:
                     # 未注入测试用 realtime 实例时，把学生回合请求接入实时推送通道。
                     connect_realtime(hub, turns.requests)
+
+                # ── 教材助手与教材维护 ──
+                # 教材助手：对话与决策，调用 AI 能力。
                 assistant = configure_material_assistant(engine, settings, materials)
                 app.state.material_assistant = assistant
+                # 教材删除。
                 deletion = configure_material_deletion(assistant)
                 app.state.material_deletion = deletion
+                # 教材章节与领域内容关联。
                 chapters = configure_chapter_associations(materials)
                 app.state.chapter_associations = chapters
+                # 教材采纳决策。
                 adoptions = configure_material_adoptions(materials)
                 app.state.material_adoptions = adoptions
+                # 教材业务侧提交入库。
                 intake = configure_material_intake(materials)
                 app.state.material_intake = intake
+
+                # ── 领域入库与分析处理 ──
+                # 领域侧提交读取。
                 domain_intake = configure_domain_intake(materials)
                 app.state.domain_intake = domain_intake
+                # 领域分析：抽取/分类，必要时落生成执行。
                 analysis = configure_domain_analysis(domain_intake, materials, settings)
                 app.state.domain_analysis = analysis
+                # 入库处理编排。
                 processing = configure_intake_processing(analysis)
                 app.state.domain_intake_processing = processing
+                # 领域实例管理。
                 instances = configure_instances(analysis)
                 app.state.domain_instances = instances
+
+                # ── 收据路由与实时推送 ──
+                # 收据路由表：(动作, 范围) 映射到对应所有者的读收据方法。
                 app.state.receipts = RequestReceipts(
                     {
                         (
@@ -216,6 +254,7 @@ def create_app(
                         (PREPARE_DETECTION, "learning_space"): turns.requests.receipt,
                     }
                 )
+                # 实时推送中枢：在线连接推送与重同步。
                 app.state.realtime = hub
 
                 async def refresh(event_id: UUID) -> None:
@@ -256,10 +295,10 @@ def create_app(
     app.include_router(target_router)
     app.include_router(courses_router)
     app.include_router(conversation_router)
-
     app.include_router(receipts_router)
     app.include_router(realtime_router)
     app.add_middleware(RequestBodyLimit)
+    
     # 各类异常统一交由 api_error 转换为公开错误响应。
     for error_type in (
         RequestError,
