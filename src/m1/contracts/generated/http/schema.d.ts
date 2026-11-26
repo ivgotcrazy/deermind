@@ -1507,7 +1507,10 @@ export interface components {
             definition: components["schemas"]["StrategyDefinition"];
             ref: components["schemas"]["Ref"];
         };
-        /** CandidateRef */
+        /**
+         * CandidateRef
+         * @description 候选定位：候选编号、候选修订与依据修订。
+         */
         CandidateRef: {
             /** Basis Revision */
             basis_revision: number;
@@ -2419,7 +2422,10 @@ export interface components {
             request_id: components["schemas"]["RequestId"];
             space_id: components["schemas"]["JsonUUID"];
         };
-        /** ErrorDetail */
+        /**
+         * ErrorDetail
+         * @description 错误详情：错误码、可公开说明、明细列表与是否可重试。
+         */
         ErrorDetail: {
             /** Code */
             code: string;
@@ -2430,7 +2436,10 @@ export interface components {
             /** Retryable */
             retryable: boolean;
         };
-        /** ErrorResponse */
+        /**
+         * ErrorResponse
+         * @description 对外错误响应体：错误详情与可选请求引用。
+         */
         ErrorResponse: {
             error: components["schemas"]["ErrorDetail"];
             /** Request Ref */
@@ -2455,7 +2464,10 @@ export interface components {
             /** Reasons */
             reasons: string[];
         };
-        /** EventPartRef */
+        /**
+         * EventPartRef
+         * @description 定位某事件内一条记录或一个字段的引用；path 为 JSON Pointer。
+         */
         EventPartRef: {
             /**
              * Event Id
@@ -2558,7 +2570,10 @@ export interface components {
             action: "clarify" | "wait_input" | "blocked";
             explanation: components["schemas"]["Wording"];
         };
-        /** FileReceipt */
+        /**
+         * FileReceipt
+         * @description 上传完成后回传的文件收据：身份、类型、大小与摘要。
+         */
         FileReceipt: {
             /** Byte Size */
             byte_size: number;
@@ -2848,7 +2863,10 @@ export interface components {
             /** Title */
             title: string;
         };
-        /** Issue */
+        /**
+         * Issue
+         * @description 一条校验/错误明细：错误码、路径、说明与关联引用。
+         */
         Issue: {
             /** Code */
             code: string;
@@ -3135,6 +3153,7 @@ export interface components {
         };
         /** MaterialMessageInput */
         MaterialMessageInput: {
+            focus_candidate?: components["schemas"]["JsonUUID"] | null;
             /** Message */
             message: string;
             previous_batch_ref?: components["schemas"]["PreviousMaterialBatch"] | null;
@@ -3583,7 +3602,10 @@ export interface components {
              */
             type: "paragraph";
         };
-        /** ParentBinding */
+        /**
+         * ParentBinding
+         * @description 候选与唯一父题的绑定；候选父、入库项父、题目实例父三类引用恰好其一。
+         */
         ParentBinding: {
             candidate_ref: components["schemas"]["CandidateRef"];
             parent_candidate_ref?: components["schemas"]["CandidateRef"] | null;
@@ -3702,7 +3724,10 @@ export interface components {
         /** @enum {string} */
         Readiness: "ready" | "unprepared";
         Rectangle: number[];
-        /** Ref */
+        /**
+         * Ref
+         * @description 对象引用三元组（owner/type/id），可带单一版本定位；不直接持有正文。
+         */
         Ref: {
             /** Id */
             id: string;
@@ -4558,9 +4583,39 @@ export interface components {
         /** TextbookList */
         TextbookList: {
             /** Items */
-            items: components["schemas"]["TextbookRow"][];
+            items: components["schemas"]["TextbookListItem"][];
             /** Next Cursor */
             next_cursor: string | null;
+        };
+        /** TextbookListItem */
+        TextbookListItem: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Domain Id
+             * Format: uuid
+             */
+            domain_id: string;
+            /**
+             * Import Id
+             * Format: uuid
+             */
+            import_id: string;
+            metadata: components["schemas"]["TextbookMetadata"];
+            metadata_revision: components["schemas"]["Revision"];
+            /**
+             * Processing
+             * @enum {string}
+             */
+            processing: "ready" | "processing" | "review" | "needs_input" | "failed" | "adopted";
+            /**
+             * Textbook Id
+             * Format: uuid
+             */
+            textbook_id: string;
         };
         /** TextbookMetadata */
         TextbookMetadata: {
@@ -4669,7 +4724,10 @@ export interface components {
             object_ref: components["schemas"]["TaskRef"];
             request_id: components["schemas"]["RequestId"];
         };
-        /** UploadView */
+        /**
+         * UploadView
+         * @description 上传记录视图：状态、完成收据或错误明细。
+         */
         UploadView: {
             error?: components["schemas"]["ErrorDetail"] | null;
             receipt?: components["schemas"]["FileReceipt"] | null;
@@ -11428,6 +11486,7 @@ export interface operations {
         parameters: {
             query?: {
                 chapter_id?: string | null;
+                catalog_only?: boolean;
             };
             header?: never;
             path: {

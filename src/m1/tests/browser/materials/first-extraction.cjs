@@ -37,7 +37,9 @@ async function run() {
     await dialog.getByLabel('教材名称').fill(label);
     await dialog.getByLabel('来源说明').fill('C03 辨错演算原页与局部图');
     await dialog.getByLabel('教材文件').setInputFiles(['C03-0.png', 'C03-1.png'].map((name) => path.join(fixture, name)));
-    await dialog.getByRole('button', { name: '上传并登记' }).click();
+    await dialog.getByRole('button', { name: '上传并解析' }).click();
+    await page.locator('summary').filter({ hasText: '教材原件' }).click();
+    await page.locator('.assistant-chat li').filter({ has: page.getByText('教材助手', { exact: true }) }).first().waitFor({ timeout: 255_000 });
     await page.getByRole('button', { name: 'C03-0.png' }).waitFor();
     const assistant = page.getByRole('region', { name: '教材助手' });
     await assistant.getByLabel('引用原件').selectOption({ label: 'C03-0.png' });

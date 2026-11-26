@@ -1239,6 +1239,7 @@
       },
       "CandidateRef": {
         "additionalProperties": false,
+        "description": "候选定位：候选编号、候选修订与依据修订。",
         "properties": {
           "basis_revision": {
             "minimum": 0.0,
@@ -4020,6 +4021,7 @@
       },
       "ErrorDetail": {
         "additionalProperties": false,
+        "description": "错误详情：错误码、可公开说明、明细列表与是否可重试。",
         "properties": {
           "code": {
             "title": "Code",
@@ -4052,6 +4054,7 @@
       },
       "ErrorResponse": {
         "additionalProperties": false,
+        "description": "对外错误响应体：错误详情与可选请求引用。",
         "properties": {
           "error": {
             "$ref": "#/components/schemas/ErrorDetail"
@@ -4115,6 +4118,7 @@
       },
       "EventPartRef": {
         "additionalProperties": false,
+        "description": "定位某事件内一条记录或一个字段的引用；path 为 JSON Pointer。",
         "properties": {
           "event_id": {
             "format": "uuid",
@@ -4479,6 +4483,7 @@
       },
       "FileReceipt": {
         "additionalProperties": false,
+        "description": "上传完成后回传的文件收据：身份、类型、大小与摘要。",
         "properties": {
           "byte_size": {
             "exclusiveMinimum": 0.0,
@@ -5381,6 +5386,7 @@
       },
       "Issue": {
         "additionalProperties": false,
+        "description": "一条校验/错误明细：错误码、路径、说明与关联引用。",
         "properties": {
           "code": {
             "title": "Code",
@@ -6128,6 +6134,16 @@
       "MaterialMessageInput": {
         "additionalProperties": false,
         "properties": {
+          "focus_candidate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JsonUUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "message": {
             "maxLength": 4096,
             "minLength": 1,
@@ -7511,6 +7527,7 @@
       },
       "ParentBinding": {
         "additionalProperties": false,
+        "description": "候选与唯一父题的绑定；候选父、入库项父、题目实例父三类引用恰好其一。",
         "properties": {
           "candidate_ref": {
             "$ref": "#/components/schemas/CandidateRef"
@@ -7869,6 +7886,7 @@
       },
       "Ref": {
         "additionalProperties": false,
+        "description": "对象引用三元组（owner/type/id），可带单一版本定位；不直接持有正文。",
         "properties": {
           "id": {
             "minLength": 1,
@@ -10570,7 +10588,7 @@
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/TextbookRow"
+              "$ref": "#/components/schemas/TextbookListItem"
             },
             "title": "Items",
             "type": "array"
@@ -10592,6 +10610,60 @@
           "next_cursor"
         ],
         "title": "TextbookList",
+        "type": "object"
+      },
+      "TextbookListItem": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "domain_id": {
+            "format": "uuid",
+            "title": "Domain Id",
+            "type": "string"
+          },
+          "import_id": {
+            "format": "uuid",
+            "title": "Import Id",
+            "type": "string"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/TextbookMetadata"
+          },
+          "metadata_revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "processing": {
+            "enum": [
+              "ready",
+              "processing",
+              "review",
+              "needs_input",
+              "failed",
+              "adopted"
+            ],
+            "title": "Processing",
+            "type": "string"
+          },
+          "textbook_id": {
+            "format": "uuid",
+            "title": "Textbook Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "textbook_id",
+          "domain_id",
+          "import_id",
+          "metadata",
+          "metadata_revision",
+          "created_at",
+          "processing"
+        ],
+        "title": "TextbookListItem",
         "type": "object"
       },
       "TextbookMetadata": {
@@ -10876,6 +10948,7 @@
       },
       "UploadView": {
         "additionalProperties": false,
+        "description": "上传记录视图：状态、完成收据或错误明细。",
         "properties": {
           "error": {
             "anyOf": [
@@ -20887,6 +20960,16 @@
                 }
               ],
               "title": "Chapter Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "catalog_only",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Catalog Only",
+              "type": "boolean"
             }
           }
         ],

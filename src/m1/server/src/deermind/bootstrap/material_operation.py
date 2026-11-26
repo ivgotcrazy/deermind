@@ -48,12 +48,13 @@ from temporalio.exceptions import ActivityError, ApplicationError
 PURPOSE = Purpose(
     "material_extraction",
     Ref(owner="product", type="ai_purpose", id="material_extraction", version=1),
-    Ref(owner="product", type="prompt", id="material_extraction", version=1),
+    Ref(owner="product", type="prompt", id="material_extraction", version=6),
     Ref(owner="product", type="ai_schema", id="MaterialProposal", version=1),
     MaterialProposal,
 )
 _MODEL_KEY = "M1_MATERIAL_MODEL_KEY"
 _PAGE_BATCH = 4
+_CONTEXT_PAGES = 2
 
 
 def material_config() -> ExecutionConfig | None:
@@ -61,7 +62,7 @@ def material_config() -> ExecutionConfig | None:
         # 未显式启用教材抽取模型，返回空配置关闭该路径。
         return None
     return ExecutionConfig(
-        revision="material-extraction-1",
+        revision="material-extraction-6",
         purpose_bindings={
             PURPOSE.name: PurposeBinding(
                 contract_ref=PURPOSE.contract_ref,
@@ -215,7 +216,10 @@ class MaterialActivities:
         rendered: list[ImagePage] = []
         if not gaps:
             # 尚无缺失问题时，逐页校验原件并渲染为图片。
-            for value in pages[offset : offset + _PAGE_BATCH]:
+            overlap = _CONTEXT_PAGES if turn.input.get("neighbor_pages") else 0
+            start = max(0, offset - overlap)
+            stop = offset + _PAGE_BATCH
+            for position, value in enumerate(pages[start : stop + overlap], start):
                 assert isinstance(value, dict)
                 index = value["file_page"]
                 assert isinstance(index, int)
@@ -254,18 +258,31 @@ class MaterialActivities:
                                 "region": None,
                             }
                         ),
-                        name=str(value["original_name"]),
+                        name=("本批负责页 " if offset <= position < stop else "相邻对照页 ")
+                        + str(value["original_name"]),
                         data=base64.b64encode(image).decode(),
                     )
                 )
         previous = await self.service.previous_context(turn)
         prompt = str(turn.input["message"])
+        if turn.input.get("focus_candidate"):
+            prompt += f"\n定点修正候选 {turn.input['focus_candidate']}。用 replaces 指定它。"
         if previous:
-            # 有上一批候选时，把修正上下文追加到提示词。
-            prompt += (
-                "\n以下是所引用的上一批候选，只用于核对本次请求。"
-                "请保留与这条修正无关的原有内容，交付修正后的完整候选。\n" + previous
-            )
+            state = turn.input.get("previous_batch_state")
+            if turn.input.get("focus_candidate"):
+                prompt += (
+                    "\n只修订所选项，解法附父题。preserved_items 仅列出其他项的标题；"
+                    "这些项原样保留，不复查、不报告缺失。所选原文：\n"
+                )
+            elif state is None:
+                # v1 已受理任务恢复时沿用原输入。
+                prompt += (
+                    "\n以下是所引用的上一批候选，只用于核对本次请求。"
+                    "请保留与这条修正无关的原有内容，交付修正后的完整候选。\n"
+                )
+            else:
+                prompt += f"\n所引用的上一批候选（受理时 decision_state={state}）：\n"
+            prompt += previous
         return PreparedRange(
             pages=rendered,
             prompt=prompt,
@@ -289,12 +306,13 @@ class MaterialActivities:
             MaterialProposal.model_validate(await self.calls.candidate_content(run, UUID(key)))
             for key in keys
         ]
-        proposal = merge_proposals(values, selected) if values else None
-        if proposal is not None and gaps:
-            # 已有提案但存在缺失问题，结果降级为待补充输入。
-            proposal = proposal.model_copy(
-                update={"outcome": "needs_input", "questions": [*proposal.questions, *gaps]}
-            )
+        page_count = len(selected)
+        selected = list({page.source_id: page for page in selected}.values())
+        proposal = (
+            merge_proposals(values, selected, neighbors=page_count != len(selected))
+            if values and not gaps
+            else None
+        )
         # 无缺失、且提案不处于待补充状态时，本轮才可标记完成。
         can_complete = not gaps and (proposal is None or proposal.outcome != "needs_input")
         outcome: TurnOutcome = "completed" if can_complete else "needs_input"
@@ -314,7 +332,9 @@ class MaterialActivities:
         )
 
 
-def merge_proposals(proposals: list[MaterialProposal], shown: list[SourceRef]) -> MaterialProposal:
+def merge_proposals(
+    proposals: list[MaterialProposal], shown: list[SourceRef], *, neighbors: bool = False
+) -> MaterialProposal:
     """各页段使用自己的局部键，程序为合并后的提案消除键冲突。"""
     changes: list[ProposedContent] = []
     retire: list[str] = []
@@ -322,19 +342,47 @@ def merge_proposals(proposals: list[MaterialProposal], shown: list[SourceRef]) -
     coverage: list[OriginalCoverage] = []
     issues: list[str] = []
     questions: list[str] = []
-    allowed = {item.source_id for item in shown}
+    positions = {item.source_id: index for index, item in enumerate(shown)}
+    preceding_sections: dict[str, str] = {}
     # 逐段合并候选，把各段局部键改写为全局唯一编号。
     for index, proposal in enumerate(proposals, 1):
-        local = {item.source_id for item in proposal.coverage}
-        if not local <= allowed:
-            # 候选覆盖了本批未提供的来源，属越界引用。
-            raise ValueError("Unexpected material coverage")
-        proposal = proposal.bind_sources([item for item in shown if item.source_id in local])
+        start = (index - 1) * _PAGE_BATCH
+        stop = start + _PAGE_BATCH
+        overlap = _CONTEXT_PAGES if neighbors else 0
+        proposal = proposal.bind_sources(shown[max(0, start - overlap) : stop + overlap])
+
+        roots = {
+            item.local_key
+            for item in proposal.changes
+            if not item.parent_key
+            and start <= min(positions[r.source_id] for r in item.content.source_refs) < stop
+        }
+        included = [
+            item for item in proposal.changes if (item.parent_key or item.local_key) in roots
+        ]
         keys = {item.local_key: f"{index}:{order}" for order, item in enumerate(proposal.changes)}
         sections = {
             item.local_key: f"{index}:{order}"
             for order, item in enumerate(proposal.catalog_changes)
         }
+        current_sections: dict[str, str] = {}
+        for chapter in proposal.catalog_changes:
+            if chapter.local_key not in {item.chapter_key for item in included} and not any(
+                start <= positions[page] < stop for page in chapter.source_ids
+            ):
+                continue
+            # 同名且共享原页的相邻目录项表示同一章节。仅同名不合并。
+            prior_key = preceding_sections.get(chapter.name)
+            prior = next((c for c in chapters if c.local_key == prior_key), None)
+            if prior and set(prior.source_ids).intersection(chapter.source_ids):
+                sections[chapter.local_key] = prior.local_key
+                prior.source_ids.extend(p for p in chapter.source_ids if p not in prior.source_ids)
+            else:
+                chapters.append(
+                    chapter.model_copy(deep=True, update={"local_key": sections[chapter.local_key]})
+                )
+            current_sections[chapter.name] = sections[chapter.local_key]
+        preceding_sections = current_sections
         changes.extend(
             item.model_copy(
                 update={
@@ -344,13 +392,11 @@ def merge_proposals(proposals: list[MaterialProposal], shown: list[SourceRef]) -
                     "parent_key": keys[item.parent_key] if item.parent_key else None,
                 }
             )
-            for item in proposal.changes
+            for item in included
         )
-        chapters.extend(
-            item.model_copy(update={"local_key": sections[item.local_key]})
-            for item in proposal.catalog_changes
+        coverage.extend(
+            item for item in proposal.coverage if start <= positions[item.source_id] < stop
         )
-        coverage.extend(proposal.coverage)
         retire.extend(proposal.retire)
         issues.extend(proposal.issues)
         questions.extend(proposal.questions)

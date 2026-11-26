@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import type { components } from '../../../../../contracts/generated/http/schema';
 import { ApiError, get, postAccepted } from '../../../shared/api/http';
 import type { DomainSession } from '../domain/api';
@@ -9,6 +9,8 @@ export type AdoptedCandidate = Schema['CandidateRef'] & {
   kind: string;
   parent_ref: Schema['Ref'] | null;
   validity: string;
+  intake_status?: 'received' | 'submitted' | 'rejected' | null;
+  intake_ref?: string | null;
   body: { title: string };
 };
 const { items, importId, domainId, session } = defineProps<{
@@ -23,6 +25,7 @@ const pending = ref<Schema['SubmitDomainIntake']>();
 const sending = ref(false);
 const error = ref('');
 const cancel = new AbortController();
+const emit = defineEmits<{ changed: [] }>();
 const opts = { session, signal: cancel.signal };
 let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -47,6 +50,15 @@ async function refresh(submissionId: string) {
     },
   );
   result.value = reply;
+  if (
+    reply.status !== 'submitted' &&
+    items.some(
+      (item) => selectedAtSubmit.has(item.candidate_id) && item.intake_status !== reply.status,
+    )
+  ) {
+    selectedAtSubmit.clear();
+    emit('changed');
+  }
   if (
     !cancel.signal.aborted &&
     reply.status === 'submitted' &&
@@ -95,6 +107,7 @@ async function submit() {
   sending.value = true;
   try {
     const command = pending.value ?? (await prepareCommand());
+    for (const row of command.adopted_content_refs) selectedAtSubmit.add(row.candidate_id);
     pending.value = command;
     try {
       const response = await postAccepted(
@@ -137,6 +150,22 @@ onBeforeUnmount(() => {
   cancel.abort();
   clearTimeout(timer);
 });
+const selectedAtSubmit = new Set<string>();
+watch(
+  () => items,
+  (rows) => {
+    selected.value = [];
+    const active = rows.find((row) => row.intake_status === 'submitted' && row.intake_ref);
+    if (active?.intake_ref) {
+      for (const row of rows.filter((row) => row.intake_ref === active.intake_ref))
+        selectedAtSubmit.add(row.candidate_id);
+      void refresh(active.intake_ref).catch((cause) => {
+        if (!cancel.signal.aborted) error.value = String(cause);
+      });
+    }
+  },
+  { immediate: true },
+);
 const kinds = { kc: '知识成分', task_instance: '题目', reference: '题内参考' } as Record<
   string,
   string
@@ -151,8 +180,22 @@ const kinds = { kc: '知识成分', task_instance: '题目', reference: '题内�
         v-for="item in items.filter((candidate) => candidate.validity === 'current')"
         :key="item.candidate_id"
       >
-        <input v-model="selected" type="checkbox" :value="item.candidate_id" />
+        <input
+          v-model="selected"
+          type="checkbox"
+          :value="item.candidate_id"
+          :disabled="item.intake_status === 'received' || item.intake_status === 'submitted'"
+        />
         {{ kinds[item.kind] }} · {{ item.body.title }}
+        <small>{{
+          item.intake_status === 'received'
+            ? '领域已接收'
+            : item.intake_status === 'submitted'
+              ? '等待领域接收'
+              : item.intake_status === 'rejected'
+                ? '领域未接收'
+                : '待提交'
+        }}</small>
       </label>
     </fieldset>
     <button type="submit" :disabled="sending || (!chosen.length && !pending)">

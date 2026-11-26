@@ -3,11 +3,57 @@
 import unittest
 from uuid import uuid4
 
+from deermind.bootstrap.material_operation import merge_proposals
 from deermind.product.materials.proposals import MaterialProposal
 from deermind.spaces.domain.public import SourceRef
 
 
 class MaterialProposalTests(unittest.TestCase):
+    def test_neighbor_pages_are_verified_per_window_and_counted_only_once(self) -> None:
+        pages = [
+            SourceRef.model_validate(
+                {
+                    "source_id": f"page-{n}",
+                    "owner": "product",
+                    "ref": {"type": "file", "file_id": uuid4(), "sha256": "a" * 64},
+                }
+            )
+            for n in range(9)
+        ]
+
+        def chunk(seen: list[SourceRef]) -> MaterialProposal:
+            keys = [page.source_id for page in seen]
+            return MaterialProposal.model_validate(
+                {
+                    "outcome": "proposal",
+                    "reply": "供核对",
+                    "changes": [],
+                    "issues": [],
+                    "questions": [],
+                    "catalog_changes": [
+                        {
+                            "action": "add",
+                            "local_key": "unit",
+                            "order": 1,
+                            "name": "第一章",
+                            "source_ids": keys,
+                            "reason": "同章页眉",
+                        }
+                    ],
+                    "coverage": [
+                        {"source_id": key, "status": "processed", "reason": "已读"} for key in keys
+                    ],
+                }
+            )
+
+        batches = [chunk(pages[:6]), chunk(pages[2:]), chunk(pages[6:])]
+        result = merge_proposals(batches, pages, neighbors=True)
+        self.assertEqual([p.source_id for p in result.coverage], [p.source_id for p in pages])
+        self.assertEqual(len(result.catalog_changes), 1)
+        self.assertEqual(len(result.catalog_changes[0].source_ids), 9)
+        with self.assertRaisesRegex(ValueError, "覆盖清单"):
+            merge_proposals([chunk(pages), *batches[1:]], pages, neighbors=True)
+
     def test_bind_uses_registered_file_and_keeps_observed_printed_page(self) -> None:
         shown = SourceRef.model_validate(
             {

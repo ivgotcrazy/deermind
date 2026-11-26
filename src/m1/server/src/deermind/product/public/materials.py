@@ -94,8 +94,12 @@ class TextbookRow(FactModel):
     created_at: datetime
 
 
+class TextbookListItem(TextbookRow):
+    processing: Literal["ready", "processing", "review", "needs_input", "failed", "adopted"]
+
+
 class TextbookList(FactModel):
-    items: list[TextbookRow]
+    items: list[TextbookListItem]
     next_cursor: str | None
 
 

@@ -43,6 +43,7 @@ from deermind.product.public.materials import (
     MaterialView,
     NewMaterial,
     TextbookList,
+    TextbookListItem,
     TextbookMetadata,
     TextbookRow,
 )
@@ -466,8 +467,19 @@ class MaterialReceiving:
             rows = (
                 await connection.scalars(
                     text(
-                        "SELECT to_jsonb(t)-'source_event_id' FROM product.textbook t "
-                        "JOIN product.material_import i USING(import_id) WHERE i.status='active' "
+                        "SELECT (to_jsonb(t)-'source_event_id') || jsonb_build_object("
+                        "'processing', CASE WHEN i.active_request_ref IS NOT NULL "
+                        "THEN 'processing' "
+                        "WHEN last_turn.state IN ('failed','needs_input') THEN last_turn.state "
+                        "WHEN EXISTS (SELECT 1 FROM product.material_candidate_batch b "
+                        "JOIN product.material_turn mt ON mt.request_ref=b.turn_ref "
+                        "WHERE mt.import_id=i.import_id AND "
+                        "b.decision_state='pending') THEN 'review' "
+                        "WHEN i.content_revision>0 THEN 'adopted' ELSE 'ready' END) "
+                        "FROM product.textbook t JOIN product.material_import i USING(import_id) "
+                        "LEFT JOIN LATERAL (SELECT state FROM product.material_turn "
+                        "WHERE import_id=i.import_id ORDER BY created_at DESC LIMIT 1) "
+                        "last_turn ON true WHERE i.status='active' "
                         "AND (CAST(:domain AS uuid) IS NULL OR t.domain_id=:domain) "
                         "AND strpos(lower(t.metadata->>'title'),lower(:name))>0 "
                         "AND (CAST(:after AS uuid) IS NULL OR t.textbook_id>:after) "
@@ -476,7 +488,7 @@ class MaterialReceiving:
                     {"domain": domain_id, "name": name, "after": after, "limit": limit + 1},
                 )
             ).all()
-        books = [TextbookRow.model_validate_json(canonical_json(row)) for row in rows[:limit]]
+        books = [TextbookListItem.model_validate_json(canonical_json(row)) for row in rows[:limit]]
         return TextbookList(
             items=books,
             next_cursor=f"{token}.{books[-1].textbook_id}" if len(rows) > limit else None,

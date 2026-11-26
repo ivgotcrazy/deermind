@@ -20,6 +20,7 @@ from deermind.foundation.system.public.errors import Issue, RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.materials import assistant_facts as facts
 from deermind.product.materials.facts import IMPORT, MaterialImportFact, record
+from deermind.product.materials.focused_revision import revise_item
 from deermind.product.materials.proposals import MaterialProposal
 from deermind.product.materials.receiving import MaterialReceiving, import_ref
 from deermind.product.public.authentication import SessionView
@@ -289,10 +290,39 @@ class MaterialAssistant:
                 raise RequestError(409, "revision_conflict", "教材内容已更新，请重新选择引用。")
             prior_batch = command.previous_batch_ref
             earlier_pages = None
+            prior_state = None
+            if command.focus_candidate and (not prior_batch or command.selection):
+                raise RequestError(400, "invalid_reference", "定点修正须引用候选批次及其原页。")
             if prior_batch is not None:
-                # 引用前序批次时，取出其已读页集合作为上下文范围。
+                # 固定纠错时的批次状态和原页范围，决定哪些候选需要随本轮交付。
                 earlier = await self._previous_batch(connection, identity, prior_batch)
+                prior_state = earlier["decision_state"]
                 earlier_pages = {str(ref["source_id"]) for ref in earlier["read_set"]}
+                if command.focus_candidate:
+                    pages_used = (
+                        await connection.scalars(
+                            text(
+                                "SELECT jsonb_array_elements(c.source_refs)->>'id' "
+                                "FROM product.material_candidate c JOIN "
+                                "product.material_candidate f "
+                                "ON c.import_id=f.import_id AND ((c.batch_id=f.batch_id AND ("
+                                "c.candidate_id=f.candidate_id OR "
+                                "c.parent_ref->>'id'=f.candidate_id::text)) OR "
+                                "(c.candidate_id::text=f.parent_ref->>'id' AND "
+                                "c.candidate_revision=(f.parent_ref->>'revision')::int)) "
+                                "WHERE f.candidate_id=:candidate AND "
+                                "f.batch_id=:batch AND f.import_id=:scope"
+                            ),
+                            {
+                                "candidate": command.focus_candidate,
+                                "batch": prior_batch.batch_id,
+                                "scope": identity,
+                            },
+                        )
+                    ).all()
+                    if not pages_used:
+                        raise RequestError(400, "invalid_reference", "所选内容不属于这批候选。")
+                    earlier_pages = set(pages_used)
             pages, gaps = await self._manifest(connection, identity, command, earlier_pages)
             timestamp = datetime.now(UTC)
             message_id = uuid4()
@@ -314,6 +344,11 @@ class MaterialAssistant:
                     "basis_revision": imported["content_revision"],
                     "request_id": command.request_id,
                     "previous_batch": prior_batch.model_dump(mode="json") if prior_batch else None,
+                    "previous_batch_state": prior_state,
+                    "focus_candidate": str(command.focus_candidate)
+                    if command.focus_candidate
+                    else None,
+                    "neighbor_pages": True,
                 },
                 state="accepted",
                 runtime_ref=work_id,
@@ -460,9 +495,45 @@ class MaterialAssistant:
                     {"id": fixed.batch_id, "import": turn.import_id},
                 )
             ).all()
-        return canonical_json(
-            {"chapters": previous["diff_summary"]["chapters"], "items": list(rows)}
-        )
+            focus = turn.input.get("focus_candidate")
+            if focus:
+                target = next(row for row in rows if row["candidate_id"] == focus)
+                focused = [target]
+                if parent := target["parent_ref"]:
+                    parent_row = await connection.scalar(
+                        text(
+                            "SELECT to_jsonb(c)-'source_event_id' FROM "
+                            "product.material_candidate c "
+                            "WHERE import_id=:scope AND candidate_id=:id AND "
+                            "candidate_revision=:revision"
+                        ),
+                        {"scope": turn.import_id, **parent},
+                    )
+                    if parent_row is not None:
+                        focused.append(parent_row)
+                return canonical_json(
+                    {
+                        "chapter": next(
+                            c["name"]
+                            for c in previous["diff_summary"]["chapters"]
+                            if c["chapter_id"] == target["chapter_ref"]["id"]
+                        ),
+                        "items": focused,
+                        # 只给关联摘要，防止将未提交给模型的其他解法误报为缺失。
+                        "preserved_items": [
+                            {"kind": row["kind"], "title": row["body"]["title"]}
+                            for row in rows
+                            if row["candidate_id"] != focus
+                        ],
+                    }
+                )
+        context = {"chapters": previous["diff_summary"]["chapters"], "items": list(rows)}
+        if turn.input.get("previous_batch_state") == "pending":
+            # 待审的撤下决定没有对应正文行，单独提示，避免下一批无意覆盖它。
+            context["pending_retirements"] = [
+                item["candidate_id"] for item in previous["write_set"] if item["action"] == "retire"
+            ]
+        return canonical_json(context)
 
     async def finish(
         self,
@@ -483,6 +554,20 @@ class MaterialAssistant:
             imported = await self.materials.read_import(connection, work.scope_id, lock=True)
             actor = (await store.authorization(connection, work.execution_id)).initiator_ref
             batches: list[Ref] = []
+            focus = turn.input.get("focus_candidate")
+            if (
+                focus
+                and proposal
+                and (
+                    proposal.outcome == "needs_input"
+                    or proposal.retire
+                    or len([item for item in proposal.changes if item.replaces == focus]) != 1
+                )
+            ):
+                # 目标不唯一或材料不全时保留旧稿，请管理员补充再试。
+                outcome = "needs_input"
+                reply = "\n".join(proposal.questions) or "请补充所选内容需要修改的具体位置。"
+                proposal = None
             if proposal is not None and (
                 proposal.changes or proposal.catalog_changes or proposal.retire
             ):
@@ -514,6 +599,10 @@ class MaterialAssistant:
         prior_ref = turn.input.get("previous_batch")
         previous_rows: dict[str, facts.CandidateFact] = {}
         chapter_names: dict[str, UUID] = {}
+        focus = turn.input.get("focus_candidate")
+        candidates: dict[str, tuple[UUID, int]] = {}
+        prior_retirements: list[dict[str, JsonValue]] = []
+        adopted_basis: dict[str, JsonValue] = {}
         if prior_ref is not None:
             # 载入前序批次快照，供修订与退役定位旧候选。
             previous = PreviousMaterialBatch.model_validate(prior_ref)
@@ -530,10 +619,41 @@ class MaterialAssistant:
             for row in sources:
                 prior = facts.CandidateFact.model_validate_json(canonical_json(row))
                 previous_rows[str(prior.candidate_id)] = prior
+            # 连续修订草稿时始终比较上次正式采用的版本，草稿修订号不能充当采用版本。
+            for write in snapshot["write_set"]:
+                target = str(write["candidate_id"])
+                if snapshot["decision_state"] == "adopted" and target in previous_rows:
+                    adopted_basis[target] = previous_rows[target].candidate_revision
+                elif "adopted_basis" in write:
+                    adopted_basis[target] = write["adopted_basis"]
+                elif write["action"] == "add":
+                    adopted_basis[target] = None
             for section in snapshot["diff_summary"]["chapters"]:
                 # 记录章节名到前序章节标识的映射，便于目录调整复用。
                 chapter_names[section["name"]] = UUID(section["chapter_id"])
-        candidates: dict[str, tuple[UUID, int]] = {}
+            if isinstance(focus, str):
+                # 单项修订只采用模型对该项的修改，兄弟条目和父子关系由程序保留。
+                old = previous_rows[focus]
+                matches = [
+                    c for c in proposal.changes if c.replaces == focus and c.kind == old.kind
+                ]
+                if len(matches) != 1 or proposal.retire:
+                    raise ValueError("定点修正必须唯一对应所选候选")
+                pending = snapshot["decision_state"] == "pending"
+                # 局部批次可能只含解法。父题若也在本批修订，下面会换成它的新版本。
+                for row in previous_rows.values():
+                    if row.parent_ref and row.parent_ref.revision:
+                        candidates[row.parent_ref.id] = (
+                            UUID(row.parent_ref.id),
+                            row.parent_ref.revision,
+                        )
+                if pending:
+                    prior_retirements = [
+                        w for w in snapshot["write_set"] if w["action"] == "retire"
+                    ]
+                proposal, shown = revise_item(
+                    proposal, shown, snapshot, previous_rows, focus, matches[0]
+                )
         replaced: set[str] = set()
         for item in proposal.changes:
             if item.replaces is None:
@@ -564,7 +684,7 @@ class MaterialAssistant:
         basis = turn.input["basis_revision"]
         assert isinstance(basis, int)
         rows: list[FactRecord] = []
-        writes: list[dict[str, JsonValue]] = []
+        writes: list[dict[str, JsonValue]] = list(prior_retirements)
         for target in proposal.retire:
             old = previous_rows.get(target)
             if old is None or target in replaced:
@@ -624,6 +744,11 @@ class MaterialAssistant:
                     "previous": entry.replaces,
                     "candidate_revision": revision,
                     "reason": entry.reason,
+                    **(
+                        {"adopted_basis": adopted_basis[str(identity)]}
+                        if str(identity) in adopted_basis
+                        else {}
+                    ),
                 }
             )
         batch = facts.CandidateBatchFact(

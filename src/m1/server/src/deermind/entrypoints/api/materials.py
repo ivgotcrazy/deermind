@@ -334,11 +334,15 @@ async def decide_material_batch(
     operation_id="material_current_contents",
 )
 async def material_current_contents(
-    request: Request, response: Response, import_id: UUID, chapter_id: UUID | None = None
+    request: Request,
+    response: Response,
+    import_id: UUID,
+    chapter_id: UUID | None = None,
+    catalog_only: bool = False,
 ) -> MaterialCurrentContents:
     session = await _admin(request, response)
     adoptions: MaterialAdoptionService = request.app.state.material_adoptions
-    return await adoptions.contents(session, import_id, chapter_id)
+    return await adoptions.contents(session, import_id, chapter_id, catalog_only=catalog_only)
 
 
 @router.post(

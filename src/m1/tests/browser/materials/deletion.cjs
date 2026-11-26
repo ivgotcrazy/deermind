@@ -39,19 +39,17 @@ async function run() {
     await dialog.getByLabel('教材名称').fill(name);
     await dialog.getByLabel('来源说明').fill('E02-17 会撤下的验收教材');
     await dialog.getByLabel('教材文件').setInputFiles(fixture);
-    await dialog.getByRole('button', { name: '上传并登记' }).click();
+    const parsing = page.waitForRequest((r) => r.method() === 'POST' && r.url().endsWith('/messages'));
+    await dialog.getByRole('button', { name: '上传并解析' }).click();
+    const requestId = (await parsing).postDataJSON().request_id;
+    await page.locator('summary').filter({ hasText: '教材原件' }).click();
     await page.getByRole('button', { name: '删除导入' }).waitFor();
     const books = await (await api.get(root + '/textbooks?name=' + encodeURIComponent(name), { headers })).json();
     const book = books.items.find((item) => item.metadata.title === name);
     const reading = root + '/textbooks/' + book.textbook_id;
     let assistantReceipt;
     if (process.env.M1_E02_CANCEL_QUEUED === '1') {
-      // Worker 暂停时保存一条不含明确原件范围的请求，验证取消不会外发模型。
-      const requestId = randomUUID();
-      const accepted = await api.post(root + '/material-imports/' + book.import_id + '/messages', {
-        headers, data: { request_id: requestId, message: '等待撤下的教材助手测试消息。' },
-      });
-      assert.equal(accepted.status(), 202, await accepted.text());
+      // 删除已由上传启动、正在排队的解析工作。
       assistantReceipt = root + '/requests/receipt?' + new URLSearchParams({
         action: 'product.converse_material_assistant', resource_kind: 'material_import',
         resource_id: book.import_id, request_id: requestId,

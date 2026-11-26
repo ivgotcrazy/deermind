@@ -57,6 +57,7 @@ async function load() {
       get('/api/m1/material-imports/{import_id}/contents', {
         ...opts,
         params: { import_id: material.textbook.import_id },
+        query: { catalog_only: true },
       }),
       get('/api/m1/domains/{domain_id}/objects', {
         ...opts,
@@ -216,6 +217,7 @@ onBeforeUnmount(() => lifecycle.abort());
           >任务
           <select
             v-model="selectedTask"
+            aria-label="任务"
             required
             @change="
               selectedMethods = [];

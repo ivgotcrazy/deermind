@@ -1,6 +1,6 @@
 images:
-  server: deermind/server:evidence-time-r1
-  client: deermind/client:textbook-domain-ui-r2
+  server: deermind/server:material-chapter-final
+  client: deermind/client:material-chapter-r2
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
 filesClaim: deermind-files

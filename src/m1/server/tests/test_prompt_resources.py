@@ -1,5 +1,6 @@
 """Prompt resources resolve an exact version and preserve explicit part order."""
 
+import re
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import TestCase
@@ -8,11 +9,24 @@ from unittest.mock import patch
 from deermind.abstractions.ai.calls import AIRejected
 from deermind.abstractions.events import Ref
 from deermind.bootstrap.evaluation_operation import PURPOSE, TEACHING
+from deermind.bootstrap.material_operation import PURPOSE as MATERIAL
 from deermind.bootstrap.prompts import configure_prompts
 from deermind.foundation.ai.prompts import PromptLibrary, PromptSource
+from deermind.spaces.domain.public import RichContent
+from deermind.spaces.domain.rich_content import MathExpression
+from pydantic import TypeAdapter
 
 
 class PromptResourceTests(TestCase):
+    def test_material_examples_validate_as_the_types_sent_to_the_model(self) -> None:
+        # 示例也随正式合同校验，避免教给模型的公式或图形无法保存。
+        instructions = configure_prompts().read(MATERIAL.prompt_ref, ["instructions"])
+        formula, diagram = re.findall(r"```json\n(.*?)\n```", instructions, re.DOTALL)
+        expression = TypeAdapter(MathExpression).validate_json(formula)
+        self.assertEqual(expression.op, "divide")
+        content = RichContent.model_validate_json(diagram)
+        self.assertEqual(content.blocks[0].type, "diagram")
+
     def test_evaluation_prompt_resources_are_packaged_with_the_operation(self) -> None:
         prompts = configure_prompts()
         self.assertIn("method_source", prompts.read(PURPOSE.prompt_ref, ["instructions"]))

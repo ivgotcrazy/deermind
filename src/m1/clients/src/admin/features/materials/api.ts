@@ -4,7 +4,7 @@ import type { DomainSession } from '../domain/api';
 
 type Schemas = components['schemas'];
 export type MaterialDetail = Schemas['MaterialView'];
-export type TextbookRow = Schemas['TextbookRow'];
+export type TextbookRow = Schemas['TextbookListItem'];
 export type MaterialFile = Schemas['MaterialFile'];
 export type SourceView = Schemas['MaterialSourceView'];
 type NewMaterial = Schemas['NewMaterial'];
@@ -90,7 +90,7 @@ export async function readReceipt(session: DomainSession, command: ReceiveComman
   };
 }
 
-export async function download(session: DomainSession, source: SourceView) {
+export async function originalUrl(session: DomainSession, source: SourceView) {
   const query = new URLSearchParams({
     view: 'source',
     storage_ref: source.receipt.storage_ref,
@@ -102,7 +102,11 @@ export async function download(session: DomainSession, source: SourceView) {
     cache: 'no-store',
   });
   if (!result.ok) throw new Error('无法读取该原件，请核对当前登录和原件状态。');
-  const url = URL.createObjectURL(await result.blob());
+  return URL.createObjectURL(await result.blob());
+}
+
+export async function download(session: DomainSession, source: SourceView) {
+  const url = await originalUrl(session, source);
   const link = document.createElement('a');
   link.href = url;
   link.download = source.original_name;

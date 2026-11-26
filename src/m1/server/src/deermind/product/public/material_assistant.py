@@ -39,6 +39,7 @@ class MaterialMessageInput(FactModel):
     message: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=4096)]
     selection: MaterialSelection | None = None
     previous_batch_ref: PreviousMaterialBatch | None = None
+    focus_candidate: JsonUUID | None = None
 
 
 class MaterialMessagePart(FactModel):
@@ -118,7 +119,12 @@ class MaterialAdoptionService(Protocol):
     ) -> MaterialAdoptionReceipt: ...
 
     async def contents(
-        self, session: SessionView, import_id: UUID, chapter_id: UUID | None
+        self,
+        session: SessionView,
+        import_id: UUID,
+        chapter_id: UUID | None,
+        *,
+        catalog_only: bool = False,
     ) -> MaterialCurrentContents: ...
 
 

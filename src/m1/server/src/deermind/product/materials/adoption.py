@@ -136,6 +136,27 @@ class MaterialAdoptions:
             if item.get("action") in ("replace", "retire")
         ]
         if previous is not None and targets:
+            expected = {
+                str(w["candidate_id"]): w["adopted_basis"]
+                for w in batch.write_set
+                if "adopted_basis" in w and str(w["candidate_id"]) in targets
+            }
+            if expected:
+                changed = await connection.scalar(
+                    text(
+                        "SELECT 1 FROM jsonb_each_text(CAST(:expected AS jsonb)) e "
+                        "LEFT JOIN product.material_content_current c "
+                        "ON c.import_id=:id AND c.candidate_id=CAST(e.key AS uuid) "
+                        "WHERE c.candidate_revision IS DISTINCT FROM CAST(e.value AS bigint) "
+                        "OR c.validity<>'current' LIMIT 1"
+                    ),
+                    {"id": import_id, "expected": canonical_json(expected)},
+                )
+                if changed:
+                    raise RequestError(
+                        409, "candidate_basis_changed", "要修正的内容已变化，请重新核对。"
+                    )
+                targets = [target for target in targets if target not in expected]
             # 先核对修订/退役目标相对前序批次是否仍在当前版本。
             prior = PreviousMaterialBatch.model_validate(previous)
             changed = await connection.scalar(
@@ -410,28 +431,45 @@ class MaterialAdoptions:
         )
 
     async def contents(
-        self, session: SessionView, import_id: UUID, chapter_id: UUID | None
+        self,
+        session: SessionView,
+        import_id: UUID,
+        chapter_id: UUID | None,
+        *,
+        catalog_only: bool = False,
     ) -> MaterialCurrentContents:
         self.materials.administrator(session)
         async with self.engine.connect() as connection:
             imported = await self.materials.read_import(connection, import_id, lock=True)
             keys = {"id": import_id, "chapter": chapter_id, "book": imported["textbook_id"]}
-            items = list(
-                (
-                    await connection.scalars(
-                        text(
-                            "SELECT (to_jsonb(c)-'source_event_id') || "
-                            "jsonb_build_object('validity',v.validity) "
-                            "FROM product.material_content_current v "
-                            "JOIN product.material_candidate c "
-                            "USING(candidate_id,candidate_revision) "
-                            "WHERE v.import_id=:id AND v.validity<>'retired' "
-                            "AND (CAST(:chapter AS uuid) IS NULL OR v.chapter_id=:chapter) "
-                            "ORDER BY v.chapter_id,c.local_key LIMIT 101"
-                        ),
-                        keys,
-                    )
-                ).all()
+            items = (
+                []
+                if catalog_only
+                else list(
+                    (
+                        await connection.scalars(
+                            text(
+                                "SELECT (to_jsonb(c)-'source_event_id') || "
+                                "jsonb_build_object('validity',v.validity,"
+                                "'intake_status',s.status,'intake_ref',s.submission_id) "
+                                "FROM product.material_content_current v "
+                                "JOIN product.material_candidate c "
+                                "USING(candidate_id,candidate_revision) "
+                                "LEFT JOIN LATERAL (SELECT status,submission_id FROM "
+                                "product.material_intake_submission sub "
+                                "WHERE sub.import_id=v.import_id "
+                                "AND sub.candidate_refs @> jsonb_build_array(jsonb_build_object("
+                                "'candidate_id',v.candidate_id,"
+                                "'candidate_revision',v.candidate_revision)) "
+                                "ORDER BY sub.created_at DESC LIMIT 1) s ON true "
+                                "WHERE v.import_id=:id AND v.validity<>'retired' "
+                                "AND (CAST(:chapter AS uuid) IS NULL OR v.chapter_id=:chapter) "
+                                "ORDER BY v.chapter_id,c.local_key LIMIT 101"
+                            ),
+                            keys,
+                        )
+                    ).all()
+                )
             )
             chapters = list(
                 (

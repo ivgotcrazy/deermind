@@ -56,7 +56,7 @@ async function run() {
     const dialog = page.getByRole('dialog', { name: '上传教材', exact: true });
     const owner = dialog.getByRole('combobox', { name: /所属领域/ });
     assert.equal(await owner.inputValue(), '');
-    assert.ok(await dialog.getByRole('button', { name: '上传并登记' }).isDisabled());
+    assert.ok(await dialog.getByRole('button', { name: '上传并解析' }).isDisabled());
     await dialog.getByLabel('教材名称').fill(label);
     await dialog.getByLabel('来源说明').fill('合成验收页');
     const original = twoPagePdf();
@@ -95,7 +95,7 @@ async function run() {
       stored = await response.json();
       await route.abort();
     });
-    await dialog.getByRole('button', { name: '上传并登记' }).click();
+    await dialog.getByRole('button', { name: '上传并解析' }).click();
     await page.getByText('已登记 1 份原件。', { exact: false }).waitFor();
     await page.getByRole('status').filter({ hasText: '损坏原件.pdf' }).waitFor();
     await page.unroute('**/api/m1/material-imports');
@@ -103,6 +103,7 @@ async function run() {
     const duplicate = await page.request.post(origin + '/api/m1/material-imports', { data: command, headers });
     assert.equal(duplicate.status(), 200, await duplicate.text());
     assert.deepEqual(await duplicate.json(), stored);
+    await page.locator('summary').filter({ hasText: '教材原件' }).click();
     await page.getByText('2 页 · 顺序 1').waitFor();
     const workspace = page.getByRole('region', { name: '教材管理' });
     await workspace.getByText('所属领域 · ' + domainName, { exact: false }).waitFor();
@@ -120,7 +121,7 @@ async function run() {
       mimeType: 'image/png',
       buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGP8//8/AwMDEwMDAwMDAwAkBgMB/DXemwAAAABJRU5ErkJggg==', 'base64'),
     });
-    await appendix.getByRole('button', { name: '上传并登记' }).click();
+    await appendix.getByRole('button', { name: '补充原件' }).click();
     await page.getByText('1 页 · 顺序 2').waitFor();
     const current = await page.request.get(origin + '/api/m1/textbooks/' + stored.result.textbook_id, { headers });
     assert.equal(current.status(), 200, await current.text());

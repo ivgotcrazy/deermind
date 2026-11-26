@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { ApiError, get, post } from '../../../shared/api/http';
+import { ApiError, get, post, postAccepted } from '../../../shared/api/http';
 import { listDomains } from '../domain/api';
 import type { DomainRow, DomainSession } from '../domain/api';
 import DomainCreateDialog from '../domain/DomainCreateDialog.vue';
@@ -44,6 +44,19 @@ const resultNotice = ref('');
 const pending = ref<ReceiveCommand>();
 const appending = ref(false);
 const hasBook = computed(() => Boolean(selected.value));
+const stages = {
+  ready: ['待解析', '开始解析'],
+  processing: ['解析中', '查看进度'],
+  review: ['待核对', '核对候选'],
+  needs_input: ['待补充', '继续处理'],
+  failed: ['解析未完成', '查看并重试'],
+  adopted: ['教材已采用', '查看教材'],
+} as const;
+
+function moveFile(index: number, distance: number) {
+  const moved = files.value.splice(index, 1);
+  files.value.splice(index + distance, 0, ...moved);
+}
 
 function message(cause: unknown, fallback: string) {
   return cause instanceof Error ? cause.message : fallback;
@@ -210,6 +223,21 @@ async function store(command: ReceiveCommand, uploadFailures: string[] = []) {
     `已登记 ${result.received.length} 份原件。` +
     (uploadFailures.length ? `未上传：${uploadFailures.join('；')}。` : '') +
     (result.failed.length ? `未登记 ${result.failed.length} 份收据。` : '');
+  if (command.kind === 'domain' && !uploadFailures.length && !result.failed.length) {
+    try {
+      await postAccepted(
+        '/api/m1/material-imports/{import_id}/messages',
+        {
+          request_id: command.body.request_id,
+          message: '请解析整本教材。',
+        },
+        { session, params: { import_id: result.import_id } },
+      );
+      resultNotice.value = '原件已登记，解析请求已受理。';
+    } catch (cause) {
+      resultNotice.value = `原件已保存。请在教材助手核对解析进度。 ${message(cause, '')}`;
+    }
+  }
   await loadBooks();
   await read(result.textbook_id);
 }
@@ -344,6 +372,8 @@ onBeforeUnmount(() => {
             <th>所属领域</th>
             <th>版次</th>
             <th>来源</th>
+            <th>处理进度</th>
+            <th>操作</th>
           </tr>
         </thead>
         <tbody>
@@ -356,6 +386,12 @@ onBeforeUnmount(() => {
             <td>{{ domainNames.get(book.domain_id) ?? '领域不可用' }}</td>
             <td>{{ book.metadata.edition || '—' }}</td>
             <td>{{ book.metadata.source }}</td>
+            <td>{{ stages[book.processing][0] }}</td>
+            <td>
+              <button type="button" :disabled="busy" @click="show(book.textbook_id)">
+                {{ stages[book.processing][1] }}
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -381,7 +417,11 @@ onBeforeUnmount(() => {
           type="button"
           aria-label="返回教材列表"
           :disabled="busy"
-          @click="selected = undefined"
+          @click="
+            selected = undefined;
+            resultNotice = '';
+            loadBooks();
+          "
         >
           教材管理
         </button>
@@ -395,9 +435,9 @@ onBeforeUnmount(() => {
           · {{ selected.textbook.metadata.edition }}</span
         >
       </p>
-      <section class="editor-panel">
+      <details class="editor-panel">
+        <summary>教材原件</summary>
         <div class="material-actions">
-          <h3>教材原件</h3>
           <button
             type="button"
             :disabled="busy || Boolean(selected.next_source_cursor)"
@@ -423,7 +463,7 @@ onBeforeUnmount(() => {
         >
           更多原件
         </button>
-      </section>
+      </details>
       <nav class="editor-tabs" aria-label="教材工作区">
         <button
           type="button"
@@ -431,7 +471,7 @@ onBeforeUnmount(() => {
           :aria-pressed="materialTab === 'content'"
           @click="materialTab = 'content'"
         >
-          解析内容
+          章节内容与教材助手
         </button>
         <button
           type="button"
@@ -539,7 +579,25 @@ onBeforeUnmount(() => {
             :disabled="busy || Boolean(pending)"
             @change="choose"
         /></label>
-        <p v-if="files.length">{{ files.map((file) => file.name).join('、') }}</p>
+        <ol v-if="files.length" class="upload-order" aria-label="原件顺序">
+          <li v-for="(file, index) in files" :key="file.name + index">
+            {{ file.name }}
+            <button
+              type="button"
+              :disabled="busy || !!pending || index === 0"
+              @click="moveFile(index, -1)"
+            >
+              上移
+            </button>
+            <button
+              type="button"
+              :disabled="busy || !!pending || index === files.length - 1"
+              @click="moveFile(index, 1)"
+            >
+              下移
+            </button>
+          </li>
+        </ol>
         <p v-if="progress" role="status">{{ progress }}</p>
         <p v-if="error" role="alert">{{ error }}</p>
         <div class="material-actions">
@@ -547,7 +605,7 @@ onBeforeUnmount(() => {
             取消
           </button>
           <button type="submit" :disabled="busy || (!pending && !domainNames.has(domain))">
-            {{ pending ? '继续本次登记' : '上传并登记' }}
+            {{ pending ? '继续本次登记' : appending ? '补充原件' : '上传并解析' }}
           </button>
         </div>
       </form>
