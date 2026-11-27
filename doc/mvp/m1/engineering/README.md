@@ -1,11 +1,11 @@
 # M1 工程设计
 
-> **版本**：v0.113<br>
+> **版本**：v0.114<br>
 > **状态**：已进入小增量工程实现；进度及待确认项见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-25<br>
-> **修订说明**：v0.112 → v0.113，登记后端存量代码注释规范细则<br>
+> **更新日期**：2026-11-27<br>
+> **修订说明**：v0.113 → v0.114，登记教材整本版本事件及目标固定引用<br>
 
 E01-16 的配置、范围及复核见[载荷交付记录](../../../../src/m1/deploy/environments/local-wsl/E01-16-payload-codec.md)，进度见[实施计划](Delivery_Plan.md)。
 
@@ -73,7 +73,7 @@ AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己�
 | PRD R01、R17：身份与必要确认 | [产品业务](Product_Application_Design.md)、[公共运行](System_Foundation_Design.md) | 预置账号、简单登录、固定两角色及必要确认；本人空间隔离与后台授权，不建设完整权限平台 |
 | R02–03：整册导入、对话纠错及候选采用 | [产品业务](Product_Application_Design.md)、[AI 底座](AI_Foundation_Design.md) | 文件与页序、引用、Agent 协议、候选检查、采用及失败处理 |
 | R04：领域管理与章节采用 | [Domain](Domain_Space_Design.md)、[产品业务](Product_Application_Design.md) | Domain§1维护固定版本和内容语法，§2维护复用／入库，§5.3维护归类与保存交接，§4.3维护KC路径；[物理表](database/Business_Domain.md)单独维护；Product负责章节明确采用 |
-| R05、R08、R10：Claim、目标与选用 | [Evaluation§1](Evaluation_Space_Design.md#1-claim方法判据与评价方面)、[Product§4—5](Product_Application_Design.md#4-章节关联目标定义与课程应用) | Claim快照、方法判据／方面规则、目标条件和应用；旧应用不改，空间可采用新版 |
+| R05、R08、R10：Claim、目标与选用 | [Evaluation§1](Evaluation_Space_Design.md#1-claim方法判据与评价方面)、[Product§4—5](Product_Application_Design.md#4-章节关联目标定义与课程应用) | Claim 快照、目标条件与课程应用。目标固定已发布的提炼，空间固定目标与课程版本。 |
 | R06、R11–13、R16：活动与检测 | [Interaction](Interaction_Space_Design.md)、[客户端](Client_Design.md) | 四类配置及活动森林、busy与停止、整条回复、先关轮再帮助、正式提供事实及恢复 |
 | R07：题目准备与运行供题 | [Domain](Domain_Space_Design.md)、[Interaction](Interaction_Space_Design.md) | 已有实例筛选、生成检查保存、本次用途及无可用题分支 |
 | R14、内容§4.16–4.21：Evidence、概率与目标 | [Evaluation](Evaluation_Space_Design.md) | §2取材与资格；§3数值接线；§4目标计算；[物理表](database/Business_Evaluation.md)；§5.6维护覆盖规则，§6.4／6.6维护提交。§6.7顺序处理；§6.8保持时间 |
@@ -216,6 +216,7 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 
 | 事件 | 生产方 / 范围 | 事实及用途 |
 | --- | --- | --- |
+| `MaterialEditionSaved` | product / textbook | 教材内容树或提炼保存完整快照，Product 同步更新本版投影。发布树后可由管理员启动提炼。 |
 | `MaterialCandidatePrepared` | product / material_import | 助手保存一批候选；核对或继续修正另存新候选；按授权查询/投影，不默认触发AI |
 | `MaterialIntakeStatusUpdated` | product / material_import | 消费Domain接收/拒绝事件后保存教材侧状态；Product消费Domain结果后生成教材状态 |
 | `ApplicationChecked` | product / course_application | 保存教材/目标应用检查结果；按授权查询/投影，不默认触发AI |
@@ -357,3 +358,4 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | v0.111 | 2026-11-23 | 登记掌握完成事件到目标计算、Interaction 等待与读取的边界 |
 | v0.112 | 2026-11-24 | 登记固定版本空间的有效触发与历史采用事件 |
 | v0.113 | 2026-11-25 | 登记后端存量代码注释规范细则（Comment_Conventions.md） |
+| v0.114 | 2026-11-27 | 登记整本教材版本事件及目标、空间的固定引用。 |

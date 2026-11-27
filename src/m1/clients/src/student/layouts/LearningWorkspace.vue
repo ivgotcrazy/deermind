@@ -10,6 +10,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import type { components } from '../../../../contracts/generated/http/schema';
 import { ApiError, get, post } from '../../shared/api/http';
 import AdoptedChapter from '../../shared/content/AdoptedChapter.vue';
+import BookReader from '../components/BookReader.vue';
 import type { Realtime } from '../../shared/realtime/client';
 import { Button } from '../components/ui/button';
 import ActivityDirectory from '../features/conversation/ActivityDirectory.vue';
@@ -1013,17 +1014,25 @@ void refresh();
           </Button>
         </header>
         <div id="study-reader-content" class="reader-content">
-          <AdoptedChapter
+          <BookReader
             :session="session"
             :space="opened.space.space_id"
-            :chapters="opened.adoption.snapshot.chapters"
-            :reading="{ title: opened.space.textbook_title, selectionKey: key + ':chapter' }"
-            allow-reference
             @reference="
               quotedContent = $event;
               chatOpen = true;
             "
-          />
+          >
+            <AdoptedChapter
+              :session="session"
+              :space="opened.space.space_id"
+              :chapters="opened.adoption.snapshot.chapters"
+              :reading="{ title: opened.space.textbook_title, selectionKey: key + ':chapter' }"
+              allow-reference
+              @reference="
+                quotedContent = $event;
+                chatOpen = true;
+              "
+          /></BookReader>
         </div>
       </section>
     </div>

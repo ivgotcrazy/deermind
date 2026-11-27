@@ -164,6 +164,8 @@ async function inspect() {
       ),
       Promise.all(
         chosen.map(async (chapter) => {
+          if (target.extraction_id)
+            return { chapter_id: chapter.id, revision: chapter.revision, content_refs: [] };
           const content = await get('/api/m1/material-imports/{import_id}/contents', {
             session,
             params: { import_id: props.importId },

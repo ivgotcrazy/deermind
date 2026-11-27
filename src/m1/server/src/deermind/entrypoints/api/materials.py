@@ -59,7 +59,9 @@ type Cursor = Annotated[str | None, Query(max_length=128)]
 type Limit = Annotated[int, Query(ge=1, le=100)]
 
 
-async def _admin(request: Request, response: Response, *, writing: bool = False) -> SessionView:
+async def material_admin(
+    request: Request, response: Response, *, writing: bool = False
+) -> SessionView:
     auth, config = access(request, writing=writing)
     expected = request.headers.get("x-expected-session")
     session = await auth.session(request.cookies.get(config.cookie_name), expected)
@@ -84,7 +86,7 @@ async def _admin(request: Request, response: Response, *, writing: bool = False)
 async def register_upload(
     request: Request, response: Response, body: RegisterMaterialFile
 ) -> UploadView:
-    session = await _admin(request, response, writing=True)
+    session = await material_admin(request, response, writing=True)
     materials: MaterialService = request.app.state.materials
     await materials.authorize_upload(session, body.domain_ref, body.import_id)
     uploads: FileUploads = request.app.state.uploads
@@ -115,7 +117,7 @@ async def register_upload(
     },
 )
 async def write_upload(request: Request, response: Response, upload_id: UUID) -> UploadView:
-    session = await _admin(request, response, writing=True)
+    session = await material_admin(request, response, writing=True)
     uploads: FileUploads = request.app.state.uploads
     row = await uploads.read(session.account.account_id, upload_id)
     materials: MaterialService = request.app.state.materials
@@ -149,7 +151,7 @@ async def write_upload(request: Request, response: Response, upload_id: UUID) ->
     operation_id="read_file_upload",
 )
 async def read_upload(request: Request, response: Response, upload_id: UUID) -> UploadView:
-    session = await _admin(request, response)
+    session = await material_admin(request, response)
     uploads: FileUploads = request.app.state.uploads
     return upload_view(await uploads.read(session.account.account_id, upload_id))
 
@@ -163,7 +165,7 @@ async def read_upload(request: Request, response: Response, upload_id: UUID) -> 
 async def create_material(
     request: Request, response: Response, body: NewMaterial
 ) -> MaterialReceipt:
-    session = await _admin(request, response, writing=True)
+    session = await material_admin(request, response, writing=True)
     materials: MaterialService = request.app.state.materials
     return await materials.receive(session, body)
 
@@ -177,7 +179,7 @@ async def create_material(
 async def append_material(
     request: Request, response: Response, import_id: UUID, body: AppendMaterial
 ) -> MaterialReceipt:
-    session = await _admin(request, response, writing=True)
+    session = await material_admin(request, response, writing=True)
     materials: MaterialService = request.app.state.materials
     return await materials.receive(session, body, import_id)
 
@@ -193,7 +195,7 @@ async def list_textbooks(
     cursor: Cursor = None,
     limit: Limit = 50,
 ) -> TextbookList:
-    session = await _admin(request, response)
+    session = await material_admin(request, response)
     materials: MaterialService = request.app.state.materials
     return await materials.list_books(session, domain_id, name, cursor, limit)
 
@@ -211,7 +213,7 @@ async def read_textbook(
     cursor: Cursor = None,
     limit: Limit = 50,
 ) -> MaterialDetail:
-    session = await _admin(request, response)
+    session = await material_admin(request, response)
     materials: MaterialService = request.app.state.materials
     return await materials.detail(session, textbook_id, cursor, limit)
 
@@ -237,7 +239,7 @@ async def download_resource(
     storage_ref: UUID,
     view: str,
 ) -> StreamingResponse:
-    session = await _admin(request, response)
+    session = await material_admin(request, response)
     try:
         owner = Ref.model_validate_json(owner_ref)
         source_id = UUID(owner.id)
@@ -272,7 +274,7 @@ async def download_resource(
 async def send_material_message(
     request: Request, response: Response, import_id: UUID, body: MaterialMessageInput
 ) -> MaterialTurnAcceptance:
-    session = await _admin(request, response, writing=True)
+    session = await material_admin(request, response, writing=True)
     assistant: MaterialAssistantService = request.app.state.material_assistant
     return await assistant.accept(session, import_id, body)
 
@@ -291,7 +293,7 @@ async def read_material_history(
     upper_seq: Annotated[int | None, Query(ge=0, le=2**63 - 1)] = None,
     limit: Limit = 50,
 ) -> MaterialHistory:
-    session = await _admin(request, response)
+    session = await material_admin(request, response)
     assistant: MaterialAssistantService = request.app.state.material_assistant
     return await assistant.history(session, import_id, after_seq, upper_seq, limit)
 
@@ -305,7 +307,7 @@ async def read_material_history(
 async def read_material_batch(
     request: Request, response: Response, import_id: UUID, batch_id: UUID
 ) -> MaterialBatchView:
-    session = await _admin(request, response)
+    session = await material_admin(request, response)
     assistant: MaterialAssistantService = request.app.state.material_assistant
     return await assistant.read_batch(session, import_id, batch_id)
 
@@ -319,7 +321,7 @@ async def read_material_batch(
 async def decide_material_batch(
     request: Request, response: Response, import_id: UUID, batch_id: UUID, body: DecideMaterialBatch
 ) -> MaterialAdoptionReceipt:
-    session = await _admin(request, response, writing=True)
+    session = await material_admin(request, response, writing=True)
     if body.batch_ref.batch_id != batch_id:
         # 路径批次与回执引用不符，拦截跨批次误操作。
         raise RequestError(400, "invalid_reference", "候选批次与请求路径不一致。")
@@ -340,7 +342,7 @@ async def material_current_contents(
     chapter_id: UUID | None = None,
     catalog_only: bool = False,
 ) -> MaterialCurrentContents:
-    session = await _admin(request, response)
+    session = await material_admin(request, response)
     adoptions: MaterialAdoptionService = request.app.state.material_adoptions
     return await adoptions.contents(session, import_id, chapter_id, catalog_only=catalog_only)
 
@@ -355,7 +357,7 @@ async def material_current_contents(
 async def submit_intake(
     request: Request, response: Response, import_id: UUID, body: SubmitDomainIntake
 ) -> IntakeAccepted:
-    session = await _admin(request, response, writing=True)
+    session = await material_admin(request, response, writing=True)
     intake: MaterialIntakeService = request.app.state.material_intake
     return await intake.submit(session, import_id, body)
 
@@ -369,7 +371,7 @@ async def submit_intake(
 async def read_intake(
     request: Request, response: Response, import_id: UUID, submission_id: UUID
 ) -> IntakeSubmissionView:
-    session = await _admin(request, response)
+    session = await material_admin(request, response)
     intake: MaterialIntakeService = request.app.state.material_intake
     return await intake.detail(session, import_id, submission_id)
 
@@ -388,7 +390,7 @@ async def list_associations(
     cursor: Cursor = None,
     limit: Limit = 50,
 ) -> ChapterAssociationList:
-    session = await _admin(request, response)
+    session = await material_admin(request, response)
     service: ChapterAssociationService = request.app.state.chapter_associations
     return await service.list(session, textbook_id, chapter_id, cursor, limit)
 
@@ -406,7 +408,7 @@ async def save_association(
     chapter_id: UUID,
     body: ChapterAssociationCommand,
 ) -> ChapterAssociationReceipt:
-    session = await _admin(request, response, writing=True)
+    session = await material_admin(request, response, writing=True)
     service: ChapterAssociationService = request.app.state.chapter_associations
     return await service.decide(session, textbook_id, chapter_id, body)
 
@@ -423,6 +425,6 @@ async def delete_material(
     import_id: UUID,
     body: DeleteMaterial,
 ) -> MaterialDeletionReceipt:
-    session = await _admin(request, response, writing=True)
+    session = await material_admin(request, response, writing=True)
     service: MaterialDeletionService = request.app.state.material_deletion
     return await service.delete(session, import_id, body)

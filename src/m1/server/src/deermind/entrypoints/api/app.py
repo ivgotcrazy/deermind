@@ -29,6 +29,7 @@ from deermind.bootstrap.materials import (
     configure_chapter_associations,
     configure_domain_analysis,
     configure_domain_intake,
+    configure_editions,
     configure_instances,
     configure_intake_processing,
     configure_material_adoptions,
@@ -41,6 +42,7 @@ from deermind.bootstrap.settings import Settings
 from deermind.entrypoints.api.activity_configs import router as activity_router
 from deermind.entrypoints.api.auth import router
 from deermind.entrypoints.api.body_limit import RequestBodyLimit
+from deermind.entrypoints.api.book_editions import router as editions_router
 from deermind.entrypoints.api.conversation import connect_realtime
 from deermind.entrypoints.api.conversation import router as conversation_router
 from deermind.entrypoints.api.courses import router as courses_router
@@ -164,6 +166,9 @@ def create_app(
                 # 教材接收/登记服务；同时返回文件上传登记与原件校验器。
                 materials, app.state.uploads = configure_materials(engine, settings, domain)
                 app.state.materials = materials
+                app.state.material_editions, app.state.render_book_page = configure_editions(
+                    materials
+                )
 
                 # ── 学习目标与课程空间 ──
                 # 学习目标定义：基于教材接收与主张定义解析条件。
@@ -290,6 +295,7 @@ def create_app(
     app.include_router(usage_router)
     app.include_router(domain_router)
     app.include_router(materials_router)
+    app.include_router(editions_router)
     app.include_router(evaluation_router)
     app.include_router(activity_router)
     app.include_router(target_router)

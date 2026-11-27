@@ -18,7 +18,9 @@ const definitionPages = [
   { id: 'interaction', label: '交互活动' },
   { id: 'targets', label: '目标管理' },
 ] as const;
-const selection = ref<(typeof definitionPages)[number]['id'] | 'spaces'>('domain');
+const selection = ref<(typeof definitionPages)[number]['id'] | 'spaces'>(
+  window.location.hash === '#textbooks' ? 'textbooks' : 'domain',
+);
 
 function resetWorkspace() {
   clearCreateDraft();

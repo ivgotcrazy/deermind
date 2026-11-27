@@ -32,6 +32,7 @@ class TargetHead(FactModel):
 
 
 class TargetVersion(FactModel):
+    extraction_id: UUID | None = None
     target_id: UUID
     revision: int
     title: str
@@ -45,6 +46,7 @@ class TargetVersion(FactModel):
         return TargetView(
             target_ref=TargetRef(target_id=self.target_id, revision=self.revision),
             textbook_id=textbook_id,
+            extraction_id=self.extraction_id,
             title=self.title,
             items=self.items,
             chapter_basis_refs=self.chapter_basis,

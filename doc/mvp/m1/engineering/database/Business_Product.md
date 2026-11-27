@@ -1,17 +1,19 @@
 # deermind 数据库：产品业务数据字典
 
-> **版本**：v0.11<br>
+> **版本**：v0.12<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
-> **更新日期**：2026-11-22<br>
-> **修订说明**：v0.10 → v0.11，维护课程发布版本、空间固定采用及最近进入索引字段<br>
+> **更新日期**：2026-11-27<br>
+> **修订说明**：登记整本教材版本、原文节点及目标固定提炼引用<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **29 张表、253 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **31 张表、273 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
 | 表 | 用途 |
 | --- | --- |
+| [material_edition](#30-productmaterial_edition) | 整本树与教学提炼版本 |
+| [material_content_node](#31-productmaterial_content_node) | 版本内的逻辑节点与原页覆盖 |
 | [accounts](#1-productaccounts) | 预置账号与固定角色 |
 | [credentials](#2-productcredentials) | 密码验证资料 |
 | [auth_sessions](#3-productauth_sessions) | 可撤销的浏览器登录会话 |
@@ -48,6 +50,10 @@ login_attempts按账号标识和来源摘要计数，须覆盖未知账号，故
 
 ```mermaid
 erDiagram
+    product__textbook ||--o{ product__material_edition : textbook_id
+    product__material_edition ||--o{ product__material_edition : tree_id
+    product__material_edition ||--o{ product__material_content_node : material_version_id
+    product__material_edition ||--o{ product__learning_target_version : extraction_id
     product__accounts {
         uuid account_id PK
     }
@@ -730,6 +736,7 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | `revision` | `bigint` | 否 | 无 | 从1递增；写入时比较预期修订，不以时间代替；主键组成字段 |
 | `title` | `text` | 否 | 无 | 目标名称 |
 | `items` | `jsonb` | 否 | 无 | Product§4.2.1 GoalItem[]：Claim、章节依据、Task条件、方法模式、方法及方面 |
+| `extraction_id` | `uuid` | 是 | 无 | 新建或修订必选同教材已发布提炼，旧目标无此引用。外键指向 material_edition。 |
 | `chapter_basis` | `jsonb` | 否 | '[]'::jsonb | 选用章节及关联修订；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `gaps` | `jsonb` | 否 | '[]'::jsonb | Issue[]；草稿缺口，不等于可应用 |
 | `actor_ref` | `jsonb` | 否 | 无 | 实际管理员、学生或服务身份，不能用模型声称的身份；Ref，见总册§3 |
@@ -903,6 +910,37 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 
 查询索引：`(login_digest,admitted_at)`及`(source_digest,admitted_at)`。限额检查与追加在按稳定顺序取得的事务咨询锁内执行。应用仅SELECT/INSERT及UPDATE(outcome)，不可修改身份、时间或删除记录。
 
+## 30. `product.material_edition`
+
+| 字段 | PostgreSQL 类型 | 约束及用途 |
+| :--- | :--- | :--- |
+| edition_id | uuid | 主键 |
+| textbook_id | uuid | 必填，引用所属教材 |
+| kind | text | tree 或 extraction |
+| number | integer | 正整数，同教材、同类型唯一 |
+| tree_id | uuid | 提炼必填，引用本教材已发布树。树本身为空 |
+| status | text | draft、published 或 discarded |
+| revision | integer | 正整数，保存草稿时检查，发布后只读 |
+| pages | jsonb | 有序原页数组，记录文件、页序与可见印刷页码 |
+| entries | jsonb | 教学提炼的章节、Task、方法与知识引用数组 |
+| pending | jsonb | 草稿修正、待处理项、来源版本与关联任务快照 |
+| created_at | timestamptz | 版本首次保存时间 |
+| source_event_id | uuid | 最近一次 MaterialEditionSaved 事实 |
+
+## 31. `product.material_content_node`
+
+| 字段 | PostgreSQL 类型 | 约束及用途 |
+| :--- | :--- | :--- |
+| material_version_id | uuid | 与 node_id 组成主键，引用内容树版本 |
+| node_id | uuid | 本树中的节点身份 |
+| parent_id | uuid | 根节点为空，其余引用同一版中的父节点，提交时检查 |
+| node_kind | text | 整本、章、节、标题、段落、题、解法或图表等，枚举见 OpenAPI ContentNode |
+| sibling_order | integer | 正整数，同一版本同一父节点下唯一 |
+| content | jsonb | 单个正文对象，纯结构节点可空 |
+| covered_page_ids | uuid[] | 本节点覆盖的原页，元素不可空。程序检查属于本书，父节点覆盖其子节点 |
+
+每版有一个根。按版本和父节点取有序子节点；按版本和原页查覆盖数组，使用 GIN 索引。
+
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
@@ -918,3 +956,4 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | v0.9 | 2026-11-22 | 落实教材元数据、不可变原件及页序约束 |
 | v0.10 | 2026-11-22 | 登记向 Domain 提交的精确来源、受理结果和查询方式 |
 | v0.11 | 2026-11-24 | 维护课程发布版本、空间固定采用及最近进入索引字段 |
+| v0.12 | 2026-11-27 | 登记整本教材版本、原文节点及目标固定提炼引用 |

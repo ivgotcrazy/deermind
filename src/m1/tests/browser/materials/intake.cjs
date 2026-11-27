@@ -27,6 +27,7 @@ async function run() {
     await page.getByRole('searchbox', { name: '教材名称' }).fill(label);
     await page.getByRole('button', { name: '搜索' }).click();
     await page.getByRole('button', { name: label, exact: true }).click();
+    await page.getByRole('button', { name: '候选与领域入库', exact: true }).click();
     const adopted = page.getByRole('region', { name: '已采用内容' });
     const task = adopted.getByRole('checkbox', { name: /^题目 · / }).first();
     await task.check();

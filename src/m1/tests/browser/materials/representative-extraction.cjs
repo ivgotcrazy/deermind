@@ -71,6 +71,7 @@ async function run() {
       await page.getByRole('searchbox', { name: '教材名称' }).fill(label);
       await page.getByRole('button', { name: '搜索' }).click();
       await page.getByRole('button', { name: label, exact: true }).click();
+      await page.getByRole('button', { name: '候选与领域入库', exact: true }).click();
       if (correction) {
         await page.getByRole('button', { name: '核对候选', exact: true }).last().click();
         await page.getByRole('button', { name: '引用这批候选继续修正' }).click();
@@ -90,9 +91,10 @@ async function run() {
       await dialog.getByLabel('来源说明').fill(caseId + ' ' + profile.title);
       await dialog.getByLabel('教材文件').setInputFiles(files);
       await dialog.getByRole('button', { name: '上传并解析' }).click();
-      await page.locator('summary').filter({ hasText: '教材原件' }).click();
-      await page.locator('.assistant-chat li').filter({ has: page.getByText('教材助手', { exact: true }) }).first().waitFor({ timeout: 255_000 });
+      await page.getByRole('button', { name: '教材原件', exact: true }).click();
       await page.getByRole('button', { name: path.basename(files[0]) }).waitFor();
+      await page.getByRole('button', { name: '候选与领域入库', exact: true }).click();
+      await page.locator('.assistant-chat li').filter({ has: page.getByText('教材助手', { exact: true }) }).first().waitFor({ timeout: 255_000 });
     }
     const assistant = page.getByRole('region', { name: '教材助手' });
     const started = page.waitForResponse((response) =>

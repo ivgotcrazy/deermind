@@ -8,6 +8,7 @@ from deermind.abstractions.events import FactModel, Ref
 from deermind.foundation.system.files.uploads import JsonUUID
 from deermind.foundation.system.public.errors import Issue
 from deermind.product.public.authentication import SessionView
+from deermind.product.public.material_editions import EditionJob
 from deermind.product.public.materials import RequestId, Revision
 from pydantic import Field, JsonValue, StringConstraints
 
@@ -35,6 +36,7 @@ class PreviousMaterialBatch(FactModel):
 
 
 class MaterialMessageInput(FactModel):
+    edition_job: EditionJob | None = None
     request_id: RequestId
     message: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=4096)]
     selection: MaterialSelection | None = None

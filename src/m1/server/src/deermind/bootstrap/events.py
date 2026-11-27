@@ -25,6 +25,7 @@ from deermind.product.materials.adoption_facts import REGISTRATIONS as MATERIAL_
 from deermind.product.materials.assistant_facts import REGISTRATIONS as MATERIAL_ASSISTANT
 from deermind.product.materials.chapter_associations import REGISTRATION as CHAPTERS
 from deermind.product.materials.deletion import REGISTRATION as MATERIAL_DELETION
+from deermind.product.materials.edition_facts import REGISTRATION as MATERIAL_EDITION
 from deermind.product.materials.facts import REGISTRATION as MATERIAL_RECEIVED
 from deermind.product.materials.intake_facts import REGISTRATIONS as MATERIAL_INTAKE
 from deermind.spaces.domain.analysis_facts import REGISTRATIONS as DOMAIN_ANALYSIS
@@ -70,6 +71,7 @@ REGISTRATIONS = [
     WAIT_REGISTRATION,
     DOMAIN_SAVED,
     MATERIAL_RECEIVED,
+    MATERIAL_EDITION,
     *MATERIAL_ASSISTANT,
     *MATERIAL_ADOPTIONS,
     CHAPTERS,

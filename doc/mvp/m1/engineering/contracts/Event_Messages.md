@@ -1,11 +1,11 @@
 # M1 事件与消息载荷
 
-> **版本**：v0.19<br>
+> **版本**：v0.20<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-23<br>
-> **修订说明**：v0.18 → v0.19，标记历史采用变化，更新空间创建与初始评价的事件语义<br>
+> **更新日期**：2026-11-27<br>
+> **修订说明**：v0.19 → v0.20，登记整本教材版本保存事件及其载荷<br>
 
 本分册是事件信封、类型化动作字段与通知结构的唯一字段定义；完整事实正文及投影登记见[事件正文合同](Event_Facts.md)。事件何时保存、消费者怎样处理仍归业务模块；主流程事件索引保留在[工程README§6](../README.md#6-跨模块事件目录)。所有事件只追加；重试沿原事件身份。
 
@@ -853,6 +853,7 @@ Product完成章节添加、编辑或取消关联时产生，作用域为 `textb
 
 | 事件 | 生产方 / 范围 | 何时产生 | 必需事实 |
 | --- | --- | --- | --- |
+| `MaterialEditionSaved` | product / textbook | 生成、复制、纠错、调整关联、丢弃或发布整本版本 | 载荷只有 records，含本版完整快照。发布树后由管理员另行发起提炼。 |
 | `MaterialCandidatePrepared` | product / material_import | 助手保存一批候选；核对或继续修正另存新候选 | 候选及批次完整正文 |
 | `MaterialIntakeStatusUpdated` | product / material_import | 消费Domain接收/拒绝事件后保存教材侧状态 | 原提交及所用Domain事件 |
 | `ApplicationChecked` | product / course_application | 保存教材/目标应用检查结果 | 完整检查项、限制及固定依据 |
@@ -881,7 +882,7 @@ Product完成章节添加、编辑或取消关联时产生，作用域为 `textb
 | `FileReceived` | runtime / file | 文件完整保存且校验通过 | 文件身份、媒体、字节数、hash和非秘密存储定位 |
 | `ProjectionRebuildFinished` | runtime / maintenance | 维护重建完成或明确失败 | 范围、代次、固定上界、检查结果或错误 |
 
-共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过正文合同§3登记Schema校验。本轮累计已接线TrialAccountSaved（管理员/学生开户及资料更新）、UsageConfirmationRecorded、AccountRecovered、AccountSignedIn、AccountSignedOut、FileReceived、ProjectionRebuildFinished、DeliveryStateChanged和ExecutionStateChanged；其余类型未实现。事件版本沿§3登记，不宣称执行过历史数据迁移。
+除仅使用 records 的 MaterialEditionSaved 外，共同动作字段：subject_ref:Ref、outcome:string、reason_code:string或null，三者必填；subject_ref必须与信封owner_ref相同。outcome按下表穷举，不能传任意状态。记录正文通过正文合同§3登记Schema校验。本轮累计已接线TrialAccountSaved（管理员/学生开户及资料更新）、UsageConfirmationRecorded、AccountRecovered、AccountSignedIn、AccountSignedOut、FileReceived、ProjectionRebuildFinished、DeliveryStateChanged和ExecutionStateChanged；其余类型未实现。事件版本沿§3登记，不宣称执行过历史数据迁移。
 
 | 类型 | outcome允许值 | 额外字段 |
 | --- | --- | --- |
@@ -1053,3 +1054,4 @@ runtime运行留痕的records使用固定DTO，逐事件数量及条件见正文
 | v0.17 | 2026-11-23 | 登记求助、先前作答与取消剩余题单的事件职责 |
 | v0.18 | 2026-11-23 | 登记目标计算与 Interaction 掌握接续的事件消费 |
 | v0.19 | 2026-11-24 | 标记历史采用变化，更新空间创建与初始评价的事件语义 |
+| v0.20 | 2026-11-27 | 登记整本教材版本保存事件及其载荷 |

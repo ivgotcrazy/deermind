@@ -29,6 +29,7 @@ _LOCATIONS: dict[ReadKind, frozenset[tuple[str, str]]] = {
     "course": frozenset(
         {
             ("product", "material_candidate"),
+            ("product", "material_content_node"),
             ("domain", "task"),
             ("domain", "solution"),
             ("domain", "task_instance"),
@@ -318,7 +319,9 @@ async def read_activity(
         ),
         params,
     )
-    return result({"parts": parts}, [reference]) if parts is not None else unavailable()  # 消息不存在或角色不可呈现
+    return (
+        result({"parts": parts}, [reference]) if parts is not None else unavailable()
+    )  # 消息不存在或角色不可呈现
 
 
 async def read_scope(db: AsyncConnection, handle: CallHandle) -> tuple[UUID, UUID] | None:

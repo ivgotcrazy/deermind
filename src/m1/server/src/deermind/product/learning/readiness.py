@@ -154,6 +154,7 @@ async def prepare_course(
         textbook_title=textbook_title,
         target_ref=target.target_ref,
         target_title=target.title,
+        extraction_id=target.extraction_id,
         chapters=chapters,
         activity_config_refs=[config.config_ref for config in configs.values()],
         readiness=checks,

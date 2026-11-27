@@ -42,7 +42,7 @@ async function run() {
     const parsing = page.waitForRequest((r) => r.method() === 'POST' && r.url().endsWith('/messages'));
     await dialog.getByRole('button', { name: '上传并解析' }).click();
     const requestId = (await parsing).postDataJSON().request_id;
-    await page.locator('summary').filter({ hasText: '教材原件' }).click();
+    await page.getByRole('button', { name: '教材原件', exact: true }).click();
     await page.getByRole('button', { name: '删除导入' }).waitFor();
     const books = await (await api.get(root + '/textbooks?name=' + encodeURIComponent(name), { headers })).json();
     const book = books.items.find((item) => item.metadata.title === name);

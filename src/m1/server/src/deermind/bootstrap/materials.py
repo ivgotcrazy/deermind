@@ -1,5 +1,8 @@
 """把教材用途与已有事件、存储和领域公开查询接线。"""
 
+import asyncio
+from collections.abc import Awaitable, Callable
+
 from deermind.bootstrap.domain_operation import analysis_config
 from deermind.bootstrap.events import event_reader, event_store
 from deermind.bootstrap.material_operation import material_config
@@ -7,13 +10,15 @@ from deermind.bootstrap.settings import Settings
 from deermind.foundation.system.events.attachments import FactAttachments
 from deermind.foundation.system.files.uploads import FileUploads
 from deermind.infrastructure.files.local import LocalFiles
-from deermind.infrastructure.files.originals import inspect_original
+from deermind.infrastructure.files.originals import inspect_original, render_original_page
 from deermind.product.materials.adoption import MaterialAdoptions
 from deermind.product.materials.assistant import MaterialAssistant
 from deermind.product.materials.chapter_associations import ChapterAssociations
 from deermind.product.materials.deletion import MaterialDeletion
+from deermind.product.materials.editions import MaterialEditions
 from deermind.product.materials.intake import MaterialIntake
 from deermind.product.materials.receiving import MaterialReceiving
+from deermind.product.public.material_editions import BookPage
 from deermind.spaces.domain.analysis import DomainAnalysis
 from deermind.spaces.domain.instance_management import InstanceManagement
 from deermind.spaces.domain.instances import chapter_methods
@@ -38,6 +43,21 @@ def configure_materials(
         lambda reference, limit: files.open_verified(reference, max_bytes=limit),
     )
     return materials, uploads
+
+
+def configure_editions(
+    materials: MaterialReceiving,
+) -> tuple[MaterialEditions, Callable[[BookPage], Awaitable[bytes]]]:
+    async def render(page: BookPage) -> bytes:
+        stream, media_type, _, _ = await materials.open_original(page.source_id, page.file_id)
+
+        def render_and_close() -> bytes:
+            with stream:
+                return render_original_page(stream, media_type, page.index)
+
+        return await asyncio.to_thread(render_and_close)
+
+    return MaterialEditions(materials), render
 
 
 def configure_material_assistant(

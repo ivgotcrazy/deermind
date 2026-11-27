@@ -71,6 +71,7 @@ class EvaluationGap(FactModel):
 
 
 class CourseSnapshot(FactModel):
+    extraction_id: JsonUUID | None = None
     textbook_title: str
     target_ref: TargetRef
     target_title: str

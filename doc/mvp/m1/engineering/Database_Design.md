@@ -1,10 +1,10 @@
 # M1 数据库设计
 
-> **版本**：v0.21<br>
-> **状态**：E01-15接线AI七表；部署与验证见实施计划，114张规划表按需迁移<br>
+> **版本**：v0.22<br>
+> **状态**：E01-15接线AI七表；部署与验证见实施计划，116张规划表按需迁移<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
-> **更新日期**：2026-11-22<br>
-> **修订说明**：v0.20 → v0.21，同步学生与固定课程版本的空间唯一性<br>
+> **更新日期**：2026-11-27<br>
+> **修订说明**：迁移 0043 新增教材版本与节点，目标固定引用提炼版本<br>
 
 截至 `0023_material_deletion`，本机业务库实际 57 张表（含迁移表），规划表仍按下文目录维护。教材原件、候选、采用、领域入库和章节关联的字段见各数据分册。
 
@@ -18,7 +18,7 @@
 
 | 数据库 | 内容 | 表数 | 管理方与账号边界 | 字段字典 |
 | --- | --- | --- | --- | --- |
-| `deermind` | 业务、事件、运行、文件元数据及AI调用 | 114 | 各模块维护各自schema；运行账号与迁移账号分开 | 本册§2及六个分册 |
+| `deermind` | 业务、事件、运行、文件元数据及AI调用 | 116 | 各模块维护各自schema；运行账号与迁移账号分开 | 本册§2及六个分册 |
 | `temporal` | Workflow历史、执行、任务队列及组件元数据 | 40 | Temporal专用账号，官方Schema工具升级 | [执行库](database/Temporal.md) |
 | `temporal_visibility` | Workflow检索视图及Schema记录 | 3 | Temporal查询库专用账号，官方工具升级 | [查询库](database/Temporal_Visibility.md) |
 
@@ -47,7 +47,7 @@ NATS、教材原件、派生图片和大载荷不是SQL表。文件字节经隔�
 
 | schema | 表数 / 列数 | 内容与完整字典 |
 | --- | --- | --- |
-| `product` | 29 / 253 | [产品业务](database/Business_Product.md) |
+| `product` | 31 / 273 | [产品业务](database/Business_Product.md) |
 | `domain` | 9 / 92 | [领域空间](database/Business_Domain.md) |
 | `interaction` | 35 / 306 | [交互空间](database/Business_Interaction.md) |
 | `evaluation` | 13 / 127 | [评估空间](database/Business_Evaluation.md) |
@@ -239,6 +239,8 @@ P为事件正文的业务投影，D为由事实生成的当前索引，C为运�
 | [interaction.proactive_revisions](database/Business_Interaction.md#33-interactionproactive_revisions) | P | 完整正文及产生事件见事件正文§3 |
 | [interaction.proactive_prompts](database/Business_Interaction.md#34-interactionproactive_prompts) | P | 完整正文及产生事件见事件正文§3 |
 | [interaction.resume_actions](database/Business_Interaction.md#35-interactionresume_actions) | C | 沿原模块恢复；不重放业务副作用 |
+| [product.material_edition](database/Business_Product.md#30-productmaterial_edition) | P | MaterialEditionSaved 整本版本 |
+| [product.material_content_node](database/Business_Product.md#31-productmaterial_content_node) | P | 同一树版本事实展开的节点 |
 | [product.accounts](database/Business_Product.md#1-productaccounts) | P | 完整正文及产生事件见事件正文§3 |
 | [product.credentials](database/Business_Product.md#2-productcredentials) | C | 沿原模块恢复；不重放业务副作用 |
 | [product.auth_sessions](database/Business_Product.md#3-productauth_sessions) | C | 沿原模块恢复；不重放业务副作用 |
@@ -377,3 +379,4 @@ E01-14通过`0010_waits_results`接线结果与等待五表，当前实际29张�
 | v0.19 | 2026-11-22 | 同步单批重建的事务边界 |
 | v0.20 | 2026-11-22 | 同步教材和领域入库相关字段 |
 | v0.21 | 2026-11-24 | 同步学生与固定课程版本的空间唯一性 |
+| v0.22 | 2026-11-27 | 迁移 0043 新增教材版本与节点，目标固定引用提炼版本 |

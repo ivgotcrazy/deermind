@@ -10,6 +10,7 @@ from deermind.foundation.system.events.store import lock_scope_sequence
 from deermind.foundation.system.public.errors import RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.learning import course_facts as facts
+from deermind.product.learning.book_chapters import chapters as edition_chapters
 from deermind.product.learning.readiness import MethodCheck, issue, prepare_course
 from deermind.product.learning.targets import TargetDefinitions
 from deermind.product.materials.chapter_associations import AssociationFact
@@ -240,6 +241,26 @@ class CourseChecks:
         import_id: UUID,
         command: CourseCheckCommand,
     ) -> list[ChapterSnapshot]:
+        extraction = await db.scalar(
+            text(
+                "SELECT extraction_id FROM product.learning_target_version "
+                "WHERE target_id=:id AND revision=:r"
+            ),
+            {"id": command.target_ref.target_id, "r": command.target_ref.revision},
+        )
+        if extraction:
+            available = {c.chapter_id: c for c in await edition_chapters(db, book, extraction)}
+            selected: list[ChapterSnapshot] = []
+            for item in command.chapters:
+                chapter = available.get(item.chapter_id)
+                if (
+                    chapter is None
+                    or chapter.revision != item.revision
+                    or any(r not in chapter.content_refs for r in item.content_refs)
+                ):
+                    raise RequestError(409, "check_stale", "所选章节不属于该目标的教材版本。")
+                selected.append(chapter)
+            return selected
         return [await self.chapter(db, book, import_id, entry) for entry in command.chapters]
 
     async def check(self, principal: UUID, command: CourseCheckCommand) -> CourseCheckReceipt:
@@ -279,7 +300,7 @@ class CourseChecks:
             old = await self.validate_base(db, command)
             selected = await self.selections(db, textbook, import_id, command)
             chapters = list(selected)
-            if old is not None:
+            if old is not None and not target.extraction_id:
                 # 保留上一版已选、本轮未改动也未剔除的章节，避免它们从快照中丢失。
                 chapters.extend(
                     chapter

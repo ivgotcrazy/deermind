@@ -254,6 +254,7 @@ async function run() {
     await page.getByRole('searchbox', { name: '教材名称' }).fill(label);
     await page.getByRole('button', { name: '搜索' }).click();
     await page.getByRole('button', { name: label, exact: true }).click();
+    await page.getByRole('button', { name: '候选与领域入库', exact: true }).click();
     await page.getByRole('button', { name: '章节关联', exact: true }).click();
     await page.getByRole('region', { name: '章节关联' }).getByRole('rowheader', { name: definition.title, exact: true }).waitFor();
     await page.screenshot({ path: path.join(evidence, id + '-chapter.png'), fullPage: true });

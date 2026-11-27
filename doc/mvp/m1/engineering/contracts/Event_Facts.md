@@ -1,11 +1,11 @@
 # M1 事件正文与业务投影合同
 
-> **版本**：v0.20<br>
+> **版本**：v0.21<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-23<br>
-> **修订说明**：v0.19 → v0.20，注明固定版本和最近空间由原有事件投影得出<br>
+> **更新日期**：2026-11-27<br>
+> **修订说明**：v0.20 → v0.21，登记教材版本的完整快照、节点投影与防重收据<br>
 
 本册定义事件如何保存完整事实、生成业务查询数据，以及怎样安全重建。事件信封和通知载荷见[事件消息](Event_Messages.md)；表字段仍只在[数据库分册](../Database_Design.md)维护。新增的正文DTO和投影接线是本轮详细设计，待审阅；不增加页面或AI Operation。
 
@@ -141,6 +141,7 @@ record_id=null的payload读取仍按事件类型和字段授权：业务消费�
 | `product.student_guardian_relations` | [product.student_guardian_relations](../database/Business_Product.md#5-productstudent_guardian_relations) | `(relation_id)` | A |
 | `product.usage_confirmations` | [product.usage_confirmations](../database/Business_Product.md#6-productusage_confirmations) | `(confirmation_id)` | A |
 | `product.textbook` | [product.textbook](../database/Business_Product.md#8-producttextbook) | `(textbook_id)` | S |
+| `product.material_edition` | [版本与内容节点](../database/Business_Product.md#30-productmaterial_edition)；[完整快照 Edition](../../../../../src/m1/server/src/deermind/product/public/material_editions.py) | `(edition_id)`，revision 递增 | S |
 | `product.material_import` | [product.material_import](../database/Business_Product.md#9-productmaterial_import) | `(import_id)` | S |
 | `product.material_source` | [product.material_source](../database/Business_Product.md#10-productmaterial_source) | `(source_id)` | A |
 | `product.material_message` | [product.material_message](../database/Business_Product.md#11-productmaterial_message) | `(message_id)` | A |
@@ -233,6 +234,7 @@ product.material_intake_submission的接收状态由Domain接收事件驱动：P
 | `MaterialAssistantTurnFinished` | `product.material_message`[0..1]；`product.material_turn`[1]；`product.material_import`[1] | reply_ref非空恰有对应消息，否则为0；turn.state=outcome；候选另由Prepared登记 |
 | `MaterialCandidateDeclined` | `product.material_adoption`[1]；`product.material_candidate_batch`[1]；`product.material_import`[1] | decision=decline、batch=declined；不改当前内容指针 |
 | `ChapterAssociationSaved` | `product.chapter_association`[1] | 新增关系修订；取消仍保存方法为空的修订，不删除历史 |
+| `MaterialEditionSaved` | `product.material_edition`[1] | 树快照含全部节点，提炼快照含固定树和章节任务。Product 在同一事务登记投影收据、保存版本，树节点按本版快照替换。重放保留原版本及节点 ID。 |
 | `MaterialCandidatePrepared` | `product.material_candidate_batch`[1..2]；`product.material_candidate`[0..n]；`product.material_import`[1] | 恰一个新pending批，附明确被替代旧pending批的superseded快照。仅撤下内容或调整目录时可无新候选，已采用批不改 |
 | `MaterialIntakeStatusUpdated` | `product.material_intake_submission`[1] | status=received/rejected，与domain_event_id的Domain决定一致 |
 | `ApplicationChecked` | `product.application_check`[1] | ready/blocked和完整检查项一致 |
@@ -344,3 +346,4 @@ M1只提供受控维护重建，不新增管理页面。业务生成器先按§3
 | v0.18 | 2026-11-23 | 登记供题输入、库存用途检查与新题复核正文 |
 | v0.19 | 2026-11-23 | 登记求助事件携带已关闭轮的剩余题单取消记录 |
 | v0.20 | 2026-11-24 | 注明固定版本和最近空间由原有事件投影得出 |
+| v0.21 | 2026-11-27 | 登记教材版本的完整快照、节点投影与防重收据 |

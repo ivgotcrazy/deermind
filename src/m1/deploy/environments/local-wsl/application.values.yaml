@@ -1,6 +1,6 @@
 images:
-  server: deermind/server:material-chapter-final
-  client: deermind/client:material-chapter-r2
+  server: deermind/server:book-editions-r7
+  client: deermind/client:book-editions-r6
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
 filesClaim: deermind-files

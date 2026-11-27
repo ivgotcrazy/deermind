@@ -1,5 +1,7 @@
 """Link each operation's prompt reference to its own packaged resources."""
 
+from deermind.bootstrap.book_operation import OUTLINE
+from deermind.bootstrap.book_operation import TEACHING as BOOK_TEACHING
 from deermind.bootstrap.domain_operation import PURPOSE as ANALYSIS
 from deermind.bootstrap.evaluation_operation import PURPOSE as SUBMISSION
 from deermind.bootstrap.evaluation_operation import TEACHING
@@ -13,6 +15,8 @@ def configure_prompts() -> PromptLibrary:
     return PromptLibrary(
         [
             PromptSource("deermind.product.materials", EXTRACTION.prompt_ref),
+            PromptSource("deermind.product.materials", OUTLINE.prompt_ref),
+            PromptSource("deermind.product.materials", BOOK_TEACHING.prompt_ref),
             PromptSource(
                 "deermind.spaces.domain",
                 ANALYSIS.prompt_ref,

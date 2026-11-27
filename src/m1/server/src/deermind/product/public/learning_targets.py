@@ -58,6 +58,7 @@ class GoalItem(GoalItemFields):
 
 
 class CreateTarget(FactModel):
+    extraction_id: JsonUUID
     action: Literal["create"]
     request_id: RequestId
     textbook_id: JsonUUID
@@ -66,6 +67,7 @@ class CreateTarget(FactModel):
 
 
 class ReviseTarget(FactModel):
+    extraction_id: JsonUUID
     action: Literal["update"]
     request_id: RequestId
     textbook_id: JsonUUID
@@ -79,6 +81,7 @@ type TargetCommand = Annotated[CreateTarget | ReviseTarget, Field(discriminator=
 
 
 class TargetView(FactModel):
+    extraction_id: JsonUUID | None = None
     target_ref: TargetRef
     textbook_id: JsonUUID
     title: Label

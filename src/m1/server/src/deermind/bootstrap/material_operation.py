@@ -20,6 +20,7 @@ from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.events import FactModel, Ref
 from deermind.abstractions.executions import RunInput
 from deermind.abstractions.file_records import FileObject
+from deermind.bootstrap.book_operation import OUTLINE, TEACHING, EditionActivities, EditionInput
 from deermind.foundation.ai.execution import Calls
 from deermind.foundation.ai.tools import Tools
 from deermind.foundation.system.files.uploads import MAX_BYTES
@@ -61,8 +62,8 @@ def material_config() -> ExecutionConfig | None:
     if os.environ.get("M1_MATERIAL_MODEL_ENABLED") != "true":
         # 未显式启用教材抽取模型，返回空配置关闭该路径。
         return None
-    return ExecutionConfig(
-        revision="material-extraction-6",
+    config = ExecutionConfig(
+        revision="material-extraction-6-book-teaching-2",
         purpose_bindings={
             PURPOSE.name: PurposeBinding(
                 contract_ref=PURPOSE.contract_ref,
@@ -92,6 +93,25 @@ def material_config() -> ExecutionConfig | None:
             max_result_bytes=1024**2,
             finalize_reserve_seconds=15,
         ),
+    )
+
+    original = config.purpose_bindings[PURPOSE.name]
+    return config.model_copy(
+        update={
+            "purpose_bindings": {
+                **config.purpose_bindings,
+                **{
+                    p.name: original.model_copy(
+                        update={
+                            "contract_ref": p.contract_ref,
+                            "prompt_ref": p.prompt_ref,
+                            "schema_ref": p.schema_ref,
+                        }
+                    )
+                    for p in (OUTLINE, TEACHING)
+                },
+            }
+        }
     )
 
 
@@ -124,6 +144,7 @@ STEP_OPTIONS: _ActivityOptions = {
 @workflow.defn(name=WORKFLOW, sandboxed=False)
 class MaterialWorkflow(PydanticAIWorkflow):
     agent: ClassVar[Agent[CallHandle, BaseModel]]
+    book_agents: ClassVar[dict[str, Agent[CallHandle, BaseModel]]]
 
     @workflow.run
     async def run(self, body: str) -> str:
@@ -136,6 +157,35 @@ class MaterialWorkflow(PydanticAIWorkflow):
             await workflow.execute_activity("runtime.execution_started", body, **STEP_OPTIONS)
             # 按页批逐段抽取，直到取完或出现阻断性缺失。
             while True:
+                variant = ""
+                if workflow.patched("material-book-editions"):
+                    variant = await workflow.execute_activity(
+                        "material.edition_input",
+                        args=[body, offset, str(candidates[-1]) if candidates else None],
+                        result_type=str,
+                        **STEP_OPTIONS,
+                    )
+                mode = EditionInput.model_validate_json(variant) if variant else None
+                if mode and mode.purpose == TEACHING.name:
+                    candidates.append(
+                        await execute_ai_task(
+                            self.book_agents[mode.purpose],
+                            PromptCallInput(
+                                run=run,
+                                step_key="parse",
+                                call_key=f"section-{offset}",
+                                purpose=mode.purpose,
+                                prompt_parts=["instructions"],
+                                prompt=mode.prompt,
+                                material_refs=[],
+                                tool_grants=[],
+                            ),
+                        )
+                    )
+                    if mode.next_offset is None:
+                        break
+                    offset = mode.next_offset
+                    continue
                 packed = await workflow.execute_activity(
                     "material.render_pages", args=[body, offset], result_type=str, **STEP_OPTIONS
                 )
@@ -143,11 +193,13 @@ class MaterialWorkflow(PydanticAIWorkflow):
                 gaps.extend(selection.gaps)
                 if selection.pages and not selection.gaps:
                     # 本批有可读页面且无缺失问题，才提交模型解析。
-                    contents: list[UserContent] = [selection.prompt]
-                    for page in selection.pages:
+                    prompt = mode.prompt if mode else selection.prompt
+                    contents: list[UserContent] = [prompt]
+                    for position, page in enumerate(selection.pages, offset + 1):
                         contents.extend(
                             [
-                                f"{page.name}\n{page.source.model_dump_json()}",
+                                (f"全书页序 {position}\n" if mode else "")
+                                + f"{page.name}\n{page.source.model_dump_json()}",
                                 BinaryContent(
                                     data=base64.b64decode(page.data), media_type="image/jpeg"
                                 ),
@@ -155,14 +207,14 @@ class MaterialWorkflow(PydanticAIWorkflow):
                         )
                     candidates.append(
                         await execute_ai_task(
-                            self.agent,
+                            self.book_agents[mode.purpose] if mode else self.agent,
                             PromptCallInput(
                                 run=run,
                                 step_key="parse",
                                 call_key=f"pages-{offset}",
-                                purpose=PURPOSE.name,
+                                purpose=mode.purpose if mode else PURPOSE.name,
                                 prompt_parts=["instructions"],
-                                prompt=selection.prompt,
+                                prompt=prompt,
                                 material_refs=[
                                     Ref(
                                         owner="product",
@@ -181,6 +233,13 @@ class MaterialWorkflow(PydanticAIWorkflow):
                     # 已到末尾，或本批出现问题，停止翻页。
                     break
                 offset = selection.next_offset
+            if mode and not gaps:
+                await workflow.execute_activity(
+                    "material.edition_finish",
+                    args=[body, [str(key) for key in candidates]],
+                    **STEP_OPTIONS,
+                )
+                return run.input_ref.id
             await workflow.execute_activity(
                 "material.finish",
                 args=[
@@ -432,7 +491,26 @@ def material_activities(
         tools,
         model_credential,
     )
-    MaterialWorkflow.__pydantic_ai_agents__ = [MaterialWorkflow.agent]
-    ai = AIActivities(calls, {PURPOSE.schema_ref.model_dump_json(): MaterialProposal, **schemas})
+    MaterialWorkflow.book_agents = {
+        p.name: build_agent(p, calls, tools, model_credential) for p in (OUTLINE, TEACHING)
+    }
+    MaterialWorkflow.__pydantic_ai_agents__ = [
+        MaterialWorkflow.agent,
+        *MaterialWorkflow.book_agents.values(),
+    ]
+    ai = AIActivities(
+        calls,
+        {p.schema_ref.model_dump_json(): p.output for p in (PURPOSE, OUTLINE, TEACHING)}
+        | dict(schemas),
+    )
+    editions = EditionActivities(service, calls)
     activity_service = MaterialActivities(service, calls)
-    return [ai.prepare, ai.save, ai.fail, activity_service.render, activity_service.finish]
+    return [
+        ai.prepare,
+        ai.save,
+        ai.fail,
+        activity_service.render,
+        activity_service.finish,
+        editions.prepare,
+        editions.finish,
+    ]

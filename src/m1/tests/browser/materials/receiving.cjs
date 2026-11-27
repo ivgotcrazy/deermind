@@ -103,7 +103,7 @@ async function run() {
     const duplicate = await page.request.post(origin + '/api/m1/material-imports', { data: command, headers });
     assert.equal(duplicate.status(), 200, await duplicate.text());
     assert.deepEqual(await duplicate.json(), stored);
-    await page.locator('summary').filter({ hasText: '教材原件' }).click();
+    await page.getByRole('button', { name: '教材原件', exact: true }).click();
     await page.getByText('2 页 · 顺序 1').waitFor();
     const workspace = page.getByRole('region', { name: '教材管理' });
     await workspace.getByText('所属领域 · ' + domainName, { exact: false }).waitFor();

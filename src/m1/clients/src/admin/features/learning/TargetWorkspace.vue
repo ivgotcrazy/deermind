@@ -6,6 +6,7 @@ import { get, post } from '../../../shared/api/http';
 import { listDomains, type DomainSession } from '../domain/api';
 import type { TextbookRow } from '../materials/api';
 import CourseApplication from './CourseApplication.vue';
+import { bookPath, fixedChapters } from '../../../shared/book/editions';
 import TargetPromptChoices from './TargetPromptChoices.vue';
 import { promptPreview, type Choices } from '../interaction/promptPreview';
 import { methodKey, methodNames } from './methodNames';
@@ -36,6 +37,21 @@ const claims = ref<Schema['ClaimRow'][]>([]);
 const chapters = ref<Chapter[]>([]);
 const draftItems = ref<Item[]>([]);
 const claimId = ref('');
+const editionOptions = ref<Schema['EditionInfo'][]>([]);
+const extractionId = ref('');
+async function chooseEdition(id: string) {
+  const book = activeBook.value;
+  if (!book) return;
+  const previous = extractionId.value;
+  extractionId.value = id;
+  try {
+    chapters.value = id ? await fixedChapters(props.session, book.textbook_id, id) : [];
+  } catch (e) {
+    extractionId.value = previous;
+    error.value = (e as Error).message;
+    throw e;
+  }
+}
 const editing = ref<Target>();
 const creating = ref(false);
 const panel = ref<'edit' | 'application'>('edit');
@@ -84,6 +100,7 @@ async function loadBook(book: TextbookRow) {
         ];
       }),
     );
+    editionOptions.value = await get(bookPath, { session, params: { book: book.textbook_id } });
     targets.value = targetList.items;
     claims.value = claimList.items;
   } catch (caught) {
@@ -106,6 +123,8 @@ function reset() {
 
 function createTarget() {
   reset();
+  extractionId.value = '';
+  chapters.value = [];
   creating.value = true;
 }
 
@@ -205,6 +224,8 @@ async function open(target: Target) {
         draft: structuredClone(JSON.parse(JSON.stringify(draft)) as Goal),
       })),
     );
+    if (target.extraction_id) await chooseEdition(target.extraction_id);
+    else extractionId.value = '';
     editing.value = target;
     promptChoices.value = { ...bindings.get(targetKey(target)) };
     creating.value = false;
@@ -279,6 +300,7 @@ async function save() {
   try {
     const data = {
       title: title.value,
+      extraction_id: extractionId.value,
       textbook_id: book.textbook_id,
       request_id: crypto.randomUUID(),
       items: draftItems.value.map((item) => item.draft),
@@ -395,6 +417,48 @@ async function save() {
           <form class="admin-editor editor-panel target-editor" @submit.prevent="save">
             <fieldset :disabled="busy">
               <label>目标名称 <input v-model="title" required maxlength="160" /></label>
+              <label
+                >教学提炼版本<select
+                  :value="extractionId"
+                  required
+                  @change="chooseEdition(($event.target as HTMLSelectElement).value)"
+                >
+                  <option value="">请选择已发布的提炼</option>
+                  <option
+                    v-for="v in editionOptions.filter(
+                      (v) => v.kind === 'extraction' && v.status === 'published',
+                    )"
+                    :key="v.edition_id"
+                    :value="v.edition_id"
+                  >
+                    提炼 v{{ v.number }} · 内容树 v{{
+                      editionOptions.find((x) => x.edition_id === v.tree_id)?.number
+                    }}
+                  </option>
+                </select></label
+              >
+              <p
+                v-if="
+                  !editionOptions.some((v) => v.kind === 'extraction' && v.status === 'published')
+                "
+              >
+                这本教材尚无已发布的提炼。<a
+                  :href="`/admin/?textbook=${bookId}#textbooks`"
+                  target="_blank"
+                  rel="noopener"
+                  >打开教材管理</a
+                >发布后可<button type="button" @click="loadBook(activeBook!)">刷新版本</button>。
+              </p>
+              <details v-if="extractionId">
+                <summary>预览所选版本的章节与任务</summary>
+                <a
+                  :href="`/admin/?textbook=${bookId}&tree=${editionOptions.find((v) => v.edition_id === extractionId)?.tree_id}&extraction=${extractionId}#textbooks`"
+                  target="_blank"
+                  rel="noopener"
+                  >在教材管理查看这组版本</a
+                >
+                <p v-for="c in chapters" :key="c.id">{{ c.title }} · {{ c.tasks.length }} 个任务</p>
+              </details>
               <TargetPromptChoices v-model="promptChoices" :guides="guides" />
               <label
                 >选用 Claim

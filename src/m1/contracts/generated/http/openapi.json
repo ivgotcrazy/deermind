@@ -1203,6 +1203,55 @@
         "title": "BlueprintNode",
         "type": "object"
       },
+      "BookPage": {
+        "additionalProperties": false,
+        "properties": {
+          "file_id": {
+            "format": "uuid",
+            "title": "File Id",
+            "type": "string"
+          },
+          "index": {
+            "title": "Index",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "page_id": {
+            "format": "uuid",
+            "title": "Page Id",
+            "type": "string"
+          },
+          "printed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Printed"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page_id",
+          "source_id",
+          "file_id",
+          "name",
+          "index",
+          "printed"
+        ],
+        "title": "BookPage",
+        "type": "object"
+      },
       "BoundRule": {
         "additionalProperties": false,
         "properties": {
@@ -1506,6 +1555,38 @@
           "associations"
         ],
         "title": "ChapterSnapshot",
+        "type": "object"
+      },
+      "ChapterTask": {
+        "additionalProperties": false,
+        "properties": {
+          "chapter_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "method_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SolutionRef"
+            },
+            "title": "Method Refs",
+            "type": "array"
+          },
+          "source_nodes": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "title": "Source Nodes",
+            "type": "array"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "chapter_id",
+          "task_ref",
+          "method_refs"
+        ],
+        "title": "ChapterTask",
         "type": "object"
       },
       "Chart": {
@@ -2313,6 +2394,68 @@
           }
         ]
       },
+      "ContentNode": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "covered_page_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Covered Page Ids",
+            "type": "array"
+          },
+          "node_id": {
+            "format": "uuid",
+            "title": "Node Id",
+            "type": "string"
+          },
+          "node_kind": {
+            "$ref": "#/components/schemas/NodeKind"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "sibling_order": {
+            "minimum": 1.0,
+            "title": "Sibling Order",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "node_id",
+          "parent_id",
+          "node_kind",
+          "sibling_order",
+          "content",
+          "covered_page_ids"
+        ],
+        "title": "ContentNode",
+        "type": "object"
+      },
       "ControlAction": {
         "enum": [
           "pause",
@@ -2608,6 +2751,16 @@
             "title": "Evaluation Gaps",
             "type": "array"
           },
+          "extraction_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JsonUUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/GoalItem"
@@ -2890,6 +3043,9 @@
             "title": "Action",
             "type": "string"
           },
+          "extraction_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/GoalItemDraft"
@@ -2909,6 +3065,7 @@
           }
         },
         "required": [
+          "extraction_id",
           "action",
           "request_id",
           "textbook_id",
@@ -3994,6 +4151,322 @@
           "evidence"
         ],
         "title": "DraftDefinition",
+        "type": "object"
+      },
+      "Edition": {
+        "additionalProperties": false,
+        "properties": {
+          "base_edition_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Edition Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "edition_id": {
+            "format": "uuid",
+            "title": "Edition Id",
+            "type": "string"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/MapTask"
+            },
+            "title": "Entries",
+            "type": "array"
+          },
+          "issues": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/EditionKind"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/ContentNode"
+            },
+            "title": "Nodes",
+            "type": "array"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "pages": {
+            "items": {
+              "$ref": "#/components/schemas/BookPage"
+            },
+            "title": "Pages",
+            "type": "array"
+          },
+          "pending": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ContentNode"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pending"
+          },
+          "related_tasks": {
+            "items": {
+              "$ref": "#/components/schemas/MapTask"
+            },
+            "title": "Related Tasks",
+            "type": "array"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "discarded"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "textbook_id": {
+            "format": "uuid",
+            "title": "Textbook Id",
+            "type": "string"
+          },
+          "tree_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tree Id"
+          }
+        },
+        "required": [
+          "edition_id",
+          "textbook_id",
+          "kind",
+          "number",
+          "tree_id",
+          "status",
+          "revision",
+          "created_at",
+          "pages",
+          "nodes",
+          "entries"
+        ],
+        "title": "Edition",
+        "type": "object"
+      },
+      "EditionCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "copy",
+              "publish",
+              "discard",
+              "apply_correction",
+              "reject_correction",
+              "edit_tasks"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "chapter_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JsonUUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "revision": {
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/ChapterTask"
+            },
+            "title": "Tasks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "request_id",
+          "action",
+          "revision"
+        ],
+        "title": "EditionCommand",
+        "type": "object"
+      },
+      "EditionInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "edition_id": {
+            "format": "uuid",
+            "title": "Edition Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/EditionKind"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "discarded"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "textbook_id": {
+            "format": "uuid",
+            "title": "Textbook Id",
+            "type": "string"
+          },
+          "tree_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tree Id"
+          }
+        },
+        "required": [
+          "edition_id",
+          "textbook_id",
+          "kind",
+          "number",
+          "tree_id",
+          "status",
+          "revision",
+          "created_at"
+        ],
+        "title": "EditionInfo",
+        "type": "object"
+      },
+      "EditionJob": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "tree",
+              "correct",
+              "extract"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "edition_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JsonUUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "node_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JsonUUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "EditionJob",
+        "type": "object"
+      },
+      "EditionKind": {
+        "enum": [
+          "tree",
+          "extraction"
+        ],
+        "type": "string"
+      },
+      "EditionUsage": {
+        "additionalProperties": false,
+        "properties": {
+          "target_ref": {
+            "$ref": "#/components/schemas/Ref"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_ref",
+          "title"
+        ],
+        "title": "EditionUsage",
         "type": "object"
       },
       "EnterSpace": {
@@ -5894,6 +6367,86 @@
         "title": "LocalBinding",
         "type": "object"
       },
+      "MapTask": {
+        "additionalProperties": false,
+        "properties": {
+          "chapter_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "knowledge": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeRef"
+            },
+            "title": "Knowledge",
+            "type": "array"
+          },
+          "knowledge_names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Knowledge Names",
+            "type": "array"
+          },
+          "method_knowledge": {
+            "items": {
+              "items": {
+                "$ref": "#/components/schemas/KnowledgeRef"
+              },
+              "type": "array"
+            },
+            "title": "Method Knowledge",
+            "type": "array"
+          },
+          "method_names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Method Names",
+            "type": "array"
+          },
+          "method_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SolutionRef"
+            },
+            "title": "Method Refs",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "prerequisites": {
+            "items": {
+              "$ref": "#/components/schemas/Prerequisite"
+            },
+            "title": "Prerequisites",
+            "type": "array"
+          },
+          "source_nodes": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "title": "Source Nodes",
+            "type": "array"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "chapter_id",
+          "task_ref",
+          "method_refs",
+          "name",
+          "method_names",
+          "method_knowledge",
+          "knowledge",
+          "knowledge_names",
+          "prerequisites"
+        ],
+        "title": "MapTask",
+        "type": "object"
+      },
       "MaterialAdoptionReceipt": {
         "additionalProperties": false,
         "properties": {
@@ -6134,6 +6687,16 @@
       "MaterialMessageInput": {
         "additionalProperties": false,
         "properties": {
+          "edition_job": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EditionJob"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "focus_candidate": {
             "anyOf": [
               {
@@ -7314,6 +7877,28 @@
         "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$",
         "type": "string"
       },
+      "NodeKind": {
+        "enum": [
+          "book",
+          "unit",
+          "chapter",
+          "section",
+          "group",
+          "example",
+          "exercise",
+          "subquestion",
+          "solution",
+          "heading",
+          "paragraph",
+          "caption",
+          "formula",
+          "table",
+          "chart",
+          "diagram",
+          "image"
+        ],
+        "type": "string"
+      },
       "NonBlank": {
         "minLength": 1,
         "type": "string"
@@ -8374,6 +8959,9 @@
           "expected_revision": {
             "$ref": "#/components/schemas/Revision"
           },
+          "extraction_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/GoalItemDraft"
@@ -8396,6 +8984,7 @@
           }
         },
         "required": [
+          "extraction_id",
           "action",
           "request_id",
           "textbook_id",
@@ -9814,6 +10403,30 @@
         "title": "StrategyDefinition",
         "type": "object"
       },
+      "StudentBook": {
+        "additionalProperties": false,
+        "properties": {
+          "extraction": {
+            "$ref": "#/components/schemas/Edition"
+          },
+          "related_tasks": {
+            "items": {
+              "$ref": "#/components/schemas/MapTask"
+            },
+            "title": "Related Tasks",
+            "type": "array"
+          },
+          "tree": {
+            "$ref": "#/components/schemas/Edition"
+          }
+        },
+        "required": [
+          "tree",
+          "extraction"
+        ],
+        "title": "StudentBook",
+        "type": "object"
+      },
       "StudentInput": {
         "additionalProperties": false,
         "description": "保持实际输入原文，当前浏览位置不进入引用。",
@@ -10065,6 +10678,16 @@
             },
             "title": "Chapter Basis Refs",
             "type": "array"
+          },
+          "extraction_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JsonUUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "gaps": {
             "items": {
@@ -19201,6 +19824,295 @@
         ]
       }
     },
+    "/api/m1/learning-spaces/{space_id}/book": {
+      "get": {
+        "operationId": "student_book_edition",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "space_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Space Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentBook"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Student Book",
+        "tags": [
+          "book-editions"
+        ]
+      }
+    },
+    "/api/m1/learning-spaces/{space_id}/book/pages/{page_id}": {
+      "get": {
+        "operationId": "student_book_page_image",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "space_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Space Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "page_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Page Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Student Page",
+        "tags": [
+          "book-editions"
+        ]
+      }
+    },
     "/api/m1/learning-spaces/{space_id}/chapters/{chapter_id}": {
       "get": {
         "operationId": "product_space_chapter",
@@ -22613,6 +23525,1081 @@
         "summary": "List Textbooks",
         "tags": [
           "materials"
+        ]
+      }
+    },
+    "/api/m1/textbooks/{book}/editions": {
+      "get": {
+        "operationId": "list_material_editions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "book",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Book",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EditionInfo"
+                  },
+                  "title": "Response List Material Editions",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Listing",
+        "tags": [
+          "book-editions"
+        ]
+      }
+    },
+    "/api/m1/textbooks/{book}/editions/catalog": {
+      "get": {
+        "operationId": "material_task_catalog",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "book",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Book",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MapTask"
+                  },
+                  "title": "Response Material Task Catalog",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Catalog",
+        "tags": [
+          "book-editions"
+        ]
+      }
+    },
+    "/api/m1/textbooks/{book}/editions/pages": {
+      "get": {
+        "operationId": "material_edition_pages",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "book",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Book",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BookPage"
+                  },
+                  "title": "Response Material Edition Pages",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Pages",
+        "tags": [
+          "book-editions"
+        ]
+      }
+    },
+    "/api/m1/textbooks/{book}/editions/pages/{page_id}": {
+      "get": {
+        "operationId": "material_page_image",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "book",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Book",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "page_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Page Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Image",
+        "tags": [
+          "book-editions"
+        ]
+      }
+    },
+    "/api/m1/textbooks/{book}/editions/{edition}": {
+      "get": {
+        "operationId": "read_material_edition",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "book",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Book",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "edition",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Edition",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Page Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Edition"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Detail",
+        "tags": [
+          "book-editions"
+        ]
+      },
+      "post": {
+        "operationId": "edit_material_edition",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "book",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Book",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "edition",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Edition",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditionInfo"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Edit",
+        "tags": [
+          "book-editions"
+        ]
+      }
+    },
+    "/api/m1/textbooks/{book}/editions/{edition}/usage": {
+      "get": {
+        "operationId": "material_edition_usage",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "book",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Book",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "edition",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Edition",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EditionUsage"
+                  },
+                  "title": "Response Material Edition Usage",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Usage",
+        "tags": [
+          "book-editions"
         ]
       }
     },

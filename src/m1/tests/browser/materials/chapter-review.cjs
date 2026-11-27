@@ -89,6 +89,7 @@ async function run() {
     );
     await dialog.getByRole('button', { name: '上传并解析' }).click();
     const book = (await (await stored).json()).result;
+    await page.getByRole('button', { name: '候选与领域入库', exact: true }).click();
     const review = page.getByRole('region', { name: '待核对候选' });
     const adopt = review.getByRole('button', { name: '采用', exact: true });
     await adopt.waitFor({ timeout: 300_000 });
@@ -133,6 +134,7 @@ async function run() {
     const row = page.getByRole('row').filter({ hasText: title });
     await row.getByText('教材已采用', { exact: true }).waitFor();
     await row.getByRole('button', { name: '查看教材' }).click();
+    await page.getByRole('button', { name: '候选与领域入库', exact: true }).click();
     await adopted.getByText('领域已接收', { exact: true }).waitFor();
     await page.setViewportSize({ width: 820, height: 900 });
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));

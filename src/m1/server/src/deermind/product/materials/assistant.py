@@ -19,6 +19,7 @@ from deermind.foundation.system.executions.contracts import Caller, Entry, Regis
 from deermind.foundation.system.public.errors import Issue, RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.materials import assistant_facts as facts
+from deermind.product.materials.editions import MaterialEditions, new_draft, read_edition
 from deermind.product.materials.facts import IMPORT, MaterialImportFact, record
 from deermind.product.materials.focused_revision import revise_item
 from deermind.product.materials.proposals import MaterialProposal
@@ -36,6 +37,7 @@ from deermind.product.public.material_assistant import (
     PreviousMaterialBatch,
     TurnOutcome,
 )
+from deermind.product.public.material_editions import Edition
 from deermind.spaces.domain.public import SourceRef
 from pydantic import JsonValue, TypeAdapter
 from sqlalchemy import text
@@ -81,6 +83,7 @@ class MaterialAssistant:
     ) -> None:
         self.engine = engine
         self.materials = materials
+        self.editions = MaterialEditions(materials)
         self.events = events
         self.reader = reader
         self.attachments = attachments
@@ -177,6 +180,7 @@ class MaterialAssistant:
         if (
             selection is None
             and earlier_pages is None
+            and command.edition_job is None
             and not any(term in command.message for term in WHOLE_BOOK)
         ):
             # 既未选原件、又未指整本，消息也未暗示全册，缺少取材范围。
@@ -323,7 +327,66 @@ class MaterialAssistant:
                     if not pages_used:
                         raise RequestError(400, "invalid_reference", "所选内容不属于这批候选。")
                     earlier_pages = set(pages_used)
+            source: Edition | None = None
+            job = command.edition_job
+            edition_context: dict[str, JsonValue] = {}
+            if job:
+                if command.selection or prior_batch or command.focus_candidate:
+                    raise RequestError(422, "invalid_reference", "整本版本任务使用固定的原页范围。")
+                book = imported["textbook_id"]
+                if job.action != "tree":
+                    if job.edition_id is None:
+                        raise RequestError(422, "invalid_reference", "请选择内容树版本。")
+                    source = await read_edition(connection, book, job.edition_id)
+                    status = "published" if job.action == "extract" else "draft"
+                    if (
+                        source.kind != "tree"
+                        or source.status != status
+                        or source.revision != job.revision
+                    ):
+                        raise RequestError(409, "revision_conflict", "内容树版本或状态已变化。")
+                    if job.node_id and job.node_id not in {n.node_id for n in source.nodes}:
+                        raise RequestError(422, "invalid_reference", "引用节点不属于本版。")
+                    edition_context["source"] = source.model_dump(mode="json")
+                if job.action == "extract":
+                    domain_id = await connection.scalar(
+                        text("SELECT domain_id FROM product.textbook WHERE textbook_id=:id"),
+                        {"id": book},
+                    )
+                    edition_context["catalog"] = [
+                        t.model_dump(mode="json")
+                        for t in await self.editions.catalog(session, domain_id)
+                    ]
             pages, gaps = await self._manifest(connection, identity, command, earlier_pages)
+            if job and job.action == "correct" and source is not None:
+                originals = {str(page["page_id"]): page for page in pages}
+                if any(str(page.page_id) not in originals for page in source.pages):
+                    raise RequestError(409, "source_unavailable", "该树版本的原页不完整。")
+                pages = [originals[str(page.page_id)] for page in source.pages]
+            seconds = 1200
+            if job:
+                units = len(pages)
+                if job.action == "extract":
+                    assert source is not None
+                    units = sum(n.node_kind in {"unit", "chapter", "section"} for n in source.nodes)
+                batches = max(1, (units + 3) // 4)
+                # Reserve one repair per batch, with a finite budget fixed at acceptance.
+                if batches > 1:
+                    budget = config.budget.model_copy(
+                        update={
+                            "max_model_requests": max(
+                                config.budget.max_model_requests, batches * 2
+                            ),
+                            "max_total_tokens": max(
+                                config.budget.max_total_tokens,
+                                batches
+                                * (config.budget.max_input_tokens + config.budget.max_output_tokens)
+                                * 2,
+                            ),
+                        }
+                    )
+                    config = config.model_copy(update={"budget": budget})
+                    seconds = max(seconds, batches * 250 + config.budget.finalize_reserve_seconds)
             timestamp = datetime.now(UTC)
             message_id = uuid4()
             work_id = uuid4()
@@ -348,7 +411,10 @@ class MaterialAssistant:
                     "focus_candidate": str(command.focus_candidate)
                     if command.focus_candidate
                     else None,
-                    "neighbor_pages": True,
+                    "neighbor_pages": job is None,
+                    "edition_job": job.model_dump(mode="json") if job else None,
+                    "edition_context": edition_context,
+                    "textbook_id": str(imported["textbook_id"]),
                 },
                 state="accepted",
                 runtime_ref=work_id,
@@ -389,7 +455,7 @@ class MaterialAssistant:
                 scope_id=identity,
                 acceptance_key=str(action_id),
                 input_ref=turn_ref(action_id),
-                seconds=1200,
+                seconds=seconds,
                 basis_refs=sources,
                 ai_config_ref=work_id,
             )
@@ -543,6 +609,7 @@ class MaterialAssistant:
         reply: str,
         outcome: TurnOutcome,
         issues: list[Issue],
+        edition: Edition | None = None,
     ) -> None:
         async with self.engine.begin() as connection:
             saved = await store.lock_owned(connection, self.registry, run.execution_id)
@@ -553,6 +620,19 @@ class MaterialAssistant:
             turn = await self._turn(connection, UUID(work.input_ref.id), work.scope_id)
             imported = await self.materials.read_import(connection, work.scope_id, lock=True)
             actor = (await store.authorization(connection, work.execution_id)).initiator_ref
+            if edition is not None:
+                if imported["source_revision"] != turn.input["source_revision"]:
+                    raise RequestError(409, "revision_conflict", "原页已变化，请基于当前来源重试。")
+                if edition.pending is not None:
+                    current = await read_edition(
+                        connection, edition.textbook_id, edition.edition_id
+                    )
+                    if current.status != "draft" or current.revision != edition.revision:
+                        raise RequestError(409, "revision_conflict", "草稿已变化，请重新发起修正。")
+                    edition = edition.model_copy(update={"revision": current.revision + 1})
+                else:
+                    edition = await new_draft(connection, edition, edition.edition_id)
+                await self.editions.persist(connection, actor, edition, turn.request_ref)
             batches: list[Ref] = []
             focus = turn.input.get("focus_candidate")
             if (

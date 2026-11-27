@@ -297,6 +297,25 @@ class CourseSpaces:
             if chapter_view is None:
                 # 按章节号/版本或内容引用都未在本空间快照中命中。
                 raise RequestError(404, "not_found", "这个章节不在空间采用范围内。")
+            if adopted.snapshot.extraction_id:
+                from deermind.product.materials.editions import read_edition
+
+                book = (await self.row(db, scope)).textbook_id
+                extraction = await read_edition(db, book, adopted.snapshot.extraction_id)
+                assert extraction.tree_id is not None
+                tree = await read_edition(db, book, extraction.tree_id)
+                nodes = {str(n.node_id): n for n in tree.nodes}
+                selected_refs = [source] if source else chapter_view.content_refs
+                return [
+                    {
+                        "source_ref": r.model_dump(mode="json"),
+                        "content": nodes[r.id].content,
+                        "kind": nodes[r.id].node_kind,
+                        "pages": [str(p) for p in nodes[r.id].covered_page_ids],
+                    }
+                    for r in selected_refs
+                    if r in chapter_view.content_refs
+                ]
             parts: list[tuple[str, str, UUID, UUID, UUID]] = []
             selected = [source] if source is not None else chapter_view.content_refs
             # 逐份候选内容取出类型、本地编号与溯源事件。
@@ -345,6 +364,36 @@ class CourseSpaces:
     async def read_quoted_content(
         self, scope: UUID, adoption: UUID, reference: Ref
     ) -> list[dict[str, JsonValue]]:
+        if reference.owner == "product" and reference.type == "material_content_node":
+            async with self.engine.connect() as db:
+                adopted = await self.fixed_adoption(db, scope, adoption)
+                row = (
+                    await db.execute(
+                        text("""
+                    SELECT n.node_kind,n.content,n.covered_page_ids
+                    FROM product.material_edition e
+                    JOIN product.material_edition t ON t.edition_id=e.tree_id
+                    JOIN product.material_content_node n ON n.material_version_id=t.edition_id
+                    WHERE e.edition_id=:edition AND e.status='published' AND t.status='published'
+                    AND t.number=:revision AND n.node_id=CAST(:node AS uuid)
+                """),
+                        {
+                            "edition": adopted.snapshot.extraction_id,
+                            "revision": reference.revision,
+                            "node": reference.id,
+                        },
+                    )
+                ).one_or_none()
+            if row is None:
+                raise RequestError(404, "not_found", "该原文不属于学习空间固定的教材版本。")
+            return [
+                {
+                    "source_ref": reference.model_dump(mode="json"),
+                    "content": row.content,
+                    "kind": row.node_kind,
+                    "pages": [str(p) for p in row.covered_page_ids],
+                }
+            ]
         if reference.type == "material_candidate":
             # 直接引用候选内容：按来源候选定位，不绑定章节。
             return await self.fixed_chapter_content(scope, adoption, None, source=reference)

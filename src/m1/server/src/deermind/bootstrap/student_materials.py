@@ -133,8 +133,13 @@ class StudentMaterialSources:
         self, db: AsyncConnection, scope: UUID, adoption: UUID, reference: Ref
     ) -> tuple[JsonValue, list[Ref]] | None:
         adopted = await self.spaces.fixed_adoption(db, scope, adoption)
-        if reference.owner == "product" and reference.type == "material_candidate":
-            if not any(reference in chapter.content_refs for chapter in adopted.snapshot.chapters):
+        if reference.owner == "product" and reference.type in {
+            "material_candidate",
+            "material_content_node",
+        }:
+            if reference.type == "material_candidate" and not any(
+                reference in chapter.content_refs for chapter in adopted.snapshot.chapters
+            ):
                 # 候选内容不在本空间采用快照内。
                 return None
             parts = await self.spaces.read_quoted_content(scope, adoption, reference)

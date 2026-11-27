@@ -578,6 +578,9 @@ class MaterialReceiving:
         self, session: SessionView, source_id: UUID, file_id: UUID
     ) -> tuple[BinaryIO, str, int, str]:
         self.administrator(session)
+        return await self.open_original(source_id, file_id)
+
+    async def open_original(self, source_id: UUID, file_id: UUID) -> tuple[BinaryIO, str, int, str]:
         async with self.engine.connect() as connection:
             row = (
                 await connection.execute(

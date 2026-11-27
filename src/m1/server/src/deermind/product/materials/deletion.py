@@ -121,12 +121,18 @@ class MaterialDeletion:
                 # 基线版本、删除范围引用或占用状态任一不符即冲突。
                 raise RequestError(409, "revision_conflict", "教材已更新，请重新确认删除范围。")
             applied = await connection.scalar(
-                text("SELECT 1 FROM product.application_head WHERE textbook_id=:book LIMIT 1"),
+                text(
+                    "SELECT 1 FROM product.application_head WHERE textbook_id=:book "
+                    "UNION ALL SELECT 1 FROM product.material_edition "
+                    "WHERE textbook_id=:book AND status='published' LIMIT 1"
+                ),
                 {"book": imported["textbook_id"]},
             )
             if applied is not None:
                 # 教材已被课程应用，导入不可删除。
-                raise RequestError(409, "already_applied", "教材已应用，不能删除此导入。")
+                raise RequestError(
+                    409, "already_applied", "教材已有发布版本或课程应用，须保留原页。"
+                )
             sources = (
                 await connection.scalars(
                     text(

@@ -13,6 +13,7 @@ from deermind.foundation.system.events.store import lock_scope_sequence
 from deermind.foundation.system.public.errors import Issue, RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.learning import target_facts as facts
+from deermind.product.learning.book_chapters import association, published
 from deermind.product.learning.requirements import ConditionResolver, prepare_item
 from deermind.product.materials.chapter_associations import AssociationFact
 from deermind.product.materials.receiving import MaterialReceiving, cursor_position
@@ -63,9 +64,21 @@ class TargetDefinitions:
         return row.domain_id
 
     async def chapter_basis(
-        self, db: AsyncConnection, book: UUID, item: GoalItemFields, claim: ClaimView
+        self,
+        db: AsyncConnection,
+        book: UUID,
+        item: GoalItemFields,
+        claim: ClaimView,
+        extraction: UUID | None = None,
     ) -> dict[UUID, ChapterAssociationView]:
         task = claim.definition.task_ref
+        if extraction:
+            value = await published(db, book, extraction)
+            return {
+                r.chapter_id: association(extraction, r)
+                for r in value.entries
+                if r.task_ref == task and r.chapter_id in item.chapter_refs
+            }
         rows = (
             await db.execute(
                 text(
@@ -103,7 +116,9 @@ class TargetDefinitions:
                 # 同一批内目标项标识不得重复。
                 raise RequestError(400, "invalid_reference", "目标项不能重复。")
             claim = claims[draft.claim_ref]
-            chapters = await self.chapter_basis(db, body.textbook_id, draft, claim)
+            chapters = await self.chapter_basis(
+                db, body.textbook_id, draft, claim, body.extraction_id
+            )
             item, missing, sources = prepare_item(
                 draft, claim, chapters, prior, f"/items/{index}", self.resolve
             )
@@ -232,6 +247,7 @@ class TargetDefinitions:
             target_id=target_id, textbook_id=book, head_revision=revision, created_at=now
         )
         snapshot = facts.TargetVersion(
+            extraction_id=body.extraction_id,
             target_id=target_id,
             revision=revision,
             title=body.title,
@@ -294,7 +310,9 @@ class TargetDefinitions:
                     # 持锁后复核基线修订号，防止并发覆盖。
                     raise RequestError(409, "revision_conflict", "学习目标已变化，请重新读取。")
                 for item in items:
-                    chapters = await self.chapter_basis(db, book, item, claims[item.claim_ref])
+                    chapters = await self.chapter_basis(
+                        db, book, item, claims[item.claim_ref], body.extraction_id
+                    )
                     if len(chapters) != len(item.chapter_refs) or any(
                         value.association_ref not in chapter_refs for value in chapters.values()
                     ):

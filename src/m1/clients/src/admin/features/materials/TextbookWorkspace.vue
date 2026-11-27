@@ -7,6 +7,7 @@ import DomainCreateDialog from '../domain/DomainCreateDialog.vue';
 import { detail, download, listTextbooks, readReceipt, receive, upload } from './api';
 import type { MaterialDetail, MaterialFile, ReceiveCommand, SourceView, TextbookRow } from './api';
 import MaterialAssistantPanel from './MaterialAssistantPanel.vue';
+import EditionWorkspace from './EditionWorkspace.vue';
 import ChapterAssociationsPanel from './ChapterAssociationsPanel.vue';
 
 const { session } = defineProps<{ session: DomainSession }>();
@@ -25,6 +26,12 @@ const bookCursor = ref<string>();
 const selected = ref<MaterialDetail>();
 const dialog = ref<HTMLDialogElement>();
 const deleteDialog = ref<HTMLDialogElement>();
+const bookViews = [
+  { id: 'editions', label: '教材工作台' },
+  { id: 'candidates', label: '候选与领域入库' },
+  { id: 'files', label: '教材原件' },
+] as const;
+const bookView = ref<(typeof bookViews)[number]['id']>('editions');
 const materialTab = ref<'content' | 'associations'>('content');
 const deleting = ref(false);
 const deleteError = ref('');
@@ -45,12 +52,12 @@ const pending = ref<ReceiveCommand>();
 const appending = ref(false);
 const hasBook = computed(() => Boolean(selected.value));
 const stages = {
-  ready: ['待解析', '开始解析'],
-  processing: ['解析中', '查看进度'],
-  review: ['待核对', '核对候选'],
-  needs_input: ['待补充', '继续处理'],
-  failed: ['解析未完成', '查看并重试'],
-  adopted: ['教材已采用', '查看教材'],
+  ready: '待解析',
+  processing: '解析中',
+  review: '待核对',
+  needs_input: '待补充',
+  failed: '解析未完成',
+  adopted: '教材已采用',
 } as const;
 
 function moveFile(index: number, distance: number) {
@@ -97,7 +104,10 @@ async function read(id: string, cursor?: string) {
       sources: [...selected.value.sources, ...response.import.sources],
     };
   } else {
-    if (selected.value?.textbook.textbook_id !== id) materialTab.value = 'content';
+    if (selected.value?.textbook.textbook_id !== id) {
+      bookView.value = 'editions';
+      materialTab.value = 'content';
+    }
     selected.value = response.import;
   }
 }
@@ -322,6 +332,8 @@ onMounted(async () => {
   void loadBooks();
   try {
     domains.value = (await listDomains(session, lifecycle.signal)).items;
+    const book = new URLSearchParams(window.location.search).get('textbook');
+    if (book) await show(book);
   } catch (cause) {
     error.value = message(cause, '无法加载教材管理。');
   }
@@ -372,7 +384,7 @@ onBeforeUnmount(() => {
             <th>所属领域</th>
             <th>版次</th>
             <th>来源</th>
-            <th>处理进度</th>
+            <th>导入进度</th>
             <th>操作</th>
           </tr>
         </thead>
@@ -386,10 +398,10 @@ onBeforeUnmount(() => {
             <td>{{ domainNames.get(book.domain_id) ?? '领域不可用' }}</td>
             <td>{{ book.metadata.edition || '—' }}</td>
             <td>{{ book.metadata.source }}</td>
-            <td>{{ stages[book.processing][0] }}</td>
+            <td>{{ stages[book.processing] }}</td>
             <td>
               <button type="button" :disabled="busy" @click="show(book.textbook_id)">
-                {{ stages[book.processing][1] }}
+                查看教材
               </button>
             </td>
           </tr>
@@ -435,8 +447,18 @@ onBeforeUnmount(() => {
           · {{ selected.textbook.metadata.edition }}</span
         >
       </p>
-      <details class="editor-panel">
-        <summary>教材原件</summary>
+      <nav class="editor-tabs" aria-label="教材详情视图">
+        <button
+          v-for="view in bookViews"
+          :key="view.id"
+          type="button"
+          :aria-pressed="bookView === view.id"
+          @click="bookView = view.id"
+        >
+          {{ view.label }}
+        </button>
+      </nav>
+      <section v-show="bookView === 'files'" class="editor-panel" aria-label="教材原件">
         <div class="material-actions">
           <button
             type="button"
@@ -463,36 +485,45 @@ onBeforeUnmount(() => {
         >
           更多原件
         </button>
-      </details>
-      <nav class="editor-tabs" aria-label="教材工作区">
-        <button
-          type="button"
-          class="secondary"
-          :aria-pressed="materialTab === 'content'"
-          @click="materialTab = 'content'"
-        >
-          章节内容与教材助手
-        </button>
-        <button
-          type="button"
-          class="secondary"
-          :aria-pressed="materialTab === 'associations'"
-          @click="materialTab = 'associations'"
-        >
-          章节关联
-        </button>
-      </nav>
-      <MaterialAssistantPanel
-        v-show="materialTab === 'content'"
-        :key="selected.textbook.import_id"
-        :material="selected"
+      </section>
+      <EditionWorkspace
+        v-show="bookView === 'editions'"
+        :key="selected.textbook.textbook_id"
+        :book="selected.textbook.textbook_id"
+        :import-id="selected.textbook.import_id"
         :session="session"
       />
-      <ChapterAssociationsPanel
-        v-if="materialTab === 'associations'"
-        :material="selected"
-        :session="session"
-      />
+      <section v-show="bookView === 'candidates'" aria-label="教材候选与领域入库">
+        <nav class="editor-tabs" aria-label="教材工作区">
+          <button
+            type="button"
+            class="secondary"
+            :aria-pressed="materialTab === 'content'"
+            @click="materialTab = 'content'"
+          >
+            章节内容与教材助手
+          </button>
+          <button
+            type="button"
+            class="secondary"
+            :aria-pressed="materialTab === 'associations'"
+            @click="materialTab = 'associations'"
+          >
+            章节关联
+          </button>
+        </nav>
+        <MaterialAssistantPanel
+          v-show="materialTab === 'content'"
+          :key="selected.textbook.import_id"
+          :material="selected"
+          :session="session"
+        />
+        <ChapterAssociationsPanel
+          v-if="materialTab === 'associations'"
+          :material="selected"
+          :session="session"
+        />
+      </section>
     </template>
 
     <dialog ref="deleteDialog" aria-label="删除教材导入">
