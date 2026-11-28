@@ -1,11 +1,11 @@
 # M1 Domain API
 
-> **版本**：v0.12<br>
+> **版本**：v0.13<br>
 > **状态**：设计合同；已实现范围和进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计规范](../../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
 > **更新日期**：2026-11-23<br>
-> **修订说明**：v0.11 → v0.12，同步 Task 正文保存合同<br>
+> **修订说明**：v0.12 → v0.13，区分教材模型读取与早期独立定义维护<br>
 
 共同类型与回执见[总册](../API_and_Message_Design.md)。接口只接受已授权领域及精确对象引用；所有定义/内容结构以[Domain§1](../Domain_Space_Design.md#1-领域对象身份与关系)为唯一来源。API不直接接收数据库行或模型任意生成的ID。
 
@@ -84,7 +84,7 @@ E02-01 接入 D01、D02、D04 和 D13 的管理员领域根分支。各请求携
 
 `object_kind=task` 沿用成员新建、修订和软删除的请求及版本规则。Task 载荷见 [Domain §1.2 与 §3.1](../Domain_Space_Design.md#31-可检查的任务定义)。变量和限制写在内容正文，保存时校验正文结构。未填正文为 `null`，缺项在 `gaps` 返回。
 
-E02-05 新增 `object_kind=solution`。Task 定义接收 `method_refs`、`prerequisites`，Solution 接收 `kc_refs`。三者均随持有者版本保存，省略时为空。非法关系返回 `invalid_reference` 或 `dependency_cycle`，`issues[].path` 指明涉及的关系字段。旧 Task 请求仍可用原编号查询或重放。
+早期独立定义的 E02-05 合同新增 `object_kind=solution`。Task 定义接收 `method_refs`、`prerequisites`，Solution 接收 `kc_refs`。三者均随持有者版本保存，省略时为空。非法关系返回 `invalid_reference` 或 `dependency_cycle`，`issues[].path` 指明涉及的关系字段。旧 Task 请求仍可用原编号查询或重放。
 
 服务端分配领域 ID，将 `DomainDefinitionSaved`、首版、领域头、投影收据和请求收据同事务提交。原请求编号与内容相同时返回原结果，原编号用于不同内容时返回 409。
 
@@ -204,7 +204,7 @@ E02-05 新增 `object_kind=solution`。Task 定义接收 `method_refs`、`prereq
 | --- | --- | --- | --- |
 | `task_ref` | ObjectRef(task) | 是 | 查询对象 |
 | `method_refs` | ObjectRef(solution)[] | 是 | Task直接方法 |
-| `kc_refs` | ObjectRef(kc)[] | 是 | 按精确版本去重的直接知识 |
+| `kc_refs` | ObjectRef(kc)[] | 是 | 任务绑定知识及所选方法直接依赖的知识任务对应知识，按版本去重 |
 | `kc_sources` | {kc_id, uses[{method_ref,kc_ref}]}[] | 是 | 按 KC 身份汇总并保留来源方法和各自采用的 KC 版本 |
 | `prerequisites` | 先导关系[] | 是 | Domain§1.2的task_ref、适用方法与依赖条件；不是可执行子调用树 |
 | `gaps` | Issue[] | 是 | Task 固定版本的定义缺项 |
@@ -596,3 +596,4 @@ ContentRef只允许所属view已授权的JSON Pointer；图文重排不升对象
 | v0.10 | 2026-11-22 | 登记定义提取、实例归类与后续正式保存的接口 |
 | v0.11 | 2026-11-23 | 明确题内参考归类分别核对父题和参考，补充结论及证据口径 |
 | v0.12 | 2026-11-23 | 同步 Task 正文保存合同 |
+| v0.13 | 2026-11-28 | 明确教材模型知识读取与独立维护边界 |

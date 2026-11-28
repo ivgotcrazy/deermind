@@ -12,11 +12,14 @@ from deermind.foundation.system.public.errors import RequestError
 from deermind.product.public.authentication import SessionView
 from deermind.product.public.courses import LearningSpaceService
 from deermind.spaces.evaluation.public import (
+    AssessmentCommand,
+    AssessmentModel,
     BasisView,
     ClaimCommand,
     ClaimDetail,
     ClaimList,
     ClaimReceipt,
+    ClaimRow,
     ClaimService,
     EvaluationBasisService,
 )
@@ -218,3 +221,48 @@ def _basis_cursor(cursor: str | None, binding: str) -> UUID | None:
     except ValueError as error:
         # 游标末段不是合法 UUID。
         raise RequestError(400, "invalid_request", "续页位置无效。") from error
+
+
+@router.get(
+    "/textbooks/{book}/extractions/{extraction}/models",
+    responses=ERRORS,
+    operation_id="list_assessment_models",
+)
+async def model_list(
+    request: Request,
+    response: Response,
+    book: UUID,
+    extraction: UUID,
+    expected: ExpectedSession = None,
+) -> list[AssessmentModel]:
+    await admin_session(request, response, expected)
+    return await request.app.state.assessments.list(book, extraction)
+
+
+@router.post(
+    "/textbooks/{book}/extractions/{extraction}/models/{model}",
+    responses=ERRORS,
+    operation_id="save_assessment_model",
+)
+async def model_save(
+    request: Request,
+    response: Response,
+    book: UUID,
+    extraction: UUID,
+    model: UUID,
+    body: AssessmentCommand,
+    expected: ExpectedSession = None,
+    csrf: CsrfToken = None,
+) -> AssessmentModel:
+    session = await admin_session(request, response, expected, csrf, writing=True)
+    return await request.app.state.assessments.save(
+        session.account.account_id, book, extraction, model, body
+    )
+
+
+@router.get("/models/{model}/claims", responses=ERRORS, operation_id="list_model_members")
+async def list_model_members(
+    request: Request, response: Response, model: UUID, expected: ExpectedSession = None
+) -> list[ClaimRow]:
+    await admin_session(request, response, expected)
+    return await request.app.state.assessments.members(model)

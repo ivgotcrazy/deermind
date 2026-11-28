@@ -42,6 +42,9 @@ def references(content: DefinitionContent) -> list[Relationship]:
         return [
             Relationship(f"/kc_refs/{index}", "solution_kc", ref)
             for index, ref in enumerate(content.kc_refs)
+        ] + [
+            Relationship(f"/dependencies/{i}/task_ref", "method_prerequisite", dep.task_ref)
+            for i, dep in enumerate(content.dependencies or [])
         ]
     if not isinstance(content, TaskDefinition):
         # 其他定义类型无可提取关系。
@@ -50,6 +53,8 @@ def references(content: DefinitionContent) -> list[Relationship]:
         Relationship(f"/method_refs/{index}", "task_method", ref)
         for index, ref in enumerate(content.method_refs)
     ]
+    if content.knowledge_ref:
+        entries.append(Relationship("/knowledge_ref", "task_knowledge", content.knowledge_ref))
     for index, link in enumerate(content.prerequisites):
         path = f"/prerequisites/{index}"
         entries.append(Relationship(f"{path}/task_ref", "task_prerequisite", link.task_ref))
@@ -87,6 +92,10 @@ async def validate_relationships(
     connection: AsyncConnection, domain_id: UUID, owner_id: UUID, content: DefinitionContent
 ) -> None:
     """在领域根锁内检查当前可采用性与精确先导图。"""
+    if (isinstance(content, TaskDefinition) and (content.task_type or content.knowledge_ref)) or (
+        isinstance(content, SolutionDefinition) and content.dependencies is not None
+    ):
+        raise relationship_error("/content", "教材模型请在相应教学提炼草稿中维护。")
     if isinstance(content, TaskDefinition):
         _check_task_shape(content)
     entries = references(content)
@@ -100,7 +109,8 @@ async def validate_relationships(
             "JOIN domain.object_identity i ON i.object_id=s.object_id "
             "JOIN domain.object_version v ON (v.object_id,v.version)=(i.object_id,s.version) "
             "JOIN domain.object_version h ON (h.object_id,h.version)=(i.object_id,i.head_version) "
-            "WHERE i.domain_id=:domain AND NOT v.is_deleted AND NOT h.is_deleted"
+            "WHERE i.domain_id=:domain AND i.source_edition_id IS NULL "
+            "AND NOT v.is_deleted AND NOT h.is_deleted"
         ),
         {"domain": domain_id, **_keys([entry.ref for entry in entries])},
     )
@@ -173,8 +183,14 @@ async def method_knowledge(
             "SELECT r.owner_id,r.owner_version,r.target_id,r.target_version FROM selected s "
             "JOIN domain.object_reference r ON "
             "(r.owner_id,r.owner_version)=(s.object_id,s.version) "
-            "WHERE r.relation_kind='solution_kc' "
-            "ORDER BY r.owner_id,r.path"
+            "WHERE r.relation_kind='solution_kc' UNION "
+            "SELECT s.object_id,s.version,k.target_id,k.target_version FROM selected s "
+            "JOIN domain.object_reference d "
+            "ON (d.owner_id,d.owner_version)=(s.object_id,s.version) "
+            "AND d.relation_kind='method_prerequisite' JOIN domain.object_reference k "
+            "ON (k.owner_id,k.owner_version)=(d.target_id,d.target_version) "
+            "AND k.relation_kind='task_knowledge' "
+            "ORDER BY 1,3"
         ),
         _keys(methods),
     )

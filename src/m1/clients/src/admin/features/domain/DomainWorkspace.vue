@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import { ApiError } from '../../../shared/api/http';
+import { ApiError, get, post } from '../../../shared/api/http';
 import RichContent from '../../../shared/content/RichContent.vue';
 import { listDomains, readDomain } from './api';
-import type { DomainRow, DomainSession, DomainView, MemberKind } from './api';
+import type { DomainRow, DomainSession, DomainView } from './api';
 import DomainCreateDialog from './DomainCreateDialog.vue';
-import DomainMembers from './DomainMembers.vue';
-import DomainIntakeItems from './DomainIntakeItems.vue';
-import DomainInstances from './DomainInstances.vue';
+import { ElButton, ElEmpty, ElMessageBox } from 'element-plus';
+import TeachingTaskEditor from '../materials/TeachingTaskEditor.vue';
+import BookModelScope from '../materials/BookModelScope.vue';
+import { editionPath, type BookTypes, type Edition } from '../../../shared/book/editions';
 
 const { session } = defineProps<{ session: DomainSession }>();
 const lifecycle = new AbortController();
@@ -17,7 +18,65 @@ const rows = ref<DomainRow[] | null>(null);
 const filter = ref('');
 const listError = ref('');
 const selected = ref('');
-const memberKind = ref<MemberKind | 'intake' | 'instances'>('kc');
+const model = ref<Edition>();
+const tree = ref<Edition>();
+let scopeRead = 0;
+async function choose(book?: BookTypes['TextbookListItem'], version?: BookTypes['EditionInfo']) {
+  const sequence = ++scopeRead;
+  model.value = undefined;
+  tree.value = undefined;
+  detailError.value = '';
+  if (!book || !version) return;
+  try {
+    const value = await get(editionPath, {
+      session,
+      params: { book: book.textbook_id, edition: version.edition_id },
+      signal: lifecycle.signal,
+    });
+    const source = version.tree_id
+      ? await get(editionPath, {
+          session,
+          params: { book: book.textbook_id, edition: version.tree_id },
+          signal: lifecycle.signal,
+        })
+      : undefined;
+    if (sequence === scopeRead) {
+      model.value = value;
+      tree.value = source;
+    }
+  } catch (e) {
+    if (sequence === scopeRead && !lifecycle.signal.aborted)
+      detailError.value = (e as Error).message;
+  }
+}
+async function remove(row: DomainRow) {
+  try {
+    await ElMessageBox.confirm(
+      '确认删除领域「' + row.name + '」？已有教材时无法删除。',
+      '删除领域',
+      { type: 'warning', confirmButtonText: '删除', cancelButtonText: '取消' },
+    );
+  } catch {
+    return;
+  }
+  try {
+    await post(
+      '/api/m1/domain-definitions',
+      {
+        request_id: crypto.randomUUID(),
+        object_kind: 'domain',
+        action: 'soft_delete',
+        object_ref: row.object_ref,
+        expected_version: row.object_ref.version,
+        change_note: '管理员删除空领域',
+      },
+      { session },
+    );
+    await loadList();
+  } catch (e) {
+    listError.value = (e as Error).message;
+  }
+}
 const detail = ref<DomainView | null>(null);
 const detailError = ref('');
 let detailRead: AbortController | undefined;
@@ -110,6 +169,7 @@ onBeforeUnmount(() => {
           <tr>
             <th>领域名称</th>
             <th>版本</th>
+            <th>操作</th>
           </tr>
         </thead>
         <tbody>
@@ -120,6 +180,7 @@ onBeforeUnmount(() => {
               </button>
             </td>
             <td>v{{ row.object_ref.version }}</td>
+            <td><ElButton link type="danger" @click="remove(row)">删除</ElButton></td>
           </tr>
         </tbody>
       </table>
@@ -149,67 +210,15 @@ onBeforeUnmount(() => {
           <h3>说明</h3>
           <RichContent :content="detail.content.description" />
         </section>
-        <nav class="editor-tabs" aria-label="领域对象">
-          <button
-            type="button"
-            class="secondary"
-            :aria-pressed="memberKind === 'kc'"
-            @click="memberKind = 'kc'"
-          >
-            知识成分
-          </button>
-          <button
-            type="button"
-            class="secondary"
-            :aria-pressed="memberKind === 'task'"
-            @click="memberKind = 'task'"
-          >
-            任务
-          </button>
-          <button
-            type="button"
-            class="secondary"
-            :aria-pressed="memberKind === 'solution'"
-            @click="memberKind = 'solution'"
-          >
-            方法
-          </button>
-          <button
-            type="button"
-            class="secondary"
-            :aria-pressed="memberKind === 'intake'"
-            @click="memberKind = 'intake'"
-          >
-            待入库内容
-          </button>
-          <button
-            type="button"
-            class="secondary"
-            :aria-pressed="memberKind === 'instances'"
-            @click="memberKind = 'instances'"
-          >
-            题目实例
-          </button>
-        </nav>
-        <DomainIntakeItems
-          v-if="memberKind === 'intake'"
-          :key="selected"
-          :domain-id="selected"
-          :session="session"
+        <BookModelScope :domain="selected" :session="session" @change="choose" />
+        <TeachingTaskEditor
+          v-if="model && tree"
+          :key="model.edition_id"
+          :edition="model"
+          :tree="tree"
         />
-        <DomainInstances
-          v-else-if="memberKind === 'instances'"
-          :key="selected"
-          :domain-id="selected"
-          :session="session"
-        />
-        <DomainMembers
-          v-else
-          :key="`${selected}:${memberKind}`"
-          :kind="memberKind"
-          :domain-id="selected"
-          :session="session"
-        />
+        <ElEmpty v-else description="请选择教材及其已发布的教学提炼" :image-size="75" />
+        <p v-if="detailError" role="alert">{{ detailError }}</p>
       </div>
       <div v-else-if="detailError" class="feedback">
         <p role="alert">{{ detailError }}</p>

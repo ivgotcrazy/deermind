@@ -20,7 +20,13 @@ from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.events import FactModel, Ref
 from deermind.abstractions.executions import RunInput
 from deermind.abstractions.file_records import FileObject
-from deermind.bootstrap.book_operation import OUTLINE, TEACHING, EditionActivities, EditionInput
+from deermind.bootstrap.book_operation import (
+    ASSESS,
+    OUTLINE,
+    TEACHING,
+    EditionActivities,
+    EditionInput,
+)
 from deermind.foundation.ai.execution import Calls
 from deermind.foundation.ai.tools import Tools
 from deermind.foundation.system.files.uploads import MAX_BYTES
@@ -63,7 +69,7 @@ def material_config() -> ExecutionConfig | None:
         # 未显式启用教材抽取模型，返回空配置关闭该路径。
         return None
     config = ExecutionConfig(
-        revision="material-extraction-6-book-teaching-2",
+        revision="material-extraction-7-book-teaching-3",
         purpose_bindings={
             PURPOSE.name: PurposeBinding(
                 contract_ref=PURPOSE.contract_ref,
@@ -108,7 +114,7 @@ def material_config() -> ExecutionConfig | None:
                             "schema_ref": p.schema_ref,
                         }
                     )
-                    for p in (OUTLINE, TEACHING)
+                    for p in (OUTLINE, TEACHING, ASSESS)
                 },
             }
         }
@@ -166,7 +172,7 @@ class MaterialWorkflow(PydanticAIWorkflow):
                         **STEP_OPTIONS,
                     )
                 mode = EditionInput.model_validate_json(variant) if variant else None
-                if mode and mode.purpose == TEACHING.name:
+                if mode and mode.purpose in {TEACHING.name, ASSESS.name}:
                     candidates.append(
                         await execute_ai_task(
                             self.book_agents[mode.purpose],
@@ -492,7 +498,7 @@ def material_activities(
         model_credential,
     )
     MaterialWorkflow.book_agents = {
-        p.name: build_agent(p, calls, tools, model_credential) for p in (OUTLINE, TEACHING)
+        p.name: build_agent(p, calls, tools, model_credential) for p in (OUTLINE, TEACHING, ASSESS)
     }
     MaterialWorkflow.__pydantic_ai_agents__ = [
         MaterialWorkflow.agent,
@@ -500,7 +506,7 @@ def material_activities(
     ]
     ai = AIActivities(
         calls,
-        {p.schema_ref.model_dump_json(): p.output for p in (PURPOSE, OUTLINE, TEACHING)}
+        {p.schema_ref.model_dump_json(): p.output for p in (PURPOSE, OUTLINE, TEACHING, ASSESS)}
         | dict(schemas),
     )
     editions = EditionActivities(service, calls)

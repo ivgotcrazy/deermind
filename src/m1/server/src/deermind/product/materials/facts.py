@@ -94,9 +94,8 @@ def validate(draft: EventDraft, payload: EventPayload) -> None:
         else:
             # 未登记的记录类型不能进入教材投影。
             raise ValueError("Unexpected material record")
-    if len(imports) != 1 or not sources:
-        # 导入记录须恰好一条，来源至少一条。
-        raise ValueError("MaterialReceived requires one import and at least one source")
+    if len(imports) != 1 or (not sources and (not textbooks or payload.failed)):
+        raise ValueError("Only a new textbook can be registered without files")
     imported = imports[0]
     if (
         draft.owner_ref != Ref(owner="product", type="material_import", id=str(payload.import_id))
@@ -175,3 +174,47 @@ async def project(connection: AsyncConnection, event: StoredEvent) -> None:
                 )
             },
         )
+
+
+class OriginalsRemoved(EventPayload):
+    import_id: UUID
+    source_ids: list[UUID]
+
+
+def validate_removal(draft: EventDraft, payload: EventPayload) -> None:
+    if (
+        not isinstance(payload, OriginalsRemoved)
+        or not payload.source_ids
+        or len(payload.records) != 1
+    ):
+        raise ValueError("Original removal requires the import and its source identities")
+    item = payload.records[0]
+    if (
+        draft.scope_id != payload.import_id
+        or item.record_type != IMPORT
+        or item.record_id != str(payload.import_id)
+        or not isinstance(item.content, InlineContent)
+        or item.content.value.get("status") != "active"
+    ):
+        raise ValueError("Removal must preserve the owning textbook")
+
+
+REMOVAL = EventRegistration(
+    "MaterialOriginalsRemoved",
+    1,
+    "product",
+    "material_import",
+    OriginalsRemoved,
+    validate_removal,
+    {(IMPORT, 1): MaterialImportFact},
+)
+
+
+async def project_removal(db: AsyncConnection, event: StoredEvent) -> None:
+    payload = event.payload
+    assert isinstance(payload, OriginalsRemoved)
+    await project(db, event)
+    await db.execute(
+        text("DELETE FROM product.material_source WHERE import_id=:id AND source_id=ANY(:sources)"),
+        {"id": payload.import_id, "sources": payload.source_ids},
+    )

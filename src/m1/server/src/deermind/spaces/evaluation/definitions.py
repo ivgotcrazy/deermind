@@ -494,7 +494,7 @@ class ClaimDefinitions:
             await db.execute(
                 text(
                     "SELECT claim_id,head_revision FROM evaluation.claim WHERE domain_id=:domain "
-                    "AND task_id=:task AND task_version=:version FOR UPDATE"
+                    "AND task_id=:task AND task_version=:version AND model_id IS NULL FOR UPDATE"
                 ),
                 {
                     "domain": command.domain_id,

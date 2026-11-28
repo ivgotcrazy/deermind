@@ -484,3 +484,22 @@ class RichContent(FactModel):
                         (*path, "payload", "relations", relation_index, "source_refs"),
                     )
         return self
+
+
+def paragraph(text: str, role: Literal["statement", "reference", "definition"]) -> RichContent:
+    return RichContent.model_validate(
+        {
+            "schema_version": "1",
+            "role": role,
+            "source_refs": [],
+            "data_tables": [],
+            "blocks": [
+                {
+                    "block_id": "p",
+                    "type": "paragraph",
+                    "provenance": {"source_refs": [], "transformation": "generated"},
+                    "payload": {"spans": [{"type": "text", "text": text}]},
+                }
+            ],
+        }
+    )

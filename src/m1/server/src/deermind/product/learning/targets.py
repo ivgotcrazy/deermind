@@ -43,12 +43,17 @@ type ClaimReader = Callable[[UUID, int | None], Awaitable[ClaimDetail]]
 
 class TargetDefinitions:
     def __init__(
-        self, materials: MaterialReceiving, claims: ClaimReader, resolve: ConditionResolver
+        self,
+        materials: MaterialReceiving,
+        claims: ClaimReader,
+        resolve: ConditionResolver,
+        require_members: Callable[[AsyncConnection, UUID, UUID, set[ClaimRef]], Awaitable[None]],
     ) -> None:
         self.materials = materials
         self.engine = materials.engine
         self.claims = claims
         self.resolve = resolve
+        self.require_members = require_members
 
     async def _book(self, db: AsyncConnection, textbook: UUID, *, lock: bool = False) -> UUID:
         row = (
@@ -248,6 +253,7 @@ class TargetDefinitions:
         )
         snapshot = facts.TargetVersion(
             extraction_id=body.extraction_id,
+            assessment_id=body.assessment_id,
             target_id=target_id,
             revision=revision,
             title=body.title,
@@ -297,6 +303,7 @@ class TargetDefinitions:
             if receipt.result_ref is None:
                 # 本事务抢到收据身份，进入持锁校验与落事件流程。
                 await self._book(db, book, lock=True)
+                await self.require_members(db, body.extraction_id, body.assessment_id, set(claims))
                 current = (
                     await db.execute(
                         text(

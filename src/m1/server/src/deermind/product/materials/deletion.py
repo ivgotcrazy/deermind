@@ -17,7 +17,13 @@ from deermind.foundation.system.executions.contracts import Caller
 from deermind.foundation.system.public.errors import RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.materials.assistant import MaterialAssistant
-from deermind.product.materials.facts import IMPORT, MaterialImportFact, record
+from deermind.product.materials.facts import (
+    IMPORT,
+    MaterialImportFact,
+    OriginalsRemoved,
+    project_removal,
+    record,
+)
 from deermind.product.materials.receiving import import_ref
 from deermind.product.persistence.receipts import claim_request, complete_request
 from deermind.product.public.authentication import SessionView
@@ -63,6 +69,97 @@ class MaterialDeletion:
     def __init__(self, assistant: MaterialAssistant) -> None:
         self.assistant = assistant
         self.materials = assistant.materials
+
+    async def remove_originals(
+        self, session: SessionView, identity: UUID, command: DeleteMaterial
+    ) -> MaterialDeletionReceipt:
+        principal = self.materials.administrator(session)
+        scope = ("material_import", identity)
+        actor = Ref(owner="product", type="account", id=str(principal))
+        async with self.materials.engine.begin() as db:
+            receipt = await claim_request(
+                db,
+                principal_id=str(principal),
+                action="product.remove_originals",
+                scope_id=str(identity),
+                request_id=command.request_id,
+                normalized_input=command.model_dump(mode="json"),
+            )
+            if receipt.result_ref is None:
+                row = await self.materials.read_import(db, identity, lock=True)
+                expected = Ref(
+                    owner="product",
+                    type="deletion_scope",
+                    id=str(identity),
+                    revision=row["revision"],
+                )
+                if (
+                    command.confirmed_scope_ref != expected
+                    or command.expected_revision != row["revision"]
+                ):
+                    raise RequestError(409, "revision_conflict", "教材已变化，请刷新再确认。")
+                if row["active_request_ref"] or await db.scalar(
+                    text(
+                        "SELECT 1 FROM product.material_edition WHERE textbook_id=:book AND "
+                        "kind='tree' AND status<>'discarded' LIMIT 1"
+                    ),
+                    {"book": row["textbook_id"]},
+                ):
+                    raise RequestError(
+                        409, "original_in_use", "原件正在解析或已有内容树版本，无法删除。"
+                    )
+                sources = list(
+                    await db.scalars(
+                        text(
+                            "SELECT source_id FROM product.material_source WHERE import_id=:id "
+                            "ORDER BY source_order"
+                        ),
+                        {"id": identity},
+                    )
+                )
+                if not sources:
+                    raise RequestError(409, "not_found", "教材没有已导入的原件。")
+                fact = MaterialImportFact(
+                    import_id=identity,
+                    textbook_id=row["textbook_id"],
+                    status="active",
+                    revision=row["revision"] + 1,
+                    source_revision=row["source_revision"] + 1,
+                    content_revision=row["content_revision"],
+                    created_at=row["created_at"],
+                    updated_at=datetime.now(UTC),
+                )
+                payload = OriginalsRemoved(
+                    import_id=identity, source_ids=sources, records=[record(IMPORT, identity, fact)]
+                )
+                event = uuid4()
+                access = ProducerAccess("product", actor, frozenset({scope}))
+                draft = EventDraft(
+                    event,
+                    "MaterialOriginalsRemoved",
+                    1,
+                    *scope,
+                    import_ref(identity),
+                    payload.model_dump(mode="json"),
+                    command.request_id,
+                )
+                seq = await lock_scope_sequence(db, *scope)
+                (stored,) = await self.materials.events.append(
+                    db,
+                    access,
+                    [draft],
+                    commit_id=uuid4(),
+                    correlation_id=receipt.request_ref,
+                    expected_seq={scope: seq},
+                )
+                await project_removal(db, stored)
+                await complete_request(
+                    db, receipt, Ref(owner="runtime", type="event", id=str(event))
+                )
+            return MaterialDeletionReceipt(
+                request_ref=receipt.request_ref,
+                result=MaterialDeletionResult(import_id=identity, deleted=True),
+            )
 
     async def delete(
         self,
@@ -122,16 +219,16 @@ class MaterialDeletion:
                 raise RequestError(409, "revision_conflict", "教材已更新，请重新确认删除范围。")
             applied = await connection.scalar(
                 text(
-                    "SELECT 1 FROM product.application_head WHERE textbook_id=:book "
+                    "SELECT 1 FROM product.learning_space WHERE textbook_id=:book "
                     "UNION ALL SELECT 1 FROM product.material_edition "
-                    "WHERE textbook_id=:book AND status='published' LIMIT 1"
+                    "WHERE textbook_id=:book AND kind='tree' AND status='published' LIMIT 1"
                 ),
                 {"book": imported["textbook_id"]},
             )
             if applied is not None:
                 # 教材已被课程应用，导入不可删除。
                 raise RequestError(
-                    409, "already_applied", "教材已有发布版本或课程应用，须保留原页。"
+                    409, "already_applied", "教材已有已发布内容树或关联学习空间，无法删除。"
                 )
             sources = (
                 await connection.scalars(

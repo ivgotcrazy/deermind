@@ -1,17 +1,18 @@
 # deermind 数据库：评估空间数据字典
 
-> **版本**：v0.5<br>
+> **版本**：v0.6<br>
 > **状态**：E05 迁移已在现有 K3s 接线，验收进度见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
-> **更新日期**：2026-11-23<br>
-> **修订说明**：v0.4 → v0.5，登记评价输入、解释、掌握状态与顺序迁移<br>
+> **更新日期**：2026-11-28<br>
+> **修订说明**：新增评估套及套内任务 Claim 的唯一约束<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **13 张表、127 个列定义**。处理流程、接口和业务载荷由[Evaluation_Space_Design.md](../Evaluation_Space_Design.md) §1.5、§2.3—2.4、§3—6维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **14 张表、137 个列定义**。处理流程、接口和业务载荷由[Evaluation_Space_Design.md](../Evaluation_Space_Design.md) §1.5、§2.3—2.4、§3—6维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
 | 表 | 用途 |
 | --- | --- |
+| [assessment_model](#assessment_model) | 基于教材提炼的整套评估标准 |
 | [claim](#1-evaluationclaim) | Task评价定义身份 |
 | [claim_version](#2-evaluationclaim_version) | 判据及四方面的完整定义 |
 | [evaluation_input](#3-evaluationevaluation_input) | 本次评价的固定取材与规则 |
@@ -79,6 +80,9 @@ erDiagram
     evaluation__belief_revision ||--o{ evaluation__belief_current : "current_revision_ref"
     evaluation__claim ||--o{ evaluation__belief_current : "claim_id"
     evaluation__claim ||--o{ evaluation__belief_revision : "claim_id"
+    product__material_edition ||--o{ evaluation__assessment_model : extraction_id
+    evaluation__assessment_model ||--o{ evaluation__claim : model_id
+    evaluation__assessment_model ||--o{ product__learning_target_version : assessment_id
     evaluation__claim ||--o{ evaluation__claim_version : "claim_id"
     evaluation__claim ||--o{ evaluation__evidence : "claim_id"
     evaluation__claim_version ||..o{ evaluation__evidence : "claim_id claim_revision"
@@ -107,10 +111,11 @@ Task评价定义身份。
 | `domain_id` | `uuid` | 否 | 无 | Domain；逻辑引用domain.object_identity |
 | `task_id` | `uuid` | 否 | 无 | 被评价Task的稳定身份 |
 | `task_version` | `bigint` | 否 | 无 | 被评价Task的精确版本；正整数；与ID组成逻辑引用 domain.object_version |
+| `model_id` | `uuid` | 是 | 无 | 外键指向整套评估标准，套内每个任务版本唯一 |
 | `head_revision` | `bigint` | 否 | 无 | 当前定义修订 |
 | `created_at` | `timestamptz` | 否 | 无 | 服务端写入时间；UTC |
 
-约束与关系：UQ(task_id,task_version)；FK(claim_id,head_revision)→claim_version提交时检查；没有KC Claim。
+约束与关系：套内唯一 (model_id,task_id,task_version)，未绑定整套的定义另按 (task_id,task_version) 唯一；FK(claim_id,head_revision)→claim_version提交时检查；没有KC Claim。
 
 查询索引：主键、Task精确版本唯一键；(domain_id,task_id,task_version)。
 
@@ -429,6 +434,22 @@ AI对表现的解释候选。
 | `0040_evaluation_mastery` | Evidence、Belief 修订与当前索引、掌握快照与当前引用 |
 | `0041_evaluation_progress` | 空间顺序游标和当前来源。开发环境从迁移前最后一条事实开始接收后续评价 |
 
+## assessment_model
+
+| 字段 | 类型 | 约束与含义 |
+| :--- | :--- | :--- |
+| model_id | uuid | 主键，评估套身份 |
+| extraction_id | uuid | 非空，外键指向 material_edition。创建时核对本教材的发布提炼 |
+| name | text | 非空白，管理员指定的名称 |
+| number | integer | 正整数，同一提炼内唯一的版本序号 |
+| revision | integer | 正整数，每次草稿保存或发布递增 |
+| status | text | draft 或 published |
+| claims | jsonb | 数组，逐任务保存方法、正反例判据、证据不足及四方面要求 |
+| created_at | timestamptz | 非空，首次创建时间 |
+| source_event_id | uuid | 非空，指向本次完整快照的来源事件 |
+
+`claim.model_id` 为评估套外键，套内按任务及版本唯一。不同套对同一任务分别生成 Claim。目标版本以提炼和套的组合外键约束归属。
+
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
@@ -438,3 +459,4 @@ AI对表现的解释候选。
 | v0.3 | 2026-11-15 | 统一事件事实源、正文来源及查询投影，承接同事务写入与按需订阅；见MVP决定登记§96。本轮仅修改文档。 |
 | v0.4 | 2026-11-23 | 在条件事实登记题面覆盖依据 |
 | v0.5 | 2026-11-23 | 登记 E05 实际迁移及解释字段 |
+| v0.6 | 2026-11-28 | 登记评估套及套内 Claim 唯一键。 |

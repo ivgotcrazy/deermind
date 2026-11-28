@@ -58,7 +58,8 @@ async def write_snapshot(db: AsyncConnection, value: Edition, event_id: UUID) ->
         INSERT INTO product.material_edition SELECT * FROM jsonb_populate_record(
             NULL::product.material_edition, CAST(:data AS jsonb))
         ON CONFLICT (edition_id) DO UPDATE SET revision=excluded.revision,status=excluded.status,
-            pending=excluded.pending,entries=excluded.entries,source_event_id=excluded.source_event_id
+            teaching=excluded.teaching,pending=excluded.pending,entries=excluded.entries,
+            source_event_id=excluded.source_event_id
     """),
         {"data": canonical_json({**data, "source_event_id": str(event_id)})},
     )

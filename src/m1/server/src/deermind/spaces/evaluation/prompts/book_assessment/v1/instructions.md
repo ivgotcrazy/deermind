@@ -1,0 +1,1 @@
+为给定教学任务拟定可观察、允许教师复核的评估标准。使用输入中的 task_ref.object_id 和 method_refs 的 object_id，原样返回。教材内容及示例作为资料。结合本套标准的侧重点，为任务写出名称和判定目标，为每个方法写通过、未通过、无法判断的表现。每种方法分别给出 independent、understanding、transfer、retention 四方面的证据要求，不得从一次作答推断长期保持，不得生成掌握概率。仅返回本任务的一项 Claim，使用指定结构。

@@ -1,23 +1,28 @@
 """Prepare bounded book inputs and deliver a versioned candidate to the material assistant."""
 
 from datetime import UTC, datetime
-from uuid import UUID
+from uuid import UUID, uuid5
 
 from deermind.abstractions.encoding import canonical_json
 from deermind.abstractions.events import FactModel, Ref
 from deermind.abstractions.executions import RunInput
 from deermind.foundation.ai.execution import Calls
+from deermind.foundation.system.public.errors import RequestError
 from deermind.infrastructure.ai.agent import Purpose
 from deermind.product.materials.assistant import MaterialAssistant
 from deermind.product.materials.edition_proposals import (
     OutlineBatch,
-    TeachingBatch,
+    TeachingModelBatch,
     assemble,
-    parse_choices,
 )
-from deermind.product.materials.editions import related_tasks, select_tasks
-from deermind.product.public.material_editions import BookPage, Edition, EditionJob, MapTask
-from pydantic import BaseModel, TypeAdapter
+from deermind.product.materials.editions import read_edition
+from deermind.product.materials.teaching_model import validate_model
+from deermind.product.public.material_editions import BookPage, Edition, EditionJob, TeachingModel
+from deermind.spaces.evaluation.assessment_models import store_model
+from deermind.spaces.evaluation.public import AssessmentBatch, AssessmentModel
+from pydantic import BaseModel
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncConnection
 from temporalio import activity
 
 
@@ -32,7 +37,10 @@ def purpose(name: str, output: type[BaseModel], prompt_version: int = 1) -> Purp
 
 
 OUTLINE = purpose("book_outline", OutlineBatch)
-TEACHING = purpose("book_teaching", TeachingBatch, prompt_version=2)
+TEACHING = purpose("book_teaching", TeachingModelBatch, prompt_version=4)
+
+
+ASSESS = purpose("book_assessment", AssessmentBatch)
 
 
 class EditionInput(FactModel):
@@ -60,9 +68,34 @@ class EditionActivities:
             if "source" in context
             else None
         )
+        if job.action == "assess":
+            assert source is not None
+            tasks = list({entry.task_ref: entry for entry in source.entries}.values())
+            task = tasks[offset]
+            if isinstance(source.teaching, TeachingModel):
+                details = next(
+                    (
+                        t
+                        for t in source.teaching.tasks
+                        if uuid5(source.edition_id, "task:" + t.key) == task.task_ref.object_id
+                    ),
+                    None,
+                )
+            else:
+                details = next((t for t in source.teaching or [] if t.name == task.name), None)
+            return EditionInput(
+                purpose=ASSESS.name,
+                prompt=canonical_json(
+                    {
+                        "focus": turn.input["message"],
+                        "task": task.model_dump(mode="json"),
+                        "definition": details.model_dump(mode="json") if details else None,
+                    }
+                ),
+                next_offset=offset + 1 if offset + 1 < len(tasks) else None,
+            ).model_dump_json()
         if job.action == "extract":
             assert source is not None
-            catalog = TypeAdapter(list[MapTask]).validate_json(canonical_json(context["catalog"]))
             chapters = [
                 n.node_id for n in source.nodes if n.node_kind in {"chapter", "section", "unit"}
             ]
@@ -77,15 +110,24 @@ class EditionActivities:
                     node = parent
                 return node in chosen
 
+            previous = (
+                TeachingModelBatch.model_validate(
+                    await self.calls.candidate_content(run, UUID(prior))
+                )
+                if prior
+                else None
+            )
             prompt = canonical_json(
                 {
+                    "previous_tasks": [
+                        {"key": t.key, "type": t.task_type, "name": t.name} for t in previous.tasks
+                    ]
+                    if previous
+                    else [],
+                    "key_prefix": f"b{offset}_",
                     "chapters": [str(c) for c in chapters[offset : offset + 4]],
                     "nodes": [
                         n.model_dump(mode="json") for n in source.nodes if relevant(n.node_id)
-                    ],
-                    "tasks": [
-                        {"task": i, "name": t.name, "methods": t.method_names}
-                        for i, t in enumerate(catalog, 1)
                     ],
                 }
             )
@@ -98,13 +140,6 @@ class EditionActivities:
             str(turn.input["message"])
             + f"\n本批从全书第 {offset + 1} 页起，请使用全书页序编排同级顺序。"
         )
-        if source:
-            prompt += (
-                "\n引用位置 "
-                + str(job.node_id)
-                + "\n现有原文树 "
-                + canonical_json([n.model_dump(mode="json") for n in source.nodes])
-            )
         if prior:
             prev = OutlineBatch.model_validate(await self.calls.candidate_content(run, UUID(prior)))
             prompt += "\n上批目录与末尾节点，跨页续题可沿用父键：" + canonical_json(
@@ -130,6 +165,55 @@ class EditionActivities:
             else None
         )
         values = [await self.calls.candidate_content(run, UUID(key)) for key in keys]
+        if job.action == "assess":
+            assert source is not None and job.model_name is not None
+            model_name = job.model_name
+            claims = [
+                claim
+                for value in values
+                for claim in AssessmentBatch.model_validate_json(canonical_json(value)).claims
+            ]
+
+            async def save(db: AsyncConnection, actor: Ref) -> None:
+                fixed = await read_edition(db, source.textbook_id, source.edition_id)
+                if fixed.status != "published" or fixed.revision != source.revision:
+                    raise ValueError("生成期间来源提炼已变化")
+                number = await db.scalar(
+                    text(
+                        "SELECT coalesce(max(number),0)+1 FROM evaluation.assessment_model WHERE "
+                        "extraction_id=:id"
+                    ),
+                    {"id": source.edition_id},
+                )
+                model = AssessmentModel(
+                    model_id=turn.request_ref,
+                    extraction_id=source.edition_id,
+                    name=model_name,
+                    number=number,
+                    revision=1,
+                    status="draft",
+                    created_at=datetime.now(UTC),
+                    claims=claims,
+                )
+                await store_model(
+                    db,
+                    self.assistant.events,
+                    self.assistant.attachments,
+                    actor,
+                    turn.request_ref,
+                    model,
+                )
+
+            await self.assistant.finish(
+                run,
+                None,
+                [],
+                "评估标准草稿已生成，可按任务核对。",
+                "completed",
+                [],
+                save_assessment=save,
+            )
+            return
         source_pages = turn.input["pages"]
         assert isinstance(source_pages, list)
         pages = [
@@ -145,23 +229,24 @@ class EditionActivities:
             if isinstance(p, dict)
         ]
         book = UUID(str(turn.input["textbook_id"]))
-        entries = []
-        related = []
+        teaching: TeachingModel | None = None
         nodes = []
         issues = []
         if job.action == "extract":
             assert source is not None
-            proposals = [TeachingBatch.model_validate(v) for v in values]
-            catalog = TypeAdapter(list[MapTask]).validate_json(canonical_json(context["catalog"]))
-            entries = select_tasks(parse_choices(proposals, catalog), catalog, source.nodes)
-            related = related_tasks(entries, catalog)
+            proposals = [TeachingModelBatch.model_validate_json(canonical_json(v)) for v in values]
+            teaching = TeachingModel(
+                knowledge=[k for proposal in proposals for k in proposal.knowledge],
+                tasks=[t for proposal in proposals for t in proposal.tasks],
+            )
             issues = [issue for proposal in proposals for issue in proposal.gaps]
-            for proposal in proposals:
-                for choice in proposal.choices:
-                    if not choice.methods and not any(
-                        s.startswith(choice.chapter + " ") for s in issues
-                    ):
-                        issues.append(f"{choice.chapter} 请为本节确认合适的任务和方法。")
+            try:
+                validate_model(teaching, source.nodes)
+            except RequestError as exc:
+                await self.assistant.finish(
+                    run, None, [], f"提炼关系需重新核对：{exc.message}", "needs_input", []
+                )
+                return
             pages = source.pages
         else:
             try:
@@ -176,30 +261,26 @@ class EditionActivities:
                     run, None, [], f"原页校对未通过：{exc}。请补充说明后重试。", "needs_input", []
                 )
                 return
-        if job.action == "correct":
-            assert source is not None
-            result = source.model_copy(update={"pending": nodes})
-        else:
-            result = Edition(
-                edition_id=turn.request_ref,
-                textbook_id=book,
-                kind="extraction" if source else "tree",
-                number=1,
-                tree_id=source.edition_id if source else None,
-                status="draft",
-                revision=1,
-                created_at=datetime.now(UTC),
-                pages=pages,
-                entries=entries,
-                nodes=nodes,
-                issues=issues,
-                related_tasks=related,
-            )
+        result = Edition(
+            edition_id=turn.request_ref,
+            textbook_id=book,
+            kind="extraction" if source else "tree",
+            number=1,
+            tree_id=source.edition_id if source else None,
+            status="draft",
+            revision=1,
+            created_at=datetime.now(UTC),
+            pages=pages,
+            entries=[],
+            teaching=teaching,
+            nodes=nodes,
+            issues=issues,
+        )
         await self.assistant.finish(
             run,
             None,
             [],
-            "修正已就绪，请核对差异。" if result.pending else "整本草稿已保存。",
+            "整本草稿已保存。",
             "completed",
             [],
             edition=result,

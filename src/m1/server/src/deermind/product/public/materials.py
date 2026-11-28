@@ -55,6 +55,7 @@ class ReceiveFiles(FactModel):
 
 
 class NewMaterial(ReceiveFiles):
+    files: list[MaterialFile] = Field(default_factory=list[MaterialFile], max_length=600)
     domain_ref: MaterialDomainRef
     title: Name
     source: Name

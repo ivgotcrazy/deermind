@@ -1,12 +1,12 @@
 # deermind 数据库：领域空间数据字典
 
-> **版本**：v0.8<br>
+> **版本**：v0.10<br>
 > **状态**：设计合同；迁移覆盖范围见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
-> **更新日期**：2026-11-22<br>
-> **修订说明**：v0.7 → v0.8，补齐待入库标题、候选来源及受理映射<br>
+> **更新日期**：2026-11-28<br>
+> **修订说明**：v0.9 → v0.10，登记 0046 关系索引<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **9 张表、92 个列定义**。处理流程、接口和业务载荷由[Domain_Space_Design.md](../Domain_Space_Design.md) §1、§4.3、§6.2维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **9 张表、93 个列定义**。处理流程、接口和业务载荷由[Domain_Space_Design.md](../Domain_Space_Design.md) §1、§4.3、§6.2维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 迁移 `0012_domain_roots` 建立 §1、§2 和 §9 三张表。E02-03 复用这些表保存 `kc` 身份及版本。迁移 `0013_kc_versions` 授予应用角色更新 `object_identity.head_version`、`catalog_revision` 两列的权限。应用角色对版本表仅可查询和插入。§9 的 `input_artifact_id` 保持为空，外键随 §6 建表补齐。
 
@@ -88,6 +88,7 @@ erDiagram
 | `kind` | `text` | 否 | 无 | Domain、Task、Solution、KC、TaskInstance |
 | `domain_id` | `uuid` | 是 | 无 | 所属Domain；根对象为空；FK → `domain.object_identity.object_id` |
 | `head_version` | `bigint` | 否 | 无 | 当前头版本；正整数 |
+| `source_edition_id` | `uuid` | 是 | 无 | 外键指向发布该定义的教材提炼。已归属的成员只能从提炼新版本重新生成 |
 | `catalog_revision` | `bigint` | 是 | 无 | 领域目录运行计数；Domain必须有值，成员必须为空，不是内容版本 |
 
 约束与关系：CHECK根Domain的domain_id为空且catalog_revision非空，成员反之；domain_id目标必须是Domain；FK(object_id,head_version)→object_version延迟到提交；类型归属不改。
@@ -134,7 +135,7 @@ erDiagram
 | `owner_id` | `uuid` | 否 | 无 | 持有引用的对象；主键组成字段 |
 | `owner_version` | `bigint` | 否 | 无 | 持有者精确版本；主键组成字段 |
 | `path` | `text` | 否 | 无 | 正文内唯一JSON路径；主键组成字段 |
-| `relation_kind` | `text` | 否 | 无 | task_method、task_prerequisite、prerequisite_method_scope、solution_kc、instance_task、reference_solution |
+| `relation_kind` | `text` | 否 | 无 | task_method、task_knowledge、method_prerequisite、task_prerequisite、prerequisite_method_scope、instance_task、reference_solution。历史数据仍可读取 solution_kc |
 | `target_id` | `uuid` | 否 | 无 | 被引用对象 |
 | `target_version` | `bigint` | 否 | 无 | 被引用精确版本 |
 
@@ -321,3 +322,5 @@ Domain接收教材来源的固定结论。
 | v0.6 | 2026-11-22 | 登记关系索引、精确版本外键和追加权限 |
 | v0.7 | 2026-11-22 | 登记 KC 确认和就绪依据投影，接通原收据依据外键 |
 | v0.8 | 2026-11-22 | 补待入库标题、候选来源及受理映射 |
+| v0.9 | 2026-11-28 | 登记发布提炼持有的领域成员及直接检验路径 |
+| v0.10 | 2026-11-28 | 登记 0046 关系索引 |

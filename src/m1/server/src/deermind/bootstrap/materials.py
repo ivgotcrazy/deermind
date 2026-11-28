@@ -24,12 +24,12 @@ from deermind.spaces.domain.instance_management import InstanceManagement
 from deermind.spaces.domain.instances import chapter_methods
 from deermind.spaces.domain.intake import DomainIntake
 from deermind.spaces.domain.intake_processing import IntakeProcessing
-from deermind.spaces.domain.public import DomainService
-from sqlalchemy.ext.asyncio import AsyncEngine
+from deermind.spaces.domain.public import BookDomainService
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
 
 def configure_materials(
-    engine: AsyncEngine, settings: Settings, domain: DomainService
+    engine: AsyncEngine, settings: Settings, domain: BookDomainService[AsyncConnection]
 ) -> tuple[MaterialReceiving, FileUploads]:
     files = LocalFiles(settings.files_root, backend=settings.files_backend)
     uploads = FileUploads(engine, files, inspect_original)

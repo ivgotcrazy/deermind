@@ -47,7 +47,7 @@ from deermind.product.public.materials import (
     TextbookMetadata,
     TextbookRow,
 )
-from deermind.spaces.domain.public import DomainDetail, DomainService
+from deermind.spaces.domain.public import BookDomainService, DomainDetail
 from sqlalchemy import text
 from sqlalchemy.engine import RowMapping
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
@@ -84,11 +84,24 @@ def cursor_position(cursor: str | None, token: str) -> UUID | None:
         raise RequestError(400, "invalid_request", "续页位置无效。") from error
 
 
+async def require_empty_domain(db: AsyncConnection, domain_id: UUID) -> None:
+    title = await db.scalar(
+        text(
+            "SELECT t.metadata->>'title' FROM product.textbook t JOIN product.material_import i "
+            "USING(import_id) "
+            "WHERE t.domain_id=:id AND i.status='active' LIMIT 1"
+        ),
+        {"id": domain_id},
+    )
+    if title is not None:
+        raise RequestError(409, "domain_in_use", f"该领域仍有关联教材《{title}》，无法删除。")
+
+
 class MaterialReceiving:
     def __init__(
         self,
         engine: AsyncEngine,
-        domain: DomainService,
+        domain: BookDomainService[AsyncConnection],
         uploads: FileUploads,
         events: EventStore,
         reader: EventReader,
@@ -270,8 +283,8 @@ class MaterialReceiving:
         actor = Ref(owner="product", type="account", id=str(principal))
         access = ProducerAccess("product", actor, frozenset({("material_import", import_id)}))
         prepared = None
-        if sources:
-            # 存在可登记原件时组装受理事件；无原件则只落失败收据。
+        if sources or (creating and not body.files):
+            # 创建空教材也需保留身份；有上传但全部失败时只登记拒绝收据。
             rows = [record(IMPORT, import_id, imported)]
             if isinstance(body, NewMaterial):
                 book = TextbookRow(
@@ -324,8 +337,17 @@ class MaterialReceiving:
                 # 收据本身已带错误（如冲突占用），直接沿用。
                 error = receipt.error
             elif reference is None:
+                if isinstance(body, NewMaterial):
+                    await self.domain.lock_active_domain(connection, body.domain_ref.object_id)
                 if isinstance(body, AppendMaterial):
                     locked = await self.read_import(connection, import_id, lock=True)
+                    if await connection.scalar(
+                        text("SELECT 1 FROM product.material_source WHERE import_id=:id LIMIT 1"),
+                        {"id": import_id},
+                    ):
+                        raise RequestError(
+                            409, "original_in_use", "请先删除现有原件，再导入整份新材料。"
+                        )
                     if (
                         body.expected_revision != locked["source_revision"]
                         or current is None

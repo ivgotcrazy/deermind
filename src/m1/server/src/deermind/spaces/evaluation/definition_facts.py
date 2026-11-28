@@ -26,6 +26,7 @@ RECORD_ID = "claim-version"
 
 
 class ClaimVersion(FactModel):
+    model_id: UUID | None = None
     claim_id: UUID
     revision: int
     definition: ClaimDefinition
@@ -91,8 +92,9 @@ async def project(connection: AsyncConnection, event: StoredEvent) -> None:
         await connection.execute(
             text(
                 "INSERT INTO evaluation.claim "
-                "(claim_id,domain_id,task_id,task_version,head_revision,created_at) "
-                "VALUES (:id,:domain,:task,:version,:revision,:created) ON CONFLICT(claim_id) "
+                "(claim_id,domain_id,task_id,task_version,head_revision,created_at,model_id) "
+                "VALUES (:id,:domain,:task,:version,:revision,:created,:model) ON "
+                "CONFLICT(claim_id) "
                 "DO UPDATE SET head_revision=EXCLUDED.head_revision"
             ),
             {
@@ -102,6 +104,7 @@ async def project(connection: AsyncConnection, event: StoredEvent) -> None:
                 "version": payload.task_ref.version,
                 "revision": version.revision,
                 "created": version.created_at,
+                "model": version.model_id,
             },
         )
         await connection.execute(

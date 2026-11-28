@@ -1,323 +1,281 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { ElButton, ElDialog, ElMessageBox, ElTag } from 'element-plus';
-import { get, post, postAccepted } from '../../../shared/api/http';
-import OriginalPage from '../../../shared/book/OriginalPage.vue';
+import {
+  ElButton,
+  ElDialog,
+  ElEmpty,
+  ElMessageBox,
+  ElOption,
+  ElSelect,
+  ElTable,
+  ElTableColumn,
+  ElTag,
+} from 'element-plus';
+import { get, post } from '../../../shared/api/http';
 import {
   bookPath,
   editionPath,
-  nodeText,
-  outline,
   sectionOf,
   type BookSession,
   type BookTypes,
   type Edition,
-  type MapTask,
+  type Node,
 } from '../../../shared/book/editions';
-const { session, book, importId } = defineProps<{
-  session: BookSession;
+import OriginalPage from '../../../shared/book/OriginalPage.vue';
+import BookTreeEditor from './BookTreeEditor.vue';
+import TeachingTaskEditor from './TeachingTaskEditor.vue';
+import { generateBookDraft } from './generation';
+const props = defineProps<{
   book: string;
+  bookTitle: string;
+  session: BookSession;
   importId: string;
+  view: 'tree' | 'extraction' | 'work';
 }>();
+const emit = defineEmits<{ work: [] }>();
 type Info = BookTypes['EditionInfo'];
 const versions = ref<Info[]>([]),
+  pages = ref<BookTypes['BookPage'][]>([]),
   tree = ref<Edition>(),
-  extraction = ref<Edition>(),
-  pages = ref<BookTypes['BookPage'][]>([]);
-const catalog = ref<MapTask[]>([]),
-  page = ref(''),
+  extraction = ref<Edition>();
+const page = ref(''),
   node = ref(''),
   error = ref(''),
   feedback = ref(''),
-  busy = ref(false);
-const correction = ref(''),
-  editTasks = ref(false),
-  selected = ref<Record<string, string[]>>({}),
-  usage = ref<string[]>([]);
-const stop = new AbortController();
-const options = { session, signal: stop.signal };
+  busy = ref(false),
+  createOpen = ref(false),
+  sourceTree = ref('');
+const controller = new AbortController(),
+  options = { session: props.session, signal: controller.signal };
 const trees = computed(() => versions.value.filter((v) => v.kind === 'tree'));
 const extracts = computed(() =>
   versions.value.filter((v) => v.kind === 'extraction' && v.tree_id === tree.value?.edition_id),
 );
-const rows = computed(() => outline(tree.value?.nodes ?? []));
-const chapter = computed(() => sectionOf(tree.value?.nodes ?? [], node.value));
-const chapterTitle = computed(
-  () => rows.value.find((r) => r.node.node_id === chapter.value)?.title || '请选择章或节',
-);
-const associated = computed(
-  () => extraction.value?.entries.filter((t) => t.chapter_id === chapter.value) ?? [],
-);
+const listed = computed(() => versions.value.filter((v) => v.kind === props.view));
 const title = (v: Info) => 'v' + v.number + ' · ' + (v.status === 'published' ? '已发布' : '草稿');
-const diffs = computed(() => {
-  if (!tree.value?.pending) return [];
-  const before = new Map(tree.value.nodes.map((n) => [n.node_id, n])),
-    after = new Map(tree.value.pending.map((n) => [n.node_id, n]));
-  return [...new Set([...before.keys(), ...after.keys()])].flatMap((id) => {
-    const a = before.get(id),
-      b = after.get(id);
-    if (JSON.stringify(a) === JSON.stringify(b)) return [];
-    const describe = (n: NonNullable<typeof a>) =>
-      [
-        n.node_kind,
-        nodeText(n),
-        '顺序 ' + n.sibling_order,
-        '父节点 ' +
-          (rows.value.find((r) => r.node.node_id === n.parent_id)?.title ?? n.parent_id ?? '全书'),
-      ].join(' · ');
-    return [(a ? describe(a) : '新增') + ' → ' + (b ? describe(b) : '移除')];
-  });
-});
-function chooseNode(id: string) {
+const treeName = (id?: string | null) => {
+  const row = trees.value.find((v) => v.edition_id === id);
+  return row ? '内容树 v' + row.number : '—';
+};
+function selectNode(id: string) {
   node.value = id;
-  const n = tree.value?.nodes.find((n) => n.node_id === id);
+  const n = tree.value?.nodes.find((r) => r.node_id === id);
   if (n && !n.covered_page_ids.includes(page.value)) page.value = n.covered_page_ids[0] ?? '';
 }
-async function pickExtraction(id?: string) {
-  extraction.value = undefined;
-  usage.value = [];
-  if (!id) return;
-  extraction.value = await get(editionPath, { ...options, params: { book, edition: id } });
-  usage.value = (
-    await get('/api/m1/textbooks/{book}/editions/{edition}/usage', {
-      ...options,
-      params: { book, edition: id },
-    })
-  ).map((r) => r.title + ' v' + r.target_ref.revision);
+function read(id: string) {
+  return get(editionPath, { ...options, params: { book: props.book, edition: id } });
 }
-const savedNotes = new Map<string, string>();
-async function switchTree(select: HTMLSelectElement) {
-  const next = select.value;
-  const current = tree.value?.edition_id;
-  if (current && correction.value.trim()) {
-    select.value = current;
-    try {
-      await ElMessageBox.confirm('切换版本前是否保留这段未发送的纠错说明？', '切换内容树版本', {
-        confirmButtonText: '保留后切换',
-        cancelButtonText: '放弃后切换',
-        distinguishCancelAndClose: true,
-        showClose: true,
-      });
-      savedNotes.set(current, correction.value);
-    } catch (reason) {
-      if (reason !== 'cancel') return;
-      savedNotes.delete(current);
-    }
-  }
-  await pickTree(next);
-  correction.value = savedNotes.get(next) ?? '';
+async function pickTree(id?: string, selected?: string) {
+  const next = id ? await read(id) : undefined;
+  const choices = versions.value.filter((v) => v.kind === 'extraction' && v.tree_id === id);
+  const target = choices.find((v) => v.edition_id === selected) ?? choices[0];
+  const nextExtraction = target ? await read(target.edition_id) : undefined;
+  tree.value = next;
+  extraction.value = nextExtraction;
+  if (!next?.nodes.some((n) => n.node_id === node.value))
+    node.value = next?.nodes.find((n) => !n.parent_id)?.node_id ?? '';
+  selectNode(node.value);
 }
-async function pickTree(id?: string, prefer?: string) {
-  tree.value = undefined;
-  node.value = '';
-  extraction.value = undefined;
-  usage.value = [];
-  if (!id) return;
-  tree.value = await get(editionPath, { ...options, params: { book, edition: id } });
-  if (!tree.value.pages.some((p) => p.page_id === page.value))
-    page.value = tree.value.pages[0]?.page_id ?? '';
-  chooseNode(
-    rows.value.find((r) => r.node.node_kind === 'section' || r.node.node_kind === 'chapter')?.node
-      .node_id ?? '',
-  );
-  await pickExtraction(
-    extracts.value.find((v) => v.edition_id === prefer)?.edition_id ??
-      extracts.value[0]?.edition_id,
-  );
-  sessionStorage.setItem('book-tree-' + book, id);
-}
-async function reload(preferTree?: string, preferExtraction?: string) {
-  versions.value = await get(bookPath, { ...options, params: { book } });
-  const requested = new URLSearchParams(window.location.search);
-  const key =
-    preferTree ??
-    tree.value?.edition_id ??
-    requested.get('tree') ??
-    sessionStorage.getItem('book-tree-' + book);
-  const next =
-    trees.value.find((v) => v.edition_id === key) ??
-    trees.value.find((v) => v.status === 'draft') ??
-    trees.value[0];
-  const last = node.value;
+async function refresh(preferTree?: string, preferExtract?: string) {
+  versions.value = await get(bookPath, { ...options, params: { book: props.book } });
+  const id = preferTree ?? tree.value?.edition_id;
   await pickTree(
-    next?.edition_id,
-    preferExtraction ?? extraction.value?.edition_id ?? requested.get('extraction') ?? undefined,
+    (trees.value.find((v) => v.edition_id === id) ?? trees.value[0])?.edition_id,
+    preferExtract ?? extraction.value?.edition_id,
   );
-  if (tree.value?.nodes.some((n) => n.node_id === last)) chooseNode(last);
 }
 async function act(fn: () => Promise<void>) {
   if (busy.value) return;
   busy.value = true;
   error.value = '';
+  feedback.value = '';
   try {
     await fn();
   } catch (e) {
-    if (!stop.signal.aborted) error.value = (e as Error).message;
+    if (!controller.signal.aborted) error.value = (e as Error).message;
   } finally {
     busy.value = false;
   }
 }
-onMounted(
-  () =>
-    void act(async () => {
-      pages.value = await get('/api/m1/textbooks/{book}/editions/pages', {
-        ...options,
-        params: { book },
-      });
-      page.value = pages.value[0]?.page_id ?? '';
-      await reload();
-    }),
+onMounted(() =>
+  act(async () => {
+    pages.value = await get('/api/m1/textbooks/{book}/editions/pages', {
+      ...options,
+      params: { book: props.book },
+    });
+    page.value = pages.value[0]?.page_id ?? '';
+    const url = new URLSearchParams(location.search);
+    await refresh(url.get('tree') ?? undefined, url.get('extraction') ?? undefined);
+    const source = url.get('node');
+    if (source && tree.value?.nodes.some((n) => n.node_id === source)) selectNode(source);
+  }),
 );
-onBeforeUnmount(() => stop.abort());
-async function submit(
-  value: Edition,
+onBeforeUnmount(() => controller.abort());
+async function command(
+  v: Info,
   action: BookTypes['EditionCommand']['action'],
-  tasks?: BookTypes['ChapterTask'][],
+  extra: Partial<BookTypes['EditionCommand']> = {},
 ) {
-  if (action === 'publish') {
-    const base = value.base_edition_id
-      ? await get(editionPath, { ...options, params: { book, edition: value.base_edition_id } })
-      : undefined;
-    const items = (ed?: Edition) =>
-      new Map(
-        ed?.kind === 'tree'
-          ? ed.nodes.map((n) => [n.node_id, JSON.stringify(n)] as const)
-          : (ed?.entries ?? []).map(
-              (t) => [t.chapter_id + ':' + t.task_ref.object_id, JSON.stringify(t)] as const,
-            ),
-      );
-    const old = items(base),
-      next = items(value);
-    const added = [...next.keys()].filter((id) => !old.has(id)).length;
-    const removed = [...old.keys()].filter((id) => !next.has(id)).length;
-    const changed = [...next.keys()].filter(
-      (id) => old.has(id) && old.get(id) !== next.get(id),
-    ).length;
-    const basis = value.kind === 'extraction' ? '，基于内容树 v' + tree.value?.number : '';
-    if (
-      !window.confirm(
-        '发布整本' +
-          (value.kind === 'tree' ? '内容树' : '教学提炼') +
-          ' v' +
-          value.number +
-          basis +
-          '？\n新增 ' +
-          added +
-          ' 项，修改 ' +
-          changed +
-          ' 项，移除 ' +
-          removed +
-          ' 项。发布后只读。',
-      )
-    )
-      return;
-  }
-  if (action === 'discard' && !window.confirm('丢弃整份草稿 v' + value.number + '？')) return;
   const result = await post(
     editionPath,
-    {
-      request_id: crypto.randomUUID(),
-      action,
-      revision: value.revision,
-      chapter_id: chapter.value || null,
-      tasks: tasks ?? [],
-    },
-    { ...options, params: { book, edition: value.edition_id } },
+    { request_id: crypto.randomUUID(), action, revision: v.revision, ...extra },
+    { ...options, params: { book: props.book, edition: v.edition_id } },
   );
-  editTasks.value = false;
-  await reload(
-    value.kind === 'tree' ? result.edition_id : tree.value?.edition_id,
-    value.kind === 'extraction' ? result.edition_id : undefined,
+  await refresh(
+    v.kind === 'tree' ? result.edition_id : (v.tree_id ?? undefined),
+    v.kind === 'extraction' ? result.edition_id : undefined,
   );
-  feedback.value = action === 'publish' ? '已发布。' : '已保存。';
+  feedback.value =
+    action === 'publish' ? '版本已发布。' : action === 'discard' ? '版本已删除。' : '草稿已保存。';
 }
-async function generate(action: 'tree' | 'correct' | 'extract') {
-  const request = crypto.randomUUID(),
-    source = tree.value;
-  const job = await postAccepted(
-    '/api/m1/material-imports/{import_id}/messages',
-    {
-      request_id: request,
-      message:
-        action === 'correct'
-          ? correction.value
-          : action === 'tree'
-            ? '生成整本教材内容树。'
-            : '根据已发布的内容树重新提炼整本教材。',
-      edition_job: {
-        action,
-        edition_id: action === 'tree' ? null : source?.edition_id,
-        revision: action === 'tree' ? null : source?.revision,
-        node_id: action === 'correct' ? node.value : null,
+async function confirmAction(v: Info, action: 'publish' | 'discard' | 'copy') {
+  const label = action === 'publish' ? '发布' : action === 'discard' ? '删除' : '复制';
+  try {
+    await ElMessageBox.confirm(
+      label +
+        '整本' +
+        (v.kind === 'tree' ? '内容树' : '教学提炼') +
+        ' v' +
+        v.number +
+        '？' +
+        (action === 'publish'
+          ? '发布后只能查看。'
+          : action === 'copy'
+            ? '将创建一份独立草稿。'
+            : ''),
+      label + '版本',
+      {
+        confirmButtonText: label,
+        cancelButtonText: '取消',
+        type: action === 'discard' ? 'warning' : 'info',
       },
-    },
-    { ...options, params: { import_id: importId } },
-  );
-  feedback.value = '教材助手正在处理，可离开后再回来查看。';
-  for (let tries = 0; tries < 600 && !stop.signal.aborted; tries++) {
-    await new Promise((r) => setTimeout(r, 2000));
-    if (stop.signal.aborted) return;
-    const receipt = await get('/api/m1/requests/receipt', {
-      ...options,
-      query: {
-        request_id: request,
-        action: 'product.converse_material_assistant',
-        resource_kind: 'material_import',
-        resource_id: importId,
-      },
-    });
-    if (receipt.receipt_state === 'rejected' || receipt.business_state === 'failed')
-      throw new Error('生成失败，请查看教材助手记录后重试。');
-    if (receipt.receipt_state === 'completed') {
-      if (receipt.business_state === 'needs_input')
-        throw new Error('教材助手需要补充说明，请在下方对话记录查看原因。');
-      await reload(
-        action === 'tree' ? job.request_ref : source?.edition_id,
-        action === 'extract' ? job.request_ref : undefined,
-      );
-      feedback.value = '处理已结束。';
-      correction.value = '';
-      return;
-    }
-  }
-  feedback.value = '请刷新查看最新处理结果。';
-}
-async function editing() {
-  catalog.value = await get('/api/m1/textbooks/{book}/editions/catalog', {
-    ...options,
-    params: { book },
-  });
-  selected.value = Object.fromEntries(
-    associated.value.map((t) => [t.task_ref.object_id, t.method_refs.map((m) => m.object_id)]),
-  );
-  for (const t of catalog.value) selected.value[t.task_ref.object_id] ??= [];
-  editTasks.value = true;
-}
-function taskSelection() {
-  return catalog.value.flatMap((t) => {
-    const methods = t.method_refs.filter((m) =>
-      selected.value[t.task_ref.object_id]?.includes(m.object_id),
     );
-    return methods.length
-      ? [
-          {
-            chapter_id: chapter.value,
-            task_ref: t.task_ref,
-            method_refs: methods,
-            source_nodes:
-              associated.value.find((a) => a.task_ref.object_id === t.task_ref.object_id)
-                ?.source_nodes ?? [],
-          },
-        ]
-      : [];
+  } catch {
+    return;
+  }
+  await act(() => command(v, action));
+}
+async function openVersion(v: Info) {
+  await act(async () => {
+    await pickTree(
+      v.kind === 'tree' ? v.edition_id : v.tree_id!,
+      v.kind === 'extraction' ? v.edition_id : undefined,
+    );
+    emit('work');
   });
+}
+async function generate() {
+  const action = props.view === 'tree' ? 'tree' : 'extract';
+  const source = trees.value.find((v) => v.edition_id === sourceTree.value);
+  if (action === 'extract' && !source) return;
+  createOpen.value = false;
+  await act(async () => {
+    feedback.value = '正在生成整本草稿，可离开后再查看。';
+    const id = await generateBookDraft(
+      options,
+      props.importId,
+      { action, edition_id: source?.edition_id, revision: source?.revision },
+      action === 'tree' ? '解析整本教材内容树。' : '从本版内容树提炼教学任务。',
+    );
+    await refresh(
+      action === 'tree' ? id : source?.edition_id,
+      action === 'extract' ? id : undefined,
+    );
+    feedback.value = '草稿已生成，可在工作台编辑。';
+  });
+}
+function create() {
+  sourceTree.value = trees.value.find((v) => v.status === 'published')?.edition_id ?? '';
+  createOpen.value = true;
+}
+async function saveTree(nodes: Node[]) {
+  if (tree.value) await command(tree.value, 'edit_tree', { nodes });
+}
+async function saveTasks(teaching: BookTypes['TeachingModel']) {
+  if (extraction.value) await command(extraction.value, 'edit_teaching', { teaching });
 }
 </script>
 <template>
-  <section aria-label="教材版本工作区" class="editions">
-    <p v-if="error" class="problem" role="alert">{{ error }}</p>
+  <section class="editions">
+    <p v-if="error" role="alert" class="problem">{{ error }}</p>
     <p v-if="feedback" role="status">{{ feedback }}</p>
-    <div class="book-columns">
+    <section v-if="view !== 'work'" class="version-list">
+      <header>
+        <div>
+          <h2>{{ view === 'tree' ? '内容树版本' : '教学提炼版本' }}</h2>
+          <p>
+            {{
+              view === 'tree'
+                ? '整本解析原件，草稿可在工作台逐节点编辑。'
+                : '从已发布内容树生成教学任务，整本发布后可用于评估和目标。'
+            }}
+          </p>
+        </div>
+        <ElButton
+          type="primary"
+          :disabled="
+            busy ||
+            !pages.length ||
+            (view === 'extraction' && !trees.some((v) => v.status === 'published'))
+          "
+          @click="create"
+          >创建{{ view === 'tree' ? '内容树' : '教学提炼' }}</ElButton
+        >
+      </header>
+      <ElTable :data="listed" row-key="edition_id" empty-text="暂无版本"
+        ><ElTableColumn label="名称" min-width="150"
+          ><template #default>{{
+            bookTitle + (view === 'tree' ? ' · 内容树' : ' · 教学提炼')
+          }}</template></ElTableColumn
+        >
+        <ElTableColumn label="版本" width="75"
+          ><template #default="{ row }">v{{ row.number }}</template></ElTableColumn
+        >
+        <ElTableColumn v-if="view === 'extraction'" label="来源树版本" min-width="110"
+          ><template #default="{ row }">{{ treeName(row.tree_id) }}</template></ElTableColumn
+        >
+        <ElTableColumn label="状态" width="90"
+          ><template #default="{ row }"
+            ><ElTag :type="row.status === 'published' ? 'success' : 'info'">{{
+              row.status === 'published' ? '已发布' : '草稿'
+            }}</ElTag></template
+          ></ElTableColumn
+        >
+        <ElTableColumn label="创建时间" min-width="145"
+          ><template #default="{ row }">{{
+            new Date(row.created_at).toLocaleString('zh-CN', { hour12: false })
+          }}</template></ElTableColumn
+        >
+        <ElTableColumn label="操作" min-width="175"
+          ><template #default="{ row }"
+            ><ElButton link type="primary" :disabled="busy" @click="openVersion(row as Info)">{{
+              row.status === 'published' ? '查看' : '编辑'
+            }}</ElButton
+            ><ElButton
+              v-if="row.status === 'published'"
+              link
+              :disabled="busy"
+              @click="confirmAction(row as Info, 'copy')"
+              >复制</ElButton
+            ><ElButton
+              v-else
+              link
+              type="primary"
+              :disabled="busy"
+              @click="confirmAction(row as Info, 'publish')"
+              >发布</ElButton
+            ><ElButton
+              link
+              type="danger"
+              :disabled="busy"
+              @click="confirmAction(row as Info, 'discard')"
+              >删除</ElButton
+            ></template
+          ></ElTableColumn
+        >
+      </ElTable>
+    </section>
+    <div v-else class="book-columns">
       <section>
         <h3>教材原页</h3>
         <OriginalPage
@@ -328,236 +286,138 @@ function taskSelection() {
         />
       </section>
       <section>
-        <header>
-          <h3>内容树</h3>
-          <select
-            v-if="trees.length"
-            aria-label="内容树版本"
-            :value="tree?.edition_id"
-            :disabled="busy"
-            @change="act(() => switchTree($event.target as HTMLSelectElement))"
-          >
-            <option v-for="v in trees" :key="v.edition_id" :value="v.edition_id">
-              {{ title(v) }}
-            </option>
-          </select>
-        </header>
-        <ElButton v-if="!tree" :disabled="busy" type="primary" @click="act(() => generate('tree'))"
-          >从原页生成内容树</ElButton
-        >
-        <template v-if="tree"
-          ><div class="node-list">
-            <button
-              v-for="row in rows"
-              :key="row.node.node_id"
-              type="button"
-              :class="{
-                chosen: row.node.node_id === node,
-                near: row.node.covered_page_ids.includes(page),
-              }"
-              :style="{ paddingLeft: 8 + row.depth * 12 + 'px' }"
-              :aria-pressed="row.node.node_id === node"
-              @click="chooseNode(row.node.node_id)"
-            >
-              {{ row.title }}
-            </button>
-          </div>
-          <template v-if="tree.status === 'draft'"
-            ><label
-              >引用所选节点纠错<textarea
-                v-model.trim="correction"
-                placeholder="说明需要添加、移动或修改的内容"
-                rows="2"
-              /></label
-            ><ElButton
-              :disabled="busy || !correction || !node"
-              @click="act(() => generate('correct'))"
-              >提交给教材助手</ElButton
-            >
-            <div v-if="tree.pending">
-              <h4>修正前后</h4>
-              <p v-for="d in diffs" :key="d">{{ d }}</p>
-              <ElButton :disabled="busy" @click="act(() => submit(tree!, 'apply_correction'))"
-                >接受修正</ElButton
-              ><ElButton :disabled="busy" @click="act(() => submit(tree!, 'reject_correction'))"
-                >放弃修正</ElButton
-              >
-            </div>
-            <div class="actions">
-              <ElButton
-                :disabled="busy || !!tree.pending"
-                type="primary"
-                @click="act(() => submit(tree!, 'publish'))"
-                >发布整本内容树</ElButton
-              ><ElButton :disabled="busy" @click="act(() => submit(tree!, 'discard'))"
-                >丢弃草稿</ElButton
-              >
-            </div></template
-          >
-          <ElButton v-else :disabled="busy" @click="act(() => submit(tree!, 'copy'))"
-            >基于此版建树草稿</ElButton
-          ></template
-        >
+        <h3>内容树</h3>
+        <ElSelect
+          v-if="trees.length"
+          aria-label="内容树版本"
+          :model-value="tree?.edition_id"
+          :disabled="busy"
+          @change="(id: string) => act(() => pickTree(id))"
+          ><ElOption v-for="v in trees" :key="v.edition_id" :label="title(v)" :value="v.edition_id"
+        /></ElSelect>
+        <BookTreeEditor
+          v-if="tree"
+          :edition="tree"
+          :selected="node"
+          :save="saveTree"
+          :busy="busy"
+          @select="selectNode"
+        /><ElEmpty v-else description="尚无内容树" :image-size="60" />
       </section>
       <section>
-        <header>
-          <h3>教学提炼</h3>
-          <select
-            v-if="extracts.length"
-            :value="extraction?.edition_id"
-            aria-label="提炼版本"
-            :disabled="busy"
-            @change="act(() => pickExtraction(($event.target as HTMLSelectElement).value))"
-          >
-            <option v-for="v in extracts" :key="v.edition_id" :value="v.edition_id">
-              {{ title(v) }}
-            </option>
-          </select>
-        </header>
-        <p v-if="tree?.status !== 'published'">发布整本内容树后，可以生成教学提炼。</p>
-        <template v-else
-          ><p>基于内容树 v{{ tree.number }}</p>
-          <ElButton :disabled="busy" @click="act(() => generate('extract'))">生成教学提炼</ElButton>
-          <template v-if="extraction"
-            ><h4>{{ chapterTitle }}</h4>
-            <p v-if="!associated.length">本节尚无关联任务</p>
-            <article v-for="t in associated" :key="t.task_ref.object_id">
-              <strong>{{ t.name }}</strong>
-              <p>{{ t.method_names.join('、') }}</p>
-              <ElTag v-for="k in t.knowledge_names" :key="k">{{ k }}</ElTag><button
-                @click="chooseNode(t.chapter_id)"
-              >
-                定位章节
-              </button>
-            </article>
-            <p v-for="issue in extraction.issues" :key="issue" role="status">{{ issue }}</p>
-            <div v-if="extraction.status === 'draft'" class="actions">
-              <ElButton :disabled="busy || !chapter" @click="act(editing)">调整本节任务</ElButton
-              ><ElButton
-                :disabled="busy"
-                type="primary"
-                @click="act(() => submit(extraction!, 'publish'))"
-                >发布整本教学提炼</ElButton
-              ><ElButton :disabled="busy" @click="act(() => submit(extraction!, 'discard'))"
-                >丢弃提炼草稿</ElButton
-              >
-            </div>
-            <template v-else
-              ><p>使用目标：{{ usage.join('、') || '暂无' }}</p>
-              <ElButton :disabled="busy" @click="act(() => submit(extraction!, 'copy'))"
-                >基于此版建提炼草稿</ElButton
-              ></template
-            ></template
-          ></template
-        >
+        <h3>教学提炼</h3>
+        <ElSelect
+          v-if="extracts.length"
+          aria-label="教学提炼版本"
+          :model-value="extraction?.edition_id"
+          :disabled="busy"
+          @change="
+            (id: string) =>
+              act(async () => {
+                extraction = await read(id);
+              })
+          "
+          ><ElOption
+            v-for="v in extracts"
+            :key="v.edition_id"
+            :label="title(v)"
+            :value="v.edition_id"
+        /></ElSelect>
+        <template v-if="tree && extraction"
+          ><p v-for="(issue, i) in extraction.issues" :key="i" role="status">{{ issue }}</p>
+          <TeachingTaskEditor
+            :key="extraction.edition_id"
+            :edition="extraction"
+            :tree="tree"
+            :save="saveTasks"
+            :chapter="sectionOf(tree.nodes, node)"
+            @source="selectNode"
+          />
+        </template>
+        <ElEmpty
+          v-else
+          :description="
+            tree?.status === 'draft' ? '发布这版内容树后可创建教学提炼' : '本版内容树暂无教学提炼'
+          "
+          :image-size="60"
+        />
       </section>
     </div>
-    <ElDialog v-model="editTasks" title="调整本节任务" width="min(600px, 90vw)"
-      ><p>{{ chapterTitle }} · 勾选本节采用的方法</p>
-      <fieldset v-for="t in catalog" :key="t.task_ref.object_id">
-        <legend>{{ t.name }}</legend>
-        <label v-for="(m, i) in t.method_refs" :key="m.object_id"
-          ><input v-model="selected[t.task_ref.object_id]" type="checkbox" :value="m.object_id" />{{
-            t.method_names[i]
-          }}</label
-        >
-      </fieldset>
-      <p v-if="!catalog.length">请先在领域管理中建立可用任务及方法。</p>
+    <ElDialog
+      v-model="createOpen"
+      :title="view === 'tree' ? '创建内容树' : '创建教学提炼'"
+      width="min(470px,92vw)"
+      ><p>
+        {{
+          view === 'tree'
+            ? '将重新解析整本原件并保存为新草稿。'
+            : '请选择此次提炼依据的已发布内容树。'
+        }}
+      </p>
+      <ElSelect v-if="view === 'extraction'" v-model="sourceTree" aria-label="依据的内容树"
+        ><ElOption
+          v-for="v in trees.filter((r) => r.status === 'published')"
+          :key="v.edition_id"
+          :label="title(v)"
+          :value="v.edition_id"
+      /></ElSelect>
       <template #footer
-        ><ElButton @click="editTasks = false">取消</ElButton
-        ><ElButton
-          type="primary"
-          :disabled="busy"
-          @click="act(() => submit(extraction!, 'edit_tasks', taskSelection()))"
-          >保存本节任务</ElButton
-        ></template
+        ><ElButton @click="createOpen = false">取消</ElButton
+        ><ElButton type="primary" :disabled="busy" @click="generate">开始生成</ElButton></template
       ></ElDialog
     >
   </section>
 </template>
 <style scoped>
+.editions {
+  margin-top: 18px;
+}
+.version-list,
+.book-columns > section {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 6px;
+  padding: 18px;
+  min-width: 0;
+}
+.version-list header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 15px;
+}
+.version-list h2,
+.book-columns h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.version-list header p {
+  color: var(--el-text-color-secondary);
+  margin: 5px 0 0;
+  font-size: 13px;
+}
 .book-columns {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
-  align-items: start;
 }
 .book-columns > section {
-  min-width: 0;
-  border: 1px solid var(--el-border-color);
-  border-radius: 6px;
-  background: var(--el-bg-color);
-  padding: 14px;
-}
-.book-columns header,
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  min-height: 340px;
 }
 .book-columns h3 {
-  margin: 0 0 12px;
+  margin-bottom: 14px;
 }
-.book-columns header {
-  justify-content: space-between;
+.book-columns .el-select {
   margin-bottom: 10px;
-}
-.node-list {
-  max-height: 52vh;
-  overflow: auto;
-  margin-bottom: 10px;
-}
-.node-list button {
-  display: block;
-  text-align: left;
-  width: 100%;
-  border: 0;
-  border-left: 3px solid transparent;
-  background: transparent;
-  color: inherit;
-  padding: 6px;
-  overflow-wrap: anywhere;
-}
-.node-list .near {
-  border-left-color: var(--el-color-primary-light-5);
-}
-.node-list .chosen {
-  background: var(--el-color-primary-light-9);
-  color: var(--el-color-primary);
-}
-textarea {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-}
-.actions {
-  margin-top: 12px;
-}
-.actions :deep(.el-button) {
-  margin: 0;
-}
-article {
-  border-top: 1px solid var(--el-border-color-lighter);
-  padding: 10px 0;
 }
 .problem {
   color: var(--el-color-danger);
 }
-fieldset label {
-  display: block;
-}
 @media (max-width: 1000px) {
   .book-columns {
-    grid-template-columns: 1fr 1fr;
-  }
-  .book-columns > section:last-child {
-    grid-column: 1/-1;
-  }
-}
-@media (max-width: 650px) {
-  .book-columns {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(235px, 1fr));
+    overflow-x: auto;
   }
 }
 </style>

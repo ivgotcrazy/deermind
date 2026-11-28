@@ -145,7 +145,16 @@ async def chapter_methods(
         solution = SolutionDefinition.model_validate(
             await require_definition(connection, domain_id, method)
         )
-        for item in solution.kc_refs:
+        derived = list(solution.kc_refs)
+        if task.knowledge_ref:
+            derived.append(task.knowledge_ref)
+        for dependency in solution.dependencies or []:
+            target = TaskDefinition.model_validate(
+                await require_definition(connection, domain_id, dependency.task_ref)
+            )
+            if target.knowledge_ref:
+                derived.append(target.knowledge_ref)
+        for item in derived:
             key = (item.object_id, item.version)
             if key not in seen:
                 # 同一知识成分去重，首次出现时核对可采用性。

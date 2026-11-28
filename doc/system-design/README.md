@@ -1,17 +1,17 @@
 # DeerMind 系统设计文档入口
 
-> **版本**：v0.37<br>
+> **版本**：v0.38<br>
 > **文档性质**：文档导航与使用说明<br>
 > **状态**：文档修订待用户审阅；本轮未修改原型或实现真实服务<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
 > **评审记录**：用户批准本轮修订；作者自检见MVP决定登记§69，不代表真实效果验收<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-14<br>
-> **修订说明**：v0.36 → v0.37，同步现行引用与文档导航；不改变其余模型或历史结论；逐文件记录见MVP决定登记§69<br>
+> **更新日期**：2026-11-28<br>
+> **修订说明**：v0.37 → v0.38，同步教材领域模型 v1.8 及提炼工作台入口<br>
 
 ---
 
-以下七份v1.4为既有系统设计基线，承接[概念设计入口](../concept-design/README.md)；其中旧模型摘要尚未全部按M1迁移，不是可直接照搬的新M1工程规格。当前Domain合同为[v1.7](../concept-design/DeerMind_Domain_Space_Design_v1.7.md)，Evaluation为[v1.11](../concept-design/DeerMind_Evaluation_Space_Design_v1.11.md)，具体产品规则以[M1 PRD](../mvp/m1/PRD.md)及设计规格为准，差异由M1-OPEN-04登记。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
+以下七份v1.4为既有系统设计基线，承接[概念设计入口](../concept-design/README.md)；其中旧模型摘要尚未全部按M1迁移，不是可直接照搬的新M1工程规格。当前Domain合同为[v1.8](../concept-design/DeerMind_Domain_Space_Design_v1.8.md)，Evaluation为[v1.11](../concept-design/DeerMind_Evaluation_Space_Design_v1.11.md)，具体产品规则以[M1 PRD](../mvp/m1/PRD.md)及设计规格为准，差异由M1-OPEN-04登记。[Phase 6 证据评审](DeerMind_System_Design_Evidence_Review_v1.0.md)记录的是旧 v1.0 的 Gate E/F 与 Build 准入依据；历史结论未重写，新模型未因此取得实证验证。[System Design Roadmap](DeerMind_System_Design_Roadmap_v0.11.md)的阶段规划保持。
 
 **当前工作：** 先审[新领域模型及M1适配清单](../mvp/m1/design/Domain_Model_Revision_Checklist.md)，本轮没有改动这里的历史系统基线。 审阅[M1总体设计](../mvp/m1/engineering/System_Design.md)，确认状态和未决项统一见[§7.2](../mvp/m1/engineering/System_Design.md#72-总体架构问题清单)。此前已重分[AI Operation与普通处理目录](../mvp/m1/engineering/README.md#5-m1-operation总目录)，同步路由、Worker和执行保障，记录见[§67](../mvp/DECISIONS.md#67-operation限定为ai业务能力)；总体仍待用户接收，未编码。M1按[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)组织，旧稿与本目录既有设计仅供历史参考，历史G3不等于新M1通过接收。
 
@@ -40,3 +40,4 @@ Build输出统一位于`build/`；[Build Plan v0.4](build/DeerMind_Architecture_
 | 版本 | 日期 | 修改 |
 | :--- | :--- | :--- |
 | v0.37 | 2026-11-14 | 同步现行引用与文档导航；不改变其余模型或历史结论。本轮仅改文档；完整记录见MVP决定登记§69。 |
+| v0.38 | 2026-11-28 | 同步教材领域模型 v1.8 及提炼工作台入口 |

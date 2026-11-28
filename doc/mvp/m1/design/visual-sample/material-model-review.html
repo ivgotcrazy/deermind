@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>教材与评估模型 · 交互评审</title>
+<style>
+*{box-sizing:border-box}body{margin:0;color:#1e3045;background:#f4f6f9;font:15px/1.6 "Microsoft YaHei",system-ui,sans-serif}header,aside,article,dialog{background:white}header{height:56px;padding:0 26px;display:flex;align-items:center;gap:24px;border-bottom:1px solid #dce2ea}header small{margin-left:auto}small,.muted{color:#596a79}main{display:grid;grid-template-columns:178px 1fr;min-height:calc(100vh - 56px)}aside{padding:25px 12px;border-right:1px solid #dce2ea}aside button{width:100%;text-align:left;margin-bottom:6px}button,select,input,textarea{font:inherit;color:inherit}button,select,input:not([type=checkbox]),textarea{border:1px solid #becbd7;background:white;border-radius:5px;padding:6px 12px}button{cursor:pointer}button:hover,button[aria-current=true]{background:#eaf1fd;color:#165398;border-color:#8eafd5}button.primary{background:#245c9d;color:white;border-color:#245c9d}button:disabled{opacity:.5;cursor:default}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #6696d6;outline-offset:2px}aside button{border:0}section#screen{padding:25px clamp(15px,3vw,45px);min-width:0;max-width:1550px}h1{font-size:25px;margin:6px 0 16px}h2{font-size:18px;margin:0}h3{font-size:16px}article{border:1px solid #d6dee8;border-radius:7px;padding:18px;min-width:0}.bar,.tabs{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px}.tabs{gap:0;border-bottom:1px solid #ccd7e3}.tabs button{border:0;border-radius:0;background:transparent;padding:10px 18px}.tabs button[aria-current=true]{border-bottom:2px solid #245c9d}.columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.columns article{min-height:365px}.pair{display:grid;grid-template-columns:minmax(210px,1fr) minmax(0,2fr);gap:12px}table{width:100%;border-collapse:collapse}td,th{text-align:left;border-bottom:1px solid #e2e7ed;padding:10px}th{font-size:13px;color:#506275;background:#f6f8fb}label{display:block;margin:12px 0}label select,textarea{display:block;width:100%}textarea{min-height:100px}.page{max-height:420px;max-width:100%;object-fit:contain;display:block;margin:auto}dialog{border:1px solid #bac7d5;border-radius:8px;max-width:min(520px,92vw);width:480px}dialog::backdrop{background:#192f4655}details{margin:10px 0}#notice{margin-top:15px;color:#235a3f}ul{padding-left:23px}@media(max-width:900px){main{grid-template-columns:1fr}aside{display:flex;padding:6px;overflow:auto}aside button{width:auto;white-space:nowrap}.columns,.pair{grid-template-columns:1fr}.columns article{min-height:180px}}
+</style>
+<header><b>DeerMind</b> 管理后台 <small>交互线框 · 示例数据 · 刷新可复位</small></header>
+<main><aside id="nav" aria-label="管理导航"></aside><section id="screen" aria-label="工作区"></section></main>
+<dialog id="modal"><form method="dialog"><h2 id="mt"></h2><div id="mb"></div><div class="bar"><button value="cancel">关闭</button><button id="accept" value="apply" class="primary">保存</button></div></form></dialog>
+<script>
+const screen=document.querySelector('#screen'),modal=document.querySelector('#modal');
+const menu=['教材管理','领域管理','评估管理','目标管理'],tabs=['教材原件','内容树','教学提炼','工作台'];
+const book='北师大数学 · 六年级上册',tasks=['解释分数乘法的意义','解决连续求一个量几分之几的问题'];
+const models=[{name:'概念理解 v1',published:true,rules:['能结合图说明每个分数指哪个整体。','能解释两个分率分别对应哪个量。']},{name:'应用迁移 v2',published:true,rules:['能换一个情境说明相同算式的意义。','能在新情境独立列式并说明依据。']}];
+const pic='../../../../../src/mvp_foundation/m1/content-representation/source/page-49.png';
+let area=0,tab=0,tree='v1',extract='v1',pageno=49,pick=0,active=0,goal=0,checked=new Set(),notice='',goalName='',savedGoal=null,domainLevel=0,selectedNode='node',draftNodes={node:'航模应用题',method:'说一说你的思路'};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const btn=(label,cmd,cls='')=>'<button type="button" class="'+cls+'" data-cmd="'+cmd+'">'+esc(label)+'</button>';
+const select=(id,vals,value)=>'<select id="'+id+'">'+vals.map(([v,label])=>'<option value="'+v+'" '+(String(v)===String(value)?'selected':'')+'>'+esc(label)+'</option>').join('')+'</select>';
+const tbl=(head,rows)=>'<table><thead><tr>'+head.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+const options=[['v1','v1 · 已发布'],['v2','v2 · 草稿']];
+function page(){return '<div class="bar">'+btn('第 49 页','p49')+btn('第 50 页','p50')+'</div><img class="page" alt="教材印刷第 '+pageno+' 页" src="'+pic.replace('49',pageno)+'">'}
+function material(){
+ let content;
+ if(tab===0)content='<article><div class="bar"><h2>教材原件</h2>'+btn('更多 · 删除原件','guard')+'</div>'+page()+'</article>';
+ if(tab===1||tab===2){const isTree=tab===1;content='<article>'+tbl(['名称','版本','状态',...(isTree?[]:['基于内容树']),'创建时间','操作'],options.map(([v,label])=>[isTree?'整本内容树':'整本教学提炼',v,label.split(' · ')[1],...(isTree?[]:['v1']),'11-27',btn(v==='v1'?'查看':'编辑','open'+v)]))+'</article>'}
+ if(tab===3)content='<div class="columns"><article><h2>教材原页</h2>'+page()+'</article><article><h2>内容树</h2><label>树版本'+select('tree',options,tree)+'</label><details open><summary>第四单元　分数的应用</summary><ul><li>分数的应用（一）<ul><li>'+btn(tree==='v2'?draftNodes.node:'航模应用题','node')+'</li><li>'+btn(tree==='v2'?draftNodes.method:'说一说你的思路','method')+'</li></ul></li></ul></details>'+(tree==='v2'?btn('编辑所选节点','editNode'):'<p class="muted">发布版只读</p>')+'</article><article><h2>教学提炼</h2>'+(tree==='v2'?'<p>发布这版内容树后可创建教学提炼。</p>':'<label>提炼版本'+select('extract',options,extract)+'</label>'+tasks.map((t,i)=>btn(t,'task'+i)).join(' '))+'</article></div>';
+ return '<small>教材管理 / 数学</small><h1>'+book+'</h1><div class="tabs">'+tabs.map((t,i)=>'<button data-cmd="tab'+i+'" aria-current="'+(i===tab)+'">'+t+'</button>').join('')+'</div>'+content;
+}
+function domain(){
+ const trail=['领域管理','数学',book,'教学提炼 v1'];
+ const rows=domainLevel===0?[['数学',btn('查看教材','next')]]:domainLevel===1?[[book,btn('查看发布版本','next')]]:domainLevel===2?[['整本教学提炼 v1',btn('查看领域模型','next')]]:[['任务',tasks.join('、')],['解法','先求一个小组的人数，再求另一个小组'],['知识点','分数乘法的意义']];
+ return '<small>'+trail.slice(0,domainLevel+1).join(' / ')+'</small><h1>'+trail[domainLevel]+'</h1><article>'+(domainLevel?btn('返回上一级','back'):'')+tbl([['领域','操作'],['教材','操作'],['已发布教学提炼','操作'],['模型内容','定义']][domainLevel],rows)+'</article>';
+}
+function evaluation(){
+ const m=models[pick];return '<small>数学 / '+book+' / 教学提炼 v1</small><h1>评估模型</h1><div class="bar"><label>评估模型版本'+select('model',models.map((m,i)=>[i,m.name+' · '+(m.published?'已发布':'草稿')]),pick)+'</label>'+btn('生成评估草稿','gen')+'</div><div class="pair"><article><h2>任务与 Claim</h2>'+tasks.map((t,i)=>'<p>'+btn(t,'claim'+i)+'</p>').join('')+'</article><article><small>'+esc(m.name)+'</small><h2>'+tasks[active]+'</h2><h3>可观察的表现</h3><p>'+esc(m.rules[active])+'</p>'+(m.published?'发布版只读':btn('手工编辑','rule')+' '+btn('发布整套标准','publish','primary'))+'</article></div>';
+}
+function target(){
+ const valid=models.map((m,i)=>[i,m]).filter(([,m])=>m.published);
+ return '<small>目标管理 / 数学 / '+book+'</small><h1>创建课程目标</h1><article><label>目标名称 <input id="goalName" value="'+esc(goalName)+'" placeholder="例如：掌握分数应用题"></label><p>教学提炼　 <b>整本教学提炼 v1</b></p><label>评估模型版本'+select('goal',valid.map(([i,m])=>[i,m.name]),goal)+'</label><h3>选择本目标要求的 Claim</h3>'+tasks.map((t,i)=>'<label><input type="checkbox" data-i="'+i+'" '+(checked.has(i)?'checked':'')+'> '+t+' · '+esc(models[goal].rules[i])+'</label>').join('')+btn('保存目标','saveGoal','primary')+(savedGoal?'<p><b>已保存：</b>'+esc(savedGoal)+'</p>':'')+'</article>';
+}
+function render(){
+ document.querySelector('#nav').innerHTML=menu.map((n,i)=>'<button data-cmd="area'+i+'" aria-current="'+(i===area)+'">'+n+'</button>').join('');
+ screen.innerHTML=[material,domain,evaluation,target][area]()+'<p id="notice" role="status">'+esc(notice)+'</p>';
+}
+let onApply;
+function popup(title,body,save,apply){document.querySelector('#mt').textContent=title;document.querySelector('#mb').innerHTML=body;const b=document.querySelector('#accept');b.hidden=!save;b.textContent=save||'';onApply=apply;modal.returnValue='';modal.showModal()}
+modal.onclose=()=>{if(modal.returnValue==='apply'&&onApply)onApply();render()};
+document.addEventListener('input',e=>{if(e.target.id==='goalName')goalName=e.target.value});
+document.addEventListener('change',e=>{const t=e.target;if(t.id==='tree'){tree=t.value;extract='v1'}if(t.id==='extract')extract=t.value;if(t.id==='model')pick=+t.value;if(t.id==='goal'){goal=+t.value;checked.clear();notice='请重新选择这套标准中的 Claim。'}if(t.hasAttribute('data-i')){const i=+t.dataset.i;t.checked?checked.add(i):checked.delete(i)}if(t.tagName==='SELECT')render()});
+document.addEventListener('click',e=>{
+ const c=e.target.closest('[data-cmd]')?.dataset.cmd;if(!c)return;notice='';
+ if(c.startsWith('area'))area=+c.slice(4);
+ else if(c.startsWith('tab'))tab=+c.slice(3);
+ else if(c==='next')domainLevel++;else if(c==='back')domainLevel--;
+ else if(c==='guard')notice='这份原件关联内容树 v1、v2，无法删除。';
+ else if(c==='p49'||c==='p50')pageno=+c.slice(1);
+ else if(c.startsWith('open')){const v=c.slice(4);tree=tab===1?v:'v1';extract=tab===2?v:'v1';tab=3}
+ else if(c==='node'||c==='method'){pageno=c==='node'?49:50;selectedNode=c;notice='已定位到原页 '+pageno}
+ else if(c==='editNode'){popup('编辑草稿节点','<label>节点内容<textarea id="draft">'+esc(draftNodes[selectedNode])+'</textarea></label>','保存',()=>{draftNodes[selectedNode]=document.querySelector('#draft').value;notice='已保存草稿节点'});return}
+ else if(c.startsWith('task')){popup(tasks[+c.slice(4)],'<p>来源：第四单元 · 分数的应用（一）</p><p>方法：根据分率确定参照量并列式。</p>',null);return}
+ else if(c.startsWith('claim'))active=+c.slice(5);
+ else if(c==='gen'){popup('生成整套评估草稿','<p>基于：教学提炼 v1 · 2 个任务</p><label>本套标准的侧重点<input id="focus" value="解释参照量"></label>','生成示例草稿',()=>{const focus=document.querySelector('#focus').value.trim()||'任务表现';models.push({name:focus+' v'+(models.length+1),published:false,rules:['能指出算式中分数对应的参照量。','能说清连续两步各自所用的参照量。']});pick=models.length-1;active=0;notice='示例草稿已生成，可逐任务修改。'});return}
+ else if(c==='rule'){popup('手工编辑 Claim','<label>可观察的表现<textarea id="draft">'+esc(models[pick].rules[active])+'</textarea></label>','保存草稿',()=>{models[pick].rules[active]=document.querySelector('#draft').value.trim()});return}
+ else if(c==='publish'){if(models[pick].rules.some(r=>!r)){notice='请补全任务的评价标准。'}else{popup('发布整套评估标准','<p>'+esc(models[pick].name)+' · 2 项 Claim。发布后可供创建目标时选择。</p>','确认发布',()=>{models[pick].published=true;notice='已发布整套标准。'});return}}
+ else if(c==='saveGoal'){if(!goalName.trim()||!checked.size)notice='请填写目标名称，并选择至少一项 Claim。';else savedGoal=goalName+' ／ 提炼 v1 ／ '+models[goal].name+' ／ '+[...checked].map(i=>tasks[i]).join('、')}
+ render();
+});
+render();
+</script>
+</html>

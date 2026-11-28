@@ -10,7 +10,7 @@ from deermind.abstractions.events import FactModel, Ref
 from deermind.foundation.system.public.errors import Issue
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
 from deermind.product.public.authentication import SessionView
-from deermind.spaces.domain.rich_content import RichContent, SourceRef, invalid
+from deermind.spaces.domain.rich_content import RichContent, SourceRef, invalid, paragraph
 
 __all__ = [
     "SAVE_ACTION",
@@ -24,6 +24,8 @@ __all__ = [
     "DomainRef",
     "DomainRow",
     "DomainService",
+    "BookDomainService",
+    "paragraph",
     "DomainView",
     "NonBlank",
     "RichContent",
@@ -83,7 +85,7 @@ class DomainIntakeQueries(Protocol):
 
 class DomainRef(FactModel):
     kind: Literal["domain"] = "domain"
-    object_id: UUID
+    object_id: JsonUuid
     version: Version
 
 
@@ -159,10 +161,17 @@ class Prerequisite(FactModel):
     method_refs: list[SolutionRef] = Field(default_factory=list[SolutionRef])
 
 
+class MethodDependency(FactModel):
+    task_ref: TaskRef
+    reason: NonBlank
+
+
 class TaskDefinition(FactModel):
     """可保存未填齐的定义；就绪要求与个人评价独立。"""
 
     name: NonBlank
+    task_type: Literal["knowledge", "composite"] | None = None
+    knowledge_ref: KnowledgeRef | None = None
     responsibility: RichContent | None = None
     expected_output: RichContent | None = None
     completion_conditions: RichContent | None = None
@@ -209,6 +218,7 @@ class SolutionDefinition(FactModel):
     """方法描述本层思路、依据、适用条件和关键过程。"""
 
     name: NonBlank
+    dependencies: list[MethodDependency] | None = None
     approach: RichContent | None = None
     rationale: RichContent | None = None
     applicability: RichContent | None = None
@@ -235,7 +245,7 @@ def solution_gaps(content: SolutionDefinition) -> list[Issue]:
         for field, value, label in fields
         if value is None
     ]
-    if not content.kc_refs:
+    if content.dependencies is None and not content.kc_refs:
         # 方法未关联知识成分，记缺口。
         gaps.append(Issue(code="missing_knowledge", path="/kc_refs", message="尚未关联知识成分。"))
     return gaps
@@ -255,6 +265,15 @@ class CreateDomainRequest(FactModel):
     object_kind: Literal["domain"]
     action: Literal["create"]
     definition: DomainDefinition
+    change_note: NonBlank
+
+
+class DeleteDomainRequest(FactModel):
+    request_id: RequestId
+    object_kind: Literal["domain"]
+    action: Literal["soft_delete"]
+    object_ref: DomainRef
+    expected_version: Version
     change_note: NonBlank
 
 
@@ -350,6 +369,7 @@ def save_variant(value: object) -> str | None:
 
 type SaveRequest = Annotated[
     Annotated[CreateDomainRequest, Tag("domain.create")]
+    | Annotated[DeleteDomainRequest, Tag("domain.soft_delete")]
     | Annotated[CreateKnowledgeRequest, Tag("kc.create")]
     | Annotated[UpdateKnowledgeRequest, Tag("kc.update")]
     | Annotated[DeleteKnowledgeRequest, Tag("kc.soft_delete")]
@@ -806,3 +826,18 @@ class DomainIntakeActions(Protocol):
     ) -> IntakeActionReceipt: ...
 
     async def read_parent(self, domain_id: UUID, item_id: UUID) -> InstanceView: ...
+
+
+class BookDomainService[Tx](DomainService, Protocol):
+    async def publish_members(
+        self,
+        db: Tx,
+        domain: UUID,
+        actor: Ref,
+        request: UUID,
+        edition: UUID,
+        members: list[tuple[MemberRef, DefinitionContent]],
+        paths: list[ConfirmKCPathRequest],
+    ) -> None: ...
+
+    async def lock_active_domain(self, connection: Tx, domain_id: UUID) -> None: ...

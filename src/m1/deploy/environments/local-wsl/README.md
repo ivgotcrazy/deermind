@@ -57,6 +57,7 @@ wsl -d DeerMind-M1 -u root -- python3 /mnt/d/code/deermind/deermind/src/m1/scrip
 | E02-16 | 章节采用 Task 与方法 | [章节关联交付与验证](E02-16-chapter-associations.md) |
 | E02-17 | 删除未完成导入、保留事实 | [删除导入交付与验证](E02-17-material-deletion.md) |
 | E02-18 | 四个教材样例端到端回归 | [四例核对与证据](E02-18-representative-regression.md) |
+| E02-21 | 知识与任务编辑、方法依赖、发布模型只读展示 | [工作台与领域管理走查](E02-21-knowledge-tasks.md) |
 | E03-01 | Claim、执行判据及方面规则 | [评价定义交付和集群验证](E03-01-claim-definitions.md) |
 | E03-02 | 四类活动配置及首次保存 | [活动配置交付和集群验证](E03-02-activity-configurations.md) |
 | E03-03 | 学习目标、方法来源及目标条件 | [目标交付和集群验证](E03-03-learning-targets.md) |

@@ -1,10 +1,10 @@
 # M1 数据库设计
 
-> **版本**：v0.22<br>
-> **状态**：E01-15接线AI七表；部署与验证见实施计划，116张规划表按需迁移<br>
+> **版本**：v0.23<br>
+> **状态**：E01-15接线AI七表；部署与验证见实施计划，117张规划表按需迁移<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
-> **更新日期**：2026-11-27<br>
-> **修订说明**：迁移 0043 新增教材版本与节点，目标固定引用提炼版本<br>
+> **更新日期**：2026-11-28<br>
+> **修订说明**：迁移 0044、0045 接入评估套、目标选版及领域定义归属<br>
 
 截至 `0023_material_deletion`，本机业务库实际 57 张表（含迁移表），规划表仍按下文目录维护。教材原件、候选、采用、领域入库和章节关联的字段见各数据分册。
 
@@ -18,7 +18,7 @@
 
 | 数据库 | 内容 | 表数 | 管理方与账号边界 | 字段字典 |
 | --- | --- | --- | --- | --- |
-| `deermind` | 业务、事件、运行、文件元数据及AI调用 | 116 | 各模块维护各自schema；运行账号与迁移账号分开 | 本册§2及六个分册 |
+| `deermind` | 业务、事件、运行、文件元数据及AI调用 | 117 | 各模块维护各自schema；运行账号与迁移账号分开 | 本册§2及六个分册 |
 | `temporal` | Workflow历史、执行、任务队列及组件元数据 | 40 | Temporal专用账号，官方Schema工具升级 | [执行库](database/Temporal.md) |
 | `temporal_visibility` | Workflow检索视图及Schema记录 | 3 | Temporal查询库专用账号，官方工具升级 | [查询库](database/Temporal_Visibility.md) |
 
@@ -47,10 +47,10 @@ NATS、教材原件、派生图片和大载荷不是SQL表。文件字节经隔�
 
 | schema | 表数 / 列数 | 内容与完整字典 |
 | --- | --- | --- |
-| `product` | 31 / 273 | [产品业务](database/Business_Product.md) |
-| `domain` | 9 / 92 | [领域空间](database/Business_Domain.md) |
+| `product` | 31 / 275 | [产品业务](database/Business_Product.md) |
+| `domain` | 9 / 93 | [领域空间](database/Business_Domain.md) |
 | `interaction` | 35 / 306 | [交互空间](database/Business_Interaction.md) |
-| `evaluation` | 13 / 127 | [评估空间](database/Business_Evaluation.md) |
+| `evaluation` | 14 / 137 | [评估空间](database/Business_Evaluation.md) |
 | `runtime` | 20 / 207 | [公共运行及文件登记](database/Business_Runtime.md) |
 | `ai` | 7 / 77 | [AI调用](database/Business_AI.md) |
 | `public` | 1 / 1 | Alembic迁移记录，见§5 |
@@ -69,6 +69,11 @@ erDiagram
     product_learning_space ||..o{ product_space_adoption : adoption_history
     product_course_application ||..o{ product_space_adoption : application_ref
     product_target_basis ||..o{ product_space_adoption : target_basis_ref
+    product_textbook ||--o{ product_material_edition : textbook_id
+    product_material_edition ||--o{ evaluation_assessment_model : extraction_id
+    evaluation_assessment_model ||--o{ evaluation_claim : model_id
+    evaluation_assessment_model ||--o{ product_learning_target_version : assessment_id
+    product_material_edition ||--o{ domain_object_identity : source_edition_id
     product_textbook ||..o{ product_material_chapter : chapters
     product_material_chapter ||..o{ product_chapter_association : task_and_methods
     domain_object_identity ||..o{ domain_object_version : versions
@@ -191,6 +196,7 @@ P为事件正文的业务投影，D为由事实生成的当前索引，C为运�
 | [domain.kc_test_path](database/Business_Domain.md#7-domainkc_test_path) | P | 完整正文及产生事件见事件正文§3 |
 | [domain.supply_batch](database/Business_Domain.md#8-domainsupply_batch) | P | 完整正文及产生事件见事件正文§3 |
 | [domain.command_receipt](database/Business_Domain.md#9-domaincommand_receipt) | C | 沿原模块恢复；不重放业务副作用 |
+| [evaluation.assessment_model](database/Business_Evaluation.md#assessment_model) | P | AssessmentModelSaved 保存整套评估标准 |
 | [evaluation.claim](database/Business_Evaluation.md#1-evaluationclaim) | D | 来源与重建见事件正文§3.1 |
 | [evaluation.claim_version](database/Business_Evaluation.md#2-evaluationclaim_version) | P | 完整正文及产生事件见事件正文§3 |
 | [evaluation.evaluation_input](database/Business_Evaluation.md#3-evaluationevaluation_input) | P | 完整正文及产生事件见事件正文§3 |
@@ -380,3 +386,4 @@ E01-14通过`0010_waits_results`接线结果与等待五表，当前实际29张�
 | v0.20 | 2026-11-22 | 同步教材和领域入库相关字段 |
 | v0.21 | 2026-11-24 | 同步学生与固定课程版本的空间唯一性 |
 | v0.22 | 2026-11-27 | 迁移 0043 新增教材版本与节点，目标固定引用提炼版本 |
+| v0.23 | 2026-11-28 | 迁移 0044、0045 接入评估套、目标选版及领域定义归属 |

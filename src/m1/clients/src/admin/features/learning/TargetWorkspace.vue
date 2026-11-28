@@ -39,17 +39,50 @@ const draftItems = ref<Item[]>([]);
 const claimId = ref('');
 const editionOptions = ref<Schema['EditionInfo'][]>([]);
 const extractionId = ref('');
+const modelId = ref('');
+const standards = ref<Schema['AssessmentModel'][]>([]);
+let editionRead = 0,
+  modelRead = 0;
+async function chooseModel(id: string) {
+  const attempt = ++modelRead;
+  modelId.value = id;
+  claimId.value = '';
+  claims.value = [];
+  draftItems.value = [];
+  if (id) {
+    try {
+      const members = await get('/api/m1/evaluation/models/{model}/claims', {
+        session: props.session,
+        params: { model: id },
+      });
+      if (attempt === modelRead) claims.value = members;
+    } catch (e) {
+      if (attempt === modelRead) error.value = (e as Error).message;
+    }
+  }
+}
 async function chooseEdition(id: string) {
-  const book = activeBook.value;
-  if (!book) return;
-  const previous = extractionId.value;
+  const book = activeBook.value,
+    attempt = ++editionRead;
   extractionId.value = id;
+  standards.value = [];
+  chapters.value = [];
+  await chooseModel('');
+  if (!book || !id) return;
   try {
-    chapters.value = id ? await fixedChapters(props.session, book.textbook_id, id) : [];
+    const [fixed, models] = await Promise.all([
+      fixedChapters(props.session, book.textbook_id, id),
+      get('/api/m1/evaluation/textbooks/{book}/extractions/{extraction}/models', {
+        session: props.session,
+        params: { book: book.textbook_id, extraction: id },
+      }),
+    ]);
+    if (attempt === editionRead) {
+      chapters.value = fixed;
+      standards.value = models.filter((m) => m.status === 'published');
+    }
   } catch (e) {
-    extractionId.value = previous;
-    error.value = (e as Error).message;
-    throw e;
+    if (attempt === editionRead) error.value = (e as Error).message;
   }
 }
 const editing = ref<Target>();
@@ -75,34 +108,13 @@ async function loadBook(book: TextbookRow) {
   busy.value = true;
   try {
     const session = props.session;
-    const [targetList, claimList, content] = await Promise.all([
-      get(path, { session, query: { textbook_id: book.textbook_id } }),
-      get('/api/m1/evaluation/claims', { session, query: { domain_id: book.domain_id } }),
-      get('/api/m1/material-imports/{import_id}/contents', {
-        session,
-        params: { import_id: book.import_id },
-      }),
+    const [targetList, editions] = await Promise.all([
+      get('/api/m1/learning-targets', { session, query: { textbook_id: book.textbook_id } }),
+      get(bookPath, { session, params: { book: book.textbook_id } }),
     ]);
-    chapters.value = await Promise.all(
-      content.chapters.flatMap((chapter) => {
-        if (
-          typeof chapter.chapter_id !== 'string' ||
-          typeof chapter.title !== 'string' ||
-          typeof chapter.revision !== 'number'
-        )
-          return [];
-        const { chapter_id, title, revision } = chapter;
-        return [
-          get('/api/m1/textbooks/{textbook_id}/chapters/{chapter_id}/associations', {
-            session,
-            params: { textbook_id: book.textbook_id, chapter_id },
-          }).then((data) => ({ id: chapter_id, title, revision, tasks: data.items })),
-        ];
-      }),
-    );
-    editionOptions.value = await get(bookPath, { session, params: { book: book.textbook_id } });
+    if (activeBook.value?.textbook_id !== book.textbook_id) return;
+    editionOptions.value = editions;
     targets.value = targetList.items;
-    claims.value = claimList.items;
   } catch (caught) {
     error.value = (caught as Error).message;
   } finally {
@@ -111,6 +123,11 @@ async function loadBook(book: TextbookRow) {
 }
 
 function reset() {
+  editionRead++;
+  modelRead++;
+  modelId.value = '';
+  standards.value = [];
+  claims.value = [];
   promptChoices.value = {};
   panel.value = 'edit';
   editing.value = undefined;
@@ -217,6 +234,8 @@ async function addGoal() {
 async function open(target: Target) {
   busy.value = true;
   try {
+    await chooseEdition(target.extraction_id ?? '');
+    await chooseModel(target.assessment_id ?? '');
     draftItems.value = await Promise.all(
       target.items.map(async (draft) => ({
         key: draft.item_id,
@@ -224,8 +243,7 @@ async function open(target: Target) {
         draft: structuredClone(JSON.parse(JSON.stringify(draft)) as Goal),
       })),
     );
-    if (target.extraction_id) await chooseEdition(target.extraction_id);
-    else extractionId.value = '';
+
     editing.value = target;
     promptChoices.value = { ...bindings.get(targetKey(target)) };
     creating.value = false;
@@ -301,6 +319,7 @@ async function save() {
     const data = {
       title: title.value,
       extraction_id: extractionId.value,
+      assessment_id: modelId.value,
       textbook_id: book.textbook_id,
       request_id: crypto.randomUUID(),
       items: draftItems.value.map((item) => item.draft),
@@ -459,6 +478,28 @@ async function save() {
                 >
                 <p v-for="c in chapters" :key="c.id">{{ c.title }} · {{ c.tasks.length }} 个任务</p>
               </details>
+              <label
+                >评估标准版本<select
+                  :value="modelId"
+                  :disabled="!extractionId"
+                  @change="chooseModel(($event.target as HTMLSelectElement).value)"
+                >
+                  <option value="">选择已发布标准</option>
+                  <option v-for="m in standards" :key="m.model_id" :value="m.model_id">
+                    {{ m.name }} · v{{ m.number }}
+                  </option>
+                </select></label
+              >
+              <p v-if="extractionId && !standards.length">
+                此提炼还没有已发布的评估标准。<a
+                  href="/admin/#claims"
+                  target="_blank"
+                  rel="noopener"
+                  >打开评估管理</a
+                >，发布后可<button type="button" @click="chooseEdition(extractionId)">
+                  刷新标准</button
+                >。
+              </p>
               <TargetPromptChoices v-model="promptChoices" :guides="guides" />
               <label
                 >选用 Claim

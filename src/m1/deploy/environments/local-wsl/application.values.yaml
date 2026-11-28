@@ -1,6 +1,6 @@
 images:
-  server: deermind/server:book-editions-r7
-  client: deermind/client:book-editions-r6
+  server: deermind/server:knowledge-tasks-r5
+  client: deermind/client:knowledge-list-r1
 nodeSelector:
   kubernetes.io/hostname: deermind-m1
 filesClaim: deermind-files

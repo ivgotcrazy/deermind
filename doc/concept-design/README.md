@@ -1,13 +1,13 @@
 # DeerMind 概念设计入口
 
-> **版本**：v0.12<br>
+> **版本**：v0.13<br>
 > **文档性质**：文档导航与使用说明<br>
 > **状态**：文档修订待用户审阅；本轮未修改原型或实现真实服务<br>
 > **维护责任**：Codex 维护与核对；用户决定重要模型与范围变更<br>
 > **评审记录**：用户批准本轮修订；作者自检见MVP决定登记§69，不代表真实效果验收<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-14<br>
-> **修订说明**：v0.11 → v0.12，同步现行引用与文档导航；不改变其余模型或历史结论；逐文件记录见MVP决定登记§69<br>
+> **更新日期**：2026-11-28<br>
+> **修订说明**：v0.12 → v0.13，同步教材领域模型 v1.8 及提炼工作台入口<br>
 
 ---
 
@@ -16,7 +16,7 @@
 | 文档 | 负责内容 |
 | --- | --- |
 | [Concept Architecture v1.7](DeerMind_Concept_Architecture_v1.7.md) | 整体架构、跨层归属、运行闭环与不变量 |
-| [Domain Space Design v1.7](DeerMind_Domain_Space_Design_v1.7.md) | Task、Solution、KC、TaskInstance；多KC方法、Task先导、题内参考和d=v×t案例 |
+| [Domain Space Design v1.8](DeerMind_Domain_Space_Design_v1.8.md) | Task、Solution、KC、TaskInstance；任务专属方法、Task先导、题内参考和d=v×t案例 |
 | [Learning Space Design v1.5](DeerMind_Learning_Space_Design_v1.5.md) | LearningMaterial、LearningTarget、材料映射、定义与绑定、版本及权限 |
 | [Evaluation Space Design v1.11](DeerMind_Evaluation_Space_Design_v1.11.md) | 条件性能力命题、Evidence、Belief 与目标达成评估 |
 | [Interaction Space Design v1.7](DeerMind_Interaction_Space_Design_v1.7.md) | 既有空间职责基线；Observation及活动摘要待按M1迁移，不能强制新增Observation层 |
@@ -30,10 +30,11 @@
 
 [Reassessment](DeerMind_Learning_Model_Reassessment.md) 保留分析过程；其早期显式能力及问题族候选已被后续讨论替代，单Task多维的当前结论、逐文件变更及迁移边界见 §11；§1–10 保留历史分析和前次修订。当前导航指向采用版本，旧文件及验证引用保留原义；更早概念及系统合同可从 [Git 基线 eb7800b](https://github.com/ivgotcrazy/deermind/tree/eb7800b10da58bf3ee3ed4cbb27a3d484ebc1b94/doc) 查阅。历史报告链接仍指向当时版本，不以新设计替换旧实验输入。
 
-**现行与历史的边界。** Domain v1.7、Evaluation v1.11是M1当前模型合同；本轮关联概念摘要已同步新Domain语义，历史系统基线仍按M1-OPEN-04核对，不自动取得相同成熟度。教材Agent对话、目标章节方法适用及学习机会的当前详细规定见[M1内容规格](../mvp/m1/design/Content_and_Model_Reference.md)。旧版文件作为历史基线保留，不批量改正文为“已废止”；当前导航不再把旧Domain／Evaluation版本作为新实现依据。
+**现行与历史的边界。** Domain v1.8、Evaluation v1.11是M1当前模型合同；本轮关联概念摘要已同步新Domain语义，历史系统基线仍按M1-OPEN-04核对，不自动取得相同成熟度。教材Agent对话、目标章节方法适用及学习机会的当前详细规定见[M1内容规格](../mvp/m1/design/Content_and_Model_Reference.md)。旧版文件作为历史基线保留，不批量改正文为“已废止”；当前导航不再把旧Domain／Evaluation版本作为新实现依据。
 
 ## 修订记录
 
 | 版本 | 日期 | 修改 |
 | :--- | :--- | :--- |
 | v0.12 | 2026-11-14 | 同步现行引用与文档导航；不改变其余模型或历史结论。本轮仅改文档；完整记录见MVP决定登记§69。 |
+| v0.13 | 2026-11-28 | 同步教材领域模型 v1.8 及提炼工作台入口 |

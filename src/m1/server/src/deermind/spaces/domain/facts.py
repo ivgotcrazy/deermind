@@ -54,6 +54,7 @@ class DomainVersion(FactModel):
 
 
 class DomainSaved(EventPayload):
+    source_edition_id: UUID | None = None
     object_ref: ObjectRef
     previous_ref: ObjectRef | None
     action: Literal["create", "update", "soft_delete"]
@@ -105,7 +106,7 @@ def validate_saved(draft: EventDraft, payload: EventPayload) -> None:
         if (
             not isinstance(value.content, DomainDefinition)
             or draft.scope_id != ref.object_id
-            or payload.action != "create"
+            or payload.action not in {"create", "soft_delete"}
         ):
             raise ValueError("Invalid Domain root definition")
     elif draft.scope_id == ref.object_id or not isinstance(

@@ -1,11 +1,11 @@
 # M1 工程设计
 
-> **版本**：v0.114<br>
+> **版本**：v0.116<br>
 > **状态**：已进入小增量工程实现；进度及待确认项见实施计划<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
 > **写作规范**：[系统设计文档规范 v1.0](../../../top/DeerMind_System_Design_Writing_Standard.md)<br>
-> **更新日期**：2026-11-27<br>
-> **修订说明**：v0.113 → v0.114，登记教材整本版本事件及目标固定引用<br>
+> **更新日期**：2026-11-28<br>
+> **修订说明**：v0.115 → v0.116，同步教材领域模型 v1.8 及提炼工作台入口<br>
 
 E01-16 的配置、范围及复核见[载荷交付记录](../../../../src/m1/deploy/environments/local-wsl/E01-16-payload-codec.md)，进度见[实施计划](Delivery_Plan.md)。
 
@@ -13,7 +13,7 @@ E01-16 的配置、范围及复核见[载荷交付记录](../../../../src/m1/dep
 
 Operation仅封装AI业务能力，普通业务入口另列于[§7](#7-普通业务处理目录)；本批仍为9项AI Operation，不因新增字段或保存检查扩充目录。详细设计直接形成可审阅文稿，用户review后再处理意见；不以逐条对话或先写验证代码作为推进前置。影响架构的风险单独提出，其他验证留实现阶段，见[登记§70](../../DECISIONS.md#70-domain详细设计对象内容与入库)。
 
-正式前端采用Vue 3＋TypeScript＋Vite、shadcn-vue及Tailwind CSS，先落实工程结构和业务接线，视觉与交互优化后置。旧原型与本次样板仅供参考，样板未获界面验收；见[客户端§1.1](Client_Design.md#11-视觉设计与样板评审)及实施计划Q11—Q12。
+正式前端采用 Vue 3、TypeScript 和 Vite；学生端使用 shadcn-vue 和 Tailwind CSS，管理端使用 Element Plus，先落实工程结构和业务接线，视觉与交互优化后置。旧原型与本次样板仅供参考，样板未获界面验收；见[客户端§1.1](Client_Design.md#11-视觉设计与样板评审)及实施计划Q11—Q12。
 
 编码、脚本及配置统一遵循[编程规范](Coding_Standard.md)，通过`src/m1/scripts/check.sh`及`test.sh`检查。工具检查后仍逐文件review可读性和失败边界。
 
@@ -53,14 +53,14 @@ AI 底座和公共运行机制同属共用底座。各 Space 分别描述自己�
 
 | 当前产品输入 | 版本与作用 |
 | --- | --- |
-| [PRD](../PRD.md) | v0.30：M1产品行为与验收；Web交付，学习用时功能后置 |
-| [内容与模型规格](../design/Content_and_Model_Reference.md) | v0.29：对象关系、教学与评价语义、试用算法和参数 |
-| [交互规格](../design/Interaction_Design.md)及[原型](../prototype/README.md) | 交互规格 v0.27：管理员和学生的操作与状态；旧截图和原型仅供参考，正式布局与样式重新设计 |
+| [PRD](../PRD.md) | v0.32：M1产品行为与验收；Web交付，学习用时功能后置 |
+| [内容与模型规格](../design/Content_and_Model_Reference.md) | v0.31：对象关系、教学与评价语义、试用算法和参数 |
+| [交互规格](../design/Interaction_Design.md)及[原型](../prototype/README.md) | 交互规格 v0.29：管理员和学生的操作与状态；旧截图和原型仅供参考，正式布局与样式重新设计 |
 | [验证计划](../validation/Validation_Plan.md) | v0.10：内容、语义、数值、效果及真实浏览器验收口径 |
 
 本轮产品输入已按新领域模型修订，不再沿用`37bd334`作为当前内容基线。此前最小账号、取消离线检查、浏览器交付及用时后置决定仍有效。正式接收模块时固定本表现行文件与资产哈希；历史输入和mock不构成生产模型或算法。
 
-分层依据见[已确认方向](../../DECISIONS.md#31-m1系统设计首轮实现草案)；领域与评价语义分别参考[Domain v1.7](../../../concept-design/DeerMind_Domain_Space_Design_v1.7.md)、[Evaluation v1.11](../../../concept-design/DeerMind_Evaluation_Space_Design_v1.11.md)，AI 执行边界参考[AI Native 原则](../../../top/DeerMind_AI_Native_Architecture_Principles_v0.7.md)。具体 M1 规则以产品输入和后续已确认决定为准。
+分层依据见[已确认方向](../../DECISIONS.md#31-m1系统设计首轮实现草案)；领域与评价语义分别参考[Domain v1.8](../../../concept-design/DeerMind_Domain_Space_Design_v1.8.md)、[Evaluation v1.11](../../../concept-design/DeerMind_Evaluation_Space_Design_v1.11.md)，AI 执行边界参考[AI Native 原则](../../../top/DeerMind_AI_Native_Architecture_Principles_v0.7.md)。具体 M1 规则以产品输入和后续已确认决定为准。
 
 旧工程稿已进入[归档](../../archive/2026-11-11-before-swdd/README.md)，含精确原文 ZIP、SHA-256 清单和可读副本。旧稿只供参考；重建时未直接复制旧稿正文，后续确认的选型与职责按各次决定登记更新。旧稿中的 Python、数据库、框架、调度和代码目录均不因归档或重建获得批准。
 
@@ -216,6 +216,8 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 
 | 事件 | 生产方 / 范围 | 事实及用途 |
 | --- | --- | --- |
+| `MaterialOriginalsRemoved` | product / material_import | 移除当前原件登记，保留变更事实 |
+| `AssessmentModelSaved` | evaluation / extraction | 保存整套草稿或发布快照；目标引用同一发布套 |
 | `MaterialEditionSaved` | product / textbook | 教材内容树或提炼保存完整快照，Product 同步更新本版投影。发布树后可由管理员启动提炼。 |
 | `MaterialCandidatePrepared` | product / material_import | 助手保存一批候选；核对或继续修正另存新候选；按授权查询/投影，不默认触发AI |
 | `MaterialIntakeStatusUpdated` | product / material_import | 消费Domain接收/拒绝事件后保存教材侧状态；Product消费Domain结果后生成教材状态 |
@@ -359,3 +361,5 @@ API和消息承载两类请求：普通入口直接调用相应处理器；AI入
 | v0.112 | 2026-11-24 | 登记固定版本空间的有效触发与历史采用事件 |
 | v0.113 | 2026-11-25 | 登记后端存量代码注释规范细则（Comment_Conventions.md） |
 | v0.114 | 2026-11-27 | 登记整本教材版本事件及目标、空间的固定引用。 |
+| v0.115 | 2026-11-28 | 登记移除教材原件、保存整套评价标准及教材提炼版本所有权 |
+| v0.116 | 2026-11-28 | 同步教材领域模型 v1.8 及提炼工作台入口 |

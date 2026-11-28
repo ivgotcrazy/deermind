@@ -184,6 +184,18 @@ async def append_material(
     return await materials.receive(session, body, import_id)
 
 
+@router.post(
+    "/material-imports/{import_id}/originals/remove",
+    responses=ERRORS,
+    operation_id="remove_material_originals",
+)
+async def remove_originals(
+    request: Request, response: Response, import_id: UUID, body: DeleteMaterial
+) -> MaterialDeletionReceipt:
+    session = await material_admin(request, response, writing=True)
+    return await request.app.state.material_deletion.remove_originals(session, import_id, body)
+
+
 @router.get(
     "/textbooks", response_model=TextbookList, responses=ERRORS, operation_id="list_textbooks"
 )

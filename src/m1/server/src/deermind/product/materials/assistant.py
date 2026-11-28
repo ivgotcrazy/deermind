@@ -1,5 +1,6 @@
 """受理教材助手、固定原件依据，并查询已保存的对话和候选。"""
 
+from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime
 from typing import Literal
 from uuid import UUID, uuid4, uuid5
@@ -338,37 +339,36 @@ class MaterialAssistant:
                     if job.edition_id is None:
                         raise RequestError(422, "invalid_reference", "请选择内容树版本。")
                     source = await read_edition(connection, book, job.edition_id)
-                    status = "published" if job.action == "extract" else "draft"
+                    status = "published"
+                    kind = "extraction" if job.action == "assess" else "tree"
                     if (
-                        source.kind != "tree"
+                        source.kind != kind
                         or source.status != status
                         or source.revision != job.revision
                     ):
                         raise RequestError(409, "revision_conflict", "内容树版本或状态已变化。")
                     if job.node_id and job.node_id not in {n.node_id for n in source.nodes}:
                         raise RequestError(422, "invalid_reference", "引用节点不属于本版。")
+                    if job.action == "assess" and (
+                        not job.model_name or len(job.model_name) > 160 or not source.entries
+                    ):
+                        raise RequestError(
+                            422,
+                            "invalid_reference",
+                            "请选有任务的已发布提炼并填写评估标准名称（最多160字）。",
+                        )
                     edition_context["source"] = source.model_dump(mode="json")
-                if job.action == "extract":
-                    domain_id = await connection.scalar(
-                        text("SELECT domain_id FROM product.textbook WHERE textbook_id=:id"),
-                        {"id": book},
-                    )
-                    edition_context["catalog"] = [
-                        t.model_dump(mode="json")
-                        for t in await self.editions.catalog(session, domain_id)
-                    ]
             pages, gaps = await self._manifest(connection, identity, command, earlier_pages)
-            if job and job.action == "correct" and source is not None:
-                originals = {str(page["page_id"]): page for page in pages}
-                if any(str(page.page_id) not in originals for page in source.pages):
-                    raise RequestError(409, "source_unavailable", "该树版本的原页不完整。")
-                pages = [originals[str(page.page_id)] for page in source.pages]
+            if job and job.action == "tree" and not pages:
+                raise RequestError(409, "source_unavailable", "请先导入教材原件。")
             seconds = 1200
             if job:
                 units = len(pages)
                 if job.action == "extract":
                     assert source is not None
                     units = sum(n.node_kind in {"unit", "chapter", "section"} for n in source.nodes)
+                if job.action == "assess" and source is not None:
+                    units = len(source.entries) * 4
                 batches = max(1, (units + 3) // 4)
                 # Reserve one repair per batch, with a finite budget fixed at acceptance.
                 if batches > 1:
@@ -610,6 +610,7 @@ class MaterialAssistant:
         outcome: TurnOutcome,
         issues: list[Issue],
         edition: Edition | None = None,
+        save_assessment: Callable[[AsyncConnection, Ref], Awaitable[None]] | None = None,
     ) -> None:
         async with self.engine.begin() as connection:
             saved = await store.lock_owned(connection, self.registry, run.execution_id)
@@ -620,18 +621,16 @@ class MaterialAssistant:
             turn = await self._turn(connection, UUID(work.input_ref.id), work.scope_id)
             imported = await self.materials.read_import(connection, work.scope_id, lock=True)
             actor = (await store.authorization(connection, work.execution_id)).initiator_ref
+            if save_assessment is not None:
+                await save_assessment(connection, actor)
             if edition is not None:
                 if imported["source_revision"] != turn.input["source_revision"]:
                     raise RequestError(409, "revision_conflict", "原页已变化，请基于当前来源重试。")
-                if edition.pending is not None:
-                    current = await read_edition(
-                        connection, edition.textbook_id, edition.edition_id
-                    )
-                    if current.status != "draft" or current.revision != edition.revision:
-                        raise RequestError(409, "revision_conflict", "草稿已变化，请重新发起修正。")
-                    edition = edition.model_copy(update={"revision": current.revision + 1})
-                else:
-                    edition = await new_draft(connection, edition, edition.edition_id)
+                if edition.tree_id is not None:
+                    tree = await read_edition(connection, edition.textbook_id, edition.tree_id)
+                    if tree.status != "published":
+                        raise RequestError(409, "invalid_reference", "本次提炼的内容树已不可用。")
+                edition = await new_draft(connection, edition, edition.edition_id)
                 await self.editions.persist(connection, actor, edition, turn.request_ref)
             batches: list[Ref] = []
             focus = turn.input.get("focus_candidate")

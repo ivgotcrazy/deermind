@@ -836,6 +836,109 @@
         "title": "Assessment",
         "type": "object"
       },
+      "AssessmentCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "save",
+              "publish"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "claims": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/TaskStandard"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claims"
+          },
+          "request_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "request_id",
+          "revision",
+          "action"
+        ],
+        "title": "AssessmentCommand",
+        "type": "object"
+      },
+      "AssessmentModel": {
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/TaskStandard"
+            },
+            "title": "Claims",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "extraction_id": {
+            "format": "uuid",
+            "title": "Extraction Id",
+            "type": "string"
+          },
+          "model_id": {
+            "format": "uuid",
+            "title": "Model Id",
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Title"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claims",
+          "model_id",
+          "extraction_id",
+          "name",
+          "number",
+          "revision",
+          "status",
+          "created_at"
+        ],
+        "title": "AssessmentModel",
+        "type": "object"
+      },
       "Attainment": {
         "enum": [
           "met",
@@ -1555,38 +1658,6 @@
           "associations"
         ],
         "title": "ChapterSnapshot",
-        "type": "object"
-      },
-      "ChapterTask": {
-        "additionalProperties": false,
-        "properties": {
-          "chapter_id": {
-            "$ref": "#/components/schemas/JsonUUID"
-          },
-          "method_refs": {
-            "items": {
-              "$ref": "#/components/schemas/SolutionRef"
-            },
-            "title": "Method Refs",
-            "type": "array"
-          },
-          "source_nodes": {
-            "items": {
-              "$ref": "#/components/schemas/JsonUUID"
-            },
-            "title": "Source Nodes",
-            "type": "array"
-          },
-          "task_ref": {
-            "$ref": "#/components/schemas/TaskRef"
-          }
-        },
-        "required": [
-          "chapter_id",
-          "task_ref",
-          "method_refs"
-        ],
-        "title": "ChapterTask",
         "type": "object"
       },
       "Chart": {
@@ -2413,16 +2484,13 @@
           },
           "covered_page_ids": {
             "items": {
-              "format": "uuid",
-              "type": "string"
+              "$ref": "#/components/schemas/JsonUUID"
             },
             "title": "Covered Page Ids",
             "type": "array"
           },
           "node_id": {
-            "format": "uuid",
-            "title": "Node Id",
-            "type": "string"
+            "$ref": "#/components/schemas/JsonUUID"
           },
           "node_kind": {
             "$ref": "#/components/schemas/NodeKind"
@@ -2430,14 +2498,12 @@
           "parent_id": {
             "anyOf": [
               {
-                "format": "uuid",
-                "type": "string"
+                "$ref": "#/components/schemas/JsonUUID"
               },
               {
                 "type": "null"
               }
-            ],
-            "title": "Parent Id"
+            ]
           },
           "sibling_order": {
             "minimum": 1.0,
@@ -3043,6 +3109,9 @@
             "title": "Action",
             "type": "string"
           },
+          "assessment_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
           "extraction_id": {
             "$ref": "#/components/schemas/JsonUUID"
           },
@@ -3066,6 +3135,7 @@
         },
         "required": [
           "extraction_id",
+          "assessment_id",
           "action",
           "request_id",
           "textbook_id",
@@ -3396,6 +3466,43 @@
       "DecimalText": {
         "pattern": "^[+-]?[0-9]+(?:\\.[0-9]+)?$",
         "type": "string"
+      },
+      "DeleteDomainRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "soft_delete",
+            "title": "Action",
+            "type": "string"
+          },
+          "change_note": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "expected_version": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "object_kind": {
+            "const": "domain",
+            "title": "Object Kind",
+            "type": "string"
+          },
+          "object_ref": {
+            "$ref": "#/components/schemas/DomainRef"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "request_id",
+          "object_kind",
+          "action",
+          "object_ref",
+          "expected_version",
+          "change_note"
+        ],
+        "title": "DeleteDomainRequest",
+        "type": "object"
       },
       "DeleteKnowledgeRequest": {
         "additionalProperties": false,
@@ -3953,9 +4060,7 @@
             "type": "string"
           },
           "object_id": {
-            "format": "uuid",
-            "title": "Object Id",
-            "type": "string"
+            "$ref": "#/components/schemas/JsonUuid"
           },
           "version": {
             "$ref": "#/components/schemas/Version"
@@ -4247,6 +4352,23 @@
             "title": "Status",
             "type": "string"
           },
+          "teaching": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TeachingModel"
+              },
+              {
+                "items": {
+                  "$ref": "#/components/schemas/TeachingTask"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Teaching"
+          },
           "textbook_id": {
             "format": "uuid",
             "title": "Textbook Id",
@@ -4289,22 +4411,25 @@
               "copy",
               "publish",
               "discard",
-              "apply_correction",
-              "reject_correction",
-              "edit_tasks"
+              "edit_tree",
+              "edit_teaching"
             ],
             "title": "Action",
             "type": "string"
           },
-          "chapter_id": {
+          "nodes": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/JsonUUID"
+                "items": {
+                  "$ref": "#/components/schemas/ContentNode"
+                },
+                "type": "array"
               },
               {
                 "type": "null"
               }
-            ]
+            ],
+            "title": "Nodes"
           },
           "request_id": {
             "$ref": "#/components/schemas/RequestId"
@@ -4314,12 +4439,15 @@
             "title": "Revision",
             "type": "integer"
           },
-          "tasks": {
-            "items": {
-              "$ref": "#/components/schemas/ChapterTask"
-            },
-            "title": "Tasks",
-            "type": "array"
+          "teaching": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TeachingModel"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -4400,8 +4528,8 @@
           "action": {
             "enum": [
               "tree",
-              "correct",
-              "extract"
+              "extract",
+              "assess"
             ],
             "title": "Action",
             "type": "string"
@@ -4410,6 +4538,16 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/JsonUUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "model_name": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Name"
               },
               {
                 "type": "null"
@@ -4675,6 +4813,30 @@
           "quote"
         ],
         "title": "EvidenceQuote",
+        "type": "object"
+      },
+      "EvidenceRule": {
+        "additionalProperties": false,
+        "properties": {
+          "aspect": {
+            "enum": [
+              "independent",
+              "understanding",
+              "transfer",
+              "retention"
+            ],
+            "title": "Aspect",
+            "type": "string"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/Explanation"
+          }
+        },
+        "required": [
+          "aspect",
+          "evidence"
+        ],
+        "title": "EvidenceRule",
         "type": "object"
       },
       "EvidenceSummary": {
@@ -7773,6 +7935,23 @@
         "title": "MethodDefinition",
         "type": "object"
       },
+      "MethodDependency": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "$ref": "#/components/schemas/NonBlank"
+          },
+          "task_ref": {
+            "$ref": "#/components/schemas/TaskRef"
+          }
+        },
+        "required": [
+          "task_ref",
+          "reason"
+        ],
+        "title": "MethodDependency",
+        "type": "object"
+      },
       "MethodRequirement": {
         "additionalProperties": false,
         "properties": {
@@ -7804,6 +7983,39 @@
         "title": "MethodRequirement",
         "type": "object"
       },
+      "MethodStandard": {
+        "additionalProperties": false,
+        "properties": {
+          "aspects": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRule"
+            },
+            "title": "Aspects",
+            "type": "array"
+          },
+          "fail_description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "method_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "pass_description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "unknown_description": {
+            "$ref": "#/components/schemas/Explanation"
+          }
+        },
+        "required": [
+          "method_id",
+          "pass_description",
+          "fail_description",
+          "unknown_description",
+          "aspects"
+        ],
+        "title": "MethodStandard",
+        "type": "object"
+      },
       "MissingCell": {
         "additionalProperties": false,
         "properties": {
@@ -7821,6 +8033,150 @@
           "state"
         ],
         "title": "MissingCell",
+        "type": "object"
+      },
+      "ModelKnowledge": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "title": "Applicability",
+            "type": "string"
+          },
+          "key": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "meaning": {
+            "title": "Meaning",
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "meaning",
+          "applicability"
+        ],
+        "title": "ModelKnowledge",
+        "type": "object"
+      },
+      "ModelMethod": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "title": "Applicability",
+            "type": "string"
+          },
+          "dependencies": {
+            "items": {
+              "$ref": "#/components/schemas/TeachingDependency"
+            },
+            "title": "Dependencies",
+            "type": "array"
+          },
+          "key": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          },
+          "steps": {
+            "title": "Steps",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "steps",
+          "rationale",
+          "applicability",
+          "dependencies"
+        ],
+        "title": "ModelMethod",
+        "type": "object"
+      },
+      "ModelTask": {
+        "additionalProperties": false,
+        "properties": {
+          "chapter_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "completion_conditions": {
+            "title": "Completion Conditions",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "expected_output": {
+            "title": "Expected Output",
+            "type": "string"
+          },
+          "insufficient_example": {
+            "default": "",
+            "title": "Insufficient Example",
+            "type": "string"
+          },
+          "key": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "knowledge_key": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Name"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/ModelMethod"
+            },
+            "title": "Methods",
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "source_nodes": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "title": "Source Nodes",
+            "type": "array"
+          },
+          "task_type": {
+            "enum": [
+              "knowledge",
+              "composite"
+            ],
+            "title": "Task Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "task_type",
+          "knowledge_key",
+          "chapter_id",
+          "source_nodes",
+          "description",
+          "expected_output",
+          "completion_conditions",
+          "methods"
+        ],
+        "title": "ModelTask",
         "type": "object"
       },
       "Name": {
@@ -7849,7 +8205,6 @@
               "$ref": "#/components/schemas/MaterialFile"
             },
             "maxItems": 600,
-            "minItems": 1,
             "title": "Files",
             "type": "array"
           },
@@ -7865,7 +8220,6 @@
         },
         "required": [
           "request_id",
-          "files",
           "domain_ref",
           "title",
           "source"
@@ -8956,6 +9310,9 @@
             "title": "Action",
             "type": "string"
           },
+          "assessment_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
           "expected_revision": {
             "$ref": "#/components/schemas/Revision"
           },
@@ -8985,6 +9342,7 @@
         },
         "required": [
           "extraction_id",
+          "assessment_id",
           "action",
           "request_id",
           "textbook_id",
@@ -9787,6 +10145,20 @@
               }
             ]
           },
+          "dependencies": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/MethodDependency"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependencies"
+          },
           "kc_refs": {
             "items": {
               "$ref": "#/components/schemas/KnowledgeRef"
@@ -9847,6 +10219,20 @@
                 "type": "null"
               }
             ]
+          },
+          "dependencies": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/MethodDependency"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependencies"
           },
           "kc_refs": {
             "items": {
@@ -10672,6 +11058,16 @@
       "TargetView": {
         "additionalProperties": false,
         "properties": {
+          "assessment_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JsonUUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "chapter_basis_refs": {
             "items": {
               "$ref": "#/components/schemas/Ref"
@@ -10808,6 +11204,16 @@
               }
             ]
           },
+          "knowledge_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/KnowledgeRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "method_refs": {
             "items": {
               "$ref": "#/components/schemas/SolutionRef"
@@ -10834,6 +11240,21 @@
                 "type": "null"
               }
             ]
+          },
+          "task_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "knowledge",
+                  "composite"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Type"
           }
         },
         "required": [
@@ -10886,6 +11307,16 @@
               }
             ]
           },
+          "knowledge_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/KnowledgeRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "method_refs": {
             "items": {
               "$ref": "#/components/schemas/SolutionRef"
@@ -10912,6 +11343,21 @@
                 "type": "null"
               }
             ]
+          },
+          "task_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "knowledge",
+                  "composite"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Type"
           }
         },
         "required": [
@@ -11113,6 +11559,35 @@
         "title": "TaskRef",
         "type": "object"
       },
+      "TaskStandard": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/MethodStandard"
+            },
+            "title": "Methods",
+            "type": "array"
+          },
+          "task_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Title"
+          }
+        },
+        "required": [
+          "task_id",
+          "title",
+          "description",
+          "methods"
+        ],
+        "title": "TaskStandard",
+        "type": "object"
+      },
       "TaskView": {
         "additionalProperties": false,
         "properties": {
@@ -11158,6 +11633,183 @@
           "gaps"
         ],
         "title": "TaskView",
+        "type": "object"
+      },
+      "TeachingConcept": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "insufficient_example": {
+            "default": "",
+            "title": "Insufficient Example",
+            "type": "string"
+          },
+          "meaning": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "observable_behavior": {
+            "default": "",
+            "title": "Observable Behavior",
+            "type": "string"
+          },
+          "test_method": {
+            "$ref": "#/components/schemas/Name"
+          }
+        },
+        "required": [
+          "name",
+          "meaning",
+          "applicability",
+          "test_method"
+        ],
+        "title": "TeachingConcept",
+        "type": "object"
+      },
+      "TeachingDependency": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "task_key": {
+            "$ref": "#/components/schemas/Name"
+          }
+        },
+        "required": [
+          "task_key",
+          "reason"
+        ],
+        "title": "TeachingDependency",
+        "type": "object"
+      },
+      "TeachingMethod": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "default": "",
+            "title": "Applicability",
+            "type": "string"
+          },
+          "knowledge": {
+            "items": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "title": "Knowledge",
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "rationale": {
+            "default": "",
+            "title": "Rationale",
+            "type": "string"
+          },
+          "steps": {
+            "title": "Steps",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "steps",
+          "knowledge"
+        ],
+        "title": "TeachingMethod",
+        "type": "object"
+      },
+      "TeachingModel": {
+        "additionalProperties": false,
+        "properties": {
+          "knowledge": {
+            "items": {
+              "$ref": "#/components/schemas/ModelKnowledge"
+            },
+            "title": "Knowledge",
+            "type": "array"
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/ModelTask"
+            },
+            "title": "Tasks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "knowledge",
+          "tasks"
+        ],
+        "title": "TeachingModel",
+        "type": "object"
+      },
+      "TeachingTask": {
+        "additionalProperties": false,
+        "properties": {
+          "chapter_id": {
+            "$ref": "#/components/schemas/JsonUUID"
+          },
+          "completion_conditions": {
+            "default": "",
+            "title": "Completion Conditions",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "direct_knowledge": {
+            "items": {
+              "$ref": "#/components/schemas/TeachingConcept"
+            },
+            "title": "Direct Knowledge",
+            "type": "array"
+          },
+          "expected_output": {
+            "default": "",
+            "title": "Expected Output",
+            "type": "string"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/TeachingMethod"
+            },
+            "title": "Methods",
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "prerequisites": {
+            "items": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "title": "Prerequisites",
+            "type": "array"
+          },
+          "source_nodes": {
+            "items": {
+              "$ref": "#/components/schemas/JsonUUID"
+            },
+            "title": "Source Nodes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "chapter_id",
+          "name",
+          "description",
+          "source_nodes",
+          "methods",
+          "prerequisites",
+          "direct_knowledge"
+        ],
+        "title": "TeachingTask",
         "type": "object"
       },
       "TextPart": {
@@ -12870,6 +13522,9 @@
                 "oneOf": [
                   {
                     "$ref": "#/components/schemas/CreateDomainRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DeleteDomainRequest"
                   },
                   {
                     "$ref": "#/components/schemas/CreateKnowledgeRequest"
@@ -16603,6 +17258,169 @@
         ]
       }
     },
+    "/api/m1/evaluation/models/{model}/claims": {
+      "get": {
+        "operationId": "list_model_members",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "model",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Model",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ClaimRow"
+                  },
+                  "title": "Response List Model Members",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "List Model Members",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    },
     "/api/m1/evaluation/spaces/{scope_id}/basis": {
       "get": {
         "operationId": "evaluation_read_basis",
@@ -16977,6 +17795,384 @@
           }
         },
         "summary": "Read Basis",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    },
+    "/api/m1/evaluation/textbooks/{book}/extractions/{extraction}/models": {
+      "get": {
+        "operationId": "list_assessment_models",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "book",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Book",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "extraction",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Extraction",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AssessmentModel"
+                  },
+                  "title": "Response List Assessment Models",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Model List",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    },
+    "/api/m1/evaluation/textbooks/{book}/extractions/{extraction}/models/{model}": {
+      "post": {
+        "operationId": "save_assessment_model",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "book",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Book",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "extraction",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Extraction",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "model",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Model",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Expected-Session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Expected-Session"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Csrf-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssessmentCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Model Save",
         "tags": [
           "evaluation"
         ]
@@ -22971,6 +24167,159 @@
         ]
       }
     },
+    "/api/m1/material-imports/{import_id}/originals/remove": {
+      "post": {
+        "operationId": "remove_material_originals",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMaterial"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaterialDeletionReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Method Not Allowed"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Remove Originals",
+        "tags": [
+          "materials"
+        ]
+      }
+    },
     "/api/m1/requests/receipt": {
       "get": {
         "operationId": "runtime_read_request_receipt",
@@ -23687,6 +25036,23 @@
               "format": "uuid",
               "title": "Book",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "edition",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Edition"
             }
           }
         ],

@@ -1,12 +1,12 @@
 # deermind 数据库：产品业务数据字典
 
-> **版本**：v0.12<br>
+> **版本**：v0.14<br>
 > **状态**：设计合同；实际接线范围和进度见实施计划，不表示本册全部已实现<br>
 > **维护与评审**：Codex 编写及自检，用户审阅<br>
-> **更新日期**：2026-11-27<br>
-> **修订说明**：登记整本教材版本、原文节点及目标固定提炼引用<br>
+> **更新日期**：2026-11-28<br>
+> **修订说明**：v0.13 → v0.14，登记教学提炼正文的知识和任务集合<br>
 
-本分册是[数据库设计](../Database_Design.md)的字段附录，共 **31 张表、273 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
+本分册是[数据库设计](../Database_Design.md)的字段附录，共 **31 张表、275 个列定义**。处理流程、接口和业务载荷由[Product_Application_Design.md](../Product_Application_Design.md) §2.5、§3.7、§5.3维护；本文是物理表、字段、约束和索引的唯一维护位置。
 
 ## 表目录与关系
 
@@ -736,6 +736,7 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | `revision` | `bigint` | 否 | 无 | 从1递增；写入时比较预期修订，不以时间代替；主键组成字段 |
 | `title` | `text` | 否 | 无 | 目标名称 |
 | `items` | `jsonb` | 否 | 无 | Product§4.2.1 GoalItem[]：Claim、章节依据、Task条件、方法模式、方法及方面 |
+| `assessment_id` | `uuid` | 是 | 无 | 新建或修订必选；与 extraction_id 共同引用同一评估套 |
 | `extraction_id` | `uuid` | 是 | 无 | 新建或修订必选同教材已发布提炼，旧目标无此引用。外键指向 material_edition。 |
 | `chapter_basis` | `jsonb` | 否 | '[]'::jsonb | 选用章节及关联修订；Ref[]，固定版本；空数组表示没有，不表示未知 |
 | `gaps` | `jsonb` | 否 | '[]'::jsonb | Issue[]；草稿缺口，不等于可应用 |
@@ -922,6 +923,7 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | status | text | draft、published 或 discarded |
 | revision | integer | 正整数，保存草稿时检查，发布后只读 |
 | pages | jsonb | 有序原页数组，记录文件、页序与可见印刷页码 |
+| teaching | jsonb | 新提炼正文含 knowledge 和 tasks 两个数组。对象以版本内稳定 key 关联。知识任务持 knowledge_key，方法持 dependencies。内容树为空。历史数组按原版读取。 |
 | entries | jsonb | 教学提炼的章节、Task、方法与知识引用数组 |
 | pending | jsonb | 草稿修正、待处理项、来源版本与关联任务快照 |
 | created_at | timestamptz | 版本首次保存时间 |
@@ -957,3 +959,5 @@ E01-10迁移0006_account_usage实现以下四表。应用角色仅可读/插入�
 | v0.10 | 2026-11-22 | 登记向 Domain 提交的精确来源、受理结果和查询方式 |
 | v0.11 | 2026-11-24 | 维护课程发布版本、空间固定采用及最近进入索引字段 |
 | v0.12 | 2026-11-27 | 登记整本教材版本、原文节点及目标固定提炼引用 |
+| v0.13 | 2026-11-28 | 登记提炼草稿正文、目标版本引用评估套。 |
+| v0.14 | 2026-11-28 | 登记教学提炼正文的知识和任务集合 |

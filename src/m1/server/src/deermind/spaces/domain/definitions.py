@@ -1,5 +1,6 @@
 """领域、知识成分及其固定版本的读写。"""
 
+from collections.abc import Awaitable, Callable
 from datetime import datetime
 from hashlib import sha256
 from uuid import UUID, uuid4
@@ -20,7 +21,7 @@ from deermind.abstractions.events import (
 )
 from deermind.foundation.system.events.attachments import FactAttachments
 from deermind.foundation.system.events.query import EventReader
-from deermind.foundation.system.events.store import EventStore
+from deermind.foundation.system.events.store import EventStore, lock_scope_sequence
 from deermind.foundation.system.projections.receipts import application
 from deermind.foundation.system.public.errors import RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
@@ -47,6 +48,7 @@ from deermind.spaces.domain.public import (
     CreateSolutionRequest,
     CreateTaskRequest,
     DefinitionContent,
+    DeleteDomainRequest,
     DeleteKnowledgeRequest,
     DeleteSolutionRequest,
     DeleteTaskRequest,
@@ -167,9 +169,9 @@ def saved_response(row: RowMapping) -> CreateDomainResponse:
         raise RuntimeError("A domain save receipt must be committed with its result")
     saved = Ref.model_validate(row["result_ref"])
     content = None
-    if saved.owner == "domain" and saved.type == "domain" and saved.version == 1:
+    if saved.owner == "domain" and saved.type == "domain" and saved.version is not None:
         # 新建领域：v1 根对象引用。
-        ref = DomainRef(object_id=UUID(saved.id), version=1)
+        ref = DomainRef(object_id=UUID(saved.id), version=saved.version)
     elif saved.owner == "domain" and saved.type == "kc" and saved.version is not None:
         ref = KnowledgeRef(kind="kc", object_id=UUID(saved.id), version=saved.version)
     elif saved.owner == "domain" and saved.type == "task" and saved.version is not None:
@@ -206,14 +208,15 @@ async def apply_domain_event(connection: AsyncConnection, event: StoredEvent) ->
             await connection.execute(
                 text(
                     "INSERT INTO domain.object_identity "
-                    "(object_id,kind,domain_id,head_version,catalog_revision) "
-                    "VALUES (:id,:kind,:domain_id,1,:catalog)"
+                    "(object_id,kind,domain_id,head_version,catalog_revision,source_edition_id) "
+                    "VALUES (:id,:kind,:domain_id,1,:catalog,:edition)"
                 ),
                 {
                     "id": value.object_id,
                     "kind": ref.kind,
                     "domain_id": None if root else event.draft.scope_id,
                     "catalog": 1 if root else None,
+                    "edition": event.payload.source_edition_id,
                 },
             )
         await connection.execute(
@@ -263,12 +266,92 @@ class DomainDefinitions:
         events: EventStore,
         reader: EventReader,
         attachments: FactAttachments,
+        require_empty_domain: Callable[[AsyncConnection, UUID], Awaitable[None]],
     ) -> None:
+        self.require_empty_domain = require_empty_domain
         self.engine = engine
         self.events = events
         self.reader = reader
         self.attachments = attachments
         self.kc_paths = KCTestPaths(engine, events, attachments)
+
+    async def lock_active_domain(self, connection: AsyncConnection, domain_id: UUID) -> None:
+        identity = await connection.scalar(
+            text(
+                "SELECT object_id FROM domain.object_identity WHERE object_id=:id AND "
+                "kind='domain' FOR UPDATE"
+            ),
+            {"id": domain_id},
+        )
+        if identity is None or await connection.scalar(text(_ROOT), {"id": domain_id}) is None:
+            raise RequestError(409, "invalid_reference", "该领域已删除或不存在。")
+
+    async def publish_members(
+        self,
+        db: AsyncConnection,
+        domain: UUID,
+        actor: Ref,
+        request: UUID,
+        edition: UUID,
+        members: list[tuple[MemberRef, DefinitionContent]],
+        paths: list[ConfirmKCPathRequest],
+    ) -> None:
+        """Publish book-local definitions in dependency order inside the edition transaction."""
+        await self.lock_active_domain(db, domain)
+        now = await db.scalar(text("SELECT clock_timestamp()"))
+        scope = ("domain", domain)
+        access = ProducerAccess("domain", actor, frozenset({scope}))
+        for ref, content in members:
+            value = DomainVersion(
+                object_id=ref.object_id,
+                version=ref.version,
+                content_schema_version=1,
+                content=content,
+                is_deleted=False,
+                created_at=now,
+                created_by=actor,
+                change_note="发布教材教学提炼",
+            )
+            payload = DomainSaved(
+                source_edition_id=edition,
+                object_ref=ref,
+                previous_ref=None,
+                action="create",
+                request_ref=request,
+                records=[
+                    FactRecord(
+                        record_id=RECORD_ID,
+                        record_type=RECORD_TYPE,
+                        schema_version=1,
+                        content=InlineContent(
+                            storage="inline", value=value.model_dump(mode="json")
+                        ),
+                    )
+                ],
+            )
+            draft = EventDraft(
+                uuid4(),
+                EVENT_TYPE,
+                1,
+                *scope,
+                version_ref(ref),
+                payload.model_dump(mode="json"),
+                str(request),
+            )
+            prepared = await self.attachments.prepare(self.events, access, (draft,))
+            seq = await lock_scope_sequence(db, *scope)
+            (event,) = await self.events.append(
+                db,
+                access,
+                prepared,
+                commit_id=uuid4(),
+                correlation_id=request,
+                expected_seq={scope: seq},
+            )
+            await apply_domain_event(db, event)
+
+        for path in paths:
+            await self.kc_paths.publish_in_transaction(db, domain, actor, request, path)
 
     async def list_domains(self, session: SessionView) -> DomainList:
         administrator(session)
@@ -524,6 +607,8 @@ class DomainDefinitions:
                 prerequisites.append(link.model_copy(update={"method_refs": applicable}))
         async with self.engine.connect() as connection:
             kc_refs, sources = await method_knowledge(connection, methods)
+            if task.content.knowledge_ref and task.content.knowledge_ref not in kc_refs:
+                kc_refs.append(task.content.knowledge_ref)
             paths = await read_task_paths(connection, task.object_ref, methods)
         return TaskDependencies(
             task_ref=task.object_ref,
@@ -570,6 +655,7 @@ class DomainDefinitions:
             if isinstance(
                 body,
                 (
+                    DeleteDomainRequest,
                     UpdateKnowledgeRequest,
                     DeleteKnowledgeRequest,
                     UpdateTaskRequest,
@@ -605,7 +691,11 @@ class DomainDefinitions:
         else:
             # 修订/删除：沿用既有对象，版本号在前一版基础上 +1。
             assert row is not None
-            domain_id = row["domain_id"]
+            domain_id = (
+                body.object_ref.object_id
+                if isinstance(body, DeleteDomainRequest)
+                else row["domain_id"]
+            )
             if row["kind"] != body.object_ref.kind or not isinstance(domain_id, UUID):
                 raise RequestError(404, "not_found", "找不到指定领域对象。")
             previous = body.object_ref
@@ -613,7 +703,13 @@ class DomainDefinitions:
                 # 乐观锁：请求所带期望版本与底版不符。
                 raise RequestError(409, "version_conflict", "编辑版本不一致，请检查原稿。")
             ref = previous.model_copy(update={"version": previous.version + 1})
-            if isinstance(body, DeleteKnowledgeRequest | DeleteTaskRequest | DeleteSolutionRequest):
+            if isinstance(
+                body,
+                DeleteDomainRequest
+                | DeleteKnowledgeRequest
+                | DeleteTaskRequest
+                | DeleteSolutionRequest,
+            ):
                 # 软删除沿用原内容，仅标记 is_deleted。
                 content = (await self._read_version(row, domain_id, ref.object_id)).content
             else:
@@ -689,8 +785,13 @@ class DomainDefinitions:
                 existing = (await connection.execute(_RECEIPT, key)).mappings().one()
                 return replay(existing, normalized, digest)
             sequence = 0
-            if not isinstance(ref, DomainRef):
+            if isinstance(body, DeleteDomainRequest):
+                await self.lock_active_domain(connection, domain_id)
+                await self.require_empty_domain(connection, domain_id)
+                sequence = await lock_scope_sequence(connection, "domain", domain_id)
+            elif not isinstance(ref, DomainRef):
                 # 成员保存先锁领域并核对版本；根领域不需要成员锁。
+                assert not isinstance(previous, DomainRef)
                 sequence = await self._lock_member_save(connection, domain_id, previous)
                 if candidate is not None:
                     if candidate.owner != "domain" or candidate.type != "artifact":
@@ -745,7 +846,8 @@ class DomainDefinitions:
             head = (
                 await connection.execute(
                     text(
-                        "SELECT i.head_version,v.is_deleted FROM domain.object_identity i "
+                        "SELECT i.head_version,i.source_edition_id,v.is_deleted "
+                        "FROM domain.object_identity i "
                         "JOIN domain.object_version v ON (v.object_id,v.version)="
                         "(i.object_id,i.head_version) WHERE i.object_id=:id "
                         "AND i.kind=:kind AND i.domain_id=:domain FOR UPDATE OF i"
@@ -753,6 +855,8 @@ class DomainDefinitions:
                     {"id": previous.object_id, "kind": previous.kind, "domain": domain_id},
                 )
             ).one_or_none()
+            if head is not None and head.source_edition_id is not None:
+                raise RequestError(409, "published_readonly", "请从发布的教学提炼复制草稿后修改。")
             if head is None or head.is_deleted or head.head_version != previous.version:
                 # 对象已删、不存在或头版本与期望版本不符，乐观锁冲突。
                 raise RequestError(409, "version_conflict", "领域对象已变更，请核对最新版本。")

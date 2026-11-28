@@ -35,13 +35,12 @@ async def pages(request: Request, response: Response, book: UUID) -> list[BookPa
 
 
 @router.get(BOOK + "/catalog", operation_id="material_task_catalog")
-async def catalog(request: Request, response: Response, book: UUID) -> list[MapTask]:
+async def catalog(
+    request: Request, response: Response, book: UUID, edition: UUID | None = None
+) -> list[MapTask]:
     session = await material_admin(request, response)
-    materials = request.app.state.materials
-    detail = await materials.detail(session, book, None, 1)
-    return await request.app.state.material_editions.catalog(
-        session, detail.material.textbook.domain_id
-    )
+    await request.app.state.materials.detail(session, book, None, 1)
+    return await request.app.state.material_editions.catalog(book, edition)
 
 
 @router.get(BOOK + "/pages/{page_id}", operation_id="material_page_image", response_class=Response)

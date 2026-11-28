@@ -10,6 +10,7 @@ from deermind.product.materials.receiving import MaterialReceiving
 from deermind.product.persistence import receipts
 from deermind.spaces.domain.evaluation_references import read_fixed_reference
 from deermind.spaces.domain.instances import evaluation_task
+from deermind.spaces.evaluation.assessment_models import require_members
 from deermind.spaces.evaluation.basis import EvaluationBasis
 from deermind.spaces.evaluation.conditions import resolve_conditions
 from deermind.spaces.evaluation.definitions import ClaimDefinitions
@@ -48,7 +49,7 @@ def configure_targets(materials: MaterialReceiving, claims: ClaimDefinitions) ->
     def conditions(rule: AspectRule, supplied: dict[str, JsonValue]) -> dict[str, JsonValue]:
         return resolve_conditions(rule.condition_schema, rule.default_values, supplied)
 
-    return TargetDefinitions(materials, claims.detail, conditions)
+    return TargetDefinitions(materials, claims.detail, conditions, require_members)
 
 
 def configure_evaluation_inputs(claims: ClaimDefinitions, spaces: CourseSpaces) -> EvaluationInputs:

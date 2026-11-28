@@ -316,3 +316,44 @@ class EvaluationBasisService(Protocol):
     ) -> BasisView: ...
 
     async def processing(self, scope: UUID, trigger: UUID) -> BasisView: ...
+
+
+class EvidenceRule(FactModel):
+    aspect: Literal["independent", "understanding", "transfer", "retention"]
+    evidence: Explanation
+
+
+class MethodStandard(FactModel):
+    method_id: JsonUUID
+    pass_description: Explanation
+    fail_description: Explanation
+    unknown_description: Explanation
+    aspects: list[EvidenceRule]
+
+
+class TaskStandard(FactModel):
+    task_id: JsonUUID
+    title: Title
+    description: Explanation
+    methods: list[MethodStandard]
+
+
+class AssessmentBatch(FactModel):
+    claims: list[TaskStandard]
+
+
+class AssessmentModel(AssessmentBatch):
+    model_id: UUID
+    extraction_id: UUID
+    name: Title
+    number: int
+    revision: int
+    status: Literal["draft", "published"]
+    created_at: datetime
+
+
+class AssessmentCommand(FactModel):
+    request_id: str = Field(min_length=1, max_length=128)
+    revision: int = Field(ge=1)
+    action: Literal["save", "publish"]
+    claims: list[TaskStandard] | None = None

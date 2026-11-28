@@ -1,14 +1,14 @@
 # MVP 产品迭代与文档入口
 
-> **版本**：v0.98<br>
+> **版本**：v0.99<br>
 > **文档性质**：当前MVP目录、阅读顺序与维护约定<br>
 > **状态**：已进入小增量工程实现；进度与待确认项见实施计划<br>
 > **上游依据与基线**：M1 PRD v0.29、内容规格v0.27、交互规格v0.26及本轮用户决定；E01-01/02已实施；产品规则、历史原型与证据保留<br>
 > **维护责任**：Codex主导整理；用户决定关键产品取舍<br>
 > **评审记录**：编程规范及E01-01/02整改见MVP决定登记§107<br>
 > **写作规范**：[设计文档规范 v1.1](../top/DeerMind_Design_Document_Standard_v1.1.md)<br>
-> **更新日期**：2026-11-15<br>
-> **修订说明**：v0.97 → v0.98，同步编程规范与E01-01/02整改；暂不推进E01-03，见决定登记§107<br>
+> **更新日期**：2026-11-28<br>
+> **修订说明**：v0.98 → v0.99，同步教材领域模型 v1.8 及提炼工作台入口<br>
 
 ---
 
@@ -45,7 +45,7 @@ doc/mvp/
     └── 2026-11-11-before-swdd/    原七份M1工程文件、原文快照与清单
 ```
 
-本轮先读[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)、[九份文档分工](m1/engineering/README.md#1-文档分工)、[总体设计](m1/engineering/System_Design.md)及[本批决定与变更](DECISIONS.md#97-完整工程目录与openapi开发合同)。产品输入按[M1入口](m1/README.md)、[PRD v0.29](m1/PRD.md)、[内容规格 v0.27](m1/design/Content_and_Model_Reference.md)、[交互规格 v0.26](m1/design/Interaction_Design.md)及[验证计划 v0.10](m1/validation/Validation_Plan.md)查阅。Domain合同为[v1.7](../concept-design/DeerMind_Domain_Space_Design_v1.7.md)，Evaluation为[v1.11](../concept-design/DeerMind_Evaluation_Space_Design_v1.11.md)，AI执行原则见[AI Native架构原则 v0.7](../top/DeerMind_AI_Native_Architecture_Principles_v0.7.md)。
+本轮先读[系统设计写作规范](../top/DeerMind_System_Design_Writing_Standard.md)、[九份文档分工](m1/engineering/README.md#1-文档分工)、[总体设计](m1/engineering/System_Design.md)及[本批决定与变更](DECISIONS.md#97-完整工程目录与openapi开发合同)。产品输入按[M1入口](m1/README.md)、[PRD v0.29](m1/PRD.md)、[内容规格 v0.27](m1/design/Content_and_Model_Reference.md)、[交互规格 v0.26](m1/design/Interaction_Design.md)及[验证计划 v0.10](m1/validation/Validation_Plan.md)查阅。Domain合同为[v1.8](../concept-design/DeerMind_Domain_Space_Design_v1.8.md)，Evaluation为[v1.11](../concept-design/DeerMind_Evaluation_Space_Design_v1.11.md)，AI执行原则见[AI Native架构原则 v0.7](../top/DeerMind_AI_Native_Architecture_Principles_v0.7.md)。
 
 此前模型、活动、教材、学生及评价的决定和资产继续由[DECISIONS](DECISIONS.md)及[M1产品交接检查](m1/README.md#6-主流程闭环检查2026-11-09)索引。本批不重写历史结论，总体设计首稿不代表产品验收或全部工程设计完成。
 
@@ -120,3 +120,4 @@ M1/M2/M3是产品版本的推进顺序。原Phase 3–7的需求、设计、工�
 | v0.96 | 2026-11-15 | 同步E01-01实施入口；逐增量验证与评审规则不变 |
 | v0.97 | 2026-11-15 | 同步E01-02基础组件实施及评审入口，见决定登记§106 |
 | v0.98 | 2026-11-15 | 同步编程规范与E01-01/02整改；暂不推进E01-03，见决定登记§107 |
+| v0.99 | 2026-11-28 | 同步教材领域模型 v1.8 及提炼工作台入口 |

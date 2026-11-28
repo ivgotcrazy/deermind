@@ -27,6 +27,7 @@ from deermind.product.materials.chapter_associations import REGISTRATION as CHAP
 from deermind.product.materials.deletion import REGISTRATION as MATERIAL_DELETION
 from deermind.product.materials.edition_facts import REGISTRATION as MATERIAL_EDITION
 from deermind.product.materials.facts import REGISTRATION as MATERIAL_RECEIVED
+from deermind.product.materials.facts import REMOVAL as MATERIAL_ORIGINALS_REMOVED
 from deermind.product.materials.intake_facts import REGISTRATIONS as MATERIAL_INTAKE
 from deermind.spaces.domain.analysis_facts import REGISTRATIONS as DOMAIN_ANALYSIS
 from deermind.spaces.domain.facts import DOMAIN_SAVED
@@ -34,6 +35,7 @@ from deermind.spaces.domain.instance_facts import REGISTRATIONS as DOMAIN_INSTAN
 from deermind.spaces.domain.intake import REGISTRATIONS as DOMAIN_INTAKE
 from deermind.spaces.domain.kc_path_facts import PATH_REGISTRATIONS
 from deermind.spaces.domain.supply_facts import REGISTRATIONS as TASK_SUPPLY
+from deermind.spaces.evaluation.assessment_models import REGISTRATION as ASSESSMENT_MODEL
 from deermind.spaces.evaluation.definition_facts import REGISTRATION as CLAIM_DEFINITION
 from deermind.spaces.evaluation.goal_facts import REGISTRATION as GOAL_RESULT
 from deermind.spaces.evaluation.input_facts import REGISTRATION as EVALUATION_INPUT
@@ -71,6 +73,7 @@ REGISTRATIONS = [
     WAIT_REGISTRATION,
     DOMAIN_SAVED,
     MATERIAL_RECEIVED,
+    MATERIAL_ORIGINALS_REMOVED,
     MATERIAL_EDITION,
     *MATERIAL_ASSISTANT,
     *MATERIAL_ADOPTIONS,
@@ -82,6 +85,7 @@ REGISTRATIONS = [
     *DOMAIN_INSTANCES,
     *PATH_REGISTRATIONS,
     CLAIM_DEFINITION,
+    ASSESSMENT_MODEL,
     ACTIVITY_CONFIG,
     *CONVERSATION,
     SUPPLY_REQUEST,

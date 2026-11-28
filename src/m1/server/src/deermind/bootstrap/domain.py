@@ -10,22 +10,24 @@ from deermind.foundation.system.events.attachments import FactAttachments
 from deermind.foundation.system.events.query import EventReader
 from deermind.foundation.system.events.store import EventStore
 from deermind.infrastructure.files.local import LocalFiles
+from deermind.product.materials.receiving import require_empty_domain
 from deermind.spaces.domain.definitions import DomainDefinitions
-from deermind.spaces.domain.public import DomainService
+from deermind.spaces.domain.public import BookDomainService
 from deermind.spaces.domain.supply import TaskSupply
 from deermind.spaces.domain.supply_generation import GenerateSupply
-from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
 
 def configure_domain(
     engine: AsyncEngine, root: Path, *, backend: Literal["local", "pvc"]
-) -> DomainService:
+) -> BookDomainService[AsyncConnection]:
     files = LocalFiles(root, backend=backend)
     return DomainDefinitions(
         engine,
         event_store(),
         event_reader(engine, files),
         FactAttachments(engine, files),
+        require_empty_domain,
     )
 
 

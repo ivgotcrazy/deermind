@@ -33,10 +33,11 @@
 .editor-panel > :where(h2, h3, h4) {
   margin-bottom: 12px;
 }
-.admin-editor :where(button, input, select, textarea) {
+/* Element Plus supplies the layout and interaction states of its own controls. */
+.admin-editor :where(button, input, select, textarea):not(:where([class^='el-'], [class*=' el-'])) {
   font: inherit;
 }
-.admin-editor :where(button) {
+.admin-editor :where(button):not(:where([class^='el-'], [class*=' el-'])) {
   min-height: 32px;
   padding: 5px 14px;
   border: 1px solid var(--el-border-color);
@@ -45,20 +46,29 @@
   color: var(--el-text-color-regular);
   cursor: pointer;
 }
-.admin-editor :where(button:hover:enabled, button[aria-pressed='true']) {
+.admin-editor
+  :where(button:hover:enabled, button[aria-pressed='true']):not(
+    :where([class^='el-'], [class*=' el-'])
+  ) {
   color: var(--el-color-primary);
   background: var(--admin-selected);
 }
-.admin-editor :where(.primary, button[type='submit']:not(.secondary)) {
+.admin-editor
+  :where(.primary, button[type='submit']:not(.secondary)):not(
+    :where([class^='el-'], [class*=' el-'])
+  ) {
   color: white;
   border-color: var(--el-color-primary);
   background: var(--el-color-primary);
 }
-.admin-editor :where(.primary, button[type='submit']:not(.secondary)):hover:enabled {
+.admin-editor
+  :where(.primary, button[type='submit']:not(.secondary)):not(
+    :where([class^='el-'], [class*=' el-'])
+  ):hover:enabled {
   background: #174b99;
   color: white;
 }
-.admin-editor button:disabled {
+.admin-editor button:disabled:not(:where([class^='el-'], [class*=' el-'])) {
   opacity: 0.55;
   cursor: not-allowed;
 }
@@ -66,7 +76,10 @@
   outline: 2px solid var(--el-color-primary);
   outline-offset: 2px;
 }
-.admin-editor :where(input:not([type='checkbox'], [type='radio']), select, textarea) {
+.admin-editor
+  :where(input:not([type='checkbox'], [type='radio']), select, textarea):not(
+    :where([class^='el-'], [class*=' el-'])
+  ) {
   display: block;
   width: 100%;
   min-width: 0;
@@ -78,15 +91,19 @@
   border: 1px solid var(--el-border-color);
   border-radius: 3px;
 }
-.admin-editor textarea {
+.admin-editor textarea:not(:where([class^='el-'], [class*=' el-'])) {
   min-height: 72px;
   resize: vertical;
 }
-.admin-editor label {
+.admin-editor label:not(:where([class^='el-'], [class*=' el-'])) {
   display: block;
   max-width: 100%;
 }
-.admin-editor label :where(input:not([type='checkbox'], [type='radio']), select, textarea) {
+.admin-editor
+  label
+  :where(input:not([type='checkbox'], [type='radio']), select, textarea):not(
+    :where([class^='el-'], [class*=' el-'])
+  ) {
   margin-top: 4px;
 }
 .admin-editor :is(input[type='checkbox'], input[type='radio']) {

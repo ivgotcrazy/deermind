@@ -7,7 +7,7 @@ from pydantic import Field, StringConstraints
 
 from deermind.abstractions.events import FactModel
 from deermind.spaces.domain.public import ReferenceSolution, SolutionRef, TaskInstance, TaskRef
-from deermind.spaces.domain.rich_content import RichContent
+from deermind.spaces.domain.rich_content import paragraph as paragraph
 
 type Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
 type QuestionText = Annotated[
@@ -35,25 +35,6 @@ class QuestionCheck(FactModel):
 
 class QualityChecks(FactModel):
     checks: list[QuestionCheck]
-
-
-def paragraph(text: str, role: Literal["statement", "reference"]) -> RichContent:
-    return RichContent.model_validate(
-        {
-            "schema_version": "1",
-            "role": role,
-            "source_refs": [],
-            "data_tables": [],
-            "blocks": [
-                {
-                    "block_id": "p",
-                    "type": "paragraph",
-                    "provenance": {"source_refs": [], "transformation": "generated"},
-                    "payload": {"spans": [{"type": "text", "text": text}]},
-                }
-            ],
-        }
-    )
 
 
 def materialize(

@@ -7,10 +7,9 @@ from deermind.abstractions.events import FactModel
 from deermind.product.materials.content_tree import validate_tree
 from deermind.product.public.material_editions import (
     BookPage,
-    ChapterTask,
     ContentNode,
-    MapTask,
     NodeKind,
+    TeachingModel,
 )
 from pydantic import Field, JsonValue
 
@@ -31,38 +30,8 @@ class OutlineBatch(FactModel):
     printed_pages: dict[str, str] = Field(default_factory=dict)
 
 
-class TaskChoice(FactModel):
-    chapter: str
-    task: int = Field(ge=1)
-    methods: list[int]
-    sources: list[str]
-
-
-class TeachingBatch(FactModel):
-    choices: list[TaskChoice]
+class TeachingModelBatch(TeachingModel):
     gaps: list[str]
-
-
-def parse_choices(proposals: list[TeachingBatch], catalog: list[MapTask]) -> list[ChapterTask]:
-    result: list[ChapterTask] = []
-    for proposal in proposals:
-        for row in proposal.choices:
-            if row.task > len(catalog) or any(
-                i < 1 or i > len(catalog[row.task - 1].method_refs) for i in row.methods
-            ):
-                raise ValueError("教学提炼引用了清单外的任务或方法。")
-            if not row.methods:
-                continue  # An unmatched task is a chapter gap, never an adopted association.
-            entry = catalog[row.task - 1]
-            result.append(
-                ChapterTask(
-                    chapter_id=UUID(row.chapter),
-                    task_ref=entry.task_ref,
-                    method_refs=[entry.method_refs[i - 1] for i in row.methods],
-                    source_nodes=[UUID(n) for n in row.sources],
-                )
-            )
-    return result
 
 
 def assemble(

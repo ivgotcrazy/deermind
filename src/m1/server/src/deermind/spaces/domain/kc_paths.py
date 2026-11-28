@@ -19,7 +19,7 @@ from deermind.abstractions.events import (
     StoredEvent,
 )
 from deermind.foundation.system.events.attachments import FactAttachments
-from deermind.foundation.system.events.store import EventStore
+from deermind.foundation.system.events.store import EventStore, lock_scope_sequence
 from deermind.foundation.system.projections.receipts import application
 from deermind.foundation.system.public.errors import ErrorDetail, Issue, RequestError
 from deermind.foundation.system.public.receipts import ReceiptQuery, ReceiptView
@@ -161,9 +161,9 @@ async def _check_path(
     if body.solution_ref not in task.method_refs:
         # 任务→方法须为直接采用关系。
         raise relationship_error("/solution_ref", "指定版本的方法必须由该任务版本直接采用。")
-    if body.kc_ref not in method.kc_refs:
+    if task.knowledge_ref != body.kc_ref if task.task_type else body.kc_ref not in method.kc_refs:
         # 方法→KC 须为直接引用关系。
-        raise relationship_error("/kc_ref", "指定版本的知识成分必须由该方法版本直接引用。")
+        raise relationship_error("/kc_ref", "请选择该知识任务直接对应的知识。")
     issues = [
         issue.model_copy(update={"path": f"/task_ref{issue.path}"})
         for issue in task_gaps(task)
@@ -278,6 +278,72 @@ async def read_task_paths(
     return result
 
 
+def _path_draft(
+    domain: UUID,
+    body: ConfirmKCPathRequest,
+    actor: Ref,
+    request_id: UUID,
+    artifact_id: UUID,
+    confirmation_id: UUID,
+    now: datetime,
+    issues: list[Issue],
+) -> tuple[EventDraft, Ref | None, Ref]:
+    refs = [version_ref(ref) for ref in (body.kc_ref, body.task_ref, body.solution_ref)]
+    basis = PathBasis(
+        outcome="not_ready" if issues else "confirmed",
+        responsibility_ref=refs[1].model_copy(update={"path": "/responsibility"}),
+        observable_behavior=body.observable_behavior,
+        insufficient_examples=body.insufficient_examples,
+        issues=issues,
+    )
+    artifact = PathArtifact(
+        artifact_id=artifact_id,
+        domain_id=domain,
+        definition_refs=refs,
+        payload=basis,
+        command_ref=Ref(owner="domain", type="command_receipt", id=str(request_id)),
+        created_at=now,
+    )
+    rows = [_record(ARTIFACT_TYPE, artifact_id, artifact)]
+    related = None
+    if not issues:
+        # 校验无缺口才生成确认记录；有缺口只落依据产物。
+        keys = _ref_keys(body)
+        path = PathRecord.model_validate(
+            {
+                **keys,
+                "confirmation_id": confirmation_id,
+                "basis_artifact_id": artifact_id,
+                "confirmed_by": actor,
+                "confirmed_at": now,
+            }
+        )
+        rows.append(_record(PATH_TYPE, confirmation_id, path))
+        related = path_ref(confirmation_id)
+
+    check_ref = basis_ref(artifact_id)
+    event = KCPathEvent(
+        records=rows,
+        confirmation_ref=related,
+        basis_ref=check_ref,
+        kc_ref=body.kc_ref,
+        task_ref=body.task_ref,
+        solution_ref=body.solution_ref,
+        request_ref=request_id,
+    )
+    draft = EventDraft(
+        event_id=uuid4(),
+        event_type=NOT_READY if issues else CONFIRMED,
+        schema_version=1,
+        scope_kind="domain",
+        scope_id=domain,
+        owner_ref=related or check_ref,
+        payload=event.model_dump(mode="json"),
+        source_request_id=body.request_id,
+    )
+    return draft, related, check_ref
+
+
 class KCTestPaths:
     def __init__(
         self, engine: AsyncEngine, events: EventStore, attachments: FactAttachments
@@ -285,6 +351,34 @@ class KCTestPaths:
         self.engine = engine
         self.events = events
         self.attachments = attachments
+
+    async def publish_in_transaction(
+        self,
+        db: AsyncConnection,
+        domain: UUID,
+        actor: Ref,
+        request: UUID,
+        body: ConfirmKCPathRequest,
+    ) -> None:
+        """Use the same path checks and fact projection as an individual confirmation."""
+        issues = await _check_path(db, domain, body)
+        if issues:
+            raise RequestError(422, "invalid_teaching", "直接检验路径缺少依据。", issues=issues)
+        now = await db.scalar(text("SELECT clock_timestamp()"))
+        draft, _, _ = _path_draft(domain, body, actor, request, uuid4(), uuid4(), now, [])
+        scope = ("domain", domain)
+        access = ProducerAccess("domain", actor, frozenset({scope}))
+        prepared = await self.attachments.prepare(self.events, access, (draft,))
+        seq = await lock_scope_sequence(db, *scope)
+        (saved,) = await self.events.append(
+            db,
+            access,
+            prepared,
+            commit_id=uuid4(),
+            correlation_id=request,
+            expected_seq={scope: seq},
+        )
+        await _project(db, saved)
 
     async def confirm(
         self, actor_id: UUID, domain: UUID, body: ConfirmKCPathRequest
@@ -303,61 +397,11 @@ class KCTestPaths:
 
         request_id, artifact_id, confirmation_id = uuid4(), uuid4(), uuid4()
         actor = Ref(owner="product", type="account", id=str(actor_id))
-        refs = [version_ref(ref) for ref in (body.kc_ref, body.task_ref, body.solution_ref)]
-        basis = PathBasis(
-            outcome="not_ready" if issues else "confirmed",
-            responsibility_ref=refs[1].model_copy(update={"path": "/responsibility"}),
-            observable_behavior=body.observable_behavior,
-            insufficient_examples=body.insufficient_examples,
-            issues=issues,
-        )
-        artifact = PathArtifact(
-            artifact_id=artifact_id,
-            domain_id=domain,
-            definition_refs=refs,
-            payload=basis,
-            command_ref=Ref(owner="domain", type="command_receipt", id=str(request_id)),
-            created_at=now,
-        )
-        rows = [_record(ARTIFACT_TYPE, artifact_id, artifact)]
-        related = None
-        if not issues:
-            # 校验无缺口才生成确认记录；有缺口只落依据产物。
-            keys = _ref_keys(body)
-            path = PathRecord.model_validate(
-                {
-                    **keys,
-                    "confirmation_id": confirmation_id,
-                    "basis_artifact_id": artifact_id,
-                    "confirmed_by": actor,
-                    "confirmed_at": now,
-                }
-            )
-            rows.append(_record(PATH_TYPE, confirmation_id, path))
-            related = path_ref(confirmation_id)
-
-        check_ref = basis_ref(artifact_id)
-        event = KCPathEvent(
-            records=rows,
-            confirmation_ref=related,
-            basis_ref=check_ref,
-            kc_ref=body.kc_ref,
-            task_ref=body.task_ref,
-            solution_ref=body.solution_ref,
-            request_ref=request_id,
+        draft, related, check_ref = _path_draft(
+            domain, body, actor, request_id, artifact_id, confirmation_id, now, issues
         )
         scope = ("domain", domain)
         access = ProducerAccess("domain", actor, frozenset({scope}))
-        draft = EventDraft(
-            event_id=uuid4(),
-            event_type=NOT_READY if issues else CONFIRMED,
-            schema_version=1,
-            scope_kind="domain",
-            scope_id=domain,
-            owner_ref=related or check_ref,
-            payload=event.model_dump(mode="json"),
-            source_request_id=body.request_id,
-        )
         try:
             prepared = await self.attachments.prepare(self.events, access, (draft,))
         except OSError as error:

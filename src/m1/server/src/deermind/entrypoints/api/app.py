@@ -9,6 +9,7 @@ from uuid import UUID
 
 import uvicorn
 from deermind.bootstrap.accounts import configure_usage
+from deermind.bootstrap.assessment_models import AssessmentAuthoring
 from deermind.bootstrap.authentication import configure_authentication
 from deermind.bootstrap.courses import (
     STUDENT_VIEWS,
@@ -166,6 +167,7 @@ def create_app(
                 # 教材接收/登记服务；同时返回文件上传登记与原件校验器。
                 materials, app.state.uploads = configure_materials(engine, settings, domain)
                 app.state.materials = materials
+                app.state.assessments = AssessmentAuthoring(materials)
                 app.state.material_editions, app.state.render_book_page = configure_editions(
                     materials
                 )
@@ -304,7 +306,7 @@ def create_app(
     app.include_router(receipts_router)
     app.include_router(realtime_router)
     app.add_middleware(RequestBodyLimit)
-    
+
     # 各类异常统一交由 api_error 转换为公开错误响应。
     for error_type in (
         RequestError,

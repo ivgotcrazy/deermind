@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { ApiError, get, post, postAccepted } from '../../../shared/api/http';
+import { ApiError, get, post } from '../../../shared/api/http';
 import { listDomains } from '../domain/api';
 import type { DomainRow, DomainSession } from '../domain/api';
 import DomainCreateDialog from '../domain/DomainCreateDialog.vue';
-import { detail, download, listTextbooks, readReceipt, receive, upload } from './api';
-import type { MaterialDetail, MaterialFile, ReceiveCommand, SourceView, TextbookRow } from './api';
-import MaterialAssistantPanel from './MaterialAssistantPanel.vue';
+import { detail, listTextbooks, readReceipt, receive, upload } from './api';
+import type { MaterialDetail, MaterialFile, ReceiveCommand, TextbookRow } from './api';
+import { ElButton, ElEmpty, ElMessageBox } from 'element-plus';
+import BookOriginal from './BookOriginal.vue';
 import EditionWorkspace from './EditionWorkspace.vue';
-import ChapterAssociationsPanel from './ChapterAssociationsPanel.vue';
 
 const { session } = defineProps<{ session: DomainSession }>();
 const lifecycle = new AbortController();
@@ -27,13 +27,15 @@ const selected = ref<MaterialDetail>();
 const dialog = ref<HTMLDialogElement>();
 const deleteDialog = ref<HTMLDialogElement>();
 const bookViews = [
-  { id: 'editions', label: '教材工作台' },
-  { id: 'candidates', label: '候选与领域入库' },
   { id: 'files', label: '教材原件' },
+  { id: 'tree', label: '内容树' },
+  { id: 'extraction', label: '教学提炼' },
+  { id: 'work', label: '工作台' },
 ] as const;
-const bookView = ref<(typeof bookViews)[number]['id']>('editions');
-const materialTab = ref<'content' | 'associations'>('content');
+const bookView = ref<(typeof bookViews)[number]['id']>('files');
+
 const deleting = ref(false);
+const deletingBook = ref<MaterialDetail>();
 const deleteError = ref('');
 let deleteRequest: string | undefined;
 const title = ref('');
@@ -105,19 +107,16 @@ async function read(id: string, cursor?: string) {
     };
   } else {
     if (selected.value?.textbook.textbook_id !== id) {
-      bookView.value = 'editions';
-      materialTab.value = 'content';
+      bookView.value = 'files';
     }
     selected.value = response.import;
   }
 }
 
-async function openDelete() {
-  const current = selected.value;
-  if (!current) return;
+async function openDelete(id: string) {
   deleteError.value = '';
   try {
-    await read(current.textbook.textbook_id);
+    deletingBook.value = (await detail(session, id)).import;
     deleteRequest = undefined;
     deleteDialog.value?.showModal();
   } catch (cause) {
@@ -126,7 +125,7 @@ async function openDelete() {
 }
 
 async function removeImport() {
-  const book = selected.value;
+  const book = deletingBook.value;
   if (!book || deleting.value) return;
   deleting.value = true;
   deleteError.value = '';
@@ -233,21 +232,7 @@ async function store(command: ReceiveCommand, uploadFailures: string[] = []) {
     `已登记 ${result.received.length} 份原件。` +
     (uploadFailures.length ? `未上传：${uploadFailures.join('；')}。` : '') +
     (result.failed.length ? `未登记 ${result.failed.length} 份收据。` : '');
-  if (command.kind === 'domain' && !uploadFailures.length && !result.failed.length) {
-    try {
-      await postAccepted(
-        '/api/m1/material-imports/{import_id}/messages',
-        {
-          request_id: command.body.request_id,
-          message: '请解析整本教材。',
-        },
-        { session, params: { import_id: result.import_id } },
-      );
-      resultNotice.value = '原件已登记，解析请求已受理。';
-    } catch (cause) {
-      resultNotice.value = `原件已保存。请在教材助手核对解析进度。 ${message(cause, '')}`;
-    }
-  }
+  if (command.kind === 'domain') resultNotice.value = '教材已创建，可以导入原件。';
   await loadBooks();
   await read(result.textbook_id);
 }
@@ -262,6 +247,21 @@ async function submit() {
     }
     const chosen = domains.value.find((row) => row.object_ref.object_id === domain.value);
     if (!chosen) throw new Error('请先选择有效领域。');
+    if (!appending.value) {
+      await store({
+        kind: 'domain',
+        scope: chosen.object_ref.object_id,
+        body: {
+          request_id: crypto.randomUUID(),
+          files: [],
+          domain_ref: chosen.object_ref,
+          title: title.value,
+          source: source.value || title.value,
+          edition: edition.value || null,
+        },
+      });
+      return;
+    }
     if (!files.value.length) throw new Error('请选择教材文件。');
     if (
       files.value.length > 600 ||
@@ -291,24 +291,13 @@ async function submit() {
     if (!accepted.length) throw new Error(failed.join('；'));
     progress.value = '正在登记原件';
     const command = { request_id: crypto.randomUUID(), files: accepted };
+    if (!current) throw new Error('教材尚未选定。');
     await store(
-      current
-        ? {
-            kind: 'material_import',
-            scope: current.textbook.import_id,
-            body: { ...command, expected_revision: current.source_revision },
-          }
-        : {
-            kind: 'domain',
-            scope: chosen.object_ref.object_id,
-            body: {
-              ...command,
-              domain_ref: chosen.object_ref,
-              title: title.value,
-              source: source.value,
-              edition: edition.value || null,
-            },
-          },
+      {
+        kind: 'material_import',
+        scope: current.textbook.import_id,
+        body: { ...command, expected_revision: current.source_revision },
+      },
       failed,
     );
   } catch (cause) {
@@ -319,12 +308,36 @@ async function submit() {
   }
 }
 
-async function getFile(item: SourceView) {
+async function removeOriginals() {
+  const item = selected.value;
+  if (!item || busy.value) return;
+  try {
+    await ElMessageBox.confirm('移除本教材的全部原页？教材条目将保留。', '删除教材原件', {
+      type: 'warning',
+      confirmButtonText: '删除原件',
+      cancelButtonText: '取消',
+    });
+  } catch {
+    return;
+  }
+  busy.value = true;
   error.value = '';
   try {
-    await download(session, item);
+    await post(
+      '/api/m1/material-imports/{import_id}/originals/remove',
+      {
+        request_id: crypto.randomUUID(),
+        expected_revision: item.revision,
+        confirmed_scope_ref: item.deletion_scope_ref,
+      },
+      { session, params: { import_id: item.textbook.import_id } },
+    );
+    await read(item.textbook.textbook_id);
+    resultNotice.value = '原件已删除，可重新导入。';
   } catch (cause) {
-    error.value = cause instanceof ApiError ? cause.message : message(cause, '读取文件失败。');
+    error.value = message(cause, '删除原件失败。');
+  } finally {
+    busy.value = false;
   }
 }
 
@@ -333,7 +346,10 @@ onMounted(async () => {
   try {
     domains.value = (await listDomains(session, lifecycle.signal)).items;
     const book = new URLSearchParams(window.location.search).get('textbook');
-    if (book) await show(book);
+    if (book) {
+      await show(book);
+      if (new URLSearchParams(window.location.search).has('extraction')) bookView.value = 'work';
+    }
   } catch (cause) {
     error.value = message(cause, '无法加载教材管理。');
   }
@@ -373,7 +389,7 @@ onBeforeUnmount(() => {
         />
         <button type="submit" class="secondary" :disabled="busy">搜索</button>
         <button type="button" class="primary toolbar-end" :disabled="busy" @click="open(false)">
-          上传教材
+          创建教材
         </button>
       </form>
       <p v-if="listError" role="alert">{{ listError }}</p>
@@ -403,6 +419,9 @@ onBeforeUnmount(() => {
               <button type="button" :disabled="busy" @click="show(book.textbook_id)">
                 查看教材
               </button>
+              <ElButton link type="danger" :disabled="busy" @click="openDelete(book.textbook_id)"
+                >删除</ElButton
+              >
             </td>
           </tr>
         </tbody>
@@ -458,78 +477,48 @@ onBeforeUnmount(() => {
           {{ view.label }}
         </button>
       </nav>
-      <section v-show="bookView === 'files'" class="editor-panel" aria-label="教材原件">
+      <section v-if="bookView === 'files'" class="editor-panel originals" aria-label="教材原件">
         <div class="material-actions">
-          <button
-            type="button"
-            :disabled="busy || Boolean(selected.next_source_cursor)"
-            @click="open(true)"
+          <h3>教材原件</h3>
+          <ElButton
+            v-if="selected.sources.length"
+            text
+            type="danger"
+            :disabled="busy"
+            @click="removeOriginals"
+            >删除原件</ElButton
           >
-            补充原件
-          </button>
-          <button type="button" class="secondary" :disabled="busy" @click="openDelete">
-            删除导入
-          </button>
         </div>
-        <ol class="material-list">
-          <li v-for="item in selected.sources" :key="item.source_ref.id">
-            <button type="button" @click="getFile(item)">{{ item.original_name }}</button>
-            <span>{{ item.page_count }} 页 · 顺序 {{ item.order }}</span>
-          </li>
-        </ol>
-        <button
-          v-if="selected.next_source_cursor"
-          type="button"
-          :disabled="busy"
-          @click="show(selected.textbook.textbook_id, selected.next_source_cursor)"
+        <BookOriginal
+          v-if="selected.sources.length"
+          :key="selected.source_revision"
+          :book="selected.textbook.textbook_id"
+          :session="session"
+        />
+        <ElEmpty v-else description="尚未导入教材原件"
+          ><ElButton type="primary" @click="open(true)">导入教材</ElButton></ElEmpty
         >
-          更多原件
-        </button>
       </section>
       <EditionWorkspace
-        v-show="bookView === 'editions'"
+        v-else
         :key="selected.textbook.textbook_id"
+        :view="bookView"
+        :book-title="selected.textbook.metadata.title"
         :book="selected.textbook.textbook_id"
         :import-id="selected.textbook.import_id"
         :session="session"
+        @work="bookView = 'work'"
       />
-      <section v-show="bookView === 'candidates'" aria-label="教材候选与领域入库">
-        <nav class="editor-tabs" aria-label="教材工作区">
-          <button
-            type="button"
-            class="secondary"
-            :aria-pressed="materialTab === 'content'"
-            @click="materialTab = 'content'"
-          >
-            章节内容与教材助手
-          </button>
-          <button
-            type="button"
-            class="secondary"
-            :aria-pressed="materialTab === 'associations'"
-            @click="materialTab = 'associations'"
-          >
-            章节关联
-          </button>
-        </nav>
-        <MaterialAssistantPanel
-          v-show="materialTab === 'content'"
-          :key="selected.textbook.import_id"
-          :material="selected"
-          :session="session"
-        />
-        <ChapterAssociationsPanel
-          v-if="materialTab === 'associations'"
-          :material="selected"
-          :session="session"
-        />
-      </section>
     </template>
 
-    <dialog ref="deleteDialog" aria-label="删除教材导入">
+    <dialog ref="deleteDialog" aria-label="删除教材">
       <form class="material-form" @submit.prevent="removeImport">
-        <h3>删除教材导入</h3>
-        <p>此操作会停止未完成的教材处理，保留原件以及已经入库的领域内容。</p>
+        <h3>删除教材</h3>
+        <p>
+          确认删除《{{
+            deletingBook?.textbook.metadata.title
+          }}》？已有发布的内容树或学习空间时无法删除。
+        </p>
         <p v-if="deleteError" role="alert">{{ deleteError }}</p>
         <footer class="editor-footer">
           <button
@@ -545,7 +534,7 @@ onBeforeUnmount(() => {
     </dialog>
     <dialog ref="dialog" aria-labelledby="material-editor-title" @cancel.prevent>
       <form class="material-form" @submit.prevent="submit">
-        <h3 id="material-editor-title">{{ appending ? '补充原件' : '上传教材' }}</h3>
+        <h3 id="material-editor-title">{{ appending ? '导入原件' : '创建教材' }}</h3>
         <template v-if="!appending">
           <div class="upload-domain">
             <label
@@ -589,18 +578,14 @@ onBeforeUnmount(() => {
           /></label>
           <label
             >来源说明
-            <input
-              v-model.trim="source"
-              required
-              maxlength="512"
-              :disabled="busy || Boolean(pending)"
+            <input v-model.trim="source" maxlength="512" :disabled="busy || Boolean(pending)"
           /></label>
           <label
             >版次
             <input v-model.trim="edition" maxlength="512" :disabled="busy || Boolean(pending)"
           /></label>
         </template>
-        <label
+        <label v-if="appending"
           >教材文件
           <input
             ref="fileInput"
@@ -636,7 +621,7 @@ onBeforeUnmount(() => {
             取消
           </button>
           <button type="submit" :disabled="busy || (!pending && !domainNames.has(domain))">
-            {{ pending ? '继续本次登记' : appending ? '补充原件' : '上传并解析' }}
+            {{ pending ? '继续本次登记' : appending ? '导入原件' : '创建教材' }}
           </button>
         </div>
       </form>
@@ -651,6 +636,12 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.originals {
+  min-height: 380px;
+}
+.originals .el-empty {
+  min-height: 300px;
+}
 .upload-domain {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
